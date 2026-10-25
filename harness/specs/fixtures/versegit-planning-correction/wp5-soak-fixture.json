@@ -1,0 +1,11 @@
+{
+  "schema": "clawx.versegit.wp5-soak-fixture/v1",
+  "nodeId": "TF-0471",
+  "role": "WP5",
+  "fixturePurpose": "Bounded disposable-repository replay and soak fixture covering producer-consumer worktrees, unavailable receipts, sidecar crash and report tamper.",
+  "runs": 3,
+  "maxDurationMs": 300000,
+  "expectedOutputs": [
+    "artifacts/versegit/wp5/soak-report.json"
+  ]
+}

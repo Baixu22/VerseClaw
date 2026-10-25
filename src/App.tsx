@@ -40,6 +40,7 @@ const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((
 const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
 const ClawGraphPage = lazy(() => import('./pages/ClawGraph'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
+const MemoryPage = lazy(() => import('./pages/Memory').then((m) => ({ default: m.MemoryPage })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
 const UiV2Showcase = lazy(() => import('./pages/UiV2Showcase').then((m) => ({ default: m.UiV2Showcase })));
 
@@ -124,6 +125,7 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
           )}
         />
         <Route path="/knowledge" element={<Knowledge />} />
+        <Route path="/memory" element={<MemoryPage />} />
         <Route
           path="/browser"
           element={(

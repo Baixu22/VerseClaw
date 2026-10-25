@@ -5,7 +5,6 @@
 import { useEffect, useMemo, useState, useCallback, type ReactNode } from 'react';
 import {
   Plus,
-  Trash2,
   RefreshCw,
   X,
   AlertCircle,
@@ -27,6 +26,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { DurationPicker, type DurationValue } from '@/components/rareui/DurationPicker';
+import { DeleteButton } from '@/components/rareui/DeleteButton';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import {
   hostApi,
@@ -428,14 +429,30 @@ interface TaskDialogProps {
   onSave: (input: CronJobCreateInput) => Promise<void>;
 }
 
-function getInitialCronSchedule(job?: CronJob): string {
+// eslint-disable-next-line react-refresh/only-export-components
+export function getInitialCronSchedule(job?: CronJob): string {
   const schedule = job?.schedule;
   if (!schedule) return '0 9 * * *';
   if (typeof schedule === 'string') return schedule;
   if (typeof schedule === 'object' && 'expr' in schedule && typeof (schedule as { expr: string }).expr === 'string') {
     return (schedule as { expr: string }).expr;
   }
-  return '0 9 * * *';
+  return '';
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function readCronTime(expression: string): DurationValue | null {
+  const parts = expression.trim().split(/\s+/);
+  if (parts.length !== 5 || !/^\d+$/.test(parts[0]) || !/^\d+$/.test(parts[1])) return null;
+  const minutes = Number(parts[0]);
+  const hours = Number(parts[1]);
+  return hours <= 23 && minutes <= 59 ? { hours, minutes } : null;
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function writeCronTime(expression: string, value: DurationValue): string {
+  const parts = expression.trim().split(/\s+/);
+  return `${value.minutes} ${value.hours} ${parts.slice(2).join(' ')}`;
 }
 
 function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDialogProps) {
@@ -485,8 +502,9 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
   const [validationResult, setValidationResult] = useState<AgentBrowserValidateResult | null>(null);
   const [selectedAgentId, setSelectedAgentId] = useState(job?.agentId || useChatStore.getState().currentAgentId);
   const [schedule, setSchedule] = useState(getInitialCronSchedule(job));
-  const [customSchedule, setCustomSchedule] = useState('');
-  const [useCustom, setUseCustom] = useState(false);
+  const [customSchedule, setCustomSchedule] = useState(getInitialCronSchedule(job));
+  const [useCustom, setUseCustom] = useState(() => !!job && !schedulePresets.some((preset) => preset.value === getInitialCronSchedule(job)));
+  const [scheduleChanged, setScheduleChanged] = useState(false);
   const [enabled, setEnabled] = useState(job?.enabled ?? true);
   const [deliveryMode, setDeliveryMode] = useState<'none' | 'announce'>(job?.delivery?.mode === 'announce' ? 'announce' : 'none');
   const [deliveryChannel, setDeliveryChannel] = useState(job?.delivery?.channel || '');
@@ -530,8 +548,9 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
       setValidationResult(null);
       setSelectedAgentId(job?.agentId || useChatStore.getState().currentAgentId);
       setSchedule(getInitialCronSchedule(job));
-      setCustomSchedule('');
-      setUseCustom(false);
+      setCustomSchedule(getInitialCronSchedule(job));
+      setUseCustom(!!job && !schedulePresets.some((preset) => preset.value === getInitialCronSchedule(job)));
+      setScheduleChanged(false);
       setEnabled(job?.enabled ?? true);
       setDeliveryMode(job?.delivery?.mode === 'announce' ? 'announce' : 'none');
       setDeliveryChannel(job?.delivery?.channel || '');
@@ -542,6 +561,9 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
     }
   }
   const schedulePreview = estimateNextRun(useCustom ? customSchedule : schedule);
+  const cronTime = readCronTime(useCustom ? customSchedule : schedule);
+  const structuredSchedule = job?.schedule && typeof job.schedule === 'object' ? job.schedule : null;
+  const preserveNonCron = !!structuredSchedule && structuredSchedule.kind !== 'cron' && !scheduleChanged;
   const selectableChannels = configuredChannels.filter((group) => isSupportedCronDeliveryChannel(group.channelType));
   const availableChannels = selectableChannels.some((group) => group.channelType === deliveryChannel)
     ? selectableChannels
@@ -744,7 +766,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
     }
 
     const finalSchedule = useCustom ? customSchedule : schedule;
-    if (!finalSchedule.trim()) {
+    if (!preserveNonCron && !finalSchedule.trim()) {
       toast.error(t('toast.scheduleRequired'));
       return;
     }
@@ -1200,7 +1222,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
                     type="button"
                     variant={schedule === preset.value ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSchedule(preset.value)}
+                  onClick={() => { setSchedule(preset.value); setScheduleChanged(true); }}
                     className={cn(
                       "justify-start h-10 rounded-xl font-medium text-meta transition-all",
                       schedule === preset.value
@@ -1217,10 +1239,19 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
               <Input
                 placeholder={t('dialog.cronPlaceholder')}
                 value={customSchedule}
-                onChange={(e) => setCustomSchedule(e.target.value)}
+                onChange={(e) => { setCustomSchedule(e.target.value); setScheduleChanged(true); }}
                 className="h-[44px] rounded-xl font-mono text-meta bg-transparent border-black/10 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary shadow-sm transition-all text-foreground placeholder:text-foreground/40"
               />
             )}
+            {preserveNonCron && <p className="rounded-md bg-surface-input px-3 py-2 text-xs text-muted-foreground" data-testid="cron-preserved-schedule">
+              {parseCronSchedule(structuredSchedule, t)}
+            </p>}
+            {cronTime && !preserveNonCron && <div className="flex items-center gap-3 py-1">
+              <DurationPicker value={cronTime} disabled={saving} onConfirm={(value) => {
+                const expression = writeCronTime(useCustom ? customSchedule : schedule, value);
+                setSchedule(expression); setCustomSchedule(expression); setUseCustom(true); setScheduleChanged(true);
+              }} />
+            </div>}
             <div className="flex items-center justify-between mt-2">
               <p className="text-xs text-muted-foreground/80 font-medium">
                 {schedulePreview ? `${t('card.next')}: ${schedulePreview}` : t('dialog.cronPlaceholder')}
@@ -1229,7 +1260,10 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => setUseCustom(!useCustom)}
+                onClick={() => {
+                  if (!useCustom) setCustomSchedule(schedule);
+                  setUseCustom(!useCustom);
+                }}
                 className="text-xs h-7 px-2 text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 rounded-lg"
               >
                 {useCustom ? t('dialog.usePresets') : t('dialog.useCustomCron')}
@@ -2040,16 +2074,12 @@ function CronJobDetailsPanel({
             <CronEditIcon className="mr-2 h-5 w-5" />
             {t('workbench.editConfiguration')}
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
+          <DeleteButton
             onClick={onDelete}
             className="h-9 w-9 rounded-md text-destructive hover:bg-destructive/10 hover:text-destructive"
             aria-label={t('common:actions.delete', 'Delete')}
             title={t('common:actions.delete', 'Delete')}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          />
         </div>
       </div>
     </aside>
@@ -2181,7 +2211,10 @@ export function Cron() {
 
   const handleSave = useCallback(async (input: CronJobCreateInput) => {
     if (editingJob) {
-      await updateJob(editingJob.id, input);
+      const { schedule: nextSchedule, ...rest } = input;
+      const initial = getInitialCronSchedule(editingJob);
+      // Omitting an untouched schedule also preserves Gateway timezone and every/at fields.
+      await updateJob(editingJob.id, nextSchedule === initial ? rest : input);
     } else {
       await createJob(input);
     }

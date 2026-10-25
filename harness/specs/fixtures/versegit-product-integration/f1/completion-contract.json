@@ -1,0 +1,53 @@
+{
+  "schema": "clawx.versegit.f1-completion-contract/v1",
+  "generated_at": "2026-10-22T21:58:17.344Z",
+  "task": "TF-0535",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d06808b0e2286d2a3bc7ea2f730d285018c8e355",
+    "tree": "bd6eadb7966a2bbc64ed45c41b32577662e987fe",
+    "dirty": false
+  },
+  "contract_version": "clawx.versegit.completion-contract/v1",
+  "mapping": {
+    "applied": {
+      "providerProjection": "host-completed",
+      "activeSessionRisk": false,
+      "recoveryRequired": false,
+      "providerLanded": false
+    },
+    "not_applied": {
+      "providerProjection": "abandoned",
+      "activeSessionRisk": false,
+      "recoveryRequired": false,
+      "providerLanded": false
+    },
+    "unknown": {
+      "providerProjection": "abandoned",
+      "activeSessionRisk": false,
+      "recoveryRequired": true,
+      "providerLanded": false
+    }
+  },
+  "provider_semantics": {
+    "source_refs": [
+      "VerseGit/crates/vg-cli/src/main.rs:596",
+      "VerseGit/crates/vg-schema/src/events.rs:116"
+    ],
+    "session_ended_means": "abandoned/non-landed",
+    "host_completed_source": "host-owned versioned completion fact",
+    "provider_landed": false,
+    "m4_authorized": false
+  },
+  "boundaries": {
+    "default_off": true,
+    "live_ready": false,
+    "product_approved": false,
+    "m4_authorized": false,
+    "real_human_evidence": false
+  },
+  "passed": true,
+  "digest": "12d8476662b32cdc5dec0986e8bd4670d00bf0d781e50884dabe3fc2a8f1f227"
+}

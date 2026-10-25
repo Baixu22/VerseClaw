@@ -131,8 +131,9 @@ test.describe('Role memory panel', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-agents').click();
+    const advancedAgentsUrl = new URL(page.url());
+    advancedAgentsUrl.hash = '/settings/agents?advancedMemory=1';
+    await page.goto(advancedAgentsUrl.toString());
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
     await page.getByTestId('role-orchestration-toggle').click();
@@ -582,8 +583,9 @@ test.describe('Role memory panel', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-agents').click();
+    const advancedAgentsUrl = new URL(page.url());
+    advancedAgentsUrl.hash = '/settings/agents?advancedMemory=1';
+    await page.goto(advancedAgentsUrl.toString());
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
     await page.getByTestId('role-orchestration-toggle').click();

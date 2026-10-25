@@ -36,6 +36,7 @@ type SessionActivityEvent =
 const sessionSnapshots = new Map<string, SessionActivitySnapshot>();
 const eventUnsubscribers: Array<() => void> = [];
 const mockTimers = new Map<string, ReturnType<typeof setTimeout>[]>();
+const loadGenerationBySession = new Map<string, number>();
 let initialized = false;
 
 function asFiniteNumber(value: unknown): number | undefined {
@@ -394,6 +395,8 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
     },
     load: async ({ workspaceId, sessionKey }) => {
       get().init();
+      const requestGeneration = (loadGenerationBySession.get(sessionKey) ?? 0) + 1;
+      loadGenerationBySession.set(sessionKey, requestGeneration);
       const isMockMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('mock') === '1';
       /*
        * Keep whatever this session already showed.
@@ -403,9 +406,18 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
        * panel then looked exactly like a session with no background activity.
        */
       const previous = get().snapshots[sessionKey];
+      const invalidatePreviousPolicy = !isMockMode && previous !== undefined
+        && (previous.policy !== undefined || previous.availability.policy !== undefined);
       const initial = isMockMode
         ? mockSnapshot(sessionKey, mockScenario())
-        : previous ?? createEmptySessionActivitySnapshot(sessionKey);
+        : previous
+          ? {
+              ...previous,
+              ...(invalidatePreviousPolicy
+                ? { policy: null, availability: { ...previous.availability, policy: false } }
+                : {}),
+            }
+          : createEmptySessionActivitySnapshot(sessionKey);
       set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: initial } }));
       if (isMockMode
         && (initial.session.status !== 'idle' || initial.git || initial.tasks.length || initial.terminals.length)) {
@@ -425,6 +437,9 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       const [activityResult] = await Promise.allSettled([
         hostApi.sessionActivity.snapshot({ workspaceId, sessionKey }),
       ]);
+      if (loadGenerationBySession.get(sessionKey) !== requestGeneration) {
+        return get().snapshots[sessionKey] ?? initial;
+      }
       let snapshot = get().snapshots[sessionKey] ?? initial;
       const hydrated = activityResult.status === 'fulfilled'
         && activityResult.value.success
@@ -433,6 +448,16 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         : null;
       if (hydrated) {
         const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, base);
+        /* Policy is a runtime-scoped fact. A response for another workspace or
+         * session must never be painted under the current selection, even if an
+         * older host path accidentally returns it after a scope switch. */
+        const policyScopeMatches = hydrated.policy != null
+          && hydrated.policy.scope.sessionKey === sessionKey
+          && (!workspaceId || hydrated.policy.scope.workspaceId === workspaceId);
+        const hasPolicyProjection = Object.prototype.hasOwnProperty.call(hydrated, 'policy')
+          || hydrated.availability.policy !== undefined;
+        const availability = { ...snapshot.availability, ...hydrated.availability };
+        if (hasPolicyProjection) availability.policy = policyScopeMatches;
         snapshot = {
           ...snapshot,
           ...hydrated,
@@ -443,16 +468,19 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
           subagents: mergeItems(snapshot.subagents, hydrated.subagents),
           terminals: mergeItems(snapshot.terminals, hydrated.terminals),
           continuity: { ...snapshot.continuity, ...hydrated.continuity },
-          availability: { ...snapshot.availability, ...hydrated.availability },
+          ...(hasPolicyProjection ? { policy: policyScopeMatches ? hydrated.policy : null } : {}),
+          availability,
           backgroundRead: mergeBackgroundRead(snapshot.backgroundRead, hydrated.backgroundRead),
           capturedAt: Math.max(snapshot.capturedAt, hydrated.capturedAt),
         };
       } else {
-        /* The host call itself failed, so nothing was read: keep the rows that
-         * are on screen and change only the read state, or a failure would look
-         * like a session that suddenly had no background activity. */
+        /* Background rows may stay visible as stale facts, but policy is not a
+         * durable transcript fact: a failed or interrupted re-read clears it
+         * rather than presenting the old runtime scope as current. */
         snapshot = {
           ...snapshot,
+          policy: null,
+          availability: { ...snapshot.availability, policy: false },
           backgroundRead: mergeBackgroundRead(snapshot.backgroundRead, undefined),
         };
       }
@@ -481,6 +509,7 @@ export function disposeSessionActivitySubscriptions(): void {
   while (eventUnsubscribers.length) eventUnsubscribers.pop()?.();
   for (const timers of mockTimers.values()) timers.forEach(clearTimeout);
   mockTimers.clear();
+  loadGenerationBySession.clear();
   initialized = false;
 }
 

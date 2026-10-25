@@ -1,0 +1,192 @@
+{
+  "schema": "clawx.long-session.current-baseline/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-a1",
+  "program": "long-session-development-20261022",
+  "task": "TF-0548",
+  "generatedAt": "2026-10-22T15:12:53.214Z",
+  "scope": "Current source and fault baseline for one explicit Windows-local Workspace/Assistant session tree. This does not accept long-session product behavior.",
+  "candidate": {
+    "sourceCommit": "e73c29eebc5ae3f9c3355c5c446dbfd96577de8c",
+    "baseCommit": "3d6891d761fc78962859393e623cc19d8b3c20e2",
+    "sourceTree": "d06b8c75cbf44d3fbba6dff4f4d801f00a1e8b24",
+    "branch": "codex/long-session-implementation-20261022",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program",
+    "cleanCandidateObserved": true,
+    "dirtyScopeAtCapture": "A1 tracked fixtures, regression test and product-semantics documentation only",
+    "evidenceCandidateCommit": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
+    "evidenceCandidateTree": "91026b1f0bc14fccd77b09119775725b658493a1"
+  },
+  "environment": {
+    "platform": "win32",
+    "node": "v24.22.1",
+    "pnpm": "11.2.2",
+    "tempRoot": "D:/tmp",
+    "runtimeBuild": "not-built-for-A1-baseline",
+    "gatewayBuild": "not-built-for-A1-baseline",
+    "electronBuild": "not-built-for-A1-baseline",
+    "codegraph": "retired in current repository; historical frozen indexes are not current callers"
+  },
+  "sourceInputs": [
+    {
+      "path": "harness/specs/tasks/long-session-baseline-contract.md",
+      "sha256": "f37aac2dc2557fd1edb93e7f8d1077295100c8a479ada45a8e1aa6ef18b43fa7"
+    },
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "sha256": "e97e39f7ea9d18218f9a237893d1597b09682e7ba19b2902699a17b909ad99d1"
+    },
+    {
+      "path": "shared/types/identity-scope.ts",
+      "sha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc"
+    },
+    {
+      "path": "shared/types/workspace.ts",
+      "sha256": "67c8b8b399d0e560def06a55b8a18f4c20fd0f171982ce9863964dece548b41f"
+    },
+    {
+      "path": "shared/types/project.ts",
+      "sha256": "6fe16f274b70641a932fc62a0b3fb6af01bf7812ede782cd0b503f77fd5aef82"
+    },
+    {
+      "path": "shared/types/task-ledger.ts",
+      "sha256": "2dd0d945502fc1cc55d3ede9b63e2aec26fbcdb5f995c788ff7b3f55a8fadbf0"
+    },
+    {
+      "path": "shared/types/resource-tracker.ts",
+      "sha256": "74d90cd5af89106eb0db3546b61e359aa09affafbf9c905363d09d0389ee2f04"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "5f132476dabce4d86b0ca6453f443d09c0d421485cbbc3940e3e848de14cd799"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "8156b6dd23eda25b4758711f784cef80a6b526676d708598446da44c3442c9e2"
+    },
+    {
+      "path": "electron/services/session-delete-gate.ts",
+      "sha256": "253902e7e826f1379fe6a0bb0328e9d73c456d5c47b076ee05548b75faddf929"
+    },
+    {
+      "path": "electron/utils/session-files.ts",
+      "sha256": "30a4a396396d774ebdaa40927915d9d0f047255d5b42c329db9c32b37278c248"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+      "sha256": "1cdb7c700fda19239a7b555aef79233a6ec5ec7fea602a14657e7f3e215b6cc1"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-lifecycle-state.ts",
+      "sha256": "963b25ffcda0cc9eb2f766b656aff18f2d99618e8701a38800cc977feb161d88"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts",
+      "sha256": "014d427eea2cd13979828dcd5de2020eb024fe08fce059fabcfd1a763889ddab"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+      "sha256": "c5fdd2bff5e012b8479544543d4570d0bd118765e16225beb58a64fcc8370be7"
+    },
+    {
+      "path": "openclaw_runtime/extensions/codex/src/app-server/thread-lifecycle.ts",
+      "sha256": "0f5ee112522acf0873978aff9c4157144368de20e7755f454a883e2e30b361dc"
+    },
+    {
+      "path": "openclaw_runtime/extensions/anthropic/cli-backend.ts",
+      "sha256": "6c16de109e311ac43b0d06980252661c3328d559f2c13765f56c5440f9ebed0b"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json",
+      "sha256": "44e928fe1324446312216cf71a5f66e03c93eb02164585c447af0e670703e353"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json",
+      "sha256": "8ec554f2dad797a9a3c6c4f932e24bc04d55de0533ea82746390a09559e58f15"
+    },
+    {
+      "path": "harness/specs/fixtures/long-session-development/a1/verification-receipt.json",
+      "sha256": "b558111ff4a9a4dc36c7f069b634abfced091de00989441b48382ca4a4e8beff"
+    },
+    {
+      "path": "tests/unit/long-session-action-contract.test.ts",
+      "sha256": "601f25515ab7674bad669d8f0f54931599a9f58148940b961bd2608489a74636"
+    }
+  ],
+  "measurementContract": {
+    "minimumPairedScenarios": 30,
+    "comparison": "Paired agent-driven scenarios with identical model, model settings, workspace, task input and bounded context.",
+    "criticalFactFidelityPercent": 100,
+    "nextStepAccuracyPercent": 95,
+    "falseCompletionCount": 0,
+    "netCostOrInputTokenReductionPercentMin": 15,
+    "p95LatencyRatioMax": 1.1,
+    "safetyRegressions": 0,
+    "requiredSamples": [
+      "first-token latency",
+      "wall-clock latency",
+      "input/output/cache tokens",
+      "observed cost when pricing is known"
+    ],
+    "insufficientEvidenceDisposition": "keep-baseline-or-NO-GO; never invent a quality improvement"
+  },
+  "baselineFindings": [
+    {
+      "id": "archive-active-run-not-fenced",
+      "classification": "known_gap",
+      "summary": "archiveSession in electron/services/sessions-api.ts renames the transcript and updates the archive index without acquiring the runtime session admission fence or requiring an idle run."
+    },
+    {
+      "id": "restore-index-removed-before-transcript-rename",
+      "classification": "known_gap",
+      "summary": "restoreSession removes the archive-index entry before restoring the archived transcript; a crash can leave no retry locator."
+    },
+    {
+      "id": "production-caller-map",
+      "classification": "observed",
+      "summary": "The actual Chat store is src/stores/chat.ts. Same-named helpers under src/stores/chat/ are not accepted as production callers unless the actual store composition or a test proves the edge."
+    },
+    {
+      "id": "runtime-delete-journal-present",
+      "classification": "observed",
+      "summary": "Live delete already persists a caller operationId, requires a matching runtime_committed receipt, closes the terminal and only then sweeps the local mirror."
+    },
+    {
+      "id": "handoff-boundary-present",
+      "classification": "observed",
+      "summary": "Handoff creation is serialized and creates a new draft child session; it does not mutate the source or transfer task/goal ownership."
+    }
+  ],
+  "negativeScenarioIndex": "harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json",
+  "unmeasured": [
+    "active-run archive and restore crash recovery were not executed end-to-end in A1",
+    "duplicate and late completion delivery",
+    "generation-stale lifecycle events against a live Gateway",
+    "configured versus effective versus actual backend switching",
+    "authorization revocation between admission and follow-up",
+    "cross-workspace long-session delegation",
+    "application/Gateway restart with an unknown delete receipt",
+    "Cron/Workboard pause during an active turn",
+    "real Electron lifecycle E2E and long-running resource measurements",
+    "paired continuity quality, latency and cost evaluation from D2"
+  ],
+  "historicalEvidencePolicy": {
+    "oldResearchTests": 124,
+    "usedAsCurrentAcceptance": false,
+    "note": "Historical research, prior PASS records and old performance samples are background only; A1 commands and file readback produce this baseline."
+  },
+  "cleanup": {
+    "startedProcesses": false,
+    "startedBrowser": false,
+    "startedElectron": false,
+    "recoveryRequired": false,
+    "notes": "A1 source inspection and structural fixtures only; no runtime resources were launched by this baseline step."
+  },
+  "limitations": [
+    "No live backend, Gateway restart, Electron E2E, permission revocation or long-running resource test was executed for A1.",
+    "No Project store, second task/goal authority, universal resource table or scheduler is introduced.",
+    "Archive/restore remain partial until TF-0549 lands the lifecycle barrier.",
+    "All evidence is agent-driven; no real-human claim is made."
+  ],
+  "verificationReceipt": "harness/specs/fixtures/long-session-development/a1/verification-receipt.json"
+}

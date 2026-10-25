@@ -33,6 +33,7 @@
     "inbox": "收件箱",
     "scheduled": "已安排",
     "knowledge": "知识",
+    "memory": "记忆",
     "cronTasks": "定时任务",
     "skills": "工具",
     "agents": "Agents",
@@ -208,5 +209,13 @@
       "responsibility": "本地无法确定具体原因。",
       "nextStep": "请先重试一次;若再次出现,请把错误编号提供给支持人员。"
     }
+  },
+  "rareui": {
+    "hours": "小时",
+    "minutes": "分钟",
+    "hoursShort": "时",
+    "minutesShort": "分",
+    "editTime": "修改时间",
+    "confirmTime": "确认时间"
   }
 }

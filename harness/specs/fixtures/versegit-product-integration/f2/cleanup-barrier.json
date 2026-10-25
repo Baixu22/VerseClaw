@@ -1,0 +1,216 @@
+{
+  "schema": "clawx.versegit.f2-cleanup-barrier-evidence/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-23T11:14:33.835Z",
+  "source": {
+    "before": {
+      "branch": "codex/versegit-product-integration-20261022",
+      "commit": "e3d9ee474ae8f31ff52b44bf3a70a1b7e74a1c28",
+      "tree": "7aa5cd5c72efade31f8261c46f34dac5f1e40798",
+      "dirty": false
+    },
+    "after": {
+      "branch": "codex/versegit-product-integration-20261022",
+      "commit": "e3d9ee474ae8f31ff52b44bf3a70a1b7e74a1c28",
+      "tree": "7aa5cd5c72efade31f8261c46f34dac5f1e40798",
+      "dirty": false
+    }
+  },
+  "protocol": {
+    "stages": [
+      "stop_accepting",
+      "drain_cancel",
+      "seal_evidence",
+      "detach_vg",
+      "verify_owner_epoch_ref",
+      "delete_disposable"
+    ],
+    "lateEventsRejectedAfterSeal": true,
+    "restartReadsDurableRecord": true,
+    "unknownInventoryNeverClaimsZero": true
+  },
+  "commands": [
+    {
+      "name": "unit",
+      "argv": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/versegit-cleanup-barrier.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 20325,
+      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX-work/versegit-product-integration-20261022\n\n\n Test Files  1 passed (1)\n      Tests  10 passed (10)\n   Start at  19:13:30\n   Duration  17.04s (transform 849ms, setup 969ms, import 1.19s, tests 8.49s, environment 5.91s)\n\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "e2",
+      "argv": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/versegit-lifecycle-cleanup.spec.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 43504,
+      "stdoutTail": "\nRunning 1 test using 1 worker\n\n  ok 1 tests\\e2e\\versegit-lifecycle-cleanup.spec.ts:50:7 › VerseGit cleanup barrier lifecycle › seals normal, failure and continuation cleanup before deleting owned resources (39.1s)\n\n  1 passed (40.6s)\n",
+      "stderrTail": "(node:46524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:46524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "pnpm.cmd",
+        "contract:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 763,
+      "stdoutTail": "Contract check passed.\n",
+      "stderrTail": "$ node scripts/contract-check.mjs\n"
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "pnpm.cmd",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/versegit-product-f2-cleanup-barrier.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 1690,
+      "stdoutTail": "s/fixtures/versegit-product-integration/e3/SHA256SUMS, harness/specs/fixtures/versegit-product-integration/e3/apply-decision.json, harness/specs/fixtures/versegit-product-integration/e3/independent-review.json, harness/specs/fixtures/versegit-product-integration/e3/ordering-trace.json, harness/specs/fixtures/versegit-product-integration/e3/toctou-negative.json, harness/specs/fixtures/versegit-product-integration/e3/write-journal-index.json, harness/specs/fixtures/versegit-product-integration/f1/SHA256SUMS, harness/specs/fixtures/versegit-product-integration/f1/completion-contract.json, harness/specs/fixtures/versegit-product-integration/f1/independent-review.json, harness/specs/fixtures/versegit-product-integration/f1/persisted-outcomes.json, harness/specs/fixtures/versegit-product-integration/f1/restart-lifecycle.json, openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts, openclaw_runtime/src/agents/harness/versegit-feedback-delivery.ts, openclaw_runtime/src/agents/harness/versegit-feedback-marker.ts, openclaw_runtime/src/agents/harness/versegit-tool-observation.ts, openclaw_runtime/src/agents/orchestration-candidate-apply.ts, openclaw_runtime/src/agents/orchestration-candidate.ts, openclaw_runtime/src/agents/orchestration-patch-flow.ts, openclaw_runtime/src/agents/orchestration-worktree-merge.ts, openclaw_runtime/src/agents/patch-flow.ts, openclaw_runtime/src/agents/session-tool-result-guard-wrapper.ts, openclaw_runtime/src/agents/sessions/tools/edit.ts, openclaw_runtime/src/agents/sessions/tools/read.test.ts, openclaw_runtime/src/agents/sessions/tools/read.ts, openclaw_runtime/src/agents/sessions/tools/tool-contracts.ts, openclaw_runtime/src/agents/sessions/tools/versegit-tool-basis.ts, openclaw_runtime/src/agents/sessions/tools/write.ts, openclaw_runtime/src/agents/verseshell/governed-process.ts, openclaw_runtime/src/plugin-sdk/versegit-binding-port.ts, openclaw_runtime/src/plugin-sdk/versegit-observation-port.ts, scripts/verify-versegit-product-c1-evidence.mts, scripts/verify-versegit-product-c2-evidence.mts, scripts/verify-versegit-product-d1-evidence.mts, scripts/verify-versegit-product-d2-evidence.mts, scripts/verify-versegit-product-e1-evidence.mts, scripts/verify-versegit-product-e2-evidence.mts, scripts/verify-versegit-product-e3-evidence.mts, scripts/verify-versegit-product-f1-evidence.mts, scripts/versegit-feedback-delivery-probe.mts, scripts/versegit-product-a1-evidence.d.mts, scripts/versegit-product-a1-evidence.mjs, scripts/versegit-product-a2-evidence.d.mts, scripts/versegit-product-a2-evidence.mjs, scripts/versegit-product-b1-evidence.mts, scripts/versegit-product-b2-evidence.mts, scripts/versegit-product-c1-evidence.mts, scripts/versegit-product-c2-evidence.mts, scripts/versegit-product-d1-evidence.mts, scripts/versegit-product-d2-evidence.mts, scripts/versegit-product-e1-evidence.mts, scripts/versegit-product-e3-evidence.mts, scripts/versegit-product-f1-evidence.mts, scripts/versegit-product-paired-evaluation.mts, scripts/versegit-runtime-bindings-probe.mts, shared/host-api/contract.ts, tests/e2e/app-smoke.spec.ts, tests/e2e/versegit-candidate-apply.spec.ts, tests/e2e/versegit-diagnostics.spec.ts, tests/e2e/versegit-feedback-delivery.spec.ts, tests/e2e/versegit-feedback-paired.spec.ts, tests/e2e/versegit-runtime-bindings.spec.ts, tests/unit/versegit-candidate-freeze.test.ts, tests/unit/versegit-completion-lifecycle.test.ts, tests/unit/versegit-fact-adapter.test.ts, tests/unit/versegit-feedback-delivery.test.ts, tests/unit/versegit-host-api.test.ts, tests/unit/versegit-host-apply.test.ts, tests/unit/versegit-paired-evaluation.test.ts, tests/unit/versegit-product-a1-evidence.test.ts, tests/unit/versegit-product-a2-evidence.test.ts, tests/unit/versegit-runtime-bindings.test.ts, tests/unit/versegit-wp6-closeout.test.ts, tests/unit/versegit-wp8-review.test.ts, tests/unit/versegit-wp9-global-acceptance.test.ts\nPASS WITH RESIDUAL\nSpec is valid: harness\\specs\\tasks\\versegit-product-f2-cleanup-barrier.md\n",
+      "stderrTail": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/versegit-product-f2-cleanup-barrier.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/versegit-product-f2-cleanup-barrier.md\"\n"
+    }
+  ],
+  "e2": {
+    "schema": "clawx.versegit.f2-cleanup-e2e/v1",
+    "passed": true,
+    "cases": [
+      {
+        "label": "normal",
+        "runId": "f2-normal-1792754064837-5tnqixsxc25",
+        "bindingId": "7f8d5dd9-6bee-4be2-8e1a-45e094bf75ac",
+        "result": {
+          "ok": true,
+          "barriered": true,
+          "status": "deleted",
+          "issues": []
+        },
+        "ownedProcess": {
+          "pid": 27728,
+          "exited": true
+        },
+        "managerPresent": false,
+        "worktreeSurvived": false,
+        "attachmentsSurvived": false,
+        "transcriptSurvived": false,
+        "baseRootPreserved": true,
+        "inventoryAfter": {
+          "managers": 0,
+          "observed": true,
+          "processes": 0,
+          "survivors": [],
+          "tempRoots": 0,
+          "worktrees": 0
+        },
+        "barrierStatusBeforeLateEvent": "deleted",
+        "lateEvent": {
+          "accepted": false,
+          "status": "deleted",
+          "count": 1
+        }
+      },
+      {
+        "label": "failure",
+        "runId": "f2-failure-1792754066718-rib510u7xds",
+        "bindingId": "5faa92f5-0adf-4863-a61b-a3e7ea7ebda9",
+        "result": {
+          "ok": true,
+          "barriered": true,
+          "status": "deleted",
+          "issues": []
+        },
+        "ownedProcess": {
+          "pid": 13140,
+          "exited": true
+        },
+        "managerPresent": false,
+        "worktreeSurvived": false,
+        "attachmentsSurvived": false,
+        "transcriptSurvived": false,
+        "baseRootPreserved": true,
+        "inventoryAfter": {
+          "managers": 0,
+          "observed": true,
+          "processes": 0,
+          "survivors": [],
+          "tempRoots": 0,
+          "worktrees": 0
+        },
+        "barrierStatusBeforeLateEvent": "deleted",
+        "lateEvent": {
+          "accepted": false,
+          "status": "deleted",
+          "count": 1
+        }
+      },
+      {
+        "label": "continuation",
+        "runId": "f2-continuation-1792754068121-4vw8o1rqa3u",
+        "bindingId": "e23adab3-82f4-4ddd-988e-78c48ad89e43",
+        "result": {
+          "ok": true,
+          "barriered": true,
+          "status": "deleted",
+          "issues": []
+        },
+        "ownedProcess": {
+          "pid": 43640,
+          "exited": true
+        },
+        "managerPresent": false,
+        "worktreeSurvived": false,
+        "attachmentsSurvived": false,
+        "transcriptSurvived": false,
+        "baseRootPreserved": true,
+        "inventoryAfter": {
+          "managers": 0,
+          "observed": true,
+          "processes": 0,
+          "survivors": [],
+          "tempRoots": 0,
+          "worktrees": 0
+        },
+        "barrierStatusBeforeLateEvent": "deleted",
+        "lateEvent": {
+          "accepted": false,
+          "status": "deleted",
+          "count": 1
+        }
+      }
+    ],
+    "negative": {
+      "rejected": true,
+      "status": "rejected",
+      "worktreeSurvived": true
+    },
+    "boundaries": {
+      "bindingExplicitlyEnabled": true,
+      "liveReady": false,
+      "productApproved": false,
+      "m4Authorized": false,
+      "realHumanEvidence": false
+    }
+  },
+  "events": {
+    "path": "bridge-events.jsonl",
+    "count": 24,
+    "attached": 3,
+    "ended": 3,
+    "allAgentDriven": true
+  },
+  "passed": true
+}

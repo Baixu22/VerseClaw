@@ -1,0 +1,21 @@
+{
+  "schema": "clawx.versegit.evidence-retention/v2",
+  "disposable_resources": ["temporary candidate worktree", "sidecar process", "bounded event queue", "temporary log buffer"],
+  "retain_evidence": ["manifest.json", "report.json", "events.jsonl", "observations.jsonl", "candidate.json", "verdict.json", "cleanup.json", "SHA256SUMS"],
+  "sealing": {
+    "atomic": true,
+    "completion_marker": "sealed.json",
+    "digest_anchor": "host-owned immutable manifest anchor",
+    "pre_cleanup_manifest": "Seal all evidence that exists before cleanup.",
+    "post_cleanup_attachment": "Attach cleanup.json after cleanup and re-anchor; the pre-cleanup evidence remains immutable.",
+    "missing_file": "incomplete",
+    "tamper": "reject"
+  },
+  "rules": [
+    "Cleanup means no disposable process or temporary worktree remains.",
+    "Cleanup never means deleting success, failure or unknown evidence.",
+    "A sealed evidence set is immutable; cleanup adds a separately anchored attachment.",
+    "Independent review must verify file contents and reference reachability, not only hashes.",
+    "WP5 completion forbids disposable residue, not retained report evidence."
+  ]
+}

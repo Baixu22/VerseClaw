@@ -1,0 +1,46 @@
+{
+  "schema": "clawx.versegit.d2-behavior-evidence/v1",
+  "generated_at": "2026-10-22T19:56:03.336Z",
+  "task": "TF-0531",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "50837eca343d56b6bee3ca05b6d31452658d5da1",
+    "tree": "b028a9cfa747060fa741ae9d537ec6837d872972",
+    "dirty": false
+  },
+  "comparison": {
+    "off_failed": 3,
+    "on_passed": 3,
+    "behavior_shift_count": 3,
+    "negative_false_positive_count": 0,
+    "stable_normalized_outcomes": true
+  },
+  "observed_actions": {
+    "on_feedback_delivered": 3,
+    "on_reread": 3,
+    "on_rework": 3
+  },
+  "interpretation": {
+    "transcript_presence_alone_claimed_behavior_shift": false,
+    "failure_was_actual_tsc": true,
+    "off_on_inputs_identical": true
+  },
+  "unmeasured": [
+    "external model quality/cost was not measured",
+    "only TypeScript fixtures were measured",
+    "the deterministic agent policy is simulated, while tool, Git, and tsc effects are real"
+  ],
+  "boundaries": {
+    "supported_language_only": "typescript",
+    "cjs_claim": false,
+    "transcript_presence_is_behavior_shift": false,
+    "cost_measured": false,
+    "external_model_quality_measured": false,
+    "host_verdict": "unchanged",
+    "m4_authorized": false
+  },
+  "passed": true,
+  "digest": "1b8b2c79573e2c54b533653930b57e563609911db5bbc9e6eff869a10c51b150"
+}

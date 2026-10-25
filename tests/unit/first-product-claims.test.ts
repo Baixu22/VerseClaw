@@ -12,9 +12,9 @@ const rootDir = process.cwd();
 const expectedComponentLabels = new Map([
   ['DCS coding loop', 'opt-in'],
   ['DCS Fact view and tool registry', 'opt-in'],
-  ['VToken turn assembly', 'opt-in'],
+  ['VToken turn assembly', 'internal'],
   ['SEKB automatic writeback', 'deferred'],
-  ['C6 automatic context ladder', 'deferred'],
+  ['C6 automatic context ladder', 'internal'],
   ['C7 knowledge/routing cutover', 'deferred'],
   ['Coding WAL', 'deferred'],
   ['Browser supervised workflows', 'experimental'],
@@ -101,7 +101,6 @@ describe('FP-P1-08 first-product claim boundary', () => {
         developer: {
           dcsProdFlags: { title: string; modeOptIn: string };
           dcsPreview: { title: string; description: string };
-          vtokenBridge: { description: string };
         };
       };
 
@@ -110,7 +109,6 @@ describe('FP-P1-08 first-product claim boundary', () => {
       expect(settings.developer.dcsProdFlags.modeOptIn).toContain('opt-in');
       expect(settings.developer.dcsPreview.title).toContain('Controlled Preview');
       expect(settings.developer.dcsPreview.description).toMatch(/opt-in/i);
-      expect(settings.developer.vtokenBridge.description).toMatch(/opt-in/i);
     }
   });
 });

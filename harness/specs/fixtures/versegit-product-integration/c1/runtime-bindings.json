@@ -1,0 +1,101 @@
+{
+  "schema": "clawx.versegit.c1-runtime-bindings/v1",
+  "generated_at": "2026-10-22T18:33:04.885Z",
+  "task": "TF-0528",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "ea0fb43aa6b0201859f0627583f26b058bbde596",
+    "tree": "62c796a30ac84da94df9ea8e35648fdf94ee4c05",
+    "dirty": false
+  },
+  "production_caller": "Gateway role-orchestration -> runOrchestrationObserved -> VerseGitRuntimeBindingPort -> Electron Main typed binding bridge; subagent terminal lifecycle -> registered binding end",
+  "orchestration": {
+    "runId": "orch_c1_e2e",
+    "failures": 0,
+    "outcomes": 3,
+    "spawned": 3,
+    "bindings": 3
+  },
+  "bridge_counts": {
+    "bind_requested": 9,
+    "bound": 5,
+    "bind_rejected": 4,
+    "attach_requested": 4,
+    "attached": 4,
+    "attach_rejected": 0,
+    "end_requested": 6,
+    "ended": 4,
+    "end_rejected": 2
+  },
+  "event_identity": {
+    "all_agent_driven": true,
+    "actors": [
+      "electron-main"
+    ],
+    "absolute_path_leaks": 0
+  },
+  "repo_count": 1,
+  "worktree_count": 4,
+  "repo_ids": [
+    "7171267862e1e5f1224c496710c5cc98782b8bc051529c9c2e1b02780545bd44"
+  ],
+  "worktree_ids": [
+    "05c6dc281a79520a31b8c54f764d07b19caa5355df654b652acfdb5965979413",
+    "e974af2d0d33ee3a7576cd51f3fc1aeaa8a8311802795a65262a9342af529b36",
+    "d84d341bf269b1749e6fc47a046c7946cacb746ea34a6514bb70588d990245c3",
+    "6d0de235438ccbea4889f43ea1ce4826e1c3d85e57c9e95e6e6ea823457438b7"
+  ],
+  "lifecycle": {
+    "retry_same_binding": true,
+    "duplicate_session_rejected": true,
+    "duplicate_end_rejected": true,
+    "attach_observed": true,
+    "cancellation_observed": true,
+    "child_bindings_ended": true
+  },
+  "authority": {
+    "host_verdict": "unchanged",
+    "vg_unavailable_does_not_block_host": true,
+    "second_message_bus": false,
+    "second_executor": false,
+    "m4_authorized": false
+  },
+  "commands": [
+    {
+      "id": "unit",
+      "command": "pnpm exec vitest run tests/unit/versegit-runtime-bindings.test.ts",
+      "exit_code": 0,
+      "tests": 4
+    },
+    {
+      "id": "e2e",
+      "command": "pnpm exec playwright test tests/e2e/versegit-runtime-bindings.spec.ts",
+      "exit_code": 0,
+      "tests": 1
+    },
+    {
+      "id": "contract",
+      "command": "pnpm contract:check",
+      "exit_code": 0
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit_code": 0
+    },
+    {
+      "id": "comms",
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exit_code": 0
+    }
+  ],
+  "limitations": [
+    "Worker model execution is represented by real child processes under injected production spawn; no external model provider session is claimed.",
+    "The Electron Main process and runtime child cross a real process boundary; a packaged public build was not produced or published.",
+    "Only Windows x64 host process and Git worktree lifecycle are measured."
+  ],
+  "passed": true,
+  "digest": "f33420b5c5ae1ef2e3e6481a113412e6ad178220c655d7cbd9ad8fa6a10753a3"
+}

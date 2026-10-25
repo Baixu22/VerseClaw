@@ -1,0 +1,11 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0477",
+  "role": "MC4",
+  "fixturePurpose": "Execution input for MC4: validate actual source/binary/contract identities before any sidecar process; import the shipped host adapter; compare complete projected provider documents; and re-fire authority, report, capability and command-plan refusals.",
+  "expectedOutputs": [
+    "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+    "artifacts/versegit/mc4/adapter-report.json"
+  ],
+  "oracle": "Pre-execution identity gate passes; full-document adapter seams are equivalent; M0 is inert; all identity, capability, report, plan and authority negative controls fire with host verdict unchanged."
+}

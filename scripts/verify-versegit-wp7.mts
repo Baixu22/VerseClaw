@@ -1,0 +1,135 @@
+#!/usr/bin/env -S node --import tsx
+// Independent WP7 verifier: validate retained evidence, replay the live vertical
+// slice in an isolated evidence directory, compare stable outcomes, and recheck
+// both artifact and curated checksum manifests.
+import { createHash } from 'node:crypto';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  WP7_ARTIFACT_PATH,
+  WP7_CURATED_EVIDENCE_DIR,
+  WP7_EVIDENCE_DIR,
+  WP7_EVIDENCE_PATH,
+  buildWp7Report,
+  validateWp7Report,
+} from './versegit-wp7-host-vertical.mts';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
+
+const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
+const sha = (value: string | Uint8Array) => createHash('sha256').update(value).digest('hex');
+
+function at(flag: string): string | undefined {
+  const index = process.argv.indexOf(flag);
+  return index >= 0 ? resolve(repositoryRoot, process.argv[index + 1]) : undefined;
+}
+
+function readJson(path: string, label: string): Record<string, unknown> {
+  if (!existsSync(path)) throw new Error(`${label} missing: ${path}`);
+  return JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>;
+}
+
+function verifySums(path: string): string[] {
+  if (!existsSync(path)) return [`SHA256SUMS missing: ${path}`];
+  const issues: string[] = [];
+  const seen = new Set<string>();
+  for (const [index, line] of readFileSync(path, 'utf8').split(String.fromCharCode(10)).filter(Boolean).entries()) {
+    const match = /^([0-9a-f]{64})  (.+)$/u.exec(line);
+    if (!match) { issues.push(`SHA256SUMS line ${index + 1} malformed`); continue; }
+    if (seen.has(match[2])) issues.push(`SHA256SUMS duplicate path: ${match[2]}`);
+    seen.add(match[2]);
+    const target = resolve(repositoryRoot, match[2]);
+    if (!existsSync(target)) { issues.push(`SHA256SUMS target missing: ${match[2]}`); continue; }
+    const actual = sha(readFileSync(target));
+    if (actual !== match[1]) issues.push(`SHA256SUMS mismatch: ${match[2]}`);
+  }
+  return issues;
+}
+
+function filesUnder(root: string, current = root): string[] {
+  const output: string[] = [];
+  for (const entry of readdirSync(current, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+    const absolute = join(current, entry.name);
+    if (entry.isDirectory()) output.push(...filesUnder(root, absolute));
+    else if (entry.isFile()) output.push(relative(root, absolute).replaceAll('\\', '/'));
+  }
+  return output;
+}
+
+function verifyCuratedEvidence(): string[] {
+  const artifactRoot = resolve(repositoryRoot, WP7_EVIDENCE_DIR);
+  const curatedRoot = resolve(repositoryRoot, WP7_CURATED_EVIDENCE_DIR);
+  const issues: string[] = [];
+  if (!existsSync(artifactRoot) || !existsSync(curatedRoot)) return ['artifact or curated evidence directory is missing'];
+  const artifactFiles = filesUnder(artifactRoot);
+  const curatedFiles = filesUnder(curatedRoot);
+  if (JSON.stringify(artifactFiles) !== JSON.stringify(curatedFiles)) issues.push('curated evidence file set differs from artifact evidence');
+  for (const file of artifactFiles) {
+    const left = join(artifactRoot, file);
+    const right = join(curatedRoot, file);
+    if (!existsSync(right)) issues.push(`curated evidence missing: ${file}`);
+    else if (sha(readFileSync(left)) !== sha(readFileSync(right))) issues.push(`curated evidence mismatch: ${file}`);
+  }
+  return issues;
+}
+
+export async function verifyWp7Artifact({
+  artifact = resolve(repositoryRoot, WP7_ARTIFACT_PATH),
+  replay = true,
+}: { artifact?: string; replay?: boolean } = {}): Promise<{ ok: boolean; issues: string[]; report: Record<string, unknown> }> {
+  const storedPath = existsSync(artifact) ? artifact : resolve(repositoryRoot, WP7_EVIDENCE_PATH);
+  const stored = readJson(storedPath, 'WP7 report');
+  const issues = validateWp7Report(stored, { evidenceRoot: resolve(repositoryRoot, WP7_EVIDENCE_DIR) }).issues.slice();
+  if (stored.passed !== true || stored.status !== 'passed') issues.push('stored report is not passed');
+
+  if (replay) {
+    const replayEvidenceDir = mkdtempSync(join(tmpdir(), 'versegit-wp7-verify-'));
+    try {
+      const live = await buildWp7Report({ root: repositoryRoot, evidenceDir: replayEvidenceDir });
+      const liveValidation = validateWp7Report(live, { evidenceRoot: replayEvidenceDir });
+      issues.push(...liveValidation.issues.map((issue) => `live: ${issue}`));
+      if (live.passed !== true) issues.push('live replay did not pass');
+      if (live.normalizedOutcomeDigest !== stored.normalizedOutcomeDigest) issues.push('normalized outcome digest drifted');
+      const storedOutcome = stored.normalizedOutcome as Record<string, unknown> | undefined;
+      const liveOutcome = live.normalizedOutcome as Record<string, unknown> | undefined;
+      for (const key of ['candidateInputDigest', 'factProjectionCount', 'providerCallCount', 'governedCallCount', 'behaviorEventCount', 'receiptAuthorityVerified']) {
+        if (storedOutcome?.[key] !== liveOutcome?.[key]) issues.push(`normalized outcome field drifted: ${key}`);
+      }
+      const storedCleanup = stored.cleanup as Record<string, unknown> | undefined;
+      const liveCleanup = live.cleanup as Record<string, unknown> | undefined;
+      if (storedCleanup?.status !== 'clean' || liveCleanup?.status !== 'clean') issues.push('cleanup is not clean');
+    } finally {
+      rmSync(replayEvidenceDir, { recursive: true, force: true });
+    }
+  }
+
+  const evidence = resolve(repositoryRoot, WP7_EVIDENCE_PATH);
+  if (existsSync(evidence) && evidence !== storedPath && readFileSync(evidence).compare(readFileSync(storedPath)) !== 0) {
+    issues.push('curated WP7 evidence differs from artifact');
+  }
+  issues.push(...verifyCuratedEvidence());
+  issues.push(...verifySums(resolve(repositoryRoot, 'artifacts/versegit/wp7/SHA256SUMS')));
+  issues.push(...verifySums(resolve(repositoryRoot, 'harness/specs/fixtures/versegit-planning-correction/wp7-evidence/SHA256SUMS')));
+  return { ok: issues.length === 0, issues: [...new Set(issues)], report: stored };
+}
+
+async function main(): Promise<void> {
+  const result = await verifyWp7Artifact({ artifact: at('--artifact') });
+  if (!result.ok) {
+    for (const issue of result.issues) console.error(`[versegit-wp7-verify] FAIL: ${issue}`);
+    process.exitCode = 1;
+    return;
+  }
+  const report = result.report;
+  const cleanup = report.cleanup as Record<string, unknown>;
+  const provider = report.provider as Record<string, unknown>;
+  console.log(`[versegit-wp7-verify] OK normalized=${String(report.normalizedOutcomeDigest).slice(0, 12)} provider_calls=${(provider.providerCalls as unknown[]).length} worktrees_deleted=${String(cleanup.worktreesDeleted)} processes=${String(cleanup.processSurvivors)}`);
+}
+
+if (isMainEntrypoint(import.meta.url)) {
+  main().catch((error) => {
+    console.error(`[versegit-wp7-verify] FAIL: ${String(error?.stack ?? error)}`);
+    process.exitCode = 1;
+  });
+}

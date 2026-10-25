@@ -1,0 +1,230 @@
+{
+  "schema": "clawx.versegit.wp1-observation-fixture/v1",
+  "nodeId": "TF-0467",
+  "role": "WP1",
+  "bindings": {
+    "a": {
+      "runId": "run-a",
+      "sessionKey": "session-a",
+      "traceId": "trace-a",
+      "requestId": "request-a",
+      "repoId": "repo-alpha",
+      "worktreeId": "worktree-a",
+      "agentSessionId": "agent-session-a",
+      "vgSessionId": "vg-session-a",
+      "ownerId": "owner-a",
+      "actor": "agent:codex",
+      "epoch": 2,
+      "boundAt": 1000
+    },
+    "b": {
+      "runId": "run-b",
+      "sessionKey": "session-b",
+      "traceId": "trace-b",
+      "requestId": "request-b",
+      "repoId": "repo-alpha",
+      "worktreeId": "worktree-b",
+      "agentSessionId": "agent-session-b",
+      "vgSessionId": "vg-session-b",
+      "ownerId": "owner-b",
+      "actor": "agent:codex",
+      "epoch": 1,
+      "boundAt": 1100
+    },
+    "a2": {
+      "runId": "run-a",
+      "sessionKey": "session-a2",
+      "traceId": "trace-a2",
+      "requestId": "request-a2",
+      "repoId": "repo-alpha",
+      "worktreeId": "worktree-a",
+      "agentSessionId": "agent-session-a2",
+      "vgSessionId": "vg-session-a2",
+      "ownerId": "owner-a",
+      "actor": "agent:codex",
+      "epoch": 3,
+      "boundAt": 3300
+    }
+  },
+  "steps": [
+    {
+      "id": "bind-a",
+      "op": "bind",
+      "binding": "a",
+      "expected": { "status": "attached" }
+    },
+    {
+      "id": "bind-b",
+      "op": "bind",
+      "binding": "b",
+      "expected": { "status": "attached" }
+    },
+    {
+      "id": "read-start-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-read", "traceId": "trace-a-read", "eventId": "evt-read-a-start" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 1, "ts": 2000,
+        "toolCallId": "read-a", "name": "Read", "args": { "path": "src/a.ts" }
+      },
+      "expected": { "status": "observed", "event": { "surface": "file.read", "coverage": "host-event", "worktreeId": "worktree-a", "status": "started" } }
+    },
+    {
+      "id": "read-complete-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-read", "traceId": "trace-a-read", "eventId": "evt-read-a-complete" },
+      "event": {
+        "type": "tool.completed", "runId": "run-a", "sessionKey": "session-a", "seq": 2, "ts": 2050,
+        "toolCallId": "read-a", "name": "Read", "result": { "text": "observed" }, "isError": false
+      },
+      "expected": { "status": "observed", "event": { "surface": "file.read", "coverage": "host-event", "worktreeId": "worktree-a", "status": "succeeded" } }
+    },
+    {
+      "id": "duplicate-read-start-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-read", "traceId": "trace-a-read", "eventId": "evt-read-a-start" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 1, "ts": 2000,
+        "toolCallId": "read-a", "name": "Read", "args": { "path": "src/a.ts" }
+      },
+      "expected": { "status": "duplicate", "event": null }
+    },
+    {
+      "id": "patch-b",
+      "op": "ingest",
+      "context": { "epoch": 1, "ownerId": "owner-b", "requestId": "request-b-patch", "traceId": "trace-b-patch", "eventId": "evt-patch-b" },
+      "event": {
+        "type": "patch.completed", "runId": "run-b", "sessionKey": "session-b", "seq": 1, "ts": 2100,
+        "toolCallId": "patch-b", "title": "Update b.ts", "summary": "one edit", "added": 1, "modified": 0, "deleted": 0
+      },
+      "expected": { "status": "observed", "event": { "surface": "file.write", "coverage": "host-event", "worktreeId": "worktree-b", "status": "succeeded" } }
+    },
+    {
+      "id": "search-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-search", "traceId": "trace-a-search", "eventId": "evt-search-a" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 3, "ts": 2200,
+        "toolCallId": "search-a", "name": "grep", "args": { "query": "symbol" }
+      },
+      "expected": { "status": "observed", "event": { "surface": "repo.search", "coverage": "host-event", "worktreeId": "worktree-a", "status": "started" } }
+    },
+    {
+      "id": "test-start-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-test", "traceId": "trace-a-test", "eventId": "evt-test-a-start" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 4, "ts": 2300,
+        "toolCallId": "test-a", "name": "exec", "args": { "command": "pnpm test" }
+      },
+      "expected": { "status": "observed", "event": { "surface": "test", "coverage": "host-event", "worktreeId": "worktree-a", "status": "started" } }
+    },
+    {
+      "id": "test-complete-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-test", "traceId": "trace-a-test", "eventId": "evt-test-a-complete" },
+      "event": {
+        "type": "tool.completed", "runId": "run-a", "sessionKey": "session-a", "seq": 5, "ts": 2400,
+        "toolCallId": "test-a", "name": "exec", "result": { "exitCode": 0 }, "isError": false
+      },
+      "expected": { "status": "observed", "event": { "surface": "test", "coverage": "host-event", "worktreeId": "worktree-a", "status": "succeeded" } }
+    },
+    {
+      "id": "mcp-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-mcp", "traceId": "trace-a-mcp", "eventId": "evt-mcp-a" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 6, "ts": 2450,
+        "toolCallId": "mcp-a", "name": "mcp__server__read", "args": { "uri": "repo://alpha" }
+      },
+      "expected": { "status": "partial", "event": { "surface": "mcp", "coverage": "partial", "worktreeId": "worktree-a", "status": "started" } }
+    },
+    {
+      "id": "network-b",
+      "op": "ingest",
+      "context": { "epoch": 1, "ownerId": "owner-b", "requestId": "request-b-network", "traceId": "trace-b-network", "eventId": "evt-network-b" },
+      "event": {
+        "type": "tool.started", "runId": "run-b", "sessionKey": "session-b", "seq": 2, "ts": 2500,
+        "toolCallId": "network-b", "name": "web_fetch", "args": { "url": "https://example.invalid" }
+      },
+      "expected": { "status": "partial", "event": { "surface": "network", "coverage": "partial", "worktreeId": "worktree-b", "status": "started" } }
+    },
+    {
+      "id": "unknown-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-unknown", "traceId": "trace-a-unknown", "eventId": "evt-unknown-a" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 7, "ts": 2550,
+        "toolCallId": "unknown-a", "name": "mystery_tool", "args": {}
+      },
+      "expected": { "status": "unobserved", "event": { "surface": "control", "coverage": "unobserved", "worktreeId": "worktree-a", "status": "started" } }
+    },
+    {
+      "id": "stale-a",
+      "op": "ingest",
+      "context": { "epoch": 1, "ownerId": "owner-a", "requestId": "request-a-stale", "traceId": "trace-a-stale", "eventId": "evt-stale-a" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 8, "ts": 2600,
+        "toolCallId": "stale-a", "name": "Read", "args": { "path": "src/stale.ts" }
+      },
+      "expected": { "status": "stale", "event": null }
+    },
+    {
+      "id": "wrong-owner-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-b", "requestId": "request-a-owner", "traceId": "trace-a-owner", "eventId": "evt-wrong-owner-a" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 9, "ts": 2650,
+        "toolCallId": "wrong-owner", "name": "Read", "args": { "path": "src/other.ts" }
+      },
+      "expected": { "status": "rejected_by_policy", "event": null }
+    },
+    {
+      "id": "wrong-session-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-session", "traceId": "trace-a-session", "eventId": "evt-wrong-session-a" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-b", "seq": 10, "ts": 2700,
+        "toolCallId": "wrong-session", "name": "Read", "args": { "path": "src/cross.ts" }
+      },
+      "expected": { "status": "rejected_by_policy", "event": null }
+    },
+    {
+      "id": "detach-a",
+      "op": "detach",
+      "binding": "a",
+      "options": { "epoch": 2, "ownerId": "owner-a", "at": 3000, "reason": "worktree_cleanup" },
+      "expected": { "status": "detached", "sessionEnd": { "surface": "control", "operation": "session.end" } }
+    },
+    {
+      "id": "late-a",
+      "op": "ingest",
+      "context": { "epoch": 2, "ownerId": "owner-a", "requestId": "request-a-late", "traceId": "trace-a-late", "eventId": "evt-late-a" },
+      "event": {
+        "type": "tool.started", "runId": "run-a", "sessionKey": "session-a", "seq": 11, "ts": 3100,
+        "toolCallId": "late-a", "name": "Read", "args": { "path": "src/late.ts" }
+      },
+      "expected": { "status": "stale", "event": null }
+    },
+    {
+      "id": "detach-b",
+      "op": "detach",
+      "binding": "b",
+      "options": { "epoch": 1, "ownerId": "owner-b", "at": 3200, "reason": "worktree_cleanup" },
+      "expected": { "status": "detached", "sessionEnd": { "surface": "control", "operation": "session.end" } }
+    },
+    {
+      "id": "rebind-a-epoch-3",
+      "op": "bind",
+      "binding": "a2",
+      "expected": { "status": "attached" }
+    },
+    {
+      "id": "detach-a-epoch-3",
+      "op": "detach",
+      "binding": "a2",
+      "options": { "epoch": 3, "ownerId": "owner-a", "at": 3400, "reason": "worktree_cleanup" },
+      "expected": { "status": "detached", "sessionEnd": { "surface": "control", "operation": "session.end" } }
+    }
+  ]
+}

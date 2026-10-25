@@ -1,0 +1,129 @@
+{
+  "schema": "clawx.long-session.b1-policy-source-matrix/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-b1",
+  "task": "TF-0550",
+  "rows": [
+    {
+      "id": "configured-without-runtime-facts",
+      "configured": "provider/model override present",
+      "effective": "unknown",
+      "source": "session entry without fresh TF-0512 profile",
+      "expectedState": "unknown"
+    },
+    {
+      "id": "current-runtime-facts",
+      "configured": "openclaw embedded",
+      "effective": "openclaw-embedded + current model + grant/action state",
+      "source": "TF-0512 ModelCapabilityProfile/v1 snapshot",
+      "expectedState": "effective"
+    },
+    {
+      "id": "stale-runtime-facts",
+      "configured": "openclaw embedded",
+      "effective": "unknown",
+      "source": "freshness gate 30s",
+      "expectedState": "stale"
+    },
+    {
+      "id": "wrong-generation",
+      "configured": "openclaw embedded",
+      "effective": "unknown",
+      "source": "runtime generation mismatch",
+      "expectedState": "mismatch"
+    },
+    {
+      "id": "codex-native-compaction",
+      "configured": "codex",
+      "effective": "codex-app-server with native thread",
+      "source": "Codex binding sidecar + current runtime snapshot",
+      "expectedState": "ignored OpenClaw compaction overrides"
+    },
+    {
+      "id": "claude-native-compaction",
+      "configured": "claude-cli",
+      "effective": "claude-cli with native session",
+      "source": "Claude CLI binding + current runtime snapshot",
+      "expectedState": "ignored OpenClaw compaction overrides"
+    },
+    {
+      "id": "schedule-limit",
+      "configured": "Cron/Workboard exists outside session",
+      "effective": "unsupported by this projection",
+      "source": "schedule owner boundary",
+      "expectedState": "unsupported"
+    },
+    {
+      "id": "auth-secret-boundary",
+      "configured": "provider binding metadata only",
+      "effective": "no credentials or prompt text",
+      "source": "policy builder allowlist",
+      "expectedState": "not-present"
+    }
+  ],
+  "policyStatesObserved": [
+    "configured",
+    "effective",
+    "unsupported"
+  ],
+  "testOutcomes": [
+    {
+      "case": "missing",
+      "generationState": "missing",
+      "backendEffective": "unknown",
+      "source": "tests/unit/long-session-effective-policy.test.ts"
+    },
+    {
+      "case": "stale",
+      "generationState": "stale",
+      "backendEffective": "unknown",
+      "source": "tests/unit/long-session-effective-policy.test.ts"
+    },
+    {
+      "case": "wrong-generation",
+      "generationState": "mismatch",
+      "backendEffective": "unknown",
+      "source": "tests/unit/long-session-effective-policy.test.ts"
+    },
+    {
+      "case": "runtime-fallback",
+      "generationState": "unverified",
+      "backendEffective": "unknown",
+      "source": "openclaw_runtime/src/agents/runtime-effective-capability.test.ts"
+    },
+    {
+      "case": "codex-native-compaction",
+      "generationState": "current",
+      "backendEffective": "codex-app-server",
+      "compatibilityStates": [
+        "ignored"
+      ],
+      "source": "tests/unit/long-session-effective-policy.test.ts + backend-parity.json"
+    },
+    {
+      "case": "claude-native-compaction",
+      "generationState": "current",
+      "backendEffective": "claude-cli",
+      "compatibilityStates": [
+        "ignored"
+      ],
+      "source": "tests/unit/long-session-effective-policy.test.ts + backend-parity.json"
+    }
+  ],
+  "credentialScan": {
+    "scope": [
+      "effective-session-policy.json",
+      "backend-parity.json",
+      "policy-source-and-override-matrix.json"
+    ],
+    "patterns": [
+      "api key assignments",
+      "bearer tokens",
+      "auth profile IDs",
+      "raw prompt/transcript markers",
+      "private key headers"
+    ],
+    "matches": 0,
+    "result": "pass"
+  }
+}

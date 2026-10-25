@@ -1,0 +1,218 @@
+{
+  "schema": "clawx.memory-control-plane.tf0497-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0497",
+  "program": "component-graduation",
+  "task": "TF-0497",
+  "candidate": {
+    "commit": "5681db3a516636965166e3fdd4f1229940ac5172",
+    "tree": "b331c6e1c912d0afb8513e7e8acee7434e00f7ca",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\gate-run.json"
+  },
+  "title": "TF-0497 single Memory control plane across domain stores",
+  "verdict": "pass",
+  "featureClaim": "Memory is one reviewable product concept: accepted facts or cards with provenance, scope and lifecycle state. Runtime facts, role cards, embeddings and Dreaming caches are implementation data domains, not separate product memories.",
+  "commands": [
+    {
+      "id": "memory-root",
+      "command": "pnpm exec vitest run tests/unit/memory-control-plane-authority.test.ts tests/unit/runtime-memory-store.test.ts tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/runtime-memory-fact-survival-e2e.test.ts tests/unit/runtime-memory-relations.test.ts tests/unit/runtime-memory-background-consolidation.test.ts tests/unit/component-authority-manifest.test.ts tests/unit/component-disposition-catalog.test.ts tests/unit/model-capability-profile.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 12777,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\memory-root.log",
+      "rawLogSha256": "b2444fdfe22b2bcff225d69db7d6145fffc17bfe256fb489be733f08191be2d2",
+      "tests": 86,
+      "passed": 86,
+      "failed": 0,
+      "files": 9
+    },
+    {
+      "id": "memory-runtime",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-src.config.ts src/memory/memory-policy.test.ts src/memory/root-memory-files.test.ts src/runtime-core/memory-hybrid-retrieval.cjk.test.ts src/runtime-core/memory-runtime-config.test.ts src/runtime-core/memory-effect-receipt.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 5817,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\memory-runtime.log",
+      "rawLogSha256": "f0216e0b721743a2b4e39a36931b4ab9e530a96a1dc66a924930a34cd3446a10",
+      "tests": 75,
+      "passed": 75,
+      "failed": 0,
+      "files": 5
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 29733,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\typecheck.log",
+      "rawLogSha256": "42bca54de0f8aa63f98937c2acf4f2716b77f64352e0ec618ac68ddf39565364",
+      "projects": 3,
+      "errors": 0,
+      "success": true
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 929,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\contract-check.log",
+      "rawLogSha256": "81d18a4ca335c721b9567fc4d94482781ef54aebc18a6959042cf816bc899414",
+      "result": "pass"
+    },
+    {
+      "id": "i18n-lint",
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0,
+      "durationMs": 888,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\i18n-lint.log",
+      "rawLogSha256": "abcc50aa570dba0c3e2a8d438ea2714d1c5175eeb9944f13f40d0292151b0831"
+    },
+    {
+      "id": "catalogs-check",
+      "command": "pnpm catalogs:check",
+      "exitCode": 0,
+      "durationMs": 1223,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\catalogs-check.log",
+      "rawLogSha256": "eb7f66cf61a0fa6bd7e31e6a0afca2f5cdcd7f5403e16f48ad695f3431947e39",
+      "result": "pass"
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 54275,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\build-vite.log",
+      "rawLogSha256": "6498a13fd570079d96b04fddb68233f2498dc221cf11ea1325b2df28d2ca2de4",
+      "success": true
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 833,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\comms-replay.log",
+      "rawLogSha256": "b220bc5c91a973beae1d995bd036866d0330a67027d47dd5080cd2dd84675f6e",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 690,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\comms-compare.log",
+      "rawLogSha256": "e5bad3743f511e407d0f3640d312a587c501c5ddf224ab2defd690e20e59ccb0",
+      "result": "PASS",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/memory-control-plane-authority.md",
+      "exitCode": 0,
+      "durationMs": 1397,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\harness-validate.log",
+      "rawLogSha256": "34829911df0882aea0bb12c4d6c82a749c1d37c60afeb33f53982c562a5264f7",
+      "result": "pass"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 53,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\git-diff-check.log",
+      "rawLogSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint shared/memory/control-plane.ts shared/component-authority-manifest.ts shared/dcs/component-disposition-catalog.ts tests/unit/memory-control-plane-authority.test.ts tests/unit/component-disposition-catalog.test.ts tests/unit/model-capability-profile.test.ts",
+      "exitCode": 0,
+      "durationMs": 5488,
+      "rawLog": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\changed-eslint.log",
+      "rawLogSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+    }
+  ],
+  "counts": {
+    "memoryRootFiles": 9,
+    "memoryRootTests": 86,
+    "memoryRuntimeFiles": 5,
+    "memoryRuntimeTests": 75,
+    "totalTests": 161,
+    "commands": 12,
+    "failedCommands": 0,
+    "builds": 1,
+    "typecheckProjects": 3,
+    "typecheckErrors": 0,
+    "commsRows": 44,
+    "commsPassed": 44
+  },
+  "acceptance": [
+    {
+      "criterion": "Every memory data type/scope/operation has exactly one accepting/update authority.",
+      "result": "pass",
+      "evidence": [
+        "memory-authority-matrix.json",
+        "tests/unit/memory-control-plane-authority.test.ts"
+      ]
+    },
+    {
+      "criterion": "Role/Runtime/Dreaming/Embedding scope, retention, delete, invalidation and retrieval semantics are consistent.",
+      "result": "pass",
+      "evidence": [
+        "memory-lifecycle-matrix.json",
+        "tests/unit/runtime-memory-store.test.ts",
+        "openclaw_runtime/src/memory/memory-policy.test.ts"
+      ]
+    },
+    {
+      "criterion": "Migration/compatibility retains multiple stores without data loss or forced clustering.",
+      "result": "pass",
+      "evidence": [
+        "memory-lifecycle-matrix.json",
+        "tests/unit/runtime-memory-relations.test.ts",
+        "tests/unit/runtime-memory-background-consolidation.test.ts"
+      ]
+    },
+    {
+      "criterion": "The model profile describes one Memory concept and accepted-only approval boundary.",
+      "result": "pass",
+      "evidence": [
+        "memory-authority-matrix.json",
+        "tests/unit/memory-control-plane-authority.test.ts"
+      ]
+    }
+  ],
+  "sourceInputs": [
+    "shared/memory/control-plane.ts",
+    "shared/component-authority-manifest.ts",
+    "shared/dcs/component-disposition-catalog.ts",
+    "docs/dev/memory-control-plane.md",
+    "docs/clawx-product-semantics.md",
+    "tests/unit/memory-control-plane-authority.test.ts",
+    "tests/unit/runtime-memory-store.test.ts",
+    "openclaw_runtime/src/memory/memory-policy.test.ts"
+  ],
+  "unmeasured": [
+    "external-provider value of automatic Dreaming promotion",
+    "cross-machine memory migration",
+    "user-facing review/delete/export completion remains TF-0498"
+  ],
+  "limitations": [
+    "The manifest maps existing owners; it does not cluster stores or migrate data between machines.",
+    "Candidate persistence is allowed, but candidates remain non-retrievable and non-injectable.",
+    "User-visible Memory review/delete/export remains TF-0498.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "temporaryRoot": "D:/tmp/tf0497/5681db3a516636965166e3fdd4f1229940ac5172",
+    "recoveryRequired": false
+  },
+  "rawRun": "D:\\tmp\\tf0497\\5681db3a516636965166e3fdd4f1229940ac5172\\gate-run.json",
+  "credentialScan": {
+    "command": "node scan of TF-0497 JSON artifacts for high-signal credential patterns",
+    "matches": 0,
+    "result": "pass"
+  }
+}

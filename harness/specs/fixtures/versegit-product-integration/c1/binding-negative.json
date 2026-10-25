@@ -1,0 +1,55 @@
+{
+  "schema": "clawx.versegit.c1-binding-negative/v1",
+  "generated_at": "2026-10-22T18:33:04.886Z",
+  "task": "TF-0528",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "ea0fb43aa6b0201859f0627583f26b058bbde596",
+    "tree": "62c796a30ac84da94df9ea8e35648fdf94ee4c05",
+    "dirty": false
+  },
+  "cases": {
+    "cross_repo_rejected": true,
+    "wrong_owner_rejected": true,
+    "stale_epoch_rejected": true,
+    "duplicate_session_rejected": true,
+    "duplicate_end_rejected": true,
+    "unbound_end_rejected": true,
+    "c_d_junction_same_repo": true
+  },
+  "bridge_rejections": [
+    {
+      "kind": "bind_rejected",
+      "requestId": "manual-duplicate",
+      "error": "agent session already has an active VG binding"
+    },
+    {
+      "kind": "end_rejected",
+      "requestId": "manual-retry",
+      "error": "binding has already ended"
+    },
+    {
+      "kind": "end_rejected",
+      "error": "binding/owner/epoch mismatch"
+    },
+    {
+      "kind": "bind_rejected",
+      "requestId": "cross-repo",
+      "error": "workspace is outside the allowed repository"
+    },
+    {
+      "kind": "bind_rejected",
+      "requestId": "wrong-owner",
+      "error": "owner identity mismatch"
+    },
+    {
+      "kind": "bind_rejected",
+      "requestId": "wrong-epoch",
+      "error": "epoch is stale or mismatched"
+    }
+  ],
+  "passed": true,
+  "digest": "682d74c3fa2424c60bb7aed25e6ae3207f78caebd7800394d0b8ffe049d53c21"
+}

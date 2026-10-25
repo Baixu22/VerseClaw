@@ -73,6 +73,10 @@ import {
 import { resolveContextWindowInfo } from "../context-window-guard.js";
 import { DEFAULT_CONTEXT_TOKENS } from "../defaults.js";
 import { createAgentToolResultMiddlewareRunner } from "../harness/tool-result-middleware.js";
+import { deriveVerseGitToolObservationRequest } from "../harness/versegit-tool-observation.js";
+import { enrichToolResultWithVerseGitFeedback } from "../harness/versegit-feedback-delivery.js";
+import { getVerseGitRuntimeBindingForRun } from "../../plugin-sdk/versegit-binding-registry.js";
+import { createVerseGitRuntimeObservationPortFromEnv } from "../../plugin-sdk/versegit-observation-port.js";
 import type { AgentMessage, AgentToolResult } from "../runtime/index.js";
 import type { ExtensionFactory, SessionManager } from "../sessions/index.js";
 import { resolveTranscriptPolicy } from "../transcript-policy.js";
@@ -105,8 +109,9 @@ function hasErrorToolResultStatus(result: AgentToolResult<unknown>): boolean {
   return status === "error" || status === "timeout";
 }
 
-function buildAgentToolResultMiddlewareFactory(): ExtensionFactory {
+function buildAgentToolResultMiddlewareFactory(params: { runId?: string }): ExtensionFactory {
   const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" });
+  const observationPort = createVerseGitRuntimeObservationPortFromEnv();
   return (agent) => {
     agent.on("tool_result", async (rawEvent: unknown, ctx: { cwd?: string }) => {
       const event = recordFromUnknown(rawEvent) as AgentToolResultEvent;
@@ -135,9 +140,49 @@ function buildAgentToolResultMiddlewareFactory(): ExtensionFactory {
       });
       const isError =
         event.isError === true || inputHadErrorStatus || hasErrorToolResultStatus(result);
+      let deliveredResult = result;
+      if (observationPort && params.runId) {
+        const binding = getVerseGitRuntimeBindingForRun(params.runId);
+        if (binding) {
+          try {
+            const request = deriveVerseGitToolObservationRequest({
+              event: {
+                threadId: event.threadId,
+                turnId: event.turnId,
+                toolCallId,
+                toolName: event.toolName,
+                args: recordFromUnknown(event.input),
+                cwd: ctx.cwd,
+                isError,
+                result,
+              },
+              binding,
+              cwd: ctx.cwd ?? binding.worktreePath,
+            });
+            const delivery = await enrichToolResultWithVerseGitFeedback({
+              result,
+              observe: () => observationPort.observe(request),
+              reportDelivery: (feedback) => observationPort.reportDelivery({
+                bindingId: binding.bindingId,
+                childRunId: params.runId!,
+                toolCallId,
+                evidenceId: feedback.evidenceId,
+                level: "host-delivered",
+                observedAt: new Date().toISOString(),
+              }),
+            });
+            deliveredResult = delivery.result;
+            if (delivery.error) {
+              log.warn(`VerseGit feedback unavailable; original tool result retained: ${delivery.error}`);
+            }
+          } catch (error) {
+            log.warn(`VerseGit tool observation unavailable: ${String(error).slice(0, 240)}`);
+          }
+        }
+      }
       return {
-        content: result.content,
-        details: result.details,
+        content: deliveredResult.content,
+        details: deliveredResult.details,
         ...(isError ? { isError: true } : {}),
       };
     });
@@ -944,7 +989,7 @@ export function buildEmbeddedExtensionFactories(params: {
   if (taskStateFactory) {
     factories.push(taskStateFactory);
   }
-  factories.push(buildAgentToolResultMiddlewareFactory());
+  factories.push(buildAgentToolResultMiddlewareFactory({ runId: params.runId }));
   return factories;
 }
 

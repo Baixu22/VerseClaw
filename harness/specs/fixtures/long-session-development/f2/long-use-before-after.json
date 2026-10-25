@@ -1,0 +1,631 @@
+{
+  "schema": "clawx.long-session.f2-long-use-before-after/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-f2",
+  "taskForestNode": "TF-0562",
+  "taskKey": "F2",
+  "program": "long-session-development-20261022",
+  "contract": "harness/specs/tasks/long-session-long-use-budget.md",
+  "generatedAt": "2026-10-24T05:19:50.420Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997",
+    "tree": "aa24137b2585e65e08f7d29139ccbc7ba71a8c84",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+  },
+  "measurementSource": {
+    "kind": "built-Electron 333-session probe run against the current candidate",
+    "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
+    "rawSha256": "d10f18b934dc5263bdcf3527805f2dbc3f2fa24a5ee52d7cb7a543b7b0dbf112",
+    "probeSchema": "clawx.long-session.f2.session-loading-probe/v1",
+    "probeActor": "codex-long-session-f2-probe",
+    "platform": "win32",
+    "node": "v24.22.1",
+    "completedAt": "2026-10-24T05:05:39.099Z"
+  },
+  "budgets": {
+    "module": "shared/long-session-budget.ts",
+    "moduleSha256": "33b2bbceb04b75833c7960b0008650f6c5181beef9dd4d279e4bd808626dd561",
+    "frozenBeforeMeasurement": true,
+    "fixture": {
+      "minSessionCount": 333,
+      "minTranscriptBytes": 41943040,
+      "idleRssDurationMs": 300000,
+      "idleRssSampleIntervalMs": 5000,
+      "minIdleRssSamples": 55,
+      "minSwitchSamples": 5,
+      "maxLongTasksOver50MsOnLongSessionOpen": 0
+    },
+    "latencyBudgetMs": {
+      "sidebar.loadSessions.p50": 900,
+      "sidebar.loadSessions.p95": 1500,
+      "sidebar.sessionSwitch.p50": 260,
+      "sidebar.sessionSwitch.p95": 320,
+      "sidebar.longSessionOpen.p95": 600,
+      "host.sessionsSummaries.p95": 900,
+      "compaction.plan.p50": 1500,
+      "compaction.plan.p95": 3000,
+      "continuation.build.p50": 600,
+      "continuation.build.p95": 1500
+    }
+  },
+  "fixture": {
+    "sessionCount": 333,
+    "transcriptBytes": 59932341,
+    "transcriptMiB": 57.16,
+    "longTranscriptBytes": 180000
+  },
+  "rawSamples": {
+    "loadSessionsMs": 786,
+    "sessionSwitchDurationsMs": [
+      152.70000000298023,
+      176.1000000089407,
+      155.20000000298023,
+      147.59999999403954,
+      146.90000000596046
+    ],
+    "sessionSwitchPublishedP50Ms": 152.70000000298023,
+    "sessionSwitchPublishedP95Ms": 176.1000000089407,
+    "longSessionOpenMs": 173.79999999701977,
+    "longSessionRenderedRows": 3,
+    "summariesCalls": [
+      {
+        "durationMs": 0,
+        "keys": 40
+      }
+    ],
+    "idleRssDurationMs": 300000,
+    "idleRssSampleIntervalMs": 5000,
+    "idleRssSamplesBytes": [
+      596090880,
+      592052224,
+      592977920,
+      591896576,
+      322306048,
+      321609728,
+      320696320,
+      320995328,
+      325861376,
+      343019520,
+      326422528,
+      316121088,
+      316522496,
+      316342272,
+      316407808,
+      316440576,
+      316600320,
+      316608512,
+      316641280,
+      264232960,
+      281747456,
+      264589312,
+      264507392,
+      264531968,
+      263794688,
+      263643136,
+      178999296,
+      198762496,
+      180588544,
+      180375552,
+      180719616,
+      180948992,
+      182095872,
+      182284288,
+      182218752,
+      182194176,
+      182198272,
+      183431168,
+      183631872,
+      183943168,
+      183824384,
+      185159680,
+      185487360,
+      185180160,
+      185180160,
+      185503744,
+      185806848,
+      185651200,
+      185741312,
+      185872384,
+      185016320,
+      185110528,
+      185188352,
+      186122240,
+      185958400,
+      185962496,
+      185974784,
+      188329984,
+      188194816,
+      160641024
+    ],
+    "idleLongTasksOver50Ms": [],
+    "sessionSwitchLongTasksOver50Ms": [
+      {
+        "startTime": 9068.90000000596,
+        "durationMs": 57
+      }
+    ],
+    "longSessionOpenLongTasksOver50Ms": []
+  },
+  "recomputed": {
+    "switchP50Ms": 152.70000000298023,
+    "switchP95Ms": 176.1000000089407,
+    "percentilesReproducibleFromSamples": true,
+    "summaryCallCount": 1,
+    "summaryRequestedKeys": 40,
+    "longTasksOver50Ms": {
+      "idleControlWindowMs": 2500,
+      "idleControl": 0,
+      "sessionSwitch": 1,
+      "longSessionOpen": 0
+    },
+    "longTasksOver50MsBudgets": {
+      "longSessionOpen": 0,
+      "sessionSwitch": null
+    },
+    "longTasksOver50MsMedians": {
+      "idleControl": 0,
+      "sessionSwitch": 0,
+      "longSessionOpen": 0
+    },
+    "latencyObservation": {
+      "sidebar.loadSessions.p50": 786,
+      "sidebar.loadSessions.p95": 786,
+      "sidebar.sessionSwitch.p50": 152.70000000298023,
+      "sidebar.sessionSwitch.p95": 176.1000000089407,
+      "sidebar.longSessionOpen.p95": 173.79999999701977,
+      "host.sessionsSummaries.p95": 0,
+      "compaction.plan.p50": 34.51729999999952,
+      "compaction.plan.p95": 35.92489999999998,
+      "continuation.build.p50": 0.10570000000006985,
+      "continuation.build.p95": 0.20319999999992433
+    },
+    "latencyVerdict": {
+      "passed": true,
+      "violations": [],
+      "unmeasured": []
+    },
+    "medianLatencyObservation": {
+      "sidebar.loadSessions.p50": 752,
+      "sidebar.loadSessions.p95": 752,
+      "sidebar.sessionSwitch.p50": 152.70000000298023,
+      "sidebar.sessionSwitch.p95": 176.1000000089407,
+      "sidebar.longSessionOpen.p95": 137.29999999701977,
+      "host.sessionsSummaries.p95": 0,
+      "compaction.plan.p50": 34.51729999999952,
+      "compaction.plan.p95": 35.92489999999998,
+      "continuation.build.p50": 0.10570000000006985,
+      "continuation.build.p95": 0.20319999999992433
+    },
+    "medianLatencyVerdict": {
+      "passed": true,
+      "violations": [],
+      "unmeasured": []
+    },
+    "metricMedians": {
+      "loadSessionsMs": 752,
+      "sessionSwitchP50Ms": 152.70000000298023,
+      "sessionSwitchP95Ms": 176.1000000089407,
+      "longSessionOpenMs": 137.29999999701977,
+      "summariesCallMs": 0,
+      "idleLongTasksOver50Ms": 0,
+      "sessionSwitchLongTasksOver50Ms": 0,
+      "longSessionOpenLongTasksOver50Ms": 0
+    },
+    "runSpread": {
+      "loadSessionsMs": {
+        "values": [
+          786,
+          752,
+          634
+        ],
+        "min": 634,
+        "max": 786
+      },
+      "sessionSwitchP50Ms": {
+        "values": [
+          152.70000000298023,
+          163,
+          120
+        ],
+        "min": 120,
+        "max": 163
+      },
+      "sessionSwitchP95Ms": {
+        "values": [
+          176.1000000089407,
+          186.79999999701977,
+          134.80000001192093
+        ],
+        "min": 134.80000001192093,
+        "max": 186.79999999701977
+      },
+      "longSessionOpenMs": {
+        "values": [
+          173.79999999701977,
+          137.29999999701977,
+          129.5
+        ],
+        "min": 129.5,
+        "max": 173.79999999701977
+      },
+      "idleLongTasksOver50Ms": {
+        "values": [
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "max": 0
+      },
+      "sessionSwitchLongTasksOver50Ms": {
+        "values": [
+          1,
+          0,
+          0
+        ],
+        "min": 0,
+        "max": 1
+      },
+      "longSessionOpenLongTasksOver50Ms": {
+        "values": [
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "max": 0
+      }
+    }
+  },
+  "compactionAndContinuation": {
+    "note": "measured in-process against the shipped planners by tests/unit/long-session-long-use-budget.test.ts on this candidate",
+    "observationPath": "D:/tmp/long-session-f2/observation-18982d5e6.json",
+    "observationSha256": "0df7f5671c1300f20686935566e58bfc97823f82ab556a23cfc2710a12896dc5",
+    "planSamplesMs": [
+      35.92489999999998,
+      35.45920000000024,
+      34.23940000000039,
+      34.51729999999952,
+      34.39190000000053,
+      35.08340000000044,
+      34.20959999999923,
+      34.94840000000022,
+      34.430600000000595,
+      35.59220000000005,
+      34.371900000000096
+    ],
+    "planP50Ms": 34.51729999999952,
+    "planP95Ms": 35.92489999999998,
+    "continuationSamplesMs": [
+      0.26599999999962165,
+      0.15350000000034925,
+      0.180900000001202,
+      0.125,
+      0.12269999999989523,
+      0.11270000000149594,
+      0.10260000000016589,
+      0.10570000000006985,
+      0.10649999999986903,
+      0.10239999999976135,
+      0.10099999999874854,
+      0.11309999999866704,
+      0.10009999999965657,
+      0.20319999999992433,
+      0.32409999999981665,
+      0.15859999999884167,
+      0.1790999999993801,
+      0.11659999999938009,
+      0.1856999999999971,
+      0.10820000000057917,
+      0.1044000000001688,
+      0.11920000000100117,
+      0.09419999999954598,
+      0.09310000000004948,
+      0.10560000000077707,
+      0.09749999999985448,
+      0.09310000000004948,
+      0.09220000000095752,
+      0.09219999999913853,
+      0.11269999999967695,
+      0.16849999999976717,
+      0.11180000000058499,
+      0.11759999999958382,
+      0.10189999999965949,
+      0.09730000000126893,
+      0.09519999999974971,
+      0.10310000000026776,
+      0.09430000000065775,
+      0.09270000000105938,
+      0.09120000000075379,
+      0.09150000000045111
+    ],
+    "continuationP50Ms": 0.10570000000006985,
+    "continuationP95Ms": 0.20319999999992433
+  },
+  "runs": [
+    {
+      "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
+      "sha256": "d10f18b934dc5263bdcf3527805f2dbc3f2fa24a5ee52d7cb7a543b7b0dbf112",
+      "fixtureTranscriptBytes": 59932341,
+      "loadSessionsMs": 786,
+      "longSessionOpenMs": 173.79999999701977,
+      "longSessionOpenLongTasks": 0,
+      "summariesCallMs": 0,
+      "switchP50Ms": 152.70000000298023,
+      "switchP95Ms": 176.1000000089407,
+      "switchLongTasks": 1,
+      "idleLongTasks": 0,
+      "idleRssSampleCount": 60,
+      "windowBoundaries": {
+        "idleControlWindow": [
+          6,
+          6
+        ],
+        "longSessionOpenWindow": [
+          6,
+          6
+        ],
+        "sessionSwitchWindow": [
+          6,
+          7
+        ],
+        "totalRecordedLongTasks": 7,
+        "attributionFixed": true,
+        "note": "indices into the renderer long-task list; every task belongs to exactly one window"
+      },
+      "hostConditions": {
+        "freeRamMb": 1426,
+        "freeDiskMb": 156316,
+        "freeRamMbAfter": 1058,
+        "freeDiskMbAfter": 157503
+      },
+      "measurementValid": true,
+      "exclusionReason": null
+    },
+    {
+      "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-2.json",
+      "sha256": "81c38ff1853107fbecc7ab39461920dc47e0db0b7ee33ca2b0f97c48ad44ede8",
+      "fixtureTranscriptBytes": 59932341,
+      "loadSessionsMs": 752,
+      "longSessionOpenMs": 137.29999999701977,
+      "longSessionOpenLongTasks": 0,
+      "summariesCallMs": 0,
+      "switchP50Ms": 163,
+      "switchP95Ms": 186.79999999701977,
+      "switchLongTasks": 0,
+      "idleLongTasks": 0,
+      "idleRssSampleCount": 60,
+      "windowBoundaries": {
+        "idleControlWindow": [
+          7,
+          7
+        ],
+        "longSessionOpenWindow": [
+          7,
+          7
+        ],
+        "sessionSwitchWindow": [
+          7,
+          7
+        ],
+        "totalRecordedLongTasks": 7,
+        "attributionFixed": true,
+        "note": "indices into the renderer long-task list; every task belongs to exactly one window"
+      },
+      "hostConditions": {
+        "freeRamMb": 684,
+        "freeDiskMb": 157505,
+        "freeRamMbAfter": 2624,
+        "freeDiskMbAfter": 157484
+      },
+      "measurementValid": true,
+      "exclusionReason": null
+    },
+    {
+      "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-3.json",
+      "sha256": "0927777dff8394817ca04cad262451b9b3004843fd7fe46fdf55c23ac2f803d6",
+      "fixtureTranscriptBytes": 59932341,
+      "loadSessionsMs": 634,
+      "longSessionOpenMs": 129.5,
+      "longSessionOpenLongTasks": 0,
+      "summariesCallMs": 0,
+      "switchP50Ms": 120,
+      "switchP95Ms": 134.80000001192093,
+      "switchLongTasks": 0,
+      "idleLongTasks": 0,
+      "idleRssSampleCount": 60,
+      "windowBoundaries": {
+        "idleControlWindow": [
+          6,
+          6
+        ],
+        "longSessionOpenWindow": [
+          6,
+          6
+        ],
+        "sessionSwitchWindow": [
+          6,
+          6
+        ],
+        "totalRecordedLongTasks": 6,
+        "attributionFixed": true,
+        "note": "indices into the renderer long-task list; every task belongs to exactly one window"
+      },
+      "hostConditions": {
+        "freeRamMb": 2920,
+        "freeDiskMb": 157487,
+        "freeRamMbAfter": 297,
+        "freeDiskMbAfter": 157466
+      },
+      "measurementValid": true,
+      "exclusionReason": null
+    }
+  ],
+  "measurementValidity": {
+    "rule": {
+      "minDiskHeadroomMbOverFixture": 32,
+      "excludeDegradedRunsFromMedian": true
+    },
+    "derivedFloorMb": 90,
+    "perRunFloors": [
+      {
+        "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
+        "floorMb": 90,
+        "freeDiskMbBefore": 156316,
+        "freeDiskMbAfter": 157503
+      },
+      {
+        "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-2.json",
+        "floorMb": 90,
+        "freeDiskMbBefore": 157505,
+        "freeDiskMbAfter": 157484
+      },
+      {
+        "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-3.json",
+        "floorMb": 90,
+        "freeDiskMbBefore": 157487,
+        "freeDiskMbAfter": 157466
+      }
+    ],
+    "validRuns": 3,
+    "collectedRuns": 3,
+    "excludedRuns": [],
+    "note": "validity is derived from the run's own recorded fixture size plus the frozen headroom, so it cannot be tuned against a sample; a run below that floor is listed here and excluded from the median, never silently averaged. Host free memory is recorded as context only"
+  },
+  "runSelection": {
+    "rule": "per-metric median across measurement-valid runs; the published raw sample arrays come from the valid run whose switch p95 is closest to its median",
+    "collected": 3,
+    "measurementValid": 3,
+    "publishedPath": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
+    "validityFloors": {
+      "minDiskHeadroomMbOverFixture": 32,
+      "excludeDegradedRunsFromMedian": true
+    },
+    "metricMedians": {
+      "loadSessionsMs": 752,
+      "sessionSwitchP50Ms": 152.70000000298023,
+      "sessionSwitchP95Ms": 176.1000000089407,
+      "longSessionOpenMs": 137.29999999701977,
+      "summariesCallMs": 0,
+      "idleLongTasksOver50Ms": 0,
+      "sessionSwitchLongTasksOver50Ms": 0,
+      "longSessionOpenLongTasksOver50Ms": 0
+    },
+    "note": "run-to-run variance on this host is material, so the published headline is the per-metric median across measurement-valid runs; every run is listed in runs[] above"
+  },
+  "windowBoundaries": {
+    "idleControlWindow": [
+      6,
+      6
+    ],
+    "longSessionOpenWindow": [
+      6,
+      6
+    ],
+    "sessionSwitchWindow": [
+      6,
+      7
+    ],
+    "totalRecordedLongTasks": 7,
+    "attributionFixed": true,
+    "note": "indices into the renderer long-task list; every task belongs to exactly one window"
+  },
+  "historyReference": {
+    "note": "TF-0423 keeps the pre-change/post-change comparison for the sidebar fix. It is referenced only; none of its numbers are reused as this candidate result.",
+    "directory": "harness/specs/fixtures/tf0423-session-loading/",
+    "filesNotResigned": [
+      "before.json",
+      "after.json",
+      "acceptance.json",
+      "attribution.json"
+    ]
+  },
+  "boundaries": [
+    "Gateway RPC is agent-mocked; sessions.summaries is the real Electron host service reading synthetic local transcripts.",
+    "Synthetic transcripts contain no private user content and are generated at runtime.",
+    "Timing is a local Windows Electron sample, not a cross-platform benchmark.",
+    "Switch latency is click -> two settled animation frames so the same probe runs on pre-change and post-change builds.",
+    "Each renderer long task is attributed to exactly one measurement window; windowBoundaries records the indices used for the slices.",
+    "Run-to-run variance on this host is material, so F2 publishes every run plus a median rather than a single sample."
+  ],
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/long-session-f2/gates-18982d5e6/gates.json",
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "unit-label-summary-search-budget",
+        "command": "pnpm exec vitest run tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 6949,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-label-summary-search-budget.log",
+        "summary": "  Test Files  3 passed (3)       Tests  4 passed (4)    Start at  13:17:41    Duration  5.52s (transform 1.70s, setup 296ms, import 944ms, tests 2.60s, environment 1.16s) "
+      },
+      {
+        "name": "unit-long-use-budget",
+        "command": "set LONG_SESSION_F2_PROBE_RUNS=D:\\tmp\\long-session-f2\\runs-18982d5e6&& set LONG_SESSION_F2_CANDIDATE=18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997&& set LONG_SESSION_F2_OBSERVATION=D:\\tmp\\long-session-f2\\observation-18982d5e6.json&& pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 11654,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-long-use-budget.log",
+        "summary": "  Test Files  1 passed (1)       Tests  24 passed (24)    Start at  13:17:48    Duration  10.21s (transform 4.38s, setup 124ms, import 4.87s, tests 4.45s, environment 580ms) "
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "durationMs": 30175,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\typecheck.log",
+        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+      },
+      {
+        "name": "contract-check",
+        "command": "pnpm run contract:check",
+        "exitCode": 0,
+        "durationMs": 910,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\contract-check.log",
+        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+      },
+      {
+        "name": "comms-replay",
+        "command": "pnpm run comms:replay",
+        "exitCode": 0,
+        "durationMs": 854,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-replay.log",
+        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+      },
+      {
+        "name": "comms-compare",
+        "command": "pnpm run comms:compare",
+        "exitCode": 0,
+        "durationMs": 744,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-compare.log",
+        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+      },
+      {
+        "name": "harness-validate",
+        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-long-use-budget.md",
+        "exitCode": 0,
+        "durationMs": 1543,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\harness-validate.log",
+        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" Spec is valid: harness\\specs\\tasks\\long-session-long-use-budget.md"
+      },
+      {
+        "name": "git-diff-check",
+        "command": "git diff --check",
+        "exitCode": 0,
+        "durationMs": 100,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\git-diff-check.log",
+        "summary": ""
+      },
+      {
+        "name": "eslint-changed",
+        "command": "pnpm exec eslint shared/long-session-budget.ts src/stores/gateway.ts tests/unit/long-session-long-use-budget.test.ts scripts/long-session-f2-evidence.mjs harness/specs/fixtures/long-session-development/f2/probe-f2.mjs",
+        "exitCode": 0,
+        "durationMs": 3780,
+        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\eslint-changed.log",
+        "summary": ""
+      }
+    ]
+  }
+}

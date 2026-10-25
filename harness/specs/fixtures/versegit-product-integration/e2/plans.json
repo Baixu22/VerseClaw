@@ -1,0 +1,234 @@
+{
+  "schema": "clawx.versegit.e2-plans/v1",
+  "generated_at": "2026-10-22T21:04:42.508Z",
+  "task": "TF-0533",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d929fdc94e6e099d0b1984cb30ec37ed28ad8996",
+    "tree": "192a13159ec5177f24a5d1f849ada7d2247b1f06",
+    "dirty": false
+  },
+  "required_tests": [
+    "producer-api",
+    "consumer-a",
+    "consumer-b-rework",
+    "required-env"
+  ],
+  "runs": [
+    {
+      "id": "failure",
+      "candidate": {
+        "sourceCandidateId": "vgc_94fc2adec195290c24341148",
+        "candidateId": "216f7e63cee30bd80f6a96471015cd0850fa7a8246695e1eedb252a87a38aab5",
+        "candidateCommitOid": "7051d64652c38f94154b1a98b9025e44418864df",
+        "candidateTreeOid": "de60cc101394524ee0df16146a35d81107825705",
+        "inputDigest": "03b8054c727bc7de7d2bf43803a54353ecd1ca733e9cb3dd93b6354ed8e5497e",
+        "files": [
+          {
+            "path": ".gitignore",
+            "sha256": "5f083efae12d01608479e33cbf3eef89f604ab1e742c76f4da542f3ec1d8f741",
+            "bytes": 16
+          },
+          {
+            "path": "src/consumer-a.cjs",
+            "sha256": "dcf802c961af2121270592bed315f735a89dde82a66af04717753f2605f91388",
+            "bytes": 85
+          },
+          {
+            "path": "src/consumer-b.cjs",
+            "sha256": "20a5b35c807059e65cee81846ac542e5cdb3f057030f96416370e1ffb304f42f",
+            "bytes": 106
+          },
+          {
+            "path": "src/producer.cjs",
+            "sha256": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809",
+            "bytes": 39
+          },
+          {
+            "path": "verify.cjs",
+            "sha256": "c39fbb3e33a08442cbfeb3143f445a6a6eafd01d8311de7d4f809e9f72eea517",
+            "bytes": 718
+          }
+        ]
+      },
+      "plan": {
+        "schema": "clawx.versegit.command-plan/v1",
+        "runId": "run-e2-candidate-failure",
+        "candidateId": "216f7e63cee30bd80f6a96471015cd0850fa7a8246695e1eedb252a87a38aab5",
+        "candidateInputDigest": "03b8054c727bc7de7d2bf43803a54353ecd1ca733e9cb3dd93b6354ed8e5497e",
+        "checkId": "candidate-full-required-tests",
+        "owner": "owner-e2-candidate-receipts",
+        "epoch": 3,
+        "authorizationId": "auth-run-e2-candidate-failure",
+        "authorizationDigest": "eb9c8c70802b3a1f312fb501c049affc5b4ffbe32c01b204598bdeb61a032ad8",
+        "evidenceVersion": 2,
+        "deadlineAt": 1792703137384,
+        "requiredChecks": [
+          "producer-api",
+          "consumer-a",
+          "consumer-b-rework",
+          "required-env"
+        ],
+        "requiredScope": "full",
+        "commands": [
+          {
+            "argv": [
+              "node",
+              "verify.cjs"
+            ],
+            "cwd": ".",
+            "env": {
+              "CLAWX_VG_REQUIRED_SCOPE": "full",
+              "CLAWX_VG_TEST_MODE": "candidate"
+            },
+            "effect": "read",
+            "retry": "never",
+            "expectedArtifacts": [
+              "stdout",
+              "stderr",
+              "exit"
+            ],
+            "timeoutMs": 30000,
+            "maxOutputBytes": 262144
+          }
+        ],
+        "planDigest": "45db249f2dd76d40f64b5f750a02a3997ff2c0d4d6fe459fdbf52b37ea047456"
+      },
+      "observed_checks": {
+        "schema": "clawx.versegit.required-tests/v1",
+        "ok": false,
+        "checks": [
+          {
+            "id": "producer-api",
+            "passed": true
+          },
+          {
+            "id": "consumer-a",
+            "passed": true
+          },
+          {
+            "id": "consumer-b-rework",
+            "passed": false
+          },
+          {
+            "id": "required-env",
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "continuation",
+      "candidate": {
+        "sourceCandidateId": "vgc_54924b26036c2009c9e4fead",
+        "candidateId": "da69d4ef47ee4210ecbed2938db0f186dbe418968ccbea8af9ae8c4091055977",
+        "candidateCommitOid": "2cee8f9155fe85a76956719d9afe3ce927c0274e",
+        "candidateTreeOid": "139ac2344f80bebd186ce2ce9f3ceb518c7c2c9e",
+        "inputDigest": "fa5d124cc67dbb9e8b91fdedb7a63d67ac2f638bc2a1476cedd9988295681823",
+        "files": [
+          {
+            "path": ".gitignore",
+            "sha256": "5f083efae12d01608479e33cbf3eef89f604ab1e742c76f4da542f3ec1d8f741",
+            "bytes": 16
+          },
+          {
+            "path": "src/consumer-a.cjs",
+            "sha256": "dcf802c961af2121270592bed315f735a89dde82a66af04717753f2605f91388",
+            "bytes": 85
+          },
+          {
+            "path": "src/consumer-b.cjs",
+            "sha256": "6c479d1b7ba864cae390ac0c7b8f2edc85459dced6fafe7a49493c3c716d270c",
+            "bytes": 159
+          },
+          {
+            "path": "src/producer.cjs",
+            "sha256": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809",
+            "bytes": 39
+          },
+          {
+            "path": "verify.cjs",
+            "sha256": "c39fbb3e33a08442cbfeb3143f445a6a6eafd01d8311de7d4f809e9f72eea517",
+            "bytes": 718
+          }
+        ]
+      },
+      "plan": {
+        "schema": "clawx.versegit.command-plan/v1",
+        "runId": "run-e2-candidate-continuation",
+        "candidateId": "da69d4ef47ee4210ecbed2938db0f186dbe418968ccbea8af9ae8c4091055977",
+        "candidateInputDigest": "fa5d124cc67dbb9e8b91fdedb7a63d67ac2f638bc2a1476cedd9988295681823",
+        "checkId": "candidate-full-required-tests",
+        "owner": "owner-e2-candidate-receipts",
+        "epoch": 3,
+        "authorizationId": "auth-run-e2-candidate-continuation",
+        "authorizationDigest": "7ba7510800797bee3713601a7f8a48ed6b8975bb0ec39cd4ca3295adb50a5c66",
+        "evidenceVersion": 2,
+        "deadlineAt": 1792703140796,
+        "requiredChecks": [
+          "producer-api",
+          "consumer-a",
+          "consumer-b-rework",
+          "required-env"
+        ],
+        "requiredScope": "full",
+        "commands": [
+          {
+            "argv": [
+              "node",
+              "verify.cjs"
+            ],
+            "cwd": ".",
+            "env": {
+              "CLAWX_VG_REQUIRED_SCOPE": "full",
+              "CLAWX_VG_TEST_MODE": "candidate"
+            },
+            "effect": "read",
+            "retry": "never",
+            "expectedArtifacts": [
+              "stdout",
+              "stderr",
+              "exit"
+            ],
+            "timeoutMs": 30000,
+            "maxOutputBytes": 262144
+          }
+        ],
+        "planDigest": "22eed12f7c5fe6ab7db5e6e429c5eec1b2e549d8a103d6ee71c5ce718fda53c3"
+      },
+      "observed_checks": {
+        "schema": "clawx.versegit.required-tests/v1",
+        "ok": true,
+        "checks": [
+          {
+            "id": "producer-api",
+            "passed": true
+          },
+          {
+            "id": "consumer-a",
+            "passed": true
+          },
+          {
+            "id": "consumer-b-rework",
+            "passed": true
+          },
+          {
+            "id": "required-env",
+            "passed": true
+          }
+        ]
+      }
+    }
+  ],
+  "execution_route": "production process.start -> VerseShell governed ACI",
+  "output_bounds": {
+    "timeout_ms": 30000,
+    "max_output_bytes": 262144
+  },
+  "host_policy_approved": true,
+  "native_fallback_used": false,
+  "passed": true,
+  "digest": "ec68dba7275c4f5072445f30a317e03ba28cf2c9f98329cf8d92023ff2e2d375"
+}

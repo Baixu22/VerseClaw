@@ -1,0 +1,191 @@
+{
+  "contractSchema": "clawx.versegit.wp0-contract/v1",
+  "generated_at": "2026-10-21T07:42:27.502Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0466",
+  "binary_identity": {
+    "path": "D:/Projects/VerseGit/target/debug/vg.exe",
+    "exists": true,
+    "sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "bytes": 72509440,
+    "profile": "debug",
+    "platform": "win32-x64",
+    "capabilities_schema": "versegit.capabilities/v1",
+    "capabilities_digest": "185a7f032e142662ba846b0eca026340ff7f9891c84d53d923d619c163407b58",
+    "source_head": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "source_tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "consumer_contract_digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749",
+    "golden_bundle_digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b",
+    "sidecar_package_digest": "9c57e5d46ad4c18c086584600eca5ecd0de687b8721727d15d1c548e0d7e5f0b"
+  },
+  "version_matrix": {
+    "host_contract_versions": [
+      "clawx.versegit.consumer-contract/v1"
+    ],
+    "consumer_contract_version": "clawx.versegit.consumer-contract/v1",
+    "module_report_schema": "clawx.versegit.module-report/v1",
+    "command_plan_schema": "clawx.versegit.command-plan/v1",
+    "execution_receipt_schema": "clawx.verseshell.execution-receipt/v2",
+    "sidecar_package_schema": "clawx.versegit.mc3-package/v1",
+    "fingerprint_schema": "clawx.versegit.mc2-fingerprint/v1",
+    "vg_version": "0.1.0",
+    "vg_schema_version": 1,
+    "supported_vg_schema_versions": [
+      1,
+      2
+    ],
+    "ledger_schema_version": 2,
+    "capabilities_schema": "versegit.capabilities/v1",
+    "verdict_schema": "versegit.verdict/v1",
+    "sts_protocols": [
+      "1.1",
+      "2.0"
+    ],
+    "platform": "win32-x64",
+    "binary_profile": "debug",
+    "binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "source_head": "89af0c36216e64bb0f7430fc3fe21c39c485be7c"
+  },
+  "read_only_tool_catalog": {
+    "advertised_tools": [
+      "basis_status",
+      "basis_watermark",
+      "declare_intent",
+      "explain_conflict",
+      "integration_status",
+      "verdict",
+      "vg_capabilities",
+      "who_touches"
+    ],
+    "read_only_tools": [
+      "basis_status",
+      "basis_watermark",
+      "explain_conflict",
+      "integration_status",
+      "verdict",
+      "vg_capabilities",
+      "who_touches"
+    ],
+    "excluded_tools": [
+      "declare_intent"
+    ],
+    "deny_by_default": true,
+    "write_tools_exposed": false,
+    "catalog_digest": "b69a7799ac057d33c56edf9ad09f7b44377cad437e8a891e8e420ef3c3d2f985",
+    "excluded_digest": "e558cd7ce0685ee8eb6627c3f69d243ed9b06d4d45be79464444a56e93291563"
+  },
+  "mcp_registration": {
+    "registered_by_clawx": false,
+    "policy": "ClawX exposes only the filtered read-only catalog through a host-owned typed adapter addressed by the binary digest; the provider .mcp.json entry is never inherited.",
+    "provider_release_binary_present": false,
+    "provider_mcp_entry_is_dev_override": true,
+    "mutable_checkout_path_consumed": false,
+    "model_facing_write_tools": []
+  },
+  "mode_matrix": {
+    "M0": {
+      "attach": false,
+      "processes_started": 0,
+      "state_read": false,
+      "workspace_write": false,
+      "domain_state_write": false,
+      "execution": "none",
+      "status": "not_applicable",
+      "host_verdict": "unchanged"
+    },
+    "M1": {
+      "attach": true,
+      "processes_started": 1,
+      "state_read": true,
+      "workspace_write": false,
+      "domain_state_write": false,
+      "execution": "none",
+      "status": "partial",
+      "host_verdict": "unchanged"
+    },
+    "M2": {
+      "attach": true,
+      "processes_started": 1,
+      "state_read": true,
+      "workspace_write": false,
+      "domain_state_write": true,
+      "execution": "none",
+      "status": "partial",
+      "host_verdict": "unchanged"
+    },
+    "M3": {
+      "attach": true,
+      "processes_started": 1,
+      "state_read": true,
+      "workspace_write": false,
+      "domain_state_write": true,
+      "execution": "via_verseshell_only",
+      "status": "partial",
+      "host_verdict": "unchanged"
+    }
+  },
+  "mode_resolution": {
+    "M0": {
+      "mode": "M0",
+      "attach": false,
+      "processes_started": 0,
+      "state_read": false,
+      "workspace_write": false,
+      "status": "not_applicable",
+      "host_verdict": "unchanged",
+      "reason": "disabled_by_profile",
+      "catalog_digest": "b69a7799ac057d33c56edf9ad09f7b44377cad437e8a891e8e420ef3c3d2f985",
+      "matrix_head": "89af0c36216e64bb0f7430fc3fe21c39c485be7c"
+    },
+    "M1": {
+      "mode": "M1",
+      "attach": true,
+      "processes_started": 1,
+      "state_read": true,
+      "workspace_write": false,
+      "status": "partial",
+      "host_verdict": "unchanged",
+      "reason": "identity_probe_only",
+      "catalog_digest": "b69a7799ac057d33c56edf9ad09f7b44377cad437e8a891e8e420ef3c3d2f985",
+      "matrix_head": "89af0c36216e64bb0f7430fc3fe21c39c485be7c"
+    }
+  },
+  "gate": {
+    "passed": true,
+    "failures": []
+  },
+  "probe_error": null,
+  "eligibility": {
+    "triggers": [
+      "more_than_one_worktree",
+      "more_than_one_active_session",
+      "explicit_isolation_plan"
+    ],
+    "default_enabled": false,
+    "single_worktree_single_session_commands": 0,
+    "added_to_fast_profile": false,
+    "added_to_comms_profile": false,
+    "added_to_implicit_profile": false
+  },
+  "non_interference": {
+    "created_or_attached_session": false,
+    "wrote_provider_state": false,
+    "provider_workspace_unchanged": true,
+    "provider_porcelain_sha256_before": "306940bfe85a98f45d32888dea562c295f88663f7ab598047321c015fcf0eb46",
+    "provider_porcelain_sha256_after": "306940bfe85a98f45d32888dea562c295f88663f7ab598047321c015fcf0eb46",
+    "land_or_admit_invoked": false,
+    "host_verdict_changed": false
+  },
+  "status": "verified",
+  "host_verdict": "unchanged",
+  "boundaries": {
+    "vg_source_tree_copied": false,
+    "vg_history_copied": false,
+    "vg_task_forest_copied": false,
+    "vg_build_outputs_copied": false,
+    "vg_private_evidence_copied": false,
+    "provider_source_modified": false,
+    "default_on": false
+  }
+}

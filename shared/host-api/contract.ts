@@ -53,8 +53,13 @@ import type {
   MemoryProposal,
   MemoryProposalPreview,
   MemoryProposalRecord,
+  MemorySurfaceSnapshot,
+  MemorySurfaceSource,
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
+import type { LongSessionContinuityContextPack } from '../long-session-continuity';
+import type { SessionEffectivePolicy } from '../types/session-effective-policy';
+export type { SessionEffectivePolicy } from '../types/session-effective-policy';
 import type {
   GitBranch,
   GitCapabilities,
@@ -121,6 +126,8 @@ import type {
   PromptCacheRiskSeverity,
   PromptCacheStatus,
   WorkspaceContextRange,
+  WorkspaceCoordinatorBinding,
+  WorkspaceCoordinatorTaskRef,
   KnowledgeInvocationMode,
   SessionArchiveEntry,
   SessionFolder,
@@ -133,6 +140,10 @@ import type {
   WorkspaceWebPreviewLaunchConfig,
   WorkspaceWebPreviewStatus,
 } from '../types/workspace';
+import type {
+  DelegationAdmissionReceipt,
+  DelegationTaskRef,
+} from '../types/delegation-admission';
 import type {
   WorkProviderConfig,
   WorkProviderRunPayload,
@@ -271,6 +282,12 @@ export type SessionDeleteResult = HostSuccess & {
    * sessions.json update failed — the session entry is kept so the user can
    * retry instead of seeing a fake success. */
   partial?: boolean;
+  /**
+   * Set when the Gateway delete committed but the local mirror step had
+   * nothing to do (for example: this runtime keeps no legacy sessions.json).
+   * A skipped mirror is a success, and the reason stays auditable.
+   */
+  skipped?: string;
   /** Paths that could not be unlinked (only meaningful when partial). */
   remainingPaths?: string[];
 };
@@ -2807,6 +2824,60 @@ export type SessionArchivePayload = {
   originalFolderId?: string | null;
 };
 export type SessionRestorePayload = { id: string };
+export type SessionEffectivePolicyPayload = {
+  sessionKey: string;
+  workspaceId?: string;
+};
+export type SessionEffectivePolicyResult = HostSuccess & {
+  policy?: SessionEffectivePolicy;
+};
+export type SessionCoordinatorBindingReadPayload = {
+  workspaceId?: string;
+};
+export type SessionCoordinatorBindingValidation =
+  | 'current'
+  | 'unverified'
+  | 'invalidated'
+  | 'missing';
+export type SessionCoordinatorBindingResult = HostSuccess & {
+  binding: WorkspaceCoordinatorBinding | null;
+  validation: SessionCoordinatorBindingValidation;
+  reason?: string | null;
+};
+export type SessionBindCoordinatorPayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  expectedRevision: number;
+  taskRefs: WorkspaceCoordinatorTaskRef[];
+};
+export type SessionBindCoordinatorResult = HostSuccess & {
+  binding?: WorkspaceCoordinatorBinding;
+  validation?: SessionCoordinatorBindingValidation;
+};
+export type SessionDelegateCoordinatorPayload = {
+  workspaceId: string;
+  idempotencyKey: string;
+  roleName: string;
+  task: string;
+  taskRef: DelegationTaskRef;
+  writeSet?: string[];
+  isolation?: 'shared' | 'worktree';
+  modelRef?: string | null;
+  /** The only supported execution backend for this route. */
+  backend?: 'openclaw-embedded';
+};
+export type SessionDelegateCoordinatorResult = HostSuccess & {
+  receipt: DelegationAdmissionReceipt;
+  duplicate?: boolean;
+  recoveryRequired?: boolean;
+};
+export type SessionDelegationAdmissionsPayload = {
+  workspaceId?: string;
+};
+export type SessionDelegationAdmissionsResult = HostSuccess & {
+  receipts: DelegationAdmissionReceipt[];
+};
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
 export type SessionListArchivedResult = HostSuccess & {
@@ -3371,6 +3442,20 @@ export type ChatSendWithMediaResult = HostSuccess & {
     used: number;
   };
   knowledgeDenials?: ChatKnowledgeDenial[];
+};
+
+export type ChatContinuityPreviewPayload = {
+  sessionKey: string;
+  workspaceId: string;
+  activeTaskNodeId?: string | null;
+  knowledgeReferences?: ChatKnowledgeReference[];
+};
+
+export type ChatContinuityPreviewResult = HostSuccess & {
+  validation: 'current' | 'missing' | 'invalidated' | 'unavailable';
+  pack?: LongSessionContinuityContextPack;
+  rendered?: string;
+  reason?: string;
 };
 
 export type ChatKnowledgeDenial = {
@@ -5223,6 +5308,69 @@ export type MemoryProposeFactsConfirmResult = HostSuccess & {
   factId?: string;
 };
 
+export type MemorySurfacePayload = {
+  limit?: number;
+};
+
+export type MemorySurfaceResult = HostSuccess & MemorySurfaceSnapshot;
+
+export type MemoryApproveCandidatePayload = {
+  source: MemorySurfaceSource;
+  id: string;
+};
+
+export type MemoryApproveCandidateResult = HostSuccess & {
+  approved: boolean;
+  acceptedId?: string;
+  reason?: string;
+};
+
+export type MemoryDeletePayload = {
+  source: MemorySurfaceSource;
+  id: string;
+  reason?: string;
+};
+
+export type MemoryDeleteResult = HostSuccess & {
+  deleted: boolean;
+  source: MemorySurfaceSource;
+  id: string;
+  state: string;
+};
+
+export type MemoryRememberPayload = {
+  content: string;
+  scope: MemoryCardScope;
+  scopeKey?: string | null;
+  roleTags?: string[];
+  type?: MemoryProposal['type'];
+  sensitivity?: MemoryProposal['sensitivity'];
+  expiresAt?: string | null;
+};
+
+export type MemoryRememberResult = HostSuccess & {
+  accepted: boolean;
+  reviewRequired: boolean;
+  cardId?: string;
+  proposalId?: string;
+  reason?: string;
+};
+
+export type MemoryExportPayload = {
+  format?: 'json';
+};
+
+export type MemoryExportResult = HostSuccess & {
+  path: string;
+  sha256: string;
+  generatedAt: string;
+  counts: {
+    accepted: number;
+    candidates: number;
+    redacted: number;
+  };
+};
+
 /**
  * Runtime exec-approval boundary (TF-0240). `list` reads the Gateway's pending
  * exec approvals; `resolve` answers exactly one of them with a decision the
@@ -5251,12 +5399,59 @@ export type RuntimeApprovalResolveResult =
   | { success: true; approvalId: string; decision: string }
   | { success: false; error: string };
 
+export type VerseGitDiagnosticBinding = {
+  workspaceId: string;
+  sessionId: string;
+  worktreeId: string;
+  ownerId: string;
+  epoch: number;
+  mode: 'M1' | 'M2';
+};
+
+export type VerseGitDiagnosticStatus = {
+  schema: 'clawx.versegit.host-diagnostics/v1';
+  generatedAt: string;
+  enabled: boolean;
+  mode: 'M0' | 'M1' | 'M2';
+  status: 'not_applicable' | 'unavailable' | 'partial' | 'observed' | 'degraded' | 'rejected_by_policy';
+  reason?: string;
+  identity: {
+    repoId: string | null;
+    binarySha256: string | null;
+    version: string | null;
+    capabilitiesSchema: string | null;
+  };
+  coverage: { declared: string[]; unobserved: string[] };
+  capabilities: {
+    schema: string | null;
+    safety: { default_enable: false | null; managed_opt_in: boolean; strict_admission_present: boolean };
+    verdict: {
+      single_green_light: false | null;
+      dimensions: string[];
+      read_surface: { observed_channels: string[]; unobserved_channels: string[] } | null;
+    };
+  } | null;
+  observation: {
+    processStarted: boolean;
+    exitCode: number | null;
+    deadlineMs: number;
+    timedOut: boolean;
+    cancelled: boolean;
+    stdoutSha256: string;
+    stderrSha256: string;
+  } | null;
+  issues: string[];
+  hostVerdict: 'unchanged';
+};
 export type HostApiContract = {
   app: {
     version: () => string;
     openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
     backupRestorePreview: (payload: BackupRestorePayload) => BackupRestorePreviewResult;
     backupRestoreApply: (payload: BackupRestorePayload) => BackupRestoreResult;
+  };
+  versegit: {
+    status: (payload: VerseGitDiagnosticBinding) => VerseGitDiagnosticStatus;
   };
   openclaw: {
     status: () => OpenClawStatusResult;
@@ -5720,12 +5915,18 @@ export type HostApiContract = {
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
     archive: (payload: SessionArchivePayload) => HostSuccess;
     restore: (payload: SessionRestorePayload) => HostSuccess;
+    effectivePolicy: (payload: SessionEffectivePolicyPayload) => SessionEffectivePolicyResult;
+    coordinatorBinding: (payload?: SessionCoordinatorBindingReadPayload) => SessionCoordinatorBindingResult;
+    bindCoordinator: (payload: SessionBindCoordinatorPayload) => SessionBindCoordinatorResult;
+    delegateCoordinator: (payload: SessionDelegateCoordinatorPayload) => SessionDelegateCoordinatorResult;
+    delegationAdmissions: (payload?: SessionDelegationAdmissionsPayload) => SessionDelegationAdmissionsResult;
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
     emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;
   };
   chat: {
     sendWithMedia: (payload: ChatSendWithMediaPayload) => ChatSendWithMediaResult;
+    continuityPreview: (payload: ChatContinuityPreviewPayload) => ChatContinuityPreviewResult;
   };
   workProviders: {
     status: () => WorkProviderStatusSnapshot;
@@ -5922,6 +6123,11 @@ export type HostApiContract = {
     injectionReceipts: (payload: MemoryInjectionReceiptsPayload) => MemoryInjectionReceiptsResult;
     proposeFactsList: (payload: MemoryProposeFactsListPayload) => MemoryProposeFactsListResult;
     proposeFactsConfirm: (payload: MemoryProposeFactsConfirmPayload) => MemoryProposeFactsConfirmResult;
+    surface: (payload?: MemorySurfacePayload) => MemorySurfaceResult;
+    approveCandidate: (payload: MemoryApproveCandidatePayload) => MemoryApproveCandidateResult;
+    delete: (payload: MemoryDeletePayload) => MemoryDeleteResult;
+    remember: (payload: MemoryRememberPayload) => MemoryRememberResult;
+    export: (payload?: MemoryExportPayload) => MemoryExportResult;
   };
 };
 

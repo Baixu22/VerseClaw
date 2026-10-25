@@ -1,0 +1,64 @@
+{
+  "schema": "clawx.versegit.d1-feedback-delivery/v1",
+  "generated_at": "2026-10-22T19:40:35.944Z",
+  "task": "TF-0530",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "90ac51a93e020c9492bb2835c1ae2c2fed1dac31",
+    "tree": "3b8dfb6b850b2d313af7f2f97aaf8bf0028225cf",
+    "dirty": false
+  },
+  "evidence": {
+    "evidence_id": "vgf_c229d459ad9cd2f4a8fe991f",
+    "coverage": "direct",
+    "basis_digest": "sha256:8f26a8d9ee2f6ca035276656ff858c1409c635f48b17503098be62324ba51792",
+    "candidate_id": null
+  },
+  "tool_result": {
+    "original_content_blocks": 1,
+    "enriched_content_blocks": 2,
+    "original_content_preserved": true,
+    "original_details_preserved": true,
+    "is_error": false
+  },
+  "levels": {
+    "produced": 1,
+    "host_delivered": 1,
+    "transcript_confirmed": 1,
+    "distinct_evidence_ids": 1
+  },
+  "bridge_events": [
+    {
+      "kind": "feedback_produced",
+      "at": "2026-10-22T19:39:33.632Z",
+      "evidenceId": "vgf_c229d459ad9cd2f4a8fe991f",
+      "level": "produced"
+    },
+    {
+      "kind": "feedback_delivered",
+      "at": "2026-10-22T19:39:33.638Z",
+      "evidenceId": "vgf_c229d459ad9cd2f4a8fe991f",
+      "level": "host-delivered"
+    },
+    {
+      "kind": "feedback_confirmed",
+      "at": "2026-10-22T19:39:33.647Z",
+      "evidenceId": "vgf_c229d459ad9cd2f4a8fe991f",
+      "level": "transcript-confirmed"
+    }
+  ],
+  "negatives": {
+    "duplicate_observation": "duplicate",
+    "duplicate_feedback_emitted": false,
+    "duplicate_delivery_rejected": true,
+    "wrong_owner_rejected": true,
+    "old_epoch_rejected": true,
+    "revoked_after_end_rejected": true,
+    "timeout_after_ttl_rejected": true,
+    "unavailable_original_preserved": true
+  },
+  "passed": true,
+  "digest": "15b38228361b5d26f534f5ae368ab4f491d8d4d8bffbf16c912665f6d3da436f"
+}

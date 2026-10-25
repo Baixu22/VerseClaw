@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => {
   const service = {
-    open: vi.fn(async () => ({ session: { id: 's1' }, textSample: 'ok' })),
+    open: vi.fn(async (_payload?: unknown) => ({ session: { id: 's1' }, textSample: 'ok' })),
     list: vi.fn(() => []),
     close: vi.fn(),
   };
@@ -19,7 +19,9 @@ const mocks = vi.hoisted(() => {
   const module = {
     AgentBrowserService: class {
       constructor(options: unknown) { constructService(options); }
-      open = service.open; list = service.list; close = service.close;
+      open(payload: unknown) { return service.open(payload); }
+      list() { return service.list(); }
+      close(sessionId: string) { return service.close(sessionId); }
     },
     createDefaultAgentBrowserCliRunner: vi.fn(() => runner),
     AgentBrowserFacade: class { downloadFile = facade.downloadFile; getDriverProfile = () => ({ kind: 'injected', methods: null }); },
@@ -38,7 +40,7 @@ const mocks = vi.hoisted(() => {
     runner,
     constructService,
     facade,
-    getProfile: vi.fn(async () => ({ id: 'a', rootPath: 'D:/workspace-a', permissionMode: 'readOnly' })),
+    getProfile: vi.fn(async (): Promise<{ id: string; rootPath: string; permissionMode: string } | null> => ({ id: 'a', rootPath: 'D:/workspace-a', permissionMode: 'readOnly' })),
     recordPermission: vi.fn(async (event: unknown) => event),
     sensitive: vi.fn(async (channel: string) => ({ allowed: true, code: 'allow', reason: 'ok', channel })),
   };
@@ -195,4 +197,39 @@ describe('VerseBrowser host adapter ownership', () => {
       setSandboxHighRiskPolicyLoader(null);
     }
   });
-});
+
+  it('resolves the browser resource scope from the active workspace, never from sessionKey', async () => {
+    setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
+    try {
+      const service = getDefaultAgentBrowserService();
+      await service.open({ url: 'https://example.com/a', sessionKey: 'agent:main:one' });
+      expect(mocks.service.open).toHaveBeenLastCalledWith(expect.objectContaining({
+        workspaceId: 'a',
+        sessionKey: 'agent:main:one',
+      }));
+      service.close('s1');
+
+      mocks.getProfile.mockResolvedValueOnce(null);
+      await service.open({ url: 'https://example.com/global', sessionKey: 'agent:main:two' });
+      const globalCall = mocks.service.open.mock.calls.at(-1) as unknown[] | undefined;
+      const globalPayload = globalCall?.[0] as { workspaceId?: string; sessionKey?: string } | undefined;
+      expect(globalPayload?.workspaceId).toBeUndefined();
+      expect(globalPayload?.sessionKey).toBe('agent:main:two');
+      service.close('s1');
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });
+
+  it('rejects a caller-selected workspace that differs from the active workspace', async () => {
+    setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
+    try {
+      const service = getDefaultAgentBrowserService();
+      await expect(service.open({ url: 'https://example.com', workspaceId: 'b' })).rejects.toMatchObject({
+        code: 'E_WORKSPACE_MISMATCH',
+      });
+      expect(mocks.service.open).not.toHaveBeenCalled();
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });});

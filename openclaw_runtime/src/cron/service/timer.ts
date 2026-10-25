@@ -1445,6 +1445,26 @@ export async function executeJobCore(
   if (abortSignal?.aborted) {
     return resolveAbortError();
   }
+  // E1: a follow-up bound to a long-session coordinator must still be current.
+  // The verdict comes from the injected evaluator; a bound job without one
+  // fails closed so a rotated or archived coordinator can never be resumed by
+  // a stale schedule.
+  if (job.coordinator) {
+    const verdict = state.deps.evaluateCoordinatorScope
+      ? await state.deps.evaluateCoordinatorScope({ job })
+      : { allowed: false, state: "unverifiable", reason: "no coordinator scope evaluator is configured" };
+    if (!verdict.allowed) {
+      const error = `coordinator-scope-${verdict.state}: ${verdict.reason}`;
+      return {
+        status: "skipped",
+        error,
+        diagnostics: createCronRunDiagnosticsFromError("cron-preflight", error, {
+          severity: "warn",
+          nowMs: state.deps.nowMs,
+        }),
+      };
+    }
+  }
   // A timer continuation has no session semantics — it only records that a
   // deadline passed — so it always takes the detached path regardless of
   // sessionTarget, rather than being routed into a main-session enqueue.

@@ -156,6 +156,17 @@ export type CronServiceDeps = {
     missionId: string;
     abortSignal?: AbortSignal;
   }) => Promise<CronRunOutcome>;
+  /**
+   * E1: pre-flight fence for jobs bound to a long-session coordinator. The
+   * runtime injects this so the Cron scheduler stays free of workspace and
+   * session-generation internals; an absent evaluator fails closed for a
+   * coordinator-bound job.
+   */
+  evaluateCoordinatorScope?: (params: { job: CronJob }) => Promise<{
+    allowed: boolean;
+    state: string;
+    reason: string;
+  }>;
   cleanupTimedOutAgentRun?: (params: {
     job: CronJob;
     timeoutMs: number;

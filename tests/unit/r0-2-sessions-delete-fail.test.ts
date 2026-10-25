@@ -81,6 +81,7 @@ async function makeConfigDir(): Promise<string> {
   const sessionsDir = join(root, 'agents', 'main', 'sessions');
   await mkdir(sessionsDir, { recursive: true });
   state.configDir = root;
+  process.env.OPENCLAW_STATE_DIR = root;
   process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR = join(root, 'context-archive');
   return sessionsDir;
 }
@@ -94,6 +95,7 @@ beforeEach(() => {
 afterEach(async () => {
   state.configDir = null;
   delete process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR;
+  delete process.env.OPENCLAW_STATE_DIR;
   await Promise.all(tempRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
@@ -146,6 +148,20 @@ describe('R0-2 sessions.delete partial failures', () => {
     expect(result.success).toBe(true);
     const indexAfter = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8')) as Record<string, unknown>;
     expect(indexAfter['agent:main:abc123']).toBeUndefined();
+  });
+
+  it('succeeds without a legacy sessions.json instead of failing the committed delete', async () => {
+    // The runtime keeps sessions in its own store, so this agent has no mirror
+    // index at all. The Gateway delete is authoritative: the local sweep must
+    // report success and must not fabricate an empty sessions.json.
+    await makeConfigDir();
+    const sessionsDir = join(state.configDir as string, 'agents', 'main', 'sessions');
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const result = await createSessionsApi().delete({ sessionKey: 'agent:main:abc123' } as never);
+
+    expect(result.success).toBe(true);
+    await expect(access(join(sessionsDir, 'sessions.json'))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('removes runtime .jsonl.deleted.<timestamp> transcripts during hard delete', async () => {

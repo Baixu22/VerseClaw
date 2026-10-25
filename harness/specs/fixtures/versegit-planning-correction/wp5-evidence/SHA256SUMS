@@ -1,0 +1,6 @@
+13aeb09c889177d732faad7a842f2067c95d0dd27c38020110fe0ed8598aa6bf  harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json
+df1210f0b35d1e35bfb7805cda6919b4af03f3593951abe90c4e8ade93b5c69d  harness/specs/fixtures/versegit-planning-correction/wp5-soak-fixture.json
+9910524f56de7832f72006285d93fefa92fb46e2549f8e8414c33e75da6476d2  harness/specs/tasks/versegit-wp5-replay-soak.md
+2f9c568bd6181d542e7ca9f41fe98d9cc16197e69a75b4b6c0eb8487f5ae9ee1  scripts/versegit-wp5-soak.mjs
+9f94d0e764c6a1d9ab596dbb61271693cfff0a00d25dd34fed30b7231b71f8f4  scripts/verify-versegit-wp5.mjs
+132cd7c0c18ce3deb7f4a00d3f4c998957cff7ca00cad50cb4b14c030acb82d6  tests/unit/versegit-wp5-soak.test.ts

@@ -26,7 +26,7 @@ export function KnowledgeReviewQueue({ items, filter, query, onFilterChange, onQ
         <div className="flex flex-wrap gap-1" role="group" aria-label={t('reviewQueue.filterLabel')}>
           {(['all', 'inbox', 'draft', 'proposal'] as const).map((kind) => (
             <button key={kind} type="button" aria-pressed={filter === kind}
-              className={cn('h-8 rounded-lg px-2.5 text-xs text-muted-foreground transition-colors hover:bg-foreground/[0.04]', filter === kind && 'bg-foreground/[0.06] text-foreground')}
+              className={cn('h-8 rounded-lg px-2.5 text-xs text-muted-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/5', filter === kind && 'bg-black/5 dark:bg-white/10 text-foreground')}
               data-testid={`knowledge-review-filter-${kind}`} onClick={() => onFilterChange(kind)}>
               {t(`reviewQueue.filters.${kind}`)}
               <span className="ml-1.5 tabular-nums">{kind === 'all' ? items.length : items.filter((item) => item.kind === kind).length}</span>
@@ -43,15 +43,15 @@ export function KnowledgeReviewQueue({ items, filter, query, onFilterChange, onQ
           const Icon = ICONS[item.kind];
           return (
             <button key={item.key} type="button" onClick={() => onSelect(item)}
-              className="knowledge-press flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left hover:bg-foreground/[0.04]"
+              className="knowledge-press flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left hover:bg-black/5 dark:hover:bg-white/5"
               data-testid="knowledge-review-item" data-item-key={item.key}>
               <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium">{item.title}</span>
                 <span className="mt-1 line-clamp-2 block text-xs text-muted-foreground">{item.summary}</span>
-                <span className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                <span className="mt-2 flex flex-wrap items-center gap-2 text-tiny text-muted-foreground">
                   <span>{t(`reviewQueue.filters.${item.kind}`)}</span>
-                  <Badge variant="outline" className="rounded-full border-border/60 bg-transparent text-[10px] font-normal text-muted-foreground">{t(`reviewQueue.status.${item.status}`)}</Badge>
+                  <Badge variant="outline" className="rounded-full border-border/60 bg-transparent text-2xs font-normal text-muted-foreground">{t(`reviewQueue.status.${item.status}`)}</Badge>
                 </span>
               </span>
               <ArrowRight className="mt-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />

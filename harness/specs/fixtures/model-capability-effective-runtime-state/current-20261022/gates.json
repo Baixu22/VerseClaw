@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "ModelCapabilityEffectiveRuntimeGates/v1",
+  "taskId": "TF-0512",
+  "generatedAt": "2026-10-22T11:01:24Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "requiredGates": [
+    {
+      "id": "focused-tests",
+      "command": "pnpm exec vitest run tests/unit/runtime-effective-capability.test.ts tests/unit/model-capability-profile.test.ts --reporter=verbose",
+      "exitCode": 0,
+      "durationMs": 25470,
+      "evidence": "01-focused-tests.txt",
+      "result": "25 tests passed"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 40578,
+      "evidence": "02-typecheck.txt",
+      "result": "node, web and test type projects passed"
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "durationMs": 955,
+      "evidence": "03-contract.txt",
+      "result": "Host contract passed"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 961,
+      "evidence": "04-comms-replay.txt",
+      "result": "Replay metrics written"
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 1149,
+      "evidence": "05-comms-compare.txt",
+      "result": "PASS with no regressions"
+    },
+    {
+      "id": "targeted-eslint",
+      "command": "pnpm exec eslint <TF-0512 changed TypeScript files>",
+      "exitCode": 0,
+      "durationMs": 7983,
+      "evidence": "06-eslint.txt",
+      "result": "No diagnostics"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/model-capability-effective-runtime-state.md --since 857baf3ece4cd223c4ca8a13816b486cb8e575eb",
+      "exitCode": 0,
+      "durationMs": 2249,
+      "evidence": "07-harness-validate.txt",
+      "result": "Spec valid with real changed-path ownership"
+    },
+    {
+      "id": "repo-evidence-check",
+      "command": "pnpm repo:evidence:check",
+      "exitCode": 0,
+      "durationMs": 786,
+      "evidence": "08-repo-evidence-check.txt",
+      "result": "PASS: 171 referenced paths"
+    }
+  ],
+  "supplementalGates": [
+    {
+      "id": "full-repository-tests",
+      "command": "pnpm test",
+      "exitCode": 1,
+      "durationMs": 864785,
+      "evidence": "00-full-tests.txt",
+      "result": "8,700 passed, 13 failed in 7 unrelated baseline/completeness tests",
+      "claimedAsTaskPass": false
+    }
+  ]
+}

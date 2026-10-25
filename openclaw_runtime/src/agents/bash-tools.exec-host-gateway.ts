@@ -30,6 +30,7 @@ import {
 import type { SafeBinProfile } from "../infra/exec-safe-bin-policy.js";
 import { INTERNAL_MESSAGE_CHANNEL, normalizeMessageChannel } from "../utils/message-channel.js";
 import { markBackgrounded, tail } from "./bash-process-registry.js";
+import { createExecPermissionEffect } from "./bash-tools.exec-permission.js";
 import {
   buildExecApprovalRequesterContext,
   buildExecApprovalTurnSourceContext,
@@ -764,6 +765,17 @@ export async function processGatewayAllowlist(
 
       recordMatchedAllowlistUse(resolvedPath ?? undefined);
 
+      const permissionEffect = createExecPermissionEffect({
+        ownerDecisionRef: approvalId,
+        command: params.command,
+        ...(enforcedCommand ? { execCommand: enforcedCommand } : {}),
+        host: params.executionHost ?? "gateway",
+        workdir: params.workdir,
+        ...(params.agentId ? { agentId: params.agentId } : {}),
+        ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+        ...(params.sessionId ? { expectedSessionId: params.sessionId } : {}),
+        ...(params.scopeKey ? { scopeKey: params.scopeKey } : {}),
+      });
       let run: Awaited<ReturnType<typeof runExecProcess>> | null;
       try {
         run = await runExecProcess({
@@ -772,6 +784,7 @@ export async function processGatewayAllowlist(
           executionPlan,
           execHost: params.executionHost,
           hostPolicyApproved: params.executionHost === "verseshell",
+          permissionEffect,
           config: params.config,
           workdir: params.workdir,
           env: params.env,

@@ -1,0 +1,226 @@
+{
+  "schema": "clawx.long-session.c1-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-c1",
+  "program": "long-session-development-20261022",
+  "task": "TF-0552",
+  "title": "C1 stable coordinator binding and long-session scope",
+  "verdict": "pass",
+  "featureClaim": "explicit, revisioned long-session coordinator binding over existing Workspace, Session and Task Ledger owners",
+  "candidate": {
+    "commit": "09dcda17683369e12b60609ec055156052082260",
+    "tree": "876c9f4e0e98efc86ca8fe82e1d88f57c3b76dfc",
+    "branch": "codex/long-session-implementation-20261022",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "rawRun": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\gate-run.json"
+  },
+  "commands": [
+    {
+      "id": "unit-identity",
+      "command": "pnpm exec vitest run tests/unit/workspace-session.test.ts tests/unit/project-projection.test.ts tests/unit/identity-scope.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 4279,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\unit-identity.log",
+      "rawLogSha256": "ba760419dec6c0cc19af519c245ddde47e3fdc44f7b4df2c07b5d2689a0f2051",
+      "files": 3,
+      "tests": 40,
+      "passed": 40,
+      "failed": 0
+    },
+    {
+      "id": "unit-coordinator",
+      "command": "pnpm exec vitest run tests/unit/long-session-coordinator-binding.test.ts tests/unit/workspaces-api.test.ts tests/unit/workspaces-store.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "durationMs": 4964,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\unit-coordinator.log",
+      "rawLogSha256": "2d14e33763c3ade3bae7259992a506b007b20a2ca42bcaf779972276cdd7a73e",
+      "files": 3,
+      "tests": 28,
+      "passed": 28,
+      "failed": 0
+    },
+    {
+      "id": "build-vite",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "durationMs": 53949,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\build-vite.log",
+      "rawLogSha256": "0f7f7758719bbef3580de91949f6dd8c06620a39ef30265aff23528a6f590a60",
+      "success": true
+    },
+    {
+      "id": "electron-e2e",
+      "command": "pnpm run test:e2e:run tests/e2e/long-session-coordinator-binding.spec.ts",
+      "exitCode": 0,
+      "durationMs": 37595,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\electron-e2e.log",
+      "rawLogSha256": "14aba2555618f54dd5ed122626ad79baf254081185395f95970a576316ed0ddf",
+      "files": 1,
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "electronLaunches": 2,
+      "gatewayLaunches": 2,
+      "appRestart": true,
+      "activeSessionSwitch": true,
+      "resetInvalidation": true,
+      "archiveInvalidation": true
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 23829,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\typecheck.log",
+      "rawLogSha256": "e624bf56d699ba5933461c737736fca58901fc5910f1ab3ad466533d242e72c1",
+      "projects": 3,
+      "errors": 0
+    },
+    {
+      "id": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "durationMs": 999,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\contract-check.log",
+      "rawLogSha256": "72bd3657c7bc5e83e34d6af24a18c5e3ba0c109584df333e5fc9631930a26329",
+      "result": "pass"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 804,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\comms-replay.log",
+      "rawLogSha256": "fbc28bc00d7affce5550c2162eec1dd0ed5652d8dbfec2d78ea6285e73ee35fd",
+      "success": true
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 696,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\comms-compare.log",
+      "rawLogSha256": "5b5e27fb12b5801a70abb081a29a989c297fa1b7db2d18bc312bb10d37602e1f",
+      "result": "PASS",
+      "comparisonRows": 44,
+      "passedRows": 44,
+      "failedRows": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/long-session-coordinator-binding.md",
+      "exitCode": 0,
+      "durationMs": 1414,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\harness-validate.log",
+      "rawLogSha256": "9eaf7e79b23a7d9cac9e0d5e880b6ede8d1888b3cb81c239ed9d8be1ad75473e",
+      "result": "valid"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 67,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\git-diff-check.log",
+      "rawLogSha256": "f01a374e9c81e3db89b3a42940c4d6a5447684986a1296e42bf13f196eed6295",
+      "whitespaceErrors": 0
+    },
+    {
+      "id": "changed-eslint",
+      "command": "pnpm exec eslint shared/types/workspace.ts shared/host-api/contract.ts src/lib/host-api.ts src/lib/workspace-session.ts src/stores/workspaces.ts electron/services/workspaces-api.ts electron/services/sessions-api.ts tests/unit/workspace-session.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/e2e/long-session-coordinator-binding.spec.ts",
+      "exitCode": 0,
+      "durationMs": 5393,
+      "rawLog": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\changed-eslint.log",
+      "rawLogSha256": "f01a374e9c81e3db89b3a42940c4d6a5447684986a1296e42bf13f196eed6295",
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "counts": {
+    "unitFiles": 6,
+    "unitTests": 68,
+    "unitPassed": 68,
+    "e2eFiles": 1,
+    "e2eTests": 1,
+    "e2ePassed": 1,
+    "totalTests": 69,
+    "commands": 11,
+    "failedCommands": 0,
+    "builds": 1,
+    "typecheckProjects": 3,
+    "typecheckErrors": 0,
+    "commsRows": 44,
+    "commsPassed": 44
+  },
+  "acceptance": [
+    {
+      "criterion": "A real Workspace, Assistant and SessionKey are bound to existing Task Ledger refs by the existing Workspace owner.",
+      "result": "pass",
+      "evidence": [
+        "coordinator-binding.json",
+        "tests/unit/long-session-coordinator-binding.test.ts"
+      ]
+    },
+    {
+      "criterion": "The binding can recover after UI close/app restart/handoff-like active session switch and is invalidated by reset/archive/delete.",
+      "result": "pass",
+      "evidence": [
+        "tests/e2e/long-session-coordinator-binding.spec.ts",
+        "scope-and-recovery-matrix.json"
+      ]
+    },
+    {
+      "criterion": "Ordinary Chat does not enter long-session coordination automatically; visible entry remains C4.",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/workspace-session.test.ts",
+        "src/lib/workspace-session.ts"
+      ]
+    },
+    {
+      "criterion": "Cross-workspace, missing-owner, revision-conflict and deleted-session cases fail closed; Task Ledger remains the only completion authority.",
+      "result": "pass",
+      "evidence": [
+        "tests/unit/long-session-coordinator-binding.test.ts",
+        "electron/services/sessions-api.ts"
+      ]
+    }
+  ],
+  "sourceInputs": [
+    "shared/types/workspace.ts",
+    "shared/host-api/contract.ts",
+    "src/lib/host-api.ts",
+    "src/lib/workspace-session.ts",
+    "src/stores/workspaces.ts",
+    "electron/services/workspaces-api.ts",
+    "electron/services/sessions-api.ts",
+    "tests/unit/workspace-session.test.ts",
+    "tests/unit/long-session-coordinator-binding.test.ts",
+    "tests/e2e/long-session-coordinator-binding.spec.ts"
+  ],
+  "unmeasured": [
+    "provider-backed long turn continuity is outside C1",
+    "non-Windows runtime behavior",
+    "independent multi-repository Project lifecycle"
+  ],
+  "limitations": [
+    "C1 persists metadata only; the user-visible long-session coordination entry is intentionally delivered by C4.",
+    "A display-label rename does not alter sessionKey or physical sessionId, so the binding identity is label-independent; no separate label-only UI assertion is claimed.",
+    "All evidence is agent-driven; no real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "electronLaunches": 2,
+    "electronProcessesClosed": true,
+    "temporaryRoot": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260",
+    "recoveryRequired": false,
+    "notes": "The real E2E completed archive before closing; both Electron and Gateway descendants were closed by the fixture."
+  },
+  "rawRun": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260\\gate-run.json",
+  "credentialScan": {
+    "command": "rg high-signal credential patterns over C1 JSON artifacts",
+    "matches": 0,
+    "result": "pass"
+  }
+}

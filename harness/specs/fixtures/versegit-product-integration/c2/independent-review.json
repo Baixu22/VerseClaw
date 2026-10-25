@@ -1,0 +1,40 @@
+{
+  "schema": "clawx.versegit.c2-independent-review/v1",
+  "generated_at": "2026-10-22T19:05:16.968Z",
+  "task": "TF-0529",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewer_role": "independent-c2-verifier-process",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "observation-links",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "basis-race-cases",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "coverage",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "evidence_digests": {
+    "harness/specs/fixtures/versegit-product-integration/c2/observation-links.json": "a94d3e2560cdc2cbe57b004540b088c634573c0175fe199a9328871a60139ca9",
+    "harness/specs/fixtures/versegit-product-integration/c2/basis-race-cases.json": "f5cd19241f7762d1ae1b2cf47cac9fc1ab6f0ca34610f1164ac7c6a04d4fc725",
+    "harness/specs/fixtures/versegit-product-integration/c2/coverage.json": "fab394af8666d6633ef64c305088c3d5c2824a5c9053d13d55763f9a67529b0c"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_off": true,
+    "m4_authorized": false,
+    "host_authority": "unchanged",
+    "plaintext_file_contents_retained": false
+  },
+  "passed": true,
+  "digest": "b863f652d47d49a99dfcce397021813e3299e6910a558eb3f7060908d2bc3f0a"
+}

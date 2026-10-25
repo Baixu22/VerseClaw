@@ -43,11 +43,14 @@ Verse Claw は OpenClaw を基盤とする Electron デスクトップアプリ�
 | モデルとプロバイダー | アカウント、既定モデル、フォールバックの設定、トークン使用履歴の確認 | 設定 → モデルとプロバイダー |
 | Agent とタスク | Agent・役割の設定とサブ Agent の活動確認、Task Ledger への記録、明示的な Task Loop・ClawGraph の実行 | 設定 → Agents、サイドバーのその他メニュー |
 | 知識 | 資料の検索、出典と参照の管理、受信項目・下書き・提案のレビュー | サイドバー → 知識 |
+| メモリ | 承認済みメモリと永続候補の確認、提案の承認、削除/tombstone、ハッシュ付き JSON エクスポート、「これを覚える」による通常提案 | サイドバー → メモリ |
 | 受信トレイ | 権限要求、リモートタスク、ブラウザータスクの要対応項目と履歴の確認 | サイドバー → 受信トレイ |
 | スケジュールとチャンネル | 定期タスクと実行履歴の管理、チャンネルアカウント・接続状態・Agent 割り当ての設定 | サイドバーのスケジュール、設定 → Channels |
 | Skills と MCP | スキルの確認・有効化、スキルパック、マーケットからのインストール、MCP サーバー設定 | 設定 → Skills |
 | 構造化ドキュメント | VerseConf プラグインによる調査表・スライド構成・リビジョン・エクスポートの管理 | プラグイン有効化後の Agent ツールと成果物パネル |
 | 診断と復元 | セッション活動、プロセス、Trace、ランタイム状態、ストレージ使用量、復元操作の確認 | ワークスペースパネル、可観測性、設定 |
+
+明示的にバインドした長期セッションでは、Chat のアクティビティレールに安定したコーディネーター会話、既存の Task Ledger 参照、終端済みの完了バッチを表示し、worker の記録とタスクへ直接移動できます。バインド済みターンでは、受け入れ済み Task Ledger Working Context、CompressionArtifact メタデータ、現在モデル可視の accepted memory refs、typed knowledge refs から有界な `ContinuityContextPack/v1` を読み取ります。pending、candidate、期限切れ、取消、supersede、scope 外、未検証のモデル叙述は除外し、生の履歴は owner の on-demand refs に留めます。これらは既存 owner の投影であり、第二のタスク一覧、メモリストア、注入権限を作成しません。
 
 UI は日本語、英語、中国語、ロシア語に対応し、ライト・ダーク・システムテーマを選べます。一般設定の Basic / Advanced は診断情報の表示量を制御します。開発者モードを解除すると画像生成と Dreams の画面にもアクセスできます。
 
@@ -79,6 +82,8 @@ Wiki 操作にはロード済みの `memory-wiki` 拡張が必要です。未設
 
 知識の読み取り範囲と書き込み権限は別々に管理します。Memory、Wiki、参照資料を選択しても、自動書き戻しは許可されません。レビュー画面で出典、下書き、提案、適用結果の関係を追跡できます。
 
+ナレッジ画面の三角形アシスタントはクリックで小さな会話ウィンドウを開き、最小化するとアシスタントへ戻ります。質問候補と下書き操作は必要なときに開けます。ドラッグは右下の範囲内に制限され、範囲外で離すと戻ります。Ginger の動きは実際の検索・読取・下書き・レビューに連動し、回答はメインチャットの Markdown レンダラーを共有します。[実装説明](docs/dev/knowledge-bot.md)。
+
 ### 対話からタスク実行へ進む
 
 通常の Chat は即時の共同作業に使います。Task Ledger は目標、タスクノード、チェックポイント、証拠の事実を保存します。Task Loop は明示的に開始する制約付き実行です。Chat がアップグレードを提案しても、自動的に Task Loop へ移行することはありません。
@@ -92,6 +97,10 @@ ClawGraph はワークスペースの YAML ワークフローを読み込み、�
 任意の `verseconf-artifacts` プラグインには、作成、検査、改訂、レコード並べ替え、履歴復元、エクスポートのツールがあります。調査表は CSV / XLSX、スライド構成は PPTX、内容は Markdown に出力できます。成果物パネルでは管理対象の版、履歴、出力を確認できます。
 
 プラグインは**既定で無効**で、明示的な設定が必要です。PPTX は現在 3 枚のテンプレートを使用し、3 レコードを超える構成はエクスポートを拒否します。全内容を残すには Markdown を使用してください。任意のスライド数や長文のレイアウトは対象外です。設定・配布・検証の詳細は [VerseConf 統合ノート](docs/dev/verseconf-clawx-implementation-20261001.md)にあります。
+
+### VerseGit の境界付きコーディングループ
+
+VerseGit は、1 本の境界付き Windows x64（`win32-x64`）/M1 コーディングループに限定した、内部・明示オプトインのリポジトリ証拠 sidecar です。**既定で無効**かつ**一般提供は未承認**であり、`liveReady=false`、`productApproved=false`、M4 の landing/admission 権限は未承認です。ClawX が executor、タスク/オーケストレーション、承認、write journal、Git apply のホストであり続けます。Worker 候補は組み合わせ・凍結・検証された後にだけホストが書き戻します。境界、証拠、未測定範囲は[検証入口](docs/dev/versegit-validation-layer/README.md)を参照してください。他プラットフォーム、広範なモデル/言語、M4 broker は未測定または対象外です。
 
 ### 実験的機能の範囲
 
@@ -211,7 +220,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 | システムリソース | `ResourceFabric` がワークスペース実行とチャット履歴の受け入れを制御し、`BackgroundWorkGate` がキュー・RSS・CPU の圧力時にバックグラウンド処理を延期します。`ResourceTracker` はセッションに関連するサーバーの検出とクリーンアップを担当します | Main プロセス内の協調的な受け入れ制御であり、OS 全体のスケジューラではありません。フォアグラウンド処理は負荷抑制の対象になりません |
 | コンテキストエンジニアリング | `ContextEngine` が bootstrap、ingest、maintain、after-turn、assemble/compact を提供します。共有の 1 ターン 6,000 文字予算が優先順位を適用し、fail-closed の拡張 kill switch で停止できます。`ContextHealthMonitor` は注入圧力、構造、目標整合、新規性を評価します | コンテキスト拡張は opt-in です。目標となる authority 統合は別の設計作業です |
 | セッションライフサイクル | `SessionManager` は JSONL の append-only ツリーで、leaf 分岐、圧縮、ラベル、コンテキスト再構築を扱います。Host 側はチェックポイント、handoff、アーカイブ/復元、派生データのカスケード削除を追加します | セッションは Run、Task、Workspace、Project のいずれとも同じではありません。ユーザー可視のタスク事実は Task Ledger が所有します |
-| メモリ | Role Memory は Memory Card、Gatekeeper レビュー、競合処理、7 バケット Context Pack を持つ SQLite 制御プレーンです。Runtime Memory は永続化、hydrate、inject を別々に制御します | write/use gate と Runtime Memory 経路は既定で無効です。自動経験書き戻しや、未制御の本番注入を提供するものではありません |
+| メモリ | 単一の `Memory` 画面が既存ストアから承認済み Role Card、Runtime fact、永続候補を投影します。承認・削除・エクスポートは owner ごとに委譲し、「これを覚える」は Gatekeeper 審査を通るため、すべて `MemoryControlPlaneManifest/v1` の境界に従います | 候補はモデル可視コンテキストに入りません。owner の write/use gate と Runtime Memory 注入経路は個別設定のままです。ネイティブ OpenClaw memory はこの画面の管理外であることを明示します |
 | 問題認識 | trace 単位の Issue 検出から、署名・7 日ウィンドウ・ライフサイクル状態・秘匿化証拠を持つクロスラン Problem を集約します | `pnpm observability:problems` は agent のバッチ処理であり、常駐する自動修復サービスではありません |
 | マルチエージェントとロール | `RoleContract`、8 個の組み込みロール、`router`/`lead-workers`/`adversarial-review`、チームテンプレート、タスクグラフ、リソース認識の実行ウェーブ | write-set、ツール競合、同時実行上限で実行を制約します。`bounded_a2a` は無効のままで、Runtime V2 Kernel は計画段階です |
 
@@ -223,7 +232,7 @@ flowchart LR
   HOST --> GATEWAY["Gateway"]
   GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
   GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
-  MEMORY["Role Memory / Runtime Memory"] --> CONTEXT
+  MEMORY["Memory panel<br/>accepted vs candidate"] --> CONTEXT
   SESSION --> CONTEXT
   CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
   ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
@@ -244,10 +253,11 @@ flowchart LR
 | VerseShell | `openclaw_runtime/src/agents/verseshell/`、`verseshell-runtime.ts`、`shared/verseshell/`、`resources/verseshell/`、`resources/verseshell-mcp/` | 統制実行、typed ACI、artifact result、patch preview は個別に既定無効です。外部 MCP アダプターは内部実行経路とは別です |
 | VerseBrowser | `packages/versebrowser/`、`electron/services/agent-browser-*`、`electron/gateway/agent-browser-bridge.ts`、`shared/agent-browser/` | 81 の契約メソッドは 81 の Electron 機能ではありません。ドライバーは 67 を実装し、モデル層は 28 action、現在の Windows デスクトップでは 14 action のみ広告します |
 | 知識 | `src/pages/Knowledge/`、`electron/services/knowledge-api.ts`、`memory-wiki`、`openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first かつロール統治です。Agent は読み取りと提案が可能で、Inbox → Draft → Steward → Proposal → 明示確認後の apply が永続書き込み経路です。SEKB の自動書き戻しは既定無効/影運用です |
+| メモリ | `src/pages/Memory/`、`electron/services/memory-api.ts`、`openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | 単一のレビュー画面。Role Card、Runtime fact、候補は各 owner のストアと変更経路を維持します。承認、tombstone/invalidation、ハッシュ付きエクスポート、明示的記憶提案は第二の Memory authority を作りません |
 
 ツールと知識の詳細フローは[ランタイム制御プレーン](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces)にあります。
 
-`src/App.tsx` は現在、初回 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Inbox、Scheduled、Task Ledger、ClawGraph、Observability、Settings の画面を登録しています。Models、Agents、Channels、Skills は Settings 内のセクションで、Code Review と Browser はワークスペースパネルへの互換入口です。Image Generation と Dreams には開発者モードが必要です。
+`src/App.tsx` は現在、初回 Setup（`/setup/*`）、Chat（`/`）、Knowledge、Memory、Inbox、Scheduled、Task Ledger、ClawGraph、Observability、Settings の画面を登録しています。Models、Agents、Channels、Skills は Settings 内のセクションで、Code Review と Browser はワークスペースパネルへの互換入口です。Image Generation と Dreams には開発者モードが必要です。
 
 現在の pnpm workspace メンバーはルート、`harness/`、`packages/versebrowser/`、`resources/verseshell-mcp/` です。`packages/vtoken/` は Python/uv sidecar、`openclaw_runtime/` は独立した依存ワークスペースを持つ同梱 Git ソースツリーであり、Git submodule でもパッケージ用 npm ランタイムでもありません。
 
@@ -330,6 +340,7 @@ VerseBrowser: インストール・開発・ビルド時に組み込みモジュ
 | 知識、メモリ、コンテキスト | [知識システム](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agent とワークフロー | [オーケストレーション](docs/multi-agent-orchestration/README.md) · [役割パック](docs/role-packs.md) |
 | 構造化ドキュメント | [VerseConf 統合](docs/dev/verseconf-clawx-implementation-20261001.md) |
+| 会話とワークスペースの操作 | [Rare UI 操作の適応](docs/dev/rareui-interactions.md) |
 | 開発規則と継続作業 | [AGENTS.md](AGENTS.md) · [継続開発ガイド](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
 | ランタイムと受け入れ | [ランタイム収束](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 の証拠境界](docs/dev/windows-alpha-closeout-20261008.md) |
 | リソース、保管、ソース復元 | [保管規則](docs/dev/repository-artifact-retention.md) · [VerseShell ソース契約](resources/verseshell/SOURCE.md) |
@@ -340,7 +351,7 @@ VerseBrowser: インストール・開発・ビルド時に組み込みモジュ
 
 変更範囲を明確にし、対応する検証を行い、動作変更時は 4 言語の README を更新してください。API、i18n、仕様、証拠は [AGENTS.md](AGENTS.md) に従います。ソース、再利用可能な fixture、精選した最終証拠を追跡し、非公開タスク履歴と生成した生ログはローカルに保管します。
 
-Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell チームの ClawX を基盤としています。リポジトリは [MIT ライセンス](LICENSE) を採用しています。内蔵コンポーネントには固有のライセンスとソース提供義務があり、[VerseShell の声明](resources/verseshell/SOURCE.md)も参照してください。
+Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell チームの ClawX を基盤としています。リポジトリは [MIT ライセンス](LICENSE) を採用しています。内蔵コンポーネントには固有のライセンスとソース提供義務があり、[VerseShell の声明](resources/verseshell/SOURCE.md)も参照してください。会話とワークスペースのコンパクトな操作は Swami Malode の [Rare UI](https://rareui.com) を基に適応しており、ライセンスと帰属表示を `src/components/rareui` に保持しています。
 
 ### Coding 診断ログ
 

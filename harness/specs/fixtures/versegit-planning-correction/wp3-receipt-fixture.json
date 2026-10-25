@@ -1,0 +1,40 @@
+{
+  "schema": "clawx.versegit.wp3-receipt-fixture/v1",
+  "nodeId": "TF-0469",
+  "role": "WP3",
+  "fixturePurpose": "Structural host-authority fixture for the VerseShell receipt bridge: bind a fixed verification plan to receipt fields and fire every rejection path without claiming a live VerseShell execution.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp3/verdict.json"
+  ],
+  "plan": {
+    "runId": "wp3-run",
+    "candidateId": "wp3-candidate",
+    "checkId": "wp3-check",
+    "owner": "wp3-owner",
+    "epoch": 3,
+    "authorizationId": "wp3-authorization",
+    "commands": [
+      {
+        "argv": ["node", "--version"],
+        "cwd": "repo-relative-cwd",
+        "env": { "CI": "1" },
+        "effect": "read",
+        "retry": "never",
+        "expectedArtifacts": ["stdout", "stderr", "exit"]
+      }
+    ],
+    "requiredScope": "full"
+  },
+  "cases": [
+    { "id": "valid_structural_receipt", "mutation": "none", "expectedReceipt": "accepted", "expectedVerdict": "partial" },
+    { "id": "wrong_candidate", "mutation": "wrong_candidate", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" },
+    { "id": "stale_epoch", "mutation": "stale_epoch", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" },
+    { "id": "plan_digest_mismatch", "mutation": "plan_digest_mismatch", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" },
+    { "id": "argv_digest_mismatch", "mutation": "argv_digest_mismatch", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" },
+    { "id": "missing_artifact", "mutation": "missing_artifact", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" },
+    { "id": "selected_scope_claimed_full", "mutation": "selected_scope_claimed_full", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" },
+    { "id": "caller_self_report", "mutation": "caller_self_report", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" },
+    { "id": "duplicate_receipt", "mutation": "duplicate_receipt", "expectedReceipt": "duplicate", "expectedVerdict": "partial" },
+    { "id": "missing_receipt", "mutation": "missing_receipt", "expectedReceipt": "rejected_by_policy", "expectedVerdict": "partial" }
+  ]
+}

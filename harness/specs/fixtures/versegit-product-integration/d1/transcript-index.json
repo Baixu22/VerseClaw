@@ -1,0 +1,29 @@
+{
+  "schema": "clawx.versegit.d1-transcript-index/v1",
+  "generated_at": "2026-10-22T19:40:35.945Z",
+  "task": "TF-0530",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "90ac51a93e020c9492bb2835c1ae2c2fed1dac31",
+    "tree": "3b8dfb6b850b2d313af7f2f97aaf8bf0028225cf",
+    "dirty": false
+  },
+  "transcript": {
+    "relative_path": "sessions/2026-10-22T19-39-33-640Z_01a16520-3b88-7ff9-9eaf-71ab6db4bef2.jsonl",
+    "entries": 3,
+    "messages": 2,
+    "roles": [
+      "assistant",
+      "toolResult"
+    ],
+    "marker_count": 1,
+    "evidence_ids": [
+      "vgf_c229d459ad9cd2f4a8fe991f"
+    ],
+    "next_call_digest": "sha256:efda83b63b03ef5600495114fdb7d8c91ca5f962240570a48633a5c6810bfb6e"
+  },
+  "passed": true,
+  "digest": "158916e8bfa9b9b51117a4207c23f72b136fe8808adc04f8393635077d52d726"
+}

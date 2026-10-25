@@ -1,0 +1,68 @@
+{
+  "schema": "clawx.versegit.e1-candidate-negative/v1",
+  "generated_at": "2026-10-22T20:15:22.599Z",
+  "task": "TF-0532",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d2de451ba5ff20658b00903b39e5b5e73db67ceb",
+    "tree": "5cc8900c98b1105262f19de9d9378644c12cc965",
+    "dirty": false
+  },
+  "cases": {
+    "merge_conflict": {
+      "status": "conflict",
+      "reason": "merge_conflict",
+      "issues": [
+        "100644 44f2f02329bb2e751817a3e1a49cc72c1c9bd614 1\tsrc/shared.ts",
+        "100644 647828c7082cfc83ef77d77524f0336117aa22a9 2\tsrc/shared.ts",
+        "100644 cb16d94027eeff84aa40d6586bfa4168d919cce4 3\tsrc/shared.ts",
+        "Auto-merging src/shared.ts",
+        "CONFLICT (content): Merge conflict in src/shared.ts"
+      ],
+      "mainSame": true,
+      "refsSame": true
+    },
+    "main_dirty": {
+      "status": "rejected",
+      "reason": "main_worktree_dirty",
+      "issues": [
+        "base worktree contains tracked or untracked user changes"
+      ],
+      "mainSame": true,
+      "refsSame": true,
+      "userFilePreserved": true,
+      "mainStatusStillDirty": true
+    },
+    "untracked": {
+      "status": "rejected",
+      "reason": "untracked",
+      "issues": [
+        "unexpected.txt"
+      ],
+      "mainSame": true,
+      "refsSame": true
+    },
+    "base_drift": {
+      "status": "rejected",
+      "reason": "base_drift",
+      "issues": [
+        "expected 0000000000000000000000000000000000000000, got 6c3306a3489c35b9a49363dc439bc5c1ba1898a1"
+      ],
+      "mainSame": true,
+      "refsSame": true
+    },
+    "write_set_mismatch": {
+      "status": "rejected",
+      "reason": "write_set_mismatch",
+      "issues": [
+        "src/b.ts"
+      ],
+      "mainSame": true,
+      "refsSame": true
+    }
+  },
+  "passed": true,
+  "digest": "af606ca503a2c2bb7aa08d2ba223e1c8a69390c1a7b02b142acf4367399ca92c"
+}

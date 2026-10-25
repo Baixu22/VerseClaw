@@ -59,6 +59,10 @@ After each turn orchestration:
 | Six-channel combined production boundary | `extensions.knowledge.test.ts` |
 | Diagnostics sources+budget | candidate lineage + DCS observability |
 
+## TF-0493 closure
+
+VToken remains a stateless internal packing strategy behind the Context Orchestrator. The host bridge is an internal diagnostics/test boundary only; Settings has no VToken bridge toggle or independent VToken product panel. C6 remains an explicit internal assembler request API for bounded lifecycle/pressure selection rather than a permanent user opt-in. Context/request receipts remain per actual model call and are paired through the existing RC-03 seal owner.
+
 ## Non-goals
 
 - Does not enable default-on memory/VToken (see `docs/dev/default-config-matrix.md`)

@@ -1,0 +1,35 @@
+{
+  "schema": "clawx.versegit.d1-next-call-binding/v1",
+  "generated_at": "2026-10-22T19:40:35.945Z",
+  "task": "TF-0530",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "90ac51a93e020c9492bb2835c1ae2c2fed1dac31",
+    "tree": "3b8dfb6b850b2d313af7f2f97aaf8bf0028225cf",
+    "dirty": false
+  },
+  "evidence_id": "vgf_c229d459ad9cd2f4a8fe991f",
+  "message_count": 2,
+  "messages": [
+    {
+      "role": "assistant",
+      "text": "Starting write",
+      "toolName": null,
+      "isError": false
+    },
+    {
+      "role": "toolResult",
+      "text": "Successfully wrote 91 bytes to src/api.ts\n[VerseGit risk evidence_id=vgf_c229d459ad9cd2f4a8fe991f binding_id=8c0efdca-0541-4d23-a8b4-afb5ca90dad5 child_run_id=run-writer tool_call_id=write-api coverage=direct basis=sha256:8f26a8d9ee2f6ca035276656ff858c1409c635f48b17503098be62324ba51792 candidate=none] api-drift: src/api.ts:1-2 was read before a different session wrote 1-3. Re-read current content before relying on the earlier basis. host_verdict=unchanged.",
+      "toolName": "write",
+      "isError": false
+    }
+  ],
+  "evidence_ids_in_messages": [
+    "vgf_c229d459ad9cd2f4a8fe991f"
+  ],
+  "next_call_digest": "sha256:efda83b63b03ef5600495114fdb7d8c91ca5f962240570a48633a5c6810bfb6e",
+  "passed": true,
+  "digest": "10ffc8eca371ab7fa72a4e289d94725b2b594d140b97bd796d6a6806ae39c4c2"
+}

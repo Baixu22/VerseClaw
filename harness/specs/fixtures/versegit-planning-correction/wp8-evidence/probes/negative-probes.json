@@ -1,0 +1,511 @@
+[
+  {
+    "name": "live-receipt-without-authority",
+    "expected": "rejected",
+    "rejected": true,
+    "reason": "host_evidence_authority_missing"
+  },
+  {
+    "name": "plan-swap-observation-reuse",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "observation planDigest differs from plan",
+      "observation argvDigest differs from plan",
+      "observation executionInputDigest differs from plan",
+      "receipt planDigest differs from observation binding",
+      "receipt argvDigest differs from observation binding",
+      "receipt executionInputDigest differs from observation binding"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "observation planDigest differs from plan",
+        "observation argvDigest differs from plan",
+        "observation executionInputDigest differs from plan",
+        "receipt planDigest differs from observation binding",
+        "receipt argvDigest differs from observation binding",
+        "receipt executionInputDigest differs from observation binding"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "candidate-input-and-id-mismatch",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "candidate input digest differs from plan",
+      "candidate input manifest does not reproduce candidateId"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "candidate input digest differs from plan",
+        "candidate input manifest does not reproduce candidateId"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "cleanup-worktree-contradiction",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "cleanup retained worktrees"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "cleanup retained worktrees"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "cleanup-temp-contradiction",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "cleanup retained the temporary root"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "cleanup retained the temporary root"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "cleanup-deletion-contradiction",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "cleanup retained deletion errors"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "cleanup retained deletion errors"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "owned-pid-replaced",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "owned PID exit-check identities differ from managed PIDs"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "owned PID exit-check identities differ from managed PIDs"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "managed-pid-duplicated",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "owned cleanup PID vector contains duplicates",
+      "owned PID exit-check vector is incomplete",
+      "owned PID exit-check identities differ from managed PIDs",
+      "new-process PID vector differs from managed PIDs"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "owned cleanup PID vector contains duplicates",
+        "owned PID exit-check vector is incomplete",
+        "owned PID exit-check identities differ from managed PIDs",
+        "new-process PID vector differs from managed PIDs"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "owned-pid-duplicated",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "owned PID exit-check vector is incomplete",
+      "owned PID exit-check identities are duplicated",
+      "owned PID exit-check identities differ from managed PIDs"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "owned PID exit-check vector is incomplete",
+        "owned PID exit-check identities are duplicated",
+        "owned PID exit-check identities differ from managed PIDs"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "owned-pid-missing",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "owned PID exit-check vector is incomplete",
+      "owned PID exit-check identities differ from managed PIDs",
+      "owned PID checks do not contain the receipt observation PID"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "owned PID exit-check vector is incomplete",
+        "owned PID exit-check identities differ from managed PIDs",
+        "owned PID checks do not contain the receipt observation PID"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "nested-survivor",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "owned PID checks retained a survivor",
+      "nested cleanup retained process survivors"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "owned PID checks retained a survivor",
+        "nested cleanup retained process survivors"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "coherent-managed-owned-pid-replacement",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "cleanup managed PIDs do not contain the receipt observation PID",
+      "owned PID checks do not contain the receipt observation PID",
+      "during-run PIDs do not contain the receipt observation PID"
+    ],
+    "received": {
+      "status": "rejected_by_policy",
+      "reason": "host_evidence_authority_rejected",
+      "issues": [
+        "cleanup managed PIDs do not contain the receipt observation PID",
+        "owned PID checks do not contain the receipt observation PID",
+        "during-run PIDs do not contain the receipt observation PID"
+      ],
+      "hostVerdict": "unchanged"
+    },
+    "verdict": {
+      "schema": "clawx.versegit.receipt-verdict/v1",
+      "planId": "run-wp7-continuation",
+      "receiptId": null,
+      "status": "partial",
+      "reasons": [
+        "unmeasured"
+      ],
+      "dimensions": {
+        "candidate": "unknown",
+        "execution": "unmeasured",
+        "evidence": "missing",
+        "freshness": "unknown",
+        "risk": "unknown",
+        "trial": "not_run"
+      },
+      "evidenceGrade": "none",
+      "realVerseshellExecution": false,
+      "hostVerdict": "unchanged",
+      "singleGreenLight": false,
+      "issues": [
+        "no host-authoritative receipt"
+      ]
+    }
+  },
+  {
+    "name": "report-argv-vs-host-command",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "provider command argv evidence mismatch: vg-init"
+    ]
+  },
+  {
+    "name": "candidate-report-input-digest",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "candidate input digest is not reproducible",
+      "candidate ID does not match its retained manifest",
+      "candidate report differs from the frozen input manifest",
+      "primary plan input digest mismatch",
+      "primary plan argv must bind candidate input digest",
+      "continuation plan input digest mismatch",
+      "continuation plan argv must bind candidate input digest",
+      "normalized candidate input digest mismatch"
+    ]
+  },
+  {
+    "name": "wrong-receipt-rejection-after-continuation",
+    "expected": "rejected",
+    "rejected": true,
+    "issues": [
+      "failure rejection did not precede continuation"
+    ]
+  }
+]

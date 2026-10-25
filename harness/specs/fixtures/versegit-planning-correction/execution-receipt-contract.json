@@ -1,0 +1,64 @@
+{
+  "schema": "clawx.verseshell.execution-receipt/v2",
+  "trusted_source": "ClawX host process/artifact authority",
+  "authority": {
+    "reader": "ClawX host",
+    "writer": "VerseShell",
+    "caller_self_report_allowed": false
+  },
+  "required_bindings": [
+    "planId",
+    "planDigest",
+    "candidateId",
+    "checkId",
+    "ownerId",
+    "epoch",
+    "authorizationId",
+    "argvDigest",
+    "cwdDigest",
+    "envDigest",
+    "executionInputDigest",
+    "requiredScope",
+    "artifactDigests",
+    "cleanupStatus"
+  ],
+  "rejects": [
+    "wrong_candidate",
+    "stale_epoch",
+    "plan_check_mismatch",
+    "plan_digest_mismatch",
+    "input_digest_drift",
+    "script_drift",
+    "permission_revoked",
+    "duplicate_receipt",
+    "missing_or_forged_artifact",
+    "selected_scope_claimed_as_full"
+  ],
+  "replay_policy": {
+    "effectful": "never_replay_when_delivery_unknown",
+    "read_only_idempotent": "bounded_single_retry",
+    "duplicate_receipt": "reject"
+  },
+  "rules": [
+    "The host reads receipts from its own process and artifact authority; callers cannot self-report receipts.",
+    "A missing receipt is unmeasured, never passed.",
+    "Selected scope never satisfies a full required gate.",
+    "Plan, authorization, actual argv/cwd/env and script inputs must be bound to the same receipt.",
+    "Effectful requests with unknown delivery are never replayed."
+  ],
+  "live_evidence": {
+    "required_bindings": [
+      "observationId",
+      "observationDigest",
+      "planFileDigest",
+      "inputManifestDigest"
+    ],
+    "authority_reader": "host-retained observation/artifact store",
+    "missing_authority_result": "rejected_by_policy",
+    "unverified_live_claim_result": "partial",
+    "rules": [
+      "realVerseshell=true is only valid when the host authority rereads the plan, observation and every bound artifact.",
+      "A caller-authored in-memory receipt without host evidence cannot produce observed or verified."
+    ]
+  }
+}

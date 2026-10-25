@@ -1,0 +1,52 @@
+{
+  "schema": "clawx.versegit.wp8-final-review-fixture/v1",
+  "nodeId": "TF-0514",
+  "role": "WP8",
+  "candidateCommit": "5d313871c0b6f612b000db2041c9670d571c97a4",
+  "candidateTree": "b3856199f4458a8ce23ec22325899a42efe00867",
+  "reviewerModel": "ccs-hub/gpt-6.1-sol",
+  "allowedVerdicts": [
+    "PASS",
+    "PASS_WITH_GAPS",
+    "FAIL"
+  ],
+  "requiredInputs": [
+    "harness/specs/guides/versegit-concurrency/versegit-planning-correction-matrix.md",
+    "harness/specs/guides/versegit-concurrency/implementation-roadmap-and-acceptance.md",
+    "harness/specs/guides/versegit-concurrency/verseshell-and-behavior-observability.md",
+    "harness/specs/rules/versegit-validation-layer-extension-boundary.md",
+    "harness/specs/scenarios/versegit-validation-layer-extension.md",
+    "harness/specs/fixtures/versegit-planning-correction/planning-contract.json",
+    "harness/specs/fixtures/versegit-planning-correction/node-acceptance-matrix.json",
+    "harness/specs/fixtures/versegit-planning-correction/execution-receipt-contract.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/initial-review-fail.md",
+    "harness/specs/tasks/versegit-wp7-host-vertical-slice.md",
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/evidence/manifest.json",
+    "scripts/versegit-wp7-host-vertical.mts",
+    "scripts/verify-versegit-wp7.mts",
+    "electron/services/versegit-receipt-bridge.ts",
+    "electron/services/versegit-receipt-evidence.ts",
+    "electron/services/versegit-module.ts",
+    "electron/services/versegit-observation.ts",
+    "electron/services/versegit-behavior-coverage.ts",
+    "tests/unit/versegit-wp7-host-vertical.test.ts",
+    "tests/unit/versegit-receipt-authority.test.ts",
+    "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/primary-reviewer-provider-failure.md"
+  ],
+  "expectedOutputs": [
+    "artifacts/versegit/wp8/initial-review-fail.md",
+    "artifacts/versegit/wp8/review-response.md",
+    "artifacts/versegit/wp8/review-report.json",
+    "artifacts/versegit/wp8/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/initial-review-fail.md",
+    "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-response.md",
+    "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-report.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/SHA256SUMS",
+    "artifacts/versegit/wp8/primary-reviewer-provider-failure.md",
+    "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/primary-reviewer-provider-failure.md"
+  ],
+  "initialReviewFailure": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/initial-review-fail.md",
+  "allowPrimaryReviewerFallback": true
+}

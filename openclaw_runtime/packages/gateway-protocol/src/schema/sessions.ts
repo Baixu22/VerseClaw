@@ -483,6 +483,55 @@ export const SessionsDeleteParamsSchema = Type.Object(
   { additionalProperties: false },
 );
 
+/** Archives one live session behind the runtime lifecycle fence. */
+export const SessionsArchiveParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    operationId: NonEmptyString,
+    label: Type.Optional(NonEmptyString),
+    originalWorkspaceId: Type.Optional(Type.Union([NonEmptyString, Type.Null()])),
+    originalFolderId: Type.Optional(Type.Union([NonEmptyString, Type.Null()])),
+  },
+  { additionalProperties: false },
+);
+
+/** Restores one archived session with a fresh physical generation. */
+export const SessionsRestoreParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    operationId: NonEmptyString,
+  },
+  { additionalProperties: false },
+);
+
+/** Immutable receipt returned after archive/restore mutation commit. */
+export const SessionsMutationReceiptSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+    operationId: NonEmptyString,
+    journalState: Type.Literal("runtime_committed"),
+  },
+  { additionalProperties: true },
+);
+
+/** Reads the current session-level effective policy projection. */
+export const SessionsEffectivePolicyParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    workspaceId: NonEmptyString,
+    permissionMode: Type.Union([
+      Type.Literal("readOnly"),
+      Type.Literal("acceptEdits"),
+      Type.Literal("plan"),
+      Type.Literal("fullAccess"),
+    ]),
+  },
+  { additionalProperties: false },
+);
+
 /** Requests manual compaction for a session transcript. */
 export const SessionsCompactParamsSchema = Type.Object(
   {

@@ -1,0 +1,89 @@
+{
+  "schema": "clawx.versegit.mc6-decision/v1",
+  "generated_at": "2026-10-21T20:41:53.516Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0479",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/mc6-extraction-decision-fixture.json",
+  "fixtureDigest": "61563bb4b3fa76c746e7bc66a50b374d08203ea8d3a80278a4c8799cf4778a95",
+  "decision": "sidecar-only",
+  "sourceExtractionTriggered": false,
+  "triggerAssessment": [
+    {
+      "id": "sidecar-contract-stable",
+      "status": "observed",
+      "observed": true,
+      "evidence": [
+        {
+          "role": "MC4",
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+          "sha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f"
+        },
+        {
+          "role": "MC5",
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+          "sha256": "687694fbb402e4c73d8827d2e2a1f79b4d37f1d54837334ca9c2cc263eb85cc5"
+        },
+        {
+          "role": "WP5",
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json",
+          "sha256": "13aeb09c889177d732faad7a842f2067c95d0dd27c38020110fe0ed8598aa6bf"
+        }
+      ]
+    },
+    {
+      "id": "public-contract-stable",
+      "status": "observed",
+      "observed": true,
+      "evidence": [
+        {
+          "role": "MC1",
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
+          "sha256": "0d7d316db47f42d164a800982183a4f24e550a28dee1c8d2d03361c1ff9859ae"
+        },
+        {
+          "role": "WP0",
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
+          "sha256": "d4ec1fc974ba36352d9f0c8f31dc61551442ba225420c07abba9bd44aa9bc585"
+        }
+      ]
+    },
+    {
+      "id": "measured-in-process-requirement",
+      "status": "not_observed",
+      "evidence": [],
+      "basis": "No measured in-process performance or security requirement is present in the required evidence set."
+    },
+    {
+      "id": "performance-or-security-blocker",
+      "status": "not_observed",
+      "evidence": [],
+      "basis": "No sidecar performance or security blocker is present in the required evidence set."
+    }
+  ],
+  "conflictsPlanSeam": "unavailable",
+  "migrationFiles": [],
+  "retainedArchitecture": "versioned sidecar consumed through the host-owned anti-corruption adapter",
+  "rollback": {
+    "path": "Disable the concurrency-aux profile, detach the host adapter and retain the standalone provider unchanged; no ClawX source extraction exists to unwind.",
+    "providerStandalonePreserved": true,
+    "userWorkspaceMutation": false
+  },
+  "reopenPolicy": "Reopen only with measured sidecar performance/security evidence and a separate Task Forest ownership decision; stable contracts alone do not authorize extraction.",
+  "authority": {
+    "hostVerdict": "unchanged",
+    "singleGreenLight": false,
+    "defaultOn": false,
+    "m4Authorized": false
+  },
+  "boundaries": {
+    "providerStandalonePreserved": true,
+    "providerSourceCopied": false,
+    "providerHistoryCopied": false,
+    "providerBuildOutputsCopied": false,
+    "userWorkspaceMutated": false
+  },
+  "passed": true,
+  "issues": [],
+  "digest": "04e0a1d023ab73aee14006ef9471c8f12d29112bb61a94f1dfbc245a506483b3"
+}

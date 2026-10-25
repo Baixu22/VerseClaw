@@ -567,7 +567,7 @@ export function FilePreviewBody({
             </TabsContent>
           )}
           {tabs.includes('preview') && (
-            <TabsContent value="preview" className="m-0 h-full overflow-auto">
+            <TabsContent value="preview" className={cn('m-0 h-full', file.contentType === 'document' && !isHtmlPreviewExt(file.ext) ? 'overflow-hidden' : 'overflow-auto')}>
               {file.contentType === 'snapshot' ? (
                 <ImageViewer filePath={file.filePath} fileName={file.fileName} />
               ) : isOfficePreviewExt(file.ext) ? (

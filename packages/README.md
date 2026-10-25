@@ -61,16 +61,19 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
 - Open an owned session, observe it, obtain any required runtime-mode authorization,
   act, re-observe the result, then close that session. Agent-driven fixture approval
   is not real-human evidence and does not authorize other sessions or origins.
-- The desktop host deliberately does NOT inject the bundled `agent-browser` CLI into the
-  session engine: whenever a CLI runner is present the package prefers the
-  `agent-browser-cli` engine for every managed `open()`, and that engine cannot serve
-  `takeSnapshot`/`clickByUid`/`fillByUid`/`pressKey`. Packaged evidence for both the defect
-  and the fix lives in `harness/specs/fixtures/versebrowser-invocation-maturity/n8-20261016/`.
+- Managed-session engine selection is an immutable construction-time policy, not a
+  runtime probe. `browser-window` and `agent-browser-cli` are explicit choices; the
+  desktop host pins `browser-window`, while a service constructed with a CLI runner
+  pins `agent-browser-cli`. If the selected CLI engine is unavailable, `open()` fails
+  with `E_CLI_UNAVAILABLE` instead of silently switching engines.
+  Packaged evidence for the original N8 defect and its final repair remains in
+  `harness/specs/fixtures/versebrowser-invocation-maturity/n8-20261016/`; current
+  candidate evidence is kept under
+  `harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/`.
   The bundled CLI stays wired on the standalone/MCP facade
   (`packages/versebrowser/src/engine/api.ts`); CLI passthrough and external browser
   attachment are that surface's capabilities, and the desktop snapshot reports
-  `cliAvailable: false` rather than advertising them.
-- Standalone VerseBrowser MCP/CLI is a separate driver and workspace lifecycle.
+  `cliAvailable: false` rather than advertising them.- Standalone VerseBrowser MCP/CLI is a separate driver and workspace lifecycle.
   Its tool availability does not prove the desktop or Gateway path works. On Windows,
   use Node >=24.16 / libuv >=1.52.1 for browser probes; the test guard must not be bypassed.
 

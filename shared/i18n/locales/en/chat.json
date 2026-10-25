@@ -50,7 +50,8 @@
       "terminals": "Terminals",
       "continuity": "Continuity",
       "environment": "Environment",
-      "plan": "Development tasks"
+      "plan": "Development tasks",
+      "coordination": "Long session"
     },
     "status": {
       "idle": "Idle",
@@ -162,6 +163,38 @@
     "runningCount": "{{count}} running",
     "processes": {
       "openOutput": "Open the output of {{command}}"
+    },
+    "coordination": {
+      "revision": "Revision {{revision}}",
+      "binding": "Stable main session",
+      "bindingState": {
+        "active": "Active",
+        "invalidated": "Invalidated"
+      },
+      "pause": "Pause current turn",
+      "resume": "Resume current session",
+      "unknownTask": "Task status unavailable",
+      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
+      "batchTitle": "Completion result",
+      "batchCounts": "{{completed}} done · {{failed}} failed · {{cancelled}} cancelled · {{pending}} pending",
+      "invalidatedReason": {
+        "archived": "Archived",
+        "deleted": "Deleted",
+        "reset": "Reset to a new generation",
+        "session_missing": "Session missing",
+        "session_key_changed": "Session key changed"
+      },
+      "state": {
+        "draft": "Draft",
+        "accepted": "Accepted",
+        "running": "Running",
+        "waiting": "Waiting",
+        "failed": "Failed",
+        "cancelled": "Cancelled",
+        "reported": "Reported",
+        "accepted-by-task": "Accepted by task",
+        "unknown": "Unknown"
+      }
     }
   },
   "noLogs": "(No logs available yet)",
@@ -735,6 +768,10 @@
       "install": "Install OfficeCLI",
       "installing": "Installing...",
       "retry": "Retry"
+    },
+    "toc": {
+      "title": "On this page",
+      "progress": "Reading progress {{percent}}%. Open table of contents"
     }
   },
   "workspace": {
@@ -2126,7 +2163,8 @@
     "searchRelativeDays": "{{count}} d ago",
     "searchHintNavigate": "navigate",
     "searchHintSelect": "select",
-    "searchHintClose": "close"
+    "searchHintClose": "close",
+    "longSession": "Long-session main conversation"
   },
   "folders": {
     "create": "New folder",
@@ -2500,5 +2538,53 @@
     "deny": "Deny",
     "busy": "Sending decision…",
     "resolveFailed": "The runtime did not accept this decision."
+  },
+  "completionActivity": {
+    "label": "Completed activity, {{count}} unread",
+    "title": "Recently completed",
+    "empty": "Completed replies and runs will appear here.",
+    "completed": "Run completed"
+  },
+  "sessionPolicy": {
+    "title": "Session policy",
+    "unavailable": "Effective policy is unavailable for the current scope — a successful session status read will refresh it.",
+    "source": "Source: {{source}}",
+    "configured": "Configured",
+    "states": {
+      "configured": "Configured",
+      "effective": "Effective",
+      "unverified": "Unverified",
+      "unsupported": "Unsupported",
+      "ignored": "Ignored",
+      "unknown": "Unknown"
+    },
+    "generation": {
+      "current": "Current",
+      "stale": "Stale",
+      "missing": "Not observed",
+      "mismatch": "Generation mismatch",
+      "unverified": "Unverified"
+    },
+    "backend": "Backend",
+    "binding": "Native binding",
+    "model": "Model & effort",
+    "grant": "Access",
+    "actionCount": "{{allowed}} allowed · {{approval}} approval · {{unknown}} unknown",
+    "limits": "Limits",
+    "queue": "Queue",
+    "resources": "Resources",
+    "schedule": "Schedule",
+    "compaction": "Compaction",
+    "compactionOwner": {
+      "openclaw": "OpenClaw owns compaction",
+      "backend": "Native backend owns compaction",
+      "unknown": "Compaction ownership unknown"
+    },
+    "lifecycle": {
+      "title": "Action boundaries",
+      "abort": "Abort stops only the current run; session stop clears queued work and drains runtime resources.",
+      "retention": "Activity retention affects this UI view only; transcript and resource TTL stay owner-controlled.",
+      "fork": "Fork copies transcript context; worktree isolation remains a separate resource boundary."
+    }
   }
 }

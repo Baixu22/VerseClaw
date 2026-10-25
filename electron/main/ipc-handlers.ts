@@ -45,6 +45,8 @@ import { validateApiKeyWithProvider } from '../services/providers/provider-valid
 import { resourceFabric } from '../services/resource-fabric';
 import { HostApiRegistry, registerHostInvokeHandler } from './ipc/host-invoke';
 import { createAppApi } from '../services/app-api';
+import { createVerseGitApi } from '../services/versegit-api';
+import { ensureVerseGitBindingBridge } from '../gateway/versegit-bridge';
 import { createOpenClawApi } from '../services/openclaw-api';
 import { createShellApi } from '../services/shell-api';
 import { createDialogApi } from '../services/dialog-api';
@@ -179,6 +181,7 @@ function registerTypedHostHandlers(
   mainWindow: BrowserWindow,
   hostApiRegistry: HostApiRegistry,
 ): void {
+  void ensureVerseGitBindingBridge().catch((error) => { logger.warn('VerseGit binding bridge unavailable:', error); });
   // Circular init with terminalManager requires deferred assignment.
   // eslint-disable-next-line prefer-const -- assigned after terminalManager is created
   let webPreviewManager: ReturnType<typeof createWebPreviewManager>;
@@ -202,6 +205,7 @@ function registerTypedHostHandlers(
 
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
+    versegit: createVerseGitApi(),
     openclaw: createOpenClawApi(),
     shell: createShellApi(),
     dialog: createDialogApi(),
@@ -267,7 +271,10 @@ function registerTypedHostHandlers(
       ),
     }).observability,
     resourceTracker: createResourceTrackerApi(),
-    memory: createMemoryApi({ gatewayManager }),
+    memory: createMemoryApi({
+      gatewayManager,
+      exportDir: join(app.getPath('userData'), 'exports', 'memory'),
+    }),
   });
   registerHostInvokeHandler(hostApiRegistry, {
     senderAuth: {

@@ -1,0 +1,58 @@
+{
+  "schema": "clawx.integration-merge-report/v1",
+  "date": "2026-10-22",
+  "driven_by": "agent",
+  "actor": "codex",
+  "sources": {
+    "localVerseGitMain": "6a7fc6c612f9d809d72e16ef2cda1b6e9a27eae8",
+    "remoteMain": "86e01f2626771be4d4fc5980d607100f3eca4df1",
+    "componentGraduation": "1c5a31de1f2110dad7578ffe06890615aa2f8991",
+    "remoteMerge": "77c322adf",
+    "componentMerge": "57ca24be7",
+    "integrationValidation": "5a1d251e9"
+  },
+  "mergedSurfaces": [
+    "VerseGit host-module lifecycle and WP9 evidence",
+    "Rare UI conversation/workspace interaction lane from origin/main",
+    "ComponentGraduationReport/v1, component authority manifest, disposition catalog and ModelCapabilityProfile/v1"
+  ],
+  "validation": {
+    "typecheck": "pass",
+    "buildVite": "pass",
+    "rareUiE2E": {
+      "status": "pass",
+      "tests": 2,
+      "nodeVersion": "24.19.0"
+    },
+    "runtimeFocusedTests": {
+      "status": "pass",
+      "files": 21,
+      "tests": 152
+    },
+    "componentGraduationGates": "pass",
+    "catalogsCheck": "pass",
+    "contractCheck": "pass",
+    "i18nLint": "pass",
+    "evidenceReferenceCheck": "pass",
+    "harnessStructuralSpecs": [
+      "component-graduation-report-v1",
+      "rareui-conversation-interactions",
+      "versegit-wp9-global-acceptance"
+    ],
+    "candidateReplayAtVerseGitCommit": {
+      "commit": "6a7fc6c612f9d809d72e16ef2cda1b6e9a27eae8",
+      "wp9Verifier": "pass",
+      "wp8Verifier": "pass",
+      "wp6Verifier": "pass",
+      "historicalCandidateTests": "13/13 pass"
+    }
+  },
+  "retainedBoundaries": [
+    "WP9 remains PASS_WITH_GAPS, P0=0, P1=0, P2=3 and non-GA.",
+    "Component graduation source evidence retains 9 historical mutable-file checksum drift; see INTEGRATION-RESIDUALS.md.",
+    "Eleven stale TF-0490 log references are replaced by a consolidated agent readback rather than synthesized logs.",
+    "TF-0493 remains the next ready component leaf and was not implemented by this merge.",
+    "No product default, release, GA, liveReady, M4 or real-human evidence is promoted.",
+    "The pre-existing Knowledge worktree changes were not included or modified by this integration branch."
+  ]
+}

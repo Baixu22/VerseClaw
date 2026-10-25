@@ -33,6 +33,7 @@
     "inbox": "Inbox",
     "scheduled": "Scheduled",
     "knowledge": "Knowledge",
+    "memory": "Memory",
     "cronTasks": "Cron Tasks",
     "skills": "Tools",
     "agents": "Agents",
@@ -208,5 +209,13 @@
       "responsibility": "The cause could not be identified locally.",
       "nextStep": "Retry once; if it happens again, share the error reference with support."
     }
+  },
+  "rareui": {
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "hoursShort": "hr",
+    "minutesShort": "min",
+    "editTime": "Edit time",
+    "confirmTime": "Confirm time"
   }
 }

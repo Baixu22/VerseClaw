@@ -153,6 +153,7 @@ import type {
   ChannelTargetsPayload,
   ChannelTypePayload,
   ChatSendWithMediaPayload,
+  ChatContinuityPreviewPayload,
   ClawGraphAbortPayload,
   ClawGraphCompileHostResult,
   ClawGraphCompilePayload,
@@ -218,6 +219,8 @@ import type {
   GithubPrViewResult,
   GithubRepoResult,
   HostApiContract,
+  VerseGitDiagnosticBinding,
+  VerseGitDiagnosticStatus,
   SessionActivitySnapshotPayload,
   ImageGenerationSettingsPayload,
   LogMemoryPayload,
@@ -332,6 +335,16 @@ import type {
   SessionLongTaskControlHistoryResult,
   SessionLongTaskControlPayload,
   SessionPermanentDeletePayload,
+  SessionEffectivePolicyPayload,
+  SessionEffectivePolicyResult,
+  SessionBindCoordinatorPayload,
+  SessionBindCoordinatorResult,
+  SessionCoordinatorBindingReadPayload,
+  SessionCoordinatorBindingResult,
+  SessionDelegateCoordinatorPayload,
+  SessionDelegateCoordinatorResult,
+  SessionDelegationAdmissionsPayload,
+  SessionDelegationAdmissionsResult,
   SessionRestorePayload,
   SessionLongTaskControlStatusResult,
   SessionManualCompactPayload,
@@ -389,6 +402,11 @@ import type {
   MemoryProposalPreviewResult,
   MemoryProposeFactsConfirmPayload,
   MemoryProposeFactsListPayload,
+  MemorySurfacePayload,
+  MemoryApproveCandidatePayload,
+  MemoryDeletePayload,
+  MemoryRememberPayload,
+  MemoryExportPayload,
   MemorySearchPayload,
   MemoryUpdatePayload,
 } from '@shared/host-api/contract';
@@ -683,6 +701,11 @@ export const hostApi = {
       payload: BackupRestorePayload,
     ): Promise<BackupRestoreResult> =>
       invokeHost('app', 'backupRestoreApply', payload),
+  },
+  versegit: {
+    status: (binding: VerseGitDiagnosticBinding): Promise<VerseGitDiagnosticStatus> => (
+      invokeHost('versegit', 'status', binding)
+    ),
   },
   openclaw: {
     status: () => invokeHost('openclaw', 'status'),
@@ -1144,6 +1167,12 @@ export const hostApi = {
       invokeHost('memory', 'proposeFactsList', input),
     proposeFactsConfirm: (input: MemoryProposeFactsConfirmPayload) =>
       invokeHost('memory', 'proposeFactsConfirm', input),
+    surface: (input: MemorySurfacePayload = {}) => invokeHost('memory', 'surface', input),
+    approveCandidate: (input: MemoryApproveCandidatePayload) =>
+      invokeHost('memory', 'approveCandidate', input),
+    delete: (input: MemoryDeletePayload) => invokeHost('memory', 'delete', input),
+    remember: (input: MemoryRememberPayload) => invokeHost('memory', 'remember', input),
+    export: (input: MemoryExportPayload = {}) => invokeHost('memory', 'export', input),
   },
   channels: {
     accounts: (options?: ChannelAccountsPayload) => (
@@ -1482,6 +1511,21 @@ export const hostApi = {
     ),
     archive: (input: SessionArchivePayload) => invokeHost('sessions', 'archive', input),
     restore: (input: SessionRestorePayload) => invokeHost('sessions', 'restore', input),
+    effectivePolicy: (
+      input: SessionEffectivePolicyPayload,
+    ): Promise<SessionEffectivePolicyResult> => invokeHost('sessions', 'effectivePolicy', input),
+    coordinatorBinding: (
+      input?: SessionCoordinatorBindingReadPayload,
+    ): Promise<SessionCoordinatorBindingResult> => invokeHost('sessions', 'coordinatorBinding', input),
+    bindCoordinator: (
+      input: SessionBindCoordinatorPayload,
+    ): Promise<SessionBindCoordinatorResult> => invokeHost('sessions', 'bindCoordinator', input),
+    delegateCoordinator: (
+      input: SessionDelegateCoordinatorPayload,
+    ): Promise<SessionDelegateCoordinatorResult> => invokeHost('sessions', 'delegateCoordinator', input),
+    delegationAdmissions: (
+      input?: SessionDelegationAdmissionsPayload,
+    ): Promise<SessionDelegationAdmissionsResult> => invokeHost('sessions', 'delegationAdmissions', input),
     permanentDelete: (input: SessionPermanentDeletePayload) => (
       invokeHost('sessions', 'permanentDelete', input)
     ),
@@ -1494,6 +1538,8 @@ export const hostApi = {
   },
   chat: {
     sendWithMedia: (input: ChatSendWithMediaPayload) => invokeHost('chat', 'sendWithMedia', input),
+    continuityPreview: (input: ChatContinuityPreviewPayload) =>
+      invokeHost('chat', 'continuityPreview', input),
   },
   codeReview: {
     run: (input: CodeReviewRunPayload): Promise<CodeReviewRunResult> => (

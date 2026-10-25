@@ -1,245 +1,173 @@
-// TF-0498: one Memory surface must expose candidate review, export and
-// tombstone deletion without a second Memory management route.
-import { join } from 'node:path';
-import { mkdir, readFile, readdir, rm } from 'node:fs/promises';
-import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import type { ElectronApplication, Page } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { copyFile, readFile } from 'node:fs/promises';
+import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
-function stableStringify(value: unknown): string {
-  if (value == null || typeof value !== 'object') return JSON.stringify(value);
-  if (Array.isArray(value)) return `[${value.map((item) => stableStringify(item)).join(',')}]`;
-  const entries = Object.entries(value as Record<string, unknown>)
-    .sort(([left], [right]) => left.localeCompare(right))
-    .map(([key, entryValue]) => `${JSON.stringify(key)}:${stableStringify(entryValue)}`);
-  return `{${entries.join(',')}}`;
+type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
+type GatewayStatus = { state?: string; gatewayReady?: boolean };
+type MemorySurface = {
+  accepted: Array<{ key: string; id: string; content: string; modelVisible: boolean; state: string }>;
+  candidates: Array<{ key: string; id: string; content: string; modelVisible: boolean }>;
+  model: { acceptedKeys: string[]; candidateKeysExcluded: string[] };
+  counts: { accepted: number; candidates: number; modelVisible: number };
+};
+
+async function hostInvoke<T>(
+  app: ElectronApplication,
+  module: string,
+  action: string,
+  payload: Record<string, unknown> | null = null,
+): Promise<T> {
+  const response = await app.evaluate(async (_electron, request) => {
+    const { ipcMain, BrowserWindow } = process.mainModule!.require('electron') as typeof import('electron');
+    const handler = (ipcMain as unknown as {
+      _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+    })._invokeHandlers?.get('host:invoke');
+    if (!handler) throw new Error('host:invoke handler is not registered');
+    const win = BrowserWindow.getAllWindows().find((candidate) => !candidate.isDestroyed());
+    if (!win) throw new Error('No BrowserWindow available');
+    const sender = win.webContents;
+    return await handler(
+      { sender, senderFrame: { url: sender.getURL() } },
+      { id: 'memory-surface-' + Date.now() + '-' + Math.random(), ...request },
+    );
+  }, { module, action, payload }) as HostResponse<T>;
+  if (!response.ok) throw new Error(response.error?.message ?? `host invoke failed: ${module}.${action}`);
+  return response.data as T;
 }
 
-const role = {
-  name: 'architect',
-  displayName: 'Architect',
-  description: 'Designs the system shape.',
-  rolePrompt: 'Designs the system shape.',
-  tools: ['read'],
-  effort: 'high',
-};
-
-const acceptedCard = {
-  id: 'mem-accepted',
-  type: 'procedure',
-  scope: 'role',
-  scopeKey: null,
-  status: 'active',
-  content: 'Keep migration notes before schema changes.',
-  roleTags: ['architect'],
-  source: 'user',
-  sensitivity: 'normal',
-  confidence: 0.9,
-  importance: 0.7,
-  createdAt: '2026-10-21T00:00:00.000Z',
-  updatedAt: '2026-10-21T00:00:00.000Z',
-  evidenceRefs: [{ type: 'manual', ref: 'acceptance-fixture' }],
-};
-
-const reviewProposal = {
-  id: 'proposal-candidate',
-  operation: 'create',
-  status: 'needs_review',
-  decision: 'needs_review',
-  riskLevel: 'low',
-  impactScope: 'role',
-  suggestedAction: 'approve',
-  evidenceStatus: 'unchecked',
-  createdAt: '2026-10-21T00:00:00.000Z',
-  proposal: {
-    content: 'Candidate memory must be reviewed before injection.',
-    source: 'session_summary',
-    title: 'Candidate memory',
-  },
-};
-
-const runtimeCandidate = {
-  factId: 'fact-1',
-  subject: 'user',
-  predicate: 'prefers',
-  objectSummary: 'dark mode',
-  confidence: 0.82,
-  source: 'runtime-memory',
-  proposedAt: 1_726_000_000_000,
-};
-
-const baseHostApi: Record<string, unknown> = {
-  [stableStringify(['/api/settings', 'GET'])]: {
-    ok: true,
-    data: { status: 200, ok: true, json: { language: 'en', setupComplete: true } },
-  },
-  [stableStringify(['agents', 'list', null])]: {
-    success: true,
-    defaultAgentId: 'main',
-    configuredChannelTypes: [],
-    channelOwners: {},
-    channelAccountOwners: {},
-    agents: [{
-      id: 'main',
-      name: 'Main',
-      isDefault: true,
-      modelDisplay: 'test/model',
-      modelRef: 'test/model',
-      inheritedModel: false,
-      workspace: 'C:\\project',
-      agentDir: 'C:\\openclaw\\agents\\main\\agent',
-      mainSessionKey: 'agent:main:main',
-      channelTypes: [],
-    }],
-  },
-  [stableStringify(['channels', 'accounts', null])]: { success: true, channels: [] },
-  [stableStringify(['providers', 'snapshot', null])]: {
-    success: true, accounts: [], statuses: [], vendors: [], defaultAccountId: '',
-  },
-  [stableStringify(['memory', 'list', null])]: {
-    success: true,
-    cards: [acceptedCard],
-  },
-  [stableStringify(['memory', 'explainInjection', null])]: {
-    success: true,
-    injections: [],
-  },
-  [stableStringify(['memory', 'health', null])]: {
-    success: true,
-    ok: true,
-    checks: [],
-  },
-  [stableStringify(['memory', 'proposeFactsList', null])]: {
-    success: true,
-    enabled: true,
-    candidates: [runtimeCandidate],
-  },
-  [stableStringify(['memory', 'proposeFactsConfirm', null])]: {
-    success: true,
-    confirmed: true,
-    message: 'confirmed',
-    factId: 'fact-1',
-  },
-};
-
-const gatewayRpc: Record<string, unknown> = {
-  [stableStringify(['roles.list', null])]: { roles: [role] },
-  [stableStringify(['memory.proposals', null])]: { proposals: [reviewProposal] },
-  [stableStringify(['memory.conflicts', null])]: { conflicts: [] },
-  [stableStringify(['memory.stats', null])]: {
-    stats: {
-      active: 1,
-      cold: 0,
-      archived: 0,
-      tombstone: 0,
-      conflictsOpen: 0,
-      proposalsNeedsReview: 1,
-      proposalsRejected: 0,
-      proposalsApplied: 0,
-    },
-  },
-  [stableStringify(['memory.retentionCandidates', null])]: { candidates: [] },
-  [stableStringify(['memory.utilityReport', null])]: {
-    report: {
-      generatedAt: '2026-10-21T00:00:00.000Z',
-      dataQuality: 'insufficient',
-      missingEvidence: [],
-      sample: { cards: 1, injections: 0, feedback: 0, proposals: 1, conflicts: 0 },
-      aggregate: {
-        contextPrecisionAtK: null,
-        helpfulnessRate: null,
-        harmRate: null,
-        staleRate: null,
-        conflictRate: null,
-        reviewAcceptanceRate: null,
-        tokenOverheadPerRun: null,
-        taskSuccessDelta: null,
-      },
-      cards: [],
-    },
-  },
-  [stableStringify(['memory.archive', null])]: {
-    card: { ...acceptedCard, status: 'tombstone' },
-  },
-};
-
-async function openMemorySurface(app: Parameters<typeof getStableWindow>[0]) {
-  const page = await getStableWindow(app);
-  await page.reload();
-  await expect(page.getByTestId('main-layout')).toBeVisible();
-  await page.getByTestId('sidebar-nav-settings').click();
-  await page.getByTestId('settings-nav-agents').click();
-  await expect(page.getByTestId('agents-page')).toBeVisible();
-  await page.getByTestId('role-orchestration-toggle').click();
-  await page.getByRole('button', { name: /Architect/ }).click();
-  await expect(page.getByTestId('role-memory-panel')).toBeVisible();
-  return page;
-}
-
-test.describe('TF-0498 unified Memory surface', () => {
-  test('exposes candidate review, export and tombstone deletion in one panel', async ({ launchElectronApp }) => {
-    const app = await launchElectronApp({ skipSetup: true });
-    try {
-      await installIpcMocks(app, {
-        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
-        gatewayRpc,
-        hostApi: baseHostApi,
-      });
-      const page = await openMemorySurface(app);
-
-      const panel = page.getByTestId('role-memory-panel');
-      await expect(panel).toHaveAttribute('data-surface-id', 'agents.memory');
-      await expect(page.getByTestId('memory-runtime-candidates')).toBeVisible();
-      await expect(page.getByTestId('propose-facts-confirm-queue')).toBeVisible();
-      await expect(page.getByTestId('propose-facts-candidate')).toHaveAttribute('data-fact-id', 'fact-1');
-      await expect(page.getByTestId('memory-model-visibility')).toContainText(/review-only/i);
-      await expect(page.getByTestId('memory-surface-semantics')).toContainText('Read: accepted only');
-      await expect(page.getByTestId('memory-surface-semantics')).toContainText('Delete: tombstone');
-      await expect(page.getByTestId('memory-surface-semantics')).toContainText('Legacy: native unchanged');
-
-      const downloadDir = join('D:/tmp', 'tf0498-memory-export-' + Date.now());
-      await mkdir(downloadDir, { recursive: true });
-      await app.evaluate(({ session }, targetDir: string) => {
-        session.defaultSession.on('will-download', (_event: unknown, item: { getFilename: () => string; setSavePath: (value: string) => void }) => {
-          item.setSavePath(targetDir + '/' + item.getFilename());
-        });
-      }, downloadDir);
-      await page.getByTestId('memory-export').click();
-      await expect.poll(async () => {
-        try {
-          return (await readdir(downloadDir)).filter((name) => name.startsWith('clawx-memory-architect-'));
-        } catch {
-          return [];
-        }
-      }, { timeout: 30_000 }).toHaveLength(1);
-      const [downloadName] = (await readdir(downloadDir)).filter((name) => name.startsWith('clawx-memory-architect-'));
-      expect(downloadName).toMatch(/^clawx-memory-architect-/);
-      const content = await readFile(join(downloadDir, downloadName!), 'utf8');
-      await rm(downloadDir, { recursive: true, force: true });
-      const exported = JSON.parse(content) as {
-        schemaVersion: string;
-        counts: { accepted: number; candidates: number };
-        acceptedMemory: Array<{ id: string }>;
-        candidateQueue: Array<{ id: string }>;
-      };
-      expect(exported.schemaVersion).toBe('MemoryExport/v1');
-      expect(exported.counts.accepted).toBe(1);
-      expect(exported.counts.candidates).toBe(1);
-      expect(exported.acceptedMemory.map((card) => card.id)).toEqual(['mem-accepted']);
-      expect(exported.candidateQueue.map((proposal) => proposal.id)).toEqual(['proposal-candidate']);
-
-      await page.getByTestId('role-memory-delete').click();
-      await page.getByTestId('confirm-dialog-confirm-button').click();
-      const calls = await app.evaluate(() => {
-        return (globalThis as unknown as { __verseClawE2eHostCalls?: unknown[] }).__verseClawE2eHostCalls ?? [];
-      });
-      expect(calls).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          module: 'gateway',
-          action: 'rpc',
-          payload: expect.objectContaining({ method: 'memory.archive', params: { id: 'mem-accepted', tombstone: true } }),
-        }),
-      ]));
-    } finally {
-      await closeElectronApp(app);
+async function ensureGatewayReady(app: ElectronApplication): Promise<void> {
+  const deadline = Date.now() + 120_000;
+  let startRequested = false;
+  while (Date.now() < deadline) {
+    const status = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+    if (status.gatewayReady === true || status.state === 'running') return;
+    if (!startRequested && status.state !== 'starting') {
+      startRequested = true;
+      await hostInvoke(app, 'gateway', 'start');
     }
-  });
+    await new Promise((resolve) => setTimeout(resolve, 1_500));
+  }
+  throw new Error('Gateway did not become ready');
+}
+
+async function openMemory(page: Page): Promise<void> {
+  await page.getByTestId('sidebar-nav-memory').click();
+  await expect(page.getByTestId('memory-page')).toBeVisible({ timeout: 30_000 });
+}
+
+test('real Host/Gateway Memory surface covers remember, candidate approval, export and delete', async ({ launchElectronApp }, testInfo) => {
+  test.setTimeout(360_000);
+  let app: ElectronApplication | undefined;
+  const observation: Record<string, unknown> = {
+    schema: 'clawx.memory-user-surface.e2e/v1',
+    driven_by: 'agent',
+    actor: 'codex-memory-user-surface',
+    negative_cases: [
+      'candidate modelVisible=false before approval',
+      'deleted memory absent from accepted and model acceptedKeys after tombstone',
+    ],
+  };
+  try {
+    app = await launchElectronApp({ skipSetup: true });
+    const page = await getStableWindow(app);
+    await ensureGatewayReady(app);
+    await openMemory(page);
+
+    const token = Date.now().toString(36);
+    const rememberedContent = `Workspace memory ${token}: use pnpm for package scripts.`;
+    await page.getByTestId('memory-remember-button').click();
+    await page.getByTestId('memory-remember-content').fill(rememberedContent);
+    await page.getByTestId('memory-remember-submit').click();
+
+    const remembered = page.getByTestId('memory-accepted-item').filter({ hasText: rememberedContent });
+    await expect(remembered).toBeVisible({ timeout: 30_000 });
+    const rememberedReadback = await hostInvoke<MemorySurface>(app, 'memory', 'surface', { limit: 100 });
+    const rememberedEntry = rememberedReadback.accepted.find((entry) => entry.content === rememberedContent);
+    expect(rememberedEntry).toBeTruthy();
+    await expect(remembered).toHaveAttribute('data-model-visible', String(rememberedEntry!.modelVisible));
+    expect(rememberedReadback.model.acceptedKeys.includes(rememberedEntry!.key)).toBe(rememberedEntry!.modelVisible);
+
+    await page.getByTestId('memory-export-button').click();
+    const exportPath = (await page.getByTestId('memory-export-path').textContent({ timeout: 30_000 }))?.trim();
+    if (!exportPath) throw new Error('Memory export path is missing');
+    const retainedExportPath = testInfo.outputPath('memory-export.json');
+    await copyFile(exportPath, retainedExportPath);
+    const exportText = await readFile(retainedExportPath, 'utf8');
+    const exportJson = JSON.parse(exportText) as {
+      schemaVersion: string;
+      snapshot: MemorySurface & { model: { productDescription: string; approvalBoundary: string } };
+    };
+    expect(exportJson.schemaVersion).toBe('MemoryExport/v1');
+    expect(exportJson.snapshot.accepted.some((entry) => entry.content === rememberedContent)).toBe(true);
+    const acceptedKeys = new Set(exportJson.snapshot.accepted.map((entry) => entry.key));
+    expect(exportJson.snapshot.model.acceptedKeys.every((key) => acceptedKeys.has(key))).toBe(true);
+    expect(exportJson.snapshot.model.candidateKeysExcluded.every((key) => !exportJson.snapshot.model.acceptedKeys.includes(key))).toBe(true);
+    const digest = createHash('sha256').update(exportText).digest('hex');
+    observation.export = { path: exportPath, retainedPath: retainedExportPath, sha256: digest, accepted: exportJson.snapshot.accepted.length };
+
+    const candidateContent = `Role workspace candidate ${token}: require an owner review before acceptance.`;
+    const proposed = await hostInvoke<{
+      accepted: boolean;
+      action: string;
+      proposal?: { id?: string };
+    }>(app, 'memory', 'propose', {
+      type: 'fact',
+      scope: 'workspace',
+      roleTags: ['architect'],
+      content: candidateContent,
+      confidence: 0.95,
+      importance: 0.8,
+      source: 'role',
+      evidenceRefs: [{ type: 'manual', ref: `memory-surface-e2e:${token}` }],
+    });
+    expect(proposed.accepted).toBe(false);
+    expect(proposed.action).toBe('needs_review');
+    expect(proposed.proposal?.id).toBeTruthy();
+
+    await page.reload();
+    await openMemory(page);
+    await page.getByTestId('memory-tab-candidates').click();
+    const candidate = page.getByTestId('memory-candidate-item').filter({ hasText: candidateContent });
+    await expect(candidate).toBeVisible({ timeout: 30_000 });
+    await expect(candidate).toHaveAttribute('data-model-visible', 'false');
+    await candidate.getByTestId('memory-approve-button').click();
+
+    await page.getByTestId('memory-tab-accepted').click();
+    const approved = page.getByTestId('memory-accepted-item').filter({ hasText: candidateContent });
+    await expect(approved).toBeVisible({ timeout: 30_000 });
+
+    const beforeDelete = await hostInvoke<MemorySurface>(app, 'memory', 'surface', { limit: 100 });
+    const beforeDeleteRememberedEntry = beforeDelete.accepted.find((entry) => entry.content === rememberedContent);
+    expect(beforeDeleteRememberedEntry).toBeTruthy();
+    expect(beforeDelete.model.acceptedKeys.includes(beforeDeleteRememberedEntry!.key)).toBe(beforeDeleteRememberedEntry!.modelVisible);
+    const candidateEntry = beforeDelete.candidates.find((entry) => entry.content === candidateContent);
+    if (candidateEntry) {
+      expect(beforeDelete.model.candidateKeysExcluded).toContain(candidateEntry.key);
+      expect(beforeDelete.model.acceptedKeys).not.toContain(candidateEntry.key);
+    }
+
+    const rememberedItem = page.getByTestId('memory-accepted-item').filter({ hasText: rememberedContent });
+    await rememberedItem.getByTestId('memory-delete-button').click();
+    await page.getByTestId('confirm-dialog-confirm-button').click();
+    await expect(rememberedItem).toHaveCount(0, { timeout: 30_000 });
+
+    const afterDelete = await hostInvoke<MemorySurface>(app, 'memory', 'surface', { limit: 100 });
+    expect(afterDelete.accepted.some((entry) => entry.id === beforeDeleteRememberedEntry!.id)).toBe(false);
+    expect(afterDelete.model.acceptedKeys).not.toContain(beforeDeleteRememberedEntry!.key);
+
+    await hostInvoke(app, 'settings', 'set', { key: 'language', value: 'zh' });
+    await page.reload();
+    await page.getByTestId('sidebar-nav-memory').click();
+    await expect(page.getByRole('heading', { name: '记忆' })).toBeVisible({ timeout: 30_000 });
+    observation.locales = ['en', 'zh'];
+
+    await page.screenshot({ path: testInfo.outputPath('memory-surface.png'), fullPage: true });
+    observation.screenshot = testInfo.outputPath('memory-surface.png');
+    observation.counts = { beforeDelete: beforeDelete.counts, afterDelete: afterDelete.counts };
+    observation.status = 'passed';
+    console.log(JSON.stringify(observation));
+  } finally {
+    if (app) await closeElectronApp(app);
+  }
 });

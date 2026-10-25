@@ -1,0 +1,36 @@
+{
+  "schema": "clawx.long-session.b2-ui-screenshots/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-b2",
+  "candidate": "b7b090779f0eed283aa381932dd32c98e936e9c5",
+  "capturedAt": "2026-10-22T19:41:53.7800319Z",
+  "screenshots": [
+    {
+      "id": "policy-activity-rail-960",
+      "path": "policy-activity-rail-960.png",
+      "sourceTest": "tests/e2e/long-session-policy-surface.spec.ts:132",
+      "viewport": {
+        "width": 900,
+        "height": 760
+      },
+      "theme": "light",
+      "bytes": 228722,
+      "sha256": "fdf5bb0bca5de6d8bdedfc5ef4ee87d3f460e5ad31fbc9d99813f3038439c84e",
+      "shows": [
+        "Session policy header and Current generation badge",
+        "Backend, native binding, model/effort, access and limits rows",
+        "Configuration source and compaction ownership",
+        "narrow activity rail with no horizontal overflow"
+      ],
+      "keyboard": [
+        "toggle focused and activated with Enter",
+        "Action boundaries summary toggled with Enter"
+      ],
+      "review": {
+        "driven_by": "agent",
+        "result": "accepted",
+        "notes": "Reviewed the light-theme narrow frame for clipping, token usage and readable hierarchy."
+      }
+    }
+  ]
+}

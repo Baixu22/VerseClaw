@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-gates",
+  "driven_by": "agent",
+  "actor": "codex-verse-browser-absorption-20261022",
+  "sourceCommit": "39ce33a79e00d05d61bab693c32ed161bf27c5ec",
+  "sourceTree": "6a0b51833e8cdb8790c06c70b3bf422f92af27ec",
+  "results": [
+    {
+      "command": "pnpm --dir packages/versebrowser run typecheck",
+      "exit": 0,
+      "summary": "package TypeScript check passed"
+    },
+    {
+      "command": "pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-service.test.ts",
+      "exit": 0,
+      "summary": "15 passed"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/versebrowser-host-adapter.test.ts tests/unit/versebrowser-driver-capabilities.test.ts tests/unit/versebrowser-task-session-conservation.test.ts tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/agent-browser-tool.test.ts tests/unit/versebrowser-capability-gating.test.ts tests/unit/versebrowser-model-action-capabilities.test.ts",
+      "exit": 0,
+      "summary": "7 files, 50 passed"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/versebrowser-host-adapter.test.ts",
+      "exit": 0,
+      "summary": "9 passed"
+    },
+    {
+      "command": "pnpm contract:check",
+      "exit": 0,
+      "summary": "Contract check passed"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "summary": "node, web and tests passed"
+    },
+    {
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exit": 0,
+      "summary": "comms comparison PASS; all metrics within thresholds"
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/versebrowser-host-invocation.spec.ts tests/e2e/agent-browser-workbench.spec.ts tests/e2e/browser-security-recovery.spec.ts",
+      "exit": 0,
+      "summary": "3 passed (20.5s); verified Electron cache extraction via ELECTRON_OVERRIDE_DIST_PATH"
+    },
+    {
+      "command": "node scripts/versebrowser-m10-package-verify.mjs --release",
+      "exit": 0,
+      "summary": "both asar archives pass; devPathHits=0"
+    },
+    {
+      "command": "node scripts/versebrowser-m10-packaged-flow-verify.mjs",
+      "exit": 0,
+      "summary": "all packaged flow checks true"
+    },
+    {
+      "command": "node scripts/versebrowser-n9-stability-probe.mjs",
+      "exit": 0,
+      "summary": "10/10 cold, 30/30 loops, 3/3 interrupt+recovery, 46/46 reclaimed"
+    },
+    {
+      "command": "node scripts/versebrowser-evidence-verify.mjs",
+      "exit": 0,
+      "summary": "manifests, attribution, current-source binding and credential scan pass"
+    }
+  ],
+  "notes": [
+    "The repository-local node_modules/electron/dist/electron.exe crashed with NTSTATUS 0x80000003. A fresh extraction from the existing electron-v40.8.4-win32-x64.zip cache passed electron --version and all three E2E tests through ELECTRON_OVERRIDE_DIST_PATH. This is recorded as an environment limitation, not product evidence."
+  ]
+}

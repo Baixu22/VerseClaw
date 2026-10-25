@@ -1,0 +1,113 @@
+{
+  "schema": "clawx.versegit.e1-candidate-manifest/v1",
+  "generated_at": "2026-10-22T20:15:22.598Z",
+  "task": "TF-0532",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d2de451ba5ff20658b00903b39e5b5e73db67ceb",
+    "tree": "5cc8900c98b1105262f19de9d9378644c12cc965",
+    "dirty": false
+  },
+  "production_caller": "freezeOrchestrationWorktreeCandidate -> host Git read-tree/write-tree/commit-tree/merge-tree -> disposable worktree",
+  "candidate": {
+    "schema": "clawx.versegit.candidate/v1",
+    "candidateId": "vgc_aa13f94fcd7d4aa21a7aad0d",
+    "baseOid": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+    "baseTreeOid": "e4c6c7d02759f55c30fb5c45eab14bd2132b36d9",
+    "workerSnapshots": [
+      {
+        "taskNodeId": "task-worker-a",
+        "parentOrder": 0,
+        "worktreeRole": "worker-a",
+        "headOid": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+        "baseOid": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+        "statusDigest": "sha256:042ac995df135b34e56c43f998c584fda3d4c557a9c549a92a6d169d2ff005c2",
+        "changedFiles": [
+          "src/consumer-a.ts",
+          "src/producer.ts"
+        ],
+        "treeOid": "d95c8a74e63cf893c5d0899e83d4c3996ff235c4",
+        "commitOid": "e4b54b6d3561f638578c5972d22709dc318b279d"
+      },
+      {
+        "taskNodeId": "task-worker-b",
+        "parentOrder": 1,
+        "worktreeRole": "worker-b",
+        "headOid": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+        "baseOid": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea",
+        "statusDigest": "sha256:043b1149579b0f40d9efaf727dd3a87f922999ea27427f0076120eadb5ab305b",
+        "changedFiles": [
+          "src/consumer-b.ts"
+        ],
+        "treeOid": "e4273a5b0692ffd2002f31d8754d9f45d293c149",
+        "commitOid": "3d85bf267dd3ee1bacb8fe7394ce1e7629f4af69"
+      }
+    ],
+    "candidateCommitOid": "8d2e7970f9616ec28e24ec0afa5af6dbaf660bbe",
+    "candidateTreeOid": "d61b2d61b874eb520ba2d9ea21365e9134779df7",
+    "refsBefore": [
+      {
+        "ref": "refs/heads/main",
+        "oid": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea"
+      }
+    ],
+    "refsAfter": [
+      {
+        "ref": "refs/heads/main",
+        "oid": "748c9f05aa64e17c34cfecd595d4a3badaaa48ea"
+      }
+    ],
+    "mainStateBeforeDigest": "sha256:b87914ace2549b061153395c3b96d5de6b0dd10c4c160b6f217742a19deaf431",
+    "mainStateAfterDigest": "sha256:b87914ace2549b061153395c3b96d5de6b0dd10c4c160b6f217742a19deaf431",
+    "mainUnchanged": true,
+    "verificationCwdRole": "host-disposable-candidate",
+    "materializedPathRole": "candidate-verification-worktree",
+    "allowedRuntimeIgnorePaths": [
+      ".openclaw/"
+    ],
+    "inputDigest": "sha256:3816e3f5df5e18130afe60452b05193d23ab7b9ea1f5d2e4a83e2f511fbe31db"
+  },
+  "independent_worker_validation": {
+    "worker_a": "passed",
+    "worker_b": "passed",
+    "combined_candidate": "failed",
+    "combined_is_pending_verification": true
+  },
+  "commands": [
+    {
+      "id": "unit",
+      "command": "pnpm exec vitest run tests/unit/versegit-candidate-freeze.test.ts",
+      "exit_code": 0,
+      "tests": 4
+    },
+    {
+      "id": "contract",
+      "command": "pnpm contract:check",
+      "exit_code": 0
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit_code": 0
+    },
+    {
+      "id": "comms",
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exit_code": 0
+    },
+    {
+      "id": "harness",
+      "command": "pnpm harness validate --spec harness/specs/tasks/versegit-product-e1-candidate-freeze.md",
+      "exit_code": 0
+    }
+  ],
+  "limitations": [
+    "candidate is intentionally not applied or merged",
+    "combined TypeScript validation is intentionally pending for E2",
+    "only Windows Git behavior is measured"
+  ],
+  "passed": true,
+  "digest": "72709cff22c3ade9c3a328ff89a9a445068010f18355c7a4251eff21065441e5"
+}

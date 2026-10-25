@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-acceptance",
+  "driven_by": "agent",
+  "actor": "codex-verse-browser-absorption-20261022",
+  "candidate": {
+    "sourceCommit": "39ce33a79e00d05d61bab693c32ed161bf27c5ec",
+    "sourceTree": "6a0b51833e8cdb8790c06c70b3bf422f92af27ec",
+    "dirty": false
+  },
+  "status": "pass",
+  "criteria": [
+    {
+      "id": "CURRENT-N8-1",
+      "requirement": "Packaged runtime and app archives load cleanly without development paths",
+      "evidence": [
+        "n8-package-verify.json: status pass, devPathHits=0, packagedModuleLoad pass"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-N8-2",
+      "requirement": "Packaged Electron host runs the complete managed browser loop",
+      "evidence": [
+        "n8-packaged-flow.json: all checks true; open, fail-closed, upgrade, snapshot fixture, owner count and close pass"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-N9-1",
+      "requirement": "Current candidate passes 10 cold starts, 30 complete loops and 3 interrupt/recovery pairs",
+      "evidence": [
+        "n9-stability.json summary: coldStarts 10/10, loops 30/30, recovery 3/3"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-N9-2",
+      "requirement": "Every round reclaims its run directory and leaves no browser process residue",
+      "evidence": [
+        "n9-stability.json: 46/46 runDirsReclaimed, maxResidual=0, sessionsAfterClose=0 in loop rows"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-ENGINE-1",
+      "requirement": "Managed engine selection is explicit and stable",
+      "evidence": [
+        "packages/versebrowser/tests/agent-browser-service.test.ts: explicit browser-window, explicit CLI and E_CLI_UNAVAILABLE fail-closed cases pass"
+      ],
+      "verdict": "met"
+    },
+    {
+      "id": "CURRENT-WORKSPACE-1",
+      "requirement": "Browser resource accounting uses active workspace identity without sessionKey aliasing",
+      "evidence": [
+        "tests/unit/versebrowser-host-adapter.test.ts: active workspace injection and workspace mismatch rejection pass"
+      ],
+      "verdict": "met"
+    }
+  ],
+  "boundaries": [
+    "Windows x64 only",
+    "Performance values are observations without a pre-existing product budget",
+    "No release/GA claim"
+  ]
+}

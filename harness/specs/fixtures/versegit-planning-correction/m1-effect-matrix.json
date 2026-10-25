@@ -1,0 +1,19 @@
+{
+  "schema": "clawx.versegit.m1-effect-matrix/v2",
+  "policy": "M1 is pure diagnostic only after the target provider seams exist. Existing CLI effects are recorded separately and cannot be treated as read-only by name.",
+  "existing_cli": [
+    { "entry": "capabilities", "pure_diagnostic": true, "effects": { "file_read": true, "file_write": false, "db_read": false, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false } },
+    { "entry": "doctor", "pure_diagnostic": false, "reason": "Opens writable workspace state and may create schema tables.", "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": true, "git_object_write": false, "materialize": false, "execute": false } },
+    { "entry": "conflicts", "pure_diagnostic": false, "reason": "May open writable state, materialize merged trees and run registered checks.", "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": true, "git_object_write": true, "materialize": true, "execute": true } },
+    { "entry": "session_show", "pure_diagnostic": false, "reason": "Opens writable workspace state before reading the session projection.", "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": true, "git_object_write": false, "materialize": false, "execute": false } },
+    { "entry": "verdict_facts", "pure_diagnostic": true, "effects": { "file_read": true, "file_write": false, "db_read": false, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false } }
+  ],
+  "target_seams": [
+    { "entry": "provider.status", "pure_diagnostic": true, "owner": "TF-0476", "effects": { "file_read": true, "file_write": false, "db_read": false, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false } },
+    { "entry": "provider.doctor", "pure_diagnostic": true, "owner": "TF-0476", "requires_existing_state": true, "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false } },
+    { "entry": "provider.conflicts-plan", "pure_diagnostic": true, "owner": "TF-0476", "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false } },
+    { "entry": "provider.session-status", "pure_diagnostic": true, "owner": "TF-0476", "effects": { "file_read": true, "file_write": false, "db_read": true, "db_write_or_create": false, "git_object_write": false, "materialize": false, "execute": false } }
+  ],
+  "consumer_rule": "M1 may consume only verified pure-diagnostic target seams. It must never call an existing CLI entry merely because its name sounds read-only.",
+  "forbidden_in_m1": ["initialize", "migrate", "materialize", "execute_check", "write_workspace", "write_domain_state", "observe_event"]
+}

@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Bot, Loader2 } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { Ellipsis, Minus, Sparkles, Trash2 } from 'lucide-react';
+import { KnowledgeBot } from '@/components/knowledge-bot/KnowledgeBot';
+import { useKnowledgeBotActivity } from '@/components/knowledge-bot/use-knowledge-bot-activity';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -27,11 +30,16 @@ export type KnowledgeChatContext = {
 };
 type KnowledgeLibrarianPromptSuggestion = { id: string; label: string; prompt: string };
 
-export function KnowledgeChat() {
+export function KnowledgeChat({ context: suppliedContext, embedded = false, onClose, onOpenCitation }: {
+  context?: KnowledgeChatContext;
+  embedded?: boolean;
+  onClose?: () => void;
+  onOpenCitation?: (citation: KnowledgeLibrarianCitation) => void;
+} = {}) {
   const { t } = useTranslation(['knowledge', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
-  const context = useMemo<KnowledgeChatContext>(() => (location.state as { knowledgeContext?: KnowledgeChatContext } | null)?.knowledgeContext ?? {}, [location.state]);
+  const context = useMemo<KnowledgeChatContext>(() => suppliedContext ?? (location.state as { knowledgeContext?: KnowledgeChatContext } | null)?.knowledgeContext ?? {}, [suppliedContext, location.state]);
   const previous = useMemo(() => parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY)), []);
   const editorTitle = typeof context.editorTitle === 'string' ? context.editorTitle : previous?.editorTitle || t('workspace.untitled');
   const editorBody = typeof context.editorBody === 'string' ? context.editorBody : '';
@@ -41,6 +49,7 @@ export function KnowledgeChat() {
   const [status, setStatus] = useState<KnowledgeStatusResult['status'] | null>(null);
   const [running, setRunning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { state: botState, setActivity, setComposing, reset: resetBot } = useKnowledgeBotActivity();
   const busy = Boolean(running);
   useEffect(() => { void hostApi.knowledge.status().then((result) => setStatus(result.status ?? null)).catch(() => undefined); }, []);
   const routeSearch = useCallback(() => {
@@ -52,6 +61,7 @@ export function KnowledgeChat() {
   const backToChat = () => navigate({ pathname: '/', search: routeSearch().toString() });
   const backToLibrary = () => navigate({ pathname: '/knowledge', search: routeSearch().toString() }, { state: { knowledgeContext: context } });
   const openCitation = (citation: KnowledgeLibrarianCitation) => {
+    if (onOpenCitation) { onOpenCitation(citation); return; }
     if (!editorSource && citation.lookup.startsWith('manual:')) {
       backToLibrary();
       return;
@@ -60,10 +70,11 @@ export function KnowledgeChat() {
     navigate({ pathname: '/knowledge', search: search.toString() }, { state: { knowledgeContext: context, knowledgeTitle: citation.title } });
   };
   const openQueue = useCallback((kind: 'draft' | 'inbox', id?: string, stewardReview?: KnowledgeStewardReviewResult) => {
+    onClose?.();
     const search = routeSearch(); search.set('view', 'review-queue'); search.set('kind', kind);
     if (id) search.set('id', id);
     navigate({ pathname: '/knowledge', search: search.toString() }, { state: { knowledgeContext: context, stewardReview } });
-  }, [context, navigate, routeSearch]);
+  }, [context, navigate, routeSearch, onClose]);
 
   const [librarianQuestion, setLibrarianQuestion] = useState('');
   const [librarianError, setLibrarianError] = useState<string | null>(null);
@@ -77,6 +88,13 @@ export function KnowledgeChat() {
     if (typeof window === 'undefined') return null;
     return parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY))?.updatedAt ?? null;
   });
+  const threadRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // Append/request outcomes reveal the latest turn; unrelated state updates
+    // do not pull the reader away from earlier sources.
+    const thread = threadRef.current;
+    if (thread) thread.scrollTop = thread.scrollHeight;
+  }, [librarianMessages.length, running, librarianError]);
   const editorSummary = useMemo(() => markdownSummary(editorBody), [editorBody]);
   const editorSourceIds = useMemo(() => {
     const explicit = editorSource.trim();
@@ -126,6 +144,7 @@ export function KnowledgeChat() {
   }, [editorTitle, t]);
 
   const clearLibrarianThread = useCallback(() => {
+    resetBot();
     setLibrarianMessages([]);
     setLibrarianQuestion('');
     setLibrarianError(null);
@@ -134,7 +153,7 @@ export function KnowledgeChat() {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY);
     }
-  }, []);
+  }, [resetBot]);
 
   const askLibrarian = useCallback(async (questionOverride?: string) => {
     const question = (questionOverride ?? librarianQuestion).trim();
@@ -145,6 +164,7 @@ export function KnowledgeChat() {
     setLastLibrarianQuestion(question);
     setLibrarianError(null);
     setRunning('librarianAsk');
+    setActivity(currentSourceRefs.length > 0 ? 'waiting' : 'searching');
     setError(null);
     try {
       if (currentSourceRefs.length > 0) {
@@ -193,6 +213,7 @@ export function KnowledgeChat() {
           },
         };
         setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
+        setActivity(groundedAnswer.groundingStatus === 'missing_sources' ? 'confused' : 'finished');
         return;
       }
       const result = await hostApi.knowledge.search({
@@ -203,6 +224,7 @@ export function KnowledgeChat() {
       });
       if (!result.success) throw new Error(result.error || t('errors.search'));
       const matches = getSearchRows(result).slice(0, 3);
+      if (matches.length > 0) setActivity('reading');
       const citations: KnowledgeLibrarianCitation[] = [];
       for (const row of matches) {
         const lookup = getLookup(row);
@@ -240,6 +262,7 @@ export function KnowledgeChat() {
         });
       }
 
+      setActivity('thinking');
       const groundedAnswer = buildGroundedLibrarianAnswer({
         question,
         resultCount: getSearchRows(result).length,
@@ -268,15 +291,17 @@ export function KnowledgeChat() {
         },
       });
       setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
+      setActivity(groundedAnswer.groundingStatus === 'missing_sources' ? 'confused' : 'finished');
     } catch (err) {
       const message = errorMessageFrom(err);
       setError(message);
       setLibrarianError(message);
+      setActivity('failed');
       toast.error(message);
     } finally {
       setRunning(null);
     }
-  }, [currentSourceRefs, currentSourceSetId, editorBody, editorSource, editorSourceIds, editorSummary, editorTitle, librarianQuestion, running, t]);
+  }, [currentSourceRefs, currentSourceSetId, editorBody, editorSource, editorSourceIds, editorSummary, editorTitle, librarianQuestion, running, setActivity, t]);
 
   const copyLibrarianMessage = useCallback(async (messageId: string, content: string) => {
     if (!content.trim()) return;
@@ -291,6 +316,7 @@ export function KnowledgeChat() {
 
   const saveGroundedAnswerDraft = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
     setRunning('librarianDraft');
+    setActivity('writing');
     setError(null);
     try {
       const result = await hostApi.knowledge.createDraft(createDraftPayloadFromGroundedAnswer(answer, {
@@ -298,18 +324,21 @@ export function KnowledgeChat() {
       }));
       if (!result.success) throw new Error(result.error || t('errors.action'));
       toast.success(t('toasts.librarianDraft'));
+      setActivity('finished');
       openQueue('draft', result.draft?.id);
     } catch (err) {
       const message = errorMessageFrom(err);
       setError(message);
+      setActivity('failed');
       toast.error(message);
     } finally {
       setRunning(null);
     }
-  }, [openQueue, t]);
+  }, [openQueue, setActivity, t]);
 
   const createGroundedAnswerErrorExperience = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
     setRunning('librarianErrorExperience');
+    setActivity('writing');
     setError(null);
     try {
       const result = await hostApi.knowledge.createInboxItem(createErrorExperienceInboxPayloadFromGroundedAnswer(answer, {
@@ -318,45 +347,60 @@ export function KnowledgeChat() {
       }));
       if (!result.success) throw new Error(result.error || t('errors.action'));
       toast.success(t('toasts.librarianErrorExperience'));
+      setActivity('finished');
       openQueue('inbox', result.item?.id);
     } catch (err) {
       const message = errorMessageFrom(err);
       setError(message);
+      setActivity('failed');
       toast.error(message);
     } finally {
       setRunning(null);
     }
-  }, [openQueue, t]);
+  }, [openQueue, setActivity, t]);
 
   const sendGroundedAnswerToSteward = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
     setRunning('librarianSteward');
+    setActivity('writing');
     setError(null);
     try {
       const created = await hostApi.knowledge.createDraft(createDraftPayloadFromGroundedAnswer(answer, {
         titlePrefix: t('librarian.candidate.stewardTitlePrefix'),
       }));
       if (!created.success || !created.draft) throw new Error(created.error || t('errors.action'));
+      setActivity('working');
       const reviewed = await hostApi.knowledge.stewardReview({ draftId: created.draft.id });
       if (!reviewed.success) throw new Error(reviewed.error || t('errors.action'));
       toast.success(t('toasts.librarianSteward'));
+      setActivity('finished');
       openQueue('draft', created.draft.id, reviewed);
     } catch (err) {
       const message = errorMessageFrom(err);
       setError(message);
+      setActivity('failed');
       toast.error(message);
     } finally {
       setRunning(null);
     }
-  }, [openQueue, t]);
+  }, [openQueue, setActivity, t]);
 
-  return (<div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col bg-background" data-testid="knowledge-chat-page">
-          <header className="flex shrink-0 items-center justify-between gap-3 border-b border-black/10 px-4 py-3 text-left dark:border-white/10">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <Bot className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <h1 className="truncate font-serif text-xl font-normal tracking-tight">{t('librarian.chatTitle')}</h1>
+  return (<div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col bg-background" data-testid="knowledge-chat-page" data-bot-state={botState} data-compact={embedded}>
+          <header className={`flex shrink-0 items-center gap-3 text-left ${embedded ? 'justify-end px-3 py-1.5' : 'justify-between border-b border-black/10 px-4 py-3 dark:border-white/10'}`}>
+            <div className={embedded ? 'sr-only' : 'flex min-w-0 items-center gap-2.5'}>
+              {!embedded && <KnowledgeBot size={44} state={botState} />}
+              <div className="min-w-0">
+                <h1 className={`truncate font-serif font-normal tracking-tight ${embedded ? 'text-base' : 'text-xl'}`}>{t('librarian.chatTitle')}</h1>
+                <p className="text-xs text-muted-foreground" role="status" data-testid="knowledge-bot-status">{t(`librarian.bot.states.${botState}`)}</p>
+              </div>
               <p className="sr-only">{t('librarian.modalSubtitle')}</p>
             </div>
-            <Button
+            <div className={embedded ? 'knowledge-bot-toolbar' : 'flex items-center gap-1'}>
+            {embedded ? <DropdownMenu.Root modal={false}>
+              <DropdownMenu.Trigger asChild><button type="button" className="knowledge-bot-toolbar__more" aria-label={t('librarian.bot.more')} title={t('librarian.bot.more')} data-testid="knowledge-bot-menu"><Ellipsis size={18} /></button></DropdownMenu.Trigger>
+              <DropdownMenu.Portal><DropdownMenu.Content className="knowledge-bot-menu" align="end" sideOffset={8}>
+                <DropdownMenu.Item className="knowledge-bot-menu__item" disabled={busy || librarianMessages.length === 0} onSelect={clearLibrarianThread} data-testid="knowledge-librarian-clear"><Trash2 size={14} />{t('librarian.clearThread')}</DropdownMenu.Item>
+              </DropdownMenu.Content></DropdownMenu.Portal>
+            </DropdownMenu.Root> : <Button
               type="button"
               variant="ghost"
               size="sm"
@@ -366,29 +410,35 @@ export function KnowledgeChat() {
               data-testid="knowledge-librarian-clear"
             >
               {t('librarian.clearThread')}
-            </Button>
+            </Button>}
+            {embedded && <button type="button" className="knowledge-bot-toolbar__collapse" aria-label={t('librarian.bot.collapse')} title={t('librarian.bot.collapse')} onClick={onClose} data-testid="knowledge-bot-close"><Minus size={16} strokeWidth={2} /></button>}
+            </div>
           </header>
 
-          <div className="flex shrink-0 gap-2 border-b border-border px-4 py-2">
+          {!embedded && <div className="flex shrink-0 gap-2 border-b border-border px-4 py-2">
             <Button variant="ghost" size="sm" className="h-8" onClick={backToChat} data-testid="knowledge-chat-back">{t('librarian.backToChat')}</Button>
             <Button variant="ghost" size="sm" className="h-8" onClick={backToLibrary} data-testid="knowledge-chat-library">{t('tabs.library')}</Button>
-          </div>
+          </div>}
           {error && error !== librarianError && <p role="alert" className="px-4 py-2 text-sm text-red-700 dark:text-red-400">{error}</p>}
 
           {/* Restraint: the thread is the panel. Capability cards, the current-note
               card, the quick-action grid and the write-boundary banner were resident
               chrome that squeezed the conversation; their functions all remain
               reachable from the workbench tabs and per-answer actions. */}
-          <div className="min-h-0 flex-1 overflow-auto px-4 py-3" data-testid="knowledge-librarian-thread">
-            <div className="space-y-3">
+          <div ref={threadRef} className="min-h-0 flex-1 overflow-auto px-4 py-3" data-testid="knowledge-librarian-thread">
+            <div className="mx-auto max-w-3xl space-y-5">
               {librarianMessages.length === 0 ? (
-                <p className="px-1 py-8 text-center text-xs leading-5 text-muted-foreground">
-                  {t('librarian.threadEmpty')}
-                </p>
-              ) : librarianMessages.map((message) => (
+                <div className="flex flex-col items-center gap-3 px-1 py-10">
+                  <KnowledgeBot size={embedded ? 84 : 132} state={botState} follow />
+                  <p className="max-w-sm text-center text-sm leading-6 text-muted-foreground">{t(embedded ? 'librarian.bot.empty' : 'librarian.threadEmpty')}</p>
+                </div>
+              ) : librarianMessages.map((message, index) => (
                 <KnowledgeAssistantMessage
                   key={message.id}
                   message={message}
+                  compact={embedded}
+                  botState={index === librarianMessages.length - 1 && message.role === 'assistant' ? botState : 'idle'}
+                  animateAvatar={index === librarianMessages.length - 1 && message.role === 'assistant' && botState !== 'idle' && botState !== 'listening'}
                   copied={copiedLibrarianMessageId === message.id}
                   busy={busy}
                   copyLabel={t('librarian.copy')}
@@ -401,7 +451,7 @@ export function KnowledgeChat() {
                     sources: t('librarian.sections.sources'),
                     unknowns: t('librarian.sections.unknowns'),
                     nextAction: t('librarian.sections.nextAction'),
-                    retrieval: t('librarian.sections.retrieval'),
+                    retrieval: t(embedded ? 'librarian.bot.details' : 'librarian.sections.retrieval'),
                     query: t('librarian.retrieval.query'),
                     corpus: t('librarian.retrieval.corpus'),
                     roleTag: t('librarian.retrieval.roleTag'),
@@ -428,8 +478,8 @@ export function KnowledgeChat() {
               ))}
               {running === 'librarianAsk' ? (
                 <div className="flex items-center gap-2 px-1 text-xs text-muted-foreground" data-testid="knowledge-librarian-loading">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />
-                  {t('librarian.searching')}
+                  <KnowledgeBot size={48} state={botState} />
+                  {t(`librarian.bot.states.${botState}`)}
                 </div>
               ) : null}
               {librarianError ? (
@@ -439,14 +489,14 @@ export function KnowledgeChat() {
                   retryLabel={t('librarian.retry')}
                   dismissLabel={t('librarian.dismissError')}
                   onRetry={() => void askLibrarian(lastLibrarianQuestion)}
-                  onDismiss={() => setLibrarianError(null)}
+                  onDismiss={() => { setLibrarianError(null); setError(null); resetBot(); }}
                 />
               ) : null}
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-black/10 px-4 pb-3 pt-2.5 dark:border-white/10">
-            <div className="mb-2 flex flex-wrap gap-1.5" data-testid="knowledge-librarian-suggestions">
+          <div className={`mx-auto w-full max-w-3xl shrink-0 ${embedded ? 'knowledge-bot-composer-wrap' : 'px-4 pb-5 pt-3'}`}>
+            {!embedded && <div className="mb-2 flex flex-wrap gap-1.5" data-testid="knowledge-librarian-suggestions">
               {librarianPromptSuggestions.map((suggestion) => (
                 <button
                   key={suggestion.id}
@@ -459,17 +509,26 @@ export function KnowledgeChat() {
                   {suggestion.label}
                 </button>
               ))}
-            </div>
+            </div>}
             <KnowledgeAssistantPromptInput
               value={librarianQuestion}
               onChange={setLibrarianQuestion}
               onSubmit={() => void askLibrarian()}
               disabled={busy}
               running={running === 'librarianAsk'}
-              placeholder={t('librarian.askPlaceholder')}
+              placeholder={t(embedded ? 'librarian.bot.placeholder' : 'librarian.askPlaceholder')}
               askLabel={t('librarian.askButton')}
               hint={librarianCheckpointAt ? t('librarian.checkpointSaved', { time: new Date(librarianCheckpointAt).toLocaleTimeString() }) : t('librarian.askHint')}
-            />
+              onFocusChange={setComposing}
+              compact={embedded}
+            >
+              {embedded && <DropdownMenu.Root modal={false}>
+                <DropdownMenu.Trigger asChild><button type="button" className="knowledge-bot-prompt-trigger" disabled={busy} aria-label={t('librarian.bot.prompts')} title={t('librarian.bot.prompts')} data-testid="knowledge-bot-prompts"><Sparkles size={15} /></button></DropdownMenu.Trigger>
+                <DropdownMenu.Portal><DropdownMenu.Content className="knowledge-bot-menu" align="start" side="top" sideOffset={8} data-testid="knowledge-librarian-suggestions">
+                  {librarianPromptSuggestions.map((suggestion) => <DropdownMenu.Item key={suggestion.id} className="knowledge-bot-menu__item" onSelect={() => void askLibrarian(suggestion.prompt)} data-testid={`knowledge-librarian-suggestion-${suggestion.id}`}>{suggestion.label}</DropdownMenu.Item>)}
+                </DropdownMenu.Content></DropdownMenu.Portal>
+              </DropdownMenu.Root>}
+            </KnowledgeAssistantPromptInput>
           </div>
         </div>);
 }

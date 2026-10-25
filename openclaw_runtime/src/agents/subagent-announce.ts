@@ -51,6 +51,7 @@ import {
 } from "./subagent-announce.runtime.js";
 import { getSubagentDepthFromSessionStore } from "./subagent-depth.js";
 import { deleteSubagentSessionForCleanup } from "./subagent-session-cleanup.js";
+import { getVerseGitRuntimeBindingForRun } from "../plugin-sdk/versegit-binding-registry.js";
 import type { SpawnSubagentMode } from "./subagent-spawn.types.js";
 import { isAnnounceSkip } from "./tools/sessions-send-tokens.js";
 
@@ -619,7 +620,10 @@ export async function runSubagentAnnounceFlow(params: {
         // Best-effort
       }
     }
-    if (shouldDeleteChildSession) {
+    const barrierOwnsDeletion = Boolean(
+      process.env.CLAWX_VERSGIT_CLEANUP_ROOT?.trim() && getVerseGitRuntimeBindingForRun(params.childRunId)
+    );
+    if (shouldDeleteChildSession && !barrierOwnsDeletion) {
       await deleteSubagentSessionForCleanup({
         callGateway: subagentAnnounceDeps.callGateway,
         childSessionKey: params.childSessionKey,

@@ -1,0 +1,43 @@
+{
+  "schema": "clawx.versegit.d2-paired-input-manifest/v1",
+  "generated_at": "2026-10-22T19:56:03.335Z",
+  "task": "TF-0531",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "50837eca343d56b6bee3ca05b6d31452658d5da1",
+    "tree": "b028a9cfa747060fa741ae9d537ec6837d872972",
+    "dirty": false
+  },
+  "task_text": "Update the API consumer in the same change while preserving the current contract.",
+  "base_commit": "2e8787e85854916a7fda1cc6209d736ce2bfdb48",
+  "input_hashes": {
+    "api": "8c238f3cd63c23ecada34e6c59188083d558f8e493d6abcc7ccc296caa729a61",
+    "consumer": "6a09b86c0d2ab122df31717d505ec3f3f5af7af65f6f8024b15504766b2531c5",
+    "task": "9228c357a2c3002c40c64842e9877c66e2bf509f7617796f64e30251347b9621",
+    "tsconfig": "2e0b98d969a36a9cc7bb30fdeef4cc59bcbcefd61f37e58d66a1906eadbc991e",
+    "base_commit": "2e8787e85854916a7fda1cc6209d736ce2bfdb48"
+  },
+  "trial_schedule": {
+    "positive": 3,
+    "negative": 2
+  },
+  "paired_constraints": {
+    "same_base_commit": true,
+    "same_task_text": true,
+    "same_typescript_version": true,
+    "same_tsconfig_hash": true,
+    "same_initial_repository": true
+  },
+  "execution_class": {
+    "driver": "deterministic-simulated-agent",
+    "effects": "actual-read-write-tools-and-host-git-tsc",
+    "external_model_provider": false,
+    "real_human": false
+  },
+  "supported_language": "typescript",
+  "cjs_claim": false,
+  "passed": true,
+  "digest": "4454c9b23551013c4c6de60b9d3563c096c705cedf6b31542e5d6237d1a8df6c"
+}

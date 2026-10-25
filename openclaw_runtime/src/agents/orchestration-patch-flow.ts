@@ -1,11 +1,23 @@
 /**
  * P2b execution-side patch flow.
  *
- * Proposal-only orchestration workers return fenced apply_patch text. After all
- * expected workers complete, this module extracts those proposals and applies
- * them serially through the existing C5-2 API. It is deliberately best-effort:
- * the caller records failures and continues the ordinary verifier flow.
+ * Proposal-only orchestration workers return fenced apply_patch text. The
+ * candidate-first path materializes and verifies one combined candidate before
+ * the existing journaled apply path may touch the base workspace. Legacy direct
+ * apply remains available only when no candidate-apply host is supplied.
  */
+import type { ApplyPatchJournalOptions } from "./apply-patch-types.js";
+import type { VerseGitCompletionSink, VerseGitHostCompletionOutcome } from "../../../shared/types/versegit.js";
+import {
+  applyCandidateAfterVerification,
+  materializePatchCandidate,
+  type CandidateApplyDecision,
+  type CandidateApplyHost,
+  type CandidateApplyPermit,
+  type CandidateApplyTraceEvent,
+  type CandidateApplyVerification,
+  type PatchCandidateManifest,
+} from "./orchestration-candidate-apply.js";
 import { applyPatchProposalsSerial, type PatchProposal } from "./patch-flow.js";
 import type {
   SubagentRunRecord,
@@ -29,7 +41,57 @@ export type DeferredPatchFlowOutcome = {
   results: TeamPatchFlowResultSummary[];
   appliedAt: number;
   error?: string;
+  candidate?: PatchCandidateManifest;
+  verification?: CandidateApplyVerification;
+  permit?: CandidateApplyPermit;
+  decision?: CandidateApplyDecision;
+  trace?: CandidateApplyTraceEvent[];
+  cleanup?: { ok: boolean; issues: string[] };
 };
+
+export function patchFlowHostOutcome(status: TeamPatchFlowStatus): VerseGitHostCompletionOutcome {
+  if (status === "applied") return "applied";
+  if (status === "unknown" || status === "partial") return "unknown";
+  return "not_applied";
+}
+
+export function recordDeferredPatchFlowCompletion(input: {
+  outcome: DeferredPatchFlowOutcome;
+  sink: VerseGitCompletionSink | undefined;
+  sessionId: string;
+  runId: string;
+  actor: string;
+}): ReturnType<VerseGitCompletionSink["record"]> | {
+  status: "unavailable" | "not_configured";
+  reason: string;
+  fact: null;
+} {
+  if (!input.sink) return { status: "not_configured", reason: "completion_sink_not_configured", fact: null };
+  if (!input.outcome.candidate || !input.outcome.verification) {
+    return { status: "unavailable", reason: "completion_identity_unavailable", fact: null };
+  }
+  const hostOutcome = patchFlowHostOutcome(input.outcome.status);
+  return input.sink.record({
+    identity: {
+      ownerId: input.outcome.verification.ownerId,
+      epoch: input.outcome.verification.epoch,
+      authorizationId: input.outcome.verification.authorizationId,
+      sessionId: input.sessionId,
+      runId: input.runId,
+      candidateId: input.outcome.candidate.candidateId,
+      candidateTreeOid: input.outcome.candidate.candidateTreeOid,
+      candidateInputDigest: input.outcome.candidate.candidateInputDigest,
+      receiptDigest: input.outcome.verification.receiptDigest,
+      effectId: input.runId + ":" + input.outcome.candidate.candidateId,
+    },
+    hostOutcome,
+    idempotencyKey:
+      input.runId + ":" + input.outcome.candidate.candidateId + ":" +
+      input.outcome.verification.receiptDigest + ":" + hostOutcome,
+    actor: input.actor,
+    reason: input.outcome.error ?? null,
+  });
+}
 
 function frozenWorkerResult(worker: SubagentRunRecord): string | undefined {
   return (
@@ -78,6 +140,17 @@ function summarizeResult(result: Awaited<ReturnType<typeof applyPatchProposalsSe
           },
         }
       : {}),
+    ...(result.journal
+      ? {
+          journal: {
+            batchId: result.journal.batchId,
+            batchState: result.journal.batchState,
+            undoable: result.journal.undoable,
+            snapshotIds: result.journal.snapshots.map((snapshot) => snapshot.journalEntryId),
+          },
+        }
+      : {}),
+    ...(result.recoveryRef ? { recoveryRef: result.recoveryRef } : {}),
   };
 }
 
@@ -85,6 +158,11 @@ export async function applyDeferredPatchFlow(params: {
   workers: readonly SubagentRunRecord[];
   workspaceDir: string | undefined;
   now?: () => number;
+  candidateApply?: {
+    host: CandidateApplyHost;
+    journal: ApplyPatchJournalOptions;
+    applyProposals?: typeof applyPatchProposalsSerial;
+  };
 }): Promise<DeferredPatchFlowOutcome> {
   const now = params.now ?? Date.now;
   const appliedAt = now();
@@ -99,6 +177,53 @@ export async function applyDeferredPatchFlow(params: {
       results: [],
       appliedAt,
       error: "patch_flow_workspace_missing",
+    };
+  }
+  if (params.candidateApply) {
+    const materialized = await materializePatchCandidate({
+      workspaceDir: params.workspaceDir,
+      proposals,
+    });
+    if (materialized.status !== "frozen") {
+      return {
+        status: "failed",
+        proposalCount: proposals.length,
+        results: materialized.proposalResults.map(summarizeResult),
+        appliedAt: now(),
+        error: `candidate_materialize_failed:${materialized.reason}:${materialized.issues.join(",")}`,
+      };
+    }
+    const outcome = await applyCandidateAfterVerification({
+      workspaceDir: params.workspaceDir,
+      candidate: materialized.manifest,
+      candidateRoot: materialized.candidateRoot,
+      proposals,
+      host: params.candidateApply.host,
+      journal: params.candidateApply.journal,
+      now,
+      ...(params.candidateApply.applyProposals
+        ? { applyProposals: params.candidateApply.applyProposals }
+        : {}),
+    });
+    const status: TeamPatchFlowStatus =
+      outcome.status === "applied" ? "applied"
+        : outcome.status === "partial" ? "partial"
+          : outcome.status === "verification-failed" ? "verification-failed"
+            : outcome.status === "preflight-rejected" ? "blocked"
+              : outcome.status === "unknown" ? "unknown"
+                : "failed";
+    return {
+      status,
+      proposalCount: proposals.length,
+      results: outcome.proposalResults.map(summarizeResult),
+      appliedAt: now(),
+      ...(outcome.reason ? { error: outcome.reason } : {}),
+      candidate: materialized.manifest,
+      ...(outcome.verification ? { verification: outcome.verification } : {}),
+      ...(outcome.permit ? { permit: outcome.permit } : {}),
+      decision: outcome.decision,
+      trace: outcome.trace,
+      cleanup: outcome.cleanup,
     };
   }
   try {

@@ -13,12 +13,14 @@ import {
   PanelLeftClose,
   PanelLeft,
   Trash2,
+  Waypoints,
   Archive as ArchiveIcon,
   Pencil,
   Check,
   X,
   Loader2,
   Activity,
+  Brain,
   GitCompare,
   Workflow,
   Plus,
@@ -52,6 +54,9 @@ import { SessionSearchModal } from './SessionSearchModal';
 import { SessionFolderTree } from './SessionFolderTree';
 import { SessionContextMenu, type SessionContextMenuTarget } from './SessionContextMenu';
 import { SidebarRow } from './SidebarRow';
+import { HookSidebar } from '@/components/rareui/HookSidebar';
+import { CompletionActivityMenu } from '@/components/rareui/CompletionActivityMenu';
+import { DeleteButton } from '@/components/rareui/DeleteButton';
 import {
   OfficialArchiveIcon,
   OfficialFolderClosedIcon,
@@ -142,6 +147,7 @@ interface SessionRowProps {
   onOpenContextMenu: (key: string, x: number, y: number) => void;
   leadingActions?: React.ReactNode;
   forceActionsVisible?: boolean;
+  isCoordinator?: boolean;
 }
 
 type SidebarSessionStatusKind = 'running' | 'waiting' | 'completed' | 'error' | 'aborted';
@@ -271,6 +277,7 @@ const SessionRowMemo = memo(function SessionRow({
   onOpenContextMenu,
   leadingActions,
   forceActionsVisible = false,
+  isCoordinator = false,
 }: SessionRowProps) {
   const { t } = useTranslation(['common', 'chat']);
   const sessionStatusLabel = sessionStatus ? t(`chat:${sessionStatus.labelKey}`) : '';
@@ -357,6 +364,7 @@ const SessionRowMemo = memo(function SessionRow({
     <Tooltip>
     <SidebarRow
       className="task-row"
+      hookKey={s.key}
       selected={isSelected}
       actionsClassName="task-hover-actions"
       onMouseEnter={handleRowHoverStart}
@@ -397,7 +405,7 @@ const SessionRowMemo = memo(function SessionRow({
           >
             <Pencil />
           </button>
-          <button
+          <DeleteButton
             type="button"
             data-testid={`sidebar-session-delete-${s.key}`}
             aria-label={t('common:sidebar.deleteSession', { ns: 'common' })}
@@ -406,9 +414,7 @@ const SessionRowMemo = memo(function SessionRow({
               onDeleteClick(s.key, sessionLabel);
             }}
             className="task-hover-btn hover:!text-destructive"
-          >
-            <Trash2 />
-          </button>
+          />
         </>
       )}
       /* While a row's move-menu is open the controls must not fade out from
@@ -440,6 +446,16 @@ const SessionRowMemo = memo(function SessionRow({
           <span className={cn('marquee-text', isUnread && 'task-title--unread')}>
             <span className="marquee-text__inner">{sessionLabel}</span>
           </span>
+          {isCoordinator ? (
+            <span
+              className="inline-flex shrink-0 items-center rounded-md bg-black/5 p-1 text-muted-foreground dark:bg-white/10"
+              data-testid={`sidebar-session-coordinator-${s.key}`}
+              title={t('chat:sidebar.longSession')}
+              aria-label={t('chat:sidebar.longSession')}
+            >
+              <Waypoints className="h-3 w-3" aria-hidden="true" />
+            </span>
+          ) : null}
         </div>
         {isPinned && (
           <Pin
@@ -497,6 +513,15 @@ const SessionRowMemo = memo(function SessionRow({
             <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
               <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               <span className="truncate">{tooltipWorkspace}</span>
+            </div>
+          )}
+          {isCoordinator && (
+            <div
+              className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground"
+              data-testid={`sidebar-session-tooltip-coordinator-${s.key}`}
+            >
+              <Waypoints className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{t('chat:sidebar.longSession')}</span>
             </div>
           )}
           {branch?.trim() && (
@@ -581,7 +606,11 @@ export function Sidebar() {
   const hydrateStartup = useChatStore((s) => s.hydrateStartup);
   const handleNewChat = useNewChatAction();
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
+  const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const activeWorkspaceId = useWorkspacesStore((s) => s.activeWorkspaceId);
+  const coordinatorSessionKey = activeWorkspace?.coordinatorBinding?.state === 'active'
+    ? activeWorkspace.coordinatorBinding.sessionKey
+    : null;
   const workspacesLoading = useWorkspacesStore((s) => s.loading);
   const workspacesError = useWorkspacesStore((s) => s.error);
   const fetchWorkspaces = useWorkspacesStore((s) => s.fetchWorkspaces);
@@ -631,8 +660,8 @@ export function Sidebar() {
     const isFreshCurrent = session.key === currentSessionKey
       && /:session-\d/.test(session.key)
       && messages.length === 0;
-    return !isFreshCurrent;
-  }), [currentSessionKey, messages.length, sessions]);
+    return !isFreshCurrent || session.key === coordinatorSessionKey;
+  }), [coordinatorSessionKey, currentSessionKey, messages.length, sessions]);
 
   useEffect(() => {
     void refreshInbox();
@@ -820,6 +849,7 @@ export function Sidebar() {
   const findWorkspaceForSession = useCallback((sessionKey: string) => (
     workspaceProfiles.find((profile) => (
       profile.activeSessionKey === sessionKey
+      || profile.coordinatorBinding?.sessionKey === sessionKey
       || Boolean(profile.sessionStates?.[sessionKey])
       || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey)
     )) ?? null
@@ -1024,6 +1054,7 @@ export function Sidebar() {
     },
     { to: '/cron', icon: <CalendarDays className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.scheduled'), testId: 'sidebar-nav-cron' },
     { to: '/knowledge', icon: <FileText className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.knowledge'), testId: 'sidebar-nav-knowledge' },
+    { to: '/memory', icon: <Brain className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.memory'), testId: 'sidebar-nav-memory' },
   ];
 
   const navItems = coreNavItems.filter((item) => !hiddenRoutes.has(item.to));
@@ -1152,6 +1183,7 @@ export function Sidebar() {
       sessionStatus={sessionStatuses[s.key] ?? null}
       isPinned={entry.isPinned === true}
       isUnread={entry.isUnread === true}
+      isCoordinator={s.key === coordinatorSessionKey}
       editingLabel={editingLabel}
       currentSessionKey={currentSessionKey}
       isOnChat={isOnChat}
@@ -1173,7 +1205,7 @@ export function Sidebar() {
     />;
   }, [
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
-    currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
+    currentSessionKey, coordinatorSessionKey, isOnChat, switchSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
     handleSessionDeleteClick, handleDismissSessionStatus, findWorkspaceForSession,
     markSessionRead, openSessionContextMenu, toggleSessionPinned,
@@ -1225,7 +1257,7 @@ export function Sidebar() {
       <div
         className={cn(
           'sidebar-heading',
-          sidebarCollapsed && 'justify-center',
+          sidebarCollapsed && 'sidebar-heading--collapsed justify-center',
         )}
       >
         {!sidebarCollapsed && (
@@ -1236,6 +1268,7 @@ export function Sidebar() {
             </span>
           </div>
         )}
+        <CompletionActivityMenu />
         <button
           type="button"
           data-testid="sidebar-collapse-toggle"
@@ -1345,7 +1378,7 @@ export function Sidebar() {
                 headers inside. Row count in this list is bounded by the session
                 list itself, so there is nothing to virtualize away. */}
             <div className={cn('section-list-outer', sessionSectionOpen && 'open')} aria-hidden={!sessionSectionOpen}>
-            <div className="task-collection-list">
+            <HookSidebar className="task-collection-list" activeKey={currentSessionKey}>
               {sidebarSessionEntries
                 ? sidebarSessionEntries.length > 0
                   ? sidebarSessionEntries.slice(0, sessionRenderLimit).map((entry) => renderSessionRow(entry))
@@ -1367,6 +1400,7 @@ export function Sidebar() {
                       {showWorkspaceRow && (
                       <SidebarRow
                         className="project-row-wrap"
+                        hookKey={group.workspace.id}
                         actionsClassName="project-hover-actions"
                         actions={(
                           <>
@@ -1465,7 +1499,7 @@ export function Sidebar() {
                       </button>
                     )}
                   </div>}
-            </div>
+            </HookSidebar>
             </div>
           </section>
         </div>

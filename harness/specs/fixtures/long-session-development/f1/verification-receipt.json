@@ -1,0 +1,199 @@
+{
+  "schema": "clawx.long-session.f1-verification/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-f1",
+  "taskForestNode": "TF-0561",
+  "taskKey": "F1",
+  "contract": "harness/specs/tasks/long-session-restart-journeys.md",
+  "generatedAt": "2026-10-23T19:08:41.868Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "504b284ba79fde7bfd32562cfdd10631a5b35a2a",
+    "tree": "693ddf8b44ec5a850e7c12033c1b05a64a949a1d",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+  },
+  "verdict": "pass",
+  "featureClaim": "the explicit long-session coordinator keeps the same durable work across app restarts: binding and Task Ledger survive restart, a second workspace stays isolated, handoff/fork/compact keep working, and archive or delete invalidation plus resource reclaim prevent a stale generation from being resumed or resurrected",
+  "acceptance": [
+    {
+      "criterion": "at least six agent-driven real Electron/Host/Gateway journeys covering worker batch, background/UI closed, app and Gateway restart, fork/handoff/compact, revoke, archive/restore/delete and late events",
+      "result": "pass",
+      "observedJourneys": 6,
+      "evidence": [
+        "restart-journey-results.json",
+        "host-runtime-receipts.json"
+      ]
+    },
+    {
+      "criterion": "at least two workspaces and one ordinary session act as isolation controls; cross-scope leaks, duplicate side effects and wrong completed/delivered claims are all 0",
+      "result": "pass",
+      "evidence": [
+        "restart-journey-results.json",
+        "host-runtime-receipts.json"
+      ]
+    },
+    {
+      "criterion": "every journey reads back Task Ledger, transcript, owner receipts and resource state; an IPC-mock UI pass alone is not accepted as runtime wiring",
+      "result": "pass",
+      "evidence": [
+        "host-runtime-receipts.json",
+        "ui-evidence-index.json"
+      ]
+    },
+    {
+      "criterion": "OpenClaw and any available native backend are labelled with separate evidence levels; routes without real provider evidence stay fixture-only/unverified",
+      "result": "pass",
+      "evidence": [
+        "restart-journey-results.json"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "name": "unit-workspace-continuity",
+      "exitCode": 0,
+      "durationMs": 4866,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\unit-workspace-continuity.log",
+      "summary": "  Test Files  2 passed (2)       Tests  17 passed (17)    Start at  03:00:33    Duration  2.18s (transform 89ms, setup 234ms, import 47ms, tests 35ms, environment 1.44s) "
+    },
+    {
+      "name": "unit-delete-paths",
+      "exitCode": 0,
+      "durationMs": 6119,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\unit-delete-paths.log",
+      "summary": "  Test Files  3 passed (3)       Tests  10 passed (10)    Start at  03:00:37    Duration  4.42s (transform 751ms, setup 363ms, import 880ms, tests 1.05s, environment 1.48s) "
+    },
+    {
+      "name": "build-vite",
+      "exitCode": 0,
+      "durationMs": 65943,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\build-vite.log",
+      "summary": "vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 17ms"
+    },
+    {
+      "name": "e2e-baseline",
+      "exitCode": 0,
+      "durationMs": 163208,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\e2e-baseline.log",
+      "summary": "ok 11 tests\\e2e\\runtime-lifecycle-governance.spec.ts:42:7 › runtime lifecycle governance › delete success removes the session and conversation switch keeps the app usable (7.8s)   ok 12 tests\\e2e\\runtime-lifecycle-governance.spec.ts:121:7 › runtime lifecycle governance › delete failure keeps the persisted operationId so a retry reuses it (6.1s) [runtime-lifecycle-audit] processPollToolCalls=0   ok 13 tests\\e2e\\runtime-lifecycle-governance.spec.ts:181:7 › runtime lifecycle governance › goal wake path records zero process.poll tool calls and duplicate wake has one tick (1.0m)    13 passed (2.7m)"
+    },
+    {
+      "name": "e2e-restart-journeys",
+      "exitCode": 0,
+      "durationMs": 165078,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\e2e-restart-journeys.log",
+      "summary": "\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 1 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (2.6m)    1 passed (2.7m)"
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 0,
+      "durationMs": 31597,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\typecheck.log",
+      "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+    },
+    {
+      "name": "contract-check",
+      "exitCode": 0,
+      "durationMs": 1000,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\contract-check.log",
+      "summary": "$ node scripts/contract-check.mjs Contract check passed."
+    },
+    {
+      "name": "comms-replay",
+      "exitCode": 0,
+      "durationMs": 1202,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\comms-replay.log",
+      "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+    },
+    {
+      "name": "comms-compare",
+      "exitCode": 0,
+      "durationMs": 1064,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\comms-compare.log",
+      "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+    },
+    {
+      "name": "harness-validate",
+      "exitCode": 0,
+      "durationMs": 2030,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\harness-validate.log",
+      "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-restart-journeys.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-restart-journeys.md\" Spec is valid: harness\\specs\\tasks\\long-session-restart-journeys.md"
+    },
+    {
+      "name": "git-diff-check",
+      "exitCode": 0,
+      "durationMs": 113,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\git-diff-check.log",
+      "summary": ""
+    },
+    {
+      "name": "eslint-changed",
+      "exitCode": 0,
+      "durationMs": 5997,
+      "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\eslint-changed.log",
+      "summary": ""
+    }
+  ],
+  "counts": {
+    "gates": 12,
+    "failedGates": 0,
+    "journeys": 6,
+    "workspaces": 2,
+    "negativeCases": 3,
+    "runtimeWiringProofs": 10,
+    "uiOnlySuites": 2,
+    "providerRequests": 0
+  },
+  "claims": {
+    "crossScopeLeaks": 0,
+    "duplicateContinuationSideEffects": 0,
+    "falseCompletedOrDeliveredClaims": 0,
+    "note": "measured by the journey assertions: A/B bindings never cross, a late read after delete cannot resurrect the deleted generation, and completion/delivery claims come only from owner receipts"
+  },
+  "evidenceLevels": {
+    "openclaw_runtime": {
+      "level": "real-built-Electron-Host-Gateway",
+      "proven": true,
+      "note": "binding, restart recovery, workspace isolation, handoff/fork/compact, archive/delete invalidation and resource reclaim were exercised through the actual Host API and Gateway RPC"
+    },
+    "native_backend_continuity": {
+      "level": "unverified-no-provider-credential",
+      "proven": false,
+      "note": "no provider key is configured in this environment, so a real model turn and native-backend thread continuity stay unmeasured; the transcript readback is an empty runtime transcript, which is authoritative for \"no turn ran\" and is not claimed as model output continuity"
+    },
+    "dual_worker_batch_and_late_events": {
+      "level": "covered-by-c3-c4-journeys",
+      "proven": true,
+      "note": "batch aggregation, idempotent continuation and stale-generation refusal are covered by the C3/C4 real journeys (tests/e2e/long-session-completion-continuation.spec.ts, long-session-delegation-admission.spec.ts) and by the C1/C2 generation fences re-exercised here"
+    }
+  },
+  "unmeasured": [
+    "provider-backed model turn continuity and native backend thread resumption (no API key in this environment)",
+    "real multi-worker parallel Git worktree execution end to end (covered by receipts and scheduler tests, not by a two-worktree live run)",
+    "screen-reader matrix beyond the keyboard/aria checks already in C4"
+  ],
+  "cleanup": {
+    "startedProcesses": true,
+    "startedGateway": true,
+    "startedElectron": true,
+    "electronProcessesClosed": true,
+    "gatewayProcessesClosed": true,
+    "providerRequests": 0,
+    "recoveryRequired": false,
+    "temporaryRoot": "D:\\ClawX-work\\worktrees\\long-session-program\\test-results\\long-session-restart-journ-89344-rneys-across-two-workspaces\\f1-run-root",
+    "notes": "Each journey launched its own built Electron app and Gateway on an isolated run root and closed them in the fixture; the created schedules and sessions were cancelled by the journey itself."
+  },
+  "limitations": [
+    "F1 proves the long-session loop through real Host/Gateway wiring; it does not claim live-provider answer quality.",
+    "No product default, frozen lock, publication scope, independent Project or cloud execution claim is made here.",
+    "All evidence is agent-driven; no real-human operation, verdict or data is claimed."
+  ],
+  "artifacts": [
+    "restart-journey-results.json",
+    "host-runtime-receipts.json",
+    "ui-evidence-index.json",
+    "verification-receipt.json",
+    "README.md",
+    "SHA256SUMS"
+  ]
+}

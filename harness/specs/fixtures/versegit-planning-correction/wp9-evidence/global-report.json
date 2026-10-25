@@ -1,0 +1,971 @@
+{
+  "schema": "clawx.versegit.wp9-global-acceptance/v1",
+  "generated_at": "2026-10-21T22:22:21.639Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0515",
+  "parentTask": "TF-0465",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/wp9-global-acceptance-fixture.json",
+  "fixtureDigest": "483787946891e60f9d465ec6a7e3b363f8f0e54fc7b88a52c627ba89c09f4b57",
+  "globalVerdict": "PASS_WITH_GAPS",
+  "passed": true,
+  "p0": [],
+  "p1": [],
+  "p2": [
+    {
+      "id": "P2-evidence-snapshot-pairing",
+      "summary": "新 live artifact 包含新 PID、时间戳和关联摘要；冻结 curated evidence 不变时，verifier 的字节镜像比较返回 exit 1。新报告自身验证及 normalized outcome 比较通过；候选快照的完整 verifier 含独立 live replay 返回 exit 0。",
+      "disposition": "residual"
+    },
+    {
+      "id": "P2-bounded-validation",
+      "summary": "仅验证 Windows agent 驱动的 bounded host vertical slice。非 Windows、外部模型会话、未观测读面、conflicts-plan unavailable、debug sidecar 及完整产品 M3 边界继续保留；builder/verifier 仍共享部分验证逻辑。",
+      "disposition": "residual"
+    },
+    {
+      "id": "P2-historical-manifest",
+      "summary": "历史 planning manifest 的输入摘要相对当前源码存在三项 drift；保留历史 FAIL、上游终审失败记录及偏差账本，不将旧 manifest 作为当前通过凭据。",
+      "disposition": "residual"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC1-contract-identity",
+      "criterion": "契约、身份、生命周期、失败姿态和 evidence schema 有版本化文档",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/planning-contract.json",
+          "sha256": "a5087a435e248b58a3ccf038f8954ac1119bbdd0f41b7c08cb202944e45cf595",
+          "claim": "versioned planning and authority contract"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
+          "sha256": "0d7d316db47f42d164a800982183a4f24e550a28dee1c8d2d03361c1ff9859ae",
+          "claim": "consumer identity, lifecycle, failure and schema surface"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/execution-receipt-contract.json",
+          "sha256": "05984a357c5dc00210f16661694a180212db1452d9a674960b9515cf51251499",
+          "claim": "execution receipt cross-boundary schema"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
+          "sha256": "d4ec1fc974ba36352d9f0c8f31dc61551442ba225420c07abba9bd44aa9bc585",
+          "claim": "frozen binary and contract identity"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events-report.json",
+          "sha256": "75ba5ec9dde4a8a5f25330544b696e2741ce3d3a29d0e289dca09177d6d580b9",
+          "claim": "observation identity and event schema evidence"
+        },
+        {
+          "path": "harness/specs/rules/versegit-validation-layer-extension-boundary.md",
+          "sha256": "e5ff2ee1d166d138b0faf49cd97f15005251deedf4af1e02f2cf50dbf6314b1b",
+          "claim": "execution and harness authority boundary"
+        },
+        {
+          "path": "harness/specs/scenarios/versegit-validation-layer-extension.md",
+          "sha256": "01c63ddb2f51bffb15d25a60023fe94ef51310342655501fa55e3de860345db3",
+          "claim": "user-visible lifecycle scenario"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "planning-contract-v2",
+          "passed": true,
+          "detail": "planning contract is versioned v2"
+        },
+        {
+          "id": "live-graph-authority",
+          "passed": true,
+          "detail": "live Task Forest remains the execution authority"
+        },
+        {
+          "id": "consumer-contract",
+          "passed": true,
+          "detail": "consumer schema is clawx.versegit.consumer-contract/v1"
+        },
+        {
+          "id": "receipt-contract",
+          "passed": true,
+          "detail": "receipt contract is execution-receipt/v2"
+        },
+        {
+          "id": "failure-taxonomy",
+          "passed": true,
+          "detail": "failure taxonomy is explicit"
+        },
+        {
+          "id": "identity-evidence",
+          "passed": true,
+          "detail": "WP0/WP1 identity and observation gates pass"
+        },
+        {
+          "id": "boundary-docs",
+          "passed": true,
+          "detail": "rule and scenario document authority and lifecycle boundaries"
+        }
+      ],
+      "conclusion": "direct retained evidence satisfies this goal criterion"
+    },
+    {
+      "id": "AC2-opt-in-adapter",
+      "criterion": "ClawX 侧有 opt-in harness profile 与 host-owned adapter",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "harness/src/profiles.mjs",
+          "sha256": "b8b2992c58362fa16c4f0f3b40886fe96ab6d1dea690537cec81df3634899622",
+          "claim": "explicit concurrency-aux profile registration"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
+          "sha256": "8bbbcb5366e8bbd6094325ae1a143403053c01ab8453b9dd25c1393b43547361",
+          "claim": "opt-in diagnostic profile behavior"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+          "sha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f",
+          "claim": "host-owned adapter differential and escalation refusals"
+        },
+        {
+          "path": "electron/services/versegit-module.ts",
+          "sha256": "15f36a1202e2b09cd7d0fc6f6904acaa4d38728b27adc172a02620bae500e8fe",
+          "claim": "shipped host adapter implementation"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "profile-registered",
+          "passed": true,
+          "detail": "concurrency-aux is explicitly selectable"
+        },
+        {
+          "id": "profile-opt-in",
+          "passed": true,
+          "detail": "WP2 profile is opt-in and passes"
+        },
+        {
+          "id": "adapter-equivalent",
+          "passed": true,
+          "detail": "MC4 adapter is differentially equivalent"
+        },
+        {
+          "id": "adapter-boundaries",
+          "passed": true,
+          "detail": "adapter remains host-owned, non-renderer and default-off"
+        }
+      ],
+      "conclusion": "direct retained evidence satisfies this goal criterion"
+    },
+    {
+      "id": "AC3-concurrent-replay",
+      "criterion": "真实双 worktree/producer-consumer replay 和负向样例均由盘上证据复核",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json",
+          "sha256": "13aeb09c889177d732faad7a842f2067c95d0dd27c38020110fe0ed8598aa6bf",
+          "claim": "bounded concurrent replay and soak evidence"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+          "sha256": "687694fbb402e4c73d8827d2e2a1f79b4d37f1d54837334ca9c2cc263eb85cc5",
+          "claim": "migration differential oracle and negative controls"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+          "sha256": "44617536f879941ab082a308f738984c2a3cb0f88cf57f5da24a93f011d6698d",
+          "claim": "real host-shaped producer-consumer vertical slice"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-report.json",
+          "sha256": "15a018e4556dd5e1e7aa4621df20a8721d9af335664495382407f201373b1899",
+          "claim": "independent review of the corrected live slice"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "wp5-replay",
+          "passed": true,
+          "detail": "WP5 bounded replay and soak pass"
+        },
+        {
+          "id": "mc5-oracle",
+          "passed": true,
+          "detail": "MC5 differential oracle and all negative controls fire"
+        },
+        {
+          "id": "wp7-live-slice",
+          "passed": true,
+          "detail": "WP7 has two isolated worktrees and zero identity leaks"
+        },
+        {
+          "id": "producer-consumer",
+          "passed": true,
+          "detail": "producer-consumer candidate facts and candidate check are observed"
+        },
+        {
+          "id": "wp8-verdict",
+          "passed": true,
+          "detail": "WP8 independently passes with P0/P1 empty"
+        }
+      ],
+      "conclusion": "direct retained evidence satisfies this goal criterion"
+    },
+    {
+      "id": "AC4-default-and-failure-isolation",
+      "criterion": "单 worktree 单 session 行为零变化，VG 故障不改变 harness verdict",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
+          "sha256": "8bbbcb5366e8bbd6094325ae1a143403053c01ab8453b9dd25c1393b43547361",
+          "claim": "single-worktree zero-call and missing-binary isolation"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+          "sha256": "44617536f879941ab082a308f738984c2a3cb0f88cf57f5da24a93f011d6698d",
+          "claim": "host verdict stability across failure and continuation"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
+          "sha256": "27350249f602093eb055be9bb34ad56acca64b0c51a4e6aa05b19d5dd3f5e698",
+          "claim": "host verdict and default-off posture"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "single-worktree-zero-call",
+          "passed": true,
+          "detail": "single worktree/session starts no VG process and reads no VG state"
+        },
+        {
+          "id": "missing-binary-isolated",
+          "passed": true,
+          "detail": "missing binary is unavailable and does not change host verdict"
+        },
+        {
+          "id": "host-verdict-stable",
+          "passed": true,
+          "detail": "WP7 failure and continuation preserve the host verdict"
+        },
+        {
+          "id": "wrong-receipt-contained",
+          "passed": true,
+          "detail": "wrong receipt is rejected without changing the host verdict"
+        },
+        {
+          "id": "default-off",
+          "passed": true,
+          "detail": "default-on and single-green-light stay false"
+        }
+      ],
+      "conclusion": "direct retained evidence satisfies this goal criterion"
+    },
+    {
+      "id": "AC5-verseshell-receipt-authority",
+      "criterion": "VerseShell receipt 是 host-mode 验证事实的必要条件",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
+          "sha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
+          "claim": "receipt binding and rejection matrix"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+          "sha256": "44617536f879941ab082a308f738984c2a3cb0f88cf57f5da24a93f011d6698d",
+          "claim": "file-backed live VerseShell receipt authority"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-report.json",
+          "sha256": "15a018e4556dd5e1e7aa4621df20a8721d9af335664495382407f201373b1899",
+          "claim": "independent receipt-authority closure"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "receipt-matrix",
+          "passed": true,
+          "detail": "WP3 retains the complete structural accept/reject/duplicate matrix"
+        },
+        {
+          "id": "caller-self-report-refused",
+          "passed": true,
+          "detail": "caller self-report, second executor and selected-as-full are refused"
+        },
+        {
+          "id": "live-governed-calls",
+          "passed": true,
+          "detail": "WP7 retains two host-approved governed VerseShell calls"
+        },
+        {
+          "id": "receipt-authority",
+          "passed": true,
+          "detail": "file-backed receipt authority reconstructs a real execution fact"
+        },
+        {
+          "id": "failure-before-continuation",
+          "passed": true,
+          "detail": "failure is consumed before an accepted continuation"
+        },
+        {
+          "id": "independent-receipt-review",
+          "passed": true,
+          "detail": "WP8 independently closes the receipt-authority finding"
+        }
+      ],
+      "conclusion": "direct retained evidence satisfies this goal criterion"
+    },
+    {
+      "id": "AC6-residual-boundaries",
+      "criterion": "Task Forest 收口前保留未跑语言、平台、读面和非目标边界",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
+          "sha256": "27350249f602093eb055be9bb34ad56acca64b0c51a4e6aa05b19d5dd3f5e698",
+          "claim": "coverage, release, conflicts and M4 boundaries"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-report.json",
+          "sha256": "15a018e4556dd5e1e7aa4621df20a8721d9af335664495382407f201373b1899",
+          "claim": "independently retained P2 residuals"
+        },
+        {
+          "path": "harness/specs/guides/versegit-concurrency/wp9-lifecycle-closeout.md",
+          "sha256": "bfe019bfbce81b22369bc5fefa0188b9800387081e4f90624e0584514b358094",
+          "claim": "final lifecycle and residual disposition"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "read-surfaces-retained",
+          "passed": true,
+          "detail": "unobserved and partial read surfaces remain explicit"
+        },
+        {
+          "id": "conflicts-plan-unavailable",
+          "passed": true,
+          "detail": "missing pure conflicts-plan seam remains explicit"
+        },
+        {
+          "id": "release-ineligible",
+          "passed": true,
+          "detail": "release, GA, default-on, dirty source and debug binary posture remain visible"
+        },
+        {
+          "id": "m4-not-authorized",
+          "passed": true,
+          "detail": "M4 remains unauthorized and land/admit were not invoked"
+        },
+        {
+          "id": "wp8-p2-retained",
+          "passed": true,
+          "detail": "all three WP8 P2 residuals remain retained"
+        },
+        {
+          "id": "bounded-platform-language",
+          "passed": true,
+          "detail": "platform, language and external-model limits remain documented"
+        }
+      ],
+      "conclusion": "direct retained evidence satisfies this goal criterion"
+    },
+    {
+      "id": "AC7-migration-control",
+      "criterion": "MC0-MC7 节点覆盖源码污染与 LLM 重写风险",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json",
+          "sha256": "59197644d7a95a36fc7319d358b3673761f4be80a59c3380b942c5c29cdcf89e",
+          "claim": "provider source, binary, schema and golden baseline"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+          "sha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f",
+          "claim": "host-owned adapter without provider source import"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+          "sha256": "687694fbb402e4c73d8827d2e2a1f79b4d37f1d54837334ca9c2cc263eb85cc5",
+          "claim": "anti-rewrite differential gate"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
+          "sha256": "9b39c1f3318be3ddf42e764d783ca1527ebad6f8c6170ab3ec1be9fd7f5152f4",
+          "claim": "sidecar-only extraction decision"
+        },
+        {
+          "path": "harness/specs/fixtures/versegit-planning-correction/node-acceptance-matrix.json",
+          "sha256": "a4fb15089133cd0835edb39419ef2827734ac38ef1f5474c9425890a8f287c8d",
+          "claim": "separate execution verifier policy for every node"
+        },
+        {
+          "path": "harness/specs/guides/versegit-concurrency/wp9-lifecycle-closeout.md",
+          "sha256": "bfe019bfbce81b22369bc5fefa0188b9800387081e4f90624e0584514b358094",
+          "claim": "final sidecar-only migration and retirement rationale"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "mc0-source-freeze",
+          "passed": true,
+          "detail": "MC0 retains provider source/binary identity and dirty posture"
+        },
+        {
+          "id": "adapter-no-source-copy",
+          "passed": true,
+          "detail": "MC4 copies no provider source or internals"
+        },
+        {
+          "id": "differential-controls",
+          "passed": true,
+          "detail": "MC5 rejects rewrite-shaped drift"
+        },
+        {
+          "id": "sidecar-only",
+          "passed": true,
+          "detail": "MC6 remains sidecar-only with no source extraction"
+        },
+        {
+          "id": "separate-verifiers",
+          "passed": true,
+          "detail": "planning verifiers cannot close execution nodes"
+        },
+        {
+          "id": "retired-duplicate",
+          "passed": true,
+          "detail": "MC7 duplicate closeout remains retired into WP6"
+        }
+      ],
+      "conclusion": "direct retained evidence satisfies this goal criterion"
+    }
+  ],
+  "acceptanceSummary": {
+    "required": 7,
+    "verified": 7,
+    "withoutEvidence": 0,
+    "statusesAllowed": [
+      "verified",
+      "not_applicable",
+      "retired"
+    ]
+  },
+  "taskForest": {
+    "authority": ".agent-workbench/task-forest/graph/forest.json",
+    "graphHash": "0b01d4b92c8168605809dd44dbcd4048392f58576be1973393735bcdba1aa07e",
+    "capturedAt": "2026-10-21T21:52:03.492073Z",
+    "self": {
+      "id": "TF-0515",
+      "status": "ready"
+    },
+    "parent": {
+      "id": "TF-0465",
+      "status": "in_progress",
+      "title": "把 VerseGit 接入为宿主管理的并发工作区控制面（非 GA）",
+      "acceptanceCount": 7,
+      "acceptanceCriteria": [
+        "契约、身份、生命周期、失败姿态和 evidence schema 有版本化文档",
+        "ClawX 侧有 opt-in harness profile 与 host-owned adapter",
+        "真实双 worktree/producer-consumer replay 和负向样例均由盘上证据复核",
+        "单 worktree 单 session 行为零变化，VG 故障不改变 harness verdict",
+        "VerseShell receipt 是 host-mode 验证事实的必要条件",
+        "Task Forest 收口前保留未跑语言、平台、读面和非目标边界",
+        "MC0-MC7 节点覆盖源码污染与 LLM 重写风险"
+      ]
+    },
+    "children": [
+      {
+        "id": "TF-0466",
+        "self": false,
+        "title": "WP0：固定 VG 模块契约、二进制身份与版本矩阵",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 10,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0467",
+        "self": false,
+        "title": "WP1：建立 ClawX worktree/session 到 VG 的观测桥",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 18,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0468",
+        "self": false,
+        "title": "WP2：增加只读 harness profile 与 VG evidence pack",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 16,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0469",
+        "self": false,
+        "title": "WP3：用 VerseShell receipt 驱动 candidate verdict facts",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 17,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0470",
+        "self": false,
+        "title": "WP4：建立行为层覆盖向量与反馈送达证据",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 16,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0471",
+        "self": false,
+        "title": "WP5：执行真实并发 replay、soak 与故障矩阵",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 15,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0472",
+        "self": false,
+        "title": "WP6：VG 模块与迁移收口（合并 MC7，非 GA）",
+        "status": "done",
+        "acceptanceCount": 5,
+        "evidenceCount": 24,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0473",
+        "self": false,
+        "title": "MC0：冻结 VG source/binary/schema 与行为基线",
+        "status": "done",
+        "acceptanceCount": 3,
+        "evidenceCount": 7,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0474",
+        "self": false,
+        "title": "MC1：定义 anti-corruption sidecar contract",
+        "status": "done",
+        "acceptanceCount": 3,
+        "evidenceCount": 11,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0475",
+        "self": false,
+        "title": "MC2：建立 behavior fingerprint",
+        "status": "done",
+        "acceptanceCount": 3,
+        "evidenceCount": 13,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0476",
+        "self": false,
+        "title": "MC3：固化 sidecar 交付",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 10,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0477",
+        "self": false,
+        "title": "MC4：实现 ClawX module adapter",
+        "status": "done",
+        "acceptanceCount": 5,
+        "evidenceCount": 31,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0478",
+        "self": false,
+        "title": "MC5：建立 differential migration gate",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 14,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0479",
+        "self": false,
+        "title": "MC6：裁定 sidecar-only 或 selective extraction",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 17,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0480",
+        "self": false,
+        "title": "MC7：迁移收口与临时层退役",
+        "status": "deprecated",
+        "acceptanceCount": 4,
+        "evidenceCount": 0,
+        "fixtureStatus": "deprecated"
+      },
+      {
+        "id": "TF-0481",
+        "self": false,
+        "title": "VG 模块规划修正与独立复验（唯一 ready）",
+        "status": "done",
+        "acceptanceCount": 10,
+        "evidenceCount": 11,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0513",
+        "self": false,
+        "title": "WP7：真实宿主纵向集成、故障清理与 continuation",
+        "status": "done",
+        "acceptanceCount": 7,
+        "evidenceCount": 26,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0514",
+        "self": false,
+        "title": "WP8：TF-0481 独立终审与偏差闭合",
+        "status": "done",
+        "acceptanceCount": 4,
+        "evidenceCount": 20,
+        "fixtureStatus": "done"
+      },
+      {
+        "id": "TF-0515",
+        "self": true,
+        "title": "WP9：TF-0465 全目标验收聚合与生命周期收口",
+        "status": "ready",
+        "acceptanceCount": 5,
+        "evidenceCount": 2,
+        "fixtureStatus": "ready"
+      }
+    ],
+    "childCount": 19,
+    "openChildren": [],
+    "blockedChildren": [],
+    "unresolvedDependencies": [],
+    "expectedFinal": {
+      "self": "done",
+      "parent": "done"
+    }
+  },
+  "childGateSummary": {
+    "total": 18,
+    "done": 17,
+    "deprecated": 1,
+    "openOrBlocked": [],
+    "unresolvedDependencies": [],
+    "includingSelf": {
+      "total": 19,
+      "selfStatus": "ready",
+      "expectedSelfStatus": "done"
+    }
+  },
+  "gateChecks": [
+    {
+      "id": "wp6-independent-verifier",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "wp8-independent-verifier",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "wp7-candidate-resolution",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "wp9-independent-review",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "review": {
+    "wp6": {
+      "reportPath": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
+      "schema": "clawx.versegit.wp6-closeout/v1",
+      "passed": true,
+      "verifierPassed": true
+    },
+    "wp8": {
+      "reportPath": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-report.json",
+      "actor": "ccs-hub/gpt-6.1-sol",
+      "verdict": "PASS_WITH_GAPS",
+      "p0": 0,
+      "p1": 0,
+      "p2": 3,
+      "verifierPassed": true
+    },
+    "wp7Candidate": {
+      "commit": "5d313871c0b6f612b000db2041c9670d571c97a4",
+      "tree": "b3856199f4458a8ce23ec22325899a42efe00867",
+      "fixtureCommit": "5d313871c0b6f612b000db2041c9670d571c97a4",
+      "fixtureTree": "b3856199f4458a8ce23ec22325899a42efe00867"
+    },
+    "wp9": {
+      "reportPath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-report.json",
+      "responsePath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-response.md",
+      "providerFailurePath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/primary-reviewer-provider-failure.md",
+      "actor": "ccs-hub/gpt-6.1-sol",
+      "verdict": "PASS_WITH_GAPS",
+      "p0": 0,
+      "p1": 0,
+      "p2": 3,
+      "reviewedImplementationCommit": "66cdac59f1b7ae54cef42ff0c1574110368a7449",
+      "reviewedCommitResolvable": true,
+      "passed": true
+    }
+  },
+  "lifecycle": {
+    "positioning": "standalone-product-with-narrow-opt-in-host-module-profile",
+    "productPosture": "non-ga-landed-unwired",
+    "highestObservedAuthority": "bounded-M3-observation",
+    "m1HostProfileObserved": true,
+    "m2CandidateFactsObserved": true,
+    "m3BoundedHostSliceObserved": true,
+    "m3ProductComplete": false,
+    "m4Authorized": false,
+    "externalModelSessionObserved": false,
+    "realHumanEvidenceClaimed": false,
+    "singleSourceOfTruthReplaced": false,
+    "defaultOn": false,
+    "ga": false,
+    "releaseEligible": false,
+    "singleGreenLight": false
+  },
+  "authority": {
+    "humanEvidence": false,
+    "realHumanEvidenceClaimed": false,
+    "singleGreenLight": false,
+    "defaultOn": false,
+    "ga": false,
+    "releaseEligible": false,
+    "m4Authorized": false
+  },
+  "residuals": [
+    {
+      "source": "WP8",
+      "id": "P2-evidence-snapshot-pairing",
+      "summary": "新 live artifact 包含新 PID、时间戳和关联摘要；冻结 curated evidence 不变时，verifier 的字节镜像比较返回 exit 1。新报告自身验证及 normalized outcome 比较通过；候选快照的完整 verifier 含独立 live replay 返回 exit 0。",
+      "disposition": "residual"
+    },
+    {
+      "source": "WP8",
+      "id": "P2-bounded-validation",
+      "summary": "仅验证 Windows agent 驱动的 bounded host vertical slice。非 Windows、外部模型会话、未观测读面、conflicts-plan unavailable、debug sidecar 及完整产品 M3 边界继续保留；builder/verifier 仍共享部分验证逻辑。",
+      "disposition": "residual"
+    },
+    {
+      "source": "WP8",
+      "id": "P2-historical-manifest",
+      "summary": "历史 planning manifest 的输入摘要相对当前源码存在三项 drift；保留历史 FAIL、上游终审失败记录及偏差账本，不将旧 manifest 作为当前通过凭据。",
+      "disposition": "residual"
+    },
+    {
+      "source": "WP6",
+      "id": "live-verseShell-receipt",
+      "status": "unmeasured",
+      "detail": "WP3 proves structural plan/receipt rejection semantics only; no live host-authoritative execution receipt was run."
+    },
+    {
+      "source": "WP6",
+      "id": "conflicts-plan-seam",
+      "status": "unavailable",
+      "detail": "The current provider CLI has no pure conflicts-plan seam; WP2 records provider_seam_unavailable."
+    },
+    {
+      "source": "WP6",
+      "id": "partial-read-surfaces",
+      "status": "retained",
+      "detail": "Shell reads, direct filesystem access, arbitrary MCP, network and browser remain unobserved or partial."
+    },
+    {
+      "source": "WP6",
+      "id": "language-completeness",
+      "status": "unverified",
+      "detail": "Only the fixture-scoped Python path is observed; .mjs/.jsx/.sh remain partial and all other languages are unverified."
+    },
+    {
+      "source": "WP6",
+      "id": "non-windows-platforms",
+      "status": "unmeasured",
+      "detail": "Execution evidence is win32-x64 only; Linux and macOS were not executed."
+    },
+    {
+      "source": "WP6",
+      "id": "release-package",
+      "status": "rejected",
+      "detail": "MC0/MC3 retain dirty-source and release-binary-not-built blockers; the debug sidecar is diagnostic evidence, not a releasable package."
+    },
+    {
+      "source": "WP6",
+      "id": "real-agent-invocation",
+      "status": "not-claimed",
+      "detail": "WP1 fixtures are host-injected observations and WP5 intentionally records zero VG process calls; no real agent-to-VG tool invocation is claimed."
+    },
+    {
+      "source": "WP6",
+      "id": "m4-recovery",
+      "status": "not-run",
+      "detail": "Crash/CAS/stale-head broker recovery prerequisites are absent and M4 remains outside authorization."
+    },
+    {
+      "source": "WP6",
+      "id": "independent-final-review",
+      "status": "not-claimed",
+      "detail": "The closeout relies on reproducible local verifiers and clean-worktree harness validation; no external model or human verdict is synthesized."
+    },
+    {
+      "source": "WP6",
+      "id": "historical-planning-manifest",
+      "status": "retained",
+      "detail": "The historical TF-0481 artifacts/versegit-planning-correction/manifest.json has two stale input digests for scripts/validate-versegit-planning-correction.mjs and harness/specs/tasks/versegit-module-implementation-contracts.md. Its SHA256SUMS is reproducible; the immutable historical manifest is not rewritten and remains an explicit residual."
+    },
+    {
+      "source": "WP6",
+      "id": "verifier-shared-builder",
+      "status": "retained",
+      "detail": "WP6 and MC6 verifiers replay through the producer builder/validator. Critical stored fields and every referenced digest are rechecked, but a shared-code omission risk remains."
+    }
+  ],
+  "residualDisposition": "retain",
+  "boundaries": {
+    "windowsOnlyExecution": true,
+    "agentDrivenBoundedSliceOnly": true,
+    "nonWindowsUnmeasured": true,
+    "externalModelUnmeasured": true,
+    "fullProductM3Unverified": true,
+    "fullLanguageCoverageUnverified": true,
+    "conflictsPlanUnavailable": true,
+    "releasePackageRejected": true,
+    "m4RecoveryUnverified": true,
+    "verifierSharedBuilderResidual": true
+  },
+  "closeout": {
+    "evidenceRoot": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence",
+    "requiredFinalStatus": {
+      "self": "done",
+      "parent": "done"
+    },
+    "preconditionsPassed": true,
+    "proposalRequired": true
+  },
+  "inputs": [
+    {
+      "path": "electron/services/versegit-module.ts",
+      "sha256": "15f36a1202e2b09cd7d0fc6f6904acaa4d38728b27adc172a02620bae500e8fe"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/execution-receipt-contract.json",
+      "sha256": "05984a357c5dc00210f16661694a180212db1452d9a674960b9515cf51251499"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json",
+      "sha256": "59197644d7a95a36fc7319d358b3673761f4be80a59c3380b942c5c29cdcf89e"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
+      "sha256": "0d7d316db47f42d164a800982183a4f24e550a28dee1c8d2d03361c1ff9859ae"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+      "sha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+      "sha256": "687694fbb402e4c73d8827d2e2a1f79b4d37f1d54837334ca9c2cc263eb85cc5"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
+      "sha256": "9b39c1f3318be3ddf42e764d783ca1527ebad6f8c6170ab3ec1be9fd7f5152f4"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/node-acceptance-matrix.json",
+      "sha256": "a4fb15089133cd0835edb39419ef2827734ac38ef1f5474c9425890a8f287c8d"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/planning-contract.json",
+      "sha256": "a5087a435e248b58a3ccf038f8954ac1119bbdd0f41b7c08cb202944e45cf595"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
+      "sha256": "d4ec1fc974ba36352d9f0c8f31dc61551442ba225420c07abba9bd44aa9bc585"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events-report.json",
+      "sha256": "75ba5ec9dde4a8a5f25330544b696e2741ce3d3a29d0e289dca09177d6d580b9"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
+      "sha256": "8bbbcb5366e8bbd6094325ae1a143403053c01ab8453b9dd25c1393b43547361"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
+      "sha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json",
+      "sha256": "13aeb09c889177d732faad7a842f2067c95d0dd27c38020110fe0ed8598aa6bf"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
+      "sha256": "27350249f602093eb055be9bb34ad56acca64b0c51a4e6aa05b19d5dd3f5e698"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+      "sha256": "44617536f879941ab082a308f738984c2a3cb0f88cf57f5da24a93f011d6698d"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp8-evidence/review-report.json",
+      "sha256": "15a018e4556dd5e1e7aa4621df20a8721d9af335664495382407f201373b1899"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-report.json",
+      "sha256": "33d00d0f5974aa8c8b7effe59c96aa9e5d833477c6a3ac8b0a650baf815dbf9a"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/independent-review-response.md",
+      "sha256": "53d8fe4262b17da5c6dec3f4865364899c6929ec7f19d7545dea21360e503aa6"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/primary-reviewer-provider-failure.md",
+      "sha256": "6c3d992807cb4b642bcdd71f92eccaafa9d30d96a53e7e24a90c753233657d22"
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp9-global-acceptance-fixture.json",
+      "sha256": "483787946891e60f9d465ec6a7e3b363f8f0e54fc7b88a52c627ba89c09f4b57"
+    },
+    {
+      "path": "harness/specs/guides/versegit-concurrency/wp9-lifecycle-closeout.md",
+      "sha256": "bfe019bfbce81b22369bc5fefa0188b9800387081e4f90624e0584514b358094"
+    },
+    {
+      "path": "harness/specs/rules/versegit-validation-layer-extension-boundary.md",
+      "sha256": "e5ff2ee1d166d138b0faf49cd97f15005251deedf4af1e02f2cf50dbf6314b1b"
+    },
+    {
+      "path": "harness/specs/scenarios/versegit-validation-layer-extension.md",
+      "sha256": "01c63ddb2f51bffb15d25a60023fe94ef51310342655501fa55e3de860345db3"
+    },
+    {
+      "path": "harness/src/profiles.mjs",
+      "sha256": "b8b2992c58362fa16c4f0f3b40886fe96ab6d1dea690537cec81df3634899622"
+    }
+  ],
+  "issues": [],
+  "digest": "b0099fa051dd407a4d251d0893e659f0918cb9350a3fe84f59d255f238eb53ba"
+}

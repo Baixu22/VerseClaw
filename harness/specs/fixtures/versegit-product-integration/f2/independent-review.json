@@ -1,0 +1,69 @@
+{
+  "schema": "clawx.versegit.f2-independent-review/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewedAt": "2026-10-23T11:18:24.107Z",
+  "source": {
+    "commit": "e3d9ee474ae8f31ff52b44bf3a70a1b7e74a1c28",
+    "tree": "7aa5cd5c72efade31f8261c46f34dac5f1e40798"
+  },
+  "verdict": "pass",
+  "priority": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0
+  },
+  "issues": [],
+  "criteria": [
+    {
+      "id": "single-barrier-all-delete-paths",
+      "passed": true,
+      "evidence": [
+        "cleanup-barrier.json",
+        "recovery-required.json"
+      ]
+    },
+    {
+      "id": "identity-drift-blocks-delete",
+      "passed": true,
+      "evidence": [
+        "recovery-required.json"
+      ]
+    },
+    {
+      "id": "stage-faults-preserve-resources",
+      "passed": true,
+      "evidence": [
+        "recovery-required.json"
+      ]
+    },
+    {
+      "id": "late-event-does-not-revive",
+      "passed": true,
+      "evidence": [
+        "recovery-required.json"
+      ]
+    },
+    {
+      "id": "process-manager-worktree-temp-zero",
+      "passed": true,
+      "evidence": [
+        "resource-inventory.json"
+      ]
+    },
+    {
+      "id": "unobserved-not-zero",
+      "passed": true,
+      "evidence": [
+        "recovery-required.json"
+      ]
+    },
+    {
+      "id": "product-locks-unchanged",
+      "passed": true,
+      "evidence": [
+        "cleanup-barrier.json"
+      ]
+    }
+  ]
+}

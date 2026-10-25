@@ -72,7 +72,7 @@ async function verifyWiring(hostRoot) {
     // CLI runner injected the package picks agent-browser-cli for every managed open(), and
     // takeSnapshot/clickByUid/fillByUid/pressKey stop working in the packaged app while the
     // capability snapshot still advertises them.
-    desktop_service_cli_free: !api.includes('cliRunner:') && api.includes('new HostAgentBrowserService()'),
+    desktop_service_cli_free: !api.includes('cliRunner:') && api.includes("new HostAgentBrowserService({ managedEngine: 'browser-window' })"),
     desktop_capabilities_cli_less: api.includes('cliAvailable: false'),
     standalone_cli_runner: packageApi.includes('cliRunner: createDefaultAgentBrowserCliRunner()'),
     permission_recorder: api.includes('setPermissionDecisionRecorder(recordPermissionDecisionEvent'),

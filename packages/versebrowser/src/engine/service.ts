@@ -163,8 +163,17 @@ type AgentBrowserControlState = {
   pageTextExtractor: PageTextExtractor;
 };
 
+type AgentBrowserManagedEngine = 'browser-window' | 'agent-browser-cli';
+
 type AgentBrowserServiceOptions = {
   cliRunner?: AgentBrowserRunner;
+  /**
+   * Immutable managed-session engine policy. When omitted, the constructor
+   * derives it once from the injected runner: CLI runner -> CLI engine, no
+   * runner -> Electron browser-window engine. Never re-decide from runtime
+   * binary presence after construction (N8 F1).
+   */
+  managedEngine?: AgentBrowserManagedEngine;
   createWindow?: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
   now?: () => Date;
   userDataPath?: string;
@@ -456,6 +465,7 @@ export class AgentBrowserService {
   private readonly supervisedRequestSessions = new WeakSet<object>();
   private readonly supervisedRequestSessionIds = new WeakMap<object, Set<number>>();
   private readonly cliRunner: AgentBrowserRunner | undefined;
+  private readonly managedEngine: AgentBrowserManagedEngine;
   private readonly createWindow: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
   private readonly now: () => Date;
   private readonly userDataPath: string | undefined;
@@ -468,6 +478,10 @@ export class AgentBrowserService {
 
   constructor(options: AgentBrowserServiceOptions = {}) {
     this.cliRunner = options.cliRunner;
+    this.managedEngine = options.managedEngine ?? (options.cliRunner ? 'agent-browser-cli' : 'browser-window');
+    if (this.managedEngine === 'agent-browser-cli' && !this.cliRunner) {
+      throw new Error('Agent browser managed engine "agent-browser-cli" requires a CLI runner');
+    }
     this.createWindow = options.createWindow ?? ((windowOptions) => new (electronBrowserWindow())(windowOptions));
     this.now = options.now ?? (() => new Date());
     this.userDataPath = options.userDataPath;
@@ -717,13 +731,14 @@ export class AgentBrowserService {
     };
     const url = normalizeHttpUrl(payload.url);
 
-    if (!requestGuard && this.cliRunner?.isAvailable()) {
+    if (!requestGuard && this.managedEngine === 'agent-browser-cli') {
+      const cliRunner = this.requireCliRunner();
       this.sessions.set(session.id, { session, engine: 'agent-browser-cli', runtimeMode });
-      const metadata = await this.cliRunner.open({ session, url, width, height });
+      const metadata = await cliRunner.open({ session, url, width, height });
       await this.refreshCli(session.id, metadata);
       return {
         session: this.snapshot(session.id),
-        textSample: await this.cliRunner.textSample(this.snapshot(session.id), MAX_TEXT_SAMPLE),
+        textSample: await cliRunner.textSample(this.snapshot(session.id), MAX_TEXT_SAMPLE),
       };
     }
     if (connection.mode !== 'managed') {
@@ -1853,8 +1868,10 @@ export class AgentBrowserService {
   }
 
   private requireCliRunner(): AgentBrowserRunner {
-    if (!this.cliRunner) {
-      throw new Error('Agent browser CLI runner is not available');
+    if (!this.cliRunner || !this.cliRunner.isAvailable()) {
+      const error = new Error('Agent browser CLI runner is not available') as Error & { code?: string };
+      error.code = 'E_CLI_UNAVAILABLE';
+      throw error;
     }
     return this.cliRunner;
   }

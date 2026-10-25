@@ -1,0 +1,126 @@
+{
+  "schema": "clawx.long-session.d1-fact-provenance/v1",
+  "generated_at": "2026-10-23T13:07:29.287Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-d1",
+  "source_commit": "6f9532374aaf66e668cf9dc17ec3e20f852c23ad",
+  "source_inputs": {
+    "task_ledger": "existing workspace Task Ledger JSONL via loadTaskLedgerSnapshot",
+    "working_context": "projectTaskLedgerWorkingContext accepted events only",
+    "compression": "sessions.compressionArtifact owner read",
+    "memory": "Gateway memory.surface accepted/model-visible projection",
+    "knowledge": "typed knowledge references from Chat SendWithMediaPayload"
+  },
+  "accepted_items": [
+    {
+      "id": "working-context:Constraints:1",
+      "kind": "constraint",
+      "source": "task-ledger-working-context",
+      "owner": "task-ledger",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      },
+      "freshness": "fresh",
+      "trust": "owner-accepted",
+      "acceptedAt": "2026-10-23T13:06:24.898Z",
+      "expiresAt": "2026-10-24T13:06:24.897Z",
+      "evidenceRefs": [
+        "session:agent:main:dashboard:bebf1bb2-8c31-4973-bbdc-930bf6207ae8"
+      ]
+    },
+    {
+      "id": "task-node:26d92e02-df37-4c6f-9943-47dca6f38b42:next",
+      "kind": "next-action",
+      "source": "task-ledger-node",
+      "owner": "task-ledger",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      },
+      "freshness": "fresh",
+      "trust": "owner-fact",
+      "acceptedAt": null,
+      "expiresAt": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "working-context:NextAction:1",
+      "kind": "next-action",
+      "source": "task-ledger-working-context",
+      "owner": "task-ledger",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      },
+      "freshness": "fresh",
+      "trust": "owner-accepted",
+      "acceptedAt": "2026-10-23T13:06:24.898Z",
+      "expiresAt": "2026-10-24T13:06:24.898Z",
+      "evidenceRefs": [
+        "session:agent:main:dashboard:bebf1bb2-8c31-4973-bbdc-930bf6207ae8"
+      ]
+    },
+    {
+      "id": "accepted-memory:role-memory-card:mem_014e145e-98e4-4ea6-b57f-815f93924d3d",
+      "kind": "memory-ref",
+      "source": "accepted-memory-ref",
+      "owner": "memory",
+      "scope": {
+        "kind": "workspace",
+        "key": "D:\\tmp\\verse-claw-e2e-run-eO3g9A\\verse-claw-e2e-home-3Fn7zg\\.openclaw\\workspace"
+      },
+      "freshness": "fresh",
+      "trust": "owner-accepted",
+      "acceptedAt": "2026-10-23T13:06:30.633Z",
+      "expiresAt": null,
+      "evidenceRefs": [
+        "memory:role-memory-card:mem_014e145e-98e4-4ea6-b57f-815f93924d3d",
+        "manual:memory-surface:explicit-remember"
+      ]
+    },
+    {
+      "id": "knowledge:wiki:d1:mvkzhefg",
+      "kind": "knowledge-ref",
+      "source": "knowledge-ref",
+      "owner": "knowledge",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      },
+      "freshness": "fresh",
+      "trust": "owner-fact",
+      "acceptedAt": null,
+      "expiresAt": null,
+      "evidenceRefs": [
+        "knowledge:wiki:d1:mvkzhefg"
+      ]
+    }
+  ],
+  "revocation_and_invalidity": {
+    "pending_candidates": [],
+    "expired": [],
+    "revoked_or_superseded": [],
+    "out_of_scope": [],
+    "owner_gate_closed": [],
+    "unverified_claims": []
+  },
+  "observed_exclusions": [
+    {
+      "ref": "task-ledger-working-context:d1-pending-risk-mvkzhefg",
+      "reason": "pending-not-accepted"
+    }
+  ],
+  "original_history": {
+    "transcriptRef": "session:agent:main:dashboard:bebf1bb2-8c31-4973-bbdc-930bf6207ae8",
+    "taskLedgerRef": "task-ledger:default",
+    "taskLedgerEventCount": 6,
+    "compressionAvailable": false
+  },
+  "boundary": {
+    "no_durable_memory_database": true,
+    "no_second_injection_chain": true,
+    "raw_transcript_copied": false,
+    "unverified_model_claims_promoted": false
+  }
+}

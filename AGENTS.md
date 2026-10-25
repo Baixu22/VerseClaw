@@ -1,14 +1,5 @@
 # AGENTS.md
 
-## Component Graduation worktree scope（仅本 worktree）
-
-- 进入本 worktree 后，先读 `.agent-workbench/component-graduation/WORKTREE-SCOPE.md`。
-- 开发前必须运行 `node .agent-workbench/component-graduation/check-scope.mjs --json`。
-- 只执行 guard 返回的唯一 active leaf；当前仅 `TF-0488`。
-- 保持一个 active leaf，不得执行其他 `proposed` 节点，不得跨节点修改。
-- 不处理 VerseGit；不得修改主工作区 `D:\ClawX`。
-- 完成当前节点后停止并报告；是否激活下一节点由后续明确指令决定。
-
 ## Human-in-the-loop policy（仓库所有者长期声明，2026-09-27）
 
 **本节是仓库所有者的长期声明，优先级高于本文件其余部分，以及 `harness/specs/**` 与 task-forest 中任何"需要真人"的口径。**

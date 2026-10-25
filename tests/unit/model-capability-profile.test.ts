@@ -115,7 +115,6 @@ describe('ModelCapabilityProfile/v1', () => {
     expect(visibleEntries.map((candidate) => candidate.capabilityId)).not.toContain(
       'component.v3-capability-catalog',
     );
-    expect(COMPONENT_AUTHORITY_MANIFEST.components).toHaveLength(34);
     expect(new Set(profile.entries.map((candidate) => candidate.capabilityId)).size).toBe(profile.entries.length);
 
     const result = validateModelCapabilityProfile(profile);

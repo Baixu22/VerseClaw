@@ -3,6 +3,7 @@
  *
  * Owns registration, lifecycle, delivery retry, steering, orphan recovery, persistence, and cleanup for child runs.
  */
+import { createHash } from "node:crypto";
 import type { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
 import { getRuntimeConfig } from "../config/config.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
@@ -13,9 +14,10 @@ import { getAgentRunContext, onAgentEvent } from "../infra/agent-events.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { formatBlockedLivenessError, isBlockedLivenessState } from "../shared/agent-liveness.js";
 import { createLazyImportLoader, createLazyPromiseLoader } from "../shared/lazy-promise.js";
-import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
 import { importRuntimeModule } from "../shared/runtime-import.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
+import type { VerseGitCompletionSink } from "../../../shared/types/versegit.js";
+import { createVerseGitCleanupBarrier } from '../../../shared/versegit-cleanup-barrier.js';
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
 import {
   ackLeasedAgentSteeringItemsFromSubagentRuns,
@@ -24,7 +26,6 @@ import {
   releaseLeasedAgentSteeringItemsFromSubagentRuns,
 } from "./agent-steering-queue.js";
 import { makeTaskLedgerEntry, taskGraphVerifierNode } from "./orchestration-protocol.js";
-import { removeInternalSessionEffectsTranscript } from "./internal-session-effects.js";
 import { isAbortedAgentStopReason } from "./run-termination.js";
 import type { ensureRuntimePluginsLoaded as ensureRuntimePluginsLoadedFn } from "./runtime-plugins.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
@@ -53,10 +54,10 @@ import {
   reconcileOrphanedRun,
   resolveAnnounceRetryDelayMs,
   resolveSubagentRunOrphanReason,
-  safeRemoveAttachmentsDir,
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
-import { applyDeferredPatchFlow } from "./orchestration-patch-flow.js";
+import type { CandidateApplyHost } from "./orchestration-candidate-apply.js";
+import { applyDeferredPatchFlow, recordDeferredPatchFlowCompletion } from "./orchestration-patch-flow.js";
 import { subagentRuns } from "./subagent-registry-memory.js";
 import {
   countActiveDescendantRunsFromRuns,
@@ -124,6 +125,8 @@ type SubagentRegistryDeps = {
   resolveAgentTimeoutMs: typeof resolveAgentTimeoutMs;
   restoreSubagentRunsFromDisk: typeof restoreSubagentRunsFromDisk;
   runSubagentAnnounceFlow: SubagentAnnounceModule["runSubagentAnnounceFlow"];
+  candidateApplyHost?: CandidateApplyHost;
+  completionFactSink?: VerseGitCompletionSink;
   ensureContextEnginesInitialized?: () => void;
   ensureRuntimePluginsLoaded?: typeof ensureRuntimePluginsLoadedFn;
   resolveContextEngine?: (
@@ -598,35 +601,114 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   if (expectedWorkers.some((worker) => typeof worker.endedAt !== "number")) {
     return;
   }
-  await processCompletedOrchestrationWorktrees(expectedWorkers);
   let latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
   if (!latestMeta) {
     return;
   }
-  if (latestMeta.patchFlowExecution === true && latestMeta.patchFlowStatus === undefined) {
-    if (deferredPatchFlowRunsInProgress.has(orchestrationRunId)) {
+  if (latestMeta.patchFlowExecution === true) {
+    if (latestMeta.patchFlowStatus === undefined) {
+      if (deferredPatchFlowRunsInProgress.has(orchestrationRunId)) {
+        return;
+      }
+      const host = subagentRegistryDeps.candidateApplyHost;
+      const workspaceDir =
+        expectedWorkers.find((worker) => worker.workspaceDir)?.workspaceDir ??
+        completed.workspaceDir;
+      if (!host || !workspaceDir) {
+        markOrchestrationWorkers({
+          workers: expectedWorkers,
+          patch: {
+            patchFlowStatus: "blocked",
+            patchFlowAppliedAt: Date.now(),
+            patchFlowError: !host
+              ? "candidate_apply_host_missing"
+              : "patch_flow_workspace_missing",
+            verifierSkippedReason: "candidate-apply-host-missing",
+            verifierSkippedAt: Date.now(),
+          },
+        });
+        return;
+      }
+      deferredPatchFlowRunsInProgress.add(orchestrationRunId);
+      try {
+        const outcome = await applyDeferredPatchFlow({
+          workers: expectedWorkers,
+          workspaceDir,
+          candidateApply: {
+            host,
+            journal: {
+              workspaceRoot: workspaceDir,
+              sessionId: completed.requesterSessionKey,
+              requestId: `orchestration:${orchestrationRunId}:candidate-apply`,
+              enabled: true,
+            },
+          },
+        });
+        const traceDigest = createHash("sha256")
+          .update(JSON.stringify(outcome.trace ?? []))
+          .digest("hex");
+        const journalRefs = (outcome.results ?? []).flatMap((result) =>
+          result.journal?.snapshotIds ?? []
+        );
+        const completionSink = subagentRegistryDeps.completionFactSink;
+        const completionFactRecord = recordDeferredPatchFlowCompletion({
+          outcome,
+          sink: completionSink,
+          sessionId: completed.requesterSessionKey,
+          runId: orchestrationRunId,
+          actor: "codex",
+        });
+        markOrchestrationWorkers({
+          workers: expectedWorkers,
+          patch: {
+            patchFlowStatus: outcome.status,
+            patchFlowResults: outcome.results,
+            patchFlowAppliedAt: outcome.appliedAt,
+            ...(outcome.error ? { patchFlowError: outcome.error } : {}),
+            ...(outcome.candidate
+              ? {
+                  patchFlowCandidateId: outcome.candidate.candidateId,
+                  patchFlowCandidateTreeOid: outcome.candidate.candidateTreeOid,
+                  patchFlowCandidateInputDigest: outcome.candidate.candidateInputDigest,
+                }
+              : {}),
+            patchFlowTraceDigest: traceDigest,
+            patchFlowJournalRefs: [...new Set(journalRefs)],
+            ...(completionFactRecord?.fact
+              ? {
+                  completionFactId: completionFactRecord.fact.factId,
+                  completionFactStatus: completionFactRecord.status,
+                  completionHostOutcome: completionFactRecord.fact.hostOutcome,
+                  completionProviderProjection: completionFactRecord.fact.providerProjection,
+                  completionActiveSessionRisk: completionFactRecord.fact.activeSessionRisk,
+                }
+              : {
+                  completionFactStatus: completionSink ? "unavailable" : "not_configured",
+                }),
+          },
+        });
+      } finally {
+        deferredPatchFlowRunsInProgress.delete(orchestrationRunId);
+      }
+      latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
+      if (!latestMeta) {
+        return;
+      }
+    }
+    if (latestMeta.patchFlowStatus !== "applied") {
+      if (!latestMeta.verifierSkippedReason) {
+        markOrchestrationWorkers({
+          workers: expectedWorkers,
+          patch: {
+            verifierSkippedReason: "candidate-apply-not-complete",
+            verifierSkippedAt: Date.now(),
+          },
+        });
+      }
       return;
     }
-    deferredPatchFlowRunsInProgress.add(orchestrationRunId);
-    try {
-      const outcome = await applyDeferredPatchFlow({
-        workers: expectedWorkers,
-        workspaceDir:
-          expectedWorkers.find((worker) => worker.workspaceDir)?.workspaceDir ??
-          completed.workspaceDir,
-      });
-      markOrchestrationWorkers({
-        workers: expectedWorkers,
-        patch: {
-          patchFlowStatus: outcome.status,
-          patchFlowResults: outcome.results,
-          patchFlowAppliedAt: outcome.appliedAt,
-          ...(outcome.error ? { patchFlowError: outcome.error } : {}),
-        },
-      });
-    } finally {
-      deferredPatchFlowRunsInProgress.delete(orchestrationRunId);
-    }
+  } else {
+    await processCompletedOrchestrationWorktrees(expectedWorkers);
     latestMeta = expectedWorkers.find((worker) => worker.orchestration)?.orchestration;
     if (!latestMeta) {
       return;
@@ -920,6 +1002,7 @@ const {
   completeSubagentRun,
   finalizeResumedAnnounceGiveUp,
   refreshFrozenResultFromSession,
+  runTerminalCleanup,
   startSubagentAnnounceCleanupFlow,
 } = subagentLifecycleController;
 
@@ -1144,12 +1227,10 @@ async function discardSuspendedPendingFinalDelivery(
     childSessionKey: entry.childSessionKey,
     requesterSessionKey: entry.requesterSessionKey,
   });
-  const shouldDeleteAttachments = entry.cleanup === "delete" || !entry.retainAttachmentsOnKeep;
-  if (shouldDeleteAttachments) {
-    await safeRemoveAttachmentsDir(entry);
-  }
-  await removeInternalSessionEffectsTranscript(entry.execution?.transcriptFile);
   const completionReason = entry.endedReason ?? SUBAGENT_ENDED_REASON_COMPLETE;
+  if (!(await runTerminalCleanup({ runId, entry, cleanup: entry.cleanup }))) {
+    return;
+  }
   completeCleanupBookkeeping({
     runId,
     entry,
@@ -1298,6 +1379,9 @@ async function sweepSubagentRuns() {
           now - entry.cleanupCompletedAt > SESSION_RUN_TTL_MS
         ) {
           clearPendingLifecycleError(runId);
+          if (!(await runTerminalCleanup({ runId, entry, cleanup: entry.cleanup }))) {
+            continue;
+          }
           void notifyContextEngineSubagentEnded({
             childSessionKey: entry.childSessionKey,
             reason: "swept",
@@ -1306,9 +1390,6 @@ async function sweepSubagentRuns() {
           });
           subagentRuns.delete(runId);
           mutated = true;
-          if (!entry.retainAttachmentsOnKeep) {
-            await safeRemoveAttachmentsDir(entry);
-          }
         }
         continue;
       }
@@ -1316,29 +1397,11 @@ async function sweepSubagentRuns() {
         continue;
       }
       clearPendingLifecycleError(runId);
-      try {
-        await subagentRegistryDeps.callGateway({
-          method: "sessions.delete",
-          params: {
-            key: entry.childSessionKey,
-            operationId: buildSessionDeleteOperationId("subagent-cleanup", runId),
-            deleteTranscript: true,
-            emitLifecycleHooks: false,
-          },
-          timeoutMs: 10_000,
-        });
-      } catch (err) {
-        log.warn("sessions.delete failed during subagent sweep; keeping run for retry", {
-          runId,
-          childSessionKey: entry.childSessionKey,
-          err,
-        });
+      if (!(await runTerminalCleanup({ runId, entry, cleanup: "delete" }))) {
         continue;
       }
       subagentRuns.delete(runId);
       mutated = true;
-      // Archive/purge is terminal for the run record; remove any retained attachments too.
-      await safeRemoveAttachmentsDir(entry);
       void notifyContextEngineSubagentEnded({
         childSessionKey: entry.childSessionKey,
         reason: "swept",
@@ -1380,6 +1443,19 @@ function ensureListener() {
         return;
       }
       const phase = evt.data?.phase;
+      const cleanupRoot = process.env.CLAWX_VERSGIT_CLEANUP_ROOT?.trim();
+      if (phase && cleanupRoot) {
+        const barrier = createVerseGitCleanupBarrier(cleanupRoot);
+        const sealed = barrier.read(evt.runId);
+        if (sealed) {
+          barrier.observeLateEvent({
+            runId: evt.runId,
+            event: String(phase),
+            epoch: Number(evt.data?.epoch ?? sealed.expected.epoch),
+          });
+          return;
+        }
+      }
       const entry = subagentRuns.get(evt.runId);
       if (!entry) {
         if (phase === "end" && typeof evt.sessionKey === "string") {
@@ -1575,6 +1651,18 @@ export function updateSubagentRunOrchestrationMetadata(
   return true;
 }
 
+export function configureSubagentRegistryCompletionFactSink(
+  sink: VerseGitCompletionSink | undefined,
+): void {
+  subagentRegistryDeps = { ...subagentRegistryDeps, completionFactSink: sink };
+}
+
+export function configureSubagentRegistryCandidateApplyHost(
+  host: CandidateApplyHost | undefined,
+): void {
+  subagentRegistryDeps = { ...subagentRegistryDeps, candidateApplyHost: host };
+}
+
 export function resetSubagentRegistryForTests(opts?: { persist?: boolean }) {
   clearScheduledResumeTimers();
   for (const timer of resumeRetryTimers) {
@@ -1725,6 +1813,7 @@ export function listSubagentRunsForRequester(
 
 export function leasePendingAgentSteeringItems(params: {
   requesterSessionKey: string;
+  requesterSessionId?: string;
   leaseId: string;
   now?: number;
 }) {
@@ -1732,6 +1821,7 @@ export function leasePendingAgentSteeringItems(params: {
   const leased = leasePendingAgentSteeringItemsFromSubagentRuns({
     runs: subagentRuns,
     requesterSessionKey: params.requesterSessionKey,
+    requesterSessionId: params.requesterSessionId,
     leaseId: params.leaseId,
     now: params.now,
   });

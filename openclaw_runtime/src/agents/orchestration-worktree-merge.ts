@@ -3,6 +3,8 @@ import {
   type MergeConflictPolicy,
   type WorktreeChangedFiles,
 } from "./worktree-service.js";
+import { freezeOrchestrationCandidate, type CreateCandidateWorker } from "./orchestration-candidate.js";
+import type { VerseGitCandidateResult } from "../../../shared/types/versegit.js";
 
 export type OrchestrationWorktreeMergeWorker = {
   taskNodeId: string;
@@ -83,5 +85,31 @@ export function mergeOrchestrationWorktrees(params: {
       status: item?.status === "pending" || !item ? "missing" : item.status,
       ...(reasonParts.length > 0 ? { reason: reasonParts.join(";") } : {}),
     };
+  });
+}
+export function freezeOrchestrationWorktreeCandidate(params: {
+  baseRoot: string;
+  workers: readonly OrchestrationWorktreeMergeWorker[];
+  expectedBaseOid?: string;
+  allowedRuntimeIgnorePaths?: readonly string[];
+}): VerseGitCandidateResult {
+  const service = createWorktreeService(params.baseRoot, { backend: "git" });
+  const records = new Map(service.list().map((record) => [record.id, record]));
+  const workers: CreateCandidateWorker[] = params.workers.map((worker, index) => {
+    const record = records.get(worker.worktreeId);
+    if (!record) throw new Error(`missing candidate worktree: ${worker.worktreeId}`);
+    return {
+      taskNodeId: worker.taskNodeId,
+      worktreePath: record.root,
+      worktreeRole: worker.worktreeId,
+      declaredWriteSet: worker.declaredWriteSet ?? [],
+      parentOrder: index,
+    };
+  });
+  return freezeOrchestrationCandidate({
+    baseRoot: params.baseRoot,
+    workers,
+    ...(params.expectedBaseOid ? { expectedBaseOid: params.expectedBaseOid } : {}),
+    ...(params.allowedRuntimeIgnorePaths ? { allowedRuntimeIgnorePaths: params.allowedRuntimeIgnorePaths } : {}),
   });
 }

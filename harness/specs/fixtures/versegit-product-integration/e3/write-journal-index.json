@@ -1,0 +1,48 @@
+{
+  "schema": "clawx.versegit.e3-write-journal-index/v1",
+  "generated_at": "2026-10-22T21:38:44.158Z",
+  "task": "TF-0534",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "31cbfa08a6379d32af4907d1f97416f10b64fc97",
+    "tree": "f7039a70cf327f2d2e4b3e187ab6b8d947e55cb0",
+    "dirty": false
+  },
+  "raw_report_digest": "a781a9d78d2a677903fac6f6b84db2427671db63140c994136775c931afbcfe3",
+  "result_journals": [
+    {
+      "batchId": "batch-e3-success:run-worker-a",
+      "batchState": "committed",
+      "undoable": true,
+      "snapshotIds": [
+        "write-journal:session-e3-success:1"
+      ]
+    },
+    {
+      "batchId": "batch-e3-success:run-worker-b",
+      "batchState": "committed",
+      "undoable": true,
+      "snapshotIds": [
+        "write-journal:session-e3-success:2"
+      ]
+    }
+  ],
+  "journal_steps": 2,
+  "snapshot_files": [
+    "0001-producer.cjs.pre",
+    "0002-consumer-b.cjs.pre"
+  ],
+  "undo": {
+    "restored": [
+      "src/consumer-b.cjs",
+      "src/producer.cjs"
+    ],
+    "errors": [],
+    "remainingEntries": 0
+  },
+  "recovery_restored_base": true,
+  "passed": true,
+  "digest": "c8adf6559953dd82da1fc743aa0827daa860c203577061fa45a7116b692029a4"
+}

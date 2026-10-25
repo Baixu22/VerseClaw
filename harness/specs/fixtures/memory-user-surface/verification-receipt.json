@@ -1,0 +1,222 @@
+{
+  "schema": "clawx.memory-user-surface.verification-receipt/v1",
+  "generated_at": "2026-10-23T05:19:10.465Z",
+  "driven_by": "agent",
+  "actor": "codex-memory-user-surface",
+  "task_forest_node": "TF-0498",
+  "source_candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "69b1f15864e001ec1d8b06cadfd99cd24e51aad8",
+    "tree": "bf3232eb7bb95b2f5254b50e13bf481d2a6c0348",
+    "worktree_clean_before_evidence": true
+  },
+  "gate_receipt": {
+    "schema": "clawx.memory-user-surface.gates/v1",
+    "driven_by": "agent",
+    "actor": "codex-memory-user-surface",
+    "commit": "69b1f15864e001ec1d8b06cadfd99cd24e51aad8",
+    "generatedAt": "2026-10-23T05:13:37.1398147Z",
+    "gates": [
+      {
+        "name": "focused-unit",
+        "exitCode": 0,
+        "durationMs": 45286,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\focused-unit.log"
+      },
+      {
+        "name": "i18n-lint",
+        "exitCode": 0,
+        "durationMs": 1015,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\i18n-lint.log"
+      },
+      {
+        "name": "typecheck",
+        "exitCode": 0,
+        "durationMs": 21107,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\typecheck.log"
+      },
+      {
+        "name": "contract-check",
+        "exitCode": 0,
+        "durationMs": 760,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\contract-check.log"
+      },
+      {
+        "name": "runtime-build",
+        "exitCode": 0,
+        "durationMs": 32232,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\runtime-build.log"
+      },
+      {
+        "name": "vite-build",
+        "exitCode": 0,
+        "durationMs": 51195,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\vite-build.log"
+      },
+      {
+        "name": "memory-e2e-regression",
+        "exitCode": 0,
+        "durationMs": 63086,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\memory-e2e-regression.log"
+      },
+      {
+        "name": "comms-replay",
+        "exitCode": 0,
+        "durationMs": 1088,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\comms-replay.log"
+      },
+      {
+        "name": "comms-compare",
+        "exitCode": 0,
+        "durationMs": 680,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\comms-compare.log"
+      },
+      {
+        "name": "eslint-changed",
+        "exitCode": 0,
+        "durationMs": 7074,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\eslint-changed.log"
+      },
+      {
+        "name": "eslint-agents-page",
+        "exitCode": 0,
+        "durationMs": 2083,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\eslint-agents-page.log"
+      },
+      {
+        "name": "harness-validate",
+        "exitCode": 0,
+        "durationMs": 1400,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\harness-validate.log"
+      },
+      {
+        "name": "git-diff-check",
+        "exitCode": 0,
+        "durationMs": 48,
+        "log": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8\\git-diff-check.log"
+      }
+    ]
+  },
+  "results": {
+    "focused_unit": {
+      "files": 5,
+      "tests": 99,
+      "status": "passed",
+      "summary": " Test Files  5 passed (5)\n      Tests  99 passed (99)"
+    },
+    "electron_regression": {
+      "tests": 6,
+      "status": "passed",
+      "summary": "{\"schema\":\"clawx.memory-user-surface.e2e/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-memory-user-surface\",\"negative_cases\":[\"candidate modelVisible=false before approval\",\"deleted memory absent from accepted and model acceptedKeys after tombstone\"],\"export\":{\"path\":\"D:\\\\tmp\\\\verse-claw-e2e-run-GTDocv\\\\verse-claw-e2e-user-data-Ifqr8z\\\\exports\\\\memory\\\\memory-export-2026-10-23T05-13-05-369Z.json\",\"retainedPath\":\"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\test-results\\\\memory-surface-real-Host-G-4b6bd--approval-export-and-delete\\\\memory-export.json\",\"sha256\":\"30a38f5c81796951147c526ebe654a15188f14b89accf5bfa8da6d8034ab9463\",\"accepted\":1},\"locales\":[\"en\",\"zh\"],\"screenshot\":\"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\test-results\\\\memory-surface-real-Host-G-4b6bd--approval-export-and-delete\\\\memory-surface.png\",\"counts\":{\"beforeDelete\":{\"accepted\":2,\"candidates\":0,\"modelVisible\":0},\"afterDelete\":{\"accepted\":1,\"candidates\":0,\"modelVisible\":0}},\"status\":\"passed\"}\n  6 passed (1.0m)"
+    },
+    "typecheck": {
+      "status": "passed"
+    },
+    "contract_check": {
+      "status": "passed"
+    },
+    "runtime_build": {
+      "status": "passed"
+    },
+    "vite_build": {
+      "status": "passed"
+    },
+    "i18n": {
+      "status": "passed",
+      "locales": [
+        "en",
+        "zh",
+        "ja",
+        "ru"
+      ]
+    },
+    "eslint": {
+      "status": "passed",
+      "notes": "Agents page has two pre-existing react-hooks warnings; zero errors."
+    },
+    "comms": {
+      "status": "PASS",
+      "report_excerpt": "- Result: PASS\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |"
+    },
+    "harness_validate": {
+      "status": "passed"
+    },
+    "git_diff_check": {
+      "status": "passed"
+    }
+  },
+  "acceptance": [
+    {
+      "id": "one-memory-panel",
+      "status": "passed",
+      "evidence": [
+        "src/pages/Memory/index.tsx",
+        "src/App.tsx",
+        "src/components/layout/Sidebar.tsx",
+        "src/pages/Agents/index.tsx"
+      ]
+    },
+    {
+      "id": "candidate-not-injected",
+      "status": "passed",
+      "evidence": [
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/memory-surface-runtime.test.ts",
+        "memory-visibility-matrix.json"
+      ]
+    },
+    {
+      "id": "persisted-candidate-queue",
+      "status": "passed",
+      "evidence": [
+        "openclaw_runtime/src/gateway/server-methods/memory-surface.ts",
+        "tests/unit/role-orchestration-methods.test.ts"
+      ]
+    },
+    {
+      "id": "close-semantics-and-legacy-disclosure",
+      "status": "passed",
+      "evidence": [
+        "tests/unit/role-orchestration-methods.test.ts disabled Role Memory projection",
+        "src/pages/Memory/index.tsx localized legacy boundary"
+      ]
+    },
+    {
+      "id": "delete-export",
+      "status": "passed",
+      "evidence": [
+        "tests/e2e/memory-surface.spec.ts",
+        "export-readback.json",
+        "e2e-observation.json",
+        "tests/unit/role-orchestration-methods.test.ts tombstone read-back"
+      ]
+    },
+    {
+      "id": "model-accurate-positioning",
+      "status": "passed",
+      "evidence": [
+        "memory-visibility-matrix.json",
+        "export-readback.json model.productDescription/approvalBoundary"
+      ]
+    }
+  ],
+  "primary_artifacts": {
+    "export-readback.json": "30a38f5c81796951147c526ebe654a15188f14b89accf5bfa8da6d8034ab9463",
+    "screenshots/memory-zh.png": "f4da3a35e7c5be6cb6b42c5b1f131988f908105b857c8a92d40cbcf7376790dc",
+    "e2e-observation.json": "412bb2acbf48f58365b898403d4922ac2d7f781c57f00ea05e81cf6bca43bbad",
+    "memory-visibility-matrix.json": "ade6dda0dfe9931f8d3067b467d4d8ce9cca0b08b8d5136ad9a8ca53c7fbcc15",
+    "authority-ui-journeys.json": "1a5bf5894b675d572c3c84bd0840876d30decd78a36d3cd4b797d060120893f9"
+  },
+  "cleanup": {
+    "electron_profiles": "Automatic E2E fixture cleanup after test close.",
+    "retained_primary_export": "harness/specs/fixtures/memory-user-surface/export-readback.json",
+    "raw_logs_directory": "D:\\tmp\\tf0498-69b1f15864e001ec1d8b06cadfd99cd24e51aad8"
+  },
+  "recovery_required": [],
+  "untested_boundaries": [
+    "No paid/live model call was made; this verifies Memory acceptance/visibility projection, not model answer quality.",
+    "Cross-workspace prompt-time scope selection is not measured here; TF-0498 proves candidate exclusion and accepted-only projection, while D1/F stages own contextual scope evaluation.",
+    "Runtime Memory store projection is covered with the real projection code and deterministic injected store; the built Electron journey exercised the Role owner path and runtime gates-off status.",
+    "Japanese and Russian UI strings are covered by i18n lint; Electron locale switching was exercised for English and Chinese."
+  ]
+}

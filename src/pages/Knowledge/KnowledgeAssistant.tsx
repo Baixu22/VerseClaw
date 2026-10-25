@@ -1,7 +1,8 @@
+import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdown';
+import { KnowledgeBot, type KnowledgeBotState } from '@/components/knowledge-bot/KnowledgeBot';
 import { useEffect, useRef } from 'react';
-import { AlertTriangle, Bot, Check, Copy, FilePlus2, Loader2, RotateCcw, SendHorizontal, ShieldCheck, Wrench } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { useTranslation } from 'react-i18next';
+import { Check, Copy, FilePlus2, FileText, Loader2, RotateCcw, ArrowUp, ShieldCheck, Wrench } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,76 +11,14 @@ import type { KnowledgeLibrarianGroundedAnswer } from '@/lib/knowledge-librarian
 import type { KnowledgeLibrarianCitation, KnowledgeLibrarianMessage } from './knowledge-view-utils';
 
 export function KnowledgeAssistantMarkdown({ content }: { content: string }) {
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        a({ href, children, ...props }) {
-          return (
-            <a
-              href={href}
-              target="_blank"
-              rel="noreferrer"
-              className="text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:decoration-primary"
-              {...props}
-            >
-              {children}
-            </a>
-          );
-        },
-        code({ className, children, ...props }) {
-          const block = /language-/u.test(className ?? '');
-          return block ? (
-            <code className={cn('font-mono text-xs', className)} {...props}>
-              {children}
-            </code>
-          ) : (
-            <code className="rounded bg-black/5 px-1 py-0.5 font-mono text-[0.85em] dark:bg-white/10" {...props}>
-              {children}
-            </code>
-          );
-        },
-        pre({ children, ...props }) {
-          return (
-            <pre
-              className="my-3 max-w-full overflow-x-auto rounded-lg border border-black/10 bg-black/[0.04] p-3 text-xs leading-5 dark:border-white/10 dark:bg-white/[0.06]"
-              {...props}
-            >
-              {children}
-            </pre>
-          );
-        },
-        ul({ children, ...props }) {
-          return <ul className="my-2 list-disc space-y-1 pl-5" {...props}>{children}</ul>;
-        },
-        ol({ children, ...props }) {
-          return <ol className="my-2 list-decimal space-y-1 pl-5" {...props}>{children}</ol>;
-        },
-        p({ children, ...props }) {
-          return <p className="my-2 first:mt-0 last:mb-0" {...props}>{children}</p>;
-        },
-        table({ children, ...props }) {
-          return (
-            <div className="my-3 max-w-full overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
-              <table className="w-full min-w-max border-collapse text-xs" {...props}>{children}</table>
-            </div>
-          );
-        },
-        th({ children, ...props }) {
-          return <th className="border-b border-black/10 bg-black/[0.04] px-2 py-1.5 text-left font-semibold dark:border-white/10 dark:bg-white/[0.06]" {...props}>{children}</th>;
-        },
-        td({ children, ...props }) {
-          return <td className="border-t border-black/5 px-2 py-1.5 align-top dark:border-white/10" {...props}>{children}</td>;
-        },
-      }}
-    >
-      {content}
-    </ReactMarkdown>
-  );
+  return <AssistantMarkdown text={content} isStreaming={false} />;
 }
 
 export function KnowledgeAssistantMessage({
   message,
+  botState = 'idle',
+  animateAvatar = false,
+  compact = false,
   copied,
   busy,
   copyLabel,
@@ -96,6 +35,9 @@ export function KnowledgeAssistantMessage({
   onSendToSteward,
 }: {
   message: KnowledgeLibrarianMessage;
+  botState?: KnowledgeBotState;
+  animateAvatar?: boolean;
+  compact?: boolean;
   copied: boolean;
   busy: boolean;
   copyLabel: string;
@@ -128,26 +70,44 @@ export function KnowledgeAssistantMessage({
   onCreateErrorExperience: (answer: KnowledgeLibrarianGroundedAnswer) => void;
   onSendToSteward: (answer: KnowledgeLibrarianGroundedAnswer) => void;
 }) {
+  const { t } = useTranslation('knowledge');
   const isUser = message.role === 'user';
   const label = isUser ? userLabel : roleLabel;
   const groundedAnswer = !isUser ? message.groundedAnswer : undefined;
+  // Only the exact renderer-produced retrieval template has boilerplate moved
+  // to Details. Provider prose and the persisted/copyable answer stay intact.
+  const localBody = groundedAnswer?.sources.map((source, index) => `${index + 1}. ${source.title}: ${source.excerpt}`).join('\n\n');
+  const intro = t('librarian.answerIntro', { count: groundedAnswer?.sources.length ?? 0 });
+  const boundary = t('librarian.answerBoundary');
+  const localTemplate = compact && groundedAnswer?.sources.length && groundedAnswer.answer === [intro, localBody, boundary].join('\n\n');
+  const candidateActions = groundedAnswer && <div className="flex flex-wrap gap-1" data-testid="knowledge-librarian-candidate-actions">
+    <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-tiny font-normal text-muted-foreground hover:text-foreground" disabled={busy} onClick={() => onSaveDraft(groundedAnswer)} data-testid="knowledge-librarian-save-draft">
+      <FilePlus2 className="mr-1.5 h-3 w-3" />{actionLabels.saveDraft}
+    </Button>
+    <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-tiny font-normal text-muted-foreground hover:text-foreground" disabled={busy} onClick={() => onCreateErrorExperience(groundedAnswer)} data-testid="knowledge-librarian-create-error-experience">
+      <Wrench className="mr-1.5 h-3 w-3" />{actionLabels.createErrorExperience}
+    </Button>
+    <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-tiny font-normal text-muted-foreground hover:text-foreground" disabled={busy} onClick={() => onSendToSteward(groundedAnswer)} data-testid="knowledge-librarian-send-steward">
+      <ShieldCheck className="mr-1.5 h-3 w-3" />{actionLabels.sendToSteward}
+    </Button>
+  </div>;
   return (
     <article
       className={cn(
-        'group flex gap-2.5',
+        'group flex gap-2.5', compact && 'knowledge-bot-message',
         isUser ? 'justify-end' : 'justify-start',
       )}
       data-testid={`knowledge-librarian-message-${message.role}`}
     >
       {!isUser ? (
-        <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-surface-input text-muted-foreground dark:border-white/10">
-          <Bot className="h-3.5 w-3.5" />
+        <div className={compact ? 'mt-1 h-7 w-7 shrink-0' : 'mt-0.5 h-9 w-9 shrink-0'}>
+          <KnowledgeBot size={compact ? 28 : 36} state={botState} animated={animateAvatar} />
         </div>
       ) : null}
-      <div className={cn('min-w-0 max-w-[88%]', isUser && 'flex flex-col items-end')}>
-        <div className="mb-1 flex items-center gap-2 text-[11px] text-muted-foreground">
-          <span>{label}</span>
-          <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
+      <div className={cn('min-w-0', isUser ? 'flex max-w-[88%] flex-col items-end' : 'flex-1')}>
+        <div className={cn('mb-1 flex items-center gap-2 text-tiny text-muted-foreground', compact && 'knowledge-bot-message__meta')}>
+          <span className={compact ? 'sr-only' : undefined}>{label}</span>
+          <span className={compact ? 'sr-only' : undefined}>{new Date(message.createdAt).toLocaleTimeString()}</span>
           <button
             type="button"
             className="inline-flex h-5 w-5 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-black/5 group-hover:opacity-100 focus:opacity-100 dark:hover:bg-white/10"
@@ -161,16 +121,16 @@ export function KnowledgeAssistantMessage({
         </div>
         <div
           className={cn(
-            'rounded-xl px-3.5 py-2.5 text-sm leading-6',
+            'px-1 py-1 text-sm leading-6',
             isUser
-              ? 'border border-black/10 bg-surface-input text-foreground dark:border-white/10'
+              ? 'rounded-[18px] bg-surface-input px-3.5 py-2.5 text-foreground'
               : 'text-foreground',
           )}
         >
           {isUser ? (
             <div className="whitespace-pre-wrap break-words">{message.content}</div>
           ) : groundedAnswer ? (
-            <div className="space-y-3" data-testid="knowledge-librarian-grounded-answer">
+            <div className={compact ? 'space-y-2.5' : 'space-y-3'} data-testid="knowledge-librarian-grounded-answer">
               {/* Restraint: the grounding badge only earns space when grounding is
                   imperfect. A fully grounded answer says so by simply citing sources. */}
               {groundedAnswer.groundingStatus !== 'grounded' ? (
@@ -178,22 +138,23 @@ export function KnowledgeAssistantMessage({
                   {sectionLabels.groundingStatus[groundedAnswer.groundingStatus]}
                 </Badge>
               ) : null}
-              <div className="prose prose-sm max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary" data-testid="knowledge-librarian-answer-section">
-                <KnowledgeAssistantMarkdown content={groundedAnswer.answer} />
+              <div className="min-w-0" data-testid="knowledge-librarian-answer-section">
+                <KnowledgeAssistantMarkdown content={localTemplate ? localBody! : groundedAnswer.answer} />
               </div>
               <section data-testid="knowledge-librarian-sources-section">
-                <div className="grid gap-1.5">
+                <div className={compact ? 'flex flex-wrap gap-1.5' : 'grid gap-1.5'}>
                   {groundedAnswer.sources.map((source, index) => (
                     <button
                       key={`${message.id}:source:${source.lookup}`}
                       type="button"
-                      className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                      className={cn('flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5', compact && 'knowledge-bot-source')}
+                      title={source.path || source.lookup}
                       onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score })}
                       data-testid="knowledge-librarian-source"
                     >
-                      <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>
+                      {compact ? <FileText className="h-3 w-3 shrink-0 text-muted-foreground" /> : <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>}
                       <span className="min-w-0 flex-1 truncate font-medium text-foreground/90">{source.title}</span>
-                      <span className="min-w-0 max-w-[45%] shrink-0 truncate font-mono text-[10px] text-muted-foreground">{source.path || source.lookup}</span>
+                      <span className={compact ? 'sr-only' : 'min-w-0 max-w-[45%] shrink-0 truncate font-mono text-[10px] text-muted-foreground'}>{source.path || source.lookup}</span>
                     </button>
                   ))}
                   {groundedAnswer.sources.length === 0 ? (
@@ -209,6 +170,7 @@ export function KnowledgeAssistantMessage({
                   {sectionLabels.retrieval}
                 </summary>
                 <div className="mt-2 space-y-2 border-l border-black/10 pl-3 dark:border-white/10">
+                  {localTemplate ? <p className="text-tiny leading-5 text-muted-foreground">{intro} {boundary}</p> : null}
                   {groundedAnswer.unknowns.length > 0 ? (
                     <div data-testid="knowledge-librarian-unknowns-section">
                       <div className="text-[11px] font-medium text-foreground/70">{sectionLabels.unknowns}</div>
@@ -230,25 +192,13 @@ export function KnowledgeAssistantMessage({
                     <div className="flex justify-between gap-3"><dt>{sectionLabels.resultCount}</dt><dd>{groundedAnswer.retrieval.resultCount}</dd></div>
                     <div className="flex justify-between gap-3"><dt>{sectionLabels.confidence}</dt><dd>{Math.round(groundedAnswer.confidence * 100)}%</dd></div>
                   </dl>
+                  {compact && candidateActions}
                 </div>
               </details>
-              <div className="flex flex-wrap gap-1" data-testid="knowledge-librarian-candidate-actions">
-                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" disabled={busy} onClick={() => onSaveDraft(groundedAnswer)} data-testid="knowledge-librarian-save-draft">
-                  <FilePlus2 className="mr-1.5 h-3 w-3" />
-                  {actionLabels.saveDraft}
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" disabled={busy} onClick={() => onCreateErrorExperience(groundedAnswer)} data-testid="knowledge-librarian-create-error-experience">
-                  <Wrench className="mr-1.5 h-3 w-3" />
-                  {actionLabels.createErrorExperience}
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" disabled={busy} onClick={() => onSendToSteward(groundedAnswer)} data-testid="knowledge-librarian-send-steward">
-                  <ShieldCheck className="mr-1.5 h-3 w-3" />
-                  {actionLabels.sendToSteward}
-                </Button>
-              </div>
+              {!compact && candidateActions}
             </div>
           ) : (
-            <div className="prose prose-sm max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary">
+            <div className="min-w-0">
               <KnowledgeAssistantMarkdown content={message.content} />
             </div>
           )}
@@ -284,6 +234,9 @@ export function KnowledgeAssistantPromptInput({
   placeholder,
   askLabel,
   hint,
+  onFocusChange,
+  compact = false,
+  children,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -293,6 +246,9 @@ export function KnowledgeAssistantPromptInput({
   placeholder: string;
   askLabel: string;
   hint: string;
+  onFocusChange?: (focused: boolean) => void;
+  compact?: boolean;
+  children?: import('react').ReactNode;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -305,10 +261,10 @@ export function KnowledgeAssistantPromptInput({
 
   return (
     <form
-      className="rounded-xl border border-black/10 bg-surface-input px-3 py-2 transition-colors focus-within:border-primary/35 dark:border-white/10"
+      className={cn('codex-composer-shell rounded-[25px] px-4 py-3', compact && 'knowledge-bot-composer')}
       onSubmit={(event) => {
         event.preventDefault();
-        onSubmit();
+        if (!disabled && value.trim()) onSubmit();
       }}
       data-testid="knowledge-librarian-composer"
     >
@@ -316,22 +272,24 @@ export function KnowledgeAssistantPromptInput({
         ref={textareaRef}
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onFocus={() => onFocusChange?.(true)}
+        onBlur={() => onFocusChange?.(false)}
         onKeyDown={(event) => {
-          if (event.key === 'Enter' && !event.shiftKey) {
+          if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !disabled) {
             event.preventDefault();
             onSubmit();
           }
         }}
         placeholder={placeholder}
+        aria-label={placeholder}
         data-testid="knowledge-librarian-question"
-        className="min-h-[48px] resize-none border-0 bg-transparent px-0 py-1 text-sm shadow-none focus-visible:ring-0"
+        className="min-h-[48px] resize-none border-0 bg-transparent px-0 py-1 text-conversation-body shadow-none focus-visible:ring-0"
         disabled={disabled}
       />
       <div className="mt-1 flex items-center justify-between gap-2">
-        <p className="min-w-0 text-[11px] leading-4 text-muted-foreground">{hint}</p>
-        <Button type="submit" size="sm" className="h-8 rounded-lg px-3" disabled={disabled || !value.trim()} data-testid="knowledge-librarian-ask">
-          {running ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <SendHorizontal className="mr-2 h-3.5 w-3.5" />}
-          {askLabel}
+        {compact ? children : <p className="min-w-0 text-tiny leading-4 text-muted-foreground">{hint}</p>}
+        <Button type="submit" size="icon" className="h-8 w-8 shrink-0 rounded-full" disabled={disabled || !value.trim()} data-testid="knowledge-librarian-ask" aria-label={askLabel} title={askLabel}>
+          {running ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <ArrowUp className="h-4 w-4" />}
         </Button>
       </div>
     </form>
@@ -360,7 +318,7 @@ export function KnowledgeAssistantErrorCard({
       role="alert"
     >
       <div className="flex items-start gap-2">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+        <KnowledgeBot state="failed" size={36} />
         <div className="min-w-0 flex-1">
           <div className="font-medium">{title}</div>
           <p className="mt-1 break-words text-xs leading-5">{error}</p>

@@ -1,0 +1,185 @@
+{
+  "schema": "clawx.versegit.d2-paired-results/v1",
+  "generated_at": "2026-10-22T19:56:03.336Z",
+  "task": "TF-0531",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "50837eca343d56b6bee3ca05b6d31452658d5da1",
+    "tree": "b028a9cfa747060fa741ae9d537ec6837d872972",
+    "dirty": false
+  },
+  "trials": [
+    {
+      "kind": "positive",
+      "trial": 1,
+      "off": {
+        "arm": "off",
+        "feedback_delivered": false,
+        "feedback_evidence_id": null,
+        "reread_count": 0,
+        "rework_count": 0,
+        "validation_exit_code": 2,
+        "validation_status": "failed",
+        "validation_output_sha256": "ff4b688de15d378ea82c2920f69a85bc7b0975746cc61641acf309cc10db4e78"
+      },
+      "on": {
+        "arm": "on",
+        "feedback_delivered": true,
+        "feedback_evidence_id": "vgf_573390f0e6de874920a531e0",
+        "reread_count": 1,
+        "rework_count": 1,
+        "validation_exit_code": 0,
+        "validation_status": "passed",
+        "validation_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "kind": "positive",
+      "trial": 2,
+      "off": {
+        "arm": "off",
+        "feedback_delivered": false,
+        "feedback_evidence_id": null,
+        "reread_count": 0,
+        "rework_count": 0,
+        "validation_exit_code": 2,
+        "validation_status": "failed",
+        "validation_output_sha256": "ff4b688de15d378ea82c2920f69a85bc7b0975746cc61641acf309cc10db4e78"
+      },
+      "on": {
+        "arm": "on",
+        "feedback_delivered": true,
+        "feedback_evidence_id": "vgf_0e4231f1cba20c5710c60777",
+        "reread_count": 1,
+        "rework_count": 1,
+        "validation_exit_code": 0,
+        "validation_status": "passed",
+        "validation_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "kind": "positive",
+      "trial": 3,
+      "off": {
+        "arm": "off",
+        "feedback_delivered": false,
+        "feedback_evidence_id": null,
+        "reread_count": 0,
+        "rework_count": 0,
+        "validation_exit_code": 2,
+        "validation_status": "failed",
+        "validation_output_sha256": "ff4b688de15d378ea82c2920f69a85bc7b0975746cc61641acf309cc10db4e78"
+      },
+      "on": {
+        "arm": "on",
+        "feedback_delivered": true,
+        "feedback_evidence_id": "vgf_5390bcd85bf9ba8bdf9f6f81",
+        "reread_count": 1,
+        "rework_count": 1,
+        "validation_exit_code": 0,
+        "validation_status": "passed",
+        "validation_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "kind": "negative",
+      "trial": 1,
+      "off": {
+        "arm": "off",
+        "feedback_delivered": false,
+        "feedback_evidence_id": null,
+        "reread_count": 0,
+        "rework_count": 0,
+        "validation_exit_code": 0,
+        "validation_status": "passed",
+        "validation_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "on": {
+        "arm": "on",
+        "feedback_delivered": false,
+        "feedback_evidence_id": null,
+        "reread_count": 0,
+        "rework_count": 0,
+        "validation_exit_code": 0,
+        "validation_status": "passed",
+        "validation_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "kind": "negative",
+      "trial": 2,
+      "off": {
+        "arm": "off",
+        "feedback_delivered": false,
+        "feedback_evidence_id": null,
+        "reread_count": 0,
+        "rework_count": 0,
+        "validation_exit_code": 0,
+        "validation_status": "passed",
+        "validation_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "on": {
+        "arm": "on",
+        "feedback_delivered": false,
+        "feedback_evidence_id": null,
+        "reread_count": 0,
+        "rework_count": 0,
+        "validation_exit_code": 0,
+        "validation_status": "passed",
+        "validation_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "summary": {
+    "positive_trials": 3,
+    "negative_trials": 2,
+    "positive_off_fail_count": 3,
+    "positive_on_pass_count": 3,
+    "behavior_shift_count": 3,
+    "negative_false_positive_count": 0,
+    "stable_normalized_outcomes": true,
+    "passed": true
+  },
+  "observations": {
+    "feedback_observations": 3,
+    "feedback_events": 3
+  },
+  "commands": [
+    {
+      "id": "unit",
+      "command": "pnpm exec vitest run tests/unit/versegit-paired-evaluation.test.ts",
+      "exit_code": 0,
+      "tests": 3
+    },
+    {
+      "id": "e2e",
+      "command": "pnpm exec playwright test tests/e2e/versegit-feedback-paired.spec.ts",
+      "exit_code": 0,
+      "tests": 1
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit_code": 0
+    },
+    {
+      "id": "contract",
+      "command": "pnpm contract:check",
+      "exit_code": 0
+    },
+    {
+      "id": "comms",
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exit_code": 0
+    },
+    {
+      "id": "harness",
+      "command": "pnpm harness validate --spec harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md",
+      "exit_code": 0
+    }
+  ],
+  "passed": true,
+  "digest": "bbc00722059c5b2714327da0750bff21cede4a3b559a4e3de034f1340862eda1"
+}

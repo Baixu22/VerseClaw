@@ -43,11 +43,11 @@ function textOf(result: { content: (TextContent | ImageContent)[] }): string {
 }
 
 describe("read tool: plain UTF-8", () => {
-  it("returns file content verbatim with undefined details", async () => {
+  it("returns file content verbatim with read-basis details", async () => {
     await writeFile(join(dir, "plain.txt"), "hello\nworld\n", "utf-8");
     const result = await executeRead({ path: "plain.txt" });
     expect(result.content).toEqual([{ type: "text", text: "hello\nworld\n" }]);
-    expect(result.details).toBeUndefined();
+    expect(result.details?.versegit_basis).toMatchObject({ schema: "clawx.versegit.tool-basis/v1", kind: "read", path: "plain.txt" });
   });
 
   it("resolves relative paths against the tool cwd", async () => {
@@ -112,7 +112,7 @@ describe("read tool: truncation boundaries", () => {
     const lines = Array.from({ length: 2000 }, (_, i) => `L${i + 1}`);
     await writeFile(join(dir, "exact.txt"), lines.join("\n"), "utf-8");
     const result = await executeRead({ path: "exact.txt" });
-    expect(result.details).toBeUndefined();
+    expect(result.details?.versegit_basis).toMatchObject({ path: "exact.txt", kind: "read" });
     expect(textOf(result)).toBe(lines.join("\n"));
   });
 
@@ -192,7 +192,7 @@ describe("read tool: offset/limit", () => {
     const result = await executeRead({ path: "f.txt", limit: 2 });
     // characterization: "1 more lines" grammar for a single remaining line.
     expect(textOf(result)).toBe("one\ntwo\n\n[1 more lines in file. Use offset=3 to continue.]");
-    expect(result.details).toBeUndefined();
+    expect(result.details?.versegit_basis).toMatchObject({ path: "f.txt", kind: "read", lineStart: 1, lineEnd: 2 });
   });
 
   it("combines offset and limit", async () => {

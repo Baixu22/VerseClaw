@@ -1,0 +1,81 @@
+{
+  "schema": "clawx.versegit.c2-basis-race-cases/v1",
+  "generated_at": "2026-10-22T19:05:11.032Z",
+  "task": "TF-0529",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "6f1f92385f9b75f4e7f583991f532526f802833c",
+    "tree": "3ba380507ff680648f45d07e54c8bdbc5cdf111a",
+    "dirty": false
+  },
+  "cases": {
+    "producer_consumer_api_drift": {
+      "passed": true,
+      "finding": {
+        "schema": "clawx.versegit.stale-read-finding/v1",
+        "findingId": "vgf_56318b4e4fa5a77602c1a80e",
+        "kind": "api-drift",
+        "path": "src/api.ts",
+        "readEventId": "vge_ba207ce84aab7b437176b529",
+        "writeEventId": "vge_63ddee6cba4d2f87a515381b",
+        "readerSessionId": "agent-session-run-a",
+        "writerSessionId": "agent-session-run-b",
+        "readRange": {
+          "lineStart": 1,
+          "lineEnd": 3
+        },
+        "writeRange": {
+          "lineStart": 1,
+          "lineEnd": 3
+        },
+        "readBasisSha256": "1c4f6cd56a7b841544bbdbd3c30ad61214baeb746c40933afb2cf998b993be75",
+        "writeBeforeSha256": "1c4f6cd56a7b841544bbdbd3c30ad61214baeb746c40933afb2cf998b993be75",
+        "writeAfterSha256": "85d29746590f087c3e5e8361f0d204f5544f14ec18c571ae31b5368f82ce4391",
+        "observedAt": "2026-10-22T19:05:10.994Z",
+        "host_verdict": "unchanged"
+      }
+    },
+    "own_write_negative": {
+      "passed": true
+    },
+    "unrelated_file_negative": {
+      "passed": true
+    },
+    "read_then_file_change": {
+      "passed": true,
+      "finding_id": "vgf_56318b4e4fa5a77602c1a80e"
+    },
+    "duplicate_rejected": {
+      "passed": true,
+      "status": "duplicate"
+    },
+    "late_after_detach_rejected": {
+      "passed": true,
+      "status": "stale",
+      "issues": [
+        "late_tool_observation_after_detach"
+      ]
+    },
+    "old_epoch_rejected": {
+      "passed": true
+    },
+    "wrong_owner_rejected": {
+      "passed": true
+    },
+    "bounded_queue_drop": {
+      "passed": true,
+      "dropped_count": 1
+    },
+    "cancelled_tool_partial": {
+      "passed": true,
+      "status": "partial",
+      "issues": [
+        "tool_not_succeeded"
+      ]
+    }
+  },
+  "passed": true,
+  "digest": "1202c7e1d95af05f8398ad38b993a8e60dc55f932c871563ed8d58c2a8318bdc"
+}

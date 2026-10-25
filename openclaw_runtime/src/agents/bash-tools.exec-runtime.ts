@@ -36,6 +36,8 @@ import { isExecApprovalFollowupSessionRebound } from "./bash-tools.exec-approval
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
 import type { BashSandboxConfig } from "./bash-tools.shared.js";
 import type { AgentToolResult } from "./runtime/index.js";
+import type { PermissionEffectOwnerCheckpointInput } from "../../../shared/permission-effect-contract.js";
+import { assertExecPermissionEffect } from "./bash-tools.exec-permission.js";
 export { applyPathPrepend, findPathKey, normalizePathPrepend } from "../infra/path-prepend.js";
 export {
   normalizeExecAsk,
@@ -763,6 +765,8 @@ export async function runExecProcess(opts: {
   execHost?: ExecHost;
   /** Set only after the OpenClaw exec policy allowed this exact command. */
   hostPolicyApproved?: boolean;
+  /** Evidence prepared by the exec policy owner; the executor cannot mint it. */
+  permissionEffect: PermissionEffectOwnerCheckpointInput;
   config?: OpenClawConfig;
   workdir: string;
   env: Record<string, string>;
@@ -814,6 +818,7 @@ export async function runExecProcess(opts: {
   const execCommand = opts.execCommand ?? opts.command;
   const diagnosticTarget = opts.sandbox ? "sandbox" : "host";
   const selectedHost = opts.execHost ?? (opts.sandbox ? "sandbox" : "gateway");
+  assertExecPermissionEffect(opts.permissionEffect);
   let compatibilityNativeFallbackUsed = false;
   const supervisor = getProcessSupervisor();
   const shellRuntimeEnv: Record<string, string> = {

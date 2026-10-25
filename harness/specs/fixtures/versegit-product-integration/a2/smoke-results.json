@@ -1,0 +1,55 @@
+{
+  "schema": "clawx.versegit.product-a2-evidence/v1",
+  "kind": "smoke-results",
+  "generated_at": "2026-10-22T12:39:28.671Z",
+  "task": "TF-0525",
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "command": "pnpm exec playwright test tests/e2e/app-smoke.spec.ts",
+  "reporter": "json",
+  "cwd_role": "worktree-root",
+  "raw_results_sha256": "60b681b8b5d75f3a1f99717c1e300ec558dcb00e458c534d87e361fa97422231",
+  "stats": {
+    "startTime": "2026-10-22T12:38:24.812Z",
+    "duration": 56312.992000000006,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "shows the setup wizard on a fresh profile",
+      "ok": true,
+      "status": "passed",
+      "duration_ms": 16125
+    },
+    {
+      "title": "can skip setup and navigate to the models page",
+      "ok": true,
+      "status": "passed",
+      "duration_ms": 11359
+    },
+    {
+      "title": "persists skipped setup across relaunch for the same isolated profile",
+      "ok": true,
+      "status": "passed",
+      "duration_ms": 17717
+    },
+    {
+      "title": "invokes the real typed host bridge for app version",
+      "ok": true,
+      "status": "passed",
+      "duration_ms": 4772
+    },
+    {
+      "title": "does not show a fatal dialog when an E2E output pipe closes",
+      "ok": true,
+      "status": "passed",
+      "duration_ms": 4728
+    }
+  ],
+  "errors": [],
+  "entered_test_body": true,
+  "digest": "4a0a5e6b87c5e4f4d34197754848193b4cdaae4f63d7550006cbb3ce36a5b835"
+}

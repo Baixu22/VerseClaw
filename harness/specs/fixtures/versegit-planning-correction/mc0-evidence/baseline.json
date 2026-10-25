@@ -1,0 +1,271 @@
+{
+  "baselineSchema": "clawx.versegit.mc0-baseline/v1",
+  "generated_at": "2026-10-21T08:15:43.217Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "repo": "D:/Projects/VerseGit",
+    "head": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "commit_time_unix": 1792545051,
+    "status": "dirty",
+    "status_porcelain_sha256": "4cbdcb293cfe0337287d7787277758d5480c6df26c602d51a81828e52ce0a8f6",
+    "changed_path_count": 15,
+    "shallow": false
+  },
+  "toolchain": {
+    "path": "rust-toolchain.toml",
+    "sha256": "85db324345b7937c49ea2ac8b962d741f710719f4f751cab809985cbe6afbe3c"
+  },
+  "version": {
+    "status": "observed",
+    "version": "0.1.0",
+    "rust_version": null
+  },
+  "vgSchema": {
+    "schema_version": 1,
+    "supported_schema_versions": [
+      1,
+      2
+    ],
+    "ledger_schema_version": 2
+  },
+  "binary": {
+    "status": "observed",
+    "path": "D:/Projects/VerseGit/target/debug/vg.exe",
+    "sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "bytes": 72509440,
+    "version": "vg 0.1.0",
+    "capabilities_schema": "versegit.capabilities/v1",
+    "capabilities_sha256": "185a7f032e142662ba846b0eca026340ff7f9891c84d53d923d619c163407b58",
+    "capability_document": {
+      "compat": {
+        "git_only": "preserved",
+        "next": "preserved",
+        "package_names": [
+          "smart-test-sorter",
+          "smart_sorter"
+        ],
+        "sts_protocols": [
+          "1.1",
+          "2.0"
+        ]
+      },
+      "mcp_tools": [
+        "vg_capabilities",
+        "verdict",
+        "integration_status",
+        "who_touches",
+        "explain_conflict",
+        "declare_intent",
+        "basis_status",
+        "basis_watermark"
+      ],
+      "read": [
+        "workspace.root",
+        "change.status",
+        "change.log",
+        "verify.status",
+        "conflicts",
+        "basis.status",
+        "report",
+        "verdict",
+        "doctor"
+      ],
+      "safety": {
+        "default_enable": false,
+        "evidence_land_present": true,
+        "managed_opt_in": true,
+        "strict_admission_present": true
+      },
+      "schema": "versegit.capabilities/v1",
+      "verdict": {
+        "dimensions": [
+          "candidate",
+          "execution",
+          "evidence",
+          "freshness",
+          "risk",
+          "trial"
+        ],
+        "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+        "read_surface": {
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ]
+        },
+        "schema": "versegit.verdict/v1",
+        "single_green_light": false
+      },
+      "workflows": [
+        {
+          "entries": [
+            "workspace.init",
+            "workspace.root",
+            "doctor"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+            "crates/vg-cli/tests/jj_public_surface.rs"
+          ],
+          "id": "workspace",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.new",
+            "change.file",
+            "change.describe",
+            "change.snapshot",
+            "change.diffedit"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_change_lifecycle.rs",
+            "crates/vg-cli/tests/jj_diffedit.rs"
+          ],
+          "id": "change.edit",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.log",
+            "op.restore",
+            "op.undo"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_operation_restore.rs",
+            "crates/vg-cli/tests/jj_op_undo_redo.rs",
+            "crates/vg-cli/tests/jj_backup_restore.rs"
+          ],
+          "id": "history.recover",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "verify.status",
+            "verdict",
+            "basis.status"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_managed_plan.rs",
+            "crates/vg-cli/tests/jj_evidence_land.rs",
+            "crates/vg-cli/tests/jj_verdict.rs"
+          ],
+          "id": "validation.admit",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.materialize",
+            "land",
+            "report"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_managed_candidate.rs",
+            "crates/vg-cli/tests/jj_closed_loop.rs",
+            "crates/vg-cli/tests/land_concurrency.rs"
+          ],
+          "id": "candidate.land",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "git.fetch",
+            "git.push",
+            "gerrit.upload"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_git_ref_sync.rs",
+            "crates/vg-cli/tests/jj_gerrit_upload.rs"
+          ],
+          "id": "external.publish",
+          "status": "controlled"
+        }
+      ],
+      "write": [
+        "workspace.init",
+        "change.new",
+        "change.file",
+        "change.describe",
+        "change.snapshot",
+        "change.diffedit",
+        "change.materialize",
+        "change.duplicate",
+        "change.abandon",
+        "change.rebase",
+        "change.squash",
+        "change.split",
+        "op.restore",
+        "op.undo",
+        "land",
+        "admit.check",
+        "git.fetch",
+        "git.push",
+        "gerrit.upload"
+      ]
+    },
+    "failure": null
+  },
+  "golden": [
+    {
+      "name": "version",
+      "status": "observed",
+      "args": [
+        "--version"
+      ],
+      "exit_ok": true,
+      "stdout_sha256": "e889ed4a6af6a9a7c6767647f6898c460eceaab1da027f4b5239af552f6e7aee",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "vg 0.1.0",
+      "stderr": null
+    },
+    {
+      "name": "capabilities",
+      "status": "observed",
+      "args": [
+        "capabilities",
+        "--json"
+      ],
+      "exit_ok": true,
+      "stdout_sha256": "2f446f9ffb81f2675e7b1140fd07994755e8bb8836acb1d1c840f14b9b194a9b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\n  \"compat\": {\n    \"git_only\": \"preserved\",\n    \"next\": \"preserved\",\n    \"package_names\": [\n      \"smart-test-sorter\",\n      \"smart_sorter\"\n    ],\n    \"sts_protocols\": [\n      \"1.1\",\n      \"2.0\"\n    ]\n  },\n  \"mcp_tools\": [\n    \"vg_capabilities\",\n    \"verdict\",\n    \"integration_status\",\n    \"who_touches\",\n    \"explain_conflict\",\n    \"declare_intent\",\n    \"basis_status\",\n    \"basis_watermark\"\n  ],\n  \"read\": [\n    \"workspace.root\",\n    \"change.status\",\n    \"change.log\",\n    \"verify.status\",\n    \"conflicts\",\n    \"basis.status\",\n    \"report\",\n    \"verdict\",\n    \"doctor\"\n  ],\n  \"safety\": {\n    \"default_enable\": false,\n    \"evidence_land_present\": true,\n    \"managed_opt_in\": true,\n    \"strict_admission_present\": true\n  },\n  \"schema\": \"versegit.capabilities/v1\",\n  \"verdict\": {\n    \"dimensions\": [\n      \"candidate\",\n      \"execution\",\n      \"evidence\",\n      \"freshness\",\n      \"risk\",\n      \"trial\"\n    ],\n    \"note\": \"六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集\",\n    \"read_surface\": {\n      \"observed_channels\": [\n        \"read\",\n        \"grep\",\n        \"glob\",\n        \"write\",\n        \"edit\"\n      ],\n      \"unobserved_channels\": [\n        \"bash\",\n        \"other-mcp\",\n        \"network\",\n        \"direct-fs\"\n      ]\n    },\n    \"schema\": \"versegit.verdict/v1\",\n    \"single_green_light\": false\n  },\n  \"workflows\": [\n    {\n      \"entries\": [\n        \"workspace.init\",\n        \"workspace.root\",\n        \"doctor\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_workspace_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_public_surface.rs\"\n      ],\n      \"id\": \"workspace\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.new\",\n        \"change.file\",\n        \"change.describe\",\n        \"change.snapshot\",\n        \"change.diffedit\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_change_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_diffedit.rs\"\n      ],\n      \"id\": \"change.edit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.log\",\n        \"op.restore\",\n        \"op.undo\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_operation_restore.rs\",\n        \"crates/vg-cli/tests/jj_op_undo_redo.rs\",\n        \"crates/vg-cli/tests/jj_backup_restore.rs\"\n      ],\n      \"id\": \"history.recover\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"verify.status\",\n        \"verdict\",\n        \"basis.status\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_plan.rs\",\n        \"crates/vg-cli/tests/jj_evidence_land.rs\",\n        \"crates/vg-cli/tests/jj_verdict.rs\"\n      ],\n      \"id\": \"validation.admit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.materialize\",\n        \"land\",\n        \"report\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_candidate.rs\",\n        \"crates/vg-cli/tests/jj_closed_loop.rs\",\n        \"crates/vg-cli/tests/land_concurrency.rs\"\n      ],\n      \"id\": \"candidate.land\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"git.fetch\",\n        \"git.push\",\n        \"gerrit.upload\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_git_ref_sync.rs\",\n        \"crates/vg-cli/tests/jj_gerrit_upload.rs\"\n      ],\n      \"id\": \"external.publish\",\n      \"status\": \"controlled\"\n    }\n  ],\n  \"write\": [\n    \"workspace.init\",\n    \"change.new\",\n    \"change.file\",\n    \"change.describe\",\n    \"change.snapshot\",\n    \"change.diffedit\",\n    \"change.materialize\",\n    \"change.duplicate\",\n    \"change.abandon\",\n    \"change.rebase\",\n    \"change.squash\",\n    \"change.split\",\n    \"op.restore\",\n    \"op.undo\",\n    \"land\",\n    \"admit.check\",\n    \"git.fetch\",\n    \"git.push\",\n    \"gerrit.upload\"\n  ]\n}",
+      "stderr": null
+    },
+    {
+      "name": "doctor",
+      "status": "observed",
+      "args": [
+        "doctor",
+        "--json"
+      ],
+      "exit_ok": true,
+      "stdout_sha256": "580e84b904b2dbbce4569496f422f26c01f361ca118daf7b2d5a5f0fed764102",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\n  \"chain\": {\n    \"events_verified\": 10230,\n    \"head_hash\": \"36cb63d9e6a893c286f7f68f0df3b9546975a481abb588722d311bcfaa9ae0f8\",\n    \"last_seq\": 10230,\n    \"valid\": true\n  },\n  \"derived_entries\": 2993,\n  \"events\": 10230,\n  \"evidence\": {\n    \"backup_scope\": \"备份 = 上列全部 exists:true 的位置 + Git 对象库；basis 回执库在 v2 账本上是物化视图（可删可重算）；.vg/derived.db 是派生缓存，不算证据\",\n    \"basis_receipts\": {\n      \"detail\": \"absent\",\n      \"exists\": false,\n      \"path\": \"D:/Projects/VerseGit/.git\\\\versegit\\\\basis\\\\basis.sqlite3\"\n    },\n    \"check_registry\": {\n      \"checks\": 1,\n      \"exists\": true,\n      \"path\": \"D:/Projects/VerseGit/.git\\\\versegit\\\\checks.json\"\n    },\n    \"git_notes\": {\n      \"exists\": false,\n      \"ref\": \"refs/notes/versegit\"\n    },\n    \"land_ops\": {\n      \"detail\": \"absent\",\n      \"exists\": false,\n      \"path\": \"D:/Projects/VerseGit/.git\\\\versegit\\\\land-ops.sqlite3\"\n    },\n    \"landed_evidence\": {\n      \"backfilled\": 0,\n      \"landed_total\": 0,\n      \"note_in_git\": 0,\n      \"report_on_disk\": 0,\n      \"without_note\": [],\n      \"without_report\": []\n    },\n    \"ledger\": {\n      \"events\": 10230,\n      \"path\": \"D:\\\\Projects\\\\VerseGit\\\\.vg\\\\ledger.db\"\n    },\n    \"ledger_receipts\": {\n      \"by_kind\": {},\n      \"total\": 0\n    },\n    \"receipt_reconciliation\": {\n      \"aligned\": true\n    },\n    \"reports\": {\n      \"exists\": false,\n      \"files\": 0,\n      \"path\": \"D:/Projects/VerseGit/.git\\\\versegit\\\\reports\"\n    }\n  },\n  \"hooks\": {\n    \"diagnostics\": [\n      {\n        \"client\": \"claude-code\",\n        \"client_available\": true,\n        \"mcp_configured\": false,\n        \"mcp_path\": \".\\\\.mcp.json\",\n        \"next_step\": \"Run `vg hooks install --client claude-code --force` from this repository: install will not replace the existing mcpServers.versegit entry and hooks entry without it.\",\n        \"ready\": false,\n        \"skill_current\": true,\n        \"skill_installed\": true,\n        \"skill_path\": \".\\\\.claude\\\\skills/versegit/SKILL.md\"\n      }\n    ],\n    \"root\": \".\"\n  },\n  \"ledger_schema_version\": 1,\n  \"plugins\": [\n    {\n      \"name\": \"detect-textual\",\n      \"provides\": [\n        \"conflicts\"\n      ],\n      \"requires_capabilities\": [\n        \"detect\",\n        \"observe\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"observe-fswatch\",\n      \"provides\": [\n        \"fs_watch_start\",\n        \"fs_watch_poll\"\n      ],\n      \"requires_capabilities\": [\n        \"observe\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"observe-hooks\",\n      \"provides\": [\n        \"hooks_ingest\",\n        \"hooks_install\",\n        \"hooks_diagnose\"\n      ],\n      \"requires_capabilities\": [\n        \"observe\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"index\",\n      \"provides\": [\n        \"symbols\",\n        \"changeset\",\n        \"reads\"\n      ],\n      \"requires_capabilities\": [\n        \"index\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.1\"\n    },\n    {\n      \"name\": \"detect-syntactic\",\n      \"provides\": [\n        \"syntactic_interleave\"\n      ],\n      \"requires_capabilities\": [\n        \"detect\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"detect-rw\",\n      \"provides\": [\n        \"rw_detect\"\n      ],\n      \"requires_capabilities\": [\n        \"detect\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"verify\",\n      \"provides\": [\n        \"verify_checks\",\n        \"verify_diagnose\",\n        \"verify_status\",\n        \"verify_run\"\n      ],\n      \"requires_capabilities\": [\n        \"verify\",\n        \"observe\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"contend\",\n      \"provides\": [\n        \"contend_decide\",\n        \"contend_advise\"\n      ],\n      \"requires_capabilities\": [\n        \"contend\",\n        \"observe\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"admit\",\n      \"provides\": [\n        \"admit_decide\"\n      ],\n      \"requires_capabilities\": [\n        \"admit\",\n        \"observe\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"export-notes\",\n      \"provides\": [\n        \"export_git_notes\"\n      ],\n      \"requires_capabilities\": [\n        \"export\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"export-prov\",\n      \"provides\": [\n        \"export_prov\"\n      ],\n      \"requires_capabilities\": [\n        \"export\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"impact\",\n      \"provides\": [\n        \"impact\"\n      ],\n      \"requires_capabilities\": [\n        \"detect\"\n      ],\n      \"schema_version\": 1,\n      \"version\": \"0.1.1\"\n    }\n  ],\n  \"unified_recovery\": {\n    \"error\": null,\n    \"isolation_probe\": \"not_run_in_doctor; use `vg sts isolation-run --probe-only` explicitly\",\n    \"jj_metadata\": {\n      \"delete\": \"not_run\",\n      \"gc\": \"not_run\",\n      \"present\": false,\n      \"reconcile\": \"not_run\"\n    },\n    \"missing_count\": 0,\n    \"missing_objects\": [],\n    \"mode\": \"read_only\",\n    \"pending_count\": 0,\n    \"pending_land_ops\": [],\n    \"repair_actions\": [],\n    \"repo\": \"D:\\\\Projects\\\\VerseGit\"\n  },\n  \"worktree_diagnostic\": {\n    \"count\": 5,\n    \"ok\": true,\n    \"worktrees\": [\n      [\n        \"main\",\n        \"main\",\n        \"clean\"\n      ],\n      [\n        \"VerseGit-arena-0e7a7582\",\n        \"(detached HEAD)\",\n        \"dirty\"\n      ],\n      [\n        \"VerseGit1\",\n        \"codex/tf0346-daemon-bounded\",\n        \"clean\"\n      ],\n      [\n        \"VerseGit2\",\n        \"codex/tf0349-ci-split\",\n        \"dirty\"\n      ],\n      [\n        \"VerseGit4\",\n        \"(detached HEAD)\",\n        \"clean\"\n      ]\n    ]\n  },\n  \"worktrees\": [\n    [\n      \"main\",\n      \"main\",\n      \"clean\"\n    ],\n    [\n      \"VerseGit-arena-0e7a7582\",\n      \"(detached HEAD)\",\n      \"dirty\"\n    ],\n    [\n      \"VerseGit1\",\n      \"codex/tf0346-daemon-bounded\",\n      \"clean\"\n    ],\n    [\n      \"VerseGit2\",\n      \"codex/tf0349-ci-split\",\n      \"dirty\"\n    ],\n    [\n      \"VerseGit4\",\n      \"(detached HEAD)\",\n      \"clean\"\n    ]\n  ]\n}",
+      "stderr": null
+    }
+  ],
+  "deliverable": "rejected",
+  "blockers": [
+    "source_worktree_dirty",
+    "not_a_deliverable_baseline"
+  ],
+  "boundaries": {
+    "source_tree_copied": false,
+    "source_history_copied": false,
+    "task_forest_copied": false,
+    "build_outputs_copied": false
+  },
+  "digest": "ab4480852e1d0f38c64f2803acdf6885b6cacfaf541e4760d9a9ce934485e728"
+}

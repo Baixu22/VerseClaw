@@ -1,0 +1,267 @@
+{
+  "schema": "clawx.versegit.f3-sidecar-package-manifest-evidence/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-23T13:25:22.331Z",
+  "clawxSource": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "95a34cca793ff07f167b2b87f182ecf82985ae4e",
+    "tree": "a69d3752e68f737d2135ff9c2380d3b539e61b3f",
+    "dirty": false
+  },
+  "source": {
+    "commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6"
+  },
+  "manifestPath": "resources/versegit/manifest.json",
+  "artifactPath": "resources/bin/win32-x64/vg.exe",
+  "package": {
+    "schema": "clawx.versegit.sidecar-package/v1",
+    "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+    "driven_by": "agent",
+    "actor": "codex",
+    "source": {
+      "repository": "https://github.com/Baixu22/VerseGit",
+      "commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+      "tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+      "archiveSha256": "33733bff0c50124e957edba151c4a1d5945b015a58e17e6cc573879761097f76",
+      "archiveBytes": 91997207,
+      "sourceInputsDigest": "52a807b0a75304af82347d2e7b3b0e7314c9063f809ba125d88c16cb12251563",
+      "effectivePatchSet": []
+    },
+    "build": {
+      "profile": "release",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--release",
+        "--bin",
+        "vg"
+      ],
+      "recipeDigest": "ec075f439e019a4779dc6f35f07b4cddff9a433a4304d34e3bb48547a3a990fb",
+      "sourceDateEpoch": 1792545051,
+      "lockfileSha256": "11eb2982c91b6cbfcf4f32c2c57ce81264c520b2602a74eca23270ed3ca47491",
+      "toolchain": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-pc-windows-msvc\nrelease: 1.98.1\nLLVM version: 22.1.8"
+      },
+      "independentBuildRoots": 2,
+      "byteIdentical": false,
+      "buildHashes": {
+        "a": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+        "b": "07557a9dd3f1ce0c055522f9e34eab23c40806ad9296ada97edb90db98588df1"
+      },
+      "semanticIdentityEqual": true
+    },
+    "artifact": {
+      "devPath": "resources/bin/win32-x64/vg.exe",
+      "packagedPath": "bin/vg.exe",
+      "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+      "bytes": 41011712,
+      "format": "pe32+",
+      "platform": "win32",
+      "arch": "x64",
+      "version": "vg 0.1.0"
+    },
+    "provider": {
+      "capabilitiesSchema": "versegit.capabilities/v1",
+      "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+      "capabilitiesBytes": 3737,
+      "contractVersion": "clawx.versegit.consumer-contract/v1",
+      "contractDigest": "77471d662b10f49d2e5b0f95ff13599df378ea79a0ab74b709dda42475768df3",
+      "schemaVersions": [
+        1,
+        2
+      ],
+      "ledgerSchemaVersion": 2,
+      "goldenDigest": "323f58a6ad891ed20d507168494c773eeb7266bd0c1bef99137a0cb838279f72"
+    },
+    "profiles": [
+      "M1"
+    ],
+    "license": {
+      "spdx": "Apache-2.0",
+      "path": "resources/versegit/LICENSE-APACHE-2.0.txt",
+      "sha256": "f81c8de6cfc5091c69fd68229215a93e1b31ee73940e355876257bf0db7ca33e"
+    },
+    "retention": {
+      "codeCopied": false,
+      "gitDirectoryCopied": false,
+      "taskForestCopied": false,
+      "privateEvidenceCopied": false,
+      "supportedTargets": [
+        "win32-x64"
+      ]
+    }
+  },
+  "packageDigest": "370d05ad327e48188d13cade48760fb78aaeebc93990f134bcee307362541f90",
+  "verified": {
+    "ok": true,
+    "code": null,
+    "issues": [],
+    "manifest": {
+      "schema": "clawx.versegit.sidecar-package/v1",
+      "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+      "driven_by": "agent",
+      "actor": "codex",
+      "source": {
+        "repository": "https://github.com/Baixu22/VerseGit",
+        "commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+        "tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+        "archiveSha256": "33733bff0c50124e957edba151c4a1d5945b015a58e17e6cc573879761097f76",
+        "archiveBytes": 91997207,
+        "sourceInputsDigest": "52a807b0a75304af82347d2e7b3b0e7314c9063f809ba125d88c16cb12251563",
+        "effectivePatchSet": []
+      },
+      "build": {
+        "profile": "release",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--release",
+          "--bin",
+          "vg"
+        ],
+        "recipeDigest": "ec075f439e019a4779dc6f35f07b4cddff9a433a4304d34e3bb48547a3a990fb",
+        "sourceDateEpoch": 1792545051,
+        "lockfileSha256": "11eb2982c91b6cbfcf4f32c2c57ce81264c520b2602a74eca23270ed3ca47491",
+        "toolchain": {
+          "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-pc-windows-msvc\nrelease: 1.98.1\nLLVM version: 22.1.8"
+        },
+        "independentBuildRoots": 2,
+        "byteIdentical": false,
+        "buildHashes": {
+          "a": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+          "b": "07557a9dd3f1ce0c055522f9e34eab23c40806ad9296ada97edb90db98588df1"
+        },
+        "semanticIdentityEqual": true
+      },
+      "artifact": {
+        "devPath": "resources/bin/win32-x64/vg.exe",
+        "packagedPath": "bin/vg.exe",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+        "bytes": 41011712,
+        "format": "pe32+",
+        "platform": "win32",
+        "arch": "x64",
+        "version": "vg 0.1.0"
+      },
+      "provider": {
+        "capabilitiesSchema": "versegit.capabilities/v1",
+        "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+        "capabilitiesBytes": 3737,
+        "contractVersion": "clawx.versegit.consumer-contract/v1",
+        "contractDigest": "77471d662b10f49d2e5b0f95ff13599df378ea79a0ab74b709dda42475768df3",
+        "schemaVersions": [
+          1,
+          2
+        ],
+        "ledgerSchemaVersion": 2,
+        "goldenDigest": "323f58a6ad891ed20d507168494c773eeb7266bd0c1bef99137a0cb838279f72"
+      },
+      "profiles": [
+        "M1"
+      ],
+      "license": {
+        "spdx": "Apache-2.0",
+        "path": "resources/versegit/LICENSE-APACHE-2.0.txt",
+        "sha256": "f81c8de6cfc5091c69fd68229215a93e1b31ee73940e355876257bf0db7ca33e"
+      },
+      "retention": {
+        "codeCopied": false,
+        "gitDirectoryCopied": false,
+        "taskForestCopied": false,
+        "privateEvidenceCopied": false,
+        "supportedTargets": [
+          "win32-x64"
+        ]
+      }
+    }
+  },
+  "reproducibility": {
+    "byteIdentical": false,
+    "semanticIdentityEqual": true
+  },
+  "verificationCommands": [
+    {
+      "name": "assemble",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/versegit-sidecar-package.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 5260,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"manifest\": \"D:\\\\ClawX-work\\\\versegit-product-integration-20261022\\\\resources\\\\versegit\\\\manifest.json\",\n  \"binary\": \"D:\\\\ClawX-work\\\\versegit-product-integration-20261022\\\\resources\\\\bin\\\\win32-x64\\\\vg.exe\",\n  \"artifactSha256\": \"6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea\",\n  \"capabilitiesSha256\": \"c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26\",\n  \"byteIdentical\": false,\n  \"semanticIdentityEqual\": true\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "unit",
+      "argv": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/versegit-sidecar-delivery.test.ts",
+        "tests/unit/versegit-host-api.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 2887,
+      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX-work/versegit-product-integration-20261022\n\n\n Test Files  2 passed (2)\n      Tests  9 passed (9)\n   Start at  21:25:24\n   Duration  1.52s (transform 233ms, setup 229ms, import 289ms, tests 883ms, environment 1.16s)\n\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "e2",
+      "argv": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/versegit-diagnostics.spec.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 12699,
+      "stdoutTail": "\nRunning 2 tests using 1 worker\n\n  ok 1 tests\\e2e\\versegit-diagnostics.spec.ts:40:7 › VerseGit host diagnostics › returns real frozen identity through renderer -> hostInvoke -> Main service (5.4s)\n  ok 2 tests\\e2e\\versegit-diagnostics.spec.ts:69:7 › VerseGit host diagnostics › reports binary mismatch without spawning a process (4.8s)\n\n  2 passed (11.4s)\n",
+      "stderrTail": "(node:42792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:42792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "pnpm.cmd",
+        "contract:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 712,
+      "stdoutTail": "Contract check passed.\n",
+      "stderrTail": "$ node scripts/contract-check.mjs\n"
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "pnpm.cmd",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/versegit-product-f3-sidecar-delivery.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 1491,
+      "stdoutTail": "/src/agents/harness/versegit-tool-observation.ts, openclaw_runtime/src/agents/orchestration-candidate-apply.ts, openclaw_runtime/src/agents/orchestration-candidate.ts, openclaw_runtime/src/agents/orchestration-patch-flow.ts, openclaw_runtime/src/agents/orchestration-worktree-merge.ts, openclaw_runtime/src/agents/orchestrator-run-observed.ts, openclaw_runtime/src/agents/patch-flow.ts, openclaw_runtime/src/agents/session-tool-result-guard-wrapper.ts, openclaw_runtime/src/agents/sessions/tools/edit.ts, openclaw_runtime/src/agents/sessions/tools/read.test.ts, openclaw_runtime/src/agents/sessions/tools/read.ts, openclaw_runtime/src/agents/sessions/tools/tool-contracts.ts, openclaw_runtime/src/agents/sessions/tools/versegit-tool-basis.ts, openclaw_runtime/src/agents/sessions/tools/write.ts, openclaw_runtime/src/agents/subagent-announce.ts, openclaw_runtime/src/agents/subagent-registry-helpers.ts, openclaw_runtime/src/agents/subagent-registry-lifecycle.ts, openclaw_runtime/src/agents/subagent-registry.ts, openclaw_runtime/src/agents/subagent-registry.types.ts, openclaw_runtime/src/agents/subagent-session-cleanup.ts, openclaw_runtime/src/agents/subagent-versegit-cleanup.ts, openclaw_runtime/src/agents/verseshell/governed-process.ts, openclaw_runtime/src/agents/worktree-service.ts, openclaw_runtime/src/plugin-sdk/versegit-binding-port.ts, openclaw_runtime/src/plugin-sdk/versegit-binding-registry.ts, openclaw_runtime/src/plugin-sdk/versegit-observation-port.ts, scripts/verify-versegit-product-c1-evidence.mts, scripts/verify-versegit-product-c2-evidence.mts, scripts/verify-versegit-product-d1-evidence.mts, scripts/verify-versegit-product-d2-evidence.mts, scripts/verify-versegit-product-e1-evidence.mts, scripts/verify-versegit-product-e2-evidence.mts, scripts/verify-versegit-product-e3-evidence.mts, scripts/verify-versegit-product-f1-evidence.mts, scripts/verify-versegit-product-f2-evidence.mts, scripts/versegit-candidate-apply-probe.mts, scripts/versegit-feedback-delivery-probe.mts, scripts/versegit-product-a1-evidence.d.mts, scripts/versegit-product-a1-evidence.mjs, scripts/versegit-product-a2-evidence.d.mts, scripts/versegit-product-a2-evidence.mjs, scripts/versegit-product-b1-evidence.mts, scripts/versegit-product-b2-evidence.mts, scripts/versegit-product-c1-evidence.mts, scripts/versegit-product-c2-evidence.mts, scripts/versegit-product-cleanup-barrier-evidence.mts, scripts/versegit-product-d1-evidence.mts, scripts/versegit-product-d2-evidence.mts, scripts/versegit-product-e1-evidence.mts, scripts/versegit-product-e2-evidence.mts, scripts/versegit-product-e3-evidence.mts, scripts/versegit-product-f1-evidence.mts, scripts/versegit-product-f2-cleanup-probe.mts, scripts/versegit-product-f2-evidence.mts, scripts/versegit-product-paired-evaluation.mts, scripts/versegit-runtime-bindings-probe.mts, shared/host-api/contract.ts, shared/types/versegit.ts, shared/versegit-cleanup-barrier.ts, shared/versegit-runtime-contract.ts, tests/e2e/app-smoke.spec.ts, tests/e2e/versegit-candidate-apply.spec.ts, tests/e2e/versegit-feedback-delivery.spec.ts, tests/e2e/versegit-feedback-paired.spec.ts, tests/e2e/versegit-lifecycle-cleanup.spec.ts, tests/e2e/versegit-runtime-bindings.spec.ts, tests/unit/versegit-candidate-freeze.test.ts, tests/unit/versegit-candidate-receipts.test.ts, tests/unit/versegit-cleanup-barrier.test.ts, tests/unit/versegit-completion-lifecycle.test.ts, tests/unit/versegit-fact-adapter.test.ts, tests/unit/versegit-feedback-delivery.test.ts, tests/unit/versegit-host-apply.test.ts, tests/unit/versegit-observation-basis.test.ts, tests/unit/versegit-paired-evaluation.test.ts, tests/unit/versegit-product-a1-evidence.test.ts, tests/unit/versegit-product-a2-evidence.test.ts, tests/unit/versegit-runtime-bindings.test.ts, tests/unit/versegit-wp6-closeout.test.ts, tests/unit/versegit-wp8-review.test.ts, tests/unit/versegit-wp9-global-acceptance.test.ts\nPASS WITH RESIDUAL\nSpec is valid: harness\\specs\\tasks\\versegit-product-f3-sidecar-delivery.md\n",
+      "stderrTail": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/versegit-product-f3-sidecar-delivery.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/versegit-product-f3-sidecar-delivery.md\"\n"
+    },
+    {
+      "name": "package-verify",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/versegit-sidecar-package.mjs",
+        "--verify"
+      ],
+      "exitCode": 0,
+      "durationMs": 135,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"packageId\": \"vg-0.1.0-win32-x64-release-6b8330354da59118\",\n  \"artifactSha256\": \"6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea\"\n}\n",
+      "stderrTail": ""
+    }
+  ]
+}

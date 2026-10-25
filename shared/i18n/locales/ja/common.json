@@ -33,6 +33,7 @@
     "inbox": "受信トレイ",
     "scheduled": "予定済み",
     "knowledge": "ナレッジ",
+    "memory": "メモリ",
     "cronTasks": "定期タスク",
     "skills": "ツール",
     "agents": "Agents",
@@ -208,5 +209,13 @@
       "responsibility": "原因をローカルで特定できませんでした。",
       "nextStep": "まず一度再試行し、再発する場合はエラー参照番号をサポートにお知らせください。"
     }
+  },
+  "rareui": {
+    "hours": "時間",
+    "minutes": "分",
+    "hoursShort": "時",
+    "minutesShort": "分",
+    "editTime": "時刻を編集",
+    "confirmTime": "時刻を確定"
   }
 }

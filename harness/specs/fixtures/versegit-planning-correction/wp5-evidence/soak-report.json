@@ -1,0 +1,379 @@
+{
+  "schema": "clawx.versegit.wp5-soak/v1",
+  "generated_at": "2026-10-21T17:26:28.610Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0471",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/wp5-soak-fixture.json",
+  "fixtureDigest": "2492fea0a540ee2d61efbaea6fcec6ae42551f084c82b9ccc16c8aaeaf2182e6",
+  "cycles": [
+    {
+      "id": "producer_consumer",
+      "status": "passed",
+      "startedAt": "2026-10-21T17:26:26.561Z",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 2,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "events": 8,
+      "coverage": {
+        "fileRead": "host-event",
+        "fileWrite": "host-event",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "sidecarUnavailableObserved": true,
+      "unsupportedLanguageObserved": true,
+      "staleEventRejected": true,
+      "receiptUnmeasured": true,
+      "finishedAt": "2026-10-21T17:26:27.079Z"
+    },
+    {
+      "id": "producer_consumer",
+      "status": "passed",
+      "startedAt": "2026-10-21T17:26:27.079Z",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 2,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "events": 8,
+      "coverage": {
+        "fileRead": "host-event",
+        "fileWrite": "host-event",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "sidecarUnavailableObserved": true,
+      "unsupportedLanguageObserved": true,
+      "staleEventRejected": true,
+      "receiptUnmeasured": true,
+      "finishedAt": "2026-10-21T17:26:27.912Z"
+    },
+    {
+      "id": "producer_consumer",
+      "status": "passed",
+      "startedAt": "2026-10-21T17:26:27.912Z",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 2,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "events": 8,
+      "coverage": {
+        "fileRead": "host-event",
+        "fileWrite": "host-event",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "sidecarUnavailableObserved": true,
+      "unsupportedLanguageObserved": true,
+      "staleEventRejected": true,
+      "receiptUnmeasured": true,
+      "finishedAt": "2026-10-21T17:26:28.595Z"
+    }
+  ],
+  "failures": [
+    {
+      "id": "single_worktree",
+      "status": "not_applicable",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "id": "verseshell_unavailable",
+      "status": "passed",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "missing-receipt",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      }
+    },
+    {
+      "id": "sidecar_crash",
+      "status": "passed",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "result": {
+        "status": "unavailable",
+        "reason": "crash"
+      }
+    },
+    {
+      "id": "report_tamper",
+      "status": "passed",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "rejected": [
+        "feedback delivery tiers are incomplete",
+        "coverage digest is not reproducible"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "producer_consumer",
+      "status": "passed",
+      "startedAt": "2026-10-21T17:26:26.561Z",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 2,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "events": 8,
+      "coverage": {
+        "fileRead": "host-event",
+        "fileWrite": "host-event",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "sidecarUnavailableObserved": true,
+      "unsupportedLanguageObserved": true,
+      "staleEventRejected": true,
+      "receiptUnmeasured": true,
+      "finishedAt": "2026-10-21T17:26:27.079Z"
+    },
+    {
+      "id": "producer_consumer",
+      "status": "passed",
+      "startedAt": "2026-10-21T17:26:27.079Z",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 2,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "events": 8,
+      "coverage": {
+        "fileRead": "host-event",
+        "fileWrite": "host-event",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "sidecarUnavailableObserved": true,
+      "unsupportedLanguageObserved": true,
+      "staleEventRejected": true,
+      "receiptUnmeasured": true,
+      "finishedAt": "2026-10-21T17:26:27.912Z"
+    },
+    {
+      "id": "producer_consumer",
+      "status": "passed",
+      "startedAt": "2026-10-21T17:26:27.912Z",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 2,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "events": 8,
+      "coverage": {
+        "fileRead": "host-event",
+        "fileWrite": "host-event",
+        "search": "unobserved",
+        "shellRead": "unobserved",
+        "shellWrite": "unobserved",
+        "mcpRead": "unobserved",
+        "mcpWrite": "unobserved",
+        "network": "unobserved",
+        "browser": "unobserved",
+        "directFs": "unobserved"
+      },
+      "sidecarUnavailableObserved": true,
+      "unsupportedLanguageObserved": true,
+      "staleEventRejected": true,
+      "receiptUnmeasured": true,
+      "finishedAt": "2026-10-21T17:26:28.595Z"
+    },
+    {
+      "id": "single_worktree",
+      "status": "not_applicable",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "id": "verseshell_unavailable",
+      "status": "passed",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "missing-receipt",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      }
+    },
+    {
+      "id": "sidecar_crash",
+      "status": "passed",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "result": {
+        "status": "unavailable",
+        "reason": "crash"
+      }
+    },
+    {
+      "id": "report_tamper",
+      "status": "passed",
+      "processCalls": 0,
+      "cleanup": {
+        "worktreesDeleted": 0,
+        "survivors": 0,
+        "tempRootRemoved": true
+      },
+      "exitCode": 0,
+      "error": null,
+      "rejected": [
+        "feedback delivery tiers are incomplete",
+        "coverage digest is not reproducible"
+      ]
+    }
+  ],
+  "normalizedOutcomeDigest": "656415c8ab4eb7684d4771ceb38e07140f11b6b1dba003c60f3209e50d1db10f",
+  "summary": {
+    "cycles": 3,
+    "passedCycles": 3,
+    "scenarios": 7,
+    "failedScenarios": 0,
+    "processCalls": 0
+  },
+  "boundaries": {
+    "sidecarProcessesStarted": false,
+    "hostWorktreesDeleted": false,
+    "tempSurvivors": 0,
+    "rawFailurePreserved": true
+  },
+  "hostVerdict": "unchanged",
+  "passed": true,
+  "issues": [],
+  "digest": "7eabc7c545ef93f3932b0393ddea399650eafb6d9ce3972c24e952e4dfca41cd"
+}

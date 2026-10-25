@@ -46,12 +46,14 @@ The diagram shows ownership relationships, not a promise that every edge is enab
 
 Current component dispositions are recorded in [Component disposition matrix](component-disposition-matrix-20261021.md) and `shared/dcs/component-disposition-catalog.ts`; the latter is the machine-readable source for later ModelCapabilityProfile work.
 
+The product-level memory domain/lifecycle matrix is [Memory control plane](memory-control-plane.md); `shared/memory/control-plane.ts` is its machine-readable `MemoryControlPlaneManifest/v1` source.
+
 `shared/component-authority-manifest.ts` is the machine-readable `ComponentAuthorityManifest/v1` registry for component purpose, owned data types, scopes, allowed reads/writes, effects, forbidden actions, runtime availability source and source anchors. `tests/unit/component-authority-manifest.test.ts` is the static guard: it rejects duplicate accepting/update authorities, domain executors, unauthorized cross-domain writes and permission escalation, then cross-checks the registry against this document, the FP-P1 product table and the default-config matrix.
 
 | Domain | Canonical owner or owner group | Boundary |
 | --- | --- | --- |
 | context | Context Runtime Kit; DCS context authority; Provider request guard | CRK owns reference lifecycle, DCS owns candidate adjudication/PromptPlan, and Provider Guard owns the final RequestEnvelope |
-| memory | Role-memory card governance; Runtime memory store; native retrieval; candidate queue; embedding provider | Role cards, runtime facts/timelines/episodes, retrieval and candidate queues are separate data domains; a candidate is not accepted memory |
+| memory | Role-memory card governance; Runtime memory store; native retrieval; candidate queue; embedding provider; Dreaming derived cache | Role cards, runtime facts/timelines/episodes, retrieval, candidates, embeddings and rebuildable Dreaming signals are separate data domains; only accepted memory is retrievable/injectable |
 | knowledge | Knowledge review authority; Knowledge retrieval source; SEKB candidate provider | Only the review authority can apply knowledge; SEKB supplies candidates/provenance |
 | capability | V3 capability catalog; Skills/MCP source registry; Tool Search | Sources publish manifests, Tool Search expands discovery/schema, and V3 descriptors never carry executor closures |
 | execution | Coding execution backend; VerseShell adapter | Execution performs effects but consumes permission decisions; VerseShell does not become a second executor |

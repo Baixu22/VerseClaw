@@ -1,0 +1,83 @@
+{
+  "schema": "clawx.versegit.f2-resource-inventory/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "e3d9ee474ae8f31ff52b44bf3a70a1b7e74a1c28",
+    "tree": "7aa5cd5c72efade31f8261c46f34dac5f1e40798",
+    "dirty": false
+  },
+  "observedOn": "win32",
+  "cases": [
+    {
+      "label": "normal",
+      "ownedProcess": {
+        "pid": 27728,
+        "exited": true
+      },
+      "managerPresent": false,
+      "worktreeSurvived": false,
+      "attachmentsSurvived": false,
+      "transcriptSurvived": false,
+      "baseRootPreserved": true,
+      "inventoryAfter": {
+        "managers": 0,
+        "observed": true,
+        "processes": 0,
+        "survivors": [],
+        "tempRoots": 0,
+        "worktrees": 0
+      },
+      "zeroSurvivors": true
+    },
+    {
+      "label": "failure",
+      "ownedProcess": {
+        "pid": 13140,
+        "exited": true
+      },
+      "managerPresent": false,
+      "worktreeSurvived": false,
+      "attachmentsSurvived": false,
+      "transcriptSurvived": false,
+      "baseRootPreserved": true,
+      "inventoryAfter": {
+        "managers": 0,
+        "observed": true,
+        "processes": 0,
+        "survivors": [],
+        "tempRoots": 0,
+        "worktrees": 0
+      },
+      "zeroSurvivors": true
+    },
+    {
+      "label": "continuation",
+      "ownedProcess": {
+        "pid": 43640,
+        "exited": true
+      },
+      "managerPresent": false,
+      "worktreeSurvived": false,
+      "attachmentsSurvived": false,
+      "transcriptSurvived": false,
+      "baseRootPreserved": true,
+      "inventoryAfter": {
+        "managers": 0,
+        "observed": true,
+        "processes": 0,
+        "survivors": [],
+        "tempRoots": 0,
+        "worktrees": 0
+      },
+      "zeroSurvivors": true
+    }
+  ],
+  "negative": {
+    "rejected": true,
+    "status": "rejected",
+    "worktreeSurvived": true
+  },
+  "passed": true
+}

@@ -84,6 +84,8 @@ type TerminalSessionRecord = {
   closeReason: TerminalCloseReason | null;
   lastOutputAtMs: number | null;
   lastInteractionAtMs: number | null;
+  /** E2: user explicitly asked to keep this terminal across UI unload. */
+  keepOnLeave?: boolean;
 };
 
 type TerminalSessionSnapshot = {
@@ -99,6 +101,8 @@ type TerminalSessionSnapshot = {
   exitCode: number | null;
   scrollback?: string;
   idle?: TerminalIdleReport;
+  /** E2: this terminal survives ui-unload/workspace-switch by user request. */
+  keepOnLeave?: boolean;
 };
 
 type TerminalManagerContext = {
@@ -116,6 +120,8 @@ type OpenTerminalInput = {
   rows?: number;
   kind?: TerminalSessionKind;
   command?: string;
+  /** E2: keep this terminal alive when the UI unloads or the workspace switches. */
+  keepOnLeave?: boolean;
 };
 
 const MAX_SCROLLBACK_CHARS = 120_000;
@@ -235,6 +241,7 @@ export class TerminalSessionManager {
       closeReason: null,
       lastOutputAtMs: null,
       lastInteractionAtMs: this.now(),
+      keepOnLeave: input.keepOnLeave === true,
     };
 
     this.sessions.set(id, session);
@@ -328,6 +335,55 @@ export class TerminalSessionManager {
     }
   }
 
+  /**
+   * E2: reclaim terminals for one session scope while honoring keep_on_leave.
+   * Returns owner counts so the caller can build a receipt instead of assuming
+   * that calling close means the owner released it.
+   */
+  reclaimForSession(params: {
+    sessionKey: string;
+    reason: TerminalCloseReason;
+    honorKeepOnLeave?: boolean;
+    workspaceId?: string;
+  }): { attempted: number; reclaimed: number; kept: number } {
+    let attempted = 0;
+    let reclaimed = 0;
+    let kept = 0;
+    for (const session of Array.from(this.sessions.values())) {
+      if (session.sessionKey !== params.sessionKey) continue;
+      if (params.workspaceId && session.workspaceId !== params.workspaceId) continue;
+      attempted += 1;
+      if (params.honorKeepOnLeave === true && session.keepOnLeave === true) {
+        kept += 1;
+        continue;
+      }
+      this.closeSession(session, params.reason);
+      reclaimed += 1;
+    }
+    return { attempted, reclaimed, kept };
+  }
+
+  /** Count live terminals for a scope without mutating anything. */
+  countForSession(params: { sessionKey: string; workspaceId?: string }): number {
+    let count = 0;
+    for (const session of this.sessions.values()) {
+      if (session.sessionKey !== params.sessionKey) continue;
+      if (params.workspaceId && session.workspaceId !== params.workspaceId) continue;
+      count += 1;
+    }
+    return count;
+  }
+
+  /** keep_on_leave terminals for a scope, accounted separately and never killed. */
+  countKeepOnLeave(params: { sessionKey: string; workspaceId?: string }): number {
+    let count = 0;
+    for (const session of this.sessions.values()) {
+      if (session.sessionKey !== params.sessionKey) continue;
+      if (params.workspaceId && session.workspaceId !== params.workspaceId) continue;
+      if (session.keepOnLeave === true) count += 1;
+    }
+    return count;
+  }
   /**
    * TF-0081 idle classification for one terminal. Returns null when the record
    * has already been reclaimed (exited terminals are removed, i.e. completed).
@@ -469,6 +525,7 @@ export class TerminalSessionManager {
       exitCode: session.exitCode,
       scrollback: includeScrollback ? session.scrollback : undefined,
       idle: this.toIdleReport(session),
+      keepOnLeave: session.keepOnLeave === true,
     };
   }
 

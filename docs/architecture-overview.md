@@ -54,11 +54,14 @@ sequenceDiagram
 
 An RPC acknowledgement, a rendered tool card and a successfully completed tool effect are different facts. Streaming and multiple tool iterations are simplified in the diagram. It does not imply every chat becomes a Task Loop or a multi-agent run.
 
+Before provider submission, the embedded runner refreshes `ModelCapabilityProfile/v1` from the current tool inventory, driver, authorization grants, runtime acknowledgement, quarantine, memory and knowledge facts. The bounded capability-positioning addendum is composed after prompt hooks and runtime context, so the model sees the run's effective state rather than a static catalog claim. Missing acknowledgement or a generation mismatch remains `unknown`; static disposition and configuration never prove that an operation is executable. A run-local generation guard prevents a late refresh from replacing a newer model call's state.
+
 ## Three forms of task state
 
 | Concept | What it represents | What it does not imply |
 | --- | --- | --- |
 | Chat/session | Immediate conversation and its execution history | Automatic decomposition into a planned multi-role workflow |
+| Long-session coordinator | Explicitly bound session tree whose binding, Task Ledger refs and physical generation survive restart, plus a terminal completion batch rail | A second task/memory/scheduler owner, or automatic promotion of ordinary Chat into a project manager |
 | Task Ledger / explicit Task Loop | User-facing goals, dependencies, evidence and deliberately started bounded execution | The internal runtime scheduler or automatic promotion from every chat |
 | ClawGraph / runtime Workboard | YAML workflow inspection/execution surfaces and internal scheduling responsibilities | Interchangeability with the user-facing task ledger |
 

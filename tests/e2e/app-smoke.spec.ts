@@ -40,6 +40,17 @@ test.describe('Verse Claw Electron smoke flows', () => {
     }
   });
 
+  test('invokes the real typed host bridge for app version', async ({ page }) => {
+    const response = await page.evaluate(async () => {
+      const bridge = (window as unknown as {
+        verseClaw?: { hostInvoke: (request: Record<string, unknown>) => Promise<unknown> };
+      }).verseClaw?.hostInvoke;
+      if (!bridge) return { ok: false, error: { code: 'BRIDGE_MISSING', message: 'host bridge missing' } };
+      return bridge({ id: `app-smoke-${crypto.randomUUID()}`, module: 'app', action: 'version' });
+    });
+    expect(response).toMatchObject({ ok: true });
+    expect((response as { data?: unknown }).data).toMatch(/^\d+\.\d+\.\d+/u);
+  });
   test('does not show a fatal dialog when an E2E output pipe closes', async ({ electronApp }) => {
     const completed = await electronApp.evaluate(() => {
       const error = Object.assign(new Error('broken pipe, write'), { code: 'EPIPE' });

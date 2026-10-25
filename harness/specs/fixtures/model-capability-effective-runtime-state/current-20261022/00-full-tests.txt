@@ -1,0 +1,433 @@
+$ vitest run --maxWorkers=2 --exclude tests/unit/gateway-permissions-api.test.ts --exclude tests/unit/files-permissions-api.test.ts --exclude tests/unit/runtime-memory-operator-inspection.test.ts && vitest run tests/unit/gateway-permissions-api.test.ts tests/unit/files-permissions-api.test.ts tests/unit/runtime-memory-operator-inspection.test.ts --maxWorkers=1 && pnpm run test:dcs
+
+ RUN  v4.1.1 D:/ClawX-worktrees/tf0512-effective-state-20261022
+
+(node:39520) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+(node:53336) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+(node:22456) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:43040) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+fatal: path 'artifacts/ignored/report.json' exists on disk, but not in 'HEAD'
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+[runtime-lifecycle-audit] leak50CycleHeapMethod=gc+used_heap_size
+ ❯ tests/unit/versegit-wp9-global-acceptance.test.ts (7 tests | 1 failed) 759ms
+     × replays the retained report, manifest and both checksum surfaces 381ms
+[runtime-lifecycle-audit] leak50CycleHeapDeltaMb=-0.332
+[runtime-lifecycle-audit] leak50CycleActiveRecords=0
+ ❯ tests/unit/verseshell-manifest.test.ts (7 tests | 7 failed) 89ms
+     × accepts the qualified ordered patch-stack bundle in development and packaging modes 17ms
+     × rejects a tampered corresponding-source patch 14ms
+     × rejects source-input manifest digest drift 10ms
+     × rejects a silently reintroduced recovered-source inventory at the pinned upstream 11ms
+     × verifies the existing artifact size and SHA-256 values 14ms
+     × rejects missing source-input provenance payload 11ms
+     × rejects facade operation order drift 10ms
+ ❯ tests/unit/versegit-wp6-closeout.test.ts (4 tests | 1 failed) 176ms
+     × aggregates every gate while preserving the non-GA and MC6 sidecar-only boundary 62ms
+Runtime performance gate failed:
+- large-history: no samples collected (zero-sample is not healthy)
+Runtime performance gate failed:
+- burst: work error: boom
+Runtime performance gate failed:
+- single-task: undeclared measurement scope
+- single-task: scope note must disclaim whole-machine coverage
+Runtime performance gate failed:
+- report must state the provider-stub limitation
+Runtime performance gate failed:
+- report claims a network call; provider stub must not use the network
+ ❯ tests/unit/uas-05-verseshell-process-lifecycle.test.ts (4 tests | 1 failed) 11ms
+     × pins the lifecycle binary, frozen source commit, and 32-operation catalog 6ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/spec-doc-gardening.test.ts (3 tests | 1 failed) 72ms
+     × every task spec carries a valid lifecycleStatus (archive, never mechanical delete) 68ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).
+
+ ❯ tests/unit/versegit-wp8-review.test.ts (2 tests | 1 failed) 32ms
+     × accepts the independent verdict and preserves historical evidence boundaries 22ms
+ ❯ tests/unit/harness-spec-lifecycle.test.ts (2 tests | 1 failed) 266ms
+     × covers every checked-in task spec without lifecycle gaps 262ms
+(node:43124) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/harness-spec-lifecycle.test.ts > task spec lifecycle > covers every checked-in task spec without lifecycle gaps
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "harness/specs/tasks/versegit-module-implementation-contracts.md: lifecycleStatus must be one of active, completed, archived",
++ ]
+
+ ❯ tests/unit/harness-spec-lifecycle.test.ts:22:50
+     20|
+     21|   it('covers every checked-in task spec without lifecycle gaps', async…
+     22|     await expect(collectTaskSpecLifecycleErrors()).resolves.toEqual([]…
+       |                                                  ^
+     23|   });
+     24| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  tests/unit/spec-doc-gardening.test.ts > G02 spec/doc gardening boundary > every task spec carries a valid lifecycleStatus (archive, never mechanical delete)
+AssertionError: invalid lifecycleStatus:
+harness/specs/tasks/versegit-module-implementation-contracts.md: planned: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "harness/specs/tasks/versegit-module-implementation-contracts.md: planned",
++ ]
+
+ ❯ tests/unit/spec-doc-gardening.test.ts:39:72
+     37|     }
+     38|     expect(missing, `missing lifecycleStatus:\n${missing.join("\n")}`)…
+     39|     expect(invalid, `invalid lifecycleStatus:\n${invalid.join("\n")}`)…
+       |                                                                        ^
+     40|   });
+     41|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  tests/unit/uas-05-verseshell-process-lifecycle.test.ts > UAS-05 VerseShell process lifecycle boundary > pins the lifecycle binary, frozen source commit, and 32-operation catalog
+Error: ENOENT: no such file or directory, open 'D:\ClawX-worktrees\tf0512-effective-state-20261022\resources\bin\win32-x64\ae.exe'
+ ❯ sha256 tests/unit/uas-05-verseshell-process-lifecycle.test.ts:10:38
+      8|
+      9| function sha256(path: string): string {
+     10|   return createHash("sha256").update(readFileSync(path)).digest("hex");
+       |                                      ^
+     11| }
+     12|
+ ❯ tests/unit/uas-05-verseshell-process-lifecycle.test.ts:42:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  tests/unit/versegit-wp6-closeout.test.ts > WP6 merged closeout > aggregates every gate while preserving the non-GA and MC6 sidecar-only boundary
+AssertionError: expected { count: 12, entryCount: 78, …(3) } to match object { count: 12, reproducible: true }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "count": 12,
+-   "reproducible": true,
++   "reproducible": false,
+  }
+
+ ❯ tests/unit/versegit-wp6-closeout.test.ts:20:44
+     18|     expect(built.report.gateSummary).toMatchObject({ required: 12, ver…
+     19|     expect(built.report.requiredGates.map((gate: { role: string }) => …
+     20|     expect(built.report.evidenceManifests).toMatchObject({ count: 12, …
+       |                                            ^
+     21|     expect(built.report.evidenceManifests.entryCount).toBe(78);
+     22|     expect(built.report.evidenceManifests.uniqueFileCount).toBe(77);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  tests/unit/versegit-wp8-review.test.ts > WP8 independent review > accepts the independent verdict and preserves historical evidence boundaries
+AssertionError: expected [ …(3) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "input digest mismatch: scripts/versegit-wp7-host-vertical.mts",
++   "input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts",
++   "input digest mismatch: tests/unit/versegit-receipt-authority.test.ts",
++ ]
+
+ ❯ tests/unit/versegit-wp8-review.test.ts:13:46
+     11|   it('accepts the independent verdict and preserves historical evidenc…
+     12|     const report = stored();
+     13|     expect(validateWp8Report(report).issues).toEqual([]);
+       |                                              ^
+     14|     expect(report.p0).toEqual([]);
+     15|     expect(report.p1).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  tests/unit/versegit-wp9-global-acceptance.test.ts > WP9 whole-goal acceptance > replays the retained report, manifest and both checksum surfaces
+AssertionError: expected [ …(8) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "WP6 verifier: stored report digest differs from the live closeout replay",
++   "WP8 verifier: input digest mismatch: scripts/versegit-wp7-host-vertical.mts",
++   "WP8 verifier: input digest mismatch: tests/unit/versegit-wp7-host-vertical.test.ts",
++   "WP8 verifier: input digest mismatch: tests/unit/versegit-receipt-authority.test.ts",
++   "WP8 verifier: SHA256SUMS mismatch: scripts/versegit-wp7-host-vertical.mts",
++   "WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-receipt-authority.test.ts",
++   "WP8 verifier: SHA256SUMS mismatch: tests/unit/versegit-wp7-host-vertical.test.ts",
++   "curated: SHA256SUMS mismatch: tests/unit/versegit-wp9-global-acceptance.test.ts",
++ ]
+
+ ❯ tests/unit/versegit-wp9-global-acceptance.test.ts:70:27
+     68|   it('replays the retained report, manifest and both checksum surfaces…
+     69|     const result = verifyWp9Artifacts({ root: process.cwd() });
+     70|     expect(result.issues).toEqual([]);
+       |                           ^
+     71|     expect(result.ok).toBe(true);
+     72|     expect(result.report.acceptanceSummary.verified).toBe(7);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > accepts the qualified ordered patch-stack bundle in development and packaging modes
+AssertionError: expected { ok: false, mode: 'dev', …(2) } to deeply equal { ok: true, mode: 'dev', …(2) }
+
+- Expected
++ Received
+
+  {
+-   "issues": [],
++   "issues": [
++     "VerseShell ae.exe is missing: D:\\ClawX-worktrees\\tf0512-effective-state-20261022\\resources\\bin\\win32-x64\\ae.exe",
++   ],
+    "mode": "dev",
+-   "ok": true,
++   "ok": false,
+    "platform": "win32-x64",
+  }
+
+ ❯ tests/unit/verseshell-manifest.test.ts:49:67
+     47|     expect(manifestText).toContain('pinned-commit-plus-ordered-patches…
+     48|     expect(manifestText).toContain(expectedCombinedSha);
+     49|     await expect(validateVerseShellManifest({ root, mode: 'dev' })).re…
+       |                                                                   ^
+     50|       ok: true,
+     51|       mode: 'dev',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects a tampered corresponding-source patch
+Error: ENOENT: no such file or directory, lstat 'D:\ClawX-worktrees\tf0512-effective-state-20261022\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:64:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects source-input manifest digest drift
+Error: ENOENT: no such file or directory, lstat 'D:\ClawX-worktrees\tf0512-effective-state-20261022\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:72:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects a silently reintroduced recovered-source inventory at the pinned upstream
+Error: ENOENT: no such file or directory, lstat 'D:\ClawX-worktrees\tf0512-effective-state-20261022\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:82:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > verifies the existing artifact size and SHA-256 values
+Error: ENOENT: no such file or directory, lstat 'D:\ClawX-worktrees\tf0512-effective-state-20261022\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:96:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects missing source-input provenance payload
+Error: ENOENT: no such file or directory, lstat 'D:\ClawX-worktrees\tf0512-effective-state-20261022\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:103:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects facade operation order drift
+Error: ENOENT: no such file or directory, lstat 'D:\ClawX-worktrees\tf0512-effective-state-20261022\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:110:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/13]⎯
+
+
+ Test Files  7 failed | 1006 passed | 5 skipped (1018)
+      Tests  13 failed | 8700 passed | 52 skipped (8765)
+   Start at  18:38:28
+   Duration  860.73s (transform 58.53s, setup 80.90s, import 283.19s, tests 694.57s, environment 474.16s)
+
+[ELIFECYCLE] Test failed. See above for more details.
+
+EXIT_CODE=1
+DURATION_MS=864785

@@ -50,7 +50,8 @@
       "terminals": "ターミナル",
       "continuity": "継続性",
       "environment": "環境",
-      "plan": "開発タスク"
+      "plan": "開発タスク",
+      "coordination": "長期セッション"
     },
     "status": {
       "idle": "待機中",
@@ -162,6 +163,38 @@
     "runningCount": "実行中 {{count}} 件",
     "processes": {
       "openOutput": "{{command}} の出力を開く"
+    },
+    "coordination": {
+      "revision": "リビジョン {{revision}}",
+      "binding": "安定したメインセッション",
+      "bindingState": {
+        "active": "有効",
+        "invalidated": "無効化済み"
+      },
+      "pause": "現在のターンを一時停止",
+      "resume": "現在のセッションを再開",
+      "unknownTask": "タスク状態を取得できません",
+      "workDetail": "{{task}} · {{backend}} · {{isolation}}",
+      "batchTitle": "完了結果",
+      "batchCounts": "完了 {{completed}} · 失敗 {{failed}} · キャンセル {{cancelled}} · 待機 {{pending}}",
+      "invalidatedReason": {
+        "archived": "アーカイブ済み",
+        "deleted": "削除済み",
+        "reset": "新しい世代にリセット済み",
+        "session_missing": "セッションが見つかりません",
+        "session_key_changed": "セッションキーが変更されました"
+      },
+      "state": {
+        "draft": "下書き",
+        "accepted": "受け付け済み",
+        "running": "実行中",
+        "waiting": "待機中",
+        "failed": "失敗",
+        "cancelled": "キャンセル",
+        "reported": "報告済み",
+        "accepted-by-task": "タスク受け付け済み",
+        "unknown": "不明"
+      }
     }
   },
   "noLogs": "（ログはまだありません）",
@@ -735,6 +768,10 @@
       "install": "OfficeCLI をインストール",
       "installing": "インストール中...",
       "retry": "再試行"
+    },
+    "toc": {
+      "title": "このページの目次",
+      "progress": "閲覧進捗 {{percent}}%。目次を開く"
     }
   },
   "workspace": {
@@ -2126,7 +2163,8 @@
     "searchRelativeDays": "{{count}} 日前",
     "searchHintNavigate": "移動",
     "searchHintSelect": "選択",
-    "searchHintClose": "閉じる"
+    "searchHintClose": "閉じる",
+    "longSession": "長期セッションのメイン会話"
   },
   "folders": {
     "create": "新規フォルダ",
@@ -2500,5 +2538,53 @@
     "deny": "拒否",
     "busy": "判断を送信中…",
     "resolveFailed": "ランタイムはこの判断を受け付けませんでした。"
+  },
+  "completionActivity": {
+    "label": "完了したアクティビティ、未読 {{count}} 件",
+    "title": "最近の完了",
+    "empty": "完了した回答と実行がここに表示されます。",
+    "completed": "実行が完了しました"
+  },
+  "sessionPolicy": {
+    "title": "セッションポリシー",
+    "unavailable": "現在のスコープの有効なポリシーを取得できません — 次回のセッション状態読み取りに成功すると更新されます。",
+    "source": "ソース: {{source}}",
+    "configured": "設定値",
+    "states": {
+      "configured": "設定済み",
+      "effective": "有効",
+      "unverified": "未検証",
+      "unsupported": "未対応",
+      "ignored": "無視",
+      "unknown": "不明"
+    },
+    "generation": {
+      "current": "現在",
+      "stale": "期限切れ",
+      "missing": "未観測",
+      "mismatch": "世代不一致",
+      "unverified": "未検証"
+    },
+    "backend": "バックエンド",
+    "binding": "ネイティブバインディング",
+    "model": "モデルと強度",
+    "grant": "権限",
+    "actionCount": "{{allowed}} 許可 · {{approval}} 承認待ち · {{unknown}} 不明",
+    "limits": "制限",
+    "queue": "キュー",
+    "resources": "リソース",
+    "schedule": "スケジュール",
+    "compaction": "圧縮",
+    "compactionOwner": {
+      "openclaw": "OpenClaw が圧縮を管理",
+      "backend": "ネイティブバックエンドが圧縮を管理",
+      "unknown": "圧縮の所有者不明"
+    },
+    "lifecycle": {
+      "title": "アクション境界",
+      "abort": "Abort は現在の run のみ停止します。session stop はキューを空にし、ランタイムリソースを解放します。",
+      "retention": "アクティビティ保持はこの UI のみに影響します。transcript とリソース TTL は各 owner が管理します。",
+      "fork": "Fork は transcript コンテキストを複製します。worktree 分離は別のリソース境界です。"
+    }
   }
 }

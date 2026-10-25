@@ -82,6 +82,7 @@ const SAFE_GATEWAY_METHODS = new Set([
   // Memory read + observability read: list/traces are side-effect free reads.
   // memory.store and observability.reportTrace remain write-gated (require approval).
   'memory.list',
+  'memory.surface',
   'memory.conflicts',
   'memory.conflictDetail',
   'memory.explainInjection',

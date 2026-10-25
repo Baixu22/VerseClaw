@@ -1,0 +1,45 @@
+{
+  "schema": "clawx.versegit.f1-independent-review/v1",
+  "generated_at": "2026-10-22T21:58:25.560Z",
+  "task": "TF-0535",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewer_role": "independent-f1-verifier-process",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "completion-contract",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "persisted-outcomes",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "restart-lifecycle",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "source-and-actor",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "evidence_digests": {
+    "harness/specs/fixtures/versegit-product-integration/f1/completion-contract.json": "3e2aee8a20a88fd3fc4ea1e2b9e8205029b64660192d1bfc4eaeeeed861678f1",
+    "harness/specs/fixtures/versegit-product-integration/f1/persisted-outcomes.json": "56d38f9ad9aa5f8b0c9f2e3486538d9a3df6a404b9b30ccaf1fba786bc752a43",
+    "harness/specs/fixtures/versegit-product-integration/f1/restart-lifecycle.json": "ee54d3be04d8615a190a5df702e028930bbaae71c0f1498ebc1653a836232557"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_off": true,
+    "m4_authorized": false,
+    "provider_landed": false,
+    "vg_landing_authority": false
+  },
+  "passed": true,
+  "digest": "e1017682823a349b67827ae4899d3005e83bc6173a7dd9c87dbdb006d0a4e82e"
+}

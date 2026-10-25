@@ -1,0 +1,7 @@
+73bcfcc088470dab695bf062838a6cf157e5ba28c71868d8a07b46bdf98b9c9d  harness/specs/fixtures/versegit-planning-correction/wp6-closeout-fixture.json
+27350249f602093eb055be9bb34ad56acca64b0c51a4e6aa05b19d5dd3f5e698  harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json
+22a548951fd34131e76f86554c8cea36343c860d01f3ff72c9ee29ec76517316  harness/specs/fixtures/versegit-planning-correction/wp6-evidence/manifest.json
+2bf777c72045f54d487db5cfd0ac7cce1e5fcc6cd826c1c6946fc7bc7dac8e7d  harness/specs/tasks/versegit-wp6-merged-closeout.md
+41d04183c0eaaaec576c42936f092cf1f5fdd35c295179c7fc028a3efcbb00a7  scripts/verify-versegit-wp6.mjs
+e93557da7fb0c572f709e66478a5395fed05ba749fe0af6a0372b282ed85a6cf  scripts/versegit-wp6-closeout.mjs
+3378fe8ee8cd9e896448f3ddeb5ef565c5b6b4098480c172b31e643b40e7987d  tests/unit/versegit-wp6-closeout.test.ts

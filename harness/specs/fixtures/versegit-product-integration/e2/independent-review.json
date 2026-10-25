@@ -1,0 +1,52 @@
+{
+  "schema": "clawx.versegit.e2-independent-review/v1",
+  "generated_at": "2026-10-22T21:05:43.141Z",
+  "task": "TF-0533",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewer_role": "independent-e2-verifier-process",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "plans",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "receipts",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "negative",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "cleanup",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "id": "source-and-actor",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "evidence_digests": {
+    "harness/specs/fixtures/versegit-product-integration/e2/plans.json": "a479913d43b82df5042dde5dba4316b1cd29036bc0fab5d197f86039022ec2a7",
+    "harness/specs/fixtures/versegit-product-integration/e2/execution-receipts.json": "1f839887080845db7a29b63bd1a9303e7d48a5a6849b46882d8611d1f7e6a117",
+    "harness/specs/fixtures/versegit-product-integration/e2/receipt-negative.json": "8b2781c5540d42c7eadc605fbcb570c998439d6fe76c96eefa0810f5b11e0882",
+    "harness/specs/fixtures/versegit-product-integration/e2/execution-cleanup.json": "1b059fa99bb61d28dff66ed250cbd2782b2e1053dcf0f900aa27ff80eccce523"
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_off": true,
+    "m4_authorized": false,
+    "host_authority": "ClawX",
+    "vg_landing_authority": false,
+    "merge_performed": false
+  },
+  "passed": true,
+  "digest": "4e2567d98358f6ca5063d80e4a51fc574d4ed64b21888b080a07c8b83e5ca44a"
+}

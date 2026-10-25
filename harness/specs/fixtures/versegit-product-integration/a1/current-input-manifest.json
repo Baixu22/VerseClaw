@@ -1,0 +1,649 @@
+{
+  "schema": "clawx.versegit.product-a1-input-manifest/v1",
+  "generated_at": "2026-10-22T12:14:30.457Z",
+  "task": "TF-0524",
+  "contract": "harness/specs/tasks/versegit-product-a1-evidence-baseline.md",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "role": "worktree-root",
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "51e0cc94d95d2ff62c08e9ebe287e66d07e42fd6",
+    "tree": "28b2590569fc3ec21515871fa41095284803b434",
+    "dirty": false,
+    "dirtyEntryCount": 0
+  },
+  "run_identity": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "host": {
+      "platform": "win32",
+      "release": "10.0.26200",
+      "arch": "x64",
+      "hostname": "LAPTOP-3LN94GP7"
+    },
+    "process": {
+      "runtime": "node",
+      "node": "v24.22.1",
+      "package_manager": "pnpm@11.2.2+sha512.36e6621fad506178936455e70247b8808ef4ec25797a9f437a93281a020484e2607f6a469a22e982987c3dbb8866e3071514ab10a4a1749e06edcd1ec118436f",
+      "pid": 10480
+    },
+    "cwd_role": "worktree-root",
+    "temp_role": "D-scratch"
+  },
+  "inputs": [
+    {
+      "role": "contract",
+      "path": "harness/specs/fixtures/versegit-planning-correction/evidence-retention-contract.json",
+      "sha256": "8ab9dbac0321f2b96e49e8f6ac89053e8aa12553e5e48269e8a0e37a0a1f5e59",
+      "bytes": 1171
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/fixtures/versegit-planning-correction/execution-receipt-contract.json",
+      "sha256": "05984a357c5dc00210f16661694a180212db1452d9a674960b9515cf51251499",
+      "bytes": 1969
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/fixtures/versegit-planning-correction/input-freeze-contract.json",
+      "sha256": "fd2cadf7fe514cc16e113eaca5b4acbac372f4f234d5f87182dc828f0e1b093f",
+      "bytes": 1999
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/fixtures/versegit-planning-correction/node-acceptance-matrix.json",
+      "sha256": "a4fb15089133cd0835edb39419ef2827734ac38ef1f5474c9425890a8f287c8d",
+      "bytes": 7643
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/fixtures/versegit-planning-correction/planning-contract.json",
+      "sha256": "a5087a435e248b58a3ccf038f8954ac1119bbdd0f41b7c08cb202944e45cf595",
+      "bytes": 3833
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/fixtures/versegit-planning-correction/provider-contracts.json",
+      "sha256": "52806943d8feaed35219be61cce30e3e5b807778e5427d0b0a647fb1a23fcae7",
+      "bytes": 3084
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/guides/versegit-concurrency/cross-agent-concurrency-research-2026-10-21.md",
+      "sha256": "830df068aef9a4035b9c0ac8fab1b9ba5914c677e9218446add72f1c0e56f7a3",
+      "bytes": 14165
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/guides/versegit-concurrency/harness-lifecycle-and-contracts.md",
+      "sha256": "6ee8c19ae91d506ac47978b7d616f1b7af9096abedee587c4c22d98338973e12",
+      "bytes": 14274
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/guides/versegit-concurrency/implementation-roadmap-and-acceptance.md",
+      "sha256": "9842a71e78e62dd33b7251de5eddf3561c074abbb5360035d17b67e26b31eac0",
+      "bytes": 15090
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/guides/versegit-concurrency/versegit-migration-control-plan.md",
+      "sha256": "c0a3f0e02ea0249426ddbbfea32b378e788d3e997ab4413c50bf05f6fe2603a3",
+      "bytes": 16955
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/guides/versegit-concurrency/versegit-planning-correction-matrix.md",
+      "sha256": "0593fa055986a7f9c665f2d3ee7e3f4614c34676dc7b6bd54f7cdb25e990d058",
+      "bytes": 6650
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/guides/versegit-concurrency/verseshell-and-behavior-observability.md",
+      "sha256": "8ac7e77e40e175cec7392aa9b35934352aa620ea3a0f133846fc66003e54cee2",
+      "bytes": 11514
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/guides/versegit-concurrency/wp9-lifecycle-closeout.md",
+      "sha256": "bfe019bfbce81b22369bc5fefa0188b9800387081e4f90624e0584514b358094",
+      "bytes": 5610
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/rules/versegit-validation-layer-extension-boundary.md",
+      "sha256": "e5ff2ee1d166d138b0faf49cd97f15005251deedf4af1e02f2cf50dbf6314b1b",
+      "bytes": 10814
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/scenarios/versegit-validation-layer-extension.md",
+      "sha256": "01c63ddb2f51bffb15d25a60023fe94ef51310342655501fa55e3de860345db3",
+      "bytes": 8240
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/tasks/versegit-product-a1-evidence-baseline.md",
+      "sha256": "e7dc1ceed2f03fd4ff6de660f2d9a1959f941257c8e3be232eb9903566211f91",
+      "bytes": 7610
+    },
+    {
+      "role": "contract",
+      "path": "harness/specs/tasks/versegit-product-integration-node-contracts.md",
+      "sha256": "d5b884858bd1e85e81a0b31a89f2c9fa20f2ae7ae589982b7f116912c877081d",
+      "bytes": 13282
+    },
+    {
+      "role": "dependency",
+      "path": "package.json",
+      "sha256": "0875b5300497a1f05b48fa147163f3d7d3379e5393ff1bb4ce3224a01b89b0e1",
+      "bytes": 38815
+    },
+    {
+      "role": "dependency",
+      "path": "pnpm-lock.yaml",
+      "sha256": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+      "bytes": 735492
+    },
+    {
+      "role": "source",
+      "path": "electron/services/versegit-behavior-coverage.ts",
+      "sha256": "f0ec6d39f25311de4ac2ef55f22d708766503b5a9b7cb536d5ad08e3ce04090f",
+      "bytes": 6275
+    },
+    {
+      "role": "source",
+      "path": "electron/services/versegit-module.ts",
+      "sha256": "15f36a1202e2b09cd7d0fc6f6904acaa4d38728b27adc172a02620bae500e8fe",
+      "bytes": 32929
+    },
+    {
+      "role": "source",
+      "path": "electron/services/versegit-observation.ts",
+      "sha256": "120fc546cfed2e923309132b3c7667183b3393795b9aaed22d1ad5464a229ba0",
+      "bytes": 30062
+    },
+    {
+      "role": "source",
+      "path": "electron/services/versegit-receipt-bridge.ts",
+      "sha256": "af8aebd0175959d71043dcb51ab90077f383cb4c2273a9aba13569a864751ead",
+      "bytes": 14027
+    },
+    {
+      "role": "source",
+      "path": "electron/services/versegit-receipt-evidence.ts",
+      "sha256": "cfb359abf5da6b03ae57e6ceada58bc189f9c4d3b55a61228b2dae4f1627cfd8",
+      "bytes": 22637
+    },
+    {
+      "role": "source",
+      "path": "scripts/validate-versegit-planning-correction.d.mts",
+      "sha256": "27001a529f2c25ca0e06d0cca492a961adb532d7bb31c548b84ce188a7eb58d9",
+      "bytes": 129
+    },
+    {
+      "role": "source",
+      "path": "scripts/validate-versegit-planning-correction.mjs",
+      "sha256": "55071568d7276212173ee7beec4f5d5208641065e9869e2158c3c0a7614798c8",
+      "bytes": 14004
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-mc0.mjs",
+      "sha256": "d0eaf5f0dee1d9c31e8ed90338e1ba2a0da817dc00a0347d7f1aa9b0842b71a7",
+      "bytes": 2252
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-mc1.mjs",
+      "sha256": "37111142b8fd0a98ecc23a0be2a24c06b5281cbc02d224d96a01461a72dfd1f8",
+      "bytes": 2368
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-mc2.mjs",
+      "sha256": "191359577c47ee471dee63d6e89cc932b391ed4f065e64fbbf8fb7f993b51f3e",
+      "bytes": 3550
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-mc3.mjs",
+      "sha256": "2e156a4949c2931be2ec5c51aec5363ea2fa59881ddd55c71700922c262114c9",
+      "bytes": 4372
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-mc4.mjs",
+      "sha256": "593595a59d23726997698c5c2130b4639ed5044c9a1ac10f1bf15e360673a880",
+      "bytes": 13953
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-mc5.mjs",
+      "sha256": "65697fe6680b6300d5ceff61a92870f197cd79cfcce9069f49feabebe3fa6f72",
+      "bytes": 6974
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-mc6.mjs",
+      "sha256": "3c3f33d46def7938790ce91904168a234b7811ff68de110147bcaa2d6b7e9c4d",
+      "bytes": 5425
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp0.mjs",
+      "sha256": "1922175d374f5ece21206fe6024f8339f34cc5dcac29e9094f92d64c4142feb6",
+      "bytes": 6749
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp1.mjs",
+      "sha256": "8194c0bc5d45214ee611e073e860ad82f9e051c0da9aaf8f40c978c14e1139ed",
+      "bytes": 6841
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp2.mjs",
+      "sha256": "2d7c30a6bee18d1ee0824696cc29da04bf93295423ae564034a56e4d25be6232",
+      "bytes": 5073
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp3.mjs",
+      "sha256": "bac7afef1411a1bdceed05038f14a89221c7b053187945fe4e3a8ba3c0ed0f91",
+      "bytes": 4175
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp4.mjs",
+      "sha256": "8c65f364767c9bd85ba8c1a4e14023ec1117084b330e5199a7519674a925a0ea",
+      "bytes": 3040
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp5.mjs",
+      "sha256": "9f94d0e764c6a1d9ab596dbb61271693cfff0a00d25dd34fed30b7231b71f8f4",
+      "bytes": 3074
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp6.mjs",
+      "sha256": "41d04183c0eaaaec576c42936f092cf1f5fdd35c295179c7fc028a3efcbb00a7",
+      "bytes": 7969
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp7.mts",
+      "sha256": "2b61a652512e56ab3a84d5b67e126d56bed4226d20205bf76d159c30ecf75b71",
+      "bytes": 7073
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp8.d.mts",
+      "sha256": "d75beed0c510ba9dd568ca22aae27e035263b7e00d1cc460d8c7198e1346dc6f",
+      "bytes": 112
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp8.mjs",
+      "sha256": "4142b2b9d15f23ba0604cbac92795f860af3f394f5052bddce4e264f163a222d",
+      "bytes": 9200
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp9.d.mts",
+      "sha256": "da373cbfe3c2320c5c248902ad32cf77ed7a19186743175ddccda96b408f7b48",
+      "bytes": 225
+    },
+    {
+      "role": "source",
+      "path": "scripts/verify-versegit-wp9.mjs",
+      "sha256": "f81131aa287a1d7eb1ce0e61324e17a65a44c5a8d7cb10090870118c783f298a",
+      "bytes": 21728
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc0-baseline.d.mts",
+      "sha256": "b9bfcf5e2f9fa2b4dbf32ef765e03ce52490a5ad78301caf3126ec46a0360269",
+      "bytes": 171
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc0-baseline.mjs",
+      "sha256": "5648a52381548efe01209838277c7a0224477f05c64bddd467e0d410f0c19319",
+      "bytes": 10167
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc1-contract.d.mts",
+      "sha256": "8a10973b40d7e7e4257b12690c2a46452e52d2d23c1b70be6468298084ff333d",
+      "bytes": 301
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc1-contract.mjs",
+      "sha256": "c4ee4b9f1635868d74b963e2cfe5b1db9796db6ce04b9d11297321ead7ec6c1a",
+      "bytes": 6275
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc2-fingerprint.d.mts",
+      "sha256": "3b098c53bc2bb6ebebc3b877c779e1577d24857c791cc8acf034c9ee83eaf800",
+      "bytes": 346
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc2-fingerprint.mjs",
+      "sha256": "abae8b08fd4896a556e84f1ce5de8f2f583e1ba43fb2c609b6f25f52aec13fbb",
+      "bytes": 31814
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc3-delivery.d.mts",
+      "sha256": "f7b467b7838f36f2d02855608634f5d1de8bbd4cfcc354852eb0a8e778216fe7",
+      "bytes": 413
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc3-delivery.mjs",
+      "sha256": "2baed6e80d778df6de8a9c7a9f9a3505d23ea306f3f596641204695f6472441b",
+      "bytes": 24652
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc4-adapter.mjs",
+      "sha256": "69af6d987717567cb0e7da6e5b92126a2de9fb13d60ed4191fb0d17b08f3c885",
+      "bytes": 48292
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc5-differential.d.mts",
+      "sha256": "f2d23540b02f4636415cf146b943e8992844607218683729f2dc42579be18aa6",
+      "bytes": 745
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-mc5-differential.mjs",
+      "sha256": "3deb1abacff4fb8f85ae1406fdb17cb38c0a36b589673d9384e7306d7bb9d3d5",
+      "bytes": 23374
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-product-a1-evidence.mjs",
+      "sha256": "460e30207516db7ec18179314d0be6cb10de66f081d6da0a3611e63f6192df87",
+      "bytes": 39796
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp0-contract.d.mts",
+      "sha256": "8fc8e3482996e6c444fd4c94b04ad47b6592e2dfefcb5b4dac044bbf30e58ac0",
+      "bytes": 495
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp0-contract.mjs",
+      "sha256": "d26c96caff8331dc6fa6ad7ed7ee417b921fe887e1219266e39809241bab3527",
+      "bytes": 16986
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp1-observation.mjs",
+      "sha256": "6221717399a68fa6682783e254f0af36a9cb05578aeab290a2fc3107db2c2581",
+      "bytes": 16278
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp2-profile.d.mts",
+      "sha256": "0e069f9401141b20142d458c23428ca4e54c4bea587de9efe2485ea95fc46181",
+      "bytes": 195
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp2-profile.mjs",
+      "sha256": "e058d37262c0ec889f85fce53c675b0f802d72d469cd76326ba6af0d2534b27f",
+      "bytes": 15588
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp3-receipts.mjs",
+      "sha256": "9d38bec09163f558595315b2a0687b7b2098f57d9cf60fd1e66cf1aeb17ad86f",
+      "bytes": 9475
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp4-coverage.mjs",
+      "sha256": "8b59f513cfe0b4e9c366fe5cea8d0c03c46ddc196fde2d0453328a59e41130e0",
+      "bytes": 6110
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp5-soak.d.mts",
+      "sha256": "9fefbaa7cdc443b130b582cf1eb44caac1105358cbb01a3f542e49784589e9f8",
+      "bytes": 165
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp5-soak.mjs",
+      "sha256": "2f9c568bd6181d542e7ca9f41fe98d9cc16197e69a75b4b6c0eb8487f5ae9ee1",
+      "bytes": 14480
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp6-closeout.d.mts",
+      "sha256": "060c7581dac469f067e2bb4aa2ce748b1c1b9da16cb048dab8ea323cd5c31585",
+      "bytes": 316
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp6-closeout.mjs",
+      "sha256": "e93557da7fb0c572f709e66478a5395fed05ba749fe0af6a0372b282ed85a6cf",
+      "bytes": 48947
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp7-host-vertical.mts",
+      "sha256": "0a121746bba106dffb70df7ab2130e586ece9761098baf0e24e017a0e9a9cf0d",
+      "bytes": 110687
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp9-global-acceptance.d.mts",
+      "sha256": "92675d4db38a092dd44016902b85fb6bbaf455edbe9bc068ebf173cf127c311d",
+      "bytes": 293
+    },
+    {
+      "role": "source",
+      "path": "scripts/versegit-wp9-global-acceptance.mjs",
+      "sha256": "2de6d5a520f2c4088edd1c39938a631fb8131b306c2ba283e96f5011a0c09b65",
+      "bytes": 45515
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-mc0-baseline.test.ts",
+      "sha256": "d31b01207e077956f929f77e41da943707f8234b7463d277b462c808e5eeca6c",
+      "bytes": 1923
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-mc1-contract.test.ts",
+      "sha256": "b7d39292dc17a4d434c0974a86cdb5d88648ec790e3df886900183bf1b94c0ce",
+      "bytes": 2701
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-mc2-fingerprint.test.ts",
+      "sha256": "e9d2316075b20b131c7bb68fafca1f6ff4e45722a540aaa81532976647e4c451",
+      "bytes": 6567
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-mc3-delivery.test.ts",
+      "sha256": "00d5b3c81ff36ee2dc72ecd39e2cf97eb1f898ec362c2b4c699e6dc0b252cb03",
+      "bytes": 7325
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-mc4-adapter.test.ts",
+      "sha256": "2077461f34690b537a08554ead4ef4ed44115b96549cb131a729f844dc40338a",
+      "bytes": 19183
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-mc5-differential.test.ts",
+      "sha256": "33d18c6e4832581dd7e567fad6fc7446cd4949694e6528240115f77cb76c1845",
+      "bytes": 11840
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-planning-correction.test.ts",
+      "sha256": "7ca65592bb8567c9fd09ab12d5f8b7a6059ebb547fc0a8951921ed7012ed1015",
+      "bytes": 4856
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-product-a1-evidence.test.ts",
+      "sha256": "7facffbba1f2e3f3e0b877b2dfa05feabf3c8171b6584b3f20b416feca89a88c",
+      "bytes": 4949
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-receipt-authority.test.ts",
+      "sha256": "27a5e31815aa073c43b8d7489022ddb4b4b84694cbda465d75f9a8346404910e",
+      "bytes": 14882
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp0-contract.test.ts",
+      "sha256": "fabc979db93a3c0c81e9dbefb9e711d4aad77ab8ae1f597004a544801d3210b5",
+      "bytes": 8925
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp1-observation.test.ts",
+      "sha256": "5c14612d6c8d8493628932856be78180fe6c47963731bc98bb99460359ce7245",
+      "bytes": 9309
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp2-profile.test.ts",
+      "sha256": "6d5a0b7119693f9500bb2ffe7bf0be00faa016586583307720b31eb7db8dda92",
+      "bytes": 2437
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp3-receipts.test.ts",
+      "sha256": "c6f03f4a8f46496538014f009149a19d09bd4052419001698774c6784fb1324a",
+      "bytes": 3789
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp4-coverage.test.ts",
+      "sha256": "e7a5398c775fb15ef8c599ff7332987fbe5e8e000c3e5c6977e998b66b2ebfcb",
+      "bytes": 2861
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp5-soak.test.ts",
+      "sha256": "132cd7c0c18ce3deb7f4a00d3f4c998957cff7ca00cad50cb4b14c030acb82d6",
+      "bytes": 998
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp6-closeout.test.ts",
+      "sha256": "ccc1e1b9c5cfb0d10d48cd4d0fd224013877beda13689602235b895be862384a",
+      "bytes": 6346
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp7-host-vertical.test.ts",
+      "sha256": "654f399e563b618503a0da4444df410ecb888b00e8f524c1694bd92bd3eee497",
+      "bytes": 7017
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp8-review.test.ts",
+      "sha256": "973036f30ea0bdb853b0aa433dc114b2d674cbcbd860a2f1267ea8d2f38fee4c",
+      "bytes": 1866
+    },
+    {
+      "role": "test",
+      "path": "tests/unit/versegit-wp9-global-acceptance.test.ts",
+      "sha256": "4dbda6dfcab8096d217635ff51f0a0722478838697108bc850a6e1808583e52f",
+      "bytes": 9025
+    }
+  ],
+  "input_counts": {
+    "source": 52,
+    "test": 19,
+    "contract": 17,
+    "dependency": 2
+  },
+  "binary": {
+    "role": "provider-debug-sidecar",
+    "status": "observed-not-deliverable",
+    "locator": {
+      "provider_root_role": "provider-checkout",
+      "relative_path": "target/debug/vg.exe"
+    },
+    "sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "bytes": 72509440,
+    "version": "vg 0.1.0",
+    "capabilities": {
+      "schema": "versegit.capabilities/v1",
+      "safety": {
+        "default_enable": false,
+        "evidence_land_present": true,
+        "managed_opt_in": true,
+        "strict_admission_present": true
+      },
+      "verdict": {
+        "dimensions": [
+          "candidate",
+          "execution",
+          "evidence",
+          "freshness",
+          "risk",
+          "trial"
+        ],
+        "single_green_light": false
+      }
+    },
+    "capabilities_sha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+    "commands": [
+      {
+        "argv": [
+          "--version"
+        ],
+        "cwd_role": "provider-checkout",
+        "exit_code": 0,
+        "stdout_sha256": "af30364b18f41b88093cd7cfbb589c4438d9a3cc724343b87fe9c8d6b8cc490c",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 9
+      },
+      {
+        "argv": [
+          "capabilities",
+          "--json"
+        ],
+        "cwd_role": "provider-checkout",
+        "exit_code": 0,
+        "stdout_sha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 3737
+      }
+    ],
+    "authority": "identity-only; no verification or landing authority",
+    "m4_authorized": false
+  },
+  "candidate_id": "4045788720d23bd59e72b48407034dbf2beea16ddc6a02d87ab20cf716911e74",
+  "boundaries": {
+    "default_on": false,
+    "ga": false,
+    "live_ready": false,
+    "product_approved": false,
+    "m4_authorized": false,
+    "real_human_evidence": false
+  },
+  "digest": "34d2efa639bedf73dabbbc3b59a51e07587460b4257741ebece5a25d46ce5ff3"
+}

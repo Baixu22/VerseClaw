@@ -33,6 +33,13 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
 
 ## Validation
 
+The Knowledge corner uses the approved procedural Ginger character. Drag stays
+near its corner dock and out-of-range release snaps back; click or keyboard
+activation opens a compact nonmodal floating conversation with source context
+intact. Actual request boundaries drive its states, and answers
+share the main Chat Markdown renderer. Reduced motion settles one pose.
+See `tasks/knowledge-bot-avatar.md` and `rules/knowledge-bot-runtime-state.md`.
+
 - `pnpm harness validate --spec harness/specs/tasks/windows-ui-v2-apple-motion.md`
 - `pnpm run typecheck`
 - `pnpm run build:vite`

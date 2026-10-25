@@ -15,7 +15,7 @@ import {
   sessionAdmissionRegistry,
   type SessionAdmissionIdentity,
 } from "../sessions/session-admission-registry.js";
-import { stopSessionRuntime } from "./session-reset-service.js";
+import { cleanupSessionBeforeMutation, stopSessionRuntime } from "./session-reset-service.js";
 
 const identity: SessionAdmissionIdentity = {
   agentId: "agent-a",
@@ -76,6 +76,22 @@ afterEach(() => {
 });
 
 describe("stopSessionRuntime", () => {
+
+  it("keeps an archive generation tombstone after successful finalization", async () => {
+    const outcome = await cleanupSessionBeforeMutation({
+      cfg: {} as OpenClawConfig,
+      key: identity.canonicalSessionKey,
+      target,
+      entry,
+      canonicalKey: identity.canonicalSessionKey,
+      reason: "session-archive",
+    });
+    expect(outcome.error).toBeUndefined();
+    outcome.settle(true);
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(true);
+    sessionAdmissionRegistry.removeFence(identity);
+  });
+
   it("releases the fence after a successful no-mutation stop", async () => {
     const result = await stopSessionRuntime({
       cfg: {} as OpenClawConfig,

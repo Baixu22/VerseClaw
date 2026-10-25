@@ -1,0 +1,6 @@
+ccfc887e6cfb80d23471717c45c9d41873b66307423a52d083ddc78d3fc4fdf3  harness/specs/fixtures/versegit-planning-correction/mc2-evidence/golden.json
+4cce829a755edcedc5b177563c7cd8b17bff9347a431ab346418860276a2bd86  harness/specs/fixtures/versegit-planning-correction/mc2-golden-fixture.json
+7402e8403b9ef841e4de28d389f353560f3103020d98846870baa928f29bcacf  harness/specs/tasks/versegit-mc2-behavior-fingerprint.md
+abae8b08fd4896a556e84f1ce5de8f2f583e1ba43fb2c609b6f25f52aec13fbb  scripts/versegit-mc2-fingerprint.mjs
+191359577c47ee471dee63d6e89cc932b391ed4f065e64fbbf8fb7f993b51f3e  scripts/verify-versegit-mc2.mjs
+e9d2316075b20b131c7bb68fafca1f6ff4e45722a540aaa81532976647e4c451  tests/unit/versegit-mc2-fingerprint.test.ts

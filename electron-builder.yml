@@ -39,6 +39,14 @@ extraResources:
       - "!verseshell/**"
       - "!screenshot/**"
       - "!verseshell-mcp/node_modules/**"
+      - "!versegit/**"
+  # Frozen VerseGit sidecar identity/license. The binary itself is copied by
+  # the target-specific extraResources mapping below.
+  - from: resources/versegit/
+    to: resources/versegit/
+    filter:
+      - "manifest.json"
+      - "LICENSE-APACHE-2.0.txt"
   # VerseShell AGPL compliance/provenance payload. The binary itself is copied
   # by the target-specific win.extraResources mapping below.
   - from: resources/verseshell/

@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0466",
+  "role": "WP0",
+  "fixturePurpose": "Frozen execution fixture for WP0: the module contract builder and its independent verifier are the implementation under test.",
+  "expectedOutputs": [
+    "artifacts/versegit/wp0/contract.json"
+  ],
+  "oracle": "Identity and contract schema pass"
+}

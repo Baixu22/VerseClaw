@@ -1,0 +1,595 @@
+{
+  "reportSchema": "clawx.versegit.mc4-adapter/v1",
+  "generated_at": "2026-10-21T20:22:32.993Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0477",
+  "adapter_module": "electron/services/versegit-module.ts",
+  "adapter_source_digest": "15f36a1202e2b09cd7d0fc6f6904acaa4d38728b27adc172a02620bae500e8fe",
+  "adapter_imports_vg_internals": false,
+  "forbidden_import_specifiers": [],
+  "additional_runtime_dependency": null,
+  "second_executor": false,
+  "contract_conformance": {
+    "ok": true,
+    "issues": [],
+    "basic": {
+      "ok": true,
+      "issues": []
+    },
+    "deep": {
+      "ok": true,
+      "issues": []
+    },
+    "mc1_report_envelope": {
+      "ok": true,
+      "issues": []
+    }
+  },
+  "migration_budget_scope": {
+    "classification": "host-owned-adapter-bootstrap",
+    "authorization_status": "agent_scope_clarification",
+    "behavior_migration": false,
+    "provider_source_files_changed": 0,
+    "provider_internal_imports": 0,
+    "mc5_line_budget_applies": "host-owned-production-only",
+    "bootstrap_budget": {
+      "production_files": 1,
+      "production_lines": 747,
+      "max_production_files": 2,
+      "max_production_lines": 800,
+      "max_lines_per_production_file": 800,
+      "passed": true
+    },
+    "rationale": "The authoritative boundary rule classifies a provider-free, lossless-document host anti-corruption bootstrap separately from provider-derived migration slices. Production budget is bounded to two files and 800 lines; tests, scripts and evidence remain digest-bound verification artifacts."
+  },
+  "closure_blockers": [],
+  "identity_evidence_controls": [
+    {
+      "id": "mc0_internal_digest",
+      "refused": true,
+      "failures": [
+        "mc0_internal_digest",
+        "mc0_capabilities_digest"
+      ]
+    },
+    {
+      "id": "mc2_internal_digest",
+      "refused": true,
+      "failures": [
+        "mc2_internal_digest"
+      ]
+    },
+    {
+      "id": "mc3_internal_digest",
+      "refused": true,
+      "failures": [
+        "mc3_internal_digest",
+        "capabilities_digest_matches_package"
+      ]
+    },
+    {
+      "id": "wp0_source_tree_link",
+      "refused": true,
+      "failures": [
+        "source_tree_matches_wp0"
+      ]
+    }
+  ],
+  "identity_preflight": {
+    "passed": true,
+    "check_count": 30,
+    "checks": [
+      {
+        "name": "consumer_contract",
+        "passed": true
+      },
+      {
+        "name": "golden_fingerprint",
+        "passed": true
+      },
+      {
+        "name": "sidecar_package",
+        "passed": true
+      },
+      {
+        "name": "wp0_contract",
+        "passed": true
+      },
+      {
+        "name": "mc0_internal_digest",
+        "passed": true
+      },
+      {
+        "name": "mc2_internal_digest",
+        "passed": true
+      },
+      {
+        "name": "mc3_internal_digest",
+        "passed": true
+      },
+      {
+        "name": "mc0_capabilities_digest",
+        "passed": true
+      },
+      {
+        "name": "source_head_matches_mc0",
+        "passed": true
+      },
+      {
+        "name": "source_tree_matches_mc0",
+        "passed": true
+      },
+      {
+        "name": "source_status_matches_mc0",
+        "passed": true
+      },
+      {
+        "name": "binary_digest_matches_mc0",
+        "passed": true
+      },
+      {
+        "name": "source_head_matches_golden",
+        "passed": true
+      },
+      {
+        "name": "source_tree_matches_golden",
+        "passed": true
+      },
+      {
+        "name": "binary_digest_matches_golden",
+        "passed": true
+      },
+      {
+        "name": "source_head_matches_package",
+        "passed": true
+      },
+      {
+        "name": "source_tree_matches_package",
+        "passed": true
+      },
+      {
+        "name": "binary_digest_matches_package",
+        "passed": true
+      },
+      {
+        "name": "capabilities_digest_matches_package",
+        "passed": true
+      },
+      {
+        "name": "source_head_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "source_tree_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "binary_digest_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "capabilities_digest_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "source_head_matches_wp0_matrix",
+        "passed": true
+      },
+      {
+        "name": "binary_digest_matches_wp0_matrix",
+        "passed": true
+      },
+      {
+        "name": "contract_digest_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "contract_digest_matches_package",
+        "passed": true
+      },
+      {
+        "name": "golden_digest_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "package_digest_matches_wp0",
+        "passed": true
+      },
+      {
+        "name": "capabilities_schema_matches_golden",
+        "passed": true
+      }
+    ],
+    "failures": []
+  },
+  "provenance": {
+    "node": "TF-0477",
+    "source_commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "source_tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
+    "source_status_digest": "4cbdcb293cfe0337287d7787277758d5480c6df26c602d51a81828e52ce0a8f6",
+    "binary_sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+    "contract_digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749",
+    "golden_bundle_digest": "cffdbbeecff8eba5021c3b15208e148d839f41dc8f8e8055efdf3ad49fe36f7b",
+    "sidecar_package_digest": "9c57e5d46ad4c18c086584600eca5ecd0de687b8721727d15d1c548e0d7e5f0b",
+    "contract_matches_wp0": true,
+    "golden_matches_wp0": true,
+    "sidecar_matches_wp0": true
+  },
+  "differential": {
+    "method": "raw sidecar reference vs shipped adapter candidate, compared under the MC5 semantic projection",
+    "full_document_compared": true,
+    "adapter_run_count": 2,
+    "seams": [
+      {
+        "seam": "identity.version",
+        "argv": [
+          "--version"
+        ],
+        "reference_exit": 0,
+        "adapter_status": "observed",
+        "identical": true,
+        "reference_digest": "fe744c26c1f97863e6ccdfbf24e96e859e9ae2a9a3c0099b1a0f4fc20f98c606",
+        "candidate_digest": "fe744c26c1f97863e6ccdfbf24e96e859e9ae2a9a3c0099b1a0f4fc20f98c606",
+        "reference_key_count": 2,
+        "candidate_key_count": 2,
+        "projection": {
+          "volatile_keys": []
+        },
+        "behavior_change_record": null
+      },
+      {
+        "seam": "identity.capabilities",
+        "argv": [
+          "capabilities",
+          "--json"
+        ],
+        "reference_exit": 0,
+        "adapter_status": "observed",
+        "identical": true,
+        "reference_digest": "2eb91c1da1faa72aaa4f8fc15234e87758ef07bdec9227448cb96245a1bb103e",
+        "candidate_digest": "2eb91c1da1faa72aaa4f8fc15234e87758ef07bdec9227448cb96245a1bb103e",
+        "reference_key_count": 49,
+        "candidate_key_count": 49,
+        "projection": {
+          "volatile_keys": []
+        },
+        "behavior_change_record": null
+      }
+    ],
+    "identical_count": 2,
+    "seam_count": 2,
+    "behavior_changes_declared": 0,
+    "negative_controls": [
+      {
+        "id": "control_version_drift",
+        "fired": true
+      },
+      {
+        "id": "control_dropped_capability_field",
+        "fired": true
+      },
+      {
+        "id": "control_single_green_light_laundering",
+        "fired": true
+      },
+      {
+        "id": "control_unknown_coverage_loss",
+        "fired": true
+      },
+      {
+        "id": "control_authority_claim",
+        "fired": true
+      },
+      {
+        "id": "control_drop_keys_projection",
+        "fired": true
+      }
+    ]
+  },
+  "default_off_regression": {
+    "m0_attach": {
+      "ok": true,
+      "status": "not_applicable",
+      "attached": false,
+      "process_calls": 0
+    },
+    "m0_report": {
+      "schema": "clawx.versegit.module-report/v1",
+      "mode": "M0",
+      "status": "not_applicable",
+      "processes_started": 0,
+      "usage_processes_started": 0,
+      "usage_state_reads": 0,
+      "workspace_write": false,
+      "harness_verdict": "host",
+      "land": "host-git",
+      "host_verdict": "unchanged"
+    }
+  },
+  "capabilities_negative_controls": [
+    {
+      "id": "capabilities_json_null",
+      "refused": true,
+      "status": "unavailable",
+      "reason": "invalid_document",
+      "issues": [
+        "capabilities must be a JSON object"
+      ]
+    },
+    {
+      "id": "capabilities_single_green_light",
+      "refused": true,
+      "status": "rejected_by_policy",
+      "reason": "schema_mismatch",
+      "issues": [
+        "capabilities claim single-green-light, which the contract forbids",
+        "capabilities digest differs from the host-frozen identity"
+      ]
+    },
+    {
+      "id": "capabilities_schema_drift",
+      "refused": true,
+      "status": "rejected_by_policy",
+      "reason": "schema_mismatch",
+      "issues": [
+        "capabilities schema versegit.capabilities/v999 != versegit.capabilities/v1",
+        "capabilities digest differs from the host-frozen identity"
+      ]
+    },
+    {
+      "id": "capabilities_default_enable",
+      "refused": true,
+      "status": "rejected_by_policy",
+      "reason": "schema_mismatch",
+      "issues": [
+        "capabilities claim default-enable, which the product lock forbids",
+        "capabilities digest differs from the host-frozen identity"
+      ]
+    },
+    {
+      "id": "capabilities_digest_drift",
+      "refused": true,
+      "status": "rejected_by_policy",
+      "reason": "schema_mismatch",
+      "issues": [
+        "capabilities digest differs from the host-frozen identity"
+      ]
+    }
+  ],
+  "command_plan_regression": {
+    "valid_plan_accepted": true,
+    "negatives": [
+      {
+        "id": "reject_shell_string",
+        "refused": true,
+        "issues": [
+          "plan must not carry shell"
+        ]
+      },
+      {
+        "id": "reject_top_level_land",
+        "refused": true,
+        "issues": [
+          "plan must not carry land"
+        ]
+      },
+      {
+        "id": "reject_empty_owner",
+        "refused": true,
+        "issues": [
+          "plan owner must be an opaque id or a structured owner"
+        ]
+      },
+      {
+        "id": "reject_git_path",
+        "refused": true,
+        "issues": [
+          "plan command git is forbidden"
+        ]
+      },
+      {
+        "id": "reject_shell_interpreter",
+        "refused": true,
+        "issues": [
+          "plan command must not invoke shell or wrapper powershell"
+        ]
+      },
+      {
+        "id": "reject_trailing_space_shell",
+        "refused": true,
+        "issues": [
+          "plan command must not invoke shell or wrapper powershell"
+        ]
+      },
+      {
+        "id": "reject_env_wrapper",
+        "refused": true,
+        "issues": [
+          "plan command must not invoke shell or wrapper env"
+        ]
+      },
+      {
+        "id": "reject_vg_repo_land",
+        "refused": true,
+        "issues": [
+          "plan command vg land is forbidden"
+        ]
+      },
+      {
+        "id": "reject_scalar_forbidden",
+        "refused": true,
+        "issues": [
+          "plan forbidden field must be absent or an empty array"
+        ]
+      },
+      {
+        "id": "reject_unknown_retry",
+        "refused": true,
+        "issues": [
+          "plan command retry sometimes is undeclared",
+          "effectful command must never auto-replay"
+        ]
+      },
+      {
+        "id": "reject_effectful_auto_replay",
+        "refused": true,
+        "issues": [
+          "plan command retry always is undeclared",
+          "effectful command must never auto-replay"
+        ]
+      }
+    ]
+  },
+  "report_usage_regression": {
+    "m1_report_valid": true,
+    "mc1_report_valid": true,
+    "native_executor_refused": true,
+    "mismatched_session_rejected": true,
+    "m1_usage": {
+      "processes_started": 2,
+      "state_reads": 1
+    },
+    "m1_identity": {
+      "repoId": "repo-mc4",
+      "worktreeIds": [
+        "worktree-mc4"
+      ],
+      "agentSessionIds": [
+        "agent-session-mc4"
+      ],
+      "vgSessionIds": [
+        "vg-session-mc4"
+      ],
+      "epoch": 1
+    },
+    "m1_correlation": {
+      "runId": "run-mc4",
+      "requestId": "request-mc4",
+      "traceId": "trace-mc4",
+      "epoch": 1
+    },
+    "report_without_attach_refused": true,
+    "contract_override_prevented": true,
+    "contract_digest": "628df7e7fcee0c96e4ca974a133f336f07fbf12eb317397f20adde53d40af749"
+  },
+  "authority_regression": {
+    "ungranted_promotion": {
+      "status": "rejected_by_policy",
+      "ok": false
+    },
+    "mismatched_grant": {
+      "status": "rejected_by_policy",
+      "ok": false
+    },
+    "granted_read_only": {
+      "status": "partial",
+      "ok": true
+    },
+    "reason_label_as_status": {
+      "ok": false,
+      "issues": [
+        "reason label used as top-level status",
+        "M0 report status must be not_applicable"
+      ]
+    },
+    "authority_claim_in_report": {
+      "ok": false,
+      "issues": [
+        "report must not carry authority field admitted"
+      ]
+    },
+    "land_command": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "admit_command": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "conflicts_in_m1": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "capabilities_in_m1": null,
+    "command_in_m0": {
+      "status": "rejected_by_policy",
+      "reason": "unauthorized_mode",
+      "host_verdict": "unchanged"
+    },
+    "deferred_commands_denied": {
+      "doctor": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "session": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "verdict": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "conflicts": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      },
+      "report": {
+        "status": "rejected_by_policy",
+        "reason": "unauthorized_mode",
+        "host_verdict": "unchanged"
+      }
+    },
+    "read_without_attach": {
+      "status": "unavailable",
+      "reason": "not_attached",
+      "process_calls": 0
+    },
+    "read_after_detach": {
+      "status": "unavailable",
+      "reason": "not_attached"
+    }
+  },
+  "forbidden_command_surface": [
+    "land",
+    "admit",
+    "declare_intent",
+    "git",
+    "gerrit",
+    "export"
+  ],
+  "read_only_command_surface": [
+    "capabilities"
+  ],
+  "deferred_command_surface": [
+    "doctor",
+    "session",
+    "verdict",
+    "conflicts",
+    "report"
+  ],
+  "status": "equivalent",
+  "boundaries": {
+    "vg_source_tree_copied": false,
+    "vg_history_copied": false,
+    "vg_task_forest_copied": false,
+    "vg_build_outputs_copied": false,
+    "vg_private_evidence_copied": false,
+    "provider_source_modified": false,
+    "host_ipc_channel_added": false,
+    "renderer_can_call_adapter": false,
+    "profile_added_to_fast_or_comms": false,
+    "default_on": false,
+    "land_or_admit_invoked": false,
+    "host_worktree_deleted": false,
+    "note": "This node proves the shipped adapter matches the sidecar under the declared projection and refuses every escalation path. Host routes, the harness profile and the VerseShell receipt bridge belong to WP1-WP3 and are not claimed here."
+  },
+  "digest": "4477903c1a9410a5faeef4f426f9c42507e211420fb60d8fdb27d8291c4de45e"
+}

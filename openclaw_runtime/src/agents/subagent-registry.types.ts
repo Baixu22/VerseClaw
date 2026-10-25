@@ -25,7 +25,10 @@ export type TeamPatchFlowStatus =
   | "applied"
   | "partial"
   | "failed"
-  | "no-proposals";
+  | "no-proposals"
+  | "verification-failed"
+  | "blocked"
+  | "unknown";
 
 export type TeamPatchFlowResultSummary = {
   workerId: string;
@@ -33,6 +36,13 @@ export type TeamPatchFlowResultSummary = {
   error?: string;
   summary?: { added: string[]; modified: string[]; deleted: string[] };
   destructive?: { reason?: string; requiresApproval?: boolean };
+  journal?: {
+    batchId: string;
+    batchState: string;
+    undoable: boolean;
+    snapshotIds: string[];
+  };
+  recoveryRef?: string;
 };
 
 export type TeamOrchestrationMetadata = {
@@ -47,7 +57,12 @@ export type TeamOrchestrationMetadata = {
   verifierRole?: string;
   verifierModelRef?: string | null;
   verifierStartedRunId?: string;
-  verifierSkippedReason?: "all-workers-failed" | "no-verifier-role" | "spawn-failed";
+  verifierSkippedReason?:
+    | "all-workers-failed"
+    | "no-verifier-role"
+    | "spawn-failed"
+    | "candidate-apply-host-missing"
+    | "candidate-apply-not-complete";
   verifierStartedAt?: number;
   verifierSkippedAt?: number;
   /** Explicit structured verifier decision; free text alone cannot authorize pass (F-AUTH-005). */
@@ -89,7 +104,28 @@ export type TeamOrchestrationMetadata = {
   patchFlowResults?: TeamPatchFlowResultSummary[];
   patchFlowAppliedAt?: number;
   patchFlowError?: string;
-};
+  patchFlowCandidateId?: string;
+  patchFlowCandidateTreeOid?: string;
+  patchFlowCandidateInputDigest?: string;
+  patchFlowTraceDigest?: string;
+  patchFlowJournalRefs?: string[];
+  completionFactId?: string;
+  completionFactStatus?: "recorded" | "duplicate" | "rejected" | "unavailable" | "not_configured";
+  completionHostOutcome?: "applied" | "not_applied" | "unknown";
+  completionProviderProjection?: "active" | "abandoned" | "host-completed";
+  completionActiveSessionRisk?: boolean;
+  verseGitCleanup?: {
+    bindingId: string;
+    requestId: string;
+    repoId: string;
+    worktreeId: string;
+    worktreePath: string;
+    ownerId: string;
+    epoch: number;
+    authorizationId: string;
+    baseOid: string;
+    refsDigest: string;
+  };};
 
 export type PendingFinalDeliveryPayload = {
   requesterSessionKey: string;

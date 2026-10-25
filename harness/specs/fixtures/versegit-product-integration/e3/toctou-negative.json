@@ -1,0 +1,94 @@
+{
+  "schema": "clawx.versegit.e3-toctou-negative/v1",
+  "generated_at": "2026-10-22T21:38:44.158Z",
+  "task": "TF-0534",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "31cbfa08a6379d32af4907d1f97416f10b64fc97",
+    "tree": "f7039a70cf327f2d2e4b3e187ab6b8d947e55cb0",
+    "dirty": false
+  },
+  "raw_report_digest": "a781a9d78d2a677903fac6f6b84db2427671db63140c994136775c931afbcfe3",
+  "cases": [
+    {
+      "id": "target-uncommitted",
+      "status": "preflight-rejected",
+      "expectedReason": "state-changed-before-first-write",
+      "actualReason": "state-changed-before-first-write",
+      "issues": [
+        "state-changed-before-first-write",
+        "base-worktree-not-clean"
+      ],
+      "firstWriteStarted": false,
+      "baseHeadUnchanged": true,
+      "baseRefsUnchanged": true,
+      "cleanupOk": true,
+      "passed": true
+    },
+    {
+      "id": "candidate-drift",
+      "status": "preflight-rejected",
+      "expectedReason": "state-changed-before-first-write",
+      "actualReason": "state-changed-before-first-write",
+      "issues": [
+        "state-changed-before-first-write",
+        "candidate-input-drift",
+        "candidate-target-drift"
+      ],
+      "firstWriteStarted": false,
+      "baseHeadUnchanged": true,
+      "baseRefsUnchanged": true,
+      "cleanupOk": true,
+      "passed": true
+    },
+    {
+      "id": "base-head",
+      "status": "preflight-rejected",
+      "expectedReason": "state-changed-before-first-write",
+      "actualReason": "state-changed-before-first-write",
+      "issues": [
+        "state-changed-before-first-write",
+        "base-head-drift"
+      ],
+      "firstWriteStarted": false,
+      "baseHeadUnchanged": false,
+      "baseRefsUnchanged": false,
+      "cleanupOk": true,
+      "passed": true
+    },
+    {
+      "id": "epoch",
+      "status": "preflight-rejected",
+      "expectedReason": "authority-epoch-mismatch",
+      "actualReason": "authority-epoch-mismatch",
+      "issues": [
+        "authority-epoch-mismatch",
+        "permit-snapshot-digest-mismatch"
+      ],
+      "firstWriteStarted": false,
+      "baseHeadUnchanged": true,
+      "baseRefsUnchanged": true,
+      "cleanupOk": true,
+      "passed": true
+    },
+    {
+      "id": "revoked",
+      "status": "preflight-rejected",
+      "expectedReason": "grant-revoked",
+      "actualReason": "grant-revoked",
+      "issues": [
+        "grant-revoked",
+        "permit-snapshot-digest-mismatch"
+      ],
+      "firstWriteStarted": false,
+      "baseHeadUnchanged": true,
+      "baseRefsUnchanged": true,
+      "cleanupOk": true,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "digest": "e24b930e75cb23a44b8a9f04854fb0e719c9d97879a36ac7e2f8536036b559b8"
+}

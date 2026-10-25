@@ -1,0 +1,75 @@
+{
+  "schema": "clawx.versegit.wp9-manifest/v1",
+  "generated_at": "2026-10-21T22:22:21.639Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0515",
+  "parentTask": "TF-0465",
+  "report": {
+    "path": "artifacts/versegit/wp9/global-report.json",
+    "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence/global-report.json",
+    "digest": "b0099fa051dd407a4d251d0893e659f0918cb9350a3fe84f59d255f238eb53ba",
+    "sha256": "08d5b76de7704300cd642cfc2c3c8f8383ebafb49633326f16890db66950e311"
+  },
+  "verdict": {
+    "globalVerdict": "PASS_WITH_GAPS",
+    "passed": true,
+    "p0": 0,
+    "p1": 0,
+    "p2": 3
+  },
+  "acceptance": {
+    "required": 7,
+    "verified": 7,
+    "withoutEvidence": 0,
+    "statusesAllowed": [
+      "verified",
+      "not_applicable",
+      "retired"
+    ]
+  },
+  "children": {
+    "total": 18,
+    "done": 17,
+    "deprecated": 1,
+    "openOrBlocked": [],
+    "unresolvedDependencies": [],
+    "includingSelf": {
+      "total": 19,
+      "selfStatus": "ready",
+      "expectedSelfStatus": "done"
+    }
+  },
+  "independentReview": {
+    "actor": "ccs-hub/gpt-6.1-sol",
+    "verdict": "PASS_WITH_GAPS",
+    "p0": 0,
+    "p1": 0,
+    "p2": 3,
+    "reviewedImplementationCommit": "66cdac59f1b7ae54cef42ff0c1574110368a7449",
+    "passed": true
+  },
+  "authority": {
+    "humanEvidence": false,
+    "realHumanEvidenceClaimed": false,
+    "singleGreenLight": false,
+    "defaultOn": false,
+    "ga": false,
+    "releaseEligible": false,
+    "m4Authorized": false
+  },
+  "residualDisposition": "retain",
+  "residualCount": 14,
+  "fixtureDigest": "483787946891e60f9d465ec6a7e3b363f8f0e54fc7b88a52c627ba89c09f4b57",
+  "graphHash": "0b01d4b92c8168605809dd44dbcd4048392f58576be1973393735bcdba1aa07e",
+  "closeout": {
+    "evidenceRoot": "harness/specs/fixtures/versegit-planning-correction/wp9-evidence",
+    "requiredFinalStatus": {
+      "self": "done",
+      "parent": "done"
+    },
+    "preconditionsPassed": true,
+    "proposalRequired": true
+  },
+  "digest": "4f5118c7bc4c947d21314ae868e6f85eae90daa0808d8ae82f8c3b0f96db8565"
+}

@@ -82,6 +82,12 @@ function rendererManualChunks(id: string): string | undefined {
   if (normalized.endsWith('/src/pages/Settings/index.tsx')) return 'settings-detail';
   if (normalized.includes('/src/lib/monaco/')) return 'editor';
   if (!packageName) return undefined;
+  // Shared Markdown and the file icon namespace both consume Lucide. Keep its
+  // eagerly initialized icon exports together so lazy chunks cannot form a TDZ.
+  if (packageName === 'lucide-react') return 'lucide-icons';
+  // assistant-ui registers resources against symbols initialized by its core.
+  // Keep registrations and core in one chunk when Markdown gains a second host.
+  if (packageName.startsWith('@assistant-ui/')) return 'assistant-ui-runtime';
   if (packageName === 'monaco-editor' || packageName === '@monaco-editor/react') return 'editor';
   if (packageName === 'xlsx' || packageName === 'pdfjs-dist') return 'document-viewers';
   if (packageName === 'katex') return 'math-rendering';

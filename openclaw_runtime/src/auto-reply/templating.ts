@@ -322,6 +322,8 @@ export type MsgContext = {
    * Used for hook confirmation messages like "Session context saved to memory".
    */
   HookMessages?: string[];
+  /** Canonical workspace identity forwarded by Gateway chat.send. */
+  WorkspaceId?: string;
   /**
    * Trusted workspace authority fingerprint forwarded by Gateway chat.send
    * (produced by Main from the workspace's normalized rootPath). Embedded

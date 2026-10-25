@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 
 /**
- * TASK-P0-05: honest map of CVK shell vs DCS vs Verse Token.
+ * TASK-P0-05: honest map of the CVK shell versus DCS. VToken is an internal
+ * pack strategy and intentionally has no independent user control.
  * Display-only — does not enable features.
  */
 export function ContextLayersExplainer() {
@@ -26,13 +27,6 @@ export function ContextLayersExplainer() {
           <p className="font-medium text-foreground/90">{t('developer.contextLayers.dcsTitle')}</p>
           <p className="mt-1">{t('developer.contextLayers.dcsBody')}</p>
         </div>
-        <div data-testid="settings-context-layers-vtoken">
-          <p className="font-medium text-foreground/90">{t('developer.contextLayers.vtokenTitle')}</p>
-          <p className="mt-1">{t('developer.contextLayers.vtokenBody')}</p>
-        </div>
-        <p className="text-tiny" data-testid="settings-context-layers-footer">
-          {t('developer.contextLayers.footer')}
-        </p>
       </div>
     </div>
   );

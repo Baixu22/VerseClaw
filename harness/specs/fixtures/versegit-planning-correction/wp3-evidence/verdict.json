@@ -1,0 +1,430 @@
+{
+  "schema": "clawx.versegit.wp3-receipt-evidence/v1",
+  "generated_at": "2026-10-21T20:41:46.284Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0469",
+  "fixture": "harness/specs/fixtures/versegit-planning-correction/wp3-receipt-fixture.json",
+  "planDigest": "40c98583d6ec1eedaa73c1c4c93e8e11f8a618faa14c5b386d1c0b8b949a837f",
+  "plan": {
+    "schema": "clawx.versegit.command-plan/v1",
+    "runId": "wp3-run",
+    "candidateId": "wp3-candidate",
+    "checkId": "wp3-check",
+    "owner": "wp3-owner",
+    "epoch": 3,
+    "authorizationId": "wp3-authorization",
+    "commands": [
+      {
+        "argv": [
+          "node",
+          "--version"
+        ],
+        "cwd": "repo-relative-cwd",
+        "env": {
+          "CI": "1"
+        },
+        "effect": "read",
+        "retry": "never",
+        "expectedArtifacts": [
+          "stdout",
+          "stderr",
+          "exit"
+        ]
+      }
+    ],
+    "requiredScope": "full",
+    "planDigest": "40c98583d6ec1eedaa73c1c4c93e8e11f8a618faa14c5b386d1c0b8b949a837f"
+  },
+  "cases": [
+    {
+      "caseId": "valid_structural_receipt",
+      "mutation": "none",
+      "receiptResult": {
+        "status": "accepted",
+        "reason": "receipt_bound",
+        "issues": [],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": "receipt-valid_structural_receipt",
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "observed",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "epoch:3",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "normalized-event",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "structural receipt or unverified live claim; no host-authoritative execution is claimed"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "wrong_candidate",
+      "mutation": "wrong_candidate",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "receipt candidateId mismatch",
+        "issues": [
+          "receipt candidateId mismatch"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "stale_epoch",
+      "mutation": "stale_epoch",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "receipt epoch mismatch",
+        "issues": [
+          "receipt epoch mismatch"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "plan_digest_mismatch",
+      "mutation": "plan_digest_mismatch",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "receipt planDigest mismatch",
+        "issues": [
+          "receipt planDigest mismatch"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "argv_digest_mismatch",
+      "mutation": "argv_digest_mismatch",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "receipt argv digest mismatch",
+        "issues": [
+          "receipt argv digest mismatch"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "missing_artifact",
+      "mutation": "missing_artifact",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "receipt artifact digests are missing or invalid",
+        "issues": [
+          "receipt artifact digests are missing or invalid"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "selected_scope_claimed_full",
+      "mutation": "selected_scope_claimed_full",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "receipt scope is not full",
+        "issues": [
+          "receipt scope is not full",
+          "receipt may not self-claim selected scope as full"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "caller_self_report",
+      "mutation": "caller_self_report",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "receipt authority is not VerseShell host-owned",
+        "issues": [
+          "receipt authority is not VerseShell host-owned"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "duplicate_receipt",
+      "mutation": "duplicate_receipt",
+      "receiptResult": {
+        "status": "duplicate",
+        "reason": "duplicate_receipt",
+        "issues": [
+          "receipt id was already consumed"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": "receipt-duplicate_receipt",
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "observed",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "epoch:3",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "normalized-event",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "structural receipt or unverified live claim; no host-authoritative execution is claimed"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    },
+    {
+      "caseId": "missing_receipt",
+      "mutation": "missing_receipt",
+      "receiptResult": {
+        "status": "rejected_by_policy",
+        "reason": "missing_receipt",
+        "issues": [
+          "no host receipt supplied"
+        ],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "wp3-run",
+        "receiptId": null,
+        "status": "partial",
+        "reasons": [
+          "unmeasured"
+        ],
+        "dimensions": {
+          "candidate": "unknown",
+          "execution": "unmeasured",
+          "evidence": "missing",
+          "freshness": "unknown",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "none",
+        "realVerseshellExecution": false,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": [
+          "no host-authoritative receipt"
+        ]
+      },
+      "hostVerdict": "unchanged"
+    }
+  ],
+  "summary": {
+    "caseCount": 10,
+    "accepted": 1,
+    "rejected": 8,
+    "duplicate": 1
+  },
+  "realVerseshellExecutionClaimed": false,
+  "structuralOnly": true,
+  "boundaries": {
+    "secondExecutor": false,
+    "callerSelfReportAccepted": false,
+    "selectedScopeAsFull": false,
+    "hostVerdictChanged": false,
+    "providerSourceImported": false,
+    "rawSecretStored": false
+  },
+  "hostVerdict": "unchanged",
+  "issues": [],
+  "passed": true,
+  "digest": "ce5d852d6961d6320e0b05f5efcd47c991530449e8cb59501da7629bc945f392"
+}

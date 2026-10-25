@@ -9,8 +9,13 @@
  * C0-1': four FactStore view tools (understand/impact/reuse/verify) share this
  * same shell factory as the original three BlockStore tools.
  */
+import { createHash } from "node:crypto";
 import { Type } from "typebox";
 import { normalizeArchiveHandle } from "../../../../shared/types/context-item.js";
+import {
+  assertPermissionEffectOwnerCheckpoint,
+  permissionEffectBindingFor,
+} from "../../../../shared/permission-effect-contract.js";
 import { verifyContextArchiveHandle } from "../../context-engine/registry/context-item-registry.js";
 import type {
   BlockStoreApi,
@@ -98,6 +103,8 @@ export type DcsContextAgentToolOptions = {
   /** Prefer live run session when sandbox session key differs. */
   runSessionKey?: string;
   agentSessionKey?: string;
+  /** Workspace bound to the context write effect. */
+  workspaceRoot?: string;
   blockStore?: Pick<BlockStoreApi, "query" | "queryByEntity" | "recallArchivedBlocks">;
   contextBlockSink?: ContextBlockSink;
   /**
@@ -502,7 +509,7 @@ export function createContextWriteTool(options: DcsContextAgentToolOptions): Any
       kind: "declared_paths",
       writePaths: ["context_blocks/notes"],
     },
-    execute: async (_toolCallId, args) => {
+    execute: async (toolCallId, args) => {
       const params = asToolParamsRecord(args);
       const operationRaw = readStringParam(params, "operation", { required: true });
       const operation = operationRaw as WriteOperation;
@@ -512,10 +519,63 @@ export function createContextWriteTool(options: DcsContextAgentToolOptions): Any
           reason: `invalid operation '${operationRaw}' (expected append|replace|clear)`,
         });
       }
+      if (!(CONTEXT_WRITE_ROLE_WHITELIST as readonly string[]).includes(role)) {
+        return jsonResult({
+          accepted: false,
+          reason: `role '${role}' is not in context_write whitelist`,
+        });
+      }
       const content =
         operation === "clear"
           ? ""
           : (readStringParam(params, "content") ?? "");
+      const nowMs = Date.now();
+      const workspaceId = options.workspaceRoot?.trim() || process.cwd();
+      const effectDigest = createHash("sha256")
+        .update(`${sessionId}\0${role}\0${operation}\0${toolCallId}\0${content}`)
+        .digest("hex");
+      const policyDigest = `sha256:${createHash("sha256")
+        .update(`context-write-policy:v1\0${role}\0${CONTEXT_WRITE_ROLE_WHITELIST.join(",")}`)
+        .digest("hex")}`;
+      const binding = permissionEffectBindingFor("fact-tools");
+      if (!binding) {
+        return jsonResult({ accepted: false, reason: "permission-effect-binding-missing" });
+      }
+      try {
+        assertPermissionEffectOwnerCheckpoint({
+          componentId: "fact-tools",
+          subject: {
+            sessionKey: options.runSessionKey?.trim() || options.agentSessionKey?.trim() || sessionId,
+            runId: sessionId,
+            attemptIndex: 0,
+            modelCallIndex: 0,
+            actorKind: "principal",
+            workspaceId,
+            taskBranchId: `context:${sessionId}`,
+          },
+          request: {
+            requestId: `context-write-${effectDigest.slice(0, 24)}`,
+            action: operation,
+            resource: `context-block:${sessionId}:notes`,
+            purpose: "append or replace agent notes under the context_write role whitelist",
+            idempotencyKey: `context-write-${effectDigest.slice(0, 32)}`,
+          },
+          authorityOwner: binding.finalAuthorityOwner,
+          decisionRef: `context-decision-${effectDigest.slice(0, 24)}`,
+          policyDigest,
+          issuedAtMs: nowMs,
+          expiresAtMs: nowMs + 30_000,
+          nowMs,
+          revocationEpoch: "context-write-revocation:v1",
+          policyEpoch: policyDigest,
+          catalogEpoch: "dcs-context-tools:v1",
+        });
+      } catch (error) {
+        return jsonResult({
+          accepted: false,
+          reason: error instanceof Error ? error.message : "permission-effect-check-failed",
+        });
+      }
       let existingBlock: ContextBlock | undefined;
       if (blockStore && operation !== "replace") {
         const existing = await blockStore.query({

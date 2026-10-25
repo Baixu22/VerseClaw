@@ -1,0 +1,6 @@
+72bbefe274ebf1a3a3ad17d38a351fdba1334fb8833b8f7df8310761cec3317b  harness/specs/fixtures/versegit-planning-correction/mc3-evidence/package-manifest.json
+78545c2a434b7955fcca599e22c22b8fbb4603ffef40a396bd34bb2faaff62f3  harness/specs/fixtures/versegit-planning-correction/mc3-delivery-fixture.json
+deebda20ed36a0fb904c9e0ec49cefe68337dc4fb431f571eeeb00a5b1c1b964  harness/specs/tasks/versegit-mc3-sidecar-delivery.md
+2baed6e80d778df6de8a9c7a9f9a3505d23ea306f3f596641204695f6472441b  scripts/versegit-mc3-delivery.mjs
+2e156a4949c2931be2ec5c51aec5363ea2fa59881ddd55c71700922c262114c9  scripts/verify-versegit-mc3.mjs
+2b43c7c5452300330d7c8a452858c35aad79392a5dc9090c31d8c2519964a778  tests/unit/versegit-mc3-delivery.test.ts

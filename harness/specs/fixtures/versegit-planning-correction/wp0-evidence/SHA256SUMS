@@ -1,0 +1,6 @@
+d4ec1fc974ba36352d9f0c8f31dc61551442ba225420c07abba9bd44aa9bc585  harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json
+abec73eb30d705557619a49f47ae1334d772019a45880f076b64f4143ba83a27  harness/specs/fixtures/versegit-planning-correction/wp0-contract-fixture.json
+e360a90dba260cb8babda4a62ef93cec3ea5426d05ac84be6e4322fb6d3c84df  harness/specs/tasks/versegit-wp0-module-contract.md
+d26c96caff8331dc6fa6ad7ed7ee417b921fe887e1219266e39809241bab3527  scripts/versegit-wp0-contract.mjs
+1922175d374f5ece21206fe6024f8339f34cc5dcac29e9094f92d64c4142feb6  scripts/verify-versegit-wp0.mjs
+0e896877a9ff87048ebaead8d9a1eff42375fe64a11bc3dac05f055324724af4  tests/unit/versegit-wp0-contract.test.ts

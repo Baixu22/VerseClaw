@@ -1,0 +1,10 @@
+{
+  "schema": "clawx.versegit.node-fixture/v1",
+  "nodeId": "TF-0478",
+  "role": "MC5",
+  "fixturePurpose": "Frozen execution fixture for MC5: the differential gate builder and its independent verifier are the implementation under test.",
+  "expectedOutputs": [
+    "artifacts/versegit/mc5/differential-report.json"
+  ],
+  "oracle": "Differential framework and diff budget pass"
+}

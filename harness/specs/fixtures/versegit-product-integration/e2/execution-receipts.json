@@ -1,0 +1,299 @@
+{
+  "schema": "clawx.versegit.e2-execution-receipts/v1",
+  "generated_at": "2026-10-22T21:04:42.509Z",
+  "task": "TF-0533",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "codex/versegit-product-integration-20261022",
+    "commit": "d929fdc94e6e099d0b1984cb30ec37ed28ad8996",
+    "tree": "192a13159ec5177f24a5d1f849ada7d2247b1f06",
+    "dirty": false
+  },
+  "runs": [
+    {
+      "run_id": "run-e2-candidate-failure",
+      "candidate_id": "216f7e63cee30bd80f6a96471015cd0850fa7a8246695e1eedb252a87a38aab5",
+      "plan_id": "run-e2-candidate-failure",
+      "plan_digest": "45db249f2dd76d40f64b5f750a02a3997ff2c0d4d6fe459fdbf52b37ea047456",
+      "check_id": "candidate-full-required-tests",
+      "owner_id": "owner-e2-candidate-receipts",
+      "epoch": 3,
+      "authorization_id": "auth-run-e2-candidate-failure",
+      "input_digest": "03b8054c727bc7de7d2bf43803a54353ecd1ca733e9cb3dd93b6354ed8e5497e",
+      "receipt": {
+        "schema": "clawx.verseshell.execution-receipt/v2",
+        "receiptId": "receipt-run-e2-candidate-failure",
+        "planId": "run-e2-candidate-failure",
+        "planDigest": "45db249f2dd76d40f64b5f750a02a3997ff2c0d4d6fe459fdbf52b37ea047456",
+        "candidateId": "216f7e63cee30bd80f6a96471015cd0850fa7a8246695e1eedb252a87a38aab5",
+        "checkId": "candidate-full-required-tests",
+        "ownerId": "owner-e2-candidate-receipts",
+        "epoch": 3,
+        "authorizationId": "auth-run-e2-candidate-failure",
+        "argvDigest": "cb5cd0b8ff9ac6886ea6888ff564b68740dee46603dd5208a4ea8a0d46a2f050",
+        "cwdDigest": "7299b59de0b5dad3b622afc3bdf57544e505249c77a6d4254bd14b1fc9a4ade8",
+        "envDigest": "47b6d1a209aef96731707665c30e14793bf36ef015f5b441597e72e05216f0d0",
+        "executionInputDigest": "fda6028f7b75d7a520ab5edf0852ec3b2e4359758fbc58d4fc33959c1c2d0678",
+        "requiredScope": "full",
+        "artifactDigests": [
+          "0403c80e11106edf7bd8f82685b9468fbd927b44b36d088e4549a9e1a1deeebf",
+          "6559f96e4236920bfe43b5ce0215bf14c4399e042080249c1124961565ccf817",
+          "90939d5d981eb8beeddf9ef1aeb1882166717474304fab720679f564e85c1b51",
+          "97a7608bddcded50393df417949e8873833858b67d44c2f5d350283dca03a97e",
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "eb9c8c70802b3a1f312fb501c049affc5b4ffbe32c01b204598bdeb61a032ad8",
+          "f319619d9fa44bf3d0bcd1d644d33f55feb3b721521057127af3e4a457bee6b6"
+        ],
+        "cleanupStatus": "clean",
+        "status": "exited",
+        "exitCode": 1,
+        "signal": null,
+        "durationMs": 772,
+        "stdoutDigest": "6559f96e4236920bfe43b5ce0215bf14c4399e042080249c1124961565ccf817",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "processKey": "6add4815ad9037699c07f06be41296ee2507d52acdc4a6c828cd15f011b0e71d",
+        "authority": {
+          "writer": "verseshell",
+          "trusted_source": "clawx-host-process-artifact-authority"
+        },
+        "origin": "verseshell",
+        "realVerseshell": true,
+        "observationId": "host-process-proc_f0d3890987b34369b9be04a5b4ae33ab",
+        "observationDigest": "97a7608bddcded50393df417949e8873833858b67d44c2f5d350283dca03a97e",
+        "planFileDigest": "0403c80e11106edf7bd8f82685b9468fbd927b44b36d088e4549a9e1a1deeebf",
+        "inputManifestDigest": "f319619d9fa44bf3d0bcd1d644d33f55feb3b721521057127af3e4a457bee6b6",
+        "authorizationDigest": "eb9c8c70802b3a1f312fb501c049affc5b4ffbe32c01b204598bdeb61a032ad8",
+        "cleanupEvidenceDigest": "90939d5d981eb8beeddf9ef1aeb1882166717474304fab720679f564e85c1b51"
+      },
+      "receipt_ref": {
+        "path": "receipts/f921d5718778ed1fd643cc2073cf15c24a88d3519e0b23ef9d6d88ab3a9041db.json",
+        "digest": "e3efe653c0eb82c22b88e4ad5b025a5443aa52c0c665ad6f3caf3d3b21ffdc62"
+      },
+      "plan_ref": {
+        "path": "plans/69beb9f782ecf69d4e3eb91dd452a37ab9b16cc772cc0f8c81f19a696e8d9a7b.json",
+        "digest": "0403c80e11106edf7bd8f82685b9468fbd927b44b36d088e4549a9e1a1deeebf"
+      },
+      "input_manifest_ref": {
+        "path": "inputs/3a6168113c0b295ef167071b9397ef3855b1a788ef65c6963ad5ed924fdaaf0f.json",
+        "digest": "f319619d9fa44bf3d0bcd1d644d33f55feb3b721521057127af3e4a457bee6b6"
+      },
+      "authorization_ref": {
+        "path": "authorizations/54743ed40967a2d1ee36002723f7c11a4538588cb9e698e5b9e15d0b819fe290.json",
+        "digest": "eb9c8c70802b3a1f312fb501c049affc5b4ffbe32c01b204598bdeb61a032ad8"
+      },
+      "cleanup_ref": {
+        "path": "cleanup/f921d5718778ed1fd643cc2073cf15c24a88d3519e0b23ef9d6d88ab3a9041db.json",
+        "digest": "90939d5d981eb8beeddf9ef1aeb1882166717474304fab720679f564e85c1b51"
+      },
+      "observation": {
+        "id": "host-process-proc_f0d3890987b34369b9be04a5b4ae33ab",
+        "schema": "verseshell.observation/v1",
+        "op": "process.start",
+        "digest": "97a7608bddcded50393df417949e8873833858b67d44c2f5d350283dca03a97e",
+        "process_key_digest": "6add4815ad9037699c07f06be41296ee2507d52acdc4a6c828cd15f011b0e71d",
+        "process_pid": 19988,
+        "exit_code": 1,
+        "timed_out": false,
+        "state": "exited",
+        "stdout_digest": "6559f96e4236920bfe43b5ce0215bf14c4399e042080249c1124961565ccf817",
+        "stderr_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "approval_required": true,
+        "approved_by_host": true,
+        "raw_stdout": "{\"schema\":\"clawx.versegit.required-tests/v1\",\"ok\":false,\"checks\":[{\"id\":\"producer-api\",\"passed\":true},{\"id\":\"consumer-a\",\"passed\":true},{\"id\":\"consumer-b-rework\",\"passed\":false},{\"id\":\"required-env\",\"passed\":true}]}\n",
+        "raw_stderr": ""
+      },
+      "receipt_result": {
+        "status": "accepted",
+        "reason": "receipt_bound",
+        "issues": [],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "run-e2-candidate-failure",
+        "receiptId": "receipt-run-e2-candidate-failure",
+        "status": "observed",
+        "reasons": [],
+        "dimensions": {
+          "candidate": "observed",
+          "execution": "failed",
+          "evidence": "receipt-bound",
+          "freshness": "epoch:3",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "direct-receipt",
+        "realVerseshellExecution": true,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": []
+      },
+      "authority_replay": {
+        "ok": true,
+        "issues": [],
+        "observationDigest": "97a7608bddcded50393df417949e8873833858b67d44c2f5d350283dca03a97e",
+        "artifactDigests": [
+          "0403c80e11106edf7bd8f82685b9468fbd927b44b36d088e4549a9e1a1deeebf",
+          "6559f96e4236920bfe43b5ce0215bf14c4399e042080249c1124961565ccf817",
+          "90939d5d981eb8beeddf9ef1aeb1882166717474304fab720679f564e85c1b51",
+          "97a7608bddcded50393df417949e8873833858b67d44c2f5d350283dca03a97e",
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "eb9c8c70802b3a1f312fb501c049affc5b4ffbe32c01b204598bdeb61a032ad8",
+          "f319619d9fa44bf3d0bcd1d644d33f55feb3b721521057127af3e4a457bee6b6"
+        ]
+      }
+    },
+    {
+      "run_id": "run-e2-candidate-continuation",
+      "candidate_id": "da69d4ef47ee4210ecbed2938db0f186dbe418968ccbea8af9ae8c4091055977",
+      "plan_id": "run-e2-candidate-continuation",
+      "plan_digest": "22eed12f7c5fe6ab7db5e6e429c5eec1b2e549d8a103d6ee71c5ce718fda53c3",
+      "check_id": "candidate-full-required-tests",
+      "owner_id": "owner-e2-candidate-receipts",
+      "epoch": 3,
+      "authorization_id": "auth-run-e2-candidate-continuation",
+      "input_digest": "fa5d124cc67dbb9e8b91fdedb7a63d67ac2f638bc2a1476cedd9988295681823",
+      "receipt": {
+        "schema": "clawx.verseshell.execution-receipt/v2",
+        "receiptId": "receipt-run-e2-candidate-continuation",
+        "planId": "run-e2-candidate-continuation",
+        "planDigest": "22eed12f7c5fe6ab7db5e6e429c5eec1b2e549d8a103d6ee71c5ce718fda53c3",
+        "candidateId": "da69d4ef47ee4210ecbed2938db0f186dbe418968ccbea8af9ae8c4091055977",
+        "checkId": "candidate-full-required-tests",
+        "ownerId": "owner-e2-candidate-receipts",
+        "epoch": 3,
+        "authorizationId": "auth-run-e2-candidate-continuation",
+        "argvDigest": "cb5cd0b8ff9ac6886ea6888ff564b68740dee46603dd5208a4ea8a0d46a2f050",
+        "cwdDigest": "7299b59de0b5dad3b622afc3bdf57544e505249c77a6d4254bd14b1fc9a4ade8",
+        "envDigest": "47b6d1a209aef96731707665c30e14793bf36ef015f5b441597e72e05216f0d0",
+        "executionInputDigest": "b89d4a3d23d6cc0e0d3cd7d155edb7c42cba637671f297834053f52c5f997e6b",
+        "requiredScope": "full",
+        "artifactDigests": [
+          "192fe8c1c9f9d92424c093f3c72385249b3eff02d05405e5cb5f3cbd79824794",
+          "44964bf575964ff3d955c23254ebfa1036e8650fb49c057327f92797a2ff3ba5",
+          "569dcd1bffd9116b18fa6c4cc5355fcd7dfc763c1e8ecb4afa4537a64c9f72d7",
+          "7ba7510800797bee3713601a7f8a48ed6b8975bb0ec39cd4ca3295adb50a5c66",
+          "bb171f852a818c8e8067241067e43c7f0e7ed01c3e97c594e756ab5cec2b9674",
+          "c47ee9cc64669630cbb09f66663a36058ded26ce031b363f68b36fa1ccfb2b84",
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        ],
+        "cleanupStatus": "clean",
+        "status": "exited",
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 701,
+        "stdoutDigest": "569dcd1bffd9116b18fa6c4cc5355fcd7dfc763c1e8ecb4afa4537a64c9f72d7",
+        "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "processKey": "93387c589f6a87684b336b155c07d45773d07d8f14873a5cd8147df3b1622a7f",
+        "authority": {
+          "writer": "verseshell",
+          "trusted_source": "clawx-host-process-artifact-authority"
+        },
+        "origin": "verseshell",
+        "realVerseshell": true,
+        "observationId": "host-process-proc_470b87ea3f3a467fbcb626d3b958b6dc",
+        "observationDigest": "c47ee9cc64669630cbb09f66663a36058ded26ce031b363f68b36fa1ccfb2b84",
+        "planFileDigest": "192fe8c1c9f9d92424c093f3c72385249b3eff02d05405e5cb5f3cbd79824794",
+        "inputManifestDigest": "bb171f852a818c8e8067241067e43c7f0e7ed01c3e97c594e756ab5cec2b9674",
+        "authorizationDigest": "7ba7510800797bee3713601a7f8a48ed6b8975bb0ec39cd4ca3295adb50a5c66",
+        "cleanupEvidenceDigest": "44964bf575964ff3d955c23254ebfa1036e8650fb49c057327f92797a2ff3ba5"
+      },
+      "receipt_ref": {
+        "path": "receipts/a0ba15c2d826745fcaa56c92e4ab0d32a475b395a0c6fe3fc6562074cef7f337.json",
+        "digest": "d02a4616f6a156dc476b9b6fc502d21fe9f9f35de493540ad91e7204456edde1"
+      },
+      "plan_ref": {
+        "path": "plans/c176329f3625710d0e141cb2101dbc9a4eb94bdffdc27a4eba06871c49d0436f.json",
+        "digest": "192fe8c1c9f9d92424c093f3c72385249b3eff02d05405e5cb5f3cbd79824794"
+      },
+      "input_manifest_ref": {
+        "path": "inputs/a8402b2f321c62ef4855b3a81fe24a4cc2c2345ead90eebe2896058eff436790.json",
+        "digest": "bb171f852a818c8e8067241067e43c7f0e7ed01c3e97c594e756ab5cec2b9674"
+      },
+      "authorization_ref": {
+        "path": "authorizations/fc3a8741aa0aa5797aea6ae93b1067d9aaa0d7cc025a91650e0ce6cd329a37aa.json",
+        "digest": "7ba7510800797bee3713601a7f8a48ed6b8975bb0ec39cd4ca3295adb50a5c66"
+      },
+      "cleanup_ref": {
+        "path": "cleanup/a0ba15c2d826745fcaa56c92e4ab0d32a475b395a0c6fe3fc6562074cef7f337.json",
+        "digest": "44964bf575964ff3d955c23254ebfa1036e8650fb49c057327f92797a2ff3ba5"
+      },
+      "observation": {
+        "id": "host-process-proc_470b87ea3f3a467fbcb626d3b958b6dc",
+        "schema": "verseshell.observation/v1",
+        "op": "process.start",
+        "digest": "c47ee9cc64669630cbb09f66663a36058ded26ce031b363f68b36fa1ccfb2b84",
+        "process_key_digest": "93387c589f6a87684b336b155c07d45773d07d8f14873a5cd8147df3b1622a7f",
+        "process_pid": 42096,
+        "exit_code": 0,
+        "timed_out": false,
+        "state": "exited",
+        "stdout_digest": "569dcd1bffd9116b18fa6c4cc5355fcd7dfc763c1e8ecb4afa4537a64c9f72d7",
+        "stderr_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "approval_required": true,
+        "approved_by_host": true,
+        "raw_stdout": "{\"schema\":\"clawx.versegit.required-tests/v1\",\"ok\":true,\"checks\":[{\"id\":\"producer-api\",\"passed\":true},{\"id\":\"consumer-a\",\"passed\":true},{\"id\":\"consumer-b-rework\",\"passed\":true},{\"id\":\"required-env\",\"passed\":true}]}\n",
+        "raw_stderr": ""
+      },
+      "receipt_result": {
+        "status": "accepted",
+        "reason": "receipt_bound",
+        "issues": [],
+        "hostVerdict": "unchanged"
+      },
+      "verdict": {
+        "schema": "clawx.versegit.receipt-verdict/v1",
+        "planId": "run-e2-candidate-continuation",
+        "receiptId": "receipt-run-e2-candidate-continuation",
+        "status": "observed",
+        "reasons": [],
+        "dimensions": {
+          "candidate": "observed",
+          "execution": "verified",
+          "evidence": "receipt-bound",
+          "freshness": "epoch:3",
+          "risk": "unknown",
+          "trial": "not_run"
+        },
+        "evidenceGrade": "direct-receipt",
+        "realVerseshellExecution": true,
+        "hostVerdict": "unchanged",
+        "singleGreenLight": false,
+        "issues": []
+      },
+      "authority_replay": {
+        "ok": true,
+        "issues": [],
+        "observationDigest": "c47ee9cc64669630cbb09f66663a36058ded26ce031b363f68b36fa1ccfb2b84",
+        "artifactDigests": [
+          "192fe8c1c9f9d92424c093f3c72385249b3eff02d05405e5cb5f3cbd79824794",
+          "44964bf575964ff3d955c23254ebfa1036e8650fb49c057327f92797a2ff3ba5",
+          "569dcd1bffd9116b18fa6c4cc5355fcd7dfc763c1e8ecb4afa4537a64c9f72d7",
+          "7ba7510800797bee3713601a7f8a48ed6b8975bb0ec39cd4ca3295adb50a5c66",
+          "bb171f852a818c8e8067241067e43c7f0e7ed01c3e97c594e756ab5cec2b9674",
+          "c47ee9cc64669630cbb09f66663a36058ded26ce031b363f68b36fa1ccfb2b84",
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        ]
+      }
+    }
+  ],
+  "failure_before_continuation": {
+    "failure_recorded_at": "2026-10-22T21:04:38.891Z",
+    "continuation_started_at": "2026-10-22T21:04:40.796Z",
+    "failure_receipt_retained_after_continuation": true,
+    "failure_before_continuation": true,
+    "candidate_ids_distinct": true,
+    "observation_digests_distinct": true,
+    "main_writeback_performed": false
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_off": true,
+    "m4_authorized": false,
+    "host_authority": "ClawX",
+    "vg_landing_authority": false
+  },
+  "passed": true,
+  "digest": "980e0fc2dff97c764a0c0c1014aea303027a7b06e097debb36d9827aa2fa2333"
+}

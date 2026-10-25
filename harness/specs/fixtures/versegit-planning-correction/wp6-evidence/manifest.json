@@ -1,0 +1,393 @@
+{
+  "schema": "clawx.versegit.wp6-manifest/v1",
+  "generated_at": "2026-10-21T20:41:53.516Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0472",
+  "productPosture": "non-ga-landed-unwired",
+  "finalReport": {
+    "path": "artifacts/versegit/wp6/final-report.json",
+    "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp6-evidence/final-report.json",
+    "sha256": "27350249f602093eb055be9bb34ad56acca64b0c51a4e6aa05b19d5dd3f5e698",
+    "digest": "6255949df6a72663cf4e2be220638fd67c3572a0842380b255c79ded84cd62a4"
+  },
+  "mc6Decision": {
+    "path": "artifacts/versegit/mc6/decision.json",
+    "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc6-evidence/decision.json",
+    "sha256": "9b39c1f3318be3ddf42e764d783ca1527ebad6f8c6170ab3ec1be9fd7f5152f4",
+    "digest": "04e0a1d023ab73aee14006ef9471c8f12d29112bb61a94f1dfbc245a506483b3",
+    "decision": "sidecar-only",
+    "sourceExtractionTriggered": false
+  },
+  "requiredGates": [
+    {
+      "nodeId": "TF-0473",
+      "role": "MC0",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json",
+      "curatedSha256": "59197644d7a95a36fc7319d358b3673761f4be80a59c3380b942c5c29cdcf89e",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json",
+      "artifactSha256": "59197644d7a95a36fc7319d358b3673761f4be80a59c3380b942c5c29cdcf89e",
+      "localMirrorPath": "artifacts/versegit/mc0/baseline.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "separate-diagnostic-captures",
+      "taskSpec": "harness/specs/tasks/versegit-mc0-baseline-freeze.md",
+      "taskSpecSha256": "1cc3a24df04d4b7fd8d83a9e4113fa51f06776413a19295c11798e9bf5235134",
+      "verifier": "scripts/verify-versegit-mc0.mjs",
+      "verifierSha256": "d0eaf5f0dee1d9c31e8ed90338e1ba2a0da817dc00a0347d7f1aa9b0842b71a7",
+      "schema": "clawx.versegit.mc0-baseline/v1"
+    },
+    {
+      "nodeId": "TF-0474",
+      "role": "MC1",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
+      "curatedSha256": "0d7d316db47f42d164a800982183a4f24e550a28dee1c8d2d03361c1ff9859ae",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/contract.json",
+      "artifactSha256": "0d7d316db47f42d164a800982183a4f24e550a28dee1c8d2d03361c1ff9859ae",
+      "localMirrorPath": null,
+      "localMirrorPolicy": "tracked-curated-canonical",
+      "artifactRelationship": "curated-only",
+      "taskSpec": "harness/specs/tasks/versegit-mc1-consumer-contract.md",
+      "taskSpecSha256": "3e07f728551954a9a4c29cf2cf69c8a3688c051000eaa83df7189b62ed5b11dc",
+      "verifier": "scripts/verify-versegit-mc1.mjs",
+      "verifierSha256": "37111142b8fd0a98ecc23a0be2a24c06b5281cbc02d224d96a01461a72dfd1f8",
+      "schema": "clawx.versegit.consumer-contract/v1"
+    },
+    {
+      "nodeId": "TF-0475",
+      "role": "MC2",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc2-evidence/golden.json",
+      "curatedSha256": "ccfc887e6cfb80d23471717c45c9d41873b66307423a52d083ddc78d3fc4fdf3",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/mc2-evidence/golden.json",
+      "artifactSha256": "ccfc887e6cfb80d23471717c45c9d41873b66307423a52d083ddc78d3fc4fdf3",
+      "localMirrorPath": "artifacts/versegit/mc2/golden.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-mc2-behavior-fingerprint.md",
+      "taskSpecSha256": "7402e8403b9ef841e4de28d389f353560f3103020d98846870baa928f29bcacf",
+      "verifier": "scripts/verify-versegit-mc2.mjs",
+      "verifierSha256": "191359577c47ee471dee63d6e89cc932b391ed4f065e64fbbf8fb7f993b51f3e",
+      "schema": "clawx.versegit.mc2-fingerprint/v1"
+    },
+    {
+      "nodeId": "TF-0476",
+      "role": "MC3",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc3-evidence/package-manifest.json",
+      "curatedSha256": "72bbefe274ebf1a3a3ad17d38a351fdba1334fb8833b8f7df8310761cec3317b",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/mc3-evidence/package-manifest.json",
+      "artifactSha256": "72bbefe274ebf1a3a3ad17d38a351fdba1334fb8833b8f7df8310761cec3317b",
+      "localMirrorPath": "artifacts/versegit/mc3/package-manifest.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-mc3-sidecar-delivery.md",
+      "taskSpecSha256": "deebda20ed36a0fb904c9e0ec49cefe68337dc4fb431f571eeeb00a5b1c1b964",
+      "verifier": "scripts/verify-versegit-mc3.mjs",
+      "verifierSha256": "2e156a4949c2931be2ec5c51aec5363ea2fa59881ddd55c71700922c262114c9",
+      "schema": "clawx.versegit.mc3-package/v1"
+    },
+    {
+      "nodeId": "TF-0477",
+      "role": "MC4",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+      "curatedSha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/adapter-report.json",
+      "artifactSha256": "c2646aab06fce2d3652344c1562448f12a0d887941e4a45d25c4044bcaf1f98f",
+      "localMirrorPath": "artifacts/versegit/mc4/adapter-report.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-mc4-module-adapter.md",
+      "taskSpecSha256": "a2b44a7b219a7a01c2905f6c53af69aa2cab88dfbf10f2824409f4534761c53e",
+      "verifier": "scripts/verify-versegit-mc4.mjs",
+      "verifierSha256": "593595a59d23726997698c5c2130b4639ed5044c9a1ac10f1bf15e360673a880",
+      "schema": "clawx.versegit.mc4-adapter/v1"
+    },
+    {
+      "nodeId": "TF-0478",
+      "role": "MC5",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+      "curatedSha256": "687694fbb402e4c73d8827d2e2a1f79b4d37f1d54837334ca9c2cc263eb85cc5",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/differential-report.json",
+      "artifactSha256": "687694fbb402e4c73d8827d2e2a1f79b4d37f1d54837334ca9c2cc263eb85cc5",
+      "localMirrorPath": "artifacts/versegit/mc5/differential-report.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-mc5-differential-gate.md",
+      "taskSpecSha256": "9d0b0690d9cbbe4c5ee0fc8e8c3414903a31097740eadb911b154daabdf38c17",
+      "verifier": "scripts/verify-versegit-mc5.mjs",
+      "verifierSha256": "65697fe6680b6300d5ceff61a92870f197cd79cfcce9069f49feabebe3fa6f72",
+      "schema": "clawx.versegit.mc5-differential/v1"
+    },
+    {
+      "nodeId": "TF-0466",
+      "role": "WP0",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
+      "curatedSha256": "d4ec1fc974ba36352d9f0c8f31dc61551442ba225420c07abba9bd44aa9bc585",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/contract.json",
+      "artifactSha256": "d4ec1fc974ba36352d9f0c8f31dc61551442ba225420c07abba9bd44aa9bc585",
+      "localMirrorPath": "artifacts/versegit/wp0/contract.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-wp0-module-contract.md",
+      "taskSpecSha256": "e360a90dba260cb8babda4a62ef93cec3ea5426d05ac84be6e4322fb6d3c84df",
+      "verifier": "scripts/verify-versegit-wp0.mjs",
+      "verifierSha256": "1922175d374f5ece21206fe6024f8339f34cc5dcac29e9094f92d64c4142feb6",
+      "schema": "clawx.versegit.wp0-contract/v1"
+    },
+    {
+      "nodeId": "TF-0467",
+      "role": "WP1",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events-report.json",
+      "curatedSha256": "75ba5ec9dde4a8a5f25330544b696e2741ce3d3a29d0e289dca09177d6d580b9",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/events-report.json",
+      "artifactSha256": "75ba5ec9dde4a8a5f25330544b696e2741ce3d3a29d0e289dca09177d6d580b9",
+      "localMirrorPath": "artifacts/versegit/wp1/events-report.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-wp1-observation-bridge.md",
+      "taskSpecSha256": "d26bcfb83e76d54ef1fd85a750fdd75a06105ab29745560d2b9dc57449c6fe2c",
+      "verifier": "scripts/verify-versegit-wp1.mjs",
+      "verifierSha256": "8194c0bc5d45214ee611e073e860ad82f9e051c0da9aaf8f40c978c14e1139ed",
+      "schema": "clawx.versegit.wp1-evidence-report/v1"
+    },
+    {
+      "nodeId": "TF-0468",
+      "role": "WP2",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
+      "curatedSha256": "8bbbcb5366e8bbd6094325ae1a143403053c01ab8453b9dd25c1393b43547361",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json",
+      "artifactSha256": "8bbbcb5366e8bbd6094325ae1a143403053c01ab8453b9dd25c1393b43547361",
+      "localMirrorPath": "artifacts/versegit/wp2/report.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-wp2-diagnostic-profile.md",
+      "taskSpecSha256": "7728ee132e0047677b74ea983f98bd020201ebac7875ce3e740f6c44c51522c0",
+      "verifier": "scripts/verify-versegit-wp2.mjs",
+      "verifierSha256": "2d7c30a6bee18d1ee0824696cc29da04bf93295423ae564034a56e4d25be6232",
+      "schema": "clawx.versegit.wp2-profile/v1"
+    },
+    {
+      "nodeId": "TF-0469",
+      "role": "WP3",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
+      "curatedSha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/verdict.json",
+      "artifactSha256": "b9b3cd1c14cb90712f4307af66808cb69294eedb142c23413797b0bbb4d48d7d",
+      "localMirrorPath": "artifacts/versegit/wp3/verdict.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-wp3-receipt-bridge.md",
+      "taskSpecSha256": "9b0c8ddd8b43a3a7e924b8aafb05ad85e25e71dd756e1bdf301fcbc09820616d",
+      "verifier": "scripts/verify-versegit-wp3.mjs",
+      "verifierSha256": "bac7afef1411a1bdceed05038f14a89221c7b053187945fe4e3a8ba3c0ed0f91",
+      "schema": "clawx.versegit.wp3-receipt-evidence/v1"
+    },
+    {
+      "nodeId": "TF-0470",
+      "role": "WP4",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp4-evidence/coverage.json",
+      "curatedSha256": "f7a3e5569f43f095455c301a4b16f942745b65d3b88580339389a8000cdae82e",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp4-evidence/coverage.json",
+      "artifactSha256": "f7a3e5569f43f095455c301a4b16f942745b65d3b88580339389a8000cdae82e",
+      "localMirrorPath": "artifacts/versegit/wp4/coverage.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-wp4-behavior-coverage.md",
+      "taskSpecSha256": "464d2eabd2395e032ec5f985100a769832a4726644b8003e8d7cf554b8db77a0",
+      "verifier": "scripts/verify-versegit-wp4.mjs",
+      "verifierSha256": "8c65f364767c9bd85ba8c1a4e14023ec1117084b330e5199a7519674a925a0ea",
+      "schema": "clawx.versegit.wp4-coverage-evidence/v1"
+    },
+    {
+      "nodeId": "TF-0471",
+      "role": "WP5",
+      "curatedPath": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json",
+      "curatedSha256": "13aeb09c889177d732faad7a842f2067c95d0dd27c38020110fe0ed8598aa6bf",
+      "artifactPath": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/soak-report.json",
+      "artifactSha256": "13aeb09c889177d732faad7a842f2067c95d0dd27c38020110fe0ed8598aa6bf",
+      "localMirrorPath": "artifacts/versegit/wp5/soak-report.json",
+      "localMirrorPolicy": "tracked-curated-canonical; optional ignored mirror checked when present",
+      "artifactRelationship": "semantic-equivalent-when-local-mirror-present",
+      "taskSpec": "harness/specs/tasks/versegit-wp5-replay-soak.md",
+      "taskSpecSha256": "9910524f56de7832f72006285d93fefa92fb46e2549f8e8414c33e75da6476d2",
+      "verifier": "scripts/verify-versegit-wp5.mjs",
+      "verifierSha256": "9f94d0e764c6a1d9ab596dbb61271693cfff0a00d25dd34fed30b7231b71f8f4",
+      "schema": "clawx.versegit.wp5-soak/v1"
+    }
+  ],
+  "evidenceManifests": [
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc0-evidence/SHA256SUMS",
+      "sha256": "f3ad4ffb9ff6315add902512babb584c3f9ee77c404b94ff88782c5faffca8f8",
+      "entries": 5
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc1-evidence/SHA256SUMS",
+      "sha256": "309c0c03f6c07909c996e7682df70631e193130bab45dc9639faf4f6f032fdc6",
+      "entries": 6
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc2-evidence/SHA256SUMS",
+      "sha256": "eeb6a3e944d6e46a84ede2a8a03af606ab5de818ff5e3b17ef622a22a1d596d8",
+      "entries": 6
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc3-evidence/SHA256SUMS",
+      "sha256": "6628de32904be68fb59c9b745b958675eabb292e0b50848fbf15b6db70b2f52d",
+      "entries": 6
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc4-evidence/SHA256SUMS",
+      "sha256": "47bc19256e97e779c365b1d10a540c5e891245e1baf1f78bab0846567455f95f",
+      "entries": 7
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/mc5-evidence/SHA256SUMS",
+      "sha256": "a2ecea1b6d72380d571d2a99f1b2a0ddd56752e011b4c98a4bbca98dfeb375bd",
+      "entries": 6
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp0-evidence/SHA256SUMS",
+      "sha256": "31831a1861deee9c75f4c1c8c96f797d7f1a52091cdccb1cb3a25ec99ace5ca1",
+      "entries": 6
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp1-evidence/SHA256SUMS",
+      "sha256": "532cd4fd54935518c22ef1ab83cf5f9e2cdc8232d4d1a878d991783856d55b78",
+      "entries": 8
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS",
+      "sha256": "1ff5b7665a9579e7cde6c4184f205debc2ca3be3f5eca8f2dda1c472f008d2d5",
+      "entries": 8
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS",
+      "sha256": "56acaa151e1b16715c911f3a631c68a4edb16127b8a22d0103cd225a9454dd36",
+      "entries": 7
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp4-evidence/SHA256SUMS",
+      "sha256": "93c08959a3a772ec18a1d0922a154074c3ab717641c3e003194f77d36a725fab",
+      "entries": 7
+    },
+    {
+      "path": "harness/specs/fixtures/versegit-planning-correction/wp5-evidence/SHA256SUMS",
+      "sha256": "b1d926f5d608b092b1b79febbed81f96c8031bb1bc85159995da3097b314efc1",
+      "entries": 6
+    }
+  ],
+  "evidenceUniqueFileCount": 77,
+  "credentialScan": {
+    "status": "passed",
+    "filesScanned": 85,
+    "patterns": [
+      "openai-like",
+      "github-like",
+      "aws-access-key",
+      "private-key",
+      "phc-like"
+    ],
+    "hits": [],
+    "passed": true
+  },
+  "localMirrorManifests": {
+    "declared": 12,
+    "policy": "checked-when-present; ignored artifacts are not required for clean-checkout replay",
+    "requiredForCleanReplay": false
+  },
+  "authority": {
+    "hostVerdict": "unchanged",
+    "singleGreenLight": false,
+    "harnessVerdictOwner": "host",
+    "executionOwner": "verseShell",
+    "landingOwner": "host-git",
+    "liveVerseShellReceiptExecuted": false,
+    "verseShellBridgeMode": "structural-only",
+    "landOrAdmitInvoked": false,
+    "m4Authorized": false,
+    "observedHostVerdicts": [
+      {
+        "role": "WP0",
+        "value": "unchanged"
+      },
+      {
+        "role": "WP1",
+        "value": "unchanged"
+      },
+      {
+        "role": "WP2",
+        "value": "unchanged"
+      },
+      {
+        "role": "WP3",
+        "value": "unchanged"
+      },
+      {
+        "role": "WP5",
+        "value": "unchanged"
+      }
+    ]
+  },
+  "release": {
+    "productPosture": "non-ga-landed-unwired",
+    "defaultOn": false,
+    "packageStatus": "rejected",
+    "releaseEligible": false,
+    "ga": false,
+    "sourceStatus": "dirty",
+    "binaryProfile": "debug",
+    "releaseBinaryBuilt": false,
+    "blockers": [
+      "not_a_deliverable_baseline",
+      "release_binary_not_built",
+      "source_worktree_dirty"
+    ],
+    "evidenceClosureIsProductApproval": false
+  },
+  "coverage": {
+    "source": "WP4 normalized behavior coverage; WP5 matters are bounded replay observations, not a completeness upgrade",
+    "coverageVector": {
+      "fileRead": "host-event",
+      "fileWrite": "host-event",
+      "search": "host-event",
+      "shellRead": "unobserved",
+      "shellWrite": "inferred",
+      "mcpRead": "partial",
+      "mcpWrite": "unobserved",
+      "network": "partial",
+      "browser": "unobserved",
+      "directFs": "unobserved"
+    },
+    "requiredUnobservedSurfaces": [
+      "shell reads and process-derived file reads",
+      "direct filesystem access outside host instrumentation",
+      "arbitrary MCP reads and writes outside the typed host surface",
+      "network access",
+      "browser activity"
+    ]
+  },
+  "platformCoverage": {
+    "executed": [
+      "win32-x64"
+    ],
+    "unexecuted": [
+      "linux",
+      "macos"
+    ],
+    "boundary": "Windows-only validation; other platforms are unmeasured, not proven equivalent"
+  },
+  "m4": {
+    "status": "not_authorized",
+    "requested": false,
+    "landOrAdmitInvoked": false,
+    "reason": "No separate CAS landing ownership decision exists; WP0-WP5 evidence cannot promote M1-M3 into M4.",
+    "prerequisites": [
+      "a live host-authoritative VerseShell receipt independently rebuilds verification facts",
+      "cross-process crash, CAS conflict and stale-head recovery evidence exists",
+      "product locks and owner change are separately decided",
+      "vg admitted is never written as the harness verdict",
+      "land and admit remain absent from the default development path"
+    ]
+  },
+  "passed": true,
+  "digest": "a3e53ab7c8fcb969bd2d63a12ea2190c68ee47b785f3f082143e4af6eaa80719"
+}

@@ -1,0 +1,47 @@
+{
+  "schema": "clawx.versegit.product-a2-evidence/v1",
+  "kind": "cleanup",
+  "generated_at": "2026-10-22T12:39:29.629Z",
+  "task": "TF-0525",
+  "driven_by": "agent",
+  "actor": "codex",
+  "raw_run_report_sha256": "41106fea9452b6d7880a2721faeb4c472f6f1afbd74eeb6592d775e7204bf93c",
+  "raw_cleanup_report_sha256": "b6de092704ed092d7d6248fb935133941cc6e2cfa2590f470f58e5fb68cc3ca7",
+  "run_root_role": ".local/e2e-run-base/verse-claw-e2e-run-bnwLrZ",
+  "ledger_entries": 6,
+  "pid_checks": [
+    {
+      "pid": 54380,
+      "alive_after": false
+    },
+    {
+      "pid": 47576,
+      "alive_after": false
+    },
+    {
+      "pid": 3632,
+      "alive_after": false
+    },
+    {
+      "pid": 53616,
+      "alive_after": false
+    },
+    {
+      "pid": 11640,
+      "alive_after": false
+    },
+    {
+      "pid": 41508,
+      "alive_after": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "owned": 0,
+    "remaining": 0
+  },
+  "source_modified_by_cleanup": false,
+  "user_data_retention": "ignored .local run root is not promoted to Git; curated cleanup summary is retained",
+  "digest": "26ec2aa07dcaa926fa4b1041b23053a8b2937bb6dfe0d31346ba429fec3b0faf"
+}

@@ -4245,6 +4245,7 @@ export const chatHandlers: GatewayRequestHandlers = {
           : {}),
         GatewayClientScopes: client?.connect?.scopes ?? [],
         ...(workspaceDir ? { WorkspaceDir: workspaceDir } : {}),
+        ...(workspaceId ? { WorkspaceId: workspaceId } : {}),
         // D3 closeout (consumer side): forward the trusted workspace authority
         // fingerprint so embedded attempt can prefer it over the locally
         // computed `effectiveWorkspace` fingerprint. Absent → agent-config

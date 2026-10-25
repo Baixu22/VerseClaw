@@ -1,0 +1,18 @@
+{
+  "schema": "clawx.versegit.wp7-host-vertical-fixture/v1",
+  "nodeId": "TF-0513",
+  "role": "WP7",
+  "fixturePurpose": "Bounded real-host vertical integration: two concurrent worktree/session identities, real VerseGit facts, a composed candidate, real VerseShell-governed verification, host-owned receipt acceptance, failure rejection and continuation.",
+  "worktreeCount": 3,
+  "activeSessionCount": 2,
+  "runs": 2,
+  "maxDurationMs": 240000,
+  "expectedOutputs": [
+    "artifacts/versegit/wp7/host-vertical-report.json",
+    "artifacts/versegit/wp7/SHA256SUMS",
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/report.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/SHA256SUMS",
+    "artifacts/versegit/wp7/evidence/manifest.json",
+    "harness/specs/fixtures/versegit-planning-correction/wp7-evidence/evidence/manifest.json"
+  ]
+}

@@ -87,12 +87,31 @@ export type GovernedVerseShellProcessHandle = {
   runtimeId: string;
   pid: number;
   mode: "pipe" | "pty";
+  approvalRequired: boolean;
   stdin: GovernedVerseShellProcessStdin;
   wait: () => Promise<GovernedVerseShellProcessExit>;
   kill: (reason?: TerminationReason) => Promise<void>;
   resourceReceipt: GovernedProcessResourceReceipt;
 };
 
+export type GovernedVerseShellProcessObservedResult = {
+  stdout: string;
+  stderr: string;
+  success: boolean;
+  exitCode: number | null;
+  timedOut: boolean;
+  state: Exclude<ProcessState, "running">;
+  terminationReason?: string;
+  observation: Observation;
+  processKey: string;
+  processPid: number;
+  managerKey: string;
+  processKeys: string[];
+  approvalRequired: boolean;
+  approvedByHost: boolean;
+  deadlineAt: number;
+  resourceReceipt: GovernedProcessResourceReceipt;
+};
 export type GovernedProcessResourceLimits = {
   maxMemoryBytes?: number;
   maxProcesses?: number;
@@ -129,6 +148,8 @@ export type GovernedVerseShellProcessOptions = {
   cwd: string;
   processEnv: Record<string, string>;
   timeoutMs?: number;
+  /** Absolute host deadline; remaining time is bounded by this value before start. */
+  deadlineAt?: number;
   maxOutputBytes: number;
   usePty: boolean;
   agentId: string;
@@ -310,9 +331,15 @@ export async function startGovernedVerseShellProcess(
     );
   }
   const profile = plan.profileDefinition;
-  const boundedTimeoutMs = options.timeoutMs === undefined
+  const remainingDeadlineMs = options.deadlineAt === undefined
     ? profile.maxTimeoutMs
-    : Math.min(Math.max(1, options.timeoutMs), profile.maxTimeoutMs);
+    : options.deadlineAt - Date.now();
+  if (remainingDeadlineMs <= 0) {
+    throw new GovernedVerseShellError("E_PROCESS_DEADLINE", "candidate verification deadline has elapsed");
+  }
+  const boundedTimeoutMs = options.timeoutMs === undefined
+    ? Math.min(profile.maxTimeoutMs, remainingDeadlineMs)
+    : Math.min(Math.max(1, options.timeoutMs), profile.maxTimeoutMs, remainingDeadlineMs);
   const boundedOutputBytes = Math.min(
     Math.max(1, options.maxOutputBytes),
     profile.maxOutputBytes,
@@ -564,11 +591,13 @@ export async function startGovernedVerseShellProcess(
     }
   })();
 
+  const approvalRequired = first.error?.code === "E_NEEDS_APPROVAL";
   return {
     processId: identity.process_id,
     runtimeId: identity.runtime_id,
     pid: snapshot.pid,
     mode: snapshot.mode,
+    approvalRequired,
     stdin,
     wait: async () => await waitPromise,
     resourceReceipt,
@@ -581,5 +610,76 @@ export async function startGovernedVerseShellProcess(
       );
       if (!observation.ok) throw observationError(observation);
     },
+  };
+}
+
+/**
+ * Run one exact plan through the production process.start lifecycle and derive a
+ * host-owned observation from the verified exit, streams and managed process identity.
+ */
+export async function executeGovernedVerseShellProcessObserved(
+  options: GovernedVerseShellProcessOptions,
+): Promise<GovernedVerseShellProcessObservedResult> {
+  const manager = getGovernedVerseShellManager(options.manager);
+  const startedAt = Date.now();
+  const deadlineAt = options.deadlineAt ?? startedAt + (options.timeoutMs ?? 60_000);
+  let stdout = "";
+  let stderr = "";
+  const handle = await startGovernedVerseShellProcess({
+    ...options,
+    manager,
+    onStdout: (chunk) => {
+      stdout += chunk;
+      options.onStdout?.(chunk);
+    },
+    onStderr: (chunk) => {
+      stderr += chunk;
+      options.onStderr?.(chunk);
+    },
+  });
+  const health = manager.list().find((entry) => entry.pid === handle.pid);
+  const processKey = health?.key ?? `process-pid-${handle.pid}`;
+  const managerKey = health?.key ?? processKey;
+  const exit = await handle.wait();
+  const success = exit.state === "exited" && exit.exitCode === 0 && !exit.timedOut;
+  const observation: Observation = {
+    schema: "verseshell.observation/v1",
+    id: `host-process-${handle.processId}`,
+    op: "process.start",
+    ok: success,
+    status: success ? "ok" : "failed",
+    data: {
+      exit_code: exit.exitCode,
+      timed_out: exit.timedOut,
+      state: exit.state,
+      stdout: { text: stdout },
+      stderr: { text: stderr },
+      ...(exit.terminationReason ? { termination_reason: exit.terminationReason } : {}),
+      artifacts: exit.artifacts,
+    },
+    meta: {
+      elapsed_ms: Date.now() - startedAt,
+      profile: "clawx-governed-process/v1",
+      token_estimate: Math.ceil((stdout.length + stderr.length) / 4),
+      capabilities_used: ["shell.exec"],
+    },
+  };
+  return {
+    stdout,
+    stderr,
+    success,
+    exitCode: exit.exitCode,
+    timedOut: exit.timedOut,
+    state: exit.state,
+    ...(exit.terminationReason ? { terminationReason: exit.terminationReason } : {}),
+    observation,
+    processKey,
+    processPid: handle.pid,
+    managerKey,
+    processKeys: [processKey],
+    approvalRequired: handle.approvalRequired,
+    approvedByHost: options.hostPolicyApproved,
+    deadlineAt,
+    resourceReceipt: handle.resourceReceipt,
   };
 }

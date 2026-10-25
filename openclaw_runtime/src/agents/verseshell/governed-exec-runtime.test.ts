@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { runExecProcess } from "../bash-tools.exec-runtime.js";
+import { createExecPermissionEffect } from "../bash-tools.exec-permission.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 
 const FLAG_ENV = [
@@ -29,6 +30,13 @@ async function runVerseShell(config?: OpenClawConfig) {
     command: "node --version",
     execHost: "verseshell",
     hostPolicyApproved: true,
+    permissionEffect: createExecPermissionEffect({
+      ownerDecisionRef: "verseshell-rollout-test",
+      command: "node --version",
+      host: "verseshell",
+      workdir: process.cwd(),
+      agentId: "verseshell-rollout-test",
+    }),
     agentId: "verseshell-rollout-test",
     config,
     workdir: process.cwd(),

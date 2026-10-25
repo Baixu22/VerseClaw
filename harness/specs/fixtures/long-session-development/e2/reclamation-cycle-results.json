@@ -1,0 +1,1269 @@
+{
+  "schema": "clawx.long-session.e2-cycle-results/v1",
+  "drivenBy": "agent",
+  "actor": "codex-long-session-e2",
+  "taskForestNode": "TF-0560",
+  "generatedAt": "2026-10-23T17:48:58.388Z",
+  "candidate": {
+    "branch": "codex/long-session-implementation-20261022",
+    "commit": "7c8348b579f0278b09595c8929a83e09ab0da232",
+    "tree": "6bc9376ba2b83141c8f97f2742ba66e118106eee",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+  },
+  "scope": {
+    "workspaceId": "workspace-a",
+    "sessionKey": "agent:architect:e2-long-session",
+    "expectedSessionId": "session-generation-1",
+    "rootPath": "D:/workspace-a"
+  },
+  "cycles": 50,
+  "results": [
+    {
+      "cycle": 1,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 2,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 1,
+      "laneResidue": 0,
+      "terminalKept": 1,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 1,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 2,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 3,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 2,
+      "laneResidue": 0,
+      "terminalKept": 2,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 2,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 3,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 4,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 3,
+      "laneResidue": 0,
+      "terminalKept": 3,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 3,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 4,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 5,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 4,
+      "laneResidue": 0,
+      "terminalKept": 4,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 4,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 5,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 6,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 5,
+      "laneResidue": 0,
+      "terminalKept": 5,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 5,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 6,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 7,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 6,
+      "laneResidue": 0,
+      "terminalKept": 6,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 6,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 7,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 8,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 7,
+      "laneResidue": 0,
+      "terminalKept": 7,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 7,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 8,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 9,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 8,
+      "laneResidue": 0,
+      "terminalKept": 8,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 8,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 9,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 10,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 9,
+      "laneResidue": 0,
+      "terminalKept": 9,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 9,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 10,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 11,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 10,
+      "laneResidue": 0,
+      "terminalKept": 10,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 10,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 11,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 12,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 11,
+      "laneResidue": 0,
+      "terminalKept": 11,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 11,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 12,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 13,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 12,
+      "laneResidue": 0,
+      "terminalKept": 12,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 12,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 13,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 14,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 13,
+      "laneResidue": 0,
+      "terminalKept": 13,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 13,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 14,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 15,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 14,
+      "laneResidue": 0,
+      "terminalKept": 14,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 14,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 15,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 16,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 15,
+      "laneResidue": 0,
+      "terminalKept": 15,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 15,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 16,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 17,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 16,
+      "laneResidue": 0,
+      "terminalKept": 16,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 16,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 17,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 18,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 17,
+      "laneResidue": 0,
+      "terminalKept": 17,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 17,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 18,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 19,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 18,
+      "laneResidue": 0,
+      "terminalKept": 18,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 18,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 19,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 20,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 19,
+      "laneResidue": 0,
+      "terminalKept": 19,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 19,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 20,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 21,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 20,
+      "laneResidue": 0,
+      "terminalKept": 20,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 20,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 21,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 22,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 21,
+      "laneResidue": 0,
+      "terminalKept": 21,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 21,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 22,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 23,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 22,
+      "laneResidue": 0,
+      "terminalKept": 22,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 22,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 23,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 24,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 23,
+      "laneResidue": 0,
+      "terminalKept": 23,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 23,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 24,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 25,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 24,
+      "laneResidue": 0,
+      "terminalKept": 24,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 24,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 25,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 26,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 25,
+      "laneResidue": 0,
+      "terminalKept": 25,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 25,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 26,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 27,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 26,
+      "laneResidue": 0,
+      "terminalKept": 26,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 26,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 27,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 28,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 27,
+      "laneResidue": 0,
+      "terminalKept": 27,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 27,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 28,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 29,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 28,
+      "laneResidue": 0,
+      "terminalKept": 28,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 28,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 29,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 30,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 29,
+      "laneResidue": 0,
+      "terminalKept": 29,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 29,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 30,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 31,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 30,
+      "laneResidue": 0,
+      "terminalKept": 30,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 30,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 31,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 32,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 31,
+      "laneResidue": 0,
+      "terminalKept": 31,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 31,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 32,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 33,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 32,
+      "laneResidue": 0,
+      "terminalKept": 32,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 32,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 33,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 34,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 33,
+      "laneResidue": 0,
+      "terminalKept": 33,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 33,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 34,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 35,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 34,
+      "laneResidue": 0,
+      "terminalKept": 34,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 34,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 35,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 36,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 35,
+      "laneResidue": 0,
+      "terminalKept": 35,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 35,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 36,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 37,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 36,
+      "laneResidue": 0,
+      "terminalKept": 36,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 36,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 37,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 38,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 37,
+      "laneResidue": 0,
+      "terminalKept": 37,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 37,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 38,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 39,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 38,
+      "laneResidue": 0,
+      "terminalKept": 38,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 38,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 39,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 40,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 39,
+      "laneResidue": 0,
+      "terminalKept": 39,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 39,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 40,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 41,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 40,
+      "laneResidue": 0,
+      "terminalKept": 40,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 40,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 41,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 42,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 41,
+      "laneResidue": 0,
+      "terminalKept": 41,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 41,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 42,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 43,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 42,
+      "laneResidue": 0,
+      "terminalKept": 42,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 42,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 43,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 44,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 43,
+      "laneResidue": 0,
+      "terminalKept": 43,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 43,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 44,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 45,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 44,
+      "laneResidue": 0,
+      "terminalKept": 44,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 44,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 45,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 46,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 45,
+      "laneResidue": 0,
+      "terminalKept": 45,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 45,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 46,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 47,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 46,
+      "laneResidue": 0,
+      "terminalKept": 46,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 46,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 47,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 48,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 47,
+      "laneResidue": 0,
+      "terminalKept": 47,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 47,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 48,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 49,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 48,
+      "laneResidue": 0,
+      "terminalKept": 48,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 48,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 49,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 50,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 49,
+      "laneResidue": 0,
+      "terminalKept": 49,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 49,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    },
+    {
+      "cycle": 50,
+      "archiveRecoveryRequired": false,
+      "archivedKeptOnLeave": 51,
+      "deleteRecoveryRequired": false,
+      "keptOnLeave": 50,
+      "laneResidue": 0,
+      "terminalKept": 50,
+      "ownerOutcomes": [
+        "terminal:reclaimed",
+        "browser:reclaimed",
+        "background-port:reclaimed",
+        "worktree:reclaimed",
+        "admission-permit:reclaimed"
+      ],
+      "liveAfter": {
+        "terminals": 50,
+        "browsers": 0,
+        "ports": 0,
+        "worktrees": 0,
+        "admissionPermits": 0
+      }
+    }
+  ],
+  "final": {
+    "keepOnLeaveTerminals": 50,
+    "managedResidue": 0,
+    "zeroLaneResidue": true,
+    "recoveryRequired": false
+  },
+  "semantics": {
+    "laneResidue": "managed resources only; keep_on_leave terminals are counted separately and never treated as failures",
+    "cycle": "create -> archive -> session-delete -> owner readback"
+  },
+  "gateReceipt": {
+    "provided": true,
+    "source": "D:/tmp/long-session-e2/gates-7c8348b57/gates.json",
+    "allPassed": true,
+    "gates": [
+      {
+        "name": "terminal-delete-unit",
+        "command": "pnpm exec vitest run tests/unit/terminal-session-manager.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/session-delete-gate.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 7207,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\terminal-delete-unit.log",
+        "summary": "  Test Files  3 passed (3)       Tests  10 passed (10)    Start at  01:47:51    Duration  4.38s (transform 668ms, setup 369ms, import 817ms, tests 987ms, environment 1.58s) "
+      },
+      {
+        "name": "admission-unit",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/sessions/session-admission-registry.test.ts src/sessions/session-admission-registry-reclamation.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 6988,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\admission-unit.log",
+        "summary": "  Test Files  2 passed (2)       Tests  23 passed (23)    Start at  01:48:01    Duration  700ms (transform 86ms, setup 0ms, import 151ms, tests 165ms, environment 0ms) "
+      },
+      {
+        "name": "e2-unit",
+        "command": "pnpm exec vitest run tests/unit/long-session-resource-reclamation.test.ts --maxWorkers=1",
+        "exitCode": 0,
+        "durationMs": 2343,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\e2-unit.log",
+        "summary": "  Test Files  1 passed (1)       Tests  8 passed (8)    Start at  01:48:04    Duration  412ms (transform 67ms, setup 134ms, import 28ms, tests 15ms, environment 0ms) "
+      },
+      {
+        "name": "typecheck",
+        "command": "pnpm run typecheck",
+        "exitCode": 0,
+        "durationMs": 35092,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\typecheck.log",
+        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
+      },
+      {
+        "name": "contract-check",
+        "command": "pnpm run contract:check",
+        "exitCode": 0,
+        "durationMs": 908,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\contract-check.log",
+        "summary": "$ node scripts/contract-check.mjs Contract check passed."
+      },
+      {
+        "name": "comms-replay",
+        "command": "pnpm run comms:replay",
+        "exitCode": 0,
+        "durationMs": 1021,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\comms-replay.log",
+        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
+      },
+      {
+        "name": "comms-compare",
+        "command": "pnpm run comms:compare",
+        "exitCode": 0,
+        "durationMs": 865,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\comms-compare.log",
+        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
+      },
+      {
+        "name": "harness-validate",
+        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-resource-reclamation.md",
+        "exitCode": 0,
+        "durationMs": 1797,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\harness-validate.log",
+        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-resource-reclamation.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-resource-reclamation.md\" Spec is valid: harness\\specs\\tasks\\long-session-resource-reclamation.md"
+      },
+      {
+        "name": "git-diff-check",
+        "command": "git diff --check",
+        "exitCode": 0,
+        "durationMs": 91,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\git-diff-check.log",
+        "summary": ""
+      },
+      {
+        "name": "eslint-changed",
+        "command": "pnpm exec eslint shared/long-session-resource-reclamation.ts electron/services/long-session-resource-reclamation.ts electron/services/terminal-session-manager.ts electron/services/sessions-api.ts tests/unit/long-session-resource-reclamation.test.ts scripts/long-session-reclamation-evidence.mjs",
+        "exitCode": 0,
+        "durationMs": 6108,
+        "log": "D:\\tmp\\long-session-e2\\gates-7c8348b57\\eslint-changed.log",
+        "summary": ""
+      }
+    ]
+  }
+}

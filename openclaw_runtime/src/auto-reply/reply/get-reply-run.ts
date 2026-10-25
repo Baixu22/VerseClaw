@@ -1332,6 +1332,7 @@ export async function runPreparedReply(
       // params.workspaceFingerprint) into FollowupRun.run so embedded attempt
       // can prefer it over the locally computed `effectiveWorkspace` fingerprint.
       // Absent → agent-config fallback path uses the local compute.
+      workspaceId: normalizeOptionalString(ctx.WorkspaceId),
       workspaceFingerprint: normalizeOptionalString(ctx.WorkspaceFingerprint),
       chatKnowledgeRefs: ctx.ChatKnowledgeRefs,
       config: cfg,
