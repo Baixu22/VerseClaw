@@ -19,16 +19,19 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EVIDENCE_ROOT = 'harness/specs/fixtures/versebrowser-invocation-maturity';
-const CURRENT = 'current-20261025';
+const CURRENT = 'current-merge-20261025';
 const SOURCE_SCOPE = [
   'packages/versebrowser',
   'electron/services/agent-browser-api.ts',
+  'electron/main/index.ts',
   'electron/services/agent-browser-capabilities.ts',
   'electron/gateway/agent-browser-bridge.ts',
   'shared/agent-browser',
+  'shared/host-api/contract.ts',
   'openclaw_runtime/src/agents/tools/agent-browser-tool.ts',
   'openclaw_runtime/src/gateway/server-methods/agent-browser.ts',
   'scripts/versebrowser-n9-stability-probe.mjs',
+  'scripts/versebrowser-m10-packaged-flow-verify.mjs',
 ];
 const CREDENTIAL_PATTERNS = [
   /(?<![A-Za-z0-9_-])sk-[A-Za-z0-9_-]{20,}/,
