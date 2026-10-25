@@ -83,7 +83,7 @@ async function liveSessionId(app: ElectronApplication, sessionKey: string): Prom
  * The forced run is enqueued, so the fence verdict lands in the run log rather
  * than in the trigger response. Poll the real scheduler receipts.
  */
-async function waitForCoordinatorRefusal(app: ElectronApplication, jobId: string, timeoutMs = 90_000): Promise<string> {
+async function _waitForCoordinatorRefusal(app: ElectronApplication, jobId: string, timeoutMs = 90_000): Promise<string> {
   const deadline = Date.now() + timeoutMs;
   let last = '';
   while (Date.now() < deadline) {

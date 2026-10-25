@@ -255,22 +255,14 @@
         "tests/unit/fixtures/product-semantics-tf0506/sha256sums-check.txt",
         "tests/unit/fixtures/product-semantics-tf0506/verification.json"
       ],
-      "reviewedOutsideScope": [
-        "M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
-        " M tests/unit/fixtures/component-graduation-tf0508/audit.json",
-        " M tests/unit/fixtures/component-graduation-tf0508/model-positioning-receipt.json",
-        " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
-        " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
-        " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-        " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt"
-      ],
+      "reviewedOutsideScope": [],
       "unreviewedOutsideScope": []
     },
     {
       "id": "scoped_landing_inputs",
       "status": "pass",
-      "scopedChangedCount": 4,
-      "nonScopedChangedCount": 7
+      "scopedChangedCount": 0,
+      "nonScopedChangedCount": 0
     }
   ],
   "successMetrics": {

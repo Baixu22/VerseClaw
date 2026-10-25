@@ -24,7 +24,7 @@ type LedgerSnapshot = {
 
 async function readRuntimeAck(app: ElectronApplication): Promise<GatewayStatus> {
   const deadline = Date.now() + 120_000;
-  let last: GatewayStatus = {};
+  let last: GatewayStatus;
   while (Date.now() < deadline) {
     try {
       last = await hostInvoke<GatewayStatus>(app, 'gateway', 'rpc', {
@@ -137,11 +137,10 @@ test.describe('long-session restart journeys', () => {
     let forkKey: string | undefined;
     let handoffKey: string | undefined;
     let archiveEntry: ArchiveEntry | undefined;
-    let archivedGeneration: string | undefined;
     let restoredGeneration: string | undefined;
     let beforeGatewayRestart: GatewayStatus | undefined;
     let afterGatewayRestart: GatewayStatus | undefined;
-    let firstLlmRequests = 0;
+    let firstLlmRequests: number;
     let dualWorkerBatch: Record<string, unknown> | undefined;
     try {
       const firstApp = app;
@@ -188,7 +187,7 @@ test.describe('long-session restart journeys', () => {
       const returnedSessionFile = forkPatch.entry?.sessionFile?.trim();
       const sessionFileName = returnedSessionFile ? basename(returnedSessionFile) : '';
       const forkTranscriptCandidates = [
-        returnedSessionFile && returnedSessionFile.match(/^[A-Za-z]:[\/]/) ? returnedSessionFile : '',
+        returnedSessionFile && returnedSessionFile.match(/^[A-Za-z]:[/]/) ? returnedSessionFile : '',
         sessionFileName ? join(openclawDir, 'agents', 'main', 'sessions', sessionFileName) : '',
         sessionFileName ? join(sourceStateDir, 'agents', 'main', 'sessions', sessionFileName) : '',
       ].filter(Boolean);

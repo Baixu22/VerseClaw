@@ -1,7 +1,7 @@
 {
     "schemaVersion":  "ProductSemanticsVerification/v1",
     "taskForestNodeId":  "TF-0506",
-    "generatedAt":  "2026-10-25T08:29:18.9376144Z",
+    "generatedAt":  "2026-10-25T11:40:56.6101232Z",
     "driven_by":  "agent",
     "actor":  "codex",
     "status":  "pass",
@@ -13,7 +13,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/01-focused-tests.txt",
-                      "outputSha256":  "630f92ff976003adf01819839a8ba32e1ba6f222d260239fb984c31fc2c2168c"
+                      "outputSha256":  "9f98b4000e61ffeb426e2090e981d9cb89839ec4779d279adcb05fda2a56eda3"
                   },
                   {
                       "id":  "02-typecheck",
@@ -21,7 +21,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/02-typecheck.txt",
-                      "outputSha256":  "9c191e91c9afe0e2cdeb0a2606cccc2a4f0809378a98f07f8845aab1304a7edc"
+                      "outputSha256":  "8ecd0621526b9e44a1697764125a24ef70a8a70883520dac867ce4d093594692"
                   },
                   {
                       "id":  "03-i18n-lint",
@@ -37,7 +37,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/04-lint.txt",
-                      "outputSha256":  "6d8eceb29dfb36a8917e8e73c7665783b4f9d2f805b166950cbfd335a746db14"
+                      "outputSha256":  "9753b655466fd3ff9c2dda791366401d55e48338ac3b173de355aeceae67ec28"
                   },
                   {
                       "id":  "05-contract-check",
@@ -69,7 +69,7 @@
                       "exitCode":  0,
                       "status":  "pass",
                       "outputPath":  "tests/unit/fixtures/product-semantics-tf0506/08-claim-scan.txt",
-                      "outputSha256":  "0749b6c5fc119f26a8d9ea2fab18f978e99d504a3e1d5718b18f4fdb997ccd0e"
+                      "outputSha256":  "b75538e8d8028347c67fd97e6b8a5a4a5af1c0eac5e0dfeba4ea9f0656025bc9"
                   },
                   {
                       "id":  "09-diff-check",

@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-25T11:06:01.204Z
+Generated at: 2026-10-25T13:05:53.993Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.

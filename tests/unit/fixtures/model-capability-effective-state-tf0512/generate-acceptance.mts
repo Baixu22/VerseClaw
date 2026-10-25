@@ -310,6 +310,7 @@ const report = {
   binding: {
     commit: process.env.TF0512_BINDING_COMMIT ?? execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
     tree: process.env.TF0512_BINDING_TREE ?? execFileSync("git", ["rev-parse", "HEAD^{tree}"], { encoding: "utf8" }).trim(),
+    buildHash: "pending",
     runtimeGeneration: generation,
     provider: "not-applicable",
     model: "not-applicable",
@@ -324,7 +325,6 @@ const report = {
       sha(`${out}/profile.json`),
       sha(`${out}/acceptance.json`),
     ],
-    buildHash: "pending",
   },
   evidence: [
     {
