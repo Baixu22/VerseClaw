@@ -6,12 +6,12 @@
   "taskKey": "F3",
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-final-acceptance.md",
-  "generatedAt": "2026-10-24T22:38:46.989Z",
+  "generatedAt": "2026-10-25T05:54:07.671Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261023-r2",
-    "commit": "5a14742d9a46cf6b626195bc29fd794603d4baec",
-    "tree": "09d2d1617469bd72edebc811b2d2830629bd9d82",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "branch": "codex/long-session-merge-r2-20261025",
+    "commit": "f0d9d4acea1925cee10c55c450400d10e78312cd",
+    "tree": "28cabc01be32989a2e2b805f574f029268900867",
+    "worktree": "D:/ClawX-work/worktrees/long-session-integration-r2",
     "status": []
   },
   "scope": {
@@ -31,7 +31,7 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/a1/gates.json",
       "primaryEvidenceSha256": "eb3ce12bc7bee43b3e29cf081ba0c9f62bd68fef78c9e4080b416af7f81e76ad",
       "schema": "clawx.long-session.node-evidence/v1",
-      "artifactCount": 8,
+      "artifactCount": 9,
       "artifactFiles": [
         "SHA256SUMS",
         "action-and-inheritance-contract.json",
@@ -40,7 +40,8 @@
         "gates.json",
         "navigation.json",
         "negative-scenario-index.json",
-        "retention.json"
+        "retention.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
         "SHA256SUMS": "d56df0522a4f7af94f9a228470485087684a138c5b98109b3dccd6fe32683e7a",
@@ -50,14 +51,15 @@
         "gates.json": "eb3ce12bc7bee43b3e29cf081ba0c9f62bd68fef78c9e4080b416af7f81e76ad",
         "navigation.json": "113d49a80a678f6f5ec9dd6be58b9d4962de4f86aafa8aea6a79330751f5be6f",
         "negative-scenario-index.json": "32e6a6d5d5ea50bc514e7f2feb311117adc7e73b6a55c9e4ada7ac5daedaae5e",
-        "retention.json": "8dd62a1978fda7963add998b93af35e97b92f91a6b323ec83a1cdf431ec6c030"
+        "retention.json": "8dd62a1978fda7963add998b93af35e97b92f91a6b323ec83a1cdf431ec6c030",
+        "verification-receipt.json": "b558111ff4a9a4dc36c7f069b634abfced091de00989441b48382ca4a4e8beff"
       },
       "sha256sums": {
         "verified": 7,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 10,
+        "exitCodeObservations": 19,
         "failed": [],
         "failedCount": 0
       },
@@ -113,27 +115,24 @@
         {
           "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
           "full": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
-          "reachableFromHead": false,
+          "reachableFromHead": true,
           "referencedBy": [
             "action-and-inheritance-contract.json/templateProvenance/commit",
             "current-baseline.json/templateProvenance/commit",
             "negative-scenario-index.json/templateProvenance/commit"
           ]
-        }
-      ],
-      "unreachableCandidates": [
+        },
         {
-          "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
-          "full": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
-          "reachableFromHead": false,
+          "commit": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
+          "full": "b088635108f4c40c77efcd9f46a1c421f405b8d9",
+          "reachableFromHead": true,
           "referencedBy": [
-            "action-and-inheritance-contract.json/templateProvenance/commit",
-            "current-baseline.json/templateProvenance/commit",
-            "negative-scenario-index.json/templateProvenance/commit"
+            "verification-receipt.json/candidate/commit"
           ]
         }
       ],
-      "reachableCandidateCount": 2,
+      "unreachableCandidates": [],
+      "reachableCandidateCount": 4,
       "evidenceOk": true
     },
     {
@@ -254,7 +253,7 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/b1/gates.json",
       "primaryEvidenceSha256": "a55c0c78f589f90026288af73e2665a36d96546aee1372891c6c5de1c3d372f6",
       "schema": "clawx.long-session.node-evidence/v1",
-      "artifactCount": 21,
+      "artifactCount": 22,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
@@ -276,7 +275,8 @@
         "navigation.json",
         "policy-source-and-override-matrix.json",
         "review-disposition.json",
-        "root-tests.vitest.json"
+        "root-tests.vitest.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
         "README.md": "050c3919f3d6151a7e9a7efc1a86af37c3743006625d30e073eef1e67cb50e3c",
@@ -299,14 +299,15 @@
         "navigation.json": "bb7b1efe838e30da28b35267a38cf7ce776a6d7722386166159b965400903356",
         "policy-source-and-override-matrix.json": "29c93eaf0efb671d362c51a437c6ea00d6c15ae21734c427a3a150885e3a4592",
         "review-disposition.json": "9119f87a32641387105cee3c39b93ce3fa273586a09664d242b5dcf3c7bbe618",
-        "root-tests.vitest.json": "fc03914f32ae0698f98235f365e13143928cf974c8c73e6ae83524447f39329b"
+        "root-tests.vitest.json": "fc03914f32ae0698f98235f365e13143928cf974c8c73e6ae83524447f39329b",
+        "verification-receipt.json": "b860c1e0fbaa8b386f0af1ba082db557b24c1c2a0777d33555c2dcc6e55bba81"
       },
       "sha256sums": {
         "verified": 20,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 17,
+        "exitCodeObservations": 28,
         "failed": [],
         "failedCount": 0
       },
@@ -337,6 +338,14 @@
       },
       "candidates": [
         {
+          "commit": "5eef970b9a6ff401bd92ff870a559cde751a1b8e",
+          "full": "5eef970b9a6ff401bd92ff870a559cde751a1b8e",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/candidate/commit"
+          ]
+        },
+        {
           "commit": "803e945a7a9370d8d25c2a76ce4c5dfe850fb8e1",
           "full": "803e945a7a9370d8d25c2a76ce4c5dfe850fb8e1",
           "reachableFromHead": true,
@@ -351,7 +360,7 @@
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     },
     {
@@ -362,7 +371,7 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/b2/gates.json",
       "primaryEvidenceSha256": "a7c709de5c3962f02d86633e4267eafce16c8df12eb7189a38c5a7542c028e03",
       "schema": "clawx.long-session.node-evidence/v1",
-      "artifactCount": 20,
+      "artifactCount": 21,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
@@ -376,6 +385,7 @@
         "gates.json",
         "harness-latest.md",
         "lint-scoped.mjs",
+        "policy-activity-rail-960.png",
         "policy-surface-narrow.png",
         "policy-surface-wide.png",
         "policy-ui-matrix.json",
@@ -398,6 +408,7 @@
         "gates.json": "a7c709de5c3962f02d86633e4267eafce16c8df12eb7189a38c5a7542c028e03",
         "harness-latest.md": "09d2e5d0742d2bd8cebd37608ae6669c2b40e57f53d8b54adcf403fe34f956a8",
         "lint-scoped.mjs": "1f0fcc43069e558a422a564c6feaf8b194536b4c91916848c7d66b6fd933adf4",
+        "policy-activity-rail-960.png": "fdf5bb0bca5de6d8bdedfc5ef4ee87d3f460e5ad31fbc9d99813f3038439c84e",
         "policy-surface-narrow.png": "5a5523644fe202c980aabdc1b6a595978c57d7c61565250806e8487a388d8f8e",
         "policy-surface-wide.png": "a2f414df16f54c56f2cffadedef7d5eb7957c85dabc2ff8386f7fe38f69bf0be",
         "policy-ui-matrix.json": "58bfc5886fa352965223e7513bef48988d742ca982f3473beba4651992bf8ec0",
@@ -482,7 +493,7 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/c1/gates.json",
       "primaryEvidenceSha256": "81a2afa7679b1d71d176d74ca7920c0114fb61cb991359a43be2f858eeb7bc5b",
       "schema": "clawx.long-session.node-evidence/v1",
-      "artifactCount": 18,
+      "artifactCount": 19,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
@@ -501,7 +512,8 @@
         "review-disposition.json",
         "scope-and-recovery-matrix.json",
         "unit-binding.vitest.json",
-        "unit-required.vitest.json"
+        "unit-required.vitest.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
         "README.md": "40443ed5cc555cec8c9cd705153b55913b00c117027ba4faf2766389bce8d115",
@@ -521,14 +533,15 @@
         "review-disposition.json": "1c2cd59f8949066146bb7a67c2aab5f584f3a119e6c6c0a5d8ce2584145d19f1",
         "scope-and-recovery-matrix.json": "1df14b3df0302b4482cc250e48b95ea47196997d3ded8d5a50db97c94f197496",
         "unit-binding.vitest.json": "3f45ac4b70f0596e1b19646a622c8596391ce78777a40b00bc0ba94864e6ed1c",
-        "unit-required.vitest.json": "1023dd741382a40155d04958b9ed916c8fce12425bd7bc973cdc49d0d7f45ee7"
+        "unit-required.vitest.json": "1023dd741382a40155d04958b9ed916c8fce12425bd7bc973cdc49d0d7f45ee7",
+        "verification-receipt.json": "f2b4ee1332f017c7c42abb417ae8cd88c617961adfb2aa5222dba957e08372c3"
       },
       "sha256sums": {
         "verified": 17,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 15,
+        "exitCodeObservations": 26,
         "failed": [],
         "failedCount": 0
       },
@@ -584,6 +597,14 @@
       },
       "candidates": [
         {
+          "commit": "09dcda17683369e12b60609ec055156052082260",
+          "full": "09dcda17683369e12b60609ec055156052082260",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/candidate/commit"
+          ]
+        },
+        {
           "commit": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
           "full": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
           "reachableFromHead": true,
@@ -598,7 +619,7 @@
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     },
     {
@@ -609,7 +630,7 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/c2/gates.json",
       "primaryEvidenceSha256": "845713099dbe1fbadbbbeee4e3b3718edc01e5c2a9f0cb68f5c1c3811a18b852",
       "schema": "clawx.long-session.node-evidence/v1",
-      "artifactCount": 11,
+      "artifactCount": 12,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
@@ -621,7 +642,8 @@
         "e2e-process-cleanup.json",
         "gates.json",
         "harness-latest.md",
-        "scope-permission-isolation-matrix.json"
+        "scope-permission-isolation-matrix.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
         "README.md": "14ecfcdaad862c9f63ce539e7a0328e5c514dc98d9e358905b896b0dfb016a95",
@@ -634,14 +656,15 @@
         "e2e-process-cleanup.json": "4dc3bd06ac88c60d18a9b522317e9b2c20ad1ea8436dc86ff3ea989533e33302",
         "gates.json": "845713099dbe1fbadbbbeee4e3b3718edc01e5c2a9f0cb68f5c1c3811a18b852",
         "harness-latest.md": "d8b3071fa5764646ae3853fd2a2f475ce1706a2129549547aa73fcfb3b695564",
-        "scope-permission-isolation-matrix.json": "8f35df12ae4c1eda76f12a6b5f3343fa1c8a53471c592306022a38f096e0fa88"
+        "scope-permission-isolation-matrix.json": "8f35df12ae4c1eda76f12a6b5f3343fa1c8a53471c592306022a38f096e0fa88",
+        "verification-receipt.json": "16a889034f693702da97a2b1c6fe9844574b50a30d86389dc39dbd61d4da4bf5"
       },
       "sha256sums": {
         "verified": 10,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 17,
+        "exitCodeObservations": 29,
         "failed": [],
         "failedCount": 0
       },
@@ -693,6 +716,14 @@
       },
       "candidates": [
         {
+          "commit": "57b82e740da022bd3a74c9f996a11d766e1cc84d",
+          "full": "57b82e740da022bd3a74c9f996a11d766e1cc84d",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/candidate/commit"
+          ]
+        },
+        {
           "commit": "a2631e3a41afe740469661a006623e212d3835d5",
           "full": "a2631e3a41afe740469661a006623e212d3835d5",
           "reachableFromHead": true,
@@ -707,7 +738,7 @@
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     },
     {
@@ -718,7 +749,7 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/c3/gates.json",
       "primaryEvidenceSha256": "bce2e8ff3491784fee4f6a99bb1a62a566f8550347779e8e90b1d3c1d979fb8d",
       "schema": "clawx.long-session.node-evidence/v1",
-      "artifactCount": 13,
+      "artifactCount": 14,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
@@ -732,7 +763,8 @@
         "e2e-process-cleanup.json",
         "gates.json",
         "harness-latest.md",
-        "restart-replay-check.json"
+        "restart-replay-check.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
         "README.md": "b0f6c6e520c3a24a6967404a735d81408a6a2e2a73566c70648528fcd16e041a",
@@ -747,14 +779,15 @@
         "e2e-process-cleanup.json": "8226f1a22e146c149854d6252d87512a7d69828b675f64b57c89eadaaebc28fb",
         "gates.json": "bce2e8ff3491784fee4f6a99bb1a62a566f8550347779e8e90b1d3c1d979fb8d",
         "harness-latest.md": "82eecdb26db37c3d961f0aeb1d16c92927124d0f2f0fb34903d935c429822b4a",
-        "restart-replay-check.json": "9498db6752f73f17e3cd9f42d8acac98876ff404601072b5f744f8a1a00e31af"
+        "restart-replay-check.json": "9498db6752f73f17e3cd9f42d8acac98876ff404601072b5f744f8a1a00e31af",
+        "verification-receipt.json": "8e2b4f46ec1faed112ef1b9b503bda6e364078354a0ac3ff462cf58f0f7f1342"
       },
       "sha256sums": {
         "verified": 12,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 17,
+        "exitCodeObservations": 30,
         "failed": [],
         "failedCount": 0
       },
@@ -799,10 +832,18 @@
             "gates.json/commands[0]/commit",
             "gates.json/commands[10]/commit"
           ]
+        },
+        {
+          "commit": "53db65bd56fdddba723ee09195a6827c4352fbbf",
+          "full": "53db65bd56fdddba723ee09195a6827c4352fbbf",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/candidate/commit"
+          ]
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     },
     {
@@ -813,12 +854,14 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/c4/gates.json",
       "primaryEvidenceSha256": "f12c80712ceb73dddd77be37630fac833f9396b664c94225fcfdd2d932dd194a",
       "schema": "clawx.long-session.node-evidence/v1",
-      "artifactCount": 16,
+      "artifactCount": 19,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
         "comms-compare-report.md",
         "coordination-narrow.png",
+        "coordination-rail-narrow.png",
+        "coordination-rail-wide.png",
         "coordination-ui-journeys.json",
         "coordination-ui-screenshots.json",
         "coordination-wide.png",
@@ -830,13 +873,16 @@
         "gates.json",
         "harness-latest.md",
         "lint-scoped.mjs",
-        "unit-required.vitest.json"
+        "unit-required.vitest.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
         "README.md": "d4d34e163816e79592c2ecc3d6886ea6a000bb41f80ba6d17c98bd3cdb59dca5",
         "SHA256SUMS": "5773cd220bade600d3eaa094bb9d6fe54cdf3add1a1504a91e1669cb5f511ba2",
         "comms-compare-report.md": "f37e403dd46afda51a348a064d3da3f7956ea518706ee39480ad1aefac279bdc",
         "coordination-narrow.png": "659481d2a9e17f54233e64bf4c194947fc24e80640e678538bf7513fcf32dcb2",
+        "coordination-rail-narrow.png": "a004a63b1113dac42bd451e1998d5408473f0e6a701316e27e5010e88f6bb123",
+        "coordination-rail-wide.png": "9dc904b414a95e87e120d325ba3d438b2a17069a49e5586e2577b7dc0cd55c74",
         "coordination-ui-journeys.json": "27aa9f0d74aac7cf864dd40db468fa62a1eba87b412da8d1710108dd4e534ec5",
         "coordination-ui-screenshots.json": "70ff983a46977b1534373caf2eb07413f92b31ecf8fe3f6b7118c8cee7115a82",
         "coordination-wide.png": "0d0bdacef6abd0742e0ff529a9df2699c751d056e85f15050adea7273ad5c236",
@@ -848,14 +894,15 @@
         "gates.json": "f12c80712ceb73dddd77be37630fac833f9396b664c94225fcfdd2d932dd194a",
         "harness-latest.md": "bef57efb2eb334100accbe21d8f8556ee000b38ca7e1c62b3279d353913bd163",
         "lint-scoped.mjs": "b301fc0e7c94bc95ac918366379199ac34c28b5be1e0f179d579a4efb9ed7bcd",
-        "unit-required.vitest.json": "89f112a1170012a1f1eef735bef469aa4dbb72da75c7c8cd280884ce70cdfadb"
+        "unit-required.vitest.json": "89f112a1170012a1f1eef735bef469aa4dbb72da75c7c8cd280884ce70cdfadb",
+        "verification-receipt.json": "3e8cf3df8a8587413a0568414443cc5387798f9f82b8ffe4557df71bc8e9c7a2"
       },
       "sha256sums": {
         "verified": 15,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 15,
+        "exitCodeObservations": 26,
         "failed": [],
         "failedCount": 0
       },
@@ -874,6 +921,14 @@
       },
       "candidates": [
         {
+          "commit": "4a4f53f37749d95d85f4990c85e196a5f1f11d0d",
+          "full": "4a4f53f37749d95d85f4990c85e196a5f1f11d0d",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/candidate/commit"
+          ]
+        },
+        {
           "commit": "640da4cf927fc51569964568b0fe6c3f0dfa86cf",
           "full": "640da4cf927fc51569964568b0fe6c3f0dfa86cf",
           "reachableFromHead": true,
@@ -888,7 +943,7 @@
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     },
     {
@@ -899,7 +954,7 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/d1/verification.json",
       "primaryEvidenceSha256": "09139762e1101a8bdb821131db7dff31e08a330105e4c5eb9c915d87423c317e",
       "schema": "clawx.long-session.d1-verification/v1",
-      "artifactCount": 15,
+      "artifactCount": 17,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
@@ -907,6 +962,7 @@
         "comms-compare-report.md",
         "comms-current-metrics.json",
         "continuity-context-pack.json",
+        "continuity-e2e-observation.json",
         "credential-scan.json",
         "cross-scope-negative.json",
         "e2e-last-run.json",
@@ -915,6 +971,7 @@
         "fact-provenance-and-revocation.json",
         "gates.json",
         "typecheck-errors.log",
+        "verification-receipt.json",
         "verification.json"
       ],
       "artifactHashes": {
@@ -924,6 +981,7 @@
         "comms-compare-report.md": "e79cfc22752c0485b6db5a0454a1400266151552cf8fb464b8c748bd10fb9682",
         "comms-current-metrics.json": "6e86043c655531ace0592f33d113d97c967fad0a96945a77227564114ab3a283",
         "continuity-context-pack.json": "9177ac494a3ae8acc996ef937045d3d0bc8e5baf5ac58efe32f3717a7228d29a",
+        "continuity-e2e-observation.json": "72f6b23b9249b38369994c7fcbef47fb62426ab5347984f6f28daff9945e7424",
         "credential-scan.json": "c57af298b2d120ebf77eb9c7128d2ebf711454d6e1cdab84249c2c4a79df6751",
         "cross-scope-negative.json": "1771a4d81d5eda7d9eeedad4186128dcfc74345b92f1c210e3079af378e6a539",
         "e2e-last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
@@ -932,6 +990,7 @@
         "fact-provenance-and-revocation.json": "a377488b0fb5cf9cc83e1a485d8e3d8c06fa86804a00a3e10c49330f33aaa791",
         "gates.json": "2455fd17ee2f60079682fd4edc09ac4e92036ef6da7f08f2fc3c89831edbf956",
         "typecheck-errors.log": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57",
+        "verification-receipt.json": "5882a5fc089e5f84f6c13d1cb0fb98834c15bd97aa5e9997290d90460a28a91f",
         "verification.json": "09139762e1101a8bdb821131db7dff31e08a330105e4c5eb9c915d87423c317e"
       },
       "sha256sums": {
@@ -939,7 +998,7 @@
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 24,
+        "exitCodeObservations": 36,
         "failed": [],
         "failedCount": 0
       },
@@ -949,12 +1008,13 @@
         "representationFailureCount": 0
       },
       "negativeProofs": {
-        "count": 70,
+        "count": 72,
         "ids": [
           "candidate memory",
           "candidate memory excluded",
           "coordinator generation mismatch invalidates pack",
           "coordinator session deleted",
+          "deleted coordinator session -> binding invalidated -> no pack",
           "deleted coordinator session gets no pack",
           "deleted session",
           "expired memory",
@@ -969,6 +1029,7 @@
           "native backend compaction owner",
           "native backend compaction owner is marked unavailable and does not claim artifact",
           "network-degraded",
+          "ordinary session missing coordinator binding -> no pack",
           "ordinary session without binding gets no pack",
           "ordinary session without coordinator binding",
           "pending working-context",
@@ -988,9 +1049,7 @@
           "| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
           "| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
           "| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |",
-          "| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |",
-          "| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |",
-          "| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |"
+          "| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |"
         ]
       },
       "candidates": [
@@ -1004,10 +1063,19 @@
             "comms-current-metrics.json/candidate/commit",
             "verification.json/source_commit"
           ]
+        },
+        {
+          "commit": "6f9532374aaf66e668cf9dc17ec3e20f852c23ad",
+          "full": "6f9532374aaf66e668cf9dc17ec3e20f852c23ad",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/gate_receipt/commit",
+            "verification-receipt.json/source_candidate/commit"
+          ]
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     },
     {
@@ -1383,25 +1451,29 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/f1/restart-journey-results.json",
       "primaryEvidenceSha256": "7936ab9eb12c0fddbb74496707a690f7d8f42cf87cfa0e40ba95456ea61ebe94",
       "schema": "clawx.long-session.restart-journeys.curated/v1",
-      "artifactCount": 4,
+      "artifactCount": 6,
       "artifactFiles": [
+        "README.md",
         "SHA256SUMS",
         "host-runtime-receipts.json",
         "restart-journey-results.json",
-        "ui-evidence-index.json"
+        "ui-evidence-index.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
+        "README.md": "e5da01191fc932682da7c5e76f103948e9ff6851a5c3f6ee13ea2e6819b75236",
         "SHA256SUMS": "3a7604cd5ae38b1bd2dfe42072d2f8b6e6ee9fd9d0be95859e76406de5bfc88c",
         "host-runtime-receipts.json": "1f34217b3ae7b9fea4c2c64022ec558275c2adb8d85dd07c82af2f51b79a1232",
         "restart-journey-results.json": "7936ab9eb12c0fddbb74496707a690f7d8f42cf87cfa0e40ba95456ea61ebe94",
-        "ui-evidence-index.json": "58ffcf6fdf0e5f898c513c1402e0e6dbf715866adae3158058e48fe42bfbec64"
+        "ui-evidence-index.json": "58ffcf6fdf0e5f898c513c1402e0e6dbf715866adae3158058e48fe42bfbec64",
+        "verification-receipt.json": "03b49f0ebe5b56212fae06a1047955b881f01047e47d04db386988cff2208399"
       },
       "sha256sums": {
         "verified": 3,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 0,
+        "exitCodeObservations": 12,
         "failed": [],
         "failedCount": 0
       },
@@ -1425,6 +1497,14 @@
       },
       "candidates": [
         {
+          "commit": "504b284ba79fde7bfd32562cfdd10631a5b35a2a",
+          "full": "504b284ba79fde7bfd32562cfdd10631a5b35a2a",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/candidate/commit"
+          ]
+        },
+        {
           "commit": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
           "full": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
           "reachableFromHead": true,
@@ -1436,7 +1516,7 @@
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     },
     {
@@ -1447,29 +1527,33 @@
       "primaryEvidence": "harness/specs/fixtures/long-session-development/f2/long-use-before-after.json",
       "primaryEvidenceSha256": "77a6f1c3838178781b2c40f7024ab09d8fbb299a1dc64ae9bd8aba5b93414fd6",
       "schema": "clawx.long-session.f2-long-use-before-after/v1",
-      "artifactCount": 6,
+      "artifactCount": 8,
       "artifactFiles": [
         "README.md",
         "SHA256SUMS",
         "long-use-before-after.json",
         "notification-budget.json",
+        "probe-f2.mjs",
         "probe.mjs",
-        "rss-and-owner-counts.json"
+        "rss-and-owner-counts.json",
+        "verification-receipt.json"
       ],
       "artifactHashes": {
         "README.md": "c7093eb2178f83d92f78311ff9c666db55281d84a171f0bc842fd08a10db9a74",
         "SHA256SUMS": "1d021725a8556bf760356d51d487197e263c422c7b23e07a672943a9c9b2c65d",
         "long-use-before-after.json": "77a6f1c3838178781b2c40f7024ab09d8fbb299a1dc64ae9bd8aba5b93414fd6",
         "notification-budget.json": "11f222bedfeb70aa55e6c6278ac92429a0c1832059f5086d4010ece4234f5065",
+        "probe-f2.mjs": "da0029948870f94e8d9c33708348d00dea9bf85fd59fe012696f5be511db723e",
         "probe.mjs": "877fa824c5905750997dc43806717184cffbebe97f10272349a13a86daf928cb",
-        "rss-and-owner-counts.json": "d44d67f607510c39cb315171b709331f70c4f17f9a8b6646cdcc5dee6f9546b5"
+        "rss-and-owner-counts.json": "d44d67f607510c39cb315171b709331f70c4f17f9a8b6646cdcc5dee6f9546b5",
+        "verification-receipt.json": "3457bbe4a2ee7ffebd3feedb6b210aafbef9bccf448d5ca3465e48083c3976c5"
       },
       "sha256sums": {
         "verified": 4,
         "failures": []
       },
       "gates": {
-        "exitCodeObservations": 31,
+        "exitCodeObservations": 40,
         "failed": [],
         "failedCount": 0
       },
@@ -1490,6 +1574,14 @@
       },
       "candidates": [
         {
+          "commit": "18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997",
+          "full": "18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997",
+          "reachableFromHead": true,
+          "referencedBy": [
+            "verification-receipt.json/candidate/commit"
+          ]
+        },
+        {
           "commit": "9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4",
           "full": "9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4",
           "reachableFromHead": true,
@@ -1501,7 +1593,7 @@
         }
       ],
       "unreachableCandidates": [],
-      "reachableCandidateCount": 1,
+      "reachableCandidateCount": 2,
       "evidenceOk": true
     }
   ],
@@ -1724,101 +1816,87 @@
   "gates": [
     {
       "name": "typecheck",
-      "command": "pnpm.cmd run typecheck",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 29717,
-      "stdoutSha256": "4209468acf4f420297230737dae46019f568875164b70c9edc928c82b0dc2cc5",
+      "durationMs": null,
+      "stdoutSha256": "0cf49817ca555f37fdede0e2bf7a307cb86a2991b853352062f8954c2aeaf0bd",
       "stderrSha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a",
-      "stdoutTail": "[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 20658,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"35ec5e4c2983379fe66196810db3dab8a812b38931c07dc6c4842992879b3f75\",\n    \"inputCount\": 12540,\n    \"report\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 28876,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 42\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 24401\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 5904\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 20658,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
-      "stderrTail": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/typecheck.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/typecheck.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/typecheck.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/typecheck.stderr.txt"
     },
     {
       "name": "contract-check",
-      "command": "pnpm.cmd run contract:check",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 938,
+      "durationMs": null,
       "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
       "stderrSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26",
-      "stdoutTail": "Contract check passed.\n",
-      "stderrTail": "$ node scripts/contract-check.mjs\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/contract-check.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/contract-check.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/contract-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/contract-check.stderr.txt"
     },
     {
       "name": "comms-replay",
-      "command": "pnpm.cmd run comms:replay",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 783,
-      "stdoutSha256": "a87bb980bc4c0dacfe38a3862003cf1dc33ffe4a82e2211364ecaf240b90a136",
+      "durationMs": null,
+      "stdoutSha256": "6195b4f58c84860727e6d7b683e73ff0fcd71e2a137272d9d8d08794d76c695f",
       "stderrSha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a",
-      "stdoutTail": "Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\current-metrics.json\n",
-      "stderrTail": "$ node scripts/comms/replay.mjs\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-replay.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-replay.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/comms-replay.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/comms-replay.stderr.txt"
     },
     {
       "name": "comms-compare",
-      "command": "pnpm.cmd run comms:compare",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 693,
-      "stdoutSha256": "cc7cd156ebff59c2b10f219fdf27ead5bd87b27e2383859e3143a30c174afd8d",
+      "durationMs": null,
+      "stdoutSha256": "ae3649796c545d84066b680288d7e4794060526693492fe73d65f98fa548118b",
       "stderrSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e",
-      "stdoutTail": "# Comms Regression Report\n\n- Generated at: 2026-10-24T22:33:42.082Z\n- Candidate: 5a14742d9a46cf6b626195bc29fd794603d4baec (09d2d1617469bd72edebc811b2d2830629bd9d82)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\compare-report.md\n",
-      "stderrTail": "$ node scripts/comms/compare.mjs\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-compare.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/comms-compare.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/comms-compare.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/comms-compare.stderr.txt"
     },
     {
       "name": "repo-artifacts-check",
-      "command": "pnpm.cmd run repo:artifacts:check",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 3939,
-      "stdoutSha256": "bd9597c7c69fafc271a09494c38e098896fc821c7431b2ecd4c225c121b9f54b",
+      "durationMs": null,
+      "stdoutSha256": "435189d0903ce0f8df3e3363fda7c5bbd83465bfe505cc6e30fe045fe3c87498",
       "stderrSha256": "f62d1dbbb5220d55c5deff1fc44b06476881b770066fcf3c9d0ecb2c407bb252",
-      "stdoutTail": "Repository artifact retention passed (18574 tracked paths).\n",
-      "stderrTail": "$ node scripts/check-repository-artifacts.mjs\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-artifacts-check.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-artifacts-check.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/repo-artifacts-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/repo-artifacts-check.stderr.txt"
     },
     {
       "name": "repo-evidence-check",
-      "command": "pnpm.cmd run repo:evidence:check",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 649,
-      "stdoutSha256": "da040a157d2a342894bccf6d9ffb727314a87f11f8f60b594ad078df1e10d846",
+      "durationMs": null,
+      "stdoutSha256": "2e10c5528534f911264ecdbe53966f74b44244cad14555b5f0d21097adedba75",
       "stderrSha256": "3049ca0f98bfe460d3c5a6eeb13472b5a01f6ed1f0bda5fa73b681f7f3324970",
-      "stdoutTail": "[evidence-refs] PASS 171 referenced path(s)\n",
-      "stderrTail": "$ node scripts/check-evidence-refs.mjs\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-evidence-check.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/repo-evidence-check.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/repo-evidence-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/repo-evidence-check.stderr.txt"
     },
     {
       "name": "long-session-e2e",
-      "command": "pnpm.cmd exec playwright test tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-effective-policy.spec.ts tests/e2e/long-session-policy-surface.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-paired-evaluation.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-restart-journeys.spec.ts --workers=1 --output D:\\tmp\\anchor-long-session-f3\\1792881189760\\e2e",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 298620,
-      "stdoutSha256": "f39e9a653fe884c331d2ffe7b16bb15b1f8990b87f0ca8f64afcd35a68b63960",
-      "stderrSha256": "00004ec82c95f8d7bca49438d2df44b7be2cb44c95b9f805af5de456f35460c2",
-      "stdoutTail": "ntext\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mvmz82iu\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmz82iu\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok  2 tests\\e2e\\long-session-continuity-context.spec.ts:85:5 › real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.6s)\n  ok  3 tests\\e2e\\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (32.7s)\n  ok  4 tests\\e2e\\long-session-coordinator-binding.spec.ts:74:5 › coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries (25.7s)\n  ok  5 tests\\e2e\\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (27.7s)\n  ok  6 tests\\e2e\\long-session-effective-policy.spec.ts:84:5 › real Host and Gateway expose a secret-free configured policy without inventing effective facts (12.6s)\n{\"schema\":\"clawx.long-session.e1-followup-journey/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-e1\",\"steps\":[{\"step\":\"bound-follow-up-created\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"state\":\"allowed\",\"expectedSessionId\":\"514d8f8f-0443-4d90-92d0-a531c56af321\"},{\"step\":\"stop-current-turn-is-independent-of-schedule\",\"stopped\":true,\"scheduleStillPresent\":true},{\"step\":\"trigger-after-invalidation\",\"refusedWith\":\"Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)\",\"gatewayRunCount\":0},{\"step\":\"pause-keeps-schedule\",\"enabled\":false},{\"step\":\"cancel-removes-schedule\",\"removed\":true}],\"negatives\":[\"deleted coordinator session -> binding invalidated -> cron fence state unverifiable\"],\"status\":\"passed\",\"workspaceId\":\"default\",\"coordinatorSessionKey\":\"agent:main:dashboard:c35baf8a-8198-489b-ad2c-660bc3437660\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-followup-sche-587bc-ire-after-it-is-invalidated\\\\followup-journey-observation.json\"}\n  ok  7 tests\\e2e\\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (12.9s)\n  ok  8 tests\\e2e\\long-session-lifecycle-faults.spec.ts:104:5 › real Host and Gateway archive/restore preserves history and rotates the physical generation (12.9s)\n  ok  9 tests\\e2e\\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (12.9s)\n{\"schema\":\"clawx.long-session.d2-continuity-preview/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-r2\",\"negatives\":[\"ordinary session missing coordinator binding -> no pack\",\"deleted coordinator session -> binding invalidated -> no pack\"],\"primary\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-preview.json\",\"status\":\"passed\",\"packStatus\":\"partial\",\"items\":[{\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\workspace-mvmzbe0v\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmzbe0v\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok 10 tests\\e2e\\long-session-paired-evaluation.spec.ts:85:5 › D2 clean candidate: real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.1s)\n  ok 11 tests\\e2e\\long-session-policy-surface.spec.ts:252:5 › policy surface explains provenance, lifecycle boundaries, narrow layout, and session scope (22.9s)\n  ok 12 tests\\e2e\\long-session-restart-journeys.spec.ts:118:7 › long-session restart journeys › real Electron journeys preserve scope, transcripts, task links, and lifecycle generations (1.0m)\n\n  12 passed (4.9m)\n",
-      "stderrTail": "(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n[fp-p1-harness] connection #1\n[fp-p1-harness] connection #2\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stderr.txt"
+      "durationMs": null,
+      "stdoutSha256": "ee0a21fab3fb3deddb34e4c151261c2acfa1987268780c461a4d7099a77242c7",
+      "stderrSha256": "db66604535eae2f33af8e1259462c2cf44287932aa6255bccd3131efeb45a4ef",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/long-session-e2e.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/long-session-e2e.stderr.txt"
     },
     {
       "name": "harness-validate",
@@ -1826,13 +1904,13 @@
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 1313,
+      "durationMs": 2565,
       "stdoutSha256": "0113e650ef0fe43e2082b528fb77328afd1e67de5e96db0556b6a8f9799a153e",
       "stderrSha256": "d5ae70342382a7ca0b3a4cf2e14b1045b8d6387655548c78205862840d4a20ef",
       "stdoutTail": "Spec is valid: harness\\specs\\tasks\\long-session-final-acceptance.md\n",
       "stderrTail": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-final-acceptance.md\"\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/harness-validate.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/harness-validate.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/harness-validate.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/harness-validate.stderr.txt"
     },
     {
       "name": "git-diff-check",
@@ -1840,13 +1918,13 @@
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 72,
+      "durationMs": 104,
       "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdoutTail": "",
       "stderrTail": "",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/git-diff-check.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/git-diff-check.stderr.txt"
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/git-diff-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/git-diff-check.stderr.txt"
     }
   ],
   "e2e": {
@@ -1866,23 +1944,21 @@
     "workers": 1,
     "gate": {
       "name": "long-session-e2e",
-      "command": "pnpm.cmd exec playwright test tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/long-session-effective-policy.spec.ts tests/e2e/long-session-policy-surface.spec.ts tests/e2e/long-session-coordinator-binding.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-coordination.spec.ts tests/e2e/long-session-continuity-context.spec.ts tests/e2e/long-session-paired-evaluation.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts tests/e2e/long-session-restart-journeys.spec.ts --workers=1 --output D:\\tmp\\anchor-long-session-f3\\1792881189760\\e2e",
+      "command": null,
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 298620,
-      "stdoutSha256": "f39e9a653fe884c331d2ffe7b16bb15b1f8990b87f0ca8f64afcd35a68b63960",
-      "stderrSha256": "00004ec82c95f8d7bca49438d2df44b7be2cb44c95b9f805af5de456f35460c2",
-      "stdoutTail": "ntext\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mvmz82iu\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmz82iu\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok  2 tests\\e2e\\long-session-continuity-context.spec.ts:85:5 › real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.6s)\n  ok  3 tests\\e2e\\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (32.7s)\n  ok  4 tests\\e2e\\long-session-coordinator-binding.spec.ts:74:5 › coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries (25.7s)\n  ok  5 tests\\e2e\\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (27.7s)\n  ok  6 tests\\e2e\\long-session-effective-policy.spec.ts:84:5 › real Host and Gateway expose a secret-free configured policy without inventing effective facts (12.6s)\n{\"schema\":\"clawx.long-session.e1-followup-journey/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-e1\",\"steps\":[{\"step\":\"bound-follow-up-created\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"state\":\"allowed\",\"expectedSessionId\":\"514d8f8f-0443-4d90-92d0-a531c56af321\"},{\"step\":\"stop-current-turn-is-independent-of-schedule\",\"stopped\":true,\"scheduleStillPresent\":true},{\"step\":\"trigger-after-invalidation\",\"refusedWith\":\"Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)\",\"gatewayRunCount\":0},{\"step\":\"pause-keeps-schedule\",\"enabled\":false},{\"step\":\"cancel-removes-schedule\",\"removed\":true}],\"negatives\":[\"deleted coordinator session -> binding invalidated -> cron fence state unverifiable\"],\"status\":\"passed\",\"workspaceId\":\"default\",\"coordinatorSessionKey\":\"agent:main:dashboard:c35baf8a-8198-489b-ad2c-660bc3437660\",\"jobId\":\"c0fd65f1-db0d-42b8-8814-49c689e9e0c1\",\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-followup-sche-587bc-ire-after-it-is-invalidated\\\\followup-journey-observation.json\"}\n  ok  7 tests\\e2e\\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (12.9s)\n  ok  8 tests\\e2e\\long-session-lifecycle-faults.spec.ts:104:5 › real Host and Gateway archive/restore preserves history and rotates the physical generation (12.9s)\n  ok  9 tests\\e2e\\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (12.9s)\n{\"schema\":\"clawx.long-session.d2-continuity-preview/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-r2\",\"negatives\":[\"ordinary session missing coordinator binding -> no pack\",\"deleted coordinator session -> binding invalidated -> no pack\"],\"primary\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-preview.json\",\"status\":\"passed\",\"packStatus\":\"partial\",\"items\":[{\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\workspace-mvmzbe0v\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mvmzbe0v\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f3\\\\1792881189760\\\\e2e\\\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\\\continuity-observation.json\"}\n  ok 10 tests\\e2e\\long-session-paired-evaluation.spec.ts:85:5 › D2 clean candidate: real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (17.1s)\n  ok 11 tests\\e2e\\long-session-policy-surface.spec.ts:252:5 › policy surface explains provenance, lifecycle boundaries, narrow layout, and session scope (22.9s)\n  ok 12 tests\\e2e\\long-session-restart-journeys.spec.ts:118:7 › long-session restart journeys › real Electron journeys preserve scope, transcripts, task links, and lifecycle generations (1.0m)\n\n  12 passed (4.9m)\n",
-      "stderrTail": "(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n[fp-p1-harness] connection #1\n[fp-p1-harness] connection #2\n",
-      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stdout.txt",
-      "stderrFile": "D:/tmp/anchor-long-session-f3/1792881189760/logs/long-session-e2e.stderr.txt"
+      "durationMs": null,
+      "stdoutSha256": "ee0a21fab3fb3deddb34e4c151261c2acfa1987268780c461a4d7099a77242c7",
+      "stderrSha256": "db66604535eae2f33af8e1259462c2cf44287932aa6255bccd3131efeb45a4ef",
+      "stdoutFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/long-session-e2e.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f3/1792905737966/logs/long-session-e2e.stderr.txt"
     },
     "realElectron": true,
     "transport": "built Electron -> Host API -> real Main owner -> real Gateway child where the spec exercises it"
   },
   "secretScan": {
-    "scannedFiles": 134,
+    "scannedFiles": 144,
     "hits": [],
     "pass": true
   },
@@ -1967,7 +2043,7 @@
     "pass": true
   },
   "cleanup": {
-    "runRoot": "D:/tmp/anchor-long-session-f3/1792881189760",
+    "runRoot": "D:/tmp/anchor-long-session-f3/1792905737966",
     "runRootKept": true,
     "note": "raw run root stays on D:; curated acceptance artifacts are the committed evidence",
     "recoveryRequired": false
