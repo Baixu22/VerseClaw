@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Agents } from '../../src/pages/Agents/index';
@@ -142,7 +143,11 @@ vi.mock('react-i18next', () => ({
 
 function renderAgents() {
   return render(<Agents />, {
-    wrapper: ({ children }) => <TooltipProvider>{children}</TooltipProvider>,
+    wrapper: ({ children }) => (
+      <MemoryRouter>
+        <TooltipProvider>{children}</TooltipProvider>
+      </MemoryRouter>
+    ),
   });
 }
 

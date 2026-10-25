@@ -1,145 +1,114 @@
 {
-  "schema": "clawx.long-session.c1-scope-recovery-matrix/v1",
+  "schema": "clawx.long-session.scope-recovery-matrix/v1",
+  "generatedAt": "2026-10-23T20:49:19.713Z",
   "driven_by": "agent",
-  "actor": "codex-long-session-c1",
-  "program": "long-session-development-20261022",
-  "task": "TF-0552",
-  "verdict": "pass",
-  "candidate": "09dcda17683369e12b60609ec055156052082260",
-  "cases": [
+  "actor": "codex-long-session-r2",
+  "candidate": "4432d6a9105c50c3c04896ce2542da57181b5f3b",
+  "rows": [
     {
-      "id": "explicit-opt-in",
+      "case": "workspace-assistant-session-binding",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts",
-        "tests/e2e/long-session-coordinator-binding.spec.ts"
-      ],
-      "detail": "Binding exists only after sessions.bindCoordinator receives valid workspace, assistant, session, Task Ledger refs and revision."
+      "evidence": "unit-binding.vitest.json; coordinator-binding-e2e.json"
     },
     {
-      "id": "ordinary-chat-no-auto-bind",
+      "case": "existing-task-ledger-references-only",
       "result": "pass",
-      "evidence": [
-        "tests/unit/workspace-session.test.ts"
-      ],
-      "detail": "Creating a normal workspace session does not call bindCoordinator."
+      "evidence": "Task Ledger node remained todo through archive/restore/pause"
     },
     {
-      "id": "app-restart-recovery",
+      "case": "canonical-local-environment",
       "result": "pass",
-      "evidence": [
-        "tests/e2e/long-session-coordinator-binding.spec.ts"
-      ],
-      "detail": "The binding is read from workspaces.json after closing and relaunching built Electron and Gateway."
+      "evidence": "local root and branch observed by Git owner"
     },
     {
-      "id": "active-session-handoff-switch",
+      "case": "managed-worktree-and-branch-uniqueness",
       "result": "pass",
-      "evidence": [
-        "tests/e2e/long-session-coordinator-binding.spec.ts"
-      ],
-      "detail": "Changing activeSessionKey to a derived session does not silently repoint the stable binding."
+      "evidence": "long-session-coordinator-binding.test.ts"
     },
     {
-      "id": "display-label-rename",
+      "case": "app-restart-persistence",
       "result": "pass",
-      "evidence": [
-        "shared/types/workspace.ts",
-        "electron/services/sessions-api.ts"
-      ],
-      "detail": "Binding identity is sessionKey plus physical sessionId and contains no mutable display label; a label-only rename cannot alter the binding."
+      "evidence": "coordinator-binding-e2e.json states.persisted=ready"
     },
     {
-      "id": "cross-workspace",
+      "case": "session-rename",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts"
-      ],
-      "detail": "A workspaceId that is not active is rejected."
+      "evidence": "coordinator-binding-e2e.json states.renamed=ready"
     },
     {
-      "id": "missing-owner",
+      "case": "handoff-pending-then-materialized",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts"
-      ],
-      "detail": "A missing Gateway owner is rejected."
+      "evidence": "session-pending -> handoffActive=ready"
     },
     {
-      "id": "wrong-assistant",
+      "case": "archive-policy-restore",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts"
-      ],
-      "detail": "A session key from another assistant is rejected."
+      "evidence": "paused -> restored=ready with new generation"
     },
     {
-      "id": "deleted-session-bind",
+      "case": "archive-retention-none",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts"
-      ],
-      "detail": "A session absent from the runtime owner cannot be newly bound."
+      "evidence": "unit-binding.vitest.json; invalid without environment deletion"
     },
     {
-      "id": "missing-task-ledger-ref",
+      "case": "manual-pause",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts"
-      ],
-      "detail": "Every referenced Task Ledger node must exist before persistence."
+      "evidence": "coordinator-binding-e2e.json states.manuallyPaused=paused"
     },
     {
-      "id": "revision-conflict",
+      "case": "delete-invalidation",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts"
-      ],
-      "detail": "A stale expectedRevision is rejected."
+      "evidence": "long-session-coordinator-binding.test.ts lifecycle delete"
     },
     {
-      "id": "reset-invalidation",
+      "case": "reset-generation-mismatch",
       "result": "pass",
-      "evidence": [
-        "tests/e2e/long-session-coordinator-binding.spec.ts"
-      ],
-      "detail": "Physical sessionId mismatch invalidates the prior generation with reason reset."
+      "evidence": "unit-binding.vitest.json; explicit rebind increments revision"
     },
     {
-      "id": "archive-invalidation",
+      "case": "active-run-environment-switch",
       "result": "pass",
-      "evidence": [
-        "tests/e2e/long-session-coordinator-binding.spec.ts",
-        "coordinator-binding.json"
-      ],
-      "detail": "Successful real Host/Gateway archive persists invalidationReason archived."
+      "evidence": "COORDINATOR_BINDING_SWITCH_BLOCKED test"
     },
     {
-      "id": "delete-invalidation",
+      "case": "cross-workspace-and-missing-owner",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts",
-        "electron/services/sessions-api.ts"
-      ],
-      "detail": "The production delete paths call the same revisioned invalidation helper covered by the unit test; post-read also detects a missing session."
+      "evidence": "COORDINATOR_WORKSPACE_SCOPE_MISMATCH and COORDINATOR_OWNER_MISSING tests"
     },
     {
-      "id": "task-completion-authority",
+      "case": "revision-conflict-and-concurrency",
       "result": "pass",
-      "evidence": [
-        "tests/unit/long-session-coordinator-binding.test.ts",
-        "electron/services/sessions-api.ts"
-      ],
-      "detail": "Binding reads Task Ledger refs only and performs no Task Ledger append or status update."
+      "evidence": "serialized concurrent revision-zero binds; exactly one wins"
+    },
+    {
+      "case": "deleted-session-or-missing-task-ref",
+      "result": "pass",
+      "evidence": "COORDINATOR_SESSION_MISSING and COORDINATOR_TASK_REF_MISSING tests"
+    },
+    {
+      "case": "chat-enforces-bound-environment",
+      "result": "pass",
+      "evidence": "chat-api-workspace-fingerprint.test.ts active, paused, mismatch, and pending generation cases"
+    },
+    {
+      "case": "ordinary-chat-does-not-auto-enter",
+      "result": "pass",
+      "evidence": "binding exists only through explicit workspaces.bindCoordinator host call"
     }
   ],
-  "unmeasured": [
-    "A real UI display-label rename action was not separately exercised; identity excludes the label by source invariant.",
-    "C2 delegation admission and C3 completion continuation are separate task contracts."
-  ],
-  "cleanup": {
-    "temporaryRoot": "D:\\tmp\\long-session-c1\\09dcda17683369e12b60609ec055156052082260",
-    "recoveryRequired": false,
-    "electronProcessesClosed": true
-  }
+  "negativeCases": [
+    "cross-workspace request",
+    "missing Workspace/Assistant owner",
+    "deleted session",
+    "missing Task Ledger node",
+    "stale binding revision",
+    "concurrent revision-zero writes",
+    "managed worktree absent from Git owner",
+    "duplicate branch checkout",
+    "active-run environment switch",
+    "paused binding",
+    "generation mismatch",
+    "missing environment root",
+    "missing task completion write path"
+  ]
 }

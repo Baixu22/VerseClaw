@@ -1,0 +1,14 @@
+
+Running 9 tests using 1 worker
+
+  ok 1 tests\e2e\chat-slash-session-lifecycle.spec.ts:95:5 › slash /rename renames the current session through the host API (16.4s)
+  ok 2 tests\e2e\chat-slash-session-lifecycle.spec.ts:125:5 › slash /clear resets the local message view (7.3s)
+  ok 3 tests\e2e\long-session-lifecycle-faults.spec.ts:102:5 › real Host and Gateway archive/restore preserves history and rotates the physical generation (37.9s)
+  ok 4 tests\e2e\sidebar-session-folders-archive.spec.ts:333:7 › Sidebar session workgroups and archive › pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting (23.5s)
+  ok 5 tests\e2e\sidebar-session-folders-archive.spec.ts:394:7 › Sidebar session workgroups and archive › keeps workgroups inside the project and renders time sorting as a direct list (7.9s)
+  ok 6 tests\e2e\sidebar-session-folders-archive.spec.ts:420:7 › Sidebar session workgroups and archive › creates a workgroup, moves a running session into it, searches it, then deletes the workgroup (11.6s)
+  ok 7 tests\e2e\sidebar-session-folders-archive.spec.ts:506:7 › Sidebar session workgroups and archive › delete dialog offers archive and permanent delete; archive modal restores sessions (8.3s)
+  ok 8 tests\e2e\sidebar-session-folders-archive.spec.ts:551:7 › Sidebar session workgroups and archive › drags a conversation after another to auto-group, rename, and remove the group (6.5s)
+  ok 9 tests\e2e\sidebar-session-folders-archive.spec.ts:627:7 › Sidebar session workgroups and archive › permanent delete from the archived settings page removes the entry (6.1s)
+
+  9 passed (2.1m)

@@ -132,7 +132,20 @@
     "pid": "pid {{pid}}",
     "fromSession": "{{session}} から",
     "stop": "停止",
-    "stopResource": "{{label}} を停止"
+    "stopResource": "{{label}} を停止",
+    "coordinator": {
+      "title": "長期セッション調整",
+      "start": "長期セッションを開始",
+      "pause": "一時停止",
+      "resume": "再開",
+      "taskRequired": "先に Task Ledger ノードを選択してください。",
+      "processes": "プロセス {{count}} 件",
+      "slots": "スロット {{count}} 件",
+      "recovery": "復旧状態: {{state}}",
+      "backgroundTerminals": "バックグラウンド端末 {{count}} 件",
+      "queued": "キュー待ち {{count}} 件",
+      "state": { "active": "有効", "paused": "一時停止", "invalid": "無効", "unbound": "未バインド" }
+    }
   },
   "errorBoundary": {
     "description": "予期しないエラーが発生しました。再読み込みして続行するか、以下のエラー参照番号をサポートにお知らせください。",

@@ -47,7 +47,7 @@ This file is generated — edit the source of truth instead.
 - risk: baseline-on
 - enable: On by default through Workspace Context; explicit runtime.contextBlock.working-memory.enabled=false remains a supported rollback.
 - rollback: Turn Workspace Context off or set enabled=false, then restart; recent-action injection stops.
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:479`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:483`
 
 > TF-0494: default-on after a predeclared paired canary; Assembler injects ## Recent Actions once per model-call context. Not long-term knowledge.
 
@@ -61,7 +61,7 @@ This file is generated — edit the source of truth instead.
 - risk: baseline-on
 - enable: On by default through Workspace Context; explicit runtime.contextBlock.tool-registry.enabled=false remains a supported rollback.
 - rollback: Turn Workspace Context off or set enabled=false, then restart; the tool summary stops.
-- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:490`
+- executor: wired — `openclaw_runtime/src/context-engine/assembler.ts:494`
 
 > TF-0494: default-on after a predeclared paired canary; tool-registry Block and ## Tools summary remain exactly-once per model call.
 

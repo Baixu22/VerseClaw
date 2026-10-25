@@ -1,0 +1,41 @@
+{
+  "schema": "clawx.long-session.review-disposition/v1",
+  "generatedAt": "2026-10-23T19:18:32.708Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "e2302cdaee166f29019d1a677f4ffbb645104b52",
+  "sourceReview": "Direct-source review, focused owner-boundary tests, full repository gates, and a built Electron journey.",
+  "findings": [
+    {
+      "issue": "The session activity store could let a late response from an older workspace, session, backend, or authorization read overwrite the current view.",
+      "status": "fixed",
+      "evidence": "Workspace-scope tokens, per-session request ids, fail-closed policy scope checks, visible scope filters, and approval-triggered reload are covered by session-activity-store-scope.test.ts."
+    },
+    {
+      "issue": "The activity panel showed only backend/effort, without configuration sources, compatibility reasons, action permissions, or lifecycle boundaries.",
+      "status": "fixed",
+      "evidence": "The policy section now exposes configured/effective facts, localized reasons, sources, compatibility, action permissions, Retention, abort/stop, and fork/worktree boundaries."
+    },
+    {
+      "issue": "The narrow toolbar hid the activity entry and closed an already-open panel.",
+      "status": "fixed",
+      "evidence": "The compact-layout hide and forced-close behavior were removed; built Electron verifies a visible toggle and bounded panel at 680px."
+    },
+    {
+      "issue": "Recovery details used unguarded asynchronous reads when switching sessions.",
+      "status": "fixed",
+      "evidence": "RecoverySettingsSection now request-gates compaction and long-task reads and filters cross-workspace snapshots."
+    },
+    {
+      "issue": "External local-model review was not run to a verdict in this pass.",
+      "status": "unmeasured",
+      "evidence": "No external review pass is claimed."
+    }
+  ],
+  "verdict": "no-known-blocking-defect; external review and live-provider effective-state turn remain unmeasured",
+  "limits": [
+    "The real Host/Gateway journey reads and re-reads policy across a Gateway restart but does not issue a live-provider model turn.",
+    "The deterministic two-session/backend/action UI scenario uses renderer host replay in the same built Electron test after actual Host/Gateway policy and restart checks.",
+    "Four-locale key parity is validated by i18n lint; only the English narrow/wide screenshots are retained."
+  ]
+}

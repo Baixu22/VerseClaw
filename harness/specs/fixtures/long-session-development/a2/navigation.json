@@ -1,0 +1,409 @@
+{
+  "schema": "clawx.long-session.navigation/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "database": "D:/ClawX/.codegraph/codegraph.db",
+  "indexedCommit": "d887414facd34d0ebe740e5ae58a1316573d0c0f",
+  "correctnessEvidence": false,
+  "symbols": [
+    {
+      "id": "function:31cd0c3d7ff5a658426d1e2b8720847b",
+      "name": "cleanupSessionBeforeMutation",
+      "kind": "function",
+      "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+      "start_line": 887,
+      "end_line": 974,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "performGatewaySessionReset",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 1026,
+          "line": 1094
+        },
+        {
+          "kind": "contains",
+          "name": "session-reset-service.ts",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 1,
+          "line": null
+        },
+        {
+          "kind": "imports",
+          "name": "sessions.runtime.ts",
+          "file_path": "openclaw_runtime/src/gateway/server-methods/sessions.runtime.ts",
+          "start_line": 1,
+          "line": 6
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "resolveSessionLifecycleIdentity",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 446,
+          "line": 897
+        },
+        {
+          "kind": "calls",
+          "name": "fence",
+          "file_path": "openclaw_runtime/src/sessions/session-admission-registry.ts",
+          "start_line": 308,
+          "line": 914
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 921
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 933
+        },
+        {
+          "kind": "calls",
+          "name": "runSessionStopFront",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 505,
+          "line": 948
+        },
+        {
+          "kind": "calls",
+          "name": "clearSessionResetRuntimeState",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/session-reset-cleanup.ts",
+          "start_line": 11,
+          "line": 956
+        },
+        {
+          "kind": "calls",
+          "name": "resolveCleanupQueueKeys",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 460,
+          "line": 956
+        },
+        {
+          "kind": "calls",
+          "name": "clearBootstrapSnapshot",
+          "file_path": "openclaw_runtime/src/agents/bootstrap-cache.ts",
+          "start_line": 82,
+          "line": 957
+        },
+        {
+          "kind": "calls",
+          "name": "stopSubagentsForRequester",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/abort.ts",
+          "start_line": 210,
+          "line": 958
+        },
+        {
+          "kind": "calls",
+          "name": "runCleanupOtherOwners",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 557,
+          "line": 964
+        },
+        {
+          "kind": "contains",
+          "name": "settle",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 901,
+          "line": null
+        },
+        {
+          "kind": "references",
+          "name": "OpenClawConfig",
+          "file_path": "openclaw_runtime/src/config/types.openclaw.ts",
+          "start_line": 486,
+          "line": 888
+        },
+        {
+          "kind": "references",
+          "name": "SessionEntry",
+          "file_path": "openclaw_runtime/src/config/sessions/types.ts",
+          "start_line": 220,
+          "line": 891
+        },
+        {
+          "kind": "references",
+          "name": "SessionAcpMeta",
+          "file_path": "openclaw_runtime/packages/acp-core/src/types.ts",
+          "start_line": 84,
+          "line": 895
+        },
+        {
+          "kind": "references",
+          "name": "SessionMutationCleanupOutcome",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 435,
+          "line": 896
+        },
+        {
+          "kind": "references",
+          "name": "settle",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 901,
+          "line": 925
+        }
+      ]
+    },
+    {
+      "id": "property:8bcf937d2f5e606df94b8493f66575b7",
+      "name": "updateSessionStore",
+      "kind": "property",
+      "file_path": "openclaw_runtime/src/agents/subagent-spawn.ts",
+      "start_line": 154,
+      "end_line": 154,
+      "callers": [
+        {
+          "kind": "contains",
+          "name": "SubagentSpawnDeps",
+          "file_path": "openclaw_runtime/src/agents/subagent-spawn.ts",
+          "start_line": 144,
+          "line": null
+        }
+      ],
+      "callees": []
+    },
+    {
+      "id": "function:29a8aff9603a999a9955ed22930cc225",
+      "name": "updateSessionStore",
+      "kind": "function",
+      "file_path": "openclaw_runtime/src/config/sessions/store.ts",
+      "start_line": 489,
+      "end_line": 507,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "persistDiscordModelPickerOverride",
+          "file_path": "openclaw_runtime/extensions/discord/src/monitor/native-command-model-picker-apply.ts",
+          "start_line": 33,
+          "line": 45
+        },
+        {
+          "kind": "calls",
+          "name": "closeDiscordThreadSessions",
+          "file_path": "openclaw_runtime/extensions/discord/src/monitor/thread-session-close.ts",
+          "start_line": 15,
+          "line": 47
+        },
+        {
+          "kind": "calls",
+          "name": "repairFeishuDoctorState",
+          "file_path": "openclaw_runtime/extensions/feishu/src/doctor.ts",
+          "start_line": 639,
+          "line": 695
+        },
+        {
+          "kind": "calls",
+          "name": "scrubDreamingNarrativeArtifacts",
+          "file_path": "openclaw_runtime/extensions/memory-core/src/dreaming-narrative.ts",
+          "start_line": 720,
+          "line": 770
+        },
+        {
+          "kind": "calls",
+          "name": "registerTelegramHandlers",
+          "file_path": "openclaw_runtime/extensions/telegram/src/bot-handlers.runtime.ts",
+          "start_line": 149,
+          "line": 2590
+        },
+        {
+          "kind": "calls",
+          "name": "bot-message-context.session-recreate.test-support.ts",
+          "file_path": "openclaw_runtime/extensions/telegram/src/bot-message-context.session-recreate.test-support.ts",
+          "start_line": 1,
+          "line": 99
+        },
+        {
+          "kind": "calls",
+          "name": "resolveGroupActivationFor",
+          "file_path": "openclaw_runtime/extensions/whatsapp/src/auto-reply/monitor/group-activation.ts",
+          "start_line": 31,
+          "line": 57
+        },
+        {
+          "kind": "calls",
+          "name": "persistSessionEntry",
+          "file_path": "openclaw_runtime/src/agents/command/attempt-execution.shared.ts",
+          "start_line": 34,
+          "line": 37
+        },
+        {
+          "kind": "calls",
+          "name": "updateSessionStoreAfterAgentRun",
+          "file_path": "openclaw_runtime/src/agents/command/session-store.ts",
+          "start_line": 59,
+          "line": 296
+        },
+        {
+          "kind": "calls",
+          "name": "clearCliSessionInStore",
+          "file_path": "openclaw_runtime/src/agents/command/session-store.ts",
+          "start_line": 319,
+          "line": 335
+        },
+        {
+          "kind": "calls",
+          "name": "recordCliCompactionInStore",
+          "file_path": "openclaw_runtime/src/agents/command/session-store.ts",
+          "start_line": 345,
+          "line": 404
+        },
+        {
+          "kind": "calls",
+          "name": "clearLiveModelSwitchPending",
+          "file_path": "openclaw_runtime/src/agents/live-model-switch.ts",
+          "start_line": 233,
+          "line": 249
+        },
+        {
+          "kind": "calls",
+          "name": "markRestartAbortedMainSessions",
+          "file_path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+          "start_line": 103,
+          "line": 163
+        },
+        {
+          "kind": "calls",
+          "name": "markSessionFailed",
+          "file_path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+          "start_line": 216,
+          "line": 221
+        },
+        {
+          "kind": "calls",
+          "name": "resumeMainSession",
+          "file_path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+          "start_line": 337,
+          "line": 378
+        },
+        {
+          "kind": "calls",
+          "name": "markRestartAbortedMainSessionsFromLocks",
+          "file_path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+          "start_line": 421,
+          "line": 437
+        },
+        {
+          "kind": "calls",
+          "name": "recoverOrphanedSubagentSessions",
+          "file_path": "openclaw_runtime/src/agents/subagent-orphan-recovery.ts",
+          "start_line": 183,
+          "line": 260
+        },
+        {
+          "kind": "calls",
+          "name": "recoverOrphanedSubagentSessions",
+          "file_path": "openclaw_runtime/src/agents/subagent-orphan-recovery.ts",
+          "start_line": 183,
+          "line": 336
+        },
+        {
+          "kind": "calls",
+          "name": "persistSubagentSessionTiming",
+          "file_path": "openclaw_runtime/src/agents/subagent-registry-helpers.ts",
+          "start_line": 114,
+          "line": 132
+        },
+        {
+          "kind": "calls",
+          "name": "createSessionStatusTool",
+          "file_path": "openclaw_runtime/src/agents/tools/session-status-tool.ts",
+          "start_line": 488,
+          "line": 807
+        },
+        {
+          "kind": "calls",
+          "name": "clearAbortCutoffInSessionRuntime",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/abort-cutoff.runtime.ts",
+          "start_line": 7,
+          "line": 23
+        },
+        {
+          "kind": "calls",
+          "name": "tryFastAbortFromMessage",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/abort.ts",
+          "start_line": 297,
+          "line": 440
+        },
+        {
+          "kind": "calls",
+          "name": "clearDroppedCliSessionBinding",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/agent-runner-cli-dispatch.ts",
+          "start_line": 158,
+          "line": 178
+        },
+        {
+          "kind": "calls",
+          "name": "persistFallbackCandidateSelection",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/agent-runner-execution.ts",
+          "start_line": 1703,
+          "line": 1782
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "runExclusiveSessionStoreWrite",
+          "file_path": "openclaw_runtime/src/config/sessions/store-writer.ts",
+          "start_line": 13,
+          "line": 494
+        },
+        {
+          "kind": "calls",
+          "name": "loadMutableSessionStoreForWriter",
+          "file_path": "openclaw_runtime/src/config/sessions/store.ts",
+          "start_line": 290,
+          "line": 495
+        },
+        {
+          "kind": "calls",
+          "name": "skipSaveWhenResult",
+          "file_path": "openclaw_runtime/src/config/sessions/store.ts",
+          "start_line": 175,
+          "line": 497
+        },
+        {
+          "kind": "calls",
+          "name": "restoreUnchangedSessionStoreCache",
+          "file_path": "openclaw_runtime/src/config/sessions/store.ts",
+          "start_line": 228,
+          "line": 498
+        },
+        {
+          "kind": "calls",
+          "name": "saveSessionStoreUnlocked",
+          "file_path": "openclaw_runtime/src/config/sessions/store.ts",
+          "start_line": 315,
+          "line": 501
+        },
+        {
+          "kind": "calls",
+          "name": "resolveSingleEntryPersistence",
+          "file_path": "openclaw_runtime/src/config/sessions/store.ts",
+          "start_line": 176,
+          "line": 503
+        },
+        {
+          "kind": "references",
+          "name": "SessionEntry",
+          "file_path": "openclaw_runtime/src/config/sessions/types.ts",
+          "start_line": 220,
+          "line": 491
+        },
+        {
+          "kind": "references",
+          "name": "UpdateSessionStoreOptions",
+          "file_path": "openclaw_runtime/src/config/sessions/store.ts",
+          "start_line": 170,
+          "line": 492
+        }
+      ]
+    }
+  ]
+}

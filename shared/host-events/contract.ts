@@ -156,7 +156,7 @@ export type SubagentRuntimeLifecycleEvent = {
   sessionKey?: string;
   roleName?: string;
   task?: string;
-  status: 'started' | 'completed' | 'error' | 'aborted' | 'verified';
+  status: 'started' | 'accepted' | 'completed' | 'error' | 'aborted' | 'verified';
   summary?: string;
   error?: string;
   ts?: number;

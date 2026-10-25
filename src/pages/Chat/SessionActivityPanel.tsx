@@ -39,7 +39,7 @@
  */
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, CirclePause, CirclePlay, FilePlus2, GitBranch, GitCommitHorizontal, Layers3, Loader2, RotateCcw, Target, TerminalSquare, UsersRound, Waypoints } from 'lucide-react';
+import { ChevronRight, FilePlus2, GitBranch, GitCommitHorizontal, Loader2, RotateCcw, Target, TerminalSquare } from 'lucide-react';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
@@ -48,15 +48,11 @@ import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
 import { cn } from '@/lib/utils';
 import { subagentIdentity } from '@shared/subagent-identity';
 import { backgroundReadFailed } from '@shared/types/session-activity';
-import { SessionEffectivePolicyPanel } from './SessionEffectivePolicyPanel';
 import type {
   SessionActivitySnapshot,
   SessionActivitySubagent,
 } from '@shared/types/session-activity';
-import type { DelegationAdmissionReceipt } from '@shared/types/delegation-admission';
-import type { TaskLedgerNode } from '@shared/types/task-ledger';
-import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
-import { deriveCoordinationSurface, type CoordinationWorkState } from './long-session-coordination';
+import type { SessionPolicyFactStatus } from '@shared/types/session-effective-policy';
 
 type SessionActivityPanelProps = {
   snapshot: SessionActivitySnapshot;
@@ -78,16 +74,8 @@ type SessionActivityPanelProps = {
   onRetryStatus?: () => void;
   showGit?: boolean;
   showCommands?: boolean;
-  /** The current workspace's explicit long-session binding, if any. */
-  coordinatorBinding?: WorkspaceCoordinatorBinding | null;
-  delegationReceipts?: readonly DelegationAdmissionReceipt[];
-  taskLedgerNodes?: readonly TaskLedgerNode[];
-  coordinatorRunActive?: boolean;
-  coordinatorPaused?: boolean;
-  onOpenTaskNode?: (nodeId: string) => void;
-  onOpenCoordinatorSession?: (sessionKey: string) => void;
-  onPauseCoordinator?: () => void;
-  onResumeCoordinator?: () => void;
+  /** View-only row retention; transcript/resource TTLs remain owner facts. */
+  activityRetentionMinutes?: 0 | 5 | 15;
 };
 
 /**
@@ -98,18 +86,10 @@ type RowState = 'idle' | 'running' | 'ok' | 'warn' | 'error';
 
 function rowState(status: string): RowState {
   if (status === 'running' || status === 'started' || status === 'starting') return 'running';
-  if (status === 'completed' || status === 'verified' || status === 'exited' || status === 'reported' || status === 'accepted-by-task') return 'ok';
-  if (status === 'accepted' || status === 'waiting_approval' || status === 'waiting' || status === 'paused' || status === 'unknown') return 'warn';
-  if (status === 'failed' || status === 'error' || status === 'blocked' || status === 'aborted' || status === 'killed' || status === 'lost' || status === 'cancelled') return 'error';
+  if (status === 'completed' || status === 'verified' || status === 'exited') return 'ok';
+  if (status === 'review' || status === 'waiting_approval' || status === 'waiting' || status === 'paused') return 'warn';
+  if (status === 'failed' || status === 'error' || status === 'blocked' || status === 'aborted' || status === 'killed' || status === 'lost') return 'error';
   return 'idle';
-}
-
-function coordinationStateLabelKey(state: CoordinationWorkState): string {
-  return 'sessionActivity.coordination.state.' + state;
-}
-
-function shortReference(value: string): string {
-  return value.length > 22 ? value.slice(0, 10) + '…' + value.slice(-8) : value;
 }
 
 function formatCount(value: number): string {
@@ -164,6 +144,7 @@ function Row({
   value,
   state,
   tall,
+  stacked,
   title,
   onOpen,
   testId,
@@ -174,6 +155,7 @@ function Row({
   value?: React.ReactNode;
   state?: RowState;
   tall?: boolean;
+  stacked?: boolean;
   title?: string;
   onOpen?: () => void;
   testId?: string;
@@ -198,6 +180,7 @@ function Row({
   const className = cn(
     'codex-session-activity__row',
     tall && 'is-tall',
+    stacked && 'is-stacked',
     onOpen && 'is-interactive',
   );
   if (!onOpen) {
@@ -239,6 +222,23 @@ function HeaderAction({
   );
 }
 
+function PolicyNote({
+  title,
+  body,
+  testId,
+}: {
+  title: string;
+  body: string;
+  testId: string;
+}) {
+  return (
+    <div className="codex-session-activity__policy-note" data-testid={testId}>
+      <span className="codex-session-activity__policy-note-title">{title}</span>
+      <span className="codex-session-activity__policy-note-body">{body}</span>
+    </div>
+  );
+}
+
 function subagentTestId(agent: SessionActivitySubagent): string {
   return `session-activity-subagent-${agent.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 }
@@ -248,6 +248,57 @@ function commandDigest(command: string): string {
   const compact = command.replace(/\s+/g, ' ').trim();
   return compact.length <= 42 ? compact : `${compact.slice(0, 41)}…`;
 }
+
+function policyState(status: SessionPolicyFactStatus): RowState {
+  if (status === 'effective') return 'ok';
+  if (status === 'configured' || status === 'ignored' || status === 'unsupported') return 'warn';
+  return 'idle';
+}
+
+const POLICY_REASON_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  'no-current-run-capability-profile': 'missingProfile',
+  'capability-profile-outside-observation-ttl': 'staleProfile',
+  'session-generation-mismatch': 'sessionMismatch',
+  'run-generation-mismatch': 'runMismatch',
+  'runtime-generation-unknown': 'runtimeUnknown',
+  'gateway-generation-mismatch': 'gatewayMismatch',
+  'capability-profile-fallback': 'profileFallback',
+  'grants are owned by runtime facts': 'grantsUnavailable',
+  'grants unavailable': 'grantsUnavailable',
+  'no fresh context-budget observation for the current generation': 'contextUnavailable',
+  'current scheduler admission was not read by this snapshot': 'resourcesUnavailable',
+  'current schedule state is not part of this read': 'scheduleUnavailable',
+  'no persisted queue override': 'noQueueOverride',
+  'the native backend owns automatic compaction': 'nativeAutomaticCompaction',
+  'provider selection belongs to the native transcript backend': 'nativeProvider',
+  'model selection belongs to the native transcript backend': 'nativeModel',
+  'manual compaction routes through the native backend': 'nativeManualCompaction',
+  'native compaction does not consume OpenClaw reserve-token arguments': 'nativeReserveTokens',
+  'runtime backend is not registered or its compaction ownership is unknown': 'runtimeCompactionUnknown',
+};
+
+const POLICY_PARAMETER_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  'automatic-compaction': 'automaticCompaction',
+  'manual-compaction': 'manualCompaction',
+  'compaction.provider': 'provider',
+  'compaction.model': 'model',
+  'compaction.reserveTokens': 'reserveTokens',
+};
+
+const POLICY_ACTION_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  exec: 'exec',
+  read: 'read',
+  write: 'write',
+  browser: 'browser',
+};
+
+const POLICY_AUTHORIZATION_KEY_BY_VALUE: Readonly<Record<string, string>> = {
+  allowed: 'allowed',
+  'requires-approval': 'requiresApproval',
+  denied: 'denied',
+  'not-applicable': 'notApplicable',
+  unknown: 'unknown',
+};
 
 export function SessionActivityPanel({
   snapshot,
@@ -263,34 +314,13 @@ export function SessionActivityPanel({
   onRetryStatus,
   showGit = true,
   showCommands = true,
-  coordinatorBinding = null,
-  delegationReceipts = [],
-  taskLedgerNodes = [],
-  coordinatorRunActive = false,
-  coordinatorPaused = false,
-  onOpenTaskNode,
-  onOpenCoordinatorSession,
-  onPauseCoordinator,
-  onResumeCoordinator,
+  activityRetentionMinutes = 5,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
 
   const git = showGit ? snapshot.git : null;
   const hasGit = Boolean(git && git.isRepository);
   const hasPlan = (plan?.todos.length ?? 0) > 0;
-  const hasPolicyStatus = snapshot.policy !== undefined || snapshot.availability.policy !== undefined;
-  const coordination = useMemo(
-    () => coordinatorBinding?.sessionKey === snapshot.session.sessionKey
-      ? deriveCoordinationSurface({
-          binding: coordinatorBinding,
-          receipts: delegationReceipts,
-          snapshot,
-          taskNodes: taskLedgerNodes,
-        })
-      : null,
-    [coordinatorBinding, delegationReceipts, snapshot, taskLedgerNodes],
-  );
-  const hasCoordination = coordination != null;
   const hasSubagents = snapshot.subagents.length > 0;
   const visibleProcesses = useMemo(
     () => (showCommands ? processes : []),
@@ -309,6 +339,64 @@ export function SessionActivityPanel({
     return snapshot.processes.filter((entry) => !runtimeIds.has(entry.id));
   }, [showCommands, snapshot.processes, visibleProcesses]);
   const hasProcesses = visibleProcesses.length > 0 || snapshotOnlyProcesses.length > 0;
+  const policy = snapshot.policy;
+  const configuredBackend = policy?.backend.configured;
+  const effectiveBackend = policy?.backend.effective;
+  const configuredModel = policy?.model.configured;
+  const effectiveModel = policy?.model.effective;
+  const grantSummary = policy?.grants.effective.value;
+  const grantActions = grantSummary?.actions ?? [];
+  const retentionLabel = t(`sessionActivity.policy.retention.${activityRetentionMinutes}`);
+  const policyReason = (reason: string | null | undefined): string | null => {
+    if (!reason) return null;
+    const key = POLICY_REASON_KEY_BY_VALUE[reason];
+    return key
+      ? t(`sessionActivity.policy.reasons.${key}`, { defaultValue: reason })
+      : reason;
+  };
+  const policyParameter = (parameter: string): string => {
+    const key = POLICY_PARAMETER_KEY_BY_VALUE[parameter];
+    return key
+      ? t(`sessionActivity.policy.parameters.${key}`, { defaultValue: parameter })
+      : parameter;
+  };
+  const grantActionLabel = (actionId: string): string => {
+    const key = POLICY_ACTION_KEY_BY_VALUE[actionId];
+    return key
+      ? t(`sessionActivity.policy.grantActions.${key}`, { defaultValue: actionId })
+      : actionId;
+  };
+  const authorizationLabel = (authorization: string): string => {
+    const key = POLICY_AUTHORIZATION_KEY_BY_VALUE[authorization];
+    return key
+      ? t(`sessionActivity.policy.authorization.${key}`, { defaultValue: authorization })
+      : authorization;
+  };
+  const configuredContextValue = policy?.context.configured.value?.contextTokens
+    ? t('sessionActivity.policy.tokens', { count: policy.context.configured.value.contextTokens })
+    : t(`sessionActivity.policy.status.${policy?.context.configured.status ?? 'unverified'}`);
+  const effectiveContextValue = policy?.context.effective.value?.contextTokens
+    ? t('sessionActivity.policy.tokens', { count: policy.context.effective.value.contextTokens })
+    : t(`sessionActivity.policy.status.${policy?.context.effective.status ?? 'unverified'}`);
+  const configuredQueueValue = [
+    policy?.queue.configured.value?.mode,
+    policy?.queue.configured.value?.cap != null
+      ? t('sessionActivity.policy.queueCap', { count: policy.queue.configured.value.cap })
+      : null,
+  ].filter(Boolean).join(' · ') || t('sessionActivity.policy.notReported');
+  const effectiveQueueValue = t('sessionActivity.policy.queueValue', {
+    mode: policy?.queue.effective.value?.mode ?? t('sessionActivity.policy.notReported'),
+    count: policy?.queue.effective.value?.queuedCount ?? 0,
+  });
+  const unverifiedFacts = policy ? [
+    { label: t('sessionActivity.policy.effectiveBackend'), reason: effectiveBackend?.reason },
+    { label: t('sessionActivity.policy.effort'), reason: effectiveModel?.reason },
+    { label: t('sessionActivity.policy.context'), reason: policy.context.effective.reason },
+    { label: t('sessionActivity.policy.actions'), reason: policy.grants.effective.reason },
+    { label: t('sessionActivity.policy.queue'), reason: policy.queue.effective.reason },
+    { label: t('sessionActivity.policy.resources'), reason: policy.resources.effective.reason },
+    { label: t('sessionActivity.policy.schedule'), reason: policy.schedule.effective.reason },
+  ].filter((fact) => Boolean(fact.reason)) : [];
 
   /* The recovery affordance is not a section — it is an action on the card. It
    * appears only when there is something to recover, which is the same signal
@@ -350,7 +438,7 @@ export function SessionActivityPanel({
   const runningSubagents = snapshot.subagents.filter((agent) => agent.status === 'started').length;
   const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
 
-  if (!hasGit && !hasPlan && !hasPolicyStatus && !hasCoordination && !hasSubagents && !hasProcesses
+  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses && !policy
     && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert && !backgroundUnknown) return null;
 
   return (
@@ -360,104 +448,6 @@ export function SessionActivityPanel({
       aria-label={t('sessionActivity.title')}
     >
       <div className={cn('codex-session-activity__body', compact && 'is-scrollable')}>
-        {/* ── 长期协作 ─────────────────────────────────────────────────── */}
-{hasCoordination && coordination ? (
-          <Section
-            title={t('sessionActivity.sections.coordination')}
-            summary={t('sessionActivity.coordination.revision', { revision: coordination.revision })}
-            actions={(
-              <>
-                {coordination.bindingState === 'active' && coordinatorRunActive && !coordinatorPaused && onPauseCoordinator ? (
-                  <HeaderAction
-                    label={t('sessionActivity.coordination.pause')}
-                    icon={<CirclePause className="h-3.5 w-3.5" />}
-                    onClick={onPauseCoordinator}
-                    testId="session-activity-coordination-pause"
-                  />
-                ) : null}
-                {coordination.bindingState === 'active' && coordinatorPaused && onResumeCoordinator ? (
-                  <HeaderAction
-                    label={t('sessionActivity.coordination.resume')}
-                    icon={<CirclePlay className="h-3.5 w-3.5" />}
-                    onClick={onResumeCoordinator}
-                    testId="session-activity-coordination-resume"
-                  />
-                ) : null}
-              </>
-            )}
-            testId="session-activity-coordination"
-          >
-            <Row
-              icon={<Waypoints className="h-3.5 w-3.5" aria-hidden="true" />}
-              label={t('sessionActivity.coordination.binding')}
-              sublabel={shortReference(coordination.sessionKey)}
-              value={coordinatorPaused
-                ? t('sessionActivity.coordination.state.waiting')
-                : t('sessionActivity.coordination.bindingState.' + coordination.bindingState)}
-              state={coordinatorPaused ? 'warn' : rowState(coordination.bindingState)}
-              title={coordination.invalidationReason
-                ? t('sessionActivity.coordination.invalidatedReason.' + coordination.invalidationReason)
-                : coordination.sessionKey}
-              onOpen={onOpenCoordinatorSession ? () => onOpenCoordinatorSession(coordination.sessionKey) : undefined}
-              testId="session-activity-coordination-binding"
-            />
-            {coordination.taskRefs.slice(0, 3).map((task) => (
-              <Row
-                key={task.nodeId}
-                testId={'session-activity-coordination-task-' + task.nodeId.replace(/[^a-zA-Z0-9_-]/g, '-')}
-                icon={<Target className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={task.title}
-                sublabel={shortReference(task.nodeId)}
-                value={task.status
-                  ? t('sessionActivity.taskStatus.' + task.status, { defaultValue: task.status })
-                  : t('sessionActivity.coordination.unknownTask')}
-                state={task.status ? rowState(task.status) : 'warn'}
-                onOpen={task.available && onOpenTaskNode ? () => onOpenTaskNode(task.nodeId) : undefined}
-              />
-            ))}
-            {coordination.works.slice(0, 4).map((work) => (
-              <Row
-                key={work.receiptId}
-                tall
-                testId={'session-activity-coordination-work-' + work.receiptId.replace(/[^a-zA-Z0-9_-]/g, '-')}
-                icon={<UsersRound className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={work.roleName}
-                sublabel={t('sessionActivity.coordination.workDetail', {
-                  task: work.task,
-                  backend: work.backend,
-                  isolation: work.isolation,
-                })}
-                value={t(coordinationStateLabelKey(work.state))}
-                state={rowState(work.state)}
-                title={work.childRunId ?? work.idempotencyKey}
-                onOpen={work.childSessionKey && onOpenSubagent
-                  ? () => onOpenSubagent(work.childSessionKey!)
-                  : undefined}
-              />
-            ))}
-            {coordination.batches.slice(0, 3).map((batch) => (
-              <Row
-                key={batch.id}
-                tall
-                testId={'session-activity-coordination-batch-' + batch.id.replace(/[^a-zA-Z0-9_-]/g, '-')}
-                icon={<Layers3 className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={t('sessionActivity.coordination.batchTitle')}
-                sublabel={t('sessionActivity.coordination.batchCounts', {
-                  completed: batch.completedWorkerCount,
-                  failed: batch.failedWorkerCount,
-                  cancelled: batch.cancelledWorkerCount,
-                  pending: batch.pendingWorkerCount,
-                })}
-                value={t(coordinationStateLabelKey(batch.state))}
-                state={rowState(batch.state)}
-                title={batch.idempotencyKey}
-                onOpen={batch.openWorkerSessionKey && onOpenSubagent
-                  ? () => onOpenSubagent(batch.openWorkerSessionKey!)
-                  : undefined}
-              />
-            ))}
-          </Section>
-        ) : null}
         {/* ── 环境 ─────────────────────────────────────────────────────── */}
         {hasGit && gitStats ? (
           <Section
@@ -515,10 +505,6 @@ export function SessionActivityPanel({
               />
             ) : null}
           </Section>
-        ) : null}
-
-        {hasPolicyStatus ? (
-          <SessionEffectivePolicyPanel policy={snapshot.policy ?? null} />
         ) : null}
 
         {/* ── 开发任务 ─────────────────────────────────────────────────── */}
@@ -582,6 +568,183 @@ export function SessionActivityPanel({
                 />
               );
             })}
+          </Section>
+        ) : null}
+
+        {/* ── 运行策略 ─────────────────────────────────────────────────── */}
+        {policy ? (
+          <Section
+            title={t('sessionActivity.sections.policy')}
+            testId="session-activity-policy"
+            summary={t(`sessionActivity.policy.generation.${policy.generation.state}`, {
+              defaultValue: policy.generation.state,
+            })}
+          >
+            <Row
+              testId="session-activity-policy-backend"
+              stacked
+              label={t('sessionActivity.policy.backend')}
+              sublabel={`${t(`sessionActivity.policy.status.${configuredBackend?.status ?? 'unverified'}`)} · ${configuredBackend?.source ?? t('sessionActivity.policy.notReported')}`}
+              value={configuredBackend?.value
+                ? [configuredBackend.value.runtime, configuredBackend.value.provider, configuredBackend.value.model].filter(Boolean).join(' · ')
+                : t('sessionActivity.policy.notReported')}
+              state={configuredBackend ? policyState(configuredBackend.status) : 'idle'}
+            />
+            <Row
+              testId="session-activity-policy-effective"
+              stacked
+              label={t('sessionActivity.policy.effectiveBackend')}
+              sublabel={policyReason(effectiveBackend?.reason ?? null) ?? t('sessionActivity.policy.currentRunObservation')}
+              value={effectiveBackend?.value
+                ? [effectiveBackend.value.runtime, effectiveBackend.value.provider, effectiveBackend.value.model].filter(Boolean).join(' · ')
+                : t(`sessionActivity.policy.status.${effectiveBackend?.status ?? 'unverified'}`)}
+              state={effectiveBackend ? policyState(effectiveBackend.status) : 'idle'}
+            />
+            <Row
+              testId="session-activity-policy-effort"
+              stacked
+              label={t('sessionActivity.policy.effort')}
+              sublabel={[configuredModel?.source, policyReason(effectiveModel?.reason ?? null)].filter(Boolean).join(' · ')}
+              value={[configuredModel?.value?.effort, effectiveModel?.value?.effort].filter(Boolean).join(' → ') || t('sessionActivity.policy.notReported')}
+              state={effectiveModel?.status === 'effective' ? 'ok' : 'warn'}
+            />
+            <Row
+              testId="session-activity-policy-context"
+              stacked
+              label={t('sessionActivity.policy.context')}
+              sublabel={[policy.context.configured.source, policy.context.effective.source, policyReason(policy.context.effective.reason)].filter(Boolean).join(' · ')}
+              value={`${configuredContextValue} → ${effectiveContextValue}`}
+              state={policyState(policy.context.effective.status)}
+            />
+            <Row
+              testId="session-activity-policy-actions"
+              stacked
+              label={t('sessionActivity.policy.actions')}
+              sublabel={policy.grants.effective.reason
+                ? policyReason(policy.grants.effective.reason)
+                : t('sessionActivity.policy.actionCount', { count: grantSummary?.total ?? 0 })}
+              value={grantSummary
+                ? t('sessionActivity.policy.actionSummary', {
+                    allowed: grantSummary.allowed,
+                    approval: grantSummary.requiresApproval,
+                    denied: grantSummary.denied,
+                    unknown: grantSummary.unknown,
+                  })
+                : t(`sessionActivity.policy.status.${policy.grants.effective.status}`)}
+              state={policyState(policy.grants.effective.status)}
+            />
+            {grantActions.length > 0 ? (
+              <details className="codex-session-activity__policy-details" data-testid="session-activity-policy-action-details">
+                <summary>{t('sessionActivity.policy.showActions')}</summary>
+                <div className="codex-session-activity__policy-detail-body">
+                  {grantActions.map((action) => (
+                    <div className="codex-session-activity__policy-detail-row" key={action.actionId}>
+                      <span>{grantActionLabel(action.actionId)}</span>
+                      <span data-state={action.authorization === 'allowed'
+                        ? 'ok'
+                        : action.authorization === 'denied'
+                          ? 'error'
+                          : action.authorization === 'unknown'
+                            ? 'idle'
+                            : 'warn'}>
+                        {authorizationLabel(action.authorization)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            ) : null}
+            <Row
+              testId="session-activity-policy-queue"
+              stacked
+              label={t('sessionActivity.policy.queue')}
+              sublabel={policyReason(policy.queue.effective.reason) ?? policy.queue.effective.source}
+              value={`${configuredQueueValue} → ${effectiveQueueValue}`}
+              state={policyState(policy.queue.effective.status)}
+            />
+            <Row
+              testId="session-activity-policy-resources"
+              stacked
+              label={t('sessionActivity.policy.resources')}
+              sublabel={policyReason(policy.resources.effective.reason)}
+              value={t(`sessionActivity.policy.status.${policy.resources.effective.status}`)}
+              state={policyState(policy.resources.effective.status)}
+            />
+            <Row
+              testId="session-activity-policy-schedule"
+              stacked
+              label={t('sessionActivity.policy.schedule')}
+              sublabel={policyReason(policy.schedule.effective.reason)}
+              value={t(`sessionActivity.policy.status.${policy.schedule.effective.status}`)}
+              state={policyState(policy.schedule.effective.status)}
+            />
+            <details className="codex-session-activity__policy-details" data-testid="session-activity-policy-details">
+              <summary>{t('sessionActivity.policy.showDetails')}</summary>
+              <div className="codex-session-activity__policy-detail-body">
+                <div className="codex-session-activity__policy-detail-heading">{t('sessionActivity.policy.sources')}</div>
+                <ul className="codex-session-activity__policy-source-list" data-testid="session-activity-policy-sources">
+                  {policy.sources.map((source) => <li key={source}>{source}</li>)}
+                </ul>
+                {policy.generation.reason ? (
+                  <div className="codex-session-activity__policy-detail-row">
+                    <span>{t('sessionActivity.policy.generationReason')}</span>
+                    <span>{policyReason(policy.generation.reason)}</span>
+                  </div>
+                ) : null}
+                {unverifiedFacts.length > 0 ? (
+                  <>
+                    <div className="codex-session-activity__policy-detail-heading">{t('sessionActivity.policy.unverifiedFacts')}</div>
+                    <div data-testid="session-activity-policy-unverified-facts">
+                      {unverifiedFacts.map((fact) => (
+                        <div className="codex-session-activity__policy-detail-row is-multiline" key={fact.label}>
+                          <span>{fact.label}</span>
+                          <span data-state="idle">{t('sessionActivity.policy.status.unverified')}</span>
+                          <p>{policyReason(fact.reason)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
+                <div className="codex-session-activity__policy-detail-heading">{t('sessionActivity.policy.compatibility')}</div>
+                <div data-testid="session-activity-policy-compatibility">
+                  {policy.compatibility.map((row) => (
+                    <div className="codex-session-activity__policy-detail-row is-multiline" key={`${row.backend}:${row.parameter}`}>
+                      <span>{policyParameter(row.parameter)}</span>
+                      <span data-state={policyState(row.status)}>{t(`sessionActivity.policy.status.${row.status}`)}</span>
+                      {policyReason(row.reason) ? <p>{policyReason(row.reason)}</p> : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </details>
+          </Section>
+        ) : null}
+
+        {policy ? (
+          <Section
+            title={t('sessionActivity.policy.boundaries.title')}
+            testId="session-activity-policy-boundaries"
+          >
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.abort.title')}
+              body={t('sessionActivity.policy.boundaries.abort.description')}
+              testId="session-activity-boundary-abort"
+            />
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.stop.title')}
+              body={t('sessionActivity.policy.boundaries.stop.description')}
+              testId="session-activity-boundary-stop"
+            />
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.activity.title')}
+              body={t('sessionActivity.policy.boundaries.activity.description', { retention: retentionLabel })}
+              testId="session-activity-boundary-activity"
+            />
+            <PolicyNote
+              title={t('sessionActivity.policy.boundaries.fork.title')}
+              body={t('sessionActivity.policy.boundaries.fork.description')}
+              testId="session-activity-boundary-fork"
+            />
           </Section>
         ) : null}
 

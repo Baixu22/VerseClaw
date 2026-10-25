@@ -57,8 +57,28 @@ import type {
   MemorySurfaceSource,
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
+import type {
+  SessionDelegationPayload,
+  SessionDelegationResult,
+} from '../types/session-delegation';
+export type {
+  SessionDelegationAdmission,
+  SessionDelegationBackend,
+  SessionDelegationBudget,
+  SessionDelegationChildReceipt,
+  SessionDelegationCoordinator,
+  SessionDelegationIsolation,
+  SessionDelegationIsolationBackend,
+  SessionDelegationIsolationMode,
+  SessionDelegationPayload,
+  SessionDelegationReceipt,
+  SessionDelegationResult,
+  SessionDelegationSchedulerReceipt,
+  SessionDelegationStatus,
+  SessionDelegationToolAuthorization,
+  SessionDelegationWorkerPlan,
+} from '../types/session-delegation';
 import type { LongSessionContinuityContextPack } from '../long-session-continuity';
-import type { SessionEffectivePolicy } from '../types/session-effective-policy';
 export type { SessionEffectivePolicy } from '../types/session-effective-policy';
 import type {
   GitBranch,
@@ -126,11 +146,13 @@ import type {
   PromptCacheRiskSeverity,
   PromptCacheStatus,
   WorkspaceContextRange,
-  WorkspaceCoordinatorBinding,
-  WorkspaceCoordinatorTaskRef,
   KnowledgeInvocationMode,
   SessionArchiveEntry,
   SessionFolder,
+  WorkspaceCoordinatorArchiveRestorePolicy,
+  WorkspaceCoordinatorBinding,
+  WorkspaceCoordinatorEnvironmentBinding,
+  WorkspaceCoordinatorRecovery,
   WorkspaceKnowledgeScope,
   WorkspacePermissionMode,
   WorkspacePreviewMode,
@@ -140,10 +162,6 @@ import type {
   WorkspaceWebPreviewLaunchConfig,
   WorkspaceWebPreviewStatus,
 } from '../types/workspace';
-import type {
-  DelegationAdmissionReceipt,
-  DelegationTaskRef,
-} from '../types/delegation-admission';
 import type {
   WorkProviderConfig,
   WorkProviderRunPayload,
@@ -269,6 +287,8 @@ export type {
 } from '../types/memory';
 
 export type JsonRecord = Record<string, unknown>;
+import type { ReclaimReceipt } from '../long-session-resource-reclamation';
+
 export type HostSuccess = { success: boolean; error?: string };
 export type ProviderDefaultSyncResult = HostSuccess & {
   /** True when the default was saved but the runtime model registry sync
@@ -278,16 +298,14 @@ export type ProviderDefaultSyncResult = HostSuccess & {
   reason?: string;
 };
 export type SessionDeleteResult = HostSuccess & {
+  /** Physical generation whose runtime finalizer produced the delete receipt. */
+  expectedSessionId?: string;
+  /** Owner-derived cleanup result, including recovery identity when incomplete. */
+  resourceReclamation?: ReclaimReceipt;
   /** True when the transcript was removed but side artefacts or the
    * sessions.json update failed — the session entry is kept so the user can
    * retry instead of seeing a fake success. */
   partial?: boolean;
-  /**
-   * Set when the Gateway delete committed but the local mirror step had
-   * nothing to do (for example: this runtime keeps no legacy sessions.json).
-   * A skipped mirror is a success, and the reason stays auditable.
-   */
-  skipped?: string;
   /** Paths that could not be unlinked (only meaningful when partial). */
   remainingPaths?: string[];
 };
@@ -619,6 +637,35 @@ export type WorkspaceSaveStatePayload = {
   state?: WorkspaceUiState;
   sessionKey?: string;
 };
+export type WorkspaceCoordinatorEnvironmentSelection = {
+  kind: WorkspaceCoordinatorEnvironmentBinding['kind'];
+  rootPath: string;
+  setupProfile?: string | null;
+};
+export type WorkspaceCoordinatorBindPayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  expectedRevision?: number;
+  taskLedgerNodeIds: string[];
+  environment: WorkspaceCoordinatorEnvironmentSelection;
+  archiveRestorePolicy: WorkspaceCoordinatorArchiveRestorePolicy;
+};
+export type WorkspaceCoordinatorResolvePayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+};
+export type WorkspaceCoordinatorPausePayload = {
+  workspaceId: string;
+  agentId: string;
+  sessionKey: string;
+  expectedRevision: number;
+};
+export type WorkspaceCoordinatorBindingResult = HostSuccess & {
+  binding: WorkspaceCoordinatorBinding | null;
+  recovery: WorkspaceCoordinatorRecovery;
+};
 export type WorkspaceActiveResult = HostSuccess & {
   activeWorkspaceId: string | null;
   activeWorkspace: WorkspaceProfile | null;
@@ -650,12 +697,16 @@ export type WorkspaceTerminalRunResult = HostSuccess & {
 export type WorkspaceTerminalOpenPayload = {
   workspaceId?: string;
   sessionKey?: string;
+  /** Optional caller-provided physical generation; Main verifies it with Gateway when supplied. */
+  expectedSessionId?: string;
   cwd?: string;
   cols?: number;
   rows?: number;
   approvalId?: string;
   kind?: 'interactive' | 'webPreviewDevServer';
   command?: string;
+  /** Keep this terminal alive across renderer teardown; owner default is true. */
+  keepOnLeave?: boolean;
 };
 export type WorkspaceTerminalSessionPayload = {
   sessionId: string;
@@ -684,6 +735,7 @@ export type WorkspaceTerminalSessionResult = HostSuccess & {
   sessionId?: string | null;
   workspaceId?: string | null;
   sessionKey?: string | null;
+  expectedSessionId?: string | null;
   kind?: 'interactive' | 'webPreviewDevServer';
   cwd?: string | null;
   pid?: number | null;
@@ -2824,60 +2876,6 @@ export type SessionArchivePayload = {
   originalFolderId?: string | null;
 };
 export type SessionRestorePayload = { id: string };
-export type SessionEffectivePolicyPayload = {
-  sessionKey: string;
-  workspaceId?: string;
-};
-export type SessionEffectivePolicyResult = HostSuccess & {
-  policy?: SessionEffectivePolicy;
-};
-export type SessionCoordinatorBindingReadPayload = {
-  workspaceId?: string;
-};
-export type SessionCoordinatorBindingValidation =
-  | 'current'
-  | 'unverified'
-  | 'invalidated'
-  | 'missing';
-export type SessionCoordinatorBindingResult = HostSuccess & {
-  binding: WorkspaceCoordinatorBinding | null;
-  validation: SessionCoordinatorBindingValidation;
-  reason?: string | null;
-};
-export type SessionBindCoordinatorPayload = {
-  workspaceId: string;
-  agentId: string;
-  sessionKey: string;
-  expectedRevision: number;
-  taskRefs: WorkspaceCoordinatorTaskRef[];
-};
-export type SessionBindCoordinatorResult = HostSuccess & {
-  binding?: WorkspaceCoordinatorBinding;
-  validation?: SessionCoordinatorBindingValidation;
-};
-export type SessionDelegateCoordinatorPayload = {
-  workspaceId: string;
-  idempotencyKey: string;
-  roleName: string;
-  task: string;
-  taskRef: DelegationTaskRef;
-  writeSet?: string[];
-  isolation?: 'shared' | 'worktree';
-  modelRef?: string | null;
-  /** The only supported execution backend for this route. */
-  backend?: 'openclaw-embedded';
-};
-export type SessionDelegateCoordinatorResult = HostSuccess & {
-  receipt: DelegationAdmissionReceipt;
-  duplicate?: boolean;
-  recoveryRequired?: boolean;
-};
-export type SessionDelegationAdmissionsPayload = {
-  workspaceId?: string;
-};
-export type SessionDelegationAdmissionsResult = HostSuccess & {
-  receipts: DelegationAdmissionReceipt[];
-};
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
 export type SessionListArchivedResult = HostSuccess & {
@@ -3193,6 +3191,11 @@ export type SessionStopPayload = {
 export type SessionStopResult = HostSuccess & {
   key?: string;
   stopped?: boolean;
+  expectedSessionId?: string;
+  resourceReclamation?: ReclaimReceipt;
+};
+export type SessionArchiveResult = HostSuccess & {
+  resourceReclamation?: ReclaimReceipt;
 };
 export type SessionForkPayload = {
   sessionKey: string;
@@ -5308,6 +5311,35 @@ export type MemoryProposeFactsConfirmResult = HostSuccess & {
   factId?: string;
 };
 
+/**
+ * Runtime exec-approval boundary (TF-0240). `list` reads the Gateway's pending
+ * exec approvals; `resolve` answers exactly one of them with a decision the
+ * runtime already offered for that request.
+ */
+export type RuntimeApprovalPendingEntry = {
+  approvalId: string;
+  command: string;
+  commandPreview?: string | null;
+  cwd?: string | null;
+  host?: string | null;
+  agentId?: string | null;
+  sessionKey?: string | null;
+  allowedDecisions: string[];
+  createdAtMs?: number;
+  expiresAtMs?: number;
+};
+export type RuntimeApprovalListResult = {
+  pending: RuntimeApprovalPendingEntry[];
+};
+export type RuntimeApprovalResolvePayload = {
+  approvalId: string;
+  decision: string;
+};
+export type RuntimeApprovalResolveResult =
+  | { success: true; approvalId: string; decision: string }
+  | { success: false; error: string };
+
+
 export type MemorySurfacePayload = {
   limit?: number;
 };
@@ -5371,34 +5403,6 @@ export type MemoryExportResult = HostSuccess & {
   };
 };
 
-/**
- * Runtime exec-approval boundary (TF-0240). `list` reads the Gateway's pending
- * exec approvals; `resolve` answers exactly one of them with a decision the
- * runtime already offered for that request.
- */
-export type RuntimeApprovalPendingEntry = {
-  approvalId: string;
-  command: string;
-  commandPreview?: string | null;
-  cwd?: string | null;
-  host?: string | null;
-  agentId?: string | null;
-  sessionKey?: string | null;
-  allowedDecisions: string[];
-  createdAtMs?: number;
-  expiresAtMs?: number;
-};
-export type RuntimeApprovalListResult = {
-  pending: RuntimeApprovalPendingEntry[];
-};
-export type RuntimeApprovalResolvePayload = {
-  approvalId: string;
-  decision: string;
-};
-export type RuntimeApprovalResolveResult =
-  | { success: true; approvalId: string; decision: string }
-  | { success: false; error: string };
-
 export type VerseGitDiagnosticBinding = {
   workspaceId: string;
   sessionId: string;
@@ -5443,6 +5447,7 @@ export type VerseGitDiagnosticStatus = {
   issues: string[];
   hostVerdict: 'unchanged';
 };
+
 export type HostApiContract = {
   app: {
     version: () => string;
@@ -5536,6 +5541,9 @@ export type HostApiContract = {
     renameFolder: (payload: WorkspaceFolderRenamePayload) => WorkspaceSnapshotResult;
     deleteFolder: (payload: WorkspaceFolderDeletePayload) => WorkspaceSnapshotResult;
     moveSessionToFolder: (payload: WorkspaceFolderMoveSessionPayload) => WorkspaceSnapshotResult;
+    bindCoordinator: (payload: WorkspaceCoordinatorBindPayload) => WorkspaceCoordinatorBindingResult;
+    resolveCoordinator: (payload: WorkspaceCoordinatorResolvePayload) => WorkspaceCoordinatorBindingResult;
+    pauseCoordinator: (payload: WorkspaceCoordinatorPausePayload) => WorkspaceCoordinatorBindingResult;
   };
   projectRules: {
     snapshot: () => ProjectRulesSnapshotResult;
@@ -5888,6 +5896,7 @@ export type HostApiContract = {
     testImageGeneration: (payload: ImageGenerationTestPayload) => ImageGenerationTestResult;
   };
   sessions: {
+    delegate: (payload: SessionDelegationPayload) => SessionDelegationResult;
     delete: (payload: SessionDeletePayload) => SessionDeleteResult;
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;
@@ -5913,13 +5922,8 @@ export type HostApiContract = {
     createHandoff: (payload: SessionCreateHandoffPayload) => SessionCreateHandoffResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
-    archive: (payload: SessionArchivePayload) => HostSuccess;
+    archive: (payload: SessionArchivePayload) => SessionArchiveResult;
     restore: (payload: SessionRestorePayload) => HostSuccess;
-    effectivePolicy: (payload: SessionEffectivePolicyPayload) => SessionEffectivePolicyResult;
-    coordinatorBinding: (payload?: SessionCoordinatorBindingReadPayload) => SessionCoordinatorBindingResult;
-    bindCoordinator: (payload: SessionBindCoordinatorPayload) => SessionBindCoordinatorResult;
-    delegateCoordinator: (payload: SessionDelegateCoordinatorPayload) => SessionDelegateCoordinatorResult;
-    delegationAdmissions: (payload?: SessionDelegationAdmissionsPayload) => SessionDelegationAdmissionsResult;
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
     emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;

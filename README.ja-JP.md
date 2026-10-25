@@ -41,7 +41,9 @@ Verse Claw は OpenClaw を基盤とする Electron デスクトップアプリ�
 | 対話とセッション | 応答のストリーミング、ファイルと知識参照の添付、ツール結果の確認、会話の検索・固定・グループ化・アーカイブ・復元 | メイン画面とセッションサイドバー |
 | プロジェクト | プロジェクトの切り替え、ファイルの閲覧とプレビュー、対話の横でターミナル・ブラウザー・Git 差分・コードレビューを利用 | 対話ツールバーのワークスペースパネル |
 | モデルとプロバイダー | アカウント、既定モデル、フォールバックの設定、トークン使用履歴の確認 | 設定 → モデルとプロバイダー |
-| Agent とタスク | Agent・役割の設定とサブ Agent の活動確認、Task Ledger への記録、明示的な Task Loop・ClawGraph の実行 | 設定 → Agents、サイドバーのその他メニュー |
+| Agent とタスク | Agent・役割の設定とサブ Agent の活動確認、Task Ledger への記録、明示的な Task Loop・委譲された worker は typed `sessions.delegate` Host 入口から、既存のコーディネーターバインド、権限、Gateway owner の受け入れを経て開始します。レシートは coordinator revision と session generation、Task Ledger 参照、子セッション/run、実際のツール認可、実際の分離バックエンド、checkout 情報、上限付きリソースを結び付けます。`accepted` は受け入れだけを表し、実行中または完了済みを意味しません。古い generation、失効した承認、未対応バックエンド、安全性を証明できない並列書き込みは fail closed または直列化されます。[長期セッション委譲の受け入れ](harness/specs/guides/long-session-delegation-admission.md)を参照してください。
+
+ClawGraph の実行 | 設定 → Agents、サイドバーのその他メニュー |
 | 知識 | 資料の検索、出典と参照の管理、受信項目・下書き・提案のレビュー | サイドバー → 知識 |
 | メモリ | 承認済みメモリと永続候補の確認、提案の承認、削除/tombstone、ハッシュ付き JSON エクスポート、「これを覚える」による通常提案 | サイドバー → メモリ |
 | 受信トレイ | 権限要求、リモートタスク、ブラウザータスクの要対応項目と履歴の確認 | サイドバー → 受信トレイ |
@@ -66,7 +68,7 @@ UI は日本語、英語、中国語、ロシア語に対応し、ライト・�
 
 *プロジェクトの炎ロゴを使った AI 生成の概念図です。タスク → ワークスペースのツール → レビューと検証を表します。アプリのスクリーンショットや自動合格の保証ではありません。*
 
-パネルにはファイル、ターミナル、ブラウザー、レビュー、成果物、活動関連のタブを開けます。ターミナルは対話の横または下に配置できます。ブラウザーはローカルプレビューや Web ページを表示し、レビュー画面は Git の変更と関連操作をまとめます。セッション活動パネルでは実行とコマンドの状態を確認できます。
+パネルにはファイル、ターミナル、ブラウザー、レビュー、成果物、活動関連のタブを開けます。ターミナルは対話の横または下に配置できます。ブラウザーはローカルプレビューや Web ページを表示し、レビュー画面は Git の変更と関連操作をまとめます。セッション活動パネルでは実行とコマンドの状態に加え、設定されたランタイム、モデル、制限を確認できます。現在の実行で有効な事実は、ランタイムから一致する新しい観測が届くまで未検証として表示されます。ポリシー詳細には設定ソース、互換性と上書き理由、操作権限を表示し、実行中止とセッション停止、表示専用の活動保持期間と transcript／ランタイムリソースの TTL、会話分岐と Git ワークツリー分離を区別します。
 
 権限セレクターには読み取り専用、計画、編集を許可、フルアクセスなどのモードがあります。計画モードはユーザーファイルの変更を制限しますが、ランタイムのメタデータは書き込まれる場合があります。詳細は[権限の意味と境界](docs/clawx-product-semantics.md)を参照してください。
 
@@ -88,7 +90,7 @@ Wiki 操作にはロード済みの `memory-wiki` 拡張が必要です。未設
 
 通常の Chat は即時の共同作業に使います。Task Ledger は目標、タスクノード、チェックポイント、証拠の事実を保存します。Task Loop は明示的に開始する制約付き実行です。Chat がアップグレードを提案しても、自動的に Task Loop へ移行することはありません。
 
-Workspace はローカルの実行ルート、agent の関連付け、権限コンテキストを識別します。Project は長期的な作業コンテナを表し、現在の shared ID 契約は互換マッピングのみを提供します。独立した Project 管理は未実装です。Run は一回の実行試行を識別し、ユーザー向けタスクの事実は Task Ledger が一元管理します。[ID 用語集](docs/clawx-product-semantics.md#identity-and-scope-vocabulary)を参照してください。
+Workspace はローカルの実行ルート、agent の関連付け、権限コンテキストを識別します。Project は長期的な作業コンテナを表し、現在の shared ID 契約は互換マッピングのみを提供します。独立した Project 管理は未実装です。Run は一回の実行試行を識別し、ユーザー向けタスクの事実は Task Ledger が一元管理します。長期協働を明示的に開始した場合だけ、コーディネーターバインドが一つの Workspace／Assistant／Session を既存の Task Ledger 参照と canonical なローカルチェックアウトまたは管理ワークツリーに関連付けます。通常の Chat は自動的にこのスコープへ入りません。[ID 用語集](docs/clawx-product-semantics.md#identity-and-scope-vocabulary)を参照してください。
 
 ClawGraph はワークスペースの YAML ワークフローを読み込み、コンパイル診断、ノード状態、イベント、レビュー項目を表示します。ランタイムの Workboard はスケジューリングを担当し、ユーザー向け Task Ledger とは役割が異なります。[Agent オーケストレーション](docs/multi-agent-orchestration/README.md)と[概念の境界](docs/clawx-product-semantics.md)を参照してください。
 
@@ -362,3 +364,7 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell �
 
 セッションの Handoff は Main で Task Ledger の系譜を検証・保存してから新しい会話を有効化します。循環や読み取れない履歴は拒否します。`openclaw.json` の `runtime.handoff.enabled=true` で深さ制限を有効化できます（`maxDepth`: 1–64、省略時は 3）。制限は既定で無効で、フォークは Handoff の系譜を保持します。
 **テレメトリーの同意:** 設定でテレメトリーをオフにすると即時反映されます。以降のイベントは停止し、SDK のキューはローカルで破棄され、再度有効化しても復活しません。送信済みのリクエストは取り消せません。[同意ライフサイクル](docs/dev/telemetry-consent-lifecycle.md)を参照してください。
+
+同じ orchestration run の全 expected worker が終端状態になった後だけ、session activity owner が一つの consolidated completion-batch receipt を導出し、完了事実と durable delivery intent を分けて扱います。reset や handoff 後の古い結果は fenced となり、新しい generation へ送られません。
+
+Chat ツールバーのリソース入口には、明示的にバインドした長期セッション、canonical 環境と revision、Task Ledger 参照、完了バッチ、一時停止・再開操作も表示されます。Session activity は generation 単位で、既存 owner から導出した terminal、browser、管理ポート、runtime process、durable helper、worktree、admission permit の台帳を統合します。測定不能な値は unknown のままで、明示的な OPENCLAW_LONG_SESSION_* 上限は process、background terminal、worktree の作成前に拒否できます。Workspace switch はリソースを保持し、session delete、workspace delete、app quit はそれぞれの owner scope だけを閉じます。

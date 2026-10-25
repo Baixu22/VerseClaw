@@ -3,7 +3,12 @@
  * front (fence -> queues -> abort -> children -> wait -> drain) and never
  * mutates the session store.
  */
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const pluginCleanupState = vi.hoisted(() => ({ run: vi.fn() }));
+vi.mock("../plugins/host-hook-cleanup.js", () => ({
+  runPluginHostCleanup: pluginCleanupState.run,
+}));
 import {
   addSession,
   deleteSession,
@@ -70,13 +75,17 @@ function makeSession(params: {
   };
 }
 
+beforeEach(() => {
+  pluginCleanupState.run.mockReset();
+  pluginCleanupState.run.mockResolvedValue({ cleanupCount: 0, failures: [] });
+});
+
 afterEach(() => {
   resetProcessRegistryForTests();
   sessionAdmissionRegistry.clearForTests();
 });
 
 describe("stopSessionRuntime", () => {
-
   it("keeps an archive generation tombstone after successful finalization", async () => {
     const outcome = await cleanupSessionBeforeMutation({
       cfg: {} as OpenClawConfig,
@@ -92,6 +101,67 @@ describe("stopSessionRuntime", () => {
     sessionAdmissionRegistry.removeFence(identity);
   });
 
+  it("drains an in-flight permit before archiving", async () => {
+    const release = sessionAdmissionRegistry.acquirePermit(identity, "chat-send");
+    let finished = false;
+    const pending = cleanupSessionBeforeMutation({
+      cfg: {} as OpenClawConfig,
+      key: identity.canonicalSessionKey,
+      target,
+      entry,
+      canonicalKey: identity.canonicalSessionKey,
+      reason: "session-archive",
+    }).finally(() => {
+      finished = true;
+    });
+
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(true);
+    expect(finished).toBe(false);
+
+    release();
+    const outcome = await pending;
+    expect(outcome.error).toBeUndefined();
+    outcome.settle(true);
+  });
+
+  it.each(["session-reset", "session-delete"] as const)(
+    "keeps legacy %s best-effort for A2-only owner warnings",
+    async (reason) => {
+      pluginCleanupState.run.mockResolvedValueOnce({
+        cleanupCount: 0,
+        failures: [{ pluginId: "fixture", hookId: "cleanup", error: new Error("warning") }],
+      });
+      const outcome = await cleanupSessionBeforeMutation({
+        cfg: {} as OpenClawConfig,
+        key: identity.canonicalSessionKey,
+        target,
+        entry,
+        canonicalKey: identity.canonicalSessionKey,
+        reason,
+      });
+      expect(outcome.error).toBeUndefined();
+      outcome.settle(false);
+    },
+  );
+
+  it("fails closed for the same owner warning while archiving", async () => {
+    pluginCleanupState.run.mockResolvedValueOnce({
+      cleanupCount: 0,
+      failures: [{ pluginId: "fixture", hookId: "cleanup", error: new Error("warning") }],
+    });
+    const outcome = await cleanupSessionBeforeMutation({
+      cfg: {} as OpenClawConfig,
+      key: identity.canonicalSessionKey,
+      target,
+      entry,
+      canonicalKey: identity.canonicalSessionKey,
+      reason: "session-archive",
+    });
+    expect(outcome.error?.code).toBe("UNAVAILABLE");
+    outcome.settle(false);
+  });
+
   it("releases the fence after a successful no-mutation stop", async () => {
     const result = await stopSessionRuntime({
       cfg: {} as OpenClawConfig,
@@ -101,6 +171,33 @@ describe("stopSessionRuntime", () => {
     });
     expect(result).toEqual({ ok: true, key: identity.canonicalSessionKey });
     expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
+  });
+
+  it("keeps unknown archive cleanup fenced and retries with the same exclusive owner", async () => {
+    addSession(
+      makeSession({
+        id: "archive-unknown-owner",
+        lifecycleOwner: "verseshell",
+        lifecycleExitPromise: Promise.resolve(),
+      }),
+    );
+    const outcome = await cleanupSessionBeforeMutation({
+      cfg: {} as OpenClawConfig,
+      key: identity.canonicalSessionKey,
+      target,
+      entry,
+      canonicalKey: identity.canonicalSessionKey,
+      reason: "session-archive",
+    });
+    expect(outcome.error?.code).toBe("UNAVAILABLE");
+    outcome.settle(false);
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(true);
+    expect(() => sessionAdmissionRegistry.acquirePermit(identity, "chat-send")).toThrow(/fenced/);
+    deleteSession("archive-unknown-owner");
+    const retried = await outcome.retry!();
+    expect(retried.error).toBeUndefined();
+    retried.settle(true);
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(true);
   });
 
   it("observes the admission fence during owner cancel (fence-before-drain order)", async () => {

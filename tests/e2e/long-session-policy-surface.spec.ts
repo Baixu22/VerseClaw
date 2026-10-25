@@ -1,7 +1,41 @@
-import { readFileSync, existsSync } from 'node:fs';
-import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { readFile, writeFile } from 'node:fs/promises';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+
+type HostResponse<T> = {
+  ok: boolean;
+  data?: T;
+  error?: { code?: string; message?: string };
+};
+type GatewayStatus = { state?: string; gatewayReady?: boolean };
+type CreatedSession = { key?: string; sessionKey?: string };
+type Policy = {
+  schemaVersion: string;
+  generatedAt: string;
+  scope: { workspaceId: string; sessionKey: string; agentId: string | null; sessionId: string | null; runId: string | null };
+  generation: { state: string; runtimeGeneration: string | null; capabilityProfileGeneration: string | null; observedAt: string | null; reason: string | null };
+  backend: { configured: { value: null | { runtime: string; kind: string; ownsNativeCompaction: boolean | null; provider: string | null; model: string | null }; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
+  model: { configured: { value: null | { provider: string | null; model: string | null; effort: string | null }; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
+  grants: { configured: { value: unknown; status: string; source: string; reason: string | null }; effective: { value: null | { total: number; allowed: number; requiresApproval: number; denied: number; unknown: number; actions: Array<{ actionId: string; authorization: string; grantState: string | null }> }; status: string; source: string; reason: string | null } };
+  context: { configured: { value: null | { contextTokens: number | null; contextPressure: string | null }; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
+  queue: { configured: { value: unknown; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
+  resources: { configured: { value: unknown; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
+  schedule: { configured: { value: unknown; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
+  compatibility: Array<{ backend: string; parameter: string; status: string; reason: string | null }>;
+  sources: string[];
+};
+type ActivityResult = { success: boolean; runtimeAvailable?: boolean; snapshot?: { policy?: Policy } };
+
+const SECOND_SESSION_KEY = 'agent:main:policy-secondary';
+const READ_AT = 1_792_700_000_000;
+const PRIMARY_MARKER = 'Primary session policy surface';
+const SECONDARY_MARKER = 'Secondary session policy surface';
+
+function pngDimensions(bytes: Buffer): { width: number; height: number } {
+  if (bytes.subarray(1, 4).toString('ascii') !== 'PNG') throw new Error('screenshot is not a PNG');
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -12,64 +46,6 @@ function stableStringify(value: unknown): string {
   return `{${entries.join(',')}}`;
 }
 
-const SESSION_KEY = 'agent:main:main';
-const WORKSPACE_ID = 'workspace-long-policy';
-const READ_AT = 1_760_000_000_000;
-const POLICY = JSON.parse(readFileSync(
-  path.resolve('harness/specs/fixtures/long-session-development/b1/effective-session-policy.json'),
-  'utf8',
-)) as Record<string, unknown>;
-const UI_POLICY = {
-  ...POLICY,
-  scope: { ...(POLICY.scope as Record<string, unknown>), workspaceId: WORKSPACE_ID, sessionKey: SESSION_KEY },
-};
-const PERSISTED_TURN = [{ role: 'user', id: 'policy-user-turn', content: [{ type: 'text', text: 'Show the session policy' }], timestamp: READ_AT }];
-const WORKSPACE = {
-  id: WORKSPACE_ID, name: 'Long Policy Workspace', rootPath: 'C:/workspace-long-policy', agentId: 'main', selectedAgentId: 'main',
-  activeSessionKey: SESSION_KEY, agentBindings: { main: { workspaceId: WORKSPACE_ID, agentId: 'main', sessionKey: SESSION_KEY } },
-  permissionMode: 'acceptEdits', createdAt: 1, updatedAt: 1, lastOpenedAt: 1, state: {}, sessionStates: { [SESSION_KEY]: {} },
-};
-const CLEAN_REPOSITORY = { isRepository: true, workspaceRoot: WORKSPACE.rootPath, branch: 'main', ahead: 0, behind: 0, clean: true, hasConflicts: false, stagedCount: 0, unstagedCount: 0, untrackedCount: 0, conflictedCount: 0, changes: [] };
-
-function activitySnapshot() {
-  return {
-    session: { sessionKey: SESSION_KEY, runId: null, status: 'idle', startedAt: null, endedAt: null, error: null, updatedAt: 0 },
-    /* Policy alone must remain reachable: this quiet session has no Git rows,
-       tasks, workers, processes, goals or lineage to classify as activity. */
-    git: null, tasks: [], subagents: [], terminals: [], goals: [], processes: [], lineage: [],
-    continuity: { queueCount: 0, contextPressure: null, checkpoint: false, blockedReason: null },
-    availability: { git: true, tasks: true, subagents: true, terminals: true, continuity: true, policy: true },
-    policy: UI_POLICY, backgroundRead: { state: 'known', readAt: READ_AT, failedAt: null }, capturedAt: READ_AT,
-  };
-}
-
-function hostApiMocks() {
-  return {
-    [stableStringify(['gateway', 'status', null])]: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
-    [stableStringify(['settings', 'getAll', null])]: { success: true, data: {} },
-    [stableStringify(['workspaces', 'list', null])]: { success: true, profiles: [WORKSPACE], activeWorkspaceId: WORKSPACE_ID, activeWorkspace: WORKSPACE },
-    [stableStringify(['workspaces', 'getActive', null])]: { success: true, activeWorkspaceId: WORKSPACE_ID, activeWorkspace: WORKSPACE },
-    [stableStringify(['/api/workspaces', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, workspaces: [WORKSPACE], activeWorkspaceId: WORKSPACE_ID } } },
-    [stableStringify(['agents', 'list', null])]: { success: true, agents: [{ id: 'main', name: 'main', canonicalSessionKey: SESSION_KEY }], defaultAgentId: 'main', defaultModelRef: null },
-    [stableStringify(['/api/agents', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, agents: [{ id: 'main', name: 'main' }] } } },
-    [stableStringify(['sessions', 'history', { sessionKey: SESSION_KEY, limit: 200 }])]: { messages: PERSISTED_TURN, hasMore: false },
-    [stableStringify(['git', 'status', null])]: { success: true, status: CLEAN_REPOSITORY },
-    [stableStringify(['sessionActivity', 'snapshot', null])]: { success: true, runtimeAvailable: true, snapshot: activitySnapshot() },
-  };
-}
-
-function gatewayRpcMocks() {
-  return {
-    [stableStringify(['sessions.list', {}])]: { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'Policy' }] } },
-    [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'Policy' }] } },
-    [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500_000 }])]: { success: true, result: { messages: PERSISTED_TURN } },
-    [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200 }])]: { success: true, result: { messages: PERSISTED_TURN } },
-  };
-}
-
-type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
-type GatewayStatus = { state?: string; gatewayReady?: boolean };
-
 async function hostInvoke<T>(
   app: ElectronApplication,
   module: string,
@@ -78,163 +54,337 @@ async function hostInvoke<T>(
 ): Promise<T> {
   const response = await app.evaluate(async (_electron, request) => {
     const { ipcMain, BrowserWindow } = process.mainModule!.require('electron') as typeof import('electron');
-    const handler = (ipcMain as unknown as { _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers?.get('host:invoke');
+    const handler = (ipcMain as unknown as {
+      _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+    })._invokeHandlers?.get('host:invoke');
     if (!handler) throw new Error('host:invoke handler is not registered');
     const win = BrowserWindow.getAllWindows().find((candidate) => !candidate.isDestroyed());
-    if (!win) throw new Error('No BrowserWindow available');
+    if (!win) throw new Error('No BrowserWindow available for host:invoke sender auth');
     const sender = win.webContents;
-    return await handler({ sender, senderFrame: { url: sender.getURL() } }, { id: `policy-${Date.now()}-${Math.random()}`, ...request });
+    const event = {
+      sender,
+      senderFrame: { url: typeof sender.getURL === 'function' ? sender.getURL() : '' },
+    };
+    return await handler(event, { id: `policy-surface-${Date.now()}-${Math.random()}`, ...request });
   }, { module, action, payload }) as HostResponse<T>;
-  if (!response.ok) throw new Error(response.error?.message ?? `host invoke failed: ${module}.${action}`);
+  if (!response.ok) {
+    throw new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'host invoke failed'}`);
+  }
   return response.data as T;
 }
 
 async function ensureGatewayReady(app: ElectronApplication): Promise<void> {
   const deadline = Date.now() + 120_000;
-  let lastStatus: GatewayStatus | undefined;
-  let lastError: string | undefined;
-  let startRequested = false;
+  let started = false;
   while (Date.now() < deadline) {
-    try {
-      lastStatus = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
-      if (lastStatus.gatewayReady === true || lastStatus.state === 'running') return;
-      if (!startRequested && lastStatus.state !== 'starting') {
-        startRequested = true;
-        await hostInvoke(app, 'gateway', 'start');
-      }
-    } catch (error) {
-      lastError = error instanceof Error ? error.message : String(error);
+    const status = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+    if (status.gatewayReady === true || status.state === 'running') return;
+    if (!started && status.state !== 'starting') {
+      started = true;
+      await hostInvoke(app, 'gateway', 'start');
     }
     await new Promise((resolve) => setTimeout(resolve, 1_500));
   }
-  throw new Error(`Gateway did not become ready: ${JSON.stringify({ lastStatus, lastError })}`);
+  throw new Error('Gateway did not become ready for the policy surface E2E');
 }
 
-async function makeWritable(app: ElectronApplication): Promise<void> {
-  const active = await hostInvoke<{ activeWorkspace?: { id?: string } }>(app, 'workspaces', 'getActive');
-  if (active.activeWorkspace?.id) {
-    await hostInvoke(app, 'workspaces', 'update', { id: active.activeWorkspace.id, permissionMode: 'fullAccess' });
+async function activeWorkspace(app: ElectronApplication): Promise<{ id: string; rootPath?: string; name?: string }> {
+  const active = await hostInvoke<{ activeWorkspace?: { id?: string; rootPath?: string; name?: string }; id?: string; rootPath?: string; name?: string }>(
+    app,
+    'workspaces',
+    'getActive',
+  );
+  const workspace = active.activeWorkspace ?? active;
+  if (!workspace.id) throw new Error('Active workspace has no id');
+  await hostInvoke(app, 'workspaces', 'update', { id: workspace.id, permissionMode: 'fullAccess' });
+  return { id: workspace.id, rootPath: workspace.rootPath, name: workspace.name };
+}
+
+function clonePolicy(policy: Policy): Policy {
+  return JSON.parse(JSON.stringify(policy)) as Policy;
+}
+
+function policyFor(primary: Policy, sessionKey: string, runtime: 'openclaw' | 'codex', model: string): Policy {
+  const policy = clonePolicy(primary);
+  policy.scope = { ...policy.scope, sessionKey };
+  policy.generatedAt = new Date(READ_AT).toISOString();
+  policy.backend.configured = {
+    ...policy.backend.configured,
+    value: {
+      runtime,
+      kind: runtime === 'codex' ? 'native' : 'openclaw',
+      ownsNativeCompaction: runtime === 'codex',
+      provider: primary.backend.configured.value?.provider ?? 'openai',
+      model,
+    },
+    source: sessionKey === SECOND_SESSION_KEY ? 'session.runtime.secondary' : 'session.runtime',
+  };
+  policy.model.configured = {
+    ...policy.model.configured,
+    value: {
+      provider: primary.model.configured.value?.provider ?? 'openai',
+      model,
+      effort: primary.model.configured.value?.effort ?? 'high',
+    },
+  };
+  policy.grants.effective = {
+    value: {
+      total: 3,
+      allowed: 1,
+      requiresApproval: 1,
+      denied: 1,
+      unknown: 0,
+      actions: [
+        { actionId: 'exec', authorization: 'allowed', grantState: 'active' },
+        { actionId: 'write', authorization: 'requires-approval', grantState: null },
+        { actionId: 'browser', authorization: 'denied', grantState: 'revoked' },
+      ],
+    },
+    status: 'effective',
+    source: 'runtime-effective-capability.observation',
+    reason: null,
+  };
+  policy.compatibility = runtime === 'codex'
+    ? [
+        { backend: 'codex', parameter: 'automatic-compaction', status: 'ignored', reason: 'the native backend owns automatic compaction' },
+        { backend: 'codex', parameter: 'compaction.reserveTokens', status: 'unsupported', reason: 'native compaction does not consume OpenClaw reserve-token arguments' },
+      ]
+    : primary.compatibility;
+  return policy;
+}
+
+function snapshot(sessionKey: string, policy: Policy) {
+  return {
+    session: {
+      sessionKey,
+      runId: null,
+      status: 'idle',
+      startedAt: null,
+      endedAt: null,
+      error: null,
+      updatedAt: READ_AT,
+    },
+    git: {
+      isRepository: true,
+      workspaceRoot: 'C:/policy-surface',
+      branch: 'main',
+      ahead: 0,
+      behind: 0,
+      clean: true,
+      hasConflicts: false,
+      stagedCount: 0,
+      unstagedCount: 0,
+      untrackedCount: 0,
+      conflictedCount: 0,
+      changes: [],
+    },
+    tasks: [],
+    subagents: [],
+    terminals: [],
+    goals: [],
+    processes: [],
+    lineage: [],
+    policy,
+    continuity: { queueCount: 0, contextPressure: null, checkpoint: false, blockedReason: null },
+    availability: { git: true, tasks: true, subagents: true, terminals: true, continuity: true },
+    backgroundRead: { state: 'known', readAt: READ_AT, failedAt: null },
+    capturedAt: READ_AT,
+  };
+}
+
+function history(text: string, id: string) {
+  return [{
+    id,
+    role: 'user',
+    content: text,
+    timestamp: READ_AT / 1000,
+  }];
+}
+
+function uiMocks(workspaceId: string, sessionKey: string, primary: Policy, secondary: Policy) {
+  const workspace = {
+    id: workspaceId,
+    name: 'Policy Surface Workspace',
+    rootPath: 'C:/policy-surface',
+    agentId: 'main',
+    selectedAgentId: 'main',
+    activeSessionKey: sessionKey,
+    permissionMode: 'acceptEdits' as const,
+    createdAt: 1,
+    updatedAt: 1,
+    lastOpenedAt: 1,
+    state: {},
+    sessionStates: { [sessionKey]: {}, [SECOND_SESSION_KEY]: {} },
+  };
+  const sessions = [
+    { key: sessionKey, displayName: 'Policy primary', updatedAt: READ_AT },
+    { key: SECOND_SESSION_KEY, displayName: 'Policy secondary', updatedAt: READ_AT + 1 },
+  ];
+  return {
+    gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+    gatewayRpc: {
+      [stableStringify(['sessions.list', {}])]: { success: true, result: { sessions } },
+      [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: { success: true, result: { sessions } },
+      [stableStringify(['chat.history', { sessionKey, limit: 200, maxChars: 500_000 }])]: { success: true, result: { messages: history(PRIMARY_MARKER, 'policy-primary') } },
+      [stableStringify(['chat.history', { sessionKey: SECOND_SESSION_KEY, limit: 200, maxChars: 500_000 }])]: { success: true, result: { messages: history(SECONDARY_MARKER, 'policy-secondary') } },
+      [stableStringify(['chat.history', { sessionKey: SECOND_SESSION_KEY, limit: 1000 }])]: { success: true, result: { messages: history(SECONDARY_MARKER, 'policy-secondary') } },
+    },
+    hostApi: {
+      [stableStringify(['/api/settings', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { language: 'en', theme: 'light', setupComplete: true } } },
+      [stableStringify(['settings', 'getAll', null])]: { language: 'en', theme: 'light', setupComplete: true },
+      [stableStringify(['gateway', 'status', null])]: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+      [stableStringify(['/api/gateway/status', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } } },
+      [stableStringify(['/api/agents', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, agents: [{ id: 'main', name: 'main' }] } } },
+      [stableStringify(['agents', 'list', null])]: { success: true, agents: [{ id: 'main', name: 'main', canonicalSessionKey: sessionKey }], defaultAgentId: 'main', defaultModelRef: null },
+      [stableStringify(['workspaces', 'getActive', null])]: { success: true, activeWorkspaceId: workspaceId, activeWorkspace: workspace },
+      [stableStringify(['workspaces', 'list', null])]: { success: true, profiles: [workspace], activeWorkspaceId: workspaceId, activeWorkspace: workspace },
+      [stableStringify(['/api/workspaces', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, workspaces: [workspace], activeWorkspaceId: workspaceId } } },
+      [stableStringify(['workspaces', 'saveState', { id: workspaceId, sessionKey, state: {} }])]: { success: true },
+      [stableStringify(['sessions', 'history', { sessionKey, limit: 200 }])]: { messages: history(PRIMARY_MARKER, 'policy-primary'), hasMore: false },
+      [stableStringify(['sessions', 'history', { sessionKey: SECOND_SESSION_KEY, limit: 200 }])]: { messages: history(SECONDARY_MARKER, 'policy-secondary'), hasMore: false },
+      [stableStringify(['git', 'status', null])]: { success: false },
+      [stableStringify(['sessionActivity', 'snapshot', { workspaceId, sessionKey }])]: { success: true, runtimeAvailable: true, snapshot: snapshot(sessionKey, primary) },
+      [stableStringify(['sessionActivity', 'snapshot', { workspaceId, sessionKey: SECOND_SESSION_KEY }])]: { success: true, runtimeAvailable: true, snapshot: snapshot(SECOND_SESSION_KEY, secondary) },
+    },
+  };
+}
+
+test('policy surface explains provenance, lifecycle boundaries, narrow layout, and session scope', async ({ launchElectronApp }, testInfo) => {
+  test.setTimeout(240_000);
+  const app = await launchElectronApp({ skipSetup: true });
+  try {
+    await getStableWindow(app);
+    await ensureGatewayReady(app);
+    const workspace = await activeWorkspace(app);
+    const created = await hostInvoke<CreatedSession>(app, 'gateway', 'rpc', {
+      method: 'sessions.create',
+      params: { agentId: 'main', label: `policy-surface-${Date.now()}` },
+      timeoutMs: 60_000,
+    });
+    const sessionKey = created.key ?? created.sessionKey;
+    if (!sessionKey) throw new Error(`sessions.create returned no key: ${JSON.stringify(created)}`);
+
+    const beforeRestart = await hostInvoke<ActivityResult>(app, 'sessionActivity', 'snapshot', {
+      workspaceId: workspace.id,
+      sessionKey,
+    });
+    expect(beforeRestart.success).toBe(true);
+    const actualPolicy = beforeRestart.snapshot?.policy;
+    expect(actualPolicy?.schemaVersion).toBe('SessionEffectivePolicy/v1');
+    expect(actualPolicy?.scope.workspaceId).toBe(workspace.id);
+    expect(actualPolicy?.scope.sessionKey).toBe(sessionKey);
+    expect(actualPolicy?.backend.configured.status).toBe('configured');
+    expect(actualPolicy?.backend.effective.status).toBe('unverified');
+    expect(actualPolicy?.sources.length).toBeGreaterThan(0);
+
+    await hostInvoke(app, 'gateway', 'stop');
+    await ensureGatewayReady(app);
+    const afterRestart = await hostInvoke<ActivityResult>(app, 'sessionActivity', 'snapshot', {
+      workspaceId: workspace.id,
+      sessionKey,
+    });
+    expect(afterRestart.success).toBe(true);
+    expect(afterRestart.snapshot?.policy?.scope.workspaceId).toBe(workspace.id);
+    expect(afterRestart.snapshot?.policy?.scope.sessionKey).toBe(sessionKey);
+
+    const primaryPolicy = policyFor(actualPolicy!, sessionKey, 'codex', 'gpt-policy-primary');
+    const secondaryPolicy = policyFor(actualPolicy!, SECOND_SESSION_KEY, 'openclaw', 'gpt-policy-secondary');
+    await installIpcMocks(app, uiMocks(workspace.id, sessionKey, primaryPolicy, secondaryPolicy));
+    const page = await getStableWindow(app);
+    await page.reload();
+    await page.waitForLoadState('domcontentloaded');
+    await expect(page.getByTestId('chat-user-message-bubble').getByText(PRIMARY_MARKER)).toBeVisible({ timeout: 30_000 });
+
+    const toggle = page.getByTestId('chat-session-activity-toggle');
+    await expect(toggle).toBeVisible();
+    await toggle.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('session-activity-panel')).toBeVisible();
+
+    const configured = page.getByTestId('session-activity-policy-backend');
+    await expect(configured).toContainText('codex');
+    await expect(configured).toContainText('session.runtime');
+    await expect(page.getByTestId('session-activity-policy-effective')).toContainText(/unverified/i);
+    await expect(page.getByTestId('session-activity-boundary-abort')).toContainText(/session, stored transcript/i);
+    await expect(page.getByTestId('session-activity-boundary-stop')).toContainText(/retaining the session/i);
+    await expect(page.getByTestId('session-activity-boundary-activity')).toContainText(/view-only window/i);
+    await expect(page.getByTestId('session-activity-boundary-fork')).toContainText(/does not create a Git branch or worktree/i);
+
+    const policyDetailsSummary = page.getByTestId('session-activity-policy-details').locator('summary');
+    await policyDetailsSummary.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('session-activity-policy-sources')).toContainText('runtime-effective-capability.observation');
+    await expect(page.getByTestId('session-activity-policy-unverified-facts')).toContainText(/no capability observation exists/i);
+    await expect(page.getByTestId('session-activity-policy-compatibility')).toContainText(/unsupported/i);
+    await expect(page.getByTestId('session-activity-policy-compatibility')).toContainText(/native backend does not consume/i);
+    const actionDetailsSummary = page.getByTestId('session-activity-policy-action-details').locator('summary');
+    await actionDetailsSummary.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('session-activity-policy-action-details')).toContainText('approval required');
+
+    const widePath = testInfo.outputPath('policy-surface-wide.png');
+    await page.screenshot({ path: widePath, fullPage: true });
+    await testInfo.attach('policy-surface-wide', { path: widePath, contentType: 'image/png' });
+
+    const secondaryRow = page.getByTestId(`sidebar-session-${SECOND_SESSION_KEY}`);
+    await expect(secondaryRow).toBeVisible();
+    await secondaryRow.click();
+    await expect(page.getByTestId('chat-user-message-bubble').getByText(SECONDARY_MARKER)).toBeVisible({ timeout: 30_000 });
+    await page.getByTestId('chat-session-activity-toggle').click();
+    await expect(page.getByTestId('session-activity-policy-backend')).toContainText('openclaw');
+    await expect(page.getByTestId('session-activity-policy-backend')).toContainText('session.runtime.secondary');
+    await expect(page.getByTestId('session-activity-policy-backend')).not.toContainText('codex');
+
+    await page.setViewportSize({ width: 680, height: 760 });
+    await expect(page.getByTestId('chat-session-activity-toggle')).toBeVisible();
+    const panel = page.getByTestId('session-activity-panel');
+    await expect(panel).toBeVisible();
+    const box = await panel.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.x).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(680.5);
+
+    const narrowPath = testInfo.outputPath('policy-surface-narrow.png');
+    await page.screenshot({ path: narrowPath, fullPage: true });
+    await testInfo.attach('policy-surface-narrow', { path: narrowPath, contentType: 'image/png' });
+
+    const wideBytes = await readFile(widePath);
+    const narrowBytes = await readFile(narrowPath);
+    const widePixels = pngDimensions(wideBytes);
+    const narrowPixels = pngDimensions(narrowBytes);
+    const screenshots = [
+      { name: 'policy-surface-wide', path: widePath, viewport: { width: 1280, height: 800 }, pixels: widePixels, sha256: createHash('sha256').update(wideBytes).digest('hex') },
+      { name: 'policy-surface-narrow', path: narrowPath, viewport: { width: 680, height: 760 }, pixels: narrowPixels, sha256: createHash('sha256').update(narrowBytes).digest('hex') },
+    ];
+    const screenshotsOutput = testInfo.outputPath('policy-ui-screenshots.json');
+    await writeFile(screenshotsOutput, `${JSON.stringify({ schema: 'clawx.long-session.policy-ui-screenshots/v1', driven_by: 'agent', actor: process.env.COMPASS_AGENT_NAME ?? 'clawx-e2e-agent', screenshots }, null, 2)}\n`);
+    await testInfo.attach('policy-ui-screenshots', { path: screenshotsOutput, contentType: 'application/json' });
+
+    const resultsOutput = testInfo.outputPath('policy-ui-results.json');
+    await writeFile(resultsOutput, `${JSON.stringify({
+      schema: 'clawx.long-session.policy-ui-results/v1',
+      driven_by: 'agent',
+      actor: process.env.COMPASS_AGENT_NAME ?? 'clawx-e2e-agent',
+      workspaceId: workspace.id,
+      primarySessionKey: sessionKey,
+      secondarySessionKey: SECOND_SESSION_KEY,
+      actualHostGateway: {
+        beforeRestart: { generationState: actualPolicy?.generation.state, backend: actualPolicy?.backend.configured.value, effectiveStatus: actualPolicy?.backend.effective.status, sources: actualPolicy?.sources },
+        afterRestart: { generationState: afterRestart.snapshot?.policy?.generation.state, workspaceId: afterRestart.snapshot?.policy?.scope.workspaceId, sessionKey: afterRestart.snapshot?.policy?.scope.sessionKey },
+      },
+      uiScenario: {
+        primaryRuntime: 'codex',
+        secondaryRuntime: 'openclaw',
+        keyboardOpened: true,
+        sourceDetailsOpened: true,
+        actionDetailsOpened: true,
+        narrowViewport: { width: 680, height: 760, panelBounded: true, toggleVisible: true },
+      },
+      transport: 'built Electron host:invoke -> actual Gateway; renderer host replay for deterministic two-session UI',
+      screenshots,
+    }, null, 2)}\n`);
+    await testInfo.attach('policy-ui-results', { path: resultsOutput, contentType: 'application/json' });
+  } finally {
+    await closeElectronApp(app);
   }
-}
-
-async function createSession(app: ElectronApplication, label: string): Promise<string> {
-  const created = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'rpc', {
-    method: 'sessions.create', params: { agentId: 'main', label }, timeoutMs: 60_000,
-  });
-  const key = typeof created.key === 'string' ? created.key : created.sessionKey;
-  if (typeof key !== 'string') throw new Error(`sessions.create returned no key: ${JSON.stringify(created)}`);
-  return key;
-}
-
-test.describe('long-session policy surface', () => {
-  test.setTimeout(180_000);
-
-  test('renders provenance, limits and action boundaries through a narrow Electron activity rail', async ({ launchElectronApp }, testInfo) => {
-    const app = await launchElectronApp({ skipSetup: true });
-    try {
-      await installIpcMocks(app, { gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true }, gatewayRpc: gatewayRpcMocks(), hostApi: hostApiMocks() });
-      const page = await getStableWindow(app);
-      await page.setViewportSize({ width: 900, height: 760 });
-      await expect(page.getByTestId('chat-page')).toBeVisible({ timeout: 30_000 });
-      const toggle = page.getByTestId('chat-session-activity-toggle');
-      await toggle.focus();
-      await page.keyboard.press('Enter');
-      await expect(page.getByTestId('session-policy-summary')).toBeVisible();
-      const policy = page.getByTestId('session-policy-summary');
-      await expect(policy).toContainText('Session policy');
-      await expect(policy).toContainText('openclaw-embedded');
-      await expect(policy).toContainText('Source:');
-      await expect(policy).toContainText('Abort stops only the current run');
-      await expect(policy).toContainText('OpenClaw owns compaction');
-      await expect(policy).toContainText('agents.defaults.compaction: Effective');
-      await expect.poll(() => policy.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
-
-      const lifecycle = page.getByTestId('session-policy-lifecycle-help');
-      await expect(lifecycle).toBeVisible();
-      const summary = lifecycle.locator('summary');
-      await summary.focus();
-      await page.keyboard.press('Enter');
-      await expect(lifecycle).not.toHaveAttribute('open');
-      await page.keyboard.press('Enter');
-      await expect(lifecycle).toHaveAttribute('open');
-
-      /* Keyboard focus moves the rail's scroll position to the disclosure.
-         Restore the top before the acceptance frame so the provenance header,
-         backend row and limits are all visible together. */
-      await policy.evaluate((element) => {
-        let parent = element.parentElement;
-        while (parent) {
-          if (parent.scrollHeight > parent.clientHeight) {
-            parent.scrollTop = 0;
-            break;
-          }
-          parent = parent.parentElement;
-        }
-      });
-      await page.screenshot({ path: testInfo.outputPath('policy-activity-rail-960.png'), animations: 'disabled' });
-    } finally {
-      await closeElectronApp(app);
-    }
-  });
-
-  test('real Host/Gateway policy reads stay scoped, refresh after permission and Gateway changes, and remain configuration-read-only', async ({ launchElectronApp, userDataDir }) => {
-    const app = await launchElectronApp({ skipSetup: true });
-    try {
-      const page = await getStableWindow(app);
-      await ensureGatewayReady(app);
-      await makeWritable(app);
-      const keyA = await createSession(app, `policy-a-${Date.now()}`);
-      const keyB = await createSession(app, `policy-b-${Date.now()}`);
-      const configPath = path.join(userDataDir, 'openclaw-source-state', 'openclaw.json');
-      const before = existsSync(configPath) ? readFileSync(configPath, 'utf8') : null;
-      const a = await hostInvoke<{ success: boolean; policy?: Record<string, unknown> }>(app, 'sessions', 'effectivePolicy', { sessionKey: keyA });
-      const b = await hostInvoke<{ success: boolean; policy?: Record<string, unknown> }>(app, 'sessions', 'effectivePolicy', { sessionKey: keyB });
-      expect(a.success).toBe(true);
-      expect(b.success).toBe(true);
-      expect(a.policy?.scope).toMatchObject({ sessionKey: keyA });
-      expect(b.policy?.scope).toMatchObject({ sessionKey: keyB });
-      expect(a.policy?.scope).not.toMatchObject({ sessionKey: keyB });
-      expect(a.policy?.generation).toMatchObject({ state: 'missing' });
-      expect(a.policy?.backend).toMatchObject({ effective: { state: 'unknown' } });
-      expect(a.policy?.limits).toMatchObject({ schedule: { state: 'unsupported' } });
-      expect(JSON.stringify(a.policy)).not.toMatch(/apiKey|authProfileId|access_token|refresh_token/i);
-      if (before != null) expect(readFileSync(configPath, 'utf8')).toBe(before);
-
-      await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
-      const permissionButton = page.getByTestId('chat-composer-permission-mode');
-      await permissionButton.click();
-      await page.getByTestId('chat-composer-permission-option-readOnly').focus();
-      await page.keyboard.press('Enter');
-      await expect(permissionButton).toContainText(/read.?only/i);
-
-      /* Recovery reuses the exact policy projection and remains reachable for a
-         quiet session whose empty Chat has no activity toggle. */
-      await page.evaluate((sessionKey) => {
-        window.location.hash = `#/settings/recovery?sessionKey=${encodeURIComponent(sessionKey)}`;
-      }, keyA);
-      await expect(page.getByTestId('recovery-settings-section')).toBeVisible({ timeout: 30_000 });
-      const policy = page.getByTestId('session-policy-summary');
-      await expect(policy).toBeVisible({ timeout: 30_000 });
-      await expect(policy.getByTestId('session-policy-grant')).toContainText('readOnly');
-
-      await hostInvoke(app, 'gateway', 'restart');
-      await ensureGatewayReady(app);
-      await expect(policy).toBeVisible({ timeout: 30_000 });
-      await expect(policy.getByTestId('session-policy-unavailable')).toHaveCount(0);
-      await expect(policy.getByTestId('session-policy-grant')).toContainText('readOnly');
-
-      await page.evaluate(() => { window.location.hash = '#/'; });
-      await expect(permissionButton).toContainText(/read.?only/i, { timeout: 30_000 });
-      await permissionButton.click();
-      await page.getByTestId('chat-composer-permission-option-fullAccess').focus();
-      await page.keyboard.press('Enter');
-      await expect(permissionButton).toContainText(/full access/i);
-      await page.evaluate((sessionKey) => {
-        window.location.hash = `#/settings/recovery?sessionKey=${encodeURIComponent(sessionKey)}`;
-      }, keyA);
-      await expect(policy.getByTestId('session-policy-grant')).toContainText('fullAccess', { timeout: 30_000 });
-    } finally {
-      await closeElectronApp(app);
-    }
-  });
 });

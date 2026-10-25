@@ -48,6 +48,19 @@ ownedPaths:
   - openclaw_runtime/src/context-engine/registry.ts
   - openclaw_runtime/src/context-engine/compass-context.ts
   - openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts
+  - openclaw_runtime/src/context-engine/context-final-snapshot.ts
+  - openclaw_runtime/src/context-engine/context-ladder.ts
+  - openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.test.ts
+  - src/pages/Settings/index.tsx
+  - shared/i18n/locales/en/settings.json
+  - shared/i18n/locales/zh/settings.json
+  - shared/i18n/locales/ja/settings.json
+  - shared/i18n/locales/ru/settings.json
+  - tests/e2e/dcs-prod-p0-settings.spec.ts
+  - tests/e2e/vtoken-bridge-settings.spec.ts
+  - tests/unit/context-assembly-authority-tf0493.test.ts
+  - tests/unit/versegit-mc0-baseline.test.ts
 touchedAreas:
   - artifacts/agent-dev-workbench/**
   - artifacts/agent-dev-deep-test/**
@@ -78,6 +91,14 @@ touchedAreas:
   - artifacts/tf0013-compass-budget-20260930/**
   - artifacts/tf0013-message-budget-20260930/**
   - tests/unit/**
+  - tests/e2e/**
+  - tests/fixtures/launch-contract-matrix.ts
+  - shared/i18n/locales/**
+  - src/pages/Settings/index.tsx
+  - docs/clawx-product-semantics.md
+  - docs/generated/catalogs/**
+  - shared/dcs/prod-flags-catalog.ts
+  - shared/host-api/contract.ts
   - docs/dev/**
 expectedUserBehavior:
   - Context enhancements remain opt-in and fail closed; all product defaults and the three product locks remain false.

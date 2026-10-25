@@ -60,44 +60,14 @@
   "recovery": {
     "activityTitle": "Session & Recovery",
     "currentTitle": "Current session recovery",
-    "enabled": {
-      "title": "Show session activity panel",
-      "description": "Show structured runtime status beside Chat when real activity exists."
-    },
-    "autoExpand": {
-      "title": "Automatic expansion",
-      "description": "Choose when the activity panel opens on desktop.",
-      "active": "When active",
-      "attention": "When attention is needed",
-      "never": "Never"
-    },
-    "completedRunsExpanded": {
-      "title": "Keep completed run activity expanded",
-      "description": "Show completed run details by default. Manually collapsed runs stay collapsed for that session."
-    },
-    "showGit": {
-      "title": "Show workspace Git",
-      "description": "Include workspace-scoped branch and change status."
-    },
-    "showCommands": {
-      "title": "Show Agent commands",
-      "description": "Include structured command summaries alongside interactive terminals."
-    },
-    "notifications": {
-      "title": "Recovery and blocked notifications",
-      "description": "Notify when a real recovery or blocked signal needs review."
-    },
-    "retention": {
-      "title": "Recent activity retention",
-      "description": "Keep completed activity visible for a bounded period.",
-      "none": "Do not retain",
-      "five": "5 minutes",
-      "fifteen": "15 minutes"
-    },
-    "session": {
-      "title": "Session",
-      "description": "Choose a workspace session to inspect."
-    },
+    "enabled": { "title": "Show session activity panel", "description": "Show structured runtime status beside Chat when real activity exists." },
+    "autoExpand": { "title": "Automatic expansion", "description": "Choose when the activity panel opens on desktop.", "active": "When active", "attention": "When attention is needed", "never": "Never" },
+    "completedRunsExpanded": { "title": "Keep completed run activity expanded", "description": "Show completed run details by default. Manually collapsed runs stay collapsed for that session." },
+    "showGit": { "title": "Show workspace Git", "description": "Include workspace-scoped branch and change status." },
+    "showCommands": { "title": "Show Agent commands", "description": "Include structured command summaries alongside interactive terminals." },
+    "notifications": { "title": "Recovery and blocked notifications", "description": "Notify when a real recovery or blocked signal needs review." },
+    "retention": { "title": "Recent activity retention", "description": "Limit how long completed activity remains visible in the panel. This does not change transcript or runtime-resource retention.", "none": "Do not retain", "five": "5 minutes", "fifteen": "15 minutes" },
+    "session": { "title": "Session", "description": "Choose a workspace session to inspect." },
     "runAction": "Run",
     "openConversation": "Open conversation",
     "healthy": "No recovery pressure detected for this session.",

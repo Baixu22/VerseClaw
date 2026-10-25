@@ -1,0 +1,31 @@
+{
+  "schema": "clawx.long-session.retention/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "files": [
+    {
+      "file": "harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json",
+      "consumer": "node acceptance and independent verifier",
+      "source": "current agent-driven run or fixed source contract",
+      "needed": "replayable claim evidence"
+    },
+    {
+      "file": "harness/specs/fixtures/long-session-development/a1/current-baseline.json",
+      "consumer": "node acceptance and independent verifier",
+      "source": "current agent-driven run or fixed source contract",
+      "needed": "replayable claim evidence"
+    },
+    {
+      "file": "harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json",
+      "consumer": "node acceptance and independent verifier",
+      "source": "current agent-driven run or fixed source contract",
+      "needed": "replayable claim evidence"
+    },
+    {
+      "file": "harness/specs/fixtures/long-session-development/a1/SHA256SUMS",
+      "consumer": "node acceptance and independent verifier",
+      "source": "current agent-driven run or fixed source contract",
+      "needed": "replayable claim evidence"
+    }
+  ]
+}

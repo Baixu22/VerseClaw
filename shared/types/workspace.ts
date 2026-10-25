@@ -1,4 +1,4 @@
-import type { DelegationAdmissionReceipt } from './delegation-admission.js';
+import type { TaskLedgerReference } from './task-ledger-reference.js';
 import type { WorkModeId } from './work-mode.js';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
@@ -142,41 +142,54 @@ export interface WorkspaceAgentBinding {
   bootstrapOverrides?: Record<string, string>;
 }
 
-export const WORKSPACE_COORDINATOR_BINDING_SCHEMA = 'WorkspaceCoordinatorBinding/v1' as const;
+export type WorkspaceCoordinatorBindingState = 'active' | 'paused' | 'invalid';
+export type WorkspaceCoordinatorArchiveRestorePolicy = 'restore' | 'none';
 
-export type WorkspaceCoordinatorBindingState = 'active' | 'invalidated';
-export type WorkspaceCoordinatorInvalidationReason =
-  | 'archived'
-  | 'deleted'
-  | 'reset'
-  | 'session_missing'
-  | 'session_key_changed';
-
-/** Reference only. Task status and ownership remain in the Task Ledger. */
-export type WorkspaceCoordinatorTaskRef = {
-  kind: 'task-ledger';
-  nodeId: string;
-};
+/** Facts resolved from the existing workspace and Git/worktree owners. */
+export interface WorkspaceCoordinatorEnvironmentBinding {
+  kind: 'local' | 'managed-worktree';
+  canonicalRoot: string;
+  backend: 'local-workspace' | 'git';
+  branch: string | null;
+  detachedHead: boolean;
+  setupProfile: string | null;
+}
 
 /**
- * Minimal durable binding metadata owned by the Workspace store. It names the
- * selected long-lived session and existing Task Ledger nodes; it is not a task,
- * goal, project or execution authority.
+ * Minimal explicit long-collaboration metadata. Task status and completion stay
+ * in Task Ledger; this record carries only a one-way reference list.
  */
 export interface WorkspaceCoordinatorBinding {
-  schemaVersion: typeof WORKSPACE_COORDINATOR_BINDING_SCHEMA;
+  schemaVersion: 1;
   workspaceId: string;
   agentId: string;
   sessionKey: string;
-  /** Physical runtime generation observed when the user explicitly opted in. */
-  sessionId: string;
-  taskRefs: WorkspaceCoordinatorTaskRef[];
+  sessionGeneration: string | null;
+  taskLedgerReferences: TaskLedgerReference[];
+  environment: WorkspaceCoordinatorEnvironmentBinding;
+  archiveRestorePolicy: WorkspaceCoordinatorArchiveRestorePolicy;
   state: WorkspaceCoordinatorBindingState;
-  revision: number;
+  bindingRevision: number;
+  invalidationReason: string | null;
   createdAt: string;
   updatedAt: string;
-  invalidatedAt: string | null;
-  invalidationReason: WorkspaceCoordinatorInvalidationReason | null;
+}
+
+export type WorkspaceCoordinatorRecoveryState =
+  | 'ready'
+  | 'paused'
+  | 'invalid'
+  | 'missing'
+  | 'unavailable'
+  | 'environment-missing'
+  | 'session-missing'
+  | 'session-pending'
+  | 'generation-mismatch';
+
+export interface WorkspaceCoordinatorRecovery {
+  state: WorkspaceCoordinatorRecoveryState;
+  reason: string | null;
+  bindingRevision: number | null;
 }
 
 export interface WorkspaceChatFooterState {
@@ -265,10 +278,6 @@ export interface WorkspaceProfile {
   selectedAgentId?: string;
   activeSessionKey: string;
   agentBindings?: Record<string, WorkspaceAgentBinding>;
-  /** Present only after an explicit long-session coordination opt-in. */
-  coordinatorBinding?: WorkspaceCoordinatorBinding | null;
-  /** Bounded durable admission journal owned by the Workspace store. */
-  delegationReceipts?: Record<string, DelegationAdmissionReceipt>;
   permissionMode: WorkspacePermissionMode;
   createdAt: number;
   updatedAt: number;
@@ -278,6 +287,8 @@ export interface WorkspaceProfile {
   sessionFolders?: SessionFolder[];
   sessionFolderAssignments?: Record<string, string>;
   archivedSessionKeys?: string[];
+  /** Explicit long-collaboration metadata, keyed by stable SessionKey. */
+  coordinatorBindings?: Record<string, WorkspaceCoordinatorBinding>;
 }
 
 export interface SessionArchiveEntry {

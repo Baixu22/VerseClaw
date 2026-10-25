@@ -34,10 +34,12 @@ type SessionActivityEvent =
   | { channel: 'command'; payload: ChatRuntimeEvent & { type: 'command.output' } };
 
 const sessionSnapshots = new Map<string, SessionActivitySnapshot>();
+const snapshotScopes = new Map<string, string | null>();
+const latestLoadRequestBySession = new Map<string, number>();
 const eventUnsubscribers: Array<() => void> = [];
 const mockTimers = new Map<string, ReturnType<typeof setTimeout>[]>();
-const loadGenerationBySession = new Map<string, number>();
 let initialized = false;
+let loadRequestSequence = 0;
 
 function asFiniteNumber(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
@@ -74,6 +76,36 @@ function routingSessionKey(event: SessionActivityEvent): string | null {
 
 function shouldApply(updatedAt: number, current: number): boolean {
   return updatedAt >= current;
+}
+
+function normalizeWorkspaceScope(workspaceId: string | null | undefined): string | null {
+  return workspaceId?.trim() || null;
+}
+
+function policyMatchesScope(
+  snapshot: SessionActivitySnapshot,
+  workspaceId: string | null,
+  sessionKey: string,
+): boolean {
+  const policy = snapshot.policy;
+  if (!policy) return true;
+  if (policy.scope.sessionKey !== sessionKey) return false;
+  return workspaceId === null || policy.scope.workspaceId === workspaceId;
+}
+
+function markPolicyRefreshPending(snapshot: SessionActivitySnapshot): SessionActivitySnapshot {
+  if (!snapshot.policy) return snapshot;
+  return {
+    ...snapshot,
+    policy: {
+      ...snapshot.policy,
+      generation: {
+        ...snapshot.policy.generation,
+        state: 'stale',
+        reason: 'refresh-pending',
+      },
+    },
+  };
 }
 
 function taskStatus(status: string): SessionActivityTask['status'] {
@@ -206,7 +238,7 @@ export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: 
       task: data.task,
       summary: data.summary,
       error: data.error,
-      status: data.status,
+      status: data.status === 'accepted' ? 'started' : data.status,
       childSessionKey: data.childSessionKey,
       agentId: data.agentId,
       updatedAt,
@@ -372,6 +404,14 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
     if (next !== current) {
       sessionSnapshots.set(key, next);
       set((state) => ({ snapshots: { ...state.snapshots, [key]: next } }));
+      /* Permission changes can alter runtime-effective grants and capability
+       * facts without changing the session key. Refresh through the canonical
+       * host seam so the policy never retains an authorization snapshot from
+       * before the event. */
+      if (event.channel === 'runtime' && event.payload.type === 'approval.updated') {
+        const workspaceId = snapshotScopes.get(key) ?? null;
+        void get().load({ workspaceId, sessionKey: key });
+      }
     }
   };
 
@@ -395,29 +435,23 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
     },
     load: async ({ workspaceId, sessionKey }) => {
       get().init();
-      const requestGeneration = (loadGenerationBySession.get(sessionKey) ?? 0) + 1;
-      loadGenerationBySession.set(sessionKey, requestGeneration);
+      const requestedWorkspaceId = normalizeWorkspaceScope(workspaceId);
+      const requestId = ++loadRequestSequence;
+      latestLoadRequestBySession.set(sessionKey, requestId);
       const isMockMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('mock') === '1';
       /*
-       * Keep whatever this session already showed.
-       *
-       * `load` used to seed an empty snapshot before the read even started, so a
-       * failed re-read erased the facts AND left nothing to mark as stale: the
-       * panel then looked exactly like a session with no background activity.
+       * Keep same-scope facts while refreshing so a failed re-read remains
+       * visible as stale. A different workspace must not reuse the prior
+       * session's rows merely because the session key collides.
        */
-      const previous = get().snapshots[sessionKey];
-      const invalidatePreviousPolicy = !isMockMode && previous !== undefined
-        && (previous.policy !== undefined || previous.availability.policy !== undefined);
+      const previousScope = snapshotScopes.get(sessionKey);
+      const sameScope = previousScope === undefined || previousScope === requestedWorkspaceId;
+      const previous = sameScope ? get().snapshots[sessionKey] : undefined;
+      snapshotScopes.set(sessionKey, requestedWorkspaceId);
       const initial = isMockMode
         ? mockSnapshot(sessionKey, mockScenario())
-        : previous
-          ? {
-              ...previous,
-              ...(invalidatePreviousPolicy
-                ? { policy: null, availability: { ...previous.availability, policy: false } }
-                : {}),
-            }
-          : createEmptySessionActivitySnapshot(sessionKey);
+        : markPolicyRefreshPending(previous ?? createEmptySessionActivitySnapshot(sessionKey));
+      sessionSnapshots.set(sessionKey, initial);
       set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: initial } }));
       if (isMockMode
         && (initial.session.status !== 'idle' || initial.git || initial.tasks.length || initial.terminals.length)) {
@@ -425,7 +459,6 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       }
 
       if (isMockMode) {
-        sessionSnapshots.set(sessionKey, initial);
         /* Git comes from `git.status()` even under mock, because the mock host
          * bridge answers that call with the same fixture the review tab reads.
          * Seeding a second git object into each scenario would let the status
@@ -435,53 +468,47 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       }
 
       const [activityResult] = await Promise.allSettled([
-        hostApi.sessionActivity.snapshot({ workspaceId, sessionKey }),
+        hostApi.sessionActivity.snapshot({ workspaceId: requestedWorkspaceId, sessionKey }),
       ]);
-      if (loadGenerationBySession.get(sessionKey) !== requestGeneration) {
+      if (
+        latestLoadRequestBySession.get(sessionKey) !== requestId
+        || snapshotScopes.get(sessionKey) !== requestedWorkspaceId
+      ) {
         return get().snapshots[sessionKey] ?? initial;
       }
-      let snapshot = get().snapshots[sessionKey] ?? initial;
-      const hydrated = activityResult.status === 'fulfilled'
+      const current = get().snapshots[sessionKey] ?? initial;
+      const candidate = activityResult.status === 'fulfilled'
         && activityResult.value.success
         && activityResult.value.snapshot
         ? activityResult.value.snapshot
         : null;
+      const hydrated = candidate && policyMatchesScope(candidate, requestedWorkspaceId, sessionKey)
+        ? candidate
+        : null;
+      let snapshot = current;
       if (hydrated) {
         const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, base);
-        /* Policy is a runtime-scoped fact. A response for another workspace or
-         * session must never be painted under the current selection, even if an
-         * older host path accidentally returns it after a scope switch. */
-        const policyScopeMatches = hydrated.policy != null
-          && hydrated.policy.scope.sessionKey === sessionKey
-          && (!workspaceId || hydrated.policy.scope.workspaceId === workspaceId);
-        const hasPolicyProjection = Object.prototype.hasOwnProperty.call(hydrated, 'policy')
-          || hydrated.availability.policy !== undefined;
-        const availability = { ...snapshot.availability, ...hydrated.availability };
-        if (hasPolicyProjection) availability.policy = policyScopeMatches;
         snapshot = {
-          ...snapshot,
+          ...current,
           ...hydrated,
-          session: hydrated.session && hydrated.session.updatedAt >= snapshot.session.updatedAt
-            ? { ...snapshot.session, ...hydrated.session, sessionKey }
-            : snapshot.session,
-          tasks: mergeItems(snapshot.tasks, hydrated.tasks),
-          subagents: mergeItems(snapshot.subagents, hydrated.subagents),
-          terminals: mergeItems(snapshot.terminals, hydrated.terminals),
-          continuity: { ...snapshot.continuity, ...hydrated.continuity },
-          ...(hasPolicyProjection ? { policy: policyScopeMatches ? hydrated.policy : null } : {}),
-          availability,
-          backgroundRead: mergeBackgroundRead(snapshot.backgroundRead, hydrated.backgroundRead),
-          capturedAt: Math.max(snapshot.capturedAt, hydrated.capturedAt),
+          session: hydrated.session && hydrated.session.updatedAt >= current.session.updatedAt
+            ? { ...current.session, ...hydrated.session, sessionKey }
+            : current.session,
+          tasks: mergeItems(current.tasks, hydrated.tasks),
+          subagents: mergeItems(current.subagents, hydrated.subagents),
+          terminals: mergeItems(current.terminals, hydrated.terminals),
+          continuity: { ...current.continuity, ...hydrated.continuity },
+          availability: { ...current.availability, ...hydrated.availability },
+          backgroundRead: mergeBackgroundRead(current.backgroundRead, hydrated.backgroundRead),
+          capturedAt: Math.max(current.capturedAt, hydrated.capturedAt),
         };
       } else {
-        /* Background rows may stay visible as stale facts, but policy is not a
-         * durable transcript fact: a failed or interrupted re-read clears it
-         * rather than presenting the old runtime scope as current. */
+        /* A failed read or a response for another workspace is not evidence
+         * about this scope. Keep same-scope facts as stale and record the
+         * failure; never merge a cross-scope policy into the selected session. */
         snapshot = {
-          ...snapshot,
-          policy: null,
-          availability: { ...snapshot.availability, policy: false },
-          backgroundRead: mergeBackgroundRead(snapshot.backgroundRead, undefined),
+          ...current,
+          backgroundRead: mergeBackgroundRead(current.backgroundRead, undefined),
         };
       }
       sessionSnapshots.set(sessionKey, snapshot);
@@ -489,11 +516,22 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       return snapshot;
     },
     apply: applyEvent,
-    refreshGit: async (_workspaceId, sessionKey) => {
+    refreshGit: async (workspaceId, sessionKey) => {
       if (!sessionKey) return;
+      const requestedWorkspaceId = normalizeWorkspaceScope(workspaceId);
       try {
         const result = await hostApi.git.status();
         if (!result.success) return;
+        if (
+          requestedWorkspaceId !== null
+          && snapshotScopes.has(sessionKey)
+          && snapshotScopes.get(sessionKey) !== requestedWorkspaceId
+        ) {
+          return;
+        }
+        if (requestedWorkspaceId !== null && !snapshotScopes.has(sessionKey)) {
+          snapshotScopes.set(sessionKey, requestedWorkspaceId);
+        }
         const current = get().snapshots[sessionKey] ?? createEmptySessionActivitySnapshot(sessionKey);
         const next = { ...current, git: result.status, availability: { ...current.availability, git: true }, capturedAt: Date.now() };
         sessionSnapshots.set(sessionKey, next);
@@ -509,7 +547,10 @@ export function disposeSessionActivitySubscriptions(): void {
   while (eventUnsubscribers.length) eventUnsubscribers.pop()?.();
   for (const timers of mockTimers.values()) timers.forEach(clearTimeout);
   mockTimers.clear();
-  loadGenerationBySession.clear();
+  sessionSnapshots.clear();
+  snapshotScopes.clear();
+  latestLoadRequestBySession.clear();
+  loadRequestSequence = 0;
   initialized = false;
 }
 

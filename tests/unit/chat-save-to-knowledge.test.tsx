@@ -122,7 +122,28 @@ vi.mock('@/lib/host-api', () => ({
   hostApi: {
     topics: { list: vi.fn(async () => ({ topics: [], activeTopicId: null })) },
     files: { writeText: vi.fn(async () => ({ success: true })) },
-    workspaces: { saveState: hostApiMock.saveWorkspaceState, update: vi.fn(async () => ({ success: true })) },
+    workspaces: {
+      saveState: hostApiMock.saveWorkspaceState,
+      update: vi.fn(async () => ({ success: true })),
+      resolveCoordinator: vi.fn(async () => ({
+        success: true,
+        binding: null,
+        recovery: { state: 'missing', reason: 'not-bound', bindingRevision: null },
+      })),
+      bindCoordinator: vi.fn(async () => ({
+        success: true,
+        binding: null,
+        recovery: { state: 'missing', reason: 'not-bound', bindingRevision: null },
+      })),
+      pauseCoordinator: vi.fn(async () => ({
+        success: true,
+        binding: null,
+        recovery: { state: 'missing', reason: 'not-bound', bindingRevision: null },
+      })),
+    },
+    resourceEnvelope: {
+      getState: vi.fn(async () => ({ measured: false })),
+    },
     skills: { local: vi.fn(async () => ({ success: true, skills: [] })) },
     workProviders: { status: vi.fn(async () => ({ kitCapabilities: [] })) },
     usage: {

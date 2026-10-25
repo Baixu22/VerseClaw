@@ -45,6 +45,125 @@ const RUNTIME_PROCESS: RunProcessSurface = {
 };
 
 describe('SessionActivityPanel', () => {
+  it('renders configured policy without dressing it up as effective', () => {
+    render(
+      <SessionActivityPanel
+        snapshot={snapshotWith({
+          policy: {
+            schemaVersion: 'SessionEffectivePolicy/v1',
+            generatedAt: '2026-10-23T08:00:00.000Z',
+            scope: {
+              workspaceId: 'workspace-a',
+              sessionKey: 'agent:main:main',
+              agentId: 'main',
+              sessionId: 'session-1',
+              runId: null,
+            },
+            generation: {
+              state: 'missing',
+              runtimeGeneration: null,
+              capabilityProfileGeneration: null,
+              observedAt: null,
+              reason: 'no-current-run-capability-profile',
+            },
+            backend: {
+              configured: {
+                value: {
+                  runtime: 'codex',
+                  kind: 'native',
+                  ownsNativeCompaction: true,
+                  provider: 'openai',
+                  model: 'gpt-5.4',
+                },
+                status: 'configured',
+                source: 'session.runtime',
+                reason: null,
+              },
+              effective: {
+                value: null,
+                status: 'unverified',
+                source: 'runtime.observation',
+                reason: 'no-current-run-capability-profile',
+              },
+            },
+            model: {
+              configured: {
+                value: { provider: 'openai', model: 'gpt-5.4', effort: 'high' },
+                status: 'configured',
+                source: 'session.model',
+                reason: null,
+              },
+              effective: {
+                value: null,
+                status: 'unverified',
+                source: 'runtime.observation',
+                reason: 'no-current-run-capability-profile',
+              },
+            },
+            grants: {
+              configured: { value: null, status: 'unverified', source: 'runtime', reason: null },
+              effective: {
+                value: {
+                  total: 3,
+                  allowed: 1,
+                  requiresApproval: 1,
+                  denied: 1,
+                  unknown: 0,
+                  actions: [
+                    { actionId: 'exec', authorization: 'allowed', grantState: 'active' },
+                    { actionId: 'write', authorization: 'requires-approval', grantState: null },
+                    { actionId: 'browser', authorization: 'denied', grantState: 'revoked' },
+                  ],
+                },
+                status: 'effective',
+                source: 'runtime-effective-capability.observation',
+                reason: null,
+              },
+            },
+            context: {
+              configured: { value: { contextTokens: null, contextPressure: null }, status: 'unverified', source: 'config', reason: null },
+              effective: { value: null, status: 'unverified', source: 'session', reason: null },
+            },
+            queue: {
+              configured: { value: { mode: null, cap: null, drop: null, debounceMs: null, queuedCount: 0 }, status: 'unverified', source: 'session', reason: null },
+              effective: { value: { mode: null, cap: null, drop: null, debounceMs: null, queuedCount: 0 }, status: 'effective', source: 'session', reason: null },
+            },
+            resources: {
+              configured: { value: { maxConcurrentRuns: null, maxConcurrentSubagents: null, maxSpawnDepth: null, maxChildrenPerAgent: null, maxProcesses: null, maxRssMb: null, maxBackgroundTerminals: null, maxWorktrees: null, idleTtlMs: null, keepOnLeave: null }, status: 'unverified', source: 'config', reason: null },
+              effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
+            },
+            schedule: {
+              configured: { value: { cronEnabled: null, cronMaxConcurrentRuns: null, sessionRetention: null }, status: 'unverified', source: 'config', reason: null },
+              effective: { value: null, status: 'unverified', source: 'runtime', reason: null },
+            },
+            compatibility: [
+              {
+                backend: 'codex',
+                parameter: 'compaction.reserveTokens',
+                status: 'unsupported',
+                reason: 'native compaction does not consume OpenClaw reserve-token arguments',
+              },
+            ],
+            sources: ['session.entry', 'runtime-effective-capability.observation'],
+          },
+        })}
+      />,
+    );
+
+    expect(screen.getByTestId('session-activity-policy')).toBeTruthy();
+    expect(screen.getByTestId('session-activity-policy-backend').textContent).toContain('configured');
+    expect(screen.getByTestId('session-activity-policy-backend').textContent).toContain('session.runtime');
+    expect(screen.getByTestId('session-activity-policy-effective').textContent).toContain('unverified');
+    expect(screen.getByTestId('session-activity-policy-effort').textContent).toContain('high');
+    expect(screen.getByTestId('session-activity-policy-actions').textContent).toContain('actionSummary');
+    expect(screen.getByTestId('session-activity-policy-sources').textContent).toContain('runtime-effective-capability.observation');
+    expect(screen.getByTestId('session-activity-policy-compatibility').textContent).toContain('unsupported');
+    expect(screen.getByTestId('session-activity-policy-compatibility').textContent).toContain('reasons.nativeReserveTokens');
+    expect(screen.getByTestId('session-activity-policy-action-details').textContent).toContain('requiresApproval');
+    expect(screen.getByTestId('session-activity-policy-boundaries').textContent).toContain('boundaries.abort.title');
+    expect(screen.getByTestId('session-activity-policy-boundaries').textContent).toContain('boundaries.fork.description');
+  });
+
   it('orders the four sections: environment, plan, sub-agents, processes', () => {
     render(
       <SessionActivityPanel

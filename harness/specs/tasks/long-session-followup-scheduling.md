@@ -9,7 +9,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 让已授权的跟进任务在合适条件继续，而不是依赖使用者重复提示或新增一套常驻调度器。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
-diffBase: 2a86ab761
+diffBase: 41c0cbd9a138ab333c24a813fab85cc1591fafec
 dependsOnTasks:
   - D3
 touchedAreas:

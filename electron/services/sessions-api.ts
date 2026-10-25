@@ -1,6 +1,6 @@
 import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import { createHash, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
@@ -11,10 +11,12 @@ import { getOpenClawConfigDir } from '../utils/paths';
 import { logger } from '../utils/logger';
 import { resolveHostOpenClawStateDir } from './knowledge-api';
 import type { GatewayManager } from '../gateway/manager';
+import { GatewayRpcError } from '../gateway/protocol';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import {
   buildSessionMutationRequestDigest,
   clearSessionDeleteGate,
+  findSessionDeleteGateBySession,
   persistSessionDeleteGate,
   persistSessionMutationGate,
   updateSessionDeleteGate,
@@ -32,32 +34,26 @@ import type {
   CompressionArtifactQuality,
   CompressionSemanticAtom,
   SessionCompactionResult,
-  SessionBindCoordinatorPayload,
-  SessionBindCoordinatorResult,
-  SessionCoordinatorBindingReadPayload,
-  SessionDelegateCoordinatorPayload,
-  SessionDelegateCoordinatorResult,
-  SessionDelegationAdmissionsPayload,
-  SessionDelegationAdmissionsResult,
   SessionDeleteResult,
-  SessionEffectivePolicy,
+  SessionDelegationPayload,
+  SessionDelegationResult,
   SessionExpandSelectorResult,
   SessionHandoffSource,
   SessionRecallDiagnostic,
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
+import { createWorkspacesApi, getActiveWorkspaceProfile, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import {
-  createWorkspacesApi,
-  getActiveWorkspaceProfile,
-  getWorkspaceRootPathById,
-  invalidateWorkspaceCoordinatorBindingsForSession,
-  listWorkspaceDelegationReceipts,
-  readWorkspaceCoordinatorBinding,
-  readWorkspaceDelegationReceipt,
-  saveWorkspaceCoordinatorBinding,
-  saveWorkspaceDelegationReceipt,
-} from './workspaces-api';
+  executeSessionDelegation,
+  hashDelegationRequest,
+  validateSessionDelegationPayload,
+} from './session-delegation-admission';
+import {
+  claimSessionDelegationAdmission,
+  commitSessionDelegationAdmission,
+  readSessionDelegationAdmission,
+} from './session-delegation-store';
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
@@ -69,22 +65,10 @@ import {
   sweepSessionArtefacts,
   cleanupContextArchiveArtifacts,
   readArchiveIndex,
-  upsertArchiveEntry,
   removeArchiveEntry,
-  writeArchiveIndex,
 } from '../utils/session-files';
 import { isRecord } from './payload-utils';
-import type {
-  DelegationAdmissionReceipt,
-  DelegationCoordinatorScope,
-  DelegationTaskRef,
-} from '@shared/types/delegation-admission';
-import type {
-  SessionArchiveEntry,
-  WorkspaceCoordinatorBinding,
-  WorkspaceCoordinatorInvalidationReason,
-  WorkspaceCoordinatorTaskRef,
-} from '@shared/types/workspace';
+import type { SessionArchiveEntry } from '@shared/types/workspace';
 
 // ponytail: serialize desktop handoff writes; use per-workspace queues if throughput requires it.
 let handoffCreationTail: Promise<unknown> = Promise.resolve();
@@ -1311,15 +1295,6 @@ async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
     const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
     sessionsJson = JSON.parse(raw) as Record<string, unknown>;
   } catch (error) {
-    const code = (error as NodeJS.ErrnoException | undefined)?.code;
-    if (code === 'ENOENT') {
-      // This runtime keeps sessions in its own store, not in a legacy
-      // per-agent sessions.json. There is no mirror index to sweep, so the
-      // absence of that file is already the desired end state — not a
-      // failure. The caller still records that the sweep was skipped.
-      logger.info('[session:delete] No legacy sessions.json mirror to sweep for ' + sessionKey);
-      return { success: true, skipped: 'legacy-sessions-json-absent' };
-    }
     logger.warn(`[session:delete] Could not read sessions.json: ${String(error)}`);
     return { success: false, error: `Could not read sessions.json: ${String(error)}` };
   }
@@ -1484,6 +1459,31 @@ function getOptionalString(value: unknown): string | null {
   return typeof value === 'string' && value.trim() ? value.trim() : null;
 }
 
+type LifecycleMutationFailureDetails = {
+  kind?: unknown;
+  operationId?: unknown;
+  key?: unknown;
+  retryable?: unknown;
+  noMutation?: unknown;
+};
+
+function isDefinitiveLifecycleMutationFailure(
+  error: unknown,
+  sessionKey: string,
+  operationId: string,
+): boolean {
+  if (!(error instanceof GatewayRpcError)) return false;
+  const details = error.payload.details ?? error.payload.data;
+  if (!isRecord(details)) return false;
+  const failure = details as LifecycleMutationFailureDetails;
+  return (
+    failure.kind === 'lifecycle-mutation-failure' &&
+    failure.key === sessionKey &&
+    failure.operationId === operationId &&
+    (failure.retryable === false || failure.noMutation === true)
+  );
+}
+
 /**
  * Archive a session through the runtime lifecycle owner. The caller persists
  * an operation id before the first RPC; any transport failure keeps the gate
@@ -1492,7 +1492,7 @@ function getOptionalString(value: unknown): string | null {
 async function archiveSession(
   payload: SessionPayload,
   gatewayManager?: GatewayManager,
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; sessionId?: string }> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1507,12 +1507,7 @@ async function archiveSession(
       sessionKey,
       agentId: parsed.agentId,
       operationKind: 'archive',
-      requestDigest: buildSessionMutationRequestDigest('archive', {
-        sessionKey,
-        label,
-        originalWorkspaceId,
-        originalFolderId,
-      }),
+      requestDigest: buildSessionMutationRequestDigest('archive', { sessionKey }),
     });
     const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.archive', {
       key: sessionKey,
@@ -1521,8 +1516,17 @@ async function archiveSession(
       ...(originalWorkspaceId ? { originalWorkspaceId } : {}),
       ...(originalFolderId ? { originalFolderId } : {}),
     }, 30_000);
+    if (result?.ok === false && result.operationId === gate.operationId && result.key === sessionKey) {
+      if (result.retryable === false || result.noMutation === true) {
+        await clearSessionDeleteGate(gate.operationId);
+      }
+      return { success: false, error: String(result.error ?? 'Archive was refused') };
+    }
     if (
       result?.ok !== true ||
+      result.archived !== true ||
+      result.key !== sessionKey ||
+      typeof result.sessionId !== 'string' || !result.sessionId ||
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed'
     ) {
@@ -1532,9 +1536,13 @@ async function archiveSession(
       };
     }
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true };
+    return { success: true, sessionId: String(result.sessionId) };
   } catch (error) {
-    // Unknown/failed RPC keeps the mirror gate and operationId for a retry.
+    // Definitive correlated refusals can release the mirror gate. Unknown or
+    // retryable outcomes retain the same operationId for journal recovery.
+    if (gate && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
+      await clearSessionDeleteGate(gate.operationId);
+    }
     return {
       success: false,
       error: `Gateway archive did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
@@ -1568,8 +1576,17 @@ async function restoreSession(
       key: sessionKey,
       operationId: gate.operationId,
     }, 30_000);
+    if (result?.ok === false && result.operationId === gate.operationId && result.key === sessionKey) {
+      if (result.retryable === false || result.noMutation === true) {
+        await clearSessionDeleteGate(gate.operationId);
+      }
+      return { success: false, error: String(result.error ?? 'Restore was refused') };
+    }
     if (
       result?.ok !== true ||
+      result.key !== sessionKey ||
+      !result.entry || typeof result.entry !== 'object' ||
+      typeof (result.entry as Record<string, unknown>).sessionId !== 'string' ||
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed' ||
       result.restored !== true
@@ -1582,6 +1599,9 @@ async function restoreSession(
     await clearSessionDeleteGate(gate.operationId);
     return { success: true };
   } catch (error) {
+    if (gate && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
+      await clearSessionDeleteGate(gate.operationId);
+    }
     return {
       success: false,
       error: `Gateway restore did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
@@ -1606,7 +1626,8 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
   const archiveIndexPath = getArchiveIndexPath(agentId);
   logger.info(`[session:permanentDelete] key=${sessionKey} agentId=${agentId}`);
 
-  const { removed } = await removeArchiveEntry(archiveIndexPath, sessionKey);
+  // Keep the archive locator until every derivative is gone, including after a host crash.
+  const removed = (await readArchiveIndex(archiveIndexPath)).entries.find(entry => entry.sessionKey === sessionKey);
   if (!removed) {
     return { success: false, error: `Session is not in the archive index: ${sessionKey}` };
   }
@@ -1619,11 +1640,9 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
     const cascade = await runHostSessionDerivativeCascade(sessionKey, baseId);
     if (!cascade.success) {
       const detail = cascade.errors.map((entry) => `${entry.kind}:${entry.id} (${entry.error})`).join('; ');
-      await upsertArchiveEntry(archiveIndexPath, removed);
       return { success: false, error: `Derivative cascade incomplete: ${detail}` };
     }
   } catch (error) {
-    await upsertArchiveEntry(archiveIndexPath, removed).catch(() => undefined);
     return { success: false, error: `Derivative cascade failed: ${String(error)}` };
   }
   const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
@@ -1640,7 +1659,6 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
   }
   if (cleanupErrors.length > 0) {
     // Keep the archive index entry as the retry locator until every owned derivative is gone.
-    await upsertArchiveEntry(archiveIndexPath, removed);
     return {
       success: false,
       error: `Some archived session files could not be removed: ${String(cleanupErrors[0].error)}`,
@@ -1648,6 +1666,10 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
     };
   }
   logger.info(`[session:permanentDelete] Hard-deleted ${sweep.removed.length} file(s) and ${archiveCleanup.removed.length} context archive(s) for ${baseId}`);
+  const removal = await removeArchiveEntry(archiveIndexPath, sessionKey, removed.transcriptPath);
+  if (!removal.removed && removal.index.entries.some(entry => entry.sessionKey === sessionKey)) {
+    return { success: false, error: 'Archived generation changed; current archive entry was retained' };
+  }
   return { success: true };
 }
 
@@ -1687,41 +1709,15 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
   if (index.entries.length === 0) return { success: true };
 
   let firstError: string | undefined;
-  const retained: SessionArchiveEntry[] = [];
   for (const entry of index.entries) {
-    try {
-      const sessionsDirAbs = dirname(entry.transcriptPath);
-      const baseId = basename(entry.transcriptPath).replace(/\.archived\.jsonl$/, '');
-      const { runHostSessionDerivativeCascade } = await import('./session-cascade-delete');
-      const cascade = await runHostSessionDerivativeCascade(entry.sessionKey, baseId);
-      if (!cascade.success) {
-        firstError ??= cascade.errors[0]?.error ?? 'derivative cascade incomplete';
-        retained.push(entry);
-        continue;
-      }
-      const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
-      const archiveCleanup = await cleanupContextArchiveArtifacts({ sessionIds: [baseId] });
-      for (const removedPath of [...sweep.removed, ...archiveCleanup.removed]) {
-        logger.info(`[session:emptyArchive] Unlinked ${removedPath}`);
-      }
-      if (sweep.errors.length > 0 || archiveCleanup.errors.length > 0) {
-        const firstCleanupError = sweep.errors[0]?.error ?? archiveCleanup.errors[0]?.error;
-        firstError ??= String(firstCleanupError);
-        retained.push(entry);
-      }
-    } catch (error) {
-      firstError ??= String(error);
-      retained.push(entry);
-      logger.warn(`[session:emptyArchive] Failed for ${entry.sessionKey}: ${String(error)}`);
-    }
+    const result = await withSessionDeleteGateLock(entry.sessionKey, async () => {
+      const pending = await findSessionDeleteGateBySession(entry.sessionKey);
+      if (pending) return { success: false, error: 'Session has a pending lifecycle mutation' };
+      return permanentDeleteSession({ id: entry.sessionKey });
+    });
+    if (!result.success) firstError ??= result.error;
   }
-
-  await writeArchiveIndex(archiveIndexPath, { version: 1, entries: retained });
-  logger.info(`[session:emptyArchive] Retained ${retained.length}/${index.entries.length} archive entries for ${agentId}`);
-  if (firstError) {
-    return { success: false, error: `Some archived session files could not be removed: ${firstError}` };
-  }
-  return { success: true };
+  return firstError ? { success: false, error: firstError } : { success: true };
 }
 
 type GatewaySessionDeleteResult = {
@@ -1796,29 +1792,35 @@ async function deleteSessionViaRuntime(
       }) ?? currentGate;
     }
     if (currentGate.terminalClosed !== true) {
-      terminalManager?.closeForSessionKey(sessionKey, 'session-delete');
+      // Runtime cleanup already proved this exact generation. The Main pass
+      // closes keep_on_leave terminals only for an explicit session delete.
+      terminalManager?.reclaimForSession({
+        sessionKey,
+        workspaceId: (await getActiveWorkspaceProfile())?.id,
+        expectedSessionId: currentGate.expectedSessionId,
+        honorKeepOnLeave: false,
+        reason: 'session-delete',
+      });
       currentGate = await updateSessionDeleteGate(gate.operationId, {
         terminalClosed: true,
       }) ?? currentGate;
     }
     if (currentGate.localSweepCommitted !== true) {
       const sweepResult = await deleteSession(sessionKey);
-      if (!sweepResult.success) {
+      const legacyStoreAbsent = !sweepResult.success && /Could not read sessions\.json:.*ENOENT/i.test(sweepResult.error ?? '');
+      if (!sweepResult.success && !legacyStoreAbsent) {
         return sweepResult;
       }
-      // A committed Gateway delete is authoritative. Record the local mirror
-      // result, including the case where this runtime keeps no legacy
-      // sessions.json and there was nothing to sweep.
-      currentGate = await updateSessionDeleteGate(gate.operationId, {
+      await updateSessionDeleteGate(gate.operationId, {
         localSweepCommitted: true,
-        ...(sweepResult.success && (sweepResult as { skipped?: string }).skipped
-          ? { localSweepSkipped: (sweepResult as { skipped?: string }).skipped }
-          : {}),
-      }) ?? currentGate;
+      });
     }
 
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true };
+    return {
+      success: true,
+      expectedSessionId: currentGate.expectedSessionId ?? result.sessionId,
+    };
   } catch (error) {
     // RPC unknown (timeout, socket drop, reconnect): do not sweep, do not
     // release the mirror gate. The persisted operationId makes the next delete
@@ -1854,205 +1856,97 @@ async function deleteSessionViaRuntimeSerialized(
   return current;
 }
 
-type LiveSessionIdentity = {
-  agentId: string;
-  sessionId: string;
-};
-
-export async function resolveLiveSessionIdentity(
-  gatewayManager: GatewayManager,
-  sessionKey: string,
-  expectedAgentId?: string,
-): Promise<LiveSessionIdentity | null> {
-  const parsed = parseSessionKey(sessionKey);
-  if (!parsed || (expectedAgentId && parsed.agentId !== expectedAgentId)) return null;
-  const listed = await gatewayManager.rpc<{ sessions?: Array<Record<string, unknown>> }>(
-    'sessions.list',
-    { agentId: parsed.agentId },
-    10_000,
-  );
-  const entry = (listed?.sessions ?? []).find((session) => (
-    session.key === sessionKey || session.sessionKey === sessionKey
-  ));
-  if (!entry) return null;
-  const physicalId = typeof entry.sessionId === 'string'
-    ? entry.sessionId.trim()
-    : typeof entry.id === 'string'
-      ? entry.id.trim()
-      : '';
-  if (!physicalId) return null;
-  return { agentId: parsed.agentId, sessionId: physicalId };
-}
-
-function normalizeCoordinatorTaskRefs(value: unknown): WorkspaceCoordinatorTaskRef[] {
-  if (!Array.isArray(value) || value.length === 0) {
-    throw new Error('At least one Task Ledger reference is required');
-  }
-  const seen = new Set<string>();
-  return value.map((entry, index) => {
-    if (!isRecord(entry) || entry.kind !== 'task-ledger' || typeof entry.nodeId !== 'string') {
-      throw new Error(`taskRefs[${index}] must name a Task Ledger node`);
-    }
-    const nodeId = entry.nodeId.trim();
-    if (!nodeId) throw new Error(`taskRefs[${index}].nodeId is required`);
-    if (seen.has(nodeId)) throw new Error(`Duplicate Task Ledger reference: ${nodeId}`);
-    seen.add(nodeId);
-    return { kind: 'task-ledger' as const, nodeId };
-  });
-}
-
-async function invalidateBindingAndRead(
-  workspaceId: string,
-  sessionKey: string,
-  reason: WorkspaceCoordinatorInvalidationReason,
-): Promise<WorkspaceCoordinatorBinding | null> {
-  await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, reason, { workspaceId });
-  const reread = await readWorkspaceCoordinatorBinding(workspaceId);
-  return reread?.binding ?? null;
-}
-
-function delegationRequestDigest(
-  payload: SessionDelegateCoordinatorPayload,
-  coordinator: DelegationCoordinatorScope,
-  taskRef: DelegationTaskRef,
-): string {
-  return createHash('sha256').update(JSON.stringify({
-    workspaceId: payload.workspaceId,
-    coordinator,
-    roleName: payload.roleName,
-    task: payload.task,
-    taskRef,
-    writeSet: [...(payload.writeSet ?? [])].sort(),
-    isolation: payload.isolation ?? 'shared',
-    modelRef: payload.modelRef ?? null,
-    backend: payload.backend ?? 'openclaw-embedded',
-  })).digest('hex');
-}
-
-async function resolveAdmissionCoordinator(params: {
-  gatewayManager: GatewayManager;
-  workspaceId: string;
-  taskRef: DelegationTaskRef;
-}): Promise<{ coordinator: DelegationCoordinatorScope } | { error: string }> {
-  const active = await getActiveWorkspaceProfile();
-  if (!active) return { error: 'No active workspace is available.' };
-  if (active.id !== params.workspaceId) return { error: 'Delegation cannot cross the active workspace.' };
-  const stored = await readWorkspaceCoordinatorBinding(active.id);
-  const binding = stored?.binding;
-  if (!binding) return { error: 'Coordinator binding is missing; long-session coordination was not started.' };
-  if (binding.state !== 'active') return { error: `Coordinator binding is ${binding.state}.` };
-  if (!binding.taskRefs.some((ref) => ref.kind === params.taskRef.kind && ref.nodeId === params.taskRef.nodeId)) {
-    return { error: 'Task reference is not part of the active coordinator binding.' };
-  }
-  let live: LiveSessionIdentity | null;
-  try {
-    live = await resolveLiveSessionIdentity(params.gatewayManager, binding.sessionKey, binding.agentId);
-  } catch (error) {
-    return { error: `Session owner unavailable: ${error instanceof Error ? error.message : String(error)}` };
-  }
-  if (!live) {
-    await invalidateBindingAndRead(active.id, binding.sessionKey, 'session_missing');
-    return { error: 'Coordinator session no longer exists.' };
-  }
-  if (live.sessionId !== binding.sessionId || live.agentId !== binding.agentId) {
-    await invalidateBindingAndRead(active.id, binding.sessionKey, 'reset');
-    return { error: 'Coordinator physical generation changed; delegation was not admitted.' };
-  }
-  return {
-    coordinator: {
-      workspaceId: binding.workspaceId,
-      agentId: binding.agentId,
-      sessionKey: binding.sessionKey,
-      sessionId: binding.sessionId,
-      bindingRevision: binding.revision,
-    },
-  };
-}
-
-function createSubmittingDelegationReceipt(params: {
-  payload: SessionDelegateCoordinatorPayload;
-  coordinator: DelegationCoordinatorScope;
-  taskRef: DelegationTaskRef;
-  requestDigest: string;
-  receiptId: string;
-  createdAt: string;
-}): DelegationAdmissionReceipt {
-  return {
-    schemaVersion: 'DelegationAdmissionReceipt/v1',
-    receiptId: params.receiptId,
-    idempotencyKey: params.payload.idempotencyKey,
-    requestDigest: params.requestDigest,
-    coordinator: params.coordinator,
-    taskRef: params.taskRef,
-    roleName: params.payload.roleName,
-    task: params.payload.task,
-    state: 'submitting',
-    acceptedIsNotCompletion: true,
-    orchestrationRunId: null,
-    taskNodeId: null,
-    taskId: null,
-    roleInstanceId: null,
-    childSessionKey: null,
-    childRunId: null,
-    backend: { kind: 'unknown', provider: null, model: null, evidence: 'admission-submitting' },
-    toolAuthorization: { allowlist: [], denylist: [], permissionDecisionCount: 0, source: 'unresolved' },
-    isolation: {
-      mode: 'unknown',
-      backend: 'unknown',
-      worktreeId: null,
-      writeSet: [...(params.payload.writeSet ?? [])],
-      parallelWritesAllowed: false,
-      writeSetBasis: 'unresolved',
-    },
-    reason: null,
-    createdAt: params.createdAt,
-    updatedAt: params.createdAt,
-    acceptedAt: null,
-    rejectedAt: null,
-  };
-}
-
-function rejectDelegationReceipt(
-  receipt: DelegationAdmissionReceipt,
-  reason: string,
-): DelegationAdmissionReceipt {
-  const now = new Date().toISOString();
-  return {
-    ...receipt,
-    state: 'rejected',
-    reason,
-    updatedAt: now,
-    rejectedAt: now,
-  };
-}
-
 export function createSessionsApi(ctx: {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
+  coordinatorLifecycle?: (event: WorkspaceCoordinatorLifecycleEvent) => Promise<void>;
+  resolveCoordinator?: CompleteHostServiceRegistry['workspaces']['resolveCoordinator'];
+  gatewayRpcForDelegation?: CompleteHostServiceRegistry['gateway']['rpc'];
+  getActiveWorkspaceId?: () => Promise<string | null>;
+  delegationStore?: {
+    readAdmission: typeof readSessionDelegationAdmission;
+    claimAdmission: typeof claimSessionDelegationAdmission;
+    commitAdmission: typeof commitSessionDelegationAdmission;
+  };
 } = {}): CompleteHostServiceRegistry['sessions'] {
+  const delegationStopEpochs = new Map<string, number>();
+  const delegationFlights = new Map<string, Promise<SessionDelegationResult>>();
+  const delegationStore = ctx.delegationStore ?? {
+    readAdmission: readSessionDelegationAdmission,
+    claimAdmission: claimSessionDelegationAdmission,
+    commitAdmission: commitSessionDelegationAdmission,
+  };
+  const observeCoordinatorLifecycle = async (event: WorkspaceCoordinatorLifecycleEvent) => {
+    if (!ctx.coordinatorLifecycle) return;
+    try {
+      await ctx.coordinatorLifecycle(event);
+    } catch (error) {
+      logger.warn('[session:coordinator-lifecycle]', { event: event.type, sessionKey: event.sessionKey, error: String(error) });
+    }
+  };
   return {
+    delegate: async (payload: SessionDelegationPayload): Promise<SessionDelegationResult> => {
+      const validated = validateSessionDelegationPayload(payload);
+      if (!validated.ok) return { success: false, status: 'rejected', error: validated.error };
+      if (!ctx.gatewayManager || !ctx.resolveCoordinator || !ctx.gatewayRpcForDelegation) {
+        return {
+          success: false,
+          status: 'rejected',
+          error: 'Delegation requires the active Gateway, Workspace owner, and permission owner',
+        };
+      }
+      const flightKey = `${validated.payload.idempotencyKey}:${hashDelegationRequest(validated.payload)}`;
+      const existingFlight = delegationFlights.get(flightKey);
+      if (existingFlight) return existingFlight;
+      const flight = executeSessionDelegation(validated.payload, {
+        readAdmission: delegationStore.readAdmission,
+        claimAdmission: delegationStore.claimAdmission,
+        commitAdmission: delegationStore.commitAdmission,
+        resolveCoordinator: ctx.resolveCoordinator,
+        getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
+        gatewayRpc: ctx.gatewayRpcForDelegation,
+        describeSessionGeneration: async (sessionKey) => {
+          const described = await ctx.gatewayManager!.rpc<{
+            session?: { sessionId?: string } | null;
+          }>('sessions.describe', { key: sessionKey }, 15_000);
+          const sessionId = described?.session?.sessionId;
+          return typeof sessionId === 'string' && sessionId.trim() ? sessionId.trim() : null;
+        },
+        stopEpoch: (sessionKey) => delegationStopEpochs.get(sessionKey) ?? 0,
+      }).finally(() => {
+        delegationFlights.delete(flightKey);
+      });
+      delegationFlights.set(flightKey, flight);
+      return flight;
+    },
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
+      const workspaceId = getOptionalWorkspaceId(payload);
       const result = ctx.gatewayManager
         ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
         : await deleteSession(sessionKey);
-      if (result.success) {
-        await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, 'deleted').catch((error) => {
-          logger.warn('[coordinator-binding] failed to invalidate after delete', error);
-        });
-        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
-        await reclaimLongSessionOwnerResources({
-          action: 'session-delete',
-          scope: {
-            workspaceId: typeof (payload as { workspaceId?: unknown })?.workspaceId === 'string' ? String((payload as { workspaceId?: unknown }).workspaceId) : '',
-            sessionKey,
-          },
-          terminalManager: ctx.terminalManager,
-        }).catch((error) => {
-          logger.warn('[resource-reclamation] delete pass failed', error);
+      if (!result.success) return result;
+      await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
+      const resourceReclamation = await reclaimLongSessionOwnerResources({
+        action: 'session-delete',
+        scope: {
+          workspaceId: workspaceId ?? '',
+          sessionKey,
+          expectedSessionId: result.expectedSessionId ?? null,
+        },
+        terminalManager: ctx.terminalManager,
+        runtimeCleanupSettled: Boolean(ctx.gatewayManager),
+      }).catch((error) => {
+        logger.warn('[resource-reclamation] delete pass failed', error);
+        return undefined;
+      });
+      if (resourceReclamation?.recoveryRequired) {
+        logger.warn('[resource-reclamation] delete recovery required', {
+          recoveryId: resourceReclamation.recoveryId,
+          activeResidue: resourceReclamation.activeResidue,
         });
       }
-      return result;
+      return { ...result, ...(resourceReclamation ? { resourceReclamation } : {}) };
     },
     rename: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
@@ -2466,15 +2360,43 @@ export function createSessionsApi(ctx: {
       }
       // Session-level stop runs the canonical stop front (queued state clear,
       // recursive subagent stop, process drain); turn-level abort stays on
-      // chat.abort.
+      // chat.abort. Advance this epoch before awaiting so a concurrent delegate
+      // can never report an accepted receipt after a stop crossed its boundary.
+      delegationStopEpochs.set(sessionKey, (delegationStopEpochs.get(sessionKey) ?? 0) + 1);
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.stop', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
       }, 30_000);
+      const expectedSessionId = typeof result.sessionId === 'string' && result.sessionId.trim()
+        ? result.sessionId.trim()
+        : null;
+      const resourceReclamation = result.ok === true
+        ? await reclaimLongSessionOwnerResources({
+            action: 'run-cancel',
+            scope: {
+              workspaceId: getOptionalWorkspaceId(payload) ?? '',
+              sessionKey,
+              expectedSessionId,
+            },
+            terminalManager: ctx.terminalManager,
+            runtimeCleanupSettled: true,
+          }).catch((error) => {
+            logger.warn('[resource-reclamation] stop pass failed', error);
+            return undefined;
+          })
+        : undefined;
+      if (resourceReclamation?.recoveryRequired) {
+        logger.warn('[resource-reclamation] stop recovery required', {
+          recoveryId: resourceReclamation.recoveryId,
+          activeResidue: resourceReclamation.activeResidue,
+        });
+      }
       return {
         success: true,
         key: typeof result.key === 'string' ? result.key : sessionKey,
         stopped: result.ok === true,
+        ...(expectedSessionId ? { expectedSessionId } : {}),
+        ...(resourceReclamation ? { resourceReclamation } : {}),
       };
     },
     restoreCheckpoint: async (payload) => {
@@ -2924,6 +2846,13 @@ export function createSessionsApi(ctx: {
             id: workspaceId, agentId, activeSessionKey: sessionKey, sessionKey,
             state: { activeTopicId: null, draftInput: payload.draftInput },
           });
+          await observeCoordinatorLifecycle({
+            type: 'handoff',
+            workspaceId,
+            sourceSessionKey,
+            sessionKey,
+            agentId,
+          });
         }
         return { success: true, sessionKey, ...lineage };
       });
@@ -2995,6 +2924,7 @@ export function createSessionsApi(ctx: {
     archive: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
       const sessionKey = getSessionKey(payload);
+      return withSessionDeleteGateLock(sessionKey, async () => {
       const result = await archiveSession({
         id: sessionKey,
         label: body.label,
@@ -3002,469 +2932,55 @@ export function createSessionsApi(ctx: {
         originalFolderId: body.originalFolderId,
       }, ctx.gatewayManager);
       if (result.success) {
-        await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, 'archived', {
-          workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : undefined,
-        }).catch((error) => {
-          logger.warn('[coordinator-binding] failed to invalidate after archive', error);
-        });
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
-        await reclaimLongSessionOwnerResources({
+        await observeCoordinatorLifecycle({
+          type: 'archive',
+          workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : null,
+          sessionKey,
+        });
+        const resourceReclamation = await reclaimLongSessionOwnerResources({
           action: 'session-archive',
           scope: {
             workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : '',
             sessionKey,
+            expectedSessionId: result.sessionId ?? null,
           },
           terminalManager: ctx.terminalManager,
+          runtimeCleanupSettled: Boolean(ctx.gatewayManager),
         }).catch((error) => {
           logger.warn('[resource-reclamation] archive pass failed', error);
+          return undefined;
         });
+        if (resourceReclamation?.recoveryRequired) {
+          logger.warn('[resource-reclamation] archive recovery required', {
+            recoveryId: resourceReclamation.recoveryId,
+            activeResidue: resourceReclamation.activeResidue,
+          });
+        }
+        return { ...result, ...(resourceReclamation ? { resourceReclamation } : {}) };
       }
       return result;
-    },
-    restore: async (payload) => restoreSession({ id: getSessionKey(payload) }, ctx.gatewayManager),
-    effectivePolicy: async (payload) => {
-      const sessionKey = typeof payload.sessionKey === 'string' ? payload.sessionKey.trim() : '';
-      if (!sessionKey) return { success: false, error: 'sessionKey is required' };
-      const active = await getActiveWorkspaceProfile();
-      if (!active) return { success: false, error: 'No active workspace is available for effective policy.' };
-      const requestedWorkspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
-      if (requestedWorkspaceId && requestedWorkspaceId !== active.id) {
-        return { success: false, error: 'Requested workspace does not match the active workspace.' };
-      }
-      if (!ctx.gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
-      try {
-        const result = await ctx.gatewayManager.rpc<{ ok?: boolean; policy?: unknown }>(
-          'sessions.effectivePolicy',
-          {
-            key: sessionKey,
-            workspaceId: active.id,
-            permissionMode: active.permissionMode,
-          },
-          15_000,
-        );
-        if (result?.ok !== true || !isRecord(result.policy)) {
-          return { success: false, error: 'Gateway returned no effective policy snapshot.' };
-        }
-        return { success: true, policy: result.policy as SessionEffectivePolicy };
-      } catch (error) {
-        return {
-          success: false,
-          error: `Effective policy read failed: ${error instanceof Error ? error.message : String(error)}`,
-        };
-      }
-    },
-    coordinatorBinding: async (payload: SessionCoordinatorBindingReadPayload = {}) => {
-      const active = await getActiveWorkspaceProfile();
-      if (!active) {
-        return { success: false, binding: null, validation: 'missing' as const, error: 'No active workspace is available.' };
-      }
-      const requestedWorkspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
-      if (requestedWorkspaceId && requestedWorkspaceId !== active.id) {
-        return { success: false, binding: null, validation: 'missing' as const, error: 'Requested workspace does not match the active workspace.' };
-      }
-      const stored = await readWorkspaceCoordinatorBinding(active.id);
-      const binding = stored?.binding ?? null;
-      if (!binding) {
-        return { success: true, binding: null, validation: 'missing' as const, reason: null };
-      }
-      if (binding.state === 'invalidated') {
-        return { success: true, binding, validation: 'invalidated' as const, reason: binding.invalidationReason };
-      }
-      if (!ctx.gatewayManager) {
-        return { success: true, binding, validation: 'unverified' as const, reason: 'Gateway manager unavailable' };
-      }
-      let live: LiveSessionIdentity | null;
-      try {
-        live = await resolveLiveSessionIdentity(ctx.gatewayManager, binding.sessionKey, binding.agentId);
-      } catch (error) {
-        return {
-          success: true,
-          binding,
-          validation: 'unverified' as const,
-          reason: `Session owner unavailable: ${error instanceof Error ? error.message : String(error)}`,
-        };
-      }
-      if (!live) {
-        const invalidated = await invalidateBindingAndRead(active.id, binding.sessionKey, 'session_missing');
-        return {
-          success: true,
-          binding: invalidated,
-          validation: 'invalidated' as const,
-          reason: 'session_missing',
-        };
-      }
-      if (live.sessionId !== binding.sessionId || live.agentId !== binding.agentId) {
-        const invalidated = await invalidateBindingAndRead(active.id, binding.sessionKey, 'reset');
-        return {
-          success: true,
-          binding: invalidated,
-          validation: 'invalidated' as const,
-          reason: 'reset',
-        };
-      }
-      return { success: true, binding, validation: 'current' as const, reason: null };
-    },
-    bindCoordinator: async (payload: SessionBindCoordinatorPayload): Promise<SessionBindCoordinatorResult> => {
-      const workspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
-      const agentId = typeof payload.agentId === 'string' ? payload.agentId.trim() : '';
-      const sessionKey = typeof payload.sessionKey === 'string' ? payload.sessionKey.trim() : '';
-      const active = await getActiveWorkspaceProfile();
-      if (!active) return { success: false, error: 'No active workspace is available.' };
-      if (!workspaceId || workspaceId !== active.id) {
-        return { success: false, error: 'Coordinator binding cannot cross the active workspace.' };
-      }
-      if (!agentId || !sessionKey) {
-        return { success: false, error: 'agentId and sessionKey are required' };
-      }
-      const parsed = parseSessionKey(sessionKey);
-      if (!parsed || parsed.agentId !== agentId) {
-        return { success: false, error: 'sessionKey belongs to a different assistant' };
-      }
-      if (active.selectedAgentId !== agentId || active.activeSessionKey !== sessionKey) {
-        return { success: false, error: 'Coordinator binding must target the selected workspace assistant and session' };
-      }
-      if (!Number.isInteger(payload.expectedRevision) || payload.expectedRevision < 0) {
-        return { success: false, error: 'expectedRevision must be a non-negative integer' };
-      }
-      if (!ctx.gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
-      try {
-        const live = await resolveLiveSessionIdentity(ctx.gatewayManager, sessionKey, agentId);
-        if (!live) return { success: false, error: 'The selected session does not exist in the runtime owner' };
-        const taskRefs = normalizeCoordinatorTaskRefs(payload.taskRefs);
-        const ledger = await loadTaskLedgerSnapshot(workspaceId);
-        const existingNodeIds = new Set(ledger.nodes.map((node) => node.id));
-        const missing = taskRefs.filter((ref) => !existingNodeIds.has(ref.nodeId)).map((ref) => ref.nodeId);
-        if (missing.length > 0) {
-          return { success: false, error: `Task Ledger references do not exist: ${missing.join(', ')}` };
-        }
-        const currentRevision = active.coordinatorBinding?.revision ?? 0;
-        if (payload.expectedRevision !== currentRevision) {
-          return {
-            success: false,
-            error: `Coordinator binding revision conflict: expected ${currentRevision}, received ${payload.expectedRevision}`,
-          };
-        }
-        const now = new Date().toISOString();
-        const binding: WorkspaceCoordinatorBinding = {
-          schemaVersion: 'WorkspaceCoordinatorBinding/v1',
-          workspaceId,
-          agentId,
-          sessionKey,
-          sessionId: live.sessionId,
-          taskRefs,
-          state: 'active',
-          revision: currentRevision + 1,
-          createdAt: active.coordinatorBinding?.createdAt ?? now,
-          updatedAt: now,
-          invalidatedAt: null,
-          invalidationReason: null,
-        };
-        const saved = await saveWorkspaceCoordinatorBinding({
-          workspaceId,
-          expectedRevision: payload.expectedRevision,
-          binding,
-        });
-        return { success: true, binding: saved, validation: 'current' as const };
-      } catch (error) {
-        return {
-          success: false,
-          error: `Coordinator binding failed: ${error instanceof Error ? error.message : String(error)}`,
-        };
-      }
-    },
-    delegateCoordinator: async (
-      payload: SessionDelegateCoordinatorPayload,
-    ): Promise<SessionDelegateCoordinatorResult> => {
-      const workspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
-      const idempotencyKey = typeof payload.idempotencyKey === 'string' ? payload.idempotencyKey.trim() : '';
-      const roleName = typeof payload.roleName === 'string' ? payload.roleName.trim() : '';
-      const task = typeof payload.task === 'string' ? payload.task.trim() : '';
-      const taskRef = payload.taskRef;
-      if (!workspaceId || !idempotencyKey || !roleName || !task
-        || !taskRef || taskRef.kind !== 'task-ledger' || typeof taskRef.nodeId !== 'string' || !taskRef.nodeId.trim()) {
-        return {
-          success: false,
-          error: 'workspaceId, idempotencyKey, roleName, task and a Task Ledger taskRef are required',
-          receipt: createSubmittingDelegationReceipt({
-            payload,
-            coordinator: {
-              workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0,
-            },
-            taskRef: taskRef ?? { kind: 'task-ledger', nodeId: '' },
-            requestDigest: '',
-            receiptId: `dar_${randomUUID()}`,
-            createdAt: new Date().toISOString(),
-          }),
-        };
-      }
-      if (!/^[A-Za-z0-9._:-]{1,200}$/.test(idempotencyKey)) {
-        return {
-          success: false,
-          error: 'idempotencyKey must be a bounded canonical identifier',
-          receipt: createSubmittingDelegationReceipt({
-            payload,
-            coordinator: { workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0 },
-            taskRef,
-            requestDigest: '',
-            receiptId: `dar_${randomUUID()}`,
-            createdAt: new Date().toISOString(),
-          }),
-        };
-      }
-      const active = await getActiveWorkspaceProfile();
-      if (!active) {
-        return {
-          success: false,
-          error: 'No active workspace is available.',
-          receipt: createSubmittingDelegationReceipt({
-            payload,
-            coordinator: { workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0 },
-            taskRef,
-            requestDigest: '',
-            receiptId: `dar_${randomUUID()}`,
-            createdAt: new Date().toISOString(),
-          }),
-        };
-      }
-      if (active.id !== workspaceId) {
-        return {
-          success: false,
-          error: 'Delegation cannot cross the active workspace.',
-          receipt: createSubmittingDelegationReceipt({
-            payload,
-            coordinator: { workspaceId, agentId: '', sessionKey: '', sessionId: '', bindingRevision: 0 },
-            taskRef,
-            requestDigest: '',
-            receiptId: `dar_${randomUUID()}`,
-            createdAt: new Date().toISOString(),
-          }),
-        };
-      }
-      const stored = await readWorkspaceCoordinatorBinding(workspaceId);
-      const binding = stored?.binding;
-      if (!binding || binding.state !== 'active') {
-        const reason = binding ? `Coordinator binding is ${binding.state}.` : 'Coordinator binding is missing.';
-        return {
-          success: false,
-          error: reason,
-          receipt: rejectDelegationReceipt(createSubmittingDelegationReceipt({
-            payload,
-            coordinator: {
-              workspaceId,
-              agentId: binding?.agentId ?? '',
-              sessionKey: binding?.sessionKey ?? '',
-              sessionId: binding?.sessionId ?? '',
-              bindingRevision: binding?.revision ?? 0,
-            },
-            taskRef,
-            requestDigest: '',
-            receiptId: `dar_${randomUUID()}`,
-            createdAt: new Date().toISOString(),
-          }), reason),
-        };
-      }
-      const coordinator: DelegationCoordinatorScope = {
-        workspaceId: binding.workspaceId,
-        agentId: binding.agentId,
-        sessionKey: binding.sessionKey,
-        sessionId: binding.sessionId,
-        bindingRevision: binding.revision,
-      };
-      const requestDigest = delegationRequestDigest(payload, coordinator, taskRef);
-      const existing = await readWorkspaceDelegationReceipt(workspaceId, idempotencyKey);
-      if (existing) {
-        if (existing.requestDigest !== requestDigest) {
-          return {
-            success: false,
-            error: 'Delegation admission idempotency key was reused with a different request',
-            receipt: existing,
-            duplicate: true,
-          };
-        }
-        return {
-          success: true,
-          receipt: existing,
-          duplicate: true,
-          recoveryRequired: existing.state === 'submitting' || existing.state === 'unknown',
-        };
-      }
-      const createdAt = new Date().toISOString();
-      let receipt = createSubmittingDelegationReceipt({
-        payload,
-        coordinator,
-        taskRef,
-        requestDigest,
-        receiptId: `dar_${randomUUID()}`,
-        createdAt,
       });
-      await saveWorkspaceDelegationReceipt(workspaceId, receipt);
-
-      if (!ctx.gatewayManager) {
-        receipt = {
-          ...receipt,
-          state: 'rejected',
-          reason: 'Gateway manager unavailable',
-          updatedAt: new Date().toISOString(),
-          rejectedAt: new Date().toISOString(),
-        };
-        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
-        return { success: false, error: receipt.reason ?? undefined, receipt };
-      }
-      if (payload.backend !== undefined && payload.backend !== 'openclaw-embedded') {
-        receipt = {
-          ...receipt,
-          state: 'rejected',
-          backend: { kind: 'unknown', provider: null, model: null, evidence: 'unsupported-backend' },
-          reason: `Unsupported delegation backend: ${String(payload.backend)}`,
-          updatedAt: new Date().toISOString(),
-          rejectedAt: new Date().toISOString(),
-        };
-        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
-        return { success: false, error: receipt.reason ?? undefined, receipt };
-      }
-      const admissionCoordinator = await resolveAdmissionCoordinator({
-        gatewayManager: ctx.gatewayManager,
-        workspaceId,
-        taskRef,
-      });
-      if ('error' in admissionCoordinator) {
-        receipt = {
-          ...receipt,
-          state: 'rejected',
-          reason: admissionCoordinator.error,
-          updatedAt: new Date().toISOString(),
-          rejectedAt: new Date().toISOString(),
-        };
-        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
-        return { success: false, error: receipt.reason ?? undefined, receipt };
-      }
-      const ledger = await loadTaskLedgerSnapshot(workspaceId);
-      if (!ledger.nodes.some((node) => node.id === taskRef.nodeId)) {
-        receipt = {
-          ...receipt,
-          state: 'rejected',
-          reason: 'Task Ledger reference does not exist',
-          updatedAt: new Date().toISOString(),
-          rejectedAt: new Date().toISOString(),
-        };
-        await saveWorkspaceDelegationReceipt(workspaceId, receipt);
-        return { success: false, error: receipt.reason ?? undefined, receipt };
-      }
-
-      const runtimeAdmission = {
-        receiptId: receipt.receiptId,
-        idempotencyKey: receipt.idempotencyKey,
-        requestDigest: receipt.requestDigest,
-        coordinator: receipt.coordinator,
-        taskRef: receipt.taskRef,
-        createdAt: receipt.createdAt,
-      };
-      try {
-        const response = await ctx.gatewayManager.rpc<{
-          admissionReceipts?: DelegationAdmissionReceipt[];
-          failures?: Array<{ roleName?: string; error?: string; status?: string }>;
-        }>('orchestrator.run', {
-          task,
-          sessionKey: binding.sessionKey,
-          agentId: binding.agentId,
-          workers: [{
-            roleName,
-            task,
-            ...(payload.modelRef ? { modelRef: payload.modelRef } : {}),
-            ...(payload.writeSet?.length ? { writeSet: payload.writeSet } : {}),
-            ...(payload.isolation ? { isolation: payload.isolation } : {}),
-          }],
-          maxWorkers: 1,
-          includeVerifier: false,
-          graphMode: 'dag',
-          workspaceDir: await getWorkspaceRootPathById(workspaceId),
-          delegationAdmission: runtimeAdmission,
-        }, 130_000);
-        const returned = response?.admissionReceipts?.[0];
-        if (returned
-          && returned.receiptId === receipt.receiptId
-          && returned.idempotencyKey === receipt.idempotencyKey
-          && returned.requestDigest === receipt.requestDigest
-          && returned.coordinator.sessionId === receipt.coordinator.sessionId
-          && returned.taskRef.nodeId === receipt.taskRef.nodeId) {
-          receipt = returned;
-        } else {
-          receipt = {
-            ...receipt,
-            state: 'rejected',
-            reason: response?.failures?.[0]?.error ?? 'Orchestrator returned no matching admission receipt',
-            updatedAt: new Date().toISOString(),
-            rejectedAt: new Date().toISOString(),
-          };
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        const knownRejection = /unknown role|forbidden|permission|max children|invalid request/i.test(message);
-        receipt = {
-          ...receipt,
-          state: knownRejection ? 'rejected' : 'unknown',
-          reason: message,
-          updatedAt: new Date().toISOString(),
-          rejectedAt: knownRejection ? new Date().toISOString() : null,
-        };
-      }
-
-      if (receipt.state === 'accepted') {
-        const current = await readWorkspaceCoordinatorBinding(workspaceId);
-        const currentBinding = current?.binding;
-        if (!currentBinding
-          || currentBinding.state !== 'active'
-          || currentBinding.revision !== receipt.coordinator.bindingRevision
-          || currentBinding.sessionId !== receipt.coordinator.sessionId) {
-          let childStopped = true;
-          if (receipt.childSessionKey) {
-            try {
-              await ctx.gatewayManager.rpc('sessions.stop', { key: receipt.childSessionKey }, 15_000);
-            } catch {
-              childStopped = false;
-            }
-          }
-          receipt = {
-            ...receipt,
-            state: childStopped ? 'rejected' : 'unknown',
-            reason: childStopped
-              ? 'Coordinator generation changed after admission; child stop was requested'
-              : 'Coordinator generation changed after admission; child stop outcome is unknown',
-            updatedAt: new Date().toISOString(),
-            rejectedAt: childStopped ? new Date().toISOString() : null,
-          };
-        }
-      }
-      receipt = await saveWorkspaceDelegationReceipt(workspaceId, receipt);
-      return {
-        success: receipt.state === 'accepted',
-        ...(receipt.state === 'accepted' ? {} : { error: receipt.reason ?? `Admission ${receipt.state}` }),
-        receipt,
-        duplicate: false,
-        recoveryRequired: receipt.state === 'unknown' || receipt.state === 'submitting',
-      };
     },
-    delegationAdmissions: async (
-      payload: SessionDelegationAdmissionsPayload = {},
-    ): Promise<SessionDelegationAdmissionsResult> => {
-      const active = await getActiveWorkspaceProfile();
-      if (!active) return { success: false, error: 'No active workspace is available.', receipts: [] };
-      const requested = typeof payload.workspaceId === 'string' ? payload.workspaceId.trim() : '';
-      if (requested && requested !== active.id) {
-        return { success: false, error: 'Requested workspace does not match the active workspace.', receipts: [] };
-      }
-      return { success: true, receipts: await listWorkspaceDelegationReceipts(active.id) };
-    },
+    restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), async () => {
+      const sessionKey = getSessionKey(payload);
+      const result = await restoreSession({ id: sessionKey }, ctx.gatewayManager);
+      if (result.success) await observeCoordinatorLifecycle({ type: 'restore', workspaceId: getOptionalWorkspaceId(payload), sessionKey });
+      return result;
+    }),
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);
+      const workspaceId = getOptionalWorkspaceId(payload);
+      return withSessionDeleteGateLock(sessionKey, async () => {
+      const pending = await findSessionDeleteGateBySession(sessionKey);
+      if (pending) return { success: false, error: 'Session has a pending lifecycle mutation' };
       const result = await permanentDeleteSession({ id: sessionKey });
       if (result.success) {
-        await invalidateWorkspaceCoordinatorBindingsForSession(sessionKey, 'deleted').catch((error) => {
-          logger.warn('[coordinator-binding] failed to invalidate after permanent delete', error);
-        });
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
+        await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
       }
       return result;
+      });
     },
     listArchived: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};

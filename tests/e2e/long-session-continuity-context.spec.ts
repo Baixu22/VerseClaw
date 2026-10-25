@@ -1,5 +1,6 @@
 import type { ElectronApplication } from '@playwright/test';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { closeElectronApp, expect, test } from './fixtures/electron';
 import {
   createTaskLedgerWorkingContextDecision,
@@ -87,7 +88,7 @@ test('real Host/Gateway continuity preview reads accepted owners and fails close
   const observation: Record<string, unknown> = {
     schema: 'clawx.long-session.d1-continuity-preview/v1',
     driven_by: 'agent',
-    actor: 'codex-long-session-d1',
+    actor: 'codex-long-session-r2',
     negatives: [],
   };
   try {
@@ -97,7 +98,16 @@ test('real Host/Gateway continuity preview reads accepted owners and fails close
     const workspace = active.activeWorkspace;
     if (!workspace) throw new Error('No active workspace');
     const token = Date.now().toString(36);
-    await hostInvoke(app, 'workspaces', 'update', { id: workspace.id, permissionMode: 'fullAccess' });
+    const scratchRoot = join(testInfo.outputDir, `workspace-${token}`);
+    await mkdir(scratchRoot, { recursive: true });
+    const updatedWorkspace = await hostInvoke<{ activeWorkspace?: Workspace; workspaces?: Workspace[] }>(app, 'workspaces', 'update', {
+      id: workspace.id,
+      rootPath: scratchRoot,
+      permissionMode: 'fullAccess',
+    });
+    const boundWorkspace = updatedWorkspace.activeWorkspace
+      ?? updatedWorkspace.workspaces?.find((candidate) => candidate.id === workspace.id)
+      ?? { ...workspace, rootPath: scratchRoot };
     const coordinatorSessionKey = await createSession(app, `D1 coordinator ${token}`);
     const ordinarySessionKey = await createSession(app, `D1 ordinary ${token}`);
     await hostInvoke(app, 'workspaces', 'update', {
@@ -188,28 +198,44 @@ test('real Host/Gateway continuity preview reads accepted owners and fails close
       },
       timeoutMs: 60_000,
     });
-    const remembered = await hostInvoke<{ success: boolean; accepted: boolean; cardId?: string; proposalId?: string; reason?: string }>(
-      app,
-      'memory',
-      'remember',
-      { content: rememberedContent, scope: 'workspace', scopeKey: workspace.rootPath, type: 'fact', sensitivity: 'normal' },
-    );
-    expect(remembered.success).toBe(true);
-    if (!remembered.accepted) {
-      const normalizedProposalId = remembered.proposalId;
-      if (!normalizedProposalId) throw new Error('Memory candidate missing proposal id');
-      const approved = await hostInvoke<{ success: boolean; approved: boolean }>(app, 'memory', 'approveCandidate', {
-        source: 'role-memory-card', id: normalizedProposalId,
+    const proposed = await hostInvoke<{
+      ok?: boolean; accepted?: boolean; card?: { id?: string }; proposal?: { id?: string }; reason?: string;
+    }>(app, 'gateway', 'rpc', {
+      method: 'memory.propose',
+      params: {
+        proposal: {
+          content: rememberedContent,
+          scope: 'workspace',
+          scopeKey: boundWorkspace.rootPath,
+          type: 'fact',
+          sensitivity: 'normal',
+          source: 'user',
+        },
+      },
+      timeoutMs: 30_000,
+    });
+    const acceptedCardId = proposed.card?.id;
+    const proposalId = proposed.proposal?.id;
+    if (!acceptedCardId && !proposalId) throw new Error('Memory proposal returned neither a card nor candidate: ' + JSON.stringify(proposed));
+    if (!acceptedCardId) {
+      const reviewed = await hostInvoke<{
+        ok?: boolean; accepted?: boolean; card?: { id?: string }; reason?: string;
+      }>(app, 'gateway', 'rpc', {
+        method: 'memory.review',
+        params: { id: proposalId, action: 'approve' },
+        timeoutMs: 30_000,
       });
-      expect(approved.approved).toBe(true);
+      if (!reviewed.card?.id) throw new Error('Memory review did not expose an accepted card: ' + JSON.stringify(reviewed));
     }
 
-    await hostInvoke(app, 'sessions', 'bindCoordinator', {
+    await hostInvoke(app, 'workspaces', 'bindCoordinator', {
       workspaceId: workspace.id,
       agentId: 'main',
       sessionKey: coordinatorSessionKey,
       expectedRevision: 0,
-      taskRefs: [{ kind: 'task-ledger', nodeId: taskNodeId }],
+      taskLedgerNodeIds: [taskNodeId],
+      environment: { kind: 'local', rootPath: boundWorkspace.rootPath, setupProfile: null },
+      archiveRestorePolicy: 'restore',
     });
 
     const preview = await hostInvoke<ContinuityResult>(app, 'chat', 'continuityPreview', {
@@ -225,7 +251,7 @@ test('real Host/Gateway continuity preview reads accepted owners and fails close
     expect(pack.schemaVersion).toBe('ContinuityContextPack/v1');
     expect(pack.complete).toBe(false);
     expect(pack.bindingRevision).toBe(1);
-    const memoryItem = pack.items.find((item) => item.kind === 'memory-ref' && item.text.includes('role-memory-card:') && item.scope.key === workspace.rootPath);
+    const memoryItem = pack.items.find((item) => item.kind === 'memory-ref' && item.text.includes('role-memory-card:') && item.scope.key === boundWorkspace.rootPath);
     expect(memoryItem).toBeTruthy();
     expect(pack.items).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'constraint', text: expect.stringContaining('Stay inside workspace scope.') }),
@@ -241,7 +267,7 @@ test('real Host/Gateway continuity preview reads accepted owners and fails close
     expect(pack.originalHistory.taskLedgerRef).toBe(`task-ledger:${workspace.id}`);
 
     const retainedPath = testInfo.outputPath('continuity-preview.json');
-    await writeFile(retainedPath, JSON.stringify({ schema: 'clawx.long-session.d1-pack/v1', driven_by: 'agent', actor: 'codex-long-session-d1', workspaceId: workspace.id, coordinatorSessionKey, taskNodeId, memoryContent: rememberedContent, preview }, null, 2) + '\n', 'utf8');
+    await writeFile(retainedPath, JSON.stringify({ schema: 'clawx.long-session.d1-pack/v1', driven_by: 'agent', actor: 'codex-long-session-r2', workspaceId: workspace.id, coordinatorSessionKey, taskNodeId, memoryContent: rememberedContent, preview }, null, 2) + '\n', 'utf8');
     observation.primary = retainedPath;
 
     const crossScope = await hostInvoke<ContinuityResult>(app, 'chat', 'continuityPreview', {

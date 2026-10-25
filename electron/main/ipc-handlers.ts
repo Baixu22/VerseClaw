@@ -199,8 +199,20 @@ function registerTypedHostHandlers(
   registerAgentBrowserGatewayBridge(gatewayManager, undefined, agentBrowserApi);
   const knowledgeApi = createKnowledgeApi({ gatewayManager });
   const remoteForgeApi = createRemoteForgeApi();
+  const gitApi = createGitApi();
+  const taskLedgerApi = createTaskLedgerApi();
+  const workspacesApi = createWorkspacesApi({
+    gatewayManager,
+    terminalManager,
+    webPreviewManager,
+    gitApi,
+    taskLedgerApi,
+  });
   const traceDiagnostics = createHostTraceDiagnosticsService({
     onSummary: recordObservabilityHostDiagnostic,
+  });
+  const gatewayApi = createGatewayApi(gatewayManager, resourceFabric, {
+    createKnowledgeInboxItem: knowledgeApi.createInboxItem,
   });
 
   hostApiRegistry.registerCoreServices({
@@ -214,11 +226,11 @@ function registerTypedHostHandlers(
     uv: createUvApi(),
     vtoken: createVtokenApi(),
     dcsProdFlags: createDcsProdFlagsApi(gatewayManager),
-    workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
+    workspaces: workspacesApi,
     projectRules: createProjectRulesApi(),
     terminal: createTerminalApi({ gatewayManager, terminalManager, traceDiagnostics }),
     sessionActivity: createSessionActivityApi({ gatewayManager, terminalManager }),
-    git: createGitApi(),
+    git: gitApi,
     permissions: createPermissionsApi(),
     runtimeApprovals: createRuntimeApprovalsApi(gatewayManager),
     orchestrationPresets: createOrchestrationPresetsApi(),
@@ -226,9 +238,7 @@ function registerTypedHostHandlers(
     settings: createSettingsApi(gatewayManager),
     efficiency: createEfficiencyApi(),
     resourceEnvelope: createResourceEnvelopeApi(),
-    gateway: createGatewayApi(gatewayManager, resourceFabric, {
-      createKnowledgeInboxItem: knowledgeApi.createInboxItem,
-    }),
+    gateway: gatewayApi,
     localControlPlane: createLocalControlPlaneApi(gatewayManager),
     capabilities: createCapabilitiesApi({ gatewayManager }),
     agentDev: createAgentDevApi({ gatewayManager }),
@@ -244,7 +254,13 @@ function registerTypedHostHandlers(
     providers: createProvidersApi({ gatewayManager, mainWindow }),
     files: createFilesApi(),
     media: createMediaApi(),
-    sessions: createSessionsApi({ gatewayManager, terminalManager }),
+    sessions: createSessionsApi({
+      gatewayManager,
+      terminalManager,
+      coordinatorLifecycle: workspacesApi.coordinatorLifecycle,
+      resolveCoordinator: workspacesApi.resolveCoordinator,
+      gatewayRpcForDelegation: gatewayApi.rpc,
+    }),
     chat: createChatApi({ gatewayManager }),
     codeReview: createCodeReviewApi({ gatewayManager }),
     remoteForge: remoteForgeApi,
@@ -260,7 +276,7 @@ function registerTypedHostHandlers(
     }),
     usage: createUsageApi(),
     topics: createTopicsApi(),
-    taskLedger: createTaskLedgerApi(),
+    taskLedger: taskLedgerApi,
     remoteTasks: createRemoteTasksApi({ gatewayManager }),
     clawGraph: createClawGraphApi({ gatewayManager }),
     observability: createObservabilityApi({

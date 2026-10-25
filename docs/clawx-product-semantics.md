@@ -54,16 +54,114 @@ the matching owner-specific field, and rejects bare or mixed task keys.
 
 The executable boundary is opt-in for new callers: branded type checks and negative
 normalization tests guard against new identity confusion. Existing raw host-api
-payloads remain compatibility surfaces. In particular,
-`electron/services/agent-browser-api.ts` still has a legacy session-based
-resource-envelope workspace fallback; this slice records it rather than claiming
-it is migrated. The program's later migration work must remove it before claiming
+payloads remain compatibility surfaces. The browser resource-envelope fallback was
+removed: `electron/services/agent-browser-api.ts` resolves the active workspace id
+before opening a session and uses the explicit host-global scope only when no
+workspace is active. It never aliases session keys into workspace identity. Other
+raw compatibility payloads still require migration before the project may claim
 whole-system identity convergence.
 
 TF-0372 supplies no Project store, new Task/Run/Trace/Goal/Memory authority, execution
 protocol, permission provider or full OS sandbox. Frozen boundaries remain
 `liveReady=false`, `productApproved=false`, `defaultOn=false`, C1 keep-off,
 Runtime Memory diagnostics-only and SEKB auto-writeback disabled.
+
+## Session lifecycle action boundary
+
+Session lifecycle actions are separate facts. An abort is not a stop, stop is not
+archive, archive is not delete, and reset changes the physical generation without
+creating a new logical conversation by string inference. The current source
+anchors, inheritance rules, failure states and known gaps are recorded in
+[`long-session-development/a1/action-and-inheritance-contract.json`](../harness/specs/fixtures/long-session-development/a1/action-and-inheritance-contract.json).
+The corresponding negative cases are fixed in
+[`negative-scenario-index.json`](../harness/specs/fixtures/long-session-development/a1/negative-scenario-index.json).
+That fixture is a current fault baseline, not evidence that every lifecycle path
+is already protected.
+
+| Action | Visible behavior | Inherits | Does not inherit / required boundary |
+| --- | --- | --- | --- |
+| Turn/run abort | Stops the active turn/run and reloads transcript state. | SessionKey, transcript, current physical session until a separate reset. | Task/goal completion or resource deletion. |
+| Session stop | Clears queued work and drains runtime activity while retaining the session. | SessionKey, session store, transcript and task/resource records. | Archive/delete mutation or task completion. |
+| Archive | Hides a conversation from the live list while retaining it for restore. | Transcript, original session-entry snapshot and original workspace/folder hints. | Running process ownership, task completion or a new SessionKey. |
+| Restore | Restores an archive-indexed conversation to the live list. | Snapshot metadata and transcript. | A restored task/goal status or running resource ownership. |
+| Reset | Rotates the physical sessionId/generation under the same SessionKey. | Agent/workspace scope, label/origin preferences and Task Ledger references. | Old run/generation authority, ordinary-session CLI bindings and token counters. |
+| Delete | Permanently removes a live or archived conversation after owner cleanup. | No restore entitlement after a committed delete. | Late run authority, task completion or a second deletion owner. |
+| Fork | Creates a new child session from a source transcript. | Transcript/model/workspace preferences and explicit fork lineage. | Task/goal completion or running resources. |
+| Handoff | Builds a bounded draft and creates a child session without mutating the source. | Bounded handoff context and explicit parent/root lineage. | Goal transfer, source mutation or resource drain. |
+| Schedule pause | Disables future Cron/Workboard triggers. | Existing session/history and current-run state. | Session stop, abort, archive/delete or task completion. |
+
+Archive and restore now execute through the runtime lifecycle owner. Archive
+acquires the existing admission fence, drains the session, records an immutable
+operation intent, writes the archive index and transcript, and only then commits
+the hidden store state. Restore inserts a fresh physical generation under the same
+SessionKey, reverses the archived transcript/index, and leaves the old generation
+tombstoned so late events cannot mutate the restored row. A failed or unknown RPC
+keeps the Main operation gate and the same operationId open for retry; archived
+keys are filtered from the live session list before the store-row commit is
+complete. The A1 contract remains a historical fault baseline and therefore keeps
+its original `partial` status for those rows.
+
+This boundary adds no Project, Task/Goal, Context/Memory, Scheduler or universal
+resource authority. Permanent deletion of an already archived conversation still
+uses the archive index as its retry locator and must not report success while an
+owned derivative remains.
+
+## Effective session policy
+
+`SessionEffectivePolicy/v1` is a read-only projection of the current session
+owner facts. It keeps configured values, effective values, unverified values,
+unsupported capabilities and ignored overrides in separate states. Effective
+facts come from the bounded TF-0512 `ModelCapabilityProfile/v1` observation for
+the same workspace/session and a matching runtime generation; a missing, stale or
+mismatched observation leaves effective values unknown. The projection never
+substitutes a JSON file, an `enabled` flag, a provider label or a stale receipt
+for runtime evidence.
+
+The policy reports backend, native binding, model/effort, workspace grant,
+action authorization, context/queue/resource/schedule limits and their sources.
+Codex app-server and Claude CLI own native compaction; their compatibility rows
+mark OpenClaw compaction overrides as ignored with a reason. OpenClaw embedded
+sessions retain OpenClaw-owned compaction. Resource and schedule owners are not
+copied into a second registry, and the policy contains no credentials, auth
+profile IDs, raw prompts or transcript text. Reading it performs no execution,
+config write or grant expansion. Executable fixtures are under
+[`long-session-development/b1/`](../harness/specs/fixtures/long-session-development/b1/).
+
+## Coordinator binding and delegation admission
+
+Long-session coordination is an explicit Workspace-owned capability, not an
+automatic mode of ordinary Chat. The current binding stores only the selected
+Workspace/Assistant, logical SessionKey, observed physical `sessionId`, existing
+Task Ledger node references and a monotonically increasing revision in the
+Workspace store. A reset changes the physical generation and invalidates the old
+binding; archive/delete invalidate it through the existing session lifecycle
+owners. The binding contains no Project store, Task/Goal status, raw transcript
+or execution authority.
+
+`DelegationAdmissionReceipt/v1` reuses the existing role orchestrator and child
+session runtime. Before invoking `orchestrator.run`, Main persists a bounded
+`submitting` receipt keyed by caller idempotency key and request digest. The final
+receipt binds the coordinator revision/physical generation, Task Ledger ref,
+role, child session/run, actual backend identity, role-clamped tool allow/deny
+facts and isolation backend. `accepted` means the runtime admitted the child; it
+is not `running`, `completed` or task completion. Unknown role, unsupported
+backend, stale coordinator generation and missing child identity remain rejected
+or unknown facts.
+
+Shared in-process writers run serially unless an explicit write-set path is
+provided; worktree isolation records whether the actual backend is `git` or the
+in-process fallback. A reset/stop racing admission is rechecked after spawn and
+the child stop is requested rather than projecting a phantom completion. The C4
+entry is still required before users can operate this capability from the main
+product surface.
+
+Completion continuation reads the existing subagent registry and delivery outbox rather than starting a second scheduler. Workers of one orchestration run form a bounded batch keyed by `completion-batch:<orchestrationRunId>:<requesterSessionKey>`; completed, failed, cancelled and missing workers remain distinct, and a deferred verifier must also become terminal before the team bundle can be exposed. Delivery remains at-least-once, but the deterministic key, per-run delivery state and requester physical-generation pin make replay idempotent and prevent a reset/handoff generation from accepting stale work. The batch receipt reports task completion authority as `none`; final model text alone is not delivery evidence. The user-visible C4 entry is still required before this runtime capability becomes an operable product surface.
+
+The C4 long-session surface reuses the existing Sidebar and Chat activity rail rather than creating a second task list. An explicitly bound coordinator conversation is marked in the Sidebar and remains openable even before its first message. The activity rail projects the Workspace binding revision and invalidation reason, existing Task Ledger references, durable delegation receipts, worker transcripts and completion-batch delivery state. Pause/resume actions delegate to the existing composer run controls and disappear once the binding is invalidated. Task acceptance still comes only from Task Ledger, and completion delivery remains at-least-once with the C3 generation fence.
+
+Long-session continuity strategy stays on the baseline: the paired evaluation contract froze a 30-pair agent-driven workload and measured only structural projection behaviour because no live provider was authorized, so no continuous-compression, value-pruning or summary-tree path is default-enabled, promoted or implied by the long-session surface. Any future promotion needs a live-provider sample that clears the published fidelity, safety, cost and P95 gates plus its own implementation spec, rollback and failure fallback; see [d3 decision evidence](../harness/specs/fixtures/long-session-development/d3/continuity-strategy-decision.json).
+
+Memory is one reviewable product concept. Role Memory cards, Runtime Memory facts/timelines/episodes, the candidate queue, embedding indexes, native-file retrieval and Dreaming caches have distinct implementation lifecycle and storage owners, but they are not separate product memories. Candidates and derived caches are never retrievable or injectable as accepted memory; role-card review or the owning Runtime Memory acceptance path must promote them first. The canonical domain matrix and migration boundary live in [memory-control-plane.md](dev/memory-control-plane.md). SEKB remains a Knowledge Runtime Lessons source and does not own a memory store.
 
 ## Windows x64 Controlled Preview
 
@@ -256,3 +354,9 @@ Implementation status is not the same as semantic status:
 5. Add explicit Chat to Task Loop upgrade UX before any automatic state-machine behavior.
 6. Normalize permission decision audit events.
 7. Limit plan editing to lightweight controls; do not build a full DAG editor.
+
+The long-session control plane separates human UI/CLI intent, typed host lifecycle calls and scoped model tools. Resume, fork, archive, delete, environment/worktree selection and handoff use the existing host owners. A model shell command does not create lifecycle authority. Archive and restore run through the runtime admission/finalizer and preserve the operation identity across unknown outcomes. An explicit coordinator binding is stored as minimal metadata on the existing Workspace owner. It references existing Task Ledger nodes, binds the stable Workspace/Assistant/SessionKey to a canonical local checkout or Git-registered worktree, and records the observed branch, detached state, setup profile, binding revision and archive policy. Chat sends use that canonical environment and its fingerprint; reset generations, invalid or paused bindings, missing owners/environments, and revision conflicts fail closed. The binding never mutates task status; completion remains a Task Ledger operation.
+
+The Session status panel projects `SessionEffectivePolicy/v1` from the existing session, configuration, model and resource owners. Configured runtime/model/limits are kept separate from current-run effective facts. `ModelCapabilityProfile/v1` observations are bounded, session/run/gateway-generation checked and used only by the matching current run; missing or stale observations leave effective backend, model, grants, context and admission facts unverified. The policy contains counts and normalized capabilities, not prompts, credentials, secrets or grant identifiers. Reading it does not execute a model, write configuration or expand authorization. The status panel exposes sources, compatibility/override reasons and normalized action permissions in the same disclosure. It also distinguishes run abort from session stop, the panel's view-only retention of completed activity from transcript and runtime-resource TTLs, and transcript-only session forks from Git worktree isolation. Activity, policy, and lifecycle facts are scope-checked during refresh so a response for an older workspace, run, Gateway generation, or request cannot replace the current selection.
+
+Codex and Claude CLI advertise native compaction ownership; OpenClaw consumes its own compaction parameters. The policy compatibility table therefore marks native-backend automatic compaction, provider and model arguments as ignored with a reason, reserve-token arguments as unsupported where the native backend does not consume them, and manual compaction as effective through the backend owner. The UI renders these outcomes as localized status and reason rows while preserving backend-provided source identifiers for inspection.

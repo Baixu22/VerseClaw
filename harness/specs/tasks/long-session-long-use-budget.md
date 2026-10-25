@@ -9,18 +9,27 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 防止长期入口越用越慢、后台消息越积越多，用新样本测量预算而非复用旧性能 PASS。
 contractIndex: harness/specs/tasks/long-session-development-plan.md
-diffBase: 0bd400d43
+diffBase: 83d2ea79ac6a3b1ada018f3968609e69ae7ff236
 dependsOnTasks:
   - F1
 touchedAreas:
   - harness/specs/tasks/long-session-long-use-budget.md
   - harness/specs/tasks/long-session-development-plan.md
+  - src/stores/chat.ts
+  - src/stores/chat/session-label-hydration.ts
+  - src/components/layout/Sidebar.tsx
+  - electron/services/sessions-api.ts
+  - electron/services/resource-tracker.ts
+  - shared/types/resource-tracker.ts
+  - openclaw_runtime/src/sessions/session-admission-registry.ts
+  - tests/unit/chat-session-label-budget.test.ts
+  - tests/e2e/long-session-followup-scheduling.spec.ts
+  - tests/unit/session-summary-bounded-read.test.ts
+  - harness/specs/fixtures/tf0423-session-loading/probe.mjs
+  - shared/long-session-long-use-budget.ts
+  - scripts/long-session-long-use-budget-evidence.mjs
   - package.json
-  - shared/long-session-budget.ts
-  - src/stores/gateway.ts
   - tests/unit/long-session-long-use-budget.test.ts
-  - scripts/long-session-f2-evidence.mjs
-  - harness/specs/fixtures/long-session-development/f2/probe-f2.mjs
   - harness/specs/fixtures/long-session-development/f2/**
 requiredRules:
   - runtime-lifecycle-governance-boundary
@@ -40,11 +49,6 @@ expectedUserBehavior:
 requiredTests:
   - pnpm exec vitest run tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1
-  - pnpm run build:vite
-  - node harness/specs/fixtures/long-session-development/f2/probe-f2.mjs <repo-root> D:/tmp/long-session-f2/instrumented/probe-run-N.json D:/tmp/long-session-f2/instrumented/run-N
-  - pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1 (with LONG_SESSION_F2_PROBE_RUNS, LONG_SESSION_F2_CANDIDATE and LONG_SESSION_F2_OBSERVATION set)
-  - pnpm long-session:f2:evidence -- --probe-runs D:/tmp/long-session-f2/instrumented --observation D:/tmp/long-session-f2/observation.json --gates <gate receipt>
-  - pnpm long-session:f2:evidence:check
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run comms:replay
@@ -55,7 +59,7 @@ plannedTests:
   - tests/unit/long-session-long-use-budget.test.ts
 acceptance:
   - 冻结并运行当前候选的至少 333 会话和长 transcript fixture，记录加载/切换/压缩/续接 P50/P95、实际字节、summary 调用/keys、long task 和原始样本。
-  - 五分钟 idle RSS 曲线与至少 50 轮 lifecycle 的 owner/cache/listener counts 读盘可重算；没有持续增长与 scope 活跃残留；显式 GC 门缺失直接失败不猜测。
+  - 五分钟 idle RSS 曲线与至少 50 轮 lifecycle 的 owner/cache/listener counts 读盘可重算；没有持续增长与 scope 活跃残留；显式 GC 门缺失直接失败不猜测。测量必须区分 renderer/Main/Gateway/runtime 进程 RSS、per-session owner 归因、后台终端数、进程树大小和 worktree/transcript 磁盘占用；资源账本给出的 CPU/RSS 超出预算时形成可复现失败或引用的 explicit policy verdict。
   - 重复 completion、无变化跟进、隐藏 UI 不制造重复通知/后台工作；每 batch 一次有意义结果，paused/expired 队列保持有界。
   - 回归预算在测量前固定；未测平台/live-provider/current packaged 仍明确 unmeasured，不能把合成 fixture 认作真人长期使用。
 docs:
@@ -109,7 +113,7 @@ docs:
 - `pnpm harness validate --spec harness/specs/tasks/long-session-long-use-budget.md`
 - `git diff --check`
 
-plannedTests 已交付；`tests/unit/long-session-long-use-budget.test.ts` 在没有盘上测量源时直接失败，测试选择未命中必须失败。built-Electron 样本的读取顺序是：`LONG_SESSION_F2_PROBE` 指向的原始探针报告（并与精选 artifact 记录的 `rawSha256` 逐字节对齐），否则读取 `harness/specs/fixtures/long-session-development/f2/long-use-before-after.json`。
+plannedTests 尚未实现；上述命令只有在交付对应测试后才构成验收，测试选择未命中必须失败。
 
 E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 仅证明交互，功能接线必须回读 actual Host/Gateway/owner receipts。所有通信改动运行 comms replay/compare，cached typecheck 不替代 uncached 全门。
 
@@ -123,14 +127,9 @@ E2E 要求真实 built Electron 与隔离 userData/run root。界面 host mocks 
 
 **执行提示与退出**
 
-- 不修改也不重签 TF-0423 fixture（其 SHA256SUMS 覆盖 `probe.mjs`）；本节点使用
-  `harness/specs/fixtures/long-session-development/f2/probe-f2.mjs` —— 同一仪器的 F2 副本，
-  修正了 long task 的窗口归属（open 与 switch 窗口不再重叠），并记录每个 run 的 fixture 大小、
-  内存与磁盘余量。TF-0423 的旧 before/after 只作为历史引用，不作为本候选结果。
+- 复用 TF-0423 probe 的 source，不读取其旧 before/after 作为本节点新结果。
+- Codex 的 rssKb/cpuPercent 只作字段参考；本节点必须证明 ClawX 自己的 current candidate 读数与 owner 归因，不把未知值填零或复用 Codex 的样本。
 - 超过基线预算先定向优化，不为本节点扩大 fast gate 或放宽既有性能限值。
-- 真实 UI 样本在本机不稳定：发布值是 measurement-valid run 的逐指标中位数，run 的合法性由该
-  run 自身记录的 fixture 大小导出（`measurementValidityFloorMb`），低于导出下限的 run 只列出
-  不进入中位数；不得用常量对样本调参。
 - 一次一个 ready leaf；发生 scope/source/dependency 漂移时重读图与合同，不默认 --allow-stale 或修改别人的 dirty 内容。
 - 验收条目全满足且证据一致后保存 proposal，base_graph_hash 匹配再 apply/validate/export；缺技术证据保持未完成并记录具体 gap。
 - 不要求所有者真人操作、真人数据或 verdict；自动模拟/独立 agent 审查如实标记。没有 live-provider 数据不能包装为质量推广证据。

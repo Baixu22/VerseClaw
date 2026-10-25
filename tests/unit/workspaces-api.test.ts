@@ -51,8 +51,11 @@ vi.mock('electron-store', () => {
 });
 
 vi.mock('@electron/services/workspace-runtime-sync', () => ({
-  syncActiveWorkspacePermissionToRuntime: vi.fn(),
+  syncActiveWorkspacePermissionToRuntime: vi.fn(async () => undefined),
+  syncActiveWorkspaceRootToRuntime: vi.fn(async () => undefined),
 }));
+
+vi.mock('@electron/utils/counted-child-process', () => ({ exec: vi.fn(async () => ({ stdout: '', stderr: '' })) }));
 
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (value: string) => value,
@@ -60,6 +63,12 @@ vi.mock('@electron/utils/paths', () => ({
 }));
 
 vi.mock('@electron/utils/clawx-harness-template', () => harnessTemplate);
+const resourceReclamation = vi.hoisted(() => ({
+  reclaimBrowserSessionsForWorkspace: vi.fn(),
+  reclaimManagedPortsForWorkspace: vi.fn(),
+}));
+
+vi.mock('@electron/services/long-session-resource-reclamation', () => resourceReclamation);
 
 describe('workspaces api compatibility migration', () => {
   beforeEach(async () => {
@@ -81,6 +90,8 @@ describe('workspaces api compatibility migration', () => {
     storeState.approvals = [];
     storeState.decisionEvents = [];
     harnessTemplate.ensureVerseClawWorkspaceHarness.mockClear();
+    resourceReclamation.reclaimBrowserSessionsForWorkspace.mockReset().mockReturnValue({ attempted: 0, reclaimed: 0 });
+    resourceReclamation.reclaimManagedPortsForWorkspace.mockReset().mockResolvedValue({ attempted: 0, reclaimed: 0, failed: 0 });
     await rm(testWorkspaceRoot, { recursive: true, force: true });
   });
 
@@ -548,4 +559,60 @@ describe('workspaces api compatibility migration', () => {
     expect(again.activeWorkspace?.permissionMode).toBe('readOnly');
   });
 
+
+  it('switches workspaces without closing the previous workspace resources', async () => {
+    storeState.activeWorkspaceId = 'legacy';
+    storeState.profiles.push({
+      id: 'other',
+      name: 'Other',
+      rootPath: 'C:/other',
+      agentId: 'main',
+      selectedAgentId: 'main',
+      activeSessionKey: 'agent:main:other',
+      permissionMode: 'acceptEdits',
+      createdAt: 2,
+      updatedAt: 2,
+      lastOpenedAt: 2,
+      state: {},
+    });
+    const terminalManager = { registerWorkspace: vi.fn(), unregisterWorkspace: vi.fn() };
+    const webPreviewManager = { registerWorkspace: vi.fn(), stopForWorkspace: vi.fn() };
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const api = createWorkspacesApi({ terminalManager, webPreviewManager } as never);
+
+    await expect(api.switch({ id: 'other' })).resolves.toMatchObject({
+      success: true,
+      activeWorkspaceId: 'other',
+    });
+    expect(terminalManager.unregisterWorkspace).not.toHaveBeenCalled();
+    expect(webPreviewManager.stopForWorkspace).not.toHaveBeenCalled();
+    expect(terminalManager.registerWorkspace).toHaveBeenCalledWith(expect.objectContaining({ id: 'other' }));
+  });
+
+  it('workspace delete reclaims Main browser and managed-port owners', async () => {
+    storeState.profiles.push({
+      id: 'other',
+      name: 'Other',
+      rootPath: 'C:/other',
+      agentId: 'main',
+      selectedAgentId: 'main',
+      activeSessionKey: 'agent:main:other',
+      permissionMode: 'acceptEdits',
+      createdAt: 2,
+      updatedAt: 2,
+      lastOpenedAt: 2,
+      state: {},
+    });
+    resourceReclamation.reclaimBrowserSessionsForWorkspace.mockReturnValue({ attempted: 1, reclaimed: 1 });
+    resourceReclamation.reclaimManagedPortsForWorkspace.mockResolvedValue({ attempted: 1, reclaimed: 1, failed: 0 });
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const api = createWorkspacesApi({
+      terminalManager: { unregisterWorkspace: vi.fn(), registerWorkspace: vi.fn() },
+      webPreviewManager: { stopForWorkspace: vi.fn(), registerWorkspace: vi.fn() },
+    } as never);
+
+    await expect(api.delete({ id: 'other' })).resolves.toMatchObject({ success: true });
+    expect(resourceReclamation.reclaimBrowserSessionsForWorkspace).toHaveBeenCalledWith('other');
+    expect(resourceReclamation.reclaimManagedPortsForWorkspace).toHaveBeenCalledWith('other');
+  });
 });

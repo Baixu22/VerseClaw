@@ -7,6 +7,9 @@ const listTaskLoopRunsForSession = vi.hoisted(() => vi.fn());
 const listClawGraphRunSnapshots = vi.hoisted(() => vi.fn());
 const countLongTaskQueuedMessages = vi.hoisted(() => vi.fn());
 const getLatestLongTaskCheckpoint = vi.hoisted(() => vi.fn());
+const loadSessionEntry = vi.hoisted(() => vi.fn());
+const readRuntimeEffectiveCapabilityObservation = vi.hoisted(() => vi.fn());
+const resolveCurrentRuntimeGeneration = vi.hoisted(() => vi.fn());
 
 vi.mock("./session-activity-projection.js", () => ({
   collectSessionActivityReadProjection,
@@ -27,6 +30,14 @@ vi.mock("../../agents/long-task-control/store.js", () => ({
   countLongTaskQueuedMessages,
   getLatestLongTaskCheckpoint,
 }));
+vi.mock("../session-utils.js", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../session-utils.js")>()),
+  loadSessionEntry,
+}));
+vi.mock("../../agents/runtime-effective-capability.js", () => ({
+  readRuntimeEffectiveCapabilityObservation,
+  resolveCurrentRuntimeGeneration,
+}));
 
 import { sessionActivityHandlers } from "./session-activity.js";
 
@@ -36,7 +47,10 @@ function callHandler(params: Record<string, unknown>, chatAbortControllers = new
   handler({
     params,
     respond,
-    context: { chatAbortControllers },
+    context: {
+      chatAbortControllers,
+      getRuntimeConfig: () => ({}),
+    },
   } as never);
   return respond;
 }
@@ -49,6 +63,22 @@ beforeEach(() => {
   listClawGraphRunSnapshots.mockReturnValue([]);
   countLongTaskQueuedMessages.mockReturnValue(0);
   getLatestLongTaskCheckpoint.mockReturnValue(undefined);
+  loadSessionEntry.mockReturnValue({
+    entry: {
+      sessionId: "session-1",
+      updatedAt: Date.now(),
+      modelProvider: "openai",
+      model: "gpt-5.4",
+      agentRuntimeOverride: "codex",
+    },
+    canonicalKey: "agent:main:main",
+  });
+  readRuntimeEffectiveCapabilityObservation.mockReturnValue({
+    state: "missing",
+    reason: "no-current-run-capability-profile",
+    observation: null,
+  });
+  resolveCurrentRuntimeGeneration.mockReturnValue("gateway-1");
   collectSessionActivityReadProjection.mockReturnValue({
     goals: [],
     processes: [],

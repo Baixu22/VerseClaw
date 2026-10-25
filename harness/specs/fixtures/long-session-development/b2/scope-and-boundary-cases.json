@@ -1,0 +1,74 @@
+{
+  "schema": "clawx.long-session.scope-boundary-cases/v1",
+  "generatedAt": "2026-10-23T19:18:32.708Z",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "candidate": "e2302cdaee166f29019d1a677f4ffbb645104b52",
+  "cases": [
+    {
+      "id": "configured-not-effective",
+      "result": "pass",
+      "evidence": "unit-core.vitest.json; missing observation remains unverified."
+    },
+    {
+      "id": "older-request-cannot-overwrite-newer-backend",
+      "result": "pass",
+      "evidence": "tests/unit/session-activity-store-scope.test.ts"
+    },
+    {
+      "id": "same-session-key-new-workspace",
+      "result": "pass",
+      "evidence": "tests/unit/session-activity-store-scope.test.ts; Chat/Recovery scope filters"
+    },
+    {
+      "id": "cross-workspace-policy-response-rejected",
+      "result": "pass",
+      "evidence": "tests/unit/session-activity-store-scope.test.ts"
+    },
+    {
+      "id": "authorization-change-refreshes-policy",
+      "result": "pass",
+      "evidence": "approval event causes canonical reload; tests/unit/session-activity-store-scope.test.ts"
+    },
+    {
+      "id": "gateway-restart",
+      "result": "pass",
+      "evidence": "policy-ui-results.json actualHostGateway.afterRestart"
+    },
+    {
+      "id": "session-switch",
+      "result": "pass",
+      "evidence": "policy-ui-results.json secondary session and screenshot policy-surface-wide.png"
+    },
+    {
+      "id": "background-read-failure",
+      "result": "pass",
+      "evidence": "e2e-group.stdout; background unknown remains distinct from empty activity."
+    },
+    {
+      "id": "abort-versus-stop",
+      "result": "pass",
+      "evidence": "policy-ui-results.json lifecycle-boundaries check"
+    },
+    {
+      "id": "activity-retention-versus-resource-ttl",
+      "result": "pass",
+      "evidence": "policy-ui-results.json lifecycle-boundaries check"
+    },
+    {
+      "id": "fork-versus-git-worktree",
+      "result": "pass",
+      "evidence": "policy-ui-results.json lifecycle-boundaries check"
+    },
+    {
+      "id": "keyboard-and-narrow-layout",
+      "result": "pass",
+      "evidence": "policy-ui-results.json uiScenario + policy-surface-narrow.png"
+    },
+    {
+      "id": "four-locale-coverage",
+      "result": "pass",
+      "evidence": "b2-i18n gate in gates.json"
+    }
+  ]
+}

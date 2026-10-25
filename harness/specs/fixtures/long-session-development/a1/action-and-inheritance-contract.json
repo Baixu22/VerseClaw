@@ -1,10 +1,10 @@
 {
   "schema": "clawx.long-session.action-contract/v1",
   "driven_by": "agent",
-  "actor": "codex-long-session-a1",
+  "actor": "codex-long-session-r2",
   "program": "long-session-development-20261022",
   "task": "TF-0548",
-  "generatedAt": "2026-10-22T14:47:04.264Z",
+  "generatedAt": "2026-10-23T00:00:50.722Z",
   "scope": "Current production behavior and ownership boundaries for one explicit Workspace/Assistant session tree. This is a fault baseline, not a completion claim.",
   "identities": [
     {
@@ -671,6 +671,71 @@
     "No live backend switch, permission revocation, restart or long-running resource measurement was executed for this A1 baseline.",
     "No real-human evidence is claimed; all fixtures and receipts are agent-driven.",
     "Project remains a compatibility projection; no independent Project store or CRUD was added.",
-    "The action contract records current behavior and gaps; only A2 and later nodes may close lifecycle mutation gaps."
-  ]
+    "The action contract records current behavior and gaps; only A2 and later nodes may close lifecycle mutation gaps.",
+    "Shell execution is not a lifecycle API; model tools consume only the scoped existing session tools. Host actions must pass their admission and permission owners."
+  ],
+  "templateProvenance": {
+    "commit": "aac7b1953733a8f8d2956d2a7e87ce86306012ec",
+    "use": "structure only; source identity and observations regenerated for this worktree"
+  },
+  "controlPlane": {
+    "modelShellLifecycleAuthority": false,
+    "researchIndex": "harness/specs/fixtures/long-session-development/research/source-index.json",
+    "operations": [
+      {
+        "action": "resume",
+        "human": "Select the existing conversation and send a turn or restore a checkpoint.",
+        "host": {
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "restoreCheckpoint:"
+        },
+        "model": "unsupported"
+      },
+      {
+        "action": "fork",
+        "human": "Invoke the existing host fork action.",
+        "host": {
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "fork:"
+        },
+        "model": "unsupported"
+      },
+      {
+        "action": "archive",
+        "human": "Invoke archive through the host action.",
+        "host": {
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "archiveSession"
+        },
+        "model": "unsupported"
+      },
+      {
+        "action": "delete",
+        "human": "Invoke permanent delete through the host action.",
+        "host": {
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "permanentDeleteSession"
+        },
+        "model": "unsupported"
+      },
+      {
+        "action": "worktree",
+        "human": "Select a checkout or managed worktree through the workspace/Git host.",
+        "host": {
+          "path": "electron/services/git-api.ts",
+          "symbol": "worktreeAdd:"
+        },
+        "model": "unsupported"
+      },
+      {
+        "action": "handoff",
+        "human": "Invoke prepare/create handoff through the host.",
+        "host": {
+          "path": "electron/services/sessions-api.ts",
+          "symbol": "createHandoff:"
+        },
+        "model": "unsupported"
+      }
+    ]
+  }
 }

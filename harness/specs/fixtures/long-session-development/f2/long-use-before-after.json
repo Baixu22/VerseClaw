@@ -1,631 +1,1055 @@
 {
   "schema": "clawx.long-session.f2-long-use-before-after/v1",
-  "drivenBy": "agent",
+  "driven_by": "agent",
   "actor": "codex-long-session-f2",
   "taskForestNode": "TF-0562",
   "taskKey": "F2",
   "program": "long-session-development-20261022",
   "contract": "harness/specs/tasks/long-session-long-use-budget.md",
-  "generatedAt": "2026-10-24T05:19:50.420Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997",
-    "tree": "aa24137b2585e65e08f7d29139ccbc7ba71a8c84",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4",
+    "tree": "a6cd76822acba85116ae170ac8c89d285973c2f0",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
   },
-  "measurementSource": {
-    "kind": "built-Electron 333-session probe run against the current candidate",
-    "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
-    "rawSha256": "d10f18b934dc5263bdcf3527805f2dbc3f2fa24a5ee52d7cb7a543b7b0dbf112",
-    "probeSchema": "clawx.long-session.f2.session-loading-probe/v1",
-    "probeActor": "codex-long-session-f2-probe",
-    "platform": "win32",
-    "node": "v24.22.1",
-    "completedAt": "2026-10-24T05:05:39.099Z"
+  "generatedAt": "2026-10-24T22:12:01.512Z",
+  "budgetSchema": "clawx.long-session.long-use-budget/v1",
+  "before": {
+    "frozenAt": "2026-10-25T05:40:00.000Z",
+    "freezeBasis": "Frozen in shared/long-session-long-use-budget.ts before the official 333-session / five-minute run. The calibration numbers are short smoke probes on the same candidate and are not acceptance evidence.",
+    "budget": {
+      "schema": "clawx.long-session.long-use-budget/v1",
+      "minimumSessionCount": 333,
+      "minimumTranscriptBytes": 52428800,
+      "maxLoadP95Ms": 1500,
+      "maxSwitchP95Ms": 300,
+      "maxCompactP95Ms": 15000,
+      "maxContinuationP95Ms": 3000,
+      "idleDurationMs": 300000,
+      "idleSampleMs": 5000,
+      "maxIdleGrowthBytes": 67108864,
+      "maxIdleLongestRise": 12,
+      "minimumLifecycleCycles": 50,
+      "maxOwnerResidual": 0,
+      "maxNotificationDuplicates": 0,
+      "maxPausedQueueLength": 64,
+      "maxExpiredQueueLength": 64
+    },
+    "revisions": [
+      {
+        "item": "maxCompactP95Ms",
+        "from": 5000,
+        "to": 15000,
+        "at": "2026-10-25T05:40:00.000Z",
+        "reason": "The first value was frozen without any compaction sample. Two calibration smokes measured runtime-side manual compaction of a 37.6k-token / 151 KB session at 7.4-9.0 s while the agent-driven model replied instantly; the revised bound keeps documented headroom instead of publishing a number the candidate never met."
+      }
+    ],
+    "calibration": [
+      {
+        "run": "smoke-session-loading",
+        "env": {
+          "TF0423_IDLE_MS": "300000",
+          "TF0423_SESSION_COUNT": "333"
+        },
+        "measured": {
+          "loadSessionsMs": 650,
+          "switchP50Ms": 141.2,
+          "switchP95Ms": 167.5,
+          "requestedKeys": 40,
+          "longSessionOpenMs": 130.7,
+          "persistentGrowth": false
+        },
+        "note": "first calibration smoke; compaction and continuation were not instrumented yet"
+      },
+      {
+        "run": "smoke-compaction-and-continuation",
+        "env": {
+          "TF0423_IDLE_MS": "5000",
+          "TF0423_COMPACT_SESSIONS": "2",
+          "TF0423_HIDDEN_MS": "5000"
+        },
+        "measured": {
+          "loadSessionsMs": 538,
+          "switchP50Ms": 114.7,
+          "switchP95Ms": 130.1,
+          "requestedKeys": 40,
+          "compactP50Ms": 8328,
+          "compactP95Ms": 8328,
+          "continuationP50Ms": 1134,
+          "continuationP95Ms": 1134,
+          "hiddenLabelRehydrationCalls": 0,
+          "hiddenLongTasks": 0
+        },
+        "note": "single-character filler; hidden-window and owner readbacks already instrumented"
+      },
+      {
+        "run": "smoke-varied-filler",
+        "env": {
+          "TF0423_IDLE_MS": "5000",
+          "TF0423_COMPACT_SESSIONS": "2",
+          "TF0423_HIDDEN_MS": "5000"
+        },
+        "measured": {
+          "loadSessionsMs": 523,
+          "switchP50Ms": 88.3,
+          "switchP95Ms": 99.8,
+          "requestedKeys": 40,
+          "compactP50Ms": 9043,
+          "compactP95Ms": 9043,
+          "continuationP50Ms": 1143,
+          "continuationP95Ms": 1143,
+          "hiddenLabelRehydrationCalls": 0,
+          "hiddenLongTasks": 0
+        },
+        "note": "varied natural-language filler of the same size; the compaction cost is therefore not a repeated-character artifact"
+      }
+    ]
   },
-  "budgets": {
-    "module": "shared/long-session-budget.ts",
-    "moduleSha256": "33b2bbceb04b75833c7960b0008650f6c5181beef9dd4d279e4bd808626dd561",
-    "frozenBeforeMeasurement": true,
+  "after": {
+    "measurements": {
+      "sessionCount": 333,
+      "transcriptBytes": 59932341,
+      "loadP95Ms": 567,
+      "switchP95Ms": 111.40000000596046,
+      "compactP95Ms": 8937,
+      "continuationP95Ms": 1140,
+      "gcAvailable": true,
+      "idleDurationMs": 300000,
+      "idleSampleCount": 58,
+      "idleGrowthBytes": -2023424,
+      "idleLongestRise": 7,
+      "lifecycleCycles": 50,
+      "ownerResidual": 0,
+      "notificationDuplicates": 0,
+      "pausedQueueLength": 1,
+      "expiredQueueLength": 0
+    },
+    "evaluation": {
+      "failures": [],
+      "pass": true
+    },
     "fixture": {
-      "minSessionCount": 333,
-      "minTranscriptBytes": 41943040,
-      "idleRssDurationMs": 300000,
-      "idleRssSampleIntervalMs": 5000,
-      "minIdleRssSamples": 55,
-      "minSwitchSamples": 5,
-      "maxLongTasksOver50MsOnLongSessionOpen": 0
+      "sessionCount": 333,
+      "transcriptBytes": 59932341,
+      "transcriptMiB": 57.16
     },
-    "latencyBudgetMs": {
-      "sidebar.loadSessions.p50": 900,
-      "sidebar.loadSessions.p95": 1500,
-      "sidebar.sessionSwitch.p50": 260,
-      "sidebar.sessionSwitch.p95": 320,
-      "sidebar.longSessionOpen.p95": 600,
-      "host.sessionsSummaries.p95": 900,
-      "compaction.plan.p50": 1500,
-      "compaction.plan.p95": 3000,
-      "continuation.build.p50": 600,
-      "continuation.build.p95": 1500
+    "runtimeWorkspace": {
+      "id": "default",
+      "rootPath": "D:\\tmp\\anchor-long-session-f2\\1792879345950\\probe\\run\\home\\.openclaw\\workspace",
+      "permissionMode": "fullAccess",
+      "updateSuccess": true
+    },
+    "load": {
+      "durationMs": 567,
+      "method": "page.reload -> first rendered sidebar session row"
+    },
+    "sessionSwitch": {
+      "count": 5,
+      "durationsMs": [
+        109.59999999403954,
+        89.79999999701977,
+        111,
+        111.40000000596046,
+        109.60000000149012
+      ],
+      "p50Ms": 109.60000000149012,
+      "p95Ms": 111.40000000596046,
+      "longTasksOver50Ms": []
+    },
+    "compact": {
+      "count": 5,
+      "samples": [
+        {
+          "index": 0,
+          "sessionKey": "agent:main:dashboard:39952056-3e45-4d36-9313-8659eea20240",
+          "durationMs": 8364,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 1,
+          "sessionKey": "agent:main:dashboard:4bdff959-3cc0-4c1f-bf1f-4ea1acefc1b6",
+          "durationMs": 8937,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 2,
+          "sessionKey": "agent:main:dashboard:f9f77cc6-7f4d-407e-9d35-16f9635728c4",
+          "durationMs": 7565,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 3,
+          "sessionKey": "agent:main:dashboard:f114bb50-33ae-46ad-a14c-f105f4060226",
+          "durationMs": 7487,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 4,
+          "sessionKey": "agent:main:dashboard:ada4df54-3cf2-48ae-90cc-e04d22ba08d1",
+          "durationMs": 7568,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        }
+      ],
+      "durationsMs": [
+        8364,
+        8937,
+        7565,
+        7487,
+        7568
+      ],
+      "p50Ms": 7568,
+      "p95Ms": 8937,
+      "compactedCount": 5
+    },
+    "continuation": {
+      "count": 5,
+      "samples": [
+        {
+          "index": 0,
+          "sessionKey": "agent:main:dashboard:39952056-3e45-4d36-9313-8659eea20240",
+          "durationMs": 1033,
+          "observed": true,
+          "transcriptBytesAfter": 303495
+        },
+        {
+          "index": 1,
+          "sessionKey": "agent:main:dashboard:4bdff959-3cc0-4c1f-bf1f-4ea1acefc1b6",
+          "durationMs": 1139,
+          "observed": true,
+          "transcriptBytesAfter": 303495
+        },
+        {
+          "index": 2,
+          "sessionKey": "agent:main:dashboard:f9f77cc6-7f4d-407e-9d35-16f9635728c4",
+          "durationMs": 1126,
+          "observed": true,
+          "transcriptBytesAfter": 291120
+        },
+        {
+          "index": 3,
+          "sessionKey": "agent:main:dashboard:f114bb50-33ae-46ad-a14c-f105f4060226",
+          "durationMs": 1140,
+          "observed": true,
+          "transcriptBytesAfter": 291120
+        },
+        {
+          "index": 4,
+          "sessionKey": "agent:main:dashboard:ada4df54-3cf2-48ae-90cc-e04d22ba08d1",
+          "durationMs": 1139,
+          "observed": true,
+          "transcriptBytesAfter": 291120
+        }
+      ],
+      "durationsMs": [
+        1033,
+        1139,
+        1126,
+        1140,
+        1139
+      ],
+      "p50Ms": 1139,
+      "p95Ms": 1140,
+      "observedCount": 5
+    },
+    "summariesHostCall": {
+      "calls": [
+        {
+          "durationMs": 27,
+          "keys": 40
+        },
+        {
+          "durationMs": 13,
+          "keys": 40
+        },
+        {
+          "durationMs": 10,
+          "keys": 40
+        },
+        {
+          "durationMs": 14,
+          "keys": 40
+        },
+        {
+          "durationMs": 13,
+          "keys": 40
+        },
+        {
+          "durationMs": 12,
+          "keys": 40
+        },
+        {
+          "durationMs": 12,
+          "keys": 40
+        },
+        {
+          "durationMs": 12,
+          "keys": 40
+        },
+        {
+          "durationMs": 4,
+          "keys": 13
+        },
+        {
+          "durationMs": 15,
+          "keys": 40
+        }
+      ],
+      "requestedKeys": 40,
+      "durationMs": 27,
+      "durationP50Ms": 13
+    },
+    "longSessionOpen": {
+      "sessionKey": "agent:main:s332",
+      "transcriptBytes": 180000,
+      "durationMs": 125.19999999552965,
+      "renderedRows": 3,
+      "longTasksOver50Ms": []
+    },
+    "idleLongTaskControl": {
+      "windowMs": 2500,
+      "longTasksOver50Ms": []
+    },
+    "rawSamples": {
+      "switchDurationsMs": [
+        109.59999999403954,
+        89.79999999701977,
+        111,
+        111.40000000596046,
+        109.60000000149012
+      ],
+      "compactSamples": [
+        {
+          "index": 0,
+          "sessionKey": "agent:main:dashboard:39952056-3e45-4d36-9313-8659eea20240",
+          "durationMs": 8364,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 1,
+          "sessionKey": "agent:main:dashboard:4bdff959-3cc0-4c1f-bf1f-4ea1acefc1b6",
+          "durationMs": 8937,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 2,
+          "sessionKey": "agent:main:dashboard:f9f77cc6-7f4d-407e-9d35-16f9635728c4",
+          "durationMs": 7565,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 3,
+          "sessionKey": "agent:main:dashboard:f114bb50-33ae-46ad-a14c-f105f4060226",
+          "durationMs": 7487,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        },
+        {
+          "index": 4,
+          "sessionKey": "agent:main:dashboard:ada4df54-3cf2-48ae-90cc-e04d22ba08d1",
+          "durationMs": 7568,
+          "status": "compacted",
+          "compacted": true,
+          "tokensBefore": 37595,
+          "tokensAfter": 37509,
+          "transcriptBytesBeforeCompact": 151350,
+          "error": null,
+          "compactReadyWaits": 1,
+          "preCompactStatus": {
+            "canCompact": true,
+            "tokensBefore": null,
+            "messageCount": null
+          }
+        }
+      ],
+      "continuationSamples": [
+        {
+          "index": 0,
+          "sessionKey": "agent:main:dashboard:39952056-3e45-4d36-9313-8659eea20240",
+          "durationMs": 1033,
+          "observed": true,
+          "transcriptBytesAfter": 303495
+        },
+        {
+          "index": 1,
+          "sessionKey": "agent:main:dashboard:4bdff959-3cc0-4c1f-bf1f-4ea1acefc1b6",
+          "durationMs": 1139,
+          "observed": true,
+          "transcriptBytesAfter": 303495
+        },
+        {
+          "index": 2,
+          "sessionKey": "agent:main:dashboard:f9f77cc6-7f4d-407e-9d35-16f9635728c4",
+          "durationMs": 1126,
+          "observed": true,
+          "transcriptBytesAfter": 291120
+        },
+        {
+          "index": 3,
+          "sessionKey": "agent:main:dashboard:f114bb50-33ae-46ad-a14c-f105f4060226",
+          "durationMs": 1140,
+          "observed": true,
+          "transcriptBytesAfter": 291120
+        },
+        {
+          "index": 4,
+          "sessionKey": "agent:main:dashboard:ada4df54-3cf2-48ae-90cc-e04d22ba08d1",
+          "durationMs": 1139,
+          "observed": true,
+          "transcriptBytesAfter": 291120
+        }
+      ],
+      "idleRssSamples": [
+        {
+          "at": 1792879447692,
+          "mainRssBytes": 326275072,
+          "rendererRssBytes": 254226432,
+          "gatewayRssBytes": 395939840
+        },
+        {
+          "at": 1792879452889,
+          "mainRssBytes": 325218304,
+          "rendererRssBytes": 245841920,
+          "gatewayRssBytes": 395939840
+        },
+        {
+          "at": 1792879458097,
+          "mainRssBytes": 324100096,
+          "rendererRssBytes": 244875264,
+          "gatewayRssBytes": 396070912
+        },
+        {
+          "at": 1792879463291,
+          "mainRssBytes": 324853760,
+          "rendererRssBytes": 242962432,
+          "gatewayRssBytes": 396070912
+        },
+        {
+          "at": 1792879468495,
+          "mainRssBytes": 324001792,
+          "rendererRssBytes": 240824320,
+          "gatewayRssBytes": 396210176
+        },
+        {
+          "at": 1792879473695,
+          "mainRssBytes": 323710976,
+          "rendererRssBytes": 240828416,
+          "gatewayRssBytes": 396210176
+        },
+        {
+          "at": 1792879478994,
+          "mainRssBytes": 324739072,
+          "rendererRssBytes": 245678080,
+          "gatewayRssBytes": 396398592
+        },
+        {
+          "at": 1792879484277,
+          "mainRssBytes": 323469312,
+          "rendererRssBytes": 242671616,
+          "gatewayRssBytes": 398974976
+        },
+        {
+          "at": 1792879489483,
+          "mainRssBytes": 323469312,
+          "rendererRssBytes": 241709056,
+          "gatewayRssBytes": 398938112
+        },
+        {
+          "at": 1792879494677,
+          "mainRssBytes": 323469312,
+          "rendererRssBytes": 243269632,
+          "gatewayRssBytes": 398938112
+        },
+        {
+          "at": 1792879499876,
+          "mainRssBytes": 323485696,
+          "rendererRssBytes": 243134464,
+          "gatewayRssBytes": 398483456
+        },
+        {
+          "at": 1792879505073,
+          "mainRssBytes": 323952640,
+          "rendererRssBytes": 242872320,
+          "gatewayRssBytes": 398483456
+        },
+        {
+          "at": 1792879510280,
+          "mainRssBytes": 325574656,
+          "rendererRssBytes": 245440512,
+          "gatewayRssBytes": 398536704
+        },
+        {
+          "at": 1792879515486,
+          "mainRssBytes": 320696320,
+          "rendererRssBytes": 243830784,
+          "gatewayRssBytes": 398487552
+        },
+        {
+          "at": 1792879520685,
+          "mainRssBytes": 323641344,
+          "rendererRssBytes": 242438144,
+          "gatewayRssBytes": 398487552
+        },
+        {
+          "at": 1792879525892,
+          "mainRssBytes": 323641344,
+          "rendererRssBytes": 243150848,
+          "gatewayRssBytes": 398614528
+        },
+        {
+          "at": 1792879531099,
+          "mainRssBytes": 323801088,
+          "rendererRssBytes": 243150848,
+          "gatewayRssBytes": 398487552
+        },
+        {
+          "at": 1792879536306,
+          "mainRssBytes": 323661824,
+          "rendererRssBytes": 243138560,
+          "gatewayRssBytes": 397459456
+        },
+        {
+          "at": 1792879541742,
+          "mainRssBytes": 324800512,
+          "rendererRssBytes": 248709120,
+          "gatewayRssBytes": 402022400
+        },
+        {
+          "at": 1792879547011,
+          "mainRssBytes": 324755456,
+          "rendererRssBytes": 247599104,
+          "gatewayRssBytes": 400105472
+        },
+        {
+          "at": 1792879552230,
+          "mainRssBytes": 324714496,
+          "rendererRssBytes": 248131584,
+          "gatewayRssBytes": 400084992
+        },
+        {
+          "at": 1792879557432,
+          "mainRssBytes": 324710400,
+          "rendererRssBytes": 248045568,
+          "gatewayRssBytes": 400429056
+        },
+        {
+          "at": 1792879562629,
+          "mainRssBytes": 324726784,
+          "rendererRssBytes": 247939072,
+          "gatewayRssBytes": 400089088
+        },
+        {
+          "at": 1792879567837,
+          "mainRssBytes": 326135808,
+          "rendererRssBytes": 249176064,
+          "gatewayRssBytes": 400076800
+        },
+        {
+          "at": 1792879573041,
+          "mainRssBytes": 325808128,
+          "rendererRssBytes": 246284288,
+          "gatewayRssBytes": 400080896
+        },
+        {
+          "at": 1792879578258,
+          "mainRssBytes": 324009984,
+          "rendererRssBytes": 246247424,
+          "gatewayRssBytes": 400084992
+        },
+        {
+          "at": 1792879583508,
+          "mainRssBytes": 324050944,
+          "rendererRssBytes": 246370304,
+          "gatewayRssBytes": 400084992
+        },
+        {
+          "at": 1792879588719,
+          "mainRssBytes": 324001792,
+          "rendererRssBytes": 246280192,
+          "gatewayRssBytes": 400084992
+        },
+        {
+          "at": 1792879593920,
+          "mainRssBytes": 324026368,
+          "rendererRssBytes": 245166080,
+          "gatewayRssBytes": 400084992
+        },
+        {
+          "at": 1792879599121,
+          "mainRssBytes": 325406720,
+          "rendererRssBytes": 247283712,
+          "gatewayRssBytes": 400224256
+        },
+        {
+          "at": 1792879604335,
+          "mainRssBytes": 324333568,
+          "rendererRssBytes": 245141504,
+          "gatewayRssBytes": 401784832
+        },
+        {
+          "at": 1792879609531,
+          "mainRssBytes": 323260416,
+          "rendererRssBytes": 245088256,
+          "gatewayRssBytes": 401788928
+        },
+        {
+          "at": 1792879614729,
+          "mainRssBytes": 323260416,
+          "rendererRssBytes": 244817920,
+          "gatewayRssBytes": 401788928
+        },
+        {
+          "at": 1792879619925,
+          "mainRssBytes": 323239936,
+          "rendererRssBytes": 244817920,
+          "gatewayRssBytes": 401788928
+        },
+        {
+          "at": 1792879625133,
+          "mainRssBytes": 323887104,
+          "rendererRssBytes": 244817920,
+          "gatewayRssBytes": 401788928
+        },
+        {
+          "at": 1792879630347,
+          "mainRssBytes": 325562368,
+          "rendererRssBytes": 249233408,
+          "gatewayRssBytes": 401776640
+        },
+        {
+          "at": 1792879635556,
+          "mainRssBytes": 320253952,
+          "rendererRssBytes": 246243328,
+          "gatewayRssBytes": 402280448
+        },
+        {
+          "at": 1792879640753,
+          "mainRssBytes": 323186688,
+          "rendererRssBytes": 246472704,
+          "gatewayRssBytes": 401780736
+        },
+        {
+          "at": 1792879645952,
+          "mainRssBytes": 323211264,
+          "rendererRssBytes": 246546432,
+          "gatewayRssBytes": 401960960
+        },
+        {
+          "at": 1792879651156,
+          "mainRssBytes": 323436544,
+          "rendererRssBytes": 246546432,
+          "gatewayRssBytes": 401784832
+        },
+        {
+          "at": 1792879656356,
+          "mainRssBytes": 323579904,
+          "rendererRssBytes": 246558720,
+          "gatewayRssBytes": 401915904
+        },
+        {
+          "at": 1792879661556,
+          "mainRssBytes": 324653056,
+          "rendererRssBytes": 250462208,
+          "gatewayRssBytes": 405266432
+        },
+        {
+          "at": 1792879666756,
+          "mainRssBytes": 324734976,
+          "rendererRssBytes": 248598528,
+          "gatewayRssBytes": 403714048
+        },
+        {
+          "at": 1792879671962,
+          "mainRssBytes": 324493312,
+          "rendererRssBytes": 248467456,
+          "gatewayRssBytes": 403652608
+        },
+        {
+          "at": 1792879677158,
+          "mainRssBytes": 323878912,
+          "rendererRssBytes": 248602624,
+          "gatewayRssBytes": 403652608
+        },
+        {
+          "at": 1792879682358,
+          "mainRssBytes": 323874816,
+          "rendererRssBytes": 248680448,
+          "gatewayRssBytes": 403652608
+        },
+        {
+          "at": 1792879687594,
+          "mainRssBytes": 321269760,
+          "rendererRssBytes": 253382656,
+          "gatewayRssBytes": 403816448
+        },
+        {
+          "at": 1792879692798,
+          "mainRssBytes": 325292032,
+          "rendererRssBytes": 247853056,
+          "gatewayRssBytes": 403599360
+        },
+        {
+          "at": 1792879698006,
+          "mainRssBytes": 324505600,
+          "rendererRssBytes": 246267904,
+          "gatewayRssBytes": 403603456
+        },
+        {
+          "at": 1792879703218,
+          "mainRssBytes": 324505600,
+          "rendererRssBytes": 245710848,
+          "gatewayRssBytes": 403603456
+        },
+        {
+          "at": 1792879708414,
+          "mainRssBytes": 324902912,
+          "rendererRssBytes": 245878784,
+          "gatewayRssBytes": 403611648
+        },
+        {
+          "at": 1792879713610,
+          "mainRssBytes": 324632576,
+          "rendererRssBytes": 245776384,
+          "gatewayRssBytes": 403611648
+        },
+        {
+          "at": 1792879718811,
+          "mainRssBytes": 325677056,
+          "rendererRssBytes": 252833792,
+          "gatewayRssBytes": 403660800
+        },
+        {
+          "at": 1792879724018,
+          "mainRssBytes": 324677632,
+          "rendererRssBytes": 248475648,
+          "gatewayRssBytes": 405798912
+        },
+        {
+          "at": 1792879729214,
+          "mainRssBytes": 324894720,
+          "rendererRssBytes": 248467456,
+          "gatewayRssBytes": 405331968
+        },
+        {
+          "at": 1792879734429,
+          "mainRssBytes": 324001792,
+          "rendererRssBytes": 248471552,
+          "gatewayRssBytes": 405331968
+        },
+        {
+          "at": 1792879739708,
+          "mainRssBytes": 323981312,
+          "rendererRssBytes": 247975936,
+          "gatewayRssBytes": 405331968
+        },
+        {
+          "at": 1792879745012,
+          "mainRssBytes": 324251648,
+          "rendererRssBytes": 247390208,
+          "gatewayRssBytes": 405331968
+        }
+      ]
+    },
+    "rawProbe": {
+      "path": "D:/tmp/anchor-long-session-f2/1792879345950/probe/long-use-probe.json",
+      "sha256": "d99583161e3eaa455c433e795629b2111ae02cff49c137420d19776e9b97df14"
     }
   },
-  "fixture": {
-    "sessionCount": 333,
-    "transcriptBytes": 59932341,
-    "transcriptMiB": 57.16,
-    "longTranscriptBytes": 180000
-  },
-  "rawSamples": {
-    "loadSessionsMs": 786,
-    "sessionSwitchDurationsMs": [
-      152.70000000298023,
-      176.1000000089407,
-      155.20000000298023,
-      147.59999999403954,
-      146.90000000596046
-    ],
-    "sessionSwitchPublishedP50Ms": 152.70000000298023,
-    "sessionSwitchPublishedP95Ms": 176.1000000089407,
-    "longSessionOpenMs": 173.79999999701977,
-    "longSessionRenderedRows": 3,
-    "summariesCalls": [
-      {
-        "durationMs": 0,
-        "keys": 40
-      }
-    ],
-    "idleRssDurationMs": 300000,
-    "idleRssSampleIntervalMs": 5000,
-    "idleRssSamplesBytes": [
-      596090880,
-      592052224,
-      592977920,
-      591896576,
-      322306048,
-      321609728,
-      320696320,
-      320995328,
-      325861376,
-      343019520,
-      326422528,
-      316121088,
-      316522496,
-      316342272,
-      316407808,
-      316440576,
-      316600320,
-      316608512,
-      316641280,
-      264232960,
-      281747456,
-      264589312,
-      264507392,
-      264531968,
-      263794688,
-      263643136,
-      178999296,
-      198762496,
-      180588544,
-      180375552,
-      180719616,
-      180948992,
-      182095872,
-      182284288,
-      182218752,
-      182194176,
-      182198272,
-      183431168,
-      183631872,
-      183943168,
-      183824384,
-      185159680,
-      185487360,
-      185180160,
-      185180160,
-      185503744,
-      185806848,
-      185651200,
-      185741312,
-      185872384,
-      185016320,
-      185110528,
-      185188352,
-      186122240,
-      185958400,
-      185962496,
-      185974784,
-      188329984,
-      188194816,
-      160641024
-    ],
-    "idleLongTasksOver50Ms": [],
-    "sessionSwitchLongTasksOver50Ms": [
-      {
-        "startTime": 9068.90000000596,
-        "durationMs": 57
-      }
-    ],
-    "longSessionOpenLongTasksOver50Ms": []
-  },
-  "recomputed": {
-    "switchP50Ms": 152.70000000298023,
-    "switchP95Ms": 176.1000000089407,
-    "percentilesReproducibleFromSamples": true,
-    "summaryCallCount": 1,
-    "summaryRequestedKeys": 40,
-    "longTasksOver50Ms": {
-      "idleControlWindowMs": 2500,
-      "idleControl": 0,
-      "sessionSwitch": 1,
-      "longSessionOpen": 0
-    },
-    "longTasksOver50MsBudgets": {
-      "longSessionOpen": 0,
-      "sessionSwitch": null
-    },
-    "longTasksOver50MsMedians": {
-      "idleControl": 0,
-      "sessionSwitch": 0,
-      "longSessionOpen": 0
-    },
-    "latencyObservation": {
-      "sidebar.loadSessions.p50": 786,
-      "sidebar.loadSessions.p95": 786,
-      "sidebar.sessionSwitch.p50": 152.70000000298023,
-      "sidebar.sessionSwitch.p95": 176.1000000089407,
-      "sidebar.longSessionOpen.p95": 173.79999999701977,
-      "host.sessionsSummaries.p95": 0,
-      "compaction.plan.p50": 34.51729999999952,
-      "compaction.plan.p95": 35.92489999999998,
-      "continuation.build.p50": 0.10570000000006985,
-      "continuation.build.p95": 0.20319999999992433
-    },
-    "latencyVerdict": {
-      "passed": true,
-      "violations": [],
-      "unmeasured": []
-    },
-    "medianLatencyObservation": {
-      "sidebar.loadSessions.p50": 752,
-      "sidebar.loadSessions.p95": 752,
-      "sidebar.sessionSwitch.p50": 152.70000000298023,
-      "sidebar.sessionSwitch.p95": 176.1000000089407,
-      "sidebar.longSessionOpen.p95": 137.29999999701977,
-      "host.sessionsSummaries.p95": 0,
-      "compaction.plan.p50": 34.51729999999952,
-      "compaction.plan.p95": 35.92489999999998,
-      "continuation.build.p50": 0.10570000000006985,
-      "continuation.build.p95": 0.20319999999992433
-    },
-    "medianLatencyVerdict": {
-      "passed": true,
-      "violations": [],
-      "unmeasured": []
-    },
-    "metricMedians": {
-      "loadSessionsMs": 752,
-      "sessionSwitchP50Ms": 152.70000000298023,
-      "sessionSwitchP95Ms": 176.1000000089407,
-      "longSessionOpenMs": 137.29999999701977,
-      "summariesCallMs": 0,
-      "idleLongTasksOver50Ms": 0,
-      "sessionSwitchLongTasksOver50Ms": 0,
-      "longSessionOpenLongTasksOver50Ms": 0
-    },
-    "runSpread": {
-      "loadSessionsMs": {
-        "values": [
-          786,
-          752,
-          634
-        ],
-        "min": 634,
-        "max": 786
-      },
-      "sessionSwitchP50Ms": {
-        "values": [
-          152.70000000298023,
-          163,
-          120
-        ],
-        "min": 120,
-        "max": 163
-      },
-      "sessionSwitchP95Ms": {
-        "values": [
-          176.1000000089407,
-          186.79999999701977,
-          134.80000001192093
-        ],
-        "min": 134.80000001192093,
-        "max": 186.79999999701977
-      },
-      "longSessionOpenMs": {
-        "values": [
-          173.79999999701977,
-          137.29999999701977,
-          129.5
-        ],
-        "min": 129.5,
-        "max": 173.79999999701977
-      },
-      "idleLongTasksOver50Ms": {
-        "values": [
-          0,
-          0,
-          0
-        ],
-        "min": 0,
-        "max": 0
-      },
-      "sessionSwitchLongTasksOver50Ms": {
-        "values": [
-          1,
-          0,
-          0
-        ],
-        "min": 0,
-        "max": 1
-      },
-      "longSessionOpenLongTasksOver50Ms": {
-        "values": [
-          0,
-          0,
-          0
-        ],
-        "min": 0,
-        "max": 0
-      }
-    }
-  },
-  "compactionAndContinuation": {
-    "note": "measured in-process against the shipped planners by tests/unit/long-session-long-use-budget.test.ts on this candidate",
-    "observationPath": "D:/tmp/long-session-f2/observation-18982d5e6.json",
-    "observationSha256": "0df7f5671c1300f20686935566e58bfc97823f82ab556a23cfc2710a12896dc5",
-    "planSamplesMs": [
-      35.92489999999998,
-      35.45920000000024,
-      34.23940000000039,
-      34.51729999999952,
-      34.39190000000053,
-      35.08340000000044,
-      34.20959999999923,
-      34.94840000000022,
-      34.430600000000595,
-      35.59220000000005,
-      34.371900000000096
-    ],
-    "planP50Ms": 34.51729999999952,
-    "planP95Ms": 35.92489999999998,
-    "continuationSamplesMs": [
-      0.26599999999962165,
-      0.15350000000034925,
-      0.180900000001202,
-      0.125,
-      0.12269999999989523,
-      0.11270000000149594,
-      0.10260000000016589,
-      0.10570000000006985,
-      0.10649999999986903,
-      0.10239999999976135,
-      0.10099999999874854,
-      0.11309999999866704,
-      0.10009999999965657,
-      0.20319999999992433,
-      0.32409999999981665,
-      0.15859999999884167,
-      0.1790999999993801,
-      0.11659999999938009,
-      0.1856999999999971,
-      0.10820000000057917,
-      0.1044000000001688,
-      0.11920000000100117,
-      0.09419999999954598,
-      0.09310000000004948,
-      0.10560000000077707,
-      0.09749999999985448,
-      0.09310000000004948,
-      0.09220000000095752,
-      0.09219999999913853,
-      0.11269999999967695,
-      0.16849999999976717,
-      0.11180000000058499,
-      0.11759999999958382,
-      0.10189999999965949,
-      0.09730000000126893,
-      0.09519999999974971,
-      0.10310000000026776,
-      0.09430000000065775,
-      0.09270000000105938,
-      0.09120000000075379,
-      0.09150000000045111
-    ],
-    "continuationP50Ms": 0.10570000000006985,
-    "continuationP95Ms": 0.20319999999992433
-  },
-  "runs": [
+  "PASS": true,
+  "negativeCases": [
     {
-      "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
-      "sha256": "d10f18b934dc5263bdcf3527805f2dbc3f2fa24a5ee52d7cb7a543b7b0dbf112",
-      "fixtureTranscriptBytes": 59932341,
-      "loadSessionsMs": 786,
-      "longSessionOpenMs": 173.79999999701977,
-      "longSessionOpenLongTasks": 0,
-      "summariesCallMs": 0,
-      "switchP50Ms": 152.70000000298023,
-      "switchP95Ms": 176.1000000089407,
-      "switchLongTasks": 1,
-      "idleLongTasks": 0,
-      "idleRssSampleCount": 60,
-      "windowBoundaries": {
-        "idleControlWindow": [
-          6,
-          6
-        ],
-        "longSessionOpenWindow": [
-          6,
-          6
-        ],
-        "sessionSwitchWindow": [
-          6,
-          7
-        ],
-        "totalRecordedLongTasks": 7,
-        "attributionFixed": true,
-        "note": "indices into the renderer long-task list; every task belongs to exactly one window"
+      "id": "gc-gate",
+      "expectation": "explicit GC unavailable fails the run instead of guessing memory trends",
+      "observed": {
+        "mainAvailable": true,
+        "rendererAvailable": true
       },
-      "hostConditions": {
-        "freeRamMb": 1426,
-        "freeDiskMb": 156316,
-        "freeRamMbAfter": 1058,
-        "freeDiskMbAfter": 157503
-      },
-      "measurementValid": true,
-      "exclusionReason": null
+      "failed": false
     },
     {
-      "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-2.json",
-      "sha256": "81c38ff1853107fbecc7ab39461920dc47e0db0b7ee33ca2b0f97c48ad44ede8",
-      "fixtureTranscriptBytes": 59932341,
-      "loadSessionsMs": 752,
-      "longSessionOpenMs": 137.29999999701977,
-      "longSessionOpenLongTasks": 0,
-      "summariesCallMs": 0,
-      "switchP50Ms": 163,
-      "switchP95Ms": 186.79999999701977,
-      "switchLongTasks": 0,
-      "idleLongTasks": 0,
-      "idleRssSampleCount": 60,
-      "windowBoundaries": {
-        "idleControlWindow": [
-          7,
-          7
-        ],
-        "longSessionOpenWindow": [
-          7,
-          7
-        ],
-        "sessionSwitchWindow": [
-          7,
-          7
-        ],
-        "totalRecordedLongTasks": 7,
-        "attributionFixed": true,
-        "note": "indices into the renderer long-task list; every task belongs to exactly one window"
-      },
-      "hostConditions": {
-        "freeRamMb": 684,
-        "freeDiskMb": 157505,
-        "freeRamMbAfter": 2624,
-        "freeDiskMbAfter": 157484
-      },
-      "measurementValid": true,
-      "exclusionReason": null
+      "id": "hidden-label-rehydration",
+      "expectation": "hidden UI does not re-hydrate session labels in the background",
+      "observed": 0,
+      "failed": false
     },
     {
-      "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-3.json",
-      "sha256": "0927777dff8394817ca04cad262451b9b3004843fd7fe46fdf55c23ac2f803d6",
-      "fixtureTranscriptBytes": 59932341,
-      "loadSessionsMs": 634,
-      "longSessionOpenMs": 129.5,
-      "longSessionOpenLongTasks": 0,
-      "summariesCallMs": 0,
-      "switchP50Ms": 120,
-      "switchP95Ms": 134.80000001192093,
-      "switchLongTasks": 0,
-      "idleLongTasks": 0,
-      "idleRssSampleCount": 60,
-      "windowBoundaries": {
-        "idleControlWindow": [
-          6,
-          6
-        ],
-        "longSessionOpenWindow": [
-          6,
-          6
-        ],
-        "sessionSwitchWindow": [
-          6,
-          6
-        ],
-        "totalRecordedLongTasks": 6,
-        "attributionFixed": true,
-        "note": "indices into the renderer long-task list; every task belongs to exactly one window"
+      "id": "long-task-control",
+      "expectation": "idle and long-session-open windows stay under the 50 ms long-task attribution used by the budget",
+      "observed": {
+        "idle": 0,
+        "longSessionOpen": 0
       },
-      "hostConditions": {
-        "freeRamMb": 2920,
-        "freeDiskMb": 157487,
-        "freeRamMbAfter": 297,
-        "freeDiskMbAfter": 157466
+      "failed": false
+    },
+    {
+      "id": "lifecycle-residual",
+      "expectation": "50 lifecycle cycles leave zero active owner residual",
+      "observed": {
+        "activeRecordResidual": 0,
+        "ownedPidResidual": 0,
+        "finishedResidual": 0,
+        "helperResidual": 0,
+        "waiterResidual": 0,
+        "worktreeResidual": 0
       },
-      "measurementValid": true,
-      "exclusionReason": null
+      "failed": false
     }
   ],
-  "measurementValidity": {
-    "rule": {
-      "minDiskHeadroomMbOverFixture": 32,
-      "excludeDegradedRunsFromMedian": true
-    },
-    "derivedFloorMb": 90,
-    "perRunFloors": [
-      {
-        "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
-        "floorMb": 90,
-        "freeDiskMbBefore": 156316,
-        "freeDiskMbAfter": 157503
-      },
-      {
-        "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-2.json",
-        "floorMb": 90,
-        "freeDiskMbBefore": 157505,
-        "freeDiskMbAfter": 157484
-      },
-      {
-        "path": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-3.json",
-        "floorMb": 90,
-        "freeDiskMbBefore": 157487,
-        "freeDiskMbAfter": 157466
-      }
-    ],
-    "validRuns": 3,
-    "collectedRuns": 3,
-    "excludedRuns": [],
-    "note": "validity is derived from the run's own recorded fixture size plus the frozen headroom, so it cannot be tuned against a sample; a run below that floor is listed here and excluded from the median, never silently averaged. Host free memory is recorded as context only"
+  "cleanup": {
+    "probeRunRootKept": true,
+    "probeRunRoot": "D:/tmp/anchor-long-session-f2/1792879345950",
+    "note": "raw run root stays on D: during the run; curated artifacts are the committed evidence",
+    "recoveryRequired": false
   },
-  "runSelection": {
-    "rule": "per-metric median across measurement-valid runs; the published raw sample arrays come from the valid run whose switch p95 is closest to its median",
-    "collected": 3,
-    "measurementValid": 3,
-    "publishedPath": "D:/tmp/long-session-f2/runs-18982d5e6/probe-run-1.json",
-    "validityFloors": {
-      "minDiskHeadroomMbOverFixture": 32,
-      "excludeDegradedRunsFromMedian": true
-    },
-    "metricMedians": {
-      "loadSessionsMs": 752,
-      "sessionSwitchP50Ms": 152.70000000298023,
-      "sessionSwitchP95Ms": 176.1000000089407,
-      "longSessionOpenMs": 137.29999999701977,
-      "summariesCallMs": 0,
-      "idleLongTasksOver50Ms": 0,
-      "sessionSwitchLongTasksOver50Ms": 0,
-      "longSessionOpenLongTasksOver50Ms": 0
-    },
-    "note": "run-to-run variance on this host is material, so the published headline is the per-metric median across measurement-valid runs; every run is listed in runs[] above"
-  },
-  "windowBoundaries": {
-    "idleControlWindow": [
-      6,
-      6
-    ],
-    "longSessionOpenWindow": [
-      6,
-      6
-    ],
-    "sessionSwitchWindow": [
-      6,
-      7
-    ],
-    "totalRecordedLongTasks": 7,
-    "attributionFixed": true,
-    "note": "indices into the renderer long-task list; every task belongs to exactly one window"
-  },
-  "historyReference": {
-    "note": "TF-0423 keeps the pre-change/post-change comparison for the sidebar fix. It is referenced only; none of its numbers are reused as this candidate result.",
-    "directory": "harness/specs/fixtures/tf0423-session-loading/",
-    "filesNotResigned": [
-      "before.json",
-      "after.json",
-      "acceptance.json",
-      "attribution.json"
-    ]
-  },
-  "boundaries": [
-    "Gateway RPC is agent-mocked; sessions.summaries is the real Electron host service reading synthetic local transcripts.",
-    "Synthetic transcripts contain no private user content and are generated at runtime.",
-    "Timing is a local Windows Electron sample, not a cross-platform benchmark.",
-    "Switch latency is click -> two settled animation frames so the same probe runs on pre-change and post-change builds.",
-    "Each renderer long task is attributed to exactly one measurement window; windowBoundaries records the indices used for the slices.",
-    "Run-to-run variance on this host is material, so F2 publishes every run plus a median rather than a single sample."
+  "remaining": [
+    "CPU/RSS resource-ledger policy verdicts are reported per owner in rss-and-owner-counts.json; no explicit policy cap was configured for this run"
   ],
-  "gateReceipt": {
-    "provided": true,
-    "source": "D:/tmp/long-session-f2/gates-18982d5e6/gates.json",
-    "allPassed": true,
-    "gates": [
-      {
-        "name": "unit-label-summary-search-budget",
-        "command": "pnpm exec vitest run tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1",
-        "exitCode": 0,
-        "durationMs": 6949,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-label-summary-search-budget.log",
-        "summary": "  Test Files  3 passed (3)       Tests  4 passed (4)    Start at  13:17:41    Duration  5.52s (transform 1.70s, setup 296ms, import 944ms, tests 2.60s, environment 1.16s) "
-      },
-      {
-        "name": "unit-long-use-budget",
-        "command": "set LONG_SESSION_F2_PROBE_RUNS=D:\\tmp\\long-session-f2\\runs-18982d5e6&& set LONG_SESSION_F2_CANDIDATE=18982d5e6c8d66f96bc0c3ebbfc4cb44ba52b997&& set LONG_SESSION_F2_OBSERVATION=D:\\tmp\\long-session-f2\\observation-18982d5e6.json&& pnpm exec vitest run tests/unit/long-session-long-use-budget.test.ts --maxWorkers=1",
-        "exitCode": 0,
-        "durationMs": 11654,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\unit-long-use-budget.log",
-        "summary": "  Test Files  1 passed (1)       Tests  24 passed (24)    Start at  13:17:48    Duration  10.21s (transform 4.38s, setup 124ms, import 4.87s, tests 4.45s, environment 580ms) "
-      },
-      {
-        "name": "typecheck",
-        "command": "pnpm run typecheck",
-        "exitCode": 0,
-        "durationMs": 30175,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\typecheck.log",
-        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
-      },
-      {
-        "name": "contract-check",
-        "command": "pnpm run contract:check",
-        "exitCode": 0,
-        "durationMs": 910,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\contract-check.log",
-        "summary": "$ node scripts/contract-check.mjs Contract check passed."
-      },
-      {
-        "name": "comms-replay",
-        "command": "pnpm run comms:replay",
-        "exitCode": 0,
-        "durationMs": 854,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-replay.log",
-        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
-      },
-      {
-        "name": "comms-compare",
-        "command": "pnpm run comms:compare",
-        "exitCode": 0,
-        "durationMs": 744,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\comms-compare.log",
-        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-      },
-      {
-        "name": "harness-validate",
-        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-long-use-budget.md",
-        "exitCode": 0,
-        "durationMs": 1543,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\harness-validate.log",
-        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\" Spec is valid: harness\\specs\\tasks\\long-session-long-use-budget.md"
-      },
-      {
-        "name": "git-diff-check",
-        "command": "git diff --check",
-        "exitCode": 0,
-        "durationMs": 100,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\git-diff-check.log",
-        "summary": ""
-      },
-      {
-        "name": "eslint-changed",
-        "command": "pnpm exec eslint shared/long-session-budget.ts src/stores/gateway.ts tests/unit/long-session-long-use-budget.test.ts scripts/long-session-f2-evidence.mjs harness/specs/fixtures/long-session-development/f2/probe-f2.mjs",
-        "exitCode": 0,
-        "durationMs": 3780,
-        "log": "D:\\tmp\\long-session-f2\\gates-18982d5e6\\eslint-changed.log",
-        "summary": ""
-      }
-    ]
-  }
+  "unmeasured": [
+    "non-Windows platforms: the probe ran on local Windows only",
+    "live provider compaction/continuation latency: the model is an agent-driven scripted endpoint, not a real provider",
+    "packaged/installed build: measurement uses the local dist-electron development build",
+    "long-horizon growth beyond one five-minute idle window",
+    "dependence on real human long-term usage: no real-human evidence is claimed or available",
+    "arbitrary session counts above the 333-session fixture"
+  ],
+  "commands": [
+    {
+      "name": "f2-probe",
+      "command": "node.exe harness/specs/fixtures/long-session-development/f2/probe.mjs D:\\ClawX-work\\worktrees\\long-session-program-r2 D:\\tmp\\anchor-long-session-f2\\1792879345950\\probe\\long-use-probe.json D:\\tmp\\anchor-long-session-f2\\1792879345950\\probe\\run",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 402123,
+      "stdoutSha256": "8ef4ca7ce6b81e31cdb70811a23264cc5a88b007e95f7e815d67249d3d1d9794",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "{\n  \"output\": \"D:\\\\tmp\\\\anchor-long-session-f2\\\\1792879345950\\\\probe\\\\long-use-probe.json\",\n  \"loadSessionsMs\": 567,\n  \"switchP50Ms\": 109.60000000149012,\n  \"switchP95Ms\": 111.40000000596046,\n  \"requestedKeys\": 40,\n  \"summariesMs\": 27,\n  \"longSessionOpenMs\": 125.19999999552965,\n  \"idleLongTasks\": 0,\n  \"longSessionRenderedRows\": 3,\n  \"longSessionLongTasks\": 0,\n  \"switchLongTasks\": 0,\n  \"persistentGrowth\": false,\n  \"compactP50Ms\": 7568,\n  \"compactP95Ms\": 8937,\n  \"continuationP50Ms\": 1139,\n  \"continuationP95Ms\": 1140,\n  \"hiddenLabelRehydrationCalls\": 0,\n  \"hiddenLongTasks\": 0,\n  \"processTreeSize\": 5,\n  \"runtimeTranscriptMiB\": 2.84\n}\n",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-probe.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-probe.stderr.txt"
+    },
+    {
+      "name": "runtime-lifecycle",
+      "command": "pnpm.cmd --dir openclaw_runtime exec vitest run src/sessions/session-admission-registry.test.ts src/sessions/session-admission-registry-reclamation.test.ts src/gateway/session-ecosystem-reclamation-cycle.test.ts --maxWorkers=1 --disableConsoleIntercept",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 91022,
+      "stdoutSha256": "ada0cd3f782361cab5227d7fcf9e2aabd347a52ae5782447a4cf9de67670c7c8",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "Scope: all 155 workspace projects\nLockfile is up to date, resolution step is skipped\nAlready up to date\n[WARN] Failed to create bin at D:\\ClawX-work\\worktrees\\long-session-program-r2\\openclaw_runtime\\extensions\\verseconf-artifacts\\node_modules\\.bin\\openclaw. ENOENT: no such file or directory, stat 'D:\\ClawX-work\\worktrees\\long-session-program-r2\\openclaw_runtime\\openclaw.mjs.EXE'\n\n. preinstall$ node scripts/preinstall-package-manager-warning.mjs\n. preinstall: Done\n. postinstall$ node scripts/postinstall-bundled-plugins.mjs\n. postinstall: Done\n. prepare$ node scripts/prepare-git-hooks.mjs\n. prepare: Done\nDone in 2.7s using pnpm v11.2.2\n\n RUN  v4.1.7 D:/ClawX-work/worktrees/long-session-program-r2/openclaw_runtime\n\n[runtime-lifecycle-audit] admissionEntriesAfterCap=16\n[runtime-lifecycle-audit] admissionRetiredEntries=48\n[runtime-lifecycle-audit] admissionLiveEntriesAfterSweep=0\n[runtime-lifecycle-audit] admissionFenceTimeouts=1\n[runtime-lifecycle-audit] admissionMaxFenceWaitMs=45\n[runtime-lifecycle-audit] admissionWaitersAfterTimeout=0\n[runtime-lifecycle-audit] admissionPermitP95Ms=0.0016\n[reclamation-audit] cycles=50 activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0 helperResidual=0 waiterResidual=0 worktreeResidual=0 sweeperActive=false exitedDiagnosticsRecords=50\n\n Test Files  3 passed (3)\n      Tests  24 passed (24)\n   Start at  06:09:20\n   Duration  78.21s (transform 1.08s, setup 420ms, import 997ms, tests 76.33s, environment 0ms)\n\n",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/runtime-lifecycle.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/runtime-lifecycle.stderr.txt"
+    },
+    {
+      "name": "notification-e2e",
+      "command": "pnpm.cmd exec playwright test tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-followup-scheduling.spec.ts --workers=1 --output D:\\tmp\\anchor-long-session-f2\\1792879345950\\notification",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 52463,
+      "stdoutSha256": "deafb25a1b44fac5e3a09e5cbfc28ff7f14b263da83a41cfcdf5f27f42e0e592",
+      "stderrSha256": "1553c1594427cd3094b10c29ca0cbbcbe5ee2550abef2571636ba9887dbeb832",
+      "stdoutTail": "\nRunning 2 tests using 1 worker\n\n  ok 1 tests\\e2e\\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart (36.7s)\n{\"schema\":\"clawx.long-session.e1-followup-journey/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-e1\",\"steps\":[{\"step\":\"bound-follow-up-created\",\"jobId\":\"a36e09a8-fa98-45e5-9f43-9a1a85de449a\",\"state\":\"allowed\",\"expectedSessionId\":\"1f3d452a-3537-4bc4-9586-ce8cce3f7245\"},{\"step\":\"stop-current-turn-is-independent-of-schedule\",\"stopped\":true,\"scheduleStillPresent\":true},{\"step\":\"trigger-after-invalidation\",\"refusedWith\":\"Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)\",\"gatewayRunCount\":0},{\"step\":\"pause-keeps-schedule\",\"enabled\":false},{\"step\":\"cancel-removes-schedule\",\"removed\":true}],\"negatives\":[\"deleted coordinator session -> binding invalidated -> cron fence state unverifiable\"],\"status\":\"passed\",\"workspaceId\":\"default\",\"coordinatorSessionKey\":\"agent:main:dashboard:304c43ab-e685-47b2-9b9b-8fa59762aecc\",\"jobId\":\"a36e09a8-fa98-45e5-9f43-9a1a85de449a\",\"observationPath\":\"D:\\\\tmp\\\\anchor-long-session-f2\\\\1792879345950\\\\notification\\\\long-session-followup-sche-587bc-ire-after-it-is-invalidated\\\\followup-journey-observation.json\"}\n  ok 2 tests\\e2e\\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (13.0s)\n\n  2 passed (50.8s)\n",
+      "stderrTail": "(node:12196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:12196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/notification-e2e.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/notification-e2e.stderr.txt"
+    },
+    {
+      "name": "f2-unit-gates",
+      "command": "pnpm.cmd exec vitest run tests/unit/long-session-long-use-budget.test.ts tests/unit/chat-session-label-budget.test.ts tests/unit/session-summary-bounded-read.test.ts tests/unit/session-search-modal-performance.test.tsx --maxWorkers=1",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8116,
+      "stdoutSha256": "c9220129e7916ae5979d9f862b68c9bb39749f5a3db0fdd1628c2696f7423fc9",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX-work/worktrees/long-session-program-r2\n\n\n Test Files  4 passed (4)\n      Tests  9 passed (9)\n   Start at  06:11:33\n   Duration  6.53s (transform 1.75s, setup 434ms, import 821ms, tests 2.75s, environment 1.88s)\n\n",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-unit-gates.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/f2-unit-gates.stderr.txt"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm.cmd run typecheck",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 19477,
+      "stdoutSha256": "504827cc68a42b95b3fee07f2285619fe2bfcde30ede219ef1728c5b754eaa76",
+      "stderrSha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8",
+      "stdoutTail": "[ext-bridge] No external extensions configured — empty stubs up to date.\n{\n  \"success\": true,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 0,\n    \"durationMs\": 14481,\n    \"observationMode\": false,\n    \"errorCount\": 0,\n    \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"f4bd60e32bf0293953f03ca5de491895f2110922c4c68e10d99019ae7ad1144b\",\n    \"inputCount\": 12539,\n    \"report\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 18826,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 42\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 0,\n      \"durationMs\": 10786\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 5400\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 0,\n      \"durationMs\": 14481,\n      \"observationMode\": false,\n      \"errorCount\": 0,\n      \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program-r2\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n",
+      "stderrTail": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/typecheck.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/typecheck.stderr.txt"
+    },
+    {
+      "name": "contract-check",
+      "command": "pnpm.cmd run contract:check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 690,
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26",
+      "stdoutTail": "Contract check passed.\n",
+      "stderrTail": "$ node scripts/contract-check.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/contract-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/contract-check.stderr.txt"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm.cmd run comms:replay",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 759,
+      "stdoutSha256": "a87bb980bc4c0dacfe38a3862003cf1dc33ffe4a82e2211364ecaf240b90a136",
+      "stderrSha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a",
+      "stdoutTail": "Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\current-metrics.json\n",
+      "stderrTail": "$ node scripts/comms/replay.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-replay.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-replay.stderr.txt"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm.cmd run comms:compare",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 674,
+      "stdoutSha256": "24f61e33905054964cfea4fb19ea0a2f7b98ef54f8fad26add807c3b298d5a87",
+      "stderrSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e",
+      "stdoutTail": "# Comms Regression Report\n\n- Generated at: 2026-10-24T22:12:01.242Z\n- Candidate: 9db3a116e10b0bfd063ab0c8e9168dd98c46d4d4 (a6cd76822acba85116ae170ac8c89d285973c2f0)\n- Result: PASS\n\n| Metric | Current | Threshold | Status |\n|---|---:|---:|---|\n| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |\n| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |\n| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |\n| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |\n| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |\n| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |\n| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |\n| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |\n| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |\n| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |\n| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |\n| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |\n| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |\n| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |\n| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |\n| history_inflight_max | 1.0000 | <= 1 | PASS |\n| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |\n| message_loss_count | 0.0000 | <= 0 | PASS |\n| message_order_violation_count | 0.0000 | <= 0 | PASS |\n| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |\n| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |\n\n\nWrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program-r2\\artifacts\\comms\\compare-report.md\n",
+      "stderrTail": "$ node scripts/comms/compare.mjs\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-compare.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/comms-compare.stderr.txt"
+    },
+    {
+      "name": "harness-validate",
+      "command": "pnpm.cmd harness validate --spec harness/specs/tasks/long-session-long-use-budget.md",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1284,
+      "stdoutSha256": "9d810936bd9ca21723e60dc77a7d9edb680af35711d4fd018ded2dc55a14462f",
+      "stderrSha256": "10d02152ae8729d8ed8fa9853e30be15df35f1d1c6f210086daf00483ab8b080",
+      "stdoutTail": "Spec is valid: harness\\specs\\tasks\\long-session-long-use-budget.md\n",
+      "stderrTail": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-long-use-budget.md\"\n",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/harness-validate.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/harness-validate.stderr.txt"
+    },
+    {
+      "name": "git-diff-check",
+      "command": "git.exe diff --check",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 55,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "stdoutFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/git-diff-check.stdout.txt",
+      "stderrFile": "D:/tmp/anchor-long-session-f2/1792879345950/logs/git-diff-check.stderr.txt"
+    }
+  ]
 }

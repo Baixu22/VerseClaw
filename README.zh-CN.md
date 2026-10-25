@@ -41,7 +41,9 @@ Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工�
 | 对话与会话 | 流式对话、附加文件和知识引用、查看工具结果；搜索、置顶、分组、归档和恢复会话 | 主界面与会话侧栏 |
 | 项目工作区 | 切换项目、浏览文件和预览内容，在对话旁使用终端、浏览器、Git 变更和代码审查 | 对话工具栏的工作区面板 |
 | 模型与提供商 | 管理提供商账户、默认模型和回退配置，查看 token 用量历史 | 设置 → 模型与提供商 |
-| Agent 与任务 | 配置 Agent 和角色，查看子 Agent 活动；用 Task Ledger 记录任务，用显式 Task Loop 或 ClawGraph 执行有约束的流程 | 设置 → Agents；侧栏更多菜单 |
+| Agent 与任务 | 配置 Agent 和角色，查看子 Agent 活动；用 Task Ledger 记录任务，用显式 Task Loop 或 委派 worker 必须经 typed `sessions.delegate` Host 入口，并由现有协调绑定、权限与 Gateway owner 接纳。回执会绑定协调 revision 与会话 generation、Task Ledger 引用、子会话/run、实际工具授权、真实隔离后端、checkout 事实和有界资源；`accepted` 只表示已接收，不代表子任务正在运行或已经完成。过期 generation、撤销的审批、不支持的后端和未证明安全的并行写入都会失败关闭或串行执行。详见[长期会话委派准入](harness/specs/guides/long-session-delegation-admission.md)。
+
+ClawGraph 执行有约束的流程 | 设置 → Agents；侧栏更多菜单 |
 | 知识工作台 | 搜索资料、管理来源与引用，在待复核队列中处理收件项、草稿和提案 | 侧栏 → 知识 |
 | 记忆 | 查看已批准记忆与持久化候选，批准提议，删除/tombstone，导出带哈希的 JSON 快照，并用“记住这个”创建普通提议 | 侧栏 → 记忆 |
 | 收件箱 | 汇总权限申请、远程任务和浏览器任务中需要处理的事项，并查看历史结果 | 侧栏 → 收件箱 |
@@ -66,7 +68,7 @@ Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工�
 
 *AI 生成的概念流程插画：沿用项目火焰 logo，展示“任务 → 工作区工具 → 审查与验证”的迭代。不是应用截图，也不表示任务会自动通过验证。*
 
-工作区面板可以同时打开文件、终端、浏览器、审查、产物和活动相关标签。终端支持侧边或底部布局；浏览器可打开本地预览或网页；审查入口集中展示 Git 改动及相关操作。会话活动面板用于跟踪运行和命令状态。
+工作区面板可以同时打开文件、终端、浏览器、审查、产物和活动相关标签。终端支持侧边或底部布局；浏览器可打开本地预览或网页；审查入口集中展示 Git 改动及相关操作。会话活动面板用于跟踪运行和命令状态，并展示已配置的运行时、模型与限制；当前运行的真实生效事实只有在运行时返回匹配的新观测后才显示为已生效。策略详情会展示配置来源、兼容性与覆盖原因以及操作权限，并明确区分中止运行与会话停止、仅用于界面展示的活动保留窗口与 transcript/资源 TTL，以及会话分叉与 Git 工作树隔离。
 
 权限选择器提供只读、计划、接受修改和完全访问等模式。计划模式限制用户文件修改，但运行元数据可能仍会写入；具体行为以[工作区权限语义](docs/clawx-product-semantics.md)为准。
 
@@ -88,7 +90,7 @@ Wiki 操作依赖已加载的 `memory-wiki` 扩展。页面可以在未配置时
 
 普通对话适合即时协作；Task Ledger 保存目标、任务节点、检查点与证据事实；Task Loop 用于显式启动的受约束执行。普通对话可以建议升级任务，但不会自动变成 Task Loop。
 
-Workspace 标识本地执行根目录、agent 绑定与权限上下文；Project 表示长期工作容器，当前 shared 身份契约仅提供兼容映射，尚未交付独立 Project 管理。Run 标识一次执行尝试；Task Ledger 仍是用户可见任务事实的唯一来源。详见[身份词汇表](docs/clawx-product-semantics.md#identity-and-scope-vocabulary)。
+Workspace 标识本地执行根目录、agent 绑定与权限上下文；Project 表示长期工作容器，当前 shared 身份契约仅提供兼容映射，尚未交付独立 Project 管理。Run 标识一次执行尝试；Task Ledger 仍是用户可见任务事实的唯一来源。只有显式建立长期协作时，协调绑定才会把一个 Workspace/Assistant/Session 关联到既有 Task Ledger 引用和 canonical 本地 checkout 或托管工作树；普通对话不会自动进入该范围。详见[身份词汇表](docs/clawx-product-semantics.md#identity-and-scope-vocabulary)。
 
 ClawGraph 从工作区 YAML 加载流程，展示编译诊断、节点状态、事件和复核项。运行时的 Workboard 负责调度，和面向用户的 Task Ledger 各有职责。详见[Agent 编排](docs/multi-agent-orchestration/README.md)与[产品概念边界](docs/clawx-product-semantics.md)。
 
@@ -362,3 +364,7 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 V
 
 会话接力在 Main 中核验并持久化 Task Ledger 血缘后才激活新会话；环路或无法读取的历史会被拒绝。可在 `openclaw.json` 设置 `runtime.handoff.enabled=true` 启用接力深度限制（`maxDepth` 为 1–64，省略时为 3）。限制默认关闭，分叉保留接力血缘。
 **遥测同意：** 在设置中关闭遥测立即生效：后续事件停止，SDK 队列在本地丢弃，重新开启不会复活旧事件；已发出的请求无法撤回。详见[同意生命周期](docs/dev/telemetry-consent-lifecycle.md)。
+
+同一次 orchestration run 的全部预期 worker 终态后，会话活动 owner 才会派生一个 consolidated completion-batch receipt，并把完成事实与持久 delivery intent 分开；reset 或 handoff 后只显示 fenced，不会把旧结果送入新 generation。
+
+Chat 工具栏的资源入口也会显示显式绑定的长期会话、canonical 环境与 revision、Task Ledger 引用、完成批次以及暂停/继续操作。会话活动现在会合并按 generation 绑定、由既有 owner 派生的 terminal、browser、托管端口、runtime 进程、durable helper、worktree 与 admission permit 账本；无法测得的值保持 unknown，显式的 OPENCLAW_LONG_SESSION_* 上限可在创建进程、后台终端或工作树之前拒绝。切换工作区保留资源；会话删除、工作区删除和应用退出只关闭各自 owner 范围。

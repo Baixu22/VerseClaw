@@ -1,0 +1,1149 @@
+{
+  "schema": "clawx.long-session.navigation/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "database": "D:/ClawX/.codegraph/codegraph.db",
+  "indexedCommit": "d887414facd34d0ebe740e5ae58a1316573d0c0f",
+  "correctnessEvidence": false,
+  "symbols": [
+    {
+      "id": "function:f6b952cbee0c8d5f1335f010fafade7a",
+      "name": "archiveSession",
+      "kind": "function",
+      "file_path": "electron/services/sessions-api.ts",
+      "start_line": 1457,
+      "end_line": 1525,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "createSessionsApi",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1833,
+          "line": 2789
+        },
+        {
+          "kind": "contains",
+          "name": "sessions-api.ts",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1,
+          "line": null
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "getSessionKey",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 482,
+          "line": 1458
+        },
+        {
+          "kind": "calls",
+          "name": "parseSessionKey",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 350,
+          "line": 1459
+        },
+        {
+          "kind": "calls",
+          "name": "getOpenClawConfigDir",
+          "file_path": "electron/utils/paths.ts",
+          "start_line": 71,
+          "line": 1464
+        },
+        {
+          "kind": "calls",
+          "name": "getArchiveIndexPath",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1441,
+          "line": 1466
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 570,
+          "line": 1467
+        },
+        {
+          "kind": "calls",
+          "name": "warn",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 578,
+          "line": 1475
+        },
+        {
+          "kind": "calls",
+          "name": "resolveSessionTranscriptPath",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 77,
+          "line": 1479
+        },
+        {
+          "kind": "calls",
+          "name": "snapshotSessionEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 357,
+          "line": 1491
+        },
+        {
+          "kind": "calls",
+          "name": "archiveSessionTranscript",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 407,
+          "line": 1493
+        },
+        {
+          "kind": "calls",
+          "name": "warn",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 578,
+          "line": 1495
+        },
+        {
+          "kind": "calls",
+          "name": "removeSessionEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 331,
+          "line": 1506
+        },
+        {
+          "kind": "calls",
+          "name": "warn",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 578,
+          "line": 1509
+        },
+        {
+          "kind": "calls",
+          "name": "getOptionalString",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1445,
+          "line": 1516
+        },
+        {
+          "kind": "calls",
+          "name": "getOptionalString",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1445,
+          "line": 1518
+        },
+        {
+          "kind": "calls",
+          "name": "getOptionalString",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1445,
+          "line": 1519
+        },
+        {
+          "kind": "calls",
+          "name": "upsertArchiveEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 503,
+          "line": 1522
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 570,
+          "line": 1523
+        },
+        {
+          "kind": "references",
+          "name": "SessionPayload",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 109,
+          "line": 1457
+        },
+        {
+          "kind": "references",
+          "name": "SessionArchiveEntry",
+          "file_path": "shared/types/workspace.ts",
+          "start_line": 241,
+          "line": 1512
+        }
+      ]
+    },
+    {
+      "id": "property:4773e265f43a12cd9bf313e201d98b3e",
+      "name": "archiveSession",
+      "kind": "property",
+      "file_path": "shared/chat/types.ts",
+      "start_line": 251,
+      "end_line": 251,
+      "callers": [
+        {
+          "kind": "contains",
+          "name": "ChatState",
+          "file_path": "shared/chat/types.ts",
+          "start_line": 191,
+          "line": null
+        }
+      ],
+      "callees": []
+    },
+    {
+      "id": "function:2a6ccded91a859c84dcbcfccf61bb1bb",
+      "name": "archiveSession",
+      "kind": "function",
+      "file_path": "src/stores/chat.ts",
+      "start_line": 3274,
+      "end_line": 3325,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "executeSlashCommand",
+          "file_path": "src/pages/Chat/ChatInput.tsx",
+          "start_line": 2344,
+          "line": 2630
+        },
+        {
+          "kind": "contains",
+          "name": "chat.ts",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 1,
+          "line": null
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "clearCachedSessionHistory",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 506,
+          "line": 3275
+        },
+        {
+          "kind": "calls",
+          "name": "clearCachedSessionRunState",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 538,
+          "line": 3276
+        },
+        {
+          "kind": "calls",
+          "name": "clearSessionLabelHydrationTracking",
+          "file_path": "src/stores/chat/session-label-hydration.ts",
+          "start_line": 95,
+          "line": 3277
+        },
+        {
+          "kind": "calls",
+          "name": "clearPendingOptimisticUserMessages",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 896,
+          "line": 3278
+        },
+        {
+          "kind": "calls",
+          "name": "dropSessionState",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 3295,
+          "line": 3304
+        },
+        {
+          "kind": "calls",
+          "name": "getAgentIdFromSessionKey",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 1835,
+          "line": 3316
+        },
+        {
+          "kind": "calls",
+          "name": "loadHistory",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 3399,
+          "line": 3319
+        },
+        {
+          "kind": "calls",
+          "name": "loadArchivedSessions",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 3360,
+          "line": 3324
+        },
+        {
+          "kind": "contains",
+          "name": "dropSessionState",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 3295,
+          "line": null
+        },
+        {
+          "kind": "references",
+          "name": "dropSessionState",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 3295,
+          "line": 3322
+        }
+      ]
+    },
+    {
+      "id": "function:cd3fc003191de75724035030a5784f0b",
+      "name": "restoreSession",
+      "kind": "function",
+      "file_path": "electron/services/sessions-api.ts",
+      "start_line": 1534,
+      "end_line": 1572,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "createSessionsApi",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1833,
+          "line": 2800
+        },
+        {
+          "kind": "contains",
+          "name": "sessions-api.ts",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1,
+          "line": null
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "getSessionKey",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 482,
+          "line": 1535
+        },
+        {
+          "kind": "calls",
+          "name": "parseSessionKey",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 350,
+          "line": 1536
+        },
+        {
+          "kind": "calls",
+          "name": "getOpenClawConfigDir",
+          "file_path": "electron/utils/paths.ts",
+          "start_line": 71,
+          "line": 1541
+        },
+        {
+          "kind": "calls",
+          "name": "getArchiveIndexPath",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1441,
+          "line": 1543
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 570,
+          "line": 1544
+        },
+        {
+          "kind": "calls",
+          "name": "removeArchiveEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 520,
+          "line": 1546
+        },
+        {
+          "kind": "calls",
+          "name": "restoreSessionTranscript",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 432,
+          "line": 1551
+        },
+        {
+          "kind": "calls",
+          "name": "upsertArchiveEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 503,
+          "line": 1556
+        },
+        {
+          "kind": "calls",
+          "name": "restoreSessionEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 380,
+          "line": 1564
+        },
+        {
+          "kind": "calls",
+          "name": "warn",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 578,
+          "line": 1567
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 570,
+          "line": 1570
+        },
+        {
+          "kind": "references",
+          "name": "SessionPayload",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 109,
+          "line": 1534
+        }
+      ]
+    },
+    {
+      "id": "method:b35273fc436324d5cdadbc036bbc7c36",
+      "name": "restoreSession",
+      "kind": "method",
+      "file_path": "openclaw_runtime/extensions/qqbot/src/engine/gateway/gateway-connection.ts",
+      "start_line": 75,
+      "end_line": 83,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "start",
+          "file_path": "openclaw_runtime/extensions/qqbot/src/engine/gateway/gateway-connection.ts",
+          "start_line": 66,
+          "line": 67
+        },
+        {
+          "kind": "calls",
+          "name": "chat-session-actions.test.ts",
+          "file_path": "tests/unit/chat-session-actions.test.ts",
+          "start_line": 1,
+          "line": 361
+        },
+        {
+          "kind": "calls",
+          "name": "chat-session-actions.test.ts",
+          "file_path": "tests/unit/chat-session-actions.test.ts",
+          "start_line": 1,
+          "line": 385
+        },
+        {
+          "kind": "contains",
+          "name": "GatewayConnection",
+          "file_path": "openclaw_runtime/extensions/qqbot/src/engine/gateway/gateway-connection.ts",
+          "start_line": 42,
+          "line": null
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "loadSession",
+          "file_path": "openclaw_runtime/extensions/qqbot/src/engine/session/session-store.ts",
+          "start_line": 131,
+          "line": 77
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "openclaw_runtime/extensions/sms/src/gateway.ts",
+          "start_line": 13,
+          "line": 81
+        }
+      ]
+    },
+    {
+      "id": "property:d1ae63b06ec8a43663c20009caf0f393",
+      "name": "restoreSession",
+      "kind": "property",
+      "file_path": "shared/chat/types.ts",
+      "start_line": 252,
+      "end_line": 252,
+      "callers": [
+        {
+          "kind": "contains",
+          "name": "ChatState",
+          "file_path": "shared/chat/types.ts",
+          "start_line": 191,
+          "line": null
+        }
+      ],
+      "callees": []
+    },
+    {
+      "id": "function:d1040261f6e2d09af2bd8ced57802b82",
+      "name": "restoreSession",
+      "kind": "function",
+      "file_path": "src/stores/chat.ts",
+      "start_line": 3327,
+      "end_line": 3342,
+      "callers": [
+        {
+          "kind": "contains",
+          "name": "chat.ts",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 1,
+          "line": null
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "loadSessions",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 2889,
+          "line": 3341
+        }
+      ]
+    },
+    {
+      "id": "function:7545abc7301c98b9d1e0826d10cb2025",
+      "name": "permanentDeleteSession",
+      "kind": "function",
+      "file_path": "electron/services/sessions-api.ts",
+      "start_line": 1581,
+      "end_line": 1634,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "createSessionsApi",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1833,
+          "line": 2803
+        },
+        {
+          "kind": "contains",
+          "name": "sessions-api.ts",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1,
+          "line": null
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "getSessionKey",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 482,
+          "line": 1582
+        },
+        {
+          "kind": "calls",
+          "name": "parseSessionKey",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 350,
+          "line": 1583
+        },
+        {
+          "kind": "calls",
+          "name": "getArchiveIndexPath",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 1441,
+          "line": 1588
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 570,
+          "line": 1589
+        },
+        {
+          "kind": "calls",
+          "name": "removeArchiveEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 520,
+          "line": 1591
+        },
+        {
+          "kind": "calls",
+          "name": "runHostSessionDerivativeCascade",
+          "file_path": "electron/services/session-cascade-delete.ts",
+          "start_line": 21,
+          "line": 1601
+        },
+        {
+          "kind": "calls",
+          "name": "upsertArchiveEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 503,
+          "line": 1604
+        },
+        {
+          "kind": "calls",
+          "name": "upsertArchiveEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 503,
+          "line": 1608
+        },
+        {
+          "kind": "calls",
+          "name": "sweepSessionArtefacts",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 209,
+          "line": 1611
+        },
+        {
+          "kind": "calls",
+          "name": "cleanupContextArchiveArtifacts",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 279,
+          "line": 1612
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 570,
+          "line": 1614
+        },
+        {
+          "kind": "calls",
+          "name": "warn",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 578,
+          "line": 1621
+        },
+        {
+          "kind": "calls",
+          "name": "upsertArchiveEntry",
+          "file_path": "electron/utils/session-files.ts",
+          "start_line": 503,
+          "line": 1625
+        },
+        {
+          "kind": "calls",
+          "name": "info",
+          "file_path": "electron/utils/logger.ts",
+          "start_line": 570,
+          "line": 1632
+        },
+        {
+          "kind": "references",
+          "name": "SessionPayload",
+          "file_path": "electron/services/sessions-api.ts",
+          "start_line": 109,
+          "line": 1581
+        }
+      ]
+    },
+    {
+      "id": "property:68a244a4655e59491cf64dc4060a2a69",
+      "name": "permanentDeleteSession",
+      "kind": "property",
+      "file_path": "shared/chat/types.ts",
+      "start_line": 253,
+      "end_line": 253,
+      "callers": [
+        {
+          "kind": "contains",
+          "name": "ChatState",
+          "file_path": "shared/chat/types.ts",
+          "start_line": 191,
+          "line": null
+        }
+      ],
+      "callees": []
+    },
+    {
+      "id": "function:258632267b27e4820e2fb782edf59feb",
+      "name": "permanentDeleteSession",
+      "kind": "function",
+      "file_path": "src/stores/chat.ts",
+      "start_line": 3344,
+      "end_line": 3358,
+      "callers": [
+        {
+          "kind": "contains",
+          "name": "chat.ts",
+          "file_path": "src/stores/chat.ts",
+          "start_line": 1,
+          "line": null
+        }
+      ],
+      "callees": []
+    },
+    {
+      "id": "function:31cd0c3d7ff5a658426d1e2b8720847b",
+      "name": "cleanupSessionBeforeMutation",
+      "kind": "function",
+      "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+      "start_line": 887,
+      "end_line": 974,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "performGatewaySessionReset",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 1026,
+          "line": 1094
+        },
+        {
+          "kind": "contains",
+          "name": "session-reset-service.ts",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 1,
+          "line": null
+        },
+        {
+          "kind": "imports",
+          "name": "sessions.runtime.ts",
+          "file_path": "openclaw_runtime/src/gateway/server-methods/sessions.runtime.ts",
+          "start_line": 1,
+          "line": 6
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "resolveSessionLifecycleIdentity",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 446,
+          "line": 897
+        },
+        {
+          "kind": "calls",
+          "name": "fence",
+          "file_path": "openclaw_runtime/src/sessions/session-admission-registry.ts",
+          "start_line": 308,
+          "line": 914
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 921
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 933
+        },
+        {
+          "kind": "calls",
+          "name": "runSessionStopFront",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 505,
+          "line": 948
+        },
+        {
+          "kind": "calls",
+          "name": "clearSessionResetRuntimeState",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/session-reset-cleanup.ts",
+          "start_line": 11,
+          "line": 956
+        },
+        {
+          "kind": "calls",
+          "name": "resolveCleanupQueueKeys",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 460,
+          "line": 956
+        },
+        {
+          "kind": "calls",
+          "name": "clearBootstrapSnapshot",
+          "file_path": "openclaw_runtime/src/agents/bootstrap-cache.ts",
+          "start_line": 82,
+          "line": 957
+        },
+        {
+          "kind": "calls",
+          "name": "stopSubagentsForRequester",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/abort.ts",
+          "start_line": 210,
+          "line": 958
+        },
+        {
+          "kind": "calls",
+          "name": "runCleanupOtherOwners",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 557,
+          "line": 964
+        },
+        {
+          "kind": "contains",
+          "name": "settle",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 901,
+          "line": null
+        },
+        {
+          "kind": "references",
+          "name": "OpenClawConfig",
+          "file_path": "openclaw_runtime/src/config/types.openclaw.ts",
+          "start_line": 486,
+          "line": 888
+        },
+        {
+          "kind": "references",
+          "name": "SessionEntry",
+          "file_path": "openclaw_runtime/src/config/sessions/types.ts",
+          "start_line": 220,
+          "line": 891
+        },
+        {
+          "kind": "references",
+          "name": "SessionAcpMeta",
+          "file_path": "openclaw_runtime/packages/acp-core/src/types.ts",
+          "start_line": 84,
+          "line": 895
+        },
+        {
+          "kind": "references",
+          "name": "SessionMutationCleanupOutcome",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 435,
+          "line": 896
+        },
+        {
+          "kind": "references",
+          "name": "settle",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 901,
+          "line": 925
+        }
+      ]
+    },
+    {
+      "id": "function:4fff42e820b8bb19cfec9408707935d1",
+      "name": "runSessionStopFront",
+      "kind": "function",
+      "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+      "start_line": 505,
+      "end_line": 555,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "stopSessionRuntime",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 608,
+          "line": 650
+        },
+        {
+          "kind": "calls",
+          "name": "cleanupSessionBeforeMutation",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 887,
+          "line": 948
+        },
+        {
+          "kind": "contains",
+          "name": "session-reset-service.ts",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 1,
+          "line": null
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 513
+        },
+        {
+          "kind": "calls",
+          "name": "clearSessionResetRuntimeState",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/session-reset-cleanup.ts",
+          "start_line": 11,
+          "line": 518
+        },
+        {
+          "kind": "calls",
+          "name": "resolveCleanupQueueKeys",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 460,
+          "line": 518
+        },
+        {
+          "kind": "calls",
+          "name": "clearBootstrapSnapshot",
+          "file_path": "openclaw_runtime/src/agents/bootstrap-cache.ts",
+          "start_line": 82,
+          "line": 519
+        },
+        {
+          "kind": "calls",
+          "name": "abortEmbeddedAgentRun",
+          "file_path": "openclaw_runtime/src/agents/embedded-agent-runner/runs.ts",
+          "start_line": 446,
+          "line": 520
+        },
+        {
+          "kind": "calls",
+          "name": "resolveChildRunWaitTargets",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 469,
+          "line": 521
+        },
+        {
+          "kind": "calls",
+          "name": "stopSubagentsForRequester",
+          "file_path": "openclaw_runtime/src/auto-reply/reply/abort.ts",
+          "start_line": 210,
+          "line": 522
+        },
+        {
+          "kind": "calls",
+          "name": "waitForEmbeddedAgentRunEnd",
+          "file_path": "openclaw_runtime/src/agents/embedded-agent-runner/runs.ts",
+          "start_line": 660,
+          "line": 524
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 526
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 533
+        },
+        {
+          "kind": "calls",
+          "name": "waitForEmbeddedAgentRunEnd",
+          "file_path": "openclaw_runtime/src/agents/embedded-agent-runner/runs.ts",
+          "start_line": 660,
+          "line": 538
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 540
+        },
+        {
+          "kind": "calls",
+          "name": "drainScope",
+          "file_path": "openclaw_runtime/src/gateway/session-drain-service.ts",
+          "start_line": 124,
+          "line": 547
+        },
+        {
+          "kind": "calls",
+          "name": "errorShape",
+          "file_path": "openclaw_runtime/packages/gateway-protocol/src/schema/error-codes.ts",
+          "start_line": 26,
+          "line": 549
+        },
+        {
+          "kind": "references",
+          "name": "SessionCleanupParams",
+          "file_path": "openclaw_runtime/src/gateway/session-reset-service.ts",
+          "start_line": 422,
+          "line": 506
+        },
+        {
+          "kind": "references",
+          "name": "SessionAdmissionIdentity",
+          "file_path": "openclaw_runtime/src/sessions/session-admission-registry.ts",
+          "start_line": 33,
+          "line": 507
+        }
+      ]
+    },
+    {
+      "id": "function:ffe63fc21a678b0dab133887363128a8",
+      "name": "createSessionsSpawnTool",
+      "kind": "function",
+      "file_path": "openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts",
+      "start_line": 255,
+      "end_line": 517,
+      "callers": [
+        {
+          "kind": "calls",
+          "name": "createOpenClawTools",
+          "file_path": "openclaw_runtime/src/agents/openclaw-tools.ts",
+          "start_line": 123,
+          "line": 654
+        },
+        {
+          "kind": "contains",
+          "name": "sessions-spawn-tool.ts",
+          "file_path": "openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts",
+          "start_line": 1,
+          "line": null
+        },
+        {
+          "kind": "imports",
+          "name": "openclaw-tools.ts",
+          "file_path": "openclaw_runtime/src/agents/openclaw-tools.ts",
+          "start_line": 1,
+          "line": 83
+        }
+      ],
+      "callees": [
+        {
+          "kind": "calls",
+          "name": "isAcpRuntimeSpawnAvailable",
+          "file_path": "openclaw_runtime/src/acp/runtime/availability.ts",
+          "start_line": 7,
+          "line": 270
+        },
+        {
+          "kind": "calls",
+          "name": "resolveSessionsSpawnThreadAvailability",
+          "file_path": "openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts",
+          "start_line": 139,
+          "line": 274
+        },
+        {
+          "kind": "calls",
+          "name": "hasAnyThreadAvailability",
+          "file_path": "openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts",
+          "start_line": 135,
+          "line": 275
+        },
+        {
+          "kind": "calls",
+          "name": "describeSessionsSpawnTool",
+          "file_path": "openclaw_runtime/src/agents/tool-description-presets.ts",
+          "start_line": 43,
+          "line": 282
+        },
+        {
+          "kind": "calls",
+          "name": "createSessionsSpawnToolSchema",
+          "file_path": "openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts",
+          "start_line": 164,
+          "line": 283
+        },
+        {
+          "kind": "calls",
+          "name": "resolveSnakeCaseParamKey",
+          "file_path": "openclaw_runtime/src/param-key.ts",
+          "start_line": 11,
+          "line": 295
+        },
+        {
+          "kind": "calls",
+          "name": "resolveSnakeCaseParamKey",
+          "file_path": "openclaw_runtime/src/param-key.ts",
+          "start_line": 11,
+          "line": 299
+        },
+        {
+          "kind": "calls",
+          "name": "readStringParam",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 137,
+          "line": 304
+        },
+        {
+          "kind": "calls",
+          "name": "normalizeSubagentTaskName",
+          "file_path": "openclaw_runtime/src/agents/subagent-task-name.ts",
+          "start_line": 17,
+          "line": 305
+        },
+        {
+          "kind": "calls",
+          "name": "jsonResult",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 432,
+          "line": 307
+        },
+        {
+          "kind": "calls",
+          "name": "readStringParam",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 137,
+          "line": 313
+        },
+        {
+          "kind": "calls",
+          "name": "readStringParam",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 137,
+          "line": 315
+        },
+        {
+          "kind": "calls",
+          "name": "readStringParam",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 137,
+          "line": 316
+        },
+        {
+          "kind": "calls",
+          "name": "normalizeToolModelOverride",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 166,
+          "line": 317
+        },
+        {
+          "kind": "calls",
+          "name": "readStringParam",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 137,
+          "line": 317
+        },
+        {
+          "kind": "calls",
+          "name": "readStringParam",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 137,
+          "line": 318
+        },
+        {
+          "kind": "calls",
+          "name": "readStringParam",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 137,
+          "line": 319
+        },
+        {
+          "kind": "calls",
+          "name": "jsonResult",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 432,
+          "line": 331
+        },
+        {
+          "kind": "calls",
+          "name": "resolveAcpUnavailableMessage",
+          "file_path": "openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts",
+          "start_line": 245,
+          "line": 333
+        },
+        {
+          "kind": "calls",
+          "name": "findAcpUnsupportedInheritedToolDeny",
+          "file_path": "openclaw_runtime/src/agents/inherited-tool-deny.ts",
+          "start_line": 60,
+          "line": 339
+        },
+        {
+          "kind": "calls",
+          "name": "jsonResult",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 432,
+          "line": 342
+        },
+        {
+          "kind": "calls",
+          "name": "formatAcpInheritedToolDenyError",
+          "file_path": "openclaw_runtime/src/agents/inherited-tool-deny.ts",
+          "start_line": 80,
+          "line": 344
+        },
+        {
+          "kind": "calls",
+          "name": "findAcpUnsupportedInheritedToolAllow",
+          "file_path": "openclaw_runtime/src/agents/inherited-tool-deny.ts",
+          "start_line": 70,
+          "line": 350
+        },
+        {
+          "kind": "calls",
+          "name": "jsonResult",
+          "file_path": "openclaw_runtime/src/agents/tools/common.ts",
+          "start_line": 432,
+          "line": 353
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "clawx.long-session.effective-policy/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "sessionKey": "agent:main:dashboard:912a4e80-deb6-49e1-b7b0-cd9a9f7663a2",
+  "workspaceId": "default",
+  "generationState": "missing",
+  "configuredBackend": {
+    "runtime": "openclaw",
+    "kind": "openclaw",
+    "ownsNativeCompaction": false,
+    "provider": "openai",
+    "model": "gpt-5.5"
+  },
+  "effectiveBackend": {
+    "value": null,
+    "status": "unverified",
+    "source": "runtime-effective-capability.observation",
+    "reason": "no-current-run-capability-profile"
+  },
+  "compatibilityRows": [
+    {
+      "backend": "openclaw",
+      "parameter": "automatic-compaction",
+      "status": "configured",
+      "reason": null
+    },
+    {
+      "backend": "openclaw",
+      "parameter": "compaction.provider",
+      "status": "configured",
+      "reason": null
+    },
+    {
+      "backend": "openclaw",
+      "parameter": "compaction.model",
+      "status": "configured",
+      "reason": null
+    },
+    {
+      "backend": "openclaw",
+      "parameter": "compaction.reserveTokens",
+      "status": "configured",
+      "reason": null
+    },
+    {
+      "backend": "openclaw",
+      "parameter": "manual-compaction",
+      "status": "effective",
+      "reason": null
+    }
+  ],
+  "transport": "built Electron host:invoke sessionActivity.snapshot -> actual Gateway session.activitySnapshot"
+}

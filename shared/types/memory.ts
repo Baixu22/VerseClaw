@@ -395,6 +395,7 @@ export type MemorySurfaceEntry = {
   sourceLabel: string;
   createdAt: string;
   updatedAt?: string | null;
+  expiresAt?: string | null;
   sensitivity: string;
   confidence?: number | null;
   importance?: number | null;

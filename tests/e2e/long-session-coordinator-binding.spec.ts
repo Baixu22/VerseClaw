@@ -1,24 +1,16 @@
+import { existsSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type GatewayStatus = { state?: string; gatewayReady?: boolean };
-type Workspace = { id: string; activeSessionKey?: string; permissionMode?: string };
-type CoordinatorBinding = {
-  workspaceId: string;
-  agentId: string;
-  sessionKey: string;
-  sessionId: string;
-  taskRefs: Array<{ kind: 'task-ledger'; nodeId: string }>;
-  state: 'active' | 'invalidated';
-  revision: number;
-  invalidationReason: string | null;
-};
-type CoordinatorRead = {
+type CreatedSession = { key?: string; sessionKey?: string };
+type LedgerSnapshot = { snapshot: { nodes: Array<{ id: string; title: string; status: string }> } };
+type BindingResult = {
   success: boolean;
-  binding: CoordinatorBinding | null;
-  validation: 'current' | 'unverified' | 'invalidated' | 'missing';
-  reason?: string | null;
+  binding?: { sessionKey: string; sessionGeneration: string | null; bindingRevision: number; state: string; taskLedgerReferences: Array<{ taskLedgerNodeId: string }> } | null;
+  recovery: { state: string; reason: string | null; bindingRevision: number | null };
 };
 
 async function hostInvoke<T>(
@@ -34,187 +26,212 @@ async function hostInvoke<T>(
     })._invokeHandlers?.get('host:invoke');
     if (!handler) throw new Error('host:invoke handler is not registered');
     const win = BrowserWindow.getAllWindows().find((candidate) => !candidate.isDestroyed());
-    if (!win) throw new Error('No BrowserWindow available');
+    if (!win) throw new Error('No BrowserWindow available for host:invoke sender auth');
     const sender = win.webContents;
-    return await handler(
-      { sender, senderFrame: { url: sender.getURL() } },
-      { id: `c1-${Date.now()}-${Math.random()}`, ...request },
-    );
+    const event = { sender, senderFrame: { url: typeof sender.getURL === 'function' ? sender.getURL() : '' } };
+    return await handler(event, { id: `coordinator-${Date.now()}-${Math.random()}`, ...request });
   }, { module, action, payload }) as HostResponse<T>;
-  if (!response.ok) throw new Error(response.error?.message ?? `host invoke failed: ${module}.${action}`);
+  if (!response.ok) throw new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'host invoke failed'}`);
   return response.data as T;
 }
 
 async function ensureGatewayReady(app: ElectronApplication): Promise<void> {
   const deadline = Date.now() + 120_000;
-  let lastStatus: GatewayStatus | undefined;
-  let lastError: string | undefined;
-  let startRequested = false;
+  let started = false;
   while (Date.now() < deadline) {
-    try {
-      lastStatus = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
-      if (lastStatus.gatewayReady === true || lastStatus.state === 'running') return;
-      if (!startRequested && lastStatus.state !== 'starting') {
-        startRequested = true;
-        await hostInvoke(app, 'gateway', 'start');
-      }
-    } catch (error) {
-      lastError = error instanceof Error ? error.message : String(error);
+    const status = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+    if (status.gatewayReady === true || status.state === 'running') return;
+    if (!started && status.state !== 'starting') {
+      started = true;
+      await hostInvoke(app, 'gateway', 'start');
     }
     await new Promise((resolve) => setTimeout(resolve, 1_500));
   }
-  throw new Error(`Gateway did not become ready: ${JSON.stringify({ lastStatus, lastError })}`);
+  throw new Error('Gateway did not become ready for coordinator binding E2E');
 }
 
-async function activeWorkspace(app: ElectronApplication): Promise<Workspace> {
-  const active = await hostInvoke<{ activeWorkspace?: Workspace }>(app, 'workspaces', 'getActive');
-  if (!active.activeWorkspace?.id) throw new Error('No active workspace');
-  return active.activeWorkspace;
+async function activeWorkspace(app: ElectronApplication): Promise<{ id: string; rootPath: string }> {
+  const active = await hostInvoke<{ activeWorkspace?: { id?: string; rootPath?: string }; id?: string; rootPath?: string }>(
+    app,
+    'workspaces',
+    'getActive',
+  );
+  const workspace = active.activeWorkspace ?? active;
+  if (!workspace.id || !workspace.rootPath) throw new Error('Active workspace is incomplete');
+  await mkdir(workspace.rootPath, { recursive: true });
+  await hostInvoke(app, 'workspaces', 'update', { id: workspace.id, permissionMode: 'fullAccess' });
+  return { id: workspace.id, rootPath: workspace.rootPath };
 }
 
-async function createCoordinatorSession(app: ElectronApplication): Promise<string> {
-  const created = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'rpc', {
-    method: 'sessions.create',
-    params: { agentId: 'main', label: `coordinator-${Date.now()}` },
-    timeoutMs: 60_000,
-  });
-  const key = typeof created.key === 'string' ? created.key : created.sessionKey;
-  if (typeof key !== 'string') throw new Error(`sessions.create returned no key: ${JSON.stringify(created)}`);
-  return key;
-}
+type CoordinatorSeed = {
+  workspaceId: string;
+  rootPath: string;
+  sessionKey: string;
+  taskLedgerNodeId: string;
+  firstGeneration: string;
+};
 
-test('real Host/Gateway coordinator binding survives app restart and invalidates reset generations', async ({ launchElectronApp }) => {
-  test.setTimeout(240_000);
-  let workspaceId: string;
-  let sessionKey: string;
-  let ledgerNodeId: string;
-  let physicalSessionId: string;
-
+test('coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries', async ({ launchElectronApp }, testInfo) => {
+  test.setTimeout(300_000);
+  let seed: CoordinatorSeed | undefined;
   const first = await launchElectronApp({ skipSetup: true });
   try {
-    const page = await getStableWindow(first);
+    await getStableWindow(first);
     await ensureGatewayReady(first);
     const workspace = await activeWorkspace(first);
-    workspaceId = workspace.id;
-    await hostInvoke(first, 'workspaces', 'update', { id: workspaceId, permissionMode: 'fullAccess' });
-    sessionKey = await createCoordinatorSession(first);
+    const workspaceId = workspace.id;
+    const rootPath = workspace.rootPath;
+    const created = await hostInvoke<CreatedSession>(first, 'gateway', 'rpc', {
+      method: 'sessions.create',
+      params: { agentId: 'main', label: `coordinator-${Date.now()}` },
+      timeoutMs: 60_000,
+    });
+    const sessionKey = created.key ?? created.sessionKey ?? '';
+    if (!sessionKey) throw new Error('sessions.create returned no key');
     await hostInvoke(first, 'workspaces', 'update', {
       id: workspaceId,
       agentId: 'main',
       activeSessionKey: sessionKey,
       sessionKey,
     });
-    const ledger = await hostInvoke<{ snapshot: { nodes: Array<{ id: string }> } }>(first, 'taskLedger', 'createNode', {
-      workspaceId,
-      node: { title: 'C1 durable coordinator task', kind: 'task', status: 'doing', owner: 'agent' },
-    });
-    ledgerNodeId = ledger.snapshot.nodes.find((node) => node.id)?.id ?? '';
-    expect(ledgerNodeId).toBeTruthy();
 
-    const bound = await hostInvoke<{ success: boolean; binding?: CoordinatorBinding; validation?: string }>(first, 'sessions', 'bindCoordinator', {
+    const led = await hostInvoke<LedgerSnapshot>(first, 'taskLedger', 'createNode', {
+      workspaceId,
+      node: { title: `Coordinator task ${Date.now()}`, kind: 'task', status: 'todo' },
+      idempotencyKey: `coordinator-task-${Date.now()}`,
+    });
+    const node = led.snapshot.nodes.at(-1);
+    if (!node) throw new Error('Task Ledger did not return the created node');
+    const taskLedgerNodeId = node.id;
+    await hostInvoke(first, 'taskLedger', 'linkSession', {
+      workspaceId,
+      nodeId: node.id,
+      sessionKey,
+      agentId: 'main',
+      relation: 'related',
+      idempotencyKey: `coordinator-link-${sessionKey}-${node.id}`,
+    });
+
+    const bound = await hostInvoke<BindingResult>(first, 'workspaces', 'bindCoordinator', {
       workspaceId,
       agentId: 'main',
       sessionKey,
       expectedRevision: 0,
-      taskRefs: [{ kind: 'task-ledger', nodeId: ledgerNodeId }],
+      taskLedgerNodeIds: [taskLedgerNodeId],
+      environment: { kind: 'local', rootPath, setupProfile: 'default' },
+      archiveRestorePolicy: 'restore',
     });
-    expect(bound.success).toBe(true);
-    expect(bound.validation).toBe('current');
-    expect(bound.binding).toMatchObject({ workspaceId, sessionKey, state: 'active', revision: 1 });
-    physicalSessionId = bound.binding?.sessionId ?? '';
-    expect(physicalSessionId).toBeTruthy();
-
-    await expect(hostInvoke<CoordinatorRead>(first, 'sessions', 'coordinatorBinding', { workspaceId }))
-      .resolves.toMatchObject({ validation: 'current', binding: { sessionId: physicalSessionId, revision: 1 } });
-
-    /* A handoff/new active session does not silently repoint the stable master.
-       The explicit binding remains on the source generation until the user
-       deliberately rebinds with the current revision. */
-    const derivedSessionKey = await createCoordinatorSession(first);
-    await hostInvoke(first, 'workspaces', 'update', {
-      id: workspaceId,
-      agentId: 'main',
-      activeSessionKey: derivedSessionKey,
-      sessionKey: derivedSessionKey,
-    });
-    await expect(hostInvoke<CoordinatorRead>(first, 'sessions', 'coordinatorBinding', { workspaceId }))
-      .resolves.toMatchObject({
-        validation: 'current',
-        binding: { sessionKey, sessionId: physicalSessionId, revision: 1 },
-      });
-    await hostInvoke(first, 'workspaces', 'update', {
-      id: workspaceId,
-      agentId: 'main',
-      activeSessionKey: sessionKey,
-      sessionKey,
-    });
-    await page.getByTestId('chat-page').waitFor({ state: 'visible' });
+    expect(bound.recovery.state).toBe('ready');
+    const firstGeneration = bound.binding?.sessionGeneration ?? '';
+    expect(firstGeneration).toBeTruthy();
+    expect(bound.binding?.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId)).toEqual([taskLedgerNodeId]);
+    seed = { workspaceId, rootPath, sessionKey, taskLedgerNodeId, firstGeneration };
   } finally {
     await closeElectronApp(first);
   }
 
-  const restarted = await launchElectronApp({ skipSetup: true });
+  if (!seed) throw new Error('Coordinator seed did not complete');
+  const { workspaceId, rootPath, sessionKey, taskLedgerNodeId, firstGeneration } = seed;
+  const second = await launchElectronApp({ skipSetup: true });
   try {
-    await getStableWindow(restarted);
-    await ensureGatewayReady(restarted);
-    const recovered = await hostInvoke<CoordinatorRead>(restarted, 'sessions', 'coordinatorBinding', { workspaceId });
-    expect(recovered).toMatchObject({
-      success: true,
-      validation: 'current',
-      binding: {
-        workspaceId,
-        agentId: 'main',
-        sessionKey,
-        sessionId: physicalSessionId,
-        taskRefs: [{ kind: 'task-ledger', nodeId: ledgerNodeId }],
-        state: 'active',
-        revision: 1,
-      },
+    await getStableWindow(second);
+    await ensureGatewayReady(second);
+    const persisted = await hostInvoke<BindingResult>(second, 'workspaces', 'resolveCoordinator', {
+      workspaceId, agentId: 'main', sessionKey,
     });
+    expect(persisted.recovery.state).toBe('ready');
+    expect(persisted.binding?.sessionGeneration).toBe(firstGeneration);
+    expect(persisted.binding?.bindingRevision).toBe(1);
 
-    const reset = await hostInvoke<Record<string, unknown>>(restarted, 'gateway', 'rpc', {
-      method: 'sessions.reset',
-      params: { key: sessionKey },
+    await hostInvoke(second, 'gateway', 'rpc', {
+      method: 'sessions.patch',
+      params: { key: sessionKey, label: 'Coordinator renamed' },
       timeoutMs: 30_000,
     });
-    expect(reset.ok).not.toBe(false);
-    await expect.poll(async () => (
-      await hostInvoke<CoordinatorRead>(restarted, 'sessions', 'coordinatorBinding', { workspaceId })
-    ), { timeout: 30_000 }).toMatchObject({
-      validation: 'invalidated',
-      reason: 'reset',
-      binding: { state: 'invalidated', invalidationReason: 'reset', revision: 2 },
+    const renamed = await hostInvoke<BindingResult>(second, 'workspaces', 'resolveCoordinator', {
+      workspaceId, agentId: 'main', sessionKey,
     });
+    expect(renamed.recovery.state).toBe('ready');
 
-    /* Archive through the real Host/Gateway mutation path. The durable binding
-       must be invalidated rather than pointing at the archived generation. */
-    const archiveKey = await createCoordinatorSession(restarted);
-    await hostInvoke(restarted, 'workspaces', 'update', {
-      id: workspaceId,
+    const handoff = await hostInvoke<{ success: boolean; sessionKey?: string }>(second, 'sessions', 'createHandoff', {
+      sessionKey,
       agentId: 'main',
-      activeSessionKey: archiveKey,
-      sessionKey: archiveKey,
+      workspaceId,
+      draftInput: 'Continue the coordinator task.',
     });
-    const rebound = await hostInvoke<{ success: boolean; binding?: CoordinatorBinding }>(restarted, 'sessions', 'bindCoordinator', {
+    expect(handoff.success).toBe(true);
+    const childSessionKey = handoff.sessionKey ?? '';
+    expect(childSessionKey).toBeTruthy();
+    if (!childSessionKey) throw new Error('createHandoff returned no session key');
+    const pending = await hostInvoke<BindingResult>(second, 'workspaces', 'resolveCoordinator', {
+      workspaceId, agentId: 'main', sessionKey: childSessionKey,
+    });
+    expect(pending.recovery.state).toBe('session-pending');
+    await hostInvoke(second, 'gateway', 'rpc', {
+      method: 'sessions.create',
+      params: { key: childSessionKey, agentId: 'main', label: 'Coordinator handoff child' },
+      timeoutMs: 60_000,
+    });
+    const handoffActive = await hostInvoke<BindingResult>(second, 'workspaces', 'resolveCoordinator', {
+      workspaceId, agentId: 'main', sessionKey: childSessionKey,
+    });
+    expect(handoffActive.recovery.state).toBe('ready');
+    expect(handoffActive.binding?.sessionGeneration).toBeTruthy();
+
+    const archived = await hostInvoke<{ success: boolean }>(second, 'sessions', 'archive', {
+      id: childSessionKey,
+      originalWorkspaceId: workspaceId,
+      label: 'Coordinator handoff archived',
+    });
+    expect(archived.success).toBe(true);
+    const paused = await hostInvoke<BindingResult>(second, 'workspaces', 'resolveCoordinator', {
+      workspaceId, agentId: 'main', sessionKey: childSessionKey,
+    });
+    expect(paused.recovery.state).toBe('paused');
+    expect(paused.binding?.state).toBe('paused');
+    expect(existsSync(rootPath)).toBe(true);
+
+    const restored = await hostInvoke<{ success: boolean }>(second, 'sessions', 'restore', { id: childSessionKey });
+    expect(restored.success).toBe(true);
+    const active = await hostInvoke<BindingResult>(second, 'workspaces', 'resolveCoordinator', {
+      workspaceId, agentId: 'main', sessionKey: childSessionKey,
+    });
+    expect(active.recovery.state).toBe('ready');
+    const restoredGeneration = active.binding?.sessionGeneration ?? '';
+    expect(restoredGeneration).toBeTruthy();
+    expect(restoredGeneration).not.toBe(handoffActive.binding?.sessionGeneration ?? '');
+
+    const manuallyPaused = await hostInvoke<BindingResult>(second, 'workspaces', 'pauseCoordinator', {
       workspaceId,
       agentId: 'main',
-      sessionKey: archiveKey,
-      expectedRevision: 2,
-      taskRefs: [{ kind: 'task-ledger', nodeId: ledgerNodeId }],
+      sessionKey: childSessionKey,
+      expectedRevision: active.binding?.bindingRevision,
     });
-    expect(rebound).toMatchObject({ success: true, binding: { state: 'active', revision: 3 } });
-    await expect(hostInvoke(restarted, 'sessions', 'archive', {
-      id: archiveKey,
-      originalWorkspaceId: workspaceId,
-      label: 'Archived coordinator generation',
-    })).resolves.toMatchObject({ success: true });
-    const archived = await hostInvoke<CoordinatorRead>(restarted, 'sessions', 'coordinatorBinding', { workspaceId });
-    expect(archived).toMatchObject({
-      validation: 'invalidated',
-      reason: 'archived',
-      binding: { sessionKey: archiveKey, state: 'invalidated', invalidationReason: 'archived', revision: 4 },
-    });
+    expect(manuallyPaused.recovery.state).toBe('paused');
+    expect(manuallyPaused.binding?.state).toBe('paused');
+    expect(existsSync(rootPath)).toBe(true);
+
+    const ledger = await hostInvoke<LedgerSnapshot>(second, 'taskLedger', 'snapshot', { workspaceId });
+    expect(ledger.snapshot.nodes.find((candidate) => candidate.id === taskLedgerNodeId)?.status).toBe('todo');
+
+    const output = testInfo.outputPath('coordinator-binding-e2e.json');
+    await writeFile(output, `${JSON.stringify({
+      schema: 'clawx.long-session.coordinator-binding-e2e/v1',
+      driven_by: 'agent',
+      actor: process.env.COMPASS_AGENT_NAME ?? 'clawx-e2e-agent',
+      workspaceId,
+      sessionKey,
+      childSessionKey,
+      taskLedgerNodeId,
+      firstGeneration,
+      restoredGeneration,
+      states: { persisted: persisted.recovery.state, renamed: renamed.recovery.state, handoffPending: pending.recovery.state, handoffActive: handoffActive.recovery.state, archived: paused.recovery.state, restored: active.recovery.state, manuallyPaused: manuallyPaused.recovery.state },
+      environmentRetainedAfterArchiveAndPause: existsSync(rootPath),
+      taskLedgerStatusAfterLifecycle: ledger.snapshot.nodes.find((candidate) => candidate.id === taskLedgerNodeId)?.status,
+      transport: 'built Electron host:invoke workspaces.bindCoordinator -> actual Main/Gateway/Git/TaskLedger owners',
+    }, null, 2)}\n`);
+    await testInfo.attach('coordinator-binding-e2e', { path: output, contentType: 'application/json' });
   } finally {
-    await closeElectronApp(restarted);
+    await closeElectronApp(second);
   }
 });

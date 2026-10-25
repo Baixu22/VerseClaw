@@ -1,181 +1,65 @@
 {
-  "schema": "clawx.long-session.f1-ui-evidence-index/v1",
-  "drivenBy": "agent",
+  "schema": "clawx.long-session.ui-evidence-index/v1",
+  "driven_by": "agent",
   "actor": "codex-long-session-f1",
-  "taskForestNode": "TF-0561",
-  "generatedAt": "2026-10-23T19:08:41.868Z",
   "candidate": {
-    "branch": "codex/long-session-implementation-20261022",
-    "commit": "504b284ba79fde7bfd32562cfdd10631a5b35a2a",
-    "tree": "693ddf8b44ec5a850e7c12033c1b05a64a949a1d",
-    "worktree": "D:/ClawX-work/worktrees/long-session-program"
+    "branch": "codex/long-session-implementation-20261023-r2",
+    "commit": "c0948cd3dc226a51d35ddf8261f9d40fb8596bec",
+    "tree": "f0f4460647898a6d63f10dda38dd477a64e2a129",
+    "worktree": "D:/ClawX-work/worktrees/long-session-program-r2",
+    "status": []
   },
-  "note": "IPC-mocked UI suites are listed for completeness only; they are not accepted as runtime wiring proof. Every F1 claim above comes from the real Host/Gateway journeys.",
-  "uiOnlySuites": [
+  "sourceReceiptSha256": "3f34e396064f5b0cb8b899cd5ca978a4f7b406c9ec26920604eaa22d0e45ada1",
+  "screenshots": [
     {
-      "file": "tests/e2e/long-session-coordination.spec.ts",
-      "proves": "C4 surface interaction with host mocks",
-      "runtimeWiringProof": false
+      "id": "wide",
+      "path": "coordination-wide.png",
+      "requestedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "contentSize": {
+        "width": 1281,
+        "height": 801
+      },
+      "browserViewport": {
+        "innerWidth": 1281,
+        "innerHeight": 801,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "bytes": 579366,
+      "sha256": "d8ef02f7621678c983b53b201d94b3ca03aef32269cfbfdf2d68b225516c0070"
     },
     {
-      "file": "tests/e2e/long-session-policy-surface.spec.ts",
-      "proves": "B2 policy rail narrow/keyboard coverage",
-      "runtimeWiringProof": false
+      "id": "narrow",
+      "path": "coordination-narrow.png",
+      "requestedViewport": {
+        "width": 680,
+        "height": 760
+      },
+      "contentSize": {
+        "width": 961,
+        "height": 761
+      },
+      "browserViewport": {
+        "innerWidth": 961,
+        "innerHeight": 761,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1442,
+        "height": 1142
+      },
+      "bytes": 453915,
+      "sha256": "ea4aeea2461b8954e610ab5af94b9af4a819f7def22bbffe021bf67af0c6ccd2"
     }
   ],
-  "runtimeSuites": [
-    {
-      "file": "tests/e2e/long-session-restart-journeys.spec.ts",
-      "proves": "F1 six cross-restart journeys on real built Electron/Host/Gateway",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/long-session-coordinator-binding.spec.ts",
-      "proves": "C1 binding survives restart, invalidates reset/archive generations",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/long-session-delegation-admission.spec.ts",
-      "proves": "C2 admission receipt and duplicate-admission guard",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/long-session-completion-continuation.spec.ts",
-      "proves": "C3 batch receipt survives stop/restart without duplicate continuation",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/long-session-continuity-context.spec.ts",
-      "proves": "D1 accepted-only continuity pack and fail-closed binding",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/long-session-followup-scheduling.spec.ts",
-      "proves": "E1 coordinator generation fence on scheduled follow-ups",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/chat-session-handoff.spec.ts",
-      "proves": "handoff flow against built app",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/chat-session-fork.spec.ts",
-      "proves": "fork flow against built app",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/chat-session-compact-range.spec.ts",
-      "proves": "manual compaction range against built app",
-      "runtimeWiringProof": true
-    },
-    {
-      "file": "tests/e2e/runtime-lifecycle-governance.spec.ts",
-      "proves": "runtime lifecycle governance against built app",
-      "runtimeWiringProof": true
-    }
-  ],
-  "gateReceipt": {
-    "provided": true,
-    "source": "D:/tmp/long-session-f1/gates-504b284ba/gates.json",
-    "allPassed": true,
-    "gates": [
-      {
-        "name": "unit-workspace-continuity",
-        "command": "pnpm exec vitest run tests/unit/workspace-session.test.ts tests/unit/chat-session-continuity.test.ts --maxWorkers=1",
-        "exitCode": 0,
-        "durationMs": 4866,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\unit-workspace-continuity.log",
-        "summary": "  Test Files  2 passed (2)       Tests  17 passed (17)    Start at  03:00:33    Duration  2.18s (transform 89ms, setup 234ms, import 47ms, tests 35ms, environment 1.44s) "
-      },
-      {
-        "name": "unit-delete-paths",
-        "command": "pnpm exec vitest run tests/unit/session-cascade-delete.test.ts tests/unit/session-delete-gate.test.ts tests/unit/terminal-session-manager.test.ts --maxWorkers=1",
-        "exitCode": 0,
-        "durationMs": 6119,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\unit-delete-paths.log",
-        "summary": "  Test Files  3 passed (3)       Tests  10 passed (10)    Start at  03:00:37    Duration  4.42s (transform 751ms, setup 363ms, import 880ms, tests 1.05s, environment 1.48s) "
-      },
-      {
-        "name": "build-vite",
-        "command": "pnpm run build:vite",
-        "exitCode": 0,
-        "durationMs": 65943,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\build-vite.log",
-        "summary": "vite v7.3.1 building client environment for production... transforming... ✓ 2 modules transformed. rendering chunks... dist-electron/preload/index.js  3.39 kB ✓ built in 17ms"
-      },
-      {
-        "name": "e2e-baseline",
-        "command": "pnpm run test:e2e:run tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/chat-session-compact-range.spec.ts tests/e2e/runtime-lifecycle-governance.spec.ts",
-        "exitCode": 0,
-        "durationMs": 163208,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\e2e-baseline.log",
-        "summary": "ok 11 tests\\e2e\\runtime-lifecycle-governance.spec.ts:42:7 › runtime lifecycle governance › delete success removes the session and conversation switch keeps the app usable (7.8s)   ok 12 tests\\e2e\\runtime-lifecycle-governance.spec.ts:121:7 › runtime lifecycle governance › delete failure keeps the persisted operationId so a retry reuses it (6.1s) [runtime-lifecycle-audit] processPollToolCalls=0   ok 13 tests\\e2e\\runtime-lifecycle-governance.spec.ts:181:7 › runtime lifecycle governance › goal wake path records zero process.poll tool calls and duplicate wake has one tick (1.0m)    13 passed (2.7m)"
-      },
-      {
-        "name": "e2e-restart-journeys",
-        "command": "pnpm run test:e2e:run tests/e2e/long-session-restart-journeys.spec.ts",
-        "exitCode": 0,
-        "durationMs": 165078,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\e2e-restart-journeys.log",
-        "summary": "\":0},{\"id\":\"journey-6-delete-late-events\",\"status\":\"pass\",\"validationAfterDelete\":\"invalidated\",\"lateReadValidation\":\"invalidated\",\"workspaceARetained\":true,\"workspaceBRetained\":true}],\"negatives\":[\"cross-workspace binding readback stayed isolated (workspace A vs B)\",\"archive invalidated the coordinator binding instead of leaving a live pointer\",\"late coordinator read after delete could not resurrect the deleted generation\"],\"status\":\"passed\"}   ok 1 tests\\e2e\\long-session-restart-journeys.spec.ts:107:5 › F1 six real long-session restart journeys across two workspaces (2.6m)    1 passed (2.7m)"
-      },
-      {
-        "name": "typecheck",
-        "command": "pnpm run typecheck",
-        "exitCode": 0,
-        "durationMs": 31597,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\typecheck.log",
-        "summary": "      \"observationMode\": false,       \"errorCount\": 0,       \"errorLog\": \"D:\\\\ClawX-work\\\\worktrees\\\\long-session-program\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"     }   ] }"
-      },
-      {
-        "name": "contract-check",
-        "command": "pnpm run contract:check",
-        "exitCode": 0,
-        "durationMs": 1000,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\contract-check.log",
-        "summary": "$ node scripts/contract-check.mjs Contract check passed."
-      },
-      {
-        "name": "comms-replay",
-        "command": "pnpm run comms:replay",
-        "exitCode": 0,
-        "durationMs": 1202,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\comms-replay.log",
-        "summary": "$ node scripts/comms/replay.mjs Wrote comms replay metrics to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\current-metrics.json"
-      },
-      {
-        "name": "comms-compare",
-        "command": "pnpm run comms:compare",
-        "exitCode": 0,
-        "durationMs": 1064,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\comms-compare.log",
-        "summary": "| message_order_violation_count | 0.0000 | <= 0 | PASS | | history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) | | rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |   Wrote comparison report to D:\\ClawX-work\\worktrees\\long-session-program\\artifacts\\comms\\compare-report.md"
-      },
-      {
-        "name": "harness-validate",
-        "command": "pnpm harness validate --spec harness/specs/tasks/long-session-restart-journeys.md",
-        "exitCode": 0,
-        "durationMs": 2030,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\harness-validate.log",
-        "summary": "$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/long-session-restart-journeys.md\" $ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/long-session-restart-journeys.md\" Spec is valid: harness\\specs\\tasks\\long-session-restart-journeys.md"
-      },
-      {
-        "name": "git-diff-check",
-        "command": "git diff --check",
-        "exitCode": 0,
-        "durationMs": 113,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\git-diff-check.log",
-        "summary": ""
-      },
-      {
-        "name": "eslint-changed",
-        "command": "pnpm exec eslint tests/e2e/long-session-restart-journeys.spec.ts electron/services/sessions-api.ts electron/services/session-delete-gate.ts shared/host-api/contract.ts scripts/long-session-restart-evidence.mjs",
-        "exitCode": 0,
-        "durationMs": 5997,
-        "log": "D:\\tmp\\long-session-f1\\gates-504b284ba\\eslint-changed.log",
-        "summary": ""
-      }
-    ]
-  }
+  "evidenceLevel": "real built Electron Chat ResourceChip -> Host API -> actual Main owner",
+  "limitations": [
+    "visual rendering is supporting evidence; lifecycle assertions are host-owner readbacks"
+  ]
 }
