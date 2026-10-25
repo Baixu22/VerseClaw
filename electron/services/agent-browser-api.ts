@@ -57,10 +57,10 @@ function navigationTarget(payload: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
-function sessionIdOf(payload: unknown): string {
+function sessionIdOf(payload: unknown, opening = false): string {
   if (!payload || typeof payload !== 'object') return 'unbound';
   const record = payload as Record<string, unknown>;
-  for (const key of ['sessionId', 'sessionKey', 'agentSessionKey']) {
+  for (const key of opening ? ['sessionKey', 'agentSessionKey'] : ['sessionId', 'sessionKey', 'agentSessionKey']) {
     const value = record[key];
     if (typeof value === 'string' && value.trim()) return value.trim();
   }
@@ -155,7 +155,7 @@ async function resolveBrowserNavigationApproval(
   if (!NAVIGATION_ACTIONS.has(action)) return;
   const url = navigationTarget(payload);
   if (!url) return;
-  const sessionId = sessionIdOf(payload);
+  const sessionId = sessionIdOf(payload, action === 'open');
   const firstPartyOrigins = await resolveFirstPartyOrigins(payload);
   const decision = decideBrowserNavigation({
     url,

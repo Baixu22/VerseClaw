@@ -227,6 +227,8 @@ it('rejects browser admission while a session lifecycle gate is open', async () 
       expect(mocks.moduleApi.open).toHaveBeenCalledTimes(1);
       await expect(api.open({ url: 'http://127.0.0.1:4567/', sessionKey: 'agent:main:trusted-private' }))
         .rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+      await expect(api.open({ url: 'http://127.0.0.1:4567/', sessionId: 's1' } as never))
+        .rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
       await expect(assertBrowserNavigationAllowed('navigate', { sessionId: 's1', url: 'http://127.0.0.1:4567/' })).resolves.toBeUndefined();
       await api.close({ sessionId: 's1' });
       await expect(assertBrowserNavigationAllowed('navigate', { sessionId: 's1', url: 'http://127.0.0.1:4567/' }))
