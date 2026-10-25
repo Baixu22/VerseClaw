@@ -1,8 +1,8 @@
 [
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/audit.json",
-    "expected": "00ccee410207737b575ed3341fd3c10236f8d22a28ea37dba9fff2bc89357653",
-    "actual": "00ccee410207737b575ed3341fd3c10236f8d22a28ea37dba9fff2bc89357653",
+    "expected": "57b24abe6d93f7f91609a95b904bceb2bcb1d241d6ceafec158379e10abe8288",
+    "actual": "57b24abe6d93f7f91609a95b904bceb2bcb1d241d6ceafec158379e10abe8288",
     "status": "pass"
   },
   {
@@ -25,8 +25,8 @@
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/model-positioning-receipt.json",
-    "expected": "371a1dac53244e1e9c7f9227b38fcdbebe98896a1a7de4ef8bbc169b2af08dc5",
-    "actual": "371a1dac53244e1e9c7f9227b38fcdbebe98896a1a7de4ef8bbc169b2af08dc5",
+    "expected": "e6ee9cf6cbd32bb34116e38cbe83d45406ea1f1b4868e3a68dee8a09a8d308aa",
+    "actual": "e6ee9cf6cbd32bb34116e38cbe83d45406ea1f1b4868e3a68dee8a09a8d308aa",
     "status": "pass"
   },
   {
@@ -37,20 +37,20 @@
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
-    "expected": "99d296861fcee7a21b6fe00c2553cbc11ae97e7fb49f3c4bfbe70af3bed57e50",
-    "actual": "99d296861fcee7a21b6fe00c2553cbc11ae97e7fb49f3c4bfbe70af3bed57e50",
+    "expected": "b6fdb209cf1675f98e289501054f0831de4b05c85359fe47ab7c0f336fe25a4a",
+    "actual": "b6fdb209cf1675f98e289501054f0831de4b05c85359fe47ab7c0f336fe25a4a",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
-    "expected": "1aab2c58dabfb0677725298ce325f796594f032810b411bc44f0ecb81ceea3f5",
-    "actual": "1aab2c58dabfb0677725298ce325f796594f032810b411bc44f0ecb81ceea3f5",
+    "expected": "ac15d5f4f0d038d0e006ba171620548da2efc819584ffc8dc1fea594a60db486",
+    "actual": "ac15d5f4f0d038d0e006ba171620548da2efc819584ffc8dc1fea594a60db486",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-    "expected": "3ef4df45672826181a89d4db20ae1530070dab3b9228cd83d9bf97960435de0c",
-    "actual": "3ef4df45672826181a89d4db20ae1530070dab3b9228cd83d9bf97960435de0c",
+    "expected": "ab105c9711171f3e6ea5e0214b73a65230bb7c9d9c1a01b77765cf5cff1421c4",
+    "actual": "ab105c9711171f3e6ea5e0214b73a65230bb7c9d9c1a01b77765cf5cff1421c4",
     "status": "pass"
   },
   {

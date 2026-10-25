@@ -52,7 +52,7 @@ const passedCalls = evaluated.reduce((sum, row) => sum + row.scored.filter((answ
 const report = {
   schemaVersion: 'ModelPositioningVerification/v1',
   taskForestNodeId: 'TF-0507',
-  generatedAt: new Date().toISOString(),
+  generatedAt: protocol.declaredAt,
   driven_by: 'agent',
   actor: 'codex',
   provider: protocol.provider,

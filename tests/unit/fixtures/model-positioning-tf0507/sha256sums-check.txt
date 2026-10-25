@@ -229,14 +229,14 @@
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/verification.json",
-    "expected": "4614469d27b15c1f0f445754c4c49cbde4506fe541d089aa00c0ef726791eb44",
-    "actual": "4614469d27b15c1f0f445754c4c49cbde4506fe541d089aa00c0ef726791eb44",
+    "expected": "c7f6ff554f7b9e0ac3361f588b6d09692879b25fe856ac4f47ea1d9f12c7cc1a",
+    "actual": "c7f6ff554f7b9e0ac3361f588b6d09692879b25fe856ac4f47ea1d9f12c7cc1a",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/model-positioning-tf0507/verify-run.mts",
-    "expected": "7a94d7b6394ebf088ab395f312292c87d8cc62849160a3dd14616f6e657943fe",
-    "actual": "7a94d7b6394ebf088ab395f312292c87d8cc62849160a3dd14616f6e657943fe",
+    "expected": "a764c8d98c66cdebd93a44e10262c1dcfd3627ec4cb957fcc7674fec9b9dddf8",
+    "actual": "a764c8d98c66cdebd93a44e10262c1dcfd3627ec4cb957fcc7674fec9b9dddf8",
     "status": "pass"
   }
 ]

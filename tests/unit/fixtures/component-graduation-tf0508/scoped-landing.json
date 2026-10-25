@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ComponentGraduationScopedLanding/v1",
   "base": "b62e7f4c9",
-  "head": "922b6495cc8f6c5494af755662355caa2e25a861",
+  "head": "5e88ffa074bf5b8283cfcebe8fa66d5703455a42",
   "status": "pass",
   "diff": [
     "README.ja-JP.md",
@@ -90,17 +90,13 @@
     "tests/unit/fixtures/product-semantics-tf0506/verification.json"
   ],
   "reviewedOutsideScope": [
-    "M tests/unit/fixtures/component-graduation-tf0508/README.md",
-    " M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
+    "M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
     " M tests/unit/fixtures/component-graduation-tf0508/audit.json",
     " M tests/unit/fixtures/component-graduation-tf0508/model-positioning-receipt.json",
     " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
     " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
     " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-    " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt",
-    " M tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json",
-    "?? tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
-    "?? tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt"
+    " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt"
   ],
   "unreviewedOutsideScope": []
 }

@@ -36,5 +36,5 @@ c2604f96d11e1a887c4cee2e35e5449600451a2e0859f0c018f84ed57b50ecbe  tests/unit/fix
 05204fb1a54a00f52f60dbe725dad90baf3a6168de40c8b8353cadeadf4d12b6  tests/unit/fixtures/model-positioning-tf0507/run-v7.json
 0f3745698e3af2e37208b6495eb361ec1f3d74e8871f649b3f21c188f0f72a18  tests/unit/fixtures/model-positioning-tf0507/run-v8.json
 c17b1f5f48fdf9dae0ff716efbf12a656bd2fa3fc5999f98c39239c8fc4b1d3a  tests/unit/fixtures/model-positioning-tf0507/run-v9.json
-4614469d27b15c1f0f445754c4c49cbde4506fe541d089aa00c0ef726791eb44  tests/unit/fixtures/model-positioning-tf0507/verification.json
-7a94d7b6394ebf088ab395f312292c87d8cc62849160a3dd14616f6e657943fe  tests/unit/fixtures/model-positioning-tf0507/verify-run.mts
+c7f6ff554f7b9e0ac3361f588b6d09692879b25fe856ac4f47ea1d9f12c7cc1a  tests/unit/fixtures/model-positioning-tf0507/verification.json
+a764c8d98c66cdebd93a44e10262c1dcfd3627ec4cb957fcc7674fec9b9dddf8  tests/unit/fixtures/model-positioning-tf0507/verify-run.mts

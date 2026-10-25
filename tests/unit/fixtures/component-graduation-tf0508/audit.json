@@ -68,7 +68,7 @@
       "readback": {
         "schemaVersion": "ModelPositioningVerification/v1",
         "taskForestNodeId": "TF-0507",
-        "generatedAt": "2026-10-25T10:08:00.735Z",
+        "generatedAt": "2026-10-25T09:17:43.778Z",
         "driven_by": "agent",
         "actor": "codex",
         "provider": "local-3065",
@@ -256,25 +256,21 @@
         "tests/unit/fixtures/product-semantics-tf0506/verification.json"
       ],
       "reviewedOutsideScope": [
-        "M tests/unit/fixtures/component-graduation-tf0508/README.md",
-        " M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
+        "M tests/unit/fixtures/component-graduation-tf0508/SHA256SUMS",
         " M tests/unit/fixtures/component-graduation-tf0508/audit.json",
         " M tests/unit/fixtures/component-graduation-tf0508/model-positioning-receipt.json",
         " M tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
         " M tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
         " M tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-        " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt",
-        " M tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json",
-        "?? tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
-        "?? tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt"
+        " M tests/unit/fixtures/component-graduation-tf0508/sha256sums-check.txt"
       ],
       "unreviewedOutsideScope": []
     },
     {
       "id": "scoped_landing_inputs",
       "status": "pass",
-      "scopedChangedCount": 6,
-      "nonScopedChangedCount": 11
+      "scopedChangedCount": 4,
+      "nonScopedChangedCount": 7
     }
   ],
   "successMetrics": {
