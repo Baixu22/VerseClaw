@@ -685,19 +685,12 @@ function buildPromptAddition(
 
   const compose = (defaultNames: readonly string[], advancedNames: readonly string[]): string => {
     const included = visible.filter((entry) => defaultNames.includes(entry.displayName) || advancedNames.includes(entry.displayName));
-    const states = (names: readonly string[]) => {
-      const grouped = new Map<string, string[]>();
-      for (const name of names) {
-        const entry = included.find((entry) => entry.displayName === name)!;
-        const state = factById.get(entry.capabilityId)!.runtimeAvailability.state;
-        const members = grouped.get(state) ?? [];
-        members.push(name);
-        grouped.set(state, members);
-      }
-      return Array.from(grouped, ([state, members]) => `${state}=[${members.join(',')}]`).join(';');
-    };
+    const states = (names: readonly string[]) => names.map((name) => {
+      const entry = included.find((entry) => entry.displayName === name)!;
+      return `${name}=${factById.get(entry.capabilityId)!.runtimeAvailability.state}`;
+    }).join(',');
     const unknownCount = included.filter((entry) => factById.get(entry.capabilityId)?.runtimeAvailability.state === 'unknown').length;
-    const lines = ['Capability positioning (authoritative):'];
+    const lines = ['Capability facts:'];
     if (defaultNames.length > 0) lines.push(`Default: ${states(defaultNames)}.`);
     if (advancedNames.length > 0) lines.push(`Advanced: ${states(advancedNames)}.`);
     const memory = factById.get('component.role-memory')?.memory ?? facts[0]!.memory;
@@ -721,8 +714,8 @@ function buildPromptAddition(
         ? 'Runtime state is not yet verified for all listed capabilities; do not present them as currently active.'
         : `Unverified runtime remains unknown (${unknownCount} listed capabilities); do not claim active.`);
     }
-    lines.push('Availability is independent of permission. Approval requests do not execute; denied/unknown actions must not be requested. Permission denials do not change availability.');
-    lines.push('Internal/retired are not products; claim only listed facts.');
+    lines.push('For capability inventories, copy each listed name/state exactly. No denied/unknown requests; approval requests never execute.');
+    lines.push('No internal/retired products; use listed facts.');
     return lines.join('\n');
   };
 
