@@ -65,7 +65,8 @@ describe('ComponentDispositionManifest/v1', () => {
 
   it('records current consumer, owner, implementation/retirement node and evidence refs for every entry', () => {
     for (const entry of COMPONENT_DISPOSITION_ENTRIES) {
-      expect(entry.currentConsumers.length, entry.id).toBeGreaterThan(0);
+      if (entry.disposition === 'retired') expect(entry.retirementNodeId, entry.id).toBeTruthy();
+      else expect(entry.currentConsumers.length, entry.id).toBeGreaterThan(0);
       expect(entry.owner.trim(), entry.id).not.toBe('');
       expect(entry.evidenceRefs.length, entry.id).toBeGreaterThan(0);
       if (entry.disposition === 'retired') expect(entry.retirementNodeId, entry.id).toBeTruthy();
@@ -91,7 +92,7 @@ describe('ComponentDispositionManifest/v1', () => {
 
   it('requires owner, future expiry and graduate/retire criteria on every experiment', () => {
     const experiments = COMPONENT_DISPOSITION_ENTRIES.filter((entry) => entry.disposition === 'experiment');
-    expect(experiments.length).toBeGreaterThan(0);
+    expect(experiments).toEqual([]);
     for (const entry of experiments) {
       expect(entry.experimentOwner, entry.id).toBeTruthy();
       expect(Date.parse(entry.expiry ?? ''), entry.id).toBeGreaterThan(Date.parse('2026-10-21T00:00:00.000Z'));
@@ -149,8 +150,9 @@ describe('ComponentDispositionManifest/v1', () => {
 
   it('rejects an experiment without expiry or owner', () => {
     const manifest = mutableManifest();
-    const experiment = (manifest.entries as Array<(typeof manifest.entries)[number]>).find((entry) => entry.disposition === 'experiment');
+    const experiment = (manifest.entries as Array<(typeof manifest.entries)[number]>).find((entry) => entry.disposition === 'internal');
     if (!experiment) throw new Error('missing experiment');
+    experiment.disposition = 'experiment';
     experiment.expiry = undefined;
     experiment.experimentOwner = '';
     const result = validateComponentDispositionManifest(manifest, inputs);

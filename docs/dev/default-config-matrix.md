@@ -15,8 +15,8 @@ This matrix is the single source of truth for **product defaults**. A component 
 
 | Surface | Config / env key | Product default | How to enable (canary) | Instant kill / stop |
 |---|---|---|---|---|
-| **VToken assembly** | runtime.vtoken.assembly.enabled | **false** (opt-in) | enabled:true or VERSE_VTOKEN_ASSEMBLY_ENABLED=1 | env=0 or enhancement kill switch |
-| **VToken bridge** | VERSE_VTOKEN_BRIDGE_ENABLED / hostApi.vtoken.setEnabled | **false** | env=1 or Developer toggle | env=0 / setEnabled(false) / kill switch |
+| **VToken assembly** | runtime.vtoken.assembly.enabled | **false** (opt-in) | retired by TF-0496; legacy values cannot enable injection | env=0 or enhancement kill switch |
+| **VToken bridge** | VERSE_VTOKEN_BRIDGE_ENABLED / hostApi.vtoken.setEnabled | **false** | retired by TF-0496; host enabling is refused | env=0 / setEnabled(false) / kill switch |
 | **Workspace Context** | Settings > General single user profile over runtime.contextBlock.working-memory.enabled + runtime.contextBlock.tool-registry.enabled | **true** | baseline-on; one Settings toggle | toggle off or context enhancement kill switch |
 | **working-memory** | runtime.contextBlock.working_memory.enabled | **true** | internal component of Workspace Context | Workspace Context off or kill switch |
 | **tool-registry** | runtime.contextBlock.tool-registry.enabled | **true** | internal component of Workspace Context | Workspace Context off or kill switch |

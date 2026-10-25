@@ -688,7 +688,9 @@ export const PRODUCT_SURFACE_AUTHORITY_LINKS = {
 export const DEFAULT_MATRIX_AUTHORITY_LINKS = {
   'VToken assembly': ['vtoken-context-source'],
   'VToken bridge': ['vtoken-bridge'],
+  'Workspace Context': ['working-memory-context-source', 'tool-registry-context-source'],
   'working-memory': ['working-memory-context-source'],
+  'tool-registry': ['tool-registry-context-source'],
   'Runtime Memory inject pilot': ['runtime-memory-store', 'dcs-context-authority'],
   'Runtime Memory shadow/provider/persist': ['runtime-memory-store', 'memory-candidate-queue', 'memory-embedding-provider'],
   'SEKB master': ['sekb-candidate-provider'],

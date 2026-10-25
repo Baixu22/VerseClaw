@@ -59,9 +59,7 @@ Rollback (if the decision is reversed):
 
 ## Residual surface (tracked, not silently dropped)
 
-The Settings > Developer "Verse Token Bridge" panel still exists and now reports a retired status. Its
-deletion lives in `src/components/settings/`, which is outside this node allowed paths and belongs to the
-surface-cleanup node `TF-0505`; the host API keeps its shape so the panel cannot crash before then.
+The original TF-0496 run left a retired compatibility panel for TF-0505. The subsequent surface-cleanup node removed its user entry. The inert host API retains its compatibility shape; enabling the retired bridge remains refused.
 
 ## Evidence
 

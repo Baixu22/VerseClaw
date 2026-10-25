@@ -75,7 +75,7 @@ The table below is the canonical component classification for this preview. Each
 | Component | Canonical label | Boundary |
 | --- | --- | --- |
 | DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
-| DCS Fact view tools | `opt-in` | Context read/search/understand tools remain a separately graduated tool surface; the baseline Workspace Context profile does not register them as side-effecting product tools. |
+| DCS Fact view and tool registry | `opt-in` | Context read/search/understand tools remain a separately graduated tool surface; the baseline Workspace Context profile does not register them as side-effecting product tools. |
 | VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
 | SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
 | C6 automatic context ladder | `deferred` | No automatic assembler activation in this preview. |

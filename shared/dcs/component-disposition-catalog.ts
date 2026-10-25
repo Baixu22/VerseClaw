@@ -93,7 +93,6 @@ const APP = 'src/App.tsx';
 const SETTINGS = 'src/pages/Settings/index.tsx';
 const SETTINGS_ROUTE = 'src/pages/Settings/route-config.ts';
 const LANDED = 'harness/specs/fixtures/landed-unwired-closeout/audit.json';
-const EXPERIMENT_EXPIRY = '2026-12-31T23:59:59.000Z';
 
 const CONTEXT_EVIDENCE = [AUTHORITY, RUNTIME, DEFAULTS, D9] as const;
 const MEMORY_EVIDENCE = [AUTHORITY, RUNTIME, DEFAULTS, SEMANTICS] as const;
@@ -150,11 +149,10 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['tool-registry-context-source'], dcsFlagIds: ['tool-registry'], runtimeLeafPatterns: ['contextBlock.tool-registry.*'] },
   }),
   entry({
-    id: 'component.vtoken-context', label: 'VToken context source', disposition: 'experiment', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('VToken remains an internal Context Orchestrator packing strategy; it has no user bridge toggle or product control.'),
-    currentConsumers: ['Context Orchestrator', 'VToken assembly'], evidenceRefs: CONTEXT_EVIDENCE,
+    id: 'component.vtoken-context', label: 'VToken context source', disposition: 'retired', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'retired', targetDefaultMode: 'retired',
+    ...retired('TF-0496 retired injection after its provider-usage decision; legacy configuration cannot reactivate it.'),
+    currentConsumers: [], evidenceRefs: [...CONTEXT_EVIDENCE, 'docs/dev/vtoken-retirement-decision.md', 'tests/unit/fixtures/vtoken-tf0496/ab-run.json'],
     coverage: { authorityComponentIds: ['vtoken-context-source'], runtimeLeafPatterns: ['vtoken.assembly.*'] },
-    experimentOwner: 'TF-0496', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if VToken graduation succeeds; otherwise retire the internal context source by TF-0496.',
   }),
   entry({
     id: 'component.vtoken-bridge', label: 'VToken internal host bridge', disposition: 'internal', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
@@ -231,11 +229,10 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['knowledge-retrieval-source'] },
   }),
   entry({
-    id: 'component.sekb-candidate-provider', label: 'SEKB candidate provider', disposition: 'experiment', owner: 'TF-0499', implementationNodeId: 'TF-0499', currentMode: 'shadow', targetDefaultMode: 'shadow',
-    ...internal('SEKB is an expiring candidate/provenance provider and cannot apply knowledge or auto-write memory.'),
-    currentConsumers: ['Knowledge candidates', 'runtime coding lessons', 'shadow retrieval'], evidenceRefs: KNOWLEDGE_EVIDENCE,
+    id: 'component.sekb-candidate-provider', label: 'Knowledge engineering-principle adapter', disposition: 'internal', owner: 'TF-0499', implementationNodeId: 'TF-0499', currentMode: 'mixed', targetDefaultMode: 'internal',
+    ...internal('TF-0499 merged engineering principles into the existing Knowledge candidate/review path; the adapter cannot apply knowledge or auto-write memory.'),
+    currentConsumers: ['Knowledge engineering-principle candidates', 'Knowledge review'], evidenceRefs: [...KNOWLEDGE_EVIDENCE, 'tests/unit/fixtures/knowledge-tf0499/verification.json'],
     coverage: { authorityComponentIds: ['sekb-candidate-provider'], dcsFlagIds: ['sekb-experience-shadow', 'sekb-retrieval-shadow'], runtimeLeafPatterns: ['contextBlock.sekb.*', 'coding.sekb.*'] },
-    experimentOwner: 'TF-0499', expiry: EXPERIMENT_EXPIRY, graduateOrRetireCriteria: 'Keep only if SEKB candidates improve Knowledge review and preserve one applied-knowledge authority; otherwise retire by TF-0499.',
   }),
   entry({
     id: 'component.v3-capability-catalog', label: 'V3 capability catalog', disposition: 'internal', owner: 'v3-capability-catalog', implementationNodeId: 'TF-0501', currentMode: 'shadow', targetDefaultMode: 'internal',
@@ -317,7 +314,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.renderer-ui-surface', label: 'Renderer UI surface', disposition: 'default', owner: 'renderer-ui-surface', implementationNodeId: 'TF-0505', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('application shell and Settings'),
     currentConsumers: ['Chat shell', 'Settings', 'workspace panels'], evidenceRefs: UI_EVIDENCE,
-    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived', 'models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/setup/*', '/', '/settings', '/settings/*', '/models'] },
+    coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived', 'models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/setup/*', '/', '/settings', '/settings/*', '/models', '/memory'] },
   }),
   entry({
     id: 'component.retired-surface-registry', label: 'Retired surface registry', disposition: 'internal', owner: 'retired-surface-registry', implementationNodeId: 'TF-0505', currentMode: 'baseline', targetDefaultMode: 'retired',
@@ -497,7 +494,7 @@ export function validateComponentDispositionManifest(
     if (!item.owner.trim()) issues.push(coverageIssue('missing_owner', `${item.id} has no owner`, item.id));
     if (!COMPONENT_DISPOSITIONS.includes(item.disposition)) issues.push(coverageIssue('invalid_disposition', `${item.id} has invalid disposition`, item.id));
     if (!COMPONENT_AUTHORITY_DEFAULT_MODES.includes(item.targetDefaultMode)) issues.push(coverageIssue('invalid_target_mode', `${item.id} has invalid target default mode`, item.id));
-    if (item.currentConsumers.length === 0) issues.push(coverageIssue('missing_consumers', `${item.id} has no current consumer`, item.id));
+    if (item.disposition !== 'retired' && item.currentConsumers.length === 0) issues.push(coverageIssue('missing_consumers', `${item.id} has no current consumer`, item.id));
     if (item.evidenceRefs.length === 0) issues.push(coverageIssue('missing_evidence', `${item.id} has no evidence artifact`, item.id));
     if (item.disposition === 'default' || item.disposition === 'advanced') {
       if (item.visibility !== 'user' || !item.userEntry) issues.push(coverageIssue('user_entry_required', `${item.id} is user-facing but has no user entry`, item.id));

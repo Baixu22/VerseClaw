@@ -8,6 +8,7 @@ intent: Verify 24 declared positioning scenarios against the production bounded 
 touchedAreas:
   - harness/specs/tasks/model-capability-positioning-acceptance.md
   - shared/model-capability-profile.ts
+  - shared/dcs/component-disposition-catalog.ts
   - tests/unit/model-capability-positioning-tf0507.test.ts
   - tests/unit/fixtures/model-capability-positioning-tf0507/**
   - scripts/model-capability-positioning.mts
