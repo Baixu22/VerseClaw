@@ -1,8 +1,8 @@
 [
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/audit.json",
-    "expected": "57b24abe6d93f7f91609a95b904bceb2bcb1d241d6ceafec158379e10abe8288",
-    "actual": "57b24abe6d93f7f91609a95b904bceb2bcb1d241d6ceafec158379e10abe8288",
+    "expected": "d75368773cb8ed03872b97d8e9fe6b9378637d9f4ef8854b84c16d63f4870516",
+    "actual": "d75368773cb8ed03872b97d8e9fe6b9378637d9f4ef8854b84c16d63f4870516",
     "status": "pass"
   },
   {
@@ -37,38 +37,38 @@
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/run-audit.mts",
-    "expected": "b6fdb209cf1675f98e289501054f0831de4b05c85359fe47ab7c0f336fe25a4a",
-    "actual": "b6fdb209cf1675f98e289501054f0831de4b05c85359fe47ab7c0f336fe25a4a",
+    "expected": "5ccd8d9a86228f23b3d0966103baf0c7bed8cbd7e24ea57988e83cedffcbf703",
+    "actual": "5ccd8d9a86228f23b3d0966103baf0c7bed8cbd7e24ea57988e83cedffcbf703",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/scope-receipt.json",
-    "expected": "ac15d5f4f0d038d0e006ba171620548da2efc819584ffc8dc1fea594a60db486",
-    "actual": "ac15d5f4f0d038d0e006ba171620548da2efc819584ffc8dc1fea594a60db486",
+    "expected": "77fe68b8b3264b9a06f77f9bd2b7f81f0b90599ecd85871f040f4c6c29afcd79",
+    "actual": "77fe68b8b3264b9a06f77f9bd2b7f81f0b90599ecd85871f040f4c6c29afcd79",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/scoped-landing.json",
-    "expected": "ab105c9711171f3e6ea5e0214b73a65230bb7c9d9c1a01b77765cf5cff1421c4",
-    "actual": "ab105c9711171f3e6ea5e0214b73a65230bb7c9d9c1a01b77765cf5cff1421c4",
+    "expected": "02cbe352377637021dba639701126568c049c886a3e10de7b9ea2f3c10577835",
+    "actual": "02cbe352377637021dba639701126568c049c886a3e10de7b9ea2f3c10577835",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/task-forest-export.txt",
-    "expected": "db58831293fc53cf1cb19edc72cfa22e9667b8fa5e88d9bef6fe538e2f609cad",
-    "actual": "db58831293fc53cf1cb19edc72cfa22e9667b8fa5e88d9bef6fe538e2f609cad",
+    "expected": "c5f2d6b38c7cb0cec1b9f25e1978a0127229802a78c8d01068ffd3d063d763f3",
+    "actual": "c5f2d6b38c7cb0cec1b9f25e1978a0127229802a78c8d01068ffd3d063d763f3",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/task-forest-validate.txt",
-    "expected": "2c578ac5602983fdc5c89b7dc9d7bc2bde18bf03656e92d56fbf9a0c070d22e9",
-    "actual": "2c578ac5602983fdc5c89b7dc9d7bc2bde18bf03656e92d56fbf9a0c070d22e9",
+    "expected": "b45a9daf28a0fc59b675605b7a75932f61663d48f60e2552f06823bab753de49",
+    "actual": "b45a9daf28a0fc59b675605b7a75932f61663d48f60e2552f06823bab753de49",
     "status": "pass"
   },
   {
     "file": "tests/unit/fixtures/component-graduation-tf0508/tf0512-receipt.json",
-    "expected": "2781c2f9a50105baaf2408b176f1ef2375caf2fa055705f003c0ee27423aa9a5",
-    "actual": "2781c2f9a50105baaf2408b176f1ef2375caf2fa055705f003c0ee27423aa9a5",
+    "expected": "d53b2b37600a69248fda55de0e358cf4d40b8656eca1bc0042de7e3c50c443ab",
+    "actual": "d53b2b37600a69248fda55de0e358cf4d40b8656eca1bc0042de7e3c50c443ab",
     "status": "pass"
   }
 ]

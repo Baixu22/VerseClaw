@@ -50,8 +50,19 @@ $results += Gate '03-lint-check' @($pnpm, 'run', 'lint:check') 'pnpm run lint:ch
 $results += Gate '04-contract-check' @($pnpm, 'run', 'contract:check') 'pnpm run contract:check'
 $results += Gate '05-no-bom' @($node, 'scripts/check-no-bom.mjs') 'node scripts/check-no-bom.mjs'
 $results += Gate '06-diff-check' @('git', 'diff', '--check') 'git diff --check'
-$results += Gate '07-scope-guard' @($node, '.agent-workbench/component-graduation/check-scope.mjs', '--require-node', 'TF-0512', '--json') 'TF-0512 scope guard'
+$scopeAudit = Join-Path $root 'tests/unit/fixtures/component-graduation-tf0508/run-audit.mts'
+$watch = [Diagnostics.Stopwatch]::StartNew()
+while (-not (Test-Path -LiteralPath $scopeAudit) -and $watch.Elapsed.TotalSeconds -lt 600) {
+  Start-Sleep -Milliseconds 250
+}
+$watch.Stop()
+if (-not (Test-Path -LiteralPath $scopeAudit)) {
+  throw "TF-0508 audit script unavailable: $scopeAudit"
+}
+$results += Gate '07-scope-guard' @($pnpm, '--dir', 'openclaw_runtime', 'exec', 'tsx', '../tests/unit/fixtures/component-graduation-tf0508/run-audit.mts', '--json') 'TF-0508 scope audit'
+
 $results += Gate '08-regenerate-acceptance' @($pnpm, 'exec', 'vitest', 'run', 'tests/unit/model-capability-effective-state-tf0512.test.ts', '-t', 'regenerates the acceptance pack from current disk facts', '--maxWorkers=1', '--reporter=dot') 'regenerate acceptance from current disk facts'
+$results += Gate '09-graduation-gate' @($pnpm, '--dir', 'openclaw_runtime', 'exec', 'tsx', '../scripts/component-graduation-report.mts', '--report', 'tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json', '--require-graduation', '--task-node-id', 'TF-0512', '--task-node-status', 'done') 'TF-0512 component graduation gate'
 
 $gateStatus = if (@($results | Where-Object { $_.status -ne 'pass' }).Count -eq 0) { 'pass' } else { 'fail' }
 $verification = [ordered]@{
