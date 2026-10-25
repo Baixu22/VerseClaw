@@ -488,7 +488,6 @@ export function createProcessSupervisor(
         const remaining = Math.max(0, (startingByLifecycle.get(lifecycleReservationKey) ?? 1) - 1);
         if (remaining === 0) startingByLifecycle.delete(lifecycleReservationKey);
         else startingByLifecycle.set(lifecycleReservationKey, remaining);
-        reservationHeld = false;
       }
       registry.finalize(runId, {
         reason: "spawn-error",
