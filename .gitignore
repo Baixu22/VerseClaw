@@ -2116,3 +2116,6 @@ openclaw_runtime/_tmp_*
 
 # Curated tracked browser evidence is a source input, despite the general log rule.
 !/harness/specs/fixtures/versebrowser-invocation-maturity/current-20261022/e2e.log
+
+# Long-session D1 log is content-addressed by its fixture SHA256SUMS.
+!harness/specs/fixtures/long-session-development/d1/typecheck-errors.log

@@ -23,14 +23,15 @@ touchedAreas:
   - shared/capability-claims.ts
   - scripts/long-session-final-acceptance-evidence.mjs
   - package.json
-  - artifacts/
-  - docs/
-  - electron/
-  - harness/
-  - openclaw_runtime/
-  - shared/
-  - src/
-  - tests/
+  - artifacts/**
+  - docs/**
+  - electron/**
+  - harness/**
+  - openclaw_runtime/**
+  - shared/**
+  - src/**
+  - tests/**
+  - scripts/**
   - README*.md
   - .gitattributes
   - .gitignore
