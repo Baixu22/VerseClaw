@@ -1,14 +1,14 @@
 [
     {
         "file":  "tests/unit/fixtures/product-semantics-tf0506/01-focused-tests.txt",
-        "expected":  "630f92ff976003adf01819839a8ba32e1ba6f222d260239fb984c31fc2c2168c",
-        "actual":  "630f92ff976003adf01819839a8ba32e1ba6f222d260239fb984c31fc2c2168c",
+        "expected":  "9f98b4000e61ffeb426e2090e981d9cb89839ec4779d279adcb05fda2a56eda3",
+        "actual":  "9f98b4000e61ffeb426e2090e981d9cb89839ec4779d279adcb05fda2a56eda3",
         "status":  "pass"
     },
     {
         "file":  "tests/unit/fixtures/product-semantics-tf0506/02-typecheck.txt",
-        "expected":  "9c191e91c9afe0e2cdeb0a2606cccc2a4f0809378a98f07f8845aab1304a7edc",
-        "actual":  "9c191e91c9afe0e2cdeb0a2606cccc2a4f0809378a98f07f8845aab1304a7edc",
+        "expected":  "8ecd0621526b9e44a1697764125a24ef70a8a70883520dac867ce4d093594692",
+        "actual":  "8ecd0621526b9e44a1697764125a24ef70a8a70883520dac867ce4d093594692",
         "status":  "pass"
     },
     {
@@ -19,8 +19,8 @@
     },
     {
         "file":  "tests/unit/fixtures/product-semantics-tf0506/04-lint.txt",
-        "expected":  "6d8eceb29dfb36a8917e8e73c7665783b4f9d2f805b166950cbfd335a746db14",
-        "actual":  "6d8eceb29dfb36a8917e8e73c7665783b4f9d2f805b166950cbfd335a746db14",
+        "expected":  "9753b655466fd3ff9c2dda791366401d55e48338ac3b173de355aeceae67ec28",
+        "actual":  "9753b655466fd3ff9c2dda791366401d55e48338ac3b173de355aeceae67ec28",
         "status":  "pass"
     },
     {
@@ -43,8 +43,8 @@
     },
     {
         "file":  "tests/unit/fixtures/product-semantics-tf0506/08-claim-scan.txt",
-        "expected":  "0749b6c5fc119f26a8d9ea2fab18f978e99d504a3e1d5718b18f4fdb997ccd0e",
-        "actual":  "0749b6c5fc119f26a8d9ea2fab18f978e99d504a3e1d5718b18f4fdb997ccd0e",
+        "expected":  "b75538e8d8028347c67fd97e6b8a5a4a5af1c0eac5e0dfeba4ea9f0656025bc9",
+        "actual":  "b75538e8d8028347c67fd97e6b8a5a4a5af1c0eac5e0dfeba4ea9f0656025bc9",
         "status":  "pass"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
         "file":  "tests/unit/fixtures/product-semantics-tf0506/verification.json",
-        "expected":  "35a3a91b116dc4b7deb4ad44f9a7fc4d93926be2617be5c1e10bc40d1b266f31",
-        "actual":  "35a3a91b116dc4b7deb4ad44f9a7fc4d93926be2617be5c1e10bc40d1b266f31",
+        "expected":  "318a6c56ff0fa9274385150e91e50bc37dc1b93d8a4c1888834fd4c907860930",
+        "actual":  "318a6c56ff0fa9274385150e91e50bc37dc1b93d8a4c1888834fd4c907860930",
         "status":  "pass"
     }
 ]

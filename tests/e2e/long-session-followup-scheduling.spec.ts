@@ -79,6 +79,33 @@ async function liveSessionId(app: ElectronApplication, sessionKey: string): Prom
   return id || null;
 }
 
+/**
+ * The forced run is enqueued, so the fence verdict lands in the run log rather
+ * than in the trigger response. Poll the real scheduler receipts.
+ */
+async function _waitForCoordinatorRefusal(app: ElectronApplication, jobId: string, timeoutMs = 90_000): Promise<string> {
+  const deadline = Date.now() + timeoutMs;
+  let last = '';
+  while (Date.now() < deadline) {
+    const result = await hostInvoke<Array<Record<string, unknown>> | { runs?: Array<Record<string, unknown>> }>(
+      app,
+      'gateway',
+      'rpc',
+      { method: 'cron.runs', params: { scope: 'job', id: jobId, jobId, limit: 5 }, timeoutMs: 20_000 },
+    );
+    const runs = Array.isArray(result) ? result : (result.runs ?? []);
+    last = JSON.stringify(runs);
+    if (last.includes('coordinator-scope-')) return last;
+    const stateProbe = (await listJobs(app)).find((job) => job.id === jobId) as
+      | (CronJobShape & { lastRun?: { success?: boolean; error?: string } })
+      | undefined;
+    last = last + '|state:' + JSON.stringify(stateProbe?.lastRun ?? null);
+    if (last.includes('coordinator-scope-')) return last;
+    await new Promise((resolve) => setTimeout(resolve, 1_500));
+  }
+  throw new Error('coordinator fence refusal was not observed in the scheduler run log: ' + last.slice(0, 400));
+}
+
 async function listJobs(app: ElectronApplication): Promise<CronJobShape[]> {
   const jobs = await hostInvoke<CronJobShape[] | { jobs?: CronJobShape[] }>(app, 'cron', 'list');
   return Array.isArray(jobs) ? jobs : (jobs.jobs ?? []);

@@ -1,6 +1,6 @@
 {
   "schema": "verse-claw-first-product-claim-scan/1",
-  "generatedAt": "2026-10-25T12:02:07.649Z",
+  "generatedAt": "2026-10-25T12:39:03.031Z",
   "repository": "ClawX",
   "scope": "tracked and non-ignored untracked text files; current product surfaces are hard-fail",
   "currentProductSurfaces": [
@@ -93607,17 +93607,17 @@
       "matches": [
         {
           "term": "live-ready-field",
-          "line": 359,
+          "line": 282,
           "count": 1
         },
         {
           "term": "product-approved-field",
-          "line": 359,
+          "line": 282,
           "count": 1
         },
         {
           "term": "ga-abbreviation",
-          "line": 359,
+          "line": 282,
           "count": 1
         }
       ]
