@@ -7,7 +7,7 @@ import { closeElectronApp, expect, test } from './fixtures/electron';
 
 const execFileAsync = promisify(execFile);
 const binaryPath = join(process.cwd(), 'resources/bin/win32-x64/ae.exe');
-const tempRoot = process.platform === 'win32' ? 'D:/tmp' : tmpdir();
+const tempRoot = process.env.VERSEGIT_E3_TMP_ROOT ?? (process.platform === 'win32' ? 'D:/tmp' : tmpdir());
 
 test.describe('verified candidate host apply', () => {
   test('runs completion, candidate verification, permission gate and journaled apply in order', async ({ launchElectronApp }) => {
