@@ -196,7 +196,7 @@ TF-0565 is complete only when all of the following can be read from disk:
 | TF-0569 | Test one real VB, one VS and one VG collaboration seam under existing owners | Bypassing VB approval, VS journaling, or VG advisory boundary |
 | TF-0570 | Define and freeze pass/fail evidence per scenario, including negatives and stale/failed observations | Treating docs, snippets, logs or green UI as runtime acceptance |
 
-TF-0566 is complete for source and packaged Windows --dir availability. TF-0567 is complete: it projects the selected harness into the existing Session effective-state surface, including configured/effective/unverified and missing/stale/mismatch generation reasons. TF-0568 has an adapter contract and a real initialize/failure pilot, but quality/latency/cost comparisons remain not-run; it stays ready rather than done. TF-0569 and TF-0570 remain proposed; TF-0570 is blocked on TF-0567 through TF-0569.
+TF-0566 is complete for source and packaged Windows --dir availability. TF-0567 is complete: it projects the selected harness into the existing Session effective-state surface, including configured/effective/unverified and missing/stale/mismatch generation reasons. TF-0568 has an adapter contract and a real initialize/failure pilot, but quality/latency/cost comparisons remain not-run; it stays ready rather than done. TF-0569 is complete: the fixture records a real VerseBrowser scenario, a real VerseShell governed process with Job Object limits, VerseGit candidate diagnostics and a journaled candidate apply with TOCTOU negatives. TF-0570 remains proposed and must be opened as the next ready-node session.
 
 ## 10. VerseSearch source ledger
 

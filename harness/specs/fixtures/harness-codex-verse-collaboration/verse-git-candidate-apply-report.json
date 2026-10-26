@@ -1,0 +1,466 @@
+{
+  "schema": "clawx.versegit.e3-probe-report/v1",
+  "generated_at": "2026-10-26T11:04:08.292Z",
+  "task": "TF-0534",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "branch": "main",
+    "commit": "f9aac2ff4919f90b94b79468a8f0c8058dfa1431",
+    "tree": "c8ce5b3ffc8edc22b43a4e2c1b0f1cc75e1ee13c",
+    "dirty": false
+  },
+  "execution_route": "real runtime patch-flow -> candidate freeze -> VerseShell verification -> permission checkpoint -> journaled apply",
+  "individual_workers": [
+    {
+      "worker": "worker-a",
+      "verdict": "passed",
+      "exitCode": 0,
+      "receiptAccepted": "accepted",
+      "authorityOk": true,
+      "candidateId": "vgpatch_d3e1e29cc29d4d246b9b7355",
+      "candidateTreeOid": "18986ba2e02a4609e22fdca6c3b17873c125147c",
+      "cleanupOk": true
+    },
+    {
+      "worker": "worker-b",
+      "verdict": "passed",
+      "exitCode": 0,
+      "receiptAccepted": "accepted",
+      "authorityOk": true,
+      "candidateId": "vgpatch_a3e85118beabc3a1d6df6bd1",
+      "candidateTreeOid": "4f4ce187a111e728d07b74facddead5c2b6f65fa",
+      "cleanupOk": true
+    }
+  ],
+  "combined_failure": {
+    "status": "verification-failed",
+    "error": "verseshell-exit:1",
+    "candidate": {
+      "schema": "clawx.versegit.patch-candidate/v1",
+      "candidateId": "vgpatch_60f92ee24538e5c5218f3ba6",
+      "baseOid": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "candidateCommitOid": "46ce43669a6a9b69c2980f8d215b2ab5bf42f063",
+      "candidateTreeOid": "e68420aa7c6f64f4884bd68ba2b42d0d5a3616a2",
+      "candidateInputDigest": "1e70af54dc55cee00fc44f469bc1a30920318d899fa27580f2a67e8b9e1201da",
+      "proposalsDigest": "b1612871f5f67b4fad755ffad636f8da310f7d6acd8c050ab257d2ca4f97401b",
+      "workerIds": [
+        "run-worker-a",
+        "run-worker-b"
+      ],
+      "changedFiles": [
+        "src/consumer-b.cjs",
+        "src/producer.cjs"
+      ],
+      "targetDigests": {
+        "src/consumer-b.cjs": "20a5b35c807059e65cee81846ac542e5cdb3f057030f96416370e1ffb304f42f",
+        "src/producer.cjs": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809"
+      },
+      "candidateRootRole": "host-disposable-candidate"
+    },
+    "verification": {
+      "status": "failed",
+      "candidateId": "vgpatch_60f92ee24538e5c5218f3ba6",
+      "baseOid": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "candidateTreeOid": "e68420aa7c6f64f4884bd68ba2b42d0d5a3616a2",
+      "candidateInputDigest": "1e70af54dc55cee00fc44f469bc1a30920318d899fa27580f2a67e8b9e1201da",
+      "receiptDigest": "495947bd4bde89300f74ad82321cbebffd8c9ac484af8fe7dcdfc46e01896710",
+      "planDigest": "420496f05b2fcb900f21e6d3afc11910c093032e0b8646d201a8794d4f2320ef",
+      "checkId": "candidate-full-required-tests",
+      "ownerId": "owner-e3-probe",
+      "epoch": 5,
+      "authorizationId": "auth-e3-probe-run-e3-combined-failure",
+      "issues": [
+        "verseshell-exit:1",
+        "receipt-result:accepted",
+        "authority:ok"
+      ]
+    },
+    "trace": [
+      {
+        "seq": 1,
+        "at": 1793012636019,
+        "kind": "candidate-frozen",
+        "details": {
+          "candidateId": "vgpatch_60f92ee24538e5c5218f3ba6",
+          "baseOid": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+          "candidateTreeOid": "e68420aa7c6f64f4884bd68ba2b42d0d5a3616a2",
+          "candidateInputDigest": "1e70af54dc55cee00fc44f469bc1a30920318d899fa27580f2a67e8b9e1201da"
+        }
+      },
+      {
+        "seq": 2,
+        "at": 1793012636201,
+        "kind": "verification-start",
+        "details": {
+          "candidateId": "vgpatch_60f92ee24538e5c5218f3ba6"
+        }
+      },
+      {
+        "seq": 3,
+        "at": 1793012637397,
+        "kind": "verification-failed",
+        "details": {
+          "receiptDigest": "495947bd4bde89300f74ad82321cbebffd8c9ac484af8fe7dcdfc46e01896710",
+          "planDigest": "420496f05b2fcb900f21e6d3afc11910c093032e0b8646d201a8794d4f2320ef",
+          "issues": [
+            "verseshell-exit:1",
+            "receipt-result:accepted",
+            "authority:ok"
+          ]
+        }
+      },
+      {
+        "seq": 4,
+        "at": 1793012637435,
+        "kind": "candidate-cleaned",
+        "details": {
+          "ok": true,
+          "issues": []
+        }
+      }
+    ],
+    "cleanup": {
+      "ok": true,
+      "issues": []
+    },
+    "main_before": {
+      "head": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "refs": "refs/heads/main 1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "status": ""
+    },
+    "main_after": {
+      "head": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "refs": "refs/heads/main 1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "status": ""
+    },
+    "main_unchanged": true,
+    "first_write_started": false,
+    "passed": true
+  },
+  "combined_success": {
+    "status": "applied",
+    "candidate": {
+      "schema": "clawx.versegit.patch-candidate/v1",
+      "candidateId": "vgpatch_b1a40f814e39800807513d9e",
+      "baseOid": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "candidateCommitOid": "a4721f686ec812f23080d5c3805985a88f102f7a",
+      "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+      "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364",
+      "proposalsDigest": "06e42de872cf91379c262f34c9a60032bfd76dcb8b41143096d08f69c94c29dd",
+      "workerIds": [
+        "run-worker-a",
+        "run-worker-b"
+      ],
+      "changedFiles": [
+        "src/consumer-b.cjs",
+        "src/producer.cjs"
+      ],
+      "targetDigests": {
+        "src/consumer-b.cjs": "6c479d1b7ba864cae390ac0c7b8f2edc85459dced6fafe7a49493c3c716d270c",
+        "src/producer.cjs": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809"
+      },
+      "candidateRootRole": "host-disposable-candidate"
+    },
+    "verification": {
+      "status": "passed",
+      "candidateId": "vgpatch_b1a40f814e39800807513d9e",
+      "baseOid": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+      "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364",
+      "receiptDigest": "0fac7be3595db8f1af121e1544424ebcb4762dd8bf1be83f4a4b858631f1af56",
+      "planDigest": "68c3f2a30476b9b425dd6df2789cb20ce2e45af7249d82ef517f2f4ba23b7668",
+      "checkId": "candidate-full-required-tests",
+      "ownerId": "owner-e3-probe",
+      "epoch": 5,
+      "authorizationId": "auth-e3-probe-run-e3-combined-success",
+      "issues": []
+    },
+    "permit": {
+      "allowed": true,
+      "permitId": "permit-e3",
+      "reason": null,
+      "candidateId": "vgpatch_b1a40f814e39800807513d9e",
+      "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+      "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364",
+      "receiptDigest": "0fac7be3595db8f1af121e1544424ebcb4762dd8bf1be83f4a4b858631f1af56",
+      "ownerId": "owner-e3-probe",
+      "epoch": 5,
+      "authorizationId": "auth-e3-probe-run-e3-combined-success",
+      "grantId": "grant-vgpatch_b1a40f814e39800807513d9e",
+      "expectedSnapshotDigest": "92a58c26c47a04f28a47e664b9e7200a3205002a2e828bc9eafc696afed7fabb"
+    },
+    "decision": {
+      "allowed": true,
+      "reason": null,
+      "issues": [],
+      "verifiedSnapshotDigest": "92a58c26c47a04f28a47e664b9e7200a3205002a2e828bc9eafc696afed7fabb",
+      "finalSnapshotDigest": "92a58c26c47a04f28a47e664b9e7200a3205002a2e828bc9eafc696afed7fabb"
+    },
+    "cleanup": {
+      "ok": true,
+      "issues": []
+    },
+    "main_before": {
+      "head": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "refs": "refs/heads/main 1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "status": ""
+    },
+    "main_after_apply": {
+      "head": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "refs": "refs/heads/main 1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "status": "M src/consumer-b.cjs\n M src/producer.cjs"
+    },
+    "main_after_undo": {
+      "head": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "refs": "refs/heads/main 1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+      "status": ""
+    },
+    "head_unchanged": true,
+    "refs_unchanged": true,
+    "applied_contents": {
+      "producer": "module.exports = { api: () => 'one' };\n",
+      "consumerB": "const { api } = require('./producer.cjs');\nconst value = api();\nmodule.exports = { value: typeof value === 'string' ? 2 : value + 1, implementation: 'b-v2' };\n"
+    },
+    "passed": true
+  },
+  "ordering_trace": {
+    "events": [
+      {
+        "seq": 1,
+        "at": 1793012637978,
+        "kind": "candidate-frozen",
+        "details": {
+          "candidateId": "vgpatch_b1a40f814e39800807513d9e",
+          "baseOid": "1fedd6c2d3c47de785ad090770e9f3c50cb2f8dc",
+          "candidateTreeOid": "765e0bb064002e26991ad2c90b7831e2f2ed2a1b",
+          "candidateInputDigest": "46bcd88a8136bd2ee766cea085ae64a2fce917637556f1a9e228e0dc118e5364"
+        }
+      },
+      {
+        "seq": 2,
+        "at": 1793012638218,
+        "kind": "verification-start",
+        "details": {
+          "candidateId": "vgpatch_b1a40f814e39800807513d9e"
+        }
+      },
+      {
+        "seq": 3,
+        "at": 1793012639434,
+        "kind": "verification-passed",
+        "details": {
+          "receiptDigest": "0fac7be3595db8f1af121e1544424ebcb4762dd8bf1be83f4a4b858631f1af56",
+          "planDigest": "68c3f2a30476b9b425dd6df2789cb20ce2e45af7249d82ef517f2f4ba23b7668",
+          "issues": []
+        }
+      },
+      {
+        "seq": 4,
+        "at": 1793012639620,
+        "kind": "permit-granted",
+        "details": {
+          "permitId": "permit-e3",
+          "reason": null,
+          "expectedSnapshotDigest": "92a58c26c47a04f28a47e664b9e7200a3205002a2e828bc9eafc696afed7fabb"
+        }
+      },
+      {
+        "seq": 5,
+        "at": 1793012639790,
+        "kind": "preflight-checked",
+        "details": {
+          "allowed": true,
+          "reason": null,
+          "issues": [],
+          "verifiedSnapshotDigest": "92a58c26c47a04f28a47e664b9e7200a3205002a2e828bc9eafc696afed7fabb",
+          "finalSnapshotDigest": "92a58c26c47a04f28a47e664b9e7200a3205002a2e828bc9eafc696afed7fabb"
+        }
+      },
+      {
+        "seq": 6,
+        "at": 1793012639790,
+        "kind": "first-write-started",
+        "details": {
+          "journalSessionId": "session-e3-success",
+          "journalRequestId": "batch-e3-success",
+          "proposalCount": 2
+        }
+      },
+      {
+        "seq": 7,
+        "at": 1793012640116,
+        "kind": "write-completed",
+        "details": {
+          "resultCount": 2,
+          "okCount": 2,
+          "journalBatchIds": [
+            "batch-e3-success:run-worker-a",
+            "batch-e3-success:run-worker-b"
+          ]
+        }
+      },
+      {
+        "seq": 8,
+        "at": 1793012640297,
+        "kind": "post-apply-verified",
+        "details": {
+          "changedFiles": [
+            "src/consumer-b.cjs",
+            "src/producer.cjs"
+          ],
+          "targetDigests": {
+            "src/consumer-b.cjs": "6c479d1b7ba864cae390ac0c7b8f2edc85459dced6fafe7a49493c3c716d270c",
+            "src/producer.cjs": "92d7b0cb02212b1a0a1b632d63f370f6548a4d4dde30fbcf97e3e268983e5809"
+          }
+        }
+      },
+      {
+        "seq": 9,
+        "at": 1793012640332,
+        "kind": "candidate-cleaned",
+        "details": {
+          "ok": true,
+          "issues": []
+        }
+      }
+    ],
+    "verification_index": 1,
+    "first_write_index": 5,
+    "post_apply_index": 7,
+    "verification_before_first_write": true,
+    "journal_batch_ids": [
+      "batch-e3-success:run-worker-a",
+      "batch-e3-success:run-worker-b"
+    ],
+    "journal_snapshot_ids": [
+      "write-journal:session-e3-success:1",
+      "write-journal:session-e3-success:2"
+    ],
+    "passed": true
+  },
+  "toctou_negative": {
+    "cases": [
+      {
+        "id": "target-uncommitted",
+        "status": "preflight-rejected",
+        "expectedReason": "state-changed-before-first-write",
+        "actualReason": "state-changed-before-first-write",
+        "issues": [
+          "state-changed-before-first-write",
+          "base-worktree-not-clean"
+        ],
+        "firstWriteStarted": false,
+        "baseHeadUnchanged": true,
+        "baseRefsUnchanged": true,
+        "cleanupOk": true,
+        "passed": true
+      },
+      {
+        "id": "candidate-drift",
+        "status": "preflight-rejected",
+        "expectedReason": "state-changed-before-first-write",
+        "actualReason": "state-changed-before-first-write",
+        "issues": [
+          "state-changed-before-first-write",
+          "candidate-input-drift",
+          "candidate-target-drift"
+        ],
+        "firstWriteStarted": false,
+        "baseHeadUnchanged": true,
+        "baseRefsUnchanged": true,
+        "cleanupOk": true,
+        "passed": true
+      },
+      {
+        "id": "base-head",
+        "status": "preflight-rejected",
+        "expectedReason": "state-changed-before-first-write",
+        "actualReason": "state-changed-before-first-write",
+        "issues": [
+          "state-changed-before-first-write",
+          "base-head-drift"
+        ],
+        "firstWriteStarted": false,
+        "baseHeadUnchanged": false,
+        "baseRefsUnchanged": false,
+        "cleanupOk": true,
+        "passed": true
+      },
+      {
+        "id": "epoch",
+        "status": "preflight-rejected",
+        "expectedReason": "authority-epoch-mismatch",
+        "actualReason": "authority-epoch-mismatch",
+        "issues": [
+          "authority-epoch-mismatch",
+          "permit-snapshot-digest-mismatch"
+        ],
+        "firstWriteStarted": false,
+        "baseHeadUnchanged": true,
+        "baseRefsUnchanged": true,
+        "cleanupOk": true,
+        "passed": true
+      },
+      {
+        "id": "revoked",
+        "status": "preflight-rejected",
+        "expectedReason": "grant-revoked",
+        "actualReason": "grant-revoked",
+        "issues": [
+          "grant-revoked",
+          "permit-snapshot-digest-mismatch"
+        ],
+        "firstWriteStarted": false,
+        "baseHeadUnchanged": true,
+        "baseRefsUnchanged": true,
+        "cleanupOk": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "write_journal": {
+    "result_journals": [
+      {
+        "batchId": "batch-e3-success:run-worker-a",
+        "batchState": "committed",
+        "undoable": true,
+        "snapshotIds": [
+          "write-journal:session-e3-success:1"
+        ]
+      },
+      {
+        "batchId": "batch-e3-success:run-worker-b",
+        "batchState": "committed",
+        "undoable": true,
+        "snapshotIds": [
+          "write-journal:session-e3-success:2"
+        ]
+      }
+    ],
+    "journal_steps": 2,
+    "snapshot_files": [
+      "0001-producer.cjs.pre",
+      "0002-consumer-b.cjs.pre"
+    ],
+    "undo": {
+      "restored": [
+        "src/consumer-b.cjs",
+        "src/producer.cjs"
+      ],
+      "errors": [],
+      "journalDir": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.ae\\agent-vg-tmp\\versegit-e3-probe-3KcgKM\\.openclaw\\journal\\session-e3-success",
+      "remainingEntries": 0
+    },
+    "recovery_restored_base": true,
+    "passed": true
+  },
+  "boundaries": {
+    "real_human_evidence": false,
+    "default_off": true,
+    "m4_authorized": false,
+    "host_authority": "ClawX",
+    "vg_landing_authority": false
+  }
+}

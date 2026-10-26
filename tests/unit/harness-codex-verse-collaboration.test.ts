@@ -14,12 +14,28 @@ describe("TF-0569 Verse collaboration evidence", () => {
     expect(receipt.driven_by).toBe("agent");
     expect(receipt.actor).toBeTruthy();
     expect(receipt.node).toBe("TF-0569");
+    expect(receipt.source).toMatchObject({ commit: "f9aac2ff4919f90b94b79468a8f0c8058dfa1431", dirty: false });
     expect(receipt.scenarios.verseBrowser).toMatchObject({ status: "pass", tests: 1, passed: 1 });
     expect(receipt.scenarios.verseBrowser.negatives).toEqual(expect.arrayContaining(["private-network-default-deny", "forged agent private-network approval rejected"]));
-    expect(receipt.scenarios.verseShell).toMatchObject({ status: "pass-contract", tests: 7, passed: 7 });
-    expect(receipt.scenarios.verseShell.realProcessExecution).toBe("not-run");
-    expect(receipt.scenarios.verseGit).toMatchObject({ status: "pass-diagnostics", tests: 2, passed: 2 });
-    expect(receipt.scenarios.verseGit.candidateApply).toBe("not-run");
+    expect(receipt.scenarios.verseShell).toMatchObject({
+      status: "pass",
+      testFiles: 1,
+      tests: 2,
+      passed: 2,
+      realProcessExecution: "pass",
+      evidence: "verse-shell-real-process.txt",
+    });
+    expect(receipt.scenarios.verseGit).toMatchObject({ status: "pass", tests: 1, passed: 1, candidateApply: "pass" });
+    expect(receipt.scenarios.verseGit.probe).toMatchObject({
+      status: "pass",
+      individualWorkers: { tests: 2, passed: 2 },
+      combinedFailure: { status: "verification-failed", passed: true, mainUnchanged: true, firstWriteStarted: false },
+      combinedSuccess: { status: "applied", passed: true, headUnchanged: true, refsUnchanged: true },
+      orderingTracePassed: true,
+      toctouCases: 5,
+      toctouPassed: true,
+      journalRecoveryRestoredBase: true,
+    });
     expect(receipt.boundaries).toMatchObject({
       vgM4Authorized: false,
       vgLandingAuthority: false,
@@ -28,12 +44,20 @@ describe("TF-0569 Verse collaboration evidence", () => {
       harnessSelfApproval: false,
       realHumanEvidence: false,
     });
+    expect(JSON.stringify(receipt.limitations)).not.toContain("blocked by host sandbox");
     expect(JSON.stringify(receipt)).not.toMatch(/sk-[A-Za-z0-9_-]{12,}|Bearer\s+[A-Za-z0-9._-]+/);
   });
 
   it("keeps the retained manifest complete", () => {
     const manifest = readFileSync(resolve(ROOT, FIXTURE, "SHA256SUMS"), "utf8");
-    for (const name of ["acceptance.json", "REPORT.md"]) {
+    for (const name of [
+      "acceptance.json",
+      "REPORT.md",
+      "verse-shell-real-process.txt",
+      "verse-git-candidate-apply-e2e.txt",
+      "verse-git-candidate-apply-probe.txt",
+      "verse-git-candidate-apply-report.json",
+    ]) {
       const hash = createHash("sha256").update(readFileSync(resolve(ROOT, FIXTURE, name))).digest("hex");
       expect(manifest).toContain(hash + "  " + name);
     }

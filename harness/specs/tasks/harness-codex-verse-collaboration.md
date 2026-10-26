@@ -7,6 +7,7 @@ taskType: runtime-bridge
 intent: Prove one real VerseBrowser, VerseShell and VerseGit collaboration seam while keeping each product owner authoritative and the harness execution-only.
 touchedAreas:
   - tests/e2e/versegit-candidate-apply.spec.ts
+  - scripts/versegit-candidate-apply-probe.mts
   # Predecessor TF-0567/TF-0568 paths on this branch.
   - .gitignore
   - docs/modules/harness-and-codex.md
@@ -51,6 +52,7 @@ requiredRules:
 requiredTests:
   - pnpm exec playwright test tests/e2e/versebrowser-host-invocation.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/verseshell-facade.test.ts tests/unit/uas-05-verseshell-process-lifecycle.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.verseshell.config.ts src/agents/verseshell/governed-process.real-limits.test.ts --maxWorkers=1
   - pnpm exec playwright test tests/e2e/versegit-candidate-apply.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/harness-codex-verse-collaboration.test.ts --maxWorkers=1
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-codex-verse-collaboration.md
@@ -87,4 +89,4 @@ This node proves the collaboration seam between a harness and the three Verse to
 
 ## Validation
 
-Run the commands in the frontmatter. A green UI or contract count is insufficient; each scenario must retain a readback artifact. If a host sandbox blocks VerseShell lifecycle writes, record it as an environment limitation rather than a pass.
+Run the commands in the frontmatter. A green UI or contract count is insufficient; each scenario must retain a readback artifact. For the real VerseShell process gate, point `TEMP`/`TMP` at an agent-owned writable directory inside the workspace; the host `D:\tmp` ACL may deny `.ae/process-lifecycle` persistence and that denial is an execution-environment limitation, not a product pass.

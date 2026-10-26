@@ -1,6 +1,6 @@
 {
   "schemaVersion": "HarnessVerseCollaborationAcceptance/v1",
-  "generatedAt": "2026-10-26T10:22:56.887Z",
+  "generatedAt": "2026-10-26T11:04:54.054Z",
   "driven_by": "agent",
   "actor": "codex-harness-verse-collaboration-20261026",
   "node": "TF-0569",
@@ -20,42 +20,69 @@
       "owner": "VerseBrowser session/approval/private-network authority"
     },
     "verseShell": {
-      "status": "pass-contract",
-      "command": "pnpm exec vitest run tests/unit/verseshell-facade.test.ts tests/unit/uas-05-verseshell-process-lifecycle.test.ts --maxWorkers=1",
-      "testFiles": 2,
-      "tests": 7,
-      "passed": 7,
-      "duration": "2.98s",
+      "status": "pass",
+      "command": "pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.verseshell.config.ts src/agents/verseshell/governed-process.real-limits.test.ts --maxWorkers=1",
+      "environment": "TEMP/TMP=<workspace>/.ae/agent-vs-real-tmp; VERSESHELL_REAL_PROCESS_START_LIMITS=1",
+      "testFiles": 1,
+      "tests": 2,
+      "passed": 2,
+      "duration": "3.38s",
+      "realProcessExecution": "pass",
       "covered": [
-        "five-operation order",
-        "canonical mapping",
-        "closed model-facing schemas",
-        "frozen lifecycle binary/source/32-operation catalog",
-        "governed exec/process control routing",
-        "frozen product boundaries"
+        "bundled ae.exe process.start",
+        "uncapped child process succeeds",
+        "maxProcesses=1 refuses the child",
+        "64 MiB commit cap rejects a 256 MiB allocation",
+        "resource receipt reports configured Job Object enforcement"
       ],
-      "realProcessExecution": "not-run",
-      "reason": "host sandbox denied lifecycle persistence with E_PROCESS_PERSIST (documented p1-160); no product code bypass applied",
+      "evidence": "verse-shell-real-process.txt",
       "owner": "VerseShell governed execution; harness does not self-approve"
     },
     "verseGit": {
-      "status": "pass-diagnostics",
-      "command": "pnpm exec playwright test tests/e2e/versegit-diagnostics.spec.ts --workers=1 --reporter=line",
-      "tests": 2,
-      "passed": 2,
-      "duration": "22.2s",
+      "status": "pass",
+      "command": "pnpm exec playwright test tests/e2e/versegit-candidate-apply.spec.ts --workers=1",
+      "tests": 1,
+      "passed": 1,
+      "duration": "31.4s",
       "covered": [
         "renderer -> hostInvoke -> Main frozen identity",
-        "binary mismatch rejected without spawning a process"
+        "binary mismatch rejected without spawning",
+        "candidate completion, verification, permission gate and journaled apply"
       ],
-      "candidateApply": "not-run",
-      "candidateApplyReason": "host sandbox denied bridge-events.jsonl write (EPERM) and governed lifecycle persistence (E_PROCESS_PERSIST)",
+      "candidateApply": "pass",
+      "probe": {
+        "status": "pass",
+        "report": "verse-git-candidate-apply-report.json",
+        "log": "verse-git-candidate-apply-probe.txt",
+        "sourceCommit": "f9aac2ff4919f90b94b79468a8f0c8058dfa1431",
+        "sourceDirty": false,
+        "individualWorkers": {
+          "tests": 2,
+          "passed": 2
+        },
+        "combinedFailure": {
+          "status": "verification-failed",
+          "passed": true,
+          "mainUnchanged": true,
+          "firstWriteStarted": false
+        },
+        "combinedSuccess": {
+          "status": "applied",
+          "passed": true,
+          "headUnchanged": true,
+          "refsUnchanged": true
+        },
+        "orderingTracePassed": true,
+        "toctouCases": 5,
+        "toctouPassed": true,
+        "journalRecoveryRestoredBase": true
+      },
       "owner": "VerseGit fact/advisory only; no verdict, task completion, M4 landing/admission or Git apply claim"
     }
   },
   "crossComponent": {
-    "positive": "VerseBrowser retained its approval/private-network gates while the agent performed a real browser task",
-    "negative": "forged approval, unsupported facade, VG binary mismatch all failed closed"
+    "positive": "The harness drove a real browser task, a real VerseShell governed process and a journaled VerseGit candidate apply while each product owner retained its authority.",
+    "negative": "Forged browser approval, unsupported facade, resource-limit enforcement and all five TOCTOU cases failed closed; no driver fallback or first write occurred."
   },
   "boundaries": {
     "vgM4Authorized": false,
@@ -66,7 +93,14 @@
     "realHumanEvidence": false
   },
   "limitations": [
-    "VerseShell real governed process and VerseGit candidate apply were blocked by host sandbox write denial, not by product assertions.",
-    "VB runtime evidence is a single local Electron fixture; no external network or model was involved."
-  ]
+    "Runtime evidence is local Windows x64, agent-driven and bound to the bundled ae.exe; no external network, provider, or real-human evidence was involved.",
+    "The real lifecycle run required TEMP/TMP under the workspace because the host D:\\tmp ACL denied process-lifecycle persistence; this is an execution-environment constraint, not a product failure.",
+    "VerseBrowser evidence is a single local Electron fixture; no external network or model was involved."
+  ],
+  "source": {
+    "branch": "main",
+    "commit": "f9aac2ff4919f90b94b79468a8f0c8058dfa1431",
+    "tree": "c8ce5b3ffc8edc22b43a4e2c1b0f1cc75e1ee13c",
+    "dirty": false
+  }
 }

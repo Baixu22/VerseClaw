@@ -1,0 +1,13 @@
+
+Running 1 test using 1 worker
+
+
+
+[1A[2K(node:34660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:34660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/1] D:\ClawX\tests\e2e\versegit-candidate-apply.spec.ts:13:7 › verified candidate host apply › runs completion, candidate verification, permission gate and journaled apply in order
+[1A[2K  1 passed (31.4s)

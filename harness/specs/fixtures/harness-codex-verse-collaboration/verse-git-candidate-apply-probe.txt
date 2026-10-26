@@ -1,0 +1,10 @@
+Preparing worktree (detached HEAD 1fedd6c)
+Preparing worktree (detached HEAD 1fedd6c)
+Preparing worktree (detached HEAD 1fedd6c)
+Preparing worktree (detached HEAD 1fedd6c)
+Preparing worktree (detached HEAD f2cd9be)
+Preparing worktree (detached HEAD 799e3d7)
+Preparing worktree (detached HEAD d76894a)
+Preparing worktree (detached HEAD 960a284)
+Preparing worktree (detached HEAD 6d8df51)
+{"passed":true,"reportPath":"C:\\Users\\27933\\Desktop\\clawx\\ClawX\\.ae\\tf0569-vg-report.json","combinedFailure":"verification-failed","combinedSuccess":"applied","ordering":true,"toctou":5,"journalSteps":2}
