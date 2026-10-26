@@ -8,6 +8,8 @@ intent: Define one adapter contract and run one real adapter pilot without addin
 touchedAreas:
   - shared/harness-adapter-contract.ts
   - scripts/verify-harness-adapter-pilot.mjs
+  - scripts/mock-acp-agent.mjs
+  - scripts/mock-acp-client.mjs
   - harness/specs/tasks/harness-codex-adapter-pilot.md
   - harness/specs/fixtures/harness-codex-adapter-pilot/**
   - tests/unit/harness-codex-adapter-pilot.test.ts

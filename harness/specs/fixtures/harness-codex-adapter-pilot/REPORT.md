@@ -16,3 +16,8 @@
 - No credentials or private prompts are retained.
 - ACP initialize is protocol evidence, not a model-quality or cost verdict.
 - OpenCode's failure is local DB schema drift, not a model-quality verdict.
+
+## Protocol lifecycle fixture
+
+- Local ACP mock reached initialize -> session/new -> session/prompt -> session/cancel.
+- It proves protocol shape and lifecycle handling only; it is not a model-quality, latency-to-provider, or cost measurement.

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "HarnessAdapterLifecycleProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-adapter-20261026",
+  "node": "TF-0568",
+  "mode": "fixture",
+  "initialize": {
+    "protocolVersion": 1,
+    "agentCapabilities": {
+      "loadSession": true,
+      "sessionCapabilities": {
+        "list": {},
+        "close": {}
+      },
+      "promptCapabilities": {
+        "image": false,
+        "audio": false,
+        "embeddedContext": true
+      }
+    },
+    "authMethods": [],
+    "agentInfo": {
+      "name": "clawx-mock-acp",
+      "title": "ClawX mock ACP",
+      "version": "1.0.0"
+    }
+  },
+  "sessionId": "mock-session-1793003262666",
+  "prompt": {
+    "stopReason": "end_turn",
+    "usage": {
+      "inputTokens": 1,
+      "outputTokens": 1,
+      "totalTokens": 2
+    }
+  }
+}
