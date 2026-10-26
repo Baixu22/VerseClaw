@@ -192,11 +192,11 @@ TF-0565 is complete only when all of the following can be read from disk:
 |---|---|---|
 | TF-0566 | Prove managed Codex app-server availability in source and packaged desktop; record binary/version/auth/startup/failure evidence | Product UI selection, task semantics, ACP substitution |
 | TF-0567 | Connect the existing Settings/Session/effective-state surfaces to the proven Codex path; expose unknown/stale/unavailable honestly | A new scheduler, Work Mode authority, second task ledger |
-| TF-0568 | Implement one adapter/evaluation contract and pilot only the alternatives that beat a real baseline | Batch-installing every harness or claiming capability parity |
+| TF-0568 | Adapter contract and one real pilot are landed in `shared/harness-adapter-contract.ts` and `harness/specs/fixtures/harness-codex-adapter-pilot/`; ACPX Codex initialize passed, OpenCode failed before a turn, quality/latency/cost remain not-run | Batch-installing every harness or claiming capability parity |
 | TF-0569 | Test one real VB, one VS and one VG collaboration seam under existing owners | Bypassing VB approval, VS journaling, or VG advisory boundary |
 | TF-0570 | Define and freeze pass/fail evidence per scenario, including negatives and stale/failed observations | Treating docs, snippets, logs or green UI as runtime acceptance |
 
-TF-0566 is complete for source and packaged Windows --dir availability. TF-0567 is the current executable leaf: it projects the selected harness into the existing Session effective-state surface, including configured/effective/unverified and missing/stale/mismatch generation reasons. TF-0568 through TF-0570 remain proposed; TF-0570 is blocked on the other three.
+TF-0566 is complete for source and packaged Windows --dir availability. TF-0567 is complete: it projects the selected harness into the existing Session effective-state surface, including configured/effective/unverified and missing/stale/mismatch generation reasons. TF-0568 has an adapter contract and a real initialize/failure pilot, but quality/latency/cost comparisons remain not-run; it stays ready rather than done. TF-0569 and TF-0570 remain proposed; TF-0570 is blocked on TF-0567 through TF-0569.
 
 ## 10. VerseSearch source ledger
 
