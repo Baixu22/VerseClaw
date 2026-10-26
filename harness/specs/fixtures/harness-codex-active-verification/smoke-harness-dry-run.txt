@@ -1,0 +1,2 @@
+Harness report: <workspace>\artifacts\harness\latest.md
+Harness result: pass

@@ -1,0 +1,15 @@
+
+Running 3 tests using 1 worker
+
+
+
+[1A[2K(node:9160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K(node:9160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[1/3] <workspace>\tests\e2e\versebrowser-host-invocation.spec.ts:5:5 › real embedded browser preserves actions, denials and unsupported outcomes
+[1A[2K[2/3] <workspace>\tests\e2e\versegit-diagnostics.spec.ts:40:7 › VerseGit host diagnostics › returns real frozen identity through renderer -> hostInvoke -> Main service
+[1A[2K[3/3] <workspace>\tests\e2e\versegit-diagnostics.spec.ts:69:7 › VerseGit host diagnostics › reports binary mismatch without spawning a process
+[1A[2K  3 passed (31.7s)

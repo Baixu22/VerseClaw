@@ -1,0 +1,800 @@
+{
+  "schemaVersion": "HarnessActiveVerificationAcceptance/v1",
+  "generatedAt": "2026-10-26T12:29:14.536Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-active-verification-20261026",
+  "node": "TF-0570",
+  "source": {
+    "commit": "1b91b2944b3398bea5dd82b9f85da5cd765bfcd3",
+    "tree": "43e8ed4cd55cb67416c3dd4e88f8079abf7c65a5",
+    "dirty": false,
+    "matrix": "harness/specs/fixtures/harness-codex-active-verification/matrix.json",
+    "matrixSha256": "2d319d3ee8c2c15bc994e3cfce8b473de293de2acd2765e5a1ec1caf1f0a6528",
+    "inputsDigest": "8264d3cfd811031007eb51f30cd89e024849bda2bbf19f0d5ee6e01d2ab57e66"
+  },
+  "sourceInputs": [
+    {
+      "path": "harness/src",
+      "exists": true,
+      "kind": "directory",
+      "sha256": "6d8a7edaa3ea1fd1c4e9cd0081745f2757fe81b0b8961d610177539764b01e51",
+      "bytes": 43234,
+      "files": 14
+    },
+    {
+      "path": "docs/modules/harness-and-codex.md",
+      "exists": true,
+      "kind": "file",
+      "sha256": "43de20f1abd2df6dedbb594cfa807a2824f31dee4a786f47a068164414986fb3",
+      "bytes": 19499,
+      "files": 1
+    },
+    {
+      "path": "shared/harness-adapter-contract.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "66899a80ede2b32ce951ad7ff340d0126d838e936d5bcabe34751db1e07088b1",
+      "bytes": 5680,
+      "files": 1
+    },
+    {
+      "path": "shared/types/coding-run.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "bytes": 17799,
+      "files": 1
+    },
+    {
+      "path": "openclaw_runtime/src/agents/harness",
+      "exists": true,
+      "kind": "directory",
+      "sha256": "8d2c535a9d346dc7c4d070dd3951cd13acd045016aa6490afa508ad148b70aec",
+      "bytes": 229316,
+      "files": 26
+    },
+    {
+      "path": "openclaw_runtime/extensions/codex",
+      "exists": true,
+      "kind": "directory",
+      "sha256": "130d8a3379be3afa0d39bfaa98070f883e3a51dd2a69f17f45c07b99fe541533",
+      "bytes": 1680164,
+      "files": 118
+    },
+    {
+      "path": "openclaw_runtime/extensions/acpx",
+      "exists": true,
+      "kind": "directory",
+      "sha256": "647b32b16718c636bb23dcab0102880934e06e72bb9e0df6e71b4c828612e129",
+      "bytes": 204600,
+      "files": 24
+    },
+    {
+      "path": "tests/unit/coding-run.test.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "29fbc33511640d99285c248591b637a47948febb4be3fac00b0293dd46dfaf1a",
+      "bytes": 8160,
+      "files": 1
+    },
+    {
+      "path": "tests/unit/harness-codex-managed-runtime.test.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "1e52fb13d047c5024df1830b9f2d33be53793fd83318d1045fa155be71cafc5a",
+      "bytes": 6681,
+      "files": 1
+    },
+    {
+      "path": "tests/unit/harness-codex-product-integration.test.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "f3c534567103095f55ab1798348b44b476e5a07c237d56a3f97f78637ebf8f62",
+      "bytes": 3045,
+      "files": 1
+    },
+    {
+      "path": "tests/unit/harness-codex-adapter-pilot.test.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "3bcf15dd10a242ac6e9e8e935fa172a779f36502c8c47d7ceaeb5ff8013e6865",
+      "bytes": 3455,
+      "files": 1
+    },
+    {
+      "path": "tests/e2e/versebrowser-host-invocation.spec.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "b065b87e7abe4f904062db7b6593fd0cdfcb5bc73b48f079c7bda4c08f34bca5",
+      "bytes": 5179,
+      "files": 1
+    },
+    {
+      "path": "tests/e2e/versegit-candidate-apply.spec.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "56e0153b663804dce35f7559ff2ba23b263fbd0640b2044a9fb1e54858d7036b",
+      "bytes": 2929,
+      "files": 1
+    },
+    {
+      "path": "tests/e2e/versegit-diagnostics.spec.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "3ccb8dec79f337468cd7ab5e8edf5f2ba1f20dac2a3fcaee966817101734531c",
+      "bytes": 3819,
+      "files": 1
+    },
+    {
+      "path": "harness/specs/tasks/harness-codex-active-verification.md",
+      "exists": true,
+      "kind": "file",
+      "sha256": "b890a3bf1fd02b613c78641098d2742134753bb93564c53c702d7436bbeae5e3",
+      "bytes": 4290,
+      "files": 1
+    },
+    {
+      "path": "scripts/verify-harness-active-matrix.mjs",
+      "exists": true,
+      "kind": "file",
+      "sha256": "85b2a211956c27e186dd0676948b5701d98db72af61bd0efbb68e5e931838b0e",
+      "bytes": 24078,
+      "files": 1
+    },
+    {
+      "path": "scripts/build-harness-active-acceptance.mjs",
+      "exists": true,
+      "kind": "file",
+      "sha256": "145bbf9a2a71012dfb93b7b53fdfe2d3875dec2cc13c4846891e5a4b6e6197c2",
+      "bytes": 2552,
+      "files": 1
+    },
+    {
+      "path": "tests/unit/harness-codex-active-verification.test.ts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "6fc905a4530d36ddf3d91452b8666265c4b26f233638b1e004109757079ed0c5",
+      "bytes": 12241,
+      "files": 1
+    },
+    {
+      "path": "scripts/verify-harness-active-matrix.d.mts",
+      "exists": true,
+      "kind": "file",
+      "sha256": "5273745956ebf0a3983f5aa68aa37936751b826c942e13cd0a7e3e9695064024",
+      "bytes": 4815,
+      "files": 1
+    },
+    {
+      "path": "resources/verseshell/manifest.json",
+      "exists": true,
+      "kind": "file",
+      "sha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+      "bytes": 7559,
+      "files": 1
+    },
+    {
+      "path": "resources/versegit/manifest.json",
+      "exists": true,
+      "kind": "file",
+      "sha256": "8c06fb3d0cbc52acb5079f8d8e8fdedf2e85e1480fd971c520887bc19b4ed2d2",
+      "bytes": 2769,
+      "files": 1
+    },
+    {
+      "path": "resources/bin/win32-x64/ae.exe",
+      "exists": true,
+      "kind": "file",
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448,
+      "files": 1
+    },
+    {
+      "path": "resources/bin/win32-x64/vg.exe",
+      "exists": true,
+      "kind": "file",
+      "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+      "bytes": 41011712,
+      "files": 1
+    },
+    {
+      "path": "release/win-unpacked/Verse Claw.exe",
+      "exists": true,
+      "kind": "file",
+      "sha256": "465e7bf060e573f9fac8c6f4d5c2b8ad6c70be9754bbee3e21615d5d6955c164",
+      "bytes": 214315008,
+      "files": 1
+    },
+    {
+      "path": "release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json",
+      "exists": true,
+      "kind": "file",
+      "sha256": "3aa615e3e88c6edc6c4b947ab46ad07f333a94ff3fa148e0a578bfce1885f74b",
+      "bytes": 912,
+      "files": 1
+    },
+    {
+      "path": "release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe",
+      "exists": true,
+      "kind": "file",
+      "sha256": "dae89a14373859b04e05a801a6104e1ef8c007059355fcd07a4eb64f893455dc",
+      "bytes": 247691568,
+      "files": 1
+    }
+  ],
+  "scenarioSource": "harness/specs/fixtures/harness-codex-authority-baseline/scenario-matrix.json",
+  "evidenceVocabulary": [
+    "source",
+    "runtime",
+    "effect",
+    "packaged",
+    "external-provider",
+    "not-run"
+  ],
+  "evidenceLevels": [
+    "source-exists",
+    "runtime-reachable",
+    "effect-verified",
+    "packaged-available",
+    "default-product-path",
+    "release-approved",
+    "not-run"
+  ],
+  "freshness": {
+    "state": "fresh",
+    "policy": {
+      "maxAgeHours": null,
+      "sourceNewerThanEvidence": "stale",
+      "missingArtifact": "stale",
+      "hashMismatch": "stale",
+      "invalidSchema": "stale",
+      "verifyWhen": "every verifier run"
+    },
+    "evidenceFiles": [
+      "tests/unit/harness-codex-product-integration.test.ts",
+      "harness/specs/fixtures/harness-codex-product-integration/acceptance.json",
+      "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+      "tests/unit/harness-codex-managed-runtime.test.ts",
+      "openclaw_runtime/extensions/codex/src/commands.ts",
+      "openclaw_runtime/extensions/codex/src/command-handlers.ts",
+      "harness/specs/fixtures/harness-codex-managed-runtime/packaged-runtime.json",
+      "tests/unit/coding-run.test.ts",
+      "shared/types/coding-run.ts",
+      "harness/specs/fixtures/harness-codex-adapter-pilot/acceptance.json",
+      "scripts/verify-harness-adapter-pilot.mjs",
+      "harness/specs/fixtures/harness-codex-adapter-pilot/real-turns.json",
+      "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json",
+      "tests/e2e/versebrowser-host-invocation.spec.ts",
+      "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
+      "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json"
+    ],
+    "checkedAt": "2026-10-26T12:29:14.536Z"
+  },
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "node": "v24.22.1",
+    "runtimeVersion": "0.4.9-alpha.0; codex-cli 0.137.0 where evidenced",
+    "timezone": "Asia/Shanghai"
+  },
+  "matrixDryRun": {
+    "status": "pass",
+    "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-codex-active-verification.md --dry-run",
+    "scenarios": 11,
+    "partial": 5,
+    "pass": 6,
+    "failed": 0,
+    "stale": 0,
+    "notRun": 0
+  },
+  "smoke": [
+    {
+      "id": "positive-versebrowser-and-versegit",
+      "scenario": "S8 + S10",
+      "status": "pass",
+      "exitCode": 0,
+      "duration": "31.7s",
+      "log": "smoke-vb-vg.txt",
+      "assertion": "real embedded browser evidence plus VG frozen identity/mismatch negatives; 3/3 Playwright tests passed",
+      "outputSha256": "4b78d3fe0ab6cbf9da574d77903c364fb194bbd0f82ed4092cc9cfa00c30f670"
+    },
+    {
+      "id": "positive-verseshell-real-limits",
+      "scenario": "S9 + S11",
+      "status": "pass",
+      "exitCode": 0,
+      "duration": "3.17s",
+      "log": "smoke-vs-real.txt",
+      "assertion": "bundled ae.exe enforced maxProcesses=1 and 64 MiB commit cap; 2/2 tests passed",
+      "outputSha256": "0ce1231087ca49eeedd35fc6c533f90d8acd84885dcf3fb275381d67c49c68b6"
+    },
+    {
+      "id": "negative-forged-approval-and-vg-mismatch",
+      "scenario": "S8 + S10",
+      "status": "pass",
+      "exitCode": 0,
+      "duration": "31.7s",
+      "log": "smoke-vb-vg.txt",
+      "assertion": "forged browser private-network approval and VG binary mismatch both failed closed without spawning",
+      "outputSha256": "4b78d3fe0ab6cbf9da574d77903c364fb194bbd0f82ed4092cc9cfa00c30f670"
+    },
+    {
+      "id": "full-matrix-dry-run",
+      "scenario": "S1-S11",
+      "status": "pass",
+      "exitCode": 0,
+      "duration": "0.7s",
+      "log": "smoke-harness-dry-run.txt",
+      "assertion": "11 scenario rows parsed and all required profiles selected without executing a product authority",
+      "outputSha256": "92bf4040a14783b99a200761f28473e68f1ea1a2a677206bb8f4d599bbc340d2"
+    }
+  ],
+  "validation": [
+    {
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-codex-active-verification.md",
+      "exitCode": 0,
+      "outputSha256": "71dad3b9cd80a63d25e12cd0e42d5d28b72c09034bd55621a37a183cf997873d"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/harness-codex-active-verification.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "testFiles": 1,
+      "tests": 9,
+      "outputSha256": "77532e34014d861918139f3d7abadb1b89d0c6a63d26843c906897e1c3e3a1e4"
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "outputSha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae"
+    },
+    {
+      "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-codex-active-verification.md --dry-run",
+      "exitCode": 0,
+      "outputSha256": "3d2e8d3338de11f3b59e07daf9fcc54657e7750eb959f6722e7208fe18b68184"
+    },
+    {
+      "command": "node scripts/verify-harness-active-matrix.mjs",
+      "exitCode": 0,
+      "outputSha256": "0152f9a9a7dc1d6576d2655b539bd57d3d84a74dd93e50f9ae6090c825c21024"
+    },
+    {
+      "command": "pnpm run docs:policy:validate",
+      "exitCode": 0,
+      "outputSha256": "43e480f46be2861ec4ff1240859bee1a2838f4274cde2b313f8054e468b8a85f"
+    },
+    {
+      "command": "pnpm run harness:specs:lifecycle",
+      "exitCode": 0,
+      "outputSha256": "af2fdc1cd387487a46db09300f1928cbeb839bf828861f99a26c93f0265f6b36"
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 19445,
+      "outputSha256": "049935a4b4aecac7902b33481f86b6c8e70a093ef06cbd6eb4d62cebb99f7e83"
+    },
+    {
+      "command": "pnpm run repo:evidence:check",
+      "exitCode": 0,
+      "referencedPaths": 187,
+      "outputSha256": "47a459f953e13db13ee2e8714d67d746dc01ea61ffa1482832f723db7d3e5c35"
+    },
+    {
+      "command": "pnpm run repo:test-coverage:check",
+      "exitCode": 0,
+      "outputSha256": "2fc1af9614686299a91735c9dc8393c8f81083b8639527191e428b43181dae77"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "outputSha256": null
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "ordinary-chat-native",
+      "evidenceGrade": "runtime",
+      "evidenceLevel": "runtime-reachable",
+      "status": "partial",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts --maxWorkers=1",
+      "input": "ordinary chat turn with no explicit Codex harness",
+      "expected": "native loop completes without creating a Task Ledger root or entering /loop",
+      "negative": "ordinary chat must not create a Task Ledger root or enter /loop",
+      "readback": "tests/unit/harness-codex-product-integration.test.ts",
+      "readbackSha256": "f3c534567103095f55ab1798348b44b476e5a07c237d56a3f97f78637ebf8f62",
+      "notRunReason": "native ordinary-turn negative is covered by source-level policy tests; no new full Chat-provider turn was run in TF-0570",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-product-integration/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "580340680e9f06a320bf6ea179c1ac5fd7448e349fa7439a5d8187f672091a9d",
+          "bytes": 4269,
+          "files": 1
+        },
+        {
+          "path": "tests/unit/harness-codex-product-integration.test.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "f3c534567103095f55ab1798348b44b476e5a07c237d56a3f97f78637ebf8f62",
+          "bytes": 3045,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "name": "normal-codex-turn",
+      "evidenceGrade": "runtime",
+      "evidenceLevel": "runtime-reachable",
+      "status": "partial",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-managed-runtime.test.ts --maxWorkers=1",
+      "input": "explicit/policy Codex app-server turn with isolated CODEX_HOME",
+      "expected": "source and packaged managed runtime initialize; an authenticated model turn is not inferred",
+      "negative": "missing app-server binary must not silently fall back after side effects",
+      "readback": "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+      "readbackSha256": "732f059d92d7c64ae331060991b2f955a0422c59ff1036155beb1dfabff935c4",
+      "notRunReason": "authenticated model turn not-run; managed initialize and missing-binary failure are proven",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "732f059d92d7c64ae331060991b2f955a0422c59ff1036155beb1dfabff935c4",
+          "bytes": 3539,
+          "files": 1
+        },
+        {
+          "path": "tests/unit/harness-codex-managed-runtime.test.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "1e52fb13d047c5024df1830b9f2d33be53793fd83318d1045fa155be71cafc5a",
+          "bytes": 6681,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "explicit-codex-control",
+      "evidenceGrade": "runtime",
+      "evidenceLevel": "runtime-reachable",
+      "status": "partial",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts --maxWorkers=1",
+      "input": "explicit agentHarnessRuntimeOverride=codex while no Codex harness is registered",
+      "expected": "MissingAgentHarnessError is surfaced; no thread is invented and no ACP switch occurs",
+      "negative": "missing bound thread shows an explicit error and never invents a thread",
+      "readback": "tests/unit/harness-codex-product-integration.test.ts",
+      "readbackSha256": "f3c534567103095f55ab1798348b44b476e5a07c237d56a3f97f78637ebf8f62",
+      "notRunReason": "bind/resume/steer command execution was not run against a live bound app-server in this node; source plus explicit-missing failure are readback",
+      "evidence": [
+        {
+          "path": "tests/unit/harness-codex-product-integration.test.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "f3c534567103095f55ab1798348b44b476e5a07c237d56a3f97f78637ebf8f62",
+          "bytes": 3045,
+          "files": 1
+        },
+        {
+          "path": "openclaw_runtime/extensions/codex/src/commands.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "b0303115c933a0a9bd54c7b4c7ed4518f1b4bcbce277361a2324bb0845d9d273",
+          "bytes": 2691,
+          "files": 1
+        },
+        {
+          "path": "openclaw_runtime/extensions/codex/src/command-handlers.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "9f31d707033ed963375e94b2c6235cc84bba3b9f8a07df000637c8e10e248cb3",
+          "bytes": 74013,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "name": "packaged-desktop-launch",
+      "evidenceGrade": "packaged",
+      "evidenceLevel": "packaged-available",
+      "status": "pass",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-managed-runtime.test.ts --maxWorkers=1",
+      "input": "release/win-unpacked packaged tree with plugin-local managed Codex runtime",
+      "expected": "packaged binary resolves inside the app payload and initializes; host Codex is not used",
+      "negative": "dev-only pnpm link is not packaged availability",
+      "readback": "harness/specs/fixtures/harness-codex-managed-runtime/packaged-runtime.json",
+      "readbackSha256": "0ef974812ed713a9d728e524d6860e8f308437bac071062f5b5a0a235a4166e7",
+      "notRunReason": null,
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-managed-runtime/packaged-runtime.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "0ef974812ed713a9d728e524d6860e8f308437bac071062f5b5a0a235a4166e7",
+          "bytes": 1567,
+          "files": 1
+        },
+        {
+          "path": "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "732f059d92d7c64ae331060991b2f955a0422c59ff1036155beb1dfabff935c4",
+          "bytes": 3539,
+          "files": 1
+        },
+        {
+          "path": "tests/unit/harness-codex-managed-runtime.test.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "1e52fb13d047c5024df1830b9f2d33be53793fd83318d1045fa155be71cafc5a",
+          "bytes": 6681,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "name": "ci-headless",
+      "evidenceGrade": "runtime",
+      "evidenceLevel": "runtime-reachable",
+      "status": "pass",
+      "command": "pnpm exec vitest run tests/unit/coding-run.test.ts --maxWorkers=1",
+      "input": "strict coding-run/v1 JSONL records without an Electron window",
+      "expected": "unknown fields and invalid sequence are rejected; no Codex CLI compatibility is implied",
+      "negative": "coding-run projection is not a Codex CLI compatibility layer",
+      "readback": "tests/unit/coding-run.test.ts",
+      "readbackSha256": "29fbc33511640d99285c248591b637a47948febb4be3fac00b0293dd46dfaf1a",
+      "notRunReason": null,
+      "evidence": [
+        {
+          "path": "tests/unit/coding-run.test.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "29fbc33511640d99285c248591b637a47948febb4be3fac00b0293dd46dfaf1a",
+          "bytes": 8160,
+          "files": 1
+        },
+        {
+          "path": "shared/types/coding-run.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+          "bytes": 17799,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "name": "acp-alternative",
+      "evidenceGrade": "runtime",
+      "evidenceLevel": "runtime-reachable",
+      "status": "partial",
+      "command": "node scripts/verify-harness-adapter-pilot.mjs",
+      "input": "explicit ACPX Codex adapter initialize and unauthenticated isolated-home negative",
+      "expected": "protocol initialize is observed; absent/unavailable adapter fails closed",
+      "negative": "absent adapter fails closed; no hidden switch to Codex native",
+      "readback": "harness/specs/fixtures/harness-codex-adapter-pilot/acceptance.json",
+      "readbackSha256": "b77e9884b0ed41c1ae4621d44f3500d34da08580a4c14be841ed6c278eeb1ea6",
+      "notRunReason": "ACPX Codex prompt turn is recorded separately; generic adapter selection and cancel are not exercised",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-adapter-pilot/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "b77e9884b0ed41c1ae4621d44f3500d34da08580a4c14be841ed6c278eeb1ea6",
+          "bytes": 7461,
+          "files": 1
+        },
+        {
+          "path": "scripts/verify-harness-adapter-pilot.mjs",
+          "exists": true,
+          "kind": "file",
+          "sha256": "4a1ba33956b09ddbc7e044dc9bf14d772738f398dd3e8fdeff0f3f7502887936",
+          "bytes": 3333,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S7",
+      "name": "alternate-harness-evaluation",
+      "evidenceGrade": "external-provider",
+      "evidenceLevel": "effect-verified",
+      "status": "partial",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-adapter-pilot.test.ts --maxWorkers=1",
+      "input": "OpenCode local binary plus ACPX Codex and native comparison fields",
+      "expected": "quality/latency/cost remain explicitly not-run; no adoption claim",
+      "negative": "a third-party demo is not proof of equivalent permissions/cost/quality",
+      "readback": "harness/specs/fixtures/harness-codex-adapter-pilot/real-turns.json",
+      "readbackSha256": "8622986552e33122e1c8f625d60a82ee68bd0abf0f6a6a27ea5610bbd5865a73",
+      "notRunReason": "OpenCode model turn failed before turn; currency cost not-run",
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-adapter-pilot/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "b77e9884b0ed41c1ae4621d44f3500d34da08580a4c14be841ed6c278eeb1ea6",
+          "bytes": 7461,
+          "files": 1
+        },
+        {
+          "path": "harness/specs/fixtures/harness-codex-adapter-pilot/real-turns.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "8622986552e33122e1c8f625d60a82ee68bd0abf0f6a6a27ea5610bbd5865a73",
+          "bytes": 2534,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S8",
+      "name": "versebrowser-task",
+      "evidenceGrade": "effect",
+      "evidenceLevel": "effect-verified",
+      "status": "pass",
+      "command": "pnpm exec playwright test tests/e2e/versebrowser-host-invocation.spec.ts --workers=1",
+      "input": "real embedded browser: open -> observe -> act -> re-observe -> verify",
+      "expected": "saved value is read back; private-network/forged approval/unsupported facade fail closed",
+      "negative": "harness cannot bypass private-network denial or approval",
+      "readback": "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json",
+      "readbackSha256": "b0608982ff46f5ec45e9d67025e8dced52d2dc5f5d0ff42fcededb467cded806",
+      "notRunReason": null,
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "b0608982ff46f5ec45e9d67025e8dced52d2dc5f5d0ff42fcededb467cded806",
+          "bytes": 4375,
+          "files": 1
+        },
+        {
+          "path": "tests/e2e/versebrowser-host-invocation.spec.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "b065b87e7abe4f904062db7b6593fd0cdfcb5bc73b48f079c7bda4c08f34bca5",
+          "bytes": 5179,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S9",
+      "name": "verseshell-execution",
+      "evidenceGrade": "effect",
+      "evidenceLevel": "effect-verified",
+      "status": "pass",
+      "command": "pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.verseshell.config.ts src/agents/verseshell/governed-process.real-limits.test.ts --maxWorkers=1",
+      "input": "bundled ae.exe with no cap, maxProcesses=1, and 64 MiB commit cap",
+      "expected": "child refusal/allocation failure is observed and receipt reports Job Object enforcement",
+      "negative": "external-write is not a journal-backed rollback",
+      "readback": "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
+      "readbackSha256": "90bce4d14f2e68c1d0bae7f5d425dc7455b9fae2d7bfcf370819c14932034c57",
+      "notRunReason": null,
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
+          "exists": true,
+          "kind": "file",
+          "sha256": "90bce4d14f2e68c1d0bae7f5d425dc7455b9fae2d7bfcf370819c14932034c57",
+          "bytes": 1201,
+          "files": 1
+        },
+        {
+          "path": "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "b0608982ff46f5ec45e9d67025e8dced52d2dc5f5d0ff42fcededb467cded806",
+          "bytes": 4375,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S10",
+      "name": "versegit-concurrent-candidate",
+      "evidenceGrade": "effect",
+      "evidenceLevel": "effect-verified",
+      "status": "pass",
+      "command": "pnpm exec playwright test tests/e2e/versegit-candidate-apply.spec.ts --workers=1",
+      "input": "two isolated candidates with verification, permission gate, journaled apply, and five TOCTOU negatives",
+      "expected": "verification precedes first write; all negatives fail closed; VG remains fact/advisory only",
+      "negative": "VG advisory/admitted is not harness verdict or task completion",
+      "readback": "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json",
+      "readbackSha256": "ad6290475f207326fc426642946b7a75493ecb06f7344df132e37e14cb3fe0fa",
+      "notRunReason": null,
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "ad6290475f207326fc426642946b7a75493ecb06f7344df132e37e14cb3fe0fa",
+          "bytes": 15384,
+          "files": 1
+        },
+        {
+          "path": "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "b0608982ff46f5ec45e9d67025e8dced52d2dc5f5d0ff42fcededb467cded806",
+          "bytes": 4375,
+          "files": 1
+        }
+      ]
+    },
+    {
+      "id": "S11",
+      "name": "failure-fallback",
+      "evidenceGrade": "runtime",
+      "evidenceLevel": "runtime-reachable",
+      "status": "pass",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts tests/unit/harness-codex-managed-runtime.test.ts --maxWorkers=1",
+      "input": "missing managed binary, isolated unauthenticated Codex, explicit missing Codex harness, and invalid runtime observation",
+      "expected": "every failure is explicit; unknown/stale observations stay unverified; no silent fallback",
+      "negative": "missing binary/auth/timeout must expose failure rather than a successful-looking result",
+      "readback": "tests/unit/harness-codex-product-integration.test.ts",
+      "readbackSha256": "f3c534567103095f55ab1798348b44b476e5a07c237d56a3f97f78637ebf8f62",
+      "notRunReason": null,
+      "evidence": [
+        {
+          "path": "tests/unit/harness-codex-product-integration.test.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "f3c534567103095f55ab1798348b44b476e5a07c237d56a3f97f78637ebf8f62",
+          "bytes": 3045,
+          "files": 1
+        },
+        {
+          "path": "tests/unit/harness-codex-managed-runtime.test.ts",
+          "exists": true,
+          "kind": "file",
+          "sha256": "1e52fb13d047c5024df1830b9f2d33be53793fd83318d1045fa155be71cafc5a",
+          "bytes": 6681,
+          "files": 1
+        },
+        {
+          "path": "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+          "exists": true,
+          "kind": "file",
+          "sha256": "732f059d92d7c64ae331060991b2f955a0422c59ff1036155beb1dfabff935c4",
+          "bytes": 3539,
+          "files": 1
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "pass": 6,
+    "partial": 5,
+    "failed": 0,
+    "notRun": 0,
+    "levels": {
+      "source-exists": 0,
+      "runtime-reachable": 6,
+      "effect-verified": 4,
+      "packaged-available": 1,
+      "default-product-path": 0,
+      "release-approved": 0,
+      "not-run": 0
+    }
+  },
+  "boundaries": {
+    "defaultPathChanged": false,
+    "productApproved": false,
+    "releaseApproved": false,
+    "realHumanEvidence": false,
+    "secondExecutorAuthority": false,
+    "verdictScope": "This receipt covers only the scenarios and evidence grades listed; partial and not-run rows are not promoted."
+  },
+  "limitations": [
+    "S1-S3 and S6-S7 retain partial rows where only source/contract or a pre-turn failure was observed.",
+    "No authenticated native, Codex or ACP model-quality comparison is claimed by this receipt.",
+    "Freshness is decided by the recorded SHA256 input and evidence fingerprints; a changed or missing path makes the receipt stale."
+  ]
+}

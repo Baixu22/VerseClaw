@@ -196,9 +196,13 @@ TF-0565 is complete only when all of the following can be read from disk:
 | TF-0569 | Test one real VB, one VS and one VG collaboration seam under existing owners | Bypassing VB approval, VS journaling, or VG advisory boundary |
 | TF-0570 | Define and freeze pass/fail evidence per scenario, including negatives and stale/failed observations | Treating docs, snippets, logs or green UI as runtime acceptance |
 
-TF-0566 is complete for source and packaged Windows --dir availability. TF-0567 is complete: it projects the selected harness into the existing Session effective-state surface, including configured/effective/unverified and missing/stale/mismatch generation reasons. TF-0568 has an adapter contract and a real initialize/failure pilot, but quality/latency/cost comparisons remain not-run; it stays ready rather than done. TF-0569 is complete: the fixture records a real VerseBrowser scenario, a real VerseShell governed process with Job Object limits, VerseGit candidate diagnostics and a journaled candidate apply with TOCTOU negatives. TF-0570 remains proposed and must be opened as the next ready-node session.
+TF-0566 is complete for source and packaged Windows --dir availability. TF-0567 is complete: it projects the selected harness into the existing Session effective-state surface, including configured/effective/unverified and missing/stale/mismatch generation reasons. TF-0568 has an adapter contract and a real initialize/failure pilot; quality/latency/cost comparisons remain explicitly not-run. TF-0569 is complete: the fixture records a real VerseBrowser scenario, a real VerseShell governed process with Job Object limits, VerseGit candidate diagnostics and a journaled candidate apply with TOCTOU negatives. TF-0570 is complete: `harness/specs/fixtures/harness-codex-active-verification/matrix.json` now binds S1-S11 to commands, inputs, expected/negative behavior, owners, readable artifacts, evidence grades and source/package SHA256 freshness. `scripts/verify-harness-active-matrix.mjs` rejects missing, changed or partial evidence instead of promoting it.
 
-## 10. VerseSearch source ledger
+## 10. Active verification
+
+Run `pnpm exec vitest run tests/unit/harness-codex-active-verification.test.ts --maxWorkers=1`, `node scripts/verify-harness-active-matrix.mjs`, and the matrix smoke logs retained under `harness/specs/fixtures/harness-codex-active-verification/`. The receipt distinguishes `pass`, `partial`, `not-run` and stale/missing evidence; it is not a task-completion, approval or Git-apply authority.
+
+## 11. VerseSearch source ledger
 
 The source ledger is [`verseSearch-sources.json`](../../harness/specs/fixtures/harness-codex-authority-baseline/verseSearch-sources.json), schema `VerseSearchSourceLedger/v2`. It records primary pages returned by the retrieval tool during this pass, not search snippets.
 

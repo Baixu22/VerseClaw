@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "HarnessActiveVerificationMatrix/v1",
+  "generatedAt": "2026-10-26T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-active-verification-20261026",
+  "scenarioSource": "harness/specs/fixtures/harness-codex-authority-baseline/scenario-matrix.json",
+  "evidenceVocabulary": [
+    "source",
+    "runtime",
+    "effect",
+    "packaged",
+    "external-provider",
+    "not-run"
+  ],
+  "freshnessPolicy": {
+    "maxAgeHours": null,
+    "sourceNewerThanEvidence": "stale",
+    "missingArtifact": "stale",
+    "hashMismatch": "stale",
+    "invalidSchema": "stale",
+    "verifyWhen": "every verifier run"
+  },
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "ordinary-chat-native",
+      "owner": "OpenClaw native loop",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts --maxWorkers=1",
+      "input": "ordinary chat turn with no explicit Codex harness",
+      "expected": "native loop completes without creating a Task Ledger root or entering /loop",
+      "negative": "ordinary chat must not create a Task Ledger root or enter /loop",
+      "readback": "tests/unit/harness-codex-product-integration.test.ts",
+      "evidenceGrade": "runtime",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-product-integration/acceptance.json",
+        "tests/unit/harness-codex-product-integration.test.ts"
+      ],
+      "status": "partial",
+      "notRunReason": "native ordinary-turn negative is covered by source-level policy tests; no new full Chat-provider turn was run in TF-0570"
+    },
+    {
+      "id": "S2",
+      "name": "normal-codex-turn",
+      "owner": "Codex app-server harness",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-managed-runtime.test.ts --maxWorkers=1",
+      "input": "explicit/policy Codex app-server turn with isolated CODEX_HOME",
+      "expected": "source and packaged managed runtime initialize; an authenticated model turn is not inferred",
+      "negative": "missing app-server binary must not silently fall back after side effects",
+      "readback": "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+      "evidenceGrade": "runtime",
+      "status": "partial",
+      "notRunReason": "authenticated model turn not-run; managed initialize and missing-binary failure are proven",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+        "tests/unit/harness-codex-managed-runtime.test.ts"
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "explicit-codex-control",
+      "owner": "/codex command surface",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts --maxWorkers=1",
+      "input": "explicit agentHarnessRuntimeOverride=codex while no Codex harness is registered",
+      "expected": "MissingAgentHarnessError is surfaced; no thread is invented and no ACP switch occurs",
+      "negative": "missing bound thread shows an explicit error and never invents a thread",
+      "readback": "tests/unit/harness-codex-product-integration.test.ts",
+      "evidenceGrade": "runtime",
+      "evidence": [
+        "tests/unit/harness-codex-product-integration.test.ts",
+        "openclaw_runtime/extensions/codex/src/commands.ts",
+        "openclaw_runtime/extensions/codex/src/command-handlers.ts"
+      ],
+      "status": "partial",
+      "notRunReason": "bind/resume/steer command execution was not run against a live bound app-server in this node; source plus explicit-missing failure are readback"
+    },
+    {
+      "id": "S4",
+      "name": "packaged-desktop-launch",
+      "owner": "packaged Electron + Codex managed runtime",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-managed-runtime.test.ts --maxWorkers=1",
+      "input": "release/win-unpacked packaged tree with plugin-local managed Codex runtime",
+      "expected": "packaged binary resolves inside the app payload and initializes; host Codex is not used",
+      "negative": "dev-only pnpm link is not packaged availability",
+      "readback": "harness/specs/fixtures/harness-codex-managed-runtime/packaged-runtime.json",
+      "evidenceGrade": "packaged",
+      "status": "pass",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-managed-runtime/packaged-runtime.json",
+        "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json",
+        "tests/unit/harness-codex-managed-runtime.test.ts"
+      ]
+    },
+    {
+      "id": "S5",
+      "name": "ci-headless",
+      "owner": "structured host execution surface",
+      "command": "pnpm exec vitest run tests/unit/coding-run.test.ts --maxWorkers=1",
+      "input": "strict coding-run/v1 JSONL records without an Electron window",
+      "expected": "unknown fields and invalid sequence are rejected; no Codex CLI compatibility is implied",
+      "negative": "coding-run projection is not a Codex CLI compatibility layer",
+      "readback": "tests/unit/coding-run.test.ts",
+      "evidenceGrade": "runtime",
+      "evidence": [
+        "tests/unit/coding-run.test.ts",
+        "shared/types/coding-run.ts"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "S6",
+      "name": "acp-alternative",
+      "owner": "ACPX + selected adapter",
+      "command": "node scripts/verify-harness-adapter-pilot.mjs",
+      "input": "explicit ACPX Codex adapter initialize and unauthenticated isolated-home negative",
+      "expected": "protocol initialize is observed; absent/unavailable adapter fails closed",
+      "negative": "absent adapter fails closed; no hidden switch to Codex native",
+      "readback": "harness/specs/fixtures/harness-codex-adapter-pilot/acceptance.json",
+      "evidenceGrade": "runtime",
+      "status": "partial",
+      "notRunReason": "ACPX Codex prompt turn is recorded separately; generic adapter selection and cancel are not exercised",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-adapter-pilot/acceptance.json",
+        "scripts/verify-harness-adapter-pilot.mjs"
+      ]
+    },
+    {
+      "id": "S7",
+      "name": "alternate-harness-evaluation",
+      "owner": "adapter boundary",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-adapter-pilot.test.ts --maxWorkers=1",
+      "input": "OpenCode local binary plus ACPX Codex and native comparison fields",
+      "expected": "quality/latency/cost remain explicitly not-run; no adoption claim",
+      "negative": "a third-party demo is not proof of equivalent permissions/cost/quality",
+      "readback": "harness/specs/fixtures/harness-codex-adapter-pilot/real-turns.json",
+      "evidenceGrade": "external-provider",
+      "status": "partial",
+      "notRunReason": "OpenCode model turn failed before turn; currency cost not-run",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-adapter-pilot/acceptance.json",
+        "harness/specs/fixtures/harness-codex-adapter-pilot/real-turns.json"
+      ]
+    },
+    {
+      "id": "S8",
+      "name": "versebrowser-task",
+      "owner": "VerseBrowser host + selected harness",
+      "command": "pnpm exec playwright test tests/e2e/versebrowser-host-invocation.spec.ts --workers=1",
+      "input": "real embedded browser: open -> observe -> act -> re-observe -> verify",
+      "expected": "saved value is read back; private-network/forged approval/unsupported facade fail closed",
+      "negative": "harness cannot bypass private-network denial or approval",
+      "readback": "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json",
+      "evidenceGrade": "effect",
+      "status": "pass",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json",
+        "tests/e2e/versebrowser-host-invocation.spec.ts"
+      ]
+    },
+    {
+      "id": "S9",
+      "name": "verseshell-execution",
+      "owner": "VerseShell governed execution",
+      "command": "pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.verseshell.config.ts src/agents/verseshell/governed-process.real-limits.test.ts --maxWorkers=1",
+      "input": "bundled ae.exe with no cap, maxProcesses=1, and 64 MiB commit cap",
+      "expected": "child refusal/allocation failure is observed and receipt reports Job Object enforcement",
+      "negative": "external-write is not a journal-backed rollback",
+      "readback": "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
+      "evidenceGrade": "effect",
+      "status": "pass",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
+        "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json"
+      ]
+    },
+    {
+      "id": "S10",
+      "name": "versegit-concurrent-candidate",
+      "owner": "VerseGit host module + selected harness",
+      "command": "pnpm exec playwright test tests/e2e/versegit-candidate-apply.spec.ts --workers=1",
+      "input": "two isolated candidates with verification, permission gate, journaled apply, and five TOCTOU negatives",
+      "expected": "verification precedes first write; all negatives fail closed; VG remains fact/advisory only",
+      "negative": "VG advisory/admitted is not harness verdict or task completion",
+      "readback": "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json",
+      "evidenceGrade": "effect",
+      "status": "pass",
+      "evidence": [
+        "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json",
+        "harness/specs/fixtures/harness-codex-verse-collaboration/acceptance.json"
+      ]
+    },
+    {
+      "id": "S11",
+      "name": "failure-fallback",
+      "owner": "existing error/approval owners",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts tests/unit/harness-codex-managed-runtime.test.ts --maxWorkers=1",
+      "input": "missing managed binary, isolated unauthenticated Codex, explicit missing Codex harness, and invalid runtime observation",
+      "expected": "every failure is explicit; unknown/stale observations stay unverified; no silent fallback",
+      "negative": "missing binary/auth/timeout must expose failure rather than a successful-looking result",
+      "readback": "tests/unit/harness-codex-product-integration.test.ts",
+      "evidenceGrade": "runtime",
+      "status": "pass",
+      "evidence": [
+        "tests/unit/harness-codex-product-integration.test.ts",
+        "tests/unit/harness-codex-managed-runtime.test.ts",
+        "harness/specs/fixtures/harness-codex-managed-runtime/acceptance.json"
+      ]
+    }
+  ],
+  "sourceFiles": [
+    "harness/src",
+    "docs/modules/harness-and-codex.md",
+    "shared/harness-adapter-contract.ts",
+    "shared/types/coding-run.ts",
+    "openclaw_runtime/src/agents/harness",
+    "openclaw_runtime/extensions/codex",
+    "openclaw_runtime/extensions/acpx",
+    "tests/unit/coding-run.test.ts",
+    "tests/unit/harness-codex-managed-runtime.test.ts",
+    "tests/unit/harness-codex-product-integration.test.ts",
+    "tests/unit/harness-codex-adapter-pilot.test.ts",
+    "tests/e2e/versebrowser-host-invocation.spec.ts",
+    "tests/e2e/versegit-candidate-apply.spec.ts",
+    "tests/e2e/versegit-diagnostics.spec.ts",
+    "harness/specs/tasks/harness-codex-active-verification.md",
+    "scripts/verify-harness-active-matrix.mjs",
+    "scripts/build-harness-active-acceptance.mjs",
+    "tests/unit/harness-codex-active-verification.test.ts",
+    "scripts/verify-harness-active-matrix.d.mts"
+  ],
+  "packageFiles": [
+    "resources/verseshell/manifest.json",
+    "resources/versegit/manifest.json",
+    "resources/bin/win32-x64/ae.exe",
+    "resources/bin/win32-x64/vg.exe",
+    "release/win-unpacked/Verse Claw.exe",
+    "release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json",
+    "release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe"
+  ]
+}

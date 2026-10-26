@@ -1,0 +1,143 @@
+export type EvidenceGrade = 'source' | 'runtime' | 'effect' | 'packaged' | 'external-provider' | 'not-run';
+export type ScenarioStatus = 'pass' | 'partial' | 'failed' | 'not-run';
+export type EvidenceFingerprint = {
+  path: string;
+  exists: boolean;
+  kind: 'file' | 'directory' | 'missing';
+  sha256: string | null;
+  bytes: number | null;
+  files: number;
+};
+export type VerificationScenario = {
+  id: string;
+  name: string;
+  owner: string;
+  command: string;
+  input: string;
+  expected: string;
+  negative: string;
+  readback: string;
+  evidenceGrade: EvidenceGrade;
+  status: ScenarioStatus;
+  notRunReason: string | null;
+  evidence: string[];
+};
+export type VerificationMatrix = {
+  schemaVersion: string;
+  generatedAt: string;
+  driven_by: 'agent';
+  actor: string;
+  scenarioSource: string | null;
+  evidenceVocabulary: string[];
+  freshnessPolicy: Record<string, unknown>;
+  sourceFiles: string[];
+  packageFiles: string[];
+  scenarios: VerificationScenario[];
+};
+export type VerificationSmokeEntry = {
+  id: string;
+  scenario?: string;
+  status: string;
+  exitCode: number;
+  duration?: string;
+  log: string;
+  assertion?: string;
+  outputSha256?: string | null;
+};
+export type VerificationValidationEntry = {
+  command: string;
+  exitCode: number;
+  tests?: number;
+  testFiles?: number;
+  outputSha256?: string | null;
+};
+export type VerificationEnvironment = {
+  platform: string;
+  arch: string;
+  node: string;
+  runtimeVersion: string;
+  timezone?: string;
+};
+export type VerificationAcceptanceScenario = Omit<VerificationScenario, 'notRunReason' | 'evidence'> & {
+  evidenceLevel: string;
+  notRunReason: string | null;
+  readbackSha256: string | null;
+  evidence: EvidenceFingerprint[];
+};
+export type VerificationAcceptance = {
+  schemaVersion: string;
+  generatedAt: string;
+  driven_by: 'agent';
+  actor: string;
+  node: string;
+  source: {
+    commit: string;
+    tree: string;
+    dirty: boolean;
+    matrix: string;
+    matrixSha256: string;
+    inputsDigest: string;
+  };
+  sourceInputs: EvidenceFingerprint[];
+  scenarioSource: string | null;
+  evidenceVocabulary: string[];
+  evidenceLevels: string[];
+  freshness: { state: string; policy: Record<string, unknown>; evidenceFiles: string[]; checkedAt: string };
+  environment: VerificationEnvironment;
+  matrixDryRun: Record<string, unknown> & { status: string; scenarios: number };
+  smoke: VerificationSmokeEntry[];
+  validation: VerificationValidationEntry[];
+  scenarios: VerificationAcceptanceScenario[];
+  summary: { total: number; pass: number; partial: number; failed: number; notRun: number; levels: Record<string, number> };
+  boundaries: Record<string, boolean | string>;
+  limitations: string[];
+};
+export type VerificationResult = {
+  ok: boolean;
+  issues: string[];
+  stale: Array<{ scenario?: string; reason: string; path?: string; paths?: string[] }>;
+  summary: { total: number; pass: number; partial: number; failed: number; notRun: number; stale: number };
+};
+export const ACTIVE_MATRIX_SCHEMA: string;
+export const ACTIVE_ACCEPTANCE_SCHEMA: string;
+export const DEFAULT_FIXTURE_DIR: string;
+export const DEFAULT_MATRIX_PATH: string;
+export const DEFAULT_ACCEPTANCE_PATH: string;
+export const SPEC_PATH: string;
+export const VERIFIER_PATH: string;
+export const BUILDER_PATH: string;
+export const TEST_PATH: string;
+export const REQUIRED_SCENARIO_IDS: string[];
+export const EVIDENCE_GRADES: EvidenceGrade[];
+export const EVIDENCE_LEVELS: string[];
+export function sha256File(path: string): string;
+export function sha256Text(value: string): string;
+export function readJson(root: string, relativePath: string): unknown;
+export function fingerprintPath(root: string, relativePath: string): EvidenceFingerprint;
+export function captureInputs(root: string, paths: string[]): { inputs: EvidenceFingerprint[]; digest: string };
+export function buildAcceptance(args: {
+  matrix: VerificationMatrix;
+  sourceCommit: string;
+  sourceTree: string;
+  sourceDirty: boolean;
+  freshness?: string;
+  validation?: VerificationValidationEntry[];
+  root?: string;
+  actor?: string;
+  environment?: VerificationEnvironment;
+  matrixDryRun?: Record<string, unknown> & { status: string; scenarios: number };
+  smoke?: VerificationSmokeEntry[];
+}): VerificationAcceptance;
+export function validateMatrixStructure(matrix: VerificationMatrix, options?: { root?: string }): VerificationResult;
+export function verifyActiveMatrix(args: {
+  matrix: VerificationMatrix;
+  acceptance?: VerificationAcceptance | null;
+  root?: string;
+  sourceDirty?: boolean;
+  sourceCommit?: string | null;
+  sourceTree?: string | null;
+}): VerificationResult;
+export function verifyActiveMatrixArtifacts(args?: { root?: string; matrixPath?: string }): VerificationResult & {
+  matrix: VerificationMatrix;
+  acceptance: VerificationAcceptance | null;
+};
