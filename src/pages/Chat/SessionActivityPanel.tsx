@@ -342,6 +342,8 @@ export function SessionActivityPanel({
   const policy = snapshot.policy;
   const configuredBackend = policy?.backend.configured;
   const effectiveBackend = policy?.backend.effective;
+  const configuredHarness = policy?.harness?.configured;
+  const effectiveHarness = policy?.harness?.effective;
   const configuredModel = policy?.model.configured;
   const effectiveModel = policy?.model.effective;
   const grantSummary = policy?.grants.effective.value;
@@ -390,6 +392,7 @@ export function SessionActivityPanel({
   });
   const unverifiedFacts = policy ? [
     { label: t('sessionActivity.policy.effectiveBackend'), reason: effectiveBackend?.reason },
+    { label: t('sessionActivity.policy.harness'), reason: effectiveHarness?.reason },
     { label: t('sessionActivity.policy.effort'), reason: effectiveModel?.reason },
     { label: t('sessionActivity.policy.context'), reason: policy.context.effective.reason },
     { label: t('sessionActivity.policy.actions'), reason: policy.grants.effective.reason },
@@ -589,6 +592,20 @@ export function SessionActivityPanel({
                 ? [configuredBackend.value.runtime, configuredBackend.value.provider, configuredBackend.value.model].filter(Boolean).join(' · ')
                 : t('sessionActivity.policy.notReported')}
               state={configuredBackend ? policyState(configuredBackend.status) : 'idle'}
+            />
+            <Row
+              testId="session-activity-policy-harness"
+              stacked
+              label={t('sessionActivity.policy.harness')}
+              sublabel={[
+                configuredHarness?.source,
+                policyReason(effectiveHarness?.reason ?? null) ?? t('sessionActivity.policy.currentRunObservation'),
+              ].filter(Boolean).join(' · ')}
+              value={[
+                configuredHarness?.value?.id,
+                effectiveHarness?.value?.id ?? t(`sessionActivity.policy.status.${effectiveHarness?.status ?? 'unverified'}`),
+              ].filter(Boolean).join(' → ') || t('sessionActivity.policy.notReported')}
+              state={effectiveHarness?.status === 'effective' ? 'ok' : effectiveHarness ? 'warn' : 'idle'}
             />
             <Row
               testId="session-activity-policy-effective"

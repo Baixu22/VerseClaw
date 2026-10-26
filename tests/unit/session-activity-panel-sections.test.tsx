@@ -86,6 +86,10 @@ describe('SessionActivityPanel', () => {
                 reason: 'no-current-run-capability-profile',
               },
             },
+            harness: {
+              configured: { value: { id: 'codex', kind: 'native' }, status: 'configured', source: 'session.runtime', reason: null },
+              effective: { value: null, status: 'unverified', source: 'runtime.observation', reason: 'no-current-run-capability-profile' },
+            },
             model: {
               configured: {
                 value: { provider: 'openai', model: 'gpt-5.4', effort: 'high' },
@@ -153,6 +157,8 @@ describe('SessionActivityPanel', () => {
     expect(screen.getByTestId('session-activity-policy')).toBeTruthy();
     expect(screen.getByTestId('session-activity-policy-backend').textContent).toContain('configured');
     expect(screen.getByTestId('session-activity-policy-backend').textContent).toContain('session.runtime');
+    expect(screen.getByTestId('session-activity-policy-harness').textContent).toContain('codex');
+    expect(screen.getByTestId('session-activity-policy-harness').textContent).toContain('unverified');
     expect(screen.getByTestId('session-activity-policy-effective').textContent).toContain('unverified');
     expect(screen.getByTestId('session-activity-policy-effort').textContent).toContain('high');
     expect(screen.getByTestId('session-activity-policy-actions').textContent).toContain('actionSummary');

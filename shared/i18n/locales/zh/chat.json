@@ -167,6 +167,7 @@
     "policy": {
       "backend": "配置的后端",
       "effectiveBackend": "实际生效后端",
+      "harness": "执行 Harness",
       "effort": "推理强度",
       "context": "上下文窗口",
       "actions": "操作权限",

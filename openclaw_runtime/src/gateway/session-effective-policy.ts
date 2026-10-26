@@ -22,6 +22,7 @@ import {
   type SessionPolicyFact,
   type SessionPolicyFactStatus,
   type SessionPolicyGrantSummary,
+  type SessionPolicyHarness,
   type SessionPolicyModel,
   type SessionPolicyQueueLimits,
   type SessionPolicyResourceLimits,
@@ -293,6 +294,21 @@ export function buildSessionEffectivePolicy(
         "runtime-effective-capability.observation",
         observation.reason ?? "current-run backend identity is unavailable",
       );
+  const observedHarnessKind = observedBackendId
+    ? backendKind({ runtime: observedBackendId, cfg: input.cfg, agentId }).kind
+    : "unknown";
+  const effectiveHarness = observation.state === "available" && observedBackendId && observedProvider && observedModel
+    ? fact<SessionPolicyHarness>(
+        { id: observedBackendId, kind: observedHarnessKind },
+        "effective",
+        "runtime-effective-capability.observation",
+      )
+    : fact<SessionPolicyHarness>(
+        null,
+        "unverified",
+        "runtime-effective-capability.observation",
+        observation.reason ?? (observedBackendId ? "current-run backend identity is incomplete" : "current-run harness identity is unavailable"),
+      );
   const effectiveModel = observed && modelMatches
     ? fact<SessionPolicyModel>(
         {
@@ -425,6 +441,14 @@ export function buildSessionEffectivePolicy(
     backend: axis(
       fact(configuredBackend, "configured", "session.runtime + model resolution"),
       effectiveBackend,
+    ),
+    harness: axis(
+      fact<SessionPolicyHarness>(
+        { id: effectiveRuntime, kind: configuredKind.kind },
+        "configured",
+        "session.runtime + model resolution",
+      ),
+      effectiveHarness,
     ),
     model: axis(
       fact(configuredModel, "configured", "session.model + model resolution + effort defaults", effort.source),

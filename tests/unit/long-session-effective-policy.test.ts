@@ -158,6 +158,15 @@ describe("session effective policy", () => {
       status: "effective",
       value: { runtime: "codex", provider: "openai", model: "gpt-5.4" },
     });
+    expect(policy.harness.configured).toMatchObject({
+      status: "configured",
+      value: { id: "codex", kind: "native" },
+    });
+    expect(policy.harness.effective).toMatchObject({
+      status: "effective",
+      source: "runtime-effective-capability.observation",
+      value: { id: "codex", kind: "native" },
+    });
     expect(policy.model.effective.value).toEqual({
       provider: "openai",
       model: "gpt-5.4",
@@ -220,6 +229,10 @@ describe("session effective policy", () => {
       expect(policy.model.effective.status).toBe("unverified");
       expect(policy.grants.effective.status).toBe("unverified");
       expect(policy.backend.configured.value?.runtime).toBe("codex");
+      expect(policy.harness.configured.value?.id).toBe("codex");
+      expect(policy.harness.effective.status).toBe("unverified");
+      expect(policy.harness.effective.value).toBeNull();
+      expect(policy.harness.effective.reason).toBe(`${state}-observation`);
     }
   });
 
@@ -233,6 +246,7 @@ describe("session effective policy", () => {
       value: { runtime: "codex", provider: "openai", model: "gpt-5.4" },
     });
     expect(policy.backend.effective.value).toBeNull();
+    expect(policy.harness.effective.value).toBeNull();
     expect(policy.model.effective.value).toBeNull();
     expect(policy.context.configured.value).toEqual({
       contextTokens: 160_000,
@@ -250,6 +264,7 @@ describe("session effective policy", () => {
       reason: "mismatch-observation",
     });
     expect(policy.backend.effective.status).toBe("unverified");
+    expect(policy.harness.effective.status).toBe("unverified");
     expect(policy.model.effective.status).toBe("unverified");
     expect(policy.grants.effective.status).toBe("unverified");
   });

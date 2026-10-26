@@ -16,6 +16,7 @@ type Policy = {
   scope: { workspaceId: string; sessionKey: string; agentId: string | null; sessionId: string | null; runId: string | null };
   generation: { state: string; runtimeGeneration: string | null; capabilityProfileGeneration: string | null; observedAt: string | null; reason: string | null };
   backend: { configured: { value: null | { runtime: string; kind: string; ownsNativeCompaction: boolean | null; provider: string | null; model: string | null }; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
+  harness: { configured: { value: null | { id: string; kind: string }; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
   model: { configured: { value: null | { provider: string | null; model: string | null; effort: string | null }; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
   grants: { configured: { value: unknown; status: string; source: string; reason: string | null }; effective: { value: null | { total: number; allowed: number; requiresApproval: number; denied: number; unknown: number; actions: Array<{ actionId: string; authorization: string; grantState: string | null }> }; status: string; source: string; reason: string | null } };
   context: { configured: { value: null | { contextTokens: number | null; contextPressure: string | null }; status: string; source: string; reason: string | null }; effective: { value: unknown; status: string; source: string; reason: string | null } };
@@ -118,6 +119,10 @@ function policyFor(primary: Policy, sessionKey: string, runtime: 'openclaw' | 'c
       model,
     },
     source: sessionKey === SECOND_SESSION_KEY ? 'session.runtime.secondary' : 'session.runtime',
+  };
+  policy.harness.configured = {
+    ...policy.harness.configured,
+    value: { id: runtime, kind: runtime === 'codex' ? 'native' : 'openclaw' },
   };
   policy.model.configured = {
     ...policy.model.configured,
@@ -304,6 +309,8 @@ test('policy surface explains provenance, lifecycle boundaries, narrow layout, a
     const configured = page.getByTestId('session-activity-policy-backend');
     await expect(configured).toContainText('codex');
     await expect(configured).toContainText('session.runtime');
+    await expect(page.getByTestId('session-activity-policy-harness')).toContainText('codex');
+    await expect(page.getByTestId('session-activity-policy-harness')).toContainText(/unverified/i);
     await expect(page.getByTestId('session-activity-policy-effective')).toContainText(/unverified/i);
     await expect(page.getByTestId('session-activity-boundary-abort')).toContainText(/session, stored transcript/i);
     await expect(page.getByTestId('session-activity-boundary-stop')).toContainText(/retaining the session/i);
@@ -333,6 +340,8 @@ test('policy surface explains provenance, lifecycle boundaries, narrow layout, a
     await page.getByTestId('chat-session-activity-toggle').click();
     await expect(page.getByTestId('session-activity-policy-backend')).toContainText('openclaw');
     await expect(page.getByTestId('session-activity-policy-backend')).toContainText('session.runtime.secondary');
+    await expect(page.getByTestId('session-activity-policy-harness')).toContainText('openclaw');
+    await expect(page.getByTestId('session-activity-policy-harness')).toContainText(/unverified/i);
     await expect(page.getByTestId('session-activity-policy-backend')).not.toContainText('codex');
 
     await page.setViewportSize({ width: 680, height: 760 });

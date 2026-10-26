@@ -167,6 +167,7 @@
     "policy": {
       "backend": "Configured backend",
       "effectiveBackend": "Effective backend",
+      "harness": "Harness",
       "effort": "Effort",
       "context": "Context window",
       "actions": "Action permissions",

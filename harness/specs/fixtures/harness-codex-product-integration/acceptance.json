@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "HarnessCodexProductIntegrationAcceptance/v1",
+  "generatedAt": "2026-10-26T07:20:00Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-product-integration-20261026",
+  "node": "TF-0567",
+  "implementation": {
+    "schema": "SessionEffectivePolicy/v1",
+    "harnessAxis": true,
+    "configuredSource": "session.runtime + model resolution",
+    "effectiveSource": "runtime-effective-capability.observation",
+    "uiSurface": "Session activity policy",
+    "newSelector": false,
+    "newScheduler": false
+  },
+  "validation": [
+    {
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/session-activity-panel-sections.test.tsx tests/unit/session-activity-store-scope.test.ts --maxWorkers=2",
+      "exitCode": 0,
+      "testFiles": 4,
+      "tests": 24
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-codex-product-integration.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/long-session-policy-surface.spec.ts --workers=1 --reporter=line",
+      "exitCode": 0,
+      "tests": 1,
+      "duration": "44.6s"
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/chat-run-state-events.spec.ts --grep \"preserves foreground exec output|anchors the live thinking matrix\" --workers=1 --reporter=line",
+      "exitCode": 0,
+      "tests": 3,
+      "duration": "39.1s",
+      "note": "Initial run 2 passed / 1 selector failure; completed-turn rerun 1 passed (16.4s). Final evidence covers success 1 + failed/aborted 2."
+    }
+  ],
+  "notRun": [
+    {
+      "check": "authenticated Codex model turn",
+      "status": "not-run",
+      "reason": "No credential was provided for this node; TF-0566 recorded the isolated unauthenticated boundary."
+    }
+  ],
+  "productBoundary": {
+    "defaultPathChanged": false,
+    "productApproved": false,
+    "releaseApproved": false,
+    "realHumanEvidence": false
+  },
+  "limitations": [
+    "No authenticated Codex turn was executed; harness selection is proven at the policy/observation layer, not by a model response.",
+    "Codex thread-level identity and visible transcript sharing remain not-run until a real Electron Chat turn is executed.",
+    "Electron E2E uses host-api replay and synthetic runtime events; it proves the host/renderer contract, not a live provider response."
+  ],
+  "electronE2E": {
+    "status": "passed",
+    "finalRuns": {
+      "policySurface": {
+        "command": "pnpm exec playwright test tests/e2e/long-session-policy-surface.spec.ts --workers=1 --reporter=line",
+        "tests": 1,
+        "passed": 1,
+        "exitCode": 0,
+        "duration": "44.6s"
+      },
+      "chatTurns": {
+        "command": "pnpm exec playwright test tests/e2e/chat-run-state-events.spec.ts --grep \"preserves foreground exec output|anchors the live thinking matrix\" --workers=1 --reporter=line",
+        "success": 1,
+        "failedOrAborted": 2,
+        "initialRun": "2 passed / 1 failed: ambiguous getByText selector",
+        "completedTurnRerun": "1 passed (16.4s) after narrowing selector"
+      }
+    },
+    "environmentFix": {
+      "electronInstall": "node node_modules/electron/install.js",
+      "sandbox": "Windows E2E launcher always passes --no-sandbox for isolated userData",
+      "runRoot": "CLAWX_E2E_RUN_ROOT must point at a writable test-results directory; D:\\tmp E2E home produced EPERM on .openclaw/logs"
+    }
+  },
+  "negativeCases": [
+    {
+      "id": "explicit-missing-codex-harness",
+      "command": "pnpm exec vitest run tests/unit/harness-codex-product-integration.test.ts --maxWorkers=1",
+      "result": "pass",
+      "assertion": "explicit agentHarnessRuntimeOverride=codex throws MissingAgentHarnessError when no codex harness is registered",
+      "meaning": "Explicit Codex selection fails closed; it does not silently fall back to OpenClaw"
+    }
+  ]
+}

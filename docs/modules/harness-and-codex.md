@@ -19,7 +19,7 @@ Treating them as interchangeable creates duplicate ownership, misleading capabil
 | Layer | Current owner / source | What it owns | What it must not own | Current evidence boundary |
 |---|---|---|---|---|
 | OpenClaw native loop | `openclaw_runtime/src/agents/embedded-agent-runner/` and `openclaw_runtime/src/agents/harness/builtin-openclaw.ts` | Turn execution, tool loop, runtime policy, context assembly hooks, transcript/event production | UI agent selection, Task Ledger state, or a second approval authority | Source plus prior runtime evidence; per-scenario behavior must be re-run |
-| Codex app-server harness | `openclaw_runtime/extensions/codex/harness.ts`, `src/app-server/run-attempt.ts` | A Codex thread-backed execution attempt, native Codex tools when allowed, compaction ownership and Codex events | ClawX task state, approval decisions, workspace permissions, app-server binary packaging guarantee | Source and installed pnpm dependency; packaged managed binary is not proven by the existing `release/win-unpacked` |
+| Codex app-server harness | `openclaw_runtime/extensions/codex/harness.ts`, `src/app-server/run-attempt.ts` | A Codex thread-backed execution attempt, native Codex tools when allowed, compaction ownership and Codex events | ClawX task state, approval decisions, workspace permissions, app-server binary packaging guarantee | TF-0566 proves source + packaged Windows --dir availability for @openai/codex 0.137.0; authenticated model turns remain not-run |
 | `/codex` command surface | `openclaw_runtime/extensions/codex/src/commands.ts`, `command-handlers.ts` | Explicit user/agent control of bind, resume, steer, stop, model, permissions, threads, CLI session lookup and plugin access | General settings UI or a second session lifecycle | Command source exists; UI-independent behavior needs real invocation evidence |
 | ACPX runtime | `openclaw_runtime/extensions/acpx/` | Embedded ACP backend, ACP session transport, adapter-based external agents such as Codex and Claude | ClawX Task Ledger, approvals, tool policy or a second task graph | Generic ACP SDK is packaged; concrete adapter availability must be checked separately |
 | Codex Supervisor | `openclaw_runtime/extensions/codex-supervisor/` | Read/list/send/interrupt to already-running Codex app-servers | Launching a local Codex harness or replacing `/codex` bind/resume | Separate remote-control tool surface; not the local harness path |
@@ -196,7 +196,7 @@ TF-0565 is complete only when all of the following can be read from disk:
 | TF-0569 | Test one real VB, one VS and one VG collaboration seam under existing owners | Bypassing VB approval, VS journaling, or VG advisory boundary |
 | TF-0570 | Define and freeze pass/fail evidence per scenario, including negatives and stale/failed observations | Treating docs, snippets, logs or green UI as runtime acceptance |
 
-The implementation nodes remain `proposed`; this document does not close them. TF-0566 is the only intended next executable leaf after TF-0565 closes.
+TF-0566 is complete for source and packaged Windows --dir availability. TF-0567 is the current executable leaf: it projects the selected harness into the existing Session effective-state surface, including configured/effective/unverified and missing/stale/mismatch generation reasons. TF-0568 through TF-0570 remain proposed; TF-0570 is blocked on the other three.
 
 ## 10. VerseSearch source ledger
 

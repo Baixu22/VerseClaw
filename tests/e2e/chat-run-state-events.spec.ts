@@ -217,7 +217,7 @@ test.describe('Verse Claw chat run state events', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('Render the latest status inline');
       await page.getByTestId('chat-composer-send').click();
-      await expect(page.getByText('Render the latest status inline')).toBeVisible();
+      await expect(page.getByTestId('chat-user-message-bubble').getByText('Render the latest status inline')).toBeVisible();
 
       await app.evaluate(({ BrowserWindow }, sessionKey) => {
         for (const win of BrowserWindow.getAllWindows()) {

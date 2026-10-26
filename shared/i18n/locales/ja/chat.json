@@ -167,6 +167,7 @@
     "policy": {
       "backend": "設定済みバックエンド",
       "effectiveBackend": "有効なバックエンド",
+      "harness": "実行ハーネス",
       "effort": "推論強度",
       "context": "コンテキストウィンドウ",
       "actions": "操作権限",

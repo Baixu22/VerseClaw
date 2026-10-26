@@ -391,7 +391,8 @@ async function launchVerseClawElectron(
   const app = await electron.launch({
     executablePath: String(electronBinaryPath),
     args: [
-      ...(process.platform === 'win32' && process.env.ELECTRON_DISABLE_SANDBOX === '1' ? ['--no-sandbox'] : []),
+      // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.
+      ...(process.platform === 'win32' ? ['--no-sandbox'] : []),
       `--user-data-dir=${userDataDir}`,
       '--lang=en-US',
       '--disable-gpu',

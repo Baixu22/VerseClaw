@@ -28,6 +28,12 @@ export type SessionPolicyBackend = {
   model: string | null;
 };
 
+/** The harness that owns this turn, kept separate from the model backend. */
+export type SessionPolicyHarness = {
+  id: string;
+  kind: SessionPolicyBackend['kind'];
+};
+
 export type SessionPolicyModel = {
   provider: string | null;
   model: string | null;
@@ -106,6 +112,7 @@ export type SessionEffectivePolicy = {
     reason: string | null;
   };
   backend: SessionPolicyAxis<SessionPolicyBackend>;
+  harness: SessionPolicyAxis<SessionPolicyHarness>;
   model: SessionPolicyAxis<SessionPolicyModel>;
   grants: SessionPolicyAxis<SessionPolicyGrantSummary>;
   context: SessionPolicyAxis<SessionPolicyContextLimits>;

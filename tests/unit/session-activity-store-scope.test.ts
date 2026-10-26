@@ -54,6 +54,10 @@ function policy(workspaceId: string, runtime = 'openclaw', grantState: 'active' 
       configured: { value: configured, status: 'configured', source: 'session.runtime', reason: null },
       effective: { value: null, status: 'unverified', source: 'runtime-effective-capability.observation', reason: 'no-current-run-capability-profile' },
     },
+    harness: {
+      configured: { value: { id: runtime, kind: configured.kind }, status: 'configured', source: 'session.runtime', reason: null },
+      effective: { value: null, status: 'unverified', source: 'runtime-effective-capability.observation', reason: 'no-current-run-capability-profile' },
+    },
     model: {
       configured: { value: { provider: 'openai', model: 'gpt-5.5', effort: 'high' }, status: 'configured', source: 'session.model', reason: null },
       effective: { value: null, status: 'unverified', source: 'runtime-effective-capability.observation', reason: 'no-current-run-capability-profile' },
