@@ -1275,5 +1275,10 @@
     "Windows x64 local unsigned win-unpacked artifact; installer/uninstaller bodies unmeasured",
     "Installed dependencies reused and exact dependency archive preserved",
     "No GA, publishing, frozen default change, product lock change or real-human claim"
-  ]
+  ],
+  "currentEvidenceSourceCommit": "6d06b614b414b0f31b3716c9b9a76734600924f1",
+  "currentEvidenceSourceTree": "2e2649dfbc474c83640bf334463c438053e3a9e2",
+  "boundary": {
+    "note": "The packaged candidate remains 96f589cbb; post-merge evidence preservation commits change no Browser source input. Remote docs merge 5077634a7 and evidence context are bound separately."
+  }
 }

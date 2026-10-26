@@ -9,5 +9,9 @@
   "n8": "pass",
   "n9": "pass",
   "privateNetworkDefaultDeny": "pass",
-  "explicitAgentApproval": "pass"
+  "explicitAgentApproval": "pass",
+  "currentEvidenceSourceCommit": "6d06b614b414b0f31b3716c9b9a76734600924f1",
+  "currentEvidenceSourceTree": "2e2649dfbc474c83640bf334463c438053e3a9e2",
+  "packagedSourceCommit": "96f589cbb609a3eab29b7fa93283c423bdd84cf8",
+  "remoteDocsMerge": "5077634a78adfab92f8517581178a480cfb53bc1"
 }
