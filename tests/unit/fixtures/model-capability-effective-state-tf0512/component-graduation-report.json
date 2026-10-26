@@ -17,9 +17,9 @@
   "driven_by": "agent",
   "expiry": null,
   "binding": {
-    "commit": "5936ab13598b2bee54cce25463233faa85ff049f",
-    "tree": "10ce631e0f5539332dac41c32414a50840e482e4",
-    "buildHash": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094",
+    "commit": "480e31f124c69d53cebb4e675dda965bf178c955",
+    "tree": "bb36ab3f0eb869d0bde07a0420548d98497d3c16",
+    "buildHash": "0fc359092085d1d6eed4517e205c8b5947e1343c80efd93b23df484d54cc041e",
     "runtimeGeneration": "gateway-tf0512",
     "provider": "not-applicable",
     "model": "not-applicable",
@@ -48,13 +48,13 @@
       },
       {
         "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-        "sha256": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
-        "bytes": 23738
+        "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+        "bytes": 23397
       },
       {
         "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
-        "sha256": "982cbb9c4205f7e88226f0859f76f61ab8723aeaf990b765850107ff13f128e9",
-        "bytes": 122175
+        "sha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+        "bytes": 118228
       },
       {
         "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json",
@@ -72,8 +72,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-          "sha256": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
-          "bytes": 23738,
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
           "supportsVerdict": true
         }
       ]
@@ -86,8 +86,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-          "sha256": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
-          "bytes": 23738,
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
           "supportsVerdict": true
         }
       ]
@@ -100,8 +100,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-          "sha256": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
-          "bytes": 23738,
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
           "supportsVerdict": true
         }
       ]
@@ -114,8 +114,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-          "sha256": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
-          "bytes": 23738,
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
           "supportsVerdict": true
         }
       ]
@@ -128,8 +128,8 @@
       "artifacts": [
         {
           "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/raw-evidence.json",
-          "sha256": "5850f1f65abc93afd4553c1d0ef3f22f3b385e87d98b6334cb4f9d53099e9c0d",
-          "bytes": 23738,
+          "sha256": "351529fd6260aa6e11f887e2ae491154c8cfb0ef31ed771c3d2508da391b75d6",
+          "bytes": 23397,
           "supportsVerdict": true
         }
       ]
@@ -137,7 +137,7 @@
   ],
   "recompute": {
     "verdict": "pass",
-    "inputDigest": "c4ec85ff125e5aa476c16c1685862a73a4c787c43670e5a6bf24a3a04d705094",
+    "inputDigest": "0fc359092085d1d6eed4517e205c8b5947e1343c80efd93b23df484d54cc041e",
     "command": "pnpm exec tsx tests/unit/fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts"
   }
 }
