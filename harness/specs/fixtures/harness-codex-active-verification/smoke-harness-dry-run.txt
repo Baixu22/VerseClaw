@@ -1,2 +1,2 @@
-Harness report: <workspace>\artifacts\harness\latest.md
+Harness report: D:\ClawX\artifacts\harness\latest.md
 Harness result: pass
