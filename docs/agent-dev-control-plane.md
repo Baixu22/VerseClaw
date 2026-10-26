@@ -145,4 +145,6 @@ const calls = await getAgentDevHostCalls(page);
 
 Renderer code must still call backend data through `src/lib/host-api.ts`; these helpers exist to make that boundary faster to test, not to bypass it.
 
+On Windows, Playwright global setup defaults Electron homes and process ledgers to the ignored `.tmp/e2e-runs` directory inside the checkout. This avoids the low-integrity `D:\tmp` ACL mismatch that can stop Electron before `BrowserWindow` creation. Set `CLAWX_E2E_RUN_ROOT_BASE` or `CLAWX_E2E_RUN_ROOT` only when an isolated run root is intentionally required.
+
 See also [`docs/agent-dev-tooling-evaluation.md`](agent-dev-tooling-evaluation.md) for the current external-tool adoption plan and measured benefit report.

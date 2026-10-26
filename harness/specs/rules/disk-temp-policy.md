@@ -37,10 +37,10 @@ Also:
 - Low-integrity checkout exception: if the checkout that hosts the executable carries a
   Low mandatory integrity label (this `D:\ClawX` tree does), processes it spawns cannot
   write into a Medium-integrity `D:\tmp`. Point `TEMP`/`TMP` at an ignored scratch
-  directory *inside* the checkout. For Playwright, set `CLAWX_E2E_RUN_ROOT` to the
-  ignored base directory (for example `D:\ClawX\.local\e2e-run-base`); global setup
-  treats it as the base and creates a unique `verse-claw-e2e-run-*` child, rather than
-  overwriting the caller's path with an unusable OS-temp child.
+  directory *inside* the checkout. Playwright global setup defaults its run root to
+  `D:\ClawX\.tmp\e2e-runs`; set `CLAWX_E2E_RUN_ROOT_BASE` or `CLAWX_E2E_RUN_ROOT` to
+  another ignored directory only for an intentionally isolated run. Global setup creates a
+  unique `verse-claw-e2e-run-*` child rather than overwriting the caller's path.
   Verified 2026-10-15: `governed-exec.real.test.ts` and
   `tests/e2e/agent-dev-quality.spec.ts` both fail under `D:\tmp` (missing artifact /
   `EPERM: mkdir <userData>\logs` leading to "Application initialization failed") and

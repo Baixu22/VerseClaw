@@ -33,6 +33,8 @@ touchedAreas:
   - scripts/**
   - harness/specs/**
   - tests/unit/**
+  - tests/e2e/**
+  - docs/agent-dev-control-plane.md
 ---
 
 # Agent Dev Ecosystem Regularization

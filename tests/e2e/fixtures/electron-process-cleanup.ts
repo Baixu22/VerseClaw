@@ -1,6 +1,5 @@
 import { execFile } from 'node:child_process';
 import { appendFile, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import type { FullConfig } from '@playwright/test';
@@ -8,6 +7,12 @@ import type { FullConfig } from '@playwright/test';
 const execFileAsync = promisify(execFile);
 
 export const ELECTRON_PID_LEDGER = 'electron-pids.jsonl';
+
+// Electron child processes on this Windows host cannot create their .openclaw
+// profile below a low-integrity D:\tmp path. Keep the default run root inside
+// the ignored workspace scratch directory; explicit CLAWX_E2E_RUN_ROOT* values
+// still take precedence for CI and isolated diagnostics.
+const DEFAULT_E2E_RUN_ROOT_BASE = join(process.cwd(), '.tmp', 'e2e-runs');
 
 /*
  * Why the CIM sweep is no longer the primary mechanism.
@@ -190,7 +195,7 @@ export default async function setupElectronProcessCleanup(config: FullConfig) {
   if (process.platform !== 'win32') return;
   const previousRoot = process.env.CLAWX_E2E_RUN_ROOT;
   const requestedBase = process.env.CLAWX_E2E_RUN_ROOT_BASE?.trim() || previousRoot?.trim();
-  const baseRoot = requestedBase ? resolve(requestedBase) : tmpdir();
+  const baseRoot = requestedBase ? resolve(requestedBase) : DEFAULT_E2E_RUN_ROOT_BASE;
   await mkdir(baseRoot, { recursive: true });
   const runRoot = await mkdtemp(join(baseRoot, 'verse-claw-e2e-run-'));
   process.env.CLAWX_E2E_RUN_ROOT = resolve(runRoot);
