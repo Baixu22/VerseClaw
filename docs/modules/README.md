@@ -60,6 +60,7 @@ flowchart LR
 | Verse 系列组件 | [VerseGit / VerseShell / VerseBrowser](verse-tools.md) | VG、VS、VB 的职责、所有权、能力数量、默认状态、安全边界与验收缺口 |
 | 资源、观测与恢复 | [资源与可观测性](resources-and-observability.md) | ResourceFabric、BackgroundWorkGate、资源追踪、预算、tracing、问题聚合、session activity、Doctor/support bundle |
 | 集成与产品表面 | [集成与页面地图](integrations-and-surfaces.md) | 渠道、Scheduled、Skills/MCP、Inbox、远程任务、Code Review、Office/VerseConf、媒体、Settings、路由 |
+| Harness、Codex 与外部 Agent | [Harness 与 Codex](harness-and-codex.md) | native loop、Codex app-server、`/codex`、ACPX、Codex Supervisor、替代 harness 的职权、真实场景与证据边界 |
 | 工程与验证 | [开发与验证](development-and-validation.md) | 仓库层次、命令、Harness、i18n/contract、Agent Dev、数据与证据边界 |
 | 全部组件分类 | [组件清单](component-inventory.md) | 当前 54 条 disposition、用户入口、owner、节点与内部/退役分组 |
 

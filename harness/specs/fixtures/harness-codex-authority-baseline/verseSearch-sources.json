@@ -1,0 +1,259 @@
+{
+  "schemaVersion": "VerseSearchSourceLedger/v2",
+  "generatedAt": "2026-10-26T04:20:00Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-authority-20261026",
+  "retrieval": {
+    "providers": [
+      "AnySearch"
+    ],
+    "route": "AnySearch extract for known official URLs; no snippet used as page evidence",
+    "networkObservation": "2026-10-26 Asia/Shanghai session",
+    "credentials": "AnySearch anonymous; no secret values retained",
+    "statusVocabulary": [
+      "retrieved",
+      "search-result-only",
+      "failed",
+      "paywalled"
+    ],
+    "boundary": "retrieved means the page body was returned during this pass; it does not mean local runtime or product acceptance"
+  },
+  "sources": [
+    {
+      "id": "acp-overview",
+      "url": "https://agentclientprotocol.com/protocol/v1/overview",
+      "title": "Agent Client Protocol v1 Overview",
+      "usedFor": [
+        "protocol layers",
+        "client/agent responsibilities"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "acp-registry",
+      "url": "https://agentclientprotocol.com/get-started/agents",
+      "title": "ACP Agents registry",
+      "usedFor": [
+        "candidate agents include Codex, Claude, Copilot, Goose, OpenCode, OpenHands"
+      ],
+      "evidenceType": "official registry",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "acp-session-modes",
+      "url": "https://agentclientprotocol.com/protocol/v1/session-modes",
+      "title": "Agent Client Protocol v1 Session Modes",
+      "usedFor": [
+        "Plan mode is a session mode with explicit mode updates"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "acp-v2-draft",
+      "url": "https://agentclientprotocol.com/protocol/v2/prompt-lifecycle",
+      "title": "ACP v2 Prompt Lifecycle (Draft)",
+      "usedFor": [
+        "v2 is draft, lifecycle/cancellation semantics are not a stable product contract"
+      ],
+      "evidenceType": "official documentation; draft status",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "codex-app-server",
+      "url": "https://learn.chatgpt.com/codex/app-server",
+      "title": "Codex App Server | ChatGPT Learn",
+      "usedFor": [
+        "custom clients/authentication/history/approvals/event streaming",
+        "stdio vs websocket transport boundary"
+      ],
+      "evidenceType": "official documentation",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "status": "retrieved",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "codex-readme",
+      "url": "https://github.com/openai/codex",
+      "title": "openai/codex public repository",
+      "usedFor": [
+        "Apache-2.0 client boundary and public artifacts"
+      ],
+      "evidenceType": "official repository",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "codex-sdk",
+      "url": "https://learn.chatgpt.com/docs/codex-sdk",
+      "title": "Codex SDK",
+      "usedFor": [
+        "SDK and app-server are distinct integration surfaces"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "codex-security",
+      "url": "https://learn.chatgpt.com/docs/sandboxing",
+      "title": "Codex Sandbox",
+      "usedFor": [
+        "OS-enforced default boundary vs policy-only local execution"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "copilot-sdk",
+      "url": "https://github.blog/changelog/2026-06-02-copilot-sdk-is-now-generally-available/",
+      "title": "GitHub Copilot SDK GA",
+      "usedFor": [
+        "programmatic session/tool surface; candidate comparison"
+      ],
+      "evidenceType": "vendor changelog",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "goose-docs",
+      "url": "https://goose-docs.ai/docs/guides/acp-providers/",
+      "title": "Goose ACP providers",
+      "usedFor": [
+        "ACP as a provider routing layer; not local ClawX availability"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "opencode-acp",
+      "url": "https://opencode.ai/docs/acp/",
+      "title": "OpenCode ACP support",
+      "usedFor": [
+        "ACP is an adapter path, not a claim of equivalent runtime"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "opencode-sdk",
+      "url": "https://opencode.ai/docs/sdk/",
+      "title": "OpenCode SDK",
+      "usedFor": [
+        "type-safe programmatic client"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "opencode-server",
+      "url": "https://opencode.ai/docs/server/",
+      "title": "OpenCode Server",
+      "usedFor": [
+        "headless HTTP server and OpenAPI control surface"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "openhands-agent-server",
+      "url": "https://docs.openhands.dev/sdk/arch/agent-server",
+      "title": "OpenHands Agent Server",
+      "usedFor": [
+        "HTTP/WebSocket agent server and sandboxed deployment model"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "openhands-overview",
+      "url": "https://docs.openhands.dev/sdk/arch/overview",
+      "title": "OpenHands SDK overview",
+      "usedFor": [
+        "agent, tools, workspaces, policies, remote execution"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    },
+    {
+      "id": "playwright-mcp",
+      "url": "https://playwright.dev/mcp/introduction",
+      "title": "Playwright MCP",
+      "usedFor": [
+        "browser automation comparison; ClawX VB remains its own owner"
+      ],
+      "evidenceType": "official documentation",
+      "status": "retrieved",
+      "retrievalMethod": "AnySearch extract",
+      "provider": "anysearch",
+      "observationTime": "2026-10-26T04:20:00Z",
+      "contentScope": "primary-page"
+    }
+  ],
+  "localReferences": [
+    "docs/modules/harness-and-codex.md",
+    "harness/specs/fixtures/harness-codex-authority-baseline/authority-matrix.json",
+    "harness/specs/fixtures/harness-codex-authority-baseline/scenario-matrix.json"
+  ],
+  "boundaries": [
+    "External URLs are research inputs, not product acceptance.",
+    "No snippet, summary or generated answer is treated as a runtime receipt.",
+    "No API key, auth header, prompt or private session content is retained."
+  ]
+}

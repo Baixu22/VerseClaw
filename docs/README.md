@@ -15,6 +15,7 @@ The root README links here for current, source-grounded module descriptions. The
 - [Multi-agent and tasks](modules/multi-agent-and-tasks.md)
 - [VerseGit / VerseShell / VerseBrowser](modules/verse-tools.md)
 - [Resources and observability](modules/resources-and-observability.md)
+- [Harness and Codex](modules/harness-and-codex.md)
 - [Integrations and surfaces](modules/integrations-and-surfaces.md)
 - [Development and validation](modules/development-and-validation.md)
 - [Component inventory](modules/component-inventory.md)

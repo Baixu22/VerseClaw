@@ -14,7 +14,7 @@
 
 import 'zx/globals';
 import { ELECTRON_MAIN_RUNTIME_PACKAGES, isLocalRuntimeArtifact } from './openclaw-bundle-config.mjs';
-import { copyRuntimeTree } from './copy-runtime-package.mjs';
+import { collectRuntimeDependencyPackages, copyRuntimeTree } from './copy-runtime-package.mjs';
 
 const ROOT = path.resolve(__dirname, '..');
 const RUNTIME_ROOT = path.join(ROOT, 'openclaw_runtime');
@@ -93,6 +93,14 @@ function listPackages(nodeModulesDir) {
     }
   }
   return result;
+}
+
+function listExtensionPackageDirs() {
+  const extensionsRoot = path.join(RUNTIME_ROOT, 'extensions');
+  if (!fs.existsSync(extensionsRoot)) return [];
+  return fs.readdirSync(extensionsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(extensionsRoot, entry.name, 'package.json')))
+    .map((entry) => path.join(extensionsRoot, entry.name));
 }
 
 function readJsonSafe(filePath) {
@@ -259,7 +267,29 @@ while (queue.length > 0) {
 echo`   Found ${collected.size} total packages (direct + transitive)`;
 echo`   Skipped ${skippedDevCount} dev-only package references`;
 
-// === 4b. Collect extra packages (tsx, typescript, ELECTRON_MAIN_RUNTIME_PACKAGES) ===
+// === 4b. Collect bundled-plugin dependencies beside each plugin ===
+// Plugin entrypoints resolve bare imports from their package root. A flattened
+// runtime node_modules is not enough for Codex's app-server binary.
+const extensionDependencyPackages = new Map();
+// Keep this list explicit while packaging support is being graduated. Codex is
+// the native-runtime case that needs its dependency tree beside the plugin.
+const PACKAGED_EXTENSION_DEPENDENCY_IDS = new Set(['codex']);
+for (const extensionDir of listExtensionPackageDirs()) {
+  const pluginId = path.basename(extensionDir);
+  if (!PACKAGED_EXTENSION_DEPENDENCY_IDS.has(pluginId)) continue;
+  const pluginPkg = readJsonSafe(path.join(extensionDir, 'package.json'));
+  if (!pluginPkg) continue;
+  if (listPackageDeps(pluginPkg).length === 0) continue;
+  let packages;
+  try {
+    packages = collectRuntimeDependencyPackages(extensionDir, RUNTIME_ROOT);
+  } catch (error) {
+    throw new Error(`Failed to collect dependencies for ${path.basename(extensionDir)}: ${error.message}`);
+  }
+  extensionDependencyPackages.set(path.basename(extensionDir), { sourceRoot: extensionDir, packages });
+}
+
+// === 4c. Collect extra packages (tsx, typescript, ELECTRON_MAIN_RUNTIME_PACKAGES) ===
 let extraCount = 0;
 for (const pkgName of RUNTIME_EXTRA_PACKAGES) {
   const pkgLink = path.join(runtimeNM, ...pkgName.split('/'));
@@ -340,6 +370,24 @@ for (const [realPath, pkgName] of collectedEntries) {
 }
 
 echo`   Copied ${copiedCount} packages (skipped ${skippedDupes} version duplicates)`;
+
+// === 5b. Materialize bundled-plugin dependencies beside each plugin ===
+let extensionDependencyCount = 0;
+for (const [pluginId, extensionDependency] of extensionDependencyPackages) {
+  const { sourceRoot, packages } = extensionDependency;
+  const pluginOutput = path.join(OUTPUT, 'extensions', pluginId);
+  if (!fs.existsSync(pluginOutput)) continue;
+  for (const { source: installedSource, destination } of packages.values()) {
+    const relativeDestination = path.relative(sourceRoot, destination);
+    const dest = path.join(pluginOutput, relativeDestination);
+    fs.mkdirSync(normWin(path.dirname(dest)), { recursive: true });
+    copyRuntimeTree(normWin(installedSource), normWin(dest));
+    extensionDependencyCount++;
+  }
+}
+if (extensionDependencyCount > 0) {
+  echo`   Materialized ${extensionDependencyCount} bundled-plugin dependency packages`;
+}
 
 // === 6. Cleanup bundle (same patterns as bundle-openclaw.mjs, minus extensions) ===
 echo``;

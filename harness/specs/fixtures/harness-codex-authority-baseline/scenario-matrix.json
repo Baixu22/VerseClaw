@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "HarnessCodexScenarioMatrix/v2",
+  "generatedAt": "2026-10-26T04:20:00Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-authority-20261026",
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "ordinary-chat-native",
+      "owner": "OpenClaw native loop",
+      "nextNode": "TF-0567",
+      "negativeCase": "ordinary chat must not create a Task Ledger root or enter /loop state",
+      "realValue": "ordinary chat should not pay harness-switch complexity",
+      "negativeEvidence": "task root created or harness forced",
+      "ownerBoundary": "ClawX session; native loop"
+    },
+    {
+      "id": "S2",
+      "name": "normal-codex-turn",
+      "owner": "Codex app-server harness",
+      "nextNode": "TF-0566",
+      "negativeCase": "missing app-server binary must not silently fall back after side effects",
+      "realValue": "repository work gets a Codex-native thread and tool loop",
+      "negativeEvidence": "missing binary falls through to native after side effects",
+      "ownerBoundary": "ClawX turn/approval; Codex attempt"
+    },
+    {
+      "id": "S3",
+      "name": "explicit-codex-control",
+      "owner": "/codex command surface",
+      "nextNode": "TF-0567",
+      "negativeCase": "missing bound thread shows an explicit error and never invents a thread",
+      "realValue": "resume/steer/stop an existing Codex thread explicitly",
+      "negativeEvidence": "invents a thread or silently uses ACP",
+      "ownerBoundary": "explicit /codex command"
+    },
+    {
+      "id": "S4",
+      "name": "packaged-desktop-launch",
+      "owner": "packaged Electron + Codex managed runtime",
+      "nextNode": "TF-0566",
+      "negativeCase": "dev-only pnpm link is not packaged availability",
+      "realValue": "installed app can actually launch managed Codex",
+      "negativeEvidence": "dev link works but packaged tree is missing binary",
+      "ownerBoundary": "packaging + managed runtime"
+    },
+    {
+      "id": "S5",
+      "name": "ci-headless",
+      "owner": "structured host execution surface",
+      "nextNode": "TF-0566",
+      "negativeCase": "coding-run projection is not a Codex CLI compatibility layer",
+      "realValue": "bounded CI/headless execution without pretending to be Codex CLI",
+      "negativeEvidence": "CLI-text scraping or desktop-only assumption",
+      "ownerBoundary": "structured host execution surface"
+    },
+    {
+      "id": "S6",
+      "name": "acp-alternative",
+      "owner": "ACPX + selected adapter",
+      "nextNode": "TF-0568",
+      "negativeCase": "absent adapter fails closed; no hidden switch to Codex native",
+      "realValue": "explicitly use an available ACP adapter",
+      "negativeEvidence": "absent adapter silently falls back",
+      "ownerBoundary": "ACPX + selected adapter"
+    },
+    {
+      "id": "S7",
+      "name": "alternate-harness-evaluation",
+      "owner": "adapter boundary",
+      "nextNode": "TF-0568",
+      "negativeCase": "a third-party demo is not proof of equivalent permissions/cost/quality",
+      "realValue": "measure a competitor only on a real scenario",
+      "negativeEvidence": "registry listing or demo becomes adoption proof",
+      "ownerBoundary": "adapter evaluation contract"
+    },
+    {
+      "id": "S8",
+      "name": "versebrowser-task",
+      "owner": "VerseBrowser host + selected harness",
+      "nextNode": "TF-0569",
+      "negativeCase": "harness cannot bypass private-network denial or approval",
+      "realValue": "automate a real browser task under existing safety",
+      "negativeEvidence": "private network denial/approval bypass",
+      "ownerBoundary": "VB browser owner"
+    },
+    {
+      "id": "S9",
+      "name": "verseshell-execution",
+      "owner": "VerseShell governed execution",
+      "nextNode": "TF-0569",
+      "negativeCase": "external-write is not a journal-backed rollback",
+      "realValue": "run a real bounded command with receipt",
+      "negativeEvidence": "arbitrary argv or receipt-free success",
+      "ownerBoundary": "VS execution owner"
+    },
+    {
+      "id": "S10",
+      "name": "versegit-concurrent-candidate",
+      "owner": "VerseGit host module + selected harness",
+      "nextNode": "TF-0569",
+      "negativeCase": "VG advisory/admitted is not harness verdict or task completion",
+      "realValue": "give agent repository facts while isolating candidates",
+      "negativeEvidence": "advisory upgraded to verdict/land",
+      "ownerBoundary": "VG fact/advisory owner"
+    },
+    {
+      "id": "S11",
+      "name": "failure-fallback",
+      "owner": "existing error/approval owners",
+      "nextNode": "TF-0570",
+      "negativeCase": "missing binary/auth/timeout must expose failure rather than a successful-looking result",
+      "realValue": "fail honestly when runtime/auth/adapter is unavailable",
+      "negativeEvidence": "green-looking completion after timeout/missing dependency",
+      "ownerBoundary": "existing error/approval owners"
+    }
+  ]
+}

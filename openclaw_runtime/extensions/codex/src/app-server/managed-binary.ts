@@ -136,18 +136,46 @@ function resolveManagedCodexPackageBinCandidates(
   roots: readonly string[],
   platform: NodeJS.Platform,
 ): string[] {
-  if (platform === "win32") {
-    return [];
-  }
-
   const candidates: string[] = [];
   for (const root of roots) {
+    if (platform === "win32") {
+      const nativeCandidate = resolveManagedCodexWindowsNativeCandidate(root);
+      if (nativeCandidate) {
+        candidates.push(nativeCandidate);
+      }
+      continue;
+    }
     const candidate = resolveManagedCodexPackageBinCandidate(root);
     if (candidate) {
       candidates.push(candidate);
     }
   }
   return candidates;
+}
+
+function resolveManagedCodexWindowsNativeCandidate(root: string): string | null {
+  const arch = process.arch === "arm64" ? "arm64" : "x64";
+  const nativePackageName = `@openai/codex-win32-${arch}`;
+  const targetTriple = arch === "arm64" ? "aarch64-pc-windows-msvc" : "x86_64-pc-windows-msvc";
+  try {
+    const requireFromRoot = createRequire(path.join(root, "package.json"));
+    const codexPackageJson = requireFromRoot.resolve(
+      `${MANAGED_CODEX_APP_SERVER_PACKAGE}/package.json`,
+    );
+    const requireFromCodex = createRequire(codexPackageJson);
+    const nativePackageJson = requireFromCodex.resolve(
+      `${nativePackageName}/package.json`,
+    );
+    return path.resolve(
+      path.dirname(nativePackageJson),
+      "vendor",
+      targetTriple,
+      "bin",
+      "codex.exe",
+    );
+  } catch {
+    return null;
+  }
 }
 
 function resolveManagedCodexPackageBinCandidate(root: string): string | null {
@@ -179,6 +207,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 /** Internal helpers exposed for managed-binary path-resolution tests. */
 export const testing = {
   resolveDefaultCodexPluginRoot,
+  resolveManagedCodexAppServerCommandCandidates,
 };
 
 function isDistExtensionRoot(pluginRoot: string, platform: NodeJS.Platform): boolean {

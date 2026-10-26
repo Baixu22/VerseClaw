@@ -34,9 +34,23 @@ export async function resolveDefaultDiffBase(cwd = ROOT) {
   return 'origin/main';
 }
 
+// Git 2.51 on Windows can render ignored untracked directory placeholders with
+// the absolute checkout path and the drive colon encoded as U+F03A (for
+// example, `D\uF03AClawX/.agent-workbench/...`). Normalize those entries back
+// to repository-relative forward-slash paths before ownership matching.
+function normalizeGitPath(file, cwd) {
+  const normalized = String(file).replaceAll('\uF03A', ':').replaceAll('\uF05C', '/').replaceAll('\\', '/');
+  const root = String(cwd).replaceAll('\\', '/').replace(/\/+$/, '');
+  const decodedRoot = root.replace(/^([A-Za-z]):/, '$1\uF03A');
+  for (const prefix of [root + '/', decodedRoot + '/']) {
+    if (normalized.startsWith(prefix)) return normalized.slice(prefix.length);
+  }
+  return normalized;
+}
+
 async function gitPaths(args, cwd = ROOT) {
   const { stdout } = await execFileAsync('git', args, { cwd, encoding: 'utf8' });
-  return stdout.split('\0').filter(Boolean);
+  return stdout.split('\0').filter(Boolean).map((file) => normalizeGitPath(file, cwd));
 }
 
 // A base ref that does not resolve must fail closed. Swallowing the git error

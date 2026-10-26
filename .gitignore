@@ -2264,6 +2264,7 @@ openclaw_runtime/_tmp_*
 !/team/dcs/dcs-v1.6-spec.md
 !/team/dcs/dcs-v1.6.1-addendum.md
 !/team/role-architecture-design/area-4-role-memory-completion.md
+!/docs/modules/harness-and-codex.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
@@ -2298,3 +2299,8 @@ openclaw_runtime/_tmp_*
 
 # Current VerseBrowser packaged/E2E acceptance log.
 !/harness/specs/fixtures/versebrowser-invocation-maturity/current-20261025/e2e.log
+
+# Tracked final VerseBrowser merge gate logs.
+!/harness/specs/fixtures/versebrowser-invocation-maturity/current-merge-20261025/comms-compare.log
+!/harness/specs/fixtures/versebrowser-invocation-maturity/current-merge-20261025/comms-replay.log
+!/harness/specs/fixtures/versebrowser-invocation-maturity/current-merge-20261025/typecheck-final.log

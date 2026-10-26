@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "HarnessCodexAuthorityAcceptance/v1",
+  "generatedAt": "2026-10-26T04:46:57.260Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-authority-20261026",
+  "node": "TF-0565",
+  "validation": [
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-codex-authority-baseline.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/harness-codex-authority-baseline.test.ts tests/unit/harness-specs.test.ts tests/unit/harness-git.test.ts",
+      "exitCode": 0,
+      "testFiles": 3,
+      "tests": 56
+    },
+    {
+      "command": "pnpm run docs:policy:validate",
+      "exitCode": 0,
+      "checks": 10
+    },
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 19410
+    },
+    {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/harness-codex-authority-baseline.test.ts",
+      "exitCode": 0,
+      "testFiles": 1,
+      "tests": 5
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-codex-managed-runtime.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-codex-managed-runtime.md",
+      "exitCode": 0
+    }
+  ],
+  "sourceHashes": {
+    "spec": "cef6f5ca79a6fefced322b143881cf96e346c56b7366691d3416012a69be33ab",
+    "document": "9a06a550a3fe0e29e55f74c82cf7b4388825c2f2d6c207ca47628d51b0241039",
+    "test": "e21b35c86607a1891ce6e91885be72727e2cf50ad7b016784c38a80bc0a58c72"
+  },
+  "fixtureHashes": [
+    {
+      "file": "authority-matrix.json",
+      "expected": "61b4575926806bf2c714f5f717e389cbf3c22c474d665f55f55cae7de264709a",
+      "actual": "61b4575926806bf2c714f5f717e389cbf3c22c474d665f55f55cae7de264709a",
+      "match": true
+    },
+    {
+      "file": "scenario-matrix.json",
+      "expected": "cbb02bb5663337a13488014579e312b027ca5a53dc8585355a91c4d49bcc41a2",
+      "actual": "cbb02bb5663337a13488014579e312b027ca5a53dc8585355a91c4d49bcc41a2",
+      "match": true
+    },
+    {
+      "file": "verseSearch-sources.json",
+      "expected": "ffc74b55265d2fc693590fe545c914f33ac7089bd34dc075559e5314dc5443e2",
+      "actual": "ffc74b55265d2fc693590fe545c914f33ac7089bd34dc075559e5314dc5443e2",
+      "match": true
+    },
+    {
+      "file": "runtime-probe-20261026.json",
+      "expected": "e5bec01d3405e3e2fb1a5c5f960286380a47d8e27ce5a0dd71b9e1c2488a0352",
+      "actual": "e5bec01d3405e3e2fb1a5c5f960286380a47d8e27ce5a0dd71b9e1c2488a0352",
+      "match": true
+    }
+  ],
+  "sourceReferencesResolvable": true,
+  "capabilityVocabulary": [
+    "source exists",
+    "runtime reachable",
+    "effect verified",
+    "packaged available",
+    "default product path",
+    "release approved"
+  ],
+  "realHumanEvidence": false,
+  "packageOrReleaseStateChanged": false,
+  "notes": [
+    "Planning baseline only; TF-0566 through TF-0570 remain implementation nodes.",
+    "VerseSearch source pages were fetched individually with AnySearch extract and marked retrieved; snippets were not used as page evidence.",
+    "Windows host gates were run through the app host because this shell session is WSL with interop disabled; all retained records are agent-driven.",
+    "runtime-probe-20261026.json is a read-only availability probe for TF-0566; it is not acceptance and does not close the node.",
+    "TF-0566 now has a separate active spec and read-only probe; its packaged runtime remains unavailable until a rebuild is verified."
+  ]
+}

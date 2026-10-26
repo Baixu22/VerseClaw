@@ -43,11 +43,60 @@ export function copyRuntimeTree(source, destination) {
 
 function packageAt(importer, name) {
   const require = createRequire(join(importer, 'package.json'));
-  for (const base of require.resolve.paths(name) ?? []) {
-    const directory = join(base, name);
+  try {
+    return realpathSync(dirname(require.resolve(`${name}/package.json`)));
+  } catch {
+    // Some Node 24 + pnpm combinations return null resolve.paths() for optional
+    // native packages; the explicit ancestor walk below is the fallback.
+  }
+  let cursor = realpathSync(importer);
+  while (true) {
+    const directory = join(cursor, 'node_modules', name);
     if (existsSync(join(directory, 'package.json'))) return realpathSync(directory);
+    const parent = dirname(cursor);
+    if (parent === cursor) break;
+    cursor = parent;
   }
   return null;
+}
+
+// Resolves the reachable dependency graph inside the supplied workspace. The
+// same package name may legitimately appear at multiple versions, so identity
+// is the resolved realpath rather than the bare package name.
+export function collectRuntimeDependencyPackages(source, installationRoot = source) {
+  installationRoot = realpathSync(installationRoot);
+  const collected = new Map();
+  const queue = [{ importer: source, destination: source, packageName: null }];
+  const visited = new Set();
+  while (queue.length) {
+    const current = queue.shift();
+    const key = current.destination;
+    if (visited.has(key)) continue;
+    visited.add(key);
+    if (current.packageName) {
+      const existing = collected.get(current.destination);
+      if (existing && existing.name !== current.packageName) {
+        throw new Error(`Dependency identity collision: ${current.destination}`);
+      }
+      collected.set(current.destination, { name: current.packageName, source: current.importer, destination: current.destination });
+    }
+    const manifest = JSON.parse(readFileSync(join(current.importer, 'package.json'), 'utf8'));
+    const dependencies = { ...manifest.peerDependencies, ...manifest.dependencies, ...manifest.optionalDependencies };
+    for (const name of Object.keys(dependencies)) {
+      const resolved = packageAt(current.importer, name);
+      const installed = resolved && isInside(installationRoot, resolved) ? resolved : null;
+      if (!installed) {
+        if (name in (manifest.optionalDependencies ?? {}) || manifest.peerDependenciesMeta?.[name]?.optional) continue;
+        throw new Error(`Missing installed dependency ${name} of ${current.importer}`);
+      }
+      queue.push({
+        importer: installed,
+        destination: join(current.destination, 'node_modules', name),
+        packageName: name,
+      });
+    }
+  }
+  return collected;
 }
 
 // Preserve each importer's installed version. Ancestors can satisfy matching

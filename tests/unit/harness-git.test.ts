@@ -62,6 +62,26 @@ describe('harness git changed files', () => {
     }
   });
 
+  it('normalizes ignored Windows directory placeholders to repository-relative paths', async () => {
+    const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-placeholders-'));
+    try {
+      await git(repo, ['init']);
+      await git(repo, ['config', 'user.email', 'test@example.com']);
+      await git(repo, ['config', 'user.name', 'Test']);
+      await writeFile(path.join(repo, '.gitignore'), 'local/\n');
+      await git(repo, ['add', '.gitignore']);
+      await git(repo, ['commit', '-m', 'base']);
+      await mkdir(path.join(repo, 'local', 'nested'), { recursive: true });
+      await writeFile(path.join(repo, 'local', 'nested', 'state.json'), '{}\n');
+
+      const changed = await getChangedFiles('HEAD', repo);
+      expect(changed.some((file: string) => file.startsWith(repo.replaceAll('\\', '/') + '/'))).toBe(false);
+      expect(changed.some((file: string) => file.startsWith('D\uF03A'))).toBe(false);
+    } finally {
+      await rm(repo, { recursive: true, force: true });
+    }
+  });
+
   it('includes staged tracked files when collecting changed paths', async () => {
     const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-'));
     const harnessDir = path.join(repo, 'harness', 'src');

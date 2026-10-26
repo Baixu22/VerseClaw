@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "HarnessCodexAuthorityMatrix/v2",
+  "generatedAt": "2026-10-26T04:20:00Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-authority-20261026",
+  "scope": "planning baseline only; no runtime or packaged capability is claimed",
+  "layers": [
+    {
+      "id": "openclaw-native",
+      "label": "OpenClaw native embedded loop",
+      "source": [
+        "openclaw_runtime/src/agents/harness/builtin-openclaw.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/"
+      ],
+      "owns": [
+        "turn execution",
+        "tool loop",
+        "runtime policy",
+        "transcript/event production"
+      ],
+      "doesNotOwn": [
+        "ClawX task state",
+        "approval decision",
+        "product UI selection"
+      ],
+      "evidenceLevel": "source + existing runtime evidence",
+      "fallback": "none; configured native runtime is selected explicitly or by default policy",
+      "decision": "adopt-existing",
+      "adoptionScope": "default ordinary execution path"
+    },
+    {
+      "id": "codex-app-server",
+      "label": "Codex app-server plugin harness",
+      "source": [
+        "openclaw_runtime/extensions/codex/harness.ts",
+        "openclaw_runtime/extensions/codex/src/app-server/"
+      ],
+      "owns": [
+        "Codex thread attempt",
+        "native tool surface when permitted",
+        "native compaction when selected"
+      ],
+      "doesNotOwn": [
+        "ClawX task authority",
+        "approval authority",
+        "packaged binary delivery"
+      ],
+      "evidenceLevel": "source + installed dependency; packaged managed binary unproven",
+      "fallback": "explicit failure; no silent fallback after side effects",
+      "decision": "adopt-as-managed-executor",
+      "adoptionScope": "explicit/policy-selected coding turns only"
+    },
+    {
+      "id": "codex-command-surface",
+      "label": "/codex command surface",
+      "source": [
+        "openclaw_runtime/extensions/codex/src/commands.ts",
+        "openclaw_runtime/extensions/codex/src/command-handlers.ts"
+      ],
+      "owns": [
+        "explicit bind/resume/steer/stop/model/permissions/threads controls"
+      ],
+      "doesNotOwn": [
+        "global runtime selector",
+        "ACP runtime",
+        "task lifecycle"
+      ],
+      "evidenceLevel": "source",
+      "fallback": "explicit binding/status error",
+      "decision": "retain-explicit-control",
+      "adoptionScope": "advanced thread control, not global selection"
+    },
+    {
+      "id": "acpx",
+      "label": "ACPX embedded ACP runtime",
+      "source": [
+        "openclaw_runtime/extensions/acpx/"
+      ],
+      "owns": [
+        "ACP backend",
+        "ACP session transport",
+        "explicit external adapters"
+      ],
+      "doesNotOwn": [
+        "approval",
+        "task ledger",
+        "native Codex harness"
+      ],
+      "evidenceLevel": "source + generic ACP SDK package; concrete adapters not proven in packaged tree",
+      "fallback": "fail closed when selected adapter is unavailable",
+      "decision": "adapt-explicit-alternative",
+      "adoptionScope": "explicit adapter selection only"
+    },
+    {
+      "id": "codex-supervisor",
+      "label": "Codex Supervisor",
+      "source": [
+        "openclaw_runtime/extensions/codex-supervisor/"
+      ],
+      "owns": [
+        "remote app-server endpoint probe/list/read/send/interrupt"
+      ],
+      "doesNotOwn": [
+        "local Codex harness launch",
+        "thread binding owner",
+        "Task Ledger"
+      ],
+      "evidenceLevel": "source",
+      "fallback": "explicit endpoint/thread error",
+      "decision": "retain-remote-control",
+      "adoptionScope": "remote app-server supervision only"
+    },
+    {
+      "id": "copilot-provider",
+      "label": "Copilot/provider harnesses",
+      "source": [
+        "openclaw_runtime/extensions/copilot/harness.ts",
+        "openclaw_runtime/extensions/copilot/index.ts"
+      ],
+      "owns": [
+        "provider-specific attempts"
+      ],
+      "doesNotOwn": [
+        "universal parity",
+        "ClawX completion",
+        "unverified tool capability"
+      ],
+      "evidenceLevel": "per-provider only",
+      "fallback": "provider-specific failure; no universal equality claim",
+      "decision": "evaluate-provider-specific",
+      "adoptionScope": "provider-specific only"
+    },
+    {
+      "id": "clawx-owners",
+      "label": "ClawX product owners",
+      "source": [
+        "electron/services/",
+        "shared/host-api/contract.ts",
+        "shared/types/"
+      ],
+      "owns": [
+        "workspace",
+        "session",
+        "task",
+        "permission",
+        "trace",
+        "resource",
+        "effective-state projection"
+      ],
+      "doesNotOwn": [
+        "agent runtime internal implementation"
+      ],
+      "evidenceLevel": "owner contracts and tests",
+      "fallback": "unknown/stale remains unknown",
+      "decision": "retain-product-authority",
+      "adoptionScope": "task, approval, permission, trace, resource, completion"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "HarnessCodexManagedRuntimeAcceptance/v1",
+  "generatedAt": "2026-10-26T05:49:36.132Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-authority-20261026",
+  "node": "TF-0566",
+  "sourceRuntime": {
+    "receipt": "source-runtime.json",
+    "version": "codex-cli 0.137.0",
+    "binarySha256": "dae89a14373859b04e05a801a6104e1ef8c007059355fcd07a4eb64f893455dc",
+    "commandSource": "resolved-managed",
+    "initialize": {
+      "userAgent": "Codex Desktop/0.137.0 (Windows 10.0.26200; x86_64) dumb (openclaw; 0.4.9-alpha.0)",
+      "codexHome": "D:\\ClawX\\build\\codex-home-source-tf0566",
+      "platformFamily": "windows",
+      "platformOs": "windows"
+    },
+    "usedSystemPath": false
+  },
+  "packagedRuntime": {
+    "receipt": "packaged-runtime.json",
+    "version": "codex-cli 0.137.0",
+    "binarySha256": "dae89a14373859b04e05a801a6104e1ef8c007059355fcd07a4eb64f893455dc",
+    "commandSource": "resolved-managed",
+    "initialize": {
+      "userAgent": "Codex Desktop/0.137.0 (Windows 10.0.26200; x86_64) dumb (openclaw; 0.4.9-alpha.0)",
+      "codexHome": "D:\\ClawX\\build\\codex-home-packaged-tf0566",
+      "platformFamily": "windows",
+      "platformOs": "windows"
+    },
+    "usedSystemPath": false,
+    "processCleanup": true
+  },
+  "packagedBuild": {
+    "command": "node scripts/run-electron-builder.mjs --win --dir --publish never",
+    "exitCode": 0,
+    "appExecutable": "release/win-unpacked/Verse Claw.exe",
+    "appExecutableSha256": "465e7bf060e573f9fac8c6f4d5c2b8ad6c70be9754bbee3e21615d5d6955c164",
+    "runtimeRoot": "release/win-unpacked/resources/openclaw-runtime",
+    "pluginRoot": "release/win-unpacked/resources/openclaw-runtime/extensions/codex"
+  },
+  "authProbe": {
+    "status": "isolated-home-unauthenticated",
+    "historicalEvidence": "runtime-probe-20261026.json",
+    "credentialsRetained": false,
+    "meaning": "Authentication failure is explicit and does not trigger another harness."
+  },
+  "negativeCases": [
+    {
+      "id": "missing-managed-binary",
+      "test": "tests/unit/harness-codex-managed-runtime.test.ts",
+      "result": "pass"
+    },
+    {
+      "id": "windows-js-wrapper-must-not-win",
+      "test": "tests/unit/harness-codex-managed-runtime.test.ts",
+      "result": "pass"
+    }
+  ],
+  "validation": {
+    "focusedTests": {
+      "command": "pnpm exec vitest run tests/unit/harness-codex-managed-runtime.test.ts tests/unit/copy-runtime-package.test.ts tests/unit/harness-codex-authority-baseline.test.ts tests/unit/harness-git.test.ts tests/unit/harness-specs.test.ts",
+      "exitCode": 0,
+      "testFiles": 5,
+      "tests": 70
+    },
+    "typecheck": {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    },
+    "harnessSpec": {
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-codex-managed-runtime.md",
+      "exitCode": 0
+    },
+    "artifactCheck": {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 19420
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  },
+  "productBoundary": {
+    "runtimeReachable": true,
+    "packagedAvailable": true,
+    "defaultPathChanged": false,
+    "productApproved": false,
+    "releaseApproved": false,
+    "realHumanEvidence": false
+  },
+  "limitations": [
+    "No authenticated model turn was executed.",
+    "No ACP adapter or alternate harness is promoted by this node.",
+    "The historical pre-fix probe remains packaged-unavailable and is not rewritten."
+  ]
+}

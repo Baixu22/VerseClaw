@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "HarnessCodexRuntimeProbe/v1",
+  "generatedAt": "2026-10-26T04:37:32.317Z",
+  "driven_by": "agent",
+  "actor": "codex-harness-codex-authority-20261026",
+  "node": "TF-0566",
+  "scope": "historical copy referenced by TF-0565; authoritative probe lives in harness/specs/fixtures/harness-codex-managed-runtime/",
+  "sourceRuntime": {
+    "packagePath": "openclaw_runtime/extensions/codex/package.json",
+    "extensionVersion": "2026.6.2",
+    "managedPackage": "@openai/codex",
+    "pinnedVersion": "0.137.0",
+    "binaryPath": "openclaw_runtime/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe",
+    "binaryBytes": 247691568,
+    "binarySha256": "dae89a14373859b04e05a801a6104e1ef8c007059355fcd07a4eb64f893455dc",
+    "versionOutput": "codex-cli 0.137.0",
+    "wrapperPath": "openclaw_runtime/node_modules/@openai/codex/bin/codex.js",
+    "wrapperVersionOutput": "codex-cli 0.137.0",
+    "appServerHelpExitCode": 0,
+    "appServerEntryPresent": true,
+    "authProbe": {
+      "status": "isolated-home-unauthenticated",
+      "exitCode": 1,
+      "isolatedCodexHome": "D:\\tmp\\clawx-codex-managed-0137",
+      "error": "Not logged in",
+      "meaning": "No credentials were found in the isolated CODEX_HOME; this does not prove the user profile is unauthenticated."
+    },
+    "acpDependencies": {
+      "codexAdapter": true,
+      "claudeAdapter": true,
+      "acpx": true
+    },
+    "appServerProtocolProbe": {
+      "command": "node @openai/codex/bin/codex.js app-server --listen stdio://",
+      "handshake": "initialize",
+      "status": "not-run",
+      "reason": "Version/help and host WebSocket health were observed; a managed 0.137.0 JSON-RPC turn was not run in this pass."
+    }
+  },
+  "packagedRuntime": {
+    "root": "release/win-unpacked/resources/openclaw-runtime",
+    "extensionPresent": true,
+    "codexPackageJsonVersion": "2026.6.2",
+    "managedDependencyDeclared": "@openai/codex@0.137.0",
+    "managedDependencyPresent": false,
+    "codexBinaryPresent": false,
+    "acpxExtensionPresent": true,
+    "acpxDependencyDeclared": true,
+    "acpxAdaptersPresent": false,
+    "acpSdkPresent": true,
+    "verdict": "packaged-unavailable",
+    "reason": "The packaged extension declares @openai/codex and ACP adapters, but the binary/dependency artifacts are absent from the packaged tree.",
+    "acpChecks": {
+      "sdk": true,
+      "codexAdapter": false,
+      "claudeAdapter": false,
+      "acpx": false
+    },
+    "extensionInstallShape": {
+      "bundledExtensionPath": "release/win-unpacked/resources/openclaw-runtime/extensions/codex",
+      "pluginLocalNodeModules": false,
+      "npmShrinkwrapPresent": true,
+      "meaning": "The bundled extension is source-like and needs a generated plugin-local dependency tree before launch."
+    }
+  },
+  "productBoundary": {
+    "runtimeReachable": false,
+    "packagedAvailable": false,
+    "defaultPathChanged": false,
+    "productApproved": false,
+    "realHumanEvidence": false
+  },
+  "limitations": [
+    "This probe did not execute a Codex turn because the isolated CODEX_HOME had no credentials; the host profile was not reused to avoid credential copying.",
+    "Source dependency presence and --version/--help do not prove packaged desktop launch.",
+    "No credentials or private prompts are retained.",
+    "The successful WebSocket health probe used the host-installed Codex 0.164.0-alpha.11.1, not the packaged @openai/codex 0.137.0 runtime."
+  ],
+  "hostRuntimeProbe": {
+    "binary": "C:/Users/27933/AppData/Local/OpenAI/Codex/bin/2993767bd1dfb009/codex.exe",
+    "versionOutput": "codex-cli 0.164.0-alpha.11.1",
+    "isolatedCodexHome": "D:\\tmp\\clawx-codex-host-probe",
+    "command": "codex app-server --listen ws://127.0.0.1:45371",
+    "healthz": 200,
+    "readyz": 200,
+    "observedStderr": "codex app-server (WebSockets); listening on ws://127.0.0.1:45371",
+    "conclusion": "host Codex app-server can bind an isolated local WebSocket endpoint; this is not the ClawX packaged runtime"
+  },
+  "validation": {
+    "nodeTest": "tests/unit/harness-codex-managed-runtime.test.ts",
+    "packagingTest": "tests/unit/copy-runtime-package.test.ts",
+    "tests": 11,
+    "testFiles": 2,
+    "result": "probe-and-packaging-tests-pass",
+    "scope": "probe/report integrity only; not packaged runtime acceptance",
+    "spec": "harness/specs/tasks/harness-codex-managed-runtime.md",
+    "specResult": "valid",
+    "rebuildGate": "required before packagedAvailable can become true"
+  },
+  "worktreeChanges": {
+    "copyRuntimePackager": "scripts/copy-runtime-package.mjs",
+    "bundleRuntime": "scripts/bundle-openclaw-runtime.mjs",
+    "regressionTest": "tests/unit/copy-runtime-package.test.ts",
+    "status": "present-in-worktree-not-yet-repackaged",
+    "meaning": "The source fix materializes plugin-local dependency graphs, but the existing release/win-unpacked tree predates it and remains packaged-unavailable."
+  }
+}

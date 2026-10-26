@@ -5,7 +5,7 @@ import { lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, w
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, it } from 'vitest';
-import { copyRuntimeDependencies, copyRuntimeTree, packagedMainDependencyBanner } from '../../scripts/copy-runtime-package.mjs';
+import { collectRuntimeDependencyPackages, copyRuntimeDependencies, copyRuntimeTree, packagedMainDependencyBanner } from '../../scripts/copy-runtime-package.mjs';
 
 const roots: string[] = [];
 afterEach(() => roots.splice(0).forEach((root) => rmSync(root, { recursive: true, force: true })));
@@ -34,6 +34,42 @@ it('materializes nested pnpm junctions rather than copying their development tar
   const copied = join(output, 'packages', 'agent', 'node_modules', 'typebox');
   expect(lstatSync(copied).isSymbolicLink()).toBe(false);
   expect(JSON.parse(readFileSync(join(copied, 'package.json'), 'utf8')).version).toBe('1.1.39');
+});
+
+it('collects a native package graph beside the plugin while preserving dependency versions', () => {
+  const root = fixture();
+  const source = join(root, 'source');
+  pkg(source, '@openclaw/codex', '1', {
+    '@openai/codex': '0.137.0',
+    alpha: '1',
+    beta: '1',
+  });
+  pkg(join(source, 'node_modules', '@openai', 'codex'), '@openai/codex', '0.137.0', {
+    '@openai/codex-win32-x64': 'npm:@openai/codex@0.137.0-win32-x64',
+  });
+  pkg(join(source, 'node_modules', '@openai', 'codex-win32-x64'), '@openai/codex', '0.137.0-win32-x64');
+  pkg(join(source, 'node_modules', 'alpha'), 'alpha', '1', { 'content-type': '1' });
+  pkg(join(source, 'node_modules', 'alpha', 'node_modules', 'content-type'), 'content-type', '1');
+  pkg(join(source, 'node_modules', 'beta'), 'beta', '1', { 'content-type': '2' });
+  pkg(join(source, 'node_modules', 'beta', 'node_modules', 'content-type'), 'content-type', '2');
+  const collected = collectRuntimeDependencyPackages(source, source);
+  const destinations = [...collected.keys()].sort();
+  expect(destinations).toEqual(expect.arrayContaining([
+    join(source, 'node_modules', '@openai', 'codex'),
+    join(source, 'node_modules', '@openai', 'codex', 'node_modules', '@openai', 'codex-win32-x64'),
+    join(source, 'node_modules', 'alpha', 'node_modules', 'content-type'),
+    join(source, 'node_modules', 'beta', 'node_modules', 'content-type'),
+  ]));
+  expect(collected.get(join(source, 'node_modules', '@openai', 'codex', 'node_modules', '@openai', 'codex-win32-x64'))?.name).toBe('@openai/codex-win32-x64');
+  const output = join(root, 'output');
+  pkg(output, '@openclaw/codex', '1');
+  for (const { source: installedSource, destination } of collected.values()) {
+    const target = join(output, destination.slice(source.length));
+    mkdirSync(target, { recursive: true });
+    writeFileSync(join(target, 'package.json'), readFileSync(join(installedSource, 'package.json'), 'utf8'));
+  }
+  expect(createRequire(join(output, 'node_modules', 'alpha', 'package.json'))('content-type/package.json').version).toBe('1');
+  expect(createRequire(join(output, 'node_modules', 'beta', 'package.json'))('content-type/package.json').version).toBe('2');
 });
 
 it('ships transitive dependency conflicts and never relies on parent node_modules', () => {
