@@ -1,0 +1,20 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "status": "pass",
+  "mainFilesChecked": 916,
+  "changedMainFiles": [
+    "active-sandbox-high-risk-policy-CDMl2twi.js",
+    "boot-theme.js",
+    "index-CieKlvbM.js",
+    "index.js",
+    "session-cascade-delete-DiT_7NFy.js"
+  ],
+  "preservedIntegrityArchives": [
+    "resources\\app.asar",
+    "resources\\main-runtime.asar"
+  ],
+  "archiveEntries": 119892,
+  "localUnsignedArtifact": true,
+  "method": "Compare each final Main output file with the ASAR and independently recompute both executable ASAR header identities. Directory entries are enumerated, never treated as files."
+}

@@ -1,0 +1,13 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "status": "pass",
+  "checkedFiles": 108151,
+  "preservedAsarInventory": [
+    "resources\\app.asar",
+    "resources\\main-runtime.asar"
+  ],
+  "sourceRoot": "C:/Users/27933/.codex/worktrees/nine-node-merge-20261025/ClawX",
+  "method": "Materialize current build using installed ASAR writer, preserve other archive identities, refresh executable integrity through the same electron-builder function; existing fuses remain enabled.",
+  "unsignedLocalArtifact": true
+}
