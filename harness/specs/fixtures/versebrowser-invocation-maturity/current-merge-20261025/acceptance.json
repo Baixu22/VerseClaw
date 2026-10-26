@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-acceptance",
+  "actor": "codex",
+  "driven_by": "agent",
+  "status": "pass",
+  "candidate": {
+    "sourceCommit": "96f589cbb609a3eab29b7fa93283c423bdd84cf8",
+    "sourceTree": "15aeab6dd8848001e30a0ae981af91824346e925",
+    "dirty": false
+  },
+  "criteria": [
+    {
+      "id": "N8",
+      "verdict": "met",
+      "evidence": [
+        "n8-package-verify.json",
+        "n8-packaged-flow.json",
+        "main-archive-readback.json"
+      ]
+    },
+    {
+      "id": "N9",
+      "verdict": "met",
+      "evidence": [
+        "n9-stability.json"
+      ]
+    },
+    {
+      "id": "APPROVAL",
+      "verdict": "met",
+      "evidence": [
+        "gates.json: 32 approval regressions; forged markers denied; cross-session/origin/open reuse denied"
+      ]
+    },
+    {
+      "id": "INTEGRATION",
+      "verdict": "met",
+      "evidence": [
+        "gates.json",
+        "source-audit.json",
+        "model-independent-readback.json"
+      ]
+    }
+  ],
+  "boundaries": [
+    "Windows x64 local unsigned win-unpacked artifact; installer/uninstaller bodies unmeasured",
+    "Installed dependencies reused and exact dependency archive preserved",
+    "No GA, publishing, frozen default change, product lock change or real-human claim"
+  ]
+}

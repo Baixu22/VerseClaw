@@ -1,0 +1,22 @@
+{
+  "actor": "codex",
+  "driven_by": "agent",
+  "sourceCandidate": {
+    "commit": "96f589cbb609a3eab29b7fa93283c423bdd84cf8",
+    "tree": "15aeab6dd8848001e30a0ae981af91824346e925",
+    "dirty": false
+  },
+  "dependencyArchive": {
+    "path": "release/win-unpacked/resources/main-runtime.asar",
+    "sha256": "b711d9221894dfe0bfd7dc7d3451b9267c125cdc5585aa232a1f3638d7a93394",
+    "bytes": 838220759
+  },
+  "dependencyInputIdentityUnchanged": true,
+  "packageControllerSha256": "d9fc2383612fd351981a0451662d91e420c872abca8504a5ea7bc418bfef91d4",
+  "appControllerSha256": "5208349b0691794ef6d2257955040047129bc73161e2f766c8b13944017cd30a",
+  "mainControllerSha256": "0afda42e53470f90e8d0238d7af0b998b275f8769242f132f4602ebe8928fede",
+  "verifierSha256": "37b33614dcdc88940cb0f56cd80537ec2695a6f837d0441d8f1beb60a06d6a51",
+  "nativeToolSha256": "e101932f5685b8e7d5e81ccb132f245e4227065608a86673397b1c70a05e989f",
+  "originalRuns": "D:/tmp/clawx-nine-node-merge-20261025",
+  "note": "Runtime and plugin bundles rebuilt from current source; locked dependency graph reused byte-for-byte; app and Main materialized; installed ASAR writer and builder integrity functions applied without disabling fuses; local unsigned package. Original environment failures remain in the private run directory."
+}

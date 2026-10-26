@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "actor": "codex",
+  "driven_by": "agent",
+  "sourceCandidate": {
+    "commit": "96f589cbb609a3eab29b7fa93283c423bdd84cf8",
+    "tree": "15aeab6dd8848001e30a0ae981af91824346e925",
+    "dirty": false
+  },
+  "status": "pass",
+  "unit": {
+    "pass": true,
+    "tests": 125,
+    "failed": 0,
+    "files": 10
+  },
+  "approval": {
+    "pass": true,
+    "tests": 32,
+    "failed": 0,
+    "files": 3
+  },
+  "packageService": {
+    "pass": true,
+    "tests": 15,
+    "failed": 0
+  },
+  "electron": {
+    "pass": true,
+    "tests": 3,
+    "skipped": 0,
+    "durationMs": 57045.073,
+    "errors": []
+  },
+  "typecheck": {
+    "success": true,
+    "cache": "disabled",
+    "durationMs": 54480,
+    "results": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 79
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 31536
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 15333
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 37123,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\nine-node-merge-20261025\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  },
+  "componentSourceAudit": {
+    "pass": true,
+    "metrics": {
+      "components": 54,
+      "authorityConflicts": 0,
+      "unclassified": 0,
+      "userVisibleShadowSurfaces": 0,
+      "unfinishedExperiments": 0,
+      "missingImplementationOrRetirement": 0
+    }
+  },
+  "modelPositioning": {
+    "candidate": {
+      "commit": "31bcdb44764760823f93a8c1dafc161ef012a606",
+      "tree": "a48bd5cb29121d074f98fd66669133cad3489d55",
+      "dirty": false
+    },
+    "rows": 24,
+    "pass": true,
+    "negativeControls": [
+      {
+        "mutation": "counter",
+        "rejected": true
+      },
+      {
+        "mutation": "candidate",
+        "rejected": true
+      },
+      {
+        "mutation": "response",
+        "rejected": true
+      },
+      {
+        "mutation": "profile",
+        "rejected": true
+      },
+      {
+        "mutation": "effect",
+        "rejected": true
+      }
+    ],
+    "sourceDrift": [],
+    "rawEvidence": "docs/dev/component-graduation/TF-0507/verified-glm-20261025"
+  },
+  "comms": {
+    "pass": true,
+    "replayMetrics": "comms-current.json"
+  },
+  "originalFailuresPreserved": [
+    "Dependency resolution before local VerseBrowser build",
+    "Electron worker teardown timeout with passed assertions",
+    "Native app-builder Low-integrity output denied",
+    "Intermediate ASAR symlink and standalone dependency gaps"
+  ],
+  "limits": [
+    "Focused development/integration gates; full repository Playwright and remote CI not run",
+    "Historical Agent Dev audit and long-session D2/D3 limits are not upgraded"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-status",
+  "actor": "codex",
+  "driven_by": "agent",
+  "status": "pass",
+  "sourceCommit": "96f589cbb609a3eab29b7fa93283c423bdd84cf8",
+  "sourceTree": "15aeab6dd8848001e30a0ae981af91824346e925",
+  "n8": "pass",
+  "n9": "pass",
+  "privateNetworkDefaultDeny": "pass",
+  "explicitAgentApproval": "pass"
+}

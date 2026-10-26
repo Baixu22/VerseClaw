@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "PositioningIndependentReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-python-verifier",
+  "pass": true,
+  "rowsChecked": 24,
+  "credentialScan": {
+    "files": 68,
+    "hits": 0
+  },
+  "negativeControls": [
+    {
+      "mutation": "counter",
+      "rejected": true
+    },
+    {
+      "mutation": "candidate",
+      "rejected": true
+    },
+    {
+      "mutation": "response",
+      "rejected": true
+    },
+    {
+      "mutation": "profile",
+      "rejected": true
+    },
+    {
+      "mutation": "effect",
+      "rejected": true
+    }
+  ],
+  "problems": []
+}

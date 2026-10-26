@@ -1,0 +1,1279 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-current-candidate",
+  "actor": "codex",
+  "driven_by": "agent",
+  "sourceCommit": "96f589cbb609a3eab29b7fa93283c423bdd84cf8",
+  "sourceTree": "15aeab6dd8848001e30a0ae981af91824346e925",
+  "dirty": false,
+  "frozenAt": "2026-10-25T16:19:49.4369504Z",
+  "platform": "win32",
+  "arch": "x64",
+  "artifacts": [
+    {
+      "path": "release/win-unpacked/Verse Claw.exe",
+      "sha256": "54e1e8263c1be5e0cb9c6fed9281b6c028f84916c07ba043da5d7b6973a89cc0",
+      "bytes": 214315008
+    },
+    {
+      "path": "release/win-unpacked/resources/app.asar",
+      "sha256": "6fbaf4bbe63677f02198637adebff373bdd7bf1b567eaa8dd3698f42c5f825ac",
+      "bytes": 867564997
+    },
+    {
+      "path": "release/win-unpacked/resources/main-runtime.asar",
+      "sha256": "b711d9221894dfe0bfd7dc7d3451b9267c125cdc5585aa232a1f3638d7a93394",
+      "bytes": 838220759
+    },
+    {
+      "path": "build/main-runtime-delivery/main-runtime.asar",
+      "sha256": "b711d9221894dfe0bfd7dc7d3451b9267c125cdc5585aa232a1f3638d7a93394",
+      "bytes": 838220759
+    }
+  ],
+  "sourceInputs": [
+    {
+      "path": "electron/gateway/agent-browser-bridge.ts",
+      "sha256": "68c25e5fcf7e4a3ffb449ce1ea3eeb876fb01727211474e80b823b39cb1a679b"
+    },
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "bf9422a513365bbb196154e04474b01ad341b88a45f11fcc6f07538585be8182"
+    },
+    {
+      "path": "electron/services/agent-browser-api.ts",
+      "sha256": "04b080fc06ebe7f1bd09bde9254b0fdf05c79280c28e6a6f4e7353da1a7b2fb1"
+    },
+    {
+      "path": "electron/services/agent-browser-capabilities.ts",
+      "sha256": "174424dca09b0cd246d4dd6c7c77d47be5032df14be44e51696ee33bdb678a8e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+      "sha256": "d6c737e271707322b7fc8e22018c38b4865b3d506da2d24405bb0fa489f3073e"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/agent-browser.ts",
+      "sha256": "e86aba60f0a4830ef75e750661d45ca3a2a6af15a8495f7191ba103c7d5524a5"
+    },
+    {
+      "path": "packages/versebrowser/LICENSE",
+      "sha256": "00d7be7fb211d703a9bca7fb6d55f4a6dc26f93527a217bcdab745f01a0358c7"
+    },
+    {
+      "path": "packages/versebrowser/import-manifest.json",
+      "sha256": "ca8ec19363d3241e24d3a50ba3938d6eccb3c4dc9c4031c88439d55da8ba61e8"
+    },
+    {
+      "path": "packages/versebrowser/integration-patches.json",
+      "sha256": "28309dd893d138ce5a0655a457f16be8d8a03d9545b20f8abf9780479c779484"
+    },
+    {
+      "path": "packages/versebrowser/package.json",
+      "sha256": "cbe84fe46b0b65a5872b18100540ff63263c881beee738fd837db4353fea1518"
+    },
+    {
+      "path": "packages/versebrowser/patches/src__cli.ts.patch",
+      "sha256": "3e5660364c5bde0b92810d7c9d0e35e941b5f1c8c7ee9e238925db3c02d6554c"
+    },
+    {
+      "path": "packages/versebrowser/patches/src__host__paths.ts.patch",
+      "sha256": "f0ccd29be55463fe87d780961ea739209bfe1fa1b0040b3988c77f7b947a8062"
+    },
+    {
+      "path": "packages/versebrowser/patches/src__index.ts.patch",
+      "sha256": "52e8d4650b6b772e4ae025fed383318e8a95b4126555cf478ee73f5aeded8acc"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__collab__remote-policy.ts.patch",
+      "sha256": "b913c3e7af50983ef76cf2e0086a42a3902a7b60da2fa5fdf6f862710a471362"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__driver-profile.ts.patch",
+      "sha256": "b92081259dbec92c27c63ba847fee7e299b5496301019544c121df188fcc98d3"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__facade.ts.patch",
+      "sha256": "3852f661b5cef68ad91ea9a754e0f8ed7fbd4ecdeaab4a0237bf3f0010422678"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__persistent-sessions.ts.patch",
+      "sha256": "f8cc7e4868b26c3245dd3675d3e50a10c3f2c6fd60394313403175507582f4e3"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__playwright-host-api.ts.patch",
+      "sha256": "8cbfe43bf0d1eeae80fed5c5d084f731bf8763a6f453a5f19d3dca6ceecdbbb0"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__semantic-browser.ts.patch",
+      "sha256": "048ab7897ed593078a3da1910123c96a69f893dda22b1167fc92bd5e079a3d53"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__standalone.ts.patch",
+      "sha256": "bc1943905e9699de8e748f7f316c4d413153b607f946b75bc8d3cbf434242167"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__upstream-control.ts.patch",
+      "sha256": "dfeff41ea0c638c9053ac5840f69f5f961855b08d804ae04a56b487cfa5289ef"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__visual-browser.ts.patch",
+      "sha256": "1ccd37a7eae2b7fb19c84f237adabf117f381eef0f80afe8b9c2631a0d627cde"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__evidence__reader.ts.patch",
+      "sha256": "f640900b6b2c452c7e628a60d8b0e2020df2c526fbe5b46abd6372d0af7ac4df"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__openclaw__gateway__types.ts.patch",
+      "sha256": "3c7b5ec21ebe98127d771464dfc68f7022d722d0acbe4cd79c90c2afbe2d3781"
+    },
+    {
+      "path": "packages/versebrowser/patches/vb-engine-policy__src__engine__service.ts.patch",
+      "sha256": "53794a1402ca0567d2989d1023e88e9e65c5cfae7289d2d5715909e88d516ec8"
+    },
+    {
+      "path": "packages/versebrowser/scripts/patch-upstream.mjs",
+      "sha256": "4a5e5f06f4abd263dc73cd02df102c2d649c2a108ba08507ccb8f90e37a90f4e"
+    },
+    {
+      "path": "packages/versebrowser/scripts/with-compatible-node.mjs",
+      "sha256": "f0ca9bd84ef1dda9c9d1f316d9cc1b514b490ff102543988a2ccf9d5b3ca87a0"
+    },
+    {
+      "path": "packages/versebrowser/src/cli.ts",
+      "sha256": "c45567568079b9c699127a881dce60f40d33d0d9b4252091366e51ba0bbfc9ff"
+    },
+    {
+      "path": "packages/versebrowser/src/collab/multi-agent-boundary.ts",
+      "sha256": "1bb3ff686ff68c84b8663816844132c2cf0dc5d2439da9195c293148754687ec"
+    },
+    {
+      "path": "packages/versebrowser/src/collab/remote-policy.ts",
+      "sha256": "104d98b6120644248180fd8cf7be518165238c0c2ad33e1b5c71c83f15780b73"
+    },
+    {
+      "path": "packages/versebrowser/src/contracts/index.ts",
+      "sha256": "be81154674bbb4c14eb60ac4e35841dfdd1e6f26b9bdc2f72a72095e192f9bb5"
+    },
+    {
+      "path": "packages/versebrowser/src/core/automation-playbook-selector.ts",
+      "sha256": "845f38ce8880c72c22c2b8791c36dcc50c52fffde7160423fec07f80abd33724"
+    },
+    {
+      "path": "packages/versebrowser/src/core/automation-playbooks.ts",
+      "sha256": "3f9249f8cb8acbda98b45ee91b80d9e7be5aa32d103d88f61e289b42dfd005fc"
+    },
+    {
+      "path": "packages/versebrowser/src/core/browser-control.ts",
+      "sha256": "aaba1becab778d420942f34f7fae926df0334cbb136a8c0acfd485022a5e97b0"
+    },
+    {
+      "path": "packages/versebrowser/src/core/extraction-rules/validation.ts",
+      "sha256": "a04ef84b5ce1a8e1ffbeb75b272758ec3c1b8d63640da0f32f3b5022b52713db"
+    },
+    {
+      "path": "packages/versebrowser/src/core/filesystem-boundary.ts",
+      "sha256": "9f917610c88a354a51b5a17e75293df4c7ce98f2e5b1288edcde39840ad3816a"
+    },
+    {
+      "path": "packages/versebrowser/src/core/index.ts",
+      "sha256": "4a7cf1ff0eb509dad68fc8be5a469a85c813823ce4fab9ec865bf8265fe73946"
+    },
+    {
+      "path": "packages/versebrowser/src/core/network-context.ts",
+      "sha256": "46550063b927358d08a905a58e38fab9901916c73d0be29c61e553513f81a460"
+    },
+    {
+      "path": "packages/versebrowser/src/core/runtime-mode-policy.ts",
+      "sha256": "0cf10e9b3128b866fa8e7017cc5c1ed64e24364ed95ddb6c0d3f24effcc2a07a"
+    },
+    {
+      "path": "packages/versebrowser/src/core/text.ts",
+      "sha256": "74c2b974abd088eb0542e18457471b1b006ab42879274bc3075d94ad4cb7ce92"
+    },
+    {
+      "path": "packages/versebrowser/src/core/tool-artifacts.ts",
+      "sha256": "d8d459c4c62755c13c251f42794d91234a005e1785d4465d9d053bdfbbca26dc"
+    },
+    {
+      "path": "packages/versebrowser/src/core/tool-authorization.ts",
+      "sha256": "af533645bdffa4e57a00a51be2eabaeb5005a085005282b3b4e1a40e8c93c282"
+    },
+    {
+      "path": "packages/versebrowser/src/core/tool-classification.ts",
+      "sha256": "4c757f047054e4c15d9dd9fb1f0bd7caa6ec8a6b4594a9fc90820873dfe7cc63"
+    },
+    {
+      "path": "packages/versebrowser/src/core/tool-registry.ts",
+      "sha256": "87c22b38563d35f56a8855bc3bebb290d3886537b2d20c973fa86b6c1c5222e2"
+    },
+    {
+      "path": "packages/versebrowser/src/core/types.ts",
+      "sha256": "053ba5745f7fcfbe77083f0e460b3026cab9917a14242e4eee7720a3829a02e2"
+    },
+    {
+      "path": "packages/versebrowser/src/core/web-search/tavily.ts",
+      "sha256": "aac71bacab36ab25506daa4e70327e950fede3f249dd6a855e97eaf355880143"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/api.ts",
+      "sha256": "ce1ada9b6f22f89be59d3e9e831025c1e8f116ed0fb53ded70ce4e23b952bea8"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/actions.ts",
+      "sha256": "847d3e3c6c76e376539966d132b95c62d85d1fda2ba6a4fd487c43529635d417"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/automation-boundary-detector.ts",
+      "sha256": "b8c41735183c4407ba7dfc967192331cc4416396ad9fbe14eb8b3790897af439"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/boundary-choice-tool-executor.ts",
+      "sha256": "31bd431fd42ba986f058db7655e5a495f14b7520ce5be3b639769e9c9978d20e"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/browser-debugger-connection.ts",
+      "sha256": "b08b6799b6a29a84dd4d49a7da1d37ac372d6672d0aabbd19a6e8a322b293445"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/console-recorder.ts",
+      "sha256": "bf56f1d43c89289ca7960160f225ae714fc7ef285d8083d1dd31eb64af9c9375"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/full-access-tool-executor.ts",
+      "sha256": "5c61747b9d2ce868dfe778b73668cc638c7da9aa5c1a0b9f855d5dc1caa91f11"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/js-source-index.ts",
+      "sha256": "b46c8194023d221056dc992f3fe3074c7a698c46bca032c6949404a774f1e352"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/js-source-tool-executor.ts",
+      "sha256": "2d52f692d8e2fddf0da5e643af7cc32e3e039661fbd84435a6c6b99981d976c6"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/network-recorder.ts",
+      "sha256": "98ce7f16d9657d98909c043724323fb497df47ba9703840057e338c288f865b2"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/page-text-extractor.ts",
+      "sha256": "499e22c9d8d647bdc1ec2e48d8e7ceb5e1a5d61efda5407630d2b95d76b30fd2"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/replay-tool-executor.ts",
+      "sha256": "2c2511f127474daf6973cc6bfe9311679d78c7f7fa3c3048c4c6ff9047feff70"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/runtime-read-tool-executor.ts",
+      "sha256": "8f997f9883ca8aa80ce542346682e13b021166ea831c6570f751502496936102"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/same-origin-js-fetcher.ts",
+      "sha256": "30e44d5f71fdc40f2ebbd94dcad00adf071d118a4e775f9cdac72d5349683249"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/same-origin-source-map-fetcher.ts",
+      "sha256": "5da189fb8f1a6253a62d40fa273406934922c94c1f1a6c1686a9df968f9f6d65"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/snapshot-manager.ts",
+      "sha256": "9ec216a6adf53c542c46be6c3a7bfb6e70b9811fb75141535397c545d1a97004"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/source-map-fetch-guards.ts",
+      "sha256": "574f21906e4b384acbcbb10e4c8d48c064c2fdb882ae14b62fa83500193a388f"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/source-map-tool-executor.ts",
+      "sha256": "bb7fa9ae1187642e971aeb2f86969288fd1e1a09f3036b3255e13a5c10e4717f"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/browser-control/tab-manager.ts",
+      "sha256": "ce08e2e49bad4542ab2bd27bb395a0d6254bacd2f6c65d662a6ecf38ee9f8b9d"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/cli-runner.ts",
+      "sha256": "f9340d33d2dde08dc6e832c058af4246a6acaca181393f3feeb760c27efe1dd0"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/diagnose-pack.ts",
+      "sha256": "d210e87f5784ac07061d2c226464f35a90c30c67871dfee344f4e0929517e762"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/driver-availability.ts",
+      "sha256": "a8cddcee6744dfcf86e01ccdf003e3fb01be3624add82ffd80d01c2dfd89b283"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/driver-profile.ts",
+      "sha256": "4698b4387057d12adb465d0b49419ef5bd35d6ab31b50da69bf705f20e4358cc"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/electron-attach.ts",
+      "sha256": "efb4ca5a174004aca947a3a4627e0d785f991d98cd7e921ae95d84c412a7585f"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/electron-host-api.ts",
+      "sha256": "b9d33e6341c4180f07974207de1d134d13fccbaaeb26cf73339d4b81114a685f"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/electron-source-map.ts",
+      "sha256": "26f0a234f79acc2e1b0979012d549d38ea678624b50832c07c0a3dd5226194cd"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/facade.ts",
+      "sha256": "bd6dfcd2c8dc749f1f025ac2710bc1a2236f0eea2c7861c2bef334e4fa9b14f2"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/hitl-checkpoint.ts",
+      "sha256": "650379b28a498648970c8646e14000b678b6bd03f6b7bdbced706d3ce7b443d3"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/interactive-snapshot.ts",
+      "sha256": "08bf1e2561498b49bde0922dddde88ee3134739eec3b67a399ff6c7bff090d0b"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/navigation-errors.ts",
+      "sha256": "88c1217bcbe3177de4c752d616b3211c2fbbad3303977d803450f0480ee4fafe"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/oneshot-verify.ts",
+      "sha256": "041ab2d08b496f1e51fb18e0a595de59b96caad343b19effd5377a88309e30df"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/persistent-sessions.ts",
+      "sha256": "f1f2c5f1df98754718061c6b3dc363aa4a9f69a50e04c45371412394c801108d"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/playwright-host-api.ts",
+      "sha256": "5e16de35fbd77edba883543d63458fcf6e5c1e5171aa606558899d2cf49bb69e"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/runtime-compatibility.ts",
+      "sha256": "08570e1c85d676e7a15a283f246ba25f252b9b5ba7ee713cbd9e1fc74377dc98"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/semantic-browser.ts",
+      "sha256": "6f679a23b947547bdf3abf0515e9d0a3991868eb3be89ee7248d7729c2812857"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/service.ts",
+      "sha256": "bea083e0072337d10e64dee78c64ba8dfa2f69451663436b0f53c683cfd183be"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/standalone.ts",
+      "sha256": "a2f6f931ada9682d2190c50bdd5982c2d5d9b40e417daf1550db7df521563f87"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/supervised-task-executor.ts",
+      "sha256": "2ae4f90414ccf39ab6d493e84b3fb3a3baa08f0d9a6444025e8aefb28f7defc9"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/task-service.ts",
+      "sha256": "73b91538f8d0a68ec2cb08d676c0830d44f4acd7fc251b35f77d73feea491e5e"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/upstream-control.ts",
+      "sha256": "29ad2eae132faa5e14a83103de5ce25e958ea97c97f0d6023153b679fb7537d8"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/vault.ts",
+      "sha256": "91731aa44daf7599eb2feeae4d535013f25db3107882d8e718ad1badb343ef1e"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/visual-browser.ts",
+      "sha256": "965a73f4007885e11e8ca7ca840789e252789ee538a69950792202c8c4bd8be1"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/diagnosis.ts",
+      "sha256": "128edf6e9fa67745153cfd285ebd05c1f401e954da4d868ca827db647e080e83"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/index.ts",
+      "sha256": "dae5d87085ccb1a92263d2e65c0440089670271c7a68159043484b9a6d5c6f72"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/output.ts",
+      "sha256": "98e9c48d261c8247b1a9f57bc199c3e50b22f62927020c1d26e2b9150c2586cb"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/path-guard.ts",
+      "sha256": "47ce434c06805853b8829b391d6e74365c596cf392fa6cc289637325a2d393ac"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/pr-comment.ts",
+      "sha256": "159dd8eb9e2d9c95716e6c36aa6acc62bdabc6f58b998f7b0b652d0cd9746117"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/reader.ts",
+      "sha256": "f5777338e673dee854e9f75e671b5f776f814591a25048e0a01e94b74092798f"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/schema.ts",
+      "sha256": "7cdfcc9fbc52b06768806e9074faa431fc25019098d9816703d4783e488d349c"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/timeline.ts",
+      "sha256": "a7936ad2b6350ca9275ceeb23cc2b30af44bdf34ce4d5fdc5d3a339fca5b5d70"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/viewer.ts",
+      "sha256": "b89f4c935576200dfb28be2d67564e30580d5128718b3b7c616bd5685be0e34c"
+    },
+    {
+      "path": "packages/versebrowser/src/evidence/writer.ts",
+      "sha256": "7ecedb62e63dbd1fe80adadd4909a3ec0b49de0b6a49a26d62b43390fe8f4f0f"
+    },
+    {
+      "path": "packages/versebrowser/src/gateway/bridge.ts",
+      "sha256": "e657e2a877b9609de568d190f53d668605358bddbb6e2712f35382155ea0c2ef"
+    },
+    {
+      "path": "packages/versebrowser/src/gateway/manager.ts",
+      "sha256": "d733c3ecee4d9e16123528b91034908d0c79fbc75d6a3c89b16c9304122110f0"
+    },
+    {
+      "path": "packages/versebrowser/src/gateway/protocol.ts",
+      "sha256": "877ebd2367a242e0cc34902ee1593c73c8354d47ebd60b287cd3696a0a8a33a4"
+    },
+    {
+      "path": "packages/versebrowser/src/host/active-sandbox-high-risk-policy.ts",
+      "sha256": "a3dba74f19f9e4e978e47b224164c4587dda7aee65ce84070f8ceae32f41b26f"
+    },
+    {
+      "path": "packages/versebrowser/src/host/electron-optional.ts",
+      "sha256": "4cc477d61d48441f0c6de696816b912bc05008293268ce2803372529c22da893"
+    },
+    {
+      "path": "packages/versebrowser/src/host/logger.ts",
+      "sha256": "c37ad13b4eefb547dab490a5966e46184c349e3f568800175aec15a87a2531ce"
+    },
+    {
+      "path": "packages/versebrowser/src/host/paths.ts",
+      "sha256": "8ca029e90b540738c046207610db8962ee22520ff35282154c8225395bc0dd95"
+    },
+    {
+      "path": "packages/versebrowser/src/host/permissions-hooks.ts",
+      "sha256": "de4c04968e7bd9ee1df00e0bb06ac5bdc74ea87985a48ef44ddc31edbeb8376e"
+    },
+    {
+      "path": "packages/versebrowser/src/host/sandbox-high-risk-gate.ts",
+      "sha256": "0f4b68b5bc205920d4945bdef753fb2e5c42eb810a123ce1b46774b0e482452a"
+    },
+    {
+      "path": "packages/versebrowser/src/host/sandbox-policy-resolver.ts",
+      "sha256": "8748d47a6375cbb00a19f5ced8bd5c4dad86e34d6383d0bc4d7fb9aa1eb0fca4"
+    },
+    {
+      "path": "packages/versebrowser/src/host/sandbox-provider-detection.ts",
+      "sha256": "913185ef9fcd3a62e889971281da9ef275d71e9ccaa55fb2f10b78068d1d9a10"
+    },
+    {
+      "path": "packages/versebrowser/src/host/sensitive-capture-gate.ts",
+      "sha256": "13279cf0c0340b9cd5408c74e9df09a8b4f97fbc8237a6d692ab9d0cdfc322b8"
+    },
+    {
+      "path": "packages/versebrowser/src/host/sensitive-capture-policy-loader.ts",
+      "sha256": "084f5ddda89635b9d3710d9a7fec633e110f318dccb0b4eee93d8aceaf4b8e2a"
+    },
+    {
+      "path": "packages/versebrowser/src/host/workspace-hooks.ts",
+      "sha256": "e8488606daa530e6b280cb5143a241bea7a985141a572ebf466c059cfa8d2350"
+    },
+    {
+      "path": "packages/versebrowser/src/host/workspace-paths.ts",
+      "sha256": "b5de8eaeb8a80b2746fd2bdef1232a9821167ba391a747d716250d92938c8de3"
+    },
+    {
+      "path": "packages/versebrowser/src/host/workspace-runtime-permissions.ts",
+      "sha256": "416a2fd0e30ea9ef12f05c216d07eda985e10721c96a5258e798466d8dbfe975"
+    },
+    {
+      "path": "packages/versebrowser/src/index.ts",
+      "sha256": "00c21de9899223a1aa9cfa9825c4d6d539d83aaa3e3b6a6dcdf4ed069694b5b0"
+    },
+    {
+      "path": "packages/versebrowser/src/mcp/argument-guard.ts",
+      "sha256": "e310b66397ca35522368584cff93be470b74598ac8fcea7bfc3b390453f40650"
+    },
+    {
+      "path": "packages/versebrowser/src/mcp/capability-policy.ts",
+      "sha256": "dbd55dcdc1730151e01ba4e8eb85c77cbd300859b53705d7a9d5e5377473e6b1"
+    },
+    {
+      "path": "packages/versebrowser/src/mcp/explain-error.ts",
+      "sha256": "8d4ffdeeebfeb8ff05f48781e2a86d8b500690d61865a0b3db840f16d9a61328"
+    },
+    {
+      "path": "packages/versebrowser/src/mcp/result-envelope.ts",
+      "sha256": "0a4f9456029d37d33c25fc7531f6eb96fcbbcaf39e7ac87e3262e93b7d7b1aa7"
+    },
+    {
+      "path": "packages/versebrowser/src/mcp/server.ts",
+      "sha256": "0f17dfdfbf1f4f84e78c49bbbb7965aa90834b3c6db7f0f23188c1ce1094e8b1"
+    },
+    {
+      "path": "packages/versebrowser/src/mcp/tool-availability.ts",
+      "sha256": "28d6c3cc24cd3fbec143c1320d3c2c70155fb7496714862ca3c7e39dbac69d64"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/automation-event.ts",
+      "sha256": "1cc824f60f3d572f1f9786fe77c1b7f160b8480f0d966e8616c154854b884ce8"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/common.ts",
+      "sha256": "787da068e3c7a708d07f80bde6948ec8a7237294dfc4595d88e5ce5098b728ef"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/external-access-policy.ts",
+      "sha256": "fef9ca4fc2863d292f2905634a52791b37adc8b0dfc8817dadf15a6bd287d580"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/gateway-protocol/client-info.ts",
+      "sha256": "254f65b17c0f1f5d14164d06ec2047302fb9c1ed6b79882f771c0b1aecbe2b08"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/gateway-protocol/error-codes.ts",
+      "sha256": "8225e68feeabad77eba0793e7cad0e2327102fdd13ad1ef7f52d67b924984457"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/gateway-protocol/index.ts",
+      "sha256": "64f835d0e9f6bad8f060dcef1c43d1389858a58711d363b0451bb1371ac0d6d1"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/gateway-protocol/types.ts",
+      "sha256": "0b14e39bfdcbab577e7e9b4c045aa0ba0406ef9f2bf5419e8f4bcde1b55b5aa3"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/gateway/agent-browser.ts",
+      "sha256": "27cfbef2d2b1dae21db94e955496703b1ecda6ca745c299797b93d97a8fb28f8"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/gateway/types.ts",
+      "sha256": "0c499ffb55e20bc38481a86364ce4f000cf9b1071509a85fee5afc3bb8fbac96"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/param-key.ts",
+      "sha256": "4e05a09ede2e10f8c9ba0df0d058fcc02a7034cd29c68b195f2f227df70906a9"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/string-coerce.ts",
+      "sha256": "bd8aeddbb97cfa5a0980ab76d30973ce3ef5941e9e612994feaa4cbd412a1c94"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/string-enum.ts",
+      "sha256": "cfbf8ac1b46a0dbdc3513b79b78c1447bf36559baedb808e91c0c84f0426f42a"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/tool-result.ts",
+      "sha256": "e9d9f0e511e0e82adce9302706d027cdadf013c2ca8e0683418d65de584fce17"
+    },
+    {
+      "path": "packages/versebrowser/src/openclaw/tool.ts",
+      "sha256": "fac88c9531613ab34588944bda2e510177f4c481b6cf62d971097b163ad54310"
+    },
+    {
+      "path": "packages/versebrowser/src/security/audit-trail.ts",
+      "sha256": "d1334f41813e4c1cd117c38f55154b69930a3eb7ea62bbb8aa5d74da667b6e94"
+    },
+    {
+      "path": "packages/versebrowser/src/security/content-provenance.ts",
+      "sha256": "3e85dda3e85b696eb5c034190a1a819c9111d7791368401274bdbcc9911d994b"
+    },
+    {
+      "path": "packages/versebrowser/src/security/markdown.ts",
+      "sha256": "3376d54073afcb10047c76d8a10e9197b7b9cfb43a8ca57e419329e83e131be1"
+    },
+    {
+      "path": "packages/versebrowser/src/security/net-policy/index.ts",
+      "sha256": "2affd494ab84413454471ff9e4cea0fae42e65beb603df8ff578c08987f43e40"
+    },
+    {
+      "path": "packages/versebrowser/src/security/net-policy/ip-test-fixtures.ts",
+      "sha256": "080e77444b3bb0e687764d1953c654dd6408cf9a8c2e0e972a450155cae74f44"
+    },
+    {
+      "path": "packages/versebrowser/src/security/net-policy/ip.ts",
+      "sha256": "a948c49bc1e117ce9cf78202873527eac7ae81c44bc761f8f1ea171af252d0ad"
+    },
+    {
+      "path": "packages/versebrowser/src/security/net-policy/ipv4.ts",
+      "sha256": "f8d605248c814de141e24c817d6cbff0238e9a14d35ed7cb1aa3ae0493f3aa69"
+    },
+    {
+      "path": "packages/versebrowser/src/security/net-policy/redact-sensitive-url.ts",
+      "sha256": "cd56d6a273f09dcd26fe72d705614eed706220c78be89a8433e7aec59405c7bb"
+    },
+    {
+      "path": "packages/versebrowser/src/security/net-policy/url-userinfo.ts",
+      "sha256": "52320861b13e3c510b982e264cb9f0a6fbd0b90d015f4e3b21616e7d99cdb1e0"
+    },
+    {
+      "path": "packages/versebrowser/src/security/redact-secrets.ts",
+      "sha256": "5b9f5fed9f23443f16df9cf36f0de49c28f11d86ac036bfa9b023a104c191842"
+    },
+    {
+      "path": "packages/versebrowser/src/security/redline-policy.ts",
+      "sha256": "ad303dfe053e993a7ba6adaa50bdbacbebbe408da45a2eab5a1609c56396eb0b"
+    },
+    {
+      "path": "packages/versebrowser/src/security/secret-names.ts",
+      "sha256": "2c0cb23cb2d822e4e519e5269c8ef3a7aee8d8b3e32657a55b2d6223249e3dd7"
+    },
+    {
+      "path": "packages/versebrowser/src/security/sensitive-capture-policy.ts",
+      "sha256": "54d117f07a6a3bec9495a95009be3c3bdd55ad5bd04db58684f88fe5dfa7a930"
+    },
+    {
+      "path": "packages/versebrowser/src/security/url-policy.ts",
+      "sha256": "e274c0248a2a74d4a0c1b63c73b3f20ab29186b9787ecbf9fc42724a1be3e07e"
+    },
+    {
+      "path": "packages/versebrowser/src/types/host-api.ts",
+      "sha256": "cd5895578e7581735bf39121596eaaf135d9226b9d97bdf18971f3a142be7743"
+    },
+    {
+      "path": "packages/versebrowser/src/types/product-semantics.ts",
+      "sha256": "d7829eaeed934c38e9533b07030ac4ef22eec56656b1525b181e17304d4a2519"
+    },
+    {
+      "path": "packages/versebrowser/src/types/sandbox.ts",
+      "sha256": "eb4eb373efb7845262d8583eeaecefeb13e0b9bd098eb7db667d6d83b5d2b0d8"
+    },
+    {
+      "path": "packages/versebrowser/src/types/workspace.ts",
+      "sha256": "084ca2815b260ed6993507428c9da46e5386c4b6af0d3fdc65d68fb515ac29e3"
+    },
+    {
+      "path": "packages/versebrowser/src/version.ts",
+      "sha256": "9fe3d3d5288ad47acac459d33c615cbae1505659ec34dcbe51e1edae44d2797e"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-automation-boundary-detector.test.ts",
+      "sha256": "a439dda2478a5ec1cbe3b403ccbd4417585c889b10d5f91eb05f1a9d190fb4e2"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-automation-playbook-selector.test.ts",
+      "sha256": "c304b567be567421caf34b9c2c70283dd186bd7b2f7b61f2874d23b332c7a299"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-automation-playbooks.test.ts",
+      "sha256": "e7f1b6cf2a58eb12d429f21be820742c0b0aa5be8bc21618deaa931ec25ef404"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-boundary-choice-tool-executor.test.ts",
+      "sha256": "22bc6762e120e5d48703dc674d40654392bd67956247c47c2d6a9e7f3cdcefb1"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-browser-control.test.ts",
+      "sha256": "609908f41e52601f2e0c9f0ce14fadc2c9c4dcae63970853a8174bd06713f43f"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-cdp-lifecycle.test.ts",
+      "sha256": "1350473022c4be138adf1218facf0866b3432d5d86076fed052a66b6030a7cbe"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-cli-runner.test.ts",
+      "sha256": "e92776501324207f1ba3fea3f9cd6dca1371519d05a2877c8f3fedeb80cc3ac1"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-console-recorder.test.ts",
+      "sha256": "ac4a91006c2a9ab4c5d70e51a081397882b7b6782f97a2d34660d8cbd02aba58"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-extraction-rules-validation.test.ts",
+      "sha256": "ba7b732642b79e4b6eee3494ff86a2ebbd99d216ba286e9e439eeb0239369b1e"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-flight-recorder.test.ts",
+      "sha256": "0221c3afacdfdd1bae9d26f2a39dd270c57b5d87d3aa6e595ac10ee8e30b6b9c"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-full-access-tool-executor.test.ts",
+      "sha256": "9d91cb9789ceb9c24d638ed612bd13499b4f2b9b808c55406c164c49153628b5"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-gateway-bridge.test.ts",
+      "sha256": "0caf5c3c9d7f7a7d535fda7a29ad466f51a8f315351a7cbed0ae124f507fea29"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-js-source-index.test.ts",
+      "sha256": "9aa501e96a1611111dfb48aaf039ca4ab05bc299b002d53bc68501f7bb7056d3"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-js-source-tool-executor.test.ts",
+      "sha256": "562be76f8780e4c52c55ab2e720027f183934e4a2793a099f93a441336edfd25"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-m6-flight-pr.test.ts",
+      "sha256": "6bf4168b6baa8224e9dcba09642e6f8efb12fee5d59abacf0729b4e02e2f5c54"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-network-context.test.ts",
+      "sha256": "5b38c807e5cd709ca2a116f932c35f290133bd7691984bb670ab1ab4f92fff7c"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-network-recorder.test.ts",
+      "sha256": "dee455b03f840728553556eedff5f7254607cfe9fe12fe3fc72e3f684a9883e5"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-network-service.test.ts",
+      "sha256": "b9153df516e1404d3bf4fa3891013c55b3b453be313e695762db94281a670cc8"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-p4-002-isolation.test.ts",
+      "sha256": "7f6efc8c500d85dbe92fe1010e128dc7631a24ee7951bb9e8af5a93fb4616fb9"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-page-text-extractor.test.ts",
+      "sha256": "19f10174b294084fbfd25bb6e109d185fac5882905ac508f63345849b66a33f9"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-redact-secrets.test.ts",
+      "sha256": "d05ac19e6d4c2f79ddd30f9076bf283f13852ef8f40c2731bac045d3f63f7ffe"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-replay-tool-executor.test.ts",
+      "sha256": "d39eb41ee8ba8fea44a9f41bfc1fa2c3cbf218906504d2f636e037ff4479d5a3"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-runtime-mode-policy.test.ts",
+      "sha256": "ce1a18dff370f82a0453728e53f9ff0d87e3102a5111da1bb3c80ea44842ee83"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-runtime-mode.test.ts",
+      "sha256": "8e6ed661b610b030434a17603e65ab968d3902be7438fb8bd79077f084ef6cfd"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-runtime-read-tool-executor.test.ts",
+      "sha256": "dd93d65668bccf581244d584377f863506aaae62927f2f9fc32e775824a1bd30"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-same-origin-source-map-fetcher.test.ts",
+      "sha256": "67fdf0d6803552ad734447951f86d81122550b9814fae3a88ed24f2116b3faed"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-service.test.ts",
+      "sha256": "a3b8524c2f0306461534f7c52725adb1ad29bc5e01fd3a132bb266ec58ca9c4a"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-source-map-tool-executor.test.ts",
+      "sha256": "1bf1c8b09f8ed7660b46f8e5808869c6be0b3b6e82a29d3159a9f5a8e82dabe0"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-standalone-facade.test.ts",
+      "sha256": "27cc2178cdb6e640589300f2a73d6bb7b4b0eb0b693ecf4d58ab9ebd81eda764"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-supervised-task-executor.test.ts",
+      "sha256": "c56169bb9d5cfdf5d0d33c77cb1220420923a08b56eefa6bcd04a8f4394f9354"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-tab-manager.test.ts",
+      "sha256": "e33c08a34e05f14d1c40f80be984051db1188331f5abe80e5300c7b13c3ca3df"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-task-service.test.ts",
+      "sha256": "6d843e88fca03db614616ba38f51fad62ceea2cdec497cb6cbbeaff56cc62a9c"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-tool-artifacts.test.ts",
+      "sha256": "ce88ca1245c0e09cc4bbe8820cce3b5a0bcf9faf12ed9faa0abad6bbec2e870e"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-tool-classification.test.ts",
+      "sha256": "bfa439c1013e2ebda3eaceb0e223ab6bb757182f347f84156d37d469736d67f9"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-tool-registry.test.ts",
+      "sha256": "c93efd01fa91a9d2db4f8ddeab209724648c188f7bb2aec705b4d323d3b530a9"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-tool.test.ts",
+      "sha256": "4a2b81a212e5b0f1483cc20bcbecf57fd1e2e32206772cc5194c955eb5e80532"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-trajectory-viewer.test.ts",
+      "sha256": "936f9d2716eb29cef296e85aed67db7a4b3e9eb9a7662e34660d68da3b552ad6"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-vault.test.ts",
+      "sha256": "a149d04d8559acd5c4878e9427ae903ee61704774dfc57853737263d751942fb"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-workspace-paths.test.ts",
+      "sha256": "0034e09418b4850f8540640c1cdf249f7a7fd7a0951e05eb04fd5075d24ac4f6"
+    },
+    {
+      "path": "packages/versebrowser/tests/argument-guard-and-pr-comment.test.ts",
+      "sha256": "d929f6583a48e92938d64caf8f4bef4cb65e0af2930e9bfe4bb05b58272ebda3"
+    },
+    {
+      "path": "packages/versebrowser/tests/browser-resource-lifecycle.test.ts",
+      "sha256": "23bb6f6acd9fabbeda03154f80abd85e0e28de3bd70940119c9d5d547af8a861"
+    },
+    {
+      "path": "packages/versebrowser/tests/browser-runtime-compatibility.test.ts",
+      "sha256": "aaabca04c9c560966e81fb58fbc848b012ac7809e1e5c69bf65d50104e231dca"
+    },
+    {
+      "path": "packages/versebrowser/tests/close-recording-integrity.test.ts",
+      "sha256": "506f1fa37c9f3e3dc597de100380b6c5f82c14fa920179de6cdcf97d4669fe0c"
+    },
+    {
+      "path": "packages/versebrowser/tests/closed-session-history.test.ts",
+      "sha256": "0ccfb7a410113f1669183512a857072ee46e6dff1fda4d91a8d87b0323c5246f"
+    },
+    {
+      "path": "packages/versebrowser/tests/collab-multi-agent-boundary.test.ts",
+      "sha256": "ed825da4f6f8c2f3a36dc86c2b676d6fe32700557ed930f9a5604e9715531994"
+    },
+    {
+      "path": "packages/versebrowser/tests/collab-remote-policy.test.ts",
+      "sha256": "453f046c0da209508cd0004af368f6d99ddefb57a307320244c9a37580c24f1d"
+    },
+    {
+      "path": "packages/versebrowser/tests/console-severity-and-href.test.ts",
+      "sha256": "add0342a5bd79ab32ea74317053d2e9807ae285eaf740b11752d0af322dc4333"
+    },
+    {
+      "path": "packages/versebrowser/tests/contracts.test.ts",
+      "sha256": "823fa35685e2bcfd869e2ef70ed2b8d6f709ffb67360bc607f43443680c10c4c"
+    },
+    {
+      "path": "packages/versebrowser/tests/current-page-verdict.test.ts",
+      "sha256": "c9e1a88b03ce0626cf15803c04f675c16d034f1ef419c55ec89a38a8382d1ff3"
+    },
+    {
+      "path": "packages/versebrowser/tests/diagnose-pack-budget.test.ts",
+      "sha256": "3fcdcb082a5e9732298f289add79e296e5204b7f4a43345f25df86687edd018d"
+    },
+    {
+      "path": "packages/versebrowser/tests/diagnose-page.test.ts",
+      "sha256": "c92efa9b24582cfe1914a821b92cfd3f27f4884135de8edb17ec8f191f66da5a"
+    },
+    {
+      "path": "packages/versebrowser/tests/driver-availability.test.ts",
+      "sha256": "579cca2aeb9d35c480dcd2f3e5a03c15a67fd07a1a890cb65a724c28306070e1"
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-jail.test.ts",
+      "sha256": "367f10b2ad97d47b779ecc856c79e0d0f8e0cfbbf4f593f2340ce81fd1b160c3"
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-output-redaction.test.ts",
+      "sha256": "b2640a7b01b1bd7fa52282c34905886ff58796928a7ad6995e4b515ebce7523a"
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-pack.test.ts",
+      "sha256": "6972c3099d72c481cdd6b41e18d09de8fe7f9c614f5ef6cdecc550d5dc81cee9"
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-sinks-coverage.test.ts",
+      "sha256": "6e1c97c74871819be7a5d9c2e679d33c93e5fccc8cb23e48c82ae0f5e8e0ba92"
+    },
+    {
+      "path": "packages/versebrowser/tests/evidence-writer-paths.test.ts",
+      "sha256": "d4ddc1087394730d732c31c378e592eb3c2bb17cd06ef0d5363efafe5daddc0e"
+    },
+    {
+      "path": "packages/versebrowser/tests/explain-error-injection.test.ts",
+      "sha256": "91ed103b5bcb72ca6009c215352686d59e6bc26da59fa9d548c999225b076cc5"
+    },
+    {
+      "path": "packages/versebrowser/tests/explain-error.test.ts",
+      "sha256": "e10e9d7dab86feba2dee37b052bc299c79c7e8539750602c48b83555276972e9"
+    },
+    {
+      "path": "packages/versebrowser/tests/global-temp-root.ts",
+      "sha256": "8ced9747b63d533472b06e12ed8261684cfc86a1b76db31e9678a5ca86920024"
+    },
+    {
+      "path": "packages/versebrowser/tests/harness-feedback.test.ts",
+      "sha256": "bcc0dd80f3e3467d4ddadfaba90c42db1c40e3fd9481e798912d196afb373332"
+    },
+    {
+      "path": "packages/versebrowser/tests/harness-live-feedback.test.ts",
+      "sha256": "af0c9edb9abbc8642501691792517668a48ac892b4fc2ea8bcf52e5d1d18c870"
+    },
+    {
+      "path": "packages/versebrowser/tests/hitl-gate-status-restart.test.ts",
+      "sha256": "1a2ba7eee226d9887015845a158fddb73db6536aa3eb11592eb3e68ea88b0f4b"
+    },
+    {
+      "path": "packages/versebrowser/tests/hitl-operator-handoff.test.ts",
+      "sha256": "8281cd57c2927c23e92e4b64eef5310318ef2b1116b30a680bfdaedc9851612d"
+    },
+    {
+      "path": "packages/versebrowser/tests/interactive-snapshot.test.ts",
+      "sha256": "c5747c81b32990d49d0bf9605b36a755fc79cacf43be721cf93cee19b5496d25"
+    },
+    {
+      "path": "packages/versebrowser/tests/mcp-capability-policy.test.ts",
+      "sha256": "c238308445cf33ecc7f5327344df4e32ed4fedd5ea8da983c74babaf2fa202fd"
+    },
+    {
+      "path": "packages/versebrowser/tests/mcp-protocol-cancel.test.ts",
+      "sha256": "2964895ffce9a4adafc7a4d1a000a78dffb403bfe5a51564d9c36152b26e6603"
+    },
+    {
+      "path": "packages/versebrowser/tests/mcp-result-envelope.test.ts",
+      "sha256": "4323ad0dd49c3d002d56d2e1f12858f5dbf8954a84db0f9c9bd2b05410d18b7b"
+    },
+    {
+      "path": "packages/versebrowser/tests/mcp-shutdown-race.test.ts",
+      "sha256": "05b50a80cb54b1b539bd88a521a54ed8029685807a60187cfe2cc7a5fbd9dada"
+    },
+    {
+      "path": "packages/versebrowser/tests/mcp-surface-sync.test.ts",
+      "sha256": "8c922ace7587fd3653c645147ca4fe7320a2a04d4a3d0bb96a9da5b021c444a4"
+    },
+    {
+      "path": "packages/versebrowser/tests/mcp-tool-exposure.test.ts",
+      "sha256": "5d7035ea84c0bdb78482bc8fcb30be50cf34b2294b788ed2fff250cf6a7bf9f5"
+    },
+    {
+      "path": "packages/versebrowser/tests/navigate-url-guard.test.ts",
+      "sha256": "488367d56417a737e321895ef4dc5cb35a6239dd51b68be8e13df46b60ddb2ae"
+    },
+    {
+      "path": "packages/versebrowser/tests/net-policy.test.ts",
+      "sha256": "be930c493712700af5726e7b9b79e01920fb2aeac4878ba07d685b07a91c1288"
+    },
+    {
+      "path": "packages/versebrowser/tests/network-detail-body-limit.test.ts",
+      "sha256": "bb4ee55178abc0b08941cf4b7f8376a05747df188eacad5d94df90f471beb5df"
+    },
+    {
+      "path": "packages/versebrowser/tests/network-detail.test.ts",
+      "sha256": "35ad8275b2379e8365f15b6a490b880f26a4b183edde32f9338b8abdea033a67"
+    },
+    {
+      "path": "packages/versebrowser/tests/network-wait.test.ts",
+      "sha256": "969c7a92741dc51ff1b522a47362aa8acbffa107e4a2544aaf7192046858ed90"
+    },
+    {
+      "path": "packages/versebrowser/tests/oneshot-verify.test.ts",
+      "sha256": "217290301ec7b42ed0ff14152b06f0e0aae2094cbb2b593b1b67e5195da71fde"
+    },
+    {
+      "path": "packages/versebrowser/tests/open-problems-regression.test.ts",
+      "sha256": "69754598f39fbd9db4ab09a06390de600d9546fe283f1479d8a37e82174f46d2"
+    },
+    {
+      "path": "packages/versebrowser/tests/openclaw-external-access-policy.test.ts",
+      "sha256": "b607b092477475accba188d3a7415b7f40779c0fbbcd18520f9be03693c6a0db"
+    },
+    {
+      "path": "packages/versebrowser/tests/openclaw-tool-provenance.test.ts",
+      "sha256": "575ba0f37ea8014090abe8db0de1b426bd13ae79e6d12a565f023942b60a32d5"
+    },
+    {
+      "path": "packages/versebrowser/tests/page-text-fidelity.test.ts",
+      "sha256": "76494db47fc6095100e23e33dc91639f8cff55bb61c7574f303557718bebb4a9"
+    },
+    {
+      "path": "packages/versebrowser/tests/page-text-read.test.ts",
+      "sha256": "fc4f742a62e826a0a2db7347dacf1eb12ff6f2c28663f7cc22d90238b2e1c0d3"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-cleanup-errors.test.ts",
+      "sha256": "942c4cb4c1b02b4b345fa2d8858017d64088bef317e4aadd616ccbd969f91564"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-launch-error.test.ts",
+      "sha256": "e63bbbc8f8c5b11a19e7f526b421ba6c94602af4df0a4b3e9c6d483acc664ef1"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-reattach-lifecycle.test.ts",
+      "sha256": "44af4548d522962318c7c3ced14c581fd399d845e405f7174f112edd3d368b0a"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-session-lifecycle.test.ts",
+      "sha256": "41895639a631263a6828b93ea05e508d05527c7f6b702e23366675949a2107bb"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-session-paths.test.ts",
+      "sha256": "ed07904b2fbc078b062615dc91d90fa9071f84a27d8a081354a1eaae5673af5f"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-session-store.test.ts",
+      "sha256": "0d0c977a9463075ec3eeb2d9ba4f764dca1ab9b54059f62449f856d8c9d30aa0"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-sessions.test.ts",
+      "sha256": "a144c14ace16c1a44c4cfef61e857c34f11d0335551636da8298487f7bb9a774"
+    },
+    {
+      "path": "packages/versebrowser/tests/persistent-startup-deadline.test.ts",
+      "sha256": "1305562142deef936e04feaca0125dbdb6f3e76ae7894a508ac6ae921a45524f"
+    },
+    {
+      "path": "packages/versebrowser/tests/playwright-actionable-snapshot.test.ts",
+      "sha256": "9295e7c18ed2ff79cea298c12bb69c92be87bf4773a24d889260efbf69f51220"
+    },
+    {
+      "path": "packages/versebrowser/tests/pr-comment-injection.test.ts",
+      "sha256": "d18ea0ca0d30ad77a8fc14aa2a4a0c1afd466ba4aa6450f33f596c0e7065239d"
+    },
+    {
+      "path": "packages/versebrowser/tests/press-key.test.ts",
+      "sha256": "dc48cb1a4d9f6920c8b0186c0a9c12e87270bd97e9cb85488d6f7a1b4ed3624d"
+    },
+    {
+      "path": "packages/versebrowser/tests/r0-4-agent-browser-nav-timeout.test.ts",
+      "sha256": "c4d3391172ec52af5b7dfffbba40df8dbc20de6f27150581e0b6a96963163b10"
+    },
+    {
+      "path": "packages/versebrowser/tests/redline-hitl.test.ts",
+      "sha256": "4eb6f516a3f7a02b30445ab49d280a2074293a220e879dcf399c0928b39ff464"
+    },
+    {
+      "path": "packages/versebrowser/tests/runtime-read.test.ts",
+      "sha256": "1614d14cca398c791352cab4343a5b7cb632f014c2958e3cc1cab3d374744796"
+    },
+    {
+      "path": "packages/versebrowser/tests/same-origin-js-fetcher.test.ts",
+      "sha256": "3070d8d3db8c95b955f1cc68674d8e8a6a016ac4ed80bbffcc86e94b0799b307"
+    },
+    {
+      "path": "packages/versebrowser/tests/screenshot-retry.test.ts",
+      "sha256": "404c3a69901c2dbf60058ec6cbda1842132115f6a2ffd0e7d795a45a4d3306a7"
+    },
+    {
+      "path": "packages/versebrowser/tests/security-audit-trail.test.ts",
+      "sha256": "91c4f94e17139ca12bb679f9aca0af2578881d77dc6b719e99ca861683f7bb0d"
+    },
+    {
+      "path": "packages/versebrowser/tests/semantic-browser.test.ts",
+      "sha256": "bbc8a1848179e6792782e3cedf1763d20954b4685f3c4aebc45ef4eac2aa8f08"
+    },
+    {
+      "path": "packages/versebrowser/tests/sensitive-capture-policy.test.ts",
+      "sha256": "e5fdd600f997e99ea0b26958c9f285d804a0d910e7ffe86a22b15ab52126eeca"
+    },
+    {
+      "path": "packages/versebrowser/tests/session-location-sync.test.ts",
+      "sha256": "8995904b89fe3139f98c9737d465bd2541e130e98aa2ed1ba38a641574a569f2"
+    },
+    {
+      "path": "packages/versebrowser/tests/session-result.test.ts",
+      "sha256": "e6c1eb49efd0a2bb6455fc0ef324597caf57995beb3183022f0743e16927fe46"
+    },
+    {
+      "path": "packages/versebrowser/tests/session-result.ts",
+      "sha256": "8b600c9f8a736308de13f8a4d01d3f7897be5744a8c53ea86ffe149688e0b109"
+    },
+    {
+      "path": "packages/versebrowser/tests/snapshot-aria-state.test.ts",
+      "sha256": "3ef4f4e7a47605a12c050b1f254fba57edb8548cd9fe793c1653999569f10d2a"
+    },
+    {
+      "path": "packages/versebrowser/tests/snapshot-diff.test.ts",
+      "sha256": "99aa72c75b7ba74539949a6aa6dadc7b74a924dc7c654d10af134be936e39a27"
+    },
+    {
+      "path": "packages/versebrowser/tests/snapshot-form-state.test.ts",
+      "sha256": "c8f2c260abcf075ad8213b720969fd9dec69622bfe0bd7eaea960870b1d6ae13"
+    },
+    {
+      "path": "packages/versebrowser/tests/snapshot-secret-redaction.test.ts",
+      "sha256": "1e5048eee7c4154e70cde69460df620e247ab512d7fc9d959fefb2f7f678e50e"
+    },
+    {
+      "path": "packages/versebrowser/tests/snapshot-with-text.test.ts",
+      "sha256": "ea74267ede73af32a26a4ce4b8e34ffd7e4eb059aa3f907d719d957e4d1cd2c2"
+    },
+    {
+      "path": "packages/versebrowser/tests/toolbox-embedding.test.ts",
+      "sha256": "894d1e4dc792982e0be199edf6988e31195cc86654e6de3b23e1ec61a1b48ea7"
+    },
+    {
+      "path": "packages/versebrowser/tests/toolbox-host-authority.test.ts",
+      "sha256": "67d47b1d1a62640da9029aea50adcb7887e5d2d029ae93aef36de1b7ec419d21"
+    },
+    {
+      "path": "packages/versebrowser/tests/toolbox-review-regressions.test.ts",
+      "sha256": "72e4c54295d7d6da51b4212b706ec45522ff22f43980d528301b2ca18e52278b"
+    },
+    {
+      "path": "packages/versebrowser/tests/unknown-session-verdict.test.ts",
+      "sha256": "775ecceec267d01938761536aed0ab8b5bf83b05f9f2ba1d6c8e8bc64bf1e36e"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-control.test.ts",
+      "sha256": "ee55a4b9ea2714fc2e8bad995629f70461324ecd830446b7251e90ba63481cf8"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-drag-editor.test.ts",
+      "sha256": "3e4137741da6a18f913e8c864fd071af75dcf71ce7f767e076deab3355d0e822"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-files.test.ts",
+      "sha256": "2e22d03c043faed0a9e496ef910d6c8fd194b3b071454a5f827f08658411121c"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-find.test.ts",
+      "sha256": "d3097bf8958f14ba084792349056dabfbb7a618868282a22bbab72830dc57e0c"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-form-values.test.ts",
+      "sha256": "bd19c4fd1b26a555e9893381d45ed8e9c0939843024905cae440238c24c9c671"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-input.test.ts",
+      "sha256": "3307dab6ed437a163120626fb6ed36074d14f6978a2ae27a1fa58a1635cd88da"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-network-policy.test.ts",
+      "sha256": "8aa1ec338e8b2d428eba1720b84c8e4f356a0041c62bf486138d0d75b37fbd1c"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-patch.test.ts",
+      "sha256": "76383ab428aa7fd5e9c20cdb9d16ba1e7fd9af0adf4d525743a0684b90a74027"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-pointer.test.ts",
+      "sha256": "de05a369407f9187fcae2efcd987f1b0c9cc9212de0e54ffa9b2082c40b21a99"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-ref-lifecycle.test.ts",
+      "sha256": "01dd9c9ec11394fa9d93a384bd6ad9fae56a821113fb3c4a54406ad617031176"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-tabs.test.ts",
+      "sha256": "8a4bdd4c671f381683aac804c9433c13decc3c575624b0842db97809edf32eb4"
+    },
+    {
+      "path": "packages/versebrowser/tests/upstream-viewport.test.ts",
+      "sha256": "aeecde8b76968974057b7145157e086d7b0bb3594d4bb2a1532cd7298a731530"
+    },
+    {
+      "path": "packages/versebrowser/tests/verify-collection-integrity.test.ts",
+      "sha256": "57cc9760613e7093e1f8697032e951c9a01c09e142e8d605349b47a79862f0a2"
+    },
+    {
+      "path": "packages/versebrowser/tests/verify-network-baseline.test.ts",
+      "sha256": "a1e8396087b9f100ea7289c6b96c5eb90c2c4b56a4a91e64a2d0a3365c468d96"
+    },
+    {
+      "path": "packages/versebrowser/tests/visual-browser.test.ts",
+      "sha256": "f7e2b598ee3393a09f65b6d00446ae2dda07779a3f3f4477116a56bee17520f4"
+    },
+    {
+      "path": "packages/versebrowser/tests/wait-primitive.test.ts",
+      "sha256": "bf8fed1bac7b2164808efaf516eadacc93eee65d51406c13943928d267ece962"
+    },
+    {
+      "path": "packages/versebrowser/tsconfig.build.json",
+      "sha256": "466e43d806f334e9ef3957e05ebcf92b47e32e40e0b59c6c2ff786ad4d7c7535"
+    },
+    {
+      "path": "packages/versebrowser/tsconfig.json",
+      "sha256": "1974c202d338587a42fa3b355e344ba6ac1751eeae42807e7bcd88b7898a7338"
+    },
+    {
+      "path": "packages/versebrowser/vitest.config.ts",
+      "sha256": "004365f2943f37ba43f3fc27a338f3762c5b5c3af54e18163d5c961d1ac17284"
+    },
+    {
+      "path": "scripts/versebrowser-m10-packaged-flow-verify.mjs",
+      "sha256": "9dd6711497d55b7f27c1df4b9f01a4f6bcb16b24dded0e11682ba23db259ad96"
+    },
+    {
+      "path": "scripts/versebrowser-n9-stability-probe.mjs",
+      "sha256": "e91a1c6db6cff061aa2b63029d98589e506f6f4fa17361b4e3f11442163ccb26"
+    },
+    {
+      "path": "shared/agent-browser/automation-playbook-selector.ts",
+      "sha256": "9e5de7e6c174f342fc2490b5d30c5e25baa549a57ef20f38762f17285639a07e"
+    },
+    {
+      "path": "shared/agent-browser/automation-playbooks.ts",
+      "sha256": "36bd7c7bc81041e71959b519c41f2d197ac29b845f2970a5c8ba70f61d64da30"
+    },
+    {
+      "path": "shared/agent-browser/browser-control.ts",
+      "sha256": "2d545a051f24bab5f33585883cd2843a031912677394bf16adbd7bb942befc12"
+    },
+    {
+      "path": "shared/agent-browser/extraction-rules/validation.ts",
+      "sha256": "9d2f88d669971ebc0f12497e24cf7bb01de7571b8a199093cccf630eebdd5a47"
+    },
+    {
+      "path": "shared/agent-browser/filesystem-boundary.ts",
+      "sha256": "2f536aad37b5bf98f2fb094d7489662138ca6ebb5107d3af60c6ec8b532b3820"
+    },
+    {
+      "path": "shared/agent-browser/network-context.ts",
+      "sha256": "56ed4b001f6306a1ca5f5347eeb49ba19a8996194a184ac658b4c4821374e306"
+    },
+    {
+      "path": "shared/agent-browser/private-network-policy.ts",
+      "sha256": "bceec389e649bf283782b226276f3546256c7f372adb7fb0f7dcce558e5297da"
+    },
+    {
+      "path": "shared/agent-browser/text.ts",
+      "sha256": "3512cb9b4512dc0b353a3da6c61a98df12a42315b5fab728a1889e72627ea97a"
+    },
+    {
+      "path": "shared/agent-browser/tool-artifacts.ts",
+      "sha256": "a82f0cb05733eb5c8aeecb663a4c8d0c8bc54f8a16c0ebed412cceb7c7a7962c"
+    },
+    {
+      "path": "shared/agent-browser/tool-authorization.ts",
+      "sha256": "b59391f7be253275f3bca0f48eb2ffa93139f41314e4397c0a2c357afdc58c8b"
+    },
+    {
+      "path": "shared/agent-browser/tool-classification.ts",
+      "sha256": "f7b8391d8f8e053aace80cadf6276577edc6c57aa09a6c365affcca97186ab9c"
+    },
+    {
+      "path": "shared/agent-browser/tool-registry.ts",
+      "sha256": "e2cd12fb4d5518fedb398dac0e10f4c54f0277c9f202931e00260f7f98eb48c3"
+    },
+    {
+      "path": "shared/agent-browser/types.ts",
+      "sha256": "ea2f6c7abc1468a1f50c275ff6f7b985d687afbbb6ca474de06761b7aa0ee2f9"
+    },
+    {
+      "path": "shared/agent-browser/web-search/tavily.ts",
+      "sha256": "684af5401c515f6b484b0ae31ad7c9adde7cb892a7aaca23e510a9d1452a342e"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "4e6510c7a8a3cc34f75d61e514736dc2e5c1280cf36b5875ee0324625588d1a6"
+    }
+  ],
+  "packageAssembly": {
+    "fromCleanSource": true,
+    "source": "96f589cbb609a3eab29b7fa93283c423bdd84cf8",
+    "builder": "electron-builder 26.8.1",
+    "supportedExternalDependencyHook": true,
+    "mainRuntimeArchiveReused": true,
+    "sourceAndLockEquivalentToRetainedDependencyBuild": true,
+    "appArchiveWriter": "installed @electron/asar",
+    "integrityWriter": "installed electron-builder addWinAsarIntegrity",
+    "unsignedLocalArtifact": true,
+    "dependenciesInstalledFresh": false
+  },
+  "privateNetworkApproval": {
+    "actor": "codex",
+    "driven_by": "agent",
+    "owner": "Main",
+    "binding": "sessionKey plus exact origin; consume once; transfer to Browser session; revoke on close",
+    "defaultDenied": true,
+    "callerClaimsIgnored": true
+  },
+  "commands": [
+    "node scripts/versebrowser-m10-package-verify.mjs --release",
+    "node scripts/versebrowser-m10-packaged-flow-verify.mjs --host-root <materialized-project> --exe <final-exe>",
+    "node scripts/versebrowser-n9-stability-probe.mjs --host-root <materialized-project> --exe <final-exe> --cold-starts 10 --loops 30 --interrupts 3",
+    "node scripts/versebrowser-evidence-verify.mjs"
+  ],
+  "boundaries": [
+    "Windows x64 local unsigned win-unpacked artifact; installer/uninstaller bodies unmeasured",
+    "Installed dependencies reused and exact dependency archive preserved",
+    "No GA, publishing, frozen default change, product lock change or real-human claim"
+  ]
+}

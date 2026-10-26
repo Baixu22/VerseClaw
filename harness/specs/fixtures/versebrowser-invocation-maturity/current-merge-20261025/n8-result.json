@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-flow",
+  "driven_by": "agent",
+  "actor": "codex",
+  "exe": "D:/tmp/clawx-nine-node-merge-20261025/release/win-unpacked/Verse Claw.exe",
+  "fixtureUrl": "http://127.0.0.1:58261/",
+  "runId": "m10-mvo17vcy",
+  "pageTitle": "Verse Claw",
+  "hostBridgePresent": true,
+  "defaultDeny": {
+    "id": "fedeb4b7-ed48-4773-ac3c-4acd7a9dd630",
+    "ok": false,
+    "error": {
+      "code": "INTERNAL",
+      "message": "Agent browser open blocked: private-network-default-deny (address class loopback)",
+      "details": {
+        "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+      }
+    }
+  },
+  "approval": {
+    "sessionId": "agent:main:m10-mvo17vcy",
+    "origin": "http://127.0.0.1:58261",
+    "grantedAt": 1792945114413,
+    "expiresAt": 1792945714413,
+    "grantedBy": "agent"
+  },
+  "flow": {
+    "enabled": true,
+    "openOk": true,
+    "sessionId": "b74450aa-0499-450a-bf2f-1a2a9b7ab591",
+    "blockedFailsClosed": true,
+    "upgradeOk": true,
+    "upgradeMode": "full_access",
+    "snapshotOk": true,
+    "snapshotHasFixture": true,
+    "ownedSessionCount": 1,
+    "closed": true
+  },
+  "checks": {
+    "host_bridge_present": true,
+    "private_network_default_deny": true,
+    "real_session_opened": true,
+    "sandbox_fails_closed_without_upgrade": true,
+    "runtime_mode_upgrade_ok": true,
+    "snapshot_returns_fixture_content": true,
+    "session_owned_by_requested_key": true,
+    "session_closed": true
+  },
+  "status": "pass",
+  "issues": []
+}
