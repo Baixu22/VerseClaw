@@ -53,7 +53,7 @@ import {
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BINARY = join(ROOT, 'resources/bin/win32-x64/ae.exe');
-const TEMP_ROOT = process.platform === 'win32' ? 'D:/tmp' : tmpdir();
+const TEMP_ROOT = process.env.VERSEGIT_E3_TMP_ROOT?.trim() || (process.platform === 'win32' ? 'D:/tmp' : tmpdir());
 const sha = (value: string | Uint8Array) => createHash('sha256').update(value).digest('hex');
 const fence = String.fromCharCode(96).repeat(3);
 const roots: string[] = [];
