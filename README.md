@@ -8,120 +8,73 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)
 
-[Screenshots](#screenshots) · [Features](#features) · [Workflows](#workflows) · [Getting started](#getting-started) · [Configuration](#configuration) · [Architecture](#architecture) · [Development](#development) · [Troubleshooting](#troubleshooting) · [Documentation](#documentation)
+[Module deep dives](docs/modules/README.md) · [Getting started](#getting-started) · [Architecture](#architecture) · [Development](#development) · [Troubleshooting](#troubleshooting) · [Documentation](#documentation)
 
-Verse Claw is an Electron desktop application built on OpenClaw. Start work in a conversation, inspect files, terminals, browser previews, code changes and generated artifacts in the same workspace, then turn useful material into reviewable project knowledge. The app also provides model and agent configuration, messaging channels, scheduled tasks and runtime diagnostics.
+Verse Claw is an Electron desktop application built on an embedded OpenClaw runtime. It combines conversation, project workspaces, coding tools, knowledge review, memory, multi-agent orchestration, messaging channels, schedules and runtime diagnostics in one local desktop product.
 
-The desktop uses React, TypeScript and Vite. It is more than a renderer wrapper: the repository also contains the Electron Main host, typed shared contracts, a vendored OpenClaw runtime and extension catalogue, the embedded VerseBrowser, retained-but-retired VToken source, the VerseShell MCP adapter, executable Harness specs, and the build/release/evidence pipeline. See [package.json](package.json) for the current version and dependencies. Some source, configuration and historical documents retain the ClawX name.
+This repository is more than a renderer wrapper. It contains the React UI, Electron Main host, typed cross-process contracts, the vendored OpenClaw runtime, VerseBrowser, the VerseShell execution foundation, retired VToken source, executable Harness specifications and the build/evidence/release pipeline.
 
-> **Current status:** this is an alpha project. Controlled Windows x64 workflows are the primary local acceptance target. macOS and Linux have build targets, with validation coverage specific to each platform and capability. Experimental features retain the activation conditions described below, in the [product semantics](docs/clawx-product-semantics.md) and in the [capability matrix](shared/capability-claims.ts).
+> **Current status:** `0.4.9-alpha.0`, controlled preview. Windows x64 local workflows are the primary acceptance target. macOS/Linux have build targets, but platform-specific runtime validation is separate. Release, GA, live readiness and product approval are not implied by component graduation or agent-driven evidence.
 
-Chat provides checkpoint restore from the session menu, repository controls beside the composer, and per-message, per-session or persistent model selection. Advanced UI mode exposes compression evidence and recovery actions. Local token usage history remains available while the Gateway is stopped.
+## What is in the product
 
-<a id="screenshots"></a>
+| Area | Current product shape | Deep dive |
+|---|---|---|
+| LLM and models | Account-based provider configuration, OAuth/API key/local auth, protocol adapters, model fallback, turn/session model overrides, streaming, tool loops, reasoning effort, usage and estimated cost | [LLM and models](docs/modules/llm-and-models.md) |
+| Conversations and sessions | JSONL append-only session trees, runs, abort/stop/archive/delete, checkpoints, compaction, handoff/fork, searchable sidebar, persisted folders and long-session coordinator binding | [Sessions](docs/modules/sessions.md) |
+| Context and memory | Context Orchestrator, 6,000-character turn budget, Workspace Context, context health, one reviewable Memory product over separate Role/Runtime stores | [Context and memory](docs/modules/context-and-memory.md) |
+| Workspaces and coding | Workspace preflight, four permission modes, file preview, PTY terminals, web previews, Git operations, review panel, write journal, stale-write guard and auto verification | [Workspace and coding](docs/modules/workspace-and-coding.md) |
+| Knowledge | Markdown/wiki-first library, Inbox → Draft → Steward → Proposal → explicit apply, Source Sets, OKF, Runtime Lessons/SEKB, provenance and governance | [Knowledge base](docs/modules/knowledge-base.md) |
+| Multi-agent and tasks | Agent/Persona/Role separation, nine built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop and ClawGraph | [Multi-agent and tasks](docs/modules/multi-agent-and-tasks.md) |
+| Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers, and retired VToken | [Verse tools](docs/modules/verse-tools.md) |
+| Resources and observability | Cooperative ResourceFabric, background shedding, process/port tracking, token/cost limits, traces, issues, Problems, session activity and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
+| Integrations and other surfaces | 15 channel types, schedules, Skills/MCP, Inbox, remote tasks, Code Review, VerseConf documents, media, Billing and Agent Dev | [Integrations and surfaces](docs/modules/integrations-and-surfaces.md) |
+
+The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
+
+## Current maturity boundaries
+
+| Label | Meaning |
+|---|---|
+| `default` / `advanced` | A current product surface, within the stated controlled-preview boundary. Not a GA claim. |
+| `internal` | Implemented or exposed internally without an independent user product entry. |
+| `shadow` / `experiment` | Observation or bounded experiment; it does not own routing, writes or approval. |
+| `retired` | Kept only for compatibility, provenance or rollback inspection. |
+| `agent-driven` | Evidence produced by an agent and labeled as such. It is not real-human evidence. |
+
+The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 24 internal, 5 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
+
+Important current defaults:
+
+- Workspace Context and read-only DCS context tools are on under their declared health and permission gates.
+- Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
+- VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
+- VerseGit is default-off and landed-unwired. VerseShell is a default-off controlled foundation. VerseBrowser advertises actions from a live driver snapshot, not from its full contract.
+- Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.
+- `liveReady=false`, `productApproved=false` and `defaultOn=false` remain product locks.
+
+See the [default configuration matrix](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) and [capability claims](shared/capability-claims.ts) before changing a default or making a release claim.
 
 ## Inside the app
 
-The header uses the B2 identity selected on 2026-10-06; the dated screenshots below retain the previous appearance.
-
-Captured directly from the Windows Electron source build on 2026-10-05, operated by an agent with isolated profiles and a real local Gateway. The Knowledge capture explicitly enables `memory-wiki`. No model account or model request is used: the empty conversation, ledger and library are real states. Click an image for full size.
+The screenshots below were captured from the Windows Electron source build on 2026-10-05. The header now uses the later B2 identity. The Knowledge capture explicitly enables `memory-wiki`; no model account or model request was used.
 
 | **Chat and task entry**<br>[![Chat and task entry](resources/readme/2026-10-05/en/chat.png)](resources/readme/2026-10-05/en/chat.png) | **Knowledge library and review entry**<br>[![Knowledge library and review entry](resources/readme/2026-10-05/en/knowledge.png)](resources/readme/2026-10-05/en/knowledge.png) |
 | --- | --- |
 | **Task Ledger**<br>[![Task Ledger](resources/readme/2026-10-05/en/tasks.png)](resources/readme/2026-10-05/en/tasks.png) | **Models and provider settings**<br>[![Models and provider settings](resources/readme/2026-10-05/en/settings.png)](resources/readme/2026-10-05/en/settings.png) |
 
-See [visual provenance](resources/readme/2026-10-05/README.md) for capture conditions, illustration prompts and file hashes. The storage warning reflects the capture machine’s actual disk state.
-
-<a id="features"></a>
-
-## Features
-
-| Area | What you can do | Entry |
-| --- | --- | --- |
-| Chat and sessions | Stream responses, attach files and knowledge references, inspect tool results; search, pin, group, archive and restore conversations | Main view and session sidebar |
-| Project workspaces | Switch projects, browse and preview files, use terminals, browsers, Git changes and code review beside the conversation | Workspace panel in the chat toolbar |
-| Models and providers | Manage provider accounts, default models and fallback settings; inspect token usage history | Settings → Models & Providers |
-| Agents and tasks | Configure agents and roles, inspect subagent activity; record tasks in Task Ledger and start explicit Task Loop or Delegated workers enter through the typed `sessions.delegate` Host path after the existing coordinator, permission and Gateway owners admit them. Its receipt binds the coordinator revision and session generation, Task Ledger reference, child session/run, effective tool authorization, actual isolation backend, checkout facts, and bounded resources. `accepted` records admission only; it does not claim that the child is running or complete. Stale generations, revoked approvals, unsupported backends and unverified parallel writers fail closed or serialize. See [long-session delegation admission](harness/specs/guides/long-session-delegation-admission.md).
-
-ClawGraph workflows | Settings → Agents; sidebar's more menu |
-| Knowledge | Search the library, manage sources and references, review Inbox items, drafts and proposals | Sidebar → Knowledge |
-| Memory | Review accepted memory and persisted candidates, approve proposals, delete/tombstone records, export a hashed JSON snapshot, and propose “Remember this” | Sidebar → Memory |
-| Inbox | Handle permission requests, remote tasks and browser tasks that need attention; inspect their history | Sidebar → Inbox |
-| Schedules and channels | Manage scheduled jobs and run history; configure channel accounts, connection status and agent bindings | Sidebar → Scheduled; Settings → Channels |
-| Skills and MCP | Inspect and enable skills, manage skill packs, marketplace installation and MCP server configuration | Settings → Skills |
-| Structured documents | Manage research tables, slide outlines, revisions and exports with the VerseConf plugin | Agent tools and artifact panel after plugin activation |
-| Diagnostics and recovery | Inspect session activity, processes, traces, runtime status, storage usage and recovery actions | Workspace panel, Observability and Settings |
-
-For an explicitly bound long session, the Chat activity rail also shows the stable coordinator conversation, its existing Task Ledger references and terminal completion batches, with direct links to the worker transcript and task record. Before a bound turn, ClawX reads a bounded `ContinuityContextPack/v1` from accepted Task Ledger Working Context, CompressionArtifact metadata, currently model-visible accepted memory refs and typed knowledge refs. Pending, candidate, expired, revoked, superseded, out-of-scope and unverified model claims are excluded; raw history stays behind on-demand owner refs. These rows and the pack project existing owners and do not create a second task list, memory store or injection authority.
-
-The interface supports English, Chinese, Japanese and Russian, with light, dark and system themes. Basic / Advanced in General settings controls diagnostic detail. Developer mode exposes diagnostic and test-only settings. Dreams is retired; Image Generation remains developer/test-only and is not product navigation.
-
-<a id="workflows"></a>
-
-## Common workflows
-
-### Complete a coding task in a project
-
-Choose a workspace and model → describe the task and attach relevant files → inspect the plan and permission requests → follow tool execution → review changes and run validation in the workspace panel.
-
-![AI-generated concept illustration using the project’s flame logo: task → workspace tools → review and verification. It is not an app screenshot or a promise that verification passes automatically.](resources/readme/2026-10-05/workflow.webp)
-
-*AI-generated concept illustration using the project’s flame logo: task → workspace tools → review and verification. It is not an app screenshot or a promise that verification passes automatically.*
-
-The panel supports file, terminal, browser, review, artifact and activity tabs. Terminals can sit beside or below the conversation. The browser opens local previews or web pages, while the review surface brings together Git changes and related actions. Session activity shows run and command status plus the configured runtime, model and limits; current-run effective facts stay marked unverified until the runtime supplies a matching fresh observation. Its policy disclosure exposes configuration sources, compatibility and override reasons, and action permissions. The same surface distinguishes run abort from session stop, the view-only activity retention window from transcript/resource TTLs, and transcript forks from Git worktree isolation.
-
-The permission selector includes Read-only, Plan, Accept edits and Full access. Plan mode restricts user-file changes, while runtime metadata may still be written. See [workspace permission semantics](docs/clawx-product-semantics.md) for the precise boundary.
-
-### Turn conversations and source material into knowledge
-
-Choose a knowledge scope and references in Chat → search sources in Library → inspect Inbox items, drafts and proposals in Review Queue → check their evidence and changes → apply through the governed review path.
-
-![AI-generated concept illustration: sources → drafts → review → project knowledge. Reading knowledge and applying changes require different authority.](resources/readme/2026-10-05/knowledge.webp)
-
-*AI-generated concept illustration: sources → drafts → review → project knowledge. Reading knowledge and applying changes require different authority.*
-
-Wiki operations require the loaded `memory-wiki` extension. The page is accessible without it, but status, search and apply operations require the plugin and vault to be ready. See [knowledge and plugin boundaries](docs/architecture-overview.md#knowledge-plugins-and-data).
-
-Knowledge read scope and write permission are managed separately. Selecting Memory, Wiki or a reference does not authorize automatic writeback. The review surface keeps the relationship between sources, drafts, proposals and application results visible.
-
-The Knowledge corner character opens a compact floating conversation on click and minimizes back to the assistant. Suggestions and draft actions are available on demand. Drag stays near its dock and returns when released out of range. Its procedural Ginger avatar follows actual retrieval, reading, draft and review requests; replies share the main Chat Markdown renderer. See [Knowledge character integration](docs/dev/knowledge-bot.md).
-
-### Move from collaboration to task execution
-
-Ordinary Chat handles immediate collaboration. Task Ledger stores goals, task nodes, checkpoints and evidence facts. Task Loop is an explicitly started, constrained execution flow. Chat can suggest an upgrade without automatically becoming a Task Loop.
-
-Workspace identifies the local execution root, agent binding and permission context. Project denotes a long-term work container; the shared identity contract currently supports a compatibility mapping, not independent Project management. Run identifies an execution attempt, while Task Ledger remains the source of user-visible task facts. An explicit coordinator binding may pin one Workspace/Assistant/Session to existing Task Ledger references and a canonical local checkout or managed worktree; ordinary Chat does not enter that scope automatically. See the [identity vocabulary](docs/clawx-product-semantics.md#identity-and-scope-vocabulary).
-
-ClawGraph loads workspace YAML workflows and displays compilation diagnostics, node state, events and review items. Runtime Workboard owns scheduling separately from the user-facing Task Ledger. See [agent orchestration](docs/multi-agent-orchestration/README.md) and [concept boundaries](docs/clawx-product-semantics.md).
-
-### Manage structured artifacts
-
-The optional `verseconf-artifacts` plugin provides creation, inspection, revision, record ordering, history restoration and export tools. Research tables export to CSV / XLSX, slide outlines to PPTX, and content to Markdown. The artifact panel shows managed revisions, history and outputs.
-
-The plugin is **disabled by default** and requires explicit configuration. PPTX currently uses a three-slide template: outlines with more than three records are rejected, with Markdown available to preserve the full outline. Arbitrary slide counts and long-text layout are not covered. See the [VerseConf integration notes](docs/dev/verseconf-clawx-implementation-20261001.md) for configuration, delivery and validation details.
-
-### VerseGit bounded coding loop
-
-VerseGit is an internal, opt-in repository-evidence sidecar for one bounded Windows x64 (`win32-x64`)/M1 coding loop. It is **default-off** and **not approved for general availability**; `liveReady=false` and `productApproved=false`, and M4 landing/admission authority is not authorized. ClawX remains the executor, task/orchestration, approval, write journal and Git apply host. Worker candidates are combined, frozen and verified before the host writes them back. See the [evidence-backed boundary](docs/dev/versegit-validation-layer/README.md); other platforms, broader model/language coverage and the M4 broker remain unmeasured or out of scope.
-
-### Experimental feature boundaries
-
-Workspace Context and the read-only context view tools are enabled by default under their declared health and permission gates. VToken is retired. SEKB automatic writeback, Runtime Memory injection and browser private-network access retain separate review or approval gates; diagnostic or shadow data does not prove model-context participation, automatic writeback or routing. Installing the application still does not authorize every optional expansion.
-
-Consult the [capability matrix](shared/capability-claims.ts), [default configuration matrix](docs/dev/default-config-matrix.md) and feature-specific validation records. Scripted or agent-executed acceptance simulations must be labeled as agent-driven. Focused test success does not establish release acceptance for the entire product or every platform.
+See [visual provenance](resources/readme/2026-10-05/README.md) for capture conditions and hashes.
 
 <a id="getting-started"></a>
 
 ## Getting started
 
-### Run from source
-
 Prerequisites:
 
-- **Node.js 24.16.0 or later in the 24.x line** and Git. Earlier Windows Node 24 releases can crash in TCP connections ([upstream fix](https://github.com/nodejs/node/issues/63620)).
-- **pnpm 11.2.2**, pinned in [package.json](package.json); Corepack can activate it.
-- Repository access and network access for dependencies, Electron, uv and agent-browser.
-- Authentication for online model providers, or a running compatible service for local models.
+- **Node.js 24.16.0 or later in the 24.x line** and Git. Earlier Windows Node 24 releases can crash in TCP connections.
+- **pnpm 11.2.2**, pinned in `package.json`.
+- Network access for dependencies, Electron, uv and agent-browser.
+- A provider account or a compatible local model service.
 
 Run from the repository root:
 
@@ -136,236 +89,148 @@ node node_modules/electron/install.js
 pnpm dev
 ```
 
-If your Node.js installation does not include Corepack, install pnpm 11.2.2 separately and continue from `pnpm run init`.
+`pnpm dev` builds VerseBrowser, the embedded runtime and bundled skills before opening Vite and Electron. The Gateway normally needs 10–30 seconds to become ready. A Vite page alone does not provide the full Electron Host services.
 
-`init` installs desktop workspace dependencies and downloads uv and agent-browser. The OpenClaw runtime has a separate dependency workspace and needs its own installation. Electron's binary installation is explicit because the dependency script policy disables its automatic install script.
+First session:
 
-`pnpm dev` generates the extension bridge, builds the runtime and prepares bundled skills before starting Vite and Electron. The first launch includes that build work; Gateway also needs time to become ready after the app opens. A Vite web page alone does not provide the full Electron host services.
+1. Complete Setup.
+2. Configure and validate a provider/model.
+3. Choose a project directory, permission mode and workspace.
+4. Send a scoped conversation and inspect the workspace panel.
+5. Resolve approvals in Inbox.
+6. Use Knowledge or Memory only through their review surfaces.
 
-### First session
+Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
 
-1. Complete the setup wizard, then configure an account and model in Settings → Models & Providers and check connectivity.
-2. Choose a project folder and confirm the workspace and permission mode.
-3. Start a conversation with a scoped task, attaching files or knowledge references as needed.
-4. Open the workspace panel from the chat toolbar to inspect files, terminal output, browser previews and changes.
-5. Handle pending requests in Inbox; use Knowledge when you want to retain project material.
-6. Configure Skills / MCP, channels and scheduled tasks as needed.
-
-App navigation and many local tests do not require paid model calls. Remote models, services and channels have their own authentication, network and billing requirements.
-
-### Packages and platforms
-
-Available distributions are the versions actually published in [this repository's Releases](https://github.com/Baixu22/VerseClaw/releases). The source configures these packaging targets:
-
-| Platform | Configured artifacts | Current scope |
-| --- | --- | --- |
-| Windows x64 | NSIS installer | Primary local controlled-workflow acceptance platform |
-| macOS x64 / arm64 | DMG, ZIP | Build targets exist; capabilities require platform-specific validation |
-| Linux x64 / arm64 | AppImage, DEB; RPM for x64 | Build targets exist; desktop execution needs a graphical environment |
-
-A build target does not guarantee a downloadable package for a particular version. Source development builds do not check for packaged updates; packaged updates depend on the configured release feed. Native VerseShell components and complete packaging have additional [source and toolchain requirements](resources/verseshell/SOURCE.md).
-
-<a id="configuration"></a>
-
-## Configuration and local data
-
-| Settings area | Contents |
-| --- | --- |
-| Models & Providers / Agents | Accounts, models, fallback rules, roles and channel bindings |
-| Skills / Channels / Browser | Skills, MCP, channel accounts, browser profiles and credentials |
-| General | Theme, language, startup options and interface detail |
-| System & Runtime / Developer | Gateway, runtime, proxy, CLI, Doctor and Agent Dev Workbench |
-| Billing | Local token history, estimated costs and activity |
-| Archived / Sessions & Recovery | Archive restoration, session state and recovery settings |
-
-No separate database server is required. App settings use local storage; runtime subsystems use configuration files, JSONL transcripts and SQLite state databases.
-
-- OpenClaw's default configuration directory is `~/.openclaw` (`.openclaw` under the Windows user home), with `openclaw.json` as its main configuration. Desktop path resolution supports the `OPENCLAW_CONFIG_DIR` override.
-- Desktop data lives in Electron's `userData` directory, with app logs under `logs/`. See [electron/utils/paths.ts](electron/utils/paths.ts).
-- Token history aggregates structured usage records from local sessions. Costs are estimates. Permanently deleting a conversation removes its contribution to history; archive it when you want to retain that history.
-- Local storage does not imply offline execution: content submitted to online models or external tools reaches those services. Keep credentials, private transcripts and raw logs out of commits and public issue reports.
+| Platform | Configured artifacts | Validation scope |
+|---|---|---|
+| Windows x64 | NSIS | Primary controlled local acceptance target |
+| macOS x64 / arm64 | DMG, ZIP | Build targets; capability-specific validation required |
+| Linux x64 / arm64 | AppImage, DEB; RPM x64 | Build targets; graphical runtime required |
 
 <a id="architecture"></a>
 
-## Architecture and repository layout
+## Architecture
 
-![Desktop, Host and runtime architecture](resources/readme/2026-10-05/architecture.svg)
+The ordinary request path is:
 
-[Mermaid source](resources/readme/2026-10-05/architecture.mmd) · [Chat sequence](resources/readme/2026-10-05/chat-sequence.svg)
+```text
+React renderer
+  -> typed host facade (src/lib/host-api.ts)
+  -> preload IPC
+  -> Electron Main (authorization + dispatch)
+  -> Host service and/or Main-owned Gateway WebSocket RPC
+  -> embedded OpenClaw runtime
+```
 
-The current request path is **React → typed host facade → preload IPC → Electron Main**. Runtime-bound services then call Gateway through the Main-owned WebSocket RPC connection. Local file and terminal services need not traverse Gateway. Events return through Main/preload and `host-events.ts` to update UI stores.
+Runtime events return through Main and `host-events.ts` to renderer stores. Local files, terminals and Git can complete in Main without traversing Gateway.
 
-Renderer requests enter through `src/lib/host-api.ts` and `src/lib/host-api-client.ts`. These boundaries are not one universal “WS → HTTP → IPC fallback”. The [architecture guide](docs/architecture-overview.md) maps the source, traces a chat turn and explains task, knowledge, plugin and local-data ownership.
-
-### Current module map
-
-This map follows current source ownership rather than the older single-directory view. The detailed inventory and local/generated boundaries are in [repository layout and evidence roots](docs/dev/repository-layout.md).
-
-| Surface | Key paths | Responsibility |
-| --- | --- | --- |
-| Renderer | `src/pages/`, `src/components/`, `src/stores/`, `src/lib/`, `src/i18n/`, `src/styles/`, `src/extensions/`, `src/hooks/`, `src/types/`, `src/assets/` | Route-level pages, shared UI, client state, typed host facade and events, localization, styling and static assets |
-| Electron Main and Host | `electron/main/`, `electron/services/`, `electron/preload/`, `electron/extensions/`, `electron/shared/`, `electron/types/`, `electron/utils/` | Window/menu/tray lifecycle, IPC authorization and host dispatch, desktop services, shared Main types/utilities and event forwarding |
-| Gateway bridge | `electron/gateway/` | Gateway startup and recovery, WebSocket RPC, connection/restart policy and runtime event adaptation |
-| Shared boundary | `shared/host-api/`, `shared/types/`, `shared/i18n/`, `shared/host-events/`, `shared/agent-dev/`, `shared/knowledge/`, `shared/mcp/`, `shared/sandbox/`, `shared/security/`, `shared/verseshell/`, `shared/vtoken/` and shared semantic modules | Host API contract, cross-process types, four-language resources, event types, domain helpers, capability and product-semantics definitions |
-| Embedded OpenClaw runtime | `openclaw_runtime/src/`, `openclaw_runtime/packages/`, `openclaw_runtime/ui/`, `openclaw_runtime/apps/`, `openclaw_runtime/experiments/`, `openclaw_runtime/test/` | Agents, models/providers, tools, sessions, context/memory, channels, scheduling, Gateway internals, runtime packages, app hosts and experiments |
-| Runtime extensions | `openclaw_runtime/extensions/` | Provider, channel, tool, browser, memory, media and plugin implementations; availability depends on runtime enablement and policy |
-| Embedded product components | `packages/versebrowser/`, `packages/vtoken/`, `resources/verseshell-mcp/` | Pinned browser-automation engine, Python/uv token sidecar and external MCP compatibility adapter |
-| Bundled resources and packaging | `resources/skills/`, `resources/skill-packs/`, `resources/openclaw-plugins/`, `resources/verseshell/`, `resources/cli/`, `resources/context/`, `resources/icons/`, `resources/readme/`, `resources/brand-exploration/`, `resources/bin/`, `resources/workspace-harness/`, `public/`, `patches/`, `electron-builder.yml` | Preinstalled skills and packs, ClawX plugins, CLI/context assets, native binaries, workspace harness inputs, documentation media and packaging assets |
-| Harness and tests | `harness/specs/`, `harness/src/`, `harness/workspace/`, `tests/unit/`, `tests/integration/`, `tests/e2e/` | Executable rules, scenarios, task specs and fixtures; unit, integration and Electron Playwright coverage |
-| Build and release automation | `scripts/`, `.github/workflows/` | Build, resource synchronization, validation, maturity, evidence, packaging, release and CI workflows |
-| Documentation and evidence | `docs/`, `plans/`, `team/`, `reports/`, `artifacts/` | Current architecture and runbooks, maturity decisions, historical design records, long-form reports, curated evidence and retained outputs |
-
-### Runtime control planes
-
-| Plane | Current mechanism | Boundary |
-| --- | --- | --- |
-| System resources | `ResourceFabric` admits workspace execution and chat-history work; `BackgroundWorkGate` defers background work under queue, RSS or CPU pressure; `ResourceTracker` owns session-linked server discovery and cleanup | Cooperative Main-process admission, not a global OS scheduler; foreground work is never shed |
-| Context engineering | `ContextEngine` runs bootstrap, ingest, maintain, after-turn and assemble/compact; a shared 6,000-character turn budget applies precedence and a fail-closed enhancement kill switch; `ContextHealthMonitor` scores pressure, structure, goal alignment and novelty | Workspace Context and context view tools default on under their declared gates; VToken is retired and other enhancement paths keep explicit rollback boundaries |
-| Model capability positioning | The reserved system-prompt addition describes scoped memory access, applied knowledge, runtime availability and action permissions | Missing or stale facts remain unknown; tool presence never grants approval. Acceptance is limited to the declared model and agent-driven scenarios |
-| Session lifecycle | `SessionManager` is a JSONL append-only tree with leaf branching, compaction, labels and context reconstruction; Host actions add checkpoints, handoff, archive/restore and cascade delete | A session is not a run, task, workspace or project; Task Ledger owns user-visible task facts |
-| Memory | One `Memory` surface projects accepted role cards and Runtime facts plus persisted candidates from their existing stores; Owner-dispatched approve/delete/export and gatekeeper-reviewed “Remember this” share the `MemoryControlPlaneManifest/v1` boundary | Candidate queues are never model-visible; owner write/use gates and Runtime Memory injection paths remain independently configurable. Native OpenClaw memory sources stay outside this panel and are disclosed explicitly |
-| Problem perception | Per-trace issue detection feeds a cross-run Problem signature aggregator with a seven-day window, lifecycle state and redacted evidence artifacts | `pnpm observability:problems` is an agent batch, not a resident auto-remediation service |
-| Multi-agent and roles | `RoleContract`, eight built-in roles, `router`/`lead-workers`/`adversarial-review` modes, team templates, task graphs and resource-aware waves | Write-set proof, tool contention and concurrency caps bound execution; `bounded_a2a` remains disabled; Runtime V2 Kernel work is planned |
+This is not a universal `WS -> HTTP -> IPC fallback` chain. Renderer pages must not open direct Gateway connections or add direct Electron IPC calls. `shared/host-api/contract.ts` is the typed shared boundary.
 
 ```mermaid
 flowchart LR
-  UI["Chat / Agents / Task surfaces"] --> HOST["Electron Host"]
-  HOST --> RESOURCE["ResourceFabric + ResourceTracker"]
-  HOST --> SHED["BackgroundWorkGate"]
-  HOST --> GATEWAY["Gateway"]
-  GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
-  GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
-  MEMORY["Memory panel<br/>accepted vs candidate"] --> CONTEXT
-  SESSION --> CONTEXT
-  CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
-  ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
-  ORCH --> WAVES["Resource-aware waves"]
-  WAVES --> WORKERS["Role-spawned workers"]
-  WORKERS --> GATEWAY
-  GATEWAY --> OBS["Observability traces / issues"]
-  OBS --> PROBLEMS["Cross-run Problem batch"]
+  UI["React renderer"] --> HOST["Typed host facade"]
+  HOST --> IPC["Preload IPC"]
+  IPC --> MAIN["Electron Main"]
+  MAIN --> SERVICES["Desktop host services"]
+  MAIN --> GW["Gateway WebSocket RPC"]
+  GW --> RUNTIME["Embedded OpenClaw runtime"]
+  RUNTIME --> EVENTS["Runtime events"]
+  EVENTS --> MAIN --> UI
 ```
 
-See [runtime control planes](docs/dev/runtime-control-planes.md) for the sequence diagram, multi-agent flow, default-off boundaries and source anchors.
+Main repository layers:
 
-### Coding, agent tools and knowledge
+- `src/`: renderer, pages, components, Zustand stores, Host facade, i18n and styles.
+- `electron/`: Main services, IPC security, Gateway supervision, preload and desktop utilities.
+- `shared/`: Host API/events, domain types, i18n resources, authority/default manifests.
+- `openclaw_runtime/`: vendored runtime, Gateway, agents, tools, channels, packages and extensions.
+- `packages/` and `resources/`: VerseBrowser, VToken, VerseShell, skills, plugins and native assets.
+- `harness/`, `tests/`, `scripts/`: executable policy, tests, automation and evidence tooling.
 
-| Surface | Current source and entry points | Boundary |
-| --- | --- | --- |
-| Coding and review | `src/pages/CodeReview/`, `electron/services/code-review-api.ts`, `git-api.ts`, `shared/types/coding-run.ts`, Task Loop and Task Ledger | Code review is explicitly read-only; CodingRun is an association/projection view, not a second task state machine. Task Ledger remains the user-visible task authority |
-| VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | VerseShell and the observability recorder are internal execution/evidence substrate with no second user-visible executor; legacy patch preview and symbol lease are retired, and the external MCP adapter is separate from the internal execution path |
-| VerseBrowser | `packages/versebrowser/`, `electron/services/agent-browser-*`, `electron/gateway/agent-browser-bridge.ts`, `shared/agent-browser/` | 81 contract methods are not 81 Electron capabilities: the driver implements 67, exposes 28 model actions and currently advertises 14 on the Windows desktop build |
-| Knowledge | `src/pages/Knowledge/`, `electron/services/knowledge-api.ts`, `memory-wiki`, `openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first and role-governed: agents read and propose; Inbox → Draft → Steward → Proposal → explicit apply is the durable write path. SEKB writeback remains default-off/shadow |
-| Memory | `src/pages/Memory/`, `electron/services/memory-api.ts`, `openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | One review surface; Role cards, Runtime facts and candidates keep their owning stores and mutation paths. Approval, tombstone/invalidation, hashed export and explicit-remember proposals never create a second Memory authority |
+See the [architecture guide](docs/architecture-overview.md) and [repository layout](docs/dev/repository-layout.md).
 
-The detailed tool and knowledge flow is included in [runtime control planes](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces).
+## Local data and privacy
 
-`src/App.tsx` currently registers first-run Setup (`/setup/*`), Chat (`/`), Knowledge, Memory, Inbox, Scheduled, Task Ledger, ClawGraph, Observability and Settings surfaces; Models, Agents, Channels and Skills are Settings sections, while Code Review and Browser are compatibility entry points into workspace panels. Image Generation remains developer/test-gated and is not product navigation; Dreams is retired.
+No separate database server is required.
 
-Current pnpm workspace members are the root, `harness/`, `packages/versebrowser/` and `resources/verseshell-mcp/`. `packages/vtoken/` is a retained Python/uv sidecar kept for provenance and rollback inspection; the production assembly and bridge are retired. `openclaw_runtime/` is a vendored Git tree with its own dependency workspace, not a Git submodule or the packaged npm runtime.
+- Desktop settings and exports live under Electron `userData`.
+- Runtime configuration normally lives under `~/.openclaw`, with `OPENCLAW_CONFIG_DIR` support.
+- Sessions use JSONL transcripts; runtime state also uses SQLite.
+- Token history is aggregated from structured session usage records. Costs are estimates.
+- Knowledge uses a `memory-wiki` vault plus local governance metadata.
+- Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
 
-VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation).
-Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access.
+Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.
+
+VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation). Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access.
 
 <a id="development"></a>
 
 ## Development and validation
 
-### Common commands
-
-Run these from the repository root. [package.json](package.json) contains their complete definitions.
+Common commands:
 
 | Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Prepare runtime/resources and start the development app |
-| `pnpm run build:vite` | Build renderer and Electron bundles; does not rebuild OpenClaw |
-| `pnpm run build:runtime` | Build the embedded runtime and run the Gateway startup smoke check |
-| `pnpm run typecheck` | Full node, web and test type checks; all three must pass |
-| `pnpm run lint:check` | Run lint without automatic fixes; `pnpm run lint` modifies files |
-| `pnpm exec vitest run tests/unit/rc10-evidence.test.ts` | Run a specific desktop test file |
-| `pnpm test` | Desktop tests, selected DCS/runtime regressions and maturity registry checks |
-| `pnpm run test:integration` | Run the configured integration test group |
-| `pnpm run test:e2e` | Build the app and run Electron E2E |
-| `pnpm run test:e2e:run` | Run Electron E2E against an existing app build; the runtime must still be fresh |
-| `pnpm contract:check` / `pnpm i18n:lint` | Check host API contracts and four-language coverage |
-| `pnpm run harness:ci` | Run the repository's Harness CI baseline |
-| `pnpm repo:artifacts:check` | Check source, curated evidence and local archive boundaries |
-| `pnpm run package:win` / `pnpm run package:mac` / `pnpm run package:linux` | Prepare target-platform resources and produce packages without publishing |
+|---|---|
+| `pnpm dev` | Prepare resources/runtime and start Electron development |
+| `pnpm run build:vite` | Build renderer and Electron bundles |
+| `pnpm run build:runtime` | Build embedded runtime and smoke-test Gateway startup |
+| `pnpm run typecheck` | Full node/web/test typecheck |
+| `pnpm run lint:check` | Lint without modifying files |
+| `pnpm test` | Root test groups and selected regressions |
+| `pnpm run test:e2e` | Build and run Electron Playwright |
+| `pnpm contract:check` / `pnpm i18n:lint` | Host contract and four-language coverage |
+| `pnpm run harness:ci` | Repository Harness baseline |
+| `pnpm run repo:artifacts:check` | Source/evidence/archive boundaries |
+| `pnpm run docs:policy:validate` | Durable documentation policy |
 
-Root `pnpm test` does not run every OpenClaw test. For runtime changes, select the relevant tests and type gates from its [package.json](openclaw_runtime/package.json) and the task specification. Windows Electron E2E must run under Windows Node.
+For task-spec work:
 
-**LoCoMo developer evaluation:** `pnpm eval:runtime-memory:locomo:full500` explicitly runs 500 questions and fails when model/embedding credentials or verified output are missing. It is separate from the default unit gate; historical aggregate fixtures are not accepted memory baselines. See the [measurement and evidence boundary](docs/dev/p0-memory-evaluation-integrity.md). An opt-in, hash-pinned local Qwen3 deployment can supply embeddings with `--local-embedding-url` and `--local-embedding-model`; its quantized results are a new reference, not a reproduction of hosted scores.
+```bash
+pnpm harness context --spec <task-spec>
+pnpm harness validate --spec <task-spec>
+pnpm harness run --spec <task-spec> --dry-run
+```
 
-### Select validation for the change
+UI changes should include Electron E2E and en/zh/ja/ru strings. Communication changes also require `pnpm run comms:replay` and `pnpm run comms:compare`. Packaging success, installer success and release authorization are separate facts.
 
-- **Task specifications:** run `pnpm harness context --spec <task-spec>` first, then `pnpm harness validate --spec <task-spec>` after implementation. Inspect the selected flow with `pnpm harness run --spec <task-spec> --dry-run`.
-- **UI:** update the relevant Electron E2E. Cover en / zh / ja / ru strings and follow [globals.css](src/styles/globals.css) for styling.
-- **Communication:** changes to renderer, Main, Gateway, send/receive or fallback paths also require `pnpm run comms:replay` and `pnpm run comms:compare`.
-- **Builds and packaging:** satisfy runtime freshness and native resource contracts before checking platform artifacts. Record build success and installation acceptance separately.
-
-### Agent Dev tooling
-
-Agent Dev Workbench in Settings → Developer provides scenario recording, contract and diagnostic entry points. Generate its offline report with `pnpm agent-dev:workbench`.
-
-| Command | Scope |
-| --- | --- |
-| `pnpm agent-dev:make <page\|e2e\|host-route\|skill\|channel\|plugin\|scenario> <name>` | Scaffold artifacts using existing development conventions |
-| `pnpm agent-dev:fast` | Contracts, i18n, prompt quality, Workbench and focused unit tests |
-| `pnpm agent-dev:deep-test:reuse` | Reuse a fresh build with cached typechecking and Workbench smoke E2E |
-| `pnpm agent-dev:deep-test` | Full Agent Dev diagnostics and timing with a fresh build |
-| `pnpm agent-dev:audit` | Strict maturity audit of the available evidence |
-
-Daily reports list outstanding full gates under `decision.requiredFullGates`. Agent Dev results cover that toolchain. Sandbox, effect-log and cost-correlation reports do not replace validation of actual runtime effects. See the [Agent Dev control plane](docs/agent-dev-control-plane.md).
+See [development and validation](docs/modules/development-and-validation.md) for the full gate map and evidence rules.
 
 <a id="troubleshooting"></a>
 
 ## Troubleshooting
 
 | Symptom | What to check |
-| --- | --- |
-| Knowledge shows `unknown method: wiki.status` | Check that `memory-wiki` is enabled and loaded, then initialize the vault. Gateway readiness alone is insufficient |
-| Wrong pnpm version or failed dependency installation | Check Node.js 24, pinned pnpm and dependencies in both workspaces; retain lockfiles |
-| Missing Electron executable | Run `node node_modules/electron/install.js` from the root and check download connectivity |
-| Gateway stays unavailable | Inspect Settings → System & Runtime and logs; run Doctor in Developer settings before considering Doctor Fix |
-| Provider or channel unavailable | Check authentication, model, enabled plugins, channel accounts and proxy; saving configuration does not prove request or delivery success |
-| Tools cannot write or an operation is blocked | Check the workspace, permission mode and approval requests in Inbox |
-| E2E reports a stale runtime | Run `pnpm run build:runtime`; rebuild `build:vite` if app sources changed too; retain freshness checks |
-| Electron fails on headless Linux | Provide a display server, for example `xvfb-run -a pnpm run test:e2e` |
-| VerseConf tools or export unavailable | Check plugin activation/configuration; use Markdown for outlines with more than three records |
+|---|---|
+| Knowledge shows `unknown method: wiki.status` | Enable and load `memory-wiki`, then initialize the vault. Gateway readiness alone is insufficient. |
+| Wrong pnpm version / install failure | Check Node.js 24.x, pinned pnpm, both dependency workspaces and lockfiles. |
+| Missing Electron executable | Run `node node_modules/electron/install.js` and check download connectivity. |
+| Gateway stays unavailable | Inspect Settings → System & Runtime and logs; run Doctor before Doctor Fix. |
+| Provider or channel unavailable | Check auth, model, plugin enablement, account status, proxy and real request/delivery evidence. |
+| Tool write or command is blocked | Check workspace root, permission mode, path boundary and Inbox approvals. |
+| E2E reports stale runtime | Run `pnpm run build:runtime`; rebuild the app as well if app sources changed. |
+| Electron fails on headless Linux | Provide a display server, for example `xvfb-run -a pnpm run test:e2e`. |
+| VerseConf PPTX export fails | Check plugin activation and the three-record template limit; use Markdown for longer outlines. |
 
 <a id="documentation"></a>
 
 ## Documentation
 
 | Topic | Entry points |
-| --- | --- |
-| Current architecture and documentation checks | [Architecture guide](docs/architecture-overview.md) · [Visual provenance](resources/readme/2026-10-05/README.md) · [Documentation index](docs/README.md) |
-| Product behavior, concepts and capability scope | [Product semantics](docs/clawx-product-semantics.md) · [Capability matrix](shared/capability-claims.ts) · [Default configuration](docs/dev/default-config-matrix.md) |
-| Knowledge, memory and context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
-| Agents and workflows | [Orchestration](docs/multi-agent-orchestration/README.md) · [Role packs](docs/role-packs.md) |
-| Structured documents | [VerseConf integration](docs/dev/verseconf-clawx-implementation-20261001.md) |
-| Conversation and workspace interactions | [Rare UI interaction adaptations](docs/dev/rareui-interactions.md) |
-| Engineering rules and continuity | [AGENTS.md](AGENTS.md) · [Development playbook](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
-| Runtime and acceptance | [Runtime convergence](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 evidence boundaries](docs/dev/windows-alpha-closeout-20261008.md) |
-| Resources, archival and source recovery | [Retention policy](docs/dev/repository-artifact-retention.md) · [VerseShell source contract](resources/verseshell/SOURCE.md) |
+|---|---|
+| Module-by-module current implementation | [Module deep dives](docs/modules/README.md) |
+| Architecture and data flow | [Architecture guide](docs/architecture-overview.md) · [Runtime control planes](docs/dev/runtime-control-planes.md) |
+| Product boundaries and defaults | [Product semantics](docs/clawx-product-semantics.md) · [Default configuration](docs/dev/default-config-matrix.md) · [Component matrix](docs/dev/component-disposition-matrix-20261021.md) |
+| Knowledge and context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) · [Context orchestrator](docs/dev/context-orchestrator.md) · [Memory control plane](docs/dev/memory-control-plane.md) |
+| Agents and tasks | [Role-first design](docs/role-first-design.md) · [Multi-agent orchestration](docs/multi-agent-orchestration/README.md) |
+| VerseGit / VerseShell / VerseBrowser | [VerseGit control plane](docs/dev/versegit-validation-layer/README.md) · [VerseShell status](docs/dev/verseshell-foundation/STATUS.md) · [VerseBrowser integration](packages/README.md) |
+| Development and evidence | [Development docs](docs/README.md) · [Agent Dev](docs/agent-dev-control-plane.md) · [Repository layout](docs/dev/repository-layout.md) · [Harness](harness/specs/) |
 
-Design plans and older acceptance snapshots have their own scope and dates. Current entry points are established by source and corresponding fresh evidence. Local Task Forest history, session handoffs and temporary logs are not prerequisites for a fresh checkout.
+Historical plans and acceptance snapshots have their own dates and candidates. Current behavior should be established from source, default manifests and fresh evidence, not from the age or length of a design document.
 
 ## Contributing and license
 
-Keep changes scoped, provide relevant validation and update all four READMEs when behavior changes. Follow [AGENTS.md](AGENTS.md) for API, i18n, specifications and evidence requirements. Track source, reusable fixtures and curated final evidence together; retain private task history and raw generated logs locally.
+Keep changes scoped, provide relevant validation and update all four root READMEs when behavior changes. For a functional or architecture change, also update the relevant module document under `docs/modules/`, the product semantics/default matrix when applicable, and reusable Harness specifications.
 
-Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including the [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation and workspace interactions adapted from [Rare UI](https://rareui.com) by Swami Malode retain the source license and attribution under `src/components/rareui`.
-
-### Coding diagnostic logs
-
-With runtime `diagnostics.enabled` explicitly set to `true`, the existing diagnostic logger reports sustained high approval-required **classification** rates and their recovery. These are tool-tier classifications, not counts of actual dialogs or human approvals; missing/expired windows are unavailable. The monitor is off when the setting is omitted or false and never changes approval or tool execution policy.
-
-With runtime `diagnostics.otel.enabled` and the `trace.cost-sampling` diagnostic flag both explicitly enabled, the existing single OpenTelemetry exit also emits a per-model-call USD cost estimate from a versioned price snapshot plus bounded, redacted trace samples; unknown prices stay `null` and the default/off path is unchanged.
-
-Session handoff creation validates and persists its Task Ledger lineage in Main before activating the new conversation; cycles or unreadable history are rejected. To enable the relay depth limit, set `runtime.handoff.enabled=true` in `openclaw.json` (`maxDepth`: 1–64, implicit limit 3). The limit defaults off, and forks retain relay ancestry.
-**Telemetry consent:** Turning telemetry off in Settings takes effect immediately: new events stop, the SDK queue is discarded locally and is not revived by re-enabling. A request already delivered cannot be recalled. See [the consent lifecycle](docs/dev/telemetry-consent-lifecycle.md).
-
-Once all expected workers for one orchestration run are terminal, the session activity owner derives one consolidated completion-batch receipt with separate completion and durable delivery states. A reset or handoff fences stale results instead of steering the new generation.
-
-The Chat toolbar resource chip also exposes an explicitly bound long session, its canonical environment and revision, Task Ledger references, completion batches, and pause/resume controls. Session activity merges a generation-scoped, owner-derived inventory for terminals, browsers, managed ports, runtime processes, durable helpers, worktrees and admission permits. Unmeasured values stay unknown; explicit OPENCLAW_LONG_SESSION_* caps can reject a new process, background terminal or worktree before creation. Workspace switching preserves resources; session delete, workspace delete and app quit close only their owning scope.
+Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation/workspace interactions adapted from [Rare UI](https://rareui.com) by Swami Malode retain attribution under `src/components/rareui`.

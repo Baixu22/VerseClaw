@@ -1,123 +1,82 @@
 <p align="center">
-  <img src="src/assets/logo.png" width="96" height="96" alt="Логотип Verse Claw" />
+  <img src="src/assets/logo.png" width="96" height="96" alt="Verse Claw logo" />
 </p>
 
 # Verse Claw
 
-**Диалоги, код, знания и выполнение задач агентами в одном настольном приложении.**
+**Чат, код, знания и выполнение агентов в одном рабочем пространстве.**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)
 
-[Скриншоты](#screenshots) · [Возможности](#features) · [Рабочие процессы](#workflows) · [Начало работы](#getting-started) · [Настройки](#configuration) · [Архитектура](#architecture) · [Разработка](#development) · [Решение проблем](#troubleshooting) · [Документация](#documentation)
+[Подробные модули (китайский)](docs/modules/README.md) · [Начало работы](#getting-started) · [Архитектура](#architecture) · [Разработка](#development) · [Решение проблем](#troubleshooting) · [Документация](#documentation)
 
-Verse Claw — приложение Electron на базе OpenClaw. Начните работу в диалоге, просматривайте файлы, терминалы, браузер, изменения кода и созданные материалы в том же рабочем пространстве, затем сохраняйте полезные результаты как проверяемые знания проекта. Приложение также предоставляет настройки моделей и агентов, каналы сообщений, задания по расписанию и диагностику среды выполнения.
+Verse Claw — Electron-приложение на встроенном OpenClaw Runtime. Оно объединяет диалог, проектные workspace, инструменты кодирования, проверку знаний, память, мультиагентную оркестрацию, каналы сообщений, расписания и диагностику runtime в одном локальном desktop-продукте.
 
-Интерфейс использует React, TypeScript и Vite. Это не только оболочка Renderer: репозиторий также содержит Electron Main Host, типизированные общие контракты, встроенную среду OpenClaw с каталогом расширений, встроенный VerseBrowser, сохранённый, но выведенный из эксплуатации исходный код VToken, адаптер VerseShell MCP, исполняемые спецификации Harness и конвейер сборки, выпуска и доказательств. Текущая версия и зависимости указаны в [package.json](package.json). В части исходников, настроек и исторических документов сохраняется название ClawX.
+Репозиторий не является тонкой оболочкой renderer. Он содержит React UI, Electron Main Host, типизированные межпроцессные контракты, vendored OpenClaw Runtime, VerseBrowser, основу управляемого выполнения VerseShell, исходники выведенного из эксплуатации VToken, исполняемые Harness-спецификации и build/evidence/release pipeline.
 
-> **Текущее состояние:** проект находится на стадии alpha. Основная локальная приёмка охватывает контролируемые сценарии Windows x64. Для macOS и Linux предусмотрены цели сборки; покрытие проверками зависит от платформы и функции. Условия включения экспериментальных возможностей описаны ниже, в [семантике продукта](docs/clawx-product-semantics.md) и [матрице возможностей](shared/capability-claims.ts).
+> **Текущий статус:** `0.4.9-alpha.0`, controlled preview. Основная цель локальной приёмки — Windows x64 workflows. Для macOS/Linux есть build targets, но проверка их runtime — отдельная работа. Component graduation и agent-driven evidence не означают release, GA, liveReady или productApproved.
 
-В чате можно восстановить контрольную точку из меню сеанса, работать с Git рядом с полем ввода и выбрать модель для одного сообщения, текущего сеанса или постоянного использования. Расширенный режим интерфейса открывает данные сжатия и действия восстановления. Локальная история использования токенов доступна и при остановленном Gateway.
+## Модули продукта
 
-<a id="screenshots"></a>
+| Область | Текущая форма | Подробно |
+|---|---|---|
+| LLM и модели | Учётные записи providers, OAuth/API key/local auth, protocol adapters, fallback, model overrides на turn/session, streaming, tool loop, reasoning effort, usage и оценка cost | [LLM и модели (кит.)](docs/modules/llm-and-models.md) |
+| Диалоги и sessions | JSONL append-only session tree, runs, abort/stop/archive/delete, checkpoints, compaction, handoff/fork, sidebar, группы и long-session coordinator | [Sessions (кит.)](docs/modules/sessions.md) |
+| Context и memory | Context Orchestrator, budget 6 000 символов, Workspace Context, health score, единый Memory surface поверх отдельных Role/Runtime stores | [Context и Memory (кит.)](docs/modules/context-and-memory.md) |
+| Workspace и coding | Preflight, четыре permission mode, preview файлов, PTY terminal, web preview, Git, review, write journal, stale-write guard, auto verify | [Workspace и coding (кит.)](docs/modules/workspace-and-coding.md) |
+| Knowledge | Markdown/wiki-first Library, Inbox → Draft → Steward → Proposal → explicit apply, Source Set, OKF, Runtime Lessons/SEKB, provenance и governance | [Knowledge (кит.)](docs/modules/knowledge-base.md) |
+| Multi-agent и tasks | Agent/Persona/Role, девять built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop, ClawGraph | [Multi-agent и tasks (кит.)](docs/modules/multi-agent-and-tasks.md) |
+| Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers и retired VToken | [Verse tools (кит.)](docs/modules/verse-tools.md) |
+| Resources и observability | Cooperative ResourceFabric, background shedding, process/port tracking, token/cost limits, traces, issues, Problems, Session Activity и recovery | [Resources и observability (кит.)](docs/modules/resources-and-observability.md) |
+| Integrations | 15 channel types, Scheduled, Skills/MCP, Inbox, Remote Tasks, Code Review, VerseConf, media, Billing и Agent Dev | [Integrations (кит.)](docs/modules/integrations-and-surfaces.md) |
 
-## Интерфейс приложения
+Подробные module documents сейчас поддерживаются на упрощённом китайском; source paths, API names и evidence links не зависят от языка. Четыре root README остаются multilingual entry points.
 
-В заголовке используется B2, выбранный 2026-10-06. Датированные снимки ниже сохраняют прежнее оформление на момент съёмки.
+## Границы зрелости
 
-Снимки сделаны агентом в Windows Electron из сборки исходников от 2026-10-05: изолированные профили и настоящий локальный Gateway. Интерфейс на снимках английский. Для страницы знаний явно включён `memory-wiki`. Аккаунты моделей и запросы к моделям не использовались; пустые диалог, журнал задач и библиотека отражают реальное состояние. Нажмите на изображение для полного размера.
+| Label | Значение |
+|---|---|
+| `default` / `advanced` | Текущая продуктовая поверхность в заявленной controlled-preview границе. Не GA. |
+| `internal` | Есть реализация или внутренний API, но нет отдельного пользовательского product entry. |
+| `shadow` / `experiment` | Наблюдение или ограниченный эксперимент; не владеет routing, записью или approval. |
+| `retired` | Сохранено только для compatibility, provenance или rollback inspection. |
+| `agent-driven` | Evidence создано агентом и помечено как такое. Это не real-human evidence. |
 
-| **Диалог и вход в задачи**<br>[![Диалог и вход в задачи](resources/readme/2026-10-05/en/chat.png)](resources/readme/2026-10-05/en/chat.png) | **Библиотека знаний и проверка**<br>[![Библиотека знаний и проверка](resources/readme/2026-10-05/en/knowledge.png)](resources/readme/2026-10-05/en/knowledge.png) |
+Текущий machine-readable component catalog содержит 54 строки: 13 default, 12 advanced, 24 internal, 5 retired, 0 experiment. Классификация не является runtime proof. См. [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
+
+Важные defaults:
+
+- Workspace Context и read-only DCS context tools включены при заявленных health/permission gates.
+- Runtime Memory injection, SEKB automatic writeback и Browser private network не default-on.
+- VToken retired; старые env/config имена не могут снова включить production assembly или sidecar.
+- VerseGit — default-off и landed-unwired. VerseShell — default-off controlled foundation. VerseBrowser рекламирует действия из live driver snapshot, а не из полного контракта.
+- Dreams retired. Image Generation ограничен developer/test surface и не является обычной продуктовой навигацией.
+- `liveReady=false`, `productApproved=false` и `defaultOn=false` остаются product locks.
+
+Перед изменением default или release claim прочитайте [default configuration](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) и [capability claims](shared/capability-claims.ts).
+
+## Скриншоты
+
+Скриншоты сделаны из Windows Electron source build 2026-10-05. Текущий header использует более позднюю B2 identity. В Knowledge capture явно включён `memory-wiki`; model account и model request не использовались.
+
+| **Chat и task entry**<br>[![Chat and task entry](resources/readme/2026-10-05/en/chat.png)](resources/readme/2026-10-05/en/chat.png) | **Knowledge library и review**<br>[![Knowledge library and review](resources/readme/2026-10-05/en/knowledge.png)](resources/readme/2026-10-05/en/knowledge.png) |
 | --- | --- |
-| **Task Ledger**<br>[![Task Ledger](resources/readme/2026-10-05/en/tasks.png)](resources/readme/2026-10-05/en/tasks.png) | **Модели и провайдеры**<br>[![Модели и провайдеры](resources/readme/2026-10-05/en/settings.png)](resources/readme/2026-10-05/en/settings.png) |
+| **Task Ledger**<br>[![Task Ledger](resources/readme/2026-10-05/en/tasks.png)](resources/readme/2026-10-05/en/tasks.png) | **Models и provider settings**<br>[![Models and provider settings](resources/readme/2026-10-05/en/settings.png)](resources/readme/2026-10-05/en/settings.png) |
 
-Условия съёмки, промпты иллюстраций и хеши файлов приведены в [описании изображений](resources/readme/2026-10-05/README.md). Предупреждение о хранилище отражает реальное состояние диска машины.
-
-<a id="features"></a>
-
-## Возможности
-
-| Область | Что можно делать | Где найти |
-| --- | --- | --- |
-| Диалоги и сессии | Получать потоковые ответы, прикладывать файлы и ссылки на знания, просматривать результаты инструментов; искать, закреплять, группировать, архивировать и восстанавливать диалоги | Главный экран и боковая панель сессий |
-| Рабочие пространства | Переключать проекты, просматривать файлы, пользоваться терминалом, браузером, Git и проверкой кода рядом с диалогом | Панель рабочего пространства на панели инструментов чата |
-| Модели и провайдеры | Управлять аккаунтами, моделями по умолчанию и резервными настройками, просматривать историю токенов | Настройки → Модели и провайдеры |
-| Агенты и задачи | Настраивать агентов и роли, следить за подагентами; вести Task Ledger и явно запускать Task Loop или Делегированный worker запускается через типизированный Host-путь `sessions.delegate` после допуска существующими owner-компонентами coordinator binding, permissions и Gateway. Квитанция связывает revision координатора и generation сессии, ссылку Task Ledger, дочерние session/run, фактическую авторизацию инструментов, реальный backend изоляции, сведения о checkout и ограниченные ресурсы. `accepted` означает только допуск, а не выполнение или завершение. Устаревшие generation, отозванные разрешения, неподдерживаемые backend и недоказанные параллельные записи отклоняются или сериализуются. См. [допуск делегирования долговременной сессии](harness/specs/guides/long-session-delegation-admission.md).
-
-ClawGraph | Настройки → Agents; дополнительное меню боковой панели |
-| Знания | Искать материалы, управлять источниками и ссылками, проверять входящие материалы, черновики и предложения | Боковая панель → Знания |
-| Память | Просматривать принятую память и сохранённых кандидатов, одобрять предложения, удалять/tombstone, экспортировать JSON с хэшем и создавать обычные предложения через «Запомнить это» | Боковая панель → Память |
-| Входящие | Обрабатывать запросы разрешений, удалённые и браузерные задачи, требующие внимания, просматривать историю | Боковая панель → Входящие |
-| Расписание и каналы | Управлять заданиями и историей запусков; настраивать аккаунты каналов, соединения и привязки агентов | Расписание на боковой панели; Настройки → Channels |
-| Skills и MCP | Просматривать и включать навыки, управлять наборами, установкой из каталога и настройками MCP-серверов | Настройки → Skills |
-| Структурированные документы | Управлять исследовательскими таблицами, планами слайдов, версиями и экспортом через VerseConf | Инструменты агента и панель материалов после включения плагина |
-| Диагностика и восстановление | Просматривать активность сессий, процессы, трассировки, состояние runtime, хранилище и действия восстановления | Рабочая панель, раздел наблюдаемости и настройки |
-
-Для явно привязанной долгосрочной сессии панель активности Chat также показывает стабильный разговор координатора, существующие ссылки Task Ledger и завершённые пакеты результатов, с прямыми переходами к транскрипту worker и записи задачи. Перед ходом привязанной сессии ClawX читает ограниченный `ContinuityContextPack/v1` из принятого Task Ledger Working Context, метаданных CompressionArtifact, принятых ссылок памяти, видимых текущей модели, и типизированных ссылок знаний. Ожидающие, кандидатные, истёкшие, отозванные, вытесненные, вне-scope и непроверенные утверждения модели исключаются; сырая история остаётся за ссылками владельцев, читаемыми по запросу. Эти строки и пакет только проецируют существующих владельцев и не создают второй список задач, хранилище памяти или полномочие инъекции.
-
-Интерфейс доступен на русском, английском, китайском и японском языках, со светлой, тёмной и системной темами. Basic / Advanced в общих настройках управляет подробностью диагностики. Режим разработчика открывает только диагностические и тестовые настройки. Dreams выведен из эксплуатации, а генерация изображений остаётся доступной только разработчикам/тестам и не входит в продуктовую навигацию.
-
-<a id="workflows"></a>
-
-## Основные рабочие процессы
-
-### Выполнить задачу с кодом в проекте
-
-Выберите рабочее пространство и модель → опишите задачу и приложите файлы → проверьте план и запросы разрешений → проследите за инструментами → проверьте изменения и выполните проверки в рабочей панели.
-
-![Концептуальная иллюстрация, созданная ИИ с фирменным огненным персонажем: задача → инструменты рабочего пространства → проверка изменений. Это не скриншот и не обещание автоматического прохождения проверок.](resources/readme/2026-10-05/workflow.webp)
-
-*Концептуальная иллюстрация, созданная ИИ с фирменным огненным персонажем: задача → инструменты рабочего пространства → проверка изменений. Это не скриншот и не обещание автоматического прохождения проверок.*
-
-Панель поддерживает вкладки файлов, терминала, браузера, проверки кода, материалов и активности. Терминал можно разместить сбоку или снизу. Браузер открывает локальный предпросмотр и веб-страницы, а раздел проверки объединяет изменения Git и связанные операции. Панель активности показывает состояние запусков и команд.
-
-Доступны режимы «Только чтение», «План», «Принимать изменения» и «Полный доступ». Режим планирования ограничивает изменение пользовательских файлов, но служебные метаданные runtime могут записываться. Подробности — в [семантике разрешений](docs/clawx-product-semantics.md).
-
-### Превратить диалоги и материалы в знания проекта
-
-Выберите область знаний и ссылки в чате → найдите источники в библиотеке → изучите входящие материалы, черновики и предложения в очереди проверки → проверьте основания и изменения → примените через контролируемый процесс проверки.
-
-![Концептуальная иллюстрация ИИ: источники → черновики → проверка → знания проекта. Чтение знаний и применение изменений требуют разных разрешений.](resources/readme/2026-10-05/knowledge.webp)
-
-*Концептуальная иллюстрация ИИ: источники → черновики → проверка → знания проекта. Чтение знаний и применение изменений требуют разных разрешений.*
-
-Для Wiki требуется загруженное расширение `memory-wiki`. Страница открывается и без него, но состояние, поиск и применение изменений требуют готового плагина и хранилища. См. [границы знаний и плагинов](docs/architecture-overview.md#knowledge-plugins-and-data).
-
-Область чтения знаний и разрешение на запись управляются отдельно. Выбор Memory, Wiki или ссылки не разрешает автоматическую обратную запись. Интерфейс сохраняет видимую связь между источниками, черновиками, предложениями и результатами применения.
-
-### Перейти от диалога к выполнению задач
-
-Обычный Chat предназначен для непосредственной совместной работы. Task Ledger хранит цели, узлы задач, контрольные точки и факты о результатах проверок. Task Loop — ограниченный цикл выполнения, запускаемый явно. Предложение перейти к нему не превращает обычный диалог в Task Loop автоматически.
-
-ClawGraph загружает процессы из YAML рабочего пространства и показывает диагностику компиляции, состояние узлов, события и элементы проверки. Workboard отвечает за планирование внутри runtime отдельно от пользовательского Task Ledger. См. [оркестрацию агентов](docs/multi-agent-orchestration/README.md) и [границы понятий](docs/clawx-product-semantics.md).
-
-Для явно привязанной долгой сессии каждый привязанный ход читает ограниченный `ContinuityContextPack/v1` из принятого Task Ledger Working Context, метаданных CompressionArtifact, принятых Memory refs, видимых модели сейчас, и типизированных Knowledge refs. Pending, candidates, истёкшие, отозванные, superseded, чужие scope и непроверенные утверждения модели исключаются; исходная история остаётся за on-demand refs владельцев. Это проекция существующих owner, а не вторая память, список задач или цепочка инъекции.
-
-### Управлять структурированными материалами
-
-Необязательный плагин `verseconf-artifacts` предоставляет инструменты создания, просмотра, изменения, упорядочивания записей, восстановления истории и экспорта. Исследовательские таблицы экспортируются в CSV / XLSX, планы слайдов — в PPTX, содержимое — в Markdown. Панель показывает управляемые версии, историю и выходные файлы.
-
-Плагин **выключен по умолчанию** и требует явной настройки. Сейчас PPTX использует шаблон из трёх слайдов: экспорт плана с более чем тремя записями отклоняется. Markdown позволяет сохранить полный план. Произвольное число слайдов и вёрстка длинного текста пока не покрываются. Настройка, поставка и проверки описаны в [заметках об интеграции VerseConf](docs/dev/verseconf-clawx-implementation-20261001.md).
-
-### Границы экспериментальных возможностей
-
-Workspace Context и read-only context view tools включены по умолчанию в пределах объявленных проверок здоровья и разрешений. VToken выведен из эксплуатации. Автоматическая запись SEKB, инъекция Runtime Memory и доступ браузера к приватной сети сохраняют отдельные проверки или подтверждения. Диагностические и shadow-данные сами по себе не доказывают участие в контексте модели, автоматическую запись или маршрутизацию. Установка приложения также не разрешает все необязательные расширения.
-
-Состояние определяется [матрицей возможностей](shared/capability-claims.ts), [матрицей настроек по умолчанию](docs/dev/default-config-matrix.md) и проверками конкретной функции. Симуляции приёмки, выполненные скриптом или агентом, должны отмечаться как agent-driven. Успех отдельных тестов не подтверждает приёмку всего продукта или всех платформ для выпуска.
+Условия съёмки и hashes: [visual provenance](resources/readme/2026-10-05/README.md).
 
 <a id="getting-started"></a>
 
 ## Начало работы
 
-### Запуск из исходников
+Требования:
 
-Потребуются:
+- **Node.js 24.16.0 или новее в ветке 24.x** и Git. Более ранние Windows Node 24 могут падать в TCP connections.
+- **pnpm 11.2.2**, зафиксированный в `package.json`.
+- Сетевой доступ к dependencies, Electron, uv и agent-browser.
+- Online provider account или совместимый local model service.
 
-- **Node.js 24** и Git.
-- **pnpm 11.2.2**, закреплённый в [package.json](package.json); его можно активировать через Corepack.
-- Доступ к репозиторию и сети для загрузки зависимостей, Electron, uv и agent-browser.
-- Авторизация онлайн-провайдера модели либо запущенный совместимый локальный сервис.
-
-Выполните из корня репозитория:
+Из корня репозитория:
 
 ```sh
 git clone https://github.com/Baixu22/VerseClaw.git
@@ -130,136 +89,83 @@ node node_modules/electron/install.js
 pnpm dev
 ```
 
-Если установленный Node.js не содержит Corepack, установите pnpm 11.2.2 отдельно и продолжите с `pnpm run init`.
+`pnpm dev` собирает VerseBrowser, embedded runtime и bundled skills, затем открывает Vite и Electron. Gateway обычно готов через 10–30 секунд. Одна Vite-страница не даёт полный Electron Host services.
 
-`init` устанавливает зависимости настольного workspace и загружает uv и agent-browser. OpenClaw использует отдельное пространство зависимостей, которое устанавливается отдельно. Установка бинарного Electron указана явно, поскольку политика скриптов зависимостей отключает его автоматический установочный скрипт.
+Первый session:
 
-Перед запуском Vite и Electron команда `pnpm dev` генерирует мост расширений, собирает runtime и подготавливает встроенные навыки. Первый запуск включает эту сборку; после открытия приложения Gateway также нужно время на готовность. Одна веб-страница Vite не предоставляет все сервисы Electron Host.
+1. Завершить Setup.
+2. Настроить и проверить provider/model.
+3. Выбрать project directory, permission mode и workspace.
+4. Отправить scoped task и проверить Workspace Panel.
+5. Обработать approvals в Inbox.
+6. Постоянные изменения Knowledge/Memory выполнять через review surfaces.
 
-### Первая сессия
+Только фактически опубликованный Release package является download target. Наличие build target не гарантирует package для текущей версии.
 
-1. Завершите мастер настройки, добавьте аккаунт и модель в «Настройки → Модели и провайдеры», проверьте соединение.
-2. Выберите папку проекта, рабочее пространство и режим разрешений.
-3. Создайте диалог с конкретной задачей, при необходимости приложите файлы или ссылки на знания.
-4. Откройте рабочую панель из чата для просмотра файлов, терминала, браузера и изменений.
-5. Обработайте запросы во входящих; используйте раздел знаний для сохранения материалов проекта.
-6. При необходимости настройте Skills / MCP, каналы и задания по расписанию.
-
-Навигация по приложению и многие локальные тесты не требуют платных вызовов модели. У удалённых моделей, сервисов и каналов собственные требования к авторизации, сети и оплате.
-
-### Пакеты и платформы
-
-Доступные дистрибутивы определяются фактически опубликованными версиями в [Releases этого репозитория](https://github.com/Baixu22/VerseClaw/releases). В исходниках настроены следующие цели:
-
-| Платформа | Настроенные форматы | Текущий охват |
-| --- | --- | --- |
-| Windows x64 | Установщик NSIS | Основная платформа локальной приёмки контролируемых сценариев |
-| macOS x64 / arm64 | DMG, ZIP | Цели сборки есть; возможности проверяются для каждой платформы |
-| Linux x64 / arm64 | AppImage, DEB; RPM для x64 | Цели сборки есть; приложению нужна графическая среда |
-
-Наличие цели сборки не гарантирует готовый пакет для конкретной версии. Сборки разработки не проверяют обновления установленных пакетов; обновление дистрибутива зависит от настроенного источника выпуска. Нативные компоненты VerseShell и полная упаковка имеют дополнительные [требования к исходникам и инструментам](resources/verseshell/SOURCE.md).
-
-<a id="configuration"></a>
-
-## Настройки и локальные данные
-
-| Раздел | Содержимое |
-| --- | --- |
-| Модели и провайдеры / Agents | Аккаунты, модели, резервные правила, роли и привязки каналов |
-| Skills / Channels / Браузер | Навыки, MCP, аккаунты каналов, профили браузера и учётные данные |
-| Общие | Тема, язык, запуск и подробность интерфейса |
-| Система и runtime / Разработчик | Gateway, runtime, прокси, CLI, Doctor и Agent Dev Workbench |
-| Оплата | Локальная история токенов, оценка стоимости и активность |
-| Архив / Сессии и восстановление | Восстановление архива, состояние сессий и параметры восстановления |
-
-Отдельный сервер базы данных не нужен. Настройки приложения хранятся локально; подсистемы runtime используют конфигурационные файлы, записи диалогов JSONL и базы состояния SQLite.
-
-- По умолчанию OpenClaw использует `~/.openclaw` — папку `.openclaw` в домашнем каталоге Windows — и основной файл `openclaw.json`. Разрешение путей в настольной части поддерживает переменную `OPENCLAW_CONFIG_DIR`.
-- Данные приложения находятся в каталоге Electron `userData`, а журналы — в его подкаталоге `logs/`. См. [определения путей](electron/utils/paths.ts).
-- История токенов суммирует структурированные записи usage локальных сессий. Стоимость является оценкой. Полное удаление диалога удаляет и его вклад в историю; используйте архив, если хотите её сохранить.
-- Локальное хранение не означает полностью автономную работу: содержимое, переданное онлайн-моделям или внешним инструментам, отправляется соответствующим сервисам. Не включайте учётные данные, закрытые диалоги и сырые журналы в коммиты и публичные отчёты об ошибках.
+| Platform | Configured artifact | Validation scope |
+|---|---|---|
+| Windows x64 | NSIS | Основная controlled local acceptance platform |
+| macOS x64 / arm64 | DMG, ZIP | Build targets; нужна platform/capability validation |
+| Linux x64 / arm64 | AppImage, DEB, x64 RPM | Build targets; требуется graphical environment |
 
 <a id="architecture"></a>
 
-## Архитектура и структура репозитория
+## Архитектура
 
-![Архитектура приложения, Host и runtime](resources/readme/2026-10-05/architecture.svg)
+Обычный request path:
 
-[Исходник Mermaid](resources/readme/2026-10-05/architecture.mmd) · [Chat sequence](resources/readme/2026-10-05/chat-sequence.svg)
+```text
+React renderer
+  -> typed host facade (src/lib/host-api.ts)
+  -> preload IPC
+  -> Electron Main (authorization + dispatch)
+  -> Host service и/или Main-owned Gateway WebSocket RPC
+  -> embedded OpenClaw runtime
+```
 
-Текущий путь запроса: **React → типизированный Host facade → preload IPC → Electron Main**. Сервисы runtime затем обращаются к Gateway по WebSocket RPC под управлением Main. Локальным файловым и терминальным сервисам не обязательно проходить через Gateway. События возвращаются через Main / preload и `host-events.ts` в хранилища UI.
+Runtime events возвращаются через Main и `host-events.ts` в renderer stores. Локальные file, terminal и Git operations могут завершаться в Main без Gateway.
 
-Точки входа Renderer — `src/lib/host-api.ts` и `src/lib/host-api-client.ts`. Эти границы нельзя описывать как универсальный «WS → HTTP → IPC fallback». [Обзор архитектуры](docs/architecture-overview.md) содержит карту исходников, последовательность диалога и обязанности подсистем задач, знаний, плагинов и локальных данных.
-
-### Карта текущих модулей
-
-Таблица отражает текущее распределение исходников, а не прежнее описание только по верхнеуровневым каталогам. Подробный перечень, а также границы генерируемых файлов и локального состояния приведены в разделе [Структура репозитория и корни доказательств](docs/dev/repository-layout.md).
-
-| Слой | Основные пути | Текущая ответственность |
-| --- | --- | --- |
-| Renderer | `src/pages/`, `src/components/`, `src/stores/`, `src/lib/`, `src/i18n/`, `src/styles/`, `src/extensions/`, `src/hooks/`, `src/types/`, `src/assets/` | Страницы маршрутов, общий UI, состояние клиента, типизированный Host facade и события, локализация, стили и статические ресурсы |
-| Electron Main и Host | `electron/main/`, `electron/services/`, `electron/preload/`, `electron/extensions/`, `electron/shared/`, `electron/types/`, `electron/utils/` | Жизненный цикл окон, меню и трея, авторизация IPC и диспетчеризация Host, настольные сервисы, общие типы и утилиты Main, передача событий |
-| Мост Gateway | `electron/gateway/` | Запуск и восстановление Gateway, WebSocket RPC, политика подключения и перезапуска, адаптация событий runtime |
-| Общая граница | `shared/host-api/`, `shared/types/`, `shared/i18n/`, `shared/host-events/`, `shared/agent-dev/`, `shared/knowledge/`, `shared/mcp/`, `shared/sandbox/`, `shared/security/`, `shared/verseshell/`, `shared/vtoken/` и общие модули семантики | Контракт Host API, межпроцессные типы, четыре языковых набора, типы событий, доменные вспомогательные модули, определения возможностей и семантики продукта |
-| Встроенный runtime OpenClaw | `openclaw_runtime/src/`, `openclaw_runtime/packages/`, `openclaw_runtime/ui/`, `openclaw_runtime/apps/`, `openclaw_runtime/experiments/`, `openclaw_runtime/test/` | Агенты, модели и провайдеры, инструменты, сеансы, контекст и память, каналы, планирование, внутренние части Gateway, пакеты runtime, приложения и эксперименты |
-| Расширения runtime | `openclaw_runtime/extensions/` | Реализации провайдеров, каналов, инструментов, браузера, памяти, медиа и плагинов; доступность зависит от включения и политик runtime |
-| Встроенные компоненты продукта | `packages/versebrowser/`, `packages/vtoken/`, `resources/verseshell-mcp/` | Закреплённый движок автоматизации браузера, Python/uv sidecar токенов и внешний адаптер совместимости MCP |
-| Встроенные ресурсы и упаковка | `resources/skills/`, `resources/skill-packs/`, `resources/openclaw-plugins/`, `resources/verseshell/`, `resources/cli/`, `resources/context/`, `resources/icons/`, `resources/readme/`, `resources/brand-exploration/`, `resources/bin/`, `resources/workspace-harness/`, `public/`, `patches/`, `electron-builder.yml` | Предустановленные навыки и наборы, плагины ClawX, ресурсы CLI и контекста, нативные бинарные файлы, входные данные Harness рабочего пространства, медиа документации и ресурсы упаковки |
-| Harness и тесты | `harness/specs/`, `harness/src/`, `harness/workspace/`, `tests/unit/`, `tests/integration/`, `tests/e2e/` | Исполняемые правила, сценарии, спецификации задач и fixture; модульное, интеграционное и Electron Playwright покрытие |
-| Автоматизация сборки и выпуска | `scripts/`, `.github/workflows/` | Сборка, синхронизация ресурсов, проверки, зрелость, доказательства, упаковка, выпуск и CI |
-| Документация и доказательства | `docs/`, `plans/`, `team/`, `reports/`, `artifacts/` | Текущая архитектура и runbook, решения о зрелости, исторические проектные материалы, длинные отчёты, отобранные доказательства и сохранённые результаты |
-
-### Плоскости управления средой выполнения
-
-| Плоскость | Текущий механизм | Граница |
-| --- | --- | --- |
-| Системные ресурсы | `ResourceFabric` управляет допуском выполнения в workspace и загрузки истории чата; `BackgroundWorkGate` откладывает фоновую работу при давлении очереди, RSS или CPU; `ResourceTracker` обнаруживает и очищает серверные ресурсы, связанные с сессией | Это кооперативный допуск внутри Main, а не глобальный планировщик ОС; пользовательская foreground-работа не вытесняется |
-| Контекстная инженерия | `ContextEngine` выполняет bootstrap, ingest, maintain, after-turn и assemble/compact; общий бюджет одного хода в 6 000 символов применяет приоритеты и fail-closed kill switch; `ContextHealthMonitor` оценивает давление, структуру, соответствие цели и новизну | Workspace Context и context view tools включены по умолчанию в пределах объявленных проверок; VToken выведен из эксплуатации, а остальные пути расширений сохраняют явные границы отката |
-| Жизненный цикл сессии | `SessionManager` хранит JSONL append-only дерево с ветвлением по leaf, компактацией, метками и восстановлением контекста; Host добавляет checkpoint, handoff, архив/восстановление и каскадное удаление производных данных | Сессия не равна Run, Task, Workspace или Project; пользовательские факты задач принадлежат Task Ledger |
-| Память | Единая поверхность `Memory` проецирует принятые Role Card, Runtime facts и сохранённых кандидатов из существующих хранилищ; approve/delete/export делегируются owner, а «Запомнить это» проходит Gatekeeper review в границах `MemoryControlPlaneManifest/v1` | Кандидаты никогда не видны модели; write/use gates каждого owner и Runtime Memory injection настраиваются отдельно. Нативная память OpenClaw остаётся вне этой панели, и UI прямо это указывает |
-| Восприятие проблем | Обнаружение Issue в отдельном trace агрегируется в кросс-запусковые Problem по сигнатуре, семидневному окну, состоянию жизненного цикла и обезличенным артефактам доказательств | `pnpm observability:problems` — это agent batch, а не постоянный сервис автоматического исправления |
-| Мультиагентность и роли | `RoleContract`, восемь встроенных ролей, режимы `router`/`lead-workers`/`adversarial-review`, шаблоны команд, граф задач и ресурсно-осведомлённые волны | Write-set, конфликты инструментов и лимит параллелизма ограничивают выполнение; `bounded_a2a` отключён, Runtime V2 Kernel остаётся планом |
+Это не универсальная цепочка `WS -> HTTP -> IPC fallback`. Renderer pages не должны напрямую подключаться к Gateway или добавлять direct Electron IPC в обход Host API. `shared/host-api/contract.ts` — типизированная общая граница.
 
 ```mermaid
 flowchart LR
-  UI["Chat / Agents / Task surfaces"] --> HOST["Electron Host"]
-  HOST --> RESOURCE["ResourceFabric + ResourceTracker"]
-  HOST --> SHED["BackgroundWorkGate"]
-  HOST --> GATEWAY["Gateway"]
-  GATEWAY --> SESSION["SessionManager<br/>JSONL session tree"]
-  GATEWAY --> CONTEXT["ContextEngine + Orchestrator"]
-  MEMORY["Memory panel<br/>accepted vs candidate"] --> CONTEXT
-  SESSION --> CONTEXT
-  CONTEXT --> BUDGET["Turn injection budget<br/>precedence + kill switch"]
-  ROLE["Roles / teams"] --> ORCH["Orchestrator + task graph"]
-  ORCH --> WAVES["Resource-aware waves"]
-  WAVES --> WORKERS["Role-spawned workers"]
-  WORKERS --> GATEWAY
-  GATEWAY --> OBS["Observability traces / issues"]
-  OBS --> PROBLEMS["Cross-run Problem batch"]
+  UI["React renderer"] --> HOST["Typed host facade"]
+  HOST --> IPC["Preload IPC"]
+  IPC --> MAIN["Electron Main"]
+  MAIN --> SERVICES["Desktop host services"]
+  MAIN --> GW["Gateway WebSocket RPC"]
+  GW --> RUNTIME["Embedded OpenClaw runtime"]
+  RUNTIME --> EVENTS["Runtime events"]
+  EVENTS --> MAIN --> UI
 ```
 
-Диаграмма последовательности, поток мультиагентного выполнения, отключённые по умолчанию границы и исходные anchors приведены в разделе [Плоскости управления средой выполнения](docs/dev/runtime-control-planes.md).
+Основные слои:
 
-### Кодирование, инструменты агента и знания
+- `src/`: renderer, pages, components, Zustand stores, Host facade, i18n и styles.
+- `electron/`: Main services, IPC security, Gateway supervision, preload и desktop utilities.
+- `shared/`: Host API/events, domain types, четыре language resources, authority/default manifests.
+- `openclaw_runtime/`: vendored runtime, Gateway, agents, tools, channels, packages и extensions.
+- `packages/` и `resources/`: VerseBrowser, VToken, VerseShell, skills, plugins и native assets.
+- `harness/`, `tests/`, `scripts/`: executable rules, tests, automation и evidence tooling.
 
-| Поверхность | Текущие источники и входы | Граница |
-| --- | --- | --- |
-| Кодирование и review | `src/pages/CodeReview/`, `electron/services/code-review-api.ts`, `git-api.ts`, `shared/types/coding-run.ts`, Task Loop и Task Ledger | Code Review явно доступен только для чтения; CodingRun — представление связей и проекций, а не второй конечный автомат задач. Пользовательские факты задач принадлежат Task Ledger |
-| VerseShell | `openclaw_runtime/src/agents/verseshell/`, `verseshell-runtime.ts`, `shared/verseshell/`, `resources/verseshell/`, `resources/verseshell-mcp/` | VerseShell и observability recorder — внутренняя основа выполнения/доказательств без второго пользовательского executor. Устаревшие patch preview и symbol lease выведены из эксплуатации; внешний MCP adapter по-прежнему не является внутренним execution path |
-| VerseBrowser | `packages/versebrowser/`, `electron/services/agent-browser-*`, `electron/gateway/agent-browser-bridge.ts`, `shared/agent-browser/` | 81 метод контракта не означает 81 возможность Electron: драйвер реализует 67, модельный слой содержит 28 actions, а текущая Windows-сборка рекламирует только 14 |
-| Знания | `src/pages/Knowledge/`, `electron/services/knowledge-api.ts`, `memory-wiki`, `openclaw_runtime/src/knowledge/sekb/` | Markdown/wiki-first и ролевое управление: агенты читают и предлагают; Inbox → Draft → Steward → Proposal → явное подтверждение → apply является единственным путём durable-записи. Автоматический SEKB writeback остаётся default-off/shadow |
-| Память | `src/pages/Memory/`, `electron/services/memory-api.ts`, `openclaw_runtime/src/gateway/server-methods/memory-surface.ts` | Единая поверхность проверки; Role Card, Runtime facts и кандидаты сохраняют собственные хранилища и mutation paths. Approve, tombstone/invalidation, hashed export и explicit-remember proposal не создают вторую Memory authority |
+Подробнее: [architecture guide](docs/architecture-overview.md), [repository layout](docs/dev/repository-layout.md).
 
-Подробный поток инструментов и знаний приведён в разделе [Плоскости управления средой выполнения](docs/dev/runtime-control-planes.md#coding-tools-and-knowledge-surfaces).
+## Локальные данные и приватность
 
-`src/App.tsx` регистрирует первичную настройку через Setup (`/setup/*`), Chat (`/`), Knowledge, Memory, Inbox, Scheduled, Task Ledger, ClawGraph, Observability и Settings. Models, Agents, Channels и Skills являются разделами Settings; Code Review и Browser — совместимыми входами в панели рабочего пространства. Генерация изображений остаётся доступной только разработчикам/тестам и не является продуктовой навигацией; Dreams выведен из эксплуатации.
+Отдельный database server не нужен.
 
-Текущие члены pnpm workspace — корень, `harness/`, `packages/versebrowser/` и `resources/verseshell-mcp/`. `packages/vtoken/` сохранён как Python/uv sidecar для аудита источника и проверки отката; production assembly и bridge выведены из эксплуатации. `openclaw_runtime/` — встроенное Git-дерево исходников с отдельным рабочим пространством зависимостей, а не Git submodule и не npm runtime, используемый при упаковке.
+- Desktop settings/exports находятся в Electron `userData`.
+- Runtime config обычно находится в `~/.openclaw`; поддерживается `OPENCLAW_CONFIG_DIR`.
+- Sessions используют JSONL transcripts; runtime state также использует SQLite.
+- Token history строится из structured session usage; cost является оценкой.
+- Knowledge использует `memory-wiki` vault и local governance metadata.
+- Logs, traces, screenshots, Task Forest и handoffs являются local working data, пока явно не curated.
+
+Локальное хранение не означает offline execution. Online models, channels, browsers и external tools получают данные согласно конфигурации. Не коммитьте credentials, private transcripts и raw logs.
 
 <a id="development"></a>
 
-## Разработка и проверки
+## Разработка и проверка
 
 Навигация в частную сеть требует одобрения Main, привязанного к сессии и origin. Автоматическая проверка выполняет одобрение через agent в Main; маркеры одобрения в запросе не дают доступа.
 
@@ -268,94 +174,65 @@ flowchart LR
 Запускайте из корня репозитория. Полные определения находятся в [package.json](package.json).
 
 | Команда | Назначение |
-| --- | --- |
-| `pnpm dev` | Подготовить runtime и ресурсы, запустить приложение для разработки |
-| `pnpm run build:vite` | Собрать Renderer и Electron; не пересобирает OpenClaw |
-| `pnpm run build:runtime` | Собрать встроенный runtime и выполнить smoke-проверку запуска Gateway |
-| `pnpm run typecheck` | Полная проверка типов node, web и тестов; все три должны пройти |
-| `pnpm run lint:check` | Lint без автоисправлений; `pnpm run lint` изменяет файлы |
-| `pnpm exec vitest run tests/unit/rc10-evidence.test.ts` | Выполнить конкретный тест приложения |
-| `pnpm test` | Тесты приложения, выбранные регрессии DCS/runtime и проверки реестра зрелости |
-| `pnpm run test:integration` | Выполнить настроенную группу интеграционных тестов |
-| `pnpm run test:e2e` | Собрать приложение и выполнить Electron E2E |
-| `pnpm run test:e2e:run` | Выполнить Electron E2E на существующей сборке; runtime должен оставаться актуальным |
-| `pnpm contract:check` / `pnpm i18n:lint` | Проверить контракт Host API и четыре локализации |
-| `pnpm run harness:ci` | Выполнить базовые проверки Harness CI |
-| `pnpm repo:artifacts:check` | Проверить границы исходников, отобранных подтверждений и локального архива |
-| `pnpm run package:win` / `pnpm run package:mac` / `pnpm run package:linux` | Подготовить ресурсы платформы и создать пакеты без публикации |
+|---|---|
+| `pnpm dev` | Подготовка resources/runtime и запуск Electron development |
+| `pnpm run build:vite` | Build renderer и Electron bundles |
+| `pnpm run build:runtime` | Build embedded runtime и Gateway startup smoke |
+| `pnpm run typecheck` | Full node/web/test typecheck |
+| `pnpm run lint:check` | Lint без изменения файлов |
+| `pnpm test` | Root test groups и selected regressions |
+| `pnpm run test:e2e` | Build и Electron Playwright |
+| `pnpm contract:check` / `pnpm i18n:lint` | Host contract и покрытие четырёх языков |
+| `pnpm run harness:ci` | Repository Harness baseline |
+| `pnpm run repo:artifacts:check` | Границы source/evidence/archive |
+| `pnpm run docs:policy:validate` | Validation documentation policy |
 
-Корневой `pnpm test` не запускает все тесты OpenClaw. При изменениях runtime выбирайте соответствующие тесты и проверки типов из его [package.json](openclaw_runtime/package.json) и спецификации задачи. Windows Electron E2E необходимо запускать через Windows Node.
+Task spec:
 
-**Оценка LoCoMo для разработки:** `pnpm eval:runtime-memory:locomo:full500` явно запускает 500 вопросов и завершается ошибкой при отсутствии ключей модели/эмбеддингов или проверенного отчёта. Это не часть обычного набора unit-тестов; исторические сводные фикстуры не считаются подтверждённой базовой оценкой памяти. См. [границы измерений и доказательств](docs/dev/p0-memory-evaluation-integrity.md). Параметры `--local-embedding-url` и `--local-embedding-model` явно включают локальный Qwen3 с проверкой хеша весов; результаты квантованной модели — новый ориентир, а не воспроизведение облачной оценки.
+```bash
+pnpm harness context --spec <task-spec>
+pnpm harness validate --spec <task-spec>
+pnpm harness run --spec <task-spec> --dry-run
+```
 
-### Проверки по типу изменений
+UI changes должны включать Electron E2E и строки en/zh/ja/ru. Communication changes дополнительно требуют `pnpm run comms:replay` и `pnpm run comms:compare`. Build success, install success и release authorization — разные факты.
 
-- **Спецификации:** сначала выполните `pnpm harness context --spec <task-spec>`, после реализации — `pnpm harness validate --spec <task-spec>`. Проверьте выбранный набор через `pnpm harness run --spec <task-spec> --dry-run`.
-- **Интерфейс:** обновите соответствующий Electron E2E, обеспечьте тексты en / zh / ja / ru и следуйте [globals.css](src/styles/globals.css).
-- **Связь:** изменения Renderer, Main, Gateway, отправки, получения или fallback требуют также `pnpm run comms:replay` и `pnpm run comms:compare`.
-- **Сборка и упаковка:** сначала обеспечьте актуальность runtime и соблюдение контрактов нативных ресурсов. Успех сборки и приёмку установки фиксируйте отдельно.
-
-### Инструменты Agent Dev
-
-Agent Dev Workbench в «Настройки → Разработчик» предоставляет запись сценариев, контракты и диагностику. Офлайн-отчёт создаётся командой `pnpm agent-dev:workbench`.
-
-| Команда | Область |
-| --- | --- |
-| `pnpm agent-dev:make <page\|e2e\|host-route\|skill\|channel\|plugin\|scenario> <name>` | Создать заготовки по существующим соглашениям |
-| `pnpm agent-dev:fast` | Контракты, i18n, качество промптов, Workbench и целевые модульные тесты |
-| `pnpm agent-dev:deep-test:reuse` | Использовать актуальную сборку, кэш проверки типов и smoke E2E Workbench |
-| `pnpm agent-dev:deep-test` | Полная диагностика Agent Dev и замер времени с новой сборкой |
-| `pnpm agent-dev:audit` | Строгий аудит зрелости по имеющимся подтверждениям |
-
-Полные проверки, которые ещё предстоит выполнить, перечислены в `decision.requiredFullGates`. Результаты Agent Dev относятся к его инструментам. Отчёты sandbox, effect log и корреляции стоимости не заменяют проверки реальных действий runtime. См. [контрольный контур Agent Dev](docs/agent-dev-control-plane.md).
+Полная карта gates: [development and validation](docs/modules/development-and-validation.md).
 
 <a id="troubleshooting"></a>
 
 ## Решение проблем
 
 | Симптом | Что проверить |
-| --- | --- |
-| Знания: `unknown method: wiki.status` | Проверьте включение и загрузку `memory-wiki`, затем инициализируйте хранилище. Готовности Gateway недостаточно |
-| Неверная версия pnpm или ошибка установки зависимостей | Node.js 24, закреплённый pnpm и зависимости обоих workspace; сохраняйте lock-файлы |
-| Отсутствует исполняемый Electron | Выполните `node node_modules/electron/install.js` из корня и проверьте доступ к загрузке |
-| Gateway остаётся недоступным | Проверьте «Система и runtime» и журналы; запустите Doctor в настройках разработчика перед применением Doctor Fix |
-| Провайдер или канал не работает | Проверьте авторизацию, модель, плагины, аккаунты и прокси; сохранение настроек не доказывает успешный запрос или доставку |
-| Запись или операция заблокирована | Проверьте рабочее пространство, режим разрешений и запросы во входящих |
-| E2E сообщает об устаревшем runtime | Выполните `pnpm run build:runtime`; при изменении приложения также пересоберите `build:vite`. Сохраняйте проверку актуальности |
-| Electron не запускается в Linux без экрана | Предоставьте графическую среду, например `xvfb-run -a pnpm run test:e2e` |
-| Инструменты или экспорт VerseConf недоступны | Проверьте включение и настройку плагина; для планов с более чем тремя записями используйте Markdown |
+|---|---|
+| Knowledge показывает `unknown method: wiki.status` | Включить и загрузить `memory-wiki`, затем инициализировать vault. Gateway readiness недостаточна. |
+| Неверный pnpm / install failure | Node.js 24.x, pinned pnpm, два dependency workspace и lockfiles. |
+| Нет Electron executable | Запустить `node node_modules/electron/install.js`, проверить download connectivity. |
+| Gateway unavailable | Settings → System & Runtime и logs; сначала Doctor, затем Doctor Fix. |
+| Provider/channel unavailable | Auth, model, plugin enablement, account status, proxy и real request/delivery evidence. |
+| Tool write/command blocked | Workspace root, permission mode, path boundary и Inbox approvals. |
+| E2E сообщает stale runtime | `pnpm run build:runtime`; при изменении app sources пересобрать app. |
+| Headless Linux Electron failure | Нужен display server, например `xvfb-run -a pnpm run test:e2e`. |
+| VerseConf PPTX export failure | Проверить plugin и лимит трёх записей template; длинный outline — Markdown. |
 
 <a id="documentation"></a>
 
 ## Документация
 
-| Тема | Ссылки |
-| --- | --- |
-| Текущая архитектура и проверка документации | [Обзор архитектуры](docs/architecture-overview.md) · [Источники изображений](resources/readme/2026-10-05/README.md) · [Индекс документации](docs/README.md) |
-| Поведение продукта, понятия и границы | [Семантика продукта](docs/clawx-product-semantics.md) · [Матрица возможностей](shared/capability-claims.ts) · [Настройки по умолчанию](docs/dev/default-config-matrix.md) |
-| Знания, память и контекст | [Система знаний](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
-| Агенты и процессы | [Оркестрация](docs/multi-agent-orchestration/README.md) · [Наборы ролей](docs/role-packs.md) |
-| Структурированные документы | [Интеграция VerseConf](docs/dev/verseconf-clawx-implementation-20261001.md) |
-| Взаимодействие в диалогах и рабочей области | [Адаптация Rare UI](docs/dev/rareui-interactions.md) |
-| Правила разработки и преемственность | [AGENTS.md](AGENTS.md) · [Руководство разработки](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
-| Runtime и приёмка | [Согласование runtime](docs/dev/unified-agent-system/runtime-convergence/README.md) · [Границы подтверждений RC-09/RC-10](docs/dev/windows-alpha-closeout-20261008.md) |
-| Ресурсы, архивы и восстановление исходников | [Правила хранения](docs/dev/repository-artifact-retention.md) · [Контракт исходников VerseShell](resources/verseshell/SOURCE.md) |
+| Тема | Вход |
+|---|---|
+| Реализация по модулям | [Module deep dives (кит.)](docs/modules/README.md) |
+| Architecture / data flow | [Architecture guide](docs/architecture-overview.md) · [Runtime control planes](docs/dev/runtime-control-planes.md) |
+| Product boundary / defaults | [Product semantics](docs/clawx-product-semantics.md) · [Default configuration](docs/dev/default-config-matrix.md) · [Component matrix](docs/dev/component-disposition-matrix-20261021.md) |
+| Knowledge / context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) · [Context orchestrator](docs/dev/context-orchestrator.md) · [Memory control plane](docs/dev/memory-control-plane.md) |
+| Agent / tasks | [Role-first design](docs/role-first-design.md) · [Multi-agent orchestration](docs/multi-agent-orchestration/README.md) |
+| VerseGit / VerseShell / VerseBrowser | [VerseGit](docs/dev/versegit-validation-layer/README.md) · [VerseShell](docs/dev/verseshell-foundation/STATUS.md) · [VerseBrowser](packages/README.md) |
+| Development / evidence | [Development docs](docs/README.md) · [Agent Dev](docs/agent-dev-control-plane.md) · [Repository layout](docs/dev/repository-layout.md) · [Harness](harness/specs/) |
 
-Проектные планы и старые результаты приёмки имеют собственные даты и область действия. Текущие точки входа определяются исходниками и соответствующими актуальными подтверждениями. Локальная история Task Forest, передача сессий и временные журналы не требуются для сборки нового checkout.
+Historical plans и acceptance snapshots имеют собственные даты и candidates. Текущее поведение определяется source, default manifests и fresh evidence.
 
 ## Участие и лицензия
 
-Ограничивайте область изменений, выполняйте необходимые проверки и обновляйте все четыре README при изменении поведения. Следуйте [AGENTS.md](AGENTS.md) в вопросах API, i18n, спецификаций и подтверждений. Отслеживайте исходники, повторно используемые fixture и отобранные итоговые результаты вместе; закрытую историю задач и сырые журналы храните локально.
+Сохраняйте узкий scope и предоставляйте релевантную validation. При изменении поведения синхронизируйте четыре root README и соответствующий документ в `docs/modules/`. При изменении interface, defaults, security boundary или user entry также проверьте product semantics, default matrix и Harness spec.
 
-Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) и работе команды ValueCell над ClawX. Репозиторий использует [лицензию MIT](LICENSE). Встроенные компоненты сохраняют собственные лицензии и обязательства по предоставлению исходников, включая [сведения о VerseShell](resources/verseshell/SOURCE.md). Компактные взаимодействия в диалогах и рабочей области адаптированы из [Rare UI](https://rareui.com) Swami Malode; лицензия и обязательная атрибуция сохранены в `src/components/rareui`.
-
-### Диагностические журналы coding
-
-При явном `diagnostics.enabled: true` существующий диагностический журнал отмечает устойчиво высокую долю классификаций, требующих подтверждения, и восстановление. Это классификация инструментов, а не число диалогов или подтверждений человеком. Недостаточные и просроченные выборки считаются неизмеренными. Если настройка отсутствует или выключена, мониторинг не включается; политика подтверждения и выполнения инструментов не меняется.
-
-При явном включении и `diagnostics.otel.enabled`, и диагностического флага `trace.cost-sampling` существующий единственный выход OpenTelemetry дополнительно выдаёт оценку стоимости каждого вызова модели в USD по версионированному снимку цен и ограниченные обезличенные срезы трассировки; неизвестные цены остаются `null`, а путь по умолчанию и выключенный не меняются.
-**Согласие на телеметрию:** Отключение телеметрии в настройках действует немедленно: новые события прекращаются, очередь SDK отбрасывается локально и не оживает при повторном включении. Уже доставленный запрос нельзя отозвать. См. [жизненный цикл согласия](docs/dev/telemetry-consent-lifecycle.md).
-
-После завершения всех expected worker одного orchestration run session activity owner формирует одну consolidated completion-batch receipt и отдельно отражает durable delivery intent. После reset или handoff устаревший результат получает статус fenced и не направляется в новую generation.
-
-Индикатор ресурсов на панели Chat также показывает явно привязанную долгую сессию, canonical-окружение и revision, ссылки Task Ledger, batch завершений и управление паузой. Session activity объединяет привязанный к generation реестр, выведенный из существующих owner: terminal, browser, управляемые порты, runtime-процессы, durable helpers, worktrees и admission permits. Неизмеренные значения остаются unknown; явные лимиты OPENCLAW_LONG_SESSION_* могут отклонить процесс, фоновый terminal или worktree до создания. Переключение workspace сохраняет ресурсы, а удаление сессии/workspace и выход из приложения закрывают только принадлежащую им область.
+Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) и работе ClawX команды ValueCell. Репозиторий использует [MIT License](LICENSE). Bundled components сохраняют собственные licenses/source obligations, включая [VerseShell notices](resources/verseshell/SOURCE.md). Часть взаимодействий conversation/workspace адаптирована из [Rare UI](https://rareui.com) Swami Malode; attribution сохранена в `src/components/rareui`.
