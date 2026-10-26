@@ -19,6 +19,8 @@ if (!Array.isArray(receipt.protocol?.authMethods) || receipt.protocol.authMethod
 if (!/no turn|no fallback|AUTH_REQUIRED/i.test(receipt.failClosed?.acpxCodex ?? '')) failures.push('failClosed');
 if (receipt.opencodeBaseline?.binaryVersionExitCode !== 0) failures.push('opencodeVersion');
 if (receipt.protocolLifecycle?.status !== 'pass') failures.push('protocolLifecycle');
+if (!Array.isArray(receipt.sourceLedger?.acp) || !receipt.sourceLedger.acp.includes('acp-overview')) failures.push('sourceLedger');
+if (receipt.rollback?.adapterRegistered !== false || receipt.rollback?.productPathChanged !== false) failures.push('rollback');
 if (receipt.modelTurn?.status !== 'fixture-only') failures.push('modelTurn');
 if (receipt.productBoundary?.defaultChanged !== false) failures.push('defaultChanged');
 if (receipt.productBoundary?.silentFallback !== false) failures.push('silentFallback');

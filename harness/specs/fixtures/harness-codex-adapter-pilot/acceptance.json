@@ -127,5 +127,29 @@
   "modelTurn": {
     "status": "fixture-only",
     "reason": "No provider credential was available; lifecycle uses a local mock ACP agent."
+  },
+  "sourceLedger": {
+    "path": "harness/specs/fixtures/harness-codex-authority-baseline/verseSearch-sources.json",
+    "acp": [
+      "acp-overview",
+      "acp-session-modes"
+    ],
+    "opencode": [
+      "opencode-acp",
+      "opencode-sdk",
+      "opencode-server"
+    ],
+    "codex": [
+      "codex-readme",
+      "codex-app-server"
+    ],
+    "usage": "official-source readback only; not evidence of local availability or model quality"
+  },
+  "rollback": {
+    "adapterRegistered": false,
+    "selectorAdded": false,
+    "productPathChanged": false,
+    "disableBy": "do not register or select the adapter; no product default path exists",
+    "residual": "installed dependency manifests remain in the repository; no process or credential retained"
   }
 }

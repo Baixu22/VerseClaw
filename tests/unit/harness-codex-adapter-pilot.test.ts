@@ -35,6 +35,10 @@ describe("TF-0568 adapter contract and pilot", () => {
     expect(receipt.opencodeBaseline.binaryVersionExitCode).toBe(0);
     expect(receipt.opencodeBaseline.modelTurn).toBe("failed-before-turn");
     expect(receipt.protocolLifecycle.status).toBe("pass");
+    expect(receipt.sourceLedger.path).toContain("verseSearch-sources.json");
+    expect(receipt.sourceLedger.opencode).toContain("opencode-acp");
+    expect(receipt.rollback.adapterRegistered).toBe(false);
+    expect(receipt.rollback.productPathChanged).toBe(false);
     expect(receipt.protocolLifecycle.fixture).toBe("mock-acp-lifecycle.json");
     expect(receipt.modelTurn.status).toBe("fixture-only");
     for (const key of ["nativeOpenClaw", "codexAppServer", "acpxCodex", "opencode"]) {
