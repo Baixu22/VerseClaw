@@ -40,7 +40,13 @@ describe("TF-0568 adapter contract and pilot", () => {
     expect(receipt.rollback.adapterRegistered).toBe(false);
     expect(receipt.rollback.productPathChanged).toBe(false);
     expect(receipt.protocolLifecycle.fixture).toBe("mock-acp-lifecycle.json");
-    expect(receipt.modelTurn.status).toBe("fixture-only");
+    expect(receipt.modelTurn.status).toBe("pass");
+    const real = JSON.parse(readFileSync(resolve(ROOT, FIXTURE, "real-turns.json"), "utf8"));
+    expect(real.results.directResponses.quality).toBe("pass");
+    expect(real.results.nativeOpenClaw.quality).toBe("pass");
+    expect(real.results.acpxCodex.quality).toBe("pass");
+    expect(real.comparison.latency.acpxCodexWallMs).toBeGreaterThan(0);
+    expect(real.comparison.currencyCost).toContain("not-run");
     for (const key of ["nativeOpenClaw", "codexAppServer", "acpxCodex", "opencode"]) {
       expect(receipt.comparisons[key].quality).toBe("not-run");
       expect(receipt.comparisons[key].latency).toBe("not-run");

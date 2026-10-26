@@ -93,7 +93,7 @@
     }
   },
   "failClosed": {
-    "acpxCodex": "initialize succeeded; auth methods are explicit and no turn was attempted without credentials",
+    "acpxCodex": "unauthenticated isolated CODEX_HOME failed closed; with explicit OPENAI_API_KEY the real turn passed",
     "opencode": "local session failure; adapter not promoted"
   },
   "productBoundary": {
@@ -125,8 +125,85 @@
     }
   },
   "modelTurn": {
-    "status": "fixture-only",
-    "reason": "No provider credential was available; lifecycle uses a local mock ACP agent."
+    "status": "pass",
+    "fixture": "real-turns.json",
+    "scenario": {
+      "prompt": "Reply with exactly: PILOT_OK",
+      "expectedOutput": "PILOT_OK",
+      "model": "space-bunny",
+      "endpoint": "http://127.0.0.1:3065/v1",
+      "qualityRule": "exact string match"
+    },
+    "results": {
+      "directResponses": {
+        "path": "/v1/responses",
+        "wallMs": 5879,
+        "output": "PILOT_OK",
+        "quality": "pass",
+        "usage": {
+          "inputTokens": 162,
+          "cachedInputTokens": 128,
+          "outputTokens": 10,
+          "reasoningTokens": 5,
+          "totalTokens": 172
+        },
+        "currencyCost": "unknown",
+        "responseId": "01a1776dca767c1486a890246143244c"
+      },
+      "nativeOpenClaw": {
+        "path": "Gateway chat.send -> native OpenClaw embedded agent",
+        "wallMs": 28683,
+        "runtimeMs": 4466,
+        "output": "PILOT_OK",
+        "quality": "pass",
+        "usage": {
+          "inputTokens": 30207,
+          "outputTokens": 6,
+          "cacheReadTokens": 142,
+          "cacheWriteTokens": 0,
+          "totalTokens": 30355
+        },
+        "currencyCost": "unknown",
+        "sessionId": "439ac9ae-5ee5-4b1d-962f-86ddc75e153b",
+        "responseId": "01a177a3715c736da3edf4ec4846c4f4"
+      },
+      "acpxCodex": {
+        "path": "ACPX Codex adapter -> Codex app-server (ACP)",
+        "wallMs": 13105,
+        "output": "PILOT_OK",
+        "quality": "pass",
+        "usage": {
+          "usedTokens": 16396,
+          "contextSize": 258400
+        },
+        "currencyCost": "unknown",
+        "sessionId": "01a177a5-b39a-70f3-807f-27e7c4cf0fd0",
+        "warnings": [
+          "Model metadata for space-bunny not found; fallback metadata used"
+        ]
+      }
+    },
+    "comparison": {
+      "quality": "all three produced exact expected output",
+      "latency": {
+        "directResponsesMs": 5879,
+        "nativeWallMs": 28683,
+        "nativeRuntimeMs": 4466,
+        "acpxCodexWallMs": 13105
+      },
+      "tokenUsage": {
+        "directResponses": 172,
+        "nativeTotal": 30355,
+        "acpxCodexUsed": 16396
+      },
+      "currencyCost": "not-run: endpoint returned token usage but no pricing"
+    },
+    "limitations": [
+      "Latency is single-run agent wall time, not P50/P95.",
+      "Native wall time includes client polling; runtimeMs is the Gateway session runtime.",
+      "ACDX Codex reported fallback model metadata for space-bunny.",
+      "No currency pricing was returned; only token usage is comparable."
+    ]
   },
   "sourceLedger": {
     "path": "harness/specs/fixtures/harness-codex-authority-baseline/verseSearch-sources.json",

@@ -2304,3 +2304,11 @@ openclaw_runtime/_tmp_*
 !/harness/specs/fixtures/versebrowser-invocation-maturity/current-merge-20261025/comms-compare.log
 !/harness/specs/fixtures/versebrowser-invocation-maturity/current-merge-20261025/comms-replay.log
 !/harness/specs/fixtures/versebrowser-invocation-maturity/current-merge-20261025/typecheck-final.log
+
+# Root OpenClaw runtime state and first-run templates (agent-local; not source)
+/.openclaw/
+/HEARTBEAT.md
+/IDENTITY.md
+/SOUL.md
+/TOOLS.md
+/USER.md

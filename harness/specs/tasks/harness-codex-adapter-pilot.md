@@ -6,6 +6,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Define one adapter contract and run one real adapter pilot without adding a selector, default path, scheduler, or second product authority.
 touchedAreas:
+  - .gitignore
   - shared/harness-adapter-contract.ts
   - scripts/verify-harness-adapter-pilot.mjs
   - scripts/mock-acp-agent.mjs
