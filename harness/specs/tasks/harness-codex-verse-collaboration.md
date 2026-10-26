@@ -7,6 +7,32 @@ taskType: runtime-bridge
 intent: Prove one real VerseBrowser, VerseShell and VerseGit collaboration seam while keeping each product owner authoritative and the harness execution-only.
 touchedAreas:
   - tests/e2e/versegit-candidate-apply.spec.ts
+  # Predecessor TF-0567/TF-0568 paths on this branch.
+  - .gitignore
+  - docs/modules/harness-and-codex.md
+  - openclaw_runtime/src/gateway/session-effective-policy.ts
+  - shared/types/session-effective-policy.ts
+  - src/pages/Chat/SessionActivityPanel.tsx
+  - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ru/chat.json
+  - shared/i18n/locales/zh/chat.json
+  - tests/e2e/chat-run-state-events.spec.ts
+  - tests/e2e/fixtures/electron.ts
+  - tests/e2e/long-session-policy-surface.spec.ts
+  - tests/unit/long-session-effective-policy.test.ts
+  - tests/unit/session-activity-panel-sections.test.tsx
+  - tests/unit/session-activity-store-scope.test.ts
+  - shared/harness-adapter-contract.ts
+  - scripts/verify-harness-adapter-pilot.mjs
+  - scripts/mock-acp-agent.mjs
+  - scripts/mock-acp-client.mjs
+  - harness/specs/tasks/harness-codex-adapter-pilot.md
+  - harness/specs/fixtures/harness-codex-adapter-pilot/**
+  - harness/specs/tasks/harness-codex-product-integration.md
+  - harness/specs/fixtures/harness-codex-product-integration/**
+  - tests/unit/harness-codex-adapter-pilot.test.ts
+  - tests/unit/harness-codex-product-integration.test.ts
   - harness/specs/tasks/harness-codex-verse-collaboration.md
   - harness/specs/fixtures/harness-codex-verse-collaboration/**
   - tests/unit/harness-codex-verse-collaboration.test.ts
@@ -16,6 +42,7 @@ expectedUserBehavior:
   - VerseGit provides workspace/session/candidate/advisory facts but cannot replace harness verdict, task completion or Git apply.
 requiredProfiles:
   - fast
+  - comms
 requiredRules:
   - contract-first-boundary
   - renderer-main-boundary
