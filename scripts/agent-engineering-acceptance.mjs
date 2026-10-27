@@ -116,7 +116,7 @@ function runPlan(args) {
     mode: args.mode || 'full',
   });
   const outputDir = outputDirFrom(args, root, manifest.runId);
-  writePlan(outputDir, manifest);
+  writePlan(outputDir, manifest, root);
   printJson({
     schema: manifest.schema,
     runId: manifest.runId,
@@ -178,7 +178,7 @@ function runFull(args) {
   });
   preflightConvergence(root, manifest);
   const outputDir = outputDirFrom(args, root, manifest.runId);
-  writePlan(outputDir, manifest);
+  writePlan(outputDir, manifest, root);
   const executor = runAcceptance(manifest, {
     sourceRoot: root,
     outputDir,

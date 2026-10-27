@@ -60,7 +60,7 @@ must still require counts when directory, filter, or workspace options precede t
 
 ## R4: Output is isolated
 
-Every run writes a unique output directory. A controlled adapter may run a legacy suite only in
+Every run writes a unique output directory. Plan and run output roots are checked against the explicit `--root` source root, never a process-global repository root. A path outside that source root is allowed; a path inside it is allowed only below `artifacts/agent-engineering-acceptance/`. Traversal and overlapping roots are rejected before any report is written. A controlled adapter may run a legacy suite only in
 its disposable detached worktree and must copy its resulting evidence into that run directory;
 it must never overwrite the shared canonical evidence. TF-0009 remains an engineering-only
 adapter: its report must retain `humanEquivalent=false`, `liveEvidence=false`,

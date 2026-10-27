@@ -2388,8 +2388,8 @@ export function readAcceptanceStatus(outputRoot = DEFAULT_OUTPUT_ROOT) {
   return { schema: ACCEPTANCE_SCHEMA, outputRoot: '<redacted>', runs, latest: runs[0] ?? null, counts };
 }
 
-export function writePlan(outputDir, manifest) {
-  const target = assertSafeOutputDirectory(outputDir, REPOSITORY_ROOT);
+export function writePlan(outputDir, manifest, sourceRoot = REPOSITORY_ROOT) {
+  const target = assertSafeOutputDirectory(outputDir, sourceRoot);
   ensureDirectory(target);
   writeJson(join(target, 'manifest.json'), manifest);
   writeJson(join(target, 'plan.json'), {

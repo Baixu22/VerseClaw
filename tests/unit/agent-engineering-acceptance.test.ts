@@ -1,17 +1,19 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ACCEPTANCE_SCHEMA,
   TF0009_ADAPTER_ID,
+  assertSafeOutputDirectory,
   type AcceptanceGate,
   type AcceptanceManifest,
   type AcceptanceReport,
   createAcceptancePlan,
+  defaults,
   digestManifest,
   digestPlan,
   digestReport,
@@ -31,6 +33,7 @@ import {
   validateExecutorEvidence,
   validateReportEvidence,
   verifyAcceptance as verifyActualAcceptance,
+  writePlan,
 } from '../../scripts/lib/agent-engineering-acceptance.mjs';
 import { main as acceptanceCliMain } from '../../scripts/agent-engineering-acceptance.mjs';
 import {
@@ -70,6 +73,28 @@ function git(root: string, args: string[]) {
 
 function gitText(root: string, args: string[]) {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
+}
+
+function createCliOutputRoot(label: string) {
+  const outputDir = mkdtempSync(join(defaults.repositoryRoot, 'artifacts', 'agent-engineering-acceptance', `tf0575-${label}-`));
+  temporaryPaths.push(outputDir);
+  return outputDir;
+}
+
+function directoryFingerprint(directory: string) {
+  if (!existsSync(directory)) return null;
+  const entries: string[] = [];
+  const walk = (current: string, prefix: string) => {
+    const stat = statSync(current);
+    if (!stat.isDirectory()) {
+      entries.push(`${prefix}:${stat.size}:${sha256File(current)}`);
+      return;
+    }
+    entries.push(`${prefix}/`);
+    for (const name of readdirSync(current).sort()) walk(join(current, name), `${prefix}/${name}`);
+  };
+  walk(directory, '');
+  return entries.sort().join('|');
 }
 
 function createFixtureRepository() {
@@ -1250,8 +1275,7 @@ describe('Agent Engineering Acceptance', () => {
 
   it('fails closed for a missing --since ref and never falls back to the HEAD file list', () => {
     const specPath = 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md';
-    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-cli-'));
-    temporaryPaths.push(outputDir);
+    const outputDir = createCliOutputRoot('missing-since');
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
     try {
@@ -1279,8 +1303,7 @@ describe('Agent Engineering Acceptance', () => {
 
   it('CLI plan with an explicit since succeeds and a TLS-poisoned full run persists a NO-GO final report', () => {
     const specPath = 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md';
-    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-cli-'));
-    temporaryPaths.push(outputDir);
+    const outputDir = createCliOutputRoot('explicit-since');
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     try {
       const planExit = acceptanceCliMain(['plan', '--spec', specPath, '--since', 'HEAD^', '--output-dir', outputDir]);
@@ -1314,6 +1337,63 @@ describe('Agent Engineering Acceptance', () => {
     } finally {
       log.mockRestore();
     }
+  });
+
+  describe('output root contract', () => {
+    it('accepts in-tree dedicated and out-of-tree roots while rejecting unsafe in-tree roots', () => {
+      const root = createFixtureRepository();
+      const manifest = createManifest(root);
+      const allowedInTree = join(root, 'artifacts', 'agent-engineering-acceptance', 'allowed-in-tree');
+      const allowedOutside = join(resolve(root, '..'), `${manifest.task.id}-explicit-outside`);
+      temporaryPaths.push(allowedInTree, allowedOutside);
+
+      for (const allowed of [allowedInTree, allowedOutside]) {
+        expect(assertSafeOutputDirectory(allowed, root)).toBe(allowed);
+        expect(writePlan(allowed, manifest, root)).toBe(allowed);
+        expect(existsSync(join(allowed, 'manifest.json'))).toBe(true);
+        expect(existsSync(join(allowed, 'plan.json'))).toBe(true);
+      }
+
+      for (const rejected of [
+        join(root, '.tmp', 'unconfigured'),
+        root,
+        join(root, 'artifacts', 'unrelated'),
+        resolve(root, 'artifacts', 'agent-engineering-acceptance', '..', '..', 'escaped'),
+      ]) {
+        expect(() => assertSafeOutputDirectory(rejected, root)).toThrow(/outside source root or under artifacts\/agent-engineering-acceptance\//u);
+        expect(() => writePlan(rejected, manifest, root)).toThrow(/outside source root or under artifacts\/agent-engineering-acceptance\//u);
+        expect(existsSync(join(rejected, 'manifest.json'))).toBe(false);
+      }
+    });
+
+    it('validates CLI plan output against the explicit --root source root', () => {
+      const { root, base, specPath } = createConvergencePreflightFixture();
+      const outside = join(root, '..', 'a2-explicit-cli-outside');
+      const inTree = join(root, 'artifacts', 'agent-engineering-acceptance', 'a2-explicit-cli-inside');
+      temporaryPaths.push(outside, inTree);
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+      try {
+        for (const outputDir of [outside, inTree]) {
+          expect(acceptanceCliMain(['plan', '--root', root, '--spec', specPath, '--since', base, '--output-dir', outputDir])).toBe(0);
+          expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
+          expect(acceptanceCliMain(['status', '--root', root, '--output-dir', outputDir])).toBe(0);
+        }
+
+        const illegal = join(root, '.tmp', 'a2-illegal');
+        const traversal = resolve(root, 'artifacts', 'agent-engineering-acceptance', '..', '..', 'escaped-cli');
+        const rootFingerprint = directoryFingerprint(root);
+        expect(acceptanceCliMain(['plan', '--root', root, '--spec', specPath, '--since', base, '--output-dir', illegal])).toBe(1);
+        expect(existsSync(join(illegal, 'manifest.json'))).toBe(false);
+        expect(acceptanceCliMain(['plan', '--root', root, '--spec', specPath, '--since', base, '--output-dir', traversal])).toBe(1);
+        expect(existsSync(traversal)).toBe(false);
+        expect(directoryFingerprint(root)).toBe(rootFingerprint);
+        expect(error.mock.calls.flat().join('\n')).toContain('acceptance output must be outside source root or under artifacts/agent-engineering-acceptance/');
+      } finally {
+        log.mockRestore();
+        error.mockRestore();
+      }
+    });
   });
 
   it('status sees nested default-layout runs and ignores internal verifier subdirectories', () => {

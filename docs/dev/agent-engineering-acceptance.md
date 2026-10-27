@@ -21,6 +21,10 @@ shortcut around the gates: a failed, timed-out, skipped, stale, or tampered resu
 The normal final profile is `full`; the optional fast profile is diagnostic evidence only and can
 never set `engineeringAcceptedByAgent=true`.
 
+## Output root safety
+
+Plan and run output roots are validated against the source root selected by `--root`. A root outside the source tree is valid. A root inside the source tree is valid only below `artifacts/agent-engineering-acceptance/`; every other in-tree path, including `.tmp/`, and any traversal out of the output directory fails closed before a manifest or report is written. Tests must choose their roots explicitly so the result does not depend on the host temp variable.
+
 ## Evidence contract
 
 Each run gets its own ignored directory under

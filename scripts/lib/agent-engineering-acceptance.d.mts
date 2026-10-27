@@ -173,5 +173,6 @@ export function verifyAcceptance(
   options?: Record<string, unknown>,
 ): AcceptanceReport;
 export function readAcceptanceStatus(outputRoot?: string): AcceptanceStatus;
-export function writePlan(outputDir: string, manifest: AcceptanceManifest): void;
+export const defaults: Readonly<{ repositoryRoot: string; outputRoot: string; timeoutMs: number }>;
+export function writePlan(outputDir: string, manifest: AcceptanceManifest, sourceRoot?: string): string;
 export function loadManifest(manifestPath: string): AcceptanceManifest;

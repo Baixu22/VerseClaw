@@ -13,12 +13,17 @@ requiredRules:
 touchedAreas:
   - harness/specs/tasks/product-acceptance-closeout.md
   - harness/specs/tasks/runtime-memory-retirement-closeout.md
+  - harness/specs/tasks/independent-acceptance-runner-output-roots.md
   - harness/specs/guides/product-acceptance-strategy.md
   - harness/specs/fixtures/product-acceptance-shortfalls/**
   - harness/specs/fixtures/product-acceptance-research/**
   - harness/specs/fixtures/product-acceptance-closeout/**
   - scripts/agent-engineering-acceptance.mjs
   - scripts/lib/agent-engineering-acceptance.mjs
+  - scripts/lib/agent-engineering-acceptance.d.mts
+  - tests/unit/agent-engineering-acceptance.test.ts
+  - docs/dev/agent-engineering-acceptance.md
+  - harness/specs/rules/agent-engineering-acceptance-boundary.md
   - tests/unit/product-acceptance-shortfalls.test.ts
   - tests/unit/task-loop-controller.test.ts
   - tests/unit/runtime-memory-context-contracts.test.ts
