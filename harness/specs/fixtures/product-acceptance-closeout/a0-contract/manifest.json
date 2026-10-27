@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+  "node": "TF-0573",
+  "title": "Freeze acceptance contract, resources and failure baseline",
+  "runId": "a0-contract-20261027",
+  "generatedAt": "2026-10-27T12:29:48.2835801+08:00",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": {
+    "commit": "082836ef4ae37b4d9e24bf35aa99b7a610e5f6a0",
+    "tree": "dd6f45cc7d9ebb0ec5e579a7491d4667f8c0707a",
+    "dirty": true,
+    "dirtyPaths": [
+      "docs/README.md",
+      "harness/specs/fixtures/product-acceptance-research/",
+      "harness/specs/fixtures/product-acceptance-shortfalls/",
+      "harness/specs/guides/product-acceptance-strategy.md",
+      "harness/specs/tasks/product-acceptance-closeout.md",
+      "tests/unit/product-acceptance-shortfalls.test.ts"
+    ],
+    "baselineOnly": "This contract-freeze candidate is intentionally dirty. It does not claim clean-candidate resolution evidence."
+  },
+  "scope": "Contract, ledger verifier, historical failure baseline and resource boundaries only; no product repair or GA claim.",
+  "commandsRun": [
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/product-acceptance-closeout.md",
+      "exitCode": 0,
+      "classification": "fresh",
+      "note": "Initial field correction followed by a passing re-run."
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/harness-specs.test.ts tests/unit/docs-index.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "classification": "fresh",
+      "note": "2 files / 46 tests passed."
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/product-acceptance-shortfalls.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "classification": "fresh",
+      "note": "1 file / 10 tests passed after verifier correction."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "harness/specs/tasks/product-acceptance-closeout.md",
+      "sha256": "6490305477a77bf688595a8464539dcb4ad0a62974f6ef5d7ad1ea5f0d347696",
+      "bytes": 16208
+    },
+    {
+      "path": "harness/specs/guides/product-acceptance-strategy.md",
+      "sha256": "4b68dde1a54cf84bb7309f374333b28ab20d449473d502d962f81425d7d733f0",
+      "bytes": 30317
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-shortfalls/ledger.json",
+      "sha256": "afb7be4cb102b85c67cbd01c7826b820e1129c3c3e030c84ca0d9e19610c3f49",
+      "bytes": 13585
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-research/sources.json",
+      "sha256": "176939efcb01ce24a34dead09eec5fbd285fadac7986004d286164205f8c6d89",
+      "bytes": 20552
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-research/research-report.json",
+      "sha256": "5afb6bc2c6015ea0c3a7ed6ff23b30257e130073952091f2b5352c2090ac6b93",
+      "bytes": 5532
+    },
+    {
+      "path": "tests/unit/product-acceptance-shortfalls.test.ts",
+      "sha256": "022e287c4c419e7186648eb96efd12e3a4c89eae95be3b820c57558c2c80e616",
+      "bytes": 29346
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "7d680747d733f76520d5503189ee02dd1976a6c8e6d676f82d9ac00025c1f32e",
+      "bytes": 5202
+    }
+  ],
+  "historicalBaselines": [
+    {
+      "id": "runtime-memory-unit",
+      "report": "64 passed / 3 failed",
+      "currentCandidateRun": false,
+      "status": "reported-but-local-artifact-missing",
+      "artifact": {
+        "path": ".tmp/ga-review-unit-rerun.log",
+        "sha256": null,
+        "bytes": null
+      },
+      "note": "Historical observation; not a current gate. The local log is absent; the reported count is not re-verified."
+    },
+    {
+      "id": "agent-acceptance-runner",
+      "report": "74 total / 72 passed / 2 failed / 0 skipped",
+      "currentCandidateRun": false,
+      "status": "reported-and-hash-recorded",
+      "artifact": {
+        "path": ".tmp/acceptance-runner-failures.json",
+        "sha256": "07598d611631decade574ed6131021b0c79403da245996ba29b6c6de4a56a75c",
+        "bytes": 28622
+      },
+      "note": "Historical observation; fixture output-root failures remain input to TF-0575."
+    },
+    {
+      "id": "coding-loop-e2e",
+      "report": "1 failed / turn did not reach final response",
+      "currentCandidateRun": false,
+      "status": "reported-and-hash-recorded",
+      "artifact": {
+        "path": ".tmp/ga-review-e2e-workspace-temp.log",
+        "sha256": "04fb17498c0599610cdfeb3fc9004a84a537af11ab74dab6cd28b8efc71ce57d",
+        "bytes": 20414
+      },
+      "note": "Historical E2E observation; no L3 effect proof."
+    },
+    {
+      "id": "full-typecheck",
+      "report": "exit 0",
+      "currentCandidateRun": false,
+      "status": "reported-and-hash-recorded",
+      "artifact": {
+        "path": ".tmp/ga-review-typecheck.log",
+        "sha256": "8e6c5083658cd8ff206190ea132e455581ad3bceb01dc2fe520da38d78b8aacf",
+        "bytes": 1586
+      },
+      "note": "Historical successful observation only; fresh aggregate gate is still required."
+    }
+  ],
+  "resourceBoundaries": {
+    "model": "space-bunny local Responses endpoint; credential only via child process environment",
+    "testProject": "C:/Users/27933/Desktop/bad-shit/moyu; disposable copies only",
+    "evidenceRedaction": "no raw key, headers, private prompts or test-project secrets",
+    "uiActor": "agent",
+    "realHumanEvidence": false,
+    "publication": "not authorized",
+    "productLocks": "unchanged"
+  },
+  "verdict": {
+    "functionalReadiness": "needs-fix",
+    "distributionReadiness": "not-run",
+    "releaseApproved": false,
+    "productApproved": false,
+    "liveReady": false,
+    "defaultOn": false,
+    "basis": "Five original shortfalls remain open and the current checkout has no packaged artifact."
+  },
+  "limitations": [
+    "No live-provider run in this node.",
+    "No packaged/install-state artifact in this node.",
+    "The worktree is intentionally dirty while the contract is authored; resolution evidence must be clean-candidate bound.",
+    "The runtime-memory 64/3 observation has no local raw log in this checkout; it is retained as a reported baseline, not re-verified evidence.",
+    "No real-human evidence is claimed.",
+    "This node proves the contract and verifier, not that the five product shortfalls are fixed.",
+    "This node proves the contract and verifier, not that the five product shortfalls are fixed."
+  ],
+  "recoveryIndex": "Read sourceFiles[].path and historicalBaselines[].artifact.path; missing local raw logs are explicitly marked absent.",
+  "rawRunArtifacts": [
+    {
+      "id": "focused-vitest",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-contract-20261027\\focused-vitest.log",
+      "sha256": "f5f0796a250b5d50bed3ff486fc5330778196a6690c9d2cdd505b8eaab42bafc",
+      "bytes": 205
+    },
+    {
+      "id": "docs-policy",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-contract-20261027\\docs-policy.log",
+      "sha256": "43e480f46be2861ec4ff1240859bee1a2838f4274cde2b313f8054e468b8a85f",
+      "bytes": 676
+    },
+    {
+      "id": "harness-validate",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-contract-20261027\\harness-validate.log",
+      "sha256": "702b8f159cdf0d798ef66f26ed7e2b23f0438f48294ac5f0a3da597053ca29af",
+      "bytes": 284
+    },
+    {
+      "id": "harness-dry-run",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-contract-20261027\\harness-dry-run.log",
+      "sha256": "43c117e8dd97eacc8b289374eac9d14b35207efdaf65a45efd212b0e2bbadb27",
+      "bytes": 307
+    },
+    {
+      "id": "git-diff-check",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-contract-20261027\\git-diff-check.log",
+      "sha256": "90af5d20cb8ec76808a7bb93202ab6770a3cabe4db00a368467b4bcf56db4ea7",
+      "bytes": 134
+    }
+  ],
+  "verification": {
+    "focusedVitest": "3 files / 56 tests passed / exit 0",
+    "docsPolicy": "10 checks passed / exit 0",
+    "harnessValidate": "pass / exit 0",
+    "harnessDryRun": "pass / exit 0",
+    "gitDiffCheck": "pass / exit 0",
+    "ledgerVerifier": "10 tests passed / current five remain open",
+    "manifestChecksum": "verified after reseal"
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "ProductAcceptanceShortfallLedger/v1",
+  "generatedAt": "2026-10-27",
+  "driven_by": "agent",
+  "actor": "codex-clawx-ga-review-20261027",
+  "policy": "harness/specs/guides/product-acceptance-strategy.md",
+  "vocabulary": {
+    "levels": [
+      "source",
+      "automated",
+      "runtime",
+      "effect",
+      "packaged",
+      "operational",
+      "release-approved"
+    ],
+    "status": [
+      "open",
+      "in-progress",
+      "resolved"
+    ],
+    "dimensions": [
+      "functional",
+      "failure-handling",
+      "recovery",
+      "operational",
+      "non-functional",
+      "security",
+      "accessibility",
+      "compatibility",
+      "documentation",
+      "test-integrity"
+    ]
+  },
+  "boundaries": {
+    "productApproved": false,
+    "releaseApproved": false,
+    "realHumanEvidence": false,
+    "note": "This ledger records known acceptance gaps. It does not authorize release, GA, or any product-default change."
+  },
+  "shortfalls": [
+    {
+      "id": "runtime-memory-retired-test-contract",
+      "surface": "task-loop-controller runtime-memory shadow persistence",
+      "level": "automated",
+      "dimension": "functional",
+      "gap": "3 unit tests still assert write and replay of Runtime Memory shadow/persist, but resolveRuntimeMemoryFeatureFlags permanently retires shadow and persist to false, so the tests fail by design drift rather than product regression.",
+      "evidence": [
+        "openclaw_runtime/src/runtime-core/memory-context.ts:860-865",
+        "tests/unit/task-loop-controller.test.ts:1073",
+        "tests/unit/task-loop-controller.test.ts:1172",
+        "tests/unit/task-loop-controller.test.ts:1258",
+        "D:/ClawX/.tmp/ga-review-unit-rerun.log",
+        "docs/dev/default-config-matrix.md"
+      ],
+      "observed": "Vitest task-loop-controller.test.ts: 64 passed / 3 failed. The failure names are 'writes one sanitized Runtime Memory episode when shadow and persist are both enabled', 'replays the real persisted TaskLoop Runtime Memory episode', 'keeps TaskLoop terminal behavior when Runtime Memory episode writing fails'.",
+      "impact": "Blocking suite is red, so exit criterion '0 failed' is unmet. Product default behavior is unaffected because the flags are retired false; the defect is the test contract, not the runtime path.",
+      "owner": "agent:task-loop-maintainer",
+      "reportedAt": "2026-10-27",
+      "reviewBy": "2026-11-10",
+      "status": "open",
+      "proposedAction": "Align the three tests with the retired-flag semantics (assert skip / no-write), keep at least one negative test for retired configuration input, then re-run the file and the full unit gate.",
+      "shortfallClass": "test-contract-drift",
+      "acceptanceDisposition": "must-resolve-before-ga",
+      "risk": "medium",
+      "dataAtRisk": false,
+      "userVisible": false,
+      "rootCauseClass": "stale-test-contract",
+      "blastRadius": "affected test file and acceptance evidence only; current runtime flag remains retired false",
+      "repairCost": "small",
+      "pathToGa": "align the tests and prove retired-flag negative behavior"
+    },
+    {
+      "id": "coding-loop-e2e-final-response",
+      "surface": "coding loop (read -> edit/write -> verify -> undo)",
+      "level": "runtime",
+      "dimension": "functional",
+      "gap": "The FP-P1-04 E2E executes read, edit, write and bash/node --check, then the scripted local provider drops with 'LLM request failed: network connection error', so the turn never reaches the final response and the journey-level (L3) claim is unmet on this run.",
+      "evidence": [
+        "tests/e2e/coding-loop-fp-p1-04.spec.ts:539-568",
+        "D:/ClawX/.tmp/ga-review-e2e-workspace-temp.log:100",
+        "D:/ClawX/.tmp/ga-review-e2e-workspace-temp.log:106",
+        "D:/ClawX/.tmp/ga-review-e2e-workspace-temp.log:128",
+        "artifacts/first-product-preview/FP-P1-04/e2e-run.log"
+      ],
+      "observed": "Reproduced twice on HEAD 082836ef4 with pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1. Both runs stall at llmRequests=4 with issued=[callread,calledit,callwrite,callbash] and the mock endpoint is local (127.0.0.1).",
+      "impact": "Release-critical coding journey cannot be declared L3-proven on the current candidate. Historical 33.0s full pass exists in artifacts/first-product-preview/FP-P1-04/e2e-run.log, so the capability is not absent, but current-candidate evidence is missing.",
+      "owner": "agent:coding-loop-maintainer",
+      "reportedAt": "2026-10-27",
+      "reviewBy": "2026-11-03",
+      "status": "open",
+      "proposedAction": "Add provider-request diagnostics (connection target, retry, timeout, pid) to the spec, capture the failing HTTP request, fix the 4th-request drop, then rerun three consecutive clean passes plus the negative paths.",
+      "shortfallClass": "product-defect-or-transport-regression",
+      "acceptanceDisposition": "must-resolve-before-ga",
+      "risk": "high",
+      "dataAtRisk": true,
+      "userVisible": true,
+      "rootCauseClass": "undetermined-between-product-runtime-and-test-transport",
+      "blastRadius": "current-candidate coding journey and release-critical L3 evidence",
+      "repairCost": "medium",
+      "pathToGa": "capture the missing provider request boundary, fix the first failing owner and pass three clean runs"
+    },
+    {
+      "id": "e2e-skill-source-mutation",
+      "surface": "Electron E2E launch preflight",
+      "level": "runtime",
+      "dimension": "recovery",
+      "gap": "Launching the E2E app repeatedly deleted four tracked QQBot skill files under openclaw_runtime/extensions/qqbot/skills/ during Gateway startup, leaving the git worktree dirty until manually restored. Root cause is not yet identified; plugin-skills publish and trim functions are candidates, but a standard junction removal probe did not reproduce target deletion.",
+      "evidence": [
+        "D:/tmp/clawx-ga-review-20261026/post-test-source-diff.txt",
+        "openclaw_runtime/src/skills/loading/plugin-skills.ts:198-275",
+        "electron/utils/skill-config.ts:249-280",
+        "electron/gateway/config-sync.ts:455-470"
+      ],
+      "observed": "git status showed 'D openclaw_runtime/extensions/qqbot/skills/qqbot-channel/SKILL.md' plus 3 sibling files after each of two E2E launches. Files were restored with git restore --source=HEAD. Repo HEAD was unchanged and no source edit was intended.",
+      "impact": "Any E2E or normal startup path that deletes tracked source files corrupts the working tree and can silently alter packaged inputs. It also makes clean-candidate evidence unreliable.",
+      "owner": "agent:electron-startup-maintainer",
+      "reportedAt": "2026-10-27",
+      "reviewBy": "2026-11-03",
+      "status": "open",
+      "proposedAction": "Instrument skill-root cleanup paths to log path, realpath, link type and decision before deletion; add an E2E guard that fails when tracked files change; then fix and rerun the full E2E suite.",
+      "shortfallClass": "test-and-runtime-boundary-defect",
+      "acceptanceDisposition": "must-resolve-before-ga",
+      "risk": "high",
+      "dataAtRisk": true,
+      "userVisible": false,
+      "rootCauseClass": "undetermined-test-or-runtime-boundary",
+      "blastRadius": "tracked source inputs during E2E; may invalidate clean-candidate and package evidence",
+      "repairCost": "medium",
+      "pathToGa": "instrument deletion paths, add a tracked-file mutation guard and rerun launch/full E2E"
+    },
+    {
+      "id": "agent-acceptance-harness-unconfigured-test-dirs",
+      "surface": "independent Executor/Verifier acceptance runner",
+      "level": "automated",
+      "dimension": "test-integrity",
+      "gap": "Two existing CLI plan tests fail because their temporary output directories are rejected as outside the source root unless the output is under artifacts/agent-engineering-acceptance. The runner correctly fails closed; the tests did not construct the permitted output location.",
+      "evidence": [
+        "tests/unit/agent-engineering-acceptance.test.ts:1287",
+        "tests/unit/agent-engineering-acceptance.test.ts:1503",
+        "scripts/lib/agent-engineering-acceptance.mjs:1023",
+        "D:/ClawX/.tmp/acceptance-runner-failures.json"
+      ],
+      "impact": "The independent acceptance protocol cannot yet be treated as a green reusable GA orchestrator: 72 tests pass but two plan-path tests fail before the actual acceptance gates run.",
+      "owner": "agent:acceptance-maintainer",
+      "reportedAt": "2026-10-27",
+      "reviewBy": "2026-11-03",
+      "status": "open",
+      "proposedAction": "Change the fixtures to use permitted temporary output roots while retaining the path-rejection negative assertion, then rerun the focused file and the independent acceptance path.",
+      "shortfallClass": "test-harness-path-contract",
+      "acceptanceDisposition": "must-resolve-before-ga",
+      "risk": "medium",
+      "dataAtRisk": false,
+      "userVisible": false,
+      "rootCauseClass": "test-fixture-path-drift",
+      "blastRadius": "the independent acceptance orchestrator tests and confidence in the GA aggregation path",
+      "repairCost": "small",
+      "pathToGa": "fix fixture output roots, preserve negative path tests and pass all 74 focused tests",
+      "observed": "Vitest JSON: 3 files, 72 passed / 2 failed / 0 skipped (74 total), exit 1, 188.5s. Failures are the two CLI plan tests at tests/unit/agent-engineering-acceptance.test.ts:1287 and :1503; each exits 1 before a manifest is written because the fixture output root is rejected."
+    },
+    {
+      "id": "qa-lab-scenario-pack-not-present",
+      "surface": "QA Lab agent-driven scenario runner",
+      "level": "automated",
+      "dimension": "test-integrity",
+      "gap": "The QA Lab scenario catalog expects qa/scenarios/index.md and individual qa-scenario/qa-flow Markdown fixtures, but the current checkout has no qa/scenarios directory. Scenario IDs are declared while the loader intentionally returns an empty pack, so the agent-driven pack cannot currently execute in this candidate.",
+      "evidence": [
+        "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.ts:242",
+        "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.ts:243",
+        "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.ts:353",
+        "openclaw_runtime/extensions/qa-lab/src/scenario-packs.ts:11"
+      ],
+      "impact": "The reusable QA Lab engine and provider modes exist, but no current-candidate agent scenario can be run from this checkout. This blocks an agent-driven UAT claim until tracked scenarios and a smoke receipt exist.",
+      "owner": "agent:qa-lab-maintainer",
+      "reportedAt": "2026-10-27",
+      "reviewBy": "2026-11-03",
+      "status": "open",
+      "proposedAction": "Restore or author the canonical qa/scenarios index and a minimal personal-agent pack, run it with mock-openai in a disposable profile and retain the suite summary and failure bundle.",
+      "shortfallClass": "missing-test-fixture-pack",
+      "acceptanceDisposition": "must-resolve-before-ga",
+      "risk": "medium",
+      "dataAtRisk": false,
+      "userVisible": false,
+      "rootCauseClass": "scenario-catalog-source-absent",
+      "blastRadius": "agent-driven scenario acceptance and any claim that personal-agent QA pack is runnable",
+      "repairCost": "medium",
+      "pathToGa": "add tracked scenario fixtures and prove one mock-provider pack run plus one negative/recovery case",
+      "observed": "See evidence refs for the current observed result."
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "open": 5,
+    "inProgress": 0,
+    "resolved": 0,
+    "blocking": [
+      "runtime-memory-retired-test-contract",
+      "coding-loop-e2e-final-response",
+      "agent-acceptance-harness-unconfigured-test-dirs",
+      "qa-lab-scenario-pack-not-present",
+      "e2e-skill-source-mutation"
+    ],
+    "accepted": [],
+    "byDisposition": {
+      "must-resolve-before-ga": 5
+    },
+    "residualLimits": [
+      "Windows x64 local source-build evidence only unless a separate platform receipt says otherwise",
+      "No packaged/install-state artifact exists in the current checkout",
+      "No real-provider or real-human evidence is claimed",
+      "Mock-provider evidence proves control flow and tool semantics, not live model quality",
+      "Historical passes do not replace current-candidate reruns"
+    ]
+  },
+  "acceptancePolicy": {
+    "resolutionOrder": [
+      "fix-the-product-or-test-contract",
+      "record-an-accepted-shortfall-with-owner-review-date-and-rollback",
+      "only-then-evaluate-release-readiness"
+    ],
+    "blockedByAnyOf": [
+      "unexpected-test-failure",
+      "current-candidate-critical-journey-not-effect-proven",
+      "unbounded-worktree-or-user-data-mutation",
+      "unresolved-p0-or-p1-defect",
+      "missing-or-stale-release-evidence"
+    ],
+    "acceptedShortfallEligibility": [
+      "not-a-blocking-defect",
+      "impact-blast-radius-and-user-visible-consequence-recorded",
+      "reproduction-evidence-and-failing-oracle-recorded",
+      "rollback-or-kill-switch-recorded",
+      "residual-risk-accepted-with-agent-owner-and-review-date",
+      "release-monitoring-and-quarantine-rule-recorded",
+      "publication-and-product-locks-unchanged"
+    ],
+    "agentEvidenceRule": {
+      "drivenBy": "agent",
+      "realHumanEvidence": false,
+      "deterministicOracleRequired": true,
+      "evaluatorMayOnlyReturn": [
+        "pass",
+        "fail",
+        "unverified"
+      ]
+    }
+  }
+}

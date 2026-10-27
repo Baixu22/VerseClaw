@@ -42,6 +42,7 @@ The deep dives are maintained in Simplified Chinese. Code paths, API names and e
 
 - [Agent development control plane](agent-dev-control-plane.md)
 - [Agent development tooling evaluation](agent-dev-tooling-evaluation.md)
+- [Product acceptance strategy and shortfall ledger](../harness/specs/guides/product-acceptance-strategy.md)
 - [Coding and DCS design lessons](agent-coding-and-dcs-design-lessons.md)
 - [Capability parity for basic chat](codex-capability-parity-basic-chat.md)
 - [DCS production P0 runbook](dcs-production-p0-runbook.md)

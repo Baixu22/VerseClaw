@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "ProductAcceptanceResearch/v1",
+  "generatedAt": "2026-10-27",
+  "driven_by": "agent",
+  "actor": "codex-clawx-ga-review-20261027",
+  "sources": [
+    {
+      "id": "playwright",
+      "title": "Playwright best practices",
+      "url": "https://playwright.dev/docs/best-practices",
+      "use": "Isolated preconditions; user-visible assertions; avoid third-party dependencies"
+    },
+    {
+      "id": "electron",
+      "title": "Playwright Electron automation",
+      "url": "https://playwright.dev/docs/api/class-electron",
+      "use": "Real Electron main process plus renderer windows; main-process deterministic setup"
+    },
+    {
+      "id": "osworld",
+      "title": "OSWorld execution-based evaluation",
+      "url": "https://arxiv.org/html/2404.07972",
+      "use": "Extract final environment state and evaluate it with task-specific functions"
+    },
+    {
+      "id": "windows-agent-arena",
+      "title": "WindowsAgentArena",
+      "url": "https://arxiv.org/html/2409.08264",
+      "use": "High-level tasks, OS observations/actions, bounded episodes and scored end states"
+    },
+    {
+      "id": "midscene",
+      "title": "Midscene.js",
+      "url": "https://midscenejs.com/basics",
+      "use": "Natural-language GUI goals with observation, planning, action and assertion; candidate adapter"
+    },
+    {
+      "id": "test-pyramid",
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "use": "Layer tests by granularity and cost; retain acceptance/system coverage"
+    },
+    {
+      "id": "microsoft-testing",
+      "title": "Microsoft testing architecture strategy",
+      "url": "https://learn.microsoft.com/en-us/azure/well-architected/operational-excellence/testing",
+      "use": "Layered automated coverage with fast feedback and targeted end-to-end tests"
+    },
+    {
+      "id": "agentic-benchmarks",
+      "title": "Rigorous agentic benchmarks",
+      "url": "https://arxiv.org/html/2507.02825v5",
+      "use": "Separate task validity from outcome validity; use executable state and branch coverage"
+    },
+    {
+      "id": "iso-29119",
+      "title": "ISO/IEC/IEEE 29119 testing series",
+      "url": "https://committee.iso.org/sites/jtc1sc7/home/projects/flagship-standards/isoiecieee-29119-series.html",
+      "use": "Organizational, management and dynamic test processes; test documentation"
+    },
+    {
+      "id": "iso-25010",
+      "title": "ISO/IEC 25010 product quality model",
+      "url": "https://www.iso.org/standard/78176.html",
+      "use": "Nine quality characteristics to define measurable acceptance dimensions"
+    },
+    {
+      "id": "ieee-730",
+      "title": "IEEE 730 Software Quality Assurance Plans",
+      "url": "https://standards.ieee.org/ieee/730/5284/",
+      "use": "Verification, validation, review and control activities in an assurance plan"
+    },
+    {
+      "id": "istqb-rbt",
+      "title": "ISTQB risk-based testing",
+      "url": "https://istqb-glossary.page/topics/risk-based-testing/",
+      "use": "Prioritize test selection and depth by likelihood, impact and risk"
+    },
+    {
+      "id": "fast-check",
+      "title": "fast-check property-based testing",
+      "url": "https://fast-check.dev/docs/introduction/what-is-property-based-testing/",
+      "use": "Generate edge cases and invariants beyond example-based inputs"
+    },
+    {
+      "id": "stryker",
+      "title": "StrykerJS mutation testing",
+      "url": "https://stryker-mutator.io/docs/",
+      "use": "Measure whether tests detect intentionally injected defects"
+    },
+    {
+      "id": "axe",
+      "title": "Playwright accessibility testing with axe",
+      "url": "https://playwright.dev/docs/accessibility-testing",
+      "use": "Automate declared accessibility rules; retain keyboard and visual review for uncovered criteria"
+    }
+  ],
+  "toolDecisions": [
+    {
+      "id": "midscene",
+      "authority": "candidate-adapter",
+      "ci": "verify-before-adoption",
+      "why": "natural-language visual GUI exploration",
+      "title": "Midscene.js",
+      "url": "https://midscenejs.com/basics"
+    },
+    {
+      "id": "windows-agent-arena",
+      "authority": "reference-pattern",
+      "ci": "not-a-product-dependency",
+      "why": "bounded OS task episodes and final-state scoring",
+      "title": "WindowsAgentArena",
+      "url": "https://arxiv.org/html/2409.08264"
+    },
+    {
+      "id": "osworld",
+      "authority": "reference-pattern",
+      "ci": "not-a-product-dependency",
+      "why": "task-specific state getters and evaluator functions",
+      "title": "OSWorld execution-based evaluation",
+      "url": "https://arxiv.org/html/2404.07972"
+    },
+    {
+      "id": "fast-check",
+      "authority": "candidate-library",
+      "ci": "pilot-limited",
+      "why": "property and edge-case generation",
+      "title": "fast-check property-based testing",
+      "url": "https://fast-check.dev/docs/introduction/what-is-property-based-testing/"
+    },
+    {
+      "id": "stryker",
+      "authority": "candidate-tool",
+      "ci": "scheduled-or-scoped",
+      "why": "test-oracle mutation score",
+      "title": "StrykerJS mutation testing",
+      "url": "https://stryker-mutator.io/docs/"
+    },
+    {
+      "id": "axe",
+      "authority": "recommended-library",
+      "ci": "yes",
+      "why": "automated accessibility rule coverage",
+      "title": "Playwright accessibility testing with axe",
+      "url": "https://playwright.dev/docs/accessibility-testing"
+    }
+  ]
+}

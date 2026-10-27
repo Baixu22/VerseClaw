@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "ProductAcceptanceResearchSources/v1",
+  "generatedAt": "2026-10-27T00:00:00.000Z",
+  "requestedAt": "2026-10-27",
+  "provider": "Exa Contents",
+  "requestId": "8b5571293252b541db3128c4129513f7",
+  "estimatedCostDollars": 0.01,
+  "query": "acceptance criteria, test layers, deterministic setup, state verification, evaluation methods, agent simulation, limitations",
+  "statuses": [
+    {
+      "id": "https://playwright.dev/docs/best-practices",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://playwright.dev/docs/api/class-electron",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://arxiv.org/html/2404.07972",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://arxiv.org/html/2409.08264",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://www.midscenejs.com/basics",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://learn.microsoft.com/en-us/azure/well-architected/operational-excellence/testing",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://arize.com/docs/ax/concepts/evaluators/evaluator-best-practices",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://arxiv.org/html/2507.02825v5",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://committee.iso.org/sites/jtc1sc7/home/projects/flagship-standards/isoiecieee-29119-series.html",
+      "status": "success",
+      "source": "cached"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Best Practices | Playwright",
+      "url": "https://playwright.dev/docs/best-practices",
+      "citationText": "Each test should be completely isolated from another test and should run independently with its own local storage, session storage, data, cookies etc. Test isolation improves reproducibility, makes debugging easier and prevents cascading test failures."
+    },
+    {
+      "title": "Electron | Playwright",
+      "url": "https://playwright.dev/docs/api/class-electron",
+      "citationText": "API (`dialog.showOpenDialog`, `dialog.showSaveDialog`, ... .showMessageBox`, etc.) because those calls happen in the Electron main process and go straight to OS APIs ... methods in the main process so tests run deterministically without any OS-level UI"
+    },
+    {
+      "title": "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments",
+      "url": "https://arxiv.org/html/2404.07972",
+      "citationText": "##### Execution-based evaluation For each task, we select the appropriate getter functions, evaluator function, and parameters to compose the configuration file. The getter function is used to extract key components (e.g., the modified file, the text contents displayed in a window element) from the final state of the environment, and the evaluator function assesses success based on the extracted key components. If a function does not exist, we will construct it and add it to the function library of the environment. After completing each evaluation, the annotator conducts initial tests with self-designed test cases. Then, in the human evaluation and experiment running phases, each example is further scrutinized and iterated upon by different individuals three times from the perspective of alignment with the instruction and correctness under different solutions. As a result, we implement nearly sample-specific executable evaluation scripts, resulting in a total of 134 unique evaluation functions for assessing functional correctness—significantly more than the previous benchmarks. The average time spent on developing the evaluation for an example and its examination amounts to approximately 2 man-hours from graduate students. ... ##### Quality control Once annotation is finished, each example is attempted by two authors who did not participate in annotating that specific example, acting as agents to complete the task. This process evaluates the current example’s quality and provides feedback to the annotators (such as unclear instructions or inability to complete the task, crashes in corner cases, serious instances of false positives and negatives, etc.), and involves joint revisions and supplements. During experiments for human performance and baselines, we further fixed examples found to have issues, dedicating over 400 man-hours for four rounds of checks. Further investment of time and a more red teaming could further reduce false positives and negatives, which we will leave to future work."
+    },
+    {
+      "title": "WindowsAgentArena:Evaluating Multi-Modal OS Agents at Scale",
+      "url": "https://arxiv.org/html/2409.08264",
+      "citationText": "### 3.1 Task definition Similar to Koh et al. (2024) and Xie et al. (2024), we formalize the agent behavior as a partially observable Markov decision process (POMDP) $(S,\\mathcal{O},\\mathcal{A},T,\\mathcal{R})$ with state space $S$, observation space $\\mathcal{O}$ (3.1.1), action space $\\mathcal{A}$ (3.1.2), transition function $T:S\\times\\mathcal{A}\\rightarrow S$, and reward function $\\mathcal{R}:S\\times\\mathcal{A}\\rightarrow\\mathbb{R}$. Given current observation $o_{t}\\in\\mathcal{O}$, an agent generates executable action $a_{t}\\in\\mathcal{A}$, resulting in a new state $s_{t+1}\\in S$ and a new partial observation $o_{t+1}\\in\\mathcal{O}$. The process repeats until the agent outputs a termination action (DONE or FAIL) or when the maximum number of steps is reached ($t>t_{\\text{max}}$). The reward function $\\mathcal{R}:S\\times\\mathcal{A}\\rightarrow[0,1]$ returns a non-zero value at the final step if the agent state achieves the task objective, or if the agent accurately predicts failure for an infeasible task; depending on the task, the reward either returns 1 if the outcome is binary (correct vs. incorrect) or a non-zero decimal value if task evaluation depends on similarity of agent outcome to the task’s objective. In all other scenarios, it returns 0. We note that the benchmark can potentially be modified to allow for intermediate non-zero rewards along the episode to account for partial completion via more complex evaluation functions—we leave this as possible future work."
+    },
+    {
+      "title": "The Basics - Midscene.js - AI UI Automation and E2E Testing",
+      "url": "https://www.midscenejs.com/basics",
+      "citationText": "accepts a goal described in natural language. It observes the interface, plans the next steps, locates the target ... , and executes the actions until the goal is complete. The prompt can also include assertions"
+    },
+    {
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "citationText": "tests can come in different levels of granularity. Most of the time they will be rather high-level and test your service through the user interface. However, it ... s good to understand that there's technically no need to write acceptance tests at the"
+    },
+    {
+      "title": "Architecture strategies for testing - Microsoft Azure Well-Architected Framework | Microsoft Learn",
+      "url": "https://learn.microsoft.com/en-us/azure/well-architected/operational-excellence/testing",
+      "citationText": "## Apply layered approach in test coverage A layered test coverage strategy gives you rapid feedback, earlier defect detection, and faster releases. When you structure tests in layers, you can quickly isolate and debug defects, making it easier to pinpoint and address issues. ### Use the test pyramid as a guide The test pyramid model illustrates this layered approach for test automation. It distributes tests across different layers to maximize coverage while minimizing execution time and maintenance costs. - Base layer: Unit tests verify individual components in isolation. They run quickly and provide immediate feedback. - Middle layer: Integration tests verify interactions between components and services. They run more slowly than unit tests but provide broader coverage of system behavior. - Top layer: End-to-end tests validate user journeys through the entire system, simulating real-world scenarios. These tests run the slowest but give the highest confidence in overall quality. You can more easily integrate base and middle layer tests into your pipelines because they have minimal dependencies. This integration enables swift feedback when tests fail and lets the build process stop immediately, preventing faulty code from progressing further. As your test coverage grows, pipeline execution time can increase significantly. Maintain a fast feedback loop by using parallel and distributed test execution strategies, keeping pipelines efficient even as coverage increases. Note Don't include every possible test in the initial build pipeline that compiles and validates your code. This choice slows release cycles and risks important tests being bypassed. Focus on tests that directly protect critical workflows and provide meaningful confidence in system quality. > Tradeoff. There's a tradeoff between test coverage and pipeline efficiency. While larger test suites increase coverage, they also increase execution time and cost. They don't always deliver a meaningful"
+    },
+    {
+      "title": "Evaluator Best Practices - Arize AX Docs",
+      "url": "https://arize.com/docs/ax/concepts/evaluators/evaluator-best-practices",
+      "citationText": "A judge that runs is not the same as a judge that’s correct ... Before trusting an LLM-as-a-judge in production, validate it against a ... 1. Collect 20–100 examples spanning the score range you care about. 2. Have humans label"
+    },
+    {
+      "title": "Establishing Best Practices for Building Rigorous Agentic Benchmarks",
+      "url": "https://arxiv.org/html/2507.02825v5",
+      "citationText": "Taxonomy. We first identify and classify the primary challenges in rigorous agentic evaluation. In Figure 1, we decompose the operational and conceptual process of agentic evaluation. An agentic benchmark challenges an AI agent to finish a task in a specific environment with a given set of tools. After several rounds of (inter-) actions, the AI agent presents a task outcome, which indicates whether the task completion state. To automatically determine whether the task is successful, the agentic benchmark develops customized methods based on the task requirements, such as string matching [92, 86] and testing [30, 59]. Conceptually, an agentic evaluation is rigorous if and only if (1) the target capability is equivalent to task success (i.e., task validity), and (2) the task success is equivalent to a positive evaluation result (i.e., outcome validity). However, agentic benchmark presents two unique challenges that makes these two validity conditions difficult to hold: 1. 1. Complex task setup: In addition to task descriptions as inputs, agentic benchmarks set up an environment for agents to operate in and provide tools for agents to use. 2. 2. Unstructured task outcome: Agentic benchmarks expect unstructured data as task outcomes, such as textual responses, code, and file edits. Verifying the correctness of such outcomes are non-trivial and requires specially designed methods. First, improper task setup can lead to the violation of task validity. For instance, $\\tau$-bench includes intentionally unattainable tasks (e.g., making changes to a non-refundable ticket), which agents are supposed to recognize and reject [86]. Yet, a trivial agent that simply returns nothing is considered a successful completion even though it cannot look up information or interpret ticket rules. Second, failure to rigorously grade unstructured task outcome can break outcome validity. For example, SWE-bench-Verified judges agent-generated patches by handwritten unit tests [14]. Since such tests can be incomplete or not perfectly sound [94, 87], a ... ### 4.1 Assessing Task Validity Figure 2: Checks in ABC to assess the task validity of an agentic benchmark. We propose guidelines for ensuring task validity. These checks uncover design or implementation flaws that can create shortcuts, which causes false positive evaluation results, or lead to impossible tasks, which causes false negative evaluation results. Tool. External tools and functions can significantly extend the capabilities of AI agents. Existing benchmarks provide two types of tools: self-hosted tools (e.g., Python, command-line tools) and API-based tools (e.g., web services). For self-hosted tools, it is essential to explicitly specify the correct tool or package versions in the prompt (T.1). In terms of API-based tools, ensuring service availability and managing rate limits is crucial (T.2). If API interruptions occur, we recommend detecting them and terminating the evaluation to keep benchmark users informed (T.3). Environment. Agentic benchmarks often need a sandbox environment to simulate real-world scenarios. Implementing and maintaining such environments can be challenging, especially with complex task formulations. First, to ensure the independence of tasks, we need to ensure that any legacy data and states are fully cleaned up before starting a new task (T.4). For example, KernelBench failed to remove ground truth answers from GPU memory, allowing agents to obtain the correct result through out-of-bounds memory access [35]. Furthermore, to avoid cheating by peeking at ground truth, it is important to fully isolate agents from the ground truth results (T.5). Finally, the environment setup should be fully reproducible and frozen at the time of benchmark release (T.6). Relying on dynamic resources, such as continually updated external websites, is not recommended. Implementation. Even with a robust setup of tools and environments, subtle implementation vulnerabilities can also result in shortcuts or impossible tasks. Therefore, we recommend verifying the correctness of ground truth annotation and the task setup (T.7-8). Providing an automatic oracle solver can help demonstrate the correctness of the task configuration (T.9). Additionally, as demonstrated in $\\tau$-bench [86], inspecting outliers in pilot experiments is crucial for identifying implementation bugs (T.10). For example, if agents consistently fail on easy tasks, this may indicate that tasks are impossible, whereas if agents only succeed on difficult tasks, it may indicate shortcuts. ... Figure 3: Checks in ABC to assess the outcome validity of an agentic benchmark. We group items by the types of the outcome and the methods of evaluation. Code Generation. Existing agentic benchmarks evaluate the capability of AI agents to write code [37, 30, 48, 59]. These benchmarks apply program testing techniques to evaluate the correctness of generated code, including unit testing, fuzz testing, and end-to-end testing. 1. 1. Unit Testing designs test cases for individual functions or classes [67]. However, poorly constructed unit tests can lead to both false positives and false negatives [70, 87]. Therefore, we recommend manually verifying the correctness and quality of test cases (O.d.1) [14], and providing quality guarantees using objective metrics (O.d.2) such as coverage [94] and cyclomatic complexity [76]. 2. 2. Fuzz Testing evaluates generated code by running it against a ground-truth implementation on automatically generated inputs [95]. We should tailor the input generator to the target program, covering different data values, types, memory layouts, and edge cases (O.e.1-2). Moreover, the inputs must affect the output (O.e.3)—e.g., random negatives reveal nothing about relu(x) [35]. 3. 3. End-to-end (E2E) Testing simulates complete user workflows, providing comprehensive testing of system functionality [72, 36]. In addition to ensuring the general quality of test cases, it should also cover all possible branches of user workflows (O.f.1). Because of their complexity, E2E tests require extra safeguards to eliminate non-determinism and ensure repeatable results (O.f.2) [61]. State Modification. Agentic benchmarks challenge agents to manipulate environment states, such as booking flight tickets [86] and editing websites [83]. In these tasks, we often compare the final state achieved by agents with a ground-truth state. We identify three key checks for rigorous state matching. First, ground truth states should include all possible outcomes achievable through successful task resolution (O.g.1). For example, when we challenge agents to attack a website, we should evaluate all possible attack outcomes [96]. Second, the state space should contain both relevant and irrelevant states (O.g.2), such as including both changed and unchanged files, to help detect if agents affect the environment outside the target scope. Finally, the state space should be complex enough (O.g.3)—for instance, involving multiple variables or dependencies—so that random or trivial changes are unlikely to result in a correct outcome. Multistep Reasoning. Agentic benchmarks evaluates multistep reasoning capabilities of AI agents [47, 11, 22, 39]. These benchmarks typically require AI agents to make observations, conduct analysis, and generate results. We summarize two common approaches for evaluating these tasks: 1. 1. Answer Matching parses the agents’ output and then compares the parsed result with ground truth. We find that parsers in existing benchmarks may make implicit assumption about the agent’s output (O.h.1). For example, the MATH dataset assumes the answer of the agent starts with “Answer:” [39]. Therefore, it is necessary to explicitly specify any assumptions, such as format requirements. Additionally, to ensure that a single final answer reflects a genuine reasoning process, we recommend designing tasks in a way that avoid success by guessing (O.h.2) [22]. 2. 2. Quality Measure evaluates agent using customized metrics against a baseline when ground truth is impossible to achieve (e.g., ground-truth predictions in an ML engineering task [11]). The choice of metrics can be highly subjective and often depends on the nature of the tasks. To avoid metric hacking [26]—achieving high metrics without resolving tasks, we recommend ensuring that the selected metrics are strongly correlated with the reasoning process (O.i.1)."
+    },
+    {
+      "title": "ISO/IEC/IEEE 29119 series",
+      "url": "https://committee.iso.org/sites/jtc1sc7/home/projects/flagship-standards/isoiecieee-29119-series.html",
+      "citationText": "core standards are based around a set of test processes, defined in Part 2, which cover testing at ... organizational, management and dynamic test levels. The test documentation, defined in Part 3 ... by executing the test processes; thus, the test"
+    }
+  ],
+  "supplementarySources": [
+    {
+      "title": "ISO/IEC 25010:2023 product quality model",
+      "url": "https://www.iso.org/standard/78176.html",
+      "citationText": "Nine product-quality characteristics and subcharacteristics provide a reference model for requirements, acceptance criteria and measures across the product lifecycle."
+    },
+    {
+      "title": "IEEE 730-2014 Software Quality Assurance Plans",
+      "url": "https://standards.ieee.org/ieee/730/5284/",
+      "citationText": "Defines uniform minimum requirements for software quality assurance plans covering planned verification, validation, review and control activities."
+    },
+    {
+      "title": "OpenAI Computer use",
+      "url": "https://developers.openai.com/api/docs/guides/tools-computer-use",
+      "citationText": "Restrict the environment, treat screen content as untrusted, confirm consequential actions, set step/time/cost limits, support cancellation and verify the actual application outcome."
+    }
+  ],
+  "supplementaryRequestId": "a0a1f2191d7471b39ea6264644820f8e",
+  "supplementaryRequestedAt": "2026-10-27",
+  "supplementaryStatuses": [
+    {
+      "id": "https://www.iso.org/standard/78176.html",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://standards.ieee.org/ieee/730/5284/",
+      "status": "success",
+      "source": "cached"
+    },
+    {
+      "id": "https://developers.openai.com/api/docs/guides/tools-computer-use",
+      "status": "success",
+      "source": "cached"
+    }
+  ]
+}
