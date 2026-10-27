@@ -1,0 +1,350 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+  "node": "TF-0574",
+  "runId": "tf0574-07f60c029",
+  "generatedAt": "2026-10-27T13:03:06.7784118+08:00",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": {
+    "commit": "07f60c029d9f46f470add0e574671ffa3f955e9f",
+    "tree": "444596b99ce99e127637473f63279f477dbdb1ca",
+    "dirty": false,
+    "label": "Clean runtime retirement source candidate; evidence files were committed afterward."
+  },
+  "scope": "Runtime Memory retirement test-contract alignment, shortfall resolution, and documentation sync; production behavior unchanged.",
+  "cleanCandidateTests": {
+    "suites": 9,
+    "passedSuites": 9,
+    "failedSuites": 0,
+    "total": 87,
+    "passed": 87,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "byFile": [
+      {
+        "file": "product-acceptance-shortfalls.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "pending": 0
+      },
+      {
+        "file": "runtime-memory-context-contracts.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "pending": 0
+      },
+      {
+        "file": "task-loop-controller.test.ts",
+        "status": "passed",
+        "tests": 69,
+        "passed": 69,
+        "pending": 0
+      }
+    ]
+  },
+  "postResolutionTests": {
+    "suites": 9,
+    "passedSuites": 9,
+    "failedSuites": 0,
+    "total": 87,
+    "passed": 87,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "byFile": [
+      {
+        "file": "product-acceptance-shortfalls.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "pending": 0
+      },
+      {
+        "file": "runtime-memory-context-contracts.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "pending": 0
+      },
+      {
+        "file": "task-loop-controller.test.ts",
+        "status": "passed",
+        "tests": 69,
+        "passed": 69,
+        "pending": 0
+      }
+    ]
+  },
+  "retirementMapping": {
+    "originalTaskLoopCases": 67,
+    "currentTaskLoopCases": 69,
+    "preservedSemanticSlots": 67,
+    "explanation": "Three retired-path assertions were replaced by a three-case it.each plus two dedicated negative controls.",
+    "replacements": [
+      "shadow/persist true => no episode write and no SQLite open",
+      "string true => no episode write and no SQLite open",
+      "all legacy flags true => no episode write and no SQLite open",
+      "retired persistence => skipped/flag_disabled with empty store and no database file",
+      "scripted writer failure => writer not called and TaskLoop terminal/checkpoint behavior unchanged"
+    ]
+  },
+  "candidateSourceFiles": [
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+      "sha256": "e38a3ca0d9d4736a54af8bdc552d19b56822c2b351a1374e6fea5f91c3279437",
+      "bytes": 53402
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "sha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "bytes": 141695
+    },
+    {
+      "path": "tests/unit/task-loop-controller.test.ts",
+      "sha256": "2599b38b67194f2f1f82b833498fea06c2415c0111fb46872def82cae043f009",
+      "bytes": 120911
+    },
+    {
+      "path": "tests/unit/runtime-memory-context-contracts.test.ts",
+      "sha256": "338df167c52666137156b8833e843468ecc97b252ef5b354d7f04ff4ee01d874",
+      "bytes": 17545
+    }
+  ],
+  "evidenceSourceFiles": [
+    {
+      "path": "harness/specs/tasks/runtime-memory-retirement-closeout.md",
+      "sha256": "6002caa033f9748f499bcadc8d77ad3ff52d3117f845d4144fd8666f5c086afd",
+      "bytes": 5142
+    },
+    {
+      "path": "harness/specs/tasks/product-acceptance-closeout.md",
+      "sha256": "e6127e2a5e288a338c96cfc6ed97bc06dbf520654b2fcdf413324dfe0657dfff",
+      "bytes": 16503
+    },
+    {
+      "path": "harness/specs/guides/product-acceptance-strategy.md",
+      "sha256": "9b40352c7fd0908fc09fc5f32a502c6c58940d3238dfce6a5bc42a42e6f99f61",
+      "bytes": 30873
+    },
+    {
+      "path": "tests/unit/product-acceptance-shortfalls.test.ts",
+      "sha256": "796ed9aa135265e912bc52b0a1be2dd098f40807b50db7e3747faefd35ca0bda",
+      "bytes": 29853
+    }
+  ],
+  "commands": [
+    {
+      "id": "clean-focused",
+      "classification": "clean-candidate",
+      "command": "pnpm exec vitest run tests/unit/task-loop-controller.test.ts tests/unit/runtime-memory-context-contracts.test.ts tests/unit/product-acceptance-shortfalls.test.ts --maxWorkers=1 --reporter=json",
+      "exitCode": 0,
+      "counts": "9 suites / 87 tests passed / 0 failed / 0 pending / 0 todo"
+    },
+    {
+      "id": "post-resolution-focused",
+      "classification": "post-resolution-evidence-worktree",
+      "command": "pnpm exec vitest run tests/unit/task-loop-controller.test.ts tests/unit/runtime-memory-context-contracts.test.ts tests/unit/product-acceptance-shortfalls.test.ts --maxWorkers=1 --reporter=json",
+      "exitCode": 0,
+      "counts": "9 suites / 87 tests passed / 0 failed / 0 pending / 0 todo"
+    },
+    {
+      "id": "ledger",
+      "command": "pnpm exec vitest run tests/unit/product-acceptance-shortfalls.test.ts --maxWorkers=1 --reporter=json",
+      "exitCode": 0,
+      "counts": "10 tests passed"
+    },
+    {
+      "id": "typecheck-test",
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    {
+      "id": "eslint",
+      "command": "pnpm exec eslint tests/unit/task-loop-controller.test.ts tests/unit/runtime-memory-context-contracts.test.ts tests/unit/product-acceptance-shortfalls.test.ts",
+      "exitCode": 0
+    },
+    {
+      "id": "docs-policy",
+      "command": "pnpm docs:policy:validate",
+      "exitCode": 0,
+      "counts": "10 checks passed"
+    },
+    {
+      "id": "narrow-harness",
+      "command": "pnpm harness validate/run --spec harness/specs/tasks/runtime-memory-retirement-closeout.md",
+      "exitCode": 0
+    },
+    {
+      "id": "closeout-harness",
+      "command": "pnpm harness validate/run --spec harness/specs/tasks/product-acceptance-closeout.md",
+      "exitCode": 0
+    },
+    {
+      "id": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "rawArtifacts": [
+    {
+      "kind": "clean-vitest-json",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-07f60c029\\a1-memory\\focused.json",
+      "sha256": "12d99accfddd4430e146028ccc264f5b7005915f4691574533e2b981684ec0a8",
+      "bytes": 28688
+    },
+    {
+      "kind": "clean-vitest-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-07f60c029\\a1-memory\\focused.log",
+      "sha256": "5e646c378b29921f0d5d921c1c85bc774ca734606d84075590f73ddb846f5f40",
+      "bytes": 96
+    },
+    {
+      "kind": "clean-typecheck-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-07f60c029\\a1-memory\\typecheck-test.log",
+      "sha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae",
+      "bytes": 57
+    },
+    {
+      "kind": "clean-eslint-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-07f60c029\\a1-memory\\eslint.log",
+      "sha256": "b327e06438f1ac1082d9b331aff825b32ff580cea7dbed86e83cf375a7d4e114",
+      "bytes": 244
+    },
+    {
+      "kind": "clean-narrow-validate-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-07f60c029\\a1-memory\\harness-validate.log",
+      "sha256": "24b342f306b2603941a04a8d6966b58aeb7a003ac66e003199b1b36f4000a4f3",
+      "bytes": 305
+    },
+    {
+      "kind": "clean-narrow-dry-run-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-07f60c029\\a1-memory\\harness-dry-run.log",
+      "sha256": "a475a24f9c73c0ff0b579ac232bd2846f1d1aa42925ae430bc3e6d1c40ee94bc",
+      "bytes": 321
+    },
+    {
+      "kind": "clean-tree-record",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-07f60c029\\a1-memory\\git-status.txt",
+      "sha256": "90f2f9ff4b19bfc9f2cfb2f4669329890f7aac639f21e3190921dd179724144d",
+      "bytes": 155
+    },
+    {
+      "kind": "post-resolution-vitest-json",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\focused.json",
+      "sha256": "a975f7a19ddc4526434af7394bc3cb0fbd8c8adcb2582db3002d3f6e9ebfdb6e",
+      "bytes": 28685
+    },
+    {
+      "kind": "post-resolution-vitest-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\focused.log",
+      "sha256": "389758a80fff4619e52edd7709202f775b7e627b56dde19dd119fd312f736a96",
+      "bytes": 82
+    },
+    {
+      "kind": "ledger-vitest-json",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\ledger.json",
+      "sha256": "9ffad203d62e2a51ba679a0c3a28589bb0ec02c184509632e43c06788e53d80e",
+      "bytes": 4110
+    },
+    {
+      "kind": "ledger-vitest-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\ledger.log",
+      "sha256": "6c10b4afec53cc49b2420f7e0873c4de7abceab77c5468c6f73c5fdb740f9ffd",
+      "bytes": 81
+    },
+    {
+      "kind": "post-resolution-typecheck-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\typecheck-test.log",
+      "sha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae",
+      "bytes": 57
+    },
+    {
+      "kind": "post-resolution-eslint-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\eslint.log",
+      "sha256": "0ee581d0248eae623d34bfc6640211fcceb3f6cd513402a91a4aac0cc935d6d6",
+      "bytes": 36
+    },
+    {
+      "kind": "docs-policy-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\docs-policy.log",
+      "sha256": "43e480f46be2861ec4ff1240859bee1a2838f4274cde2b313f8054e468b8a85f",
+      "bytes": 676
+    },
+    {
+      "kind": "narrow-validate-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\narrow-validate-r2.log",
+      "sha256": "24b342f306b2603941a04a8d6966b58aeb7a003ac66e003199b1b36f4000a4f3",
+      "bytes": 305
+    },
+    {
+      "kind": "narrow-dry-run-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\narrow-dry-run-r2.log",
+      "sha256": "a475a24f9c73c0ff0b579ac232bd2846f1d1aa42925ae430bc3e6d1c40ee94bc",
+      "bytes": 321
+    },
+    {
+      "kind": "closeout-validate-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\closeout-validate.log",
+      "sha256": "702b8f159cdf0d798ef66f26ed7e2b23f0438f48294ac5f0a3da597053ca29af",
+      "bytes": 284
+    },
+    {
+      "kind": "closeout-dry-run-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\closeout-dry-run.log",
+      "sha256": "43c117e8dd97eacc8b289374eac9d14b35207efdaf65a45efd212b0e2bbadb27",
+      "bytes": 307
+    },
+    {
+      "kind": "diff-check-log",
+      "path": "D:\\tmp\\clawx-product-acceptance\\tf0574-final\\diff-check.log",
+      "sha256": "a9f58776a09b5dac438049683f24bf85764e0ff8e7455952456165c68c158627",
+      "bytes": 13
+    }
+  ],
+  "ledgerSummary": {
+    "total": 5,
+    "open": 4,
+    "inProgress": 0,
+    "resolved": 1,
+    "blocking": [
+      "coding-loop-e2e-final-response",
+      "agent-acceptance-harness-unconfigured-test-dirs",
+      "qa-lab-scenario-pack-not-present",
+      "e2e-skill-source-mutation"
+    ],
+    "accepted": [],
+    "byDisposition": {
+      "must-resolve-before-ga": 5
+    }
+  },
+  "negativeControls": [
+    "episode writer call throws if invoked",
+    "SQLite open callback throws if invoked",
+    "database path must not exist",
+    "string true and malformed input resolve retired flags false",
+    "candidateGeneration remains true only for strict boolean",
+    "resolved ledger requires candidate, command, counts, source reference, negative control, artifact path, and SHA256"
+  ],
+  "verdict": {
+    "shortfall": "runtime-memory-retired-test-contract",
+    "resolutionPermitted": true,
+    "functionalReadiness": "needs-fix",
+    "distributionReadiness": "not-run",
+    "productApproved": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "limitations": [
+    "Full pnpm test is deferred to the final same-candidate aggregate node by the approved closeout plan.",
+    "No live provider, packaged artifact, or real-human evidence is claimed.",
+    "Production source files are hash-only stable-context evidence and were not modified.",
+    "The post-resolution focused run occurred in the evidence worktree after the clean source candidate; the clean-candidate run remains separately recorded."
+  ],
+  "realHumanEvidence": false
+}

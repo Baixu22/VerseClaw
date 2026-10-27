@@ -12,6 +12,7 @@ requiredRules:
   - docs-sync
 touchedAreas:
   - harness/specs/tasks/product-acceptance-closeout.md
+  - harness/specs/tasks/runtime-memory-retirement-closeout.md
   - harness/specs/guides/product-acceptance-strategy.md
   - harness/specs/fixtures/product-acceptance-shortfalls/**
   - harness/specs/fixtures/product-acceptance-research/**
@@ -19,6 +20,8 @@ touchedAreas:
   - scripts/agent-engineering-acceptance.mjs
   - scripts/lib/agent-engineering-acceptance.mjs
   - tests/unit/product-acceptance-shortfalls.test.ts
+  - tests/unit/task-loop-controller.test.ts
+  - tests/unit/runtime-memory-context-contracts.test.ts
   - tests/unit/harness-specs.test.ts
   - tests/unit/docs-index.test.ts
   - docs/README.md
@@ -167,14 +170,15 @@ closed by confidence alone.
 
 ## Shortfall closure rules
 
-The five recorded shortfalls are the current failure baseline. They stay open until the owning
-node produces current evidence:
+The five recorded shortfalls form the baseline. Four remain open; one is resolved with
+current evidence:
 
-1. `runtime-memory-retired-test-contract` → `TF-0574`
-2. `agent-acceptance-harness-unconfigured-test-dirs` → `TF-0575`
-3. `e2e-skill-source-mutation` → `TF-0576`
-4. `coding-loop-e2e-final-response` → `TF-0577`
-5. `qa-lab-scenario-pack-not-present` → `TF-0578`
+1. `runtime-memory-retired-test-contract` → **resolved by `TF-0574`** on candidate
+   `07f60c029`; evidence is under `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`
+2. `agent-acceptance-harness-unconfigured-test-dirs` → `TF-0575` (open)
+3. `e2e-skill-source-mutation` → `TF-0576` (open)
+4. `coding-loop-e2e-final-response` → `TF-0577` (open)
+5. `qa-lab-scenario-pack-not-present` → `TF-0578` (open)
 
 A shortfall may become `resolved` only when all of the following are on disk and bound to the
 same candidate:

@@ -338,7 +338,7 @@ task" is never acceptance evidence.
 
 ### 5.7 Next implementation sequence
 
-1. Repair test contract drift and make the focused/full unit gate green.
+1. **Resolved by TF-0574:** repair Runtime Memory test-contract drift; the clean candidate focused gate is green while the full aggregate gate remains a later release gate.
 2. Correct the independent acceptance-runner fixture output roots and pass its complete focused
    test file; this agent can close the repair without a product decision.
 3. Restore a minimal tracked QA Lab personal-agent scenario pack, run it with `mock-openai`, and
@@ -362,10 +362,12 @@ Using the levels above, the present state of this repository reads as:
   currently blocked at L3 (see ledger `coding-loop-e2e-final-response`).
 - Operational surface: partial L5; OAT drills are recorded individually but not as one
   release-candidate drill set.
-- Exit criteria: not yet satisfied. The gap ledger has five open `must-resolve-before-ga`
-  items: retired-test drift, coding-loop final response, E2E source mutation, an independent
-  acceptance-runner fixture defect, and the absent QA Lab scenario pack. The current checkout
-  also has no packaged release artifact, so L4 is `not-run` rather than inherited from history.
+- Exit criteria: not yet satisfied. The gap ledger has four open `must-resolve-before-ga`
+  items: coding-loop final response, E2E source mutation, an independent acceptance-runner
+  fixture defect, and the absent QA Lab scenario pack. Runtime Memory retired-test drift is
+  resolved by TF-0574 on clean candidate `07f60c029` (87 focused tests, zero skips; evidence in
+  `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`). The current checkout also
+  has no packaged release artifact, so L4 is `not-run` rather than inherited from history.
 - L6: not claimed. `liveReady`, `productApproved` and `defaultOn` remain locks.
 
 Therefore the honest current label is **GA candidate / release candidate with an
@@ -389,6 +391,11 @@ The raw logs remain under `.tmp/` for local diagnosis and are fingerprinted in t
 evidence manifest. The retained manifest must state `currentCandidateRun: false` for these
 rows. A future node may resolve a gap only with a fresh command, exit code, parsed counts,
 negative control and artifact hash bound to its own candidate.
+
+TF-0574 subsequently resolved the retired-test row on candidate `07f60c029`: the task-loop
+contract file reports 69/69, the Runtime Memory context contract 8/8, and the ledger verifier
+10/10. This supersedes the historical 64/3 row below while preserving it as provenance.
+
 ## 7. How to run a review
 
 1. Pick the target release candidate and freeze its commit.

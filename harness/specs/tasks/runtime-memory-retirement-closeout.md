@@ -15,6 +15,7 @@ requiredProfiles:
   - fast
 touchedAreas:
   - harness/specs/tasks/runtime-memory-retirement-closeout.md
+  - harness/specs/tasks/product-acceptance-closeout.md
   - harness/specs/guides/product-acceptance-strategy.md
   - harness/specs/fixtures/product-acceptance-shortfalls/ledger.json
   - harness/specs/fixtures/product-acceptance-closeout/a1-memory/**

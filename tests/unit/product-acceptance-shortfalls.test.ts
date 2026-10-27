@@ -349,6 +349,15 @@ function cloneLedger(): Ledger {
   return JSON.parse(readFileSync(LEDGER, 'utf8')) as Ledger;
 }
 
+function firstOpenShortfall(
+  ledger: Ledger,
+  predicate: (item: Shortfall) => boolean = () => true,
+): Shortfall {
+  const item = ledger.shortfalls.find((entry) => entry.status === 'open' && predicate(entry));
+  if (!item) throw new Error('Expected an open shortfall fixture.');
+  return item;
+}
+
 function repairedCandidate(commit = '082836ef4ae37b4d9e24bf35aa99b7a610e5f6a0'): CandidateBinding {
   return { commit, tree: 'a'.repeat(40), dirty: false };
 }
@@ -404,14 +413,14 @@ describe('product acceptance shortfall ledger', () => {
 
   it('derives summary counts from rows instead of freezing all five as open', () => {
     const progressed = cloneLedger();
-    const resolved = markResolved(progressed, 'runtime-memory-retired-test-contract');
+    const resolved = markResolved(progressed, firstOpenShortfall(progressed).id);
     progressed.summary.open -= 1;
     progressed.summary.resolved += 1;
     progressed.summary.blocking = progressed.summary.blocking.filter((id) => id !== resolved.id);
     expect(verifyLedger(progressed)).toEqual([]);
 
     const drifted = cloneLedger();
-    markResolved(drifted, 'runtime-memory-retired-test-contract');
+    markResolved(drifted, firstOpenShortfall(drifted).id);
     expect(verifyLedger(drifted).map((issue) => issue.code)).toEqual(
       expect.arrayContaining(['summary-open', 'summary-resolved', 'summary-blocking']),
     );
@@ -419,7 +428,7 @@ describe('product acceptance shortfall ledger', () => {
 
   it('rejects evidence-free resolution and unresolved summary mutation', () => {
     const evidenceFree = cloneLedger();
-    const item = evidenceFree.shortfalls[0];
+    const item = firstOpenShortfall(evidenceFree);
     item.status = 'resolved';
     evidenceFree.summary.open -= 1;
     evidenceFree.summary.resolved += 1;
@@ -431,16 +440,17 @@ describe('product acceptance shortfall ledger', () => {
     expect(verifyLedger(fabricatedCount).map((issue) => issue.code)).toContain('summary-open');
 
     const missingId = cloneLedger();
-    missingId.shortfalls = missingId.shortfalls.filter((entry) => entry.id !== EXPECTED_SHORTFALL_IDS[0]);
+    const missingShortfall = firstOpenShortfall(missingId);
+    missingId.shortfalls = missingId.shortfalls.filter((entry) => entry.id !== missingShortfall.id);
     missingId.summary.total -= 1;
     missingId.summary.open -= 1;
-    missingId.summary.blocking = missingId.summary.blocking.filter((id) => id !== EXPECTED_SHORTFALL_IDS[0]);
+    missingId.summary.blocking = missingId.summary.blocking.filter((id) => id !== missingShortfall.id);
     expect(verifyLedger(missingId).map((issue) => issue.code)).toContain('missing-shortfall');
   });
 
   it('rejects accepted P1 and unsigned accepted residuals', () => {
     const acceptedP1 = cloneLedger();
-    const high = acceptedP1.shortfalls.find((item) => item.risk === 'high' || item.risk === 'critical')!;
+    const high = firstOpenShortfall(acceptedP1, (item) => item.risk === 'high' || item.risk === 'critical');
     high.acceptanceDisposition = 'accepted-shortfall';
     acceptedP1.summary.accepted = [...acceptedP1.summary.accepted, high.id];
     acceptedP1.summary.blocking = acceptedP1.summary.blocking.filter((id) => id !== high.id);
@@ -450,7 +460,7 @@ describe('product acceptance shortfall ledger', () => {
     expect(verifyLedger(acceptedP1).map((issue) => issue.code)).toContain('accepted-p1');
 
     const unsigned = cloneLedger();
-    const nonBlocking = unsigned.shortfalls.find((item) => item.risk === 'medium')!;
+    const nonBlocking = firstOpenShortfall(unsigned, (item) => item.risk === 'medium');
     nonBlocking.acceptanceDisposition = 'accepted-shortfall';
     unsigned.summary.accepted = [...unsigned.summary.accepted, nonBlocking.id];
     unsigned.summary.blocking = unsigned.summary.blocking.filter((id) => id !== nonBlocking.id);
@@ -511,11 +521,14 @@ describe('product acceptance shortfall ledger', () => {
       expect(item.pathToGa.trim().length).toBeGreaterThan(20);
     }
     const blocking = new Set(ledger.summary.blocking);
-    for (const item of ledger.shortfalls.filter((entry) => entry.acceptanceDisposition === 'must-resolve-before-ga')) {
+    for (const item of ledger.shortfalls.filter(
+      (entry) => entry.acceptanceDisposition === 'must-resolve-before-ga' && entry.status !== 'resolved',
+    )) {
       expect(blocking.has(item.id)).toBe(true);
     }
     for (const item of ledger.shortfalls.filter((entry) => blocking.has(entry.id))) {
       expect(item.acceptanceDisposition).toBe('must-resolve-before-ga');
+      expect(item.status).not.toBe('resolved');
     }
   });
 

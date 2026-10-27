@@ -51,14 +51,18 @@
         "tests/unit/task-loop-controller.test.ts:1172",
         "tests/unit/task-loop-controller.test.ts:1258",
         "D:/ClawX/.tmp/ga-review-unit-rerun.log",
-        "docs/dev/default-config-matrix.md"
+        "docs/dev/default-config-matrix.md",
+        "harness/specs/tasks/runtime-memory-retirement-closeout.md",
+        "harness/specs/fixtures/product-acceptance-closeout/a1-memory/receipt.json",
+        "tests/unit/runtime-memory-context-contracts.test.ts",
+        "07f60c029d9f46f470add0e574671ffa3f955e9f test(runtime-memory): align retired flag contracts"
       ],
-      "observed": "Vitest task-loop-controller.test.ts: 64 passed / 3 failed. The failure names are 'writes one sanitized Runtime Memory episode when shadow and persist are both enabled', 'replays the real persisted TaskLoop Runtime Memory episode', 'keeps TaskLoop terminal behavior when Runtime Memory episode writing fails'.",
+      "observed": "Resolved on clean candidate 07f60c029d9f46f470add0e574671ffa3f955e9f: 9 focused suites / 87 tests passed / 0 failed / 0 pending / 0 todo. Explicit true, string true, and all-legacy-true inputs produce no episode write, no SQLite open, no database file, and no replay; TaskLoop terminal, checkpoint, tool, cancellation, and blocked behavior tests remain green.",
       "impact": "Blocking suite is red, so exit criterion '0 failed' is unmet. Product default behavior is unaffected because the flags are retired false; the defect is the test contract, not the runtime path.",
       "owner": "agent:task-loop-maintainer",
       "reportedAt": "2026-10-27",
       "reviewBy": "2026-11-10",
-      "status": "open",
+      "status": "resolved",
       "proposedAction": "Align the three tests with the retired-flag semantics (assert skip / no-write), keep at least one negative test for retired configuration input, then re-run the file and the full unit gate.",
       "shortfallClass": "test-contract-drift",
       "acceptanceDisposition": "must-resolve-before-ga",
@@ -68,7 +72,22 @@
       "rootCauseClass": "stale-test-contract",
       "blastRadius": "affected test file and acceptance evidence only; current runtime flag remains retired false",
       "repairCost": "small",
-      "pathToGa": "align the tests and prove retired-flag negative behavior"
+      "pathToGa": "align the tests and prove retired-flag negative behavior",
+      "resolvedAt": "2026-10-27",
+      "resolution": {
+        "candidate": {
+          "commit": "07f60c029d9f46f470add0e574671ffa3f955e9f",
+          "tree": "444596b99ce99e127637473f63279f477dbdb1ca",
+          "dirty": false
+        },
+        "sourceRef": "commit:07f60c029d9f46f470add0e574671ffa3f955e9f tests/unit/task-loop-controller.test.ts tests/unit/runtime-memory-context-contracts.test.ts",
+        "command": "pnpm exec vitest run tests/unit/task-loop-controller.test.ts tests/unit/runtime-memory-context-contracts.test.ts tests/unit/product-acceptance-shortfalls.test.ts --maxWorkers=1 --reporter=json",
+        "exitCode": 0,
+        "counts": "9 suites / 87 tests passed / 0 failed / 0 pending / 0 todo",
+        "artifactSha256": "45ccc79680cf10629b2c82f473ca797bdb0a9563101ec119c2a211ff7ab007de",
+        "artifactPath": "harness/specs/fixtures/product-acceptance-closeout/a1-memory/receipt.json",
+        "negativeControl": "retired inputs: no writer, SQLite open, database file, or replay; TaskLoop terminal and checkpoint unchanged"
+      }
     },
     {
       "id": "coding-loop-e2e-final-response",
@@ -190,11 +209,10 @@
   ],
   "summary": {
     "total": 5,
-    "open": 5,
+    "open": 4,
     "inProgress": 0,
-    "resolved": 0,
+    "resolved": 1,
     "blocking": [
-      "runtime-memory-retired-test-contract",
       "coding-loop-e2e-final-response",
       "agent-acceptance-harness-unconfigured-test-dirs",
       "qa-lab-scenario-pack-not-present",
