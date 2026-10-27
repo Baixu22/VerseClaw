@@ -162,7 +162,7 @@
         "exitCode": 0,
         "counts": "16 suites / 42 tests passed / 0 failed",
         "electronRuns": "3 launches + app-smoke + skills-set; guard ok on every run; survivors 0; sweep remaining 0",
-        "artifactSha256": "66ac385e3b0876d297def72e211b69e62d43aaf3e61ebeb0b85233e5c01cb0c2",
+        "artifactSha256": "9902cc13e584d41adb93e077fd3b200a5edca2ec4209e95d5c8ff83a0d4ec2dc",
         "artifactPath": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/receipt.json",
         "negativeControl": "guard fails on modified/deleted tracked fixture files and on further mutation of an already-dirty tree; junction target deletion is refused"
       }

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "ExternalSentinelProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+  "description": "Untracked sentinel files placed inside each QQBot skill directory (the junction target). If any launch recursively deleted through the junction, the sentinels would vanish or change.",
+  "sentinelPaths": [
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt",
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt",
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt",
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt"
+  ],
+  "before": {
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt": "bec10a18fd7492aebc98d24b04bde0aa70331ac1674a435c2f78d24afef662ab",
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt": "7bad200655b7a85517ca04f594721f3d3a3d5a6d126eb87f804ea8fd5b73d39c",
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt": "60883d17ba2f8cf4cc48e5091f61ccb55d616f1d8227d99c8f870f4cf2014603",
+    "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt": "0e37a9600b93ff4d9d9b7d772dea3ba08853960aae2a9c1ec0b5509582098514"
+  },
+  "runs": [
+    {
+      "id": "sentinel-launch-1",
+      "exitCode": 1,
+      "before": {
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt": "bec10a18fd7492aebc98d24b04bde0aa70331ac1674a435c2f78d24afef662ab",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt": "7bad200655b7a85517ca04f594721f3d3a3d5a6d126eb87f804ea8fd5b73d39c",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt": "60883d17ba2f8cf4cc48e5091f61ccb55d616f1d8227d99c8f870f4cf2014603",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt": "0e37a9600b93ff4d9d9b7d772dea3ba08853960aae2a9c1ec0b5509582098514"
+      },
+      "after": {
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt": "bec10a18fd7492aebc98d24b04bde0aa70331ac1674a435c2f78d24afef662ab",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt": "7bad200655b7a85517ca04f594721f3d3a3d5a6d126eb87f804ea8fd5b73d39c",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt": "60883d17ba2f8cf4cc48e5091f61ccb55d616f1d8227d99c8f870f4cf2014603",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt": "0e37a9600b93ff4d9d9b7d772dea3ba08853960aae2a9c1ec0b5509582098514"
+      },
+      "unchanged": true
+    },
+    {
+      "id": "sentinel-launch-2",
+      "exitCode": 1,
+      "before": {
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt": "bec10a18fd7492aebc98d24b04bde0aa70331ac1674a435c2f78d24afef662ab",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt": "7bad200655b7a85517ca04f594721f3d3a3d5a6d126eb87f804ea8fd5b73d39c",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt": "60883d17ba2f8cf4cc48e5091f61ccb55d616f1d8227d99c8f870f4cf2014603",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt": "0e37a9600b93ff4d9d9b7d772dea3ba08853960aae2a9c1ec0b5509582098514"
+      },
+      "after": {
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt": "bec10a18fd7492aebc98d24b04bde0aa70331ac1674a435c2f78d24afef662ab",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt": "7bad200655b7a85517ca04f594721f3d3a3d5a6d126eb87f804ea8fd5b73d39c",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt": "60883d17ba2f8cf4cc48e5091f61ccb55d616f1d8227d99c8f870f4cf2014603",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt": "0e37a9600b93ff4d9d9b7d772dea3ba08853960aae2a9c1ec0b5509582098514"
+      },
+      "unchanged": true
+    },
+    {
+      "id": "sentinel-launch-3",
+      "exitCode": 1,
+      "before": {
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt": "bec10a18fd7492aebc98d24b04bde0aa70331ac1674a435c2f78d24afef662ab",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt": "7bad200655b7a85517ca04f594721f3d3a3d5a6d126eb87f804ea8fd5b73d39c",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt": "60883d17ba2f8cf4cc48e5091f61ccb55d616f1d8227d99c8f870f4cf2014603",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt": "0e37a9600b93ff4d9d9b7d772dea3ba08853960aae2a9c1ec0b5509582098514"
+      },
+      "after": {
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/_a3-sentinel.txt": "bec10a18fd7492aebc98d24b04bde0aa70331ac1674a435c2f78d24afef662ab",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-media/_a3-sentinel.txt": "7bad200655b7a85517ca04f594721f3d3a3d5a6d126eb87f804ea8fd5b73d39c",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/_a3-sentinel.txt": "60883d17ba2f8cf4cc48e5091f61ccb55d616f1d8227d99c8f870f4cf2014603",
+        "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/_a3-sentinel.txt": "0e37a9600b93ff4d9d9b7d772dea3ba08853960aae2a9c1ec0b5509582098514"
+      },
+      "unchanged": true
+    }
+  ],
+  "allUnchanged": true
+}
