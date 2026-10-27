@@ -1,0 +1,614 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+  "node": "TF-0576",
+  "runId": "tf0576-7999579a6",
+  "generatedAt": "2026-10-27T09:15:04.835Z",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": {
+    "commit": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+    "tree": "6b31f5e09676131ad3b32a0b5b45b3f9ea2beb0d",
+    "dirty": false,
+    "label": "Clean source candidate; evidence files committed afterward."
+  },
+  "scope": "Stop the Electron E2E/Gateway startup skill-sync path from deleting tracked QQBot skill sources and the targets of Windows directory junctions; add a tracked-source worktree guard.",
+  "currentCandidateRun": true,
+  "rootCause": "isGeneratedPluginSkillEntry classified any Windows directory as a runner-owned junction, and prepareSyncedSkillsDirectory recursively removed entries through a junction into the tracked source.",
+  "fix": [
+    "plugin-skills.ts: only entry.isSymbolicLink() counts as a runner-owned entry, and removal re-checks lstat().isSymbolicLink() before rmSync.",
+    "workspace.ts: prepareSyncedSkillsDirectory refuses to clean a target whose real path overlaps a protected source root, throwing instead of deleting.",
+    "source-mutation-guard.ts + electron-process-cleanup.ts: global setup records tracked-source state and teardown asserts it is unchanged, writing guard JSON."
+  ],
+  "redThenGreen": {
+    "red": "With openclaw_runtime/src/skills/loading/{plugin-skills,workspace}.ts restored to 9d2abb7dc, tests/unit/skill-source-safety.test.ts fails: publishPluginSkills deletes the regular plugin-skills directory's SKILL.md.",
+    "green": "With the fix the same tests pass, and three Electron launches leave every tracked file byte-identical.",
+    "redControlLog": "red-control.log"
+  },
+  "focusedTests": {
+    "suites": 16,
+    "passedSuites": 16,
+    "failedSuites": 0,
+    "total": 42,
+    "passed": 42,
+    "failed": 0,
+    "pending": 0,
+    "byFile": [
+      {
+        "file": "config-sync-source-runtime.test.ts",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "skill-config-bundled-defaults.test.ts",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "file": "skill-source-safety.test.ts",
+        "tests": 2,
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "file": "skills-symlink-cleanup.test.ts",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "source-mutation-guard.test.ts",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      }
+    ]
+  },
+  "launches": [
+    {
+      "id": "launch-1",
+      "spec": "tests/e2e/coding-loop-fp-p1-04.spec.ts",
+      "exitCode": 1,
+      "exitNote": "Spec body fails on the separately tracked TF-0577 final-response assertion; the source-safety oracle is the guard verdict.",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "cleanup": {
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-LE7KfL",
+        "ledgerEntries": 1,
+        "reaped": 1,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      }
+    },
+    {
+      "id": "launch-2",
+      "spec": "tests/e2e/coding-loop-fp-p1-04.spec.ts",
+      "exitCode": 1,
+      "exitNote": "Spec body fails on the separately tracked TF-0577 final-response assertion; the source-safety oracle is the guard verdict.",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "cleanup": {
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-rxgg1t",
+        "ledgerEntries": 1,
+        "reaped": 1,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      }
+    },
+    {
+      "id": "launch-3",
+      "spec": "tests/e2e/coding-loop-fp-p1-04.spec.ts",
+      "exitCode": 1,
+      "exitNote": "Spec body fails on the separately tracked TF-0577 final-response assertion; the source-safety oracle is the guard verdict.",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "cleanup": {
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-155JZr",
+        "ledgerEntries": 1,
+        "reaped": 1,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      }
+    }
+  ],
+  "appSmoke": {
+    "id": "app-smoke",
+    "spec": "tests/e2e/app-smoke.spec.ts",
+    "exitCode": 0,
+    "tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "guard": {
+      "ok": true,
+      "sourceChanged": false,
+      "before": {
+        "status": "",
+        "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "status": "",
+        "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cleanup": {
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-oLDoKN",
+      "ledgerEntries": 6,
+      "reaped": 6,
+      "survivors": 0,
+      "sweepStatus": "ok",
+      "sweepRemaining": 0
+    }
+  },
+  "skillsSet": {
+    "id": "skills-set",
+    "spec": "tests/e2e/skills-packs.spec.ts tests/e2e/skills-gateway-readiness.spec.ts tests/e2e/electron-worker-cleanup.spec.ts",
+    "exitCode": 1,
+    "passed": 4,
+    "failed": 1,
+    "failure": "electron-worker-cleanup.spec.ts reads cleanup.owned but the current cleanup report nests owned/remaining under sweep (TypeError: Cannot read properties of undefined). Reproduced identically against the base fixture 9d2abb7dc; pre-existing and outside TF-0576.",
+    "guard": {
+      "ok": true,
+      "sourceChanged": false,
+      "before": {
+        "status": "",
+        "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "status": "",
+        "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cleanup": {
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-cd5bAN",
+      "ledgerEntries": 5,
+      "reaped": 5,
+      "survivors": 0,
+      "sweepStatus": "ok",
+      "sweepRemaining": 0
+    }
+  },
+  "guardVerdicts": {
+    "schemaVersion": "ElectronE2ESourceMutationGuardAggregate/v1",
+    "driven_by": "agent",
+    "actor": "codex-ga-execution-20261027",
+    "candidate": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+    "interpretation": "Each entry compares git status + tracked-file list hash + git diff HEAD hash before and after one Electron E2E launch. The candidate was clean (empty status) for every run, so ok=true means no tracked source changed during the run.",
+    "runs": [
+      {
+        "id": "launch-1",
+        "guard": {
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      {
+        "id": "launch-2",
+        "guard": {
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      {
+        "id": "launch-3",
+        "guard": {
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      {
+        "id": "app-smoke",
+        "guard": {
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      {
+        "id": "skills-set",
+        "guard": {
+          "ok": true,
+          "sourceChanged": false,
+          "before": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "after": {
+            "status": "",
+            "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+            "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      }
+    ],
+    "allOk": true
+  },
+  "processReport": {
+    "schemaVersion": "ElectronProcessReclaimReport/v1",
+    "driven_by": "agent",
+    "actor": "codex-ga-execution-20261027",
+    "candidate": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+    "runs": [
+      {
+        "id": "launch-1",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-LE7KfL",
+        "ledgerEntries": 1,
+        "reaped": 1,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      },
+      {
+        "id": "launch-2",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-rxgg1t",
+        "ledgerEntries": 1,
+        "reaped": 1,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      },
+      {
+        "id": "launch-3",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-155JZr",
+        "ledgerEntries": 1,
+        "reaped": 1,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      },
+      {
+        "id": "app-smoke",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-oLDoKN",
+        "ledgerEntries": 6,
+        "reaped": 6,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      },
+      {
+        "id": "skills-set",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-cd5bAN",
+        "ledgerEntries": 5,
+        "reaped": 5,
+        "survivors": 0,
+        "sweepStatus": "ok",
+        "sweepRemaining": 0
+      }
+    ],
+    "ownedProcessesRemainingZero": true
+  },
+  "sourceManifest": {
+    "schemaVersion": "ProductAcceptanceSourceGuard/v1",
+    "driven_by": "agent",
+    "actor": "codex-ga-execution-20261027",
+    "candidate": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+    "tree": "6b31f5e09676131ad3b32a0b5b45b3f9ea2beb0d",
+    "scope": "openclaw_runtime/extensions/qqbot/skills",
+    "files": [
+      {
+        "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/SKILL.md",
+        "sha256AtCandidate": "62f9d5a296dfa5a2b66368c6955c30165dac283107805bf916619ea5264934f6",
+        "sha256OnDisk": "62f9d5a296dfa5a2b66368c6955c30165dac283107805bf916619ea5264934f6",
+        "bytes": 12418,
+        "unchanged": true
+      },
+      {
+        "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/api_references.md",
+        "sha256AtCandidate": "e3104ffea78a99fa42a63a93143703fb7d37fb8417c57d9063d9c046a7838e90",
+        "sha256OnDisk": "e3104ffea78a99fa42a63a93143703fb7d37fb8417c57d9063d9c046a7838e90",
+        "bytes": 13764,
+        "unchanged": true
+      },
+      {
+        "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-media/SKILL.md",
+        "sha256AtCandidate": "a6540b3e29f06e54d46da2aa51ac2ff3a9707c869ab3e55c78f65ae52bdb3e7c",
+        "sha256OnDisk": "a6540b3e29f06e54d46da2aa51ac2ff3a9707c869ab3e55c78f65ae52bdb3e7c",
+        "bytes": 1807,
+        "unchanged": true
+      },
+      {
+        "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/SKILL.md",
+        "sha256AtCandidate": "4ccf5aa84dd00d37a0ac18639e44c430cb80e11d32d985be9cbd93fe218b1794",
+        "sha256OnDisk": "4ccf5aa84dd00d37a0ac18639e44c430cb80e11d32d985be9cbd93fe218b1794",
+        "bytes": 6354,
+        "unchanged": true
+      }
+    ],
+    "count": 4,
+    "allUnchanged": true
+  },
+  "commands": [
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run tests/unit/skill-source-safety.test.ts tests/unit/source-mutation-guard.test.ts tests/unit/skills-symlink-cleanup.test.ts tests/unit/skill-config-bundled-defaults.test.ts tests/unit/config-sync-source-runtime.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "counts": "42 tests / 42 passed / 0 failed across 5 files"
+    },
+    {
+      "id": "red-control",
+      "command": "pnpm exec vitest run tests/unit/skill-source-safety.test.ts (runtime files restored to 9d2abb7dc)",
+      "exitCode": 1,
+      "counts": "2 failed / 4 passed; the regular-directory case shows plugin-skills deleting SKILL.md on the unfixed source"
+    },
+    {
+      "id": "typecheck-test",
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "counts": "tsgo test project exit 0"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/electron-skill-source-safety.md",
+      "exitCode": 0,
+      "counts": "spec valid"
+    },
+    {
+      "id": "launch-1",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 1,
+      "counts": "1 spec failed on TF-0577 final response; guard ok, survivors 0"
+    },
+    {
+      "id": "launch-2",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 1,
+      "counts": "same TF-0577 assertion; guard ok, survivors 0"
+    },
+    {
+      "id": "launch-3",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 1,
+      "counts": "same TF-0577 assertion; guard ok, survivors 0"
+    },
+    {
+      "id": "app-smoke",
+      "command": "pnpm exec playwright test tests/e2e/app-smoke.spec.ts --workers=1",
+      "exitCode": 0,
+      "counts": "5 passed / 0 failed; guard ok, 6 reaped, survivors 0"
+    },
+    {
+      "id": "skills-set",
+      "command": "pnpm exec playwright test tests/e2e/skills-packs.spec.ts tests/e2e/skills-gateway-readiness.spec.ts tests/e2e/electron-worker-cleanup.spec.ts --workers=1",
+      "exitCode": 1,
+      "counts": "4 passed / 1 failed (pre-existing worker-cleanup report-shape drift); guard ok, survivors 0"
+    }
+  ],
+  "negativeControls": [
+    "guard fails when a temp-fixture tracked file is modified",
+    "guard fails when a temp-fixture tracked file is deleted",
+    "guard fails when an already-dirty tree is mutated further, so an automatic git restore cannot mask a run mutation",
+    "prepareSyncedSkillsDirectory rejects a junction that resolves into a protected source root instead of deleting the target",
+    "a regular plugin-skills directory is not removed as a stale generated link"
+  ],
+  "rawArtifacts": {
+    "focusedJson": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/focused.json",
+      "sha256": "316c3efd6763417fcc6cfd48d1726c548fdda6fd8cc97128a8dbface8610a4b7",
+      "bytes": 15350
+    },
+    "focusedLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/focused.log",
+      "sha256": "d1c1c32c7788bede76cba0c544a2a0075ba2d1e1fcf8d1150170a893d6cd9ca4",
+      "bytes": 113
+    },
+    "redControlLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/red-control.log",
+      "sha256": "2e84d8f7107f9bd4118f5120c7901618d80960aad5b07acd920d4d3c2c62e03c",
+      "bytes": 1892
+    },
+    "typecheckLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/typecheck.log",
+      "sha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae",
+      "bytes": 57
+    },
+    "harnessValidateLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/harness-validate.log",
+      "sha256": "7c9f5773648ac1f39a3c0e8abee4c4531f8146f44d2546442208faa1bb9b7569",
+      "bytes": 287
+    },
+    "launch1Log": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/launch-1.log",
+      "sha256": "6a685e8f0373a9a2f67e1a4f64f9bb10855bc8eab77626fad7694a4ae7ba54f3",
+      "bytes": 4977
+    },
+    "launch2Log": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/launch-2.log",
+      "sha256": "2aef816b5796fb0dd116f900401544c8820480d1acad7dd0c450030609ace042",
+      "bytes": 5221
+    },
+    "launch3Log": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/launch-3.log",
+      "sha256": "04ac9734127c5c8b2cba53880793bc9e92ff543908c456cfda5127aa369fb0c4",
+      "bytes": 4976
+    },
+    "appSmokeLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/app-smoke.log",
+      "sha256": "0a1ae09c75fa05dd286a0a273804e59d9a2b584af521be52ba46c6bcdc7e941a",
+      "bytes": 1098
+    },
+    "skillsSetLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/skills-set.log",
+      "sha256": "6f171271285a5e497a31d1e8f495d2f45d5237cd1d10e8aa251acbf6d0f48a6c",
+      "bytes": 3505
+    },
+    "workerCleanupPreexistingLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/worker-cleanup-base.log",
+      "sha256": "167c39aff691aa1dc09f1c5d7a0bec7113aaeabba5ac5aa7275069f4c03ac2dc",
+      "bytes": 2539
+    },
+    "guardVerdicts": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/guard-verdicts.json",
+      "sha256": "74131b29010622d10ca786bc6de01af5aecdb318cf0319d5cc6e731ed6201bf1",
+      "bytes": 3503
+    },
+    "processReport": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/process-report.json",
+      "sha256": "de41e43c76b09d9d59ceb6086e4b0126af3760b50cbb426da64f3480e4bea232",
+      "bytes": 1389
+    },
+    "sourceManifest": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/source-manifest.json",
+      "sha256": "b36d41abd34dc9e6af8ffb88bebaa7c52dc0558c18c531a2aa498191d244a5f3",
+      "bytes": 1660
+    }
+  },
+  "redactionScan": {
+    "secretPatterns": 4,
+    "findings": 0,
+    "status": "clean"
+  },
+  "productLocks": {
+    "releaseApproved": false,
+    "productApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "limitations": [
+    "Developer-source Windows x64 Electron evidence only. The packaged/installed artifact is not exercised here; the same risk is re-verified in the packaging phase and is NOT written as already excluded.",
+    "The three coding-loop launches fail their spec body on the separately tracked TF-0577 final-response assertion; the TF-0576 oracle (source/link-target hashes unchanged + guard ok) passes on all three.",
+    "electron-worker-cleanup.spec.ts fails on a pre-existing report-shape drift (it reads cleanup.owned while the report nests owned under sweep); it reproduces identically against the base fixture 9d2abb7dc and is outside TF-0576 scope.",
+    "No packaged/install-state, real-provider, release, or real-human evidence is claimed."
+  ],
+  "ledgerBinding": {
+    "path": "harness/specs/fixtures/product-acceptance-shortfalls/ledger.json",
+    "shortfallId": "e2e-skill-source-mutation",
+    "note": "The ledger entry binds to this receipt through resolution.artifactSha256. The ledger is excluded from evidenceSourceFiles so the receipt/ledger hash binding stays acyclic."
+  },
+  "candidateSourceFiles": [
+    {
+      "path": "openclaw_runtime/src/skills/loading/plugin-skills.ts",
+      "sha256": "3994c8f48939a2fd2fff0e811238dfe1e3fb6899e740e8881f97d18e24220c33",
+      "bytes": 9820
+    },
+    {
+      "path": "openclaw_runtime/src/skills/loading/workspace.ts",
+      "sha256": "9adf69a9feae63c2fc27d4bdd2bd7cfef0bb5329367f410fab9f6584a61ee486",
+      "bytes": 60334
+    },
+    {
+      "path": "tests/unit/skill-source-safety.test.ts",
+      "sha256": "060ac9af60e531cdf6558bd4b3e6d599b52be65a82b67717c1feb46bdbd15efc",
+      "bytes": 2356
+    },
+    {
+      "path": "tests/unit/source-mutation-guard.test.ts",
+      "sha256": "5eeebe7fac24ff4446dbc187565e49439cd72f26083c1ee30969032b55bf9455",
+      "bytes": 3296
+    },
+    {
+      "path": "tests/e2e/fixtures/source-mutation-guard.ts",
+      "sha256": "60c0c64b766cb2a026c472644add176b1ae73aaf38e02257cdab6f5b49bc5959",
+      "bytes": 1510
+    },
+    {
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "sha256": "d2afd5f29e6db3cf8dabb5d5cb2867ebb98136b46ec7d449d55a0636ff8df6da",
+      "bytes": 10306
+    },
+    {
+      "path": "harness/specs/tasks/electron-skill-source-safety.md",
+      "sha256": "69fdacbd8552aea3ca0f844436611687300ab7b4c942da382fd7db1e25aae1a3",
+      "bytes": 6017
+    }
+  ],
+  "evidenceSourceFiles": [
+    {
+      "path": "harness/specs/tasks/electron-skill-source-safety.md",
+      "sha256": "69fdacbd8552aea3ca0f844436611687300ab7b4c942da382fd7db1e25aae1a3",
+      "bytes": 6017
+    },
+    {
+      "path": "harness/specs/tasks/product-acceptance-closeout.md",
+      "sha256": "a1bbbccf5b06479b45b5fcffd3ba0e415a809dc991bff820c6b19795a44927d2",
+      "bytes": 17426
+    },
+    {
+      "path": "harness/specs/guides/product-acceptance-strategy.md",
+      "sha256": "e15ee27754a30e3024f76d1933623eb14d5cc79a32182b88625e19cddb3c8a47",
+      "bytes": 31819
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "ProductAcceptanceSourceGuard/v1",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+  "tree": "6b31f5e09676131ad3b32a0b5b45b3f9ea2beb0d",
+  "scope": "openclaw_runtime/extensions/qqbot/skills",
+  "files": [
+    {
+      "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/SKILL.md",
+      "sha256AtCandidate": "62f9d5a296dfa5a2b66368c6955c30165dac283107805bf916619ea5264934f6",
+      "sha256OnDisk": "62f9d5a296dfa5a2b66368c6955c30165dac283107805bf916619ea5264934f6",
+      "bytes": 12418,
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-channel/references/api_references.md",
+      "sha256AtCandidate": "e3104ffea78a99fa42a63a93143703fb7d37fb8417c57d9063d9c046a7838e90",
+      "sha256OnDisk": "e3104ffea78a99fa42a63a93143703fb7d37fb8417c57d9063d9c046a7838e90",
+      "bytes": 13764,
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-media/SKILL.md",
+      "sha256AtCandidate": "a6540b3e29f06e54d46da2aa51ac2ff3a9707c869ab3e55c78f65ae52bdb3e7c",
+      "sha256OnDisk": "a6540b3e29f06e54d46da2aa51ac2ff3a9707c869ab3e55c78f65ae52bdb3e7c",
+      "bytes": 1807,
+      "unchanged": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/qqbot/skills/qqbot-remind/SKILL.md",
+      "sha256AtCandidate": "4ccf5aa84dd00d37a0ac18639e44c430cb80e11d32d985be9cbd93fe218b1794",
+      "sha256OnDisk": "4ccf5aa84dd00d37a0ac18639e44c430cb80e11d32d985be9cbd93fe218b1794",
+      "bytes": 6354,
+      "unchanged": true
+    }
+  ],
+  "count": 4,
+  "allUnchanged": true
+}

@@ -127,7 +127,7 @@ The machine-readable ledger lives at
 8. The five baseline gaps (`runtime-memory-retired-test-contract`,
    `coding-loop-e2e-final-response`, `e2e-skill-source-mutation`,
    `agent-acceptance-harness-unconfigured-test-dirs`, `qa-lab-scenario-pack-not-present`)
-   are recorded with concrete evidence pointers and re-review dates. Two are resolved with
+   are recorded with concrete evidence pointers and re-review dates. Three are resolved with
    current-candidate evidence; the remaining rows are the acceptance backlog, not an excuse
    for silence.
 
@@ -364,8 +364,11 @@ Using the levels above, the present state of this repository reads as:
   currently blocked at L3 (see ledger `coding-loop-e2e-final-response`).
 - Operational surface: partial L5; OAT drills are recorded individually but not as one
   release-candidate drill set.
-- Exit criteria: not yet satisfied. The gap ledger has three open `must-resolve-before-ga`
-  items: coding-loop final response, E2E source mutation, and the absent QA Lab scenario pack.
+- Exit criteria: not yet satisfied. The gap ledger has two open `must-resolve-before-ga`
+  items: coding-loop final response and the absent QA Lab scenario pack. The Electron E2E
+  source-mutation defect is resolved by TF-0576 on clean candidate `7999579a6` (42/42 focused
+  tests, three launches plus app-smoke with the tracked-source guard green; evidence in
+  `harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/`).
   Runtime Memory retired-test drift is resolved by TF-0574 on clean candidate `07f60c029`
   (87 focused tests; evidence in `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`).
   The independent acceptance-runner plan-path defect is resolved by TF-0575 on clean candidate

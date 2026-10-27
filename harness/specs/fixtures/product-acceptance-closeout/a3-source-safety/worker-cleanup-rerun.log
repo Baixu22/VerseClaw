@@ -1,0 +1,35 @@
+
+Running 1 test using 1 worker
+
+(node:21828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile (15.7s)
+
+
+  1) tests\e2e\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile 
+
+    TypeError: Cannot read properties of undefined (reading 'length')
+
+      65 |       const cleanup = JSON.parse(await readFile(cleanupPath, 'utf8'));
+      66 |       expect(cleanup.runRoot.replace(/[\\/]+$/, '')).toBe(record.runRoot);
+    > 67 |       expect(cleanup.owned.length).toBeGreaterThan(0);
+         |                            ^
+      68 |       const orphan = cleanup.owned.find((process: { ParentProcessId: number }) => process.ParentProcessId === record.wrapperPid);
+      69 |       expect(orphan).toBeDefined();
+      70 |       expect(orphan.ParentAlive).toBe(false);
+        at D:\ClawX\tests\e2e\electron-worker-cleanup.spec.ts:67:28
+
+    Error Context: ..\tmp\clawx-product-acceptance\tf0576-candidate-7999579a6\a3-source-safety\worker-cleanup-rerun\electron-worker-cleanup-re-f004d-closing-another-run-profile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\tmp\clawx-product-acceptance\tf0576-candidate-7999579a6\a3-source-safety\worker-cleanup-rerun\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\tmp\clawx-product-acceptance\tf0576-candidate-7999579a6\a3-source-safety\worker-cleanup-rerun\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile 

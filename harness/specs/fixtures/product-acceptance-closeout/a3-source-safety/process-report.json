@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "ElectronProcessReclaimReport/v1",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+  "runs": [
+    {
+      "id": "launch-1",
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-LE7KfL",
+      "ledgerEntries": 1,
+      "reaped": 1,
+      "survivors": 0,
+      "sweepStatus": "ok",
+      "sweepRemaining": 0
+    },
+    {
+      "id": "launch-2",
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-rxgg1t",
+      "ledgerEntries": 1,
+      "reaped": 1,
+      "survivors": 0,
+      "sweepStatus": "ok",
+      "sweepRemaining": 0
+    },
+    {
+      "id": "launch-3",
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-155JZr",
+      "ledgerEntries": 1,
+      "reaped": 1,
+      "survivors": 0,
+      "sweepStatus": "ok",
+      "sweepRemaining": 0
+    },
+    {
+      "id": "app-smoke",
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-oLDoKN",
+      "ledgerEntries": 6,
+      "reaped": 6,
+      "survivors": 0,
+      "sweepStatus": "ok",
+      "sweepRemaining": 0
+    },
+    {
+      "id": "skills-set",
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-cd5bAN",
+      "ledgerEntries": 5,
+      "reaped": 5,
+      "survivors": 0,
+      "sweepStatus": "ok",
+      "sweepRemaining": 0
+    }
+  ],
+  "ownedProcessesRemainingZero": true
+}

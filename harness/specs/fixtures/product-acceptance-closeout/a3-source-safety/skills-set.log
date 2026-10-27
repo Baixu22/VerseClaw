@@ -1,0 +1,44 @@
+
+Running 5 tests using 1 worker
+
+(node:32764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile (13.7s)
+(node:29328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 tests\e2e\skills-gateway-readiness.spec.ts:4:7 › Skills page gateway readiness › shows local skills even when gateway is stopped (12.8s)
+  ok 3 tests\e2e\skills-gateway-readiness.spec.ts:58:7 › Skills page gateway readiness › hides uninstall for plugin-provided skills (10.6s)
+  ok 4 tests\e2e\skills-gateway-readiness.spec.ts:95:7 › Skills page gateway readiness › clears stale startup banner once local skills load while runtime rpc is still starting (12.3s)
+  ok 5 tests\e2e\skills-packs.spec.ts:36:7 › Skills feature plugins › shows managed packs and routes install and enable actions through host-api (11.4s)
+
+
+  1) tests\e2e\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile 
+
+    TypeError: Cannot read properties of undefined (reading 'length')
+
+      65 |       const cleanup = JSON.parse(await readFile(cleanupPath, 'utf8'));
+      66 |       expect(cleanup.runRoot.replace(/[\\/]+$/, '')).toBe(record.runRoot);
+    > 67 |       expect(cleanup.owned.length).toBeGreaterThan(0);
+         |                            ^
+      68 |       const orphan = cleanup.owned.find((process: { ParentProcessId: number }) => process.ParentProcessId === record.wrapperPid);
+      69 |       expect(orphan).toBeDefined();
+      70 |       expect(orphan.ParentAlive).toBe(false);
+        at D:\ClawX\tests\e2e\electron-worker-cleanup.spec.ts:67:28
+
+    Error Context: ..\tmp\clawx-product-acceptance\tf0576-candidate-7999579a6\a3-source-safety\skills-set\electron-worker-cleanup-re-f004d-closing-another-run-profile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\tmp\clawx-product-acceptance\tf0576-candidate-7999579a6\a3-source-safety\skills-set\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\tmp\clawx-product-acceptance\tf0576-candidate-7999579a6\a3-source-safety\skills-set\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile 
+  4 passed (1.0m)

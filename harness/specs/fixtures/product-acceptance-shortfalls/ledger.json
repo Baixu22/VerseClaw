@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ProductAcceptanceShortfallLedger/v1",
-  "generatedAt": "2026-10-27",
+  "generatedAt": "2026-10-27T09:12:50.279Z",
   "driven_by": "agent",
   "actor": "codex-clawx-ga-review-20261027",
   "policy": "harness/specs/guides/product-acceptance-strategy.md",
@@ -129,24 +129,43 @@
         "D:/tmp/clawx-ga-review-20261026/post-test-source-diff.txt",
         "openclaw_runtime/src/skills/loading/plugin-skills.ts:198-275",
         "electron/utils/skill-config.ts:249-280",
-        "electron/gateway/config-sync.ts:455-470"
+        "electron/gateway/config-sync.ts:455-470",
+        "harness/specs/tasks/electron-skill-source-safety.md",
+        "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/receipt.json",
+        "7999579a6d512fac1794b6ebe53a3dae409b32e4 fix(skills): stop Electron E2E startup from deleting skill sources"
       ],
-      "observed": "git status showed 'D openclaw_runtime/extensions/qqbot/skills/qqbot-channel/SKILL.md' plus 3 sibling files after each of two E2E launches. Files were restored with git restore --source=HEAD. Repo HEAD was unchanged and no source edit was intended.",
+      "observed": "Root cause identified and fixed on clean candidate 7999579a6d512fac1794b6ebe53a3dae409b32e4. plugin-skills treated any Windows directory as a runner-owned junction and the synced-skills cleanup recursively removed entries through a junction into the tracked source. Removal is now restricted to real links and the cleanup refuses paths that overlap a protected source root. Focused unit 42/42 passed; three Electron launches and an app-smoke run left every tracked file byte-identical with the worktree guard reporting ok and zero surviving Electron processes.",
       "impact": "Any E2E or normal startup path that deletes tracked source files corrupts the working tree and can silently alter packaged inputs. It also makes clean-candidate evidence unreliable.",
       "owner": "agent:electron-startup-maintainer",
       "reportedAt": "2026-10-27",
       "reviewBy": "2026-11-03",
-      "status": "open",
+      "status": "resolved",
       "proposedAction": "Instrument skill-root cleanup paths to log path, realpath, link type and decision before deletion; add an E2E guard that fails when tracked files change; then fix and rerun the full E2E suite.",
       "shortfallClass": "test-and-runtime-boundary-defect",
       "acceptanceDisposition": "must-resolve-before-ga",
       "risk": "high",
       "dataAtRisk": true,
       "userVisible": false,
-      "rootCauseClass": "undetermined-test-or-runtime-boundary",
+      "rootCauseClass": "runner-owned-path-boundary-defect",
       "blastRadius": "tracked source inputs during E2E; may invalidate clean-candidate and package evidence",
       "repairCost": "medium",
-      "pathToGa": "instrument deletion paths, add a tracked-file mutation guard and rerun launch/full E2E"
+      "pathToGa": "instrument deletion paths, add a tracked-file mutation guard and rerun launch/full E2E",
+      "resolvedAt": "2026-10-27",
+      "resolution": {
+        "candidate": {
+          "commit": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+          "tree": "6b31f5e09676131ad3b32a0b5b45b3f9ea2beb0d",
+          "dirty": false
+        },
+        "sourceRef": "commit:7999579a6d512fac1794b6ebe53a3dae409b32e4 openclaw_runtime/src/skills/loading/plugin-skills.ts openclaw_runtime/src/skills/loading/workspace.ts tests/e2e/fixtures/electron-process-cleanup.ts tests/e2e/fixtures/source-mutation-guard.ts tests/unit/skill-source-safety.test.ts tests/unit/source-mutation-guard.test.ts",
+        "command": "pnpm exec vitest run tests/unit/skill-source-safety.test.ts tests/unit/source-mutation-guard.test.ts tests/unit/skills-symlink-cleanup.test.ts tests/unit/skill-config-bundled-defaults.test.ts tests/unit/config-sync-source-runtime.test.ts --maxWorkers=1 --reporter=json",
+        "exitCode": 0,
+        "counts": "16 suites / 42 tests passed / 0 failed",
+        "electronRuns": "3 launches + app-smoke + skills-set; guard ok on every run; survivors 0; sweep remaining 0",
+        "artifactSha256": "66ac385e3b0876d297def72e211b69e62d43aaf3e61ebeb0b85233e5c01cb0c2",
+        "artifactPath": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/receipt.json",
+        "negativeControl": "guard fails on modified/deleted tracked fixture files and on further mutation of an already-dirty tree; junction target deletion is refused"
+      }
     },
     {
       "id": "agent-acceptance-harness-unconfigured-test-dirs",
@@ -226,12 +245,11 @@
   ],
   "summary": {
     "total": 5,
-    "open": 3,
+    "open": 2,
     "inProgress": 0,
-    "resolved": 2,
+    "resolved": 3,
     "blocking": [
       "coding-loop-e2e-final-response",
-      "e2e-skill-source-mutation",
       "qa-lab-scenario-pack-not-present"
     ],
     "accepted": [],

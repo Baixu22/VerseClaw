@@ -1,0 +1,46 @@
+
+ RUN  v4.1.1 D:/ClawX
+
+ ❯ tests/unit/skill-source-safety.test.ts (2 tests | 2 failed) 13ms
+     × does not treat a regular plugin-skills directory as a generated stale link 9ms
+     × fails before syncing skills through a link that resolves into a protected source root 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/skill-source-safety.test.ts > skill source safety > does not treat a regular plugin-skills directory as a generated stale link
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/skill-source-safety.test.ts:22:61
+     20|       pluginSkillsTesting.publishPluginSkills([], { pluginSkillsDir });
+     21|
+     22|       expect(existsSync(join(regularSkillDir, 'SKILL.md'))).toBe(true);
+       |                                                             ^
+     23|     } finally {
+     24|       rmSync(root, { recursive: true, force: true });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/skill-source-safety.test.ts > skill source safety > fails before syncing skills through a link that resolves into a protected source root
+TypeError: __testing.prepareSyncedSkillsDirectory is not a function
+ ❯ tests/unit/skill-source-safety.test.ts:42:32
+     40|
+     41|       await expect(
+     42|         workspaceSkillsTesting.prepareSyncedSkillsDirectory(targetSkil…
+       |                                ^
+     43|       ).rejects.toThrow(/overlaps a protected source root/u);
+     44|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 4 passed (6)
+   Start at  16:56:25
+   Duration  5.43s (transform 1.27s, setup 294ms, import 1.83s, tests 1.93s, environment 952ms)
+

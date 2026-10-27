@@ -18,6 +18,7 @@ touchedAreas:
   - harness/specs/tasks/product-acceptance-closeout.md
   - harness/specs/fixtures/product-acceptance-shortfalls/ledger.json
   - harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/**
+  - harness/specs/guides/product-acceptance-strategy.md
   - openclaw_runtime/src/skills/loading/plugin-skills.ts
   - openclaw_runtime/src/skills/loading/workspace.ts
   - tests/e2e/fixtures/electron-process-cleanup.ts

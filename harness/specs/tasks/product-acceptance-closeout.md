@@ -175,7 +175,7 @@ closed by confidence alone.
 
 ## Shortfall closure rules
 
-The five recorded shortfalls form the baseline. Three remain open; two are resolved with
+The five recorded shortfalls form the baseline. Two remain open; three are resolved with
 current evidence:
 
 1. `runtime-memory-retired-test-contract` → **resolved by `TF-0574`** on candidate
@@ -183,7 +183,10 @@ current evidence:
 2. `agent-acceptance-harness-unconfigured-test-dirs` → **resolved by `TF-0575`** on candidate
    `5bb7f1f53`; 76/76 focused tests pass while the original 74 names remain green and two path
    negatives are added. Evidence is under `harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/`
-3. `e2e-skill-source-mutation` → `TF-0576` (open)
+3. `e2e-skill-source-mutation` → **resolved by `TF-0576`** on candidate `7999579a6`;
+   plugin-skills no longer treats a regular directory as a runner-owned junction and the synced-skills
+   cleanup refuses paths that overlap a protected source root. Evidence is under
+   `harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/`
 4. `coding-loop-e2e-final-response` → `TF-0577` (open)
 5. `qa-lab-scenario-pack-not-present` → `TF-0578` (open)
 

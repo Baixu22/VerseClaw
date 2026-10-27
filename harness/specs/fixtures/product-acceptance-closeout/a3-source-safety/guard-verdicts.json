@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "ElectronE2ESourceMutationGuardAggregate/v1",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": "7999579a6d512fac1794b6ebe53a3dae409b32e4",
+  "interpretation": "Each entry compares git status + tracked-file list hash + git diff HEAD hash before and after one Electron E2E launch. The candidate was clean (empty status) for every run, so ok=true means no tracked source changed during the run.",
+  "runs": [
+    {
+      "id": "launch-1",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "launch-2",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "launch-3",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "app-smoke",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "skills-set",
+      "guard": {
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "ca7e659e84405780218c7601f20bd25344b7f254abbfbde451ac32c4ddeeef97",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "allOk": true
+}
