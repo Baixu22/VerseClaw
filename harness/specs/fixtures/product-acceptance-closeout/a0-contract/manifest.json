@@ -196,5 +196,11 @@
     "gitDiffCheck": "pass / exit 0",
     "ledgerVerifier": "10 tests passed / current five remain open",
     "manifestChecksum": "verified after reseal"
+  },
+  "postCommitReceipt": {
+    "path": "post-commit.json",
+    "sha256": "ebd72107b38dbcf05399bad5237c85aa4a5b9b6d5360c75fdeb19bb27a8215f8",
+    "candidateCommit": "b747181e025cd4d255a49c985a73cad4213f4cbf",
+    "dirty": false
   }
 }

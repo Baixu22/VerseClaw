@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutReceipt/v1",
+  "node": "TF-0573",
+  "stage": "clean-post-commit",
+  "generatedAt": "2026-10-27T12:32:45.9697401+08:00",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": {
+    "commit": "b747181e025cd4d255a49c985a73cad4213f4cbf",
+    "tree": "5b23489677779fa4f092b96d0ec3fa81a8b71894",
+    "dirty": false,
+    "dirtyPaths": []
+  },
+  "commands": {
+    "focusedVitest": {
+      "command": "pnpm exec vitest run tests/unit/product-acceptance-shortfalls.test.ts tests/unit/harness-specs.test.ts tests/unit/docs-index.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "counts": "3 files / 56 tests passed"
+    },
+    "docsPolicy": {
+      "command": "pnpm docs:policy:validate",
+      "exitCode": 0,
+      "counts": "10 checks passed"
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/product-acceptance-closeout.md",
+      "exitCode": 0
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/product-acceptance-closeout.md --dry-run",
+      "exitCode": 0
+    },
+    "gitDiffCheck": {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    "taskForestValidate": {
+      "command": "task_forest.py validate --workspace D:/ClawX",
+      "exitCode": 0
+    }
+  },
+  "rawRunArtifacts": [
+    {
+      "id": "focused-vitest",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-clean-b747181e0\\focused-vitest.log",
+      "sha256": "644eb969c5f0b96665b3c1320d8db9a857a09c432ffde20b69559001069187e5",
+      "bytes": 206
+    },
+    {
+      "id": "docs-policy",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-clean-b747181e0\\docs-policy.log",
+      "sha256": "43e480f46be2861ec4ff1240859bee1a2838f4274cde2b313f8054e468b8a85f",
+      "bytes": 676
+    },
+    {
+      "id": "harness-validate",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-clean-b747181e0\\harness-validate.log",
+      "sha256": "702b8f159cdf0d798ef66f26ed7e2b23f0438f48294ac5f0a3da597053ca29af",
+      "bytes": 284
+    },
+    {
+      "id": "harness-dry-run",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-clean-b747181e0\\harness-dry-run.log",
+      "sha256": "43c117e8dd97eacc8b289374eac9d14b35207efdaf65a45efd212b0e2bbadb27",
+      "bytes": 307
+    },
+    {
+      "id": "git-diff-check",
+      "path": "D:\\tmp\\clawx-product-acceptance\\a0-clean-b747181e0\\git-diff-check.log",
+      "sha256": "5aa89528af027f1be78a698ffafdbc882d63936b148fbfda6c87f90c07adb6e8",
+      "bytes": 53
+    }
+  ],
+  "retainedChecksums": {
+    "manifest": "48f8ffa412daefd13838b56c96f9d2d4108cd43e0bbcec0a821dda3604523f39",
+    "sha256sumsVerified": true
+  },
+  "limitations": [
+    "Five product shortfalls remain open; this receipt proves contract-freeze gates only.",
+    "No package, live provider, or real-human evidence is claimed."
+  ],
+  "realHumanEvidence": false,
+  "releaseApproved": false
+}
