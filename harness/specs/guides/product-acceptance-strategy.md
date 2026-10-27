@@ -124,11 +124,12 @@ The machine-readable ledger lives at
    item is missing, the dimension is `unverified` rather than `accepted-shortfall`.
 7. A blocking failure, unresolved P0/P1, current-candidate critical journey without an effect
    receipt, tracked/user-data mutation, or stale release evidence cannot be accepted as a gap.
-8. The five currently relevant gaps (`runtime-memory-retired-test-contract`,
+8. The five baseline gaps (`runtime-memory-retired-test-contract`,
    `coding-loop-e2e-final-response`, `e2e-skill-source-mutation`,
    `agent-acceptance-harness-unconfigured-test-dirs`, `qa-lab-scenario-pack-not-present`)
-   are recorded with concrete evidence pointers and re-review dates. They are the
-   acceptance backlog, not an excuse for silence.
+   are recorded with concrete evidence pointers and re-review dates. Two are resolved with
+   current-candidate evidence; the remaining rows are the acceptance backlog, not an excuse
+   for silence.
 
 ## 5. Agent-driven equivalent of human acceptance
 
@@ -339,13 +340,14 @@ task" is never acceptance evidence.
 ### 5.7 Next implementation sequence
 
 1. **Resolved by TF-0574:** repair Runtime Memory test-contract drift; the clean candidate focused gate is green while the full aggregate gate remains a later release gate.
-2. Correct the independent acceptance-runner fixture output roots and pass its complete focused
-   test file; this agent can close the repair without a product decision.
-3. Restore a minimal tracked QA Lab personal-agent scenario pack, run it with `mock-openai`, and
+2. **Resolved by TF-0575:** bind plan output roots to the explicit source root and pass the
+   complete acceptance-runner focused file, including the original 74 tests and two new path
+   negatives.
+3. Stop Electron test startup from deleting skill source/link targets and add a worktree guard.
+4. Instrument the coding-loop provider request, fix the first failing owner, and require three
+   clean E2E runs with undo/readback.
+5. Restore a minimal tracked QA Lab personal-agent scenario pack, run it with `mock-openai`, and
    retain one success plus one negative/recovery receipt.
-4. Instrument the coding-loop provider request and the skill-root mutation, fix the first failing
-   owner, then require three clean E2E runs.
-5. Add a tracked-file/worktree mutation guard around every Electron test run.
 6. Consolidate failure/recovery/OAT receipts into one candidate-bound run manifest.
 7. Run the independent Executor/Verifier acceptance path on a clean committed candidate.
 8. Package the frozen artifact and execute the same core journey from the installed layout.
@@ -362,12 +364,14 @@ Using the levels above, the present state of this repository reads as:
   currently blocked at L3 (see ledger `coding-loop-e2e-final-response`).
 - Operational surface: partial L5; OAT drills are recorded individually but not as one
   release-candidate drill set.
-- Exit criteria: not yet satisfied. The gap ledger has four open `must-resolve-before-ga`
-  items: coding-loop final response, E2E source mutation, an independent acceptance-runner
-  fixture defect, and the absent QA Lab scenario pack. Runtime Memory retired-test drift is
-  resolved by TF-0574 on clean candidate `07f60c029` (87 focused tests, zero skips; evidence in
-  `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`). The current checkout also
-  has no packaged release artifact, so L4 is `not-run` rather than inherited from history.
+- Exit criteria: not yet satisfied. The gap ledger has three open `must-resolve-before-ga`
+  items: coding-loop final response, E2E source mutation, and the absent QA Lab scenario pack.
+  Runtime Memory retired-test drift is resolved by TF-0574 on clean candidate `07f60c029`
+  (87 focused tests; evidence in `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`).
+  The independent acceptance-runner plan-path defect is resolved by TF-0575 on clean candidate
+  `5bb7f1f53` (76/76 focused tests, original 74 preserved; evidence in
+  `harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/`). The current checkout
+  also has no packaged release artifact, so L4 is `not-run` rather than inherited from history.
 - L6: not claimed. `liveReady`, `productApproved` and `defaultOn` remain locks.
 
 Therefore the honest current label is **GA candidate / release candidate with an
@@ -383,7 +387,7 @@ must not be re-quoted as current passes or failures after the candidate changes.
 | Observation | Reported result | Label | Use |
 | --- | --- | --- | --- |
 | `tests/unit/task-loop-controller.test.ts` | 64 passed / 3 failed | historical unit baseline, 2026-10-27 | Input to `TF-0574`; no current-candidate verdict |
-| Independent acceptance-runner focused file | 74 total / 72 passed / 2 failed / 0 skipped | historical runner baseline, 2026-10-27 | Input to `TF-0575`; fixture output root is the reported failure |
+| Independent acceptance-runner focused file | 74 total / 72 passed / 2 failed / 0 skipped | historical runner baseline, 2026-10-27 | TF-0575 superseded this row with a clean-candidate 76/76 run; retained as provenance |
 | Coding-loop E2E | 1 failed: turn did not reach final response | historical E2E baseline, 2026-10-27 | Input to `TF-0577`; no L3 effect proof |
 | Full typecheck log | exit 0, including test project | historical observation only | Not a substitute for a fresh aggregate gate |
 
@@ -394,7 +398,12 @@ negative control and artifact hash bound to its own candidate.
 
 TF-0574 subsequently resolved the retired-test row on candidate `07f60c029`: the task-loop
 contract file reports 69/69, the Runtime Memory context contract 8/8, and the ledger verifier
-10/10. This supersedes the historical 64/3 row below while preserving it as provenance.
+10/10. This supersedes the historical 64/3 row while preserving it as provenance. TF-0575
+resolved the runner-path row on candidate `5bb7f1f53`: all original 74 test names are present
+and passing, and two additional path-contract tests bring the focused file to 76/76 with zero
+skips. Rejection of repository-root overwrite, in-tree `.tmp`, unrelated in-tree roots, and
+`..` traversal remains covered; evidence is under
+`harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/`.
 
 ## 7. How to run a review
 

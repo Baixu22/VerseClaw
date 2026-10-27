@@ -155,16 +155,18 @@
       "dimension": "test-integrity",
       "gap": "Two existing CLI plan tests fail because their temporary output directories are rejected as outside the source root unless the output is under artifacts/agent-engineering-acceptance. The runner correctly fails closed; the tests did not construct the permitted output location.",
       "evidence": [
-        "tests/unit/agent-engineering-acceptance.test.ts:1287",
-        "tests/unit/agent-engineering-acceptance.test.ts:1503",
-        "scripts/lib/agent-engineering-acceptance.mjs:1023",
-        "D:/ClawX/.tmp/acceptance-runner-failures.json"
+        "tests/unit/agent-engineering-acceptance.test.ts:1304",
+        "tests/unit/agent-engineering-acceptance.test.ts:1343",
+        "scripts/lib/agent-engineering-acceptance.mjs:2391",
+        ".tmp/acceptance-runner-failures.json (historical baseline: 74 total / 72 passed / 2 failed)",
+        "5bb7f1f535f72024267496dcffd4ca4e114c5d91 fix(acceptance): bind plan roots to source",
+        "harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/receipt.json"
       ],
-      "impact": "The independent acceptance protocol cannot yet be treated as a green reusable GA orchestrator: 72 tests pass but two plan-path tests fail before the actual acceptance gates run.",
+      "impact": "The focused acceptance-runner file was red, so the independent acceptance protocol could not yet be treated as a reusable green GA orchestrator. That condition is resolved below.",
       "owner": "agent:acceptance-maintainer",
       "reportedAt": "2026-10-27",
       "reviewBy": "2026-11-03",
-      "status": "open",
+      "status": "resolved",
       "proposedAction": "Change the fixtures to use permitted temporary output roots while retaining the path-rejection negative assertion, then rerun the focused file and the independent acceptance path.",
       "shortfallClass": "test-harness-path-contract",
       "acceptanceDisposition": "must-resolve-before-ga",
@@ -174,8 +176,23 @@
       "rootCauseClass": "test-fixture-path-drift",
       "blastRadius": "the independent acceptance orchestrator tests and confidence in the GA aggregation path",
       "repairCost": "small",
-      "pathToGa": "fix fixture output roots, preserve negative path tests and pass all 74 focused tests",
-      "observed": "Vitest JSON: 3 files, 72 passed / 2 failed / 0 skipped (74 total), exit 1, 188.5s. Failures are the two CLI plan tests at tests/unit/agent-engineering-acceptance.test.ts:1287 and :1503; each exits 1 before a manifest is written because the fixture output root is rejected."
+      "pathToGa": "Use explicit supported output roots in fixtures, validate plan paths against the selected source root, preserve negative controls, and re-run the complete focused file.",
+      "observed": "Resolved on clean candidate 5bb7f1f535f72024267496dcffd4ca4e114c5d91: four suites / 76 tests passed / 0 failed / 0 pending / 0 todo. All 74 historical test names are present and green; two new path-contract tests are additional.",
+      "resolvedAt": "2026-10-27",
+      "resolution": {
+        "candidate": {
+          "commit": "5bb7f1f535f72024267496dcffd4ca4e114c5d91",
+          "tree": "3a7416ddfcc3845b5670c8cabec5c4e67b8f0497",
+          "dirty": false
+        },
+        "sourceRef": "commit:5bb7f1f535f72024267496dcffd4ca4e114c5d91 scripts/agent-engineering-acceptance.mjs scripts/lib/agent-engineering-acceptance.mjs scripts/lib/agent-engineering-acceptance.d.mts tests/unit/agent-engineering-acceptance.test.ts harness/specs/tasks/independent-acceptance-runner-output-roots.md",
+        "command": "pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/clawx-product-acceptance/tf0575-candidate-5bb7f1f53/a2-runner-path/focused.json",
+        "exitCode": 0,
+        "counts": "4 suites / 76 tests / 76 passed / 0 failed / 0 pending / 0 todo; original 74 preserved, 2 new tests added",
+        "artifactSha256": "3161d3db048577523b10f2a8365bae89a7502ba49ba3a6241e3cf824afa50710",
+        "artifactPath": "harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/receipt.json",
+        "negativeControl": "repository root, in-tree .tmp, unrelated in-tree output, and .. traversal are rejected before manifest/plan writes; unsafe CLI paths leave no evidence"
+      }
     },
     {
       "id": "qa-lab-scenario-pack-not-present",
@@ -209,14 +226,13 @@
   ],
   "summary": {
     "total": 5,
-    "open": 4,
+    "open": 3,
     "inProgress": 0,
-    "resolved": 1,
+    "resolved": 2,
     "blocking": [
       "coding-loop-e2e-final-response",
-      "agent-acceptance-harness-unconfigured-test-dirs",
-      "qa-lab-scenario-pack-not-present",
-      "e2e-skill-source-mutation"
+      "e2e-skill-source-mutation",
+      "qa-lab-scenario-pack-not-present"
     ],
     "accepted": [],
     "byDisposition": {

@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+  "node": "TF-0575",
+  "runId": "tf0575-5bb7f1f53",
+  "generatedAt": "2026-10-27T06:38:05.146Z",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": {
+    "commit": "5bb7f1f535f72024267496dcffd4ca4e114c5d91",
+    "tree": "3a7416ddfcc3845b5670c8cabec5c4e67b8f0497",
+    "dirty": false,
+    "label": "Clean source candidate; evidence files were committed afterward."
+  },
+  "scope": "Independent acceptance runner plan output-root validation and explicit CLI fixture roots.",
+  "currentCandidateRun": true,
+  "focusedTests": {
+    "suites": 4,
+    "passedSuites": 4,
+    "failedSuites": 0,
+    "total": 76,
+    "passed": 76,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "byFile": [
+      {
+        "file": "agent-engineering-acceptance.test.ts",
+        "status": "passed",
+        "tests": 76,
+        "passed": 76,
+        "failed": 0
+      }
+    ]
+  },
+  "baselineMapping": {
+    "historicalFile": ".tmp/acceptance-runner-failures.json",
+    "historicalSha256": "07598d611631decade574ed6131021b0c79403da245996ba29b6c6de4a56a75c",
+    "historicalTotal": 74,
+    "historicalPassed": 72,
+    "historicalFailed": 2,
+    "original74Present": true,
+    "original74Passed": true,
+    "addedTests": [
+      "Agent Engineering Acceptance output root contract accepts in-tree dedicated and out-of-tree roots while rejecting unsafe in-tree roots",
+      "Agent Engineering Acceptance output root contract validates CLI plan output against the explicit --root source root"
+    ],
+    "addedCount": 2
+  },
+  "commands": [
+    {
+      "id": "focused",
+      "command": "pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/clawx-product-acceptance/tf0575-candidate-5bb7f1f53/a2-runner-path/focused.json",
+      "exitCode": 0,
+      "counts": "4 suites / 76 tests / 76 passed / 0 failed / 0 pending / 0 todo"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "counts": "node, web and test projects exit 0"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/independent-acceptance-runner-output-roots.md",
+      "exitCode": 0,
+      "counts": "spec valid"
+    },
+    {
+      "id": "ledger-verifier",
+      "command": "pnpm exec vitest run tests/unit/product-acceptance-shortfalls.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/clawx-product-acceptance/tf0575-candidate-5bb7f1f53/a2-runner-path/ledger-verifier.json",
+      "exitCode": 0,
+      "counts": "1 suite / 10 tests / 10 passed / 0 failed"
+    }
+  ],
+  "negativeControls": [
+    "source root itself rejected before manifest write",
+    "in-tree .tmp output rejected before manifest write",
+    "in-tree artifacts/unrelated output rejected before manifest write",
+    ".. traversal normalized outside the dedicated acceptance root rejected before manifest write",
+    "unsafe CLI plan paths produce no evidence writes"
+  ],
+  "rawArtifacts": {
+    "focused.json": {
+      "path": "D:/ClawX/harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/focused.json",
+      "sha256": "e680f172bd2d5ac137d87976a3a17972654b0a89d5c5b952e74ab28d87ece637",
+      "bytes": 27202
+    },
+    "focused.log": {
+      "path": "D:/ClawX/harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/focused.log",
+      "sha256": "8fe8ee7a9cc74bd7315cb7a5b1af12ef8f797c477d033c1d3934f88f90953128",
+      "bytes": 111
+    },
+    "typecheck.log": {
+      "path": "D:/ClawX/harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/typecheck.log",
+      "sha256": "78712e5831760d0d9a296eaa81b77fa9d98129da05c768bfc9c1c4492f7c38b1",
+      "bytes": 1585
+    },
+    "harness-validate.log": {
+      "path": "D:/ClawX/harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/harness-validate.log",
+      "sha256": "ee38e7d68b4d9cecbab45030de502d05c3efbb86de542d917c2808e58965b592",
+      "bytes": 329
+    },
+    "ledger-verifier.json": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/ledger-verifier.json",
+      "sha256": "e4ffe41ba323cc7e2238c93b6e24cb82b123ecc3f7ff9049576f5b3f6179ec7f",
+      "bytes": 4113
+    }
+  },
+  "redactionScan": {
+    "secretPatterns": 4,
+    "findings": 0,
+    "status": "clean"
+  },
+  "productLocks": {
+    "releaseApproved": false,
+    "productApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "limitations": [
+    "This node does not run the full aggregate pnpm test or full independent Executor/Verifier acceptance path; those remain later release gates.",
+    "Evidence is Windows x64 local source-candidate evidence only.",
+    "No packaged/install-state, real-provider, release, or real-human evidence is claimed.",
+    "The test file is green on the named clean candidate; historical 72/2 remains labeled historical."
+  ],
+  "candidateSourceFiles": [
+    {
+      "path": "scripts/agent-engineering-acceptance.mjs",
+      "sha256": "71f3eb2ec8fc44ecf837c121ead993f82abeade4d93596d4d1232d09e5ad898f",
+      "bytes": 8198
+    },
+    {
+      "path": "scripts/lib/agent-engineering-acceptance.mjs",
+      "sha256": "80e41d51c58b43e1d70a1221ae51aa027ee59da641156625c69498a6a9cb2798",
+      "bytes": 110233
+    },
+    {
+      "path": "scripts/lib/agent-engineering-acceptance.d.mts",
+      "sha256": "688b053735b28226b3ee52db860694277d42a3eaddcbf475a7d94ebb6e1b64d6",
+      "bytes": 5408
+    },
+    {
+      "path": "tests/unit/agent-engineering-acceptance.test.ts",
+      "sha256": "54f426660654e938ceb4f79ca7765e92a007f4fbe4a08d7465464d0e1bfc3d74",
+      "bytes": 115407
+    },
+    {
+      "path": "harness/specs/tasks/independent-acceptance-runner-output-roots.md",
+      "sha256": "456452253ee0296ab0e7cc561f32551d4db96e73a86071e770532a1f1a151702",
+      "bytes": 4629
+    },
+    {
+      "path": "harness/specs/rules/agent-engineering-acceptance-boundary.md",
+      "sha256": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
+      "bytes": 5679
+    },
+    {
+      "path": "docs/dev/agent-engineering-acceptance.md",
+      "sha256": "ff6db6f10ec806865b1a786239ae946b53c985416425a559ccb441caf7deea86",
+      "bytes": 6886
+    }
+  ],
+  "evidenceSourceFiles": [
+    {
+      "path": "harness/specs/tasks/independent-acceptance-runner-output-roots.md",
+      "sha256": "456452253ee0296ab0e7cc561f32551d4db96e73a86071e770532a1f1a151702",
+      "bytes": 4629
+    },
+    {
+      "path": "harness/specs/tasks/product-acceptance-closeout.md",
+      "sha256": "b0d16459aad40c06f47a7969ba221f95e274ca38a0841f315054a06cf62a5441",
+      "bytes": 17133
+    },
+    {
+      "path": "harness/specs/guides/product-acceptance-strategy.md",
+      "sha256": "a2b86b7b16ec982b23ea0d08d779b53039c03b3689ebb432df47a7bbb734a03a",
+      "bytes": 31567
+    },
+    {
+      "path": "harness/specs/rules/agent-engineering-acceptance-boundary.md",
+      "sha256": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
+      "bytes": 5679
+    },
+    {
+      "path": "docs/dev/agent-engineering-acceptance.md",
+      "sha256": "ff6db6f10ec806865b1a786239ae946b53c985416425a559ccb441caf7deea86",
+      "bytes": 6886
+    }
+  ]
+}

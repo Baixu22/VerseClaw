@@ -161,7 +161,7 @@ closed by confidence alone.
 | --- | --- | --- | --- | --- | --- | --- |
 | `TF-0573` a0-contract | Freeze this contract, resource boundaries and baseline | Current HEAD/tree/dirty, `package.json`, `.tmp/acceptance-runner-failures.json`; focused tests, docs policy, harness validate/dry-run | Contract contains every task row; ledger/verifier agrees with itself and disk | Resolved without evidence, stale summary, accepted P1, fabricated pass | `vitest` focused, `pnpm docs:policy:validate`, harness validate/run dry-run, `git diff --check` | `harness/specs/fixtures/product-acceptance-closeout/a0-contract/` |
 | `TF-0574` a1-memory | Align retired Runtime Memory tests with product semantics | `openclaw_runtime/src/runtime-core/memory-context.ts`, `tests/unit/task-loop-controller.test.ts`; focused file then full unit gate | Retired flags cause no shadow/persist effect; non-retired inputs remain rejected or bounded | Old write/replay expectation is rejected, not silently rewritten as success | focused file, affected runtime suite, `pnpm test` after integration | a1 manifest and raw test JSON/log |
-| `TF-0575` a2-runner-path | Correct independent acceptance fixture output roots | Acceptance runner/library and its complete focused test file | 74/74 focused tests pass with allowed output roots | Path traversal, repo-root overwrite and arbitrary outside-root cases fail closed | focused runner file, typecheck:test, harness validate | a2 manifest and runner report |
+| `TF-0575` a2-runner-path | Correct independent acceptance fixture output roots | Acceptance runner/library and its complete focused test file | Original 74 tests remain present and pass; the repaired complete file is 76/76 with two added path-contract tests | Path traversal, repo-root overwrite, unrelated in-tree roots and in-tree `.tmp` fail closed; explicit out-of-tree roots remain allowed | focused runner file, typecheck:test, harness validate | a2 manifest and runner report |
 | `TF-0576` a3-source-safety | Stop Electron test startup from deleting skill source/link targets | Electron harness, skill-root fixture, worktree guard | Source and link target hashes are unchanged after start/stop | Guard rejects missing/aliased/write-target paths without deleting them | focused unit, Electron smoke, git source manifest before/after | a3 before/after tree and process report |
 | `TF-0577` a4-coding-final | Make the coding journey reach a final response and complete undo | `tests/e2e/coding-loop-fp-p1-04.spec.ts`, provider transport diagnostics, write journal | File/tool effects exist and a visible final answer reports the actual outcome | Provider drop yields explicit failure, never a success-looking final response; undo restores state | focused E2E ×3, negative transport case, undo/readback | a4 three-run receipts and state snapshots |
 | `TF-0578` a5-qa-pack | Restore a minimal executable QA Lab scenario pack | `openclaw_runtime/extensions/qa-lab`, canonical `qa/scenarios` fixtures, disposable profile | One mock-provider pack run reaches the declared final state | Missing/corrupt scenario and failed assertion produce a failure bundle, not an empty pass | QA Lab focused tests, one pack success, one negative/recovery run | a5 suite summary and failure bundle |
@@ -175,12 +175,14 @@ closed by confidence alone.
 
 ## Shortfall closure rules
 
-The five recorded shortfalls form the baseline. Four remain open; one is resolved with
+The five recorded shortfalls form the baseline. Three remain open; two are resolved with
 current evidence:
 
 1. `runtime-memory-retired-test-contract` → **resolved by `TF-0574`** on candidate
    `07f60c029`; evidence is under `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`
-2. `agent-acceptance-harness-unconfigured-test-dirs` → `TF-0575` (open)
+2. `agent-acceptance-harness-unconfigured-test-dirs` → **resolved by `TF-0575`** on candidate
+   `5bb7f1f53`; 76/76 focused tests pass while the original 74 names remain green and two path
+   negatives are added. Evidence is under `harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/`
 3. `e2e-skill-source-mutation` → `TF-0576` (open)
 4. `coding-loop-e2e-final-response` → `TF-0577` (open)
 5. `qa-lab-scenario-pack-not-present` → `TF-0578` (open)
