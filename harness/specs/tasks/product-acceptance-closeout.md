@@ -175,7 +175,7 @@ closed by confidence alone.
 
 ## Shortfall closure rules
 
-The five recorded shortfalls form the baseline. Two remain open; three are resolved with
+The five recorded shortfalls form the baseline. One remains open; four are resolved with
 current evidence:
 
 1. `runtime-memory-retired-test-contract` → **resolved by `TF-0574`** on candidate
@@ -187,7 +187,10 @@ current evidence:
    plugin-skills no longer treats a regular directory as a runner-owned junction and the synced-skills
    cleanup refuses paths that overlap a protected source root. Evidence is under
    `harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/`
-4. `coding-loop-e2e-final-response` → `TF-0577` (open)
+4. `coding-loop-e2e-final-response` → **resolved by `TF-0577`** on candidate `ccb4b66d0`;
+   successful tool rounds no longer consume the shared provider retry budget, so the coding journey
+   reaches its final response. Evidence is under
+   `harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/`
 5. `qa-lab-scenario-pack-not-present` → `TF-0578` (open)
 
 A shortfall may become `resolved` only when all of the following are on disk and bound to the

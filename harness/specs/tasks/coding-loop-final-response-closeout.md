@@ -24,6 +24,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/provider-outbound-budget.test.ts
   - openclaw_runtime/src/agents/bash-raw-output-capture.ts
   - tests/unit/bash-raw-output-capture-degraded.test.ts
+  - tests/unit/product-acceptance-shortfalls.test.ts
   - tests/e2e/coding-loop-fp-p1-04.spec.ts
 expectedUserBehavior:
   - A coding turn that reads, edits, writes and verifies reaches a visible final assistant message instead of stalling.

@@ -450,7 +450,11 @@ describe('product acceptance shortfall ledger', () => {
 
   it('rejects accepted P1 and unsigned accepted residuals', () => {
     const acceptedP1 = cloneLedger();
-    const high = firstOpenShortfall(acceptedP1, (item) => item.risk === 'high' || item.risk === 'critical');
+    // Upstream shortfalls can legitimately all be resolved; the rule under test
+    // is about accepted P1/critical items, so force the risk on whichever open
+    // fixture exists instead of requiring one at a particular risk level.
+    const high = firstOpenShortfall(acceptedP1);
+    high.risk = 'high';
     high.acceptanceDisposition = 'accepted-shortfall';
     acceptedP1.summary.accepted = [...acceptedP1.summary.accepted, high.id];
     acceptedP1.summary.blocking = acceptedP1.summary.blocking.filter((id) => id !== high.id);

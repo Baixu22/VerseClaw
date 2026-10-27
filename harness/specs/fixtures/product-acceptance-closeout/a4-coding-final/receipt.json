@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+  "node": "TF-0577",
+  "runId": "tf0577-ccb4b66d0",
+  "generatedAt": "2026-10-27T14:05:06.145Z",
+  "driven_by": "agent",
+  "actor": "codex-ga-execution-20261027",
+  "candidate": {
+    "commit": "ccb4b66d077bbdaf2be8dd9f4efbc3ba1b7da0a5",
+    "tree": "783bf23cd8ea2345fe52c4b96864d033d8a74911",
+    "dirty": false,
+    "label": "Clean source candidate; evidence files committed afterward."
+  },
+  "scope": "Make the FP-P1-04 coding journey reach a visible final response and complete undo, plus fail visibly on a terminal provider disconnect.",
+  "currentCandidateRun": true,
+  "rootCause": {
+    "primary": "runAgentPrompt wrapped the whole user turn in one RequestAttemptBudget sized maxRetries+1 (default 4) and every provider transport call took a slot, including successful tool rounds. A four-tool loop therefore exhausted the budget and the fifth call (the final answer) failed closed with ProviderRequestAttemptBudgetExhaustedError.",
+    "surfacing": "The OpenAI client wrapped that budget error as APIConnectionError('Connection error.'); the runner classified it as a retryable transport failure and reported FailoverError: LLM request failed: network connection error.",
+    "secondary": "createBashRawOutputCapture allocated its scratch dir eagerly, so an unwritable TEMP made the whole exec tool throw and the tool result was never written back."
+  },
+  "fix": [
+    "request-attempt-budget.ts: completeAttempt() releases the slot when an attempt succeeds; only failed attempts hold retry capacity, so retry layers still share one budget.",
+    "bash-raw-output-capture.ts: degrade to a no-op recorder that reports the allocation error in diagnostics instead of throwing.",
+    "coding-loop-fp-p1-04.spec.ts: disposable workspace moves under the agent-owned E2E run root (the Gateway child runs at a different integrity level and cannot write to D:\\tmp), provider tracing records connection/request/response events, and a terminal-disconnect negative case aborts the final stream after a partial delta only."
+  ],
+  "focusedTests": {
+    "suites": 2,
+    "passedSuites": 2,
+    "failedSuites": 0,
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  },
+  "launches": [
+    {
+      "id": "launch-1",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 0,
+      "passed": 2,
+      "includesTerminalDisconnectNegative": true
+    },
+    {
+      "id": "launch-2",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 0,
+      "passed": 2,
+      "includesTerminalDisconnectNegative": true
+    },
+    {
+      "id": "launch-3",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 0,
+      "passed": 2,
+      "includesTerminalDisconnectNegative": true
+    }
+  ],
+  "terminalDisconnectNegative": {
+    "test": "terminal provider disconnect fails visibly and the next turn succeeds",
+    "assertion": "UI shows 'Needs attention' and the full success sentence is absent",
+    "passedInAllThreeLaunches": true
+  },
+  "commands": [
+    {
+      "id": "runtime-unit",
+      "command": "pnpm --dir openclaw_runtime exec vitest run src/agents/request-attempt-budget.test.ts src/agents/provider-outbound-budget.test.ts src/agents/model-fallback.loop-termination.test.ts",
+      "exitCode": 0,
+      "counts": "28 tests passed"
+    },
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run tests/unit/bash-raw-output-capture-degraded.test.ts --maxWorkers=1 --reporter=json",
+      "exitCode": 0,
+      "counts": "1 tests / 1 passed / 0 failed"
+    },
+    {
+      "id": "typecheck-test",
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "counts": "tsgo test project exit 0"
+    },
+    {
+      "id": "launch-1",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 0,
+      "counts": "2 passed (coding journey + terminal-disconnect negative)"
+    },
+    {
+      "id": "launch-2",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 0,
+      "counts": "2 passed"
+    },
+    {
+      "id": "launch-3",
+      "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+      "exitCode": 0,
+      "counts": "2 passed"
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "counts": "metrics written"
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "counts": "all budget rows PASS, 0.00% delta on latency rows"
+    }
+  ],
+  "negativeControls": [
+    "terminal provider disconnect: partial delta then socket destroy; no success-looking final answer is rendered",
+    "bash raw-output capture with an unwritable temp root returns a no-op recorder with diagnostics instead of throwing",
+    "successful provider attempts release their retry slot; failed attempts keep theirs (runtime unit tests)"
+  ],
+  "rawArtifacts": {
+    "focusedJson": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/focused.json",
+      "sha256": "fd48e5858341503d593e6954e306e83f89ffb7aed0051111fc36f82a3e20762a",
+      "bytes": 1022
+    },
+    "runtimeUnitLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/runtime-unit.log",
+      "sha256": "ae841dcb6356dc84a4ce685ccd782e285f9bce041395074e9c3706640217fe5b",
+      "bytes": 800
+    },
+    "typecheckLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/typecheck.log",
+      "sha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae",
+      "bytes": 57
+    },
+    "launch1Log": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/launch-1.log",
+      "sha256": "0f6f1ccd789baead383f29dd9380743a498f26f7baa47df8736b0002dbd71fae",
+      "bytes": 15736
+    },
+    "launch2Log": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/launch-2.log",
+      "sha256": "eb2696bf8070d43f8de0da9335f0d99c0e43e46df4f2f5a187b50f7ced67a7af",
+      "bytes": 15731
+    },
+    "launch3Log": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/launch-3.log",
+      "sha256": "e345a9ac18cb3c8e6ec1ed4d8e745597ed1617985d34230ff170c204bca898ef",
+      "bytes": 15736
+    },
+    "commsReplayLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/comms-replay.log",
+      "sha256": "0962e83c9f461596e2398d8a77eecc38a7bf1decfa61d3b6efc8acccc37c2a28",
+      "bytes": 110
+    },
+    "commsCompareLog": {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/comms-compare.log",
+      "sha256": "6c5f91b0dbdff53874e0a43dde91af57b07645cfa41c8373ec3f3d1a492c87b4",
+      "bytes": 3490
+    }
+  },
+  "redactionScan": {
+    "secretPatterns": 4,
+    "findings": 0,
+    "status": "clean"
+  },
+  "productLocks": {
+    "releaseApproved": false,
+    "productApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "limitations": [
+    "Provider behaviour is the scripted local OpenAI-compatible endpoint; this proves control flow and tool semantics, not live-model quality.",
+    "Developer-source Windows x64 Electron evidence only; the packaged/installed artifact is not exercised here.",
+    "The workspace relocation works around a Windows integrity boundary between the Electron worker and the Gateway child on this host; it is not evidence that arbitrary TEMP locations are writable by both sides.",
+    "No live-provider, packaged, release, or real-human evidence is claimed."
+  ],
+  "candidateSourceFiles": [
+    {
+      "path": "openclaw_runtime/src/agents/request-attempt-budget.ts",
+      "sha256": "564c68837ad1a5d20594b7d5b569cd005f5850efc4b3b19c38f06482e4d1af3f",
+      "bytes": 5224
+    },
+    {
+      "path": "openclaw_runtime/src/agents/request-attempt-budget.test.ts",
+      "sha256": "0f1fbae9bd92819d3287b59396463d97cf98ce4bfd83bc7a327e1f2e82b2fad8",
+      "bytes": 3111
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+      "sha256": "0db525a301750c40c11a9547d5743c8bfe44e0eadf12bd66280d59cf7cc7ffa8",
+      "bytes": 21886
+    },
+    {
+      "path": "openclaw_runtime/src/agents/bash-raw-output-capture.ts",
+      "sha256": "fb911222fdf6663ddfe41ba84af7764ea4c269ab2ee32d4a0421857e62650006",
+      "bytes": 4517
+    },
+    {
+      "path": "tests/unit/bash-raw-output-capture-degraded.test.ts",
+      "sha256": "62babc77c5867d4f5b7d7611f5f10fa66d708b525e8d8696d7d7a6a55858c734",
+      "bytes": 1742
+    },
+    {
+      "path": "tests/unit/product-acceptance-shortfalls.test.ts",
+      "sha256": "d0b4f2353f98214163c02878802a2877a9b9ddc77d95b88caf8f498f3089a07b",
+      "bytes": 30053
+    },
+    {
+      "path": "tests/e2e/coding-loop-fp-p1-04.spec.ts",
+      "sha256": "9c6b042bdc36c01cb983f7d3554c6e37de0a8af6798b52b03b23b6e3623c2cc6",
+      "bytes": 50557
+    },
+    {
+      "path": "harness/specs/tasks/coding-loop-final-response-closeout.md",
+      "sha256": "70fa0f9e9f4e70ed6d72b50b2086caa806b3d7a86392e2b95731825bf9c3bd12",
+      "bytes": 5828
+    }
+  ],
+  "evidenceSourceFiles": [
+    {
+      "path": "harness/specs/tasks/coding-loop-final-response-closeout.md",
+      "sha256": "70fa0f9e9f4e70ed6d72b50b2086caa806b3d7a86392e2b95731825bf9c3bd12",
+      "bytes": 5828
+    },
+    {
+      "path": "harness/specs/tasks/product-acceptance-closeout.md",
+      "sha256": "039983116b1867d84b6f490b4948c31608344956dfafe62bb0bf954958f444bc",
+      "bytes": 17683
+    },
+    {
+      "path": "harness/specs/guides/product-acceptance-strategy.md",
+      "sha256": "9183431e5b2417d8688e4fc49705fea7b3646fd626a60bb332a21bad31245e43",
+      "bytes": 32005
+    }
+  ]
+}

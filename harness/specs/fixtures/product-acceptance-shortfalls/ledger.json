@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ProductAcceptanceShortfallLedger/v1",
-  "generatedAt": "2026-10-27T09:12:50.279Z",
+  "generatedAt": "2026-10-27T14:04:19.389Z",
   "driven_by": "agent",
   "actor": "codex-clawx-ga-review-20261027",
   "policy": "harness/specs/guides/product-acceptance-strategy.md",
@@ -100,24 +100,43 @@
         "D:/ClawX/.tmp/ga-review-e2e-workspace-temp.log:100",
         "D:/ClawX/.tmp/ga-review-e2e-workspace-temp.log:106",
         "D:/ClawX/.tmp/ga-review-e2e-workspace-temp.log:128",
-        "artifacts/first-product-preview/FP-P1-04/e2e-run.log"
+        "artifacts/first-product-preview/FP-P1-04/e2e-run.log",
+        "harness/specs/tasks/coding-loop-final-response-closeout.md",
+        "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/receipt.json",
+        "ccb4b66d077bbdaf2be8dd9f4efbc3ba1b7da0a5 fix(runtime): stop tool rounds from exhausting the provider retry budget"
       ],
-      "observed": "Reproduced twice on HEAD 082836ef4 with pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1. Both runs stall at llmRequests=4 with issued=[callread,calledit,callwrite,callbash] and the mock endpoint is local (127.0.0.1).",
+      "observed": "Root cause identified and fixed on clean candidate ccb4b66d077bbdaf2be8dd9f4efbc3ba1b7da0a5. runAgentPrompt shared one RequestAttemptBudget (maxRetries+1 = 4) across the whole turn and every provider transport call took a slot, including successful tool rounds; the 4-tool loop exhausted it and the final answer was refused with ProviderRequestAttemptBudgetExhaustedError, wrapped by the OpenAI client as APIConnectionError('Connection error.') and surfaced as a retryable transport failure. Successful attempts now release their slot. Three independent full runs of the coding-loop spec passed (2 passed each: the coding journey plus a terminal-disconnect negative), with the repository source unchanged.",
       "impact": "Release-critical coding journey cannot be declared L3-proven on the current candidate. Historical 33.0s full pass exists in artifacts/first-product-preview/FP-P1-04/e2e-run.log, so the capability is not absent, but current-candidate evidence is missing.",
       "owner": "agent:coding-loop-maintainer",
       "reportedAt": "2026-10-27",
       "reviewBy": "2026-11-03",
-      "status": "open",
+      "status": "resolved",
       "proposedAction": "Add provider-request diagnostics (connection target, retry, timeout, pid) to the spec, capture the failing HTTP request, fix the 4th-request drop, then rerun three consecutive clean passes plus the negative paths.",
       "shortfallClass": "product-defect-or-transport-regression",
       "acceptanceDisposition": "must-resolve-before-ga",
       "risk": "high",
       "dataAtRisk": true,
       "userVisible": true,
-      "rootCauseClass": "undetermined-between-product-runtime-and-test-transport",
+      "rootCauseClass": "shared-retry-budget-consumed-by-successful-tool-rounds",
       "blastRadius": "current-candidate coding journey and release-critical L3 evidence",
       "repairCost": "medium",
-      "pathToGa": "capture the missing provider request boundary, fix the first failing owner and pass three clean runs"
+      "pathToGa": "capture the missing provider request boundary, fix the first failing owner and pass three clean runs",
+      "resolvedAt": "2026-10-27",
+      "resolution": {
+        "candidate": {
+          "commit": "ccb4b66d077bbdaf2be8dd9f4efbc3ba1b7da0a5",
+          "tree": "783bf23cd8ea2345fe52c4b96864d033d8a74911",
+          "dirty": false
+        },
+        "sourceRef": "commit:ccb4b66d077bbdaf2be8dd9f4efbc3ba1b7da0a5 openclaw_runtime/src/agents/request-attempt-budget.ts openclaw_runtime/src/agents/bash-raw-output-capture.ts tests/e2e/coding-loop-fp-p1-04.spec.ts",
+        "command": "pnpm exec playwright test tests/e2e/coding-loop-fp-p1-04.spec.ts --workers=1",
+        "exitCode": 0,
+        "counts": "3 independent launches / 2 tests each / 6 passed / 0 failed (coding journey + terminal-disconnect negative)",
+        "supportingGates": "runtime unit 28/28; focused unit 1/1; typecheck:test exit 0; comms:replay + comms:compare exit 0 with all budget rows PASS",
+        "artifactSha256": "c32f5a61e3364412ab7919b6873594eea919a464f1500a38cd2414adcf5d2912",
+        "artifactPath": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/receipt.json",
+        "negativeControl": "terminal provider disconnect emits only a partial delta then destroys the socket; UI shows 'Needs attention' and never renders the success sentence"
+      }
     },
     {
       "id": "e2e-skill-source-mutation",
@@ -245,11 +264,10 @@
   ],
   "summary": {
     "total": 5,
-    "open": 2,
+    "open": 1,
     "inProgress": 0,
-    "resolved": 3,
+    "resolved": 4,
     "blocking": [
-      "coding-loop-e2e-final-response",
       "qa-lab-scenario-pack-not-present"
     ],
     "accepted": [],
