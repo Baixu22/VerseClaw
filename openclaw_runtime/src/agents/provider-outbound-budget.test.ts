@@ -453,10 +453,13 @@ describe("provider outbound concurrency budget", () => {
       await runWithRequestAttemptBudget(budget, async () => {
         await guardedFetch(ENDPOINT, REQUEST_INIT);
       });
+      // A successful physical request does not consume retry capacity: only
+      // failures hold a slot, so a tool-loop round leaves the turn able to ask
+      // the model for its next step (TF-0577).
       expect(budget.snapshot()).toMatchObject({
-        used: 1,
-        remaining: 0,
-        attempts: [{ physicalAttempt: 1, layer: "provider-transport" }],
+        used: 0,
+        remaining: 1,
+        attempts: [{ physicalAttempt: 1, layer: "provider-transport", outcome: "success" }],
       });
     });
 

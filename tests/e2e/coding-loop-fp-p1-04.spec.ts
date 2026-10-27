@@ -85,8 +85,12 @@ function stripEnvelopePrefix(content: string): string {
  * the script would re-issue the same call forever. Match on the sanitized
  * prefix instead — this mirrors what a real provider sees.
  */
-function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmRequestLog[] }> {
+function startScriptedLlm(options?: {
+  /** Abort the final (text) response mid-stream to simulate a terminal disconnect. */
+  abortFinalResponse?: boolean;
+}): Promise<{ server: Server; port: number; log: LlmRequestLog[]; trace: string[]; abortedFinalResponses: number }> {
   const log: LlmRequestLog[] = [];
+  const state = { abortedFinalResponses: 0 };
 
   /** `call-read` → `callread`, matching the runtime's sanitizer. */
   const sanitizeId = (id: string): string => id.replace(/[^a-zA-Z0-9]/g, "");
@@ -224,7 +228,17 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
   }
 
   return new Promise((resolve) => {
+    const trace: string[] = [];
+    const record = (event: string): void => {
+      trace.push(`${new Date().toISOString()} ${event}`);
+      if (trace.length > 200) trace.splice(0, trace.length - 200);
+    };
     const server = createHttpServer((req, res) => {
+      const socketId = `${req.socket.remoteAddress}:${req.socket.remotePort}`;
+      record(`request ${req.method} ${req.url} socket=${socketId} contentLength=${req.headers['content-length'] ?? '-'}`);
+      req.on('aborted', () => record(`request-aborted socket=${socketId}`));
+      res.on('close', () => record(`response-close socket=${socketId} writableEnded=${res.writableEnded}`));
+      res.on('error', (error) => record(`response-error socket=${socketId} ${String(error)}`));
       if (!(req.url ?? '').includes('/chat/completions')) {
         if ((req.url ?? '').includes('/models')) {
           res.writeHead(200, { 'content-type': 'application/json' });
@@ -271,6 +285,19 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
           }
         }
         const action = nextAction(userText, toolResults);
+        if (process.env.CLAWX_FP_P1_04_DUMP_BODIES === '1') {
+          console.log('[fp-p1-04-request]', JSON.stringify({
+            index: log.length,
+            stream: Boolean(parsed.stream),
+            hasResult: {
+              callread: hasResult(toolResults, 'callread'),
+              calledit: hasResult(toolResults, 'calledit'),
+              callwrite: hasResult(toolResults, 'callwrite'),
+              callbash: hasResult(toolResults, 'callbash'),
+            },
+            chosen: action.toolCall ? action.toolCall.id : 'text',
+          }));
+        }
         const projections = Object.fromEntries(
           Object.entries(DCS_PROJECTION_PATTERNS).map(([channel, pattern]) => [
             channel,
@@ -281,6 +308,18 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
             ),
           ]),
         ) as Record<DcsProjectionChannel, string[]>;
+        if (process.env.CLAWX_FP_P1_04_DUMP_BODIES === '1') {
+          console.log('[fp-p1-04-body]', JSON.stringify({
+            requestIndex: log.length,
+            finished: Boolean(req.complete),
+            roles: messages.map((m) => m.role),
+            toolCallIds: messages.filter((m) => m.role === 'tool').map((m) => m.tool_call_id),
+            assistantToolCalls: messages
+              .filter((m) => m.role === 'assistant')
+              .flatMap((m) => ((m as { tool_calls?: Array<{ id?: string }> }).tool_calls ?? []).map((c) => c.id)),
+            chosen: action.toolCall ? action.toolCall.id : 'text',
+          }));
+        }
         if (log.length < 3) {
 
           console.log('[fp-p1-04-transcript]', JSON.stringify(
@@ -325,6 +364,26 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
           : { role: 'assistant', content: action.text ?? '' };
         const finishReason = action.toolCall ? 'tool_calls' : 'stop';
 
+        if (!action.toolCall && options?.abortFinalResponse) {
+          // Terminal disconnect works for both streaming and non-streaming
+          // clients: destroy the socket before a complete response is sent.
+          state.abortedFinalResponses += 1;
+          record('forced-final-abort');
+          console.log('[fp-p1-04-forced-abort]', JSON.stringify({ stream: Boolean(parsed.stream), index: log.length }));
+          if (parsed.stream) {
+            res.writeHead(200, { 'content-type': 'text/event-stream', connection: 'keep-alive' });
+            // Emit only a partial delta (never the full completion text): the
+            // runtime must not be able to reconstruct a success-looking answer.
+            res.write(`data: ${JSON.stringify({ id: 'chatcmpl-mock', object: 'chat.completion.chunk', created: 1, model: MODEL_ID, choices: [{ index: 0, delta: { role: 'assistant', content: (action.text ?? '').slice(0, 8) }, finish_reason: null }] })}\n\n`);
+            setTimeout(() => res.destroy(), 0);
+          } else {
+            res.writeHead(200, { 'content-type': 'application/json', 'content-length': '4096' });
+            res.write('{"id":"chatcmpl-mock"');
+            setTimeout(() => res.destroy(), 0);
+          }
+          return;
+        }
+
         if (parsed.stream) {
           res.writeHead(200, {
             'content-type': 'text/event-stream',
@@ -340,6 +399,16 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
               choices: [{ index: 0, delta, finish_reason: finish }],
               ...(finish ? { usage } : {}),
             })}\n\n`;
+          if (!action.toolCall && options?.abortFinalResponse) {
+            // Terminal disconnect: emit a partial delta, then destroy the socket
+            // without finish_reason or [DONE]. The runtime must surface a visible
+            // failure instead of inventing a successful final answer.
+            state.abortedFinalResponses += 1;
+            record('forced-final-abort');
+            res.write(chunk({ role: 'assistant', content: action.text ?? '' }, null));
+            setTimeout(() => res.destroy(), 0);
+            return;
+          }
           if (action.toolCall) {
             res.write(chunk({
               role: 'assistant',
@@ -372,10 +441,16 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
         }
       });
     });
+    server.on('connection', (socket) => {
+      const socketId = `${socket.remoteAddress}:${socket.remotePort}`;
+      record(`connection open socket=${socketId}`);
+      socket.on('close', () => record(`connection close socket=${socketId}`));
+      socket.on('error', (error) => record(`connection error socket=${socketId} ${String(error)}`));
+    });
     server.listen(0, '127.0.0.1', () => {
       const address = server.address();
       if (!address || typeof address === 'string') throw new Error('llm port failed');
-      resolve({ server, port: address.port, log });
+      resolve({ server, port: address.port, log, trace, get abortedFinalResponses() { return state.abortedFinalResponses; } });
     });
   });
 }
@@ -541,6 +616,7 @@ async function sendTurn(
   log: LlmRequestLog[],
   message: string,
   finalMarker: string,
+  trace: string[] = [],
 ): Promise<void> {
   const sendResult = await hostInvoke<Record<string, unknown>>(app, 'chat', 'sendWithMedia', {
     sessionKey: 'agent:main:main',
@@ -563,8 +639,72 @@ async function sendTurn(
   console.log('[fp-p1-04-stall]', JSON.stringify({
     llmRequests: log.length,
     issued: log.map((entry) => entry.issued),
-  }).slice(0, 800));
+    lastTurn: log.at(-1)?.turn,
+    providerTrace: trace.slice(-40),
+  }).slice(0, 4000));
   throw new Error(`turn did not reach its final response: ${message}`);
+}
+
+async function writeScriptedConfig(params: {
+  homeDir: string;
+  userDataDir: string;
+  workspaceDir: string;
+  llmPort: number;
+}): Promise<void> {
+  const config = {
+    gateway: { mode: 'local', controlUi: { enabled: false } },
+    models: {
+      mode: 'merge',
+      providers: {
+        openai: {
+          api: 'openai-completions',
+          apiKey: 'test-key-ok',
+          baseUrl: `http://127.0.0.1:${params.llmPort}/v1`,
+          models: [{
+            id: MODEL_ID,
+            name: MODEL_ID,
+            api: 'openai-completions',
+            reasoning: false,
+            input: ['text'],
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+            contextWindow: 128000,
+            maxTokens: 4096,
+          }],
+        },
+      },
+    },
+    runtime: {
+      contextBlock: {
+        'compass': { enabled: true },
+        'working-memory': { enabled: true },
+        'tool-registry': { enabled: true },
+      },
+      coding: {
+        staleWriteGuard: { enabled: true },
+        autoVerify: { enabled: true, timeoutSeconds: 30 },
+      },
+    },
+    tools: {
+      profile: 'full',
+      exec: { host: 'gateway', security: 'full', ask: 'off' },
+    },
+    agents: {
+      defaults: {
+        model: { primary: `openai/${MODEL_ID}`, fallbacks: [] },
+        workspace: params.workspaceDir,
+        skipBootstrap: true,
+      },
+      list: [{ id: 'main', default: true }],
+    },
+    skills: { allowBundled: [] },
+  };
+  const serialized = `${JSON.stringify(config, null, 2)}\n`;
+  const openclawDir = join(params.homeDir, '.openclaw');
+  const sourceStateDir = join(params.userDataDir, 'openclaw-source-state');
+  await mkdir(openclawDir, { recursive: true });
+  await mkdir(sourceStateDir, { recursive: true });
+  await writeFile(join(openclawDir, 'openclaw.json'), serialized, 'utf8');
+  await writeFile(join(sourceStateDir, 'openclaw.json'), serialized, 'utf8');
 }
 
 test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () => {
@@ -575,7 +715,16 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
   }) => {
     test.setTimeout(1_500_000);
     const llm = await startScriptedLlm();
-    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-fp-p1-04-'));
+    // The Gateway child runs at a different integrity level than this worker:
+    // on Windows hosts whose TEMP lives under a guarded directory (D:\tmp) it
+    // cannot create or write files there, so edit/write/exec all fail with
+    // EPERM. Put the disposable workspace under the agent-owned E2E run root
+    // (already writable by both sides) and keep tmpdir() only as a fallback.
+    const workspaceBase = process.env.CLAWX_E2E_RUN_ROOT
+      ? join(process.env.CLAWX_E2E_RUN_ROOT, 'fp-p1-04-workspace')
+      : tmpdir();
+    await mkdir(workspaceBase, { recursive: true });
+    const workspaceDir = await mkdtemp(join(workspaceBase, 'clawx-fp-p1-04-'));
     await writeFile(join(workspaceDir, 'util.js'), BUGGY, 'utf8');
     await writeFile(join(workspaceDir, 'summary.txt'), SUMMARY_BEFORE, 'utf8');
     // A real workspace is a Git repository: the review Changes panel shows the
@@ -606,60 +755,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       'utf8',
     );
 
-    const config = {
-      gateway: { mode: 'local', controlUi: { enabled: false } },
-      models: {
-        mode: 'merge',
-        providers: {
-          openai: {
-            api: 'openai-completions',
-            apiKey: 'test-key-ok',
-            baseUrl: `http://127.0.0.1:${llm.port}/v1`,
-            models: [{
-              id: MODEL_ID,
-              name: MODEL_ID,
-              api: 'openai-completions',
-              reasoning: false,
-              input: ['text'],
-              cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-              contextWindow: 128000,
-              maxTokens: 4096,
-            }],
-          },
-        },
-      },
-      runtime: {
-        contextBlock: {
-          'compass': { enabled: true },
-          'working-memory': { enabled: true },
-          'tool-registry': { enabled: true },
-        },
-        coding: {
-          staleWriteGuard: { enabled: true },
-          autoVerify: { enabled: true, timeoutSeconds: 30 },
-        },
-      },
-      tools: {
-        profile: 'full',
-        exec: { host: 'gateway', security: 'full', ask: 'off' },
-      },
-      agents: {
-        defaults: {
-          model: { primary: `openai/${MODEL_ID}`, fallbacks: [] },
-          workspace: workspaceDir,
-          skipBootstrap: true,
-        },
-        list: [{ id: 'main', default: true }],
-      },
-      skills: { allowBundled: [] },
-    };
-    const serialized = `${JSON.stringify(config, null, 2)}\n`;
-    const openclawDir = join(homeDir, '.openclaw');
-    const sourceStateDir = join(userDataDir, 'openclaw-source-state');
-    await mkdir(openclawDir, { recursive: true });
-    await mkdir(sourceStateDir, { recursive: true });
-    await writeFile(join(openclawDir, 'openclaw.json'), serialized, 'utf8');
-    await writeFile(join(sourceStateDir, 'openclaw.json'), serialized, 'utf8');
+    await writeScriptedConfig({ homeDir, userDataDir, workspaceDir, llmPort: llm.port });
 
     const app = await launchElectronApp({ skipSetup: true });
     try {
@@ -673,7 +769,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       seedCompassKnowledgeFixture(userDataDir);
 
       // ---- T1: happy loop ----
-      await sendTurn(app, llm.log, 'FIX-THE-BUG in util.js: add() subtracts.', 'Fixed add()');
+      await sendTurn(app, llm.log, 'FIX-THE-BUG in util.js: add() subtracts.', 'Fixed add()', llm.trace);
       const fixed = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(fixed).toContain('return a + b;');
       // read really returned the file to the model:
@@ -889,7 +985,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       }
 
       // ---- T2: undo restores pre-edit content ----
-      await sendTurn(app, llm.log, 'UNDO-THE-CHANGE please.', 'Undo outcome');
+      await sendTurn(app, llm.log, 'UNDO-THE-CHANGE please.', 'Undo outcome', llm.trace);
       const reverted = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(reverted).toBe(BUGGY);
       expect(await readFile(join(workspaceDir, 'summary.txt'), 'utf8')).toBe(SUMMARY_BEFORE);
@@ -905,7 +1001,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       expect(undoResult.replace(/\s+/g, '')).toContain('"ok":true');
 
       // ---- T3: failure paths are explicit, not silent ----
-      await sendTurn(app, llm.log, 'FAILURE-PATHS demo.', 'Both failure paths');
+      await sendTurn(app, llm.log, 'FAILURE-PATHS demo.', 'Both failure paths', llm.trace);
       const missResult = toolResultFor(llm.log, 'callreadmiss');
       const badEditResult = toolResultFor(llm.log, 'calleditbad');
 
@@ -919,7 +1015,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       expect(await readFile(join(workspaceDir, 'util.js'), 'utf8')).toBe(BUGGY);
 
       // ---- T4: partial-undo is a reported failure with the journal retained ----
-      await sendTurn(app, llm.log, 'EDIT-AGAIN please.', 'Edited again');
+      await sendTurn(app, llm.log, 'EDIT-AGAIN please.', 'Edited again', llm.trace);
       const afterEditAgain = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(afterEditAgain).toContain('return a * b;');
       const editAgainResult = toolResultFor(llm.log, 'calleditagain');
@@ -936,7 +1032,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       const newestPre = preFiles.sort().at(-1)!;
       await unlink(join(sessionDirNow, newestPre));
 
-      await sendTurn(app, llm.log, 'UNDO-AFTER-SABOTAGE now.', 'Second undo outcome');
+      await sendTurn(app, llm.log, 'UNDO-AFTER-SABOTAGE now.', 'Second undo outcome', llm.trace);
       const undo2Result = toolResultFor(llm.log, 'callundotwo');
 
       console.log('[fp-p1-04-t4]', JSON.stringify({ undo2Result: undo2Result.slice(0, 300) }));
@@ -971,6 +1067,65 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       await closeElectronApp(app);
       await new Promise<void>((resolve) => llm.server.close(() => resolve()));
       await rm(workspaceDir, { recursive: true, force: true }).catch(() => undefined);
+    }
+  });
+
+  test('terminal provider disconnect fails visibly and the next turn succeeds', async ({
+    homeDir,
+    userDataDir,
+    launchElectronApp,
+  }) => {
+    test.setTimeout(600_000);
+    const llm = await startScriptedLlm({ abortFinalResponse: true });
+    const workspaceBase = process.env.CLAWX_E2E_RUN_ROOT
+      ? join(process.env.CLAWX_E2E_RUN_ROOT, 'fp-p1-04-workspace')
+      : tmpdir();
+    await mkdir(workspaceBase, { recursive: true });
+    const workspaceDir = await mkdtemp(join(workspaceBase, 'clawx-fp-p1-04-abort-'));
+    await writeFile(join(workspaceDir, 'util.js'), BUGGY, 'utf8');
+    await writeFile(join(workspaceDir, 'summary.txt'), SUMMARY_BEFORE, 'utf8');
+
+    await writeScriptedConfig({ homeDir, userDataDir, workspaceDir, llmPort: llm.port });
+
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      const page = await getStableWindow(app);
+      await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+      await startGateway(app);
+      seedCompassKnowledgeFixture(userDataDir);
+
+      await hostInvoke<Record<string, unknown>>(app, 'chat', 'sendWithMedia', {
+        sessionKey: 'agent:main:main',
+        message: 'FIX-THE-BUG in util.js: add() subtracts.',
+        idempotencyKey: `fp-p1-04-abort-${Date.now()}`,
+      });
+
+      await expect
+        .poll(() => llm.abortedFinalResponses, { timeout: 180_000 })
+        .toBeGreaterThan(0);
+      // The aborted turn must surface a failure, not a success-looking answer.
+      // The UI renders this as "Needs attention" plus the CodingRun evidence
+      // card; it must NOT render a fabricated final answer.
+      await expect
+        .poll(async () => {
+          const text = await page.getByTestId('chat-message-layout').innerText();
+          if (process.env.CLAWX_FP_P1_04_DUMP_BODIES === '1') {
+            console.log('[fp-p1-04-abort-ui]', JSON.stringify(text.slice(0, 1200)));
+          }
+          return /needs attention|failed|error|network|connection/i.test(text);
+        }, { timeout: 120_000 })
+        .toBe(true);
+
+      const afterAbort = await page.getByTestId('chat-message-layout').innerText();
+      // No success-looking completion text from the aborted final response.
+      expect(afterAbort).not.toContain('Fixed add() and rewrote summary.txt');
+    } finally {
+      try {
+        await closeElectronApp(app);
+      } finally {
+        await new Promise<void>((resolve) => llm.server.close(() => resolve()));
+        await rm(workspaceDir, { recursive: true, force: true }).catch(() => undefined);
+      }
     }
   });
 });

@@ -93,14 +93,27 @@ export class RequestAttemptBudget {
     return this.usedCount;
   }
 
-  /** Updates an existing attempt outcome without changing the consumed count. */
+  /**
+   * Records the outcome of a physical attempt.
+   *
+   * Only FAILED attempts consume the retry budget. A single user turn issues
+   * one provider request per tool round, so charging the successful ones made a
+   * 4-tool loop exhaust maxRetries+1 and the final answer was refused with
+   * ProviderRequestAttemptBudgetExhaustedError. Retry layers still share one
+   * budget because each retry after a failure keeps its slot taken.
+   * See TF-0438 (shared budget) and TF-0577 (tool-loop rounds).
+   */
   completeAttempt(
     physicalAttempt: number,
     outcome: NonNullable<RequestAttemptRecord["outcome"]>,
   ): void {
     const record = this.records.find((entry) => entry.physicalAttempt === physicalAttempt);
-    if (record) {
-      record.outcome = outcome;
+    if (!record) {
+      return;
+    }
+    record.outcome = outcome;
+    if (outcome === "success") {
+      this.usedCount = Math.max(0, this.usedCount - 1);
     }
   }
   /** Returns undefined when the budget is exhausted; does not itself sleep or retry. */

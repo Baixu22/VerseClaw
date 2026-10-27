@@ -44,7 +44,23 @@ export function createBashRawOutputCapture(params: {
   if (!sessionId) {
     throw new Error("raw output capture requires a sessionId");
   }
-  const root = mkdtempSync(join(tmpdir(), "openclaw-raw-output-"));
+  let root: string;
+  try {
+    root = mkdtempSync(join(tmpdir(), "openclaw-raw-output-"));
+  } catch (error) {
+    // Raw-output capture is a best-effort archival enrichment. A host whose
+    // TEMP root is unwritable must degrade to "no capture", never fail the
+    // exec tool: an aborted tool call leaves the model without a tool result
+    // and strands the agent turn. See TF-0577.
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      append() {},
+      finalize() {
+        return { charCount: 0, byteCount: 0, truncated: false, diagnostics: [message] };
+      },
+      dispose() {},
+    };
+  }
   const filePath = join(root, "raw-output.txt");
   const limit = Math.max(1, params.maxBytes ?? maxRawOutputBytes());
   let byteCount = 0;
