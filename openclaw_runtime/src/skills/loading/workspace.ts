@@ -1461,6 +1461,7 @@ export function buildWorkspaceSkillsPrompt(
 
 export const testing = {
   compactHomePath,
+  prepareSyncedSkillsDirectory,
 };
 
 type WorkspaceSkillBuildOptions = {
@@ -1660,7 +1661,29 @@ function resolveSyncedSkillDestinationPath(params: {
   }).resolved;
 }
 
-async function prepareSyncedSkillsDirectory(targetSkillsDir: string): Promise<void> {
+function sameOrInside(parent: string, child: string): boolean {
+  const parentPath = path.resolve(parent);
+  const childPath = path.resolve(child);
+  return parentPath === childPath || isPathInside(parentPath, childPath);
+}
+
+async function resolveSyncProtectedRoots(protectedRoots: readonly string[]): Promise<string[]> {
+  const resolved = protectedRoots.map((root) => tryRealpath(root) ?? path.resolve(root));
+  return uniqueStrings(resolved);
+}
+
+async function prepareSyncedSkillsDirectory(
+  targetSkillsDir: string,
+  protectedRoots: readonly string[] = [],
+): Promise<void> {
+  const protectedRealRoots = await resolveSyncProtectedRoots(protectedRoots);
+  const targetRealPath = tryRealpath(targetSkillsDir) ?? path.resolve(targetSkillsDir);
+  if (protectedRealRoots.some((root) => sameOrInside(root, targetRealPath))) {
+    throw new Error(
+      `refusing to clean synced skills root ${targetSkillsDir}: it overlaps a protected source root`,
+    );
+  }
+
   let stats: fs.Stats;
   try {
     stats = await fsp.lstat(targetSkillsDir);
@@ -1679,7 +1702,17 @@ async function prepareSyncedSkillsDirectory(targetSkillsDir: string): Promise<vo
   }
 
   for (const entry of await fsp.readdir(targetSkillsDir)) {
-    await fsp.rm(path.join(targetSkillsDir, entry), { recursive: true, force: true });
+    const entryPath = path.join(targetSkillsDir, entry);
+    const entryRealPath = tryRealpath(entryPath);
+    if (
+      entryRealPath &&
+      protectedRealRoots.some((root) => sameOrInside(root, entryRealPath) || sameOrInside(entryRealPath, root))
+    ) {
+      throw new Error(
+        `refusing to clean synced skill entry ${entryPath}: it overlaps a protected source root`,
+      );
+    }
+    await fsp.rm(entryPath, { recursive: true, force: true });
   }
 }
 
@@ -1713,7 +1746,11 @@ export async function syncSkillsToWorkspace(params: {
       pluginSkillsDir: params.pluginSkillsDir,
     });
 
-    await prepareSyncedSkillsDirectory(targetSkillsDir);
+    const protectedRoots = uniqueStrings([
+      sourceDir,
+      ...entries.map((entry) => entry.syncSourceDir ?? entry.skill.baseDir),
+    ]);
+    await prepareSyncedSkillsDirectory(targetSkillsDir, protectedRoots);
 
     const usedDirNames = new Set<string>();
     for (const entry of entries) {

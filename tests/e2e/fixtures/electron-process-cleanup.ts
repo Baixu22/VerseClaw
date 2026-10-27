@@ -3,6 +3,7 @@ import { appendFile, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promise
 import { basename, join, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import type { FullConfig } from '@playwright/test';
+import { assertTrackedSourceStateUnchanged, captureTrackedSourceState } from './source-mutation-guard';
 
 const execFileAsync = promisify(execFile);
 
@@ -201,13 +202,41 @@ export default async function setupElectronProcessCleanup(config: FullConfig) {
   process.env.CLAWX_E2E_RUN_ROOT = resolve(runRoot);
   const outputDir = config.projects[0].outputDir;
   await mkdir(outputDir, { recursive: true });
+  const sourceStateBefore = await captureTrackedSourceState(process.cwd());
   await writeFile(join(outputDir, 'electron-process-run.json'), JSON.stringify({ runRoot, baseRoot, runnerPid: process.pid }, null, 2));
+  await writeFile(join(outputDir, 'source-state-before.json'), JSON.stringify(sourceStateBefore, null, 2));
 
   return async () => {
+    let cleanupError: unknown;
     try { await cleanupElectronProcesses(runRoot, outputDir); }
+    catch (error) { cleanupError = error; }
     finally {
       if (previousRoot === undefined) delete process.env.CLAWX_E2E_RUN_ROOT;
       else process.env.CLAWX_E2E_RUN_ROOT = previousRoot;
     }
+
+    const sourceStateAfter = await captureTrackedSourceState(process.cwd());
+    let sourceChanged = false;
+    let sourceGuardError: unknown;
+    try {
+      assertTrackedSourceStateUnchanged(sourceStateBefore, sourceStateAfter);
+    } catch (error) {
+      sourceChanged = true;
+      sourceGuardError = error;
+    }
+    await writeFile(join(outputDir, 'source-state-after.json'), JSON.stringify(sourceStateAfter, null, 2));
+    await writeFile(join(outputDir, 'source-mutation-guard.json'), JSON.stringify({
+      schemaVersion: 'ElectronE2ESourceMutationGuard/v1',
+      driven_by: 'agent',
+      actor: 'playwright-runner',
+      ok: !sourceChanged,
+      sourceChanged,
+      before: sourceStateBefore,
+      after: sourceStateAfter,
+    }, null, 2));
+
+    if (cleanupError && sourceGuardError) throw new AggregateError([cleanupError, sourceGuardError], 'Electron E2E cleanup and source guard failed');
+    if (cleanupError) throw cleanupError;
+    if (sourceGuardError) throw sourceGuardError;
   };
 }

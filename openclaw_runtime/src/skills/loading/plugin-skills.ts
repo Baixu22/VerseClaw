@@ -267,12 +267,14 @@ function publishPluginSkills(skillDirs: string[], opts?: { pluginSkillsDir?: str
 function isGeneratedPluginSkillEntry(
   entry: Pick<fs.Dirent, "isDirectory" | "isSymbolicLink">,
 ): boolean {
-  // Windows directory symlinks are junctions and lstat reports them as directories.
-  return entry.isSymbolicLink() || (process.platform === "win32" && entry.isDirectory());
+  // Only an actual link/junction is runner-owned. A regular directory may be
+  // user or build output and must never be deleted as a stale generated link.
+  return entry.isSymbolicLink();
 }
 
 function removeGeneratedPluginSkillEntry(linkPath: string): void {
   try {
+    if (!fs.lstatSync(linkPath).isSymbolicLink()) return;
     fs.rmSync(linkPath, { recursive: true, force: true });
   } catch {
     // best-effort cleanup
