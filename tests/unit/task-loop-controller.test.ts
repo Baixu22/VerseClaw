@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -35,7 +35,6 @@ import {
   isRuntimeTaskEvent,
   isRuntimeTraceSpan,
   type CodeTaskEvidenceGateRuntimeShadowCollectionResult,
-  type RuntimeMemoryEpisodeRecord,
   type RuntimeRegistryDiagnostic,
   type RuntimeTaskEvent,
   type RuntimeTraceSpan,
@@ -1019,27 +1018,21 @@ describe('runTaskLoop', () => {
     expect(openCalls).toBe(0);
   });
 
-  it('writes one sanitized Runtime Memory episode when shadow and persist are both enabled', async () => {
-    const episodes: RuntimeMemoryEpisodeRecord[] = [];
-    const appendEpisode = vi.fn((episode: RuntimeMemoryEpisodeRecord) => {
-      episodes.push(episode);
-      return {
-        status: 'persisted' as const,
-        persisted: true as const,
-        stored: true,
-        duplicate: false,
-        value: episode,
-      };
+  it.each([
+    ['shadow and persist true', { runtime: { memory: { shadow: true, persist: true } } }],
+    ['string true flags', { runtime: { memory: { shadow: 'true', persist: 'true' } } }],
+    ['all legacy flags true', { runtime: { memory: {
+      shadow: true,
+      provider: true,
+      proposeFacts: true,
+      persist: true,
+    } } }],
+  ])('does not write Runtime Memory or create an episode when retired flags are %s', async (_name, cfg) => {
+    const appendEpisode = vi.fn(() => {
+      throw new Error('retired Runtime Memory flags must not write episodes');
     });
-    const appendFact = vi.fn();
-    const invalidateFact = vi.fn();
-    const loadStore = vi.fn();
-    const runtimeMemoryEpisodeWriter = {
-      appendEpisode,
-      appendFact,
-      invalidateFact,
-      loadStore,
-    };
+    let openCalls = 0;
+    const recordCheckpoint = vi.fn();
 
     const result = await runTaskLoop(
       {
@@ -1047,11 +1040,11 @@ describe('runTaskLoop', () => {
         sessionKey: 'agent:main:abc',
         workspaceId: 'workspace-a',
       },
-      { runtime: { memory: { shadow: true, persist: true } } },
+      cfg as never,
       {
-        idFactory: (prefix) => `${prefix}_memory_enabled`,
+        idFactory: (prefix) => `${prefix}_memory_retired`,
         now: () => 1_700_000_000_000,
-        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_memory_enabled'),
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_memory_retired'),
         runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
@@ -1063,72 +1056,48 @@ describe('runTaskLoop', () => {
           contextSummary: 'done',
         })) as never,
         getSubagentRun: getEvidenceRun as never,
-        recordCheckpoint: vi.fn() as never,
-        runtimeMemoryEpisodeWriter,
+        recordCheckpoint: recordCheckpoint as never,
+        runtimeMemoryEpisodeWriter: { appendEpisode },
+        runtimeMemoryIntegrationOptions: {
+          openDatabase: () => {
+            openCalls += 1;
+            throw new Error('retired Runtime Memory flags must not open sqlite');
+          },
+        },
         storeTrace: vi.fn() as never,
       },
     );
 
-    expect(result.status).toBe('complete');
-    expect(appendEpisode).toHaveBeenCalledTimes(1);
-    expect(appendFact).not.toHaveBeenCalled();
-    expect(invalidateFact).not.toHaveBeenCalled();
-    expect(loadStore).not.toHaveBeenCalled();
-    expect(episodes).toHaveLength(1);
-    expect(episodes[0]).toMatchObject({
-      schemaVersion: 1,
-      episodeId: 'runtime-memory:task-loop:loop_memory_enabled:complete:complete',
-      taskId: 'loop_memory_enabled',
-      kind: 'task_event',
-      reference_time: 1_700_000_000_000,
-      idempotencyKey: 'task-loop:loop_memory_enabled:terminal:complete:complete',
-      redactionStatus: 'sanitized',
-      metadata: expect.objectContaining({
-        source: 'task_loop.shadow_persistence_pilot',
-        shadowOnly: true,
-        legacyDecisionUnaffected: true,
-        noProviderHydration: true,
-        noFactExtraction: true,
-        noRuntimeAuthority: true,
-      }),
+    expect(result).toMatchObject({
+      status: 'complete',
+      phase: 'complete',
+      finalSummary: 'done',
+      nextActions: ['synthesize_final_response'],
     });
-    expect(episodes[0]?.boundedSummary).toContain('TaskLoop complete at phase complete');
-    expect(episodes[0]?.sourceRefs).toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        type: 'event',
-        ref: 'task-loop:loop_memory_enabled:complete:complete',
+    expect(result.evidenceGate?.status).toBe('pass');
+    expect(recordCheckpoint).toHaveBeenCalledWith(expect.objectContaining({
+      status: 'complete',
+      checkpoint: expect.objectContaining({
+        metadata: expect.objectContaining({
+          status: 'complete',
+          phase: 'complete',
+        }),
       }),
-      expect.objectContaining({
-        type: 'checkpoint',
-        ref: 'task-ledger:tlroot_memory_enabled',
-      }),
-    ]));
-    expect(episodes[0]?.evidenceRefs).toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        type: 'task_loop',
-        ref: 'loop_memory_enabled',
-      }),
-      expect.objectContaining({
-        type: 'task_ledger',
-        ref: 'task-ledger:tlroot_memory_enabled',
-      }),
-    ]));
-    const episodeJson = JSON.stringify(episodes[0]);
-    expect(episodeJson).not.toContain('implement feature without retaining the request text');
-    expect(episodeJson).not.toContain('done');
-    expect(episodeJson).not.toContain('Validated behavior');
-    expect(episodeJson).not.toContain('template:quick-development');
-    expect(episodeJson).not.toContain('run_0');
-    expect(episodeJson).not.toContain('child_0');
+    }));
+    expect(appendEpisode).not.toHaveBeenCalled();
+    expect(openCalls).toBe(0);
   });
 
-  it('replays the real persisted TaskLoop Runtime Memory episode without reading memory into TaskLoop', async () => {
+  it('does not replay or read a TaskLoop episode after retired persistence flags are set', async () => {
     const dbPath = createTaskLoopRuntimeMemoryDbPath();
     const config = { runtime: { memory: { shadow: true, persist: true } } };
+    const appendEpisode = vi.fn(() => {
+      throw new Error('retired Runtime Memory persistence must not write');
+    });
 
     const result = await runTaskLoop(
       {
-        task: 'phase14 raw task text must not be replayed',
+        task: 'phase14 raw task text must not be persisted or replayed',
         sessionKey: 'agent:main:abc',
         workspaceId: 'workspace-a',
       },
@@ -1149,6 +1118,7 @@ describe('runTaskLoop', () => {
         })) as never,
         getSubagentRun: getEvidenceRun as never,
         recordCheckpoint: vi.fn() as never,
+        runtimeMemoryEpisodeWriter: { appendEpisode },
         runtimeMemoryIntegrationOptions: {
           database: { path: dbPath },
           now: () => 1_700_000_000_100,
@@ -1162,6 +1132,7 @@ describe('runTaskLoop', () => {
       phase: 'complete',
       finalSummary: 'phase14 raw self-check summary must not be replayed',
     });
+    expect(appendEpisode).not.toHaveBeenCalled();
 
     const integration = createRuntimeMemoryRuntimeIntegration({
       config,
@@ -1169,64 +1140,20 @@ describe('runTaskLoop', () => {
       now: () => 1_700_000_000_200,
     });
     const loaded = integration.loadStore();
-    expect(loaded.status).toBe('loaded');
+    if (loaded.status !== 'skipped') {
+      throw new Error("expected retired persistence to skip, received " + loaded.status);
+    }
+    expect(loaded.reason).toBe('flag_disabled');
     expect(loaded.store.stats()).toMatchObject({
-      episodes: 1,
+      episodes: 0,
       facts: 0,
       invalidations: 0,
     });
-    expect(loaded.store.queryFacts({
-      subject: 'TaskLoop',
-      time: 1_700_000_000_200,
-      includeCandidates: true,
-      includeInvalidated: true,
-    })).toEqual([]);
-
-    const episodes = loaded.store.listEpisodes();
-    expect(episodes).toHaveLength(1);
-    expect(episodes[0]).toMatchObject({
-      episodeId: 'runtime-memory:task-loop:loop_memory_replay:complete:complete',
-      idempotencyKey: 'task-loop:loop_memory_replay:terminal:complete:complete',
-      taskId: 'loop_memory_replay',
-      kind: 'task_event',
-      redactionStatus: 'sanitized',
-      metadata: expect.objectContaining({
-        source: 'task_loop.shadow_persistence_pilot',
-        shadowOnly: true,
-        legacyDecisionUnaffected: true,
-        noProviderHydration: true,
-        noFactExtraction: true,
-        noRuntimeAuthority: true,
-      }),
-    });
-    expect(episodes[0]?.boundedSummary).toContain('TaskLoop complete at phase complete');
-    expect(episodes[0]?.sourceRefs).toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        type: 'event',
-        ref: 'task-loop:loop_memory_replay:complete:complete',
-      }),
-      expect.objectContaining({
-        type: 'checkpoint',
-        ref: 'task-ledger:tlroot_memory_replay',
-      }),
-    ]));
-
-    const replayJson = JSON.stringify({ episodes, stats: loaded.store.stats() });
-    expect(replayJson).not.toContain('phase14 raw task text');
-    expect(replayJson).not.toContain('phase14 raw self-check summary');
-    expect(replayJson).not.toContain('template:quick-development');
-    expect(replayJson).not.toContain('run_0');
-    expect(replayJson).not.toContain('child_0');
-    expect(replayJson).not.toContain('stdout');
-    expect(replayJson).not.toContain('stderr');
-    expect(replayJson).not.toContain('process.env');
-    expect(replayJson).not.toContain('secret');
-    expect(replayJson).not.toContain('traceparent');
-    expect(replayJson).not.toContain('tracestate');
-    expect(replayJson).not.toContain('baggage');
+    expect(loaded.store.listEpisodes()).toEqual([]);
+    expect(existsSync(dbPath)).toBe(false);
   });
 
-  it('keeps TaskLoop terminal behavior when Runtime Memory episode writing fails', async () => {
+  it('keeps TaskLoop terminal behavior when a scripted Runtime Memory writer fails after retirement', async () => {
     const appendEpisode = vi.fn(() => {
       throw new Error('sqlite unavailable');
     });
@@ -1234,7 +1161,16 @@ describe('runTaskLoop', () => {
 
     const result = await runTaskLoop(
       { task: 'implement feature', sessionKey: 'agent:main:abc', workspaceId: 'workspace-a' },
-      { runtime: { memory: { shadow: true, persist: true } } },
+      {
+        runtime: {
+          memory: {
+            shadow: true,
+            provider: true,
+            proposeFacts: true,
+            persist: true,
+          },
+        },
+      },
       {
         idFactory: (prefix) => `${prefix}_memory_error`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_memory_error'),
@@ -1255,7 +1191,7 @@ describe('runTaskLoop', () => {
       },
     );
 
-    expect(appendEpisode).toHaveBeenCalledTimes(1);
+    expect(appendEpisode).not.toHaveBeenCalled();
     expect(result).toMatchObject({
       status: 'complete',
       phase: 'complete',

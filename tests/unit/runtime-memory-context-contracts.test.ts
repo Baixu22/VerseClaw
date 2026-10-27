@@ -9,6 +9,7 @@ import {
   RUNTIME_MEMORY_RAW_INPUT_REJECTION_REASONS,
   RUNTIME_MEMORY_SOURCE_REF_TYPES,
   RUNTIME_MEMORY_VERIFICATION_STATUSES,
+  RETIRED_RUNTIME_MEMORY_FLAGS,
   buildRuntimeMemoryEpisodeFixture,
   buildRuntimeMemoryInvalidationProposalFixture,
   buildRuntimeMemoryTemporalFactCandidateFixture,
@@ -134,12 +135,18 @@ describe("runtime memory context contracts", () => {
         },
       },
     })).toEqual({
-      shadow: true,
-      provider: true,
-      proposeFacts: true,
-      persist: true,
+      shadow: false,
+      provider: false,
+      proposeFacts: false,
+      persist: false,
       candidateGeneration: true,
     });
+    expect(RETIRED_RUNTIME_MEMORY_FLAGS).toEqual([
+      'shadow',
+      'provider',
+      'proposeFacts',
+      'persist',
+    ]);
     expect(resolveRuntimeMemoryFeatureFlags({
       memory: {
         shadow: "true",

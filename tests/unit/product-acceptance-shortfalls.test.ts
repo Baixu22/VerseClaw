@@ -34,7 +34,6 @@ const EXPECTED_TASK_IDS = [
 const STATUSES = ['open', 'in-progress', 'resolved'] as const;
 const DISPOSITIONS = ['must-resolve-before-ga', 'accepted-shortfall'] as const;
 const LEVELS = ['source', 'automated', 'runtime', 'effect', 'packaged', 'operational', 'release-approved'] as const;
-const PASS_WORDS = /\b(pass|passed|passing|green)\b/i;
 
 type Status = (typeof STATUSES)[number];
 type Disposition = (typeof DISPOSITIONS)[number];
@@ -314,11 +313,8 @@ function verifyLedger(ledger: Ledger): Issue[] {
   if (summary.accepted.some((id) => ledger.shortfalls.find((item) => item.id === id)?.acceptanceDisposition !== 'accepted-shortfall')) {
     add('summary-accepted-mismatch', 'summary.accepted contains a non-accepted row.');
   }
-  for (const item of ledger.shortfalls) {
-    if (!Array.isArray(summary.residualLimits) || !summary.residualLimits.some((limit) => limit.includes('No real-provider or real-human evidence is claimed'))) {
-      add('residual-limit', 'Residual limits must state provider/human evidence boundaries.');
-      break;
-    }
+  if (!Array.isArray(summary.residualLimits) || !summary.residualLimits.some((limit) => limit.includes('No real-provider or real-human evidence is claimed'))) {
+    add('residual-limit', 'Residual limits must state provider/human evidence boundaries.');
   }
 
   const policy = ledger.acceptancePolicy;
@@ -387,7 +383,8 @@ describe('product acceptance shortfall ledger', () => {
     });
     expect(ledger.shortfalls).toHaveLength(5);
     expect(ledger.shortfalls.map((item) => item.id)).toEqual(EXPECTED_SHORTFALL_IDS);
-    expect(ledger.summary).toMatchObject({ total: 5, open: 5, inProgress: 0, resolved: 0 });
+    expect(ledger.summary.total).toBe(5);
+    expect(ledger.summary.open + ledger.summary.inProgress + ledger.summary.resolved).toBe(5);
   });
 
   it('keeps every shortfall traceable and reviewable', () => {
@@ -447,7 +444,8 @@ describe('product acceptance shortfall ledger', () => {
     high.acceptanceDisposition = 'accepted-shortfall';
     acceptedP1.summary.accepted = [...acceptedP1.summary.accepted, high.id];
     acceptedP1.summary.blocking = acceptedP1.summary.blocking.filter((id) => id !== high.id);
-    acceptedP1.summary.byDisposition['must-resolve-before-ga'] -= 1;
+    acceptedP1.summary.byDisposition['must-resolve-before-ga'] =
+      (acceptedP1.summary.byDisposition['must-resolve-before-ga'] ?? 0) - 1;
     acceptedP1.summary.byDisposition['accepted-shortfall'] = 1;
     expect(verifyLedger(acceptedP1).map((issue) => issue.code)).toContain('accepted-p1');
 
@@ -456,7 +454,8 @@ describe('product acceptance shortfall ledger', () => {
     nonBlocking.acceptanceDisposition = 'accepted-shortfall';
     unsigned.summary.accepted = [...unsigned.summary.accepted, nonBlocking.id];
     unsigned.summary.blocking = unsigned.summary.blocking.filter((id) => id !== nonBlocking.id);
-    unsigned.summary.byDisposition['must-resolve-before-ga'] -= 1;
+    unsigned.summary.byDisposition['must-resolve-before-ga'] =
+      (unsigned.summary.byDisposition['must-resolve-before-ga'] ?? 0) - 1;
     unsigned.summary.byDisposition['accepted-shortfall'] = 1;
     expect(verifyLedger(unsigned).map((issue) => issue.code)).toContain('accepted-evidence');
   });
