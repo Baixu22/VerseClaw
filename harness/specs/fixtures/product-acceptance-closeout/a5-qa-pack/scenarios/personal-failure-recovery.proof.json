@@ -1,0 +1,22 @@
+{
+  "schema": "QaScenarioFinalState/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "scenarioId": "personal-failure-recovery",
+  "sessionKey": "agent:qa:dashboard:0fcb6f33-316b-4ece-aece-688100529ca2",
+  "runId": "b26f0596-515b-4a55-8cc1-cc1237ff5c24",
+  "waitStatus": "ok",
+  "finalText": "Artifact: personal-failure-recovery.txt\nFailed step: external calendar update was not attempted\nRetry boundary: do not retry until approval is given\nPERSONAL-FAILURE-RECOVERY-OK",
+  "effect": {
+    "failedTurn": {
+      "sessionKey": "agent:qa:dashboard:4c19d83f-8785-4b06-9c6e-4ab9bfefce54",
+      "runId": "26c9e37a-2faa-4fc5-b93d-f4aedc016680",
+      "finalText": "PERSONAL-EXPECTED-TOOL-FAILURE"
+    },
+    "toolFailure": "{\n  \"status\": \"error\",\n  \"tool\": \"read\",\n  \"error\": \"ENOENT: no such file or directory, access 'D:\\\\tmp\\\\openclaw\\\\openclaw-qa-suite-oxNLTu\\\\workspace\\\\absent-external-calendar.json'\"\n}",
+    "newRunId": "b26f0596-515b-4a55-8cc1-cc1237ff5c24",
+    "artifact": "Personal failure recovery\nCompleted: request reviewed and local evidence captured\nFailed step: external calendar update was not attempted because explicit approval is missing\nRetry boundary: do not retry the external step until approval is given\nNext step: ask for approval before any external update"
+  },
+  "workspaceDir": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace",
+  "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu"
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ProductAcceptanceShortfallLedger/v1",
-  "generatedAt": "2026-10-27T14:04:19.389Z",
+  "generatedAt": "2026-10-28T03:07:38.543Z",
   "driven_by": "agent",
   "actor": "codex-clawx-ga-review-20261027",
   "policy": "harness/specs/guides/product-acceptance-strategy.md",
@@ -242,13 +242,16 @@
         "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.ts:242",
         "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.ts:243",
         "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.ts:353",
-        "openclaw_runtime/extensions/qa-lab/src/scenario-packs.ts:11"
+        "openclaw_runtime/extensions/qa-lab/src/scenario-packs.ts:11",
+        "harness/specs/tasks/qa-lab-personal-agent-pack.md",
+        "harness/specs/fixtures/product-acceptance-closeout/a5-qa-pack/receipt.json",
+        "480e683c68e9f83231eb423ce23b541598f5425f fix(qa): restore the executable personal-agent pack"
       ],
       "impact": "The reusable QA Lab engine and provider modes exist, but no current-candidate agent scenario can be run from this checkout. This blocks an agent-driven UAT claim until tracked scenarios and a smoke receipt exist.",
       "owner": "agent:qa-lab-maintainer",
       "reportedAt": "2026-10-27",
       "reviewBy": "2026-11-03",
-      "status": "open",
+      "status": "resolved",
       "proposedAction": "Restore or author the canonical qa/scenarios index and a minimal personal-agent pack, run it with mock-openai in a disposable profile and retain the suite summary and failure bundle.",
       "shortfallClass": "missing-test-fixture-pack",
       "acceptanceDisposition": "must-resolve-before-ga",
@@ -259,17 +262,30 @@
       "blastRadius": "agent-driven scenario acceptance and any claim that personal-agent QA pack is runnable",
       "repairCost": "medium",
       "pathToGa": "add tracked scenario fixtures and prove one mock-provider pack run plus one negative/recovery case",
-      "observed": "See evidence refs for the current observed result."
+      "observed": "Resolved on clean candidate 480e683c68e9f83231eb423ce23b541598f5425f: ten selected and executed, ten passes, no failed or skipped scenarios. Preflight and three negative controls passed; the false final-state oracle failed while a later local task completed. Gateway events, replies, deterministic effects and build-copy hashes are retained.",
+      "resolvedAt": "2026-10-28",
+      "resolution": {
+        "candidate": {
+          "commit": "480e683c68e9f83231eb423ce23b541598f5425f",
+          "tree": "c6ea08aac607f99b54590b3bf4f15085123ad9a1",
+          "dirty": false
+        },
+        "sourceRef": "commit:480e683c68e9f83231eb423ce23b541598f5425f openclaw_runtime/qa/scenarios openclaw_runtime/extensions/qa-lab scripts/qa-lab-personal-agent-acceptance.mjs",
+        "command": "OPENCLAW_BUILD_PRIVATE_QA=1 OPENCLAW_QA_KEEP_TEMP=1 node scripts/qa-lab-personal-agent-acceptance.mjs --output-dir .artifacts/qa-e2e/tf0578-candidate-480e683c6-full",
+        "exitCode": 0,
+        "counts": "10 selected / 10 executed / 10 passed / 0 failed / 0 skipped; QA 21/21, root 56/56",
+        "artifactPath": "harness/specs/fixtures/product-acceptance-closeout/a5-qa-pack/receipt.json",
+        "artifactSha256": "49247b8d90f1611350679507c9cf7c34f376c9d55984683cc4244be5dc6d9cad",
+        "negativeControl": "Missing fixture and actual empty catalog exit 1. Deliberately false final-state oracle exits 1 with one failure and one later successful task; negative controller exit 0. Provider/Gateway startup failure closes all acquired HTTP listeners."
+      }
     }
   ],
   "summary": {
     "total": 5,
-    "open": 1,
+    "open": 0,
     "inProgress": 0,
-    "resolved": 4,
-    "blocking": [
-      "qa-lab-scenario-pack-not-present"
-    ],
+    "resolved": 5,
+    "blocking": [],
     "accepted": [],
     "byDisposition": {
       "must-resolve-before-ga": 5

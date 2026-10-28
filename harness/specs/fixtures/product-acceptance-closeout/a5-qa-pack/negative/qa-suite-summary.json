@@ -1,0 +1,96 @@
+{
+  "scenarios": [
+    {
+      "name": "A completion claim has a real local proof file",
+      "status": "fail",
+      "steps": [
+        {
+          "name": "Create and verify a proof-backed local status",
+          "status": "fail",
+          "details": "TF-0578 deliberate false final-state oracle"
+        }
+      ],
+      "details": "TF-0578 deliberate false final-state oracle"
+    },
+    {
+      "name": "A fresh task reads a recorded workspace preference",
+      "status": "pass",
+      "steps": [
+        {
+          "name": "Read a recorded preference rather than guess it",
+          "status": "pass"
+        },
+        {
+          "name": "Retain observed final state and raw local events",
+          "status": "pass",
+          "details": "{\"schema\":\"QaScenarioFinalState/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-tf0578-qa-pack\",\"scenarioId\":\"personal-memory-preference-recall\",\"sessionKey\":\"agent:qa:dashboard:25f997a7-cc42-4a97-878a-8930bb9b98c0\",\"runId\":\"ee13b240-723e-441b-97bb-e8dad9d48bb8\",\"waitStatus\":\"ok\",\"finalText\":\"Recorded preference: lemon pepper wings with blue cheese. PERSONAL-PREFERENCE-RECALL-OK\",\"effect\":\"# Recorded user preferences\\nFor QA movie night, the user prefers lemon pepper wings with blue cheese.\\n\",\"workspaceDir\":\"D:\\\\tmp\\\\openclaw\\\\openclaw-qa-suite-SJirYV\\\\workspace\",\"tempRoot\":\"D:\\\\tmp\\\\openclaw\\\\openclaw-qa-suite-SJirYV\"}"
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1
+  },
+  "metrics": {
+    "wallMs": 24976,
+    "gatewayProcessCpuMs": 9734,
+    "gatewayCpuCoreRatio": 0.39,
+    "gatewayProcessRssStartBytes": 833388544,
+    "gatewayProcessRssEndBytes": 967401472,
+    "gatewayProcessRssDeltaBytes": 134012928,
+    "gatewayProcessRssPeakBytes": 967401472,
+    "gatewayProcessRssPeakDeltaBytes": 134012928,
+    "gatewayProcessRssSamples": [
+      {
+        "label": "suite-start",
+        "at": "2026-10-28T02:43:54.592Z",
+        "gatewayProcessRssBytes": 833388544
+      },
+      {
+        "label": "scenario:personal-no-fake-progress:start",
+        "at": "2026-10-28T02:43:55.182Z",
+        "gatewayProcessRssBytes": 842596352
+      },
+      {
+        "label": "scenario:personal-no-fake-progress:finish",
+        "at": "2026-10-28T02:44:00.098Z",
+        "gatewayProcessRssBytes": 963522560
+      },
+      {
+        "label": "scenario:personal-memory-preference-recall:start",
+        "at": "2026-10-28T02:44:00.548Z",
+        "gatewayProcessRssBytes": 963522560
+      },
+      {
+        "label": "scenario:personal-memory-preference-recall:finish",
+        "at": "2026-10-28T02:44:03.536Z",
+        "gatewayProcessRssBytes": 967401472
+      },
+      {
+        "label": "suite-finish",
+        "at": "2026-10-28T02:44:04.588Z",
+        "gatewayProcessRssBytes": 967401472
+      }
+    ]
+  },
+  "run": {
+    "startedAt": "2026-10-28T02:43:38.560Z",
+    "finishedAt": "2026-10-28T02:44:03.536Z",
+    "providerMode": "mock-openai",
+    "primaryModel": "mock-openai/gpt-5.5",
+    "primaryProvider": "mock-openai",
+    "primaryModelName": "gpt-5.5",
+    "alternateModel": "mock-openai/gpt-5.5-alt",
+    "alternateProvider": "mock-openai",
+    "alternateModelName": "gpt-5.5-alt",
+    "fastMode": false,
+    "concurrency": 1,
+    "scenarioIds": [
+      "personal-no-fake-progress",
+      "personal-memory-preference-recall"
+    ],
+    "runtimePair": null
+  }
+}

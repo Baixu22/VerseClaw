@@ -11,6 +11,7 @@ requiredRules:
   - task-forest-autoclose-and-roles
   - docs-sync
 touchedAreas:
+  - .gitignore
   - harness/specs/tasks/product-acceptance-closeout.md
   - harness/specs/tasks/runtime-memory-retirement-closeout.md
   - harness/specs/tasks/independent-acceptance-runner-output-roots.md
@@ -181,8 +182,8 @@ closed by confidence alone.
 
 ## Shortfall closure rules
 
-The five recorded shortfalls form the baseline. One remains open; four are resolved with
-current evidence:
+The five recorded shortfalls form the baseline. All five are resolved with
+source-candidate evidence; real-model, packaging and final aggregate gates remain later tasks:
 
 1. `runtime-memory-retired-test-contract` → **resolved by `TF-0574`** on candidate
    `07f60c029`; evidence is under `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`
@@ -197,7 +198,10 @@ current evidence:
    successful tool rounds no longer consume the shared provider retry budget, so the coding journey
    reaches its final response. Evidence is under
    `harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/`
-5. `qa-lab-scenario-pack-not-present` → `TF-0578` (open)
+5. `qa-lab-scenario-pack-not-present` → **resolved by `TF-0578`** on candidate `480e683c6`;
+   all ten canonical scenarios pass, three negative controls fail closed as expected, and a later task
+   completes after the deliberate oracle failure. Evidence is under
+   `harness/specs/fixtures/product-acceptance-closeout/a5-qa-pack/`
 
 A shortfall may become `resolved` only when all of the following are on disk and bound to the
 same candidate:

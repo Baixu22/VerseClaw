@@ -1,0 +1,20 @@
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[gateway] agent model: mock-openai/gpt-5.5 (thinking=medium, fast=off)
+[gateway] http server listening (3 plugins: acpx, memory-core, qa-channel)
+[gateway] log file: D:\tmp\openclaw\openclaw-2026-10-28.log
+[gateway] starting channels and sidecars...
+[plugins] embedded acpx runtime backend registered lazily
+[gateway] ready
+[heartbeat] started
+[ws] ⇄ res ✓ config.get 2773ms conn=6045b572…5242 id=d7e3ac52…e28c
+[gateway] supervisor restart reconciliation ok reconciled=0 lost=0 ours=0 foreignOwner=0 containmentUnknown=0 residual=0
+[gateway] update available (latest): v2026.10.8 (current v2026.6.2). Run: openclaw update
+[memory-consolidation] runtime memory consolidation applied (pruned=0, merged=0, strengthened=0, durationMs=1).
+[ws] ⇄ res ✓ sessions.create 609ms conn=7329b3c0…7d1c id=a8ddf7ec…2895
+[ws] ⇄ res ✓ agent 92ms runId=21e130f3-468c-4061-8e00-acf2130042c9 conn=90907866…df26 id=57c8d32b…c68b
+[gateway] provider auth state pre-warmed in 3596ms eventLoopMax=492.8ms
+[gateway] agent runtime plugins pre-warmed in 2ms
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[ws] ⇄ res ✓ agent.wait 3093ms conn=73344eb0…0d8a id=2b73654f…fe47
+Recorded preference: lemon pepper wings with blue cheese. PERSONAL-PREFERENCE-RECALL-OK

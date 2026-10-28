@@ -1,0 +1,1479 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+  "node": "TF-0578",
+  "runId": "tf0578-candidate-480e683c6",
+  "generatedAt": "2026-10-28T02:50:01.429Z",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "candidate": {
+    "commit": "480e683c68e9f83231eb423ce23b541598f5425f",
+    "tree": "c6ea08aac607f99b54590b3bf4f15085123ad9a1",
+    "dirty": false
+  },
+  "currentCandidateRun": true,
+  "scope": "Restore the ten canonical personal-agent scenarios and prove source-host Gateway/mock provider execution, failure oracles and continuation.",
+  "counts": {
+    "selected": 10,
+    "executed": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "unexpectedSkips": 0
+  },
+  "focusedTests": {
+    "qa": {
+      "files": 4,
+      "total": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    "root": {
+      "files": 3,
+      "total": 56,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "preflight": {
+    "selected": 1,
+    "executed": 1,
+    "passed": 1,
+    "exitCode": 0
+  },
+  "negativeControls": [
+    {
+      "id": "missing-fixture",
+      "exitCode": 1
+    },
+    {
+      "id": "empty-catalog",
+      "exitCode": 1,
+      "actualCatalogCount": 0
+    },
+    {
+      "id": "false-final-state",
+      "exitCode": 1,
+      "counts": {
+        "total": 2,
+        "passed": 1,
+        "failed": 1
+      }
+    }
+  ],
+  "negativeControllerExit": 0,
+  "build": {
+    "digest": "3f9975d6ebb63eeb7926a953dd9acab6ebf1a6e8ed15df506ea0f0b486216f8d",
+    "files": 12734,
+    "stamps": {
+      ".buildstamp": {
+        "builtAt": 1793155166702,
+        "head": "480e683c68e9f83231eb423ce23b541598f5425f"
+      },
+      ".runtime-postbuildstamp": {
+        "syncedAt": 1793155166786,
+        "head": "480e683c68e9f83231eb423ce23b541598f5425f"
+      }
+    },
+    "manifest": "negative-controls.json#build"
+  },
+  "commands": [
+    {
+      "id": "qa-focused",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.extension-qa.config.ts",
+        "extensions/qa-lab/src/scenario-catalog.test.ts",
+        "extensions/qa-lab/src/suite-planning.test.ts",
+        "extensions/qa-lab/src/suite-summary.test.ts",
+        "extensions/qa-lab/src/suite-startup.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/clawx-product-acceptance/tf0578-candidate-480e683c6/a5-qa-pack/qa-focused.json"
+      ],
+      "cwd": "D:/ClawX/openclaw_runtime",
+      "startedAt": "2026-10-28T02:40:06.035Z",
+      "finishedAt": "2026-10-28T02:40:30.013Z",
+      "durationMs": 23977,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-focused.log"
+    },
+    {
+      "id": "qa-types",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-tsgo.mjs",
+        "-p",
+        "test/tsconfig/tsconfig.qa-lab.test.json"
+      ],
+      "cwd": "D:/ClawX/openclaw_runtime",
+      "startedAt": "2026-10-28T02:40:30.014Z",
+      "finishedAt": "2026-10-28T02:40:46.515Z",
+      "durationMs": 16501,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-types.log"
+    },
+    {
+      "id": "root-focused",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/product-acceptance-shortfalls.test.ts",
+        "tests/unit/harness-specs.test.ts",
+        "tests/unit/docs-index.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/clawx-product-acceptance/tf0578-candidate-480e683c6/a5-qa-pack/root-focused.json"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:40:46.516Z",
+      "finishedAt": "2026-10-28T02:40:54.919Z",
+      "durationMs": 8403,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\root-focused.log"
+    },
+    {
+      "id": "runtime-lint",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-oxlint.mjs",
+        "extensions/qa-lab/api.ts",
+        "extensions/qa-lab/src/cli.runtime.ts",
+        "extensions/qa-lab/src/gateway-child.ts",
+        "extensions/qa-lab/src/providers/mock-openai/server.ts",
+        "extensions/qa-lab/src/scenario-catalog.ts",
+        "extensions/qa-lab/src/scenario-catalog.test.ts",
+        "extensions/qa-lab/src/scenario-flow-runner.ts",
+        "extensions/qa-lab/src/suite-planning.ts",
+        "extensions/qa-lab/src/suite-planning.test.ts",
+        "extensions/qa-lab/src/suite-summary.ts",
+        "extensions/qa-lab/src/suite-summary.test.ts",
+        "extensions/qa-lab/src/suite.ts",
+        "extensions/qa-lab/src/suite-startup.test.ts",
+        "tsdown.config.ts"
+      ],
+      "cwd": "D:/ClawX/openclaw_runtime",
+      "startedAt": "2026-10-28T02:40:54.920Z",
+      "finishedAt": "2026-10-28T02:42:08.592Z",
+      "durationMs": 73672,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\runtime-lint.log"
+    },
+    {
+      "id": "driver-lint",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "exec",
+        "eslint",
+        "scripts/qa-lab-personal-agent-acceptance.mjs"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:42:08.593Z",
+      "finishedAt": "2026-10-28T02:42:11.328Z",
+      "durationMs": 2735,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\driver-lint.log"
+    },
+    {
+      "id": "preflight",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/qa-lab-personal-agent-acceptance.mjs",
+        "--preflight",
+        "--output-dir",
+        ".artifacts/qa-e2e/tf0578-candidate-480e683c6-preflight"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:42:11.329Z",
+      "finishedAt": "2026-10-28T02:42:56.943Z",
+      "durationMs": 45614,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\preflight.log"
+    },
+    {
+      "id": "negative-controls",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/qa-lab-personal-agent-acceptance.mjs",
+        "--negative-controls"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:42:56.944Z",
+      "finishedAt": "2026-10-28T02:44:10.124Z",
+      "durationMs": 73180,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\negative-controls.log"
+    },
+    {
+      "id": "full-pack",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/qa-lab-personal-agent-acceptance.mjs",
+        "--output-dir",
+        ".artifacts/qa-e2e/tf0578-candidate-480e683c6-full"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:44:10.124Z",
+      "finishedAt": "2026-10-28T02:48:52.283Z",
+      "durationMs": 282158,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\full-pack.log"
+    },
+    {
+      "id": "docs-policy-validate",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "docs:policy:validate"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:48:52.284Z",
+      "finishedAt": "2026-10-28T02:48:52.921Z",
+      "durationMs": 637,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\docs-policy-validate.log"
+    },
+    {
+      "id": "comms-replay",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:48:52.922Z",
+      "finishedAt": "2026-10-28T02:48:53.650Z",
+      "durationMs": 728,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\comms-replay.log"
+    },
+    {
+      "id": "comms-compare",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:48:53.651Z",
+      "finishedAt": "2026-10-28T02:48:54.331Z",
+      "durationMs": 680,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\comms-compare.log"
+    },
+    {
+      "id": "harness-validate",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/qa-lab-personal-agent-pack.md"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:48:54.331Z",
+      "finishedAt": "2026-10-28T02:48:56.081Z",
+      "durationMs": 1750,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\harness-validate.log"
+    },
+    {
+      "id": "harness-dry-run",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/qa-lab-personal-agent-pack.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:48:56.081Z",
+      "finishedAt": "2026-10-28T02:48:57.750Z",
+      "durationMs": 1669,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\harness-dry-run.log"
+    },
+    {
+      "id": "closeout-validate",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-closeout.md"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:48:57.751Z",
+      "finishedAt": "2026-10-28T02:48:59.344Z",
+      "durationMs": 1593,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\closeout-validate.log"
+    },
+    {
+      "id": "closeout-dry-run",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-closeout.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:48:59.345Z",
+      "finishedAt": "2026-10-28T02:49:00.964Z",
+      "durationMs": 1619,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\closeout-dry-run.log"
+    },
+    {
+      "id": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:49:00.964Z",
+      "finishedAt": "2026-10-28T02:49:01.017Z",
+      "durationMs": 54,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\diff-check.log"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "personal-reminder-roundtrip",
+      "status": "pass",
+      "stepCount": 3,
+      "runId": "24cf52ed-5e10-47cd-ac51-569669e9c942",
+      "sessionKey": "agent:qa:dashboard:816aa981-e219-46c6-aca1-a1c0ff11d301",
+      "waitStatus": "ok",
+      "providerRequests": 2,
+      "effectFiles": [],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93"
+    },
+    {
+      "id": "personal-channel-thread-reply",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "8e0cff13-0e25-4566-a7e1-7a907ee3a659",
+      "sessionKey": "agent:qa:dashboard:667dc0d1-6f0a-49a4-b433-0bd5ae82e62f",
+      "waitStatus": "ok",
+      "providerRequests": 1,
+      "effectFiles": [],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw"
+    },
+    {
+      "id": "personal-memory-preference-recall",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "21e130f3-468c-4061-8e00-acf2130042c9",
+      "sessionKey": "agent:qa:dashboard:68212dca-351b-4570-b3ba-bcd66b2a30d3",
+      "waitStatus": "ok",
+      "providerRequests": 2,
+      "effectFiles": [
+        {
+          "file": "PREFERENCES.md",
+          "bytes": 102,
+          "sha256": "2fcfbb689686a38d7ae705f02722511eb1eac7f3829f4f9a5f22644af6f3e7b1"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2"
+    },
+    {
+      "id": "personal-redaction-no-secret-leak",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "85a964c2-a803-438d-950b-f573de0fc30b",
+      "sessionKey": "agent:qa:dashboard:c30acd17-97a2-40cc-bf3a-83e516590df7",
+      "waitStatus": "ok",
+      "providerRequests": 4,
+      "effectFiles": [
+        {
+          "file": "personal-diagnostics-summary.txt",
+          "bytes": 300,
+          "sha256": "5d2184e4265ce905a0a53b6ed54ebff7a6860170b7ddf5456297f36e22d74945"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f"
+    },
+    {
+      "id": "personal-tool-safety-followthrough",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "fb4d5612-2def-4522-9aea-98ab2980361f",
+      "sessionKey": "agent:qa:dashboard:cb21306a-1f22-4b77-8c5e-118db08392b5",
+      "waitStatus": "ok",
+      "providerRequests": 5,
+      "effectFiles": [
+        {
+          "file": "repo-contract-summary.txt",
+          "bytes": 119,
+          "sha256": "fbe27db10761c058174ed9da0dd5d79acd10010c68e6c7748e5db351072f6e15"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr"
+    },
+    {
+      "id": "personal-approval-denial-stop",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "78210b56-39e6-4a9e-8a4f-bafc88c05519",
+      "sessionKey": "agent:qa:dashboard:a01a6324-348f-4236-ad9a-ebfd7b3f8740",
+      "waitStatus": "ok",
+      "providerRequests": 2,
+      "effectFiles": [
+        {
+          "file": "personal-denied-command.cjs",
+          "bytes": 133,
+          "sha256": "f74378b2903b4cf30ebd226aa5bf654d5e85a8d8a518949d877eb972366eddcf"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x"
+    },
+    {
+      "id": "personal-task-followthrough-status",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "aa851d6a-ffdd-4546-991f-f12de6b5e09b",
+      "sessionKey": "agent:qa:dashboard:a4914af0-0d65-4b33-9cdd-035b32dcea15",
+      "waitStatus": "ok",
+      "providerRequests": 4,
+      "effectFiles": [
+        {
+          "file": "personal-task-status.txt",
+          "bytes": 181,
+          "sha256": "7b2399d0a24633305395ff6ec54c7a6030e1a7e4002845c213b1044b7a52fce2"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X"
+    },
+    {
+      "id": "personal-share-safe-diagnostics-artifact",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "34648ce5-4e5b-4e71-826a-308224fa6d98",
+      "sessionKey": "agent:qa:dashboard:7c481dde-67bd-417a-a847-c027ec61384e",
+      "waitStatus": "ok",
+      "providerRequests": 4,
+      "effectFiles": [
+        {
+          "file": "personal-diagnostics-summary.txt",
+          "bytes": 300,
+          "sha256": "5d2184e4265ce905a0a53b6ed54ebff7a6860170b7ddf5456297f36e22d74945"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW"
+    },
+    {
+      "id": "personal-no-fake-progress",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "08c7bd22-af24-4aff-8adb-b4c9fdcc4c87",
+      "sessionKey": "agent:qa:dashboard:e549911d-8d5a-467a-b94e-69df6286de79",
+      "waitStatus": "ok",
+      "providerRequests": 4,
+      "effectFiles": [
+        {
+          "file": "personal-progress-proof.txt",
+          "bytes": 227,
+          "sha256": "e0b584a31c3f16c59b04d9e00d0c4421618f0ad633ededdefa3e052fc401eb2c"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO"
+    },
+    {
+      "id": "personal-failure-recovery",
+      "status": "pass",
+      "stepCount": 2,
+      "runId": "b26f0596-515b-4a55-8cc1-cc1237ff5c24",
+      "sessionKey": "agent:qa:dashboard:0fcb6f33-316b-4ece-aece-688100529ca2",
+      "waitStatus": "ok",
+      "providerRequests": 6,
+      "effectFiles": [
+        {
+          "file": "personal-failure-recovery.txt",
+          "bytes": 300,
+          "sha256": "559de9577bc372bdc3c321c6653564bbbbb5d556fbfdb98c75f54b2e4b3f3881"
+        }
+      ],
+      "rawWorkspace": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace",
+      "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu"
+    }
+  ],
+  "candidateSourceFiles": [
+    {
+      "path": "README.ja-JP.md",
+      "bytes": 17395,
+      "sha256": "5cdc17a3947e17ea979fbca3f1e13a8e056ae23e1736d0423de84ae9cab354b0"
+    },
+    {
+      "path": "README.md",
+      "bytes": 16516,
+      "sha256": "e0fead02ca7ed6a708efeb9cc11ff367bcf04343fc1afcc8a02c4e5fc47228ba"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "bytes": 15355,
+      "sha256": "f35d43bde1b8b327bbc657bd38806f2037c74839686d45ba127a35096c3d7fc2"
+    },
+    {
+      "path": "harness/specs/tasks/product-acceptance-closeout.md",
+      "bytes": 18144,
+      "sha256": "755b84898ae46a502ca79f910b71b5eb184983e0c874e5134f76505a0184da83"
+    },
+    {
+      "path": "harness/specs/tasks/qa-lab-personal-agent-pack.md",
+      "bytes": 6366,
+      "sha256": "3a82b5cdacfd5344de91e2478ea55ec06ed2b519a57680a43170a056102cc969"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/api.ts",
+      "bytes": 3153,
+      "sha256": "1deaa34dac04a6cd942c987e47ae0ea0d688f6533107aa1b935898003c20df16"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/cli.runtime.ts",
+      "bytes": 45219,
+      "sha256": "2f4f5424bc050abf02c0ca22cb272b89aeaf5982c6cbcd29a3e60865c31b1c9b"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/gateway-child.ts",
+      "bytes": 35378,
+      "sha256": "973c66ef3695179d2f96cfc65b5c0d984cea754cdff7be3cf0f7e00b5827d427"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/providers/mock-openai/server.ts",
+      "bytes": 124949,
+      "sha256": "5ffa16648efd07123dfc5b2687b640d8daad76f1fa671089e6422e1f57ec5a96"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.test.ts",
+      "bytes": 5425,
+      "sha256": "1f1daf90b7397708a21485a820eca2422e3bb6d5194d5dcb2ab59ee660068436"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/scenario-catalog.ts",
+      "bytes": 14683,
+      "sha256": "4ee5067ce2c9db949ae8b4ce7f267d0d8d753db94f5558abb171e5108273cbaa"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/scenario-flow-runner.ts",
+      "bytes": 9395,
+      "sha256": "3d80f4bce6868c4b3db8a440a1b6c79c1edbf07c72afdf6c8f4e0007778bfb86"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/suite-planning.test.ts",
+      "bytes": 1445,
+      "sha256": "752a6bf5e54d0897e5022620b1d3cbddd26a5ac5651835e1d211c9631bbaa214"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/suite-planning.ts",
+      "bytes": 9002,
+      "sha256": "a4b9d27bc0dae352bd52e61e33b1e7c83c53a672b8bd2735fba875c27513c60f"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/suite-startup.test.ts",
+      "bytes": 2365,
+      "sha256": "8d9fcd50f0841f7f6869e89f1e6cc0baa9e2d8dab930dd017883a303f869ee57"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/suite-summary.test.ts",
+      "bytes": 1069,
+      "sha256": "3052172490a316f9e1725da84119c15cde49419cde2a496f6501a7e0e40865de"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/suite-summary.ts",
+      "bytes": 6283,
+      "sha256": "b3a3718cc5a46b7180b7a9c2edccdda317e35a2016e26ea126afd2e0347c1ec9"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/suite.ts",
+      "bytes": 56684,
+      "sha256": "83dc8a667fb7a46995de8f4ead0749d8ec7c99a0b926b5e2d8fa9119daa508ab"
+    },
+    {
+      "path": "openclaw_runtime/qa/README.md",
+      "bytes": 4086,
+      "sha256": "bcaee5ecce43199237aec15b3b03a4f8b85b19b5948c970e429d50e69621d255"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/index.md",
+      "bytes": 525,
+      "sha256": "2514806ed8580220b0595094a4a8c04a712901d4d607747f1937567f42fa1a27"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-approval-denial-stop.md",
+      "bytes": 6476,
+      "sha256": "e428794a8f74e25c52aa56e1ed3a716b82f0c45824881c055f1a36d614ca1e96"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-channel-thread-reply.md",
+      "bytes": 3272,
+      "sha256": "9b5000649779a684ba88555b45954ab263eabd7b33734124e4b44307bedba457"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-failure-recovery.md",
+      "bytes": 5997,
+      "sha256": "c11fbcef669c4284d2727486bbdd71d2a3b7e70c8a96605919bc5f24778f441e"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-memory-preference-recall.md",
+      "bytes": 3593,
+      "sha256": "12e8d875ae65130221104c18eb92d27a0786b1ed6408c7798e51422dbf392a47"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-no-fake-progress.md",
+      "bytes": 3898,
+      "sha256": "0d4adac2382884da414e9df487260f318cb8a8d576500c14254ead3efed020bb"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-redaction-no-secret-leak.md",
+      "bytes": 4093,
+      "sha256": "1a1407e01bac638f56427af3245b7f9066d76a05bcd22c7f20faa1876ced778f"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-reminder-roundtrip.md",
+      "bytes": 5105,
+      "sha256": "a2395b2f00d536e0750b57526c0f7ee9dc6c4d61f07b96dd566142667df21556"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-share-safe-diagnostics-artifact.md",
+      "bytes": 4098,
+      "sha256": "27a6a5ab67f82bb22ede26e87dd853a170f3f73fc297aa07b27f78605adb06a6"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-task-followthrough-status.md",
+      "bytes": 4017,
+      "sha256": "f8d780ca227c76943c2ea340eabf6f1f5244366449437ee5a6c198a06a947b61"
+    },
+    {
+      "path": "openclaw_runtime/qa/scenarios/personal-tool-safety-followthrough.md",
+      "bytes": 4683,
+      "sha256": "05728d9434fde23e9c650174bc283d3c84c135c2a33aec72f92b2c411b94c32b"
+    },
+    {
+      "path": "openclaw_runtime/test/tsconfig/tsconfig.qa-lab.test.json",
+      "bytes": 370,
+      "sha256": "c77d39a0d63b5ccaa5d5bdd85b8f2609efe379f03cc7689fe9e7b94237c3469a"
+    },
+    {
+      "path": "openclaw_runtime/tsdown.config.ts",
+      "bytes": 31162,
+      "sha256": "22d71fe966043b7703dfe8716e1e65cb0bfcd816f8c5dd423cd81c279017f67b"
+    },
+    {
+      "path": "scripts/qa-lab-personal-agent-acceptance.mjs",
+      "bytes": 10801,
+      "sha256": "b467346d4ad1071bb41565588fce7adbeeb67a9526230d063c339f29907c2b1f"
+    }
+  ],
+  "rawInventory": [
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-focused.log",
+      "path": "qa-focused.txt",
+      "sha256": "270f88ebe36d7d4066e7677a34adadf9dce2930ce0ae94163d009cc22f91eaa1",
+      "bytes": 109
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-types.log",
+      "path": "qa-types.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\root-focused.log",
+      "path": "root-focused.txt",
+      "sha256": "5f300d8825951f193cffe55864ba2f07983ef9d2ca2f30c988d7826b1e5d5679",
+      "bytes": 111
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\runtime-lint.log",
+      "path": "runtime-lint.txt",
+      "sha256": "b5cf91e694c93b826541de6fd0e2af403a4ba03aca52bee782f0a35f7f2baff4",
+      "bytes": 260
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\driver-lint.log",
+      "path": "driver-lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\preflight.log",
+      "path": "preflight.txt",
+      "sha256": "e7d0526d373c70b7bed26cc6031fc3768ef76610cba009fee922e402988042dc",
+      "bytes": 854
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\negative-controls.log",
+      "path": "negative-controls.txt",
+      "sha256": "f5f3506c93af7d72bf661174556032f0f53fe00b889aec28b805250d3afb359c",
+      "bytes": 293
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\full-pack.log",
+      "path": "full-pack.txt",
+      "sha256": "1f7c8217fa1ec3dfec77d2856c8b677d72933e220da36a1f9e1ffa7b601cd114",
+      "bytes": 6984
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\docs-policy-validate.log",
+      "path": "docs-policy-validate.txt",
+      "sha256": "3565c823c21c475b72768ac6c13e5e157763ae179df8b437015f425270fc41c1",
+      "bytes": 663
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\comms-replay.log",
+      "path": "comms-replay.txt",
+      "sha256": "a44309ffaf6c282e270b2730184947ccf19cd8b1c8835fbf45f557a1822fbea1",
+      "bytes": 108
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\comms-compare.log",
+      "path": "comms-compare.txt",
+      "sha256": "5318ac1f938b47de9cc82a8d72737d2f231f4d62a506058bce3f3602d75bdaf6",
+      "bytes": 3434
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\harness-validate.log",
+      "path": "harness-validate.txt",
+      "sha256": "e36ac55cf332fcf9ec0e22a356f7a1f5a7847efb12ffda248840e506d7d8e759",
+      "bytes": 278
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\harness-dry-run.log",
+      "path": "harness-dry-run.txt",
+      "sha256": "18ae5bb949e28824dfc7fb9460736308cc744881989d61e53dd9ddb44e0c293d",
+      "bytes": 301
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\closeout-validate.log",
+      "path": "closeout-validate.txt",
+      "sha256": "cf7cba4dab009ffefc2284e4adaf0e278630a888d3176c1838a40f8bff8d9080",
+      "bytes": 281
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\closeout-dry-run.log",
+      "path": "closeout-dry-run.txt",
+      "sha256": "5fcdd074388bd1fac471141fce770d3366e235cf07d1830ec55944e8d12d7276",
+      "bytes": 303
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\diff-check.log",
+      "path": "diff-check.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-focused.json",
+      "path": "qa-focused.json",
+      "sha256": "38f7548fbb4ce50b3cbe3dfb45db02fc41597ebf1721d3b34176ca7b51458838",
+      "bytes": 8170
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\root-focused.json",
+      "path": "root-focused.json",
+      "sha256": "323e9eae51b40808ae38dac92963d60fcd0dc5dbad7a68d39eb9b000b966b142",
+      "bytes": 18591
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\gates.json",
+      "path": "gates.json",
+      "sha256": "88e3af1da51b13ae1ae70a6e42df4908ef377b4db9b46eb21d97157de3ebd213",
+      "bytes": 10798
+    },
+    {
+      "source": "D:/tmp/clawx-relay-20261028/development/clean-candidate-build.log",
+      "path": "private-qa-build.txt",
+      "sha256": "965c620f5f0a10653c8b631460170ac1b1cdb2225578abfe7d11f6fd16308ab0",
+      "bytes": 2273
+    },
+    {
+      "source": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-full\\qa-suite-summary.json",
+      "path": "qa-suite-summary.json",
+      "sha256": "7c3c27c68d4727075bf1a5ae3257785a222d81b7e4b913c90e9e304c364ceab4",
+      "bytes": 16554
+    },
+    {
+      "source": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-full\\qa-suite-report.md",
+      "path": "qa-suite-report.md",
+      "sha256": "5f5d764395e1c31290db4f32fb9072bb30e33a28b805be65d4ce9ad30b0a45d8",
+      "bytes": 13088
+    },
+    {
+      "source": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-preflight\\qa-suite-summary.json",
+      "path": "preflight-summary.json",
+      "sha256": "1f88f424e6d35cd2ff0a26e9a08d68cd5fcec247af5db77ed35997344dad8440",
+      "bytes": 3646
+    },
+    {
+      "source": "D:/tmp/clawx-qa-negative-A63rtC/negative-controls.json",
+      "path": "negative-controls.json",
+      "sha256": "f4bae186bad6f9f35f6802632625e587a4c13c06d5ea2cd02302bcf79f67c50a",
+      "bytes": 2428739
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\missing-fixture.log",
+      "path": "negative/missing-fixture.txt",
+      "sha256": "810ef8c69f7192a93008b7a26153ee3dc82e599c4fb401793b881e55aa229d95",
+      "bytes": 55
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\empty-catalog.log",
+      "path": "negative/empty-catalog.txt",
+      "sha256": "42eb6250c00c3603a6625ff411f00916f4dc81ae9c82640fc20c042b474a7ef6",
+      "bytes": 355
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\false-final-state.log",
+      "path": "negative/false-final-state.txt",
+      "sha256": "ee3e757fa2beb7be65d31dd3b99f4b58eeec5a7786dfc6c2440b3113e9ba34a0",
+      "bytes": 660
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\source\\openclaw_runtime\\.artifacts\\qa-e2e\\false-final-state\\qa-suite-summary.json",
+      "path": "negative/qa-suite-summary.json",
+      "sha256": "a564d4e11841e9599fb9b8d9546e15594bd49c9f53438ed2e553585c1558299b",
+      "bytes": 3416
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\workspace\\personal-progress-proof.txt",
+      "path": "negative/false-oracle-effect.txt",
+      "sha256": "e0b584a31c3f16c59b04d9e00d0c4421618f0ad633ededdefa3e052fc401eb2c",
+      "bytes": 227
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\workspace\\personal-memory-preference-recall.events.json",
+      "path": "negative/recovery.events.json",
+      "sha256": "90c487e8b691f0b210d0ec75efe7163971823f79e08bef09eb02be51e6618c8c",
+      "bytes": 1401793
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\workspace\\personal-memory-preference-recall.proof.json",
+      "path": "negative/recovery.proof.json",
+      "sha256": "af6a6bf413f9375d80dc1316a105b5bd2ab124bac4cbc62476de79bb866d70fd",
+      "bytes": 665
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\gateway.stdout.log",
+      "path": "negative/gateway.stdout.txt",
+      "sha256": "aae05803d96f1cc7441b2a0c227528ea42d2fdb683db835c94db11852056ea02",
+      "bytes": 2124
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\gateway.stderr.log",
+      "path": "negative/gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\workspace\\personal-reminder-roundtrip.proof.json",
+      "path": "scenarios/personal-reminder-roundtrip.proof.json",
+      "sha256": "69ab52d88f8e38496f49bd99e5ab51a8fdff9932f4ec3353f1d544e2f9cbec7f",
+      "bytes": 1811
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\workspace\\personal-reminder-roundtrip.events.json",
+      "path": "scenarios/personal-reminder-roundtrip.events.json",
+      "sha256": "9b47354dba14faa5909fac57f9767997f2758816083bcc07356793f5d9055d08",
+      "bytes": 432053
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\gateway.stdout.log",
+      "path": "scenarios/personal-reminder-roundtrip.gateway.stdout.txt",
+      "sha256": "4c5f976a22cc1465690cbd212a439782578c6003c6d90e21ae16b4a9adc91156",
+      "bytes": 1652
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\gateway.stderr.log",
+      "path": "scenarios/personal-reminder-roundtrip.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\workspace\\personal-channel-thread-reply.proof.json",
+      "path": "scenarios/personal-channel-thread-reply.proof.json",
+      "sha256": "17c518e70e501ae40413e0a7e6811cb755d56b8a2fec51f6bd30ed092ec45b52",
+      "bytes": 633
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\workspace\\personal-channel-thread-reply.events.json",
+      "path": "scenarios/personal-channel-thread-reply.events.json",
+      "sha256": "722dbf4d544193d97269627be68f776389deb077376a47efe00012c8054e64de",
+      "bytes": 233054
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\gateway.stdout.log",
+      "path": "scenarios/personal-channel-thread-reply.gateway.stdout.txt",
+      "sha256": "3b11e79b7399744f31a4b1faa28584f85c898b69ee25d368edeef95a90c38951",
+      "bytes": 1401
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\gateway.stderr.log",
+      "path": "scenarios/personal-channel-thread-reply.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\workspace\\personal-memory-preference-recall.proof.json",
+      "path": "scenarios/personal-memory-preference-recall.proof.json",
+      "sha256": "54f2fb68bc972e0469e94099df75f3c374a97fd65a7a1a43a9fa68c39cecd561",
+      "bytes": 665
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\workspace\\personal-memory-preference-recall.events.json",
+      "path": "scenarios/personal-memory-preference-recall.events.json",
+      "sha256": "ca13e7aba834b2d24dbb31858ca6bffd557efe71483306aee75d07bc5e538127",
+      "bytes": 466026
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\gateway.stdout.log",
+      "path": "scenarios/personal-memory-preference-recall.gateway.stdout.txt",
+      "sha256": "21f97060345213b309264ffafa4969fbb9bc7ce07f84cb3a9fa2c627376755be",
+      "bytes": 1463
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\gateway.stderr.log",
+      "path": "scenarios/personal-memory-preference-recall.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\workspace\\PREFERENCES.md",
+      "path": "effects/personal-memory-preference-recall/PREFERENCES.md",
+      "sha256": "2fcfbb689686a38d7ae705f02722511eb1eac7f3829f4f9a5f22644af6f3e7b1",
+      "bytes": 102
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\workspace\\personal-redaction-no-secret-leak.proof.json",
+      "path": "scenarios/personal-redaction-no-secret-leak.proof.json",
+      "sha256": "6d33b672abf8f5fd2a1c718f6030d76bd2696dd6f0c289bb5702054ba1bb6120",
+      "bytes": 896
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\workspace\\personal-redaction-no-secret-leak.events.json",
+      "path": "scenarios/personal-redaction-no-secret-leak.events.json",
+      "sha256": "daa237a4af13d6ec8dcdba49207496c470e12e7d1e63d39a515d260b3fd11882",
+      "bytes": 937076
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\gateway.stdout.log",
+      "path": "scenarios/personal-redaction-no-secret-leak.gateway.stdout.txt",
+      "sha256": "c449224bfb2cfdb6b837ff9cedb3ce45d3a75b0094204c3231dc417b4b1c347e",
+      "bytes": 1594
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\gateway.stderr.log",
+      "path": "scenarios/personal-redaction-no-secret-leak.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\workspace\\personal-diagnostics-summary.txt",
+      "path": "effects/personal-redaction-no-secret-leak/personal-diagnostics-summary.txt",
+      "sha256": "5d2184e4265ce905a0a53b6ed54ebff7a6860170b7ddf5456297f36e22d74945",
+      "bytes": 300
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\workspace\\personal-tool-safety-followthrough.proof.json",
+      "path": "scenarios/personal-tool-safety-followthrough.proof.json",
+      "sha256": "544f27768773586c9fb6c06ac3114c936eb41b4c5446e63a05406bb6df74d077",
+      "bytes": 760
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\workspace\\personal-tool-safety-followthrough.events.json",
+      "path": "scenarios/personal-tool-safety-followthrough.events.json",
+      "sha256": "2ef478b18ce48d5a8e0e44783617fd0cbfa5c488026a8c6874ad19bd9cc27485",
+      "bytes": 1144977
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\gateway.stdout.log",
+      "path": "scenarios/personal-tool-safety-followthrough.gateway.stdout.txt",
+      "sha256": "db99c8015aa13e1119d1e9b516971ccc6cf9f13a5380101eeb51707bd513e47d",
+      "bytes": 1576
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\gateway.stderr.log",
+      "path": "scenarios/personal-tool-safety-followthrough.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\workspace\\repo-contract-summary.txt",
+      "path": "effects/personal-tool-safety-followthrough/repo-contract-summary.txt",
+      "sha256": "fbe27db10761c058174ed9da0dd5d79acd10010c68e6c7748e5db351072f6e15",
+      "bytes": 119
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace\\personal-approval-denial-stop.proof.json",
+      "path": "scenarios/personal-approval-denial-stop.proof.json",
+      "sha256": "e4b4ea6ee644a5c77b0bf6503eee22affd8365d2fc7c130d8b8832261f6865ee",
+      "bytes": 3762
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace\\personal-approval-denial-stop.events.json",
+      "path": "scenarios/personal-approval-denial-stop.events.json",
+      "sha256": "eaf437cc3c6410c19e78b5ad3091b04b98c892ad2f148bda05b12b53832cb843",
+      "bytes": 467353
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\gateway.stdout.log",
+      "path": "scenarios/personal-approval-denial-stop.gateway.stdout.txt",
+      "sha256": "2aa7d8c29d7fa3ba3e61844b244a2dc0a41e625bd3e4690d37e4d58eac021b47",
+      "bytes": 1602
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\gateway.stderr.log",
+      "path": "scenarios/personal-approval-denial-stop.gateway.stderr.txt",
+      "sha256": "78a2779c80ff9f6a5c35d44a00c73ec4952b30652c2404e6108587e5f98598dc",
+      "bytes": 281
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace\\personal-denied-command.cjs",
+      "path": "effects/personal-approval-denial-stop/personal-denied-command.cjs",
+      "sha256": "f74378b2903b4cf30ebd226aa5bf654d5e85a8d8a518949d877eb972366eddcf",
+      "bytes": 133
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace\\personal-task-followthrough-status.proof.json",
+      "path": "scenarios/personal-task-followthrough-status.proof.json",
+      "sha256": "1dd6186cbdcb84cff2b5d6c071bd627e014a8099286955ac8c1675fc48a030fc",
+      "bytes": 814
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace\\personal-task-followthrough-status.events.json",
+      "path": "scenarios/personal-task-followthrough-status.events.json",
+      "sha256": "821cebfcc1cefecbf34dee9da405bd354e9142f9c00e31b7512075bad60bbdb0",
+      "bytes": 936329
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\gateway.stdout.log",
+      "path": "scenarios/personal-task-followthrough-status.gateway.stdout.txt",
+      "sha256": "2d2b486fd1d1ffc6b8fd4a4d09c0230c121c982d620ba147e18d8380ce2ea300",
+      "bytes": 1632
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\gateway.stderr.log",
+      "path": "scenarios/personal-task-followthrough-status.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace\\personal-task-status.txt",
+      "path": "effects/personal-task-followthrough-status/personal-task-status.txt",
+      "sha256": "7b2399d0a24633305395ff6ec54c7a6030e1a7e4002845c213b1044b7a52fce2",
+      "bytes": 181
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\workspace\\personal-share-safe-diagnostics-artifact.proof.json",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.proof.json",
+      "sha256": "81037ccc00cd2e698cd5214a2a1f5619a5a6b428c218f746220be6cf66f4a8d3",
+      "bytes": 903
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\workspace\\personal-share-safe-diagnostics-artifact.events.json",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.events.json",
+      "sha256": "ad31012090dbec220e406c66062c7521400f04ad94e970807e4c7fa262f6ed4b",
+      "bytes": 937076
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\gateway.stdout.log",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.gateway.stdout.txt",
+      "sha256": "09647e5b7bc3b86dfe233c29710c3ec6bf90a44bec0fac8e65213ac18c08f29c",
+      "bytes": 1595
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\gateway.stderr.log",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\workspace\\personal-diagnostics-summary.txt",
+      "path": "effects/personal-share-safe-diagnostics-artifact/personal-diagnostics-summary.txt",
+      "sha256": "5d2184e4265ce905a0a53b6ed54ebff7a6860170b7ddf5456297f36e22d74945",
+      "bytes": 300
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\workspace\\personal-no-fake-progress.proof.json",
+      "path": "scenarios/personal-no-fake-progress.proof.json",
+      "sha256": "2a653b9e04ff01198b9f2efe719965f4790e9e972936ce33bb856b03c7faa903",
+      "bytes": 869
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\workspace\\personal-no-fake-progress.events.json",
+      "path": "scenarios/personal-no-fake-progress.events.json",
+      "sha256": "d5f358b201662fd771c93faa4a61041eee2939ecfcf2b14600b70324f720afae",
+      "bytes": 935890
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\gateway.stdout.log",
+      "path": "scenarios/personal-no-fake-progress.gateway.stdout.txt",
+      "sha256": "2f96f9b6dbe8e9f6a6833eed65c3242e0bb14d2db4aebcbd82f132e3202e6d89",
+      "bytes": 1649
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\gateway.stderr.log",
+      "path": "scenarios/personal-no-fake-progress.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\workspace\\personal-progress-proof.txt",
+      "path": "effects/personal-no-fake-progress/personal-progress-proof.txt",
+      "sha256": "e0b584a31c3f16c59b04d9e00d0c4421618f0ad633ededdefa3e052fc401eb2c",
+      "bytes": 227
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace\\personal-failure-recovery.proof.json",
+      "path": "scenarios/personal-failure-recovery.proof.json",
+      "sha256": "532f69b4492895bfa22922533e1ace73e61ea0e27b0257e7662291fe1b79476a",
+      "bytes": 1475
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace\\personal-failure-recovery.events.json",
+      "path": "scenarios/personal-failure-recovery.events.json",
+      "sha256": "effa426fb4d7afb45d7ab1017034357115605f6850ff57211fdfb44b1fc10a7d",
+      "bytes": 1403890
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\gateway.stdout.log",
+      "path": "scenarios/personal-failure-recovery.gateway.stdout.txt",
+      "sha256": "d880a435b19ce936b06925971a9de3b96ce17b560b137f64cdf45d11cd301abe",
+      "bytes": 2074
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\gateway.stderr.log",
+      "path": "scenarios/personal-failure-recovery.gateway.stderr.txt",
+      "sha256": "4021b7455e84b5df81b61d250e0bca6d88e899d4ded276e7c9ff61ad0f90abc1",
+      "bytes": 275
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace\\personal-failure-recovery.txt",
+      "path": "effects/personal-failure-recovery/personal-failure-recovery.txt",
+      "sha256": "559de9577bc372bdc3c321c6653564bbbbb5d556fbfdb98c75f54b2e4b3f3881",
+      "bytes": 300
+    }
+  ],
+  "productLocks": {
+    "releaseApproved": false,
+    "productApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "limitations": [
+    "Windows x64 source-host execution with a scripted mock provider; no live model quality or arbitrary provider compatibility claim.",
+    "Installed workspace dependencies are reused by a Git archive projection; this is not a fresh installation test.",
+    "Build hashes cover copied regular files; dependency junction targets are reused and outside the build manifest.",
+    "Preference readback uses a seeded workspace file, not retired Runtime Memory injection or persistence.",
+    "Approval is agent-driven through a real Gateway record and a separate observer using the QA runner existing admin authority; deny exec policy independently prevents the command effect.",
+    "Packaged/install-state, real provider, full product aggregate gates, release approval and real-human evidence are not claimed."
+  ],
+  "review": {
+    "independentAgent": {
+      "id": "01a1803a-360b-7901-bd45-97ce7aaca54d",
+      "nickname": "Euler",
+      "verdict": "approve",
+      "actionableFindings": 0,
+      "scope": "Code review after build-binding/startup-cleanup repairs; reported tests not independently rerun by this reviewer.",
+      "finalArtifactReadback": "approve",
+      "outcomeArtifact": "independent-review.json"
+    },
+    "externalCli": {
+      "exitCode": 1,
+      "elapsedSecondsAtStop": 1811,
+      "status": "timed-out",
+      "structuredVerdictProduced": false,
+      "cleanReviewClaimed": false,
+      "stoppedOwnedProcessTree": true,
+      "reviewerPid": 37768,
+      "reason": "The same-engine fixed-patch review exceeded the documented 30-minute window and had produced no structured result. The original process tree was verified and terminated after 1811 seconds.",
+      "outcomeArtifact": "external-review-outcome.json"
+    }
+  },
+  "recoveryIndex": "recovery-index.json",
+  "redactionScan": {
+    "patterns": 5,
+    "files": 100,
+    "findings": 0,
+    "status": "clean"
+  },
+  "postResolution": {
+    "candidateSource": {
+      "commit": "480e683c68e9f83231eb423ce23b541598f5425f",
+      "tree": "c6ea08aac607f99b54590b3bf4f15085123ad9a1",
+      "dirty": false
+    },
+    "sourceCandidateUnchanged": true,
+    "changedSourcePaths": [
+      "tests/unit/product-acceptance-shortfalls.test.ts"
+    ],
+    "reason": "The evidence-closeout fixture no longer assumes that the current ledger retains an open shortfall. All mutation controls operate on clones; rejection criteria stay intact.",
+    "gates": [
+      {
+        "id": "root-focused",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/product-acceptance-shortfalls.test.ts",
+          "tests/unit/harness-specs.test.ts",
+          "tests/unit/docs-index.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=D:/tmp/clawx-relay-20261028/post-resolution/root-focused.json"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:53:58.303Z",
+        "finishedAt": "2026-10-28T02:54:07.486Z",
+        "durationMs": 9177,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\root-focused.log"
+      },
+      {
+        "id": "docs-policy-validate",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "docs:policy:validate"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:07.487Z",
+        "finishedAt": "2026-10-28T02:54:08.217Z",
+        "durationMs": 730,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\docs-policy-validate.log"
+      },
+      {
+        "id": "repo-artifacts-check",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "repo:artifacts:check"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:08.218Z",
+        "finishedAt": "2026-10-28T02:54:12.014Z",
+        "durationMs": 3796,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\repo-artifacts-check.log"
+      },
+      {
+        "id": "repo-evidence-check",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "repo:evidence:check"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:12.015Z",
+        "finishedAt": "2026-10-28T02:54:12.712Z",
+        "durationMs": 697,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\repo-evidence-check.log"
+      },
+      {
+        "id": "harness-validate",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/qa-lab-personal-agent-pack.md"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:12.713Z",
+        "finishedAt": "2026-10-28T02:54:14.505Z",
+        "durationMs": 1792,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\harness-validate.log"
+      },
+      {
+        "id": "closeout-validate",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/product-acceptance-closeout.md"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:14.505Z",
+        "finishedAt": "2026-10-28T02:54:16.296Z",
+        "durationMs": 1791,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\closeout-validate.log"
+      },
+      {
+        "id": "harness-dry-run",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/tasks/qa-lab-personal-agent-pack.md",
+          "--dry-run"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:16.296Z",
+        "finishedAt": "2026-10-28T02:54:18.164Z",
+        "durationMs": 1868,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\harness-dry-run.log"
+      },
+      {
+        "id": "closeout-dry-run",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/tasks/product-acceptance-closeout.md",
+          "--dry-run"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:18.165Z",
+        "finishedAt": "2026-10-28T02:54:19.908Z",
+        "durationMs": 1743,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\closeout-dry-run.log"
+      },
+      {
+        "id": "diff-check",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "cwd": "D:/ClawX",
+        "startedAt": "2026-10-28T02:54:19.908Z",
+        "finishedAt": "2026-10-28T02:54:19.982Z",
+        "durationMs": 74,
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\diff-check.log"
+      }
+    ],
+    "rootFocused": {
+      "total": 56,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0
+    },
+    "ledgerLintExit": 0,
+    "rootTestTypecheckExit": 0,
+    "evidenceSource": "post-resolution/gates.json",
+    "changedFiles": [
+      {
+        "path": "tests/unit/product-acceptance-shortfalls.test.ts",
+        "bytes": 30608,
+        "sha256": "296f20b73f0fab53b63ee298361bdbcaced9e05ccfbd7c3f95882f3fbdb7532f"
+      },
+      {
+        "path": "harness/specs/tasks/qa-lab-personal-agent-pack.md",
+        "bytes": 6595,
+        "sha256": "1b1911ae051e77c224fecaf7febec7ebdd9bff46c7fd98a2c2e0de75268af9e2"
+      },
+      {
+        "path": "harness/specs/tasks/product-acceptance-closeout.md",
+        "bytes": 18496,
+        "sha256": "fd8df469fc9465bc152ac88269e856d3db11aa4b6205f3814233718c414f1e01"
+      },
+      {
+        "path": "harness/specs/guides/product-acceptance-strategy.md",
+        "bytes": 32043,
+        "sha256": "f44826250d4fdcf46880381415165d9698ce03636705107f717ff5b363ebb939"
+      },
+      {
+        "path": ".gitignore",
+        "bytes": 141580,
+        "sha256": "3e15b46168d5e50b73c356981433e51d7f8bdad788997e0359c59a429dda768f"
+      }
+    ]
+  }
+}

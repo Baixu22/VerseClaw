@@ -1,0 +1,13 @@
+{
+  "schema": "QaScenarioFinalState/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "scenarioId": "personal-task-followthrough-status",
+  "sessionKey": "agent:qa:dashboard:a4914af0-0d65-4b33-9cdd-035b32dcea15",
+  "runId": "aa851d6a-ffdd-4546-991f-f12de6b5e09b",
+  "waitStatus": "ok",
+  "finalText": "Pending: maintainer feedback before publishing\nBlocked: publishing needs explicit user approval\nDone: local evidence captured in personal-task-status.txt",
+  "effect": "Personal task followthrough\nPending: maintainer feedback before publishing\nBlocked: publishing needs explicit user approval\nDone: local evidence captured in personal-task-status.txt",
+  "workspaceDir": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace",
+  "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X"
+}

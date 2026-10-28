@@ -1,0 +1,25 @@
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[gateway] agent model: mock-openai/gpt-5.5 (thinking=medium, fast=off)
+[gateway] http server listening (3 plugins: acpx, memory-core, qa-channel)
+[gateway] log file: D:\tmp\openclaw\openclaw-2026-10-28.log
+[gateway] starting channels and sidecars...
+[plugins] embedded acpx runtime backend registered lazily
+[gateway] ready
+[heartbeat] started
+[ws] ⇄ res ✓ config.get 2593ms conn=27d633ed…b6e0 id=a04d2d08…92a9
+[gateway] supervisor restart reconciliation ok reconciled=0 lost=0 ours=0 foreignOwner=0 containmentUnknown=0 residual=0
+[gateway] update available (latest): v2026.10.8 (current v2026.6.2). Run: openclaw update
+[memory-consolidation] runtime memory consolidation applied (pruned=0, merged=0, strengthened=0, durationMs=0).
+[ws] ⇄ res ✓ sessions.create 505ms conn=a4d34f06…0d67 id=86ffaedd…aafb
+[ws] ⇄ res ✓ agent 407ms runId=08c7bd22-af24-4aff-8adb-b4c9fdcc4c87 conn=ce20d96d…c487 id=e05e0231…477f
+[gateway] provider auth state pre-warmed in 2902ms eventLoopMax=481.6ms
+[gateway] agent runtime plugins pre-warmed in 2ms
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[agents/resource-leases] [resource-lease] acquired
+[agents/resource-leases] [resource-lease] released
+[ws] ⇄ res ✓ agent.wait 3081ms conn=214db888…0b7f id=ecd60bc2…8bcf
+Artifact: personal-progress-proof.txt
+Status: local proof artifact written
+External status: not sent, not published, not uploaded, not merged
+PERSONAL-NO-FAKE-PROGRESS-OK

@@ -1,0 +1,13 @@
+{
+  "schema": "QaScenarioFinalState/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "scenarioId": "personal-memory-preference-recall",
+  "sessionKey": "agent:qa:dashboard:25f997a7-cc42-4a97-878a-8930bb9b98c0",
+  "runId": "ee13b240-723e-441b-97bb-e8dad9d48bb8",
+  "waitStatus": "ok",
+  "finalText": "Recorded preference: lemon pepper wings with blue cheese. PERSONAL-PREFERENCE-RECALL-OK",
+  "effect": "# Recorded user preferences\nFor QA movie night, the user prefers lemon pepper wings with blue cheese.\n",
+  "workspaceDir": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\workspace",
+  "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV"
+}

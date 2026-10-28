@@ -353,8 +353,20 @@ function firstOpenShortfall(
   ledger: Ledger,
   predicate: (item: Shortfall) => boolean = () => true,
 ): Shortfall {
-  const item = ledger.shortfalls.find((entry) => entry.status === 'open' && predicate(entry));
-  if (!item) throw new Error('Expected an open shortfall fixture.');
+  const item = ledger.shortfalls.find((entry) => entry.status === 'open' && predicate(entry))
+    ?? ledger.shortfalls.find(predicate);
+  if (!item) throw new Error('Expected a shortfall fixture.');
+  // These negative controls operate on cloned ledgers. Construct their open row
+  // independently of whether the current product backlog has already closed.
+  if (item.status !== 'open') {
+    ledger.summary[item.status === 'resolved' ? 'resolved' : 'inProgress'] -= 1;
+    ledger.summary.open += 1;
+    item.status = 'open';
+    delete item.resolution;
+    if (item.acceptanceDisposition === 'must-resolve-before-ga' && !ledger.summary.blocking.includes(item.id)) {
+      ledger.summary.blocking.push(item.id);
+    }
+  }
   return item;
 }
 
@@ -436,7 +448,7 @@ describe('product acceptance shortfall ledger', () => {
     expect(verifyLedger(evidenceFree).map((issue) => issue.code)).toContain('resolution-evidence');
 
     const fabricatedCount = cloneLedger();
-    fabricatedCount.summary.open = 0;
+    fabricatedCount.summary.open += 1;
     expect(verifyLedger(fabricatedCount).map((issue) => issue.code)).toContain('summary-open');
 
     const missingId = cloneLedger();
@@ -451,8 +463,8 @@ describe('product acceptance shortfall ledger', () => {
   it('rejects accepted P1 and unsigned accepted residuals', () => {
     const acceptedP1 = cloneLedger();
     // Upstream shortfalls can legitimately all be resolved; the rule under test
-    // is about accepted P1/critical items, so force the risk on whichever open
-    // fixture exists instead of requiring one at a particular risk level.
+    // is about accepted P1/critical items, so construct a cloned open fixture
+    // instead of requiring the current product ledger to retain one.
     const high = firstOpenShortfall(acceptedP1);
     high.risk = 'high';
     high.acceptanceDisposition = 'accepted-shortfall';

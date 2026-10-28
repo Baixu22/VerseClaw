@@ -1,0 +1,30 @@
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[gateway] agent model: mock-openai/gpt-5.5 (thinking=medium, fast=off)
+[gateway] http server listening (3 plugins: acpx, memory-core, qa-channel)
+[gateway] log file: D:\tmp\openclaw\openclaw-2026-10-28.log
+[gateway] starting channels and sidecars...
+[plugins] embedded acpx runtime backend registered lazily
+[gateway] ready
+[heartbeat] started
+[ws] ⇄ res ✓ config.get 2474ms conn=9d57dbac…e518 id=c41e078a…4ce3
+[gateway] supervisor restart reconciliation ok reconciled=0 lost=0 ours=0 foreignOwner=0 containmentUnknown=0 residual=0
+[gateway] update available (latest): v2026.10.8 (current v2026.6.2). Run: openclaw update
+[memory-consolidation] runtime memory consolidation applied (pruned=0, merged=0, strengthened=0, durationMs=1).
+[ws] ⇄ res ✓ sessions.create 599ms conn=91672fcc…cf04 id=3ace3e38…131d
+[ws] ⇄ res ✓ agent 487ms runId=26c9e37a-2faa-4fc5-b93d-f4aedc016680 conn=236732e6…eaae id=828ab1b5…97a2
+[gateway] provider auth state pre-warmed in 3445ms eventLoopMax=569.4ms
+[gateway] agent runtime plugins pre-warmed in 2ms
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[ws] ⇄ res ✓ agent.wait 3180ms conn=8cc0c1a9…140a id=8967a945…3578
+PERSONAL-EXPECTED-TOOL-FAILURE
+[ws] ⇄ res ✓ sessions.create 362ms conn=b608b766…5f43 id=643793f1…fc02
+[ws] ⇄ res ✓ agent 327ms runId=b26f0596-515b-4a55-8cc1-cc1237ff5c24 conn=a6b998b1…4e5c id=bc786c2f…a541
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[agents/resource-leases] [resource-lease] acquired
+[agents/resource-leases] [resource-lease] released
+[ws] ⇄ res ✓ agent.wait 1662ms conn=f341c7fe…76c1 id=7bbfd05e…898a
+Artifact: personal-failure-recovery.txt
+Failed step: external calendar update was not attempted
+Retry boundary: do not retry until approval is given
+PERSONAL-FAILURE-RECOVERY-OK

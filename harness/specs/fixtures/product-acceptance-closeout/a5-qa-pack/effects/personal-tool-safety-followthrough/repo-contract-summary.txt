@@ -1,0 +1,3 @@
+Mission: prove you followed the repo contract.
+Evidence: AGENT.md -> SOUL.md -> FOLLOWTHROUGH_INPUT.md
+Status: complete

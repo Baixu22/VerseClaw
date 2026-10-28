@@ -1,0 +1,147 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "providerMode": "mock-openai",
+  "evidenceLevel": "source-host",
+  "summaryPath": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-full\\qa-suite-summary.json",
+  "scenarioIds": [
+    "personal-reminder-roundtrip",
+    "personal-channel-thread-reply",
+    "personal-memory-preference-recall",
+    "personal-redaction-no-secret-leak",
+    "personal-tool-safety-followthrough",
+    "personal-approval-denial-stop",
+    "personal-task-followthrough-status",
+    "personal-share-safe-diagnostics-artifact",
+    "personal-no-fake-progress",
+    "personal-failure-recovery"
+  ],
+  "counts": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0
+  }
+}
+[qa-suite] run start: scenarios=10 concurrency=1 transport=qa-channel
+[qa-suite] scenario start stagger=0ms
+[qa-suite] scenario start (1/10): personal-reminder-roundtrip
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:54813
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:54815
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:54816
+[qa-suite] scenario start (1/1): personal-reminder-roundtrip
+[qa-suite] scenario pass (1/1): personal-reminder-roundtrip
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (1/10): personal-reminder-roundtrip
+[qa-suite] scenario start (2/10): personal-channel-thread-reply
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:54019
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:54021
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:54022
+[qa-suite] scenario start (1/1): personal-channel-thread-reply
+[qa-suite] scenario pass (1/1): personal-channel-thread-reply
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (2/10): personal-channel-thread-reply
+[qa-suite] scenario start (3/10): personal-memory-preference-recall
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:59092
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:59094
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:59095
+[qa-suite] scenario start (1/1): personal-memory-preference-recall
+[qa-suite] scenario pass (1/1): personal-memory-preference-recall
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (3/10): personal-memory-preference-recall
+[qa-suite] scenario start (4/10): personal-redaction-no-secret-leak
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:55674
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:55676
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:55677
+[qa-suite] scenario start (1/1): personal-redaction-no-secret-leak
+[qa-suite] scenario pass (1/1): personal-redaction-no-secret-leak
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (4/10): personal-redaction-no-secret-leak
+[qa-suite] scenario start (5/10): personal-tool-safety-followthrough
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:60691
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:60693
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:60694
+[qa-suite] scenario start (1/1): personal-tool-safety-followthrough
+[qa-suite] scenario pass (1/1): personal-tool-safety-followthrough
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (5/10): personal-tool-safety-followthrough
+[qa-suite] scenario start (6/10): personal-approval-denial-stop
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:51949
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:51951
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:51952
+[qa-suite] scenario start (1/1): personal-approval-denial-stop
+[qa-suite] scenario pass (1/1): personal-approval-denial-stop
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (6/10): personal-approval-denial-stop
+[qa-suite] scenario start (7/10): personal-task-followthrough-status
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:64087
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:64091
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:64092
+[qa-suite] scenario start (1/1): personal-task-followthrough-status
+[qa-suite] scenario pass (1/1): personal-task-followthrough-status
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (7/10): personal-task-followthrough-status
+[qa-suite] scenario start (8/10): personal-share-safe-diagnostics-artifact
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:65315
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:65317
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:65318
+[qa-suite] scenario start (1/1): personal-share-safe-diagnostics-artifact
+[qa-suite] scenario pass (1/1): personal-share-safe-diagnostics-artifact
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (8/10): personal-share-safe-diagnostics-artifact
+[qa-suite] scenario start (9/10): personal-no-fake-progress
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:51043
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:51045
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:51046
+[qa-suite] scenario start (1/1): personal-no-fake-progress
+[qa-suite] scenario pass (1/1): personal-no-fake-progress
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (9/10): personal-no-fake-progress
+[qa-suite] scenario start (10/10): personal-failure-recovery
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:57239
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:57241
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:57242
+[qa-suite] scenario start (1/1): personal-failure-recovery
+[qa-suite] scenario pass (1/1): personal-failure-recovery
+[qa-suite] run complete: passed=1 failed=0 total=1
+[qa-suite] scenario pass (10/10): personal-failure-recovery
+[qa-suite] run complete: passed=10 failed=0 total=10

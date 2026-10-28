@@ -1,0 +1,24 @@
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[gateway] agent model: mock-openai/gpt-5.5 (thinking=medium, fast=off)
+[gateway] http server listening (3 plugins: acpx, memory-core, qa-channel)
+[gateway] log file: D:\tmp\openclaw\openclaw-2026-10-28.log
+[gateway] starting channels and sidecars...
+[plugins] embedded acpx runtime backend registered lazily
+[gateway] ready
+[heartbeat] started
+[ws] ⇄ res ✓ config.get 2780ms conn=9abb9ba7…64f9 id=00b4b646…db47
+[gateway] supervisor restart reconciliation ok reconciled=0 lost=0 ours=0 foreignOwner=0 containmentUnknown=0 residual=0
+[gateway] update available (latest): v2026.10.8 (current v2026.6.2). Run: openclaw update
+[memory-consolidation] runtime memory consolidation applied (pruned=0, merged=0, strengthened=0, durationMs=0).
+[ws] ⇄ res ✓ sessions.create 550ms conn=d2eafde2…fa13 id=bd142e53…a90c
+[ws] ⇄ res ✓ agent 416ms runId=aa851d6a-ffdd-4546-991f-f12de6b5e09b conn=8a56f51c…adb3 id=2e1c8166…922a
+[gateway] provider auth state pre-warmed in 2944ms eventLoopMax=524.8ms
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[gateway] agent runtime plugins pre-warmed in 3ms
+[agents/resource-leases] [resource-lease] acquired
+[agents/resource-leases] [resource-lease] released
+[ws] ⇄ res ✓ agent.wait 3535ms conn=4166fcdf…cff1 id=d9d8b9e9…2c46
+Pending: maintainer feedback before publishing
+Blocked: publishing needs explicit user approval
+Done: local evidence captured in personal-task-status.txt

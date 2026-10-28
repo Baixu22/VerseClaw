@@ -1,0 +1,16 @@
+[qa-suite] run start: scenarios=2 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:59738
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:59740
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:59741
+[qa-suite] scenario start (1/2): personal-no-fake-progress
+[qa-suite] scenario fail (1/2): personal-no-fake-progress
+[qa-suite] scenario start (2/2): personal-memory-preference-recall
+[qa-suite] scenario pass (2/2): personal-memory-preference-recall
+[qa-suite] run complete: passed=1 failed=1 total=2
+Failed final-state assertions must fail acceptance
+
+1 !== 0
+

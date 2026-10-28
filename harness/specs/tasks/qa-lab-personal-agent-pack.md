@@ -11,6 +11,7 @@ requiredRules:
   - task-forest-autoclose-and-roles
   - docs-sync
 touchedAreas:
+  - .gitignore
   - harness/specs/tasks/qa-lab-personal-agent-pack.md
   - harness/specs/tasks/product-acceptance-closeout.md
   - harness/specs/guides/product-acceptance-strategy.md
@@ -81,6 +82,9 @@ Record each child exit 1 separately from the successful controller exit 0.
 Both build stamps must match the clean candidate; the negative receipt hashes
 every copied build file. Provider/Gateway startup failure tests check that all
 previously acquired QA HTTP listeners are closed.
+The evidence closeout adds exact ignore exceptions for 22 already tracked a2-a4
+logs. Their historical bytes and manifests stay unchanged; this removes shadow
+tracking that the repository artifact checker detects.
 
 Run one bootstrap preflight before the full ten-scenario pack. Use a unique,
 agent-owned output directory accepted by the existing repo-bound path policy;

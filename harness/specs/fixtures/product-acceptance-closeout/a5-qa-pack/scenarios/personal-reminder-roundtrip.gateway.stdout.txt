@@ -1,0 +1,24 @@
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[gateway] agent model: mock-openai/gpt-5.5 (thinking=medium, fast=off)
+[gateway] http server listening (3 plugins: acpx, memory-core, qa-channel)
+[gateway] log file: D:\tmp\openclaw\openclaw-2026-10-28.log
+[gateway] starting channels and sidecars...
+[plugins] embedded acpx runtime backend registered lazily
+[gateway] ready
+[heartbeat] started
+[ws] ⇄ res ✓ config.get 2332ms conn=2aee04d2…c08d id=48b7cea1…eba3
+[gateway] supervisor restart reconciliation ok reconciled=0 lost=0 ours=0 foreignOwner=0 containmentUnknown=0 residual=0
+[gateway] update available (latest): v2026.10.8 (current v2026.6.2). Run: openclaw update
+[memory-consolidation] runtime memory consolidation applied (pruned=0, merged=0, strengthened=0, durationMs=1).
+[ws] ⇄ res ✓ sessions.create 473ms conn=56688c8b…7f14 id=c6d3229f…5fc5
+[gateway] cron: job created
+[ws] ⇄ res ✓ cron.add 378ms conn=41a75ec8…49ca id=92ea050e…7bf3
+[gateway] provider auth state pre-warmed in 2786ms eventLoopMax=695.7ms
+[gateway] agent runtime plugins pre-warmed in 2ms
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[ws] ⇄ res ✓ agent 312ms runId=24cf52ed-5e10-47cd-ac51-569669e9c942 conn=a518612e…f700 id=93274c79…e568
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[ws] ⇄ res ✓ agent.wait 1344ms conn=04cf1bbc…0a7a id=1629cec6…d028
+PERSONAL-REMINDER-VERIFIED
+[gateway] cron: job removed

@@ -1,0 +1,2 @@
+[[31mERROR[0m] - (starship::print): Under a 'dumb' terminal (TERM=dumb).
+

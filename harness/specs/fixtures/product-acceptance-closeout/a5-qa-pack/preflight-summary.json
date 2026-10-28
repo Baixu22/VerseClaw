@@ -1,0 +1,77 @@
+{
+  "scenarios": [
+    {
+      "name": "A local reminder reaches its QA conversation",
+      "status": "pass",
+      "steps": [
+        {
+          "name": "Create a disposable reminder through Gateway",
+          "status": "pass"
+        },
+        {
+          "name": "Execute the reminder and verify delivery",
+          "status": "pass"
+        },
+        {
+          "name": "Retain observed final state and raw local events",
+          "status": "pass",
+          "details": "{\"schema\":\"QaScenarioFinalState/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-tf0578-qa-pack\",\"scenarioId\":\"personal-reminder-roundtrip\",\"sessionKey\":\"agent:qa:dashboard:c28afed5-88bc-4b69-ba2a-cd5ec1131282\",\"runId\":\"07d2b96e-0efa-41ea-8b49-589964870f9e\",\"waitStatus\":\"ok\",\"finalText\":\"PERSONAL-REMINDER-VERIFIED\",\"effect\":{\"jobId\":\"3e0f104d-7e91-441e-abab-2248776fb2c3\",\"cronRun\":{\"ts\":1793155367363,\"jobId\":\"3e0f104d-7e91-441e-abab-2248776fb2c3\",\"action\":\"finished\",\"status\":\"ok\",\"summary\":\"PERSONAL-REMINDER-OK\",\"runId\":\"manual:3e0f104d-7e91-441e-abab-2248776fb2c3:1793155358521:1\",\"runAtMs\":1793155358521,\"durationMs\":8840,\"model\":\"gpt-5.5\",\"provider\":\"mock-openai\",\"usage\":{\"input_tokens\":64,\"output_tokens\":24,\"total_tokens\":64},\"delivered\":true,\"deliveryStatus\":\"delivered\",\"delivery\":{\"intended\":{\"channel\":\"qa-channel\",\"to\":\"dm:qa-operator\",\"source\":\"explicit\"},\"resolved\":{\"ok\":true,\"channel\":\"qa-channel\",\"to\":\"dm:qa-operator\",\"source\":\"explicit\"},\"fallbackUsed\":true,\"delivered\":true},\"sessionId\":\"42c0af19-96c4-4b35-bf11-ed01d657b82e\",\"sessionKey\":\"agent:qa:cron:3e0f104d-7e91-441e-abab-2248776fb2c3:run:42c0af19-96c4-4b35-bf11-ed01d657b82e\",\"jobName\":\"TF-0578 local reminder\"},\"reminderReply\":\"PERSONAL-REMINDER-OK\",\"removed\":{\"ok\":true,\"removed\":true}},\"workspaceDir\":\"D:\\\\tmp\\\\openclaw\\\\openclaw-qa-suite-1Gl9d6\\\\workspace\",\"tempRoot\":\"D:\\\\tmp\\\\openclaw\\\\openclaw-qa-suite-1Gl9d6\"}"
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  },
+  "metrics": {
+    "wallMs": 34948,
+    "gatewayProcessCpuMs": 15156,
+    "gatewayCpuCoreRatio": 0.434,
+    "gatewayProcessRssStartBytes": 1046114304,
+    "gatewayProcessRssEndBytes": 985546752,
+    "gatewayProcessRssDeltaBytes": -60567552,
+    "gatewayProcessRssPeakBytes": 1048965120,
+    "gatewayProcessRssPeakDeltaBytes": 2850816,
+    "gatewayProcessRssSamples": [
+      {
+        "label": "suite-start",
+        "at": "2026-10-28T02:42:36.915Z",
+        "gatewayProcessRssBytes": 1046114304
+      },
+      {
+        "label": "scenario:personal-reminder-roundtrip:start",
+        "at": "2026-10-28T02:42:37.418Z",
+        "gatewayProcessRssBytes": 1048965120
+      },
+      {
+        "label": "scenario:personal-reminder-roundtrip:finish",
+        "at": "2026-10-28T02:42:50.962Z",
+        "gatewayProcessRssBytes": 985546752
+      },
+      {
+        "label": "suite-finish",
+        "at": "2026-10-28T02:42:51.884Z",
+        "gatewayProcessRssBytes": 985546752
+      }
+    ]
+  },
+  "run": {
+    "startedAt": "2026-10-28T02:42:16.014Z",
+    "finishedAt": "2026-10-28T02:42:50.962Z",
+    "providerMode": "mock-openai",
+    "primaryModel": "mock-openai/gpt-5.5",
+    "primaryProvider": "mock-openai",
+    "primaryModelName": "gpt-5.5",
+    "alternateModel": "mock-openai/gpt-5.5-alt",
+    "alternateProvider": "mock-openai",
+    "alternateModelName": "gpt-5.5-alt",
+    "fastMode": false,
+    "concurrency": 1,
+    "scenarioIds": [
+      "personal-reminder-roundtrip"
+    ],
+    "runtimePair": null
+  }
+}

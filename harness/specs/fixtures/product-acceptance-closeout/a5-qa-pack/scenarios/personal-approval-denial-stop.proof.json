@@ -1,0 +1,109 @@
+{
+  "schema": "QaScenarioFinalState/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "scenarioId": "personal-approval-denial-stop",
+  "sessionKey": "agent:qa:dashboard:a01a6324-348f-4236-ad9a-ebfd7b3f8740",
+  "runId": "78210b56-39e6-4a9e-8a4f-bafc88c05519",
+  "waitStatus": "ok",
+  "finalText": "Approval denied; the command was not executed. PERSONAL-APPROVAL-DENIED-OK",
+  "effect": {
+    "approvalId": "qa-personal-denial-e30836dc-c335-4d14-a339-17c341ccfa3c",
+    "requested": {
+      "status": "accepted",
+      "id": "qa-personal-denial-e30836dc-c335-4d14-a339-17c341ccfa3c",
+      "createdAtMs": 1793155610557,
+      "expiresAtMs": 1793155620557
+    },
+    "resolved": {
+      "ok": true
+    },
+    "decision": {
+      "id": "qa-personal-denial-e30836dc-c335-4d14-a339-17c341ccfa3c",
+      "decision": "deny",
+      "createdAtMs": 1793155610557,
+      "expiresAtMs": 1793155620557
+    },
+    "approvalEvents": [
+      {
+        "type": "event",
+        "event": "exec.approval.requested",
+        "payload": {
+          "id": "qa-personal-denial-e30836dc-c335-4d14-a339-17c341ccfa3c",
+          "request": {
+            "command": "node personal-denied-command.cjs",
+            "systemRunBinding": null,
+            "systemRunPlan": null,
+            "cwd": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace",
+            "nodeId": null,
+            "host": "gateway",
+            "security": "allowlist",
+            "ask": "always",
+            "warningText": null,
+            "commandAnalysis": {
+              "commandCount": 1,
+              "nestedCommandCount": 0,
+              "riskKinds": [],
+              "warningLines": []
+            },
+            "allowedDecisions": [
+              "allow-once",
+              "deny"
+            ],
+            "agentId": "qa",
+            "resolvedPath": null,
+            "sessionKey": "agent:qa:dashboard:a01a6324-348f-4236-ad9a-ebfd7b3f8740",
+            "turnSourceChannel": null,
+            "turnSourceTo": null,
+            "turnSourceAccountId": null,
+            "turnSourceThreadId": null
+          },
+          "createdAtMs": 1793155610557,
+          "expiresAtMs": 1793155620557
+        }
+      },
+      {
+        "type": "event",
+        "event": "exec.approval.resolved",
+        "payload": {
+          "id": "qa-personal-denial-e30836dc-c335-4d14-a339-17c341ccfa3c",
+          "decision": "deny",
+          "resolvedBy": "gateway:exec.approval.resolve",
+          "ts": 1793155610919,
+          "request": {
+            "command": "node personal-denied-command.cjs",
+            "systemRunBinding": null,
+            "systemRunPlan": null,
+            "cwd": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace",
+            "nodeId": null,
+            "host": "gateway",
+            "security": "allowlist",
+            "ask": "always",
+            "warningText": null,
+            "commandAnalysis": {
+              "commandCount": 1,
+              "nestedCommandCount": 0,
+              "riskKinds": [],
+              "warningLines": []
+            },
+            "allowedDecisions": [
+              "allow-once",
+              "deny"
+            ],
+            "agentId": "qa",
+            "resolvedPath": null,
+            "sessionKey": "agent:qa:dashboard:a01a6324-348f-4236-ad9a-ebfd7b3f8740",
+            "turnSourceChannel": null,
+            "turnSourceTo": null,
+            "turnSourceAccountId": null,
+            "turnSourceThreadId": null
+          }
+        }
+      }
+    ],
+    "deniedEffectExists": false,
+    "denialMechanism": "agent Gateway decision with approval observer plus deny exec policy"
+  },
+  "workspaceDir": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace",
+  "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x"
+}

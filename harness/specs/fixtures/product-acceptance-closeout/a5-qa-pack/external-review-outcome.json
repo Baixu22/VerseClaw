@@ -1,0 +1,44 @@
+{
+  "schema": "QaReviewExecutionOutcome/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "command": "python openclaw_runtime/.agents/skills/autoreview/scripts/autoreview --mode local --json-output <review.json> --output <review.txt> --prompt <TF-0578 scoped review context>",
+  "engine": "codex",
+  "capacityAttempts": [
+    {
+      "exitCode": 1,
+      "reason": "Windows Python GBK decoding failure before review; retried with PYTHONUTF8=1"
+    },
+    {
+      "exitCode": 1,
+      "reason": "High demand after five reconnects; no structured verdict"
+    },
+    {
+      "exitCode": 1,
+      "reason": "High demand after five reconnects; no structured verdict"
+    },
+    {
+      "exitCode": 1,
+      "reason": "High demand after five reconnects; no structured verdict"
+    }
+  ],
+  "finalAttempt": {
+    "exitCode": 1,
+    "elapsedSecondsAtStop": 1811,
+    "status": "timed-out",
+    "structuredVerdictProduced": false,
+    "cleanReviewClaimed": false,
+    "stoppedOwnedProcessTree": true,
+    "reviewerPid": 37768,
+    "reason": "The same-engine fixed-patch review exceeded the documented 30-minute window and had produced no structured result. The original process tree was verified and terminated after 1811 seconds."
+  },
+  "independentAgent": {
+    "id": "01a1803a-360b-7901-bd45-97ce7aaca54d",
+    "nickname": "Euler",
+    "codeVerdict": "approve",
+    "postResolutionArtifactVerdict": "approve",
+    "actionableFindings": 0,
+    "scope": "Source and retained-artifact readback; no independent test rerun"
+  },
+  "rawLog": "external-autoreview.txt"
+}

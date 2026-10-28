@@ -1,0 +1,57 @@
+{
+  "schema": "QaScenarioFinalState/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "scenarioId": "personal-reminder-roundtrip",
+  "sessionKey": "agent:qa:dashboard:816aa981-e219-46c6-aca1-a1c0ff11d301",
+  "runId": "24cf52ed-5e10-47cd-ac51-569669e9c942",
+  "waitStatus": "ok",
+  "finalText": "PERSONAL-REMINDER-VERIFIED",
+  "effect": {
+    "jobId": "0214b3da-cfbc-450d-9bda-dd5a8a9e1b42",
+    "cronRun": {
+      "ts": 1793155481121,
+      "jobId": "0214b3da-cfbc-450d-9bda-dd5a8a9e1b42",
+      "action": "finished",
+      "status": "ok",
+      "summary": "PERSONAL-REMINDER-OK",
+      "runId": "manual:0214b3da-cfbc-450d-9bda-dd5a8a9e1b42:1793155473351:1",
+      "runAtMs": 1793155473352,
+      "durationMs": 7766,
+      "model": "gpt-5.5",
+      "provider": "mock-openai",
+      "usage": {
+        "input_tokens": 64,
+        "output_tokens": 24,
+        "total_tokens": 64
+      },
+      "delivered": true,
+      "deliveryStatus": "delivered",
+      "delivery": {
+        "intended": {
+          "channel": "qa-channel",
+          "to": "dm:qa-operator",
+          "source": "explicit"
+        },
+        "resolved": {
+          "ok": true,
+          "channel": "qa-channel",
+          "to": "dm:qa-operator",
+          "source": "explicit"
+        },
+        "fallbackUsed": true,
+        "delivered": true
+      },
+      "sessionId": "4d5dd0e1-ee99-4520-8e55-6b6455f589d6",
+      "sessionKey": "agent:qa:cron:0214b3da-cfbc-450d-9bda-dd5a8a9e1b42:run:4d5dd0e1-ee99-4520-8e55-6b6455f589d6",
+      "jobName": "TF-0578 local reminder"
+    },
+    "reminderReply": "PERSONAL-REMINDER-OK",
+    "removed": {
+      "ok": true,
+      "removed": true
+    }
+  },
+  "workspaceDir": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\workspace",
+  "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93"
+}

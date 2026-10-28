@@ -2312,3 +2312,27 @@ openclaw_runtime/_tmp_*
 /SOUL.md
 /TOOLS.md
 /USER.md
+
+# Exact retained acceptance logs from the a2-a4 source-candidate evidence.
+!/harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/focused.log
+!/harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/harness-validate.log
+!/harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/typecheck.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/app-smoke.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/focused.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/harness-validate.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/launch-1.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/launch-2.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/launch-3.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/red-control.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/skills-set.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/typecheck.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/worker-cleanup-base.log
+!/harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/worker-cleanup-rerun.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/comms-compare.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/comms-replay.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/focused.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/launch-1.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/launch-2.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/launch-3.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/runtime-unit.log
+!/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/typecheck.log

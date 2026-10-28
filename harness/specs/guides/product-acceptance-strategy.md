@@ -127,9 +127,9 @@ The machine-readable ledger lives at
 8. The five baseline gaps (`runtime-memory-retired-test-contract`,
    `coding-loop-e2e-final-response`, `e2e-skill-source-mutation`,
    `agent-acceptance-harness-unconfigured-test-dirs`, `qa-lab-scenario-pack-not-present`)
-   are recorded with concrete evidence pointers and re-review dates. Four are resolved with
-   current-candidate evidence; the remaining rows are the acceptance backlog, not an excuse
-   for silence.
+   are recorded with concrete evidence pointers and re-review dates. All five have source-candidate
+   repair evidence. The later real-model, packaged/OAT and final aggregate gates remain necessary
+   before an overall readiness verdict.
 
 ## 5. Agent-driven equivalent of human acceptance
 

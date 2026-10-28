@@ -1,0 +1,4 @@
+Harness report: D:\ClawX\artifacts\harness\latest.md
+Harness result: pass
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/qa-lab-personal-agent-pack.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/qa-lab-personal-agent-pack.md" "--dry-run"

@@ -1,0 +1,5 @@
+Personal failure recovery
+Completed: request reviewed and local evidence captured
+Failed step: external calendar update was not attempted because explicit approval is missing
+Retry boundary: do not retry the external step until approval is given
+Next step: ask for approval before any external update

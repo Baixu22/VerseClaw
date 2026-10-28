@@ -1,0 +1,181 @@
+{
+  "schema": "QaNodeGateRun/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "candidate": {
+    "commit": "480e683c68e9f83231eb423ce23b541598f5425f",
+    "tree": "c6ea08aac607f99b54590b3bf4f15085123ad9a1",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "id": "root-focused",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/product-acceptance-shortfalls.test.ts",
+        "tests/unit/harness-specs.test.ts",
+        "tests/unit/docs-index.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/clawx-relay-20261028/post-resolution/root-focused.json"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:53:58.303Z",
+      "finishedAt": "2026-10-28T02:54:07.486Z",
+      "durationMs": 9177,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\root-focused.log"
+    },
+    {
+      "id": "docs-policy-validate",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "docs:policy:validate"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:07.487Z",
+      "finishedAt": "2026-10-28T02:54:08.217Z",
+      "durationMs": 730,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\docs-policy-validate.log"
+    },
+    {
+      "id": "repo-artifacts-check",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "repo:artifacts:check"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:08.218Z",
+      "finishedAt": "2026-10-28T02:54:12.014Z",
+      "durationMs": 3796,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\repo-artifacts-check.log"
+    },
+    {
+      "id": "repo-evidence-check",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "repo:evidence:check"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:12.015Z",
+      "finishedAt": "2026-10-28T02:54:12.712Z",
+      "durationMs": 697,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\repo-evidence-check.log"
+    },
+    {
+      "id": "harness-validate",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/qa-lab-personal-agent-pack.md"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:12.713Z",
+      "finishedAt": "2026-10-28T02:54:14.505Z",
+      "durationMs": 1792,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\harness-validate.log"
+    },
+    {
+      "id": "closeout-validate",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-closeout.md"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:14.505Z",
+      "finishedAt": "2026-10-28T02:54:16.296Z",
+      "durationMs": 1791,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\closeout-validate.log"
+    },
+    {
+      "id": "harness-dry-run",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/qa-lab-personal-agent-pack.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:16.296Z",
+      "finishedAt": "2026-10-28T02:54:18.164Z",
+      "durationMs": 1868,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\harness-dry-run.log"
+    },
+    {
+      "id": "closeout-dry-run",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-closeout.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:18.165Z",
+      "finishedAt": "2026-10-28T02:54:19.908Z",
+      "durationMs": 1743,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\closeout-dry-run.log"
+    },
+    {
+      "id": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "D:/ClawX",
+      "startedAt": "2026-10-28T02:54:19.908Z",
+      "finishedAt": "2026-10-28T02:54:19.982Z",
+      "durationMs": 74,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\tmp\\clawx-relay-20261028\\post-resolution\\diff-check.log"
+    }
+  ]
+}

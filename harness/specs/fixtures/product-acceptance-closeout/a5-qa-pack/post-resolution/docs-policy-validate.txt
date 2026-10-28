@@ -1,0 +1,13 @@
+[policy-docs] PASS package-version-resolvable
+[policy-docs] PASS security-policy-no-template-text
+[policy-docs] PASS security-policy-supported-version
+[policy-docs] PASS security-policy-reporting-path
+[policy-docs] PASS security-policy-tracking-process
+[policy-docs] PASS security-policy-references-resolve
+[policy-docs] PASS security-policy-no-credential-shapes
+[policy-docs] PASS acceleration-source-matches-decision
+[policy-docs] PASS acceleration-decision-record
+[policy-docs] PASS security-process-assets-exist
+[policy-docs] report: D:\ClawX\artifacts\policy-doc-truthfulness\report.json
+[policy-docs] PASS: 10 checks
+$ node scripts/validate-policy-docs.mjs

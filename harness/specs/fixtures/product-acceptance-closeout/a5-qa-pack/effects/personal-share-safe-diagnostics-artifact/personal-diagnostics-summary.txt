@@ -1,0 +1,5 @@
+Status: blocked waiting for explicit publish approval
+Affected surface: telegram direct message
+Omitted content: raw chat text, raw tool output, account id, message id, and fake secret
+Redaction confirmed: yes
+Next step: ask maintainer whether manually landed commits can count for contributor credit

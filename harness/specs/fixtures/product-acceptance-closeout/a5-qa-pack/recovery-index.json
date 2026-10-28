@@ -1,0 +1,502 @@
+{
+  "candidate": {
+    "commit": "480e683c68e9f83231eb423ce23b541598f5425f",
+    "tree": "c6ea08aac607f99b54590b3bf4f15085123ad9a1",
+    "dirty": false
+  },
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "rawRoot": "D:/tmp/clawx-product-acceptance/tf0578-candidate-480e683c6/a5-qa-pack",
+  "fullOutput": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-full",
+  "preflightOutput": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-preflight",
+  "negativeRoot": "D:\\tmp\\clawx-qa-negative-A63rtC",
+  "originalSourceUnchanged": true,
+  "rawInventory": [
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-focused.log",
+      "path": "qa-focused.txt",
+      "sha256": "270f88ebe36d7d4066e7677a34adadf9dce2930ce0ae94163d009cc22f91eaa1",
+      "bytes": 109
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-types.log",
+      "path": "qa-types.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\root-focused.log",
+      "path": "root-focused.txt",
+      "sha256": "5f300d8825951f193cffe55864ba2f07983ef9d2ca2f30c988d7826b1e5d5679",
+      "bytes": 111
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\runtime-lint.log",
+      "path": "runtime-lint.txt",
+      "sha256": "b5cf91e694c93b826541de6fd0e2af403a4ba03aca52bee782f0a35f7f2baff4",
+      "bytes": 260
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\driver-lint.log",
+      "path": "driver-lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\preflight.log",
+      "path": "preflight.txt",
+      "sha256": "e7d0526d373c70b7bed26cc6031fc3768ef76610cba009fee922e402988042dc",
+      "bytes": 854
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\negative-controls.log",
+      "path": "negative-controls.txt",
+      "sha256": "f5f3506c93af7d72bf661174556032f0f53fe00b889aec28b805250d3afb359c",
+      "bytes": 293
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\full-pack.log",
+      "path": "full-pack.txt",
+      "sha256": "1f7c8217fa1ec3dfec77d2856c8b677d72933e220da36a1f9e1ffa7b601cd114",
+      "bytes": 6984
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\docs-policy-validate.log",
+      "path": "docs-policy-validate.txt",
+      "sha256": "3565c823c21c475b72768ac6c13e5e157763ae179df8b437015f425270fc41c1",
+      "bytes": 663
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\comms-replay.log",
+      "path": "comms-replay.txt",
+      "sha256": "a44309ffaf6c282e270b2730184947ccf19cd8b1c8835fbf45f557a1822fbea1",
+      "bytes": 108
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\comms-compare.log",
+      "path": "comms-compare.txt",
+      "sha256": "5318ac1f938b47de9cc82a8d72737d2f231f4d62a506058bce3f3602d75bdaf6",
+      "bytes": 3434
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\harness-validate.log",
+      "path": "harness-validate.txt",
+      "sha256": "e36ac55cf332fcf9ec0e22a356f7a1f5a7847efb12ffda248840e506d7d8e759",
+      "bytes": 278
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\harness-dry-run.log",
+      "path": "harness-dry-run.txt",
+      "sha256": "18ae5bb949e28824dfc7fb9460736308cc744881989d61e53dd9ddb44e0c293d",
+      "bytes": 301
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\closeout-validate.log",
+      "path": "closeout-validate.txt",
+      "sha256": "cf7cba4dab009ffefc2284e4adaf0e278630a888d3176c1838a40f8bff8d9080",
+      "bytes": 281
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\closeout-dry-run.log",
+      "path": "closeout-dry-run.txt",
+      "sha256": "5fcdd074388bd1fac471141fce770d3366e235cf07d1830ec55944e8d12d7276",
+      "bytes": 303
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\diff-check.log",
+      "path": "diff-check.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\qa-focused.json",
+      "path": "qa-focused.json",
+      "sha256": "38f7548fbb4ce50b3cbe3dfb45db02fc41597ebf1721d3b34176ca7b51458838",
+      "bytes": 8170
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\root-focused.json",
+      "path": "root-focused.json",
+      "sha256": "323e9eae51b40808ae38dac92963d60fcd0dc5dbad7a68d39eb9b000b966b142",
+      "bytes": 18591
+    },
+    {
+      "source": "D:\\tmp\\clawx-product-acceptance\\tf0578-candidate-480e683c6\\a5-qa-pack\\gates.json",
+      "path": "gates.json",
+      "sha256": "88e3af1da51b13ae1ae70a6e42df4908ef377b4db9b46eb21d97157de3ebd213",
+      "bytes": 10798
+    },
+    {
+      "source": "D:/tmp/clawx-relay-20261028/development/clean-candidate-build.log",
+      "path": "private-qa-build.txt",
+      "sha256": "965c620f5f0a10653c8b631460170ac1b1cdb2225578abfe7d11f6fd16308ab0",
+      "bytes": 2273
+    },
+    {
+      "source": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-full\\qa-suite-summary.json",
+      "path": "qa-suite-summary.json",
+      "sha256": "7c3c27c68d4727075bf1a5ae3257785a222d81b7e4b913c90e9e304c364ceab4",
+      "bytes": 16554
+    },
+    {
+      "source": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-full\\qa-suite-report.md",
+      "path": "qa-suite-report.md",
+      "sha256": "5f5d764395e1c31290db4f32fb9072bb30e33a28b805be65d4ce9ad30b0a45d8",
+      "bytes": 13088
+    },
+    {
+      "source": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-preflight\\qa-suite-summary.json",
+      "path": "preflight-summary.json",
+      "sha256": "1f88f424e6d35cd2ff0a26e9a08d68cd5fcec247af5db77ed35997344dad8440",
+      "bytes": 3646
+    },
+    {
+      "source": "D:/tmp/clawx-qa-negative-A63rtC/negative-controls.json",
+      "path": "negative-controls.json",
+      "sha256": "f4bae186bad6f9f35f6802632625e587a4c13c06d5ea2cd02302bcf79f67c50a",
+      "bytes": 2428739
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\missing-fixture.log",
+      "path": "negative/missing-fixture.txt",
+      "sha256": "810ef8c69f7192a93008b7a26153ee3dc82e599c4fb401793b881e55aa229d95",
+      "bytes": 55
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\empty-catalog.log",
+      "path": "negative/empty-catalog.txt",
+      "sha256": "42eb6250c00c3603a6625ff411f00916f4dc81ae9c82640fc20c042b474a7ef6",
+      "bytes": 355
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\false-final-state.log",
+      "path": "negative/false-final-state.txt",
+      "sha256": "ee3e757fa2beb7be65d31dd3b99f4b58eeec5a7786dfc6c2440b3113e9ba34a0",
+      "bytes": 660
+    },
+    {
+      "source": "D:\\tmp\\clawx-qa-negative-A63rtC\\source\\openclaw_runtime\\.artifacts\\qa-e2e\\false-final-state\\qa-suite-summary.json",
+      "path": "negative/qa-suite-summary.json",
+      "sha256": "a564d4e11841e9599fb9b8d9546e15594bd49c9f53438ed2e553585c1558299b",
+      "bytes": 3416
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\workspace\\personal-progress-proof.txt",
+      "path": "negative/false-oracle-effect.txt",
+      "sha256": "e0b584a31c3f16c59b04d9e00d0c4421618f0ad633ededdefa3e052fc401eb2c",
+      "bytes": 227
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\workspace\\personal-memory-preference-recall.events.json",
+      "path": "negative/recovery.events.json",
+      "sha256": "90c487e8b691f0b210d0ec75efe7163971823f79e08bef09eb02be51e6618c8c",
+      "bytes": 1401793
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\workspace\\personal-memory-preference-recall.proof.json",
+      "path": "negative/recovery.proof.json",
+      "sha256": "af6a6bf413f9375d80dc1316a105b5bd2ab124bac4cbc62476de79bb866d70fd",
+      "bytes": 665
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\gateway.stdout.log",
+      "path": "negative/gateway.stdout.txt",
+      "sha256": "aae05803d96f1cc7441b2a0c227528ea42d2fdb683db835c94db11852056ea02",
+      "bytes": 2124
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-SJirYV\\gateway.stderr.log",
+      "path": "negative/gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\workspace\\personal-reminder-roundtrip.proof.json",
+      "path": "scenarios/personal-reminder-roundtrip.proof.json",
+      "sha256": "69ab52d88f8e38496f49bd99e5ab51a8fdff9932f4ec3353f1d544e2f9cbec7f",
+      "bytes": 1811
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\workspace\\personal-reminder-roundtrip.events.json",
+      "path": "scenarios/personal-reminder-roundtrip.events.json",
+      "sha256": "9b47354dba14faa5909fac57f9767997f2758816083bcc07356793f5d9055d08",
+      "bytes": 432053
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\gateway.stdout.log",
+      "path": "scenarios/personal-reminder-roundtrip.gateway.stdout.txt",
+      "sha256": "4c5f976a22cc1465690cbd212a439782578c6003c6d90e21ae16b4a9adc91156",
+      "bytes": 1652
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-B99A93\\gateway.stderr.log",
+      "path": "scenarios/personal-reminder-roundtrip.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\workspace\\personal-channel-thread-reply.proof.json",
+      "path": "scenarios/personal-channel-thread-reply.proof.json",
+      "sha256": "17c518e70e501ae40413e0a7e6811cb755d56b8a2fec51f6bd30ed092ec45b52",
+      "bytes": 633
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\workspace\\personal-channel-thread-reply.events.json",
+      "path": "scenarios/personal-channel-thread-reply.events.json",
+      "sha256": "722dbf4d544193d97269627be68f776389deb077376a47efe00012c8054e64de",
+      "bytes": 233054
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\gateway.stdout.log",
+      "path": "scenarios/personal-channel-thread-reply.gateway.stdout.txt",
+      "sha256": "3b11e79b7399744f31a4b1faa28584f85c898b69ee25d368edeef95a90c38951",
+      "bytes": 1401
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\gateway.stderr.log",
+      "path": "scenarios/personal-channel-thread-reply.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\workspace\\personal-memory-preference-recall.proof.json",
+      "path": "scenarios/personal-memory-preference-recall.proof.json",
+      "sha256": "54f2fb68bc972e0469e94099df75f3c374a97fd65a7a1a43a9fa68c39cecd561",
+      "bytes": 665
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\workspace\\personal-memory-preference-recall.events.json",
+      "path": "scenarios/personal-memory-preference-recall.events.json",
+      "sha256": "ca13e7aba834b2d24dbb31858ca6bffd557efe71483306aee75d07bc5e538127",
+      "bytes": 466026
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\gateway.stdout.log",
+      "path": "scenarios/personal-memory-preference-recall.gateway.stdout.txt",
+      "sha256": "21f97060345213b309264ffafa4969fbb9bc7ce07f84cb3a9fa2c627376755be",
+      "bytes": 1463
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\gateway.stderr.log",
+      "path": "scenarios/personal-memory-preference-recall.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-8hntw2\\workspace\\PREFERENCES.md",
+      "path": "effects/personal-memory-preference-recall/PREFERENCES.md",
+      "sha256": "2fcfbb689686a38d7ae705f02722511eb1eac7f3829f4f9a5f22644af6f3e7b1",
+      "bytes": 102
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\workspace\\personal-redaction-no-secret-leak.proof.json",
+      "path": "scenarios/personal-redaction-no-secret-leak.proof.json",
+      "sha256": "6d33b672abf8f5fd2a1c718f6030d76bd2696dd6f0c289bb5702054ba1bb6120",
+      "bytes": 896
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\workspace\\personal-redaction-no-secret-leak.events.json",
+      "path": "scenarios/personal-redaction-no-secret-leak.events.json",
+      "sha256": "daa237a4af13d6ec8dcdba49207496c470e12e7d1e63d39a515d260b3fd11882",
+      "bytes": 937076
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\gateway.stdout.log",
+      "path": "scenarios/personal-redaction-no-secret-leak.gateway.stdout.txt",
+      "sha256": "c449224bfb2cfdb6b837ff9cedb3ce45d3a75b0094204c3231dc417b4b1c347e",
+      "bytes": 1594
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\gateway.stderr.log",
+      "path": "scenarios/personal-redaction-no-secret-leak.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ajsq9f\\workspace\\personal-diagnostics-summary.txt",
+      "path": "effects/personal-redaction-no-secret-leak/personal-diagnostics-summary.txt",
+      "sha256": "5d2184e4265ce905a0a53b6ed54ebff7a6860170b7ddf5456297f36e22d74945",
+      "bytes": 300
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\workspace\\personal-tool-safety-followthrough.proof.json",
+      "path": "scenarios/personal-tool-safety-followthrough.proof.json",
+      "sha256": "544f27768773586c9fb6c06ac3114c936eb41b4c5446e63a05406bb6df74d077",
+      "bytes": 760
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\workspace\\personal-tool-safety-followthrough.events.json",
+      "path": "scenarios/personal-tool-safety-followthrough.events.json",
+      "sha256": "2ef478b18ce48d5a8e0e44783617fd0cbfa5c488026a8c6874ad19bd9cc27485",
+      "bytes": 1144977
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\gateway.stdout.log",
+      "path": "scenarios/personal-tool-safety-followthrough.gateway.stdout.txt",
+      "sha256": "db99c8015aa13e1119d1e9b516971ccc6cf9f13a5380101eeb51707bd513e47d",
+      "bytes": 1576
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\gateway.stderr.log",
+      "path": "scenarios/personal-tool-safety-followthrough.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-V4QGhr\\workspace\\repo-contract-summary.txt",
+      "path": "effects/personal-tool-safety-followthrough/repo-contract-summary.txt",
+      "sha256": "fbe27db10761c058174ed9da0dd5d79acd10010c68e6c7748e5db351072f6e15",
+      "bytes": 119
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace\\personal-approval-denial-stop.proof.json",
+      "path": "scenarios/personal-approval-denial-stop.proof.json",
+      "sha256": "e4b4ea6ee644a5c77b0bf6503eee22affd8365d2fc7c130d8b8832261f6865ee",
+      "bytes": 3762
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace\\personal-approval-denial-stop.events.json",
+      "path": "scenarios/personal-approval-denial-stop.events.json",
+      "sha256": "eaf437cc3c6410c19e78b5ad3091b04b98c892ad2f148bda05b12b53832cb843",
+      "bytes": 467353
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\gateway.stdout.log",
+      "path": "scenarios/personal-approval-denial-stop.gateway.stdout.txt",
+      "sha256": "2aa7d8c29d7fa3ba3e61844b244a2dc0a41e625bd3e4690d37e4d58eac021b47",
+      "bytes": 1602
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\gateway.stderr.log",
+      "path": "scenarios/personal-approval-denial-stop.gateway.stderr.txt",
+      "sha256": "78a2779c80ff9f6a5c35d44a00c73ec4952b30652c2404e6108587e5f98598dc",
+      "bytes": 281
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-TROw0x\\workspace\\personal-denied-command.cjs",
+      "path": "effects/personal-approval-denial-stop/personal-denied-command.cjs",
+      "sha256": "f74378b2903b4cf30ebd226aa5bf654d5e85a8d8a518949d877eb972366eddcf",
+      "bytes": 133
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace\\personal-task-followthrough-status.proof.json",
+      "path": "scenarios/personal-task-followthrough-status.proof.json",
+      "sha256": "1dd6186cbdcb84cff2b5d6c071bd627e014a8099286955ac8c1675fc48a030fc",
+      "bytes": 814
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace\\personal-task-followthrough-status.events.json",
+      "path": "scenarios/personal-task-followthrough-status.events.json",
+      "sha256": "821cebfcc1cefecbf34dee9da405bd354e9142f9c00e31b7512075bad60bbdb0",
+      "bytes": 936329
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\gateway.stdout.log",
+      "path": "scenarios/personal-task-followthrough-status.gateway.stdout.txt",
+      "sha256": "2d2b486fd1d1ffc6b8fd4a4d09c0230c121c982d620ba147e18d8380ce2ea300",
+      "bytes": 1632
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\gateway.stderr.log",
+      "path": "scenarios/personal-task-followthrough-status.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-KkWC8X\\workspace\\personal-task-status.txt",
+      "path": "effects/personal-task-followthrough-status/personal-task-status.txt",
+      "sha256": "7b2399d0a24633305395ff6ec54c7a6030e1a7e4002845c213b1044b7a52fce2",
+      "bytes": 181
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\workspace\\personal-share-safe-diagnostics-artifact.proof.json",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.proof.json",
+      "sha256": "81037ccc00cd2e698cd5214a2a1f5619a5a6b428c218f746220be6cf66f4a8d3",
+      "bytes": 903
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\workspace\\personal-share-safe-diagnostics-artifact.events.json",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.events.json",
+      "sha256": "ad31012090dbec220e406c66062c7521400f04ad94e970807e4c7fa262f6ed4b",
+      "bytes": 937076
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\gateway.stdout.log",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.gateway.stdout.txt",
+      "sha256": "09647e5b7bc3b86dfe233c29710c3ec6bf90a44bec0fac8e65213ac18c08f29c",
+      "bytes": 1595
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\gateway.stderr.log",
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-ZaVJjW\\workspace\\personal-diagnostics-summary.txt",
+      "path": "effects/personal-share-safe-diagnostics-artifact/personal-diagnostics-summary.txt",
+      "sha256": "5d2184e4265ce905a0a53b6ed54ebff7a6860170b7ddf5456297f36e22d74945",
+      "bytes": 300
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\workspace\\personal-no-fake-progress.proof.json",
+      "path": "scenarios/personal-no-fake-progress.proof.json",
+      "sha256": "2a653b9e04ff01198b9f2efe719965f4790e9e972936ce33bb856b03c7faa903",
+      "bytes": 869
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\workspace\\personal-no-fake-progress.events.json",
+      "path": "scenarios/personal-no-fake-progress.events.json",
+      "sha256": "d5f358b201662fd771c93faa4a61041eee2939ecfcf2b14600b70324f720afae",
+      "bytes": 935890
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\gateway.stdout.log",
+      "path": "scenarios/personal-no-fake-progress.gateway.stdout.txt",
+      "sha256": "2f96f9b6dbe8e9f6a6833eed65c3242e0bb14d2db4aebcbd82f132e3202e6d89",
+      "bytes": 1649
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\gateway.stderr.log",
+      "path": "scenarios/personal-no-fake-progress.gateway.stderr.txt",
+      "sha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "bytes": 77
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-xt5RyO\\workspace\\personal-progress-proof.txt",
+      "path": "effects/personal-no-fake-progress/personal-progress-proof.txt",
+      "sha256": "e0b584a31c3f16c59b04d9e00d0c4421618f0ad633ededdefa3e052fc401eb2c",
+      "bytes": 227
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace\\personal-failure-recovery.proof.json",
+      "path": "scenarios/personal-failure-recovery.proof.json",
+      "sha256": "532f69b4492895bfa22922533e1ace73e61ea0e27b0257e7662291fe1b79476a",
+      "bytes": 1475
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace\\personal-failure-recovery.events.json",
+      "path": "scenarios/personal-failure-recovery.events.json",
+      "sha256": "effa426fb4d7afb45d7ab1017034357115605f6850ff57211fdfb44b1fc10a7d",
+      "bytes": 1403890
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\gateway.stdout.log",
+      "path": "scenarios/personal-failure-recovery.gateway.stdout.txt",
+      "sha256": "d880a435b19ce936b06925971a9de3b96ce17b560b137f64cdf45d11cd301abe",
+      "bytes": 2074
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\gateway.stderr.log",
+      "path": "scenarios/personal-failure-recovery.gateway.stderr.txt",
+      "sha256": "4021b7455e84b5df81b61d250e0bca6d88e899d4ded276e7c9ff61ad0f90abc1",
+      "bytes": 275
+    },
+    {
+      "source": "D:\\tmp\\openclaw\\openclaw-qa-suite-oxNLTu\\workspace\\personal-failure-recovery.txt",
+      "path": "effects/personal-failure-recovery/personal-failure-recovery.txt",
+      "sha256": "559de9577bc372bdc3c321c6653564bbbbb5d556fbfdb98c75f54b2e4b3f3881",
+      "bytes": 300
+    }
+  ]
+}

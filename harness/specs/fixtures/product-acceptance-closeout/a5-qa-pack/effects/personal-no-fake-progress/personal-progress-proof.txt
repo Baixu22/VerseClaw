@@ -1,0 +1,4 @@
+Personal no-fake-progress
+Status: local proof artifact written
+External status: not sent; not published; not uploaded; not merged
+Evidence: PROGRESS_REQUEST.md and PROGRESS_EVIDENCE.md were read before this artifact was written

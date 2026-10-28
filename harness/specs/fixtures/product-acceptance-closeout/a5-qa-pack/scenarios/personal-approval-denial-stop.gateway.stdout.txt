@@ -1,0 +1,22 @@
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[gateway] agent model: mock-openai/gpt-5.5 (thinking=medium, fast=off)
+[gateway] http server listening (3 plugins: acpx, memory-core, qa-channel)
+[gateway] log file: D:\tmp\openclaw\openclaw-2026-10-28.log
+[gateway] starting channels and sidecars...
+[plugins] embedded acpx runtime backend registered lazily
+[gateway] ready
+[heartbeat] started
+[ws] ⇄ res ✓ config.get 2537ms conn=ed043f40…56da id=1ac86a28…5e8b
+[gateway] supervisor restart reconciliation ok reconciled=0 lost=0 ours=0 foreignOwner=0 containmentUnknown=0 residual=0
+[gateway] update available (latest): v2026.10.8 (current v2026.6.2). Run: openclaw update
+[memory-consolidation] runtime memory consolidation applied (pruned=0, merged=0, strengthened=0, durationMs=0).
+[ws] ⇄ res ✓ sessions.create 495ms conn=21ad1d32…1088 id=f1a37409…c838
+[ws] ⇄ res ✓ exec.approval.request 347ms conn=e6a1d838…6dcf id=2fff433c…6f8e
+[gateway] provider auth state pre-warmed in 3067ms eventLoopMax=477.6ms
+[ws] ⇄ res ✓ agent 403ms runId=78210b56-39e6-4a9e-8a4f-bafc88c05519 conn=a8f2878b…a7bf id=46766110…fdec
+[gateway] agent runtime plugins pre-warmed in 4ms
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[ws] ⇄ res ✓ agent.wait 3244ms conn=27e88b4d…b6be id=4b4da8a9…439a
+Approval denied; the command was not executed. PERSONAL-APPROVAL-DENIED-OK
+⚠️ 🛠️ run node script personal-denied-command.cjs failed

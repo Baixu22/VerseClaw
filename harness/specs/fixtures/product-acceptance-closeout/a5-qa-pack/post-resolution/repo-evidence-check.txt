@@ -1,0 +1,2 @@
+[evidence-refs] PASS 187 referenced path(s)
+$ node scripts/check-evidence-refs.mjs

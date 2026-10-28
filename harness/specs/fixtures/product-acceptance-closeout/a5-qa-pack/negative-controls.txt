@@ -1,0 +1,17 @@
+{
+  "receiptPath": "D:\\tmp\\clawx-qa-negative-A63rtC\\negative-controls.json",
+  "controls": [
+    {
+      "id": "missing-fixture",
+      "exitCode": 1
+    },
+    {
+      "id": "empty-catalog",
+      "exitCode": 1
+    },
+    {
+      "id": "false-final-state",
+      "exitCode": 1
+    }
+  ]
+}

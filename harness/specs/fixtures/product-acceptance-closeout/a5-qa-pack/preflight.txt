@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "providerMode": "mock-openai",
+  "evidenceLevel": "source-host",
+  "summaryPath": "D:\\ClawX\\openclaw_runtime\\.artifacts\\qa-e2e\\tf0578-candidate-480e683c6-preflight\\qa-suite-summary.json",
+  "scenarioIds": [
+    "personal-reminder-roundtrip"
+  ],
+  "counts": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  }
+}
+[qa-suite] run start: scenarios=1 concurrency=1 transport=qa-channel
+[qa-suite] lab start
+[qa-suite] lab ready: http://127.0.0.1:65072
+[qa-suite] provider start: mock-openai
+[qa-suite] provider ready: http://127.0.0.1:65074
+[qa-suite] gateway start
+[qa-suite] gateway ready: http://127.0.0.1:65075
+[qa-suite] scenario start (1/1): personal-reminder-roundtrip
+[qa-suite] scenario pass (1/1): personal-reminder-roundtrip
+[qa-suite] run complete: passed=1 failed=0 total=1

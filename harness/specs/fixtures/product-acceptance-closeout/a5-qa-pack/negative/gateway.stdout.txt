@@ -1,0 +1,30 @@
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[gateway] agent model: mock-openai/gpt-5.5 (thinking=medium, fast=off)
+[gateway] http server listening (3 plugins: acpx, memory-core, qa-channel)
+[gateway] log file: D:\tmp\openclaw\openclaw-2026-10-28.log
+[gateway] starting channels and sidecars...
+[plugins] embedded acpx runtime backend registered lazily
+[gateway] ready
+[heartbeat] started
+[ws] ⇄ res ✓ config.get 2047ms conn=58e229ef…28f5 id=017c7cd1…8d4b
+[gateway] supervisor restart reconciliation ok reconciled=0 lost=0 ours=0 foreignOwner=0 containmentUnknown=0 residual=0
+[gateway] update available (latest): v2026.10.8 (current v2026.6.2). Run: openclaw update
+[memory-consolidation] runtime memory consolidation applied (pruned=0, merged=0, strengthened=0, durationMs=0).
+[ws] ⇄ res ✓ sessions.create 406ms conn=870a8578…c5a5 id=f5d91b70…8213
+[ws] ⇄ res ✓ agent 267ms runId=62462c7b-4de9-4266-9188-9c836b96c1fa conn=4dbbe87c…9be2 id=e98a260f…c9f0
+[gateway] provider auth state pre-warmed in 3768ms eventLoopMax=461.1ms
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[gateway] agent runtime plugins pre-warmed in 3ms
+[agents/resource-leases] [resource-lease] acquired
+[agents/resource-leases] [resource-lease] released
+[ws] ⇄ res ✓ agent.wait 3118ms conn=75962545…500b id=cee4dea4…2667
+Artifact: personal-progress-proof.txt
+Status: local proof artifact written
+External status: not sent, not published, not uploaded, not merged
+PERSONAL-NO-FAKE-PROGRESS-OK
+[ws] ⇄ res ✓ sessions.create 195ms conn=2d2e82bc…e9d2 id=fef16ce4…e946
+[ws] ⇄ res ✓ agent 184ms runId=ee13b240-723e-441b-97bb-e8dad9d48bb8 conn=b3392faf…b364 id=830f107c…7f63
+[agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
+[ws] ⇄ res ✓ agent.wait 1169ms conn=3f51dc1b…8a76 id=f70b01ab…ae62
+Recorded preference: lemon pepper wings with blue cheese. PERSONAL-PREFERENCE-RECALL-OK

@@ -1,0 +1,17 @@
+{
+  "schema": "QaScenarioFinalState/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "scenarioId": "personal-channel-thread-reply",
+  "sessionKey": "agent:qa:dashboard:667dc0d1-6f0a-49a4-b433-0bd5ae82e62f",
+  "runId": "8e0cff13-0e25-4566-a7e1-7a907ee3a659",
+  "waitStatus": "ok",
+  "finalText": "PERSONAL-THREAD-REPLY-OK",
+  "effect": {
+    "conversationId": "qa-personal-room",
+    "threadId": "qa-personal-thread",
+    "messageId": "65e5cfde-9e4a-48dc-b225-002933541119"
+  },
+  "workspaceDir": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw\\workspace",
+  "tempRoot": "D:\\tmp\\openclaw\\openclaw-qa-suite-gMeWsw"
+}
