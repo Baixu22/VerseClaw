@@ -14,6 +14,7 @@ touchedAreas:
   - harness/specs/tasks/product-acceptance-closeout.md
   - harness/specs/tasks/runtime-memory-retirement-closeout.md
   - harness/specs/tasks/independent-acceptance-runner-output-roots.md
+  - harness/specs/tasks/qa-lab-personal-agent-pack.md
   - harness/specs/guides/product-acceptance-strategy.md
   - harness/specs/fixtures/product-acceptance-shortfalls/**
   - harness/specs/fixtures/product-acceptance-research/**
@@ -28,6 +29,11 @@ touchedAreas:
   - tests/unit/task-loop-controller.test.ts
   - tests/unit/runtime-memory-context-contracts.test.ts
   - tests/unit/harness-specs.test.ts
+  - openclaw_runtime/qa/**
+  - openclaw_runtime/extensions/qa-lab/**
+  - openclaw_runtime/tsdown.config.ts
+  - openclaw_runtime/test/tsconfig/tsconfig.qa-lab.test.json
+  - scripts/qa-lab-personal-agent-acceptance.mjs
   - tests/unit/docs-index.test.ts
   - docs/README.md
   - README.md
@@ -164,7 +170,7 @@ closed by confidence alone.
 | `TF-0575` a2-runner-path | Correct independent acceptance fixture output roots | Acceptance runner/library and its complete focused test file | Original 74 tests remain present and pass; the repaired complete file is 76/76 with two added path-contract tests | Path traversal, repo-root overwrite, unrelated in-tree roots and in-tree `.tmp` fail closed; explicit out-of-tree roots remain allowed | focused runner file, typecheck:test, harness validate | a2 manifest and runner report |
 | `TF-0576` a3-source-safety | Stop Electron test startup from deleting skill source/link targets | Electron harness, skill-root fixture, worktree guard | Source and link target hashes are unchanged after start/stop | Guard rejects missing/aliased/write-target paths without deleting them | focused unit, Electron smoke, git source manifest before/after | a3 before/after tree and process report |
 | `TF-0577` a4-coding-final | Make the coding journey reach a final response and complete undo | `tests/e2e/coding-loop-fp-p1-04.spec.ts`, provider transport diagnostics, write journal | File/tool effects exist and a visible final answer reports the actual outcome | Provider drop yields explicit failure, never a success-looking final response; undo restores state | focused E2E ×3, negative transport case, undo/readback | a4 three-run receipts and state snapshots |
-| `TF-0578` a5-qa-pack | Restore a minimal executable QA Lab scenario pack | `openclaw_runtime/extensions/qa-lab`, canonical `qa/scenarios` fixtures, disposable profile | One mock-provider pack run reaches the declared final state | Missing/corrupt scenario and failed assertion produce a failure bundle, not an empty pass | QA Lab focused tests, one pack success, one negative/recovery run | a5 suite summary and failure bundle |
+| `TF-0578` a5-qa-pack | Restore the ten canonical executable QA Lab scenarios | `openclaw_runtime/extensions/qa-lab`, canonical `qa/scenarios` fixtures, disposable profile, narrow `qa-lab-personal-agent-pack` contract | Selected=executed=10, ten passes, zero unexpected skips; Gateway final replies agree with deterministic effects | Missing fixture, empty catalog and deliberately false final-state assertion exit nonzero; a later task still completes | QA Lab focused tests/type gate, dedicated driver preflight/full pack and `--negative-controls` | a5 suite summary, raw events, effect readback and failure bundle |
 | `TF-0580` b1-space-bunny | Prove local Responses provider reachability and tool round trip through ClawX | Owner-authorized endpoint injected in environment, current adapter, tiny read-only prompt | Typed response, tool call/result and visible final state are bound to request IDs | 401/404/timeout/malformed stream fails visibly without fallback success | provider probe, focused adapter tests, Main/Gateway path smoke | b1 redacted request timeline and hash |
 | `TF-0581` b2-moyu | Run coding, approval, undo and recovery on a disposable `moyu` copy | `demo/user_api_shitcode`, offline seed, model through ClawX host-api/Gateway | Deterministic file/test state and final response match the requested change; undo restores; recovery resumes once | Permission denial, pre-edit cancellation, crash/restart and stale journal all fail closed or recover exactly once | three GUI journeys, `python -m acceptance run --mode offline --seed 20260908`, `python -m pytest tests/acceptance -q` | b2 run manifest, timeline, diffs, tree hashes |
 | `TF-0582` b3-product-matrix | Exercise the core product matrix and agent exploration | Setup, Chat, Sessions, Memory, Knowledge, Task Ledger, Task Loop, restart plus exploration | Each journey has visible state and durable readback | Forged approval, private-network access, duplicate run and missing recovery are denied/not counted | one fresh Electron journey per surface, critical three-run subset, security negatives | b3 matrix and screenshots/logs |

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.extensions.test.json",
+  "include": [
+    "../../extensions/qa-lab/api.ts",
+    "../../extensions/qa-lab/src/scenario-catalog.test.ts",
+    "../../extensions/qa-lab/src/suite-planning.test.ts",
+    "../../extensions/qa-lab/src/suite-summary.test.ts",
+    "../../extensions/qa-lab/src/suite-startup.test.ts",
+    "../../tsdown.config.ts"
+  ]
+}

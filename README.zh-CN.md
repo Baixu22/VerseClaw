@@ -195,6 +195,8 @@ pnpm harness run --spec <task-spec> --dry-run
 
 UI 改动应补 Electron E2E 和 en/zh/ja/ru 文案。通信路径改动还应运行 `pnpm run comms:replay` 与 `pnpm run comms:compare`。构建成功、安装成功、发布授权是三个不同事实。
 
+[个人 Agent QA 场景包](openclaw_runtime/qa/README.md)通过脚本 provider 运行十项 Gateway 场景，并确定性回读终态。源宿主证据覆盖控制流、拒绝和恢复；真实模型质量与打包行为有各自的验收门禁。
+
 完整门禁与证据规则见[开发与验证](docs/modules/development-and-validation.md)。
 
 <a id="troubleshooting"></a>

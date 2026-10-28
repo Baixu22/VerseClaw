@@ -2519,6 +2519,27 @@ async function buildResponsesPayload(
       return buildToolCallEventsWithArgs("read", { path: "DREAMING_CANDIDATE_EVIDENCE.md" });
     }
   }
+  if (/personal preference recall check/i.test(allInputText)) {
+    if (!toolOutput) {
+      return buildToolCallEventsWithArgs("read", { path: "PREFERENCES.md" });
+    }
+    const preference = extractSnackPreference(toolOutput);
+    return buildAssistantEvents(
+      preference
+        ? `Recorded preference: ${preference}. PERSONAL-PREFERENCE-RECALL-OK`
+        : "Preference unavailable; no preference was guessed.",
+    );
+  }
+  if (/personal approval denial check/i.test(allInputText)) {
+    if (!toolOutput) {
+      return buildToolCallEventsWithArgs("exec", { command: "node personal-denied-command.cjs" });
+    }
+    return buildAssistantEvents(
+      /denied|disabled|blocked|not allowed|allowlist|security/i.test(toolOutput)
+        ? "Approval denied; the command was not executed. PERSONAL-APPROVAL-DENIED-OK"
+        : "Unexpected command outcome; approval-denial proof is unavailable.",
+    );
+  }
   if (/personal share-safe diagnostics check/i.test(allInputText)) {
     const diagnosticsEvidenceText = extractAllToolOutputText(input);
     if (/successfully (?:wrote|created|updated|replaced)/i.test(diagnosticsEvidenceText)) {

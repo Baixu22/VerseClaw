@@ -27,26 +27,10 @@ type QaFlowApi = Record<string, unknown> & {
 };
 
 type QaFlowVars = Record<string, unknown>;
-// Fixture modules are provided by the QA flow environment at run
-// time; they are not shipped with the extension source.
-type QaFlowImportLoader = () => Promise<unknown>;
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
   ...args: string[]
 ) => (...fnArgs: unknown[]) => Promise<unknown>;
-
-const qaFlowImportLoaders: Record<string, QaFlowImportLoader> = {
-  // Fixture modules are provided by the QA flow environment at run time; the
-  // string-variable import keeps TypeScript from resolving them statically.
-  "./auth-profile.fixture.js": () => {
-    const specifier = "./auth-profile.fixture.js";
-    return import(specifier);
-  },
-  "./codex-plugin.fixture.js": () => {
-    const specifier = "./codex-plugin.fixture.js";
-    return import(specifier);
-  },
-};
 
 function formatFlowDetails(details: unknown) {
   if (details === undefined) {
@@ -81,10 +65,8 @@ function getPathWithParent(
 function createEvalContext(api: QaFlowApi, vars: QaFlowVars) {
   return {
     ...api,
-    qaImport: (specifier: string) => {
-      const loader = qaFlowImportLoaders[specifier];
-      return loader ? loader() : import(specifier);
-    },
+    // Optional fixture modules belong to the flow environment, not the build.
+    qaImport: (specifier: string) => import(specifier),
     vars,
     ...vars,
   };

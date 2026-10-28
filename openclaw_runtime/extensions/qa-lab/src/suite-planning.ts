@@ -82,7 +82,7 @@ function selectQaSuiteScenarios(params: {
     }
     return [...requestedScenarioIds].map((scenarioId) => scenarioById.get(scenarioId)!);
   }
-  return params.scenarios.filter((scenario) =>
+  const selected = params.scenarios.filter((scenario) =>
     scenarioMatchesLiveLane({
       scenario,
       providerMode: params.providerMode,
@@ -90,6 +90,12 @@ function selectQaSuiteScenarios(params: {
       claudeCliAuthMode: params.claudeCliAuthMode,
     }),
   );
+  if (selected.length === 0) {
+    throw new Error(
+      "QA suite selected no scenarios; restore the source scenario pack or select an available scenario.",
+    );
+  }
+  return selected;
 }
 
 function collectQaSuitePluginIds(

@@ -533,7 +533,8 @@ export async function startQaGatewayChild(params: {
     path.join(resolvePreferredOpenClawTmpDir(), "openclaw-qa-suite-"),
   );
   const runtimeCwd = tempRoot;
-  const distEntryPath = path.join(params.repoRoot, "dist", "index.js");
+  // The retained source runtime's library index does not dispatch CLI commands.
+  const distEntryPath = path.join(params.repoRoot, "dist", "entry.js");
   const gatewayCommand = params.command;
   const gatewayExecutablePath = gatewayCommand?.executablePath;
   const gatewayArgsPrefix = gatewayCommand?.argsPrefix ?? [];

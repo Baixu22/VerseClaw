@@ -298,6 +298,7 @@ async function runQaSuiteFromRuntimeWithInfraRetry(
 
 async function runQaParityPreflight(params: {
   repoRoot: string;
+  scenarioIds?: string[];
   transportId: QaTransportId;
   providerMode: QaProviderMode;
   primaryModel?: string;
@@ -318,7 +319,7 @@ async function runQaParityPreflight(params: {
     providerMode: params.providerMode,
     primaryModel: params.primaryModel,
     alternateModel: params.alternateModel,
-    scenarioIds: ["approval-turn-tool-followthrough"],
+    scenarioIds: [params.scenarioIds?.[0] ?? "approval-turn-tool-followthrough"],
     concurrency: 1,
   });
   process.stdout.write(`QA parity preflight watch: ${result.watchUrl}\n`);
@@ -653,6 +654,7 @@ export async function runQaSuiteCommand(opts: {
   if (opts.preflight === true) {
     await runQaParityPreflight({
       repoRoot,
+      scenarioIds,
       transportId,
       providerMode,
       primaryModel,

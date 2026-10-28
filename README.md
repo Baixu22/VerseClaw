@@ -195,6 +195,8 @@ pnpm harness run --spec <task-spec> --dry-run
 
 UI changes should include Electron E2E and en/zh/ja/ru strings. Communication changes also require `pnpm run comms:replay` and `pnpm run comms:compare`. Packaging success, installer success and release authorization are separate facts.
 
+The [personal-agent QA pack](openclaw_runtime/qa/README.md) runs ten Gateway scenarios with a scripted provider and deterministic final-state checks. Its source-host evidence covers control flow, denial and recovery; live-model quality and packaged behavior have separate acceptance gates.
+
 See [development and validation](docs/modules/development-and-validation.md) for the full gate map and evidence rules.
 
 <a id="troubleshooting"></a>

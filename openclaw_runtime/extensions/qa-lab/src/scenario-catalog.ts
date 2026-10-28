@@ -348,6 +348,9 @@ export function readQaScenarioPack(): QaScenarioPack {
   }
   const packMarkdown = readTextFile(QA_SCENARIO_PACK_INDEX_PATH).trim();
   if (!packMarkdown) {
+    if (hasQaScenarioPack()) {
+      throw new Error(`empty qa scenario pack index: ${QA_SCENARIO_PACK_INDEX_PATH}`);
+    }
     // The QA scenario pack is optional in npm distributions.  Return an empty
     // pack so completion cache updates and other consumers don't crash when
     // the qa/scenarios/ directory is not shipped with the package.

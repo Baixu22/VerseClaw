@@ -1329,7 +1329,14 @@ export async function runQaSuite(params?: QaSuiteRunParams): Promise<QaSuiteResu
     state: lab.state,
   });
   writeQaSuiteProgress(progressEnabled, `provider start: ${providerMode}`);
-  const mock = await startQaProviderServer(providerMode);
+  const mock = await startQaProviderServer(providerMode).catch(async (error: unknown) => {
+    // Provider acquisition is before the scenario cleanup scope; release the
+    // owned Lab even when startup fails, preserving the original error.
+    if (ownsLab) {
+      await Promise.allSettled([lab.stop()]);
+    }
+    throw error;
+  });
   writeQaSuiteProgress(
     progressEnabled,
     `provider ready: ${sanitizeQaSuiteProgressValue(mock?.baseUrl ?? "live")}`,
@@ -1361,6 +1368,11 @@ export async function runQaSuite(params?: QaSuiteRunParams): Promise<QaSuiteResu
       }),
       buildQaGatewayHeapCheckpointRuntimeEnvPatch(),
     ),
+  }).catch(async (error: unknown) => {
+    // Gateway startup can reject before the scenario finally block owns it.
+    // Close both HTTP listeners so a failed bootstrap does not hang the runner.
+    await Promise.allSettled([mock?.stop(), ...(ownsLab ? [lab.stop()] : [])]);
+    throw error;
   });
   writeQaSuiteProgress(
     progressEnabled,

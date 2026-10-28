@@ -124,11 +124,19 @@ export function readQaSuiteFailedOrSkippedScenarioCountFromSummary(
   }
   const payload = summary as {
     counts?: {
+      total?: unknown;
       failed?: unknown;
       skipped?: unknown;
     };
     scenarios?: Array<QaSuiteScenarioStatus>;
   };
+  // An empty run is missing execution evidence even when it reports zero failures.
+  if (
+    payload.counts?.total === 0 ||
+    (Array.isArray(payload.scenarios) && payload.scenarios.length === 0)
+  ) {
+    return null;
+  }
   const countedFailures = readNonNegativeCount(payload.counts?.failed);
   const countedSkipped = readNonNegativeCount(payload.counts?.skipped);
   const countedBlocking =

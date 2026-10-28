@@ -193,6 +193,8 @@ pnpm harness run --spec <task-spec> --dry-run
 
 UI change では Electron E2E と en/zh/ja/ru の string を追加します。Communication path の変更では `pnpm run comms:replay` と `pnpm run comms:compare` も必要です。Build success、install success、release authorization は別の事実です。
 
+[個人 Agent QA シナリオ集](openclaw_runtime/qa/README.md)は、スクリプト provider で十項目の Gateway シナリオを実行し、最終状態を決定的に検証します。ソース実行環境の証拠は制御フロー、拒否、復旧を対象とし、実モデル品質とパッケージ動作には個別の検証ゲートがあります。
+
 完全な gate map は [development and validation](docs/modules/development-and-validation.md) を参照してください。
 
 <a id="troubleshooting"></a>

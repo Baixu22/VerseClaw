@@ -63,6 +63,7 @@ export {
 } from "./src/scenario.js";
 export {
   DEFAULT_QA_AGENT_IDENTITY_MARKDOWN,
+  QA_PERSONAL_AGENT_SCENARIO_IDS,
   hasQaScenarioPack,
   listQaScenarioMarkdownPaths,
   type QaBootstrapScenarioCatalog,

@@ -13,7 +13,10 @@ import {
 } from "./scripts/lib/plugin-sdk-entries.mjs";
 import { tsdownPackageOutputRoot } from "./scripts/lib/tsdown-output-roots.mjs";
 
-type InputOptionsFactory = Extract<NonNullable<UserConfig["inputOptions"]>, (...args: never[]) => unknown>;
+type InputOptionsFactory = Extract<
+  NonNullable<UserConfig["inputOptions"]>,
+  (...args: never[]) => unknown
+>;
 type InputOptionsArg = InputOptionsFactory extends (
   options: infer Options,
   format: infer _Format,
@@ -157,8 +160,12 @@ function nodeWorkspacePackageBuildConfig(config: UserConfig): UserConfig {
 
 const bundledPluginBuildEntries = collectBundledPluginBuildEntries();
 const shouldBuildPrivateQaEntries = process.env.OPENCLAW_BUILD_PRIVATE_QA === "1";
+// Private QA needs its runtime facades, not the upstream test-helper SDK entries
+// whose fixtures are absent from retained source. Public entries remain mandatory.
 const productionPluginSdkEntrypoints = shouldBuildPrivateQaEntries
-  ? pluginSdkEntrypoints
+  ? pluginSdkEntrypoints.filter(
+      (entry) => publicPluginSdkEntrypoints.includes(entry) || entry.startsWith("qa-"),
+    )
   : publicPluginSdkEntrypoints;
 
 function buildBundledHookEntries(): Record<string, string> {
