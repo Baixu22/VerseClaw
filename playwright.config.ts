@@ -6,6 +6,8 @@ assertWindowsTestNode();
 export default defineConfig({
   globalSetup: './tests/e2e/fixtures/electron-process-cleanup.ts',
   testDir: './tests/e2e',
+  // Live acceptance uses private local resources and is selected explicitly by its runner.
+  testIgnore: process.env.CLAWX_SPACE_BUNNY_ACCEPTANCE === '1' ? [] : ['**/product-acceptance-space-bunny.spec.ts'],
   tsconfig: './tsconfig.test.json',
   // Serial by design: many specs boot a real Electron + Gateway child, and
   // concurrent gateway boots contend for ports/runtime and flake

@@ -8,10 +8,9 @@ import type {
   EasyInputMessage,
   ResponseFunctionToolCall,
   ResponseInputItem,
-  ResponseInputMessageContentList,
-  ResponseOutputText,
 } from "openai/resources/responses/responses";
 import { getEnvApiKey } from "../llm/env-api-keys.js";
+import { redactSensitiveText } from "../logging/redact.js";
 import { calculateCost } from "../llm/model-utils.js";
 import type { Context, Message, Model, SimpleStreamOptions } from "../llm/types.js";
 import { parseStreamingJson } from "../llm/utils/json-parse.js";
@@ -45,13 +44,14 @@ import { normalizeUsage, type UsageLike } from "./usage.js";
 // ── internal types ───────────────────────────────────────────────────────────
 
 type TransportContentBlock =
-  | { type: "text"; text: string; index?: number }
+  | { type: "text"; text: string; index?: number; partIndex?: number }
   | {
       type: "thinking";
       thinking: string;
       thinkingSignature: string;
       redacted?: boolean;
       index?: number;
+      partIndex?: number;
     }
   | {
       type: "toolCall";
@@ -60,6 +60,7 @@ type TransportContentBlock =
       arguments: unknown;
       partialJson?: string;
       index?: number;
+      argumentsComplete?: boolean;
     };
 
 type MutableAssistantOutput = {
@@ -119,12 +120,106 @@ function resolveResponsesFunctionCallId(item: Record<string, unknown> | undefine
       : "";
 }
 
-function resolveResponsesStopReason(
-  status: string | undefined,
-  hasToolCall: boolean,
-): string {
+function resolveResponsesContentIndex(
+  blocks: TransportContentBlock[],
+  event: Record<string, unknown>,
+  kind: "text" | "thinking",
+): number {
+  // Responses content/summary indexes are item-local, not indexes into our flattened blocks.
+  if (typeof event.output_index === "number") {
+    const partIndex = (kind === "text" ? event.content_index : event.summary_index) ?? 0;
+    return blocks.findIndex(
+      (block) =>
+        block.type === kind && block.index === event.output_index && block.partIndex === partIndex,
+    );
+  }
+  const legacyIndex = event.content_index;
+  if (typeof legacyIndex === "number" && blocks[legacyIndex]?.type === kind) return legacyIndex;
+  return blocks.findLastIndex((block) => block.type === kind);
+}
+
+function resolveResponsesStopReason(status: string | undefined, hasToolCall: boolean): string {
   if (hasToolCall) return "toolUse";
   return status === "incomplete" ? "length" : "stop";
+}
+
+function applyResponsesTerminalEvent(
+  event: Record<string, unknown>,
+  output: MutableAssistantOutput,
+  model: Model,
+): boolean {
+  const type = resolveResponsesEventType(event);
+  const response = event.response as Record<string, unknown> | undefined;
+  if (type === "response.failed" || type === "error") {
+    const failure = (response?.error ?? event.error ?? event) as Record<string, unknown>;
+    const message =
+      typeof failure.message === "string" ? failure.message : "Responses stream failed";
+    throw Object.assign(new Error(redactSensitiveText(message).slice(0, 500)), {
+      code: typeof failure.code === "string" ? redactSensitiveText(failure.code) : undefined,
+    });
+  }
+  if (type !== "response.completed" && type !== "response.incomplete") return false;
+  const status = type === "response.completed" ? "completed" : "incomplete";
+  if (response?.status !== status)
+    throw new Error("Responses terminal event has an invalid status");
+  const hasToolCall = output.content.some((block) => block.type === "toolCall");
+  // Incomplete output can contain partial tool arguments; it must never dispatch a tool.
+  if (status === "incomplete" && hasToolCall)
+    throw new Error("Responses incomplete tool call cannot execute");
+  if (
+    hasToolCall &&
+    output.content.some((block) => block.type === "toolCall" && !block.argumentsComplete)
+  )
+    throw new Error("Responses completed with an unfinished tool call");
+  output.stopReason =
+    status === "incomplete" ? "length" : resolveResponsesStopReason(status, hasToolCall);
+  applyProviderUsage(output, model, response.usage as Record<string, unknown> | undefined);
+  return true;
+}
+
+function finalizeResponsesToolItem(
+  event: Record<string, unknown>,
+  blocks: TransportContentBlock[],
+): void {
+  const item = event.item as Record<string, unknown> | undefined;
+  if (item && item.type !== "function_call") return;
+  const idx = blocks.findIndex(
+    (block) =>
+      block.type === "toolCall" &&
+      (block.index === event.output_index ||
+        (item && block.id === resolveResponsesFunctionCallId(item))),
+  );
+  const block = blocks[idx];
+  if (block?.type !== "toolCall") return;
+  if (block.argumentsComplete) return;
+  const rawArguments = item?.arguments ?? event.arguments ?? block.partialJson;
+  // Partial JSON is useful for streaming display, but only strict final JSON may reach execution.
+  const args = typeof rawArguments === "string" ? (JSON.parse(rawArguments) as unknown) : undefined;
+  if (!args || typeof args !== "object" || Array.isArray(args) || !block.id || !block.name)
+    throw new Error("Responses tool call has invalid final arguments");
+  block.arguments = args;
+  block.argumentsComplete = true;
+  delete block.partialJson;
+  delete block.index;
+}
+
+function emitCompletedResponsesToolCalls(
+  output: MutableAssistantOutput,
+  stream: ReturnType<typeof createWritableTransportEventStream>["stream"],
+  signal: AbortSignal | undefined,
+): void {
+  if (signal?.aborted) throw new Error("Request was aborted");
+  // Arguments may finish before a later failed/incomplete event or EOF. Emit only after
+  // the entire stream has passed its terminal check, once per completed tool item.
+  for (const [contentIndex, block] of output.content.entries()) {
+    if (block.type !== "toolCall") continue;
+    stream.push({
+      type: "toolcall_end",
+      contentIndex,
+      toolCall: block as never,
+      partial: output as never,
+    });
+  }
 }
 
 function applyProviderUsage(
@@ -141,10 +236,7 @@ function applyProviderUsage(
   output.usage.cacheRead = normalized.cacheRead ?? 0;
   output.usage.cacheWrite = normalized.cacheWrite ?? 0;
   const componentTotal =
-    output.usage.input +
-    output.usage.output +
-    output.usage.cacheRead +
-    output.usage.cacheWrite;
+    output.usage.input + output.usage.output + output.usage.cacheRead + output.usage.cacheWrite;
   output.usage.totalTokens =
     typeof normalized.total === "number" && Number.isFinite(normalized.total)
       ? Math.max(componentTotal, normalized.total)
@@ -360,11 +452,11 @@ function toResponsesInput(context: Context): ResponseInputItem[] {
         content: content.length > 0 ? content : [{ type: "input_text", text: "" }],
       });
     } else if (msg.role === "assistant") {
-      const content: ResponseOutputText[] = [];
+      const content: string[] = [];
       const toolCalls: ResponseFunctionToolCall[] = [];
       for (const block of msg.content) {
         if (block.type === "text") {
-          content.push({ type: "output_text", text: block.text, annotations: [] });
+          content.push(block.text);
         } else if (block.type === "thinking") {
           // thinking is not replayed in input; skip
         } else if (block.type === "toolCall") {
@@ -379,13 +471,10 @@ function toResponsesInput(context: Context): ResponseInputItem[] {
         }
       }
       if (content.length > 0) {
-        // The official API accepts `output_text` content parts when replaying
-        // prior assistant messages; the SDK's input message content-list type
-        // omits them, so only this one field needs a narrow cast.
         const assistantItem: EasyInputMessage = {
           type: "message",
           role: "assistant",
-          content: content as unknown as ResponseInputMessageContentList,
+          content: content.join(""),
         };
         items.push(assistantItem);
       }
@@ -525,14 +614,21 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
 
         // Cast to get the async iterable shape
         const blocks = output.content;
+        let receivedTerminalResponse = false;
 
-        for await (const event of responseStream as unknown as AsyncIterable<Record<string, unknown>>) {
+        for await (const event of responseStream as unknown as AsyncIterable<
+          Record<string, unknown>
+        >) {
           const eventType = resolveResponsesEventType(event);
+
+          if (applyResponsesTerminalEvent(event, output, model)) {
+            receivedTerminalResponse = true;
+            continue;
+          }
 
           if (eventType === "response.created") {
             const response = event.response as Record<string, unknown> | undefined;
-            output.responseId =
-              typeof response?.id === "string" ? response.id : undefined;
+            output.responseId = typeof response?.id === "string" ? response.id : undefined;
             continue;
           }
 
@@ -544,14 +640,13 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
           if (eventType === "response.content_part.added") {
             const part = event.part as Record<string, unknown> | undefined;
             const outputIndex =
-              typeof event.output_index === "number"
-                ? event.output_index
-                : blocks.length;
+              typeof event.output_index === "number" ? event.output_index : blocks.length;
             if (part?.type === "output_text") {
               const block: TransportContentBlock = {
                 type: "text",
                 text: "",
                 index: outputIndex,
+                partIndex: typeof event.content_index === "number" ? event.content_index : 0,
               };
               output.content.push(block);
               stream.push({
@@ -569,11 +664,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
             const text = sanitizeTransportPayloadText(delta);
             if (text.length === 0) continue;
 
-            // Find the text block by content_index or use the last text block
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "text");
             const block = blocks[contentIndex];
             if (block?.type === "text") {
               block.text += text;
@@ -588,14 +679,10 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
           }
 
           if (eventType === "response.output_text.done") {
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "text");
             const block = blocks[contentIndex];
             if (block?.type === "text") {
-              const doneText =
-                typeof event.text === "string" ? event.text : undefined;
+              const doneText = typeof event.text === "string" ? event.text : undefined;
               if (doneText !== undefined) {
                 block.text = doneText;
               }
@@ -611,18 +698,16 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
 
           if (eventType === "response.reasoning_summary_part.added") {
             const outputIndex =
-              typeof event.output_index === "number"
-                ? event.output_index
-                : blocks.length;
-            const summary = event.summary as
+              typeof event.output_index === "number" ? event.output_index : blocks.length;
+            const summary = (event.part ?? event.summary) as
               | { text?: string; id?: string }
               | undefined;
             const block: TransportContentBlock = {
               type: "thinking",
               thinking: typeof summary?.text === "string" ? summary.text : "",
-              thinkingSignature:
-                typeof summary?.id === "string" ? summary.id : "reasoning_summary",
+              thinkingSignature: typeof summary?.id === "string" ? summary.id : "reasoning_summary",
               index: outputIndex,
+              partIndex: typeof event.summary_index === "number" ? event.summary_index : 0,
             };
             output.content.push(block);
             const contentIndex = output.content.length - 1;
@@ -648,10 +733,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
             const text = sanitizeTransportPayloadText(delta);
             if (text.length === 0) continue;
 
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "thinking");
             const block = blocks[contentIndex];
             if (block?.type === "thinking") {
               block.thinking += text;
@@ -666,12 +748,11 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
           }
 
           if (eventType === "response.reasoning_summary_text.done") {
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "thinking");
             const block = blocks[contentIndex];
             if (block?.type === "thinking") {
+              if (typeof event.text === "string")
+                block.thinking = sanitizeTransportPayloadText(event.text);
               stream.push({
                 type: "thinking_end",
                 contentIndex,
@@ -691,10 +772,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
                 name: typeof item.name === "string" ? item.name : "",
                 arguments: {},
                 partialJson: "",
-                index:
-                  typeof event.output_index === "number"
-                    ? event.output_index
-                    : blocks.length,
+                index: typeof event.output_index === "number" ? event.output_index : blocks.length,
               };
               output.content.push(block);
               stream.push({
@@ -709,11 +787,8 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
           if (eventType === "response.function_call_arguments.delta") {
             const delta = typeof event.delta === "string" ? event.delta : "";
             if (delta.length === 0) continue;
-            const outputIndex =
-              typeof event.output_index === "number" ? event.output_index : -1;
-            const idx = blocks.findIndex(
-              (b) => b.type === "toolCall" && b.index === outputIndex,
-            );
+            const outputIndex = typeof event.output_index === "number" ? event.output_index : -1;
+            const idx = blocks.findIndex((b) => b.type === "toolCall" && b.index === outputIndex);
             const block = idx !== -1 ? blocks[idx] : undefined;
             if (block?.type === "toolCall") {
               const partialJson = `${block.partialJson ?? ""}${delta}`;
@@ -730,96 +805,26 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
           }
 
           if (eventType === "response.function_call_arguments.done") {
-            const outputIndex =
-              typeof event.output_index === "number" ? event.output_index : -1;
-            const idx = blocks.findIndex(
-              (b) => b.type === "toolCall" && b.index === outputIndex,
-            );
-            const block = idx !== -1 ? blocks[idx] : undefined;
-            if (block?.type === "toolCall") {
-              const doneArgs =
-                typeof event.arguments === "string" ? event.arguments : undefined;
-              if (doneArgs !== undefined) {
-                block.partialJson = doneArgs;
-                block.arguments = coerceTransportToolCallArguments(
-                  parseToolCallArguments(doneArgs),
-                );
-              } else if (typeof block.partialJson === "string" && block.partialJson.length > 0) {
-                block.arguments = coerceTransportToolCallArguments(
-                  parseToolCallArguments(block.partialJson),
-                );
-              }
-              delete block.partialJson;
-              delete block.index;
-              stream.push({
-                type: "toolcall_end",
-                contentIndex: idx,
-                toolCall: block as never,
-                partial: output as never,
-              });
-            }
+            finalizeResponsesToolItem(event, blocks);
             continue;
           }
 
           if (eventType === "response.output_item.done") {
-            const item = event.item as Record<string, unknown> | undefined;
-            if (item?.type === "function_call") {
-              const outputIndex =
-                typeof event.output_index === "number" ? event.output_index : -1;
-              const idx = blocks.findIndex(
-                (b) =>
-                  b.type === "toolCall" &&
-                  (b.index === outputIndex || b.id === resolveResponsesFunctionCallId(item)),
-              );
-              if (idx !== -1) {
-                const b = blocks[idx];
-                if (b.type === "toolCall") {
-                  const doneArgs = typeof item.arguments === "string" ? item.arguments : undefined;
-                  if (doneArgs !== undefined) {
-                    b.arguments = coerceTransportToolCallArguments(
-                      parseToolCallArguments(doneArgs),
-                    );
-                  } else if (typeof b.partialJson === "string" && b.partialJson.length > 0) {
-                    b.arguments = coerceTransportToolCallArguments(
-                      parseToolCallArguments(b.partialJson),
-                    );
-                  }
-                  const wasPending = b.partialJson !== undefined || b.index !== undefined;
-                  delete b.partialJson;
-                  delete b.index;
-                  if (wasPending) {
-                    stream.push({
-                      type: "toolcall_end",
-                      contentIndex: idx,
-                      toolCall: b as never,
-                      partial: output as never,
-                    });
-                  }
-                }
-              }
-            }
-            // For message items, we rely on content_part done events
+            finalizeResponsesToolItem(event, blocks);
             continue;
           }
-
-          if (eventType === "response.completed") {
-            const response = event.response as Record<string, unknown> | undefined;
-            const usage = response?.usage as Record<string, unknown> | undefined;
-            const stopReason =
-              typeof response?.status === "string" ? response.status : undefined;
-
-            output.stopReason = resolveResponsesStopReason(
-              stopReason,
-              output.content.some((block) => block.type === "toolCall"),
-            );
-
-            applyProviderUsage(output, model, usage);
-          }
         }
+
+        // A clean HTTP EOF is not a completed model turn. Require the provider's terminal event.
+        if (!receivedTerminalResponse)
+          throw new Error("Responses stream ended without a terminal response event");
+        emitCompletedResponsesToolCalls(output, stream, options?.signal);
 
         // Clean up any remaining index properties
         for (const block of output.content) {
           delete block.index;
+          if (block.type !== "toolCall") delete block.partIndex;
+          else delete block.argumentsComplete;
         }
         finalizeTransportStream({
           stream,
@@ -835,6 +840,8 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
           cleanup: () => {
             for (const block of output.content) {
               delete block.index;
+              if (block.type !== "toolCall") delete block.partIndex;
+              else delete block.argumentsComplete;
             }
           },
         });
@@ -923,18 +930,14 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
         finalizeOpenAIProviderParams(params, model, options);
         recordFinalOpenAIProviderPayload(options, params, "openai-completions-transport");
 
-        const chatStream = await client.chat.completions.create(
-          params as any,
-          requestOptions,
-        );
+        const chatStream = await client.chat.completions.create(params as any, requestOptions);
 
         const blocks = output.content;
         // Track tool call deltas by index
         const toolCallIndexes = new Map<number, number>(); // choice index -> content index
 
         for await (const chunk of chatStream as unknown as AsyncIterable<Record<string, unknown>>) {
-          const choices =
-            (chunk.choices as Array<Record<string, unknown>> | undefined) ?? [];
+          const choices = (chunk.choices as Array<Record<string, unknown>> | undefined) ?? [];
 
           // Some compatible providers include usage alongside text/tool deltas.
           // Apply the counters without discarding choices from the same frame.
@@ -945,12 +948,9 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
 
           for (const choice of choices) {
             const finishReason =
-              typeof choice.finish_reason === "string"
-                ? choice.finish_reason
-                : undefined;
+              typeof choice.finish_reason === "string" ? choice.finish_reason : undefined;
             const delta = choice.delta as Record<string, unknown> | undefined;
-            const choiceIndex =
-              typeof choice.index === "number" ? choice.index : 0;
+            const choiceIndex = typeof choice.index === "number" ? choice.index : 0;
 
             if (finishReason) {
               output.stopReason = mapStopReason(finishReason);
@@ -960,9 +960,7 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
 
             // Handle reasoning_content (thinking) deltas (DeepSeek, etc.)
             const reasoningContent =
-              typeof delta.reasoning_content === "string"
-                ? delta.reasoning_content
-                : undefined;
+              typeof delta.reasoning_content === "string" ? delta.reasoning_content : undefined;
             if (reasoningContent !== undefined && reasoningContent.length > 0) {
               const text = sanitizeTransportPayloadText(reasoningContent);
               if (text.length > 0) {
@@ -1019,22 +1017,14 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
             }
 
             // Handle text deltas
-            const textContent =
-              typeof delta.content === "string" ? delta.content : undefined;
-            if (
-              textContent !== undefined &&
-              textContent.length > 0 &&
-              textContent !== null
-            ) {
+            const textContent = typeof delta.content === "string" ? delta.content : undefined;
+            if (textContent !== undefined && textContent.length > 0 && textContent !== null) {
               const text = sanitizeTransportPayloadText(textContent);
               if (text.length > 0) {
                 let contentIndex: number | undefined;
                 // Find last text block with matching index
                 for (let i = blocks.length - 1; i >= 0; i--) {
-                  if (
-                    blocks[i]?.type === "text" &&
-                    blocks[i]?.index === choiceIndex
-                  ) {
+                  if (blocks[i]?.type === "text" && blocks[i]?.index === choiceIndex) {
                     contentIndex = i;
                     break;
                   }
@@ -1067,30 +1057,16 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
             }
 
             // Handle tool call deltas
-            const toolCalls = delta.tool_calls as
-              | Array<Record<string, unknown>>
-              | undefined;
+            const toolCalls = delta.tool_calls as Array<Record<string, unknown>> | undefined;
             if (toolCalls) {
               for (const toolCallDelta of toolCalls) {
-                const toolIndex =
-                  typeof toolCallDelta.index === "number"
-                    ? toolCallDelta.index
-                    : 0;
-                const toolId =
-                  typeof toolCallDelta.id === "string"
-                    ? toolCallDelta.id
-                    : undefined;
-                const toolFunction = toolCallDelta.function as
-                  | Record<string, unknown>
-                  | undefined;
+                const toolIndex = typeof toolCallDelta.index === "number" ? toolCallDelta.index : 0;
+                const toolId = typeof toolCallDelta.id === "string" ? toolCallDelta.id : undefined;
+                const toolFunction = toolCallDelta.function as Record<string, unknown> | undefined;
                 const toolName =
-                  typeof toolFunction?.name === "string"
-                    ? toolFunction.name
-                    : undefined;
+                  typeof toolFunction?.name === "string" ? toolFunction.name : undefined;
                 const toolArgs =
-                  typeof toolFunction?.arguments === "string"
-                    ? toolFunction.arguments
-                    : undefined;
+                  typeof toolFunction?.arguments === "string" ? toolFunction.arguments : undefined;
 
                 // Accumulate streamed argument fragments into a single block per
                 // tool index. Lookup and store MUST use the same key — previously
@@ -1141,13 +1117,10 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
           // Handle finish_reason for text/tool blocks
           for (const choice of choices) {
             const finishReason =
-              typeof choice.finish_reason === "string"
-                ? choice.finish_reason
-                : undefined;
+              typeof choice.finish_reason === "string" ? choice.finish_reason : undefined;
 
             if (finishReason) {
-              const choiceIndex =
-                typeof choice.index === "number" ? choice.index : 0;
+              const choiceIndex = typeof choice.index === "number" ? choice.index : 0;
 
               // End any open text block
               for (let i = blocks.length - 1; i >= 0; i--) {
@@ -1279,8 +1252,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         );
 
         // Resolve deployment name: use model.id or the deployment from model params
-        const deployment =
-          (model as { deployment?: string }).deployment ?? model.id;
+        const deployment = (model as { deployment?: string }).deployment ?? model.id;
 
         const client = new AzureOpenAI({
           apiKey,
@@ -1326,14 +1298,21 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         );
 
         const blocks = output.content;
+        let receivedTerminalResponse = false;
 
-        for await (const event of responseStream as unknown as AsyncIterable<Record<string, unknown>>) {
+        for await (const event of responseStream as unknown as AsyncIterable<
+          Record<string, unknown>
+        >) {
           const eventType = resolveResponsesEventType(event);
+
+          if (applyResponsesTerminalEvent(event, output, model)) {
+            receivedTerminalResponse = true;
+            continue;
+          }
 
           if (eventType === "response.created") {
             const response = event.response as Record<string, unknown> | undefined;
-            output.responseId =
-              typeof response?.id === "string" ? response.id : undefined;
+            output.responseId = typeof response?.id === "string" ? response.id : undefined;
             continue;
           }
 
@@ -1346,13 +1325,12 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
             const part = event.part as Record<string, unknown> | undefined;
             if (part?.type === "output_text") {
               const outputIndex =
-                typeof event.output_index === "number"
-                  ? event.output_index
-                  : blocks.length;
+                typeof event.output_index === "number" ? event.output_index : blocks.length;
               const block: TransportContentBlock = {
                 type: "text",
                 text: "",
                 index: outputIndex,
+                partIndex: typeof event.content_index === "number" ? event.content_index : 0,
               };
               output.content.push(block);
               stream.push({
@@ -1370,10 +1348,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
             const text = sanitizeTransportPayloadText(delta);
             if (text.length === 0) continue;
 
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "text");
             const block = blocks[contentIndex];
             if (block?.type === "text") {
               block.text += text;
@@ -1388,14 +1363,10 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
           }
 
           if (eventType === "response.output_text.done") {
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "text");
             const block = blocks[contentIndex];
             if (block?.type === "text") {
-              const doneText =
-                typeof event.text === "string" ? event.text : undefined;
+              const doneText = typeof event.text === "string" ? event.text : undefined;
               if (doneText !== undefined) {
                 block.text = doneText;
               }
@@ -1411,18 +1382,16 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
 
           if (eventType === "response.reasoning_summary_part.added") {
             const outputIndex =
-              typeof event.output_index === "number"
-                ? event.output_index
-                : blocks.length;
-            const summary = event.summary as
+              typeof event.output_index === "number" ? event.output_index : blocks.length;
+            const summary = (event.part ?? event.summary) as
               | { text?: string; id?: string }
               | undefined;
             const block: TransportContentBlock = {
               type: "thinking",
               thinking: typeof summary?.text === "string" ? summary.text : "",
-              thinkingSignature:
-                typeof summary?.id === "string" ? summary.id : "reasoning_summary",
+              thinkingSignature: typeof summary?.id === "string" ? summary.id : "reasoning_summary",
               index: outputIndex,
+              partIndex: typeof event.summary_index === "number" ? event.summary_index : 0,
             };
             output.content.push(block);
             const contentIndex = output.content.length - 1;
@@ -1448,10 +1417,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
             const text = sanitizeTransportPayloadText(delta);
             if (text.length === 0) continue;
 
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "thinking");
             const block = blocks[contentIndex];
             if (block?.type === "thinking") {
               block.thinking += text;
@@ -1466,12 +1432,11 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
           }
 
           if (eventType === "response.reasoning_summary_text.done") {
-            const contentIndex =
-              typeof event.content_index === "number"
-                ? event.content_index
-                : blocks.length - 1;
+            const contentIndex = resolveResponsesContentIndex(blocks, event, "thinking");
             const block = blocks[contentIndex];
             if (block?.type === "thinking") {
+              if (typeof event.text === "string")
+                block.thinking = sanitizeTransportPayloadText(event.text);
               stream.push({
                 type: "thinking_end",
                 contentIndex,
@@ -1491,10 +1456,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
                 name: typeof item.name === "string" ? item.name : "",
                 arguments: {},
                 partialJson: "",
-                index:
-                  typeof event.output_index === "number"
-                    ? event.output_index
-                    : blocks.length,
+                index: typeof event.output_index === "number" ? event.output_index : blocks.length,
               };
               output.content.push(block);
               stream.push({
@@ -1509,11 +1471,8 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
           if (eventType === "response.function_call_arguments.delta") {
             const delta = typeof event.delta === "string" ? event.delta : "";
             if (delta.length === 0) continue;
-            const outputIndex =
-              typeof event.output_index === "number" ? event.output_index : -1;
-            const idx = blocks.findIndex(
-              (b) => b.type === "toolCall" && b.index === outputIndex,
-            );
+            const outputIndex = typeof event.output_index === "number" ? event.output_index : -1;
+            const idx = blocks.findIndex((b) => b.type === "toolCall" && b.index === outputIndex);
             const block = idx !== -1 ? blocks[idx] : undefined;
             if (block?.type === "toolCall") {
               const partialJson = `${block.partialJson ?? ""}${delta}`;
@@ -1530,57 +1489,24 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
           }
 
           if (eventType === "response.function_call_arguments.done") {
-            const outputIndex =
-              typeof event.output_index === "number" ? event.output_index : -1;
-            const idx = blocks.findIndex(
-              (b) => b.type === "toolCall" && b.index === outputIndex,
-            );
-            const block = idx !== -1 ? blocks[idx] : undefined;
-            if (block?.type === "toolCall") {
-              const doneArgs =
-                typeof event.arguments === "string" ? event.arguments : undefined;
-              if (doneArgs !== undefined) {
-                block.partialJson = doneArgs;
-                block.arguments = coerceTransportToolCallArguments(
-                  parseToolCallArguments(doneArgs),
-                );
-              } else if (
-                typeof block.partialJson === "string" &&
-                block.partialJson.length > 0
-              ) {
-                block.arguments = coerceTransportToolCallArguments(
-                  parseToolCallArguments(block.partialJson),
-                );
-              }
-              delete block.partialJson;
-              delete block.index;
-              stream.push({
-                type: "toolcall_end",
-                contentIndex: idx,
-                toolCall: block as never,
-                partial: output as never,
-              });
-            }
+            finalizeResponsesToolItem(event, blocks);
             continue;
           }
-
-          if (eventType === "response.completed") {
-            const response = event.response as Record<string, unknown> | undefined;
-            const usage = response?.usage as Record<string, unknown> | undefined;
-            const stopReason =
-              typeof response?.status === "string" ? response.status : undefined;
-
-            output.stopReason = resolveResponsesStopReason(
-              stopReason,
-              output.content.some((block) => block.type === "toolCall"),
-            );
-
-            applyProviderUsage(output, model, usage);
+          if (eventType === "response.output_item.done") {
+            finalizeResponsesToolItem(event, blocks);
+            continue;
           }
         }
 
+        // Keep Azure's Responses terminal contract identical to the OpenAI-compatible path.
+        if (!receivedTerminalResponse)
+          throw new Error("Responses stream ended without a terminal response event");
+        emitCompletedResponsesToolCalls(output, stream, options?.signal);
+
         for (const block of output.content) {
           delete block.index;
+          if (block.type !== "toolCall") delete block.partIndex;
+          else delete block.argumentsComplete;
         }
         finalizeTransportStream({
           stream,
@@ -1596,6 +1522,8 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
           cleanup: () => {
             for (const block of output.content) {
               delete block.index;
+              if (block.type !== "toolCall") delete block.partIndex;
+              else delete block.argumentsComplete;
             }
           },
         });

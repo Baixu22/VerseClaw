@@ -195,6 +195,8 @@ UI change では Electron E2E と en/zh/ja/ru の string を追加します。Co
 
 [個人 Agent QA シナリオ集](openclaw_runtime/qa/README.md)は、スクリプト provider で十項目の Gateway シナリオを実行し、最終状態を決定的に検証します。ソース実行環境の証拠は制御フロー、拒否、復旧を対象とし、実モデル品質とパッケージ動作には個別の検証ゲートがあります。
 
+[Responses 検証契約](harness/specs/tasks/product-acceptance-space-bunny.md)は、ローカルサービスの推論後の本文、一度のツール往復、会話分離、中断と provider 障害を対象にします。中断した Responses stream は正常完了にも、不完全な引数でのツール実行にもなりません。この検証はモデルやリリースの承認ではありません。
+
 完全な gate map は [development and validation](docs/modules/development-and-validation.md) を参照してください。
 
 <a id="troubleshooting"></a>

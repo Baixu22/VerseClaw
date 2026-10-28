@@ -197,6 +197,8 @@ UI changes should include Electron E2E and en/zh/ja/ru strings. Communication ch
 
 The [personal-agent QA pack](openclaw_runtime/qa/README.md) runs ten Gateway scenarios with a scripted provider and deterministic final-state checks. Its source-host evidence covers control flow, denial and recovery; live-model quality and packaged behavior have separate acceptance gates.
 
+The [Responses acceptance contract](harness/specs/tasks/product-acceptance-space-bunny.md) covers text after reasoning, one tool round trip, session isolation, cancellation and provider failures on a configured local service. An interrupted Responses stream cannot finish a turn successfully or dispatch an incomplete tool call. These checks do not approve a model or a release.
+
 See [development and validation](docs/modules/development-and-validation.md) for the full gate map and evidence rules.
 
 <a id="troubleshooting"></a>

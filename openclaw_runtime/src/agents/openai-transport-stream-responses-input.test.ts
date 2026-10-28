@@ -161,7 +161,7 @@ describe("OpenAI Responses request body — official schema conformance", () => 
       {
         type: "message",
         role: "assistant",
-        content: [{ type: "output_text", text: "I will read it.", annotations: [] }],
+        content: "I will read it.",
       },
       {
         type: "function_call",

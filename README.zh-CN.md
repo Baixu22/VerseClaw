@@ -197,6 +197,8 @@ UI 改动应补 Electron E2E 和 en/zh/ja/ru 文案。通信路径改动还应�
 
 [个人 Agent QA 场景包](openclaw_runtime/qa/README.md)通过脚本 provider 运行十项 Gateway 场景，并确定性回读终态。源宿主证据覆盖控制流、拒绝和恢复；真实模型质量与打包行为有各自的验收门禁。
 
+[Responses 验收合同](harness/specs/tasks/product-acceptance-space-bunny.md)覆盖本地服务的推理后正文、一次工具往返、会话隔离、取消与 provider 故障。中断的 Responses 流不能成功结束任务，也不能派发参数不完整的工具调用；这些检查不构成模型或发布批准。
+
 完整门禁与证据规则见[开发与验证](docs/modules/development-and-validation.md)。
 
 <a id="troubleshooting"></a>
