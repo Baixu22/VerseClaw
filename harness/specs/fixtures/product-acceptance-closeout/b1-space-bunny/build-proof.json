@@ -1,0 +1,80 @@
+{
+  "schema": "TF0580FreshBuild/v1",
+  "driven_by": "agent",
+  "actor": "codex-build-sealer",
+  "generatedAt": "2026-10-28T08:52:14.761Z",
+  "candidate": {
+    "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+    "tree": "8d603d589768b7c958632c98e693239b834279b7",
+    "dirty": false
+  },
+  "buildCommands": [
+    {
+      "schema": "TF0580Gate/v1",
+      "label": "vite-build",
+      "actor": "codex-executor",
+      "driven_by": "agent",
+      "candidate": {
+        "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+        "tree": "8d603d589768b7c958632c98e693239b834279b7",
+        "dirty": false
+      },
+      "command": [
+        "pnpm",
+        "run",
+        "build:vite"
+      ],
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "build:vite"
+      ],
+      "startedAt": "2026-10-28T08:50:03.520Z",
+      "finishedAt": "2026-10-28T08:51:07.838Z",
+      "elapsedMs": 64311.1204,
+      "exitCode": 0,
+      "log": "vite-build.log",
+      "logSha256": "bd327ec0e8aefc72c1a5defa7bb89350dceeb8d224b5b4297a62eb52d6b5d9dd",
+      "recordPath": "D:\\tmp\\clawx-product-acceptance\\tf0580\\final-acceptance-ec2f1b966-20261028\\vite-build.command.json",
+      "recordSha256": "52654f6b6b5a75307dd9247680818ccfe25c7fcd28f59e0121ec486b08b8fe4c"
+    },
+    {
+      "schema": "TF0580Gate/v1",
+      "label": "runtime-build",
+      "actor": "codex-executor",
+      "driven_by": "agent",
+      "candidate": {
+        "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+        "tree": "8d603d589768b7c958632c98e693239b834279b7",
+        "dirty": false
+      },
+      "command": [
+        "pnpm",
+        "run",
+        "build:runtime"
+      ],
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "build:runtime"
+      ],
+      "startedAt": "2026-10-28T08:51:19.338Z",
+      "finishedAt": "2026-10-28T08:52:00.230Z",
+      "elapsedMs": 40884.238600000004,
+      "exitCode": 0,
+      "log": "runtime-build.log",
+      "logSha256": "5670b5556d107c056d18bf9397286472a1a3706da31fe3ae08e7163325bea542",
+      "recordPath": "D:\\tmp\\clawx-product-acceptance\\tf0580\\final-acceptance-ec2f1b966-20261028\\runtime-build.command.json",
+      "recordSha256": "cd3ee9ecbe9daef90fde47bcbf2bd62ac2f78740c90a8d04252830db6624800d"
+    }
+  ],
+  "sourceCount": 6621,
+  "buildCount": 13976,
+  "runtimeBuildStamp": {
+    "builtAt": 1793177497628,
+    "head": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c"
+  },
+  "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67"
+}

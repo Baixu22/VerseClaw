@@ -1,0 +1,15 @@
+{
+  "candidate": {
+    "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+    "tree": "8d603d589768b7c958632c98e693239b834279b7",
+    "dirty": false
+  },
+  "driven_by": "agent",
+  "actor": "codex-tf0580-b1-space-bunny",
+  "rawRoot": "D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028/b1-space-bunny",
+  "buildProof": "D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028/build-proof.json",
+  "buildGateRoot": "D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028",
+  "retainedFinalRun": true,
+  "rawSourcePreserved": true,
+  "sourceMutationGuard": "Passed; tracked source hash unchanged before and after the full Playwright run."
+}

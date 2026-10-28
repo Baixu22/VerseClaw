@@ -1,0 +1,1500 @@
+{
+  "actor": "codex-playwright",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+    "tree": "8d603d589768b7c958632c98e693239b834279b7",
+    "dirty": false,
+    "grade": "source-host-acceptance",
+    "sourceCount": 6621,
+    "buildCount": 13976,
+    "runtimeBuildStamp": {
+      "builtAt": 1793177497628,
+      "head": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c"
+    },
+    "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67"
+  },
+  "repetition": 1,
+  "marker": "EC800D2A0304432F",
+  "fixtureHash": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+  "status": "pass",
+  "configuration": {
+    "port": 59667,
+    "accountId": "custom-gasmok01",
+    "modelRef": "custom-gasmok01/space-bunny",
+    "workspaceId": "responses-acceptance"
+  },
+  "firstTurn": {
+    "sessionKey": "agent:main:session-1793177622449-amx1w4",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Use the read tool exactly once to read probe.txt. Then reply with only the opaque identifier returned by that tool. Do not use any other tool.",
+        "timestamp": 1793177625249,
+        "idempotencyKey": "934d1e55-c532-473f-b824-e8e76b4d2d7e:user",
+        "__openclaw": {
+          "id": "1b9ae5c5",
+          "recordTimestampMs": 1793177630508,
+          "seq": 1
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call_01a181b73ad574cb88afae60",
+            "name": "read",
+            "arguments": {
+              "path": "probe.txt"
+            }
+          }
+        ],
+        "api": "openai-responses",
+        "provider": "custom-gasmok01",
+        "model": "space-bunny",
+        "usage": {
+          "input": 20827,
+          "output": 28,
+          "totalTokens": 20985,
+          "cacheRead": 130,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "toolUse",
+        "timestamp": 1793177630527,
+        "responseId": "01a181b738a277bd88f577a3eb12bd03",
+        "__openclaw": {
+          "id": "c24c5288",
+          "recordTimestampMs": 1793177633688,
+          "seq": 2
+        }
+      },
+      {
+        "role": "toolResult",
+        "toolCallId": "call_01a181b73ad574cb88afae60",
+        "toolName": "read",
+        "content": [
+          {
+            "type": "text",
+            "text": "EC800D2A0304432F\n"
+          }
+        ],
+        "isError": false,
+        "timestamp": 1793177634767,
+        "__openclaw": {
+          "id": "272c2629",
+          "recordTimestampMs": 1793177634769,
+          "seq": 3
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "EC800D2A0304432F"
+          }
+        ],
+        "api": "openai-responses",
+        "provider": "custom-gasmok01",
+        "model": "space-bunny",
+        "usage": {
+          "input": 53,
+          "output": 11,
+          "totalTokens": 21021,
+          "cacheRead": 20957,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "stop",
+        "timestamp": 1793177634778,
+        "responseId": "01a181b748e6784a93294ecf40c73416",
+        "__openclaw": {
+          "id": "67db7bb0",
+          "recordTimestampMs": 1793177637513,
+          "seq": 4
+        }
+      }
+    ],
+    "readResults": 1,
+    "providerCalls": [
+      {
+        "arguments": "{\"path\":\"probe.txt\"}",
+        "call_id": "call_01a181b73ad574cb88afae60",
+        "id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+        "name": "read",
+        "status": "completed",
+        "type": "function_call"
+      }
+    ],
+    "trajectoryTools": [
+      {
+        "traceSchema": "openclaw-trajectory",
+        "schemaVersion": 2,
+        "traceId": "63fd2d8d-6463-42ab-8e2f-69529a90e4f5",
+        "source": "runtime",
+        "ts": "2026-10-28T08:53:53.692Z",
+        "seq": 8,
+        "type": "tool/start",
+        "role": "tool",
+        "phase": "start",
+        "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+        "turnId": "934d1e55-c532-473f-b824-e8e76b4d2d7e:turn",
+        "stepId": "934d1e55-c532-473f-b824-e8e76b4d2d7e:attempt:0:step:934d1e55-c532-473f-b824-e8e76b4d2d7e:model:1",
+        "toolCallId": "call_01a181b73ad574cb88afae60",
+        "state": {
+          "status": "running",
+          "phase": "start",
+          "name": "read",
+          "toolCallId": "call_01a181b73ad574cb88afae60",
+          "args": {
+            "path": "probe.txt"
+          }
+        },
+        "data": {
+          "phase": "start",
+          "name": "read",
+          "toolCallId": "call_01a181b73ad574cb88afae60",
+          "args": {
+            "path": "probe.txt"
+          }
+        }
+      },
+      {
+        "traceSchema": "openclaw-trajectory",
+        "schemaVersion": 2,
+        "traceId": "63fd2d8d-6463-42ab-8e2f-69529a90e4f5",
+        "source": "runtime",
+        "ts": "2026-10-28T08:53:54.379Z",
+        "seq": 9,
+        "type": "tool/end",
+        "role": "tool",
+        "phase": "end",
+        "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+        "turnId": "934d1e55-c532-473f-b824-e8e76b4d2d7e:turn",
+        "stepId": "934d1e55-c532-473f-b824-e8e76b4d2d7e:attempt:0:step:934d1e55-c532-473f-b824-e8e76b4d2d7e:model:1",
+        "toolCallId": "call_01a181b73ad574cb88afae60",
+        "state": {
+          "status": "completed",
+          "phase": "result",
+          "name": "read",
+          "toolCallId": "call_01a181b73ad574cb88afae60",
+          "args": {
+            "path": "probe.txt"
+          },
+          "meta": "from probe.txt",
+          "isError": false
+        },
+        "data": {
+          "phase": "result",
+          "name": "read",
+          "toolCallId": "call_01a181b73ad574cb88afae60",
+          "meta": "from probe.txt",
+          "isError": false
+        }
+      }
+    ]
+  },
+  "continuation": {
+    "sessionKey": "agent:main:session-1793177622449-amx1w4",
+    "sessionId": "63fd2d8d-6463-42ab-8e2f-69529a90e4f5",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Use the read tool exactly once to read probe.txt. Then reply with only the opaque identifier returned by that tool. Do not use any other tool.",
+        "timestamp": 1793177625249,
+        "idempotencyKey": "934d1e55-c532-473f-b824-e8e76b4d2d7e:user",
+        "__openclaw": {
+          "id": "1b9ae5c5",
+          "recordTimestampMs": 1793177630508,
+          "seq": 1
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call_01a181b73ad574cb88afae60",
+            "name": "read",
+            "arguments": {
+              "path": "probe.txt"
+            }
+          }
+        ],
+        "api": "openai-responses",
+        "provider": "custom-gasmok01",
+        "model": "space-bunny",
+        "usage": {
+          "input": 20827,
+          "output": 28,
+          "totalTokens": 20985,
+          "cacheRead": 130,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "toolUse",
+        "timestamp": 1793177630527,
+        "responseId": "01a181b738a277bd88f577a3eb12bd03",
+        "__openclaw": {
+          "id": "c24c5288",
+          "recordTimestampMs": 1793177633688,
+          "seq": 2
+        }
+      },
+      {
+        "role": "toolResult",
+        "toolCallId": "call_01a181b73ad574cb88afae60",
+        "toolName": "read",
+        "content": [
+          {
+            "type": "text",
+            "text": "EC800D2A0304432F\n"
+          }
+        ],
+        "isError": false,
+        "timestamp": 1793177634767,
+        "__openclaw": {
+          "id": "272c2629",
+          "recordTimestampMs": 1793177634769,
+          "seq": 3
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "EC800D2A0304432F"
+          }
+        ],
+        "api": "openai-responses",
+        "provider": "custom-gasmok01",
+        "model": "space-bunny",
+        "usage": {
+          "input": 53,
+          "output": 11,
+          "totalTokens": 21021,
+          "cacheRead": 20957,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "stop",
+        "timestamp": 1793177634778,
+        "responseId": "01a181b748e6784a93294ecf40c73416",
+        "__openclaw": {
+          "id": "67db7bb0",
+          "recordTimestampMs": 1793177637513,
+          "seq": 4
+        }
+      },
+      {
+        "role": "user",
+        "content": "Without calling any tools, repeat the opaque identifier from your previous tool result exactly.",
+        "timestamp": 1793177639804,
+        "idempotencyKey": "cdf98564-292d-4e76-ba8f-4b38a938f6cb:user",
+        "__openclaw": {
+          "id": "9217058e",
+          "recordTimestampMs": 1793177641143,
+          "seq": 5
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "EC800D2A0304432F"
+          }
+        ],
+        "api": "openai-responses",
+        "provider": "custom-gasmok01",
+        "model": "space-bunny",
+        "usage": {
+          "input": 20920,
+          "output": 11,
+          "totalTokens": 21074,
+          "cacheRead": 143,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "stop",
+        "timestamp": 1793177641148,
+        "responseId": "01a181b76189710abac0f670a974ec2d",
+        "__openclaw": {
+          "id": "d22a52d0",
+          "recordTimestampMs": 1793177644860,
+          "seq": 6
+        }
+      }
+    ],
+    "defaults": {
+      "modelProvider": "custom-gasmok01",
+      "model": "space-bunny",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:session-1793177622449-amx1w4",
+      "kind": "direct",
+      "displayName": "Verse Claw",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1793177644870,
+      "sessionId": "63fd2d8d-6463-42ab-8e2f-69529a90e4f5",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off",
+      "inputTokens": 20880,
+      "outputTokens": 39,
+      "totalTokens": 21010,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "startedAt": 1793177641125,
+      "endedAt": 1793177644866,
+      "runtimeMs": 3741,
+      "modelProvider": "custom-gasmok01",
+      "model": "space-bunny",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    },
+    "thinkingLevel": "off"
+  },
+  "isolation": {
+    "sessionKey": "agent:main:session-1793177646976-mmadho",
+    "history": {
+      "sessionKey": "agent:main:session-1793177646976-mmadho",
+      "sessionId": "9fdbc3a4-5aa4-4e37-ab51-3b57d60bc51d",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Without tools, if this conversation has a previous tool result, repeat its opaque identifier. Otherwise reply with exactly NO_PRIOR_TOOL_RESULT.",
+          "timestamp": 1793177648120,
+          "idempotencyKey": "ccab3d16-d0bb-452a-9a58-a65aa778b93b:user",
+          "__openclaw": {
+            "id": "45637547",
+            "recordTimestampMs": 1793177650955,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "thinking",
+              "thinking": "The user asks: without tools, if this conversation has a previous tool result, repeat its opaque identifier. Otherwise reply exactly NO_PRIOR_TOOL_RESULT.\n\nThis conversation's visible history: only this user message, no prior tool results. So reply NO_PRIOR_TOOL_RESULT.\n\nBut the project context includes tool outputs? The artifact sha256 etc. Those aren't conversation tool results. There is no previous tool result in this conversation. Reply exactly."
+            },
+            {
+              "type": "text",
+              "text": "NO_PRIOR_TOOL_RESULT"
+            }
+          ],
+          "api": "openai-responses",
+          "provider": "custom-gasmok01",
+          "model": "space-bunny",
+          "usage": {
+            "input": 21119,
+            "output": 98,
+            "totalTokens": 21217,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1793177650959,
+          "responseId": "01a181b787f57e38ac58aceabb2da0b0",
+          "__openclaw": {
+            "id": "d48718ee",
+            "recordTimestampMs": 1793177654044,
+            "seq": 2
+          }
+        }
+      ],
+      "defaults": {
+        "modelProvider": "custom-gasmok01",
+        "model": "space-bunny",
+        "contextTokens": 200000,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          }
+        ],
+        "thinkingOptions": [
+          "off"
+        ],
+        "thinkingDefault": "off"
+      },
+      "sessionInfo": {
+        "key": "agent:main:session-1793177646976-mmadho",
+        "kind": "direct",
+        "displayName": "Verse Claw",
+        "chatType": "direct",
+        "origin": {
+          "label": "Verse Claw",
+          "provider": "webchat",
+          "surface": "webchat",
+          "chatType": "direct"
+        },
+        "updatedAt": 1793177654179,
+        "sessionId": "9fdbc3a4-5aa4-4e37-ab51-3b57d60bc51d",
+        "systemSent": true,
+        "abortedLastRun": false,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          }
+        ],
+        "thinkingOptions": [
+          "off"
+        ],
+        "thinkingDefault": "off",
+        "inputTokens": 21119,
+        "outputTokens": 98,
+        "totalTokens": 21119,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "status": "done",
+        "startedAt": 1793177650941,
+        "endedAt": 1793177654047,
+        "runtimeMs": 3106,
+        "modelProvider": "custom-gasmok01",
+        "model": "space-bunny",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 200000,
+        "deliveryContext": {
+          "channel": "webchat"
+        },
+        "lastChannel": "webchat",
+        "hasActiveRun": false
+      },
+      "thinkingLevel": "off"
+    },
+    "previousResultInProviderInput": false
+  },
+  "runtimeEvents": [
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.started",
+          "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+          "sessionKey": "agent:main:session-1793177622449-amx1w4",
+          "seq": 1,
+          "ts": 1793177630480,
+          "startedAt": 1793177630480
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "tool.started",
+          "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+          "sessionKey": "agent:main:session-1793177622449-amx1w4",
+          "seq": 2,
+          "ts": 1793177633691,
+          "toolCallId": "call_01a181b73ad574cb88afae60",
+          "name": "read",
+          "args": {
+            "path": "probe.txt"
+          }
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "tool.completed",
+          "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+          "sessionKey": "agent:main:session-1793177622449-amx1w4",
+          "seq": 4,
+          "ts": 1793177634379,
+          "toolCallId": "call_01a181b73ad574cb88afae60",
+          "name": "read",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "EC800D2A0304432F\n"
+              }
+            ],
+            "details": {
+              "versegit_basis": {
+                "schema": "clawx.versegit.tool-basis/v1",
+                "kind": "read",
+                "path": "probe.txt",
+                "lineStart": 1,
+                "lineEnd": 1,
+                "fileSha256": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+                "rangeSha256": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+                "truncated": false
+              }
+            }
+          },
+          "meta": "from probe.txt",
+          "isError": false
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "assistant.delta",
+          "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+          "sessionKey": "agent:main:session-1793177622449-amx1w4",
+          "seq": 6,
+          "ts": 1793177637511,
+          "text": "EC800D2A0304432F",
+          "delta": "EC800D2A0304432F"
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+            "sessionKey": "agent:main:session-1793177622449-amx1w4",
+            "seq": 6,
+            "state": "delta",
+            "deltaText": "EC800D2A0304432F",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "EC800D2A0304432F"
+                }
+              ],
+              "timestamp": 1793177637515
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+            "sessionKey": "agent:main:session-1793177622449-amx1w4",
+            "seq": 7,
+            "state": "final",
+            "stopReason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "EC800D2A0304432F"
+                }
+              ],
+              "timestamp": 1793177637520
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.started",
+          "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+          "sessionKey": "agent:main:session-1793177622449-amx1w4",
+          "seq": 1,
+          "ts": 1793177641125,
+          "startedAt": 1793177641125
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "assistant.delta",
+          "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+          "sessionKey": "agent:main:session-1793177622449-amx1w4",
+          "seq": 2,
+          "ts": 1793177644859,
+          "text": "EC800D2A0304432F",
+          "delta": "EC800D2A0304432F"
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+            "sessionKey": "agent:main:session-1793177622449-amx1w4",
+            "seq": 2,
+            "state": "delta",
+            "deltaText": "EC800D2A0304432F",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "EC800D2A0304432F"
+                }
+              ],
+              "timestamp": 1793177644862
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+            "sessionKey": "agent:main:session-1793177622449-amx1w4",
+            "seq": 3,
+            "state": "final",
+            "stopReason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "EC800D2A0304432F"
+                }
+              ],
+              "timestamp": 1793177644868
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "run.started",
+          "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+          "sessionKey": "agent:main:session-1793177646976-mmadho",
+          "seq": 1,
+          "ts": 1793177650941,
+          "startedAt": 1793177650941
+        }
+      ]
+    },
+    {
+      "channel": "chat:runtime-event",
+      "args": [
+        {
+          "type": "assistant.delta",
+          "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+          "sessionKey": "agent:main:session-1793177646976-mmadho",
+          "seq": 2,
+          "ts": 1793177654043,
+          "text": "NO_PRIOR_TOOL_RESULT",
+          "delta": "NO_PRIOR_TOOL_RESULT"
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+            "sessionKey": "agent:main:session-1793177646976-mmadho",
+            "seq": 2,
+            "state": "delta",
+            "deltaText": "NO_PRIOR_TOOL_RESULT",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "NO_PRIOR_TOOL_RESULT"
+                }
+              ],
+              "timestamp": 1793177654045
+            }
+          }
+        }
+      ]
+    },
+    {
+      "channel": "gateway:chat-message",
+      "args": [
+        {
+          "message": {
+            "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+            "sessionKey": "agent:main:session-1793177646976-mmadho",
+            "seq": 3,
+            "state": "final",
+            "stopReason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "NO_PRIOR_TOOL_RESULT"
+                }
+              ],
+              "timestamp": 1793177654048
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "gatewayCleanup": {
+    "pid": 23096,
+    "statusBefore": "running",
+    "aliveAfterStop": false
+  },
+  "electronCleanup": {
+    "pid": 43136,
+    "aliveAfterClose": false
+  },
+  "cleanup": {
+    "listening": false,
+    "sockets": 0,
+    "requests": 0
+  },
+  "provider": [
+    {
+      "requestId": "ee22333f-1c05-4244-af82-ebe4b4ceec48",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "56d70453d0fae7b93de9ce22aea951b57bd9abc542a3aea8c7245481c9a47ac6",
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "bcf52fbee20472d9ca45415ff5facc032f9a507bc5d2f20948915a987d0cd39c"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Wed 2026-10-28 16:53 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nUse the read tool exactly once to read probe.txt. Then reply with only the opaque identifier returned by that tool. Do not use any other tool."
+            }
+          ]
+        }
+      ],
+      "fixtureResultInInput": false,
+      "fault": null,
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "01a181b738a277bd88f577a3eb12bd03",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        },
+        {
+          "type": "response.output_item.added",
+          "item": {
+            "arguments": "",
+            "call_id": "call_01a181b73ad574cb88afae60",
+            "id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+            "name": "read",
+            "status": "in_progress",
+            "type": "function_call"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.function_call_arguments.delta",
+          "delta": "{",
+          "item_id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+          "output_index": 0
+        },
+        {
+          "type": "response.function_call_arguments.delta",
+          "delta": "\"path\":\"probe.txt",
+          "item_id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+          "output_index": 0
+        },
+        {
+          "type": "response.function_call_arguments.delta",
+          "delta": "\"",
+          "item_id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+          "output_index": 0
+        },
+        {
+          "type": "response.function_call_arguments.delta",
+          "delta": "}",
+          "item_id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+          "output_index": 0
+        },
+        {
+          "type": "response.function_call_arguments.done",
+          "item_id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+          "output_index": 0,
+          "arguments": "{\"path\":\"probe.txt\"}"
+        },
+        {
+          "type": "response.output_item.done",
+          "item": {
+            "arguments": "{\"path\":\"probe.txt\"}",
+            "call_id": "call_01a181b73ad574cb88afae60",
+            "id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+            "name": "read",
+            "status": "completed",
+            "type": "function_call"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.completed",
+          "response": {
+            "id": "01a181b738a277bd88f577a3eb12bd03",
+            "model": "space-bunny",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 20957,
+              "input_tokens_details": {
+                "cached_tokens": 130
+              },
+              "output_tokens": 28,
+              "total_tokens": 20985
+            },
+            "error": null,
+            "output": [
+              {
+                "arguments": "{\"path\":\"probe.txt\"}",
+                "call_id": "call_01a181b73ad574cb88afae60",
+                "id": "fc_5eaf0dc485bfe4c712ed961395ffcce0",
+                "name": "read",
+                "status": "completed",
+                "type": "function_call"
+              }
+            ],
+            "text": ""
+          }
+        }
+      ],
+      "aborted": false,
+      "safetyCutoff": false,
+      "httpStatus": 200,
+      "providerRequestId": null,
+      "firstByteMs": 2906.9705000000104,
+      "completionMs": 3110.891300000003
+    },
+    {
+      "requestId": "3add47a6-3b5f-4798-a080-93cd3bb629d8",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "5c367d9faabaa271fd4404fa202ea3e237e9f02c329846c6bf60d64704caeb1e",
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "bcf52fbee20472d9ca45415ff5facc032f9a507bc5d2f20948915a987d0cd39c"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Wed 2026-10-28 16:53 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nUse the read tool exactly once to read probe.txt. Then reply with only the opaque identifier returned by that tool. Do not use any other tool."
+            }
+          ]
+        },
+        {
+          "type": "function_call",
+          "call_id": "call_01a181b73ad574cb88afae60",
+          "name": "read",
+          "arguments": "{\"path\":\"probe.txt\"}"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_01a181b73ad574cb88afae60",
+          "output": "EC800D2A0304432F\n"
+        }
+      ],
+      "fixtureResultInInput": true,
+      "fault": null,
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "01a181b748e6784a93294ecf40c73416",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        },
+        {
+          "type": "response.output_item.added",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "text": "",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+            "role": "assistant",
+            "status": "in_progress",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.content_part.added",
+          "item_id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "EC",
+          "item_id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "800D2A0304432F",
+          "item_id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.done",
+          "text": "EC800D2A0304432F",
+          "item_id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.content_part.done",
+          "item_id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_item.done",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "EC800D2A0304432F",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.completed",
+          "response": {
+            "id": "01a181b748e6784a93294ecf40c73416",
+            "model": "space-bunny",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 21010,
+              "input_tokens_details": {
+                "cached_tokens": 20957
+              },
+              "output_tokens": 11,
+              "total_tokens": 21021
+            },
+            "error": null,
+            "output": [
+              {
+                "content": [
+                  {
+                    "annotations": [],
+                    "logprobs": [],
+                    "text": "EC800D2A0304432F",
+                    "type": "output_text"
+                  }
+                ],
+                "id": "msg_8527d7fab050b5d4d96b9af41cf2589f",
+                "role": "assistant",
+                "status": "completed",
+                "type": "message"
+              }
+            ],
+            "text": "EC800D2A0304432F"
+          }
+        }
+      ],
+      "aborted": false,
+      "safetyCutoff": false,
+      "httpStatus": 200,
+      "providerRequestId": null,
+      "firstByteMs": 2312.747900000002,
+      "completionMs": 2712.8439999999973
+    },
+    {
+      "requestId": "8bd31433-eb29-41c1-831e-5bd3bc8cb828",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "c52c68aede508e0f9a749cc3b360fcb6385e02c55482848a050127b38790ebd8",
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "bcf52fbee20472d9ca45415ff5facc032f9a507bc5d2f20948915a987d0cd39c"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Wed 2026-10-28 16:53 GMT+8] Use the read tool exactly once to read probe.txt. Then reply with only the opaque identifier returned by that tool. Do not use any other tool."
+            }
+          ]
+        },
+        {
+          "type": "function_call",
+          "call_id": "call_call01a181b73ad574cb88afae60_150af9fb81",
+          "name": "read",
+          "arguments": "{\"path\":\"probe.txt\"}"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_call01a181b73ad574cb88afae60_150af9fb81",
+          "output": "EC800D2A0304432F\n"
+        },
+        {
+          "type": "message",
+          "role": "assistant",
+          "content": "EC800D2A0304432F"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Wed 2026-10-28 16:53 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nWithout calling any tools, repeat the opaque identifier from your previous tool result exactly."
+            }
+          ]
+        }
+      ],
+      "fixtureResultInInput": true,
+      "fault": null,
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "01a181b76189710abac0f670a974ec2d",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        },
+        {
+          "type": "response.output_item.added",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "text": "",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+            "role": "assistant",
+            "status": "in_progress",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.content_part.added",
+          "item_id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "EC",
+          "item_id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "800D2A0304432F",
+          "item_id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.done",
+          "text": "EC800D2A0304432F",
+          "item_id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.content_part.done",
+          "item_id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_item.done",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "EC800D2A0304432F",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.completed",
+          "response": {
+            "id": "01a181b76189710abac0f670a974ec2d",
+            "model": "space-bunny",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 21063,
+              "input_tokens_details": {
+                "cached_tokens": 143
+              },
+              "output_tokens": 11,
+              "total_tokens": 21074
+            },
+            "error": null,
+            "output": [
+              {
+                "content": [
+                  {
+                    "annotations": [],
+                    "logprobs": [],
+                    "text": "EC800D2A0304432F",
+                    "type": "output_text"
+                  }
+                ],
+                "id": "msg_6b097c18cde2810c5f4929bbf09f7eca",
+                "role": "assistant",
+                "status": "completed",
+                "type": "message"
+              }
+            ],
+            "text": "EC800D2A0304432F"
+          }
+        }
+      ],
+      "aborted": false,
+      "safetyCutoff": false,
+      "httpStatus": 200,
+      "providerRequestId": null,
+      "firstByteMs": 3110.287799999991,
+      "completionMs": 3692.227199999994
+    },
+    {
+      "requestId": "a5f420d1-1f4f-48db-bd02-79db260cd147",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "644ab7959e9c40c280c319897be73ac2e2150f6e8e73313f262a360b978c07f7",
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "bcf52fbee20472d9ca45415ff5facc032f9a507bc5d2f20948915a987d0cd39c"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Wed 2026-10-28 16:54 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nWithout tools, if this conversation has a previous tool result, repeat its opaque identifier. Otherwise reply with exactly NO_PRIOR_TOOL_RESULT."
+            }
+          ]
+        }
+      ],
+      "fixtureResultInInput": false,
+      "fault": null,
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "01a181b787f57e38ac58aceabb2da0b0",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        },
+        {
+          "type": "response.output_item.added",
+          "item": {
+            "id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+            "status": "in_progress",
+            "summary": [],
+            "type": "reasoning"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_part.added",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_text.delta",
+          "delta": "The user asks: without tools, if this conversation has a previous tool result, repeat its opaque",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_text.delta",
+          "delta": " identifier. Otherwise reply exactly NO_PRIOR_TOOL_RESULT.\n\nThis conversation's visible",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_text.delta",
+          "delta": " history: only this user message, no prior tool results. So reply NO_PRIOR_TOOL_RESULT.\n\nBut",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_text.delta",
+          "delta": " the project context includes tool outputs? The artifact sha256 etc. Those aren't",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_text.delta",
+          "delta": " conversation tool results. There is no previous tool result in this conversation. Reply exactly.",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_text.done",
+          "text": "The user asks: without tools, if this conversation has a previous tool result, repeat its opaque identifier. Otherwise reply exactly NO_PRIOR_TOOL_RESULT.\n\nThis conversation's visible history: only this user message, no prior tool results. So reply NO_PRIOR_TOOL_RESULT.\n\nBut the project context includes tool outputs? The artifact sha256 etc. Those aren't conversation tool results. There is no previous tool result in this conversation. Reply exactly.",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.reasoning_summary_part.done",
+          "item_id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+          "output_index": 0
+        },
+        {
+          "type": "response.output_item.done",
+          "item": {
+            "id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user asks: without tools, if this conversation has a previous tool result, repeat its opaque identifier. Otherwise reply exactly NO_PRIOR_TOOL_RESULT.\n\nThis conversation's visible history: only this user message, no prior tool results. So reply NO_PRIOR_TOOL_RESULT.\n\nBut the project context includes tool outputs? The artifact sha256 etc. Those aren't conversation tool results. There is no previous tool result in this conversation. Reply exactly.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.output_item.added",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "text": "",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_e3a22e9e403a176ff55dac9eedc7c560",
+            "role": "assistant",
+            "status": "in_progress",
+            "type": "message"
+          },
+          "output_index": 1
+        },
+        {
+          "type": "response.content_part.added",
+          "item_id": "msg_e3a22e9e403a176ff55dac9eedc7c560",
+          "output_index": 1,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "NO_PRIOR_TOOL_RESULT",
+          "item_id": "msg_e3a22e9e403a176ff55dac9eedc7c560",
+          "output_index": 1,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.done",
+          "text": "NO_PRIOR_TOOL_RESULT",
+          "item_id": "msg_e3a22e9e403a176ff55dac9eedc7c560",
+          "output_index": 1,
+          "content_index": 0
+        },
+        {
+          "type": "response.content_part.done",
+          "item_id": "msg_e3a22e9e403a176ff55dac9eedc7c560",
+          "output_index": 1,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_item.done",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "NO_PRIOR_TOOL_RESULT",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_e3a22e9e403a176ff55dac9eedc7c560",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          },
+          "output_index": 1
+        },
+        {
+          "type": "response.completed",
+          "response": {
+            "id": "01a181b787f57e38ac58aceabb2da0b0",
+            "model": "space-bunny",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 21119,
+              "output_tokens": 98,
+              "output_tokens_details": {
+                "reasoning_tokens": 89
+              },
+              "total_tokens": 21217
+            },
+            "error": null,
+            "output": [
+              {
+                "id": "rs_2235b054f9f94266b9fef00c5e4a3c21",
+                "status": "completed",
+                "summary": [
+                  {
+                    "text": "The user asks: without tools, if this conversation has a previous tool result, repeat its opaque identifier. Otherwise reply exactly NO_PRIOR_TOOL_RESULT.\n\nThis conversation's visible history: only this user message, no prior tool results. So reply NO_PRIOR_TOOL_RESULT.\n\nBut the project context includes tool outputs? The artifact sha256 etc. Those aren't conversation tool results. There is no previous tool result in this conversation. Reply exactly.",
+                    "type": "summary_text"
+                  }
+                ],
+                "type": "reasoning"
+              },
+              {
+                "content": [
+                  {
+                    "annotations": [],
+                    "logprobs": [],
+                    "text": "NO_PRIOR_TOOL_RESULT",
+                    "type": "output_text"
+                  }
+                ],
+                "id": "msg_e3a22e9e403a176ff55dac9eedc7c560",
+                "role": "assistant",
+                "status": "completed",
+                "type": "message"
+              }
+            ],
+            "text": "NO_PRIOR_TOOL_RESULT"
+          }
+        }
+      ],
+      "aborted": false,
+      "safetyCutoff": false,
+      "httpStatus": 200,
+      "providerRequestId": null,
+      "firstByteMs": 2121.9130999999907,
+      "completionMs": 3069.0441999999894
+    }
+  ]
+}

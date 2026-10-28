@@ -1,0 +1,153 @@
+{
+  "schema": "SpaceBunnyIndependentAcceptanceReview/v1",
+  "actor": "space-bunny-verifier",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+    "tree": "8d603d589768b7c958632c98e693239b834279b7",
+    "dirty": false
+  },
+  "inputFiles": [
+    {
+      "path": "build-proof.json",
+      "sha256": "ab2e92e9840895f49a3e703bff2c6de3054ad4df6d2ad4b419f7617325a5a933",
+      "bytes": 2727
+    },
+    {
+      "path": "cleanup-control-expected-failure.json",
+      "sha256": "6e4ce5f65525e2496f7e3941b846f42c62b125afed767387d649372a55e078a7",
+      "bytes": 1056
+    },
+    {
+      "path": "cleanup-negative-control.json",
+      "sha256": "37597f51f029c772707d3acc665478e1ebc379d156beb6bee40dc38a3537174d",
+      "bytes": 627
+    },
+    {
+      "path": "credential-scan.json",
+      "sha256": "c4f8be3179b7ec0f697e0877bd4a63c1f83e66100fed7ca950bab02f9c7885fd",
+      "bytes": 154
+    },
+    {
+      "path": "direct-probes.json",
+      "sha256": "f436d830162ceb50417d8c2f3ee213218826dbbc955b89d4b01ee8815261ba8b",
+      "bytes": 13241
+    },
+    {
+      "path": "electron-process-cleanup.json",
+      "sha256": "20d8723658b55a9f4919b1329160ab8b7d7812b0018efa98338454dcd791bb09",
+      "bytes": 884
+    },
+    {
+      "path": "electron-process-run.json",
+      "sha256": "5c726f0f4bf11d7e20aff231461b03b8d500c832d2b9dcd7d951c9e043ab97c8",
+      "bytes": 135
+    },
+    {
+      "path": "faults.json",
+      "sha256": "7cb61f45c4bc5e552bf86e0776fa426aad31bbbaa910f2d3b17c2490862aab2c",
+      "bytes": 228080
+    },
+    {
+      "path": "playwright-command.json",
+      "sha256": "eaf219d76255c9cf31e78d0f9b114f84758bb0dcdb42183a11eff299336125de",
+      "bytes": 514
+    },
+    {
+      "path": "playwright.log",
+      "sha256": "a3cf4a1525893fad7b37a7534d76f6683fc8674441ff2e13b7166eabd4366efb",
+      "bytes": 1612
+    },
+    {
+      "path": "receipt.json",
+      "sha256": "9c57c37b6486d3e46463715fe63eeb94826094a42d7e0c8c6dca7cef61d6cb57",
+      "bytes": 15722
+    },
+    {
+      "path": "recovery-index.json",
+      "sha256": "3255ed0442becb2925d61016cb8f589f087c79998fea4703570cf4d260019342",
+      "bytes": 704
+    },
+    {
+      "path": "runtime-tests.json",
+      "sha256": "bc230f519cd47e97f57474d5d67e5c200d390d20f84e816f29225860908a184a",
+      "bytes": 13464
+    },
+    {
+      "path": "smoke-1.json",
+      "sha256": "1e46fddd78578c1db6201e2dba82ec56f6e628d269ce83f7fa1825cca7e4fcad",
+      "bytes": 46393
+    },
+    {
+      "path": "smoke-1.png",
+      "sha256": "39818e49826e118c48fe52405c568c0d5c811792200157b4f4ff5f3977a91e29",
+      "bytes": 652846
+    },
+    {
+      "path": "smoke-2.json",
+      "sha256": "dd8f0a4d295294f892f8ab4ebb43a2e8fba59663c9761f739d7c80117c7300df",
+      "bytes": 42671
+    },
+    {
+      "path": "smoke-2.png",
+      "sha256": "3a7a2c1e2d5d861353c1fe7c578389f0b70da9a5da9c20731be0eab16117e453",
+      "bytes": 617455
+    },
+    {
+      "path": "smoke-3.json",
+      "sha256": "cb2ebfd897d1882975a39fe25a4d7712a8388def3fc6a39af49ba6ed769e3e4f",
+      "bytes": 45398
+    },
+    {
+      "path": "smoke-3.png",
+      "sha256": "76022710dac80b73df9c9935445913ead2d89d39960674302709f810c8bcb8b1",
+      "bytes": 649390
+    },
+    {
+      "path": "source-mutation-guard.json",
+      "sha256": "cc9cda6336fca44674ccc0f8760a929162f6cad82123c771618ce0d682f51712",
+      "bytes": 585
+    },
+    {
+      "path": "source-state-after.json",
+      "sha256": "56858dc575ec9e9ad74ed3f5fb01cbb139b5e9389dda6d760e82cd94a86396d2",
+      "bytes": 194
+    },
+    {
+      "path": "source-state-before.json",
+      "sha256": "56858dc575ec9e9ad74ed3f5fb01cbb139b5e9389dda6d760e82cd94a86396d2",
+      "bytes": 194
+    }
+  ],
+  "inputSha256": "3b95e1a21436aee53918e73699b6016dd531ee5f0dc6c07357ce88785a9b1ba4",
+  "inputChars": 76993,
+  "retainedBundle": {
+    "path": "final-review-bundle.json",
+    "sha256": "86b3dd176a9426a089bb27939b34a27845df9b8dc95c974d8c1543f0b6eece9c",
+    "bytes": 75526
+  },
+  "returnedModel": "space-bunny",
+  "responseId": "01a181d57cf179769967ddd6d72ed5ac",
+  "usage": {
+    "input_tokens": 21775,
+    "output_tokens": 532,
+    "output_tokens_details": {
+      "reasoning_tokens": 425
+    },
+    "total_tokens": 22307
+  },
+  "verdict": {
+    "verdict": "approve",
+    "findings": [],
+    "limitations": [
+      "Acceptance is limited to Windows x64 source-host, agent-driven evidence; package and install-state behavior were not tested.",
+      "The provider returned the alias space-bunny; independent verification of the provider's underlying model identity is outside this scope.",
+      "The provider returned no cost data.",
+      "Image capability, other providers or platforms, general model quality, and GA readiness were not established.",
+      "Release approval, product approval, live readiness, and default-on status remain false."
+    ]
+  },
+  "limitations": [
+    "Independent agent review of compact retained-evidence projections and integrity inventory; reviewer did not rerun tests."
+  ]
+}

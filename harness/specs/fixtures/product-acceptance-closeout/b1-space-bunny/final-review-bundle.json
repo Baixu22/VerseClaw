@@ -1,0 +1,2428 @@
+{
+  "receipt": {
+    "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+    "node": "TF-0580",
+    "runId": "tf0580-final-ec2f1b966-20261028",
+    "generatedAt": "2026-10-28T09:07:35.296Z",
+    "driven_by": "agent",
+    "actor": "codex-tf0580-b1-space-bunny",
+    "candidate": {
+      "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+      "tree": "8d603d589768b7c958632c98e693239b834279b7",
+      "dirty": false
+    },
+    "currentCandidateRun": true,
+    "command": {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "tests/e2e/product-acceptance-space-bunny.spec.ts",
+        "--workers=1",
+        "--output=D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028/b1-space-bunny/test-results"
+      ],
+      "exitCode": 0,
+      "actor": "codex",
+      "driven_by": "agent",
+      "credentialSource": "private-task-forest/environment",
+      "credentialCaptured": false
+    },
+    "build": {
+      "schema": "TF0580FreshBuild/v1",
+      "sourceCount": 6621,
+      "buildCount": 13976,
+      "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67",
+      "candidate": {
+        "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+        "tree": "8d603d589768b7c958632c98e693239b834279b7",
+        "dirty": false
+      }
+    },
+    "checks": {
+      "playwright": {
+        "selected": 6,
+        "executed": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "elapsedSeconds": 540
+      },
+      "direct": {
+        "requestedModels": [
+          "space-bunny",
+          "space-bunny",
+          "space-bunny",
+          "space-bunny"
+        ],
+        "returnedModels": [
+          "space-bunny",
+          "space-bunny",
+          "space-bunny",
+          "space-bunny"
+        ],
+        "responseIds": [
+          "01a181b602ee75f3888e622dbd891d9a",
+          "01a181b60fc47beaa94e6f9d5a5f4dee",
+          "01a181b621f0715eafc79fb531f40f6d",
+          "01a181b62a977c88b0249770feef3f1d"
+        ],
+        "responseStatuses": [
+          "completed",
+          "completed",
+          "completed",
+          "completed"
+        ],
+        "toolsExecuted": 1,
+        "callId": "call-f62a4131-9ba8-4a78-8c99-2dc074a52a8e",
+        "resultMarker": "ECHO_44350DF998A84D54"
+      },
+      "smokes": [
+        {
+          "repetition": 1,
+          "status": "pass",
+          "marker": "EC800D2A0304432F",
+          "fixtureHash": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+          "toolCallId": "call_01a181b73ad574cb88afae60",
+          "readResults": 1,
+          "trajectoryTools": [
+            "tool/start",
+            "tool/end"
+          ],
+          "continuationSessionId": "63fd2d8d-6463-42ab-8e2f-69529a90e4f5",
+          "isolationSessionId": "9fdbc3a4-5aa4-4e37-ab51-3b57d60bc51d",
+          "previousResultInProviderInput": false,
+          "cleanup": {
+            "listening": false,
+            "sockets": 0,
+            "requests": 0
+          },
+          "electronCleanup": {
+            "pid": 43136,
+            "aliveAfterClose": false
+          },
+          "gatewayCleanup": {
+            "pid": 23096,
+            "statusBefore": "running",
+            "aliveAfterStop": false
+          }
+        },
+        {
+          "repetition": 2,
+          "status": "pass",
+          "marker": "E68A519068DF444C",
+          "fixtureHash": "1badc032f1f247bbfcd1342626cd8e320622f2f68a4921e8f2f17dc0bfae1207",
+          "toolCallId": "call_985285b2c0e841f0a409b73e",
+          "readResults": 1,
+          "trajectoryTools": [
+            "tool/start",
+            "tool/end"
+          ],
+          "continuationSessionId": "5a293e5e-da10-4b74-b029-34bfa4741176",
+          "isolationSessionId": "5581ad29-2951-46c4-8c10-f683f88c5b23",
+          "previousResultInProviderInput": false,
+          "cleanup": {
+            "listening": false,
+            "sockets": 0,
+            "requests": 0
+          },
+          "electronCleanup": {
+            "pid": 14124,
+            "aliveAfterClose": false
+          },
+          "gatewayCleanup": {
+            "pid": 37132,
+            "statusBefore": "running",
+            "aliveAfterStop": false
+          }
+        },
+        {
+          "repetition": 3,
+          "status": "pass",
+          "marker": "EFCB409D97EF42D3",
+          "fixtureHash": "5ab15eade6374a0317b7bd46e7801c9202b31b93c7f5a7ecbc180f05f626fc08",
+          "toolCallId": "call_01a181b985cc7712ad159c5c",
+          "readResults": 1,
+          "trajectoryTools": [
+            "tool/start",
+            "tool/end"
+          ],
+          "continuationSessionId": "5d739548-319a-4887-b3d4-65df7361adaa",
+          "isolationSessionId": "923eba5f-59de-480f-829b-b54da4b41a4c",
+          "previousResultInProviderInput": false,
+          "cleanup": {
+            "listening": false,
+            "sockets": 0,
+            "requests": 0
+          },
+          "electronCleanup": {
+            "pid": 25588,
+            "aliveAfterClose": false
+          },
+          "gatewayCleanup": {
+            "pid": 13540,
+            "statusBefore": "running",
+            "aliveAfterStop": false
+          }
+        }
+      ],
+      "faults": [
+        {
+          "type": "timeout",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 1,
+            "quietMs": 3500,
+            "elapsedMs": 3651
+          },
+          "runtimeProbe": {
+            "faultRequests": 1,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "request timed out"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "thinking",
+                "thinking": "The user asks to copy an identifier exactly, without tools. The identifier \"RECOVER_D6A6AF356515\" — that's fine, just echo it.\n\nBut note there's a space in \"RECOVER_D6A6AF356515\"? Let me look: \"RECOVER_D6A6AF356515\" — no space. Actually the identifier in the message... \"RECOVER_D6A6AF356515\". Hmm, but wait, the request says \"copy this opaque identifier exactly\" — no tools. Just output it."
+              },
+              {
+                "type": "text",
+                "text": "RECOVER_D6A6AF356515"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "cancel",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 1,
+            "quietMs": 3500,
+            "elapsedMs": 3656
+          },
+          "runtimeProbe": {
+            "faultRequests": 1,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "aborted",
+            "errorMessage": "Responses stream ended without a terminal response event"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "text",
+                "text": "RECOVER_76B71CE6C228"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "401",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 1,
+            "quietMs": 3500,
+            "elapsedMs": 3642
+          },
+          "runtimeProbe": {
+            "faultRequests": 1,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "401 Injected 401 provider failure"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "thinking",
+                "thinking": "Just copy it."
+              },
+              {
+                "type": "text",
+                "text": "RECOVER_BF134DA3BE67"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "404",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 1,
+            "quietMs": 3500,
+            "elapsedMs": 3645
+          },
+          "runtimeProbe": {
+            "faultRequests": 1,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "404 Injected 404 provider failure"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "text",
+                "text": "RECOVER_F0D27C36808D"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "429",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 3,
+            "quietMs": 3500,
+            "elapsedMs": 3635
+          },
+          "runtimeProbe": {
+            "faultRequests": 3,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "429 Injected 429 provider failure"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "text",
+                "text": "RECOVER_E125D97E0D66"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "500",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 6,
+            "quietMs": 3500,
+            "elapsedMs": 6997
+          },
+          "runtimeProbe": {
+            "faultRequests": 6,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "500 Injected 500 provider failure"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "text",
+                "text": "RECOVER_7E8F877DD782"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "504",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 6,
+            "quietMs": 3500,
+            "elapsedMs": 6940
+          },
+          "runtimeProbe": {
+            "faultRequests": 6,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "504 Injected 504 provider failure"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "thinking",
+                "thinking": "Justcopy the identifier."
+              },
+              {
+                "type": "text",
+                "text": "RECOVER_16085D6B1A6D"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "malformed",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 1,
+            "quietMs": 3500,
+            "elapsedMs": 3641
+          },
+          "runtimeProbe": {
+            "faultRequests": 1,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "text",
+                "text": "RECOVER_73A9220A52CE"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        },
+        {
+          "type": "drop",
+          "status": "pass",
+          "settlement": {
+            "settled": true,
+            "requests": 1,
+            "quietMs": 3500,
+            "elapsedMs": 3634
+          },
+          "runtimeProbe": {
+            "faultRequests": 1,
+            "settled": true,
+            "responseCompleted": false,
+            "providerCalls": 0,
+            "trajectoryTools": 0,
+            "activeRequests": 0
+          },
+          "first": {
+            "stopReason": "error",
+            "errorMessage": "Responses stream ended without a terminal response event"
+          },
+          "recovery": {
+            "stopReason": "stop",
+            "text": [
+              {
+                "type": "thinking",
+                "thinking": "User asks to copy an identifier exactly. But instructions say never copy yourself... this is just an identifier, not the assistant. Fine."
+              },
+              {
+                "type": "text",
+                "text": "RECOVER_55FD425DB506"
+              }
+            ]
+          },
+          "lateEffectExists": false
+        }
+      ],
+      "cleanup": {
+        "negativeControlExpectedFailure": "fail",
+        "negativeControlProxy": {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        },
+        "ownedElectronReclaimed": true,
+        "negativeControlPass": "pass",
+        "smokeReceipts": [
+          {
+            "listening": false,
+            "sockets": 0,
+            "requests": 0
+          },
+          {
+            "listening": false,
+            "sockets": 0,
+            "requests": 0
+          },
+          {
+            "listening": false,
+            "sockets": 0,
+            "requests": 0
+          }
+        ],
+        "faultReceipt": {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        },
+        "processLedgerSurvivors": 0,
+        "sourceMutation": false
+      },
+      "unit": {
+        "rootProviderTests": {
+          "selected": 3,
+          "executed": 3,
+          "passed": 102,
+          "failed": 0,
+          "skipped": 0
+        },
+        "runtimeResponses": {
+          "selected": 2,
+          "executed": 2,
+          "passed": 32,
+          "failed": 0,
+          "skipped": 0,
+          "report": "runtime-tests.json",
+          "reportSha256": "bc230f519cd47e97f57474d5d67e5c200d390d20f84e816f29225860908a184a"
+        },
+        "typecheck": "pnpm run typecheck exited 0 (node, web, test)",
+        "commsReplayCompare": "passed",
+        "specValidation": "harness validate and dry-run passed"
+      },
+      "repositoryGates": {
+        "docsPolicyChecks": 10,
+        "artifactRetention": "passed",
+        "evidenceRefs": 187
+      }
+    },
+    "limitations": [
+      "Windows x64 source-host and agent-driven evidence; package/install-state not tested.",
+      "The provider returns the alias space-bunny; independently named model identity is not asserted.",
+      "Cost is null because the provider did not return cost.",
+      "This does not prove image capability, other providers/platforms, general model quality or GA.",
+      "Preparation-time outputs may have exposed the provider key in agent logs; retained final artifacts were independently scanned and are clean.",
+      "releaseApproved/productApproved/liveReady/defaultOn remain false; retired Runtime Memory flags remain retired."
+    ],
+    "retained": {
+      "rawRunRoot": "D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028/b1-space-bunny",
+      "recoveryIndex": "recovery-index.json",
+      "manifest": "manifest.json",
+      "sha256sums": "SHA256SUMS"
+    },
+    "independentVerifier": {
+      "status": "pending-final-review",
+      "verifierActor": "space-bunny-verifier",
+      "required": true,
+      "scope": "Read-only review of the retained evidence package; verifier record added after approval."
+    }
+  },
+  "manifest": {
+    "schema": "ProductAcceptanceManifest/v1",
+    "driven_by": "agent",
+    "actor": "codex-tf0580-b1-space-bunny",
+    "candidate": {
+      "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+      "tree": "8d603d589768b7c958632c98e693239b834279b7",
+      "dirty": false
+    },
+    "runId": "tf0580-final-ec2f1b966-20261028",
+    "files": [
+      {
+        "path": "build-proof.json",
+        "sha256": "ab2e92e9840895f49a3e703bff2c6de3054ad4df6d2ad4b419f7617325a5a933",
+        "bytes": 2727
+      },
+      {
+        "path": "cleanup-control-expected-failure.json",
+        "sha256": "6e4ce5f65525e2496f7e3941b846f42c62b125afed767387d649372a55e078a7",
+        "bytes": 1056
+      },
+      {
+        "path": "cleanup-negative-control.json",
+        "sha256": "37597f51f029c772707d3acc665478e1ebc379d156beb6bee40dc38a3537174d",
+        "bytes": 627
+      },
+      {
+        "path": "credential-scan.json",
+        "sha256": "c4f8be3179b7ec0f697e0877bd4a63c1f83e66100fed7ca950bab02f9c7885fd",
+        "bytes": 154
+      },
+      {
+        "path": "direct-probes.json",
+        "sha256": "f436d830162ceb50417d8c2f3ee213218826dbbc955b89d4b01ee8815261ba8b",
+        "bytes": 13241
+      },
+      {
+        "path": "electron-process-cleanup.json",
+        "sha256": "20d8723658b55a9f4919b1329160ab8b7d7812b0018efa98338454dcd791bb09",
+        "bytes": 884
+      },
+      {
+        "path": "electron-process-run.json",
+        "sha256": "5c726f0f4bf11d7e20aff231461b03b8d500c832d2b9dcd7d951c9e043ab97c8",
+        "bytes": 135
+      },
+      {
+        "path": "faults.json",
+        "sha256": "7cb61f45c4bc5e552bf86e0776fa426aad31bbbaa910f2d3b17c2490862aab2c",
+        "bytes": 228080
+      },
+      {
+        "path": "playwright-command.json",
+        "sha256": "eaf219d76255c9cf31e78d0f9b114f84758bb0dcdb42183a11eff299336125de",
+        "bytes": 514
+      },
+      {
+        "path": "playwright.log",
+        "sha256": "a3cf4a1525893fad7b37a7534d76f6683fc8674441ff2e13b7166eabd4366efb",
+        "bytes": 1612
+      },
+      {
+        "path": "receipt.json",
+        "sha256": "9c57c37b6486d3e46463715fe63eeb94826094a42d7e0c8c6dca7cef61d6cb57",
+        "bytes": 15722
+      },
+      {
+        "path": "recovery-index.json",
+        "sha256": "3255ed0442becb2925d61016cb8f589f087c79998fea4703570cf4d260019342",
+        "bytes": 704
+      },
+      {
+        "path": "runtime-tests.json",
+        "sha256": "bc230f519cd47e97f57474d5d67e5c200d390d20f84e816f29225860908a184a",
+        "bytes": 13464
+      },
+      {
+        "path": "smoke-1.json",
+        "sha256": "1e46fddd78578c1db6201e2dba82ec56f6e628d269ce83f7fa1825cca7e4fcad",
+        "bytes": 46393
+      },
+      {
+        "path": "smoke-1.png",
+        "sha256": "39818e49826e118c48fe52405c568c0d5c811792200157b4f4ff5f3977a91e29",
+        "bytes": 652846
+      },
+      {
+        "path": "smoke-2.json",
+        "sha256": "dd8f0a4d295294f892f8ab4ebb43a2e8fba59663c9761f739d7c80117c7300df",
+        "bytes": 42671
+      },
+      {
+        "path": "smoke-2.png",
+        "sha256": "3a7a2c1e2d5d861353c1fe7c578389f0b70da9a5da9c20731be0eab16117e453",
+        "bytes": 617455
+      },
+      {
+        "path": "smoke-3.json",
+        "sha256": "cb2ebfd897d1882975a39fe25a4d7712a8388def3fc6a39af49ba6ed769e3e4f",
+        "bytes": 45398
+      },
+      {
+        "path": "smoke-3.png",
+        "sha256": "76022710dac80b73df9c9935445913ead2d89d39960674302709f810c8bcb8b1",
+        "bytes": 649390
+      },
+      {
+        "path": "source-mutation-guard.json",
+        "sha256": "cc9cda6336fca44674ccc0f8760a929162f6cad82123c771618ce0d682f51712",
+        "bytes": 585
+      },
+      {
+        "path": "source-state-after.json",
+        "sha256": "56858dc575ec9e9ad74ed3f5fb01cbb139b5e9389dda6d760e82cd94a86396d2",
+        "bytes": 194
+      },
+      {
+        "path": "source-state-before.json",
+        "sha256": "56858dc575ec9e9ad74ed3f5fb01cbb139b5e9389dda6d760e82cd94a86396d2",
+        "bytes": 194
+      }
+    ],
+    "counts": {
+      "files": 22,
+      "playwrightPassed": 6,
+      "faultCases": 9,
+      "smokes": 3,
+      "directProbes": 4,
+      "rootProviderTests": 102,
+      "runtimeResponsesTests": 32
+    },
+    "sha256sums": "SHA256SUMS",
+    "receipt": "receipt.json",
+    "recoveryIndex": "recovery-index.json",
+    "independentVerifier": {
+      "status": "pending-final-review",
+      "path": "independent-verifier.json"
+    }
+  },
+  "sha256sums": "ab2e92e9840895f49a3e703bff2c6de3054ad4df6d2ad4b419f7617325a5a933  build-proof.json\n6e4ce5f65525e2496f7e3941b846f42c62b125afed767387d649372a55e078a7  cleanup-control-expected-failure.json\n37597f51f029c772707d3acc665478e1ebc379d156beb6bee40dc38a3537174d  cleanup-negative-control.json\nc4f8be3179b7ec0f697e0877bd4a63c1f83e66100fed7ca950bab02f9c7885fd  credential-scan.json\nf436d830162ceb50417d8c2f3ee213218826dbbc955b89d4b01ee8815261ba8b  direct-probes.json\n20d8723658b55a9f4919b1329160ab8b7d7812b0018efa98338454dcd791bb09  electron-process-cleanup.json\n5c726f0f4bf11d7e20aff231461b03b8d500c832d2b9dcd7d951c9e043ab97c8  electron-process-run.json\n7cb61f45c4bc5e552bf86e0776fa426aad31bbbaa910f2d3b17c2490862aab2c  faults.json\neaf219d76255c9cf31e78d0f9b114f84758bb0dcdb42183a11eff299336125de  playwright-command.json\na3cf4a1525893fad7b37a7534d76f6683fc8674441ff2e13b7166eabd4366efb  playwright.log\n9c57c37b6486d3e46463715fe63eeb94826094a42d7e0c8c6dca7cef61d6cb57  receipt.json\n3255ed0442becb2925d61016cb8f589f087c79998fea4703570cf4d260019342  recovery-index.json\nbc230f519cd47e97f57474d5d67e5c200d390d20f84e816f29225860908a184a  runtime-tests.json\n1e46fddd78578c1db6201e2dba82ec56f6e628d269ce83f7fa1825cca7e4fcad  smoke-1.json\n39818e49826e118c48fe52405c568c0d5c811792200157b4f4ff5f3977a91e29  smoke-1.png\ndd8f0a4d295294f892f8ab4ebb43a2e8fba59663c9761f739d7c80117c7300df  smoke-2.json\n3a7a2c1e2d5d861353c1fe7c578389f0b70da9a5da9c20731be0eab16117e453  smoke-2.png\ncb2ebfd897d1882975a39fe25a4d7712a8388def3fc6a39af49ba6ed769e3e4f  smoke-3.json\n76022710dac80b73df9c9935445913ead2d89d39960674302709f810c8bcb8b1  smoke-3.png\ncc9cda6336fca44674ccc0f8760a929162f6cad82123c771618ce0d682f51712  source-mutation-guard.json\n56858dc575ec9e9ad74ed3f5fb01cbb139b5e9389dda6d760e82cd94a86396d2  source-state-after.json\n56858dc575ec9e9ad74ed3f5fb01cbb139b5e9389dda6d760e82cd94a86396d2  source-state-before.json\n",
+  "buildProof": {
+    "schema": "TF0580FreshBuild/v1",
+    "driven_by": "agent",
+    "actor": "codex-build-sealer",
+    "generatedAt": "2026-10-28T08:52:14.761Z",
+    "candidate": {
+      "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+      "tree": "8d603d589768b7c958632c98e693239b834279b7",
+      "dirty": false
+    },
+    "buildCommands": [
+      {
+        "schema": "TF0580Gate/v1",
+        "label": "vite-build",
+        "actor": "codex-executor",
+        "driven_by": "agent",
+        "candidate": {
+          "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+          "tree": "8d603d589768b7c958632c98e693239b834279b7",
+          "dirty": false
+        },
+        "command": [
+          "pnpm",
+          "run",
+          "build:vite"
+        ],
+        "executable": "C:\\Program Files\\nodejs\\node.exe",
+        "argv": [
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "build:vite"
+        ],
+        "startedAt": "2026-10-28T08:50:03.520Z",
+        "finishedAt": "2026-10-28T08:51:07.838Z",
+        "elapsedMs": 64311.1204,
+        "exitCode": 0,
+        "log": "vite-build.log",
+        "logSha256": "bd327ec0e8aefc72c1a5defa7bb89350dceeb8d224b5b4297a62eb52d6b5d9dd",
+        "recordPath": "D:\\tmp\\clawx-product-acceptance\\tf0580\\final-acceptance-ec2f1b966-20261028\\vite-build.command.json",
+        "recordSha256": "52654f6b6b5a75307dd9247680818ccfe25c7fcd28f59e0121ec486b08b8fe4c"
+      },
+      {
+        "schema": "TF0580Gate/v1",
+        "label": "runtime-build",
+        "actor": "codex-executor",
+        "driven_by": "agent",
+        "candidate": {
+          "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+          "tree": "8d603d589768b7c958632c98e693239b834279b7",
+          "dirty": false
+        },
+        "command": [
+          "pnpm",
+          "run",
+          "build:runtime"
+        ],
+        "executable": "C:\\Program Files\\nodejs\\node.exe",
+        "argv": [
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "build:runtime"
+        ],
+        "startedAt": "2026-10-28T08:51:19.338Z",
+        "finishedAt": "2026-10-28T08:52:00.230Z",
+        "elapsedMs": 40884.238600000004,
+        "exitCode": 0,
+        "log": "runtime-build.log",
+        "logSha256": "5670b5556d107c056d18bf9397286472a1a3706da31fe3ae08e7163325bea542",
+        "recordPath": "D:\\tmp\\clawx-product-acceptance\\tf0580\\final-acceptance-ec2f1b966-20261028\\runtime-build.command.json",
+        "recordSha256": "cd3ee9ecbe9daef90fde47bcbf2bd62ac2f78740c90a8d04252830db6624800d"
+      }
+    ],
+    "sourceCount": 6621,
+    "buildCount": 13976,
+    "runtimeBuildStamp": {
+      "builtAt": 1793177497628,
+      "head": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c"
+    },
+    "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67"
+  },
+  "credentialScan": {
+    "driven_by": "agent",
+    "actor": "codex-tf0580-b1-space-bunny",
+    "patterns": 6,
+    "findings": 0,
+    "files": 24,
+    "status": "clean",
+    "items": []
+  },
+  "sourceGuard": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "767c8cbb85ef53fde39a3e4d8d53ffb5434c05a773c6bfd42424948aa56c9058",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "767c8cbb85ef53fde39a3e4d8d53ffb5434c05a773c6bfd42424948aa56c9058",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "processCleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-v31Lf9",
+    "ledgerEntries": 5,
+    "reaped": [
+      {
+        "pid": 42820,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 43136,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 14124,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 25588,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 36536,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      }
+    ],
+    "survivors": [],
+    "sweep": {
+      "status": "ok",
+      "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-v31Lf9\\",
+      "owned": [],
+      "remaining": []
+    }
+  },
+  "cleanupControl": {
+    "status": "fail",
+    "cleanup": {
+      "listening": false,
+      "sockets": 0,
+      "requests": 0
+    },
+    "electronCleanup": {
+      "pid": 42820,
+      "aliveAfterClose": false
+    },
+    "candidate": {
+      "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+      "tree": "8d603d589768b7c958632c98e693239b834279b7",
+      "dirty": false,
+      "grade": "source-host-acceptance",
+      "sourceCount": 6621,
+      "buildCount": 13976,
+      "runtimeBuildStamp": {
+        "builtAt": 1793177497628,
+        "head": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c"
+      },
+      "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67"
+    }
+  },
+  "cleanupPass": {
+    "actor": "codex-playwright",
+    "driven_by": "agent",
+    "candidate": {
+      "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+      "tree": "8d603d589768b7c958632c98e693239b834279b7",
+      "dirty": false,
+      "grade": "source-host-acceptance",
+      "sourceCount": 6621,
+      "buildCount": 13976,
+      "runtimeBuildStamp": {
+        "builtAt": 1793177497628,
+        "head": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c"
+      },
+      "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67"
+    },
+    "expectedFailureObserved": true,
+    "ownedElectronReclaimed": true,
+    "proxyReclaimed": true,
+    "status": "pass"
+  },
+  "direct": {
+    "status": "pass",
+    "requests": [
+      {
+        "label": "text",
+        "requestId": "0a566e08-f533-4497-bffc-cc5ddf911029",
+        "requestedModel": "space-bunny",
+        "returnedModel": "space-bunny",
+        "responseId": "01a181b602ee75f3888e622dbd891d9a",
+        "status": "completed",
+        "eventTypes": [],
+        "usage": {
+          "input_tokens": 178,
+          "input_tokens_details": {
+            "cached_tokens": 14
+          },
+          "output_tokens": 14,
+          "total_tokens": 192
+        },
+        "firstByteMs": 3286.4412,
+        "completionMs": 3287.5261999999993
+      },
+      {
+        "label": "sse",
+        "requestId": "8c28c49b-86f3-45a6-a1ff-ecad53616bbc",
+        "requestedModel": "space-bunny",
+        "returnedModel": "space-bunny",
+        "responseId": "01a181b60fc47beaa94e6f9d5a5f4dee",
+        "status": "completed",
+        "eventTypes": [
+          "response.created",
+          "response.output_item.added",
+          "response.reasoning_summary_part.added",
+          "response.reasoning_summary_text.delta",
+          "response.reasoning_summary_text.done",
+          "response.reasoning_summary_part.done",
+          "response.output_item.done",
+          "response.output_item.added",
+          "response.content_part.added",
+          "response.output_text.delta",
+          "response.output_text.delta",
+          "response.output_text.done",
+          "response.content_part.done",
+          "response.output_item.done",
+          "response.completed"
+        ],
+        "usage": {
+          "input_tokens": 180,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 9
+          },
+          "total_tokens": 204
+        },
+        "firstByteMs": 3734.0020000000004,
+        "completionMs": 4680.1626
+      },
+      {
+        "label": "tool-call",
+        "requestId": "0d95aafb-da2f-49ff-98c9-508ddf03f0b1",
+        "requestedModel": "space-bunny",
+        "returnedModel": "space-bunny",
+        "responseId": "01a181b621f0715eafc79fb531f40f6d",
+        "status": "completed",
+        "eventTypes": [],
+        "usage": {
+          "input_tokens": 404,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 30,
+          "output_tokens_details": {
+            "reasoning_tokens": 1
+          },
+          "total_tokens": 434
+        },
+        "firstByteMs": 2246.3854999999985,
+        "completionMs": 2246.7761999999984
+      },
+      {
+        "label": "tool-result",
+        "requestId": "ab879120-b67c-484b-995a-71867852ea6f",
+        "requestedModel": "space-bunny",
+        "returnedModel": "space-bunny",
+        "responseId": "01a181b62a977c88b0249770feef3f1d",
+        "status": "completed",
+        "eventTypes": [],
+        "usage": {
+          "input_tokens": 227,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 21,
+          "output_tokens_details": {
+            "reasoning_tokens": 7
+          },
+          "total_tokens": 248
+        },
+        "firstByteMs": 3139.298300000002,
+        "completionMs": 3139.6059999999998
+      }
+    ],
+    "toolsExecuted": 1,
+    "callId": "call-f62a4131-9ba8-4a78-8c99-2dc074a52a8e",
+    "resultMarker": "ECHO_44350DF998A84D54"
+  },
+  "smokes": [
+    {
+      "repetition": 1,
+      "status": "pass",
+      "marker": "EC800D2A0304432F",
+      "fixtureHash": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+      "firstTurn": {
+        "sessionKey": "agent:main:session-1793177622449-amx1w4",
+        "readResults": 1,
+        "providerCalls": [
+          {
+            "call_id": "call_01a181b73ad574cb88afae60",
+            "name": "read",
+            "status": "completed"
+          }
+        ],
+        "trajectoryTools": [
+          {
+            "type": "tool/start",
+            "toolCallId": "call_01a181b73ad574cb88afae60",
+            "state": {
+              "status": "running",
+              "phase": "start",
+              "name": "read",
+              "toolCallId": "call_01a181b73ad574cb88afae60",
+              "args": {
+                "path": "probe.txt"
+              }
+            }
+          },
+          {
+            "type": "tool/end",
+            "toolCallId": "call_01a181b73ad574cb88afae60",
+            "state": {
+              "status": "completed",
+              "phase": "result",
+              "name": "read",
+              "toolCallId": "call_01a181b73ad574cb88afae60",
+              "args": {
+                "path": "probe.txt"
+              },
+              "meta": "from probe.txt",
+              "isError": false
+            }
+          }
+        ]
+      },
+      "continuation": {
+        "sessionId": "63fd2d8d-6463-42ab-8e2f-69529a90e4f5",
+        "finalText": [
+          {
+            "type": "text",
+            "text": "EC800D2A0304432F"
+          }
+        ]
+      },
+      "isolation": {
+        "sessionId": "9fdbc3a4-5aa4-4e37-ab51-3b57d60bc51d",
+        "previousResultInProviderInput": false,
+        "finalText": [
+          {
+            "type": "thinking",
+            "thinking": "The user asks: without tools, if this conversation has a previous tool result, repeat its opaque identifier. Otherwise reply exactly NO_PRIOR_TOOL_RESULT.\n\nThis conversation's visible history: only this user message, no prior tool results. So reply NO_PRIOR_TOOL_RESULT.\n\nBut the project context includes tool outputs? The artifact sha256 etc. Those aren't conversation tool results. There is no previous tool result in this conversation. Reply exactly."
+          },
+          {
+            "type": "text",
+            "text": "NO_PRIOR_TOOL_RESULT"
+          }
+        ]
+      },
+      "runtimeEvents": [
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+              "sessionKey": "agent:main:session-1793177622449-amx1w4",
+              "seq": 1,
+              "ts": 1793177630480,
+              "startedAt": 1793177630480
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "tool.started",
+              "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+              "sessionKey": "agent:main:session-1793177622449-amx1w4",
+              "seq": 2,
+              "ts": 1793177633691,
+              "toolCallId": "call_01a181b73ad574cb88afae60",
+              "name": "read",
+              "args": {
+                "path": "probe.txt"
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "tool.completed",
+              "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+              "sessionKey": "agent:main:session-1793177622449-amx1w4",
+              "seq": 4,
+              "ts": 1793177634379,
+              "toolCallId": "call_01a181b73ad574cb88afae60",
+              "name": "read",
+              "result": {
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "EC800D2A0304432F\n"
+                  }
+                ],
+                "details": {
+                  "versegit_basis": {
+                    "schema": "clawx.versegit.tool-basis/v1",
+                    "kind": "read",
+                    "path": "probe.txt",
+                    "lineStart": 1,
+                    "lineEnd": 1,
+                    "fileSha256": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+                    "rangeSha256": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+                    "truncated": false
+                  }
+                }
+              },
+              "meta": "from probe.txt",
+              "isError": false
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+              "sessionKey": "agent:main:session-1793177622449-amx1w4",
+              "seq": 6,
+              "ts": 1793177637511,
+              "text": "EC800D2A0304432F",
+              "delta": "EC800D2A0304432F"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+                "sessionKey": "agent:main:session-1793177622449-amx1w4",
+                "seq": 6,
+                "state": "delta",
+                "deltaText": "EC800D2A0304432F",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EC800D2A0304432F"
+                    }
+                  ],
+                  "timestamp": 1793177637515
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "934d1e55-c532-473f-b824-e8e76b4d2d7e",
+                "sessionKey": "agent:main:session-1793177622449-amx1w4",
+                "seq": 7,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EC800D2A0304432F"
+                    }
+                  ],
+                  "timestamp": 1793177637520
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+              "sessionKey": "agent:main:session-1793177622449-amx1w4",
+              "seq": 1,
+              "ts": 1793177641125,
+              "startedAt": 1793177641125
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+              "sessionKey": "agent:main:session-1793177622449-amx1w4",
+              "seq": 2,
+              "ts": 1793177644859,
+              "text": "EC800D2A0304432F",
+              "delta": "EC800D2A0304432F"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+                "sessionKey": "agent:main:session-1793177622449-amx1w4",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "EC800D2A0304432F",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EC800D2A0304432F"
+                    }
+                  ],
+                  "timestamp": 1793177644862
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "cdf98564-292d-4e76-ba8f-4b38a938f6cb",
+                "sessionKey": "agent:main:session-1793177622449-amx1w4",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EC800D2A0304432F"
+                    }
+                  ],
+                  "timestamp": 1793177644868
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+              "sessionKey": "agent:main:session-1793177646976-mmadho",
+              "seq": 1,
+              "ts": 1793177650941,
+              "startedAt": 1793177650941
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+              "sessionKey": "agent:main:session-1793177646976-mmadho",
+              "seq": 2,
+              "ts": 1793177654043,
+              "text": "NO_PRIOR_TOOL_RESULT",
+              "delta": "NO_PRIOR_TOOL_RESULT"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+                "sessionKey": "agent:main:session-1793177646976-mmadho",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "NO_PRIOR_TOOL_RESULT",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "NO_PRIOR_TOOL_RESULT"
+                    }
+                  ],
+                  "timestamp": 1793177654045
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "ccab3d16-d0bb-452a-9a58-a65aa778b93b",
+                "sessionKey": "agent:main:session-1793177646976-mmadho",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "NO_PRIOR_TOOL_RESULT"
+                    }
+                  ],
+                  "timestamp": 1793177654048
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "cleanup": {
+        "listening": false,
+        "sockets": 0,
+        "requests": 0
+      },
+      "electronCleanup": {
+        "pid": 43136,
+        "aliveAfterClose": false
+      },
+      "gatewayCleanup": {
+        "pid": 23096,
+        "statusBefore": "running",
+        "aliveAfterStop": false
+      }
+    },
+    {
+      "repetition": 2,
+      "status": "pass",
+      "marker": "E68A519068DF444C",
+      "fixtureHash": "1badc032f1f247bbfcd1342626cd8e320622f2f68a4921e8f2f17dc0bfae1207",
+      "firstTurn": {
+        "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+        "readResults": 1,
+        "providerCalls": [
+          {
+            "call_id": "call_985285b2c0e841f0a409b73e",
+            "name": "read",
+            "status": "completed"
+          }
+        ],
+        "trajectoryTools": [
+          {
+            "type": "tool/start",
+            "toolCallId": "call_985285b2c0e841f0a409b73e",
+            "state": {
+              "status": "running",
+              "phase": "start",
+              "name": "read",
+              "toolCallId": "call_985285b2c0e841f0a409b73e",
+              "args": {
+                "path": "probe.txt"
+              }
+            }
+          },
+          {
+            "type": "tool/end",
+            "toolCallId": "call_985285b2c0e841f0a409b73e",
+            "state": {
+              "status": "completed",
+              "phase": "result",
+              "name": "read",
+              "toolCallId": "call_985285b2c0e841f0a409b73e",
+              "args": {
+                "path": "probe.txt"
+              },
+              "meta": "from probe.txt",
+              "isError": false
+            }
+          }
+        ]
+      },
+      "continuation": {
+        "sessionId": "5a293e5e-da10-4b74-b029-34bfa4741176",
+        "finalText": [
+          {
+            "type": "text",
+            "text": "E68A519068DF444C"
+          }
+        ]
+      },
+      "isolation": {
+        "sessionId": "5581ad29-2951-46c4-8c10-f683f88c5b23",
+        "previousResultInProviderInput": false,
+        "finalText": [
+          {
+            "type": "thinking",
+            "thinking": "No previous tool result."
+          },
+          {
+            "type": "text",
+            "text": "NO_PRIOR_TOOL_RESULT"
+          }
+        ]
+      },
+      "runtimeEvents": [
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "44e12c06-b1fb-490e-b6e7-b4d6bc9ae241",
+              "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+              "seq": 1,
+              "ts": 1793177709677,
+              "startedAt": 1793177709677
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "tool.started",
+              "runId": "44e12c06-b1fb-490e-b6e7-b4d6bc9ae241",
+              "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+              "seq": 2,
+              "ts": 1793177720287,
+              "toolCallId": "call_985285b2c0e841f0a409b73e",
+              "name": "read",
+              "args": {
+                "path": "probe.txt"
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "tool.completed",
+              "runId": "44e12c06-b1fb-490e-b6e7-b4d6bc9ae241",
+              "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+              "seq": 4,
+              "ts": 1793177720841,
+              "toolCallId": "call_985285b2c0e841f0a409b73e",
+              "name": "read",
+              "result": {
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "E68A519068DF444C\n"
+                  }
+                ],
+                "details": {
+                  "versegit_basis": {
+                    "schema": "clawx.versegit.tool-basis/v1",
+                    "kind": "read",
+                    "path": "probe.txt",
+                    "lineStart": 1,
+                    "lineEnd": 1,
+                    "fileSha256": "1badc032f1f247bbfcd1342626cd8e320622f2f68a4921e8f2f17dc0bfae1207",
+                    "rangeSha256": "1badc032f1f247bbfcd1342626cd8e320622f2f68a4921e8f2f17dc0bfae1207",
+                    "truncated": false
+                  }
+                }
+              },
+              "meta": "from probe.txt",
+              "isError": false
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "44e12c06-b1fb-490e-b6e7-b4d6bc9ae241",
+              "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+              "seq": 6,
+              "ts": 1793177723723,
+              "text": "E68A519068DF444C",
+              "delta": "E68A519068DF444C"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "44e12c06-b1fb-490e-b6e7-b4d6bc9ae241",
+                "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+                "seq": 6,
+                "state": "delta",
+                "deltaText": "E68A519068DF444C",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "E68A519068DF444C"
+                    }
+                  ],
+                  "timestamp": 1793177723728
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "44e12c06-b1fb-490e-b6e7-b4d6bc9ae241",
+                "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+                "seq": 7,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "E68A519068DF444C"
+                    }
+                  ],
+                  "timestamp": 1793177723735
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "a9687489-3be2-4b35-87ab-a3d681904d7a",
+              "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+              "seq": 1,
+              "ts": 1793177726990,
+              "startedAt": 1793177726990
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "a9687489-3be2-4b35-87ab-a3d681904d7a",
+              "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+              "seq": 2,
+              "ts": 1793177730159,
+              "text": "E68A519068DF444C",
+              "delta": "E68A519068DF444C"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "a9687489-3be2-4b35-87ab-a3d681904d7a",
+                "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "E68A519068DF444C",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "E68A519068DF444C"
+                    }
+                  ],
+                  "timestamp": 1793177730161
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "a9687489-3be2-4b35-87ab-a3d681904d7a",
+                "sessionKey": "agent:main:session-1793177701459-dlnmfu",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "E68A519068DF444C"
+                    }
+                  ],
+                  "timestamp": 1793177730165
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "6c7a8e57-9c69-4e02-9572-7890b618b97b",
+              "sessionKey": "agent:main:session-1793177731599-yboe93",
+              "seq": 1,
+              "ts": 1793177735981,
+              "startedAt": 1793177735981
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "6c7a8e57-9c69-4e02-9572-7890b618b97b",
+              "sessionKey": "agent:main:session-1793177731599-yboe93",
+              "seq": 2,
+              "ts": 1793177739283,
+              "text": "NO_PRIOR_TOOL_RESULT",
+              "delta": "NO_PRIOR_TOOL_RESULT"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "6c7a8e57-9c69-4e02-9572-7890b618b97b",
+                "sessionKey": "agent:main:session-1793177731599-yboe93",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "NO_PRIOR_TOOL_RESULT",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "NO_PRIOR_TOOL_RESULT"
+                    }
+                  ],
+                  "timestamp": 1793177739284
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "6c7a8e57-9c69-4e02-9572-7890b618b97b",
+                "sessionKey": "agent:main:session-1793177731599-yboe93",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "NO_PRIOR_TOOL_RESULT"
+                    }
+                  ],
+                  "timestamp": 1793177739288
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "cleanup": {
+        "listening": false,
+        "sockets": 0,
+        "requests": 0
+      },
+      "electronCleanup": {
+        "pid": 14124,
+        "aliveAfterClose": false
+      },
+      "gatewayCleanup": {
+        "pid": 37132,
+        "statusBefore": "running",
+        "aliveAfterStop": false
+      }
+    },
+    {
+      "repetition": 3,
+      "status": "pass",
+      "marker": "EFCB409D97EF42D3",
+      "fixtureHash": "5ab15eade6374a0317b7bd46e7801c9202b31b93c7f5a7ecbc180f05f626fc08",
+      "firstTurn": {
+        "sessionKey": "agent:main:session-1793177772967-t8gr32",
+        "readResults": 1,
+        "providerCalls": [
+          {
+            "call_id": "call_01a181b985cc7712ad159c5c",
+            "name": "read",
+            "status": "completed"
+          }
+        ],
+        "trajectoryTools": [
+          {
+            "type": "tool/start",
+            "toolCallId": "call_01a181b985cc7712ad159c5c",
+            "state": {
+              "status": "running",
+              "phase": "start",
+              "name": "read",
+              "toolCallId": "call_01a181b985cc7712ad159c5c",
+              "args": {
+                "path": "probe.txt"
+              }
+            }
+          },
+          {
+            "type": "tool/end",
+            "toolCallId": "call_01a181b985cc7712ad159c5c",
+            "state": {
+              "status": "completed",
+              "phase": "result",
+              "name": "read",
+              "toolCallId": "call_01a181b985cc7712ad159c5c",
+              "args": {
+                "path": "probe.txt"
+              },
+              "meta": "from probe.txt",
+              "isError": false
+            }
+          }
+        ]
+      },
+      "continuation": {
+        "sessionId": "5d739548-319a-4887-b3d4-65df7361adaa",
+        "finalText": [
+          {
+            "type": "text",
+            "text": "EFCB409D97EF42D3"
+          }
+        ]
+      },
+      "isolation": {
+        "sessionId": "923eba5f-59de-480f-829b-b54da4b41a4c",
+        "previousResultInProviderInput": false,
+        "finalText": [
+          {
+            "type": "thinking",
+            "thinking": "No previous tool result in this conversation. Reply exactly NO_PRIOR_TOOL_RESULT.\n\nBut \"Otherwise reply with exactly NO_PRIOR_TOOL_RESULT\" — should I output NO_REPLY? No, instruction says reply with exactly NO_PRIOR_TOOL_RESULT."
+          },
+          {
+            "type": "text",
+            "text": "NO_PRIOR_TOOL_RESULT"
+          }
+        ]
+      },
+      "runtimeEvents": [
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "7a498ac6-fcf4-4cfc-9ec9-dd1de7225488",
+              "sessionKey": "agent:main:session-1793177772967-t8gr32",
+              "seq": 1,
+              "ts": 1793177781288,
+              "startedAt": 1793177781288
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "tool.started",
+              "runId": "7a498ac6-fcf4-4cfc-9ec9-dd1de7225488",
+              "sessionKey": "agent:main:session-1793177772967-t8gr32",
+              "seq": 2,
+              "ts": 1793177783997,
+              "toolCallId": "call_01a181b985cc7712ad159c5c",
+              "name": "read",
+              "args": {
+                "path": "probe.txt"
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "tool.completed",
+              "runId": "7a498ac6-fcf4-4cfc-9ec9-dd1de7225488",
+              "sessionKey": "agent:main:session-1793177772967-t8gr32",
+              "seq": 4,
+              "ts": 1793177784614,
+              "toolCallId": "call_01a181b985cc7712ad159c5c",
+              "name": "read",
+              "result": {
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "EFCB409D97EF42D3\n"
+                  }
+                ],
+                "details": {
+                  "versegit_basis": {
+                    "schema": "clawx.versegit.tool-basis/v1",
+                    "kind": "read",
+                    "path": "probe.txt",
+                    "lineStart": 1,
+                    "lineEnd": 1,
+                    "fileSha256": "5ab15eade6374a0317b7bd46e7801c9202b31b93c7f5a7ecbc180f05f626fc08",
+                    "rangeSha256": "5ab15eade6374a0317b7bd46e7801c9202b31b93c7f5a7ecbc180f05f626fc08",
+                    "truncated": false
+                  }
+                }
+              },
+              "meta": "from probe.txt",
+              "isError": false
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "7a498ac6-fcf4-4cfc-9ec9-dd1de7225488",
+              "sessionKey": "agent:main:session-1793177772967-t8gr32",
+              "seq": 6,
+              "ts": 1793177786935,
+              "text": "EFCB409D97EF42D3",
+              "delta": "EFCB409D97EF42D3"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "7a498ac6-fcf4-4cfc-9ec9-dd1de7225488",
+                "sessionKey": "agent:main:session-1793177772967-t8gr32",
+                "seq": 6,
+                "state": "delta",
+                "deltaText": "EFCB409D97EF42D3",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EFCB409D97EF42D3"
+                    }
+                  ],
+                  "timestamp": 1793177786938
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "7a498ac6-fcf4-4cfc-9ec9-dd1de7225488",
+                "sessionKey": "agent:main:session-1793177772967-t8gr32",
+                "seq": 7,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EFCB409D97EF42D3"
+                    }
+                  ],
+                  "timestamp": 1793177786943
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "44607c53-5830-4ff0-bd51-b2b10f21912c",
+              "sessionKey": "agent:main:session-1793177772967-t8gr32",
+              "seq": 1,
+              "ts": 1793177790298,
+              "startedAt": 1793177790298
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "44607c53-5830-4ff0-bd51-b2b10f21912c",
+              "sessionKey": "agent:main:session-1793177772967-t8gr32",
+              "seq": 2,
+              "ts": 1793177793387,
+              "text": "EFCB409D97EF42D3",
+              "delta": "EFCB409D97EF42D3"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "44607c53-5830-4ff0-bd51-b2b10f21912c",
+                "sessionKey": "agent:main:session-1793177772967-t8gr32",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "EFCB409D97EF42D3",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EFCB409D97EF42D3"
+                    }
+                  ],
+                  "timestamp": 1793177793388
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "44607c53-5830-4ff0-bd51-b2b10f21912c",
+                "sessionKey": "agent:main:session-1793177772967-t8gr32",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "EFCB409D97EF42D3"
+                    }
+                  ],
+                  "timestamp": 1793177793391
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "fe4d967d-7cb5-499f-9155-dc125452cd56",
+              "sessionKey": "agent:main:session-1793177794927-ca98rb",
+              "seq": 1,
+              "ts": 1793177798697,
+              "startedAt": 1793177798697
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "fe4d967d-7cb5-499f-9155-dc125452cd56",
+              "sessionKey": "agent:main:session-1793177794927-ca98rb",
+              "seq": 2,
+              "ts": 1793177802854,
+              "text": "NO_PRIOR_TOOL_RESULT",
+              "delta": "NO_PRIOR_TOOL_RESULT"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "fe4d967d-7cb5-499f-9155-dc125452cd56",
+                "sessionKey": "agent:main:session-1793177794927-ca98rb",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "NO_PRIOR_TOOL_RESULT",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "NO_PRIOR_TOOL_RESULT"
+                    }
+                  ],
+                  "timestamp": 1793177802856
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "fe4d967d-7cb5-499f-9155-dc125452cd56",
+                "sessionKey": "agent:main:session-1793177794927-ca98rb",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "NO_PRIOR_TOOL_RESULT"
+                    }
+                  ],
+                  "timestamp": 1793177802859
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "cleanup": {
+        "listening": false,
+        "sockets": 0,
+        "requests": 0
+      },
+      "electronCleanup": {
+        "pid": 25588,
+        "aliveAfterClose": false
+      },
+      "gatewayCleanup": {
+        "pid": 13540,
+        "statusBefore": "running",
+        "aliveAfterStop": false
+      }
+    }
+  ],
+  "faults": {
+    "status": "pass",
+    "cleanup": {
+      "listening": false,
+      "sockets": 0,
+      "requests": 0
+    },
+    "gatewayCleanup": {
+      "pid": 26784,
+      "statusBefore": "running",
+      "aliveAfterStop": false
+    },
+    "electronCleanup": {
+      "pid": 36536,
+      "aliveAfterClose": false
+    },
+    "cases": [
+      {
+        "type": "timeout",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3651
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "request timed out"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793177907161-otihmu",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "thinking",
+              "thinking": "The user asks to copy an identifier exactly, without tools. The identifier \"RECOVER_D6A6AF356515\" — that's fine, just echo it.\n\nBut note there's a space in \"RECOVER_D6A6AF356515\"? Let me look: \"RECOVER_D6A6AF356515\" — no space. Actually the identifier in the message... \"RECOVER_D6A6AF356515\". Hmm, but wait, the request says \"copy this opaque identifier exactly\" — no tools. Just output it."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_D6A6AF356515"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "cancel",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3656
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "aborted",
+          "errorMessage": "Responses stream ended without a terminal response event"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793177928894-vsh2or",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "text",
+              "text": "RECOVER_76B71CE6C228"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "401",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3642
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "401 Injected 401 provider failure"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793177946908-3viiiv",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "thinking",
+              "thinking": "Just copy it."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_BF134DA3BE67"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "404",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3645
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "404 Injected 404 provider failure"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793177966262-m1hmi0",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "text",
+              "text": "RECOVER_F0D27C36808D"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "429",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 3,
+          "quietMs": 3500,
+          "elapsedMs": 3635
+        },
+        "runtimeProbe": {
+          "faultRequests": 3,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "429 Injected 429 provider failure"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793177985520-huk0bl",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "text",
+              "text": "RECOVER_E125D97E0D66"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "500",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 6,
+          "quietMs": 3500,
+          "elapsedMs": 6997
+        },
+        "runtimeProbe": {
+          "faultRequests": 6,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "500 Injected 500 provider failure"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793178005375-n9ggn5",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "text",
+              "text": "RECOVER_7E8F877DD782"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "504",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 6,
+          "quietMs": 3500,
+          "elapsedMs": 6940
+        },
+        "runtimeProbe": {
+          "faultRequests": 6,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "504 Injected 504 provider failure"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793178026104-ubrky3",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "thinking",
+              "thinking": "Justcopy the identifier."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_16085D6B1A6D"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "malformed",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3641
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793178043737-7tuk3p",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "text",
+              "text": "RECOVER_73A9220A52CE"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "drop",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3634
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "Responses stream ended without a terminal response event"
+        },
+        "recovery": {
+          "sessionKey": "agent:main:session-1793178060085-k4tkry",
+          "stopReason": "stop",
+          "content": [
+            {
+              "type": "thinking",
+              "thinking": "User asks to copy an identifier exactly. But instructions say never copy yourself... this is just an identifier, not the assistant. Fine."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_55FD425DB506"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      }
+    ]
+  }
+}

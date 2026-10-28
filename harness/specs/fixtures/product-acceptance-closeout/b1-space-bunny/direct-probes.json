@@ -1,0 +1,472 @@
+{
+  "candidate": {
+    "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+    "tree": "8d603d589768b7c958632c98e693239b834279b7",
+    "dirty": false,
+    "grade": "source-host-acceptance",
+    "sourceCount": 6621,
+    "buildCount": 13976,
+    "runtimeBuildStamp": {
+      "builtAt": 1793177497628,
+      "head": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c"
+    },
+    "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67"
+  },
+  "actor": "codex-playwright",
+  "driven_by": "agent",
+  "status": "pass",
+  "requests": [
+    {
+      "label": "text",
+      "requestId": "0a566e08-f533-4497-bffc-cc5ddf911029",
+      "providerRequestId": null,
+      "body": {
+        "model": "space-bunny",
+        "input": "Copy this opaque identifier exactly, without explanation or tools: GA_65CF5C871CFC46A7",
+        "max_output_tokens": 512
+      },
+      "firstByteMs": 3286.4412,
+      "completionMs": 3287.5261999999993,
+      "httpStatus": 200,
+      "response": {
+        "background": false,
+        "completed_at": 1793177554,
+        "created_at": 1793177551,
+        "error": null,
+        "id": "01a181b602ee75f3888e622dbd891d9a",
+        "incomplete_details": null,
+        "instructions": null,
+        "max_output_tokens": 512,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "GA_65CF5C871CFC46A7",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_75ae5b09d6fb0730e7f573607181a05c",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "GA_65CF5C871CFC46A7",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": null,
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "type": "text"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 178,
+          "input_tokens_details": {
+            "cached_tokens": 14
+          },
+          "output_tokens": 14,
+          "total_tokens": 192
+        },
+        "user": null
+      },
+      "eventTypes": [],
+      "cost": null
+    },
+    {
+      "label": "sse",
+      "requestId": "8c28c49b-86f3-45a6-a1ff-ecad53616bbc",
+      "providerRequestId": null,
+      "body": {
+        "model": "space-bunny",
+        "input": "Copy this opaque identifier exactly, without explanation or tools: GA_65CF5C871CFC46A7_SSE",
+        "max_output_tokens": 512,
+        "stream": true
+      },
+      "firstByteMs": 3734.0020000000004,
+      "completionMs": 4680.1626,
+      "httpStatus": 200,
+      "response": {
+        "background": false,
+        "completed_at": 1793177559,
+        "created_at": 1793177558,
+        "error": null,
+        "id": "01a181b60fc47beaa94e6f9d5a5f4dee",
+        "incomplete_details": null,
+        "instructions": null,
+        "max_output_tokens": 512,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_13a41636cd47ba94e6c5e891fafbc1e4",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need just copy. Need ensure exact.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "GA_65CF5C871CFC46A7_SSE",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_3e48413e0d44710f87afa954cecff2fe",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": null,
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "type": "text"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 180,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 9
+          },
+          "total_tokens": 204
+        },
+        "user": null
+      },
+      "eventTypes": [
+        "response.created",
+        "response.output_item.added",
+        "response.reasoning_summary_part.added",
+        "response.reasoning_summary_text.delta",
+        "response.reasoning_summary_text.done",
+        "response.reasoning_summary_part.done",
+        "response.output_item.done",
+        "response.output_item.added",
+        "response.content_part.added",
+        "response.output_text.delta",
+        "response.output_text.delta",
+        "response.output_text.done",
+        "response.content_part.done",
+        "response.output_item.done",
+        "response.completed"
+      ],
+      "cost": null
+    },
+    {
+      "label": "tool-call",
+      "requestId": "0d95aafb-da2f-49ff-98c9-508ddf03f0b1",
+      "providerRequestId": null,
+      "body": {
+        "model": "space-bunny",
+        "input": [
+          {
+            "role": "user",
+            "content": "Call ga_echo once with text \"echo-input\", then quote its result."
+          }
+        ],
+        "max_output_tokens": 512,
+        "tools": [
+          {
+            "type": "function",
+            "name": "ga_echo",
+            "description": "Return the provided text unchanged.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "strict": true
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "name": "ga_echo"
+        }
+      },
+      "firstByteMs": 2246.3854999999985,
+      "completionMs": 2246.7761999999984,
+      "httpStatus": 200,
+      "response": {
+        "background": false,
+        "completed_at": 1793177561,
+        "created_at": 1793177558,
+        "error": null,
+        "id": "01a181b621f0715eafc79fb531f40f6d",
+        "incomplete_details": null,
+        "instructions": null,
+        "max_output_tokens": 512,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"text\":\"echo-input\"}",
+            "call_id": "call-f62a4131-9ba8-4a78-8c99-2dc074a52a8e",
+            "id": "fc_079658ad00931bc1438c43933037d984",
+            "name": "ga_echo",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "output_text": "",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": null,
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "type": "text"
+          }
+        },
+        "tool_choice": {
+          "name": "ga_echo",
+          "type": "function"
+        },
+        "tools": [
+          {
+            "description": "Return the provided text unchanged.",
+            "name": "ga_echo",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 404,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 30,
+          "output_tokens_details": {
+            "reasoning_tokens": 1
+          },
+          "total_tokens": 434
+        },
+        "user": null
+      },
+      "eventTypes": [],
+      "cost": null
+    },
+    {
+      "label": "tool-result",
+      "requestId": "ab879120-b67c-484b-995a-71867852ea6f",
+      "providerRequestId": null,
+      "body": {
+        "model": "space-bunny",
+        "input": [
+          {
+            "role": "user",
+            "content": "Call ga_echo once with text \"echo-input\", then quote its result."
+          },
+          {
+            "arguments": "{\"text\":\"echo-input\"}",
+            "call_id": "call-f62a4131-9ba8-4a78-8c99-2dc074a52a8e",
+            "id": "fc_079658ad00931bc1438c43933037d984",
+            "name": "ga_echo",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call-f62a4131-9ba8-4a78-8c99-2dc074a52a8e",
+            "output": "ECHO_44350DF998A84D54"
+          }
+        ],
+        "max_output_tokens": 512,
+        "tools": [
+          {
+            "type": "function",
+            "name": "ga_echo",
+            "description": "Return the provided text unchanged.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "strict": true
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "firstByteMs": 3139.298300000002,
+      "completionMs": 3139.6059999999998,
+      "httpStatus": 200,
+      "response": {
+        "background": false,
+        "completed_at": 1793177564,
+        "created_at": 1793177560,
+        "error": null,
+        "id": "01a181b62a977c88b0249770feef3f1d",
+        "incomplete_details": null,
+        "instructions": null,
+        "max_output_tokens": 512,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_3718a809e774791a803a776293c41969",
+            "summary": [
+              {
+                "text": "We need quote result.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "\"ECHO_44350DF998A84D54\"",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_e4fa0352cac4da772eb942d4b1ce35b2",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "\"ECHO_44350DF998A84D54\"",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": null,
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "type": "text"
+          }
+        },
+        "tool_choice": "none",
+        "tools": [
+          {
+            "description": "Return the provided text unchanged.",
+            "name": "ga_echo",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 227,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 21,
+          "output_tokens_details": {
+            "reasoning_tokens": 7
+          },
+          "total_tokens": 248
+        },
+        "user": null
+      },
+      "eventTypes": [],
+      "cost": null
+    }
+  ],
+  "toolsExecuted": 1,
+  "callId": "call-f62a4131-9ba8-4a78-8c99-2dc074a52a8e",
+  "resultMarker": "ECHO_44350DF998A84D54",
+  "limitations": [
+    "returned model is an alias; underlying model identity is unverified",
+    "cost unavailable"
+  ]
+}

@@ -1,0 +1,571 @@
+{
+  "schemaVersion": "ProductAcceptanceCloseoutEvidence/v1",
+  "node": "TF-0580",
+  "runId": "tf0580-final-ec2f1b966-20261028",
+  "generatedAt": "2026-10-28T09:07:35.296Z",
+  "driven_by": "agent",
+  "actor": "codex-tf0580-b1-space-bunny",
+  "candidate": {
+    "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+    "tree": "8d603d589768b7c958632c98e693239b834279b7",
+    "dirty": false
+  },
+  "currentCandidateRun": true,
+  "command": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/product-acceptance-space-bunny.spec.ts",
+      "--workers=1",
+      "--output=D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028/b1-space-bunny/test-results"
+    ],
+    "exitCode": 0,
+    "actor": "codex",
+    "driven_by": "agent",
+    "credentialSource": "private-task-forest/environment",
+    "credentialCaptured": false
+  },
+  "build": {
+    "schema": "TF0580FreshBuild/v1",
+    "sourceCount": 6621,
+    "buildCount": 13976,
+    "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67",
+    "candidate": {
+      "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+      "tree": "8d603d589768b7c958632c98e693239b834279b7",
+      "dirty": false
+    }
+  },
+  "checks": {
+    "playwright": {
+      "selected": 6,
+      "executed": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "elapsedSeconds": 540
+    },
+    "direct": {
+      "requestedModels": [
+        "space-bunny",
+        "space-bunny",
+        "space-bunny",
+        "space-bunny"
+      ],
+      "returnedModels": [
+        "space-bunny",
+        "space-bunny",
+        "space-bunny",
+        "space-bunny"
+      ],
+      "responseIds": [
+        "01a181b602ee75f3888e622dbd891d9a",
+        "01a181b60fc47beaa94e6f9d5a5f4dee",
+        "01a181b621f0715eafc79fb531f40f6d",
+        "01a181b62a977c88b0249770feef3f1d"
+      ],
+      "responseStatuses": [
+        "completed",
+        "completed",
+        "completed",
+        "completed"
+      ],
+      "toolsExecuted": 1,
+      "callId": "call-f62a4131-9ba8-4a78-8c99-2dc074a52a8e",
+      "resultMarker": "ECHO_44350DF998A84D54"
+    },
+    "smokes": [
+      {
+        "repetition": 1,
+        "status": "pass",
+        "marker": "EC800D2A0304432F",
+        "fixtureHash": "941d05fc499eaad3eb1df560b1bab9d49f1fc96c76ed4b07c2af82d9cc5c34d7",
+        "toolCallId": "call_01a181b73ad574cb88afae60",
+        "readResults": 1,
+        "trajectoryTools": [
+          "tool/start",
+          "tool/end"
+        ],
+        "continuationSessionId": "63fd2d8d-6463-42ab-8e2f-69529a90e4f5",
+        "isolationSessionId": "9fdbc3a4-5aa4-4e37-ab51-3b57d60bc51d",
+        "previousResultInProviderInput": false,
+        "cleanup": {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        },
+        "electronCleanup": {
+          "pid": 43136,
+          "aliveAfterClose": false
+        },
+        "gatewayCleanup": {
+          "pid": 23096,
+          "statusBefore": "running",
+          "aliveAfterStop": false
+        }
+      },
+      {
+        "repetition": 2,
+        "status": "pass",
+        "marker": "E68A519068DF444C",
+        "fixtureHash": "1badc032f1f247bbfcd1342626cd8e320622f2f68a4921e8f2f17dc0bfae1207",
+        "toolCallId": "call_985285b2c0e841f0a409b73e",
+        "readResults": 1,
+        "trajectoryTools": [
+          "tool/start",
+          "tool/end"
+        ],
+        "continuationSessionId": "5a293e5e-da10-4b74-b029-34bfa4741176",
+        "isolationSessionId": "5581ad29-2951-46c4-8c10-f683f88c5b23",
+        "previousResultInProviderInput": false,
+        "cleanup": {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        },
+        "electronCleanup": {
+          "pid": 14124,
+          "aliveAfterClose": false
+        },
+        "gatewayCleanup": {
+          "pid": 37132,
+          "statusBefore": "running",
+          "aliveAfterStop": false
+        }
+      },
+      {
+        "repetition": 3,
+        "status": "pass",
+        "marker": "EFCB409D97EF42D3",
+        "fixtureHash": "5ab15eade6374a0317b7bd46e7801c9202b31b93c7f5a7ecbc180f05f626fc08",
+        "toolCallId": "call_01a181b985cc7712ad159c5c",
+        "readResults": 1,
+        "trajectoryTools": [
+          "tool/start",
+          "tool/end"
+        ],
+        "continuationSessionId": "5d739548-319a-4887-b3d4-65df7361adaa",
+        "isolationSessionId": "923eba5f-59de-480f-829b-b54da4b41a4c",
+        "previousResultInProviderInput": false,
+        "cleanup": {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        },
+        "electronCleanup": {
+          "pid": 25588,
+          "aliveAfterClose": false
+        },
+        "gatewayCleanup": {
+          "pid": 13540,
+          "statusBefore": "running",
+          "aliveAfterStop": false
+        }
+      }
+    ],
+    "faults": [
+      {
+        "type": "timeout",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3651
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "request timed out"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "thinking",
+              "thinking": "The user asks to copy an identifier exactly, without tools. The identifier \"RECOVER_D6A6AF356515\" — that's fine, just echo it.\n\nBut note there's a space in \"RECOVER_D6A6AF356515\"? Let me look: \"RECOVER_D6A6AF356515\" — no space. Actually the identifier in the message... \"RECOVER_D6A6AF356515\". Hmm, but wait, the request says \"copy this opaque identifier exactly\" — no tools. Just output it."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_D6A6AF356515"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "cancel",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3656
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "aborted",
+          "errorMessage": "Responses stream ended without a terminal response event"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "text",
+              "text": "RECOVER_76B71CE6C228"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "401",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3642
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "401 Injected 401 provider failure"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "thinking",
+              "thinking": "Just copy it."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_BF134DA3BE67"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "404",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3645
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "404 Injected 404 provider failure"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "text",
+              "text": "RECOVER_F0D27C36808D"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "429",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 3,
+          "quietMs": 3500,
+          "elapsedMs": 3635
+        },
+        "runtimeProbe": {
+          "faultRequests": 3,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "429 Injected 429 provider failure"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "text",
+              "text": "RECOVER_E125D97E0D66"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "500",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 6,
+          "quietMs": 3500,
+          "elapsedMs": 6997
+        },
+        "runtimeProbe": {
+          "faultRequests": 6,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "500 Injected 500 provider failure"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "text",
+              "text": "RECOVER_7E8F877DD782"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "504",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 6,
+          "quietMs": 3500,
+          "elapsedMs": 6940
+        },
+        "runtimeProbe": {
+          "faultRequests": 6,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "504 Injected 504 provider failure"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "thinking",
+              "thinking": "Justcopy the identifier."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_16085D6B1A6D"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "malformed",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3641
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "text",
+              "text": "RECOVER_73A9220A52CE"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      },
+      {
+        "type": "drop",
+        "status": "pass",
+        "settlement": {
+          "settled": true,
+          "requests": 1,
+          "quietMs": 3500,
+          "elapsedMs": 3634
+        },
+        "runtimeProbe": {
+          "faultRequests": 1,
+          "settled": true,
+          "responseCompleted": false,
+          "providerCalls": 0,
+          "trajectoryTools": 0,
+          "activeRequests": 0
+        },
+        "first": {
+          "stopReason": "error",
+          "errorMessage": "Responses stream ended without a terminal response event"
+        },
+        "recovery": {
+          "stopReason": "stop",
+          "text": [
+            {
+              "type": "thinking",
+              "thinking": "User asks to copy an identifier exactly. But instructions say never copy yourself... this is just an identifier, not the assistant. Fine."
+            },
+            {
+              "type": "text",
+              "text": "RECOVER_55FD425DB506"
+            }
+          ]
+        },
+        "lateEffectExists": false
+      }
+    ],
+    "cleanup": {
+      "negativeControlExpectedFailure": "fail",
+      "negativeControlProxy": {
+        "listening": false,
+        "sockets": 0,
+        "requests": 0
+      },
+      "ownedElectronReclaimed": true,
+      "negativeControlPass": "pass",
+      "smokeReceipts": [
+        {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        },
+        {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        },
+        {
+          "listening": false,
+          "sockets": 0,
+          "requests": 0
+        }
+      ],
+      "faultReceipt": {
+        "listening": false,
+        "sockets": 0,
+        "requests": 0
+      },
+      "processLedgerSurvivors": 0,
+      "sourceMutation": false
+    },
+    "unit": {
+      "rootProviderTests": {
+        "selected": 3,
+        "executed": 3,
+        "passed": 102,
+        "failed": 0,
+        "skipped": 0
+      },
+      "runtimeResponses": {
+        "selected": 2,
+        "executed": 2,
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0,
+        "report": "runtime-tests.json",
+        "reportSha256": "bc230f519cd47e97f57474d5d67e5c200d390d20f84e816f29225860908a184a"
+      },
+      "typecheck": "pnpm run typecheck exited 0 (node, web, test)",
+      "commsReplayCompare": "passed",
+      "specValidation": "harness validate and dry-run passed"
+    },
+    "repositoryGates": {
+      "docsPolicyChecks": 10,
+      "artifactRetention": "passed",
+      "evidenceRefs": 187
+    }
+  },
+  "limitations": [
+    "Windows x64 source-host and agent-driven evidence; package/install-state not tested.",
+    "The provider returns the alias space-bunny; independently named model identity is not asserted.",
+    "Cost is null because the provider did not return cost.",
+    "This does not prove image capability, other providers/platforms, general model quality or GA.",
+    "Preparation-time outputs may have exposed the provider key in agent logs; retained final artifacts were independently scanned and are clean.",
+    "releaseApproved/productApproved/liveReady/defaultOn remain false; retired Runtime Memory flags remain retired."
+  ],
+  "retained": {
+    "rawRunRoot": "D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028/b1-space-bunny",
+    "recoveryIndex": "recovery-index.json",
+    "manifest": "manifest.json",
+    "sha256sums": "SHA256SUMS"
+  },
+  "independentVerifier": {
+    "status": "approved",
+    "actor": "space-bunny-verifier",
+    "driven_by": "agent",
+    "artifact": "independent-verifier.json",
+    "sha256": "8611bf07103e7d74d8359169541ea95d894df578564c263a493eab6f4d7b5585",
+    "candidate": {
+      "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+      "tree": "8d603d589768b7c958632c98e693239b834279b7",
+      "dirty": false
+    },
+    "responseId": "01a181d57cf179769967ddd6d72ed5ac",
+    "returnedModel": "space-bunny",
+    "verdict": "approve",
+    "findings": 0,
+    "limitations": [
+      "Acceptance is limited to Windows x64 source-host, agent-driven evidence; package and install-state behavior were not tested.",
+      "The provider returned the alias space-bunny; independent verification of the provider's underlying model identity is outside this scope.",
+      "The provider returned no cost data.",
+      "Image capability, other providers or platforms, general model quality, and GA readiness were not established.",
+      "Release approval, product approval, live readiness, and default-on status remain false."
+    ]
+  }
+}

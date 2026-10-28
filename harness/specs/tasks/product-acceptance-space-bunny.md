@@ -141,6 +141,8 @@ manifest, source/build fingerprints and credential scan. A preparation-time cred
 output incident is a distinct limitation and cannot be retroactively erased by a clean
 artifact scan. Raw private Task Forest data remains outside Git.
 
+- `pnpm run build:runtime` emits a local postbuild smoke (`runtime-build-smoke: gateway ready on port ...`) after the successful runtime build; it is source-host health evidence and does not prove packaged or installed behavior.
+
 The evidence is Windows x64 source-host, agent-driven and bound to this local provider.
 It does not prove general model quality, image support, other providers/platforms,
 packaged/installed behavior or GA. `releaseApproved`, `productApproved`, `liveReady` and

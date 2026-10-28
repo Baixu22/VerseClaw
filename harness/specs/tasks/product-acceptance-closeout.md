@@ -224,6 +224,8 @@ its impact and user-visible consequence are recorded, reproduction evidence exis
 or kill switch is known, an agent owner and review date are present, and publication/product
 locks remain unchanged. A shortfall is never written as `pass`.
 
+6. `space-bunny-responses-product-round-trip` → **resolved by `TF-0580`** on candidate `ec2f1b966`; direct Responses probes, three independent clean-profile product smokes, request/tool/effect lineage, session isolation, nine bounded fault/cancel cases and recovery pass on a fresh sealed build. Evidence is under `harness/specs/fixtures/product-acceptance-closeout/b1-space-bunny/`.
+
 ## Evidence and retention
 
 Raw run output goes under `D:/tmp/clawx-product-acceptance/<run-id>/<node>/`; curated evidence

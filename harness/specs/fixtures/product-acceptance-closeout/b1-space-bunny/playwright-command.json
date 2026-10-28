@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "D:\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "tests/e2e/product-acceptance-space-bunny.spec.ts",
+    "--workers=1",
+    "--output=D:/tmp/clawx-product-acceptance/tf0580/final-acceptance-ec2f1b966-20261028/b1-space-bunny/test-results"
+  ],
+  "exitCode": 0,
+  "actor": "codex",
+  "driven_by": "agent",
+  "resourceId": "TF-0571/space-bunny",
+  "credentialSource": "private-task-forest/environment",
+  "credentialCaptured": false
+}

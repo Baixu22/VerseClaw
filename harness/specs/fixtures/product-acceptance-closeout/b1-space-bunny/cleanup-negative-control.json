@@ -1,0 +1,21 @@
+{
+  "actor": "codex-playwright",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c",
+    "tree": "8d603d589768b7c958632c98e693239b834279b7",
+    "dirty": false,
+    "grade": "source-host-acceptance",
+    "sourceCount": 6621,
+    "buildCount": 13976,
+    "runtimeBuildStamp": {
+      "builtAt": 1793177497628,
+      "head": "ec2f1b966b73364e3d85ce89cca333a7e2564e3c"
+    },
+    "inputDigest": "d6fb938db191d31bd59e9b3535f01afe91a6aba9a4bc6aada3a84c502be7bd67"
+  },
+  "expectedFailureObserved": true,
+  "ownedElectronReclaimed": true,
+  "proxyReclaimed": true,
+  "status": "pass"
+}
