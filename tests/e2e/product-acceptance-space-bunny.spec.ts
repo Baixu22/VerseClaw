@@ -351,6 +351,13 @@ test.describe('space-bunny Responses acceptance', () => {
         const calls = providerCalls(proxy.observations.slice(before));
         expect(calls).toHaveLength(1);
         expect(calls[0].name).toBe('read');
+        // The transcript can reach final/idle before the gateway flushes its
+        // trajectory sidecar. Wait for the complete lifecycle pair so a slow
+        // flush is not misreported as a missing tool effect.
+        await expect.poll(async () => {
+          const rows = await trajectoryTools(userDataDir);
+          return rows.filter(row => row.type === 'tool/start' || row.type === 'tool/end').length;
+        }, { timeout: 30_000 }).toBe(2);
         const tools = await trajectoryTools(userDataDir);
         expect(tools.filter(row => row.type === 'tool/start')).toHaveLength(1);
         expect(tools.filter(row => row.type === 'tool/end')).toHaveLength(1);
@@ -486,7 +493,13 @@ test.describe('space-bunny Responses acceptance', () => {
         (receipt.cases as Json[]).push({ type, marker, sessionKey, faultRequests: faultRequests.length,
           elapsedMs: Date.now() - began, failed, runtimeEvents: (await runtimeEvents(page)).slice(eventStart),
           lateDelivery, cancelledAfterRecovery, lateEffectExists: false,
-          recovery: await history(page, await latestSession(page)), status: 'pass' });
+          recovery: await history(page, await latestSession(page)), status: 'pass', runtimeProbe: {
+            faultRequests: faultRequests.length,
+            responseCompleted: faultRequests.some(observation => observation.events.some(event => event.type === 'response.completed')),
+            providerCalls: providerCalls(faultRequests).length,
+            trajectoryTools: (await trajectoryTools(userDataDir)).length,
+            activeRequests: proxy.activeRequests(),
+          } });
       }
       passed = true;
     } finally {
