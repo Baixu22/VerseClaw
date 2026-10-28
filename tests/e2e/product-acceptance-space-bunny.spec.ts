@@ -164,6 +164,31 @@ function providerCalls(observations: Awaited<ReturnType<typeof startSpaceBunnyPr
     .filter(item => item.type === 'function_call'));
 }
 
+async function waitForFaultRetriesToSettle(
+  proxy: Awaited<ReturnType<typeof startSpaceBunnyProxy>>,
+  start: number,
+  type: ResponsesFault,
+  quietMs = 3_500,
+  timeoutMs = 30_000,
+) {
+  const deadline = Date.now() + timeoutMs;
+  let requests = proxy.observations.slice(start).filter(observation => observation.fault === type).length;
+  let stableAt = Date.now();
+  while (Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, 250));
+    const current = proxy.observations.slice(start).filter(observation => observation.fault === type).length;
+    if (current !== requests || proxy.activeRequests() !== 0) {
+      requests = current;
+      stableAt = Date.now();
+      continue;
+    }
+    if (Date.now() - stableAt >= quietMs) {
+      return { settled: true, requests, quietMs, elapsedMs: timeoutMs - (deadline - Date.now()) };
+    }
+  }
+  return { settled: false, requests, quietMs, elapsedMs: timeoutMs };
+}
+
 async function runtimeFailed(page: Page, sessionKey: string, start: number) {
   return (await runtimeEvents(page)).slice(start).some(event => {
     const encoded = JSON.stringify(event);
@@ -442,7 +467,7 @@ test.describe('space-bunny Responses acceptance', () => {
         const failed = await history(page, sessionKey);
         expect((failed.messages ?? []).filter(message => message.role === 'assistant' && message.stopReason === 'stop')
           .some(message => messageText(message).includes('SHOULD_NOT_COMPLETE'))).toBe(false);
-        const faultRequests = proxy.observations.slice(start).filter(observation => observation.fault === type);
+        let faultRequests = proxy.observations.slice(start).filter(observation => observation.fault === type);
         if (type === 'timeout') {
           expect(faultRequests.every(observation => observation.httpStatus === 200)).toBe(true);
           expect(faultRequests.some(observation => observation.aborted)).toBe(true);
@@ -451,10 +476,19 @@ test.describe('space-bunny Responses acceptance', () => {
             .map(message => String(message.errorMessage ?? '')).join('\n');
           expect(timeoutErrors).toMatch(/request timed out|idle timeout|request timeout/i);
         }
-        expect(faultRequests.length).toBeLessThanOrEqual(12);
+        // Keep the injected fault active until every bounded retry has settled.
+        // Clearing on the first visible error races the runner's final retry.
+        const settlement = await waitForFaultRetriesToSettle(proxy, start, type);
+        expect(settlement.settled).toBe(true);
+        expect(settlement.requests).toBeLessThanOrEqual(12);
+        faultRequests = proxy.observations.slice(start).filter(observation => observation.fault === type);
+        expect(faultRequests).toHaveLength(settlement.requests);
         expect(faultRequests.every(observation => !observation.events.some(event => event.type === 'response.completed'))).toBe(true);
         expect(providerCalls(faultRequests)).toHaveLength(0);
         expect(await trajectoryTools(userDataDir)).toHaveLength(0);
+        const settledFailure = await history(page, sessionKey);
+        expect((settledFailure.messages ?? []).filter(message => message.role === 'assistant' && message.stopReason === 'stop')
+          .some(message => messageText(message).includes('SHOULD_NOT_COMPLETE'))).toBe(false);
         if (type === 'cancel') {
           await expect.poll(() => proxy.activeRequests(), { timeout: 30_000 }).toBe(0);
           expect(faultRequests.some(observation => observation.aborted)).toBe(true);
@@ -491,10 +525,11 @@ test.describe('space-bunny Responses acceptance', () => {
         expect(await readdir(workspace)).not.toContain('late-effect.txt');
         expect(proxy.observations.slice(recoveryStart).every(observation => !JSON.stringify(observation.inputItems).includes(lateMarker))).toBe(true);
         (receipt.cases as Json[]).push({ type, marker, sessionKey, faultRequests: faultRequests.length,
-          elapsedMs: Date.now() - began, failed, runtimeEvents: (await runtimeEvents(page)).slice(eventStart),
+          elapsedMs: Date.now() - began, failed: settledFailure, settlement, runtimeEvents: (await runtimeEvents(page)).slice(eventStart),
           lateDelivery, cancelledAfterRecovery, lateEffectExists: false,
           recovery: await history(page, await latestSession(page)), status: 'pass', runtimeProbe: {
             faultRequests: faultRequests.length,
+            settled: settlement.settled,
             responseCompleted: faultRequests.some(observation => observation.events.some(event => event.type === 'response.completed')),
             providerCalls: providerCalls(faultRequests).length,
             trajectoryTools: (await trajectoryTools(userDataDir)).length,
