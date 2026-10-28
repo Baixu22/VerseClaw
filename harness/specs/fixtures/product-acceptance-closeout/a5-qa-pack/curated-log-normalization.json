@@ -1,0 +1,105 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0578-qa-pack",
+  "normalized": [
+    {
+      "path": "external-autoreview.txt",
+      "originalSha256": "a1e6ea481f574ad4e40ae98187449515c0f2f6bf2d44183ac143e04e64cdd6bd",
+      "originalBytes": 748323,
+      "curatedSha256": "7714513616f257d94d4128be1c444a3e8dc647d691b8dfbaf6b2736ddf3c322f",
+      "curatedBytes": 747856,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\external-autoreview.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "negative/false-final-state.txt",
+      "originalSha256": "ee3e757fa2beb7be65d31dd3b99f4b58eeec5a7786dfc6c2440b3113e9ba34a0",
+      "originalBytes": 660,
+      "curatedSha256": "be5ac2c482d97005baea07b91384df5c2271c0f2a7436b124408a6b935e97d82",
+      "curatedBytes": 659,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\negative\\false-final-state.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "negative/gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\negative\\gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-channel-thread-reply.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-channel-thread-reply.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-memory-preference-recall.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-memory-preference-recall.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-no-fake-progress.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-no-fake-progress.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-redaction-no-secret-leak.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-redaction-no-secret-leak.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-reminder-roundtrip.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-reminder-roundtrip.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-share-safe-diagnostics-artifact.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-share-safe-diagnostics-artifact.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-task-followthrough-status.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-task-followthrough-status.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    },
+    {
+      "path": "scenarios/personal-tool-safety-followthrough.gateway.stderr.txt",
+      "originalSha256": "c8456463ddbce2a7ee8a8a9dad7d32b8ceef36f0c289167d1877b2fc8e1e6819",
+      "originalBytes": 77,
+      "curatedSha256": "c1d07f2f8580250c509befef1e9d990311e8e25ac019529c6ae029cedc8d6973",
+      "curatedBytes": 75,
+      "originalArchive": "D:\\tmp\\clawx-relay-20261028\\curated-log-originals\\scenarios\\personal-tool-safety-followthrough.gateway.stderr.txt",
+      "normalization": "Trailing horizontal whitespace and blank lines at EOF removed; original bytes preserved in archive."
+    }
+  ]
+}

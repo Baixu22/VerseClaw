@@ -498,5 +498,7 @@
       "sha256": "559de9577bc372bdc3c321c6653564bbbbb5d556fbfdb98c75f54b2e4b3f3881",
       "bytes": 300
     }
-  ]
+  ],
+  "curatedLogNormalization": "curated-log-normalization.json",
+  "originalCuratedLogsArchive": "D:/tmp/clawx-relay-20261028/curated-log-originals"
 }

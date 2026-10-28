@@ -1253,7 +1253,7 @@
   "recoveryIndex": "recovery-index.json",
   "redactionScan": {
     "patterns": 5,
-    "files": 100,
+    "files": 101,
     "findings": 0,
     "status": "clean"
   },

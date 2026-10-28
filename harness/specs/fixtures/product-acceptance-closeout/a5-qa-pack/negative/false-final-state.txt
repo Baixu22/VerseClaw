@@ -13,4 +13,3 @@
 Failed final-state assertions must fail acceptance
 
 1 !== 0
-

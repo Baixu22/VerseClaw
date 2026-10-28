@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ProductAcceptanceShortfallLedger/v1",
-  "generatedAt": "2026-10-28T03:07:38.543Z",
+  "generatedAt": "2026-10-28T03:09:23.196Z",
   "driven_by": "agent",
   "actor": "codex-clawx-ga-review-20261027",
   "policy": "harness/specs/guides/product-acceptance-strategy.md",
@@ -275,7 +275,7 @@
         "exitCode": 0,
         "counts": "10 selected / 10 executed / 10 passed / 0 failed / 0 skipped; QA 21/21, root 56/56",
         "artifactPath": "harness/specs/fixtures/product-acceptance-closeout/a5-qa-pack/receipt.json",
-        "artifactSha256": "49247b8d90f1611350679507c9cf7c34f376c9d55984683cc4244be5dc6d9cad",
+        "artifactSha256": "2ff537674e16585621051234c5bf2b34140843ec302af7933a07951872c3c91b",
         "negativeControl": "Missing fixture and actual empty catalog exit 1. Deliberately false final-state oracle exits 1 with one failure and one later successful task; negative controller exit 0. Provider/Gateway startup failure closes all acquired HTTP listeners."
       }
     }

@@ -3153,7 +3153,7 @@ exec
 "D:\\software\\PowerShell\\pwsh-7.6.6\\pwsh.exe" -NoProfile -Command '$i=0; Get-Content scripts/qa-lab-personal-agent-acceptance.mjs | ForEach-Object { $i++; if($i -le 340){ '"'{0,5}: {1}' -f "'$i, $_ }}' in D:\ClawX
  succeeded in 219ms:
     1: #!/usr/bin/env node
-    2: 
+    2:
     3: import assert from "node:assert/strict";
     4: import { spawnSync } from "node:child_process";
     5: import { createHash } from "node:crypto";
@@ -3162,7 +3162,7 @@ exec
     8: import path from "node:path";
     9: import { fileURLToPath, pathToFileURL } from "node:url";
    10: import { parseArgs } from "node:util";
-   11: 
+   11:
    12: const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
    13: const runtimeRoot = path.join(root, "openclaw_runtime");
    14: const { values } = parseArgs({
@@ -3173,7 +3173,7 @@ exec
    19:     scenario: { type: "string", multiple: true },
    20:   },
    21: });
-   22: 
+   22:
    23: function commandResult(command, args, cwd = root) {
    24:   const result = spawnSync(command, args, {
    25:     cwd,
@@ -3185,7 +3185,7 @@ exec
    31:   if (result.error) throw result.error;
    32:   return result;
    33: }
-   34: 
+   34:
    35: async function readBuildBinding(candidate) {
    36:   const stamps = {};
    37:   for (const name of [".buildstamp", ".runtime-postbuildstamp"]) {
@@ -3221,7 +3221,7 @@ exec
    67:     digest: createHash("sha256").update(JSON.stringify(files)).digest("hex"),
    68:   };
    69: }
-   70: 
+   70:
    71: async function runNegativeControls() {
    72:   const git = (args) => {
    73:     const result = commandResult("git", args);
@@ -3402,7 +3402,7 @@ exec
   248:     ),
   249:   );
   250: }
-  251: 
+  251:
   252: try {
   253:   if (values["negative-controls"]) {
   254:     await runNegativeControls();
@@ -3477,7 +3477,7 @@ exec
   487:   }
   488:   throw new Error(`gateway failed to become healthy:\n${params.logs()}`);
   489: }
-  490: 
+  490:
   491: function isRetryableRpcStartupError(error: unknown) {
   492:   const details = formatErrorMessage(error);
   493:   return (
@@ -3490,7 +3490,7 @@ exec
   500:     details.includes("gateway closed (1012)")
   501:   );
   502: }
-  503: 
+  503:
   504: export function resolveQaControlUiRoot(params: { repoRoot: string; controlUiEnabled?: boolean }) {
   505:   if (params.controlUiEnabled === false) {
   506:     return undefined;
@@ -3499,7 +3499,7 @@ exec
   509:   const indexPath = path.join(controlUiRoot, "index.html");
   510:   return existsSync(indexPath) ? controlUiRoot : undefined;
   511: }
-  512: 
+  512:
   513: export async function startQaGatewayChild(params: {
   514:   repoRoot: string;
   515:   command?: QaGatewayChildCommand;
@@ -3673,7 +3673,7 @@ exec
  1310:       }
  1311:     }
  1312:   }
- 1313: 
+ 1313:
  1314:   const ownsLab = !params?.lab;
  1315:   const startLab = params?.startLab;
  1316:   writeQaSuiteProgress(progressEnabled, "lab start");
@@ -3759,7 +3759,7 @@ exec
  1396:     alternateModel,
  1397:     webSessionIds: new Set(),
  1398:   };
- 1399: 
+ 1399:
  1400:   let preserveGatewayRuntimeDir: string | undefined;
  1401:   try {
  1402:     const transportReadyTimeoutMs = resolveQaSuiteTransportReadyTimeoutMs(
@@ -3781,14 +3781,14 @@ exec
  1418:         status: "pending",
  1419:       }),
  1420:     );
- 1421: 
+ 1421:
  1422:     lab.setScenarioRun({
  1423:       kind: "suite",
  1424:       status: "running",
  1425:       startedAt: startedAt.toISOString(),
  1426:       scenarios: liveScenarioOutcomes,
  1427:     });
- 1428: 
+ 1428:
  1429:     const gatewayProcessRssSamples: QaSuiteGatewayRssSample[] = [];
  1430:     const sampleGatewayProcessRss = (label: string) => {
  1431:       const gatewayProcessRssBytes = gateway.getProcessRssBytes?.() ?? null;
@@ -3901,7 +3901,7 @@ exec
   209:     },
   210:   };
   211: }
-  212: 
+  212:
   213: export async function startQaLabServer(
   214:   params?: QaLabServerStartParams,
   215: ): Promise<QaLabServerHandle> {
@@ -3934,7 +3934,7 @@ exec
   242:     | undefined;
   243:   const embeddedGatewayEnabled = params?.embeddedGateway !== "disabled";
   244:   let labHandle: QaLabServerHandle | null = null;
-  245: 
+  245:
   246:   let publicBaseUrl = "";
   247:   let runnerModelCatalogPromise: Promise<void> | null = null;
   248:   let runnerModelCatalogAbort: AbortController | null = null;
@@ -3965,7 +3965,7 @@ exec
   167:   }
   168:   process.stderr.write(`[qa-suite] ${message}\n`);
   169: }
-  170: 
+  170:
   171: async function waitForQaLabReady(baseUrl: string, timeoutMs = 10_000) {
   172:   const startedAt = Date.now();
   173:   while (Date.now() - startedAt < timeoutMs) {
@@ -3989,7 +3989,7 @@ exec
   191:   }
   192:   throw new Error(`timed out after ${timeoutMs}ms waiting for qa-lab ready`);
   193: }
-  194: 
+  194:
   195: async function waitForQaLabReadyOrStopOwned(params: {
   196:   lab: Pick<QaLabServerHandle, "listenUrl" | "stop">;
   197:   ownsLab: boolean;
@@ -4004,7 +4004,7 @@ exec
   206:     throw error;
   207:   }
   208: }
-  209: 
+  209:
   210: function sanitizeQaSuiteProgressValue(value: string): string {
   211:   let normalized = "";
   212:   for (const char of value) {
@@ -4018,7 +4018,7 @@ exec
   220:   normalized = normalized.replace(/\s+/gu, " ").trim();
   221:   return normalized.length > 0 ? normalized : "<empty>";
   222: }
-  223: 
+  223:
   224: function requireQaSuiteStartLab(startLab: QaSuiteStartLabFn | undefined): QaSuiteStartLabFn {
   225:   if (startLab) {
 
@@ -4027,14 +4027,14 @@ exec
  succeeded in 218ms:
     1: // Qa Lab plugin module implements scenario packs behavior.
     2: import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
-    3: 
+    3:
     4: export type QaScenarioPackDefinition = {
     5:   id: string;
     6:   title: string;
     7:   description: string;
     8:   scenarioIds: readonly string[];
     9: };
-   10: 
+   10:
    11: export const QA_PERSONAL_AGENT_SCENARIO_IDS = [
    12:   "personal-reminder-roundtrip",
    13:   "personal-channel-thread-reply",
@@ -4047,12 +4047,12 @@ exec
    20:   "personal-no-fake-progress",
    21:   "personal-failure-recovery",
    22: ] as const;
-   23: 
+   23:
    24: export const QA_OBSERVABILITY_SCENARIO_IDS = [
    25:   "otel-trace-smoke",
    26:   "docker-prometheus-smoke",
    27: ] as const;
-   28: 
+   28:
    29: export const QA_SCENARIO_PACKS = [
    30:   {
    31:     id: "personal-agent",
@@ -4069,7 +4069,7 @@ exec
    42:     scenarioIds: QA_OBSERVABILITY_SCENARIO_IDS,
    43:   },
    44: ] as const satisfies readonly QaScenarioPackDefinition[];
-   45: 
+   45:
    46: export function resolveQaScenarioPackScenarioIds(params: {
    47:   pack?: string;
    48:   scenarioIds?: string[];
@@ -4092,7 +4092,7 @@ exec
    92:   }
    93:   return blocking;
    94: }
-   95: 
+   95:
    96: export function readQaSuiteFailedScenarioCountFromSummary(summary: unknown): number | null {
    97:   if (!summary || typeof summary !== "object") {
    98:     return null;
@@ -4115,7 +4115,7 @@ exec
   115:   }
   116:   return countedFailures;
   117: }
-  118: 
+  118:
   119: export function readQaSuiteFailedOrSkippedScenarioCountFromSummary(
   120:   summary: unknown,
   121: ): number | null {
@@ -4154,7 +4154,7 @@ exec
   154:   }
   155:   return countedBlocking;
   156: }
-  157: 
+  157:
   158: export async function readQaSuiteFailedScenarioCountFromFile(summaryPath: string): Promise<number> {
   159:   let summaryText: string;
   160:   try {
@@ -4182,7 +4182,7 @@ exec
   182:     `QA summary at ${summaryPath} did not include counts.failed or scenarios[].status.`,
   183:   );
   184: }
-  185: 
+  185:
   186: export async function readQaSuiteFailedOrSkippedScenarioCountFromFile(
   187:   summaryPath: string,
   188: ): Promise<number> {
@@ -4447,7 +4447,7 @@ exec
    79:     params.explicit ?? params.scenarios.some((scenario) => scenarioRequiresControlUi(scenario))
    80:   );
    81: }
-   82: 
+   82:
    83: export type QaSuiteScenarioResult = {
    84:   name: string;
    85:   status: "pass" | "fail";
@@ -4455,14 +4455,14 @@ exec
    87:   details?: string;
    88:   runtimeParity?: RuntimeParityResult;
    89: };
-   90: 
+   90:
    91: type QaSuiteEnvironment = {
    92:   lab: QaLabServerHandle;
    93:   webSessionIds: Set<string>;
    94: } & QaSuiteRuntimeEnv;
-   95: 
+   95:
    96: export type QaSuiteStartLabFn = (params?: QaLabServerStartParams) => Promise<QaLabServerHandle>;
-   97: 
+   97:
    98: export type QaSuiteRunParams = {
    99:   repoRoot?: string;
   100:   outputDir?: string;
@@ -4484,7 +4484,7 @@ exec
   116:   runtimePair?: [RuntimeId, RuntimeId];
   117:   captureRuntimeParityCell?: boolean;
   118: };
-  119: 
+  119:
   120: function parseQaSuiteBooleanEnv(value: string | undefined): boolean | undefined {
 
 exec
@@ -4539,7 +4539,7 @@ exec
   243:   await Promise.all(workers);
   244:   return results;
   245: }
-  246: 
+  246:
   247: async function resolveQaSuiteOutputDir(repoRoot: string, outputDir?: string) {
   248:   const targetDir = !outputDir
   249:     ? path.join(repoRoot, ".artifacts", "qa-e2e", `suite-${Date.now().toString(36)}`)
@@ -4557,7 +4557,7 @@ exec
   261:     mode: 0o700,
   262:   });
   263: }
-  264: 
+  264:
   265: export {
   266:   applyQaMergePatch,
   267:   collectQaSuiteGatewayConfigPatch,
@@ -4936,24 +4936,24 @@ exec
     3: import path from "node:path";
     4: import YAML from "yaml";
     5: import { z } from "zod";
-    6: 
+    6:
     7: export const DEFAULT_QA_AGENT_IDENTITY_MARKDOWN = `# Dev C-3PO
-    8: 
+    8:
     9: You are the OpenClaw QA operator agent.
-   10: 
+   10:
    11: Persona:
    12: - protocol-minded
    13: - precise
    14: - a little flustered
    15: - conscientious
    16: - eager to report what worked, failed, or remains blocked
-   17: 
+   17:
    18: Style:
    19: - read source and docs first
    20: - test systematically
    21: - record what happened
    22: - end with a concise protocol report`;
-   23: 
+   23:
    24: const qaScenarioConfigSchema = z.record(z.string(), z.unknown()).superRefine((config, ctx) => {
    25:   for (const [key, value] of Object.entries(config)) {
    26:     if (!key.endsWith("Any")) {
@@ -4978,22 +4978,22 @@ exec
    45:     }
    46:   }
    47: });
-   48: 
+   48:
    49: const qaScenarioExecutionSchema = z.object({
    50:   kind: z.literal("flow").default("flow"),
    51:   summary: z.string().trim().min(1).optional(),
    52:   config: qaScenarioConfigSchema.optional(),
    53: });
-   54: 
+   54:
    55: const qaCoverageIdSchema = z
    56:   .string()
    57:   .trim()
    58:   .regex(/^[a-z0-9]+(?:[.-][a-z0-9]+)*$/, {
    59:     message: "coverage ids must use lowercase dotted or dashed tokens",
    60:   });
-   61: 
+   61:
    62: const qaCoverageIdListSchema = z.array(qaCoverageIdSchema).min(1);
-   63: 
+   63:
    64: const qaScenarioCoverageSchema = z
    65:   .object({
    66:     primary: qaCoverageIdListSchema,
@@ -5022,25 +5022,25 @@ exec
    89:       }
    90:     }
    91:   });
-   92: 
+   92:
    93: const qaScenarioGatewayRuntimeSchema = z.object({
    94:   forwardHostHome: z.boolean().optional(),
    95: });
-   96: 
+   96:
    97: export const QA_RUNTIME_PARITY_TIERS = ["standard", "optional", "live-only", "soak"] as const;
    98: const qaRuntimeParityTierSchema = z.enum(QA_RUNTIME_PARITY_TIERS);
-   99: 
+   99:
   100: const qaFlowCallActionSchema = z.object({
   101:   call: z.string().trim().min(1),
   102:   args: z.array(z.unknown()).optional(),
   103:   saveAs: z.string().trim().min(1).optional(),
   104: });
-  105: 
+  105:
   106: const qaFlowSetActionSchema = z.object({
   107:   set: z.string().trim().min(1),
   108:   value: z.unknown(),
   109: });
-  110: 
+  110:
   111: const qaFlowAssertActionSchema = z.object({
   112:   assert: z.union([
   113:     z.string().trim().min(1),
@@ -5050,7 +5050,7 @@ exec
   117:     }),
   118:   ]),
   119: });
-  120: 
+  120:
   121: const qaFlowThrowActionSchema = z.object({
   122:   throw: z.union([
   123:     z.string().trim().min(1),
@@ -5060,14 +5060,14 @@ exec
   127:     }),
   128:   ]),
   129: });
-  130: 
+  130:
   131: const qaFlowIfShapeBase: Record<string, z.ZodTypeAny> = {
   132:   expr: z.string().trim().min(1),
   133:   else: z.array(z.unknown()).optional(),
   134: };
   135: const qaFlowThenKey = String.fromCharCode(116, 104, 101, 110);
   136: qaFlowIfShapeBase[qaFlowThenKey] = z.array(z.unknown()).min(1);
-  137: 
+  137:
   138: const qaFlowActionSchema: z.ZodType = z.lazy(() =>
   139:   z.union([
   140:     qaFlowCallActionSchema,
@@ -5097,17 +5097,17 @@ exec
   164:     }),
   165:   ]),
   166: );
-  167: 
+  167:
   168: const qaFlowStepSchema = z.object({
   169:   name: z.string().trim().min(1),
   170:   actions: z.array(qaFlowActionSchema).min(1),
   171:   detailsExpr: z.string().trim().min(1).optional(),
   172: });
-  173: 
+  173:
   174: const qaFlowSchema = z.object({
   175:   steps: z.array(qaFlowStepSchema).min(1),
   176: });
-  177: 
+  177:
   178: const qaSeedScenarioSchema = z.object({
   179:   id: z.string().trim().min(1),
   180:   title: z.string().trim().min(1),
@@ -5129,7 +5129,7 @@ exec
   196:   codeRefs: z.array(z.string().trim().min(1)).optional(),
   197:   execution: qaScenarioExecutionSchema.optional(),
   198: });
-  199: 
+  199:
   200: const qaScenarioPackSchema = z.object({
   201:   version: z.number().int().positive(),
   202:   agent: z
@@ -5141,7 +5141,7 @@ exec
   208:     }),
   209:   kickoffTask: z.string().trim().min(1),
   210: });
-  211: 
+  211:
   212: export type QaScenarioExecution = z.infer<typeof qaScenarioExecutionSchema>;
   213: export type QaScenarioFlow = z.infer<typeof qaFlowSchema>;
   214: export type QaRuntimeParityTier = z.infer<typeof qaRuntimeParityTierSchema>;
@@ -5152,17 +5152,17 @@ exec
   219:     flow?: QaScenarioFlow;
   220:   };
   221: };
-  222: 
+  222:
   223: export type QaScenarioPack = z.infer<typeof qaScenarioPackSchema> & {
   224:   scenarios: QaSeedScenarioWithSource[];
   225: };
-  226: 
+  226:
   227: export type QaBootstrapScenarioCatalog = {
   228:   agentIdentityMarkdown: string;
   229:   kickoffTask: string;
   230:   scenarios: QaSeedScenarioWithSource[];
   231: };
-  232: 
+  232:
   233: export {
   234:   QA_OBSERVABILITY_SCENARIO_IDS,
   235:   QA_PERSONAL_AGENT_SCENARIO_IDS,
@@ -5170,7 +5170,7 @@ exec
   237:   resolveQaScenarioPackScenarioIds,
   238:   type QaScenarioPackDefinition,
   239: } from "./scenario-packs.js";
-  240: 
+  240:
   241: const QA_SCENARIO_PACK_INDEX_PATH = "qa/scenarios/index.md";
   242: const QA_SCENARIO_LEGACY_OVERVIEW_PATH = "qa/scenarios.md";
   243: const QA_SCENARIO_DIR_PATH = "qa/scenarios";
@@ -5180,7 +5180,7 @@ exec
   247: const repoPathCache = new Map<string, string | null>();
   248: let qaScenarioMarkdownPathsCache: string[] | null = null;
   249: let qaScenarioPackCache: QaScenarioPack | null = null;
-  250: 
+  250:
   251: function walkUpDirectories(start: string): string[] {
   252:   const roots: string[] = [];
   253:   let current = path.resolve(start);
@@ -5193,7 +5193,7 @@ exec
   260:     current = parent;
   261:   }
   262: }
-  263: 
+  263:
   264: function resolveRepoPath(relativePath: string, kind: "file" | "directory" = "file"): string | null {
   265:   const cacheKey = `${kind}:${relativePath}`;
   266:   if (repoPathCache.has(cacheKey)) {
@@ -5213,11 +5213,11 @@ exec
   280:   repoPathCache.set(cacheKey, null);
   281:   return null;
   282: }
-  283: 
+  283:
   284: export function hasQaScenarioPack(): boolean {
   285:   return resolveRepoPath(QA_SCENARIO_PACK_INDEX_PATH, "file") !== null;
   286: }
-  287: 
+  287:
   288: function readTextFile(relativePath: string): string {
   289:   const resolved = resolveRepoPath(relativePath, "file");
   290:   if (!resolved) {
@@ -5225,7 +5225,7 @@ exec
   292:   }
   293:   return fs.readFileSync(resolved, "utf8");
   294: }
-  295: 
+  295:
   296: function extractQaPackYaml(content: string) {
   297:   const match = content.match(QA_PACK_FENCE_RE);
   298:   if (!match?.[1]) {
@@ -5235,7 +5235,7 @@ exec
   302:   }
   303:   return match[1];
   304: }
-  305: 
+  305:
   306: function extractQaScenarioYaml(content: string, relativePath: string) {
   307:   const match = content.match(QA_SCENARIO_FENCE_RE);
   308:   if (!match?.[1]) {
@@ -5243,7 +5243,7 @@ exec
   310:   }
   311:   return match[1];
   312: }
-  313: 
+  313:
   314: function extractQaScenarioFlow(content: string, relativePath: string) {
   315:   const match = content.match(QA_FLOW_YAML_FENCE_RE);
   316:   if (!match?.[1]) {
@@ -5251,11 +5251,11 @@ exec
   318:   }
   319:   return parseQaYamlWithContext(qaFlowSchema, YAML.parse(match[1]) as unknown, relativePath);
   320: }
-  321: 
+  321:
   322: function formatZodIssuePath(pathLocal: PropertyKey[]) {
   323:   return pathLocal.length ? pathLocal.map(String).join(".") : "<root>";
   324: }
-  325: 
+  325:
   326: function parseQaYamlWithContext<T>(schema: z.ZodType<T>, value: unknown, label: string): T {
   327:   const parsed = schema.safeParse(value);
   328:   if (parsed.success) {
@@ -5266,7 +5266,7 @@ exec
   333:     .join("; ");
   334:   throw new Error(`${label}: ${issues}`);
   335: }
-  336: 
+  336:
   337: export function readQaScenarioPackMarkdown(): string {
   338:   const chunks = [readTextFile(QA_SCENARIO_PACK_INDEX_PATH).trim()];
   339:   for (const relativePath of listQaScenarioMarkdownPaths()) {
@@ -5274,7 +5274,7 @@ exec
   341:   }
   342:   return chunks.filter(Boolean).join("\n\n");
   343: }
-  344: 
+  344:
   345: export function readQaScenarioPack(): QaScenarioPack {
   346:   if (qaScenarioPackCache) {
   347:     return qaScenarioPackCache;
@@ -5414,7 +5414,7 @@ exec
   635:   const stderrLogPath = path.join(tempRoot, "gateway.stderr.log");
   636:   const stdoutLog = createWriteStream(stdoutLogPath, { flags: "a" });
   637:   const stderrLog = createWriteStream(stderrLogPath, { flags: "a" });
-  638: 
+  638:
   639:   const logs = () => output.text();
   640:   const keepTemp = process.env.OPENCLAW_QA_KEEP_TEMP === "1";
   641:   let gatewayPort = 0;
@@ -5425,7 +5425,7 @@ exec
   646:   let rpcClient: Awaited<ReturnType<typeof startQaGatewayRpcClient>> | null = null;
   647:   let stagedBundledPluginsRoot: string | null = null;
   648:   let env: NodeJS.ProcessEnv | null = null;
-  649: 
+  649:
   650:   try {
   651:     const nodeExecPath = gatewayExecutablePath ?? (await resolveQaNodeExecPath());
   652:     const buildGatewayArgs = () => [
@@ -5502,7 +5502,7 @@ exec
   723:         encoding: "utf8",
   724:         mode: 0o600,
   725:       });
-  726: 
+  726:
   727:       const attemptChild = spawn(nodeExecPath, buildGatewayArgs(), {
   728:         cwd: gatewayCwd,
   729:         env,
@@ -5522,7 +5522,7 @@ exec
   743:         stderrLog.write(buffer);
   744:       });
   745:       child = attemptChild;
-  746: 
+  746:
   747:       try {
   748:         await waitForGatewayReady({
   749:           baseUrl,
@@ -5598,14 +5598,14 @@ exec
   819:         );
   820:       }
   821:     }
-  822: 
+  822:
   823:     if (!child || !cfg || !baseUrl || !wsUrl || !rpcClient || !env) {
   824:       throw new Error("qa gateway child failed to start");
   825:     }
   826:     let activeChild = child;
   827:     let activeRpcClient = rpcClient;
   828:     const runningEnv = env;
-  829: 
+  829:
   830:     const spawnReplacementGatewayChild = async () => {
   831:       const nextChild = spawn(nodeExecPath, buildGatewayArgs(), {
   832:         cwd: gatewayCwd,
@@ -5625,7 +5625,7 @@ exec
   846:         output.push(buffer);
   847:         stderrLog.write(buffer);
   848:       });
-  849: 
+  849:
   850:       try {
 
 Potential issue: preflight uses first ID personal-reminder-roundtrip, not simple bootstrap. README says preflight selects first; okay. But required test claims a bootstrap preflight before full pack.
@@ -5679,7 +5679,7 @@ exec
     3: import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
     4: import type { QaProviderMode } from "./model-selection.js";
     5: import type { RuntimeId, RuntimeParityResult } from "./runtime-parity.js";
-    6: 
+    6:
     7: type QaSuiteSummaryScenario = {
     8:   name: string;
     9:   status: "pass" | "fail" | "skip" | "skipped";
@@ -5687,7 +5687,7 @@ exec
    11:   details?: string;
    12:   runtimeParity?: RuntimeParityResult;
    13: };
-   14: 
+   14:
    15: export type QaSuiteSummaryJson = {
    16:   scenarios: QaSuiteSummaryScenario[];
    17:   counts: {
@@ -5732,19 +5732,19 @@ exec
    56:     runtimePair?: [RuntimeId, RuntimeId] | null;
    57:   };
    58: };
-   59: 
+   59:
    60: type QaSuiteScenarioStatus = Pick<QaSuiteSummaryScenario, "status">;
-   61: 
+   61:
    62: function readNonNegativeCount(value: unknown): number | null {
    63:   return typeof value === "number" && Number.isFinite(value)
    64:     ? Math.max(0, Math.floor(value))
    65:     : null;
    66: }
-   67: 
+   67:
    68: function isQaSuiteBlockingStatus(status: unknown): boolean {
    69:   return status !== "pass";
    70: }
-   71: 
+   71:
    72: export function countQaSuiteFailedScenarios(
    73:   scenarios: ReadonlyArray<QaSuiteScenarioStatus>,
    74: ): number {
@@ -5756,7 +5756,7 @@ exec
    80:   }
    81:   return failed;
    82: }
-   83: 
+   83:
    84: export function countQaSuiteFailedOrSkippedScenarios(
    85:   scenarios: ReadonlyArray<QaSuiteScenarioStatus>,
    86: ): number {
@@ -5768,7 +5768,7 @@ exec
    92:   }
    93:   return blocking;
    94: }
-   95: 
+   95:
    96: export function readQaSuiteFailedScenarioCountFromSummary(summary: unknown): number | null {
    97:   if (!summary || typeof summary !== "object") {
    98:     return null;
@@ -5818,7 +5818,7 @@ exec
  1150:           );
  1151:         });
  1152:     };
- 1153: 
+ 1153:
  1154:     try {
  1155:       updateScenarioRun();
  1156:       const workerStartStaggerMs = resolveQaSuiteWorkerStartStaggerMs(concurrency);
@@ -5894,16 +5894,16 @@ exec
 1000:export async function runQaSuite(params?: QaSuiteRunParams): Promise<QaSuiteResult> {
 1177:              buildQaIsolatedScenarioWorkerParams({
 1604:  buildQaIsolatedScenarioWorkerParams,
-  500: 
+  500:
   501: function appendNodeOption(raw: string | undefined, option: string) {
   502:   const parts = (raw ?? "").split(/\s+/u).filter(Boolean);
   503:   return parts.includes(option) ? parts.join(" ") : [...parts, option].join(" ");
   504: }
-  505: 
+  505:
   506: function shouldCaptureGatewayHeapCheckpoints(env: NodeJS.ProcessEnv = process.env) {
   507:   return parseQaSuiteBooleanEnv(env.OPENCLAW_QA_GATEWAY_HEAP_CHECKPOINTS) === true;
   508: }
-  509: 
+  509:
   510: function buildQaGatewayHeapCheckpointRuntimeEnvPatch(
   511:   env: NodeJS.ProcessEnv = process.env,
   512: ): NodeJS.ProcessEnv | undefined {
@@ -5914,7 +5914,7 @@ exec
   517:     NODE_OPTIONS: appendNodeOption(env.NODE_OPTIONS, "--heapsnapshot-signal=SIGUSR2"),
   518:   };
   519: }
-  520: 
+  520:
   521: function mergeQaRuntimeEnvPatches(
   522:   ...patches: Array<NodeJS.ProcessEnv | undefined>
   523: ): NodeJS.ProcessEnv | undefined {
@@ -5927,7 +5927,7 @@ exec
   530:   }
   531:   return Object.keys(merged).length > 0 ? merged : undefined;
   532: }
-  533: 
+  533:
   534: export type QaSuiteSummaryJsonParams = {
   535:   scenarios: QaSuiteScenarioResult[];
   536:   startedAt: Date;
@@ -5941,7 +5941,7 @@ exec
   544:   scenarioIds?: readonly string[];
   545:   runtimePair?: [RuntimeId, RuntimeId];
   546: };
-  547: 
+  547:
   548: /**
   549:  * Strongly-typed shape of `qa-suite-summary.json`. The GPT-5.5 parity gate
   550:  * (agentic-parity-report.ts, #64441) and any future parity wrapper can
@@ -5949,16 +5949,16 @@ exec
   552:  * summary schema propagate through to every consumer at type-check time.
   553:  */
   554: export type { QaSuiteSummaryJson } from "./suite-summary.js";
-  555: 
+  555:
   556: type QaSuiteGatewayRssSample = NonNullable<
   557:   NonNullable<QaSuiteSummaryJson["metrics"]>["gatewayProcessRssSamples"]
   558: >[number];
-  559: 
+  559:
   560: type QaGatewayHandle = Awaited<ReturnType<typeof startQaGatewayChild>>;
   561: type QaSuiteGatewayHeapSnapshot = NonNullable<
   562:   NonNullable<QaSuiteSummaryJson["metrics"]>["gatewayHeapSnapshots"]
   563: >[number];
-  564: 
+  564:
   565: /**
   566:  * Pure-ish JSON builder for qa-suite-summary.json. Exported so the GPT-5.5
   567:  * parity gate (agentic-parity-report.ts, #64441) and any future parity
@@ -6002,7 +6002,7 @@ exec
   605:     },
   606:   };
   607: }
-  608: 
+  608:
   609: async function runQaRuntimeParitySuite(params: {
   610:   repoRoot: string;
   611:   outputDir: string;
@@ -6050,7 +6050,7 @@ exec
   653:     startedAt: params.startedAt.toISOString(),
   654:     scenarios: [...liveScenarioOutcomes],
   655:   });
-  656: 
+  656:
   657:   try {
   658:     const scenarios = await mapQaSuiteWithConcurrency(
   659:       params.selectedCatalogScenarios,
@@ -6073,7 +6073,7 @@ exec
   676:           startedAt: params.startedAt.toISOString(),
   677:           scenarios: [...liveScenarioOutcomes],
   678:         });
-  679: 
+  679:
   680:         const parity = await runRuntimeParityScenario({
   681:           scenarioId: scenario.id,
   682:           runCell: async (runtime) => {
@@ -6145,7 +6145,7 @@ exec
   748:             };
   749:           },
   750:         });
-  751: 
+  751:
   752:         const result = buildRuntimeParityScenarioResult({
   753:           scenarioName: scenario.title,
   754:           result: parity,
@@ -6175,7 +6175,7 @@ exec
   778:         startStaggerMs: resolveQaSuiteWorkerStartStaggerMs(params.concurrency),
   779:       },
   780:     );
-  781: 
+  781:
   782:     const finishedAt = new Date();
   783:     const { report, reportPath, summaryPath } = await writeQaSuiteArtifacts({
   784:       outputDir: params.outputDir,
@@ -6220,7 +6220,7 @@ exec
   823:     }
   824:   }
   825: }
-  826: 
+  826:
   827: async function writeQaSuiteArtifacts(params: {
   828:   outputDir: string;
   829:   startedAt: Date;
@@ -6291,7 +6291,7 @@ exec
  1053:     lab: params?.lab,
  1054:     startLab: params?.startLab,
  1055:   });
- 1056: 
+ 1056:
  1057:   if (params?.runtimePair) {
  1058:     return await runQaRuntimeParitySuite({
  1059:       repoRoot,
@@ -6314,7 +6314,7 @@ exec
  1076:       runtimePair: params.runtimePair,
  1077:     });
  1078:   }
- 1079: 
+ 1079:
  1080:   if (useIsolatedScenarioWorkers) {
  1081:     const ownsLab = !params?.lab;
  1082:     const startLab = requireQaSuiteStartLab(params?.startLab);
@@ -6335,7 +6335,7 @@ exec
   407:     runtimeParity: params.result,
   408:   };
   409: }
-  410: 
+  410:
   411: function createQaSuiteReportNotes(params: {
   412:   transport: QaTransportAdapter;
   413:   providerMode: QaProviderMode;
@@ -6347,7 +6347,7 @@ exec
   419: }) {
   420:   return params.transport.createReportNotes(params);
   421: }
-  422: 
+  422:
   423: function buildQaIsolatedScenarioWorkerParams(params: {
   424:   repoRoot: string;
   425:   outputDir: string;
@@ -6379,12 +6379,12 @@ exec
   451:     forcedRuntime: params.input?.forcedRuntime,
   452:   };
   453: }
-  454: 
+  454:
   455: function normalizeQaSuiteModelRef(input: string | undefined, fallback: string) {
   456:   const model = input?.trim();
   457:   return model && model.length > 0 ? model : fallback;
   458: }
-  459: 
+  459:
   460: function remapModelRefForForcedRuntime(params: {
   461:   modelRef: string;
   462:   providerMode: QaProviderMode;
@@ -6399,7 +6399,7 @@ exec
   471:   }
   472:   return `openai/${split.model}`;
   473: }
-  474: 
+  474:
   475: function buildQaRuntimeEnvPatch(params: {
   476:   providerMode: QaProviderMode;
   477:   forcedRuntime?: RuntimeId;
@@ -6425,7 +6425,7 @@ exec
   497:   patch.CODEX_API_KEY = "qa-mock-openai-key";
   498:   return patch;
   499: }
-  500: 
+  500:
  1080:   if (useIsolatedScenarioWorkers) {
  1081:     const ownsLab = !params?.lab;
  1082:     const startLab = requireQaSuiteStartLab(params?.startLab);
@@ -6486,7 +6486,7 @@ exec
  succeeded in 208ms:
   230:   scenarios: QaSeedScenarioWithSource[];
   231: };
-  232: 
+  232:
   233: export {
   234:   QA_OBSERVABILITY_SCENARIO_IDS,
   235:   QA_PERSONAL_AGENT_SCENARIO_IDS,
@@ -6494,7 +6494,7 @@ exec
   237:   resolveQaScenarioPackScenarioIds,
   238:   type QaScenarioPackDefinition,
   239: } from "./scenario-packs.js";
-  240: 
+  240:
   241: const QA_SCENARIO_PACK_INDEX_PATH = "qa/scenarios/index.md";
   242: const QA_SCENARIO_LEGACY_OVERVIEW_PATH = "qa/scenarios.md";
   243: const QA_SCENARIO_DIR_PATH = "qa/scenarios";
@@ -6504,7 +6504,7 @@ exec
   247: const repoPathCache = new Map<string, string | null>();
   248: let qaScenarioMarkdownPathsCache: string[] | null = null;
   249: let qaScenarioPackCache: QaScenarioPack | null = null;
-  250: 
+  250:
   251: function walkUpDirectories(start: string): string[] {
   252:   const roots: string[] = [];
   253:   let current = path.resolve(start);
@@ -6517,7 +6517,7 @@ exec
   260:     current = parent;
   261:   }
   262: }
-  263: 
+  263:
   264: function resolveRepoPath(relativePath: string, kind: "file" | "directory" = "file"): string | null {
   265:   const cacheKey = `${kind}:${relativePath}`;
   266:   if (repoPathCache.has(cacheKey)) {
@@ -6537,11 +6537,11 @@ exec
   280:   repoPathCache.set(cacheKey, null);
   281:   return null;
   282: }
-  283: 
+  283:
   284: export function hasQaScenarioPack(): boolean {
   285:   return resolveRepoPath(QA_SCENARIO_PACK_INDEX_PATH, "file") !== null;
   286: }
-  287: 
+  287:
   288: function readTextFile(relativePath: string): string {
   289:   const resolved = resolveRepoPath(relativePath, "file");
   290:   if (!resolved) {
@@ -6549,7 +6549,7 @@ exec
   292:   }
   293:   return fs.readFileSync(resolved, "utf8");
   294: }
-  295: 
+  295:
   296: function extractQaPackYaml(content: string) {
   297:   const match = content.match(QA_PACK_FENCE_RE);
   298:   if (!match?.[1]) {
@@ -6559,7 +6559,7 @@ exec
   302:   }
   303:   return match[1];
   304: }
-  305: 
+  305:
   306: function extractQaScenarioYaml(content: string, relativePath: string) {
   307:   const match = content.match(QA_SCENARIO_FENCE_RE);
   308:   if (!match?.[1]) {
@@ -6567,7 +6567,7 @@ exec
   310:   }
   311:   return match[1];
   312: }
-  313: 
+  313:
   314: function extractQaScenarioFlow(content: string, relativePath: string) {
   315:   const match = content.match(QA_FLOW_YAML_FENCE_RE);
   316:   if (!match?.[1]) {
@@ -6575,11 +6575,11 @@ exec
   318:   }
   319:   return parseQaYamlWithContext(qaFlowSchema, YAML.parse(match[1]) as unknown, relativePath);
   320: }
-  321: 
+  321:
   322: function formatZodIssuePath(pathLocal: PropertyKey[]) {
   323:   return pathLocal.length ? pathLocal.map(String).join(".") : "<root>";
   324: }
-  325: 
+  325:
   326: function parseQaYamlWithContext<T>(schema: z.ZodType<T>, value: unknown, label: string): T {
   327:   const parsed = schema.safeParse(value);
   328:   if (parsed.success) {
@@ -6590,7 +6590,7 @@ exec
   333:     .join("; ");
   334:   throw new Error(`${label}: ${issues}`);
   335: }
-  336: 
+  336:
   337: export function readQaScenarioPackMarkdown(): string {
   338:   const chunks = [readTextFile(QA_SCENARIO_PACK_INDEX_PATH).trim()];
   339:   for (const relativePath of listQaScenarioMarkdownPaths()) {
@@ -6598,7 +6598,7 @@ exec
   341:   }
   342:   return chunks.filter(Boolean).join("\n\n");
   343: }
-  344: 
+  344:
   345: export function readQaScenarioPack(): QaScenarioPack {
   346:   if (qaScenarioPackCache) {
   347:     return qaScenarioPackCache;
@@ -6661,7 +6661,7 @@ exec
   404:   };
   405:   return qaScenarioPackCache;
   406: }
-  407: 
+  407:
   408: export function listQaScenarioMarkdownPaths(): string[] {
   409:   if (qaScenarioMarkdownPathsCache) {
   410:     return qaScenarioMarkdownPathsCache;
@@ -6676,7 +6676,7 @@ exec
   419:   ).toSorted();
   420:   return qaScenarioMarkdownPathsCache;
   421: }
-  422: 
+  422:
   423: function listQaScenarioMarkdownPathsInDirectory(
   424:   absoluteDir: string,
   425:   relativeDir: string,
@@ -6702,7 +6702,7 @@ exec
     "postinstall": "node scripts/assert-pnpm-toolchain.mjs && pnpm run versebrowser:build && node scripts/patch-browser
 -hint.mjs && pnpm --dir openclaw_runtime install",
     "init": "pnpm install && pnpm run uv:download && pnpm run agent-browser:download",
-    "predev": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs 
+    "predev": "pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs
 && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
     "dev": "vite",
     "dev:mock": "vite --open \"/?mock=1#/\"",
@@ -6823,7 +6823,7 @@ s --maxWorkers=1 && pnpm run test:dcs",
     "test:dcs": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.conf
 ig.ts src/context-engine/block.test.ts src/context-engine/block-store.test.ts src/context-engine/handlers/working-memor
 y-handler.test.ts src/context-engine/handlers/task-loop-handler.test.ts src/context-engine/handlers/tool-registry-handl
-er.test.ts src/context-engine/handlers/compass-handler.test.ts src/context-engine/handlers/role-memory-handler.test.ts 
+er.test.ts src/context-engine/handlers/compass-handler.test.ts src/context-engine/handlers/role-memory-handler.test.ts
 src/context-engine/assembler.test.ts src/context-engine/assembler.kill-switch.test.ts src/context-engine/turn-injection
 -budget.test.ts src/context-engine/runtime-flag-ack.test.ts src/context-engine/dcs-observability.test.ts src/context-en
 gine/dcs-prod-flags-catalog.test.ts src/context-engine/workspace-fingerprint.test.ts src/context-engine/tools/context-s
@@ -6914,7 +6914,7 @@ seline",
     "test:e2e:agent-dev-quality": "pnpm run build:vite && playwright test tests/e2e/agent-dev-quality.spec.ts --workers
 =2",
     "test:e2e:agent-dev-quality:run": "playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2",
-    "test:e2e:agent-dev-quality:smoke": "playwright test tests/e2e/agent-dev-quality.spec.ts --grep \"loads the in-app 
+    "test:e2e:agent-dev-quality:smoke": "playwright test tests/e2e/agent-dev-quality.spec.ts --grep \"loads the in-app
 Agent Dev Workbench\"",
     "verify:security-shadow-mvp": "node scripts/verify-security-shadow-mvp.mjs",
     "comms:replay": "node scripts/comms/replay.mjs",
@@ -7048,7 +7048,7 @@ ate-system-maturity-evidence.mjs && node scripts/run-system-maturity-residual-au
     "release:windows-policy:evidence": "node scripts/collect-p6-001-evidence.mjs",
     "release:windows-policy:evidence:full": "node scripts/collect-p6-001-evidence.mjs --full",
     "release:windows-update-policy": "node scripts/validate-windows-update-feed-policy.mts",
-    "release:windows-update-policy:live": "node scripts/validate-windows-update-feed-policy.mts --probe-live --version 
+    "release:windows-update-policy:live": "node scripts/validate-windows-update-feed-policy.mts --probe-live --version
 1.0.0",
     "release:windows-update-policy:evidence": "node scripts/collect-p6-002-evidence.mjs",
     "release:windows-update-policy:evidence:full": "node scripts/collect-p6-002-evidence.mjs --full",
@@ -7085,7 +7085,7 @@ owser-task-session-conservation.test.ts tests/unit/versebrowser-host-adapter.tes
     "uas:00:evidence": "node scripts/uas-00-evidence-freeze.mjs",
     "uas:00:evidence:check": "node scripts/uas-00-evidence-freeze.mjs --check",
     "uas:06:evidence": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts",
-    "uas:06:evidence:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts 
+    "uas:06:evidence:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts
 --check",
     "uas:06:real-canary": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts",
     "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts -
@@ -7308,7 +7308,7 @@ exec
 openclaw_runtime/extensions/qa-lab/src/suite.ts:233:function shouldRunQaSuiteWithIsolatedScenarioWorkers(params: {
 openclaw_runtime/extensions/qa-lab/src/suite.ts:1050:  const useIsolatedScenarioWorkers = shouldRunQaSuiteWithIsolatedScenarioWorkers({
 openclaw_runtime/extensions/qa-lab/src/suite.ts:1614:  shouldRunQaSuiteWithIsolatedScenarioWorkers,
-  100: 
+  100:
   101: function collectQaSuitePluginIds(
   102:   scenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"],
   103: ) {
@@ -7324,7 +7324,7 @@ openclaw_runtime/extensions/qa-lab/src/suite.ts:1614:  shouldRunQaSuiteWithIsola
   113:     ),
   114:   ];
   115: }
-  116: 
+  116:
   117: function collectQaSuiteGatewayConfigPatch(
   118:   scenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"],
   119: ): Record<string, unknown> | undefined {
@@ -7340,7 +7340,7 @@ openclaw_runtime/extensions/qa-lab/src/suite.ts:1614:  shouldRunQaSuiteWithIsola
   129:   }
   130:   return merged;
   131: }
-  132: 
+  132:
   133: function collectQaSuiteGatewayRuntimeOptions(
   134:   scenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"],
   135: ) {
@@ -7352,7 +7352,7 @@ openclaw_runtime/extensions/qa-lab/src/suite.ts:1614:  shouldRunQaSuiteWithIsola
   141:   }
   142:   return forwardHostHome ? { forwardHostHome: true } : undefined;
   143: }
-  144: 
+  144:
   145: function shouldUseIsolatedQaSuiteScenarioWorkers(params: {
   146:   scenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"];
   147:   concurrency: number;
@@ -7363,11 +7363,11 @@ openclaw_runtime/extensions/qa-lab/src/suite.ts:1614:  shouldRunQaSuiteWithIsola
   152:       params.scenarios.some((scenario) => isQaMergePatchObject(scenario.gatewayConfigPatch)))
   153:   );
   154: }
-  155: 
+  155:
   156: function scenarioRequiresControlUi(scenario: QaSeedScenario) {
   157:   return normalizeLowercaseStringOrEmpty(scenario.surface) === "control-ui";
   158: }
-  159: 
+  159:
   160: function normalizeQaSuiteConcurrency(
   161:   value: number | undefined,
   162:   scenarioCount: number,
@@ -7382,7 +7382,7 @@ openclaw_runtime/extensions/qa-lab/src/suite.ts:1614:  shouldRunQaSuiteWithIsola
   171:         : defaultConcurrency;
   172:   return Math.max(1, Math.min(Math.floor(raw), Math.max(1, scenarioCount)));
   173: }
-  174: 
+  174:
   175: function resolveQaSuiteWorkerStartStaggerMs(
   176:   concurrency: number,
   177:   env: NodeJS.ProcessEnv = process.env,
@@ -7410,7 +7410,7 @@ exec
   229:     "QA suite requires startLab when no lab handle is provided; use the runtime launcher or pass startLab explicitly.",
   230:   );
   231: }
-  232: 
+  232:
   233: function shouldRunQaSuiteWithIsolatedScenarioWorkers(params: {
   234:   scenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"];
   235:   concurrency: number;
@@ -7425,23 +7425,23 @@ exec
   244:   ) {
   245:     return false;
   246:   }
-  247: 
+  247:
   248:   if (params.concurrency === 1 && params.lab && !params.startLab) {
   249:     return false;
   250:   }
-  251: 
+  251:
   252:   return true;
   253: }
-  254: 
+  254:
   255: const QA_IMAGE_UNDERSTANDING_PNG_BASE64 =
   256:   "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAAAklEQVR4AewaftIAAAK4SURBVO3BAQEAMAwCIG//znsQgXfJBZjUALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsl9wFmNQAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwP4TIF+7ciPkoAAAAASUVORK5CYII=";
-  257: 
+  257:
   258: const QA_IMAGE_UNDERSTANDING_LARGE_PNG_BASE64 =
   259:   "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAACuklEQVR4Ae3BAQEAMAwCIG//znsQgXfJBZjUALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsBpjVALMaYFYDzGqAWQ0wqwFmNcCsl9wFmNQAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwGmNUAsxpgVgPMaoBZDTCrAWY1wKwP4TIF+2YE/z8AAAAASUVORK5CYII=";
-  260: 
+  260:
   261: const QA_IMAGE_UNDERSTANDING_VALID_PNG_BASE64 =
   262:   "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAALklEQVR4nO3OoQEAAAyDsP7/9HYGJgJNdtuVDQAAAAAAACAHxH8AAAAAAACAHvBX0fhq85dN7QAAAABJRU5ErkJggg==";
-  263: 
+  263:
   264: function liveTurnTimeoutMs(
   265:   env: Pick<QaSuiteRuntimeEnv, "providerMode" | "primaryModel" | "alternateModel">,
 
@@ -7461,22 +7461,22 @@ openclaw_runtime/extensions/qa-lab/src\suite.ts:29:import { startQaProviderServe
 openclaw_runtime/extensions/qa-lab/src\suite.ts:1332:  const mock = await startQaProviderServer(providerMode).catch(async (error: unknown) => {
     1: // Qa Lab plugin module implements server runtime behavior.
     2: import { getQaProvider, type QaMockProviderServer, type QaProviderModeInput } from "./index.js";
-    3: 
+    3:
     4: type QaProviderServerParams = {
     5:   host: string;
     6:   port: number;
     7: };
-    8: 
+    8:
     9: async function startMockOpenAiProviderServer(params: QaProviderServerParams) {
    10:   const { startQaMockOpenAiServer } = await import("./mock-openai/server.js");
    11:   return await startQaMockOpenAiServer(params);
    12: }
-   13: 
+   13:
    14: async function startAimockProviderServer(params: QaProviderServerParams) {
    15:   const { startQaAimockServer } = await import("./aimock/server.js");
    16:   return await startQaAimockServer(params);
    17: }
-   18: 
+   18:
    19: export async function startQaProviderServer(
    20:   input: QaProviderModeInput,
    21:   params?: { host?: string; port?: number },
@@ -7623,7 +7623,7 @@ exec
   268:   }
   269:   throw new Error(`unknown qa flow action: ${JSON.stringify(action)}`);
   270: }
-  271: 
+  271:
   272: export async function runScenarioFlow(params: {
   273:   api: QaFlowApi;
   274:   flow: QaScenarioFlow;
@@ -7886,23 +7886,23 @@ exec
 "D:\\software\\PowerShell\\pwsh-7.6.6\\pwsh.exe" -NoProfile -Command '$i=0; Get-Content README.ru-RU.md | ForEach-Object { $i++; if($i -ge 188 -and $i -le 205){ '"'{0,5}: {1}' -f "'$i, $_ }}' in D:\ClawX
  succeeded in 188ms:
   188: | `pnpm run docs:policy:validate` | Validation documentation policy |
-  189: 
+  189:
   190: Task spec:
-  191: 
+  191:
   192: ```bash
   193: pnpm harness context --spec <task-spec>
   194: pnpm harness validate --spec <task-spec>
   195: pnpm harness run --spec <task-spec> --dry-run
   196: ```
-  197: 
+  197:
   198: UI changes должны включать Electron E2E и строки en/zh/ja/ru. Communication changes дополнительно требуют `pnpm run comms:replay` и `pnpm run comms:compare`. Build success, install success и release authorization — разные факты.
-  199: 
+  199:
   200: Полная карта gates: [development and validation](docs/modules/development-and-validation.md).
-  201: 
+  201:
   202: <a id="troubleshooting"></a>
-  203: 
+  203:
   204: ## Решение проблем
-  205: 
+  205:
 
 exec
 "D:\\software\\PowerShell\\pwsh-7.6.6\\pwsh.exe" -NoProfile -Command '$i=0; Get-Content openclaw_runtime/extensions/qa-lab/src/suite-startup.test.ts | ForEach-Object { $i++; if($i -le 100){ '"'{0,5}: {1}' -f "'$i, $_ }}' in D:\ClawX
@@ -7911,20 +7911,20 @@ exec
     2: import { startQaLabServer } from "./lab-server.js";
     3: import { QA_PERSONAL_AGENT_SCENARIO_IDS } from "./scenario-packs.js";
     4: import { runQaSuite } from "./suite.js";
-    5: 
+    5:
     6: const fixture = vi.hoisted(() => ({
     7:   failure: "gateway",
     8:   urls: [] as string[],
     9:   stops: [] as Array<() => Promise<void>>,
    10: }));
-   11: 
+   11:
    12: vi.mock("./gateway-child.js", async (importOriginal) => ({
    13:   ...(await importOriginal<typeof import("./gateway-child.js")>()),
    14:   startQaGatewayChild: async () => {
    15:     throw new Error("QA deliberate Gateway startup failure");
    16:   },
    17: }));
-   18: 
+   18:
    19: vi.mock("./providers/server-runtime.js", async (importOriginal) => {
    20:   const actual = await importOriginal<typeof import("./providers/server-runtime.js")>();
    21:   return {
@@ -7942,13 +7942,13 @@ exec
    33:     },
    34:   };
    35: });
-   36: 
+   36:
    37: afterEach(async () => {
    38:   await Promise.allSettled(fixture.stops.map((stop) => stop()));
    39:   fixture.urls = [];
    40:   fixture.stops = [];
    41: });
-   42: 
+   42:
    43: describe("QA suite startup cleanup", () => {
    44:   it.each(["provider", "gateway"])(
    45:     "closes acquired HTTP listeners after %s startup fails",
@@ -8054,7 +8054,7 @@ openclaw_runtime\extensions\qa-lab\src\live-transports\whatsapp\cli.runtime.ts:1
 exec
 "D:\\software\\PowerShell\\pwsh-7.6.6\\pwsh.exe" -NoProfile -Command '$i=0; Get-Content openclaw_runtime/extensions/qa-lab/src/cli.runtime.ts | ForEach-Object { $i++; if(($i -ge 245 -and $i -le 345) -or ($i -ge 625 -and $i -le 710)){ '"'{0,5}: {1}' -f "'$i, $_ }}' in D:\ClawX
  succeeded in 209ms:
-  245: 
+  245:
   246: function isQaSuiteInfraRetryableError(error: unknown) {
   247:   const message = formatErrorMessage(error).toLowerCase();
   248:   return (
@@ -8073,7 +8073,7 @@ exec
   261:     message.includes("did not produce report artifact")
   262:   );
   263: }
-  264: 
+  264:
   265: async function assertQaSuiteArtifacts(result: { reportPath: string; summaryPath: string }) {
   266:   try {
   267:     await fs.access(result.reportPath);
@@ -8085,7 +8085,7 @@ exec
   273:   }
   274:   await readQaSuiteFailedOrSkippedScenarioCountFromFile(result.summaryPath);
   275: }
-  276: 
+  276:
   277: async function runQaSuiteFromRuntimeWithInfraRetry(
   278:   params: Parameters<typeof runQaSuiteFromRuntime>[0],
   279:   maxRetries = QA_SUITE_INFRA_RETRY_LIMIT,
@@ -8107,7 +8107,7 @@ exec
   295:   }
   296:   throw new Error("unreachable qa suite retry state");
   297: }
-  298: 
+  298:
   299: async function runQaParityPreflight(params: {
   300:   repoRoot: string;
   301:   scenarioIds?: string[];
@@ -8149,7 +8149,7 @@ exec
   337:     );
   338:   }
   339: }
-  340: 
+  340:
   341: function parseQaCliBackendAuthMode(value: string | undefined): QaCliBackendAuthMode | undefined {
   342:   const normalized = value?.trim().toLowerCase();
   343:   if (!normalized) {
@@ -8224,7 +8224,7 @@ exec
   691:     process.exitCode = 1;
   692:   }
   693: }
-  694: 
+  694:
   695: export async function runQaParityReportCommand(opts: {
   696:   repoRoot?: string;
   697:   candidateSummary?: string;
@@ -8685,11 +8685,11 @@ exec
   956:   }
   957:   return { marker: "normal" };
   958: }
-  959: 
+  959:
   960: function isActiveMemorySubagentPrompt(text: string) {
   961:   return text.includes("You are a memory search agent.");
   962: }
-  963: 
+  963:
   964: function extractSnackPreference(text: string) {
   965:   const normalized = text.replace(/\s+/g, " ").trim();
   966:   const match =
@@ -8698,7 +8698,7 @@ exec
   969:     );
   970:   return match?.[0]?.trim() ?? null;
   971: }
-  972: 
+  972:
   973: function extractLastCapture(text: string, pattern: RegExp) {
   974:   let lastMatch: RegExpExecArray | null = null;
   975:   const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
@@ -8885,7 +8885,7 @@ exec
     2: import fs from "node:fs/promises";
     3: import path from "node:path";
     4: import { assertNoSymlinkParents, pathScope } from "openclaw/plugin-sdk/security-runtime";
-    5: 
+    5:
     6: export function resolveRepoRelativeOutputDir(repoRoot: string, outputDir?: string) {
     7:   if (!outputDir) {
     8:     return undefined;
@@ -8899,7 +8899,7 @@ exec
    16:   }
    17:   return resolved.path;
    18: }
-   19: 
+   19:
    20: async function resolveNearestExistingPath(targetPath: string) {
    21:   let current = path.resolve(targetPath);
    22:   while (true) {
@@ -8918,7 +8918,7 @@ exec
    35:     current = parent;
    36:   }
    37: }
-   38: 
+   38:
    39: function assertRepoRelativePath(repoRoot: string, targetPath: string, label: string) {
    40:   const relative = path.relative(repoRoot, targetPath);
    41:   if (relative.startsWith("..") || path.isAbsolute(relative)) {
@@ -8926,7 +8926,7 @@ exec
    43:   }
    44:   return relative;
    45: }
-   46: 
+   46:
    47: async function assertNoSymlinkSegments(repoRoot: string, targetPath: string, label: string) {
    48:   assertRepoRelativePath(repoRoot, targetPath, label);
    49:   try {
@@ -8942,7 +8942,7 @@ exec
    59:     throw error;
    60:   }
    61: }
-   62: 
+   62:
    63: export async function assertRepoBoundPath(repoRoot: string, targetPath: string, label: string) {
    64:   const repoRootResolved = path.resolve(repoRoot);
    65:   const targetResolved = path.resolve(targetPath);
@@ -8954,7 +8954,7 @@ exec
    71:   assertRepoRelativePath(repoRootReal, nearestExistingReal, label);
    72:   return targetResolved;
    73: }
-   74: 
+   74:
    75: export async function ensureRepoBoundDirectory(
    76:   repoRoot: string,
    77:   targetDir: string,
@@ -8998,7 +8998,7 @@ exec
    24: execution:
    25:   kind: flow
    26: ```
-   27: 
+   27:
    28: ```yaml qa-flow
    29: steps:
    30:   - name: Record an agent denial and reject the command
@@ -9624,33 +9624,33 @@ exec
   443:       optionsByModel[model] = { ...optionsByModel[model], ...options };
   444:     }
   445:   }
-  446: 
+  446:
   447:   return {
   448:     models,
   449:     optionsByModel: Object.keys(optionsByModel).length > 0 ? optionsByModel : undefined,
   450:   };
   451: }
-  452: 
+  452:
   453: async function runInterruptibleServer(label: string, server: InterruptibleServer) {
   454:   process.stdout.write(`${label}: ${server.baseUrl}\n`);
   455:   process.stdout.write("Press Ctrl+C to stop.\n");
-  456: 
+  456:
   457:   const shutdown = async () => {
   458:     process.off("SIGINT", onSignal);
   459:     process.off("SIGTERM", onSignal);
   460:     await server.stop();
   461:     process.exit(0);
   462:   };
-  463: 
+  463:
   464:   const onSignal = () => {
   465:     void shutdown();
   466:   };
-  467: 
+  467:
   468:   process.on("SIGINT", onSignal);
   469:   process.on("SIGTERM", onSignal);
   470:   await new Promise(() => {});
   471: }
-  472: 
+  472:
   473: async function readQaCredentialPayloadFile(filePath: string) {
   474:   const text = await fs.readFile(filePath, "utf8");
   475:   let payload: unknown;
@@ -9666,14 +9666,14 @@ exec
   485:   }
   486:   return payload as Record<string, unknown>;
   487: }
-  488: 
+  488:
   489: function formatQaCredentialLeaseState(credential: QaCredentialRecord) {
   490:   if (!credential.lease) {
   491:     return "no";
   492:   }
   493:   return `yes(${credential.lease.actorRole}:${credential.lease.ownerId})`;
   494: }
-  495: 
+  495:
   496: function printQaCredentialListTable(credentials: QaCredentialRecord[]) {
   497:   if (credentials.length === 0) {
   498:     process.stdout.write("No credentials matched.\n");
@@ -9704,7 +9704,7 @@ exec
   523:     );
   524:   }
   525: }
-  526: 
+  526:
   527: function printQaCredentialDoctorTable(
   528:   result: Awaited<ReturnType<typeof diagnoseQaCredentialBroker>>,
   529: ) {
@@ -9716,7 +9716,7 @@ exec
   535:     );
   536:   }
   537: }
-  538: 
+  538:
   539: export async function runQaLabSelfCheckCommand(opts: { repoRoot?: string; output?: string }) {
   540:   const repoRoot = path.resolve(opts.repoRoot ?? process.cwd());
   541:   const server = await startQaLabServer({
@@ -9767,7 +9767,7 @@ exec
  1160:     throw error;
  1161:   }
  1162: }
- 1163: 
+ 1163:
  1164: export async function runQaCredentialsDoctorCommand(opts: {
  1165:   actorId?: string;
  1166:   endpointPrefix?: string;
@@ -9788,7 +9788,7 @@ exec
  1181:     process.exitCode = 1;
  1182:   }
  1183: }
- 1184: 
+ 1184:
  1185: export async function runQaLabUiCommand(opts: {
  1186:   repoRoot?: string;
  1187:   host?: string;
@@ -9819,7 +9819,7 @@ exec
  1212:   });
  1213:   await runInterruptibleServer("QA Lab UI", server);
  1214: }
- 1215: 
+ 1215:
  1216: export async function runQaDockerScaffoldCommand(opts: {
  1217:   repoRoot?: string;
  1218:   outputDir: string;
@@ -10036,7 +10036,7 @@ exec
  1498:         scenarios: [...liveScenarioOutcomes],
  1499:       });
  1500:     }
- 1501: 
+ 1501:
  1502:     const runtimeParityCell =
  1503:       params?.captureRuntimeParityCell &&
  1504:       params.forcedRuntime &&
@@ -10103,7 +10103,7 @@ exec
  1565:       progressEnabled,
  1566:       `run complete: passed=${scenarios.length - failedCount} failed=${failedCount} total=${scenarios.length}`,
  1567:     );
- 1568: 
+ 1568:
  1569:     return {
  1570:       outputDir,
  1571:       reportPath,
@@ -10135,7 +10135,7 @@ exec
  1597:     }
  1598:   }
  1599: }
- 1600: 
+ 1600:
 openclaw_runtime/extensions/qa-lab/src/suite.ts:1400:  let preserveGatewayRuntimeDir: string | undefined;
 openclaw_runtime/extensions/qa-lab/src/suite.ts:1529:      preserveGatewayRuntimeDir = path.join(outputDir, "artifacts", "gateway-runtime");
 openclaw_runtime/extensions/qa-lab/src/suite.ts:1579:    preserveGatewayRuntimeDir = path.join(outputDir, "artifacts", "gateway-runtime");
@@ -10215,7 +10215,7 @@ exec
   626:       }
   627:     })();
   628:   });
-  629: 
+  629:
   630:   await new Promise<void>((resolve, reject) => {
   631:     server.once("error", reject);
   632:     server.listen(params?.port ?? 0, params?.host ?? "127.0.0.1", () => resolve());
@@ -10244,7 +10244,7 @@ exec
   655:       kickoffTask: scenarioCatalog.kickoffTask,
   656:     });
   657:   }
-  658: 
+  658:
   659:   server.on("upgrade", (req, socket, head) => {
   660:     const url = new URL(req.url ?? "/", "http://127.0.0.1");
   661:     if (!controlUiProxyTarget || !isControlUiProxyPath(url.pathname)) {
@@ -10259,7 +10259,7 @@ exec
   670:       authorizationToken: controlUiProxyToken,
   671:     });
   672:   });
-  673: 
+  673:
   674:   const lab = {
   675:     baseUrl: publicBaseUrl,
   676:     listenUrl,
@@ -10293,7 +10293,7 @@ exec
   704:   labHandle = lab;
   705:   return lab;
   706: }
-  707: 
+  707:
   708: function serializeSelfCheck(result: QaSelfCheckResult) {
   709:   return {
   710:     outputPath: result.outputPath,
@@ -10320,7 +10320,7 @@ openclaw_runtime/extensions/qa-lab/src\bus-server.ts:60:export async function cl
  3410:   });
  3411:   return { events, input, extracted, responseBody, streamEvents, model: normalizedModel };
  3412: }
- 3413: 
+ 3413:
  3414: export async function startQaMockOpenAiServer(params?: { host?: string; port?: number }) {
  3415:   const host = params?.host ?? "127.0.0.1";
  3416:   const scenarioState: MockScenarioState = {
@@ -10707,17 +10707,17 @@ exec
  3597:       writeJson(res, 404, { error: "not found" });
  3598:     })();
  3599:   });
- 3600: 
+ 3600:
  3601:   await new Promise<void>((resolve, reject) => {
  3602:     server.once("error", reject);
  3603:     server.listen(params?.port ?? 0, host, () => resolve());
  3604:   });
- 3605: 
+ 3605:
  3606:   const address = server.address();
  3607:   if (!address || typeof address === "string") {
  3608:     throw new Error("qa mock openai failed to bind");
  3609:   }
- 3610: 
+ 3610:
  3611:   return {
  3612:     baseUrl: `http://${host}:${address.port}`,
  3613:     async stop() {
@@ -11009,7 +11009,7 @@ exec
    62:   }
    63:   return true;
    64: }
-   65: 
+   65:
    66: function selectQaSuiteScenarios(params: {
    67:   scenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"];
    68:   scenarioIds?: string[];
@@ -11044,7 +11044,7 @@ exec
    97:   }
    98:   return selected;
    99: }
-  100: 
+  100:
   101: function collectQaSuitePluginIds(
   102:   scenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"],
   103: ) {
@@ -11191,12 +11191,12 @@ exec
 "D:\\software\\PowerShell\\pwsh-7.6.6\\pwsh.exe" -NoProfile -Command "git diff --cached -- scripts/qa-lab-personal-agent-acceptance.mjs | Out-File -Encoding utf8 D:\\tmp\\qa-diff.txt; Get-Content D:\\tmp\\qa-diff.txt | Select-Object -First 30" in D:\ClawX
  exited 1 in 324ms:
 warning: unable to access 'C:\Users\27933/.config/git/ignore': Permission denied
-Out-File: 
+Out-File:
 Line |
    2 |  … t-acceptance.mjs | Out-File -Encoding utf8 D:\tmp\qa-diff.txt; Get-Co …
      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      | Access to the path 'D:\tmp\qa-diff.txt' is denied.
-Get-Content: 
+Get-Content:
 Line |
    2 |  … oding utf8 D:\tmp\qa-diff.txt; Get-Content D:\tmp\qa-diff.txt | Selec …
      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11306,14 +11306,14 @@ index 808c3a703..f6bcff42f 100644
    - harness/specs/tasks/runtime-memory-retirement-closeout.md
    - harness/specs/tasks/independent-acceptance-runner-output-roots.md
 @@ -181,8 +182,8 @@ closed by confidence alone.
- 
+
  ## Shortfall closure rules
- 
+
 -The five recorded shortfalls form the baseline. One remains open; four are resolved with
 -current evidence:
 +The five recorded shortfalls form the baseline. All five are resolved with
 +source-candidate evidence; real-model, packaging and final aggregate gates remain later tasks:
- 
+
  1. `runtime-memory-retired-test-contract` → **resolved by `TF-0574`** on candidate
     `07f60c029`; evidence is under `harness/specs/fixtures/product-acceptance-closeout/a1-memory/`
 @@ -197,7 +198,10 @@ current evidence:
@@ -11325,7 +11325,7 @@ index 808c3a703..f6bcff42f 100644
 +   all ten canonical scenarios pass, three negative controls fail closed as expected, and a later task
 +   completes after the deliberate oracle failure. Evidence is under
 +   `harness/specs/fixtures/product-acceptance-closeout/a5-qa-pack/`
- 
+
  A shortfall may become `resolved` only when all of the following are on disk and bound to the
  same candidate:
 diff --git a/harness/specs/tasks/qa-lab-personal-agent-pack.md b/harness/specs/tasks/qa-lab-personal-agent-pack.md
@@ -11347,7 +11347,7 @@ index b100f6aeb..899910893 100644
 +The evidence closeout adds exact ignore exceptions for 22 already tracked a2-a4
 +logs. Their historical bytes and manifests stay unchanged; this removes shadow
 +tracking that the repository artifact checker detects.
- 
+
  Run one bootstrap preflight before the full ten-scenario pack. Use a unique,
  agent-owned output directory accepted by the existing repo-bound path policy;
 
@@ -11357,10 +11357,10 @@ exec
 
 Name                     Length
 ----                     ------
-effects                  
-negative                 
-post-resolution          
-scenarios                
+effects
+negative
+post-resolution
+scenarios
 closeout-dry-run.txt     303
 closeout-validate.txt    281
 comms-compare.txt        3434
@@ -11991,16 +11991,16 @@ personal-task-followthrough-status
 personal-share-safe-diagnostics-artifact
 personal-no-fake-progress
 personal-failure-recovery
-                   
-                   
-                   
-                   
-                   
-                   
-                   
-                   
-                   
-                   
+
+
+
+
+
+
+
+
+
+
 {
   "schema": "QaNodeGateRun/v1",
   "driven_by": "agent",
@@ -12471,5 +12471,3 @@ A	openclaw_runtime/qa/scenarios/personal-tool-safety-followthrough.md
 A	openclaw_runtime/test/tsconfig/tsconfig.qa-lab.test.json
 M	openclaw_runtime/tsdown.config.ts
 A	scripts/qa-lab-personal-agent-acceptance.mjs
-
-
