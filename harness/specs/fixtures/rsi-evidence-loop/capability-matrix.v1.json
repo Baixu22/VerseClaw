@@ -1,0 +1,481 @@
+{
+  "schemaVersion": "RsiCapabilityMatrix/v1",
+  "generatedAt": "2026-10-30",
+  "driven_by": "agent",
+  "actor": "claude/tf0603-contract",
+  "status": "frozen",
+  "scope": "What ClawX can and cannot do towards recursive self-improvement, recorded per capability layer and per evidence level. A planning artefact is not counted as a capability at any level.",
+  "claimBoundary": "This matrix records the current state of the system. It does not claim that any capability here produces a benefit, and it does not authorize enabling anything.",
+  "evidenceLevels": {
+    "source": "Implementation bytes are present in product source and reachable from a real entry point.",
+    "engineering": "A checked-in test, contract check or static gate exercises the implementation.",
+    "runtime": "A real Electron, Gateway or OpenClaw runtime path consumed the implementation and left a receipt.",
+    "effect": "The user-visible journey reached its requested end state, with a negative control and a recovery or rollback receipt.",
+    "not-run": "Nothing was executed at this level. Recorded explicitly so an unrun level can never be read as a pass."
+  },
+  "verdictVocabulary": [
+    "pass",
+    "partial",
+    "not-run",
+    "accepted-shortfall",
+    "fail",
+    "invalid"
+  ],
+  "verdictVocabularySource": "harness/specs/fixtures/agent-first-acceptance/matrix.json",
+  "layers": [
+    {
+      "id": "experience-loop",
+      "title": "Experience loop (SEKB)",
+      "summary": "ClawX captures agent trajectories, distils candidate principles, requires an explicit confirmation before a durable write, retrieves confirmed principles, and has a typed but unwired adoption counter. Default off, no automatic write-back.",
+      "defaultState": {
+        "masterFlag": "runtime.contextBlock.sekb.enabled",
+        "envOverride": "OPENCLAW_SEKB_ENABLED",
+        "default": "off",
+        "resolutionPath": "openclaw_runtime/src/knowledge/sekb/feature-flags.ts",
+        "schemaDefault": "none; the zod leaf at openclaw_runtime/src/config/zod-schema.ts is optional with no default, so an absent setting resolves to false",
+        "documentedAt": [
+          "docs/dev/default-config-matrix.md",
+          "openclaw_runtime/src/config/schema.help.ts"
+        ],
+        "codingDefault": "runtime.coding.sekb.experienceShadow defaults to false in openclaw_runtime/src/context-engine/coding-runtime-flags.ts",
+        "readMeCarefully": "openclaw_runtime/src/config/runtime-feature-leaves.ts sets sekb.enabled to true, but that file is a compile-checked type/zod parity sample, not a runtime default. Its own header says every leaf needs one sample value; it must never be read as the product default.",
+        "automaticWriteBack": "absent"
+      },
+      "stages": [
+        {
+          "id": "capture",
+          "label": "Capture agent trajectories",
+          "status": "present-flag-gated",
+          "evidence": {
+            "source": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+                "openclaw_runtime/src/knowledge/sekb/harness-integration.ts",
+                "electron/services/knowledge-api.ts"
+              ],
+              "note": "Harness hooks start, step and finish a trajectory; the host exposes the capture route."
+            },
+            "engineering": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+                "tests/unit/tf0018-sekb-no-auto-writeback.test.ts"
+              ],
+              "note": "Unit coverage exists for the capture and no-auto-writeback boundaries."
+            },
+            "runtime": {
+              "status": "partial",
+              "paths": [
+                "artifacts/sekb-golden-path/evidence.json",
+                "artifacts/first-product-preview/FP-P4-01/evidence.json"
+              ],
+              "note": "Reached in an Electron host-api E2E run. The hooks are only installed when the SEKB runtime resolved, which requires the master flag, so a default configuration captures nothing."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "No product run with SEKB enabled recorded a captured trajectory feeding a later user-visible outcome."
+            }
+          },
+          "verdict": "partial",
+          "limitations": [
+            "Off by default, so the default product configuration exercises no capture path.",
+            "The in-app capture entry point is a manual, typed input; it is not the same mechanism as automatic trajectory capture."
+          ]
+        },
+        {
+          "id": "suggest",
+          "label": "Distil candidate principles",
+          "status": "present",
+          "evidence": {
+            "source": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts",
+                "electron/services/knowledge-api.ts"
+              ],
+              "note": "Deterministic suggestion path; an optional batch assistant path is separately flagged off."
+            },
+            "engineering": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/sekb.test.ts"
+              ],
+              "note": "Suggestion behaviour is unit-covered."
+            },
+            "runtime": {
+              "status": "partial",
+              "paths": [
+                "artifacts/first-product-preview/FP-P4-01/evidence.json"
+              ],
+              "note": "Exercised through the typed host-api workflow in an Electron E2E fixture. The fixture itself is labelled engineering-validation-only."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "No live-provider distillation run and no product-benefit evidence has been recorded."
+            }
+          },
+          "verdict": "partial",
+          "limitations": [
+            "Suggestions are advisory and mutation-free by rule; producing a suggestion is not an improvement."
+          ]
+        },
+        {
+          "id": "confirm",
+          "label": "Explicit confirmation and durable write",
+          "status": "present",
+          "evidence": {
+            "source": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts",
+                "openclaw_runtime/src/knowledge/sekb/confirm-provenance.ts",
+                "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+                "electron/services/knowledge-api.ts"
+              ],
+              "note": "Confirmation is the only durable principle write path and carries provenance."
+            },
+            "engineering": {
+              "status": "present",
+              "paths": [
+                "tests/unit/sekb-confirm-provenance-p3-002.test.ts",
+                "tests/unit/tf0018-sekb-no-auto-writeback.test.ts"
+              ],
+              "note": "Provenance and the no-auto-writeback boundary are unit-covered."
+            },
+            "runtime": {
+              "status": "present",
+              "paths": [
+                "artifacts/sekb-golden-path/evidence.json"
+              ],
+              "note": "Electron host-api E2E recorded the confirm step persisting a block with a read-back receipt."
+            },
+            "effect": {
+              "status": "partial",
+              "paths": [
+                "artifacts/sekb-golden-path/evidence.json"
+              ],
+              "note": "The golden-path evidence records a behaviour delta after confirmation. It is an E2E fixture run, so it shows the loop closes inside the harness; it is not product-benefit evidence."
+            }
+          },
+          "verdict": "partial",
+          "limitations": [
+            "Requires an explicit actor action; there is no automatic path into a durable write.",
+            "The recorded effect comes from a fixture-driven run, not a user journey."
+          ]
+        },
+        {
+          "id": "retrieve",
+          "label": "Retrieve confirmed principles",
+          "status": "present-advisory-only",
+          "evidence": {
+            "source": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts",
+                "electron/services/knowledge-api.ts"
+              ],
+              "note": "Ranked retrieval over confirmed principles, with a retrieval counter."
+            },
+            "engineering": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/sekb.test.ts"
+              ],
+              "note": "Ranking and counter behaviour are unit-covered."
+            },
+            "runtime": {
+              "status": "present",
+              "paths": [
+                "artifacts/sekb-golden-path/evidence.json"
+              ],
+              "note": "Recall step recorded in the Electron E2E golden path."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Retrieval is advisory by rule: the surface displays the injection text and does not attach it. No product journey has been shown to change because of a retrieved principle."
+            }
+          },
+          "verdict": "partial",
+          "limitations": [
+            "harness/specs/rules/sekb-assisted-review-boundary.md forbids the UI from attaching retrieved text automatically, so retrieval cannot by itself produce an effect."
+          ]
+        },
+        {
+          "id": "adoption",
+          "label": "Record adoption and outcome",
+          "status": "typed-surface-only",
+          "evidence": {
+            "source": {
+              "status": "partial",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+                "openclaw_runtime/src/state/openclaw-state-schema.generated.ts"
+              ],
+              "note": "The store method and its persisted schema exist and validate their trigger vocabulary."
+            },
+            "engineering": {
+              "status": "present",
+              "paths": [
+                "openclaw_runtime/src/knowledge/sekb/experience-closed-loop.test.ts",
+                "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+                "openclaw_runtime/src/knowledge/sekb/batch-distillation-assistant.test.ts"
+              ],
+              "note": "Unit tests call the method directly."
+            },
+            "runtime": {
+              "status": "absent",
+              "paths": [],
+              "note": "A whole-repository search finds no production caller of record_adoption; every caller is a test. There is therefore no runtime signal that flips cited, adopted or outcome, and the persisted adoption count stays at zero in product. The read-only surface that displays it is a dead read."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Adoption cannot be observed because nothing records it."
+            }
+          },
+          "verdict": "not-run",
+          "limitations": [
+            "The adoption stage is wired only to tests. Reporting an adoption rate from this system today would be reporting an untriggered counter.",
+            "Ranking logic that consumes the adoption count consequently degrades to its tie-break."
+          ]
+        }
+      ],
+      "automaticWriteBack": {
+        "status": "absent",
+        "statement": "No automatic path writes a knowledge entry back into agent behaviour, a prompt file, a skill, a harness spec or product source code.",
+        "nearestExistingMechanism": "A flag-gated, per-turn prompt and tool-result injection that appends confirmed principle text during context assembly. It assembles a turn; it writes no file and is off by default.",
+        "paths": [
+          "openclaw_runtime/src/knowledge/sekb/harness-integration.ts"
+        ],
+        "enforcedBy": [
+          "harness/specs/rules/sekb-assisted-review-boundary.md",
+          "harness/specs/rules/sekb-hermes-default-off-boundary.md",
+          "docs/dev/default-config-matrix.md"
+        ],
+        "verdict": "not-run"
+      },
+      "layerVerdict": "partial",
+      "layerLimitations": [
+        "Default off, so nothing in this layer is exercised by a default configuration.",
+        "The loop is a reviewed suggestion pipeline, not a self-improvement loop: no stage changes the agent's own instructions without an explicit actor action."
+      ]
+    },
+    {
+      "id": "harness-self-modification",
+      "title": "Harness self-modification",
+      "summary": "The system generating, evaluating and landing changes to its own harness — prompts, specs, rules, gates, skills or agent configuration — does not exist.",
+      "exists": false,
+      "defaultState": {
+        "default": "not-applicable",
+        "note": "There is no flag, because there is no capability to flag."
+      },
+      "stages": [
+        {
+          "id": "harness-candidate-generation",
+          "label": "Generate a candidate harness change",
+          "status": "absent",
+          "evidence": {
+            "source": { "status": "absent", "paths": [], "note": "No code generates a candidate harness, prompt, spec or rule change." },
+            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
+            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
+            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+          },
+          "verdict": "not-run",
+          "limitations": [
+            "resources/skills/preinstalled/self-improving-agent/ is a bundled third-party skill that a human invokes to log a learning. It is a static resource, is not wired to any loop, and does not generate or land harness changes."
+          ]
+        },
+        {
+          "id": "harness-candidate-evaluation",
+          "label": "Evaluate a harness candidate against a frozen gate",
+          "status": "absent",
+          "evidence": {
+            "source": { "status": "absent", "paths": [], "note": "No harness-candidate evaluation exists." },
+            "engineering": { "status": "not-run", "paths": [], "note": "No test covers a capability that does not exist." },
+            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
+            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+          },
+          "verdict": "not-run",
+          "limitations": [
+            "The measurement instruments this would need are recorded under measurementSubstrate below. Instruments are not a capability."
+          ]
+        },
+        {
+          "id": "harness-candidate-landing",
+          "label": "Land or roll back a harness candidate automatically",
+          "status": "absent",
+          "evidence": {
+            "source": { "status": "absent", "paths": [], "note": "No automatic merge, apply or rollback path for a self-generated harness change." },
+            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
+            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
+            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+          },
+          "verdict": "not-run",
+          "limitations": [
+            "The only change paths into harness/specs/** are a human-driven authoring flow and test fixtures that write into temporary roots."
+          ]
+        }
+      ],
+      "layerVerdict": "not-run",
+      "layerLimitations": [
+        "The absence is verified by search, not by a gate: there is no test asserting that self-modification is absent, so this row is a recorded observation with the search scope stated.",
+        "No ACE, ReasoningBank, SICA, DGM, Darwin Godel, OpenEvolve or AlphaEvolve reference exists anywhere in the repository."
+      ]
+    },
+    {
+      "id": "code-self-modification",
+      "title": "Code self-modification",
+      "summary": "The system generating, evaluating and merging changes to its own product source code does not exist.",
+      "exists": false,
+      "defaultState": {
+        "default": "not-applicable",
+        "note": "There is no flag, because there is no capability to flag."
+      },
+      "stages": [
+        {
+          "id": "code-candidate-generation",
+          "label": "Generate a candidate code change",
+          "status": "absent",
+          "evidence": {
+            "source": { "status": "absent", "paths": [], "note": "No self-patch, candidate-diff or patch-generation loop exists." },
+            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
+            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
+            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+          },
+          "verdict": "not-run",
+          "limitations": [
+            "Agent-assisted coding is performed by an external coding agent under human review. That is assisted authoring, not the product modifying itself."
+          ]
+        },
+        {
+          "id": "code-candidate-evaluation",
+          "label": "Evaluate a code candidate against the frozen gate",
+          "status": "absent",
+          "evidence": {
+            "source": { "status": "absent", "paths": [], "note": "No code-candidate evaluation loop exists." },
+            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
+            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
+            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+          },
+          "verdict": "not-run",
+          "limitations": []
+        },
+        {
+          "id": "code-candidate-merge",
+          "label": "Merge a self-generated code change",
+          "status": "absent",
+          "evidence": {
+            "source": { "status": "absent", "paths": [], "note": "No automatic merge path for self-generated product code." },
+            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
+            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
+            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+          },
+          "verdict": "not-run",
+          "limitations": [
+            "Self-healing code that exists is unrelated and bounded: gateway reconnect and config-migration repair, plus a versioned write journal with undo. None of them authors or merges new product behaviour."
+          ]
+        }
+      ],
+      "layerVerdict": "not-run",
+      "layerLimitations": [
+        "Stage 4 (TF-0602) is the only place this is allowed to be researched, and it requires stage 3 to land first."
+      ]
+    }
+  ],
+  "measurementSubstrate": {
+    "description": "Instruments that a later RSI stage would measure with. Listed separately so they are never mistaken for RSI capability: an instrument that can measure an improvement is not an improvement.",
+    "items": [
+      {
+        "id": "reliability-aggregation",
+        "status": "present",
+        "paths": [
+          "scripts/lib/reliability-aggregation.mjs",
+          "tests/unit/agent-dev-reliability-aggregation.test.ts",
+          "harness/specs/rules/reliability-aggregation-boundary.md"
+        ],
+        "note": "pass^k and pass@k with k=3, a 20-complete-case floor, flake detection and insufficient-sample semantics."
+      },
+      {
+        "id": "paired-ablation",
+        "status": "present",
+        "paths": [
+          "scripts/lib/paired-ablation.mjs",
+          "tests/unit/agent-dev-paired-ablation.test.ts",
+          "harness/specs/rules/paired-ablation-boundary.md"
+        ],
+        "note": "Paired effect size with a 95 percent interval, latency percentiles, token counts, false blocks and safety violations."
+      },
+      {
+        "id": "task-set-fixtures",
+        "status": "fixture-grade-only",
+        "paths": [
+          "shared/agent-dev/reliability-fixture.json",
+          "shared/agent-dev/paired-ablation-fixture.json"
+        ],
+        "note": "The reliability fixture holds 5 cases at k=3 with only 4 complete and therefore reports insufficient-sample. The paired-ablation fixture holds 20 cases at k=3. Neither is a calibrated product task set."
+      },
+      {
+        "id": "baseline-aggregation-run",
+        "status": "not-run",
+        "paths": [],
+        "note": "The pass^k aggregation output directory artifacts/agent-dev-benefit-eval/ does not exist in this checkout, so no baseline aggregation has been run and recorded."
+      },
+      {
+        "id": "production-grader",
+        "status": "absent",
+        "paths": [],
+        "note": "No production grader or judge service exists. Judge helpers exist only inside unit tests."
+      },
+      {
+        "id": "confidence-interval-and-agreement-math",
+        "status": "partial",
+        "paths": [
+          "openclaw_runtime/src/knowledge/sekb/shadow-evaluation-offline.ts"
+        ],
+        "note": "A Wilson interval at 0.95 and Cohen's kappa with frozen thresholds exist in the SEKB offline path. There is no bootstrap and no minimum-detectable-effect computation anywhere in the repository."
+      }
+    ]
+  },
+  "currentState": {
+    "completeRsiImplementation": false,
+    "statement": "ClawX has no complete recursive-self-improvement implementation.",
+    "whatExistsInstead": [
+      "One flag-gated, human-confirmed experience loop (SEKB), default off.",
+      "Statistical aggregation and paired-ablation code with fixture-grade inputs only.",
+      "Planning and boundary documents for stages that have not been built."
+    ],
+    "basis": [
+      "harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json",
+      "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json",
+      "docs/dev/rsi-capability-and-boundaries.md",
+      "harness/specs/rules/sekb-hermes-default-off-boundary.md",
+      "harness/specs/rules/sekb-assisted-review-boundary.md"
+    ]
+  },
+  "lockedBoundaries": {
+    "humanAcceptanceRequired": false,
+    "humanEvidenceClaimed": false,
+    "drivenBy": "agent",
+    "releaseApproved": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "capabilityClaimed": false
+  },
+  "prerequisites": {
+    "TF-0604": ["TF-0590", "TF-0592"],
+    "TF-0605": ["stage 1 (TF-0599)"],
+    "TF-0606": ["stage 1 (TF-0599)"],
+    "TF-0609": ["stage 3 (TF-0601)"],
+    "rule": "No candidate generation, harness self-modification or code self-modification may be implemented before the stage gate it depends on has landed with evidence."
+  },
+  "limitations": [
+    "Every row above is a recorded observation of source and artefact state, verified by reading files and searching the repository. It is not a test suite that fails when a capability appears.",
+    "Runtime and effect levels are marked not-run far more often than they are marked present; that asymmetry is the point of this matrix.",
+    "No benefit, promotion, default change, product-lock change, release decision or real-human claim is made anywhere in this fixture."
+  ]
+}
