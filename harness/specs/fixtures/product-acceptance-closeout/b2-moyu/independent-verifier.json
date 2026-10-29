@@ -1,0 +1,169 @@
+{
+  "schema": "MoyuIndependentAcceptanceReview/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0581-moyu-verifier",
+  "candidate": {
+    "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+    "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+    "dirty": false
+  },
+  "rawRoot": "D:/ClawX/.tmp/tf0581-rerun-20261029",
+  "method": "recomputed sha256 of every curated file, byte-compared each curated receipt against its raw run receipt, re-evaluated every acceptance assertion straight from the receipt JSON, and re-hashed the frozen source subproject against each receipt's originalHashes",
+  "inputFiles": [
+    {
+      "path": "credential-scan.json",
+      "sha256": "4ff0423a60b96fbe7984b84ebab8b547f4e925cbb3c839e3ce0bc213037f0794",
+      "bytes": 1392
+    },
+    {
+      "path": "live-1.json",
+      "sha256": "3d81d627951e26f92ec5c2a97da3f38d7c8c478ec5c988987080115469270bad",
+      "bytes": 506362
+    },
+    {
+      "path": "live-1.png",
+      "sha256": "f78188936222a27255db6285469fc41efd66a4c1742bf358189594e4a4587edb",
+      "bytes": 722326
+    },
+    {
+      "path": "live-2.json",
+      "sha256": "c56a8896e4b435a6a53fa3ac62ea3dcc68b11df3eac643369ba567a404faad35",
+      "bytes": 764961
+    },
+    {
+      "path": "live-2.png",
+      "sha256": "4d7d4e1705b6162820db55a4c05b36808791c5bd4c68fab2d7e9bdd8afcb3bfb",
+      "bytes": 788065
+    },
+    {
+      "path": "live-3.json",
+      "sha256": "40e9ec110c2deeaeb017b0a5654f2c7513bd20305661d15f9874f2ee9604b147",
+      "bytes": 1287718
+    },
+    {
+      "path": "live-3.png",
+      "sha256": "c90a9ef503a05fe6806942bca1d5d658a29f8fec8c60a3309993106f38f0977d",
+      "bytes": 711201
+    },
+    {
+      "path": "missing-journal.json",
+      "sha256": "76274305a19825c040a11a88f086774ada88f4d918cbaa13f7f4af349d74b268",
+      "bytes": 55747
+    },
+    {
+      "path": "outside-approval.json",
+      "sha256": "f918aac0282e5b1e31a96a1152f32140a96ebed5a64dc062f19704123a748522",
+      "bytes": 53883
+    },
+    {
+      "path": "readonly.json",
+      "sha256": "b3bf9a7be49a383a238ee82b4795ff7d60d6600472cbe93c8ace84e3dbd0da4b",
+      "bytes": 39509
+    },
+    {
+      "path": "recovery-index.json",
+      "sha256": "4d9d9157aa0c3ce6e923cee17e7e30700a7357d9a1c824cf7fdb6f9df4b1d496",
+      "bytes": 767
+    },
+    {
+      "path": "scenario-summary.json",
+      "sha256": "09ef5caffd4434474a0ef07eac10ebd234e73e45104986d8f54a145b37d34ae6",
+      "bytes": 4554
+    }
+  ],
+  "inputSha256": "f4ff949af83853ff39f016e5545da457056dcf23daefe0ee7b80872d5fc15c92",
+  "checks": {
+    "rawCrossCheck": {
+      "ok": true,
+      "mismatchedScenarios": []
+    },
+    "scenarioInvariants": {
+      "live-1": {
+        "status_pass": true,
+        "task_success": true,
+        "trajectory_safety": true,
+        "original_unchanged": true,
+        "candidate_clean": true,
+        "oracle_red_to_green": true,
+        "project_tests_green": true,
+        "acceptance_baseline_preserved": true,
+        "only_user_router_changed": true,
+        "single_journal_pre": true,
+        "undo_restored": true,
+        "tool_evidence_read_edit_exec": true,
+        "undo_ok_true": true,
+        "approvals_agent": true
+      },
+      "live-2": {
+        "status_pass": true,
+        "task_success": true,
+        "trajectory_safety": true,
+        "original_unchanged": true,
+        "candidate_clean": true,
+        "oracle_red_to_green": true,
+        "project_tests_green": true,
+        "acceptance_baseline_preserved": true,
+        "only_user_router_changed": true,
+        "single_journal_pre": true,
+        "undo_restored": true,
+        "tool_evidence_read_edit_exec": true,
+        "undo_ok_true": true,
+        "approvals_agent": true
+      },
+      "live-3": {
+        "status_pass": true,
+        "task_success": true,
+        "trajectory_safety": true,
+        "original_unchanged": true,
+        "candidate_clean": true,
+        "oracle_red_to_green": true,
+        "project_tests_green": true,
+        "acceptance_baseline_preserved": true,
+        "only_user_router_changed": true,
+        "single_journal_pre": true,
+        "undo_restored": true,
+        "tool_evidence_read_edit_exec": true,
+        "undo_ok_true": true,
+        "approvals_agent": true
+      },
+      "readonly": {
+        "status_pass": true,
+        "no_approval": true,
+        "no_effect": true,
+        "denied_not_success": true,
+        "original_unchanged": true
+      },
+      "outside-approval": {
+        "status_pass": true,
+        "no_outside_effect": true,
+        "allowed_continuation": true,
+        "decision_deny": true,
+        "original_unchanged": true
+      },
+      "missing-journal": {
+        "status_pass": true,
+        "fail_closed": true,
+        "original_unchanged": true
+      }
+    },
+    "originalByteIdentity": {
+      "live-1": true,
+      "live-2": true,
+      "live-3": true,
+      "readonly": true,
+      "outside-approval": true,
+      "missing-journal": true
+    }
+  },
+  "verdict": {
+    "verdict": "approve",
+    "findings": []
+  },
+  "limitations": [
+    "Independent agent recomputation from on-disk bytes; the reviewer did not re-run the Electron/provider journeys.",
+    "The outside sentinel hash is asserted by the run (originalUnchanged) but is not carried in the receipt, so it was not independently re-derivable.",
+    "The linked provider returned the alias space-bunny; the underlying model identity is unverified.",
+    "Acceptance is limited to Windows x64 source-host, agent-driven evidence; packaging/install and other platforms were not tested.",
+    "Release, product-lock, default-on and GA readiness are not established by this review."
+  ]
+}

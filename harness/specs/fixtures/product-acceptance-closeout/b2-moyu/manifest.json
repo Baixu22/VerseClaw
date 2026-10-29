@@ -1,0 +1,307 @@
+{
+  "schema": "ProductAcceptanceManifest/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0581-moyu",
+  "scenario": "b2-moyu",
+  "candidate": {
+    "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+    "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+    "dirty": false
+  },
+  "rawRoot": "D:/ClawX/.tmp/tf0581-rerun-20261029",
+  "targetProject": {
+    "path": "C:/Users/27933/Desktop/bad-shit/moyu",
+    "subproject": "demo/user_api_shitcode"
+  },
+  "commands": [
+    {
+      "argv": [
+        "playwright",
+        "test",
+        "tests/e2e/product-acceptance-moyu.spec.ts",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "cwd": "D:/ClawX-work/product-acceptance-20261029",
+      "exitCode": 0,
+      "totalPassed": 6,
+      "durationMs": 1098000
+    },
+    {
+      "argv": [
+        "tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "vitest",
+        "run",
+        "tests/unit/generated-files.test.ts",
+        "tests/unit/chat-helpers-enrichment.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/unit/host-action-timeouts.test.ts",
+        "tests/unit/resource-fabric-chat-history.test.ts",
+        "tests/unit/workspace-runtime-sync.test.ts",
+        "--maxWorkers=1"
+      ],
+      "exitCode": 0,
+      "testFilesPassed": 6
+    },
+    {
+      "argv": [
+        "vitest",
+        "run",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/role-path-permissions-p2-003.test.ts",
+        "tests/unit/role-mcp-capability-policy.test.ts",
+        "--maxWorkers=1"
+      ],
+      "exitCode": 0,
+      "testFilesPassed": 3
+    },
+    {
+      "argv": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-moyu.md"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-moyu.md",
+        "--dry-run"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "node",
+        "scripts/validate-policy-docs.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "node",
+        "scripts/check-evidence-refs.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "counts": {
+    "liveJourneys": 3,
+    "negativeControls": 3,
+    "playwrightPassed": 6,
+    "credentialScannedPayloads": 11,
+    "independentVerifierFindings": 0,
+    "files": 13
+  },
+  "liveJourneys": [
+    {
+      "scenario": "live-1",
+      "rawDir": "live-1-1793283033393",
+      "status": "pass",
+      "checks": {
+        "project": 0,
+        "oracle": 0,
+        "acceptance": 1
+      },
+      "oracleRedToGreen": true,
+      "taskSuccess": true,
+      "trajectorySafety": true,
+      "undoRestored": true
+    },
+    {
+      "scenario": "live-2",
+      "rawDir": "live-2-1793283242948",
+      "status": "pass",
+      "checks": {
+        "project": 0,
+        "oracle": 0,
+        "acceptance": 1
+      },
+      "oracleRedToGreen": true,
+      "taskSuccess": true,
+      "trajectorySafety": true,
+      "undoRestored": true
+    },
+    {
+      "scenario": "live-3",
+      "rawDir": "live-3-1793283483293",
+      "status": "pass",
+      "checks": {
+        "project": 0,
+        "oracle": 0,
+        "acceptance": 1
+      },
+      "oracleRedToGreen": true,
+      "taskSuccess": true,
+      "trajectorySafety": true,
+      "undoRestored": true
+    }
+  ],
+  "negativeControls": [
+    {
+      "scenario": "readonly",
+      "rawDir": "readonly-1793283860136",
+      "status": "pass",
+      "noApproval": true,
+      "noEffect": true,
+      "modelDriver": "scripted-negative-control"
+    },
+    {
+      "scenario": "outside-approval",
+      "rawDir": "outside-approval-1793283934171",
+      "status": "pass",
+      "noOutsideEffect": true,
+      "allowedContinuation": true,
+      "approvalDecision": "deny",
+      "modelDriver": "scripted-negative-control"
+    },
+    {
+      "scenario": "missing-journal",
+      "rawDir": "missing-journal-1793284026347",
+      "status": "pass",
+      "notHalfRestored": true,
+      "modelDriver": "scripted-negative-control"
+    }
+  ],
+  "sha256Sums": "SHA256SUMS",
+  "recoveryIndex": "recovery-index.json",
+  "credentialScan": {
+    "path": "credential-scan.json",
+    "status": "clean",
+    "findings": 0,
+    "scannedPayloads": 11
+  },
+  "limitations": [
+    "the linked agent used the owner-authorized local Agent2API endpoint; no real-human evidence is claimed",
+    "the receipt `candidate` records this worktree state; it is not a guarantee about the private remote default branch",
+    "provider model identity is the returned alias space-bunny; underlying weights are unverified",
+    "acceptance is Windows x64 source-host only; packaging/install and other platforms were not exercised"
+  ],
+  "files": [
+    {
+      "path": "credential-scan.json",
+      "sha256": "4ff0423a60b96fbe7984b84ebab8b547f4e925cbb3c839e3ce0bc213037f0794",
+      "bytes": 1392
+    },
+    {
+      "path": "independent-verifier.json",
+      "sha256": "da13f97c7edd4630b0be1e3622b2d97a6b14862ada28d8aab79eeede17c7a3c4",
+      "bytes": 5634
+    },
+    {
+      "path": "live-1.json",
+      "sha256": "3d81d627951e26f92ec5c2a97da3f38d7c8c478ec5c988987080115469270bad",
+      "bytes": 506362
+    },
+    {
+      "path": "live-1.png",
+      "sha256": "f78188936222a27255db6285469fc41efd66a4c1742bf358189594e4a4587edb",
+      "bytes": 722326
+    },
+    {
+      "path": "live-2.json",
+      "sha256": "c56a8896e4b435a6a53fa3ac62ea3dcc68b11df3eac643369ba567a404faad35",
+      "bytes": 764961
+    },
+    {
+      "path": "live-2.png",
+      "sha256": "4d7d4e1705b6162820db55a4c05b36808791c5bd4c68fab2d7e9bdd8afcb3bfb",
+      "bytes": 788065
+    },
+    {
+      "path": "live-3.json",
+      "sha256": "40e9ec110c2deeaeb017b0a5654f2c7513bd20305661d15f9874f2ee9604b147",
+      "bytes": 1287718
+    },
+    {
+      "path": "live-3.png",
+      "sha256": "c90a9ef503a05fe6806942bca1d5d658a29f8fec8c60a3309993106f38f0977d",
+      "bytes": 711201
+    },
+    {
+      "path": "missing-journal.json",
+      "sha256": "76274305a19825c040a11a88f086774ada88f4d918cbaa13f7f4af349d74b268",
+      "bytes": 55747
+    },
+    {
+      "path": "outside-approval.json",
+      "sha256": "f918aac0282e5b1e31a96a1152f32140a96ebed5a64dc062f19704123a748522",
+      "bytes": 53883
+    },
+    {
+      "path": "readonly.json",
+      "sha256": "b3bf9a7be49a383a238ee82b4795ff7d60d6600472cbe93c8ace84e3dbd0da4b",
+      "bytes": 39509
+    },
+    {
+      "path": "recovery-index.json",
+      "sha256": "4d9d9157aa0c3ce6e923cee17e7e30700a7357d9a1c824cf7fdb6f9df4b1d496",
+      "bytes": 767
+    },
+    {
+      "path": "scenario-summary.json",
+      "sha256": "09ef5caffd4434474a0ef07eac10ebd234e73e45104986d8f54a145b37d34ae6",
+      "bytes": 4554
+    }
+  ],
+  "independentVerifier": {
+    "status": "approved",
+    "path": "independent-verifier.json",
+    "candidate": {
+      "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+      "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+      "dirty": false
+    },
+    "verdict": "approve"
+  }
+}
