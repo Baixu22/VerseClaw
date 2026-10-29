@@ -18,6 +18,8 @@ touchedAreas:
   - harness/specs/tasks/qa-lab-personal-agent-pack.md
   - harness/specs/tasks/product-acceptance-space-bunny.md
   - harness/specs/guides/product-acceptance-strategy.md
+  - harness/specs/guides/agent-first-acceptance.md
+  - harness/specs/fixtures/agent-first-acceptance/**
   - harness/specs/fixtures/product-acceptance-shortfalls/**
   - harness/specs/fixtures/product-acceptance-research/**
   - harness/specs/fixtures/product-acceptance-closeout/**
@@ -49,6 +51,7 @@ touchedAreas:
   - README.ja-JP.md
 expectedUserBehavior:
   - A current-candidate verdict distinguishes functionalReadiness, distributionReadiness and releaseApproved.
+  - Agent-first acceptance evaluates task validity, multiple trials, final state, transcripts, environment identity and uncertainty; agent-driven review replaces every first-line human step.
   - Known shortfalls stay visible until evidence-backed resolution or an explicitly recorded non-blocking residual.
   - An agent-driven GUI journey is accepted only when a deterministic final-state oracle proves the effect.
   - Historical reports are labelled historical and are never promoted to current-candidate gates.
@@ -62,6 +65,8 @@ requiredTests:
   - pnpm harness run --spec harness/specs/tasks/product-acceptance-closeout.md --dry-run
   - git diff --check
 acceptance:
+  - The agent-first guide maps software-engineering acceptance, engineering evidence methods and Anthropic agent-era evaluation into one agent-executable matrix without a first-line human gate.
+  - Every agent/harness quality claim records valid tasks, trial counts, deterministic outcome graders, calibrated rubric limits, environment/resource identity, confidence bounds and separate infrastructure failures.
   - The checked-in contract maps all eleven planned tasks to inputs, commands, oracles, negative cases, required gates, skip budgets and candidate binding.
   - The shortfall ledger permits evidence-backed status transitions but rejects resolution without evidence, inconsistent summaries, accepted P1 defects, and pass claims.
   - Focused constraints, policy validation and the harness dry-run exit zero; the 64/3 and 72/2 reports remain labelled as historical observations.

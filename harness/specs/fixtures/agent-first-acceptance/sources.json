@@ -1,0 +1,423 @@
+{
+  "schemaVersion": "AgentFirstAcceptanceResearch/v1",
+  "generatedAt": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Full agent-first acceptance research for ClawX: software engineering acceptance, engineering evidence methods, Anthropic agent-era evaluation, and automated surrogate review. Planning and source research only; no candidate acceptance claim.",
+  "providers": [
+    {
+      "name": "AnySearch",
+      "use": "broad discovery and authoritative URL extraction"
+    },
+    {
+      "name": "Exa",
+      "use": "semantic source selection and source-grounded highlights"
+    }
+  ],
+  "providerRequests": [
+    {
+      "provider": "AnySearch",
+      "request_id": "558934d5-a9d7-43c7-a367-d228f00acb83",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Search",
+      "request_id": "89af121dda82775a45886e2d6d25bfe4",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Search",
+      "request_id": "56aff2439ca83309d904a82651e3a628",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Search",
+      "request_id": "7a96c97b759d527446a22a93b4415b0e",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Search",
+      "request_id": "423f1d39ae47c36768a8ed099f100eb3",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Contents",
+      "request_id": "81e8f7da6be782c1170b2bfa18e3eec8",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Search",
+      "request_id": "d01d0541c74b19bedd90b1956aac3ee0",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Search",
+      "request_id": "d2422cff09094011c8f76027e3299845",
+      "status": "success",
+      "date": "2026-10-29"
+    },
+    {
+      "provider": "Exa Contents",
+      "request_id": "9da8aca0069208e1e2d3a8f3918f48eb",
+      "status": "success",
+      "date": "2026-10-29"
+    }
+  ],
+  "sources": [
+    {
+      "id": "iso-29119-1",
+      "family": "software-engineering-acceptance",
+      "title": "ISO/IEC/IEEE 29119-1:2022 General concepts",
+      "url": "https://www.iso.org/obp/ui?_escaped_fragment_=iso%3Astd%3Aiso-iec-ieee%3A29119%3A-1%3Aed-2%3Av1%3Aen",
+      "use": "Risk-based testing, test levels, test basis and oracle, independence, configuration and test completion.",
+      "facts": [
+        "The standard explains that exhaustive testing is impractical and requires sampling.",
+        "It defines test basis and test oracle as core acceptance inputs.",
+        "It describes unit/component, integration, system, system-integration and acceptance test levels.",
+        "It identifies the benefits of test independence."
+      ]
+    },
+    {
+      "id": "iso-29119-2",
+      "family": "software-engineering-acceptance",
+      "title": "ISO/IEC/IEEE 29119-2:2021 Test processes",
+      "url": "https://www.iso.org/standard/79428.html",
+      "use": "Organizational, management and dynamic test processes.",
+      "facts": [
+        "Defines generic testing processes applicable across lifecycle models."
+      ]
+    },
+    {
+      "id": "istqb-tmmi",
+      "family": "software-engineering-acceptance",
+      "title": "TMMi Framework model V2.0",
+      "url": "https://istqb-glossary.page/syllabi/tmmi/tmmi_model_en_v2_0.pdf",
+      "use": "Entry/exit criteria, risk-based approach and test completion.",
+      "facts": [
+        "Test entry criteria include environment and test documentation readiness.",
+        "Exit criteria measure executed/passed tests, coverage and summary reports.",
+        "Test approach must be revised when product risks or priorities change."
+      ]
+    },
+    {
+      "id": "playwright-best-practices",
+      "family": "software-engineering-acceptance",
+      "title": "Playwright best practices",
+      "url": "https://playwright.dev/docs/best-practices",
+      "use": "Isolated tests, observable locators and independent state.",
+      "facts": [
+        "Each test should run independently with isolated local storage, session storage, data and cookies."
+      ]
+    },
+    {
+      "id": "playwright-electron",
+      "family": "software-engineering-acceptance",
+      "title": "Playwright Electron automation",
+      "url": "https://playwright.dev/docs/api/class-electron",
+      "use": "Launch and exercise the real Electron main process and renderer.",
+      "facts": [
+        "Electron automation can launch the application and access its main process and windows."
+      ]
+    },
+    {
+      "id": "martinfowler-test-pyramid",
+      "family": "engineering-acceptance",
+      "title": "The Practical Test Pyramid",
+      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+      "use": "Layer tests by granularity/cost while retaining system coverage.",
+      "facts": [
+        "Fast granular tests and slower end-to-end tests detect different failures."
+      ]
+    },
+    {
+      "id": "martinfowler-contract-test",
+      "family": "engineering-acceptance",
+      "title": "Contract Test",
+      "url": "https://martinfowler.com/bliki/ContractTest.html",
+      "use": "Executable compatibility at service/provider boundaries.",
+      "facts": [
+        "Consumer-driven contract testing checks expectations at integration boundaries."
+      ]
+    },
+    {
+      "id": "martinfowler-compliance",
+      "family": "engineering-acceptance",
+      "title": "Compliance in a DevOps culture",
+      "url": "https://www.martinfowler.com/articles/devops-compliance.html",
+      "use": "Property, measurement, evidence, constraint and validation as an evidence model.",
+      "facts": [
+        "Compliance evaluates measurable system properties and validates evidence against constraints.",
+        "The evidence and validation result should be recorded."
+      ]
+    },
+    {
+      "id": "fast-check",
+      "family": "engineering-acceptance",
+      "title": "fast-check property-based testing",
+      "url": "https://fast-check.dev/docs/introduction/what-is-property-based-testing/",
+      "use": "Invariant and generated-edge-case testing with reproducibility.",
+      "facts": [
+        "Property tests generate inputs to seek violations of invariants."
+      ]
+    },
+    {
+      "id": "stryker",
+      "family": "engineering-acceptance",
+      "title": "StrykerJS mutation testing",
+      "url": "https://stryker-mutator.io/docs/",
+      "use": "Measure whether tests detect intentionally introduced defects.",
+      "facts": [
+        "Mutation testing injects defects and measures whether tests catch them."
+      ]
+    },
+    {
+      "id": "owasp-sast",
+      "family": "engineering-acceptance",
+      "title": "OWASP Developer Guide: Static Analysis",
+      "url": "https://devguide.owasp.org/en/05-implementation/05-static-analysis/",
+      "use": "SAST in CI with explicit blocking policy and false-positive handling.",
+      "facts": [
+        "SAST findings are candidates requiring risk-context review and a project-defined gate.",
+        "SAST can have false positives and false negatives."
+      ]
+    },
+    {
+      "id": "owasp-cicd-gates",
+      "family": "engineering-acceptance",
+      "title": "OWASP Smart Contract Security: SDK testing gates",
+      "url": "https://scs.owasp.org/handbooks/08-sdk-security-testing/part3-implementation-and-operations/",
+      "use": "Independent CI gates for static analysis, dependency scanning, SBOM, secrets and provenance.",
+      "facts": [
+        "Security controls should be independent gates tied to defect classes.",
+        "Tests should avoid live production credentials and undeclared network."
+      ]
+    },
+    {
+      "id": "openssf-baseline",
+      "family": "engineering-acceptance",
+      "title": "OpenSSF Open Source Project Security Baseline",
+      "url": "https://baseline.openssf.org/versions/2026-08-28.html",
+      "use": "Automated test and security baseline before changes are accepted.",
+      "facts": [
+        "Projects should run automated suites in CI before merging into the primary branch."
+      ]
+    },
+    {
+      "id": "anthropic-demystifying-evals",
+      "family": "agent-era-acceptance",
+      "title": "Demystifying evals for AI agents",
+      "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+      "publishedDate": "2026-01-09",
+      "use": "Canonical agent evaluation model and lifecycle.",
+      "facts": [
+        "Agent evaluation distinguishes tasks, trials, graders, transcripts, final environment outcomes, the evaluation harness, agent harness and suites.",
+        "Each trial should start from a clean, isolated environment.",
+        "Prefer deterministic graders, then model graders when needed; use human review judiciously.",
+        "Grade outcomes first and paths when safety, evidence or contracts require it.",
+        "Capability evals, regression evals and negative behaviors need balanced coverage.",
+        "Initial suites can start with 20-50 realistic tasks drawn from actual failures.",
+        "A task should be unambiguous, solvable, and have a reference solution where feasible.",
+        "A 0% pass rate over many trials is often evidence of a broken task or grader.",
+        "LLM judges should use structured rubrics, per-dimension isolation and an explicit unknown result.",
+        "Trials need repetition because agent outputs vary; aggregate with pass@k or pass^k as appropriate.",
+        "Reports should include tool calls, runtime, token use, errors and transcript inspection.",
+        "No single evaluation layer catches everything; use layered evidence."
+      ]
+    },
+    {
+      "id": "anthropic-infrastructure-noise",
+      "family": "agent-era-acceptance",
+      "title": "Quantifying infrastructure noise in agentic coding evals",
+      "url": "https://www.anthropic.com/engineering/infrastructure-noise",
+      "publishedDate": "2026-02-05",
+      "use": "Resource and infrastructure controls for agent benchmarks.",
+      "facts": [
+        "The runtime is part of the agent problem-solving loop, not a passive container.",
+        "Two agents with different resource budgets and time limits are not taking the same test.",
+        "On Terminal-Bench 2.0, resource configuration changed results by up to 6 percentage points (p < 0.01).",
+        "Infrastructure errors ranged from 5.8% under strict enforcement to 0.5% uncapped.",
+        "A guaranteed allocation and a separate hard ceiling are needed instead of one pinned value.",
+        "Resource headroom should be calibrated so scores at floor and ceiling remain within noise.",
+        "Each trial must start isolated; shared state creates correlated failures or unfair learning."
+      ]
+    },
+    {
+      "id": "anthropic-harness-design",
+      "family": "agent-era-acceptance",
+      "title": "Harness design for long-running application development",
+      "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps",
+      "publishedDate": "2026-03-24",
+      "use": "Planner/generator/evaluator separation and sprint acceptance.",
+      "facts": [
+        "The harness used planner, generator and evaluator agent roles.",
+        "Generator and evaluator negotiated each sprint contract before implementation.",
+        "The evaluator clicked through the running application and graded functionality, visual design and code quality.",
+        "Each criterion had a hard threshold; a failed threshold returned the sprint for repair.",
+        "File artifacts carried context and negotiation between agents.",
+        "Different agent roles addressed distinct failure modes rather than adding parallel self-reviews."
+      ]
+    },
+    {
+      "id": "anthropic-effective-harnesses",
+      "family": "agent-era-acceptance",
+      "title": "Effective harnesses for long-running agents",
+      "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+      "publishedDate": "2025-11-26",
+      "use": "Persistent task state, incremental work and end-to-end verification.",
+      "facts": [
+        "Initializer and coding agents used structured feature lists, progress files, git history and an init script.",
+        "Every later session reads durable state and runs a basic end-to-end check before new work.",
+        "Agents mark a feature complete only after end-to-end verification.",
+        "A clean, mergeable environment is an acceptance condition.",
+        "Browser automation improved end-to-end defect detection beyond source inspection."
+      ]
+    },
+    {
+      "id": "anthropic-ai-resistant-evals",
+      "family": "agent-era-acceptance",
+      "title": "Designing AI resistant technical evaluations",
+      "url": "https://www.anthropic.com/engineering/AI-resistant-technical-evaluations",
+      "publishedDate": "2026-01-21",
+      "use": "Task quality for complex and long-horizon work.",
+      "facts": [
+        "Tasks should represent real work and provide high signal.",
+        "A good evaluation should not hinge on a single insight and should give many chances to demonstrate ability.",
+        "The scoring distribution should be wide enough to differentiate performance.",
+        "Realistic tooling, comprehension time and longer time horizons can improve validity.",
+        "AI-assisted work can be evaluated while still requiring substantive technical performance."
+      ]
+    },
+    {
+      "id": "anthropic-model-eval-statistics",
+      "family": "agent-era-acceptance",
+      "title": "A statistical approach to model evaluations",
+      "url": "https://www.anthropic.com/research/statistical-approach-to-model-evals",
+      "publishedDate": "2024-11-19",
+      "use": "Repetition, paired comparisons, confidence intervals and power analysis.",
+      "facts": [
+        "Repeated samples help account for stochastic model output.",
+        "Paired differences remove variance attributable to shared question difficulty.",
+        "Confidence intervals quantify uncertainty around observed scores.",
+        "Power analysis relates sample count, false positives and detectable effect size.",
+        "A suite too small for the desired effect can only report a wide interval or insufficient evidence."
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "id": "software-engineering-acceptance",
+      "coverage": [
+        "risk-based test planning",
+        "static and dynamic verification",
+        "test levels",
+        "test oracles",
+        "entry and exit criteria",
+        "traceability",
+        "defect and residual handling",
+        "system and acceptance testing"
+      ]
+    },
+    {
+      "id": "engineering-acceptance",
+      "coverage": [
+        "unit, integration and end-to-end testing",
+        "property-based and mutation testing",
+        "contract and compatibility testing",
+        "Electron automation",
+        "security, dependency and artifact controls",
+        "reproducibility and standalone evidence",
+        "distribution and operational drills"
+      ]
+    },
+    {
+      "id": "agent-era-acceptance",
+      "coverage": [
+        "valid tasks and balanced suites",
+        "multiple trials",
+        "outcome, trace and rubric graders",
+        "planner/generator/evaluator separation",
+        "long-horizon handoff artifacts",
+        "resource and infrastructure controls",
+        "statistical uncertainty",
+        "agent-driven surrogate review"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "A1",
+      "finding": "Acceptance needs one task specification and one explicit oracle before a candidate is run.",
+      "implication": "Each TF child must name its inputs, command, expected final state, negative control and artifact."
+    },
+    {
+      "id": "A2",
+      "finding": "A deterministic final state must control the verdict whenever one exists.",
+      "implication": "Model graders supplement code/state oracles and return unknown when evidence is insufficient."
+    },
+    {
+      "id": "A3",
+      "finding": "Agent nondeterminism, environment variance and nondeterminism require repeated trials and uncertainty reporting.",
+      "implication": "Core quality claims need trial counts, confidence intervals, paired comparisons and resource fingerprints."
+    },
+    {
+      "id": "A4",
+      "finding": "A zero pass rate is a task/grader defect signal until a reference solution or feasibility proof says otherwise.",
+      "implication": "Task calibration is a required acceptance node; bad tasks do not count as agent failures."
+    },
+    {
+      "id": "A5",
+      "finding": "Independent agent roles are useful when they have distinct evidence responsibilities; extra self-review is not.",
+      "implication": "Use planner/executor and independent verifier/evaluator with separate actors and worktrees."
+    },
+    {
+      "id": "A6",
+      "finding": "Human review is not required for first-line acceptance under repository policy.",
+      "implication": "Automate UI actions, transcript review, qualitative rubric judgment and verdicts; label them agent-driven."
+    },
+    {
+      "id": "A7",
+      "finding": "Source, runtime, effect, package, operations, agent quality and release approval are separate claims.",
+      "implication": "The verdict schema must expose each dimension and preserve all product locks."
+    },
+    {
+      "id": "A8",
+      "finding": "Infrastructure limits can exceed the difference between candidates.",
+      "implication": "Record CPU/memory floor and hard ceiling, network, timeouts, retries, worker count and infra error rates in the manifest."
+    },
+    {
+      "id": "A9",
+      "finding": "Evidence quality itself needs tests.",
+      "implication": "Negative controls must exercise stale/tampered/self-approved/skipped/wrong-final-state and grader-bypass paths."
+    },
+    {
+      "id": "A10",
+      "finding": "Capability and regression suites need different thresholds and maintenance.",
+      "implication": "A saturated capability eval graduates into regression; difficult tasks remain visible until calibrated."
+    }
+  ],
+  "boundaries": [
+    "This research does not claim a current-candidate pass.",
+    "No real-human evidence is claimed or required.",
+    "No product lock, default, release state or publication status changes.",
+    "External source summaries are evidence for design and provenance; the linked source controls its claim.",
+    "Task Forest state remains local and must be changed only through the task-forest CLI."
+  ],
+  "taskForestNodes": {
+    "root": "TF-0588",
+    "contract": "TF-0589",
+    "tasks": "TF-0590",
+    "ui": "TF-0591",
+    "stats": "TF-0592",
+    "review": "TF-0593",
+    "ops": "TF-0594",
+    "adjudicate": "TF-0595",
+    "integrate": "TF-0596"
+  }
+}

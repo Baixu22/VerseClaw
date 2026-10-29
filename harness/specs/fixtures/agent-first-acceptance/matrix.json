@@ -1,0 +1,469 @@
+{
+  "schemaVersion": "AgentFirstAcceptanceMatrix/v1",
+  "generatedAt": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "in_progress",
+  "claimBoundary": "Planning contract only; no current-candidate acceptance.",
+  "dimensions": [
+    {
+      "id": "source",
+      "claim": "Implementation exists and is contract-aligned",
+      "deterministic": true,
+      "blocking": true,
+      "evidence": [
+        "source anchors",
+        "diff ownership",
+        "contract and schema checks",
+        "static checks"
+      ]
+    },
+    {
+      "id": "engineering",
+      "claim": "A clean candidate reproduces its required gates",
+      "deterministic": true,
+      "blocking": true,
+      "evidence": [
+        "two detached worktrees",
+        "distinct executor/verifier actors",
+        "rederived manifest",
+        "logs",
+        "exit codes",
+        "counts",
+        "hashes"
+      ]
+    },
+    {
+      "id": "runtime",
+      "claim": "The real application consumes the change",
+      "deterministic": true,
+      "blocking": true,
+      "evidence": [
+        "Electron and Gateway receipts",
+        "post-action readback",
+        "flag-off baseline"
+      ]
+    },
+    {
+      "id": "effect",
+      "claim": "The user journey reaches a correct, reversible final state",
+      "deterministic": true,
+      "blocking": true,
+      "evidence": [
+        "final-state oracle",
+        "negative case",
+        "rollback or recovery receipt",
+        "trace or screenshot when needed"
+      ]
+    },
+    {
+      "id": "distribution",
+      "claim": "A frozen package retains behavior after installation",
+      "deterministic": true,
+      "blocking": true,
+      "evidence": [
+        "artifact hash and provenance",
+        "installed-layout run",
+        "uninstall or rollback receipt"
+      ]
+    },
+    {
+      "id": "operational",
+      "claim": "The system can be operated, diagnosed, recovered and stopped",
+      "deterministic": true,
+      "blocking": true,
+      "evidence": [
+        "OAT drills",
+        "failure injection",
+        "resource cleanup",
+        "recovery timing"
+      ]
+    },
+    {
+      "id": "agentQuality",
+      "claim": "The model and harness complete valid tasks reliably, efficiently and safely",
+      "deterministic": false,
+      "blocking": true,
+      "evidence": [
+        "calibrated task suite",
+        "repeated trials",
+        "outcome and trace graders",
+        "confidence intervals",
+        "infrastructure separation"
+      ]
+    },
+    {
+      "id": "releaseApproval",
+      "claim": "A finished artifact may be published",
+      "deterministic": false,
+      "blocking": true,
+      "evidence": [
+        "separate publisher decision"
+      ],
+      "agentCanProduce": false
+    }
+  ],
+  "gates": [
+    {
+      "phase": "A. Contract and task validity",
+      "id": "A1",
+      "name": "Traceability and task contract",
+      "oracle": "Every requirement maps to at least one executable gate or an explicit not-run/accepted-shortfall row; every changed path has an owning spec.",
+      "negative": [
+        "unowned path",
+        "requirement with no gate",
+        "ambiguous success criterion"
+      ],
+      "evidence": [
+        "requirement-gate matrix",
+        "spec digest",
+        "changed-path ownership"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "A. Contract and task validity",
+      "id": "A2",
+      "name": "Task and grader calibration",
+      "oracle": "Each task has a reference solution where feasible; each critical grader rejects known-bad and ambiguous fixtures; zero-pass tasks become task-quality findings.",
+      "negative": [
+        "reference solution fails",
+        "bad fixture passes",
+        "judge guesses pass from missing evidence"
+      ],
+      "evidence": [
+        "task calibration report",
+        "grader self-test",
+        "rubric version"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "B. Engineering gates",
+      "id": "B1",
+      "name": "Static and contract layer",
+      "oracle": "Lint/typecheck/schema/license/secret/static security/contract checks meet declared policy; source locks match.",
+      "negative": [
+        "contract drift",
+        "secret-shaped leak",
+        "changed lock without consumer"
+      ],
+      "evidence": [
+        "commands",
+        "exit codes",
+        "findings by severity",
+        "source digests"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "B. Engineering gates",
+      "id": "B2",
+      "name": "Unit, property, mutation and integration",
+      "oracle": "Required happy/failure/cancel/timeout/idempotency tests pass; critical invariants and selected mutation thresholds hold.",
+      "negative": [
+        "unexpected skip",
+        "mutant survives critical boundary",
+        "property seed changes result"
+      ],
+      "evidence": [
+        "test summaries",
+        "fixed skip budget",
+        "seeds",
+        "mutation report"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "B. Engineering gates",
+      "id": "B3",
+      "name": "Independent candidate verification",
+      "oracle": "Executor and a distinct verifier rerun the same rederived gate set in separate detached worktrees with matching artifact digests.",
+      "negative": [
+        "same actor",
+        "dirty candidate",
+        "omitted or overridden gate",
+        "rehashed contradictory report"
+      ],
+      "evidence": [
+        "manifest",
+        "executor report",
+        "verifier report",
+        "logs",
+        "hashes"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "C. Product effect and safety",
+      "id": "C1",
+      "name": "Real product journey",
+      "oracle": "Agent-driven Electron UI reaches deterministic final product state with a clean profile; denial/cancel/recovery cases also pass.",
+      "negative": [
+        "text claims success but persistent state is wrong",
+        "approval bypass",
+        "resource leak"
+      ],
+      "evidence": [
+        "E2E trace",
+        "final-state readback",
+        "screenshots where needed",
+        "cleanup receipt"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "C. Product effect and safety",
+      "id": "C2",
+      "name": "Transcript and adversarial audit",
+      "oracle": "Trace shows policy-compliant evidence causality; prompt injection, malicious tool output, unauthorized path and grader-bypass cases fail closed.",
+      "negative": [
+        "hidden secret access",
+        "prompt injection succeeds",
+        "task reads prior trial state",
+        "hard-coded held-out success"
+      ],
+      "evidence": [
+        "trace taxonomy findings",
+        "security receipts",
+        "held-out variants"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "D. Distribution and operations",
+      "id": "D1",
+      "name": "Frozen package",
+      "oracle": "A frozen artifact has provenance/hash and reproduces the critical journey from installed layout.",
+      "negative": [
+        "artifact digest changes",
+        "packaged app uses source fallback",
+        "install path differs from asserted path"
+      ],
+      "evidence": [
+        "artifact manifest",
+        "installed-layout journey",
+        "post-install readback"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "D. Distribution and operations",
+      "id": "D2",
+      "name": "Operational drills",
+      "oracle": "Startup failure, Gateway loss, provider timeout, cancel, restart, crash recovery, write failure, diagnostics and bounded cleanup all have expected final receipts.",
+      "negative": [
+        "hung process after timeout",
+        "replayed side effect",
+        "unbounded temporary data"
+      ],
+      "evidence": [
+        "OAT report",
+        "fault receipts",
+        "process/port/file cleanup"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "E. Agent quality and statistics",
+      "id": "E1",
+      "name": "Trials and environment identity",
+      "oracle": "Trials start clean and isolated; model/harness/tool versions, CPU/memory floor and ceiling, time, network, retries and seeds are identical within a comparison.",
+      "negative": [
+        "prior trial git history visible",
+        "resource ceiling silently varied",
+        "infrastructure failures merged into agent failures"
+      ],
+      "evidence": [
+        "environment fingerprint",
+        "trial isolation receipt",
+        "resource envelope",
+        "error taxonomy"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "E. Agent quality and statistics",
+      "id": "E2",
+      "name": "Quality and efficiency aggregation",
+      "oracle": "Per-task outcomes, pass@k or pass^k as appropriate, paired differences, confidence intervals, power/insufficient-evidence status and efficiency budgets are reported.",
+      "negative": [
+        "drop hard trials",
+        "use top-line average to hide P1 failure",
+        "omit trial count",
+        "unbounded skip/retry"
+      ],
+      "evidence": [
+        "aggregate.json",
+        "confidence intervals",
+        "trial matrix",
+        "residual ledger"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "F. Independent agent adjudication",
+      "id": "F1",
+      "name": "Evidence review",
+      "oracle": "A distinct agent reviewer reads disk artifacts, recomputes digests/counts/statistics, checks cross-document consistency and emits dimension-specific verdicts.",
+      "negative": [
+        "executor self-accepts",
+        "review trusts printed stdout",
+        "stale evidence promoted",
+        "real-human evidence fabricated"
+      ],
+      "evidence": [
+        "review.json",
+        "SHA256SUMS",
+        "freshness check",
+        "credential scan"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "F. Independent agent adjudication",
+      "id": "F2",
+      "name": "Synthesis and resumability",
+      "oracle": "A fresh agent can resume from manifests and progress artifacts, identify the next incomplete gate and reproduce the verdict from persisted evidence.",
+      "negative": [
+        "reliance on chat memory",
+        "missing intermediate state",
+        "premature whole-project victory"
+      ],
+      "evidence": [
+        "resume test",
+        "handoff artifact",
+        "single-feature progress ledger"
+      ],
+      "automated": true
+    },
+    {
+      "phase": "G. Publisher gate",
+      "id": "G1",
+      "name": "Publication decision",
+      "oracle": "A publisher decision exists and matches the accepted artifact and scope.",
+      "negative": [
+        "agent treats an acceptance pass as publication approval",
+        "product lock changes implicitly"
+      ],
+      "evidence": [
+        "publisher decision record"
+      ],
+      "automated": false,
+      "agentCanProduce": false
+    }
+  ],
+  "verdictStates": [
+    "pass",
+    "partial",
+    "not-run",
+    "accepted-shortfall",
+    "fail",
+    "invalid"
+  ],
+  "evidencePack": [
+    "manifest.json",
+    "plan.json",
+    "environment.json",
+    "trials/<trial-id>/task.json",
+    "trials/<trial-id>/trace.jsonl",
+    "trials/<trial-id>/graders.json",
+    "trials/<trial-id>/final-state.json",
+    "trials/<trial-id>/stdout.log",
+    "trials/<trial-id>/stderr.log",
+    "aggregate.json",
+    "review.json",
+    "residuals.json",
+    "SHA256SUMS",
+    "credential-scan.json"
+  ],
+  "lockedBoundaries": {
+    "humanAcceptanceRequired": false,
+    "humanEvidenceClaimed": false,
+    "drivenBy": "agent",
+    "releaseApproved": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  },
+  "taskForestNodes": {
+    "root": "TF-0588",
+    "contract": "TF-0589",
+    "tasks": "TF-0590",
+    "ui": "TF-0591",
+    "stats": "TF-0592",
+    "review": "TF-0593",
+    "ops": "TF-0594",
+    "adjudicate": "TF-0595",
+    "integrate": "TF-0596"
+  },
+  "currentContractEvidence": {
+    "recordedAt": "2026-10-29",
+    "driven_by": "agent",
+    "actor": "codex",
+    "scope": "TF-0589 contract and static validation only",
+    "focusedTests": {
+      "command": "pnpm exec vitest run tests/unit/docs-index.test.ts tests/unit/harness-specs.test.ts --maxWorkers=1",
+      "testFilesPassed": 2,
+      "testsPassed": 46,
+      "testsFailed": 0,
+      "exitCode": 0
+    },
+    "documentPolicy": {
+      "command": "pnpm docs:policy:validate",
+      "checksPassed": 10,
+      "exitCode": 0
+    },
+    "artifactRetention": {
+      "command": "pnpm repo:artifacts:check",
+      "trackedPaths": 19737,
+      "exitCode": 0
+    },
+    "harnessValidation": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/product-acceptance-closeout.md",
+      "result": "pass",
+      "exitCode": 0
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/product-acceptance-closeout.md --dry-run",
+      "result": "pass",
+      "exitCode": 0
+    },
+    "taskForestValidation": {
+      "command": "task_forest.py validate --workspace D:/ClawX",
+      "result": "pass",
+      "exitCode": 0
+    },
+    "artifactHashes": {
+      "guide": "E4E43ACA385AECCD6061A1E9AE295CFF48ED87289D00A9A015D4670144BAFD72",
+      "sources": "B37184503F6071A91625616F84E843ACF9061D714215AA661440A924AB72ED93"
+    },
+    "limitations": [
+      "Files remain untracked and this is not a clean committed candidate.",
+      "No independent agent has re-read the final files after the evidence is sealed.",
+      "No product runtime, package, model-quality, release or real-human claim is made."
+    ],
+    "verdict": "partial"
+  },
+  "taskForestContractEvidence": {
+    "recordedAt": "2026-10-29",
+    "proposal": "TFP-20261029-agent-first-acceptance",
+    "proposalStatus": "applied",
+    "baseGraphHash": "184f34f2385647d8c2dfdb4bae88b3f88b577d1c8f00653a3c0feae6fe68c676",
+    "graphNodeCount": 596,
+    "graphEdgeCount": 1183,
+    "ready": [
+      "TF-0589"
+    ],
+    "validateExitCode": 0,
+    "exportExitCode": 0,
+    "taskForestHtml": "D:/ClawX/.agent-workbench/task-forest/exports/task-forest.html",
+    "taskForestHtmlSha256": "E0692501184843658B68AEA5562627AA9A198FF9DA6C1CA139ED241022B5A169",
+    "driven_by": "agent",
+    "actor": "codex",
+    "limitations": [
+      "Task Forest is local-only repository continuity data.",
+      "The export is a derived artifact and does not prove a clean candidate or product readiness."
+    ]
+  }
+}
