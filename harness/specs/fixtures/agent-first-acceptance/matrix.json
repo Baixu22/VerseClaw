@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-29",
   "driven_by": "agent",
   "actor": "codex",
-  "status": "ready",
+  "status": "done",
   "claimBoundary": "Planning contract only; no current-candidate acceptance.",
   "dimensions": [
     {
@@ -482,7 +482,7 @@
     },
     "limitations": [
       "This record evaluates the TF-0589 contract/static layer against source candidate 04b2db34f only.",
-      "The matrix and checked-in schema tests are sealed in the current evidence commit and require independent verifier readback before Task Forest closure.",
+      "The evidence was independently read from disk; Task Forest closure was applied through the current-graph-hash proposal.",
       "No product runtime, package, model-quality, release or real-human claim is made."
     ],
     "verdict": "pass",
@@ -577,11 +577,16 @@
   ],
   "taskForestClosure": {
     "node": "TF-0589",
-    "status": "in_progress",
-    "graphGeneratedAt": "2026-10-29T16:15:36.747785Z",
+    "status": "done",
+    "progress": 100,
+    "graphGeneratedAt": "2026-10-29T17:20:48.685053Z",
     "graphNodeCount": 610,
     "graphEdgeCount": 1208,
-    "nextAction": "Create a fresh closure proposal against the current graph hash, then apply done only after final verifier readback.",
+    "proposal": "TFP-20261030-agent-first-contract-closeout",
+    "proposalStatus": "applied",
+    "graphHashBefore": "976ae8e0cfde0a8050865cda2b64d141651dd69a478e027f87a2953bf31feca3",
+    "graphHashAfter": "0fef4ff64dfa4633e0e1c606646f9bddf77dc66bb3e0248b9d1be78c21bcf4b9d1be78c21bcf4b1",
+    "nextAction": "TF-0589 closed; proceed with ready TF-0590 and TF-0591.",
     "humanAcceptanceRequired": false,
     "claim": "Contract and static validation only"
   }
