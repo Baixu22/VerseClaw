@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "AgentFirstAcceptanceValidation/v1",
+  "checkedAt": "2026-10-30",
+  "driven_by": "agent",
+  "actor": "claude/tf0589-verifier",
+  "command": "node scripts/agent-first-acceptance-check.mjs",
+  "scope": "TF-0589 static contract validation over file bodies read from disk",
+  "counts": {
+    "gates": 14,
+    "dimensions": 8,
+    "verdictStates": 6,
+    "sources": 19,
+    "findings": 10
+  },
+  "negativeControls": [
+    {
+      "id": "gate-missing-negative",
+      "requirement": "a blocking gate without a negative control fails closed",
+      "expectedCode": "gate.negative-empty",
+      "rejected": true,
+      "observedCodes": [
+        "gate.missing-field",
+        "gate.negative-empty"
+      ]
+    },
+    {
+      "id": "gate-missing-oracle",
+      "requirement": "a gate without an oracle fails closed",
+      "expectedCode": "gate.oracle-missing",
+      "rejected": true,
+      "observedCodes": [
+        "gate.missing-field",
+        "gate.oracle-missing"
+      ]
+    },
+    {
+      "id": "gate-missing-field",
+      "requirement": "a gate missing a required field fails closed",
+      "expectedCode": "gate.missing-field",
+      "rejected": true,
+      "observedCodes": [
+        "gate.missing-field"
+      ]
+    },
+    {
+      "id": "gate-duplicate-id",
+      "requirement": "a duplicated gate id fails closed",
+      "expectedCode": "gate.duplicate-id",
+      "rejected": true,
+      "observedCodes": [
+        "gate.duplicate-id"
+      ]
+    },
+    {
+      "id": "publisher-gate-automated",
+      "requirement": "publication cannot be absorbed into the automated gate set",
+      "expectedCode": "gate.publisher-boundary",
+      "rejected": true,
+      "observedCodes": [
+        "gate.publisher-boundary"
+      ]
+    },
+    {
+      "id": "requirement-gate-dropped",
+      "requirement": "a dropped requirement fails closed",
+      "expectedCode": "requirement.gate-missing",
+      "rejected": true,
+      "observedCodes": [
+        "requirement.gate-missing"
+      ]
+    },
+    {
+      "id": "requirement-finding-malformed",
+      "requirement": "a research finding with no implication fails closed",
+      "expectedCode": "sources.finding-malformed",
+      "rejected": true,
+      "observedCodes": [
+        "sources.finding-malformed"
+      ]
+    },
+    {
+      "id": "dimension-unknown",
+      "requirement": "an invented dimension fails closed",
+      "expectedCode": "dimension.invalid-set",
+      "rejected": true,
+      "observedCodes": [
+        "dimension.invalid-set"
+      ]
+    },
+    {
+      "id": "dimension-not-blocking",
+      "requirement": "a dimension made non-blocking fails closed",
+      "expectedCode": "dimension.not-blocking",
+      "rejected": true,
+      "observedCodes": [
+        "dimension.not-blocking"
+      ]
+    },
+    {
+      "id": "verdict-unknown-state",
+      "requirement": "an unknown verdict state fails closed",
+      "expectedCode": "verdict.unknown-state",
+      "rejected": true,
+      "observedCodes": [
+        "verdict.unknown-state"
+      ]
+    },
+    {
+      "id": "locked-boundary-opened",
+      "requirement": "a contract that pre-approves release or human evidence fails closed",
+      "expectedCode": "matrix.locked-boundaries",
+      "rejected": true,
+      "observedCodes": [
+        "matrix.locked-boundaries"
+      ]
+    },
+    {
+      "id": "source-count-thin",
+      "requirement": "a five-case source set is not acceptance-grade evidence",
+      "expectedCode": "sources.too-few",
+      "rejected": true,
+      "observedCodes": [
+        "sources.family-missing",
+        "sources.family-thin",
+        "sources.too-few"
+      ]
+    },
+    {
+      "id": "provider-request-failed",
+      "requirement": "a failed research request fails closed",
+      "expectedCode": "sources.provider-request-failed",
+      "rejected": true,
+      "observedCodes": [
+        "sources.provider-request-failed"
+      ]
+    },
+    {
+      "id": "guide-human-gate-removed",
+      "requirement": "removing the no-first-line-human prohibition fails closed",
+      "expectedCode": "guide.required-statement",
+      "rejected": true,
+      "observedCodes": [
+        "guide.required-phrase",
+        "guide.required-statement"
+      ]
+    },
+    {
+      "id": "evidence-unlabelled",
+      "requirement": "evidence that is not labelled agent-driven fails closed",
+      "expectedCode": "evidence.driven-by",
+      "rejected": true,
+      "observedCodes": [
+        "evidence.driven-by"
+      ]
+    }
+  ],
+  "violations": [],
+  "limitations": [
+    "This is a static contract check: it proves the acceptance contract is internally complete, not that any product candidate passes it.",
+    "No runtime, package, model-quality, release or real-human claim is made."
+  ]
+}

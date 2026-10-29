@@ -440,39 +440,41 @@
     "integrate": "TF-0596"
   },
   "currentContractEvidence": {
-    "recordedAt": "2026-10-29",
+    "recordedAt": "2026-10-30",
     "driven_by": "agent",
-    "actor": "codex",
-    "scope": "TF-0589 contract and static validation only",
-    "focusedTests": {
-      "command": "pnpm exec vitest run tests/unit/docs-index.test.ts tests/unit/harness-specs.test.ts --maxWorkers=1",
-      "testFilesPassed": 2,
-      "testsPassed": 46,
+    "actor": "claude/tf0589-verifier",
+    "scope": "TF-0589 contract and static validation, re-read from the tracked candidate after the contract files landed",
+    "candidateCommit": "04b2db34fc8fa5db33d9a77830d32dee9176d5ba",
+    "implementationActor": "codex",
+    "verifierActor": "claude/tf0589-verifier",
+    "independentReadback": true,
+    "staticValidation": {
+      "command": "node scripts/agent-first-acceptance-check.mjs",
+      "result": "pass",
+      "exitCode": 0,
+      "gates": 14,
+      "dimensions": 8,
+      "verdictStates": 6,
+      "sources": 19,
+      "findings": 10,
+      "negativeControls": 15,
+      "negativeControlsRejected": 15,
+      "report": "harness/specs/fixtures/agent-first-acceptance/validation-report.json"
+    },
+    "matrixSchemaTests": {
+      "command": "pnpm exec vitest run tests/unit/agent-first-acceptance.test.ts",
+      "testFilesPassed": 1,
+      "testsPassed": 7,
       "testsFailed": 0,
       "exitCode": 0
     },
-    "documentPolicy": {
-      "command": "pnpm docs:policy:validate",
-      "checksPassed": 10,
-      "exitCode": 0
-    },
-    "artifactRetention": {
-      "command": "pnpm repo:artifacts:check",
-      "trackedPaths": 19737,
+    "harnessContext": {
+      "command": "pnpm harness context --spec harness/specs/tasks/rsi-evidence-loop-contract.md",
+      "result": "pass",
       "exitCode": 0
     },
     "harnessValidation": {
-      "command": "pnpm harness validate --spec harness/specs/tasks/product-acceptance-closeout.md",
-      "result": "pass",
-      "exitCode": 0
-    },
-    "harnessDryRun": {
-      "command": "pnpm harness run --spec harness/specs/tasks/product-acceptance-closeout.md --dry-run",
-      "result": "pass",
-      "exitCode": 0
-    },
-    "taskForestValidation": {
-      "command": "task_forest.py validate --workspace D:/ClawX",
+      "command": "pnpm harness validate --spec harness/specs/tasks/rsi-evidence-loop-contract.md",
       "result": "pass",
       "exitCode": 0
     },
@@ -481,19 +483,70 @@
       "sources": "B37184503F6071A91625616F84E843ACF9061D714215AA661440A924AB72ED93"
     },
     "limitations": [
-      "Files remain untracked and this is not a clean committed candidate.",
-      "No independent agent has re-read the final files after the evidence is sealed.",
+      "The contract files are tracked at the recorded candidate commit, but the validator only proves the contract is internally complete: it does not prove any product candidate passes it.",
+      "The negative controls prove the validator rejects the mutations it declares. They do not prove the 14 gates have been executed.",
+      "The static validation reads file bodies; the recorded exit codes are observations, not a substitute for the files.",
       "No product runtime, package, model-quality, release or real-human claim is made."
     ],
-    "verdict": "partial",
-    "matrixSchemaTests": {
-      "command": "pnpm exec vitest run tests/unit/agent-first-acceptance.test.ts --maxWorkers=1",
-      "testFilesPassed": 1,
-      "testsPassed": 4,
-      "testsFailed": 0,
-      "exitCode": 0
-    }
+    "verdict": "partial"
   },
+  "contractEvidenceHistory": [
+    {
+      "recordedAt": "2026-10-29",
+      "driven_by": "agent",
+      "actor": "codex",
+      "scope": "TF-0589 contract and static validation only",
+      "focusedTests": {
+        "command": "pnpm exec vitest run tests/unit/docs-index.test.ts tests/unit/harness-specs.test.ts --maxWorkers=1",
+        "testFilesPassed": 2,
+        "testsPassed": 46,
+        "testsFailed": 0,
+        "exitCode": 0
+      },
+      "documentPolicy": {
+        "command": "pnpm docs:policy:validate",
+        "checksPassed": 10,
+        "exitCode": 0
+      },
+      "artifactRetention": {
+        "command": "pnpm repo:artifacts:check",
+        "trackedPaths": 19737,
+        "exitCode": 0
+      },
+      "harnessValidation": {
+        "command": "pnpm harness validate --spec harness/specs/tasks/product-acceptance-closeout.md",
+        "result": "pass",
+        "exitCode": 0
+      },
+      "harnessDryRun": {
+        "command": "pnpm harness run --spec harness/specs/tasks/product-acceptance-closeout.md --dry-run",
+        "result": "pass",
+        "exitCode": 0
+      },
+      "taskForestValidation": {
+        "command": "task_forest.py validate --workspace D:/ClawX",
+        "result": "pass",
+        "exitCode": 0
+      },
+      "artifactHashes": {
+        "guide": "E4E43ACA385AECCD6061A1E9AE295CFF48ED87289D00A9A015D4670144BAFD72",
+        "sources": "B37184503F6071A91625616F84E843ACF9061D714215AA661440A924AB72ED93"
+      },
+      "limitations": [
+        "Files remain untracked and this is not a clean committed candidate.",
+        "No independent agent has re-read the final files after the evidence is sealed.",
+        "No product runtime, package, model-quality, release or real-human claim is made."
+      ],
+      "verdict": "partial",
+      "matrixSchemaTests": {
+        "command": "pnpm exec vitest run tests/unit/agent-first-acceptance.test.ts --maxWorkers=1",
+        "testFilesPassed": 1,
+        "testsPassed": 4,
+        "testsFailed": 0,
+        "exitCode": 0
+      }
+    }
+  ],
   "taskForestContractEvidence": {
     "recordedAt": "2026-10-29",
     "proposal": "TFP-20261029-agent-first-acceptance",
