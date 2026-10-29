@@ -64,6 +64,7 @@ type Matrix = {
     driven_by: string;
     actor: string;
     limitations: string[];
+    independentReview?: { actor: string; verdict: string };
     focusedTests: { exitCode: number; testsPassed: number; testsFailed: number };
   };
 };
@@ -164,6 +165,11 @@ describe('agent-first acceptance contract', () => {
     expect(matrix.currentContractEvidence.verdict).toMatch(/^(pass|partial|not-run|accepted-shortfall|fail|invalid)$/u);
     expect(matrix.currentContractEvidence.limitations.length).toBeGreaterThan(0);
     expect(matrix.currentContractEvidence.scope).toContain('contract');
+    expect(JSON.stringify(matrix.currentContractEvidence)).not.toMatch(/Files remain untracked|No independent agent has re-read/u);
+    if (matrix.currentContractEvidence.verdict === 'pass') {
+      expect(matrix.currentContractEvidence.independentReview?.verdict).toBe('pass');
+      expect(matrix.currentContractEvidence.independentReview?.actor).not.toBe(matrix.currentContractEvidence.actor);
+    }
   });
 
   it('documents all three research tracks and rejects a first-line human gate', () => {
