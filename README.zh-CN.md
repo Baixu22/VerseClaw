@@ -32,6 +32,10 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 
 模块详解当前以简体中文维护；其中源码路径、API 名称和证据链接与语言无关。四个根 README 负责多语言入口。
 
+对话中的处理过程可折叠，最终答复保持可见。较长的文件替换会在会话栏内同时预览修改前后，无法断行的代码在预览中自动换行，展开后只在差异区域内横向滚动。命令预览从最新输出开始。两者均支持展开，复制仍包含完整的已保留内容。仓库变更条与会话输入框使用同一条居中列宽；工具调用以紧凑的状态芯片显示目标与耗时。
+
+运行时权限请求覆盖所属会话的输入区，显示命令、工作目录和允许的选项，页面其余部分仍可操作。处理完请求后恢复原输入框、草稿和附件。
+
 ## 当前成熟度边界
 
 | 标签 | 含义 |
@@ -99,6 +103,7 @@ pnpm dev
 4. 发起有范围的任务并在 Workspace Panel 检查文件、终端、预览和变更。
 5. 在 Inbox 处理审批。
 6. Knowledge 和 Memory 的持久变化必须经过各自 review surface。
+7. 会话完成、出错或需要审批时，侧栏铃铛会保留应用内活动；可在铃铛菜单或 Settings → Session & Recovery 控制系统通知。
 
 Release 中实际发布的版本才是可下载版本。构建目标存在不代表当前版本一定提供对应安装包。
 
@@ -237,4 +242,4 @@ UI 改动应补 Electron E2E 和 en/zh/ja/ru 文案。通信路径改动还应�
 
 保持变更范围清晰，提供相应验证；行为变化时同步四个根 README 与 `docs/modules/` 对应模块。接口、默认值、安全边界或用户入口变化时，还要检查产品语义、默认矩阵和 Harness spec。
 
-Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell 团队的 ClawX 工作。仓库使用 [MIT License](LICENSE)。Bundled components 各自保留许可证和 source obligations，包括 [VerseShell notices](resources/verseshell/SOURCE.md)。部分会话/工作区交互适配自 Swami Malode 的 [Rare UI](https://rareui.com)，归属信息保留在 `src/components/rareui`。
+Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell 团队的 ClawX 工作。仓库使用 [MIT License](LICENSE)。Bundled components 各自保留许可证和 source obligations，包括 [VerseShell notices](resources/verseshell/SOURCE.md)。部分会话/工作区交互（包括网页搜索来源卡片）适配自 Swami Malode 的 [Rare UI](https://rareui.com)，归属信息保留在 `src/components/rareui`。

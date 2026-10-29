@@ -15,8 +15,9 @@
 .rare-delete-button:hover, .rare-delete-button:focus-visible { color: var(--color-text-error); background: var(--color-background-row-hover); }
 .rare-notification-bell:hover, .rare-notification-bell[data-state='open'] { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
 .rare-notification-bell { width: 30px; height: 30px; border-radius: var(--radius-sm); }
-.rare-notification-bell__count { position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 999px; background: var(--cdx-blue-300, #4fa8e0); }
-.rare-completion-menu { width: min(320px, calc(100vw - 24px)); max-height: 360px; overflow-y: auto; }
+.rare-notification-bell__count { position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; border: 1px solid var(--color-background-elevated-primary-opaque); border-radius: 999px; background: var(--cdx-blue-300, #4fa8e0); }
+.rare-completion-menu__anchor { display: inline-flex; align-items: center; }
+.rare-completion-menu { width: min(336px, calc(100vw - 24px)); max-height: min(390px, calc(100vh - 80px)); overflow-y: auto; }
 .rare-completion-menu__item { display: flex; align-items: flex-start; gap: 8px; padding: 9px 8px; }
 .rare-completion-menu__item:focus { background: var(--color-background-row-hover); }
 .rare-completion-menu__preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
@@ -43,3 +44,138 @@
 .rare-rail-toc__track { position: absolute; top: 0; left: 0; width: 54px; height: 100%; overflow: visible; pointer-events: none; color: var(--color-text-foreground-tertiary); }
 .rare-rail-toc__plane { position: absolute; top: 0; left: 0; width: 12px; height: 12px; margin: -6px 0 0 -6px; color: var(--color-text-foreground); pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .rare-duration-picker__segment { transition: none; transform: none; } }
+
+/* ---------------------------------------------------------------- theme selector
+ * Adapted from Rare UI Theme Selector. Copyright (c) 2026 Swami Malode.
+ * MIT + Commons Clause + Attribution; see src/components/rareui/LICENSE.
+ *
+ * The miniature is a cropped app window: sidebar on the left, header + tiles
+ * in the panel, and the bottom-right deliberately bleeding past the card edge.
+ *
+ * Palette. Each pane declares its OWN five colours instead of inheriting the
+ * shell palette, because the light option must stay light while the app is
+ * dark (and vice versa). The values mirror the light/dark materials in
+ * codex-tokens.css, so the preview still matches the product rather than an
+ * invented palette.
+ * -------------------------------------------------------------------------- */
+.rare-theme-selector__stage {
+  --ts-card: #edf0f3;
+  --ts-sidebar: #f6f7f9;
+  --ts-panel: #ffffff;
+  --ts-line: rgb(20 24 28 / 0.09);
+  --ts-fill: rgb(20 24 28 / 0.06);
+  --ts-strong: rgb(20 24 28 / 0.30);
+  display: block;
+  background-color: var(--ts-card);
+  transition: background-color 160ms ease-out;
+}
+.rare-theme-selector__stage[data-preview='dark'] {
+  --ts-card: #2b2b2e;
+  --ts-sidebar: #181818;
+  --ts-panel: #212121;
+  --ts-line: rgb(255 255 255 / 0.08);
+  --ts-fill: rgb(255 255 255 / 0.07);
+  --ts-strong: rgb(255 255 255 / 0.32);
+}
+.rare-theme-selector__pane { position: absolute; inset: 0; display: block; container-type: inline-size; }
+.rare-theme-selector__preview {
+  position: absolute;
+  left: 11cqw;
+  top: 11cqw;
+  right: -4cqw;
+  bottom: -4cqw;
+  display: flex;
+  overflow: hidden;
+  border-radius: 5cqw 0 0 0;
+  background-color: var(--ts-sidebar);
+  box-shadow: 0 0 0 1px var(--ts-line), 0 1px 2px rgb(0 0 0 / 0.06);
+}
+.rare-theme-selector__sidebar {
+  display: flex;
+  width: 25cqw;
+  flex-shrink: 0;
+  flex-direction: column;
+  padding: 4cqw 3cqw 14cqw;
+}
+.rare-theme-selector__dots { display: flex; gap: 1.3cqw; padding: 0 1.2cqw; }
+.rare-theme-selector__dot { width: 2cqw; height: 2cqw; border-radius: 999px; background-color: var(--ts-strong); }
+.rare-theme-selector__nav { display: flex; flex-direction: column; gap: 1cqw; margin-top: 4cqw; }
+.rare-theme-selector__nav-row { display: flex; height: 4.6cqw; align-items: center; padding: 0 1.2cqw; }
+.rare-theme-selector__nav-row--active { border-radius: 1.6cqw; background-color: var(--ts-fill); }
+.rare-theme-selector__bar { display: block; height: 2.2cqw; border-radius: 999px; background-color: var(--ts-fill); }
+.rare-theme-selector__bar--strong { width: 10cqw; background-color: var(--ts-strong); }
+.rare-theme-selector__nav-row:nth-child(2) .rare-theme-selector__bar { width: 13cqw; }
+.rare-theme-selector__nav-row:nth-child(3) .rare-theme-selector__bar { width: 8cqw; }
+.rare-theme-selector__account { display: flex; align-items: center; gap: 1.6cqw; margin-top: auto; padding: 0 1.2cqw; }
+.rare-theme-selector__avatar { width: 4.4cqw; height: 4.4cqw; flex-shrink: 0; border-radius: 999px; background-color: var(--ts-strong); }
+.rare-theme-selector__account .rare-theme-selector__bar { width: 7cqw; }
+.rare-theme-selector__panel {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: 3cqw;
+  padding: 5cqw 0 0 5cqw;
+  border-radius: 4cqw 0 0 0;
+  background-color: var(--ts-panel);
+  box-shadow: 0 0 0 1px var(--ts-line);
+}
+.rare-theme-selector__heading { display: flex; flex-direction: column; gap: 2cqw; }
+.rare-theme-selector__heading .rare-theme-selector__bar--strong { width: 11cqw; }
+.rare-theme-selector__heading .rare-theme-selector__bar:not(.rare-theme-selector__bar--strong) { width: 19cqw; }
+.rare-theme-selector__tiles { display: flex; gap: 2.5cqw; margin-top: 5cqw; }
+.rare-theme-selector__tile {
+  width: 19cqw;
+  height: 12cqw;
+  flex-shrink: 0;
+  border-radius: 2.4cqw;
+  background-color: color-mix(in oklab, var(--ts-panel) 92%, var(--ts-strong));
+  box-shadow: 0 0 0 1px var(--ts-line);
+}
+.rare-theme-selector__sheet {
+  width: 70cqw;
+  height: 20cqw;
+  flex-shrink: 0;
+  margin-top: 2.5cqw;
+  border-radius: 2.4cqw;
+  background-color: color-mix(in oklab, var(--ts-panel) 92%, var(--ts-strong));
+  box-shadow: 0 0 0 1px var(--ts-line);
+}
+/* Split ("follow system"): the same preview, cut on a diagonal. */
+.rare-theme-selector__split { position: absolute; inset: 0; display: block; }
+.rare-theme-selector__split .rare-theme-selector__pane { top: 0; bottom: 0; width: 100%; container-type: inline-size; }
+.rare-theme-selector__split .rare-theme-selector__pane--light { background-color: #edf0f3;
+  left: 0;
+  --ts-card: #edf0f3;
+  --ts-sidebar: #f6f7f9;
+  --ts-panel: #ffffff;
+  --ts-line: rgb(20 24 28 / 0.09);
+  --ts-fill: rgb(20 24 28 / 0.06);
+  --ts-strong: rgb(20 24 28 / 0.30);
+}
+.rare-theme-selector__split .rare-theme-selector__pane--dark { background-color: #2b2b2e;
+  right: 0;
+  --ts-card: #2b2b2e;
+  --ts-sidebar: #181818;
+  --ts-panel: #212121;
+  --ts-line: rgb(255 255 255 / 0.08);
+  --ts-fill: rgb(255 255 255 / 0.07);
+  --ts-strong: rgb(255 255 255 / 0.32);
+  clip-path: polygon(54% 0, 100% 0, 100% 100%, 30% 100%);
+}
+.rare-theme-selector__split .rare-theme-selector__pane--dark .rare-theme-selector__preview { left: 13cqw; }
+
+.rare-theme-selector__focus { border-color: transparent; transition: border-color 160ms ease-out; }
+.rare-theme-selector__focus { border-width: 1.5px; }
+.rare-theme-selector__item:focus-visible .rare-theme-selector__focus { border-color: var(--color-border-focus); }
+.rare-theme-selector__item:focus-visible { outline: none; }
+.rare-theme-selector__item:hover .rare-theme-selector__stage { filter: brightness(0.985); }
+.rare-theme-selector__item:hover [data-preview='dark'] { filter: brightness(1.06); }
+@media (prefers-reduced-motion: reduce) {
+  .rare-theme-selector__stage,
+  .rare-theme-selector__ring,
+  .rare-theme-selector__focus,
+  .rare-theme-selector__label { transition: none; }
+}

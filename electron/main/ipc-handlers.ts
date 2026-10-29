@@ -50,7 +50,7 @@ import { ensureVerseGitBindingBridge } from '../gateway/versegit-bridge';
 import { createOpenClawApi } from '../services/openclaw-api';
 import { createShellApi } from '../services/shell-api';
 import { createDialogApi } from '../services/dialog-api';
-import { createWindowApi } from '../services/window-api';
+import { createSystemNotificationsApi } from '../services/system-notifications-api';
 import { createUpdatesApi } from '../services/updates-api';
 import { createUvApi } from '../services/uv-api';
 import { createVtokenApi } from '../services/vtoken-api';
@@ -221,7 +221,7 @@ function registerTypedHostHandlers(
     openclaw: createOpenClawApi(),
     shell: createShellApi(),
     dialog: createDialogApi(),
-    window: createWindowApi(mainWindow),
+    window: createSystemNotificationsApi(mainWindow),
     updates: createUpdatesApi(),
     uv: createUvApi(),
     vtoken: createVtokenApi(),

@@ -32,6 +32,10 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 
 The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
 
+Chat keeps the final reply visible alongside a collapsible process summary. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
+
+Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
+
 ## Current maturity boundaries
 
 | Label | Meaning |
@@ -99,6 +103,7 @@ First session:
 4. Send a scoped conversation and inspect the workspace panel.
 5. Resolve approvals in Inbox.
 6. Use Knowledge or Memory only through their review surfaces.
+7. Completion, error, and approval events remain in the sidebar bell. System alerts can be toggled there or in Settings → Session & Recovery.
 
 Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
 
@@ -237,4 +242,4 @@ Historical plans and acceptance snapshots have their own dates and candidates. C
 
 Keep changes scoped, provide relevant validation and update all four root READMEs when behavior changes. For a functional or architecture change, also update the relevant module document under `docs/modules/`, the product semantics/default matrix when applicable, and reusable Harness specifications.
 
-Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation/workspace interactions adapted from [Rare UI](https://rareui.com) by Swami Malode retain attribution under `src/components/rareui`.
+Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation/workspace interactions, including web-search source cards, adapted from [Rare UI](https://rareui.com) by Swami Malode retain attribution under `src/components/rareui`.

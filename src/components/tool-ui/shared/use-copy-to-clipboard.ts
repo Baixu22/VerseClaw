@@ -4,13 +4,18 @@ import { useCallback, useEffect, useState } from "react";
 
 function fallbackCopyToClipboard(text: string): boolean {
   const textArea = document.createElement("textarea");
+  const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   try {
     textArea.value = text;
     textArea.setAttribute("readonly", "");
     textArea.style.position = "fixed";
     textArea.style.top = "-9999px";
     textArea.style.left = "-9999px";
-    document.body.appendChild(textArea);
+    // Keep the selection inside the active modal's focus scope. Appending to
+    // body makes a dialog redirect focus before execCommand can copy it.
+    const container = previouslyFocused?.closest('[role="dialog"], [role="alertdialog"]') ?? document.body;
+    container.appendChild(textArea);
+    textArea.focus({ preventScroll: true });
     textArea.select();
     return document.execCommand("copy");
   } catch {
@@ -19,6 +24,7 @@ function fallbackCopyToClipboard(text: string): boolean {
     if (textArea.parentNode) {
       textArea.parentNode.removeChild(textArea);
     }
+    previouslyFocused?.focus({ preventScroll: true });
   }
 }
 

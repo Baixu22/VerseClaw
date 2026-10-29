@@ -156,6 +156,11 @@ export function RecoverySettingsSection() {
           control={<SettingsSwitch ariaLabel={t('settings:recovery.notifications.title')} checked={settings.sessionRecoveryNotificationsEnabled} onChange={settings.setSessionRecoveryNotificationsEnabled} testId="settings-session-recovery-notifications" />}
         />
         <SettingsRow
+          title={t('settings:recovery.desktopNotifications.title')}
+          description={t('settings:recovery.desktopNotifications.description')}
+          control={<SettingsSwitch ariaLabel={t('settings:recovery.desktopNotifications.title')} checked={settings.desktopNotificationsEnabled} onChange={settings.setDesktopNotificationsEnabled} testId="settings-desktop-notifications" />}
+        />
+        <SettingsRow
           title={t('settings:recovery.retention.title')}
           description={t('settings:recovery.retention.description')}
           control={<SettingsSelect ariaLabel={t('settings:recovery.retention.title')} value={String(settings.sessionActivityRetentionMinutes)} onChange={(value) => settings.setSessionActivityRetentionMinutes(Number(value) as SessionActivityRetentionMinutes)} testId="settings-session-activity-retention" options={[

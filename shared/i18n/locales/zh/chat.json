@@ -508,6 +508,16 @@
       "label": "来源",
       "open": "打开来源"
     },
+    "webSearch": {
+      "searching": "正在搜索网页",
+      "searchingQuery": "正在搜索“{{query}}”",
+      "searched_one": "已搜索 {{count}} 个网站",
+      "searched_other": "已搜索 {{count}} 个网站",
+      "failed": "搜索失败",
+      "more_one": "更多来源",
+      "more_other": "更多来源",
+      "truncated": "部分结果已截断。"
+    },
     "progress": {
       "label": "进度",
       "done": "已完成",
@@ -536,7 +546,23 @@
     },
     "codeDiff": {
       "copy": "复制补丁",
-      "copied": "补丁已复制"
+      "copied": "补丁已复制",
+      "showFull": "展开差异",
+      "collapse": "收起差异",
+      "before": "修改前",
+      "after": "修改后",
+      "content": "文件差异"
+    },
+    "terminal": {
+      "copy": "复制输出",
+      "copied": "输出已复制",
+      "noOutputToCopy": "暂无可复制的输出",
+      "output": "命令输出",
+      "exitCode": "退出码 {{code}}",
+      "showAll": "查看全部输出（{{count}} 行）",
+      "collapse": "收起输出",
+      "truncated": "仅保留最近的输出。",
+      "empty": "暂无输出"
     },
     "testResults": {
       "label": "Test results",
@@ -2603,6 +2629,8 @@
     "description": "运行时在执行这条命令前暂停，正在等待你的决定。",
     "commandLabel": "命令",
     "cwdLabel": "工作目录",
+    "copyCommand": "复制命令",
+    "commandCopied": "命令已复制",
     "unknownCommand": "（运行时未提供命令）",
     "allowOnce": "仅允许这一次",
     "allowAlways": "总是允许",
@@ -2611,10 +2639,28 @@
     "resolveFailed": "运行时没有接受这个决定。"
   },
   "completionActivity": {
-    "label": "完成动态，{{count}} 条未读",
-    "title": "最近完成",
-    "empty": "已完成的回答和运行会显示在这里。",
-    "completed": "运行已完成"
+    "label": "提醒，{{count}} 条未读",
+    "title": "提醒",
+    "empty": "完成的运行、错误和需要你处理的请求会显示在这里。",
+    "completed": "运行已完成",
+    "desktopDescription": "运行完成、出错或需要审批时发送系统提醒。",
+    "desktopToggle": "桌面通知",
+    "desktopOn": "桌面提醒已开启",
+    "desktopOff": "桌面提醒已关闭",
+    "notify": {
+      "completedTitle": "Verse Claw · 会话已完成",
+      "completedBody": "会话已结束，可以查看结果。",
+      "errorTitle": "Verse Claw · 会话出错",
+      "errorBody": "打开会话查看错误详情。",
+      "approvalTitle": "Verse Claw · 需要权限",
+      "approvalCommand": "有运行正在等待权限：{{command}}",
+      "approvalBody": "有运行正在等待你的决定。"
+    },
+    "kind": {
+      "completed": "已完成",
+      "error": "出错",
+      "action-required": "待处理"
+    }
   },
   "sessionPolicy": {
     "title": "会话策略",

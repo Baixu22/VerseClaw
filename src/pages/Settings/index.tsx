@@ -8,9 +8,6 @@ import {
   Archive,
   ChevronRight,
   ReceiptText,
-  Sun,
-  Moon,
-  Monitor,
   Globe2,
   Palette,
   RefreshCw,
@@ -56,6 +53,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
 import { SettingsSectionLoading } from './sections/SettingsSectionLoading';
 import { WorkspaceContextPanel } from '@/components/settings/WorkspaceContextPanel';
+import { ThemeSelector } from '@/components/rareui/ThemeSelector';
 import { toUserMessage } from '@/lib/error-message';
 import {
   clearUiTelemetry,
@@ -1449,22 +1447,22 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
               from the reference recipe rather than per-call-site utilities. */}
           {currentSection === 'general' && (
             <SettingsSection title={t('appearance.title')}>
-              <SettingsRow
+              <SettingsStackRow
                 title={t('appearance.theme')}
-                control={(
-                  <SettingsSegmented
-                    ariaLabel={t('appearance.theme')}
-                    value={theme}
-                    testId="settings-theme-mode"
-                    onChange={setTheme}
-                    options={[
-                      { value: 'light', label: t('appearance.light'), icon: <Sun /> },
-                      { value: 'dark', label: t('appearance.dark'), icon: <Moon /> },
-                      { value: 'system', label: t('appearance.system'), icon: <Monitor /> },
-                    ]}
-                  />
-                )}
-              />
+                description={t('appearance.themeDescription')}
+                testId="settings-theme-mode"
+              >
+                <ThemeSelector
+                  aria-label={t('appearance.theme')}
+                  value={theme}
+                  onChange={(next) => setTheme(next as typeof theme)}
+                  options={[
+                    { value: 'light', label: t('appearance.light'), preview: 'light' },
+                    { value: 'dark', label: t('appearance.dark'), preview: 'dark' },
+                    { value: 'system', label: t('appearance.system'), preview: 'split' },
+                  ]}
+                />
+              </SettingsStackRow>
               <SettingsRow
                 title={t('appearance.language')}
                 control={(

@@ -508,6 +508,16 @@
       "label": "Sources",
       "open": "Open source"
     },
+    "webSearch": {
+      "searching": "Searching the web",
+      "searchingQuery": "Searching “{{query}}”",
+      "searched_one": "Searched {{count}} site",
+      "searched_other": "Searched {{count}} sites",
+      "failed": "Search failed",
+      "more_one": "more source",
+      "more_other": "more sources",
+      "truncated": "Some results are truncated."
+    },
     "progress": {
       "label": "Progress",
       "done": "Done",
@@ -536,7 +546,23 @@
     },
     "codeDiff": {
       "copy": "Copy patch",
-      "copied": "Patch copied"
+      "copied": "Patch copied",
+      "showFull": "Expand diff",
+      "collapse": "Collapse diff",
+      "before": "Before",
+      "after": "After",
+      "content": "File differences"
+    },
+    "terminal": {
+      "copy": "Copy output",
+      "copied": "Output copied",
+      "noOutputToCopy": "No output to copy",
+      "output": "Command output",
+      "exitCode": "Exit {{code}}",
+      "showAll": "Show all output ({{count}} lines)",
+      "collapse": "Collapse output",
+      "truncated": "Only the most recent output is retained.",
+      "empty": "No output yet"
     },
     "testResults": {
       "label": "Test results",
@@ -2603,6 +2629,8 @@
     "description": "The runtime paused before running this command and is waiting for your decision.",
     "commandLabel": "Command",
     "cwdLabel": "Working directory",
+    "copyCommand": "Copy command",
+    "commandCopied": "Command copied",
     "unknownCommand": "(the runtime did not report a command)",
     "allowOnce": "Allow once",
     "allowAlways": "Always allow",
@@ -2611,10 +2639,28 @@
     "resolveFailed": "The runtime did not accept this decision."
   },
   "completionActivity": {
-    "label": "Completed activity, {{count}} unread",
-    "title": "Recently completed",
-    "empty": "Completed replies and runs will appear here.",
-    "completed": "Run completed"
+    "label": "Attention, {{count}} unread",
+    "title": "Attention",
+    "empty": "Completions, failures and requests that need you will appear here.",
+    "completed": "Run completed",
+    "desktopDescription": "Native alerts for completed runs, failures and approvals.",
+    "desktopToggle": "Desktop notifications",
+    "desktopOn": "Desktop alerts on",
+    "desktopOff": "Desktop alerts off",
+    "notify": {
+      "completedTitle": "Verse Claw · Session complete",
+      "completedBody": "Your session has finished.",
+      "errorTitle": "Verse Claw · Run failed",
+      "errorBody": "Open the conversation to review the error.",
+      "approvalTitle": "Verse Claw · Approval needed",
+      "approvalCommand": "A run is waiting for permission: {{command}}",
+      "approvalBody": "A run is waiting for your decision."
+    },
+    "kind": {
+      "completed": "Completed",
+      "error": "Error",
+      "action-required": "Action needed"
+    }
   },
   "sessionPolicy": {
     "title": "Session policy",

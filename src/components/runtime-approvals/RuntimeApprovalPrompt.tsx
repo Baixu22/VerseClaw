@@ -1,21 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Check, Copy, ShieldQuestion } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useCopyToClipboard } from '@/components/tool-ui/shared/use-copy-to-clipboard';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import type { RuntimeApprovalRequestedEvent } from '@shared/host-events/contract';
 
 /**
- * TF-0240: the in-app entry point for the runtime exec-approval boundary.
+ * The active conversation's composer replacement for runtime exec approvals.
  *
  * The runtime raises `exec.approval.requested` when its exec policy gates a
  * command, and waits. Without an answer the turn hangs (J-04). This prompt shows
  * the pending request and sends back exactly one decision the runtime already
- * offered for it — it never decides on its own, never invents a decision, and
- * never dismisses a request that is still open.
+ * offered for it. The original composer stays mounted while hidden, preserving
+ * its draft and staged attachments. Other sessions remain usable.
  */
 
 const FALLBACK_DECISIONS = ['allow-once', 'deny'];
+const DECISION_ORDER: Record<string, number> = { deny: 0, 'allow-always': 1, 'allow-once': 2 };
 
 const DECISION_LABEL_KEYS: Record<string, string> = {
   'allow-once': 'runtimeApprovals.allowOnce',
@@ -34,11 +38,26 @@ export function mergePendingApprovals(
   return [...byId.values()];
 }
 
-export function RuntimeApprovalPrompt() {
+export function RuntimeApprovalPrompt({
+  sessionKey,
+  agentId,
+  hero = false,
+  children,
+}: {
+  sessionKey: string;
+  agentId?: string;
+  hero?: boolean;
+  children?: ReactNode;
+}) {
   const { t } = useTranslation('chat');
   const [pending, setPending] = useState<RuntimeApprovalRequestedEvent[]>([]);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [decisionsById, setDecisionsById] = useState<Record<string, { busy: boolean; error: string | null }>>({});
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
+  const previousRequestRef = useRef<string | undefined>(undefined);
+  const titleId = useId();
+  const descriptionId = useId();
+  const { copiedId, copy } = useCopyToClipboard();
 
   // The broadcast only covers requests raised while the renderer is listening;
   // seed from the runtime's own pending list so a reload does not orphan a request.
@@ -64,97 +83,146 @@ export function RuntimeApprovalPrompt() {
     setPending((current) => current.filter((entry) => entry.approvalId !== event.approvalId));
   }), []);
 
-  const request = pending[0];
-  if (!request) return null;
+  const request = pending.find((entry) => entry.sessionKey
+    ? entry.sessionKey === sessionKey
+    : !entry.agentId || entry.agentId === agentId);
+  const requestId = request?.approvalId;
+  useLayoutEffect(() => {
+    if (requestId && (document.activeElement === document.body || inputRef.current?.contains(document.activeElement))) {
+      titleRef.current?.focus({ preventScroll: true });
+    } else if (!requestId && previousRequestRef.current && document.activeElement === document.body) {
+      inputRef.current?.querySelector('textarea')?.focus({ preventScroll: true });
+    }
+    previousRequestRef.current = requestId;
+  }, [requestId]);
 
-  const decisions = request.allowedDecisions.length > 0 ? request.allowedDecisions : FALLBACK_DECISIONS;
+  const decisions = [...(request?.allowedDecisions.length ? request.allowedDecisions : FALLBACK_DECISIONS)]
+    .sort((left, right) => (DECISION_ORDER[left] ?? 1) - (DECISION_ORDER[right] ?? 1));
+  const copied = copiedId === requestId;
+  const busy = requestId ? Boolean(decisionsById[requestId]?.busy) : false;
+  const error = requestId ? decisionsById[requestId]?.error : null;
 
   const decide = async (decision: string) => {
-    if (busy) return;
-    setBusy(true);
-    setError(null);
+    if (!request || busy) return;
+    const approvalId = request.approvalId;
+    setDecisionsById((current) => ({ ...current, [approvalId]: { busy: true, error: null } }));
     try {
       const result = await hostApi.runtimeApprovals.resolve({
-        approvalId: request.approvalId,
+        approvalId,
         decision,
       });
       if (!result.success) {
-        setError(result.error ?? t('runtimeApprovals.resolveFailed'));
+        setDecisionsById((current) => ({ ...current, [approvalId]: { busy: false, error: result.error ?? t('runtimeApprovals.resolveFailed') } }));
         return;
       }
-      setPending((current) => current.filter((entry) => entry.approvalId !== request.approvalId));
+      setPending((current) => current.filter((entry) => entry.approvalId !== approvalId));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : String(cause));
+      setDecisionsById((current) => ({ ...current, [approvalId]: { busy: false, error: cause instanceof Error ? cause.message : String(cause) } }));
     } finally {
-      setBusy(false);
+      setDecisionsById((current) => ({ ...current, [approvalId]: { ...current[approvalId], busy: false } }));
     }
   };
 
   return (
-    <Dialog open onOpenChange={() => { /* the runtime owns the decision; the prompt stays until it is answered */ }}>
-      <DialogContent
-        className="w-[calc(100%-2rem)] max-w-lg rounded-3xl border-0 bg-surface-modal shadow-2xl"
+    <div className="relative shrink-0" data-testid="chat-composer-slot">
+      <div ref={inputRef} hidden={Boolean(request)} inert={Boolean(request)}>
+        {children}
+      </div>
+      {request && (
+      <div className={cn('codex-composer-host mx-auto w-full max-w-[768px] px-4 pb-5 pt-2', hero && 'codex-composer-host--hero')}>
+      <section
+        className="flex max-h-[min(60dvh,420px)] flex-col overflow-hidden rounded-[25px] border border-border bg-surface-modal shadow-lg"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
         data-testid="runtime-approval-prompt"
+        data-session-key={request.sessionKey ?? sessionKey}
       >
-        <DialogTitle className="font-serif text-xl font-normal tracking-tight">
-          {t('runtimeApprovals.title')}
-        </DialogTitle>
-        <DialogDescription className="text-sm text-muted-foreground">
-          {t('runtimeApprovals.description')}
-        </DialogDescription>
+        <div className="flex shrink-0 items-start gap-3 px-4 pb-2 pt-3">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-input text-muted-foreground" aria-hidden="true">
+            <ShieldQuestion className="h-4 w-4" />
+          </span>
+          <div className="min-w-0">
+            <h2 id={titleId} ref={titleRef} tabIndex={-1} className="font-sans text-sm font-semibold leading-5 tracking-normal outline-none">
+              {t('runtimeApprovals.title')}
+            </h2>
+            <p id={descriptionId} className="mt-1 text-xs leading-5 text-muted-foreground">
+              {t('runtimeApprovals.description')}
+            </p>
+          </div>
+        </div>
 
-        <dl className="mt-4 space-y-2 text-sm">
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+        <dl className="min-h-0 space-y-3 overflow-y-auto px-4 pb-3" data-testid="runtime-approval-details">
+          <div className="min-w-0">
+            <dt className="flex items-center justify-between gap-2 text-xs font-medium text-muted-foreground">
               {t('runtimeApprovals.commandLabel')}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                disabled={!request.command}
+                aria-label={t(copied ? 'runtimeApprovals.commandCopied' : 'runtimeApprovals.copyCommand')}
+                title={t(copied ? 'runtimeApprovals.commandCopied' : 'runtimeApprovals.copyCommand')}
+                onClick={() => void copy(request.command, request.approvalId)}
+              >
+                {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              </Button>
             </dt>
-            <dd className="mt-1 break-all rounded-xl bg-surface-input px-3 py-2 font-mono text-xs">
-              {request.command || t('runtimeApprovals.unknownCommand')}
+            <dd className="mt-1">
+              <pre
+                tabIndex={0}
+                aria-label={t('runtimeApprovals.commandLabel')}
+                data-testid="runtime-approval-command"
+                className="max-h-32 overflow-auto overscroll-contain whitespace-pre rounded-lg border border-border/60 bg-surface-input px-3 py-2 font-mono text-xs leading-5 text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
+              >
+                {request.command || t('runtimeApprovals.unknownCommand')}
+              </pre>
             </dd>
           </div>
           {request.cwd ? (
             <div>
-              <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+              <dt className="text-xs font-medium text-muted-foreground">
                 {t('runtimeApprovals.cwdLabel')}
               </dt>
-              <dd className="mt-1 break-all text-xs text-muted-foreground">{request.cwd}</dd>
+              <dd className="mt-2 break-words font-mono text-xs leading-5 text-muted-foreground [overflow-wrap:anywhere]">{request.cwd}</dd>
             </div>
           ) : null}
         </dl>
 
-        {error ? (
-          <p className="mt-3 text-xs text-red-700 dark:text-red-400" role="alert">
-            {error}
-          </p>
-        ) : null}
+        <div className="shrink-0 space-y-2 border-t border-border/70 px-4 py-3">
+          {error ? (
+            <p className="break-words text-xs leading-5 text-red-700 dark:text-red-400" role="alert">
+              {error}
+            </p>
+          ) : null}
+          <div className="flex flex-wrap items-center justify-end gap-2" aria-busy={busy}>
+            {decisions.map((decision) => {
+              const labelKey = DECISION_LABEL_KEYS[decision];
+              const deny = decision === 'deny';
+              return (
+                <Button
+                  key={decision}
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void decide(decision)}
+                  data-testid={`runtime-approval-${decision}`}
+                  variant={decision === 'allow-once' ? 'default' : deny ? 'ghost' : 'outline'}
+                  className={deny ? 'mr-auto' : undefined}
+                >
+                  {labelKey ? t(labelKey) : decision}
+                </Button>
+              );
+            })}
+          </div>
 
-        <div className="mt-5 flex flex-wrap justify-end gap-2">
-          {decisions.map((decision) => {
-            const labelKey = DECISION_LABEL_KEYS[decision];
-            const deny = decision === 'deny';
-            return (
-              <button
-                key={decision}
-                type="button"
-                disabled={busy}
-                onClick={() => void decide(decision)}
-                data-testid={`runtime-approval-${decision}`}
-                className={deny
-                  ? 'rounded-xl px-3 py-1.5 text-sm text-foreground hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/5'
-                  : 'rounded-xl bg-black/5 px-3 py-1.5 text-sm text-foreground hover:bg-black/10 disabled:opacity-50 dark:bg-white/10 dark:hover:bg-white/15'}
-              >
-                {labelKey ? t(labelKey) : decision}
-              </button>
-            );
-          })}
+          {busy ? (
+            <p className="text-right text-xs text-muted-foreground" role="status">
+              {t('runtimeApprovals.busy')}
+            </p>
+          ) : null}
         </div>
-
-        {busy ? (
-          <p className="mt-2 text-right text-xs text-muted-foreground" role="status">
-            {t('runtimeApprovals.busy')}
-          </p>
-        ) : null}
-      </DialogContent>
-    </Dialog>
+      </section>
+      </div>
+      )}
+    </div>
   );
 }

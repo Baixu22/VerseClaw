@@ -7,6 +7,7 @@ export function createWindowApi(mainWindow: BrowserWindow): CompleteHostServiceR
     syncTrafficLightPosition: (payload) => {
       syncMacTrafficLightPosition(mainWindow, payload.sidebarCollapsed);
     },
+    notify: () => ({ success: false, delivered: false, reason: 'notifications-unavailable', error: 'System notification service is not registered' }),
     minimize: () => {
       mainWindow.minimize();
     },

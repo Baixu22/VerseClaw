@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ExecutionGraphCard } from '@/pages/Chat/ExecutionGraphCard';
-import type { TaskStep } from '@/pages/Chat/task-visualization';
+import { deriveRuntimeTaskSteps, type TaskStep } from '@/pages/Chat/task-visualization';
+import type { ChatRuntimeRunState } from '@/stores/chat/types';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -35,6 +36,55 @@ const subagentStep: TaskStep = {
 };
 
 describe('ExecutionGraphCard flat activity rows', () => {
+  it('previews the edit target and reveals complete arguments only on expansion', () => {
+    const detail = JSON.stringify({
+      file_path: '/workspace/src/components/conversation/Message.tsx',
+      old_string: 'const before = true;',
+      new_string: 'const after = true;',
+    });
+    render(<ExecutionGraphCard agentLabel="main" steps={[{ ...branchStep, label: 'edit', detail }]} active={false} />);
+
+    expect(screen.getByText('/workspace/src/components/conversation/Message.tsx')).toBeVisible();
+    expect(screen.queryByText(/old_string/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('chat-execution-step-toggle'));
+    const region = screen.getByRole('region', { name: 'edit' });
+    expect(JSON.parse(region.textContent!)).toEqual(JSON.parse(detail));
+    expect(screen.getByTestId('chat-execution-step-toggle')).toHaveAttribute('aria-controls', region.id);
+    fireEvent.click(screen.getByTestId('chat-execution-step-toggle'));
+    expect(screen.queryByRole('region', { name: 'edit' })).not.toBeInTheDocument();
+  });
+
+  it('renders completed tool calls as done chips with their measured duration', () => {
+    const completedStep: TaskStep = { ...branchStep, status: 'completed', durationMs: 1840 };
+    render(<ExecutionGraphCard agentLabel="main" steps={[completedStep]} active={false} />);
+
+    const chip = screen.getByTestId('chat-call-chip');
+    expect(chip).toHaveAttribute('data-status', 'done');
+    expect(chip).toHaveTextContent('1840 ms');
+    expect(chip).toHaveAttribute('aria-label', 'exec, openclaw gateway start, completed');
+  });
+
+  it('derives measured duration from runtime tool events', () => {
+    const run: ChatRuntimeRunState = {
+      runId: 'run-duration',
+      status: 'completed',
+      assistantText: '',
+      thinkingText: '',
+      events: [
+        { runId: 'run-duration', type: 'tool.started', toolCallId: 'tool-duration', name: 'exec', ts: 1_000 },
+        { runId: 'run-duration', type: 'tool.completed', toolCallId: 'tool-duration', name: 'exec', ts: 2_500 },
+      ],
+    };
+
+    const steps = deriveRuntimeTaskSteps(run);
+    expect(steps).toHaveLength(1);
+    expect(steps[0]).toMatchObject({
+      status: 'completed',
+      startedAt: 1_000,
+      durationMs: 1_500,
+    });
+  });
+
   it('renders nested branches through geometry without a branch badge', () => {
     render(<ExecutionGraphCard agentLabel="main" steps={[branchStep]} active />);
 
@@ -43,13 +93,14 @@ describe('ExecutionGraphCard flat activity rows', () => {
     expect(screen.queryByText('分支')).toBeNull();
   });
 
-  it('renders error status as wrap-safe text rather than a pill', () => {
+  it('renders error status as a red call chip with its target intact', () => {
     const erroredToolStep: TaskStep = { ...branchStep, depth: 1, status: 'error' };
     render(<ExecutionGraphCard agentLabel="main" steps={[erroredToolStep]} active={false} />);
 
-    const status = screen.getByText('error');
-    expect(status.className).toContain('whitespace-nowrap');
-    expect(status.className).not.toContain('rounded-full');
+    const chip = screen.getByTestId('chat-call-chip');
+    expect(chip).toHaveAttribute('data-status', 'error');
+    expect(chip).toHaveAttribute('aria-label', 'exec, openclaw gateway start, error');
+    expect(screen.getByText('openclaw gateway start')).toHaveAttribute('title', 'openclaw gateway start');
   });
 
   it('uses a text-first system row without card chrome', () => {

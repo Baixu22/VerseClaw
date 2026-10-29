@@ -32,6 +32,10 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 
 詳細 module document は現在 Simplified Chinese で保守されています。source path、API 名、evidence link は言語非依存です。4 つの root README が多言語入口です。
 
+チャットの処理詳細を折りたたんでも最終回答は表示されます。長いファイル変更は会話欄内で変更前後を並べ、折り返せないコードはプレビュー内で折り返します。展開後の差分だけがその領域内で横スクロールします。コマンドは最新の出力からプレビューし、コピーには保持されている全文が含まれます。リポジトリ変更ストリップはコンポーザーと同じ中央列幅を使用し、ツール呼び出しは対象と時間を示すコンパクトなステータスチップで表示されます。
+
+ランタイムの承認要求は該当会話の入力欄を置き換え、コマンド、作業ディレクトリと選択肢を表示します。ページの他の部分は操作でき、承認処理が終わると元の入力欄、下書きと添付ファイルが復元されます。
+
 ## 現在の成熟度境界
 
 | Label | 意味 |
@@ -99,6 +103,7 @@ pnpm dev
 4. Scoped task を送り、Workspace Panel を確認する。
 5. Inbox で approval を処理する。
 6. Knowledge / Memory の永続変更は review surface 経由で行う。
+7. セッションの完了、エラー、承認待ちはサイドバーのベルに残ります。システム通知はベルメニューまたは Settings → Session & Recovery で切り替えられます。
 
 Release に存在する package だけが download target です。Build target の存在は current version の package を保証しません。
 
@@ -235,4 +240,4 @@ Historical plan と acceptance snapshot には固有の日付と candidate が�
 
 変更範囲を明確にし、関連 validation を提供してください。Behavior change では 4 root README と `docs/modules/` の該当 module を同期します。Interface、default、security boundary、user entry の変更では product semantics、default matrix、Harness spec も確認します。
 
-Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell team の ClawX を基盤にしています。Repository は [MIT License](LICENSE) を使用します。Bundled component は各自の license/source obligation を保持します。詳細は [VerseShell notices](resources/verseshell/SOURCE.md)。一部 conversation/workspace interaction は Swami Malode の [Rare UI](https://rareui.com) を基にし、attribution は `src/components/rareui` に保持されています。
+Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell team の ClawX を基盤にしています。Repository は [MIT License](LICENSE) を使用します。Bundled component は各自の license/source obligation を保持します。詳細は [VerseShell notices](resources/verseshell/SOURCE.md)。一部 conversation/workspace interaction（web search source card を含む）は Swami Malode の [Rare UI](https://rareui.com) を基にし、attribution は `src/components/rareui` に保持されています。

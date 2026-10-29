@@ -5,7 +5,7 @@ Evidence owner: `codex` (agent-driven Electron automation)
 
 ## Scope
 
-Verse Claw adapts six compact interactions from [Rare UI](https://rareui.com) to existing product surfaces. This is a renderer-only change: it adds no host routes, transport behavior, runtime authority, approval behavior, or product-default changes.
+Verse Claw adapts seven compact interactions from [Rare UI](https://rareui.com) to existing product surfaces. This is a renderer-only change: it adds no host routes, transport behavior, runtime authority, approval behavior, or product-default changes.
 
 | Surface | Production entry point | Behavior |
 | --- | --- | --- |
@@ -15,6 +15,8 @@ Verse Claw adapts six compact interactions from [Rare UI](https://rareui.com) to
 | Duration Picker | Scheduled-task editor | Daily, weekly, and monthly cron expressions expose local hour/minute editing. Non-cron `every` and `at` schedules remain untouched unless the user explicitly edits the schedule. |
 | Delete Button | Scheduled-task detail panel | The compact delete affordance opens the existing confirmation flow. Cancelling performs no delete host call, and failure never renders a success state. |
 | Notification Bell | Persistent sidebar header | Completed runtime runs and completed visible assistant replies appear newest first. Active, failed, aborted, empty, and tool-only turns are excluded.  The glyph is a stroke icon with a small unread dot, matching the sidebar's line-icon weight. |
+| Theme Selector | Settings > General > Theme | A row of miniature app previews for Light, Dark, and System replaces the segmented control. Each miniature is drawn in the palette it depicts, so the light card stays light while the app is dark; System splices the two diagonally. Selection applies immediately, persists through the existing settings store, and keeps a single roving tab stop with arrow/Home/End keys. |
+| Web Search | Chat tool results | Provider search query, answer summary, and landed sources render as a collapsible pill plus a source-card grid. The reference's circular globe ring is replaced by the same left-to-right progress wash ReactBits CallChip uses, so an in-flight search fills as a bar instead of an arc. |
 
 ## Runtime and data boundaries
 

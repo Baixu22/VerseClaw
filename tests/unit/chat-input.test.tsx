@@ -146,6 +146,10 @@ vi.mock('@/stores/artifact-panel', () => ({
 vi.mock('@/lib/host-api', () => ({
   hostApiFetch: hostApiFetchMock,
   hostApi: {
+    runtimeApprovals: {
+      list: vi.fn(async () => ({ pending: [] })),
+      resolve: vi.fn(async () => ({ success: true })),
+    },
     files: {
       stagePaths: (input: unknown) => hostApiFetchMock('/api/files/stage-paths', {
         method: 'POST',
@@ -3069,7 +3073,7 @@ describe('ChatInput agent targeting', () => {
     Object.defineProperty(folderFile, 'path', { value: '/tmp/project-folder' });
 
     const { container } = renderChatInput();
-    fireEvent.drop(container.firstElementChild as Element, {
+    fireEvent.drop(container.querySelector('.codex-composer-host') as Element, {
       dataTransfer: {
         items: [{
           kind: 'file',

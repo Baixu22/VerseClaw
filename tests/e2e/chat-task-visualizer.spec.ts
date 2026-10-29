@@ -523,6 +523,9 @@ test.describe('Verse Claw chat execution graph', () => {
       const graph = page.getByTestId('chat-execution-graph');
       await expect(graph).toBeVisible({ timeout: 30_000 });
       await expect(graph).toHaveAttribute('data-collapsed', 'false');
+      const callChips = graph.getByTestId('chat-call-chip');
+      expect(await callChips.count()).toBeGreaterThan(0);
+      await expect(callChips.first()).toHaveAttribute('data-status', 'done');
       await expect(
         page.locator('[data-testid="chat-execution-graph"] [data-testid="chat-execution-step"]').getByText('sessions_yield', { exact: true }),
       ).toBeVisible();
@@ -539,6 +542,26 @@ test.describe('Verse Claw chat execution graph', () => {
       await graph.screenshot({ path: screenshotPath });
       await testInfo.attach('assistant-ui-ghost-execution-graph', {
         path: screenshotPath,
+        contentType: 'image/png',
+      });
+      await page.setViewportSize({ width: 640, height: 900 });
+      const longChip = graph.getByTestId('chat-call-chip').filter({ hasText: 'exec' }).first();
+      await expect(longChip).toBeVisible();
+      expect(await longChip.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      const narrowPath = testInfo.outputPath('assistant-ui-call-chip-narrow.png');
+      await graph.screenshot({ path: narrowPath });
+      await testInfo.attach('assistant-ui-call-chip-narrow', {
+        path: narrowPath,
+        contentType: 'image/png',
+      });
+      await page.evaluate(() => {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      });
+      const darkPath = testInfo.outputPath('assistant-ui-call-chip-dark.png');
+      await graph.screenshot({ path: darkPath });
+      await testInfo.attach('assistant-ui-call-chip-dark', {
+        path: darkPath,
         contentType: 'image/png',
       });
     } finally {

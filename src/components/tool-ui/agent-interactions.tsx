@@ -20,6 +20,7 @@ import { CodeDiff } from './code-diff';
 import { ProgressTracker } from './progress-tracker';
 import { Terminal } from './terminal';
 import { WeatherWidget } from './weather-widget/runtime';
+import { WebSearch, type WebSearchSource, type WebSearchStatus } from '@/components/rareui/WebSearch';
 import type {
   ForecastDay,
   PrecipitationLevel,
@@ -192,6 +193,19 @@ type SourceInteraction = {
     author?: string;
     publishedAt?: string;
   }>;
+};
+
+type WebSearchInteraction = {
+  type: 'web-search';
+  id: string;
+  query?: string;
+  provider?: string;
+  label?: string;
+  status?: WebSearchStatus;
+  progress?: number;
+  answer?: string;
+  truncated?: boolean;
+  sources: WebSearchSource[];
 };
 
 type ProgressInteraction = {
@@ -371,6 +385,7 @@ export type ToolUiInteraction =
   | WeatherInteraction
   | DirectiveTextInteraction
   | SourceInteraction
+  | WebSearchInteraction
   | ProgressInteraction
   | StatusGridInteraction
   | AlertInteraction
@@ -451,6 +466,10 @@ function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
+function asContent(value: unknown): string | undefined {
+  return typeof value === 'string' ? value : undefined;
+}
+
 function asBoolean(value: unknown): boolean | undefined {
   return typeof value === 'boolean' ? value : undefined;
 }
@@ -506,6 +525,8 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   if (normalized === 'terminal' || normalized === 'terminal-output') return 'terminal';
   if (normalized === 'code-diff' || normalized === 'diff') return 'code-diff';
   if (normalized === 'progress-tracker' || normalized === 'run-progress') return 'progress-tracker';
+  if (normalized === 'web-search' || normalized === 'websearch' || normalized === 'web_search') return 'web-search';
+  if (normalized === 'tavily-search' || normalized === 'search-results' || normalized === 'web-search-results') return 'web-search';
   // Shape-based fallbacks
   if (Array.isArray(payload.suites) || (isRecord(payload.summary) && Array.isArray(payload.tests))) return 'test-results';
   if (typeof payload.stack === 'string' || typeof payload.trace === 'string') return 'stack-trace';
@@ -516,6 +537,7 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   if (Array.isArray(payload.columns) && Array.isArray(payload.rows)) return 'table';
   if (typeof payload.temperature === 'number' || (typeof payload.location === 'string' && typeof payload.condition === 'string')) return 'weather';
   if (Array.isArray(payload.sources) || Array.isArray(payload.citations)) return 'source';
+  if (Array.isArray(payload.results) && (typeof payload.query === 'string' || typeof payload.provider === 'string')) return 'web-search';
   if (typeof payload.value === 'number' && (typeof payload.max === 'number' || typeof payload.label === 'string')) return 'progress';
   if (Array.isArray(payload.entries) && payload.entries.length > 0) return 'key-value';
   if (Array.isArray(payload.images)) return 'image-gallery';
@@ -991,6 +1013,75 @@ function parseSource(payload: Record<string, unknown>, fallbackId: string): Sour
   return { type: 'source', id: asString(payload.id) ?? fallbackId, sources };
 }
 
+function normalizeWebSearchSource(entry: unknown, index: number): WebSearchSource | null {
+  if (typeof entry === 'string') {
+    const url = entry.trim();
+    return url ? { id: 'source-' + (index + 1), title: url, url } : null;
+  }
+  if (!isRecord(entry)) return null;
+  const url = asString(entry.url) ?? asString(entry.link) ?? asString(entry.href);
+  if (!url) return null;
+  const title = asString(entry.title) ?? asString(entry.name) ?? asString(entry.label) ?? url;
+  return {
+    id: asString(entry.id) ?? 'source-' + (index + 1),
+    title,
+    url,
+    snippet:
+      asString(entry.snippet) ??
+      asString(entry.content) ??
+      asString(entry.description) ??
+      asString(entry.summary) ??
+      asString(entry.text),
+    score: asNumber(entry.score),
+    publishedDate:
+      asString(entry.publishedDate) ??
+      asString(entry.published_date) ??
+      asString(entry.published) ??
+      asString(entry.date),
+    favicon: asString(entry.favicon) ?? asString(entry.icon),
+  };
+}
+
+function normalizeWebSearchStatus(value: unknown): WebSearchStatus {
+  const normalized = normalizeType(value);
+  if (normalized === 'searching' || normalized === 'running' || normalized === 'in-progress') return 'searching';
+  if (normalized === 'error' || normalized === 'failed' || normalized === 'failure') return 'error';
+  return 'done';
+}
+
+function parseWebSearch(payload: Record<string, unknown>, fallbackId: string): WebSearchInteraction | null {
+  const rawResults = Array.isArray(payload.results)
+    ? payload.results
+    : Array.isArray(payload.sources)
+      ? payload.sources
+      : Array.isArray(payload.citations)
+        ? payload.citations
+        : [];
+  const sources = rawResults
+    .map((entry, index) => normalizeWebSearchSource(entry, index))
+    .filter((entry): entry is WebSearchSource => entry != null);
+  const query = asString(payload.query) ?? asString(payload.q);
+  const answer = asString(payload.answer) ?? asString(payload.summary);
+  const status = normalizeWebSearchStatus(payload.status ?? payload.state);
+  // A bare tool-call input (just { query }) is not a result surface; only an
+  // explicit searching payload may render without landed sources or an answer.
+  if (sources.length === 0 && !answer && status !== 'searching') return null;
+  const rawProgress = asNumber(payload.progress) ?? asNumber(payload.percent);
+  const progress = rawProgress == null ? undefined : rawProgress > 1 ? rawProgress / 100 : rawProgress;
+  return {
+    type: 'web-search',
+    id: asString(payload.id) ?? fallbackId,
+    query,
+    provider: asString(payload.provider) ?? asString(payload.engine),
+    label: asString(payload.label),
+    status,
+    progress,
+    answer,
+    truncated: asBoolean(payload.truncated),
+    sources,
+  };
+}
+
 function parseProgress(payload: Record<string, unknown>, fallbackId: string): ProgressInteraction | null {
   const value = asNumber(payload.value) ?? asNumber(payload.current) ?? asNumber(payload.progress);
   if (value == null) return null;
@@ -1389,8 +1480,8 @@ function parseTerminal(payload: Record<string, unknown>, fallbackId: string): Te
     type: 'terminal',
     id: asString(payload.id) ?? fallbackId,
     command,
-    stdout: asString(payload.stdout) ?? asString(payload.output),
-    stderr: asString(payload.stderr),
+    stdout: asContent(payload.stdout) ?? asContent(payload.output),
+    stderr: asContent(payload.stderr),
     exitCode: asNumber(payload.exitCode),
     durationMs: asNumber(payload.durationMs),
     cwd: asString(payload.cwd),
@@ -1399,10 +1490,10 @@ function parseTerminal(payload: Record<string, unknown>, fallbackId: string): Te
 }
 
 function parseCodeDiff(payload: Record<string, unknown>, fallbackId: string): CodeDiffInteraction | null {
-  const patch = asString(payload.patch);
-  const oldCode = asString(payload.oldCode) ?? asString(payload.original);
-  const newCode = asString(payload.newCode) ?? asString(payload.modified);
-  if (!patch && oldCode == null && newCode == null) return null;
+  const patch = asContent(payload.patch);
+  const oldCode = asContent(payload.oldCode) ?? asContent(payload.original);
+  const newCode = asContent(payload.newCode) ?? asContent(payload.modified);
+  if (!patch && !oldCode && !newCode) return null;
   return {
     type: 'code-diff',
     id: asString(payload.id) ?? fallbackId,
@@ -1478,6 +1569,7 @@ export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui
   if (type === 'weather') return parseWeather(payload, fallbackId);
   if (type === 'directive-text') return parseDirectiveText(payload, fallbackId);
   if (type === 'source') return parseSource(payload, fallbackId);
+  if (type === 'web-search') return parseWebSearch(payload, fallbackId);
   if (type === 'progress') return parseProgress(payload, fallbackId);
   if (type === 'status-grid') return parseStatusGrid(payload, fallbackId);
   if (type === 'alert') return parseAlert(payload, fallbackId);
@@ -3185,6 +3277,21 @@ export function AgentInteractionRenderer({
             return <WeatherCard key={key} interaction={interaction} />;
           case 'directive-text':
             return <DirectiveTextCard key={key} interaction={interaction} />;
+          case 'web-search':
+            return (
+              <div key={key} data-testid="chat-tool-ui-web-search">
+                <WebSearch
+                  sources={interaction.sources}
+                  status={interaction.status}
+                  query={interaction.query}
+                  provider={interaction.provider}
+                  label={interaction.label}
+                  progress={interaction.progress}
+                  answer={interaction.answer}
+                  truncated={interaction.truncated}
+                />
+              </div>
+            );
           case 'source':
             return <SourceCard key={key} interaction={interaction} />;
           case 'progress':
@@ -3267,7 +3374,7 @@ export function AgentInteractionRenderer({
           case 'terminal':
             return (
               <div key={key} data-testid="chat-tool-ui-terminal">
-                <Terminal {...interaction} />
+                <Terminal {...interaction} maxCollapsedLines={10} />
               </div>
             );
           case 'code-diff':
@@ -3277,6 +3384,7 @@ export function AgentInteractionRenderer({
                   {...interaction}
                   lineNumbers="visible"
                   diffStyle="unified"
+                  maxCollapsedLines={10}
                 />
               </div>
             );

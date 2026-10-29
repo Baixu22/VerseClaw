@@ -32,6 +32,10 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 
 Подробные module documents сейчас поддерживаются на упрощённом китайском; source paths, API names и evidence links не зависят от языка. Четыре root README остаются multilingual entry points.
 
+Подробности выполнения в чате можно свернуть, сохранив итоговый ответ видимым. Длинные изменения показывают обе версии рядом внутри колонки чата; неразрывные строки переносятся в превью, а после разворачивания прокручиваются только внутри области диффа. Команды показывают последний вывод. Копирование включает весь сохранённый текст. Полоса изменений репозитория использует ту же центрированную ширину, что и поле ввода, а вызовы инструментов показываются компактными статус-чипами с целью и временем.
+
+Запросы разрешений временно заменяют поле ввода соответствующего диалога, показывая команду, рабочий каталог и доступные решения. Остальная страница остаётся доступной; после обработки запросов восстанавливаются поле ввода, черновик и вложения.
+
 ## Границы зрелости
 
 | Label | Значение |
@@ -99,6 +103,7 @@ pnpm dev
 4. Отправить scoped task и проверить Workspace Panel.
 5. Обработать approvals в Inbox.
 6. Постоянные изменения Knowledge/Memory выполнять через review surfaces.
+7. Завершение, ошибки и запросы на одобрение остаются в уведомлениях боковой панели; системные оповещения переключаются там же или в Settings → Session & Recovery.
 
 Только фактически опубликованный Release package является download target. Наличие build target не гарантирует package для текущей версии.
 
@@ -235,4 +240,4 @@ Historical plans и acceptance snapshots имеют собственные да�
 
 Сохраняйте узкий scope и предоставляйте релевантную validation. При изменении поведения синхронизируйте четыре root README и соответствующий документ в `docs/modules/`. При изменении interface, defaults, security boundary или user entry также проверьте product semantics, default matrix и Harness spec.
 
-Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) и работе ClawX команды ValueCell. Репозиторий использует [MIT License](LICENSE). Bundled components сохраняют собственные licenses/source obligations, включая [VerseShell notices](resources/verseshell/SOURCE.md). Часть взаимодействий conversation/workspace адаптирована из [Rare UI](https://rareui.com) Swami Malode; attribution сохранена в `src/components/rareui`.
+Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) и работе ClawX команды ValueCell. Репозиторий использует [MIT License](LICENSE). Bundled components сохраняют собственные licenses/source obligations, включая [VerseShell notices](resources/verseshell/SOURCE.md). Часть взаимодействий conversation/workspace, включая карточки источников веб-поиска, адаптирована из [Rare UI](https://rareui.com) Swami Malode; attribution сохранена в `src/components/rareui`.

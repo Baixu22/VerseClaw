@@ -430,6 +430,26 @@ export type DialogMessageResult = {
   checkboxChecked?: boolean;
 };
 export type WindowSyncTrafficLightPayload = { sidebarCollapsed: boolean };
+
+/**
+ * Main-owned system notification request. The renderer may ask for a native
+ * notification, but only Main decides whether the OS can display it and which
+ * window action a click should take. This is deliberately separate from the
+ * in-app toast/attention feed.
+ */
+export type SystemNotificationAttention = 'completion' | 'error' | 'action-required';
+export type SystemNotificationRequest = {
+  id: string;
+  title: string;
+  body: string;
+  attention: SystemNotificationAttention;
+  sessionKey?: string;
+  route?: string;
+};
+export type SystemNotificationResult = HostSuccess & {
+  delivered: boolean;
+  reason?: string;
+};
 export type SettingsSnapshot = Partial<{
   theme: 'light' | 'dark' | 'system';
   language: string;
@@ -471,6 +491,7 @@ export type SettingsSnapshot = Partial<{
   sessionActivityShowGit: boolean;
   sessionActivityShowCommands: boolean;
   sessionRecoveryNotificationsEnabled: boolean;
+  desktopNotificationsEnabled: boolean;
   sessionActivityRetentionMinutes: 0 | 5 | 15;
 }>;
 export type SettingsKey = keyof SettingsSnapshot & string;
@@ -5475,6 +5496,7 @@ export type HostApiContract = {
   };
   window: {
     syncTrafficLightPosition: (payload: WindowSyncTrafficLightPayload) => void;
+    notify: (payload: SystemNotificationRequest) => SystemNotificationResult;
     minimize: () => void;
     maximize: () => void;
     close: () => void;

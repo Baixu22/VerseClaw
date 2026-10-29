@@ -1,6 +1,13 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
+const LONG_DIRECTORY = 'C:/workspace/verse-claw/packages/conversation/src/components/execution/details';
+const LONG_OUTPUT = [
+  ...Array.from({ length: 32 }, (_, index) => `PASS tests/unit/conversation-rendering-${index + 1}.test.ts`),
+  '22 tests passed',
+].join('\n');
+const ORIGINAL_CODE = Array.from({ length: 24 }, (_, index) => `const step${index + 1} = "pending";`).join('\n') + '\n';
+const MODIFIED_CODE = ORIGINAL_CODE.replaceAll('pending', 'completed');
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -46,8 +53,8 @@ const seededHistory = [
           type: 'terminal',
           id: 'terminal-tests',
           command: 'pnpm test --filter execution',
-          cwd: 'C:/workspace/verse-claw',
-          stdout: 'PASS tests/unit/tool-ui-run-surfaces.test.ts\n22 tests passed',
+          cwd: LONG_DIRECTORY,
+          stdout: LONG_OUTPUT,
           exitCode: 0,
           durationMs: 1840,
         }),
@@ -55,10 +62,10 @@ const seededHistory = [
         surface({
           type: 'code-diff',
           id: 'diff-agent',
-          filePath: 'src/agent.ts',
+          filePath: `${LONG_DIRECTORY}/agent.ts`,
           language: 'typescript',
-          original: 'const status = "pending";\n',
-          modified: 'const status = "completed";\n',
+          original: ORIGINAL_CODE,
+          modified: MODIFIED_CODE,
         }),
         '',
         surface({
@@ -75,6 +82,21 @@ const seededHistory = [
             summary: 'Execution surfaces verified',
             at: new Date().toISOString(),
           },
+        }),
+        '',
+        surface({
+          type: 'web-search',
+          id: 'web-search-reactbits',
+          query: 'ReactBits CallChip progress',
+          provider: 'tavily',
+          status: 'searching',
+          progress: 0.42,
+          results: [
+            { title: 'ReactBits CallChip', url: 'https://www.reactbits.dev/micro/call-chip', content: 'A chip with a left-to-right progress wash.' },
+            { title: 'Rare UI Web Search', url: 'https://rareui.com/components/websearch', content: 'Search pill, source cards and citations.' },
+            { title: 'Motion progress values', url: 'https://motion.dev/docs/react-animate', content: 'Animating a motion value.' },
+            { title: 'Rare UI license', url: 'https://rareui.com/license', content: 'Attribution terms.' },
+          ],
         }),
       ].join('\n'),
     }],
@@ -124,13 +146,62 @@ test.describe('Tool UI execution surfaces', () => {
       const terminal = page.getByTestId('chat-tool-ui-terminal');
       const codeDiff = page.getByTestId('chat-tool-ui-code-diff');
       const progress = page.getByTestId('chat-tool-ui-progress-tracker');
+      const webSearch = page.getByTestId('chat-tool-ui-web-search');
       await expect(approval).toBeVisible({ timeout: 30_000 });
       await expect(approval).toContainText('no automatic rollback');
       await expect(terminal).toContainText('22 tests passed');
       await expect(terminal.locator('input')).toHaveCount(0);
       await expect(codeDiff).toContainText('agent.ts');
       await expect(progress).toContainText('Execution surfaces verified');
+      await expect(webSearch).toContainText('ReactBits CallChip');
+      const webSearchProgress = webSearch.getByTestId('chat-web-search-progress');
+      await expect(webSearchProgress).toHaveAttribute('data-progress-mode', 'horizontal');
+      await expect(webSearchProgress).toHaveClass(/origin-left/);
+      await expect(webSearch.getByTestId('chat-web-search-bar')).toHaveAttribute('data-progress-mode', 'horizontal');
       await expect(page.getByText('"original"', { exact: false })).toHaveCount(0);
+      await expect(terminal.getByText('Exit 0', { exact: true })).toBeVisible();
+
+      const outputToggle = terminal.getByRole('button', { name: 'Show all output (33 lines)' });
+      const diffToggle = codeDiff.getByRole('button', { name: 'Expand diff' });
+      await expect(outputToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(diffToggle).toHaveAttribute('aria-expanded', 'false');
+      const outputRegion = terminal.getByRole('region', { name: 'Command output' });
+      await expect.poll(() => outputRegion.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight)).toBeLessThanOrEqual(1);
+      expect(await outputRegion.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+      // Verify keyboard scrolling on the region itself. `locator.press` focuses
+      // the element before dispatching, avoiding page-focus races after reloads.
+      await outputRegion.press('Home');
+      await expect(outputRegion).toBeFocused();
+      await expect.poll(() => outputRegion.evaluate(element => element.scrollTop)).toBe(0);
+      // Layout can settle after the first End keypress; keep the key path under
+      // test while allowing the final scroll position to converge.
+      await expect.poll(async () => {
+        await outputRegion.press('End');
+        return outputRegion.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+      }, { timeout: 5_000 }).toBeLessThanOrEqual(1);
+      const diffRegion = codeDiff.getByRole('region', { name: 'File differences' });
+      await expect(diffRegion.locator('pre[data-diff-type="split"]')).toHaveCount(1);
+      await expect(diffRegion.locator('pre')).toHaveAttribute('data-indicators', 'classic');
+      await expect(diffRegion.locator('pre')).not.toHaveAttribute('data-background');
+      const outputPreviewHeight = (await terminal.boundingBox())!.height;
+      const diffPreviewHeight = (await codeDiff.boundingBox())!.height;
+      expect(outputPreviewHeight).toBeLessThan(320);
+      expect(diffPreviewHeight).toBeLessThan(350);
+      await outputToggle.focus();
+      await page.keyboard.press('Enter');
+      expect((await terminal.boundingBox())!.height).toBeGreaterThan(outputPreviewHeight + 100);
+      await terminal.getByRole('button', { name: 'Collapse output' }).click();
+      await diffToggle.focus();
+      await page.keyboard.press('Enter');
+      await expect.poll(async () => (await codeDiff.boundingBox())!.height).toBeGreaterThan(diffPreviewHeight + 100);
+      await expect(diffRegion.locator('pre[data-diff-type="single"]')).toHaveCount(1);
+      await codeDiff.getByRole('button', { name: 'Collapse diff' }).click();
+
+      await terminal.getByRole('button', { name: 'Copy output' }).click();
+      // Windows clipboard text uses CRLF; compare every character after newline normalization.
+      await expect.poll(() => app.evaluate(async ({ clipboard }) => (await clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(LONG_OUTPUT);
+      await codeDiff.getByRole('button', { name: 'Copy patch' }).click();
+      await expect.poll(() => app.evaluate(async ({ clipboard }) => (await clipboard.readText()).replace(/\r\n/g, '\n'))).toBe(MODIFIED_CODE);
 
       const diskSpaceNotice = page.getByText('Disk space is running low', { exact: true });
       if (await diskSpaceNotice.isVisible().catch(() => false)) {
@@ -156,6 +227,8 @@ test.describe('Tool UI execution surfaces', () => {
       for (const background of lightBackgrounds) {
         expect(background).not.toBe('rgba(0, 0, 0, 0)');
       }
+      expect(await diffRegion.locator('pre').evaluate(element => getComputedStyle(element).backgroundColor)).toBe(lightBackgrounds[2]);
+      expect(await diffRegion.evaluate(element => element.clientHeight)).toBe(200);
 
       const denyBox = await approval.getByRole('button', { name: 'Deny' }).boundingBox();
       const approveBox = await approval.getByRole('button', { name: 'Approve' }).boundingBox();
@@ -179,6 +252,9 @@ test.describe('Tool UI execution surfaces', () => {
       const lightPath = testInfo.outputPath('tool-ui-execution-light.png');
       await message.screenshot({ path: lightPath });
       await testInfo.attach('tool-ui-execution-light', { path: lightPath, contentType: 'image/png' });
+      await terminal.screenshot({ path: testInfo.outputPath('terminal-light.png') });
+      await codeDiff.screenshot({ path: testInfo.outputPath('diff-light.png') });
+      await webSearch.screenshot({ path: testInfo.outputPath('web-search-light.png') });
 
       await page.evaluate(() => {
         document.documentElement.classList.remove('light');
@@ -188,6 +264,7 @@ test.describe('Tool UI execution surfaces', () => {
         surfaces.map((surface) => surface.evaluate((element) => getComputedStyle(element).backgroundColor)),
       );
       expect(darkBackgrounds).not.toEqual(lightBackgrounds);
+      expect(await diffRegion.locator('pre').evaluate(element => getComputedStyle(element).backgroundColor)).toBe(darkBackgrounds[2]);
       const darkPath = testInfo.outputPath('tool-ui-execution-dark.png');
       await message.screenshot({ path: darkPath });
       await testInfo.attach('tool-ui-execution-dark', { path: darkPath, contentType: 'image/png' });
@@ -199,11 +276,25 @@ test.describe('Tool UI execution surfaces', () => {
       await testInfo.attach('tool-ui-execution-narrow', { path: narrowPath, contentType: 'image/png' });
       expect((await terminal.boundingBox())?.width ?? 0).toBeLessThanOrEqual(760);
       const overflowChecks = await Promise.all(
-        [approval, terminal, codeDiff, progress].map((surface) => surface.evaluate(
+        [approval, terminal, codeDiff, progress, webSearch].map((surface) => surface.evaluate(
           (element) => element.scrollWidth <= element.clientWidth + 1,
         )),
       );
-      expect(overflowChecks).toEqual([true, true, true, true]);
+      expect(overflowChecks).toEqual([true, true, true, true, true]);
+      await page.setViewportSize({ width: 640, height: 1400 });
+      await expect(diffRegion.locator('pre[data-diff-type="split"]')).toHaveCount(1);
+      for (const surface of [terminalSurface, codeDiffSurface]) {
+        const header = surface.locator(':scope > div').first();
+        const actions = surface.getByRole('button').first();
+        const box = (await surface.boundingBox())!;
+        const actionBox = (await actions.boundingBox())!;
+        expect(actionBox.x).toBeGreaterThanOrEqual(box.x);
+        expect(actionBox.x + actionBox.width).toBeLessThanOrEqual(box.x + box.width + 1);
+        expect(await header.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      }
+      const compactPath = testInfo.outputPath('tool-ui-execution-640.png');
+      await message.screenshot({ path: compactPath });
+      await testInfo.attach('tool-ui-execution-640', { path: compactPath, contentType: 'image/png' });
     } finally {
       await closeElectronApp(app);
     }

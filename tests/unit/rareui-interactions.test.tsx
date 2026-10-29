@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import MarkdownPreview, { markdownOutline } from '@/components/file-preview/MarkdownPreview';
 import { DurationPicker } from '@/components/rareui/DurationPicker';
+import { ThemeSelector, type ThemeSelectorOption } from '@/components/rareui/ThemeSelector';
 import { DeleteButton } from '@/components/rareui/DeleteButton';
 import { buildCompletionActivity } from '@/components/rareui/completion-activity';
 import { getInitialCronSchedule, readCronTime, writeCronTime } from '@/pages/Cron';
@@ -69,19 +70,102 @@ describe('Rare UI production adaptations', () => {
     expect(screen.getByRole('button')).not.toHaveAttribute('data-status', 'deleted');
   });
 
-  it('sorts actual completed runs newest first and excludes active and failed runs', () => {
+  it('sorts completed and failed runs newest first while excluding active runs', () => {
     const cards = [
       { runKey: 'old', triggerIndex: 0, status: 'completed', active: false, hasVisibleReply: true, endedAt: 100_000 },
       { runKey: 'running', triggerIndex: 2, status: 'running', active: true, hasVisibleReply: false },
-      { runKey: 'failed', triggerIndex: 4, status: 'error', active: false, hasVisibleReply: true },
+      { runKey: 'failed', triggerIndex: 4, status: 'error', active: false, hasVisibleReply: false, endedAt: 210_000 },
     ] as UserRunCard[];
     const entries = buildCompletionActivity('current', cards, {
       newest: { runId: 'newest', sessionKey: 'other', status: 'completed', endedAt: 200_000, assistantText: '', thinkingText: '', events: [] },
       active: { runId: 'active', sessionKey: 'other', status: 'running', assistantText: '', thinkingText: '', events: [] },
     }, new Map([[0, 'Visible response']]), [{ index: 1, response: 'Completed reply', completedAt: 150 }, { index: 2, response: 'Still active', completedAt: 300 }], 2);
-    expect(entries.map((entry) => entry.id)).toEqual(['other:newest', 'current:message:1', 'current:old']);
-    expect(entries[1]).toMatchObject({ index: 1, completedAt: 150_000, preview: 'Completed reply' });
-    expect(entries[2].preview).toBe('Visible response');
+    expect(entries.map((entry) => entry.id)).toEqual(['current:failed', 'other:newest', 'current:message:1', 'current:old']);
+    expect(entries[0]).toMatchObject({ kind: 'error', preview: '' });
+    expect(entries[2]).toMatchObject({ index: 1, completedAt: 150_000, preview: 'Completed reply', kind: 'completed' });
+    expect(entries[3].preview).toBe('Visible response');
     expect(buildCompletionActivity('current', [], {}, new Map())).toEqual([]);
+  });
+
+  it('theme selector exposes radios, single tab stop, and activation by mouse and keyboard', () => {
+    const options: ThemeSelectorOption[] = [
+      { value: 'light', label: 'Light', preview: 'light' },
+      { value: 'dark', label: 'Dark', preview: 'dark' },
+      { value: 'system', label: 'System', preview: 'split' },
+    ];
+    const onChange = vi.fn();
+    render(<ThemeSelector aria-label="Theme" value="light" options={options} onChange={onChange} />);
+
+    expect(screen.getByRole('radiogroup', { name: 'Theme' })).toBeInTheDocument();
+    const radios = screen.getAllByRole('radio');
+    expect(radios.map((radio) => radio.getAttribute('aria-label'))).toEqual(['Light', 'Dark', 'System']);
+    expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false']);
+    // Roving tab index: only the checked option is in the tab order.
+    expect(radios.map((radio) => radio.getAttribute('tabindex'))).toEqual(['0', '-1', '-1']);
+
+    fireEvent.click(radios[1]);
+    expect(onChange).toHaveBeenLastCalledWith('dark');
+    // Controlled: the parent owns the value until it re-renders.
+    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('theme selector wraps arrow keys and honours Home/End without marking itself checked', () => {
+    const options: ThemeSelectorOption[] = [
+      { value: 'light', label: 'Light' },
+      { value: 'dark', label: 'Dark' },
+      { value: 'system', label: 'System' },
+    ];
+    const onChange = vi.fn();
+    render(<ThemeSelector aria-label="Theme" value="dark" options={options} onChange={onChange} />);
+    const radios = screen.getAllByRole('radio');
+
+    fireEvent.keyDown(radios[1], { key: 'ArrowRight' });
+    expect(onChange).toHaveBeenLastCalledWith('system');
+    // Wraps past the end.
+    fireEvent.keyDown(radios[2], { key: 'ArrowRight' });
+    expect(onChange).toHaveBeenLastCalledWith('light');
+    fireEvent.keyDown(radios[0], { key: 'End' });
+    expect(onChange).toHaveBeenLastCalledWith('system');
+    fireEvent.keyDown(radios[0], { key: 'Home' });
+    expect(onChange).toHaveBeenLastCalledWith('light');
+    // Unrelated keys must not select anything.
+    onChange.mockClear();
+    fireEvent.keyDown(radios[0], { key: 'a' });
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('theme selector still selects and accepts keyboard input when uncontrolled', () => {
+    const options: ThemeSelectorOption[] = [
+      { value: 'light', label: 'Light' },
+      { value: 'dark', label: 'Dark' },
+    ];
+    render(<ThemeSelector aria-label="Theme" defaultValue="light" options={options} />);
+    const radios = screen.getAllByRole('radio');
+    fireEvent.click(radios[1]);
+    expect(radios[1]).toHaveAttribute('aria-checked', 'true');
+    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[1]).toHaveAttribute('tabindex', '0');
+  });
+  it('keeps the desktop notification switch in the attention menu', async () => {
+    vi.doMock('react-router-dom', async (importOriginal) => ({
+      ...await importOriginal<typeof import('react-router-dom')>(),
+      useNavigate: () => () => undefined,
+    }));
+    const { CompletionActivityMenu } = await import('@/components/rareui/CompletionActivityMenu');
+    const { useCompletionActivityStore } = await import('@/components/rareui/completion-activity-store');
+    const { useSettingsStore } = await import('@/stores/settings');
+    useCompletionActivityStore.setState({
+      activities: [],
+      nudges: [{ id: 'approval:1', sessionKey: 'agent:main:main', kind: 'action-required', status: 'rm file', occurredAt: 100 }],
+      pendingNavigation: null,
+    });
+    useSettingsStore.setState({ desktopNotificationsEnabled: true });
+    render(<TooltipProvider><CompletionActivityMenu /></TooltipProvider>);
+    fireEvent.click(screen.getByTestId('chat-completion-bell'));
+    const toggle = await screen.findByTestId('chat-completion-desktop-toggle');
+    expect(toggle).toBeChecked();
+    fireEvent.click(toggle);
+    expect(useSettingsStore.getState().desktopNotificationsEnabled).toBe(false);
+    expect(screen.getByTestId('chat-completion-desktop-state')).toHaveTextContent('desktopOff');
   });
 });

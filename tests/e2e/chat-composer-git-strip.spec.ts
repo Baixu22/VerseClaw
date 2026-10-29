@@ -3,6 +3,7 @@ import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from
 const SESSION_KEY = 'agent:main:main';
 const WORKSPACE_ID = 'workspace-composer-git';
 const fixedTimestamp = 1_772_100_000_000;
+const COMPOSER_APPROVAL_ID = 'approval-composer-inline';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -75,7 +76,10 @@ const worktrees = [
   { path: '/workspace/demo-feature-existing', branch: 'feature/existing', head: '456789abcdef', locked: true, prunable: true },
 ];
 
-async function installComposerGitMocks(app: Parameters<typeof installIpcMocks>[0]) {
+async function installComposerGitMocks(
+  app: Parameters<typeof installIpcMocks>[0],
+  messages: Array<Record<string, unknown>> = [],
+) {
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
     gatewayRpc: {
@@ -85,11 +89,11 @@ async function installComposerGitMocks(app: Parameters<typeof installIpcMocks>[0
       },
       [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
         success: true,
-        result: { messages: [] },
+        result: { messages },
       },
       [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
         success: true,
-        result: { messages: [] },
+        result: { messages },
       },
     },
     hostApi: {
@@ -164,11 +168,93 @@ async function installComposerGitMocks(app: Parameters<typeof installIpcMocks>[0
       [stableStringify(['git', 'worktreeAdd', { branch: 'feature/new-worktree', checkoutNewBranch: true }])]: {
         success: true,
       },
+      [stableStringify(['runtimeApprovals', 'list', null])]: { pending: [] },
+      [stableStringify(['runtimeApprovals', 'resolve', { approvalId: COMPOSER_APPROVAL_ID, decision: 'deny' }])]: {
+        success: true,
+        approvalId: COMPOSER_APPROVAL_ID,
+        decision: 'deny',
+      },
     },
   });
 }
 
 test.describe('Chat composer Git strip', () => {
+  test('renders runtime approval inline with the composer and Git strip', async ({ launchElectronApp }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true, visualMode: true });
+
+    try {
+      await installComposerGitMocks(app, [
+        {
+          role: 'user',
+          content: [{ type: 'text', text: 'Check the workspace.' }],
+          timestamp: fixedTimestamp,
+        },
+        {
+          role: 'assistant',
+          content: [{ type: 'text', text: 'The workspace is ready.' }],
+          timestamp: fixedTimestamp + 1,
+        },
+      ]);
+      const page = await getStableWindow(app);
+      await page.setViewportSize({ width: 1280, height: 820 });
+      try {
+        await page.reload();
+      } catch (error) {
+        if (!String(error).includes('ERR_FILE_NOT_FOUND')) throw error;
+      }
+
+      const strip = page.getByTestId('composer-git-strip');
+      const composerShell = page.getByTestId('chat-composer-shell');
+      const composer = page.getByTestId('chat-composer-input');
+      await expect(strip).toBeVisible({ timeout: 30_000 });
+      await expect(composerShell).toBeVisible();
+      await composer.fill('Keep this draft.');
+      const stripBox = (await strip.boundingBox())!;
+      const composerBox = (await composerShell.boundingBox())!;
+      await page.screenshot({ path: testInfo.outputPath('composer-aligned-with-strip.png') });
+
+      await app.evaluate(({ BrowserWindow }, frame) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('runtime-approvals:requested', frame);
+        }
+      }, {
+        approvalId: COMPOSER_APPROVAL_ID,
+        command: 'pnpm test --filter acceptance',
+        commandPreview: null,
+        cwd: '/workspace/demo',
+        host: 'gateway',
+        agentId: 'main',
+        sessionKey: SESSION_KEY,
+        allowedDecisions: ['allow-once', 'allow-always', 'deny'],
+        createdAtMs: 1,
+        expiresAtMs: 2,
+      });
+
+      const prompt = page.getByTestId('runtime-approval-prompt');
+      await expect(prompt).toBeVisible();
+      await expect(composer).toBeHidden();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await expect(page.locator('.verse-claw-dialog-overlay')).toHaveCount(0);
+      const promptBox = (await prompt.boundingBox())!;
+      expect(Math.abs(promptBox.x - composerBox.x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(promptBox.width - composerBox.width)).toBeLessThanOrEqual(1);
+      expect(Math.abs(promptBox.x - stripBox.x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(promptBox.width - stripBox.width)).toBeLessThanOrEqual(1);
+      await page.screenshot({ path: testInfo.outputPath('runtime-approval-inline-with-git.png') });
+      await prompt.screenshot({ path: testInfo.outputPath('runtime-approval-inline-prompt.png') });
+      const currentStripBox = (await strip.boundingBox())!;
+      expect(promptBox.y).toBeGreaterThan(currentStripBox.y);
+
+      await page.getByTestId('runtime-approval-deny').click();
+      await expect(prompt).toHaveCount(0);
+      await expect(composer).toBeVisible();
+      await expect(composer).toHaveValue('Keep this draft.');
+      await expect(page.locator('.verse-claw-dialog-overlay')).toHaveCount(0);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
   test('shows repository context and routes branch/worktree actions through host APIs', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -189,6 +275,22 @@ test.describe('Chat composer Git strip', () => {
       await expect(strip).toContainText('3 changes');
       await expect(strip).toContainText('ahead 2 / behind 1');
       await expect(strip).toContainText('demo');
+
+      const composerShell = page.getByTestId('chat-composer-shell');
+      await expect(composerShell).toBeVisible();
+      const assertComposerAligned = async () => {
+        await expect.poll(async () => {
+          const stripBox = await strip.boundingBox();
+          const composerBox = await composerShell.boundingBox();
+          if (!stripBox || !composerBox) return Number.POSITIVE_INFINITY;
+          return Math.abs(stripBox.x - composerBox.x) + Math.abs(stripBox.width - composerBox.width);
+        }, { timeout: 5_000 }).toBeLessThanOrEqual(2);
+      };
+      await assertComposerAligned();
+      await page.setViewportSize({ width: 960, height: 820 });
+      await assertComposerAligned();
+      await page.setViewportSize({ width: 1280, height: 820 });
+      await page.screenshot({ path: testInfo.outputPath('composer-git-layout.png') });
 
       await page.getByTestId('composer-git-trigger').click();
       const menu = page.getByTestId('composer-git-menu');

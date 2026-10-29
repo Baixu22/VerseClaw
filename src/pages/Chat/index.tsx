@@ -2709,6 +2709,21 @@ export function Chat() {
       });
     }
   }, [activeWorkspace?.id, composerPaused, currentSessionKey, saveWorkspaceState]);
+  const desktopNotificationsEnabled = useSettingsStore((state) => state.desktopNotificationsEnabled);
+  const notifyDesktop = useCallback((input: {
+    id: string;
+    title: string;
+    body: string;
+    attention: 'completion' | 'error' | 'action-required';
+    sessionKey?: string;
+  }) => {
+    if (!desktopNotificationsEnabled) return;
+    void hostApi.window.notify({
+      ...input,
+      sessionKey: input.sessionKey ?? currentSessionKey,
+    }).catch(() => {});
+  }, [currentSessionKey, desktopNotificationsEnabled]);
+
   // Host permission approvals for the run in flight. Rendered inside the turn
   // summary so a blocked run is actionable from the transcript instead of only
   // from the workspace side panels.
@@ -2719,6 +2734,39 @@ export function Chat() {
     runState: activeRunId ? runtimeRuns[activeRunId] ?? null : null,
     runActive: inputRunActive,
   });
+  const addAttentionNudge = useCompletionActivityStore((state) => state.addNudge);
+  const seenApprovalIds = useRef<Set<string>>(new Set());
+  const approvalBaselineReady = useRef(false);
+  useEffect(() => {
+    const current = new Set(pendingApprovals.map((entry) => entry.id));
+    if (!approvalBaselineReady.current) {
+      // Approvals already present at mount are pre-existing state, not a new
+      // interruption. Only approvals raised after the baseline notify.
+      seenApprovalIds.current = current;
+      approvalBaselineReady.current = true;
+      return;
+    }
+    for (const approval of pendingApprovals) {
+      if (seenApprovalIds.current.has(approval.id)) continue;
+      addAttentionNudge({
+        id: `approval:${approval.id}`,
+        sessionKey: approval.sessionKey || currentSessionKey,
+        kind: 'action-required',
+        status: approval.command || approval.reason || 'approval',
+        occurredAt: approval.requestedAt ?? Date.now(),
+      });
+      notifyDesktop({
+        id: `approval:${approval.id}`,
+        title: t('completionActivity.notify.approvalTitle'),
+        body: approval.command
+          ? t('completionActivity.notify.approvalCommand', { command: approval.command.slice(0, 120) })
+          : t('completionActivity.notify.approvalBody'),
+        attention: 'action-required',
+        sessionKey: approval.sessionKey || currentSessionKey,
+      });
+    }
+    seenApprovalIds.current = current;
+  }, [addAttentionNudge, currentSessionKey, notifyDesktop, pendingApprovals, t]);
   const handleApprovalDecision = useCallback(async (id: string, decision: 'approved' | 'denied') => {
     try {
       await decideApproval(id, decision);
@@ -3083,11 +3131,80 @@ export function Chat() {
     inputRunActive ? messageNavItems.at(-1)?.index : null,
   ), [currentSessionKey, inputRunActive, userRunCards, runtimeRuns, messageNavItems]);
   const setCompletionActivities = useCompletionActivityStore((state) => state.setActivities);
+  const addCompletionNudge = useCompletionActivityStore((state) => state.addNudge);
   const pendingCompletionActivity = useCompletionActivityStore((state) => state.pendingNavigation);
   const clearCompletionNavigation = useCompletionActivityStore((state) => state.clearNavigation);
   useEffect(() => {
     setCompletionActivities(completedActivity);
   }, [completedActivity, setCompletionActivities]);
+  const observedRunStatuses = useRef<Record<string, ChatRuntimeRunState['status']>>({});
+  const runBaselineReady = useRef(false);
+  const observedRunError = useRef<string | null>(null);
+  useEffect(() => {
+    const observed = observedRunStatuses.current;
+    const next: Record<string, ChatRuntimeRunState['status']> = {};
+    for (const run of Object.values(runtimeRuns)) {
+      next[run.runId] = run.status;
+      const previous = observed[run.runId];
+      // The first snapshot only seeds known runs. Runs that were already
+      // running at mount are treated as history for notification purposes.
+      if (!runBaselineReady.current) continue;
+      if (previous == null) continue;
+      if (run.status === 'completed' && previous !== 'completed') {
+        const attentionSession = run.sessionKey || currentSessionKey;
+        addCompletionNudge({
+          id: `run:${run.runId}:completed`,
+          sessionKey: attentionSession,
+          kind: 'completed',
+          status: 'completed',
+          occurredAt: run.endedAt ?? Date.now(),
+        });
+        notifyDesktop({
+          id: `run:${run.runId}:completed`,
+          title: t('completionActivity.notify.completedTitle'),
+          body: t('completionActivity.notify.completedBody'),
+          attention: 'completion',
+          sessionKey: attentionSession,
+        });
+      } else if (run.status === 'error' && previous !== 'error') {
+        const terminal = run.events.findLast((event) => event.type === 'run.ended' && event.status === 'error');
+        const attentionSession = run.sessionKey || currentSessionKey;
+        addCompletionNudge({
+          id: `run:${run.runId}:error`,
+          sessionKey: attentionSession,
+          kind: 'error',
+          status: terminal?.type === 'run.ended' && terminal.error ? terminal.error : 'error',
+          occurredAt: run.endedAt ?? Date.now(),
+        });
+        notifyDesktop({
+          id: `run:${run.runId}:error`,
+          title: t('completionActivity.notify.errorTitle'),
+          body: t('completionActivity.notify.errorBody'),
+          attention: 'error',
+          sessionKey: attentionSession,
+        });
+      }
+    }
+    observedRunStatuses.current = next;
+    runBaselineReady.current = true;
+    const errorText = runError?.trim() ?? null;
+    if (errorText && errorText !== observedRunError.current) {
+      addCompletionNudge({
+        id: `session:${currentSessionKey}:error:${errorText.slice(0, 160)}`,
+        sessionKey: currentSessionKey,
+        kind: 'error',
+        status: 'error',
+        occurredAt: Date.now(),
+      });
+      notifyDesktop({
+        id: `session:${currentSessionKey}:error:${errorText.slice(0, 160)}`,
+        title: t('completionActivity.notify.errorTitle'),
+        body: t('completionActivity.notify.errorBody'),
+        attention: 'error',
+      });
+    }
+    observedRunError.current = errorText;
+  }, [addCompletionNudge, currentSessionKey, notifyDesktop, runError, runtimeRuns, t]);
   useEffect(() => {
     if (!pendingCompletionActivity || pendingCompletionActivity.sessionKey !== currentSessionKey || loading) return;
     const index = pendingCompletionActivity.index ?? userRunCards.find((card) => card.runId === pendingCompletionActivity.runId)?.triggerIndex;
@@ -3807,7 +3924,7 @@ export function Chat() {
         </div>
       )}
       {activeWorkspace && (
-        <div className="relative mx-auto w-full max-w-4xl px-4">
+        <div className="relative mx-auto w-full max-w-[768px] px-4">
           <ComposerGitStrip workspace={activeWorkspace} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
         </div>
       )}

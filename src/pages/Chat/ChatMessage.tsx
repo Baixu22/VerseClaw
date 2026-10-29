@@ -7,7 +7,7 @@ import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdo
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
-import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send, GitFork, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
+import { Copy, Check, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send, GitFork, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionBarPrimitive, MessageProvider, type ThreadMessage } from '@assistant-ui/react';
 import { createPortal } from 'react-dom';
@@ -19,6 +19,7 @@ import { statFile } from '@/lib/file-preview-client';
 import { hostApi } from '@/lib/host-api';
 import type { RawMessage, AttachedFileMeta } from '@/stores/chat';
 import { AgentInteractionRenderer } from '@/components/tool-ui/agent-interactions';
+import { CallChip, inferCallChipIcon } from '@/components/tool-ui/shared/call-chip';
 import { ThinkingReasoning } from '@/components/assistant-render/ThinkingReasoning';
 import { TokenUsageBadge } from '@/components/assistant-render/TokenUsageBadge';
 import type { AssistantReasoning } from '@/components/assistant-render/model';
@@ -694,12 +695,6 @@ function AssistantStreamStatusBar({
   );
 }
 
-function formatDuration(durationMs?: number): string | null {
-  if (!durationMs || !Number.isFinite(durationMs)) return null;
-  if (durationMs < 1000) return `${Math.round(durationMs)}ms`;
-  return `${(durationMs / 1000).toFixed(1)}s`;
-}
-
 function ToolStatusBar({
   tools,
 }: {
@@ -712,32 +707,25 @@ function ToolStatusBar({
     summary?: string;
   }>;
 }) {
+  const { t } = useTranslation('chat');
   return (
     <div className="w-full space-y-1" data-testid="chat-streaming-tool-status-bar">
       {tools.map((tool) => {
-        const duration = formatDuration(tool.durationMs);
-        const isRunning = tool.status === 'running';
-        const isError = tool.status === 'error';
+        const chipStatus = tool.status === 'completed'
+          ? 'done' as const
+          : tool.status === 'error'
+            ? 'error' as const
+            : 'running' as const;
         return (
-          <div
+          <CallChip
             key={tool.toolCallId || tool.id || tool.name}
-            className={cn(
-              'flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors',
-              isRunning && 'border-primary/25 bg-primary/[0.04] text-foreground',
-              !isRunning && !isError && 'border-border/50 text-muted-foreground',
-              isError && 'border-destructive/25 text-destructive',
-            )}
-          >
-            {isRunning && <OrbStatus state="syncing" label={tool.name} className="size-3.5 text-primary" />}
-            {!isRunning && !isError && <OrbStatus state="success" label={tool.name} className="size-3.5" />}
-            {isError && <OrbStatus state="error" label={tool.name} className="size-3.5" />}
-            <Wrench className="h-3 w-3 shrink-0 opacity-60" />
-            <span className="font-mono text-sm font-medium">{tool.name}</span>
-            {duration && <span className="text-xs opacity-60">{tool.summary ? `(${duration})` : duration}</span>}
-            {tool.summary && (
-              <span className="truncate text-xs opacity-70">{tool.summary}</span>
-            )}
-          </div>
+            name={tool.name}
+            argument={tool.summary}
+            status={chipStatus}
+            icon={inferCallChipIcon(tool.name)}
+            durationMs={tool.durationMs}
+            statusLabel={t(`taskPanel.stepStatus.${tool.status}`)}
+          />
         );
       })}
     </div>

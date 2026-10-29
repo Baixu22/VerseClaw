@@ -25,6 +25,10 @@ export interface TaskStep {
    */
   kind: 'tool' | 'system' | 'message';
   detail?: string;
+  /** Wall-clock start when the runtime supplied one. */
+  startedAt?: number;
+  /** Completed duration when the runtime or command event supplied one. */
+  durationMs?: number;
   depth: number;
   parentId?: string;
   /** Extracted URL for web_fetch tool, used to render a clickable link icon. */
@@ -418,6 +422,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
 
   const steps: TaskStep[] = [];
   const stepIndexById = new Map<string, number>();
+  const toolStartedAt = new Map<string, number>();
   const upsertStep = (step: TaskStep): void => {
     const existingIndex = stepIndexById.get(step.id);
     if (existingIndex == null) {
@@ -437,6 +442,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
   for (const event of runState.events) {
     switch (event.type) {
       case 'tool.started': {
+        if (typeof event.ts === 'number') toolStartedAt.set(event.toolCallId, event.ts);
         const input = event.args as Record<string, unknown> | undefined;
         const url = event.name === 'web_fetch' && typeof input?.url === 'string' ? input.url : undefined;
         upsertStep({
@@ -445,6 +451,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
           status: 'running',
           kind: 'tool',
           detail: runtimeDetail(event.args),
+          startedAt: event.ts,
           depth: 1,
           url,
         });
@@ -462,12 +469,17 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
         break;
       }
       case 'tool.completed': {
+        const startedAt = toolStartedAt.get(event.toolCallId);
+        const durationMs = startedAt != null && typeof event.ts === 'number'
+          ? Math.max(0, event.ts - startedAt)
+          : undefined;
         upsertStep({
           id: event.toolCallId,
           label: event.name,
           status: event.isError ? 'error' : 'completed',
           kind: 'tool',
           detail: runtimeDetail(event.result),
+          durationMs,
           depth: 1,
         });
         break;
@@ -480,6 +492,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
           status: event.status === 'failed' || event.status === 'error' ? 'error' : event.phase === 'end' ? 'completed' : 'running',
           kind: 'message',
           detail: runtimeDetail(event.output),
+          durationMs: event.durationMs,
           depth: 1,
         });
         break;

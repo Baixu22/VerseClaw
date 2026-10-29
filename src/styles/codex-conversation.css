@@ -268,6 +268,19 @@
 .codex-markdown th:last-child,
 .codex-markdown td:last-child { padding-right: 0; }
 
+/* Keep embedded diffs on the same neutral surface as command output. Vertical
+ * padding lives outside the scroll region so previews end on a complete row. */
+.chat-diff-view {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  --diffs-bg: hsl(var(--surface-input));
+  --diffs-font-size: 12px;
+  --diffs-line-height: 20px;
+  --diffs-gap-block: 0px;
+}
+
 /* Streaming fade-in (_fade-in_l45ev_1). The reference staggers per-block with a
  * --fade-delay; we have no per-block delay plumbing, so this is the un-staggered
  * form — same curve, same duration. */

@@ -56,16 +56,16 @@ function TurnSummaryBadges({ counts }: { counts: TurnSummaryCounts }) {
   if (entries.length === 0) return null;
 
   return (
-    <span className="flex min-w-0 shrink-0 items-center gap-1" data-testid="chat-turn-summary-badges">
+    <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1" data-testid="chat-turn-summary-badges">
       {entries.map((entry) => (
         <span
           key={entry.key}
           data-testid={`chat-turn-summary-badge-${entry.key}`}
           className={cn(
-            'inline-flex items-center whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] font-medium leading-4',
+            'inline-flex items-center whitespace-nowrap text-xs font-normal leading-5',
             entry.key === 'approvals'
-              ? 'bg-destructive/10 text-destructive'
-              : 'bg-black/[0.05] text-muted-foreground dark:bg-white/[0.07]',
+              ? 'rounded px-1.5 bg-destructive/10 text-destructive'
+              : 'text-muted-foreground',
           )}
         >
           {t(`turnSummary.badge.${entry.key}`, { count: entry.value })}
@@ -163,9 +163,9 @@ export function TurnSummaryCard({
           <button
             type="button"
             className={cn(
-              'flex w-full min-w-0 items-center gap-2 rounded-sm py-1 text-left',
+              'flex w-full min-w-0 items-start gap-2 rounded-md px-1.5 py-1.5 text-left text-xs leading-5',
               'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2',
-              'hover:text-foreground',
+              'transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
               status === 'error' && 'text-destructive hover:text-destructive',
             )}
             aria-expanded={expanded}
@@ -173,25 +173,24 @@ export function TurnSummaryCard({
             onClick={() => onExpandedChange(!expanded)}
             data-testid="chat-turn-summary-toggle"
           >
-            <span className="shrink-0 whitespace-nowrap">{label}</span>
-            {/* Only while collapsed — once open the contents speak for
-                themselves and the chips would just be a second index. */}
-            {!expanded && summary && <TurnSummaryBadges counts={summary} />}
-            <span className="h-px min-w-4 flex-1 bg-border/70" aria-hidden="true" />
             <ChevronRight
               className={cn(
-                'h-3.5 w-3.5 shrink-0 opacity-0 transition-[transform,opacity,color] duration-150',
+                'mt-0.5 h-3.5 w-3.5 shrink-0 opacity-60 transition-[transform,opacity] duration-150 motion-reduce:transition-none',
                 'group-hover/run-activity:opacity-100 group-focus-within/run-activity:opacity-100',
                 expanded && 'rotate-90 opacity-100',
               )}
               aria-hidden="true"
             />
+            <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="font-medium">{label}</span>
+              {!expanded && summary && <TurnSummaryBadges counts={summary} />}
+            </span>
           </button>
 
           {expanded && (
             <div
               id={detailsId}
-              className="flex min-w-0 flex-col gap-2 pb-1 pt-1"
+              className="ml-3 flex min-w-0 flex-col gap-3 border-l border-border/70 py-2 pl-3"
               data-testid="chat-turn-summary-details"
             >
               {/* Reasoning leads: it is what the agent did BEFORE reaching for a

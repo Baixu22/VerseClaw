@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "iteration": 6,
+  "date": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "parent": "round-5",
+  "baseCommit": "0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6",
+  "delivery": "Uncommitted local source changes; no release or public publication.",
+  "scope": "Rare UI Web Search surface with a ReactBits CallChip-style left-to-right progress fill, backed by real runtime web_search results.",
+  "designSource": "https://www.rareui.com/components/websearch",
+  "changes": [
+    "Added a local WebSearch surface adapted from Rare UI: collapsible search pill, provider label, favicon stack, source cards, overflow card, answer summary and truncation notice.",
+    "Replaced the reference circular globe ring with a horizontal progress wash and an explicit 2px left-to-right track, matching the already-landed CallChip visual language.",
+    "Projected runtime web_search tool results from message._toolResults into a typed web-search Tool UI interaction; unrelated tool results never become search cards.",
+    "Registered the web-search interaction in the existing Tool UI parser/renderer with four-locale copy.",
+    "Extended the Electron execution-surface E2E fixture to render and inspect the search surface in the same light/dark/narrow run."
+  ],
+  "gates": {
+    "typecheckWeb": {
+      "exitCode": 0
+    },
+    "typecheckTest": {
+      "exitCode": 0
+    },
+    "unit": {
+      "exitCode": 0,
+      "filesPassed": 4,
+      "testsPassed": 44,
+      "failed": 0
+    },
+    "focusedUnit": {
+      "exitCode": 0,
+      "filesPassed": 2,
+      "testsPassed": 15,
+      "failed": 0
+    },
+    "i18n": {
+      "exitCode": 0
+    },
+    "lint": {
+      "exitCode": 0,
+      "command": "eslint (direct local bin fallback after pnpm invocation path drift)"
+    },
+    "build": {
+      "exitCode": 0
+    },
+    "electron": {
+      "exitCode": 0,
+      "testsPassed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "harness": {
+      "noDiffValidationExitCode": 0,
+      "diffValidationExitCode": 1,
+      "diffValidationNote": "Blocked by unrelated pre-existing dirty files not owned by this task; no-diff structural validation passed."
+    }
+  },
+  "visualReview": {
+    "actor": "codex",
+    "states": [
+      "desktop light web-search source grid",
+      "desktop dark conversation with web-search surface"
+    ],
+    "result": "Search pill shows a left-to-right progress track beneath the label; landed sources render as a four-column card grid with favicon stacks and an overflow card. No circular progress ring is used."
+  },
+  "images": [
+    {
+      "file": "web-search-light.png",
+      "width": 735,
+      "height": 152,
+      "bytes": 59211,
+      "sha256": "16a88818513000bd478b31ea8af77e708739ad47e27f648e0bd904100f312488"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "src/components/rareui/WebSearch.tsx",
+      "sha256": "886c52ec9a61cb1183f5c56215ef60794722d1655c86cb85e1ef95844e198d41"
+    },
+    {
+      "file": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "1d1c50c33952348a3077a3b1be1ae558674975753c499a435c74902600e04e0b"
+    },
+    {
+      "file": "src/pages/Chat/message-render-projection.ts",
+      "sha256": "dea413a6038270a3d28d693c994c0961450d57743cc9158fa3f783b71bc2ca7f"
+    },
+    {
+      "file": "tests/unit/rareui-web-search.test.tsx",
+      "sha256": "da416c641704aa148d39a36aafd44cbe8d31262c4d3561b7a772e2432c57750d"
+    },
+    {
+      "file": "tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+      "sha256": "895b46fe9d4b9f3a1e6c9692f47493228f435bf1a8078a202e4ff1a0950e83a0"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "sha256": "f4616127048232a219eb01aea5a4e0c6633e6a92ec240c9f31698580a318a0f0"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "sha256": "dac758bc52f09471fd1ac1d11d68a373dff0b09d5ae6a40a1696790068b57782"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "sha256": "e1783c193066e2b08aa178f14a7369c6b727f68638cd0d25d1337dcc7e344fef"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "sha256": "7385bd4b05bffe9bf0b144c9f12e828ba6c73fdc861713911192a148b40ebbf9"
+    }
+  ],
+  "caveats": [
+    "The screenshot is agent-driven Electron evidence using seeded IPC history, not a live provider response or human review.",
+    "The full Harness diff run was not green because the workspace contains unrelated dirty files from concurrent work; touched files are covered by the updated task spec."
+  ]
+}

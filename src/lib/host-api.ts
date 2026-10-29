@@ -410,6 +410,7 @@ import type {
   MemoryUpdatePayload,
   VerseGitDiagnosticBinding,
   VerseGitDiagnosticStatus,
+  SystemNotificationRequest,
 } from '@shared/host-api/contract';
 import type { CronJobCreateInput, CronJobUpdateInput } from '@shared/types/cron';
 import type {
@@ -727,6 +728,7 @@ export const hostApi = {
     syncTrafficLightPosition: (sidebarCollapsed: boolean) => (
       invokeHost('window', 'syncTrafficLightPosition', { sidebarCollapsed })
     ),
+    notify: (payload: SystemNotificationRequest) => invokeHost('window', 'notify', payload),
     minimize: () => invokeHost('window', 'minimize'),
     maximize: () => invokeHost('window', 'maximize'),
     close: () => invokeHost('window', 'close'),

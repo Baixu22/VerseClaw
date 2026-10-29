@@ -7,7 +7,8 @@ import { closeElectronApp, expect, getStableWindow, installIpcMocks, pinWindowCo
 const SESSION = 'agent:main:main';
 const OTHER = 'agent:main:rareui-review';
 const ROOT = 'D:/tmp/rareui-fixture-project';
-const artifacts = join(process.cwd(), 'docs', 'dev', 'evidence', 'rareui-interactions', 'screenshots');
+const artifacts = process.env.CLAWX_RAREUI_ARTIFACTS_DIR
+  || join(process.env.CLAWX_E2E_RUN_ROOT || 'D:/tmp', 'rareui-interactions', 'screenshots');
 const now = Date.parse('2026-10-21T05:30:00Z');
 const markdown = [
   '# Workspace interaction guide',
@@ -176,6 +177,20 @@ test('conversation rail, hook selection, completion bell and Markdown TOC have r
     await expect.poll(() => page.getByTestId('chat-scroll-container').evaluate((el) => el.scrollTop)).toBeLessThan(80);
     await page.getByTestId('chat-completion-bell').click();
     await expect(page.getByTestId('chat-completion-item')).toHaveCount(5);
+    await expect(page.getByTestId('chat-completion-desktop-toggle')).toBeChecked();
+    await expect(page.getByTestId('chat-completion-desktop-state')).toContainText('Desktop alerts on');
+    await page.getByTestId('chat-completion-desktop-toggle').click();
+    await expect(page.getByTestId('chat-completion-desktop-state')).toContainText('Desktop alerts off');
+    await page.getByTestId('chat-completion-desktop-toggle').click();
+    await expect(page.getByTestId('chat-completion-desktop-state')).toContainText('Desktop alerts on');
+    const menuBounds = await page.evaluate(() => {
+      const sidebar = document.querySelector('[data-testid="sidebar"]')?.getBoundingClientRect();
+      const menu = document.querySelector('[data-testid="chat-completion-menu"]')?.getBoundingClientRect();
+      return sidebar && menu ? { sidebarLeft: sidebar.left, sidebarRight: sidebar.right, menuLeft: menu.left, menuRight: menu.right } : null;
+    });
+    expect(menuBounds).not.toBeNull();
+    expect(menuBounds!.menuLeft).toBeGreaterThanOrEqual(menuBounds!.sidebarLeft);
+    expect(menuBounds!.menuRight).toBeLessThanOrEqual(menuBounds!.sidebarRight + 1);
     const completionTimes = await page.getByTestId('chat-completion-item').evaluateAll((items) => items.map((item) => Number(item.getAttribute('data-completed-at'))));
     expect(completionTimes).toEqual([...completionTimes].sort((a, b) => b - a));
     await capture(page, 'completion-bell-light');

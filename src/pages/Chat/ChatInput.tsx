@@ -115,6 +115,7 @@ import type { MotionComponentType } from '@lobehub/ui/es/MotionProvider/index';
 import { OFFICE_ACTIONS, findOfficeSkill, type OfficeAction } from './composer-actions';
 import { detectTaskLoopUpgradeSuggestion } from './task-loop-upgrade';
 import { isProviderRuntimeReady } from '@/lib/setup-provider';
+import { RuntimeApprovalPrompt } from '@/components/runtime-approvals/RuntimeApprovalPrompt';
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -3183,6 +3184,7 @@ export function ChatInput({
   );
 
   return (
+    <RuntimeApprovalPrompt sessionKey={currentSessionKey} agentId={currentAgentId} hero={hero}>
     <div
       ref={composerHostRef}
       className={cn(
@@ -4708,6 +4710,7 @@ export function ChatInput({
         </DialogContent>
       </Dialog>
     </div>
+    </RuntimeApprovalPrompt>
   );
 }
 

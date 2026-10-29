@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "scope": "Focused conversation presentation; Windows source build with deterministic histories.",
+  "baseCommit": "0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6",
+  "delivery": "Uncommitted working-tree changes; no release or public publication.",
+  "findings": [
+    "Non-wrapping summary badges and hover-only disclosure controls obscured the hierarchy at narrow widths.",
+    "Raw tool argument objects competed with operation names; useful paths and commands now lead the collapsed preview.",
+    "Unbounded code diffs and command output overwhelmed expanded process details.",
+    "File paths and terminal working directories crowded header actions.",
+    "Terminal labels and diff expansion labels lacked locale entries.",
+    "Shared text normalization trimmed meaningful indentation and trailing line endings from structured code/output."
+  ],
+  "gates": {
+    "unit": {
+      "exitCode": 0,
+      "filesPassed": 2,
+      "testsPassed": 17,
+      "testsFailed": 0
+    },
+    "electron": {
+      "exitCode": 0,
+      "startTime": "2026-10-29T04:20:06.029Z",
+      "duration": 72957.238,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "tests": [
+        {
+          "file": "chat-file-changes.spec.ts",
+          "title": "shows line stats on generated file cards",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 13074
+            }
+          ]
+        },
+        {
+          "file": "chat-file-changes.spec.ts",
+          "title": "opens html files from chat as rendered previews",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11745
+            }
+          ]
+        },
+        {
+          "file": "chat-file-changes.spec.ts",
+          "title": "keeps an attached file selected after switching through workspace",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 10707
+            }
+          ]
+        },
+        {
+          "file": "chat-tool-ui-execution-surfaces.spec.ts",
+          "title": "renders official execution surfaces in light, dark, and narrow layouts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 12990
+            }
+          ]
+        },
+        {
+          "file": "chat-turn-summary-collapse.spec.ts",
+          "title": "collapses completed long task process and expands details on demand",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11567
+            }
+          ]
+        },
+        {
+          "file": "chat-turn-summary-collapse.spec.ts",
+          "title": "leaves short conversations unwrapped",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 10659
+            }
+          ]
+        }
+      ]
+    },
+    "typecheckWeb": {
+      "exitCode": 0
+    },
+    "typecheckTests": {
+      "exitCode": 0
+    },
+    "i18n": {
+      "exitCode": 0,
+      "locales": [
+        "en",
+        "zh",
+        "ja",
+        "ru"
+      ]
+    },
+    "build": {
+      "exitCode": 0,
+      "command": "pnpm run build:vite"
+    },
+    "lint": {
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 9,
+      "baselineWarnings": 9,
+      "unchanged": true
+    },
+    "harness": {
+      "validationExitCode": 0,
+      "dryRunExitCode": 0,
+      "diffChecked": true,
+      "since": "HEAD",
+      "isolated": true,
+      "existingDependenciesReused": true,
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/chat-output-visual-hierarchy.md --since HEAD"
+    }
+  },
+  "visualReview": {
+    "actor": "codex",
+    "inspected": [
+      "light",
+      "dark",
+      "640px narrow",
+      "collapsed summary",
+      "expanded tool detail"
+    ],
+    "result": "Controls fit within their surfaces; paths truncate with full titles; long previews remain expandable."
+  },
+  "images": [
+    {
+      "file": "terminal-light.png",
+      "bytes": 27421,
+      "width": 777,
+      "height": 287,
+      "sha256": "82acbbe821911867736e2bd3e5ae3953bc745adb93e5c9974894366a7e655a56"
+    },
+    {
+      "file": "diff-light.png",
+      "bytes": 26744,
+      "width": 777,
+      "height": 287,
+      "sha256": "17b5936532c548765ba063b0e6ebba5c0cea1c20d8ece7d953ce6baccbacecb8"
+    },
+    {
+      "file": "tool-ui-execution-light.png",
+      "bytes": 184035,
+      "width": 821,
+      "height": 1062,
+      "sha256": "9f8da71ca6ef29d4d015fa066ce62965d0c659125e3345b687e63ab8d9e97384"
+    },
+    {
+      "file": "tool-ui-execution-dark.png",
+      "bytes": 207682,
+      "width": 821,
+      "height": 1062,
+      "sha256": "0ab38eedeca2e30e6ab6a29658bbd9315c21c1a94a324e8e885af40625d717f7"
+    },
+    {
+      "file": "tool-ui-execution-640.png",
+      "bytes": 173312,
+      "width": 544,
+      "height": 1062,
+      "sha256": "3ddad5cb6a1f46a9f80b123a1cceac07d57b1b7a18c7cdca95d7cc85f646807b"
+    },
+    {
+      "file": "turn-summary-narrow.png",
+      "bytes": 11415,
+      "width": 544,
+      "height": 33,
+      "sha256": "27e86fc300d40c539c9de7985d8448a191977c2c08c36fb042c97e31cc6e6431"
+    },
+    {
+      "file": "turn-process-expanded.png",
+      "bytes": 98219,
+      "width": 544,
+      "height": 461,
+      "sha256": "268f08f01c5a3cb40794ed81c1fe1c4923e0165c45a13cf895bef60dc6826c3e"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "5f18f1f99f5e950b022f6aa15303c9b75137ec77a6fb218e51290789cfa781a4"
+    },
+    {
+      "file": "README.md",
+      "sha256": "2a31b3817a1d8f005de13d99aba414042cc91af937a88c1d3ef422b26564af77"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "610083c67a72f461d8fa419c89c0fdbea48fdf3e50c744aed9e244611e7e801c"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "c5668fc7b69269a30365fa4aa98d4a6c55cd9fc0b0cf98f7dcd83fb53945cbf4"
+    },
+    {
+      "file": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "e81ecc435e9dff43c22bec3d1cb00b329ea99f6877b2a318e7c3f79deeef7e10"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "sha256": "a57f4acbafdb6588d6b359ab3666839994620a5a5c30105360d1d30d4bf2aed7"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "sha256": "62b8860c9f5f070c9be45673286995f947d8ea593f48f2f1e429fd5245a1630d"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "sha256": "cd0c560eff40f7adc9db9d4028d5207a54d980d758e4b40b4a1916e2d71a65a6"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "sha256": "369351533195c6e48ddfc38a07997f489182a58fde480294761faacd5f351e76"
+    },
+    {
+      "file": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "5b636efd0cbbbdf97b9fe83bd4f77f2b1cd567170f05a213d1094b0a98fe97d4"
+    },
+    {
+      "file": "src/components/tool-ui/RunMutationDiffs.tsx",
+      "sha256": "5ba1c9fdb2675f7874a324e119fed95cd8dc332271613faf81e0d99478afcdb1"
+    },
+    {
+      "file": "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "sha256": "b5b93a69825596695f15940dfcfea51f25edc0c9a745d86928df39f51b976146"
+    },
+    {
+      "file": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "d2fcb07426d34af0025aa9048dc10b865e29e857f7b173fcd8d6b7e8171ed86f"
+    },
+    {
+      "file": "src/components/tool-ui/code-diff/code-diff.tsx",
+      "sha256": "099e65af8f48c717fc9911f4b1c8614d3538b4179f70ab36061a18b6001f5802"
+    },
+    {
+      "file": "src/components/tool-ui/terminal/terminal.tsx",
+      "sha256": "ba132ff7ac99e54a539ea0836c02ac564d1e8829001a90dbff8fab3b097ad518"
+    },
+    {
+      "file": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "fe1f05c5120962ac8bbc7a0533245a4b9d1ec3a6ae2e119af78c190d3f87387b"
+    },
+    {
+      "file": "tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+      "sha256": "382034cc69ae29ba474b51ae64854222019ee14a7b9425a2fb9a139792adfe82"
+    },
+    {
+      "file": "tests/e2e/chat-turn-summary-collapse.spec.ts",
+      "sha256": "785a8559889ace7a5fdca9b13271ef489240439ef9e3b5b67e45ed6d40da1ac7"
+    },
+    {
+      "file": "tests/unit/execution-graph-card-badge.test.tsx",
+      "sha256": "a8635aa624c56684179b726bb52e449868c164acea8b64a99088cfe1976f2f96"
+    },
+    {
+      "file": "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "sha256": "aba669afa70c3f1522930357cea5dc5f24502e1b61cb1c554fba8516f3e01b05"
+    },
+    {
+      "file": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "0085c91c70ad118476168be08bcd60e7b5e5df7aa71784ed39727e1d4751b8c9"
+    }
+  ],
+  "priorAttemptCorrections": [
+    "Initial Electron profiles under the host temporary directory failed with EPERM before window creation; reran using the writable, ignored repository temporary directory.",
+    "Native Windows clipboard assertions normalize CRLF to LF while retaining all content and trailing newlines.",
+    "Shared-tree Harness ownership rejected three pre-existing moyu files; isolated the owned edits and verified matching SHA-256 values without disabling the diff gate."
+  ],
+  "excludedUnrelatedPaths": [
+    "harness/specs/tasks/product-acceptance-moyu.md",
+    "tests/e2e/fixtures/moyu-acceptance.ts",
+    "tests/e2e/product-acceptance-moyu.spec.ts"
+  ],
+  "limits": [
+    "Agent-driven fixture evidence, not real-human evidence.",
+    "No live-provider quality, packaged installation or full-project release acceptance claim.",
+    "Nine pre-existing React Fast Refresh compound-component warnings remain unchanged."
+  ]
+}

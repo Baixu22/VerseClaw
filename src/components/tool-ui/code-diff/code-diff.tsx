@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useId,
   createContext,
   use,
   type ReactNode,
@@ -16,7 +17,7 @@ import {
 } from "@pierre/diffs/react";
 import { parseDiffFromFile } from "@pierre/diffs";
 import type { FileDiffMetadata, ThemesType } from "@pierre/diffs";
-import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy, Check, ChevronDown, ChevronUp, FileText } from "lucide-react";
 import type { CodeDiffProps } from "./schema";
 import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
 import { Button, cn } from "./_adapter";
@@ -102,6 +103,7 @@ function getLanguageDisplayName(lang: string): string {
 
 type CodeDiffSharedState = {
   id: string;
+  contentId: string;
   isPatchMode: boolean;
   language: string;
   lineNumbers: "visible" | "hidden";
@@ -111,7 +113,9 @@ type CodeDiffSharedState = {
   isCopied: boolean;
   copyCode: () => void;
   isCollapsed: boolean;
+  isExpanded: boolean;
   shouldCollapse: boolean;
+  previewLines: number;
   toggleExpanded: () => void;
   resolvedTheme: "light" | "dark";
   pierreThemes: ThemesType;
@@ -158,6 +162,7 @@ function CodeDiffRoot({
   defaultExpanded = false,
   onExpandedChange,
 }: CodeDiffRootProps) {
+  const contentId = useId();
   const resolvedTheme = useResolvedTheme();
   const [expandedState, setExpandedState] = useState(defaultExpanded);
   const { copiedId, copy } = useCopyToClipboard();
@@ -245,6 +250,7 @@ function CodeDiffRoot({
 
   const state: CodeDiffSharedState = {
     id,
+    contentId,
     isPatchMode,
     language,
     lineNumbers,
@@ -254,7 +260,9 @@ function CodeDiffRoot({
     isCopied,
     copyCode,
     isCollapsed,
+    isExpanded: expanded,
     shouldCollapse,
+    previewLines: maxCollapsedLines ?? 10,
     toggleExpanded,
     resolvedTheme,
     pierreThemes,
@@ -268,14 +276,14 @@ function CodeDiffRoot({
     <CodeDiffContext.Provider value={state}>
       <div
         className={cn(
-          "@container flex w-full min-w-0 flex-col gap-2",
+          "@container flex w-full min-w-0 max-w-full flex-col gap-2",
           className,
         )}
         data-tool-ui-id={id}
         data-slot="code-diff"
       >
-        <div className="border-border bg-surface-input overflow-hidden rounded-md border">
-          <div>{children}</div>
+        <div className="border-border/70 bg-surface-input w-full max-w-full min-w-0 overflow-hidden rounded-lg border">
+          <div className="min-w-0 max-w-full">{children}</div>
         </div>
       </div>
     </CodeDiffContext.Provider>
@@ -291,28 +299,25 @@ function CodeDiffHeader({ className }: CodeDiffSectionProps) {
   const { language, filename, isCopied, copyCode, additions, deletions } =
     useCodeDiff();
   const hasChanges = additions > 0 || deletions > 0;
+  const pathParts = filename?.replace(/\\/g, "/").split("/") ?? [];
+  const basename = pathParts.pop();
+  const directory = pathParts.join("/");
   return (
     <div
       className={cn(
-        "bg-surface-modal flex min-w-0 items-center justify-between gap-2 border-b border-border/70 px-3 py-2",
+        "bg-surface-modal flex min-w-0 items-center gap-3 border-b border-border/70 px-3 py-2",
         className,
       )}
     >
-      <div className="flex items-center gap-1">
-        <span className="text-muted-foreground text-sm">
-          {getLanguageDisplayName(language)}
-        </span>
-        {filename && (
-          <>
-            <span className="text-muted-foreground/50">&bull;</span>
-            <span className="text-foreground text-sm font-medium">
-              {filename}
-            </span>
-          </>
-        )}
+      <FileText className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <div className="min-w-0 flex-1" title={filename}>
+        <div className="truncate text-xs font-medium leading-5 text-foreground">
+          {basename || getLanguageDisplayName(language)}
+        </div>
+        {directory && <div className="truncate font-mono text-[11px] leading-4 text-muted-foreground">{directory}</div>}
       </div>
       {hasChanges && (
-        <span className="ml-auto text-xs font-mono tabular-nums">
+        <span className="shrink-0 whitespace-nowrap text-xs font-mono tabular-nums">
           {additions > 0 && (
             <span className="text-emerald-700 dark:text-emerald-400">+{additions}</span>
           )}
@@ -326,7 +331,7 @@ function CodeDiffHeader({ className }: CodeDiffSectionProps) {
         variant="ghost"
         size="sm"
         onClick={copyCode}
-        className="h-7 w-7 p-0"
+        className="h-7 w-7 shrink-0 p-0"
         aria-label={isCopied ? t("toolUi.codeDiff.copied") : t("toolUi.codeDiff.copy")}
       >
         {isCopied ? (
@@ -340,58 +345,86 @@ function CodeDiffHeader({ className }: CodeDiffSectionProps) {
 }
 
 function CodeDiffContent({ className }: CodeDiffSectionProps) {
+  const { t } = useTranslation("chat");
   const {
+    contentId,
     isPatchMode,
     diffStyle,
     lineNumbers,
     isCollapsed,
+    isExpanded,
     resolvedTheme,
     pierreThemes,
     fileDiffMetadata,
     patch,
+    additions,
+    deletions,
+    previewLines,
   } = useCodeDiff();
 
   const disableLineNumbers = lineNumbers === "hidden";
+  // Pair old/new rows in a long replacement preview; a unified prefix can
+  // otherwise show only deletions. Expansion keeps the caller's full layout.
+  const pairedPreview = isCollapsed && additions > 0 && deletions > 0;
+  const options = {
+    theme: pierreThemes,
+    themeType: resolvedTheme,
+    diffStyle: pairedPreview ? "split" as const : diffStyle,
+    disableFileHeader: true,
+    disableLineNumbers,
+    diffIndicators: "classic" as const,
+    disableBackground: true,
+    lineDiffType: isCollapsed ? "none" as const : "word" as const,
+    // The preview is the width-sensitive state. Wrap inside the card so a
+    // long token cannot visually run past the conversation column; expansion
+    // keeps Pierre's normal horizontal code scrolling.
+    overflow: isExpanded ? "scroll" as const : "wrap" as const,
+  };
 
   return (
-    <div
-      className={cn(
-        "overflow-x-auto overflow-y-clip text-sm",
-        isCollapsed && "max-h-[200px]",
-        className,
+    <>
+      {pairedPreview && (
+        <div className="grid grid-cols-2 border-b border-border/50 bg-surface-modal text-[11px] leading-6 text-muted-foreground" aria-hidden="true">
+          <span className="px-3">{t("toolUi.codeDiff.before")}</span>
+          <span className="border-l border-border/50 px-3">{t("toolUi.codeDiff.after")}</span>
+        </div>
       )}
-    >
-      {!isPatchMode && fileDiffMetadata && (
-        <PierreFileDiff
-          fileDiff={fileDiffMetadata}
-          options={{
-            theme: pierreThemes,
-            themeType: resolvedTheme,
-            diffStyle,
-            disableFileHeader: true,
-            disableLineNumbers,
-          }}
-        />
-      )}
-      {isPatchMode && patch && (
-        <PierrePatchDiff
-          patch={patch}
-          options={{
-            theme: pierreThemes,
-            themeType: resolvedTheme,
-            diffStyle,
-            disableFileHeader: true,
-            disableLineNumbers,
-          }}
-        />
-      )}
-    </div>
+      <div className="w-full min-w-0 max-w-full py-2">
+        <div
+          id={contentId}
+          role="region"
+          aria-label={t("toolUi.codeDiff.content")}
+          tabIndex={0}
+          data-testid="code-diff-content"
+          className={cn(
+            "w-full min-w-0 max-w-full overflow-auto overscroll-contain text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring",
+            className,
+          )}
+          style={{ maxHeight: isCollapsed ? previewLines * 20 : undefined }}
+        >
+          {!isPatchMode && fileDiffMetadata && (
+            <PierreFileDiff
+              className="chat-diff-view"
+              fileDiff={fileDiffMetadata}
+              options={options}
+            />
+          )}
+          {isPatchMode && patch && (
+            <PierrePatchDiff
+              className="chat-diff-view"
+              patch={patch}
+              options={options}
+            />
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 
 function CodeDiffCollapseToggle({ className }: CodeDiffSectionProps) {
   const { t } = useTranslation("chat");
-  const { shouldCollapse, isCollapsed, toggleExpanded } = useCodeDiff();
+  const { shouldCollapse, isCollapsed, toggleExpanded, contentId } = useCodeDiff();
 
   if (!shouldCollapse) return null;
 
@@ -400,10 +433,11 @@ function CodeDiffCollapseToggle({ className }: CodeDiffSectionProps) {
       variant="ghost"
       onClick={toggleExpanded}
       className={cn(
-        "text-muted-foreground w-full rounded-none border-t font-normal",
+        "text-muted-foreground h-8 w-full rounded-none border-t border-border/70 text-xs font-normal",
         className,
       )}
       aria-expanded={!isCollapsed}
+      aria-controls={contentId}
     >
       {isCollapsed ? (
         <>

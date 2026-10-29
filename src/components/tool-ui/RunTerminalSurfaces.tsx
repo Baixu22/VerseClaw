@@ -25,6 +25,7 @@ export function RunTerminalSurfaces({ surfaces }: { surfaces: RunTerminalSurface
             exitCode={surface.status === 'running' ? undefined : surface.exitCode ?? (surface.status === 'failed' ? 1 : 0)}
             durationMs={surface.durationMs}
             truncated={surface.truncated}
+            maxCollapsedLines={10}
           />
         </div>
       ))}

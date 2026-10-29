@@ -1,5 +1,76 @@
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
+test.describe('Settings theme selector', () => {
+  test.skip(process.platform !== 'win32', 'Settings theme previews are validated on the Windows UI v2 shell.');
+
+  test('switches the live theme from the preview selector and keeps one roving tab stop', async ({ launchElectronApp }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'dark' });
+
+    try {
+      const page = await getStableWindow(app);
+      await page.getByTestId('sidebar-nav-settings').click();
+      await expect(page.getByTestId('settings-page')).toBeVisible();
+
+      const selector = page.getByTestId('settings-theme-mode').getByRole('radiogroup', { name: 'Theme' });
+      await expect(selector).toBeVisible();
+
+      const options = selector.getByRole('radio');
+      await expect(options).toHaveCount(3);
+      await expect(selector.getByRole('radio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('html')).toHaveClass(/dark/);
+
+      // Each miniature is drawn in the theme it depicts, independent of the shell.
+      const palettes = await page.evaluate(() => Array.from(
+        document.querySelectorAll<HTMLElement>('[data-slot="theme-selector-item"]'),
+      ).map((item) => ({
+        label: item.getAttribute('aria-label'),
+        preview: item.querySelector<HTMLElement>('.rare-theme-selector__stage')?.dataset.preview,
+        background: getComputedStyle(item.querySelector<HTMLElement>('.rare-theme-selector__stage')!).backgroundColor,
+        panes: item.querySelectorAll('.rare-theme-selector__pane').length,
+      })));
+      expect(palettes.map((entry) => entry.preview)).toEqual(['light', 'dark', 'split']);
+      expect(palettes[0].background).not.toBe(palettes[1].background);
+      expect(palettes[1].panes).toBe(1);
+      expect(palettes[2].panes).toBe(2);
+
+      // Roving tab index: exactly one option is reachable with Tab.
+      const tabIndexes = await options.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('tabindex')));
+      expect(tabIndexes.filter((value) => value === '0')).toHaveLength(1);
+      expect(tabIndexes).toEqual(['-1', '0', '-1']);
+
+      // Selecting Light switches the document class and persists to the settings store.
+      await selector.getByRole('radio', { name: 'Light' }).click();
+      await expect(page.locator('html')).toHaveClass(/light/);
+      await expect(selector.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true');
+      await expect.poll(async () => page.evaluate(() => (
+        JSON.parse(localStorage.getItem('verse-claw-settings') ?? '{}')?.state?.theme ?? null
+      ))).toBe('light');
+
+      const lightShot = testInfo.outputPath('settings-theme-selector-light.png');
+      await page.screenshot({ path: lightShot });
+      await testInfo.attach('settings-theme-selector-light', { path: lightShot, contentType: 'image/png' });
+
+      // Keyboard: ArrowRight moves selection and focus to the next option.
+      await selector.getByRole('radio', { name: 'Light' }).focus();
+      await page.keyboard.press('ArrowRight');
+      await expect(selector.getByRole('radio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'true');
+      await expect(selector.getByRole('radio', { name: 'Dark' })).toBeFocused();
+      await expect(page.locator('html')).toHaveClass(/dark/);
+
+      // Home returns to the first option.
+      await page.keyboard.press('Home');
+      await expect(selector.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('html')).toHaveClass(/light/);
+
+      // Restore the seeded theme before closing so the profile stays deterministic.
+      await selector.getByRole('radio', { name: 'Dark' }).click();
+      await expect(page.locator('html')).toHaveClass(/dark/);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+});
+
 async function waitForAppRoute(page: Awaited<ReturnType<typeof getStableWindow>>) {
   await expect.poll(() => new URL(page.url()).hash, { timeout: 3_000 }).toBe('#/');
   await expect(page.getByTestId('settings-page')).toHaveCount(0);

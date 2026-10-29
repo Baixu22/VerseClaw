@@ -147,13 +147,20 @@ async function openChatWithHistory(
 }
 
 test.describe('Verse Claw chat turn summary collapse', () => {
-  test('collapses completed long task process and expands details on demand', async ({ launchElectronApp }) => {
+  test('collapses completed long task process and expands details on demand', async ({ launchElectronApp }, testInfo) => {
     const history = [
       { role: 'user', content: 'Inspect the repo and summarize the work.' },
       {
         role: 'assistant',
         id: 'tool-read',
-        content: [{ type: 'tool_use', id: 'read-1', name: 'read_file', input: { path: '/workspace/src/app.ts' } }],
+        content: [
+          { type: 'thinking', thinking: 'Inspect the conversation components before changing their visual hierarchy.' },
+          { type: 'tool_use', id: 'read-1', name: 'read_file', input: { path: '/workspace/src/components/conversation/execution/details/app.ts', limit: 200 } },
+          { type: 'tool_use', id: 'plan-1', name: 'update_plan', input: { plan: [
+            { step: 'Inspect components', status: 'completed' },
+            { step: 'Verify rendering', status: 'completed' },
+          ] } },
+        ],
       },
       {
         role: 'assistant',
@@ -178,10 +185,25 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       await expect(page.getByTestId('chat-turn-summary-orb')).toHaveCount(0);
       await expect(page.getByTestId('chat-message-4').getByText('Repo inspection is complete.')).toBeVisible();
       await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
+      await expect(page.getByTestId('chat-turn-summary-badges')).toBeVisible();
+      await page.setViewportSize({ width: 640, height: 1000 });
+      const summary = page.getByTestId('chat-turn-summary-card');
+      expect(await summary.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      await summary.screenshot({ path: testInfo.outputPath('turn-summary-narrow.png') });
 
-      await page.getByTestId('chat-turn-summary-toggle').click();
+      await page.getByTestId('chat-turn-summary-toggle').focus();
+      await page.keyboard.press('Enter');
       await expect(page.getByTestId('chat-turn-summary-details')).toBeVisible();
       await expect(page.getByTestId('chat-execution-graph')).toBeVisible();
+      const readStep = page.getByTestId('chat-execution-step-toggle').filter({ hasText: 'read_file' });
+      await expect(readStep).toContainText('/workspace/src/components/conversation/execution/details/app.ts');
+      await expect(readStep).not.toContainText('"limit"');
+      await readStep.click();
+      await expect(page.getByRole('region', { name: 'read_file' })).toContainText('"limit": 200');
+      await summary.screenshot({ path: testInfo.outputPath('turn-process-expanded.png') });
+      await page.getByTestId('chat-turn-summary-toggle').click();
+      await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
+      await expect(page.getByTestId('chat-message-4').getByText('Repo inspection is complete.')).toBeVisible();
     } finally {
       await closeElectronApp(app);
     }

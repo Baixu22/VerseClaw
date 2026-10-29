@@ -508,6 +508,16 @@
       "label": "出典",
       "open": "出典を開く"
     },
+    "webSearch": {
+      "searching": "Web を検索中",
+      "searchingQuery": "「{{query}}」を検索中",
+      "searched_one": "{{count}} 件のサイトを検索しました",
+      "searched_other": "{{count}} 件のサイトを検索しました",
+      "failed": "検索に失敗しました",
+      "more_one": "件のソースを表示",
+      "more_other": "件のソースを表示",
+      "truncated": "一部の結果は切り詰められています。"
+    },
     "progress": {
       "label": "進捗",
       "done": "完了",
@@ -536,7 +546,23 @@
     },
     "codeDiff": {
       "copy": "パッチをコピー",
-      "copied": "パッチをコピーしました"
+      "copied": "パッチをコピーしました",
+      "showFull": "差分を展開",
+      "collapse": "差分を折りたたむ",
+      "before": "変更前",
+      "after": "変更後",
+      "content": "ファイルの差分"
+    },
+    "terminal": {
+      "copy": "出力をコピー",
+      "copied": "出力をコピーしました",
+      "noOutputToCopy": "コピーできる出力はありません",
+      "output": "コマンド出力",
+      "exitCode": "終了コード {{code}}",
+      "showAll": "すべての出力を表示（{{count}} 行）",
+      "collapse": "出力を折りたたむ",
+      "truncated": "最新の出力のみ保持されています。",
+      "empty": "出力はまだありません"
     },
     "testResults": {
       "label": "Test results",
@@ -2603,6 +2629,8 @@
     "description": "ランタイムはこのコマンドの実行前に停止し、あなたの判断を待っています。",
     "commandLabel": "コマンド",
     "cwdLabel": "作業ディレクトリ",
+    "copyCommand": "コマンドをコピー",
+    "commandCopied": "コマンドをコピーしました",
     "unknownCommand": "（コマンドが報告されていません）",
     "allowOnce": "今回のみ許可",
     "allowAlways": "常に許可",
@@ -2611,10 +2639,28 @@
     "resolveFailed": "ランタイムはこの判断を受け付けませんでした。"
   },
   "completionActivity": {
-    "label": "完了したアクティビティ、未読 {{count}} 件",
-    "title": "最近の完了",
-    "empty": "完了した回答と実行がここに表示されます。",
-    "completed": "実行が完了しました"
+    "label": "通知、{{count}} 件の未読",
+    "title": "通知",
+    "empty": "完了した実行、エラー、対応が必要なリクエストがここに表示されます。",
+    "completed": "実行が完了しました",
+    "desktopDescription": "実行の完了、失敗、承認待ちをデスクトップ通知で知らせます。",
+    "desktopToggle": "デスクトップ通知",
+    "desktopOn": "デスクトップ通知はオンです",
+    "desktopOff": "デスクトップ通知はオフです",
+    "notify": {
+      "completedTitle": "Verse Claw · セッション完了",
+      "completedBody": "セッションが終了しました。結果を確認できます。",
+      "errorTitle": "Verse Claw · セッションエラー",
+      "errorBody": "会話を開いてエラーの詳細を確認してください。",
+      "approvalTitle": "Verse Claw · 承認が必要です",
+      "approvalCommand": "実行が権限を待っています: {{command}}",
+      "approvalBody": "実行が判断を待っています。"
+    },
+    "kind": {
+      "completed": "完了",
+      "error": "エラー",
+      "action-required": "対応が必要"
+    }
   },
   "sessionPolicy": {
     "title": "セッションポリシー",

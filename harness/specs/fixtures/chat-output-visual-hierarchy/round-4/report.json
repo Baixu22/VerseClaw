@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "iteration": 4,
+  "date": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "parent": "round-3",
+  "baseCommit": "0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6",
+  "delivery": "Uncommitted local source changes; no release or public publication.",
+  "scope": "Composer Git-strip alignment and runtime-approval composer replacement in a Windows source build; deterministic automated history.",
+  "changes": [
+    "The repository change strip now uses the same centered 768px column as the composer instead of the wider 4xl column.",
+    "Runtime approval regression coverage now seeds a non-empty conversation and verifies the inline prompt shares the exact x/width of both the composer and Git strip.",
+    "The approval prompt remains below the strip, has no dialog role or dialog overlay, hides the original composer, and restores its draft after denial.",
+    "The task spec, scenario and four root READMEs record the shared composer-column requirement."
+  ],
+  "gates": {
+    "unit": {
+      "exitCode": 0,
+      "filesPassed": 6,
+      "testsPassed": 134,
+      "failed": 0
+    },
+    "electron": {
+      "exitCode": 0,
+      "expected": 11,
+      "passed": 11,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "typecheckWeb": {
+      "exitCode": 0
+    },
+    "typecheckTest": {
+      "exitCode": 0
+    },
+    "i18n": {
+      "exitCode": 0,
+      "locales": [
+        "en",
+        "zh",
+        "ja",
+        "ru"
+      ]
+    },
+    "build": {
+      "exitCode": 0,
+      "command": "pnpm run build:vite"
+    },
+    "lint": {
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 4,
+      "note": "pre-existing react-refresh and hook warnings in the touched modules"
+    },
+    "harness": {
+      "validationExitCode": 0,
+      "dryRunExitCode": 0,
+      "isolated": true,
+      "since": "HEAD"
+    }
+  },
+  "visualReview": {
+    "actor": "codex",
+    "states": [
+      "1280px non-empty conversation",
+      "960px alignment assertion",
+      "inline runtime approval with Git strip"
+    ],
+    "result": "The Git strip and composer share one x position and one width; the approval prompt matches both, sits below the strip, and has no modal overlay."
+  },
+  "images": [
+    {
+      "file": "composer-aligned-with-strip.png",
+      "width": 1280,
+      "height": 820,
+      "bytes": 302224,
+      "sha256": "d92abe05af46906a804d82a6b02372189b705cf34cdd4b6a7814f5fa9a397e0b"
+    },
+    {
+      "file": "runtime-approval-inline-with-git.png",
+      "width": 1280,
+      "height": 820,
+      "bytes": 285353,
+      "sha256": "d4541567328c58bf2637a9b18e88bbe9cbd92146cfe48a2fdae5c0c5475433ff"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "sha256": "e34935803a6fdc3f03fd72879e9a8b39a000856353d1ddab0e55c984c82a45df"
+    },
+    {
+      "file": "src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+      "sha256": "ea898a59017f3dae80e9508ae2eb1735e68a9fd4e97bfa66036a42b0486f9f64"
+    },
+    {
+      "file": "tests/e2e/chat-composer-git-strip.spec.ts",
+      "sha256": "898f16478e8b91891b63800dd2e1e08e2afcc3bfa5898f9b9cefc65f431d31f6"
+    },
+    {
+      "file": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "200bd55f44c4c0674173fb9aee38e715139e4e01d9e8db3d0656beb6d6230642"
+    },
+    {
+      "file": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "11dfd68b0bba4eafd8b241cbe29cab1fba9f3111121d3c4425172752c9bfe22c"
+    },
+    {
+      "file": "README.md",
+      "sha256": "e096e5b049f7daf6c01ddd0d3523a1932e39332c2eef4120040eda9b00e57b05"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "21a5d8a0573721cf9d64194349780b9cce3ac2d26ca731b74ba9348ab365ae2e"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "dcca1498bf2490d4b083481b1e1143d81b108fdb53843f6414ec8a31a5fb755c"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "a8ab470892314349a7144a0e3d7c525effa383da59c9b52d1613a536f820bcab"
+    }
+  ]
+}

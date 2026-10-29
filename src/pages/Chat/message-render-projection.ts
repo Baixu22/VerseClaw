@@ -42,6 +42,7 @@
 import { DIRECTORY_MIME_TYPE } from '@/components/assistant-ui/attachment';
 import {
   parseToolUiContent,
+  parseToolUiInteraction,
   parseToolUiToolUses,
   type ToolUiInteraction,
 } from '@/components/tool-ui/agent-interactions';
@@ -199,6 +200,90 @@ function isMessageCardTool(tool: MessageToolUse): boolean {
   return !parsed.some((interaction) => MESSAGE_CARD_EXCLUDED_TOOL_UI_TYPES.has(interaction.type));
 }
 
+const WEB_SEARCH_TOOL_NAME = /(?:^|[_-])(?:web[_-]?search|tavily[_-]?search)$|^websearch$/i;
+
+function isWebSearchToolName(name: string | undefined): boolean {
+  return typeof name === 'string' && WEB_SEARCH_TOOL_NAME.test(name.trim());
+}
+
+function parseSearchResultPayload(value: unknown, depth = 0): Record<string, unknown> | null {
+  if (depth > 4) return null;
+  if (typeof value === 'string') {
+    const trimmed = value.trim().replace(/^\uFEFF/, '');
+    if (!trimmed) return null;
+    const withoutFence = trimmed.replace(/^\s*\u0060\u0060\u0060(?:json)?\s*/i, '').replace(/\u0060\u0060\u0060\s*$/, '');
+    try {
+      return parseSearchResultPayload(JSON.parse(withoutFence) as unknown, depth + 1);
+    } catch {
+      return null;
+    }
+  }
+  if (Array.isArray(value)) {
+    const text = value
+      .map((entry) => (typeof entry === 'string' ? entry : ''))
+      .join('\n')
+      .trim();
+    return text ? parseSearchResultPayload(text, depth + 1) : null;
+  }
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  if (Array.isArray(record.results)) return record;
+  for (const key of ['result', 'data', 'payload', 'details'] as const) {
+    const nested = record[key];
+    if (nested && typeof nested === 'object') {
+      const parsed = parseSearchResultPayload(nested, depth + 1);
+      if (parsed) return parsed;
+    }
+  }
+  return record;
+}
+
+/**
+ * Runtime `web_search` results are folded onto the assistant turn as
+ * `_toolResults`, not as message.toolAttachments. Promote only the searches
+ * that carry real provider output so a rich source card never shows a
+ * fabricated/empty state; the compact execution-graph chip still owns the
+ * in-flight call row.
+ */
+function projectWebSearchInteractions(message: RawMessage, tools: MessageToolUse[]): ToolUiInteraction[] {
+  const results = message._toolResults;
+  if (!results || results.length === 0) return [];
+  const toolById = new Map(tools.map((tool) => [tool.id, tool]));
+  const seen = new Set<string>();
+  const interactions: ToolUiInteraction[] = [];
+  results.forEach((entry, index) => {
+    const tool = entry.toolCallId ? toolById.get(entry.toolCallId) : undefined;
+    const toolName = entry.toolName ?? tool?.name;
+    if (!isWebSearchToolName(toolName)) return;
+    const payload = parseSearchResultPayload(entry.result);
+    if (!payload) return;
+    const id = 'web-search-' + (entry.toolCallId || index + 1);
+    if (seen.has(id)) return;
+    seen.add(id);
+    const input = tool?.input && typeof tool.input === 'object' ? tool.input as Record<string, unknown> : undefined;
+    const raw = entry.result && typeof entry.result === 'object' && !Array.isArray(entry.result)
+      ? entry.result as Record<string, unknown>
+      : undefined;
+    const interaction = parseToolUiInteraction({
+      ...payload,
+      type: 'web-search',
+      id,
+      query: payload.query ?? raw?.query ?? input?.query,
+      provider: payload.provider ?? raw?.provider,
+      answer: payload.answer ?? raw?.answer,
+      truncated: payload.truncated ?? raw?.truncated,
+      results: Array.isArray(payload.results)
+        ? payload.results
+        : Array.isArray(payload.sources)
+          ? payload.sources
+          : [],
+      status: 'done',
+    }, id);
+    if (interaction?.type === 'web-search') interactions.push(interaction);
+  });
+  return interactions;
+}
+
 const projectionCache = new WeakMap<RawMessage, Map<string, MessageRenderProjection>>();
 
 function flagKey(flags: MessageRenderFlags): string {
@@ -228,9 +313,16 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
 
   const tools = extractToolUse(message);
   const visibleTools = suppressToolCards ? [] : tools;
-  const toolUiInteractions = isUser
+  const projectedToolUiInteractions = isUser
     ? parsed.interactions
-    : [...parsed.interactions, ...parseToolUiToolUses(tools.filter(isMessageCardTool))];
+    : [
+        ...parsed.interactions,
+        ...parseToolUiToolUses(tools.filter(isMessageCardTool)),
+        ...projectWebSearchInteractions(message, tools),
+      ];
+  const toolUiInteractions = Array.from(
+    new Map(projectedToolUiInteractions.map((interaction) => [interaction.type + ':' + interaction.id, interaction])).values(),
+  );
 
   const contentImages = extractImages(message).filter((img) => imageSrc(img) != null);
 

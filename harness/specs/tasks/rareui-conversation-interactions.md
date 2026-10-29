@@ -4,12 +4,14 @@ id: rareui-conversation-interactions
 title: Compact Rare UI interactions in conversations and workspace previews
 scenario: rareui-conversation-interactions
 taskType: implementation
-intent: Adapt six Rare UI interactions to existing session selection, turn navigation, Markdown preview, schedule editing, deletion confirmation, and completion activity without introducing runtime authority.
+intent: Adapt eight Rare UI interactions to existing session selection, turn navigation, Markdown preview, schedule editing, deletion confirmation, completion activity, web-search source display, and the Settings theme picker without introducing runtime authority.
 touchedAreas:
   - harness/specs/tasks/rareui-conversation-interactions.md
   - harness/specs/scenarios/rareui-conversation-interactions.md
   - harness/specs/rules/rareui-interaction-adaptation.md
   - src/components/rareui/**
+  - src/components/tool-ui/agent-interactions.tsx
+  - src/pages/Chat/message-render-projection.ts
   - src/components/chat/WorkspacePickerMenu.tsx
   - src/components/layout/Sidebar.tsx
   - src/components/layout/SidebarRow.tsx
@@ -20,6 +22,7 @@ touchedAreas:
   - src/pages/Chat/MessageNavRail.tsx
   - src/pages/Chat/ChatToolbar.tsx
   - src/pages/Cron/index.tsx
+  - src/pages/Settings/index.tsx
   - src/styles/rareui-interactions.css
   - src/styles/codex-sidebar.css
   - src/styles/globals.css
@@ -27,6 +30,7 @@ touchedAreas:
   - scripts/repository-artifacts.json
   - shared/i18n/locales/**
   - tests/e2e/rareui-interactions.spec.ts
+  - tests/e2e/settings-drawer.spec.ts
   - tests/unit/rareui-interactions.test.tsx
   - tests/unit/chat-message-nav-rail.test.tsx
   - docs/dev/rareui-interactions.md
@@ -42,6 +46,8 @@ expectedUserBehavior:
   - Schedule editing provides hours and minutes for daily, weekly, and monthly cron times and preserves untouched cron/every/at schedule fields through the existing host contract.
   - The animated delete affordance opens confirmation and cannot delete on its first click.
   - A bell in the persistent sidebar header, above the projects/conversations section, records completed activity, opens newest-first items, and navigates to the corresponding run or session.
+  - A completed runtime `web_search` tool result renders a search pill with a left-to-right progress fill and a source-card grid; the reference component's circular globe ring is not used.
+  - Settings > General shows a row of miniature app previews for Light, Dark, and System; selecting one applies the theme immediately, keeps one roving tab stop, and labels every option through i18n.
 requiredProfiles:
   - fast
   - e2e
@@ -55,15 +61,18 @@ requiredTests:
   - pnpm run typecheck
   - pnpm run build:vite
   - pnpm exec vitest run tests/unit/rareui-interactions.test.tsx tests/unit/chat-message-nav-rail.test.tsx
+  - pnpm exec vitest run tests/unit/rareui-web-search.test.tsx tests/unit/tool-ui-execution-surfaces.test.tsx
   - pnpm run test:e2e:run tests/e2e/rareui-interactions.spec.ts
 acceptance:
-  - All six interactions are reachable in production UI using existing stores and host calls.
+  - All seven interactions are reachable in production UI using existing stores and host calls.
   - Three turns do not show the proximity rail; four turns do, including prompt and assistant output previews.
   - The proximity rail sits at the sidebar/main-area boundary, targets only mounted message anchors, and preserves transcript scrolling, composer access, and readable content width.
   - Markdown heading IDs remain unique with duplicate labels, fenced code is absent from the TOC, and nested headings use a stepped rail.
   - Editing a schedule preserves its type and existing fields until the user explicitly changes them.
   - Failed deletion never displays a successful deletion state; opening or cancelling makes no delete host call.
   - Completion entries are sourced from completed runtime runs or existing assistant responses, not timers or fabricated progress.
+  - A web-search surface shows only provider-backed query/results, renders its sources as cards, and expresses progress as a left-to-right fill rather than the reference arc ring.
+  - Each theme miniature is drawn in the palette it depicts, including the split System preview, and switching the app theme never changes the miniature's own palette.
   - Light, dark, narrow, keyboard, and reduced-motion states are verified in real Electron screenshots marked driven_by agent.
   - Copied Rare UI source retains its copyright, full license, and visible project attribution.
 docs:

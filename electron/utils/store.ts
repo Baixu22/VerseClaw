@@ -162,6 +162,8 @@ export interface AppSettings {
   sessionActivityShowGit: boolean;
   sessionActivityShowCommands: boolean;
   sessionRecoveryNotificationsEnabled: boolean;
+  /** System-level completion, error and approval reminders; independent of in-app toasts. */
+  desktopNotificationsEnabled: boolean;
   sessionActivityRetentionMinutes: 0 | 5 | 15;
   promptCacheRiskLedger: PromptCacheRiskEvent[];
   sessionDelegationAdmissions?: StoredSessionDelegationAdmission[];
@@ -236,6 +238,7 @@ function createDefaultSettings(): AppSettings {
     sessionActivityShowGit: true,
     sessionActivityShowCommands: true,
     sessionRecoveryNotificationsEnabled: true,
+    desktopNotificationsEnabled: true,
     sessionActivityRetentionMinutes: 5,
     promptCacheRiskLedger: [],
     sensitiveCapturePolicy: DEFAULT_SENSITIVE_CAPTURE_POLICY,

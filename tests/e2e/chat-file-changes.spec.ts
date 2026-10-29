@@ -1,6 +1,9 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
+const LONG_SEGMENT = 'path-token-'.repeat(24);
+const OLD_LINE = `const value = "before-${LONG_SEGMENT}";`;
+const NEW_LINE = `const value = "after-${LONG_SEGMENT}";`;
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -34,11 +37,11 @@ const editPatchResult = {
         newStart: 1,
         newLines: 1,
         lines: [
-          { kind: 'deletion', text: 'const value = 1', oldLine: 1, newLine: null },
-          { kind: 'addition', text: 'const value = 2', oldLine: null, newLine: 1 },
+          { kind: 'deletion', text: OLD_LINE, oldLine: 1, newLine: null },
+          { kind: 'addition', text: NEW_LINE, oldLine: null, newLine: 1 },
         ],
       }],
-      patch: ['--- demo.ts', '+++ demo.ts', '@@ -1,1 +1,1 @@', '-const value = 1', '+const value = 2'].join('\n'),
+      patch: ['--- demo.ts', '+++ demo.ts', '@@ -1,1 +1,1 @@', `-${OLD_LINE}`, `+${NEW_LINE}`].join('\n'),
       completeness: 'complete',
       lineage: { requestId: 'edit-1', journalEntryId: 'write-journal:session:1' },
     }],
@@ -64,8 +67,8 @@ const history = [
       name: 'Edit',
       arguments: {
         file_path: 'demo.ts',
-        old_string: 'const value = 1\n',
-        new_string: 'const value = 2\n',
+        old_string: `${OLD_LINE}\n`,
+        new_string: `${NEW_LINE}\n`,
       },
     }],
     _toolResults: [editPatchResult],
@@ -119,7 +122,7 @@ const htmlFileHistory = [
   },
 ];
 test.describe('Verse Claw chat file changes', () => {
-  test('shows line stats on generated file cards', async ({ launchElectronApp }) => {
+  test('shows line stats on generated file cards', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -191,6 +194,23 @@ test.describe('Verse Claw chat file changes', () => {
       await expect(fileDiff).toContainText('demo.ts');
       await expect(fileDiff).toContainText('+1');
       await expect(fileDiff).toContainText('-1');
+
+      await page.setViewportSize({ width: 640, height: 1200 });
+      await fileDiff.scrollIntoViewIfNeeded();
+      const details = fileDiff.locator('xpath=ancestor::*[@data-testid="chat-turn-summary-details"][1]');
+      await expect(details).toBeVisible();
+      const cardBox = await fileDiff.boundingBox();
+      const detailsBox = await details.boundingBox();
+      expect(cardBox).not.toBeNull();
+      expect(detailsBox).not.toBeNull();
+      expect(cardBox!.x).toBeGreaterThanOrEqual(detailsBox!.x - 1);
+      expect(cardBox!.x + cardBox!.width).toBeLessThanOrEqual(detailsBox!.x + detailsBox!.width + 1);
+      const diffContent = fileDiff.getByTestId('code-diff-content');
+      expect(await diffContent.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      expect(await page.getByTestId('chat-scroll-container').evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+      const narrowPath = testInfo.outputPath('chat-git-diff-narrow.png');
+      await details.screenshot({ path: narrowPath });
+      await testInfo.attach('chat-git-diff-narrow', { path: narrowPath, contentType: 'image/png' });
     } finally {
       await closeElectronApp(app);
     }

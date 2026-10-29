@@ -19,7 +19,7 @@ export const NotificationBell = forwardRef<HTMLButtonElement, ComponentProps<'bu
     }, [total, reduced, swing]);
     return (
       <button ref={ref} type="button" {...props} data-slot="notification-bell" className={cn('rare-notification-bell', className)}>
-        <motion.svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" width="16" height="16" aria-hidden="true" style={{ rotate: swing, transformOrigin: '50% 10%' }}>
+        <motion.svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.65} strokeLinecap="round" strokeLinejoin="round" width="15" height="15" aria-hidden="true" style={{ rotate: swing, transformOrigin: '50% 10%' }}>
           <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
           <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
         </motion.svg>

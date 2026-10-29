@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "iteration": 2,
+  "date": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "scope": "Conversation diff/output preview refinement in a Windows source build; deterministic automated histories.",
+  "baseCommit": "0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6",
+  "delivery": "Uncommitted local source changes; no release or public publication.",
+  "changes": [
+    "Long replacements preview both old and new lines using the installed diff renderer; expansion restores the complete caller-selected layout.",
+    "Neutral app surface tokens replace solid red/green blocks and the mismatched black diff canvas; explicit +/- markers distinguish edits.",
+    "Preview line height and padding align to complete rows; both diff and command regions support native keyboard scrolling.",
+    "Command previews open at the latest result; streaming follows the tail only while the reader remains there.",
+    "Retention notices remain visible outside the log scroll region; all retained text remains copyable."
+  ],
+  "gates": {
+    "unit": {
+      "exitCode": 0,
+      "filesPassed": 2,
+      "testsPassed": 19,
+      "failed": 0
+    },
+    "electron": {
+      "exitCode": 0,
+      "startTime": "2026-10-29T05:07:04.395Z",
+      "duration": 72441.045,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "typecheckWeb": {
+      "exitCode": 0
+    },
+    "typecheckTests": {
+      "exitCode": 0
+    },
+    "i18n": {
+      "exitCode": 0,
+      "locales": [
+        "en",
+        "zh",
+        "ja",
+        "ru"
+      ]
+    },
+    "build": {
+      "exitCode": 0,
+      "command": "pnpm run build:vite"
+    },
+    "lint": {
+      "exitCode": 0,
+      "errors": 0,
+      "unchangedWarnings": 9
+    },
+    "harness": {
+      "validationExitCode": 0,
+      "dryRunExitCode": 0,
+      "diffChecked": true,
+      "since": "HEAD",
+      "isolated": true,
+      "dependenciesReused": true
+    }
+  },
+  "visualReview": {
+    "actor": "codex",
+    "states": [
+      "desktop light",
+      "desktop dark",
+      "640px narrow",
+      "expanded tool details"
+    ],
+    "result": "Both replacement versions visible; terminal summary visible; controls stay inside surfaces; code and card backgrounds match in both themes."
+  },
+  "images": [
+    {
+      "file": "diff-light.png",
+      "width": 777,
+      "height": 327,
+      "bytes": 38405,
+      "sha256": "c6b3771267dcb134a6eca01d3c0ad886a7f3f55ae0539879154620821002988a"
+    },
+    {
+      "file": "terminal-light.png",
+      "width": 777,
+      "height": 303,
+      "bytes": 28058,
+      "sha256": "5d70cbd5043bddc9944bab6c26cf7b92727bd7758e36d998a312c69d87a307b0"
+    },
+    {
+      "file": "tool-ui-execution-light.png",
+      "width": 821,
+      "height": 1119,
+      "bytes": 200314,
+      "sha256": "b9f1a0f235d719bd85cc76e8584287db19e463df47116ad560c589e76048b921"
+    },
+    {
+      "file": "tool-ui-execution-dark.png",
+      "width": 821,
+      "height": 1119,
+      "bytes": 225950,
+      "sha256": "c87db556d96e1efee94aa73ecc7601831e38381f026484b99d7a697223dfebf7"
+    },
+    {
+      "file": "tool-ui-execution-640.png",
+      "width": 534,
+      "height": 1119,
+      "bytes": 163867,
+      "sha256": "41456b28a678d8dc70ad5033268086b4d73df74d9066cb26523829e91876d490"
+    },
+    {
+      "file": "turn-process-expanded.png",
+      "width": 544,
+      "height": 461,
+      "bytes": 97847,
+      "sha256": "54f4579559ce8e431153a2d91b9a878ba66a4c2a428e31684a6f5f2518fd740f"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "ae4b59080a7e73f3d3888dd688fafc100467cba55ff1794fbb327967f31dfeae"
+    },
+    {
+      "file": "README.md",
+      "sha256": "444ac2ffbc53a7612b3683902c6fe129b9db81b592a4126845cee4f86e1a3120"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "da1a20591a3fc9fa0f202f2a05c492a313cf3d73d227875305d9e2d1cc056beb"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "7a913613985f04491ff4534bfe75f32231460baf5a07e1b6f9e7f3002c419ab8"
+    },
+    {
+      "file": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "167b027f667f774c75adecd25176c5d4715a67c87efcb0f1b35a7cab20eb59b6"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "sha256": "d8aeb5f79002b3c51025fdc3c2eb3b37eee6a168d16a99f59062eb0a04785f15"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "sha256": "406ca4b465b3cd9d1930e43c8684cac870dfd201d3092405b97dc52563be0b77"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "sha256": "ed307e8670f26e4ab1c5de468cdded94c731ed29f05c0f00e68c91a4f521886a"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "sha256": "8305e730ea066503e280b22387e3e4c6b4e8c00605017e52d4fa07c41ac6b566"
+    },
+    {
+      "file": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "5b636efd0cbbbdf97b9fe83bd4f77f2b1cd567170f05a213d1094b0a98fe97d4"
+    },
+    {
+      "file": "src/components/tool-ui/RunMutationDiffs.tsx",
+      "sha256": "5ba1c9fdb2675f7874a324e119fed95cd8dc332271613faf81e0d99478afcdb1"
+    },
+    {
+      "file": "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "sha256": "b5b93a69825596695f15940dfcfea51f25edc0c9a745d86928df39f51b976146"
+    },
+    {
+      "file": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "d2fcb07426d34af0025aa9048dc10b865e29e857f7b173fcd8d6b7e8171ed86f"
+    },
+    {
+      "file": "src/components/tool-ui/code-diff/code-diff.tsx",
+      "sha256": "29bb6d78a2a1b2800eeab3205e7017f69ec8642ae71e08fea804220d6f551b3c"
+    },
+    {
+      "file": "src/components/tool-ui/terminal/terminal.tsx",
+      "sha256": "432939a3034b315943ef272c3ecebb7ee452fe290c922066d106556450f40c06"
+    },
+    {
+      "file": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "fe1f05c5120962ac8bbc7a0533245a4b9d1ec3a6ae2e119af78c190d3f87387b"
+    },
+    {
+      "file": "src/styles/codex-conversation.css",
+      "sha256": "332cfbf7c30f4cb2ab05ebbdffb86039c6ed0a499b1881741625df8071d4a560"
+    },
+    {
+      "file": "tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+      "sha256": "81a304e96aa49431d626bd4d56d5e2250f171e82d9b0932232f56c093b2ed257"
+    },
+    {
+      "file": "tests/e2e/chat-turn-summary-collapse.spec.ts",
+      "sha256": "785a8559889ace7a5fdca9b13271ef489240439ef9e3b5b67e45ed6d40da1ac7"
+    },
+    {
+      "file": "tests/unit/execution-graph-card-badge.test.tsx",
+      "sha256": "a8635aa624c56684179b726bb52e449868c164acea8b64a99088cfe1976f2f96"
+    },
+    {
+      "file": "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "sha256": "3a0775c552c5330e39a332d3ba7f52a3b40d5237175197e5a9611f738598a9dc"
+    },
+    {
+      "file": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "4be90aa9c71fa3cc92e83f46fc65fa3b958be1319897ca67f506b04a715dfa33"
+    }
+  ],
+  "historicalEvidence": {
+    "report": "../report.json",
+    "sha256": "3caaefab6b2c1a346b44852fb27feffc671bf81bc70805a7bd06df3b99eecabe",
+    "note": "Iteration 1 is preserved as historical evidence and does not validate the revised source."
+  },
+  "priorAttemptCorrection": "The first final run passed all six assertions but exited 1 because the agent normalized a README trailing newline during execution. The complete suite was rerun with source frozen; this report requires exit 0 and no global errors.",
+  "limitations": [
+    "Agent-driven fixture evidence, not live-provider quality or real-human evidence.",
+    "No packaged/install-state or full-project release acceptance claim.",
+    "Nine existing compound-component Fast Refresh warnings remain unchanged."
+  ]
+}

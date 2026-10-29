@@ -1739,6 +1739,12 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/rareui-interactions/screenshots/markdown-toc-dark.png
 !/docs/dev/evidence/rareui-interactions/screenshots/markdown-toc-light.png
 !/docs/dev/evidence/rareui-interactions/screenshots/session-hook-light.png
+!/docs/dev/evidence/rareui-interactions/screenshots/theme-selector-dark.png
+!/docs/dev/evidence/rareui-interactions/screenshots/theme-selector-en-dark.png
+!/docs/dev/evidence/rareui-interactions/screenshots/theme-selector-keyboard-focus.png
+!/docs/dev/evidence/rareui-interactions/screenshots/theme-selector-light.png
+!/docs/dev/evidence/rareui-interactions/screenshots/theme-selector-narrow-1000.png
+!/docs/dev/evidence/rareui-interactions/theme-selector-results.json
 !/docs/dev/first-product-controlled-preview/DEFINITION-OF-DONE.md
 !/docs/dev/first-product-controlled-preview/FP-P0-EXIT-ACCEPTANCE.md
 !/docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md

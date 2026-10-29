@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useId, useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Ansi from "ansi-to-react";
 import {
@@ -43,6 +43,7 @@ type TerminalOutputProps = Pick<
   isCollapsed: boolean;
   shouldCollapse: boolean;
   lineCount: number;
+  previewLines: number;
   onToggleCollapse: () => void;
 };
 
@@ -53,7 +54,7 @@ function formatDuration(durationMs?: number): string | null {
 }
 
 function countOutputLines(output: string): number {
-  const trimmedTrailingNewlines = output.replace(/\n+$/, "");
+  const trimmedTrailingNewlines = output.replace(/(?:\r?\n)+$/, "");
   if (!trimmedTrailingNewlines) return 0;
   return trimmedTrailingNewlines.split("\n").length;
 }
@@ -69,30 +70,28 @@ function TerminalHeader({
 }: TerminalHeaderProps) {
   const { t } = useTranslation("chat");
   return (
-    <div className="bg-surface-modal flex min-w-0 items-center justify-between gap-2 border-b border-border/70 px-3 py-2">
-      <div className="flex items-center gap-2 overflow-hidden">
-        <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" />
-        <code className="text-foreground truncate font-mono text-xs">
-          {cwd && <span className="text-muted-foreground">{cwd}$ </span>}
-          {command}
-        </code>
+    <div className="bg-surface-modal flex min-w-0 items-center gap-3 border-b border-border/70 px-3 py-2">
+      <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" aria-hidden="true" />
+      <div className="min-w-0 flex-1">
+        <code className="text-foreground block truncate font-mono text-xs leading-5" title={command}>{command}</code>
+        {cwd && <div className="truncate font-mono text-[11px] leading-4 text-muted-foreground" title={cwd}>{cwd}</div>}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
         {formattedDuration && (
-          <span className="text-muted-foreground font-mono text-sm tabular-nums">
+          <span className="text-muted-foreground font-mono text-[11px] tabular-nums">
             {formattedDuration}
           </span>
         )}
         {exitCode != null && (
           <span
             className={cn(
-              "font-mono text-sm tabular-nums",
+              "text-xs tabular-nums",
               exitCode === 0
                 ? "text-muted-foreground"
-                : "text-red-600 dark:text-red-400",
+                : "text-red-700 dark:text-red-400",
             )}
           >
-            {exitCode}
+            {t("toolUi.terminal.exitCode", { code: exitCode })}
           </span>
         )}
         <Button
@@ -100,7 +99,7 @@ function TerminalHeader({
           size="sm"
           onClick={onCopy}
           disabled={!hasOutput}
-          className="h-7 w-7 p-0"
+          className="h-7 w-7 shrink-0 p-0"
           aria-label={
             !hasOutput
               ? t("toolUi.terminal.noOutputToCopy")
@@ -127,43 +126,67 @@ function TerminalOutput({
   isCollapsed,
   shouldCollapse,
   lineCount,
+  previewLines,
   onToggleCollapse,
 }: TerminalOutputProps) {
   const { t } = useTranslation("chat");
+  const contentId = useId();
+  const outputRef = useRef<HTMLDivElement>(null);
+  const followingOutput = useRef(true);
+  const wasCollapsed = useRef(isCollapsed);
+  useLayoutEffect(() => {
+    const node = outputRef.current;
+    if (node && isCollapsed && (followingOutput.current || !wasCollapsed.current)) {
+      node.scrollTop = node.scrollHeight;
+    }
+    wasCollapsed.current = isCollapsed;
+  }, [isCollapsed, stdout, stderr]);
+
   return (
     <div>
-      <div
-        className={cn(
-          "relative font-mono text-sm",
-          isCollapsed && "max-h-[200px] overflow-hidden",
-        )}
-      >
-        <div className="overflow-x-auto p-4">
-          {stdout && (
-            <div className="text-foreground whitespace-pre">
-              <Ansi>{stdout}</Ansi>
-            </div>
-          )}
-          {stderr && (
-            <div className="mt-2 whitespace-pre text-red-500 dark:text-red-400">
-              <Ansi>{stderr}</Ansi>
-            </div>
-          )}
-          {truncated && (
-            <div className="text-muted-foreground mt-2 text-xs italic">
-              {t("toolUi.terminal.truncated")}
-            </div>
-          )}
+      <div className="px-3 py-2">
+        <div
+          ref={outputRef}
+          id={contentId}
+          role="region"
+          aria-label={t("toolUi.terminal.output")}
+          tabIndex={0}
+          data-testid="terminal-output"
+          className="overflow-auto overscroll-contain font-mono text-xs leading-5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
+          style={{ maxHeight: isCollapsed ? previewLines * 20 : undefined }}
+          onScroll={(event) => {
+            const node = event.currentTarget;
+            followingOutput.current = node.scrollHeight - node.scrollTop - node.clientHeight < 4;
+          }}
+        >
+          <div className="min-w-max">
+            {stdout && (
+              <div className="text-foreground whitespace-pre">
+                <Ansi>{stdout}</Ansi>
+              </div>
+            )}
+            {stderr && (
+              <div className="mt-2 whitespace-pre text-red-700 dark:text-red-400">
+                <Ansi>{stderr}</Ansi>
+              </div>
+            )}
+          </div>
         </div>
-
       </div>
+
+      {truncated && (
+        <p className="px-3 pb-2 text-xs text-muted-foreground">
+          {t("toolUi.terminal.truncated")}
+        </p>
+      )}
 
       {shouldCollapse && (
         <Button
           variant="ghost"
           onClick={onToggleCollapse}
-          className="text-muted-foreground w-full rounded-none border-t font-normal"
+          className="text-muted-foreground h-8 w-full rounded-none border-t border-border/70 text-xs font-normal"
           aria-expanded={!isCollapsed}
+          aria-controls={contentId}
         >
           {isCollapsed ? (
             <>
@@ -185,7 +208,7 @@ function TerminalOutput({
 function TerminalEmpty() {
   const { t } = useTranslation("chat");
   return (
-    <div className="text-muted-foreground px-4 py-3 font-mono text-sm italic">
+    <div className="text-muted-foreground px-3 py-3 font-mono text-xs">
       {t("toolUi.terminal.empty")}
     </div>
   );
@@ -243,7 +266,7 @@ function TerminalRoot({
       data-tool-ui-id={id}
       data-slot="terminal"
     >
-      <div className="border-border bg-surface-input overflow-hidden rounded-md border">
+      <div className="border-border/70 bg-surface-input min-w-0 overflow-hidden rounded-lg border">
         <TerminalHeader
           command={command}
           cwd={cwd}
@@ -262,6 +285,7 @@ function TerminalRoot({
             isCollapsed={isCollapsed}
             shouldCollapse={shouldCollapse}
             lineCount={lineCount}
+            previewLines={maxCollapsedLines ?? 10}
             onToggleCollapse={() => setExpanded(!isExpanded)}
           />
         )}

@@ -83,6 +83,9 @@ vi.mock('@/lib/host-api', () => ({
     dialog: {
       open: vi.fn(async () => ({ canceled: true, filePaths: [] })),
     },
+    window: {
+      notify: vi.fn(async () => ({ success: true })),
+    },
     usage: {
       contextRange: vi.fn(async () => ({ usedTokens: 0, maxTokens: 0, percentage: 0 })),
       live: vi.fn(async () => ({ input: 0, output: 0, total: 0, costUsd: 0 })),
@@ -886,7 +889,9 @@ describe('Chat execution graph lifecycle', () => {
       expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
     });
 
-    expect(screen.queryByText('demo.ts')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('demo.ts');
+    expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('+1 -1');
+    expect(screen.queryByTestId('chat-generated-files')).not.toBeInTheDocument();
   });
 
   it('shows a scroll-to-latest button when the chat is scrolled away from the bottom', async () => {

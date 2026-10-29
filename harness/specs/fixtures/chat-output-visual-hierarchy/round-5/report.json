@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "iteration": 5,
+  "date": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed-with-concurrent-write-caveat",
+  "parent": "round-4",
+  "baseCommit": "0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6",
+  "delivery": "Uncommitted local source changes; no release or public publication.",
+  "scope": "ReactBits-inspired tool-call chips in the conversation execution graph, with status/progress/duration and narrow-width containment.",
+  "designSource": "https://www.reactbits.dev/micro/call-chip?status=done",
+  "changes": [
+    "Added a local CallChip primitive adapted from ReactBits CallChip, using existing lucide icons and ClawX design tokens rather than adding the Hugeicons dependency.",
+    "ExecutionGraphCard renders tool calls as compact call chips with a leading status glyph, target/detail preview, progress wash, measured duration and a disclosure chevron.",
+    "ToolStatusBar uses the same chip so streaming and completed tool invocations share one visual language.",
+    "Runtime tool events now carry startedAt/durationMs where timestamps or command durations are available; history rows remain untimed when no honest duration exists.",
+    "Call chips remain content-width with max-width containment; the narrow E2E check verifies the long exec chip does not overflow its scroll container."
+  ],
+  "gates": {
+    "unit": {
+      "exitCode": 0,
+      "filesPassed": 6,
+      "testsPassed": 136,
+      "failed": 0
+    },
+    "electron": {
+      "exitCode": 1,
+      "testsPassed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "commandNote": "11-test required suite passed with zero test failures; chat-task narrow-call-chip test passed separately. The aggregate process exited 1 only because the workspace source-mutation guard observed another concurrent workstream writing tracked files during the run.",
+      "toolUiRepeat": {
+        "repeats": 3,
+        "passed": 3
+      }
+    },
+    "typecheckWeb": {
+      "exitCode": 0
+    },
+    "typecheckTest": {
+      "exitCode": 0
+    },
+    "i18n": {
+      "exitCode": 0,
+      "locales": [
+        "en",
+        "zh",
+        "ja",
+        "ru"
+      ]
+    },
+    "build": {
+      "exitCode": 0,
+      "command": "pnpm run build:vite"
+    },
+    "lint": {
+      "exitCode": 0,
+      "errors": 0,
+      "callChipWarnings": 0,
+      "note": "CallChip, ExecutionGraphCard, ChatMessage, task-visualization and the focused E2E/unit files have zero ESLint findings."
+    },
+    "harness": {
+      "validationExitCode": 0,
+      "dryRunExitCode": 0,
+      "isolated": true,
+      "since": "HEAD"
+    }
+  },
+  "visualReview": {
+    "actor": "codex",
+    "states": [
+      "desktop light execution graph",
+      "640px narrow execution graph",
+      "640px dark execution graph"
+    ],
+    "result": "Completed tool calls render as green-washed chips with a check glyph, a compact target, a disclosure chevron and measured duration where available. The long exec chip stays inside the graph column at narrow width in light and dark themes."
+  },
+  "images": [
+    {
+      "file": "assistant-ui-ghost-execution-graph.png",
+      "width": 1196,
+      "height": 588,
+      "bytes": 278392,
+      "sha256": "1aae51a15119f4d63bcd8e44202eeb3933494afe15e4a7e2bcbb2045d2a67b33"
+    },
+    {
+      "file": "assistant-ui-call-chip-narrow.png",
+      "width": 510,
+      "height": 392,
+      "bytes": 102413,
+      "sha256": "cf5fefff9352e56bda264fdf878ff8596b3f416a464715fe623d05a2f3ecbfd1"
+    },
+    {
+      "file": "assistant-ui-call-chip-dark.png",
+      "width": 510,
+      "height": 392,
+      "bytes": 86521,
+      "sha256": "a924e6e23c3a8d887b63479d6b6b27645ca2cb2d163d08f65a3d61615c03e2ce"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "src/components/tool-ui/shared/call-chip.tsx",
+      "sha256": "2b810282ea10184b3bc8617ac49e83e47b15b0fe970c3c82793d8c83e070e04f"
+    },
+    {
+      "file": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "838bf4c050e0e6dfd3456bbeff8cf1b8eb0ac50a276ad4e79bd28a95140ee41c"
+    },
+    {
+      "file": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "fd69e0baad59c89cc067780637d3b1f32752b72202986f16f1eb183d3d751f0b"
+    },
+    {
+      "file": "src/pages/Chat/task-visualization.ts",
+      "sha256": "16c1b5a02155c147c4f5a0ae71c29cdf74965c5c554b41bee1019988b0a21a08"
+    },
+    {
+      "file": "tests/e2e/chat-task-visualizer.spec.ts",
+      "sha256": "d67c4569dacbe0c26fd4e068d13250d761f8dfc4aa0b628e9bd7a5e9d3e6b311"
+    },
+    {
+      "file": "tests/unit/execution-graph-card-badge.test.tsx",
+      "sha256": "b7a42b3475e7ea7bc49ed2899f7efb3723150b53e7d0df2d2e9cf16eb841cfb4"
+    },
+    {
+      "file": "tests/unit/chat-page-execution-graph.test.tsx",
+      "sha256": "d7473bdb0d526ebe06fdaa2fb4fed266af439f83fa34abbceb0b6fd86d825a63"
+    },
+    {
+      "file": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "200bd55f44c4c0674173fb9aee38e715139e4e01d9e8db3d0656beb6d6230642"
+    },
+    {
+      "file": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "11dfd68b0bba4eafd8b241cbe29cab1fba9f3111121d3c4425172752c9bfe22c"
+    },
+    {
+      "file": "README.md",
+      "sha256": "e096e5b049f7daf6c01ddd0d3523a1932e39332c2eef4120040eda9b00e57b05"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "21a5d8a0573721cf9d64194349780b9cce3ac2d26ca731b74ba9348ab365ae2e"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "dcca1498bf2490d4b083481b1e1143d81b108fdb53843f6414ec8a31a5fb755c"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "a8ab470892314349a7144a0e3d7c525effa383da59c9b52d1613a536f820bcab"
+    }
+  ]
+}

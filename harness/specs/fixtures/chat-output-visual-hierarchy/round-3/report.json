@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "iteration": 3,
+  "date": "2026-10-29",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "parent": "round-2",
+  "baseCommit": "0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6",
+  "delivery": "Uncommitted local source changes; no release or public publication.",
+  "scope": "Inline git mutation diff width containment and narrow-preview wrapping in a Windows source build; deterministic automated history.",
+  "changes": [
+    "RunMutationDiffs now owns an explicit full-width, zero-min-width, clipped column so the diff cannot escape the turn disclosure.",
+    "CodeDiff propagates max-width and min-width through its header, content and Pierre renderer container.",
+    "Short and collapsed previews use Pierre wrap layout, so long unbroken code tokens stay inside the card; an explicitly expanded diff keeps internal horizontal scrolling.",
+    "The E2E fixture now includes a long unbroken replacement and asserts the card stays inside chat-turn-summary-details at 640px viewport width.",
+    "The task spec, scenario and four root READMEs describe the contained preview behavior."
+  ],
+  "gates": {
+    "unit": {
+      "exitCode": 0,
+      "filesPassed": 5,
+      "testsPassed": 126,
+      "failed": 0
+    },
+    "electron": {
+      "exitCode": 0,
+      "expected": 9,
+      "passed": 9,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "typecheckWeb": {
+      "exitCode": 0
+    },
+    "typecheckTest": {
+      "exitCode": 0
+    },
+    "i18n": {
+      "exitCode": 0,
+      "locales": [
+        "en",
+        "zh",
+        "ja",
+        "ru"
+      ]
+    },
+    "build": {
+      "exitCode": 0,
+      "command": "pnpm run build:vite"
+    },
+    "lint": {
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 5,
+      "note": "react-refresh warnings in the existing multi-export code-diff module"
+    },
+    "harness": {
+      "validationExitCode": 0,
+      "dryRunExitCode": 0,
+      "isolated": true,
+      "since": "HEAD"
+    }
+  },
+  "visualReview": {
+    "actor": "codex",
+    "states": [
+      "640px narrow, light",
+      "long unbroken replacement",
+      "short diff without disclosure"
+    ],
+    "result": "The diff card stays inside the turn disclosure, long preview lines wrap to the next row, and both the diff region and conversation scroller report no horizontal overflow."
+  },
+  "images": [
+    {
+      "file": "git-diff-narrow.png",
+      "width": 532,
+      "height": 425,
+      "bytes": 49522,
+      "sha256": "431b94c77d48e9b326e6aab3969e70b1d63faf62289a32c6e7a1a0a27715f689"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "src/components/tool-ui/RunMutationDiffs.tsx",
+      "sha256": "2953720d1cd2d9f2d5fecb9fb42c1e9ed34f99b9fd822e99f330292f9413ebfa"
+    },
+    {
+      "file": "src/components/tool-ui/code-diff/code-diff.tsx",
+      "sha256": "8fb52c9cc8926eeb0930ac443e7e63b9cf25bd80ef98664f6b33e863cbc51d93"
+    },
+    {
+      "file": "src/styles/codex-conversation.css",
+      "sha256": "2620ebb084fe9c59930cd65f08132396e510f6fbcf943c3802063e7f47ce8ba4"
+    },
+    {
+      "file": "tests/e2e/chat-file-changes.spec.ts",
+      "sha256": "09eca22ba33256a42bddc7845c036e10667142d1104e9ca5927ae85877c8064c"
+    },
+    {
+      "file": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "59e757c152c48d36043b4c6792e8e008a651bbafd8f09c28a5b0d352f15e1c93"
+    },
+    {
+      "file": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "1d1b28fd5a18bd72408ab99b52b4823bd1a367893caf9a09efa58794980162ed"
+    },
+    {
+      "file": "README.md",
+      "sha256": "df3005c116fac1596b209cbbde60727ac21f80249a15cad81c4cd4a298330197"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "d0f6406b169414cfb81318b0a1648606006185a43cf7d127ce22400eb69fb931"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "205b196abf80972694bc1dd69d58ab58730cf09439284c1060cb118649c37308"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "a7b9f270be4aceaff91d35adef1727004d03828df9e49324d01cffaeb27157ae"
+    }
+  ]
+}

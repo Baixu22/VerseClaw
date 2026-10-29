@@ -1,0 +1,42 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "surface": "ego-browser (Chromium 156)",
+  "captured_at": "2026-10-29",
+  "environment": "Renderer production build served by vite preview; browser-only mock host bridge (?mock=1)",
+  "product_locks": "unchanged",
+  "interactions": {
+    "selection": "Light, Dark and System each apply documentElement class and persist to verse-claw-settings",
+    "keyboard": "ArrowRight/Left wrap, Home/End jump, one roving tab stop, :focus-visible ring resolved to color-border-focus",
+    "persistence": "localStorage state.theme tracked the selection after each change",
+    "i18n": "labels rendered as 浅色/深色/跟随系统 in zh and Light/Dark/System in en through the real language selector",
+    "layout": "no horizontal overflow at 1695, 1000 and 820 CSS px; three cards fit within the settings row",
+    "palettes": "light miniature rgb(237,240,243), dark miniature rgb(43,43,46), System rendered two panes"
+  },
+  "screenshots": [
+    {
+      "file": "screenshots/theme-selector-dark.png",
+      "sha256": "0714b1570b5611ec8d1259bedd4a283ebd5cfe4998527c9ae0ab5c7b4d1ae9af"
+    },
+    {
+      "file": "screenshots/theme-selector-light.png",
+      "sha256": "0a0abb60a8596b390b5e6418aa844016b58165c2feba049396dc2c18f66344f2"
+    },
+    {
+      "file": "screenshots/theme-selector-keyboard-focus.png",
+      "sha256": "fa910e903e1cad6a03279e75bd5cfa593b69116688598d8def7d48b6c07b0801"
+    },
+    {
+      "file": "screenshots/theme-selector-narrow-1000.png",
+      "sha256": "d56473015820becb6c07ea00f9f130f790e8bff81a857510b5b4dec47d8b42fb"
+    },
+    {
+      "file": "screenshots/theme-selector-en-dark.png",
+      "sha256": "d0c70d58d34d5c49353dd4cc861e2222146446fb28d0a159c3f7b0a07ae3dbbd"
+    }
+  ],
+  "not_verified": [
+    "Electron-hosted window rendering: this shell has no interactive desktop session, so Electron cannot create a window (Notepad also reports MainWindowHandle=0).",
+    "Real-human review of the visual result."
+  ]
+}

@@ -1238,20 +1238,22 @@ export function Sidebar() {
             </span>
           </div>
         )}
-        <CompletionActivityMenu />
-        <button
-          type="button"
-          data-testid="sidebar-collapse-toggle"
-          aria-label={t(sidebarCollapsed ? 'sidebar.expandSidebar' : 'sidebar.collapseSidebar')}
-          className="icon-button no-drag shrink-0"
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-        >
-          {sidebarCollapsed ? (
-            <PanelLeft className="h-4 w-4" />
-          ) : (
-            <PanelLeftClose className="h-4 w-4" />
-          )}
-        </button>
+        <div className="sidebar-heading-actions ml-auto flex shrink-0 items-center gap-[2px]">
+          <CompletionActivityMenu />
+          <button
+            type="button"
+            data-testid="sidebar-collapse-toggle"
+            aria-label={t(sidebarCollapsed ? 'sidebar.expandSidebar' : 'sidebar.collapseSidebar')}
+            className="icon-button no-drag shrink-0"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          >
+            {sidebarCollapsed ? (
+              <PanelLeft className="h-4 w-4" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Navigation — `.primary-nav` recipe: 32px rows, 13.5px/430 labels,

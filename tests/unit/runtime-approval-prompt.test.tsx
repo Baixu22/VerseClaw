@@ -33,6 +33,8 @@ vi.mock('react-i18next', () => ({
       'runtimeApprovals.description': 'The runtime paused before running this command.',
       'runtimeApprovals.commandLabel': 'Command',
       'runtimeApprovals.cwdLabel': 'Working directory',
+      'runtimeApprovals.copyCommand': 'Copy command',
+      'runtimeApprovals.commandCopied': 'Command copied',
       'runtimeApprovals.unknownCommand': '(the runtime did not report a command)',
       'runtimeApprovals.allowOnce': 'Allow once',
       'runtimeApprovals.allowAlways': 'Always allow',
@@ -64,14 +66,133 @@ beforeEach(() => {
 });
 
 describe('RuntimeApprovalPrompt', () => {
+  it('replaces only the owning session composer and restores the same draft input', async () => {
+    const composer = <textarea aria-label="Draft" defaultValue="Keep this draft" />;
+    const { rerender } = render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main">{composer}</RuntimeApprovalPrompt>);
+    const input = screen.getByRole('textbox', { name: 'Draft' });
+    fireEvent.change(input, { target: { value: 'Keep my edited draft and attachment' } });
+    await act(async () => {
+      mocks.requested.current?.({ ...requestedEvent, approvalId: 'other', sessionKey: 'agent:main:other', command: 'other command' });
+    });
+    expect(input).toBeVisible();
+    expect(screen.queryByTestId('runtime-approval-prompt')).toBeNull();
+    await act(async () => { mocks.requested.current?.(requestedEvent); });
+    expect(input).not.toBeVisible();
+    expect(input.parentElement).toHaveAttribute('inert');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByTestId('runtime-approval-command')).toHaveTextContent('node --test');
+
+    rerender(<RuntimeApprovalPrompt sessionKey="agent:main:other" agentId="main">{composer}</RuntimeApprovalPrompt>);
+    expect(screen.getByTestId('runtime-approval-command')).toHaveTextContent('other command');
+    fireEvent.click(screen.getByTestId('runtime-approval-deny'));
+    await waitFor(() => expect(input).toBeVisible());
+    expect(mocks.resolve).toHaveBeenCalledWith({ approvalId: 'other', decision: 'deny' });
+    expect(screen.getByRole('textbox', { name: 'Draft' })).toBe(input);
+    expect(input).toHaveValue('Keep my edited draft and attachment');
+
+    rerender(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main">{composer}</RuntimeApprovalPrompt>);
+    expect(input).not.toBeVisible();
+    await act(async () => { mocks.resolved.current?.({ approvalId: 'approval-1', decision: 'deny' }); });
+    expect(input).toBeVisible();
+    expect(input).toHaveValue('Keep my edited draft and attachment');
+  });
+
+  it('does not leak a late rejection or busy state into another session', async () => {
+    let finish: (result: unknown) => void = () => {};
+    mocks.resolve.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+    mocks.list.mockResolvedValue({ pending: [requestedEvent, { ...requestedEvent, approvalId: 'other', sessionKey: 'agent:main:other' }] });
+    const { rerender } = render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
+    fireEvent.click(await screen.findByTestId('runtime-approval-allow-once'));
+    expect(screen.getByTestId('runtime-approval-allow-once')).toBeDisabled();
+    rerender(<RuntimeApprovalPrompt sessionKey="agent:main:other" agentId="main" />);
+    expect(screen.getByTestId('runtime-approval-allow-once')).toBeEnabled();
+    await act(async () => { finish({ success: false, error: 'First request rejected' }); });
+    expect(screen.queryByRole('alert')).toBeNull();
+    rerender(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
+    expect(screen.getByRole('alert')).toHaveTextContent('First request rejected');
+    expect(screen.getByTestId('runtime-approval-allow-once')).toBeEnabled();
+  });
+
+  it('keeps the composer covered until every pending request for the session resolves', async () => {
+    mocks.list.mockResolvedValue({ pending: [requestedEvent, { ...requestedEvent, approvalId: 'next', command: 'next command' }] });
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main"><textarea aria-label="Draft" /></RuntimeApprovalPrompt>);
+    await screen.findByTestId('runtime-approval-command');
+    fireEvent.click(screen.getByTestId('runtime-approval-deny'));
+    await waitFor(() => expect(screen.getByTestId('runtime-approval-command')).toHaveTextContent('next command'));
+    expect(screen.queryByRole('textbox')).toBeNull();
+    fireEvent.click(screen.getByTestId('runtime-approval-deny'));
+    await waitFor(() => expect(screen.getByRole('textbox', { name: 'Draft' })).toBeVisible());
+    expect(mocks.resolve.mock.calls.map(call => call[0].approvalId)).toEqual(['approval-1', 'next']);
+  });
+
+  it('copies through the clipboard fallback and restores the copy button focus', async () => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: vi.fn().mockRejectedValue(new Error('Clipboard API unavailable')) },
+    });
+    const execCommand = vi.fn(() => {
+      const selected = document.activeElement as HTMLTextAreaElement;
+      expect(selected.tagName).toBe('TEXTAREA');
+      expect(selected.closest('[role="dialog"]')).toBeNull();
+      expect(selected.value.slice(selected.selectionStart, selected.selectionEnd)).toBe(requestedEvent.command);
+      return true;
+    });
+    Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand });
+    mocks.list.mockResolvedValue({ pending: [requestedEvent] });
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
+    const copyButton = await screen.findByRole('button', { name: 'Copy command' });
+    copyButton.focus();
+    fireEvent.click(copyButton);
+    await waitFor(() => expect(execCommand).toHaveBeenCalledWith('copy'));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Command copied' })).toHaveFocus());
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(mocks.resolve).not.toHaveBeenCalled();
+  });
+
+  it('copies the original command without deciding or closing the request', async () => {
+    const command = '& "C:\\workspace\\my project\\python.exe" -m pytest\n  --capture=no';
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+    mocks.list.mockResolvedValue({ pending: [{ ...requestedEvent, command }] });
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
+    await waitFor(() => expect(screen.getByTestId('runtime-approval-command')).toBeVisible());
+    expect(screen.getByTestId('runtime-approval-command').textContent).toBe(command);
+    expect(screen.getByRole('heading', { name: 'Runtime approval required' })).toHaveFocus();
+    expect(screen.queryByRole('dialog')).toBeNull();
+    fireEvent.keyDown(screen.getByRole('region', { name: 'Runtime approval required' }), { key: 'Escape' });
+    fireEvent.click(screen.getByRole('button', { name: 'Copy command' }));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(command));
+    expect(screen.getByRole('button', { name: 'Command copied' })).toBeVisible();
+    expect(screen.getByTestId('runtime-approval-prompt')).toBeVisible();
+    expect(mocks.resolve).not.toHaveBeenCalled();
+  });
+
+  it('keeps all decision buttons disabled until the offered choice resolves', async () => {
+    let finish: (result: unknown) => void = () => {};
+    mocks.resolve.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+    const allowedDecisions = ['allow-once', 'allow-always', 'deny'];
+    mocks.list.mockResolvedValue({ pending: [{ ...requestedEvent, allowedDecisions }] });
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
+    const allowAlways = await screen.findByTestId('runtime-approval-allow-always');
+    fireEvent.click(allowAlways);
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Sending decision'));
+    for (const decision of allowedDecisions) expect(screen.getByTestId(`runtime-approval-${decision}`)).toBeDisabled();
+    fireEvent.click(screen.getByTestId('runtime-approval-allow-once'));
+    expect(mocks.resolve).toHaveBeenCalledTimes(1);
+    expect(mocks.resolve).toHaveBeenCalledWith({ approvalId: 'approval-1', decision: 'allow-always' });
+    expect(allowedDecisions).toEqual(['allow-once', 'allow-always', 'deny']);
+    await act(async () => { finish({ success: true }); });
+    await waitFor(() => expect(screen.queryByTestId('runtime-approval-prompt')).toBeNull());
+  });
+
   it('renders nothing while no runtime approval is pending', async () => {
-    render(<RuntimeApprovalPrompt />);
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
     await waitFor(() => expect(mocks.list).toHaveBeenCalledTimes(1));
     expect(screen.queryByTestId('runtime-approval-prompt')).toBeNull();
   });
 
   it('shows a pending request and sends back exactly the decision the runtime offered', async () => {
-    render(<RuntimeApprovalPrompt />);
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
     await act(async () => {
       mocks.requested.current?.(requestedEvent);
     });
@@ -89,7 +210,7 @@ describe('RuntimeApprovalPrompt', () => {
   });
 
   it('offers only the decisions the runtime listed for that request', async () => {
-    render(<RuntimeApprovalPrompt />);
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
     await act(async () => {
       mocks.requested.current?.({ ...requestedEvent, allowedDecisions: ['deny'] });
     });
@@ -101,7 +222,7 @@ describe('RuntimeApprovalPrompt', () => {
 
   it('keeps the prompt open and surfaces the reason when the runtime rejects the decision', async () => {
     mocks.resolve.mockResolvedValue({ success: false, error: 'Read-only mode does not allow Gateway mutations' });
-    render(<RuntimeApprovalPrompt />);
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
     await act(async () => {
       mocks.requested.current?.(requestedEvent);
     });
@@ -113,7 +234,7 @@ describe('RuntimeApprovalPrompt', () => {
   });
 
   it('clears a request when the runtime reports it resolved elsewhere', async () => {
-    render(<RuntimeApprovalPrompt />);
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
     await act(async () => {
       mocks.requested.current?.(requestedEvent);
     });
@@ -129,7 +250,7 @@ describe('RuntimeApprovalPrompt', () => {
   it('seeds pending requests from the runtime list so a reload does not orphan one', async () => {
     mocks.list.mockResolvedValue({ pending: [{ ...requestedEvent, approvalId: 'approval-seeded' }] });
 
-    render(<RuntimeApprovalPrompt />);
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
 
     await waitFor(() => expect(screen.getByTestId('runtime-approval-prompt')).toBeTruthy());
     fireEvent.click(screen.getByTestId('runtime-approval-deny'));
@@ -148,6 +269,8 @@ describe('RuntimeApprovalPrompt translations', () => {
       'runtimeApprovals.description',
       'runtimeApprovals.commandLabel',
       'runtimeApprovals.cwdLabel',
+      'runtimeApprovals.copyCommand',
+      'runtimeApprovals.commandCopied',
       'runtimeApprovals.unknownCommand',
       'runtimeApprovals.allowOnce',
       'runtimeApprovals.allowAlways',

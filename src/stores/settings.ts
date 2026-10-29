@@ -64,6 +64,7 @@ interface SettingsState {
   sessionActivityShowGit: boolean;
   sessionActivityShowCommands: boolean;
   sessionRecoveryNotificationsEnabled: boolean;
+  desktopNotificationsEnabled: boolean;
   sessionActivityRetentionMinutes: SessionActivityRetentionMinutes;
 
   // Setup
@@ -101,6 +102,7 @@ interface SettingsState {
   setSessionActivityShowGit: (value: boolean) => void;
   setSessionActivityShowCommands: (value: boolean) => void;
   setSessionRecoveryNotificationsEnabled: (value: boolean) => void;
+  setDesktopNotificationsEnabled: (value: boolean) => void;
   setSessionActivityRetentionMinutes: (value: SessionActivityRetentionMinutes) => void;
   markSetupComplete: () => void;
   setSetupProviderVerification: (verification: SetupProviderVerification) => void;
@@ -136,6 +138,7 @@ const defaultSettings = {
   sessionActivityShowGit: true,
   sessionActivityShowCommands: true,
   sessionRecoveryNotificationsEnabled: true,
+  desktopNotificationsEnabled: true,
   sessionActivityRetentionMinutes: 5 as SessionActivityRetentionMinutes,
   setupComplete: false,
   setupProviderVerification: DEFAULT_SETUP_PROVIDER_VERIFICATION,
@@ -264,6 +267,10 @@ export const useSettingsStore = create<SettingsState>()(
       setSessionRecoveryNotificationsEnabled: (value) => {
         set({ sessionRecoveryNotificationsEnabled: value });
         void hostApi.settings.set('sessionRecoveryNotificationsEnabled', value).catch(() => { });
+      },
+      setDesktopNotificationsEnabled: (value) => {
+        set({ desktopNotificationsEnabled: value });
+        void hostApi.settings.set('desktopNotificationsEnabled', value).catch(() => { });
       },
       setSessionActivityRetentionMinutes: (value) => {
         set({ sessionActivityRetentionMinutes: value });
