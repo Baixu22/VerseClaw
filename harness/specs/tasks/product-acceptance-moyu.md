@@ -4,6 +4,7 @@ id: product-acceptance-moyu
 title: Moyu coding, approval boundary, undo and recovery acceptance
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+diffBase: 0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6
 intent: Verify that real ClawX coding tools, approval boundaries, write journal and recovery work against a disposable snapshot of the authorized moyu project, with deterministic file, test, database and trajectory oracles.
 requiredRules:
   - backend-communication-boundary
@@ -27,6 +28,17 @@ touchedAreas:
   - electron/utils/workspace-runtime-permissions.ts
   - tests/unit/workspace-runtime-sync.test.ts
   - docs/modules/workspace-and-coding.md
+  - electron/services/chat-api.ts
+  - shared/host-api/host-action-timeouts.ts
+  - src/lib/generated-files.ts
+  - src/stores/chat.ts
+  - src/stores/chat/helpers.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
+  - tests/unit/chat-helpers-enrichment.test.ts
+  - tests/unit/chat-store-history-retry.test.ts
+  - tests/unit/generated-files.test.ts
+  - tests/unit/host-action-timeouts.test.ts
+  - tests/unit/resource-fabric-chat-history.test.ts
   - playwright.config.ts
   - scripts/repository-artifacts.json
   - README.md
@@ -41,7 +53,8 @@ requiredProfiles:
   - comms
 requiredTests:
   - pnpm exec playwright test tests/e2e/product-acceptance-moyu.spec.ts --workers=1
-  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/agent-tools.workspace-readonly.test.ts src/agents/tool-policy-pipeline.test.ts
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/tool-policy-pipeline.test.ts
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/agents/agent-tools.workspace-readonly.test.ts
   - pnpm exec vitest run tests/unit/role-spawn.test.ts tests/unit/role-path-permissions-p2-003.test.ts tests/unit/role-mcp-capability-policy.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm run typecheck:test

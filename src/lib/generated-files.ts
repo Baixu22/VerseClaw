@@ -382,9 +382,10 @@ function unavailablePatchProjection(reason: string): GeneratedFilePatchProjectio
 function resultTextBlocks(result: unknown): string[] {
   // A folded tool result keeps the transcript's raw content array, while a
   // structured tool result nests the same blocks under `content`.
-  const content = Array.isArray(result)
+  const record = asRecord(result);
+  const content: unknown[] = Array.isArray(result)
     ? result
-    : (Array.isArray(asRecord(result)?.content) ? asRecord(result)!.content! : []);
+    : Array.isArray(record?.content) ? (record!.content as unknown[]) : [];
   return content
     .map((block) => asRecord(block))
     .filter((block): block is Record<string, unknown> => block != null && block.type === 'text')
