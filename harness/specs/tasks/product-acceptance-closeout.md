@@ -20,6 +20,7 @@ touchedAreas:
   - harness/specs/guides/product-acceptance-strategy.md
   - harness/specs/guides/agent-first-acceptance.md
   - harness/specs/fixtures/agent-first-acceptance/**
+  - tests/unit/agent-first-acceptance.test.ts
   - harness/specs/fixtures/product-acceptance-shortfalls/**
   - harness/specs/fixtures/product-acceptance-research/**
   - harness/specs/fixtures/product-acceptance-closeout/**
@@ -60,6 +61,7 @@ requiredProfiles:
   - comms
 requiredTests:
   - pnpm exec vitest run tests/unit/product-acceptance-shortfalls.test.ts tests/unit/harness-specs.test.ts tests/unit/docs-index.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/agent-first-acceptance.test.ts --maxWorkers=1
   - pnpm docs:policy:validate
   - pnpm harness validate --spec harness/specs/tasks/product-acceptance-closeout.md
   - pnpm harness run --spec harness/specs/tasks/product-acceptance-closeout.md --dry-run

@@ -119,7 +119,10 @@
         "spec digest",
         "changed-path ownership"
       ],
-      "automated": true
+      "automated": true,
+      "input": "task spec and actual changed-path set",
+      "command": "pnpm harness validate --spec <task-spec>",
+      "actor": "planner-agent"
     },
     {
       "phase": "A. Contract and task validity",
@@ -136,7 +139,10 @@
         "grader self-test",
         "rubric version"
       ],
-      "automated": true
+      "automated": true,
+      "input": "task, reference solution, bad fixtures and rubric",
+      "command": "run grader self-test fixture",
+      "actor": "grader-calibration-agent"
     },
     {
       "phase": "B. Engineering gates",
@@ -154,7 +160,10 @@
         "findings by severity",
         "source digests"
       ],
-      "automated": true
+      "automated": true,
+      "input": "candidate source, locks and task spec",
+      "command": "run task-spec static gates",
+      "actor": "executor-agent"
     },
     {
       "phase": "B. Engineering gates",
@@ -172,7 +181,10 @@
         "seeds",
         "mutation report"
       ],
-      "automated": true
+      "automated": true,
+      "input": "candidate tests, fixed seeds and skip budget",
+      "command": "run task-spec unit/property/integration gates",
+      "actor": "executor-agent"
     },
     {
       "phase": "B. Engineering gates",
@@ -192,7 +204,10 @@
         "logs",
         "hashes"
       ],
-      "automated": true
+      "automated": true,
+      "input": "sealed manifest, logs, hashes and executor report",
+      "command": "pnpm acceptance:agent:verify --manifest <manifest>",
+      "actor": "verifier-agent"
     },
     {
       "phase": "C. Product effect and safety",
@@ -210,7 +225,10 @@
         "screenshots where needed",
         "cleanup receipt"
       ],
-      "automated": true
+      "automated": true,
+      "input": "clean profile, fixture and final-state getter",
+      "command": "run declared Electron journey",
+      "actor": "product-evaluator-agent"
     },
     {
       "phase": "C. Product effect and safety",
@@ -228,7 +246,10 @@
         "security receipts",
         "held-out variants"
       ],
-      "automated": true
+      "automated": true,
+      "input": "trace, tool receipts and held-out adversarial fixtures",
+      "command": "run transcript and adversarial audit",
+      "actor": "trace-auditor-agent"
     },
     {
       "phase": "D. Distribution and operations",
@@ -245,7 +266,10 @@
         "installed-layout journey",
         "post-install readback"
       ],
-      "automated": true
+      "automated": true,
+      "input": "frozen package, provenance manifest and install root",
+      "command": "run installed-layout journey",
+      "actor": "package-verifier-agent"
     },
     {
       "phase": "D. Distribution and operations",
@@ -262,7 +286,10 @@
         "fault receipts",
         "process/port/file cleanup"
       ],
-      "automated": true
+      "automated": true,
+      "input": "fault injection plan and process/port/file baseline",
+      "command": "run declared OAT drill set",
+      "actor": "oat-agent"
     },
     {
       "phase": "E. Agent quality and statistics",
@@ -280,7 +307,10 @@
         "resource envelope",
         "error taxonomy"
       ],
-      "automated": true
+      "automated": true,
+      "input": "task suite, model/harness versions and resource envelope",
+      "command": "run isolated repeated trials",
+      "actor": "evaluation-runner-agent"
     },
     {
       "phase": "E. Agent quality and statistics",
@@ -299,7 +329,10 @@
         "trial matrix",
         "residual ledger"
       ],
-      "automated": true
+      "automated": true,
+      "input": "per-trial outcomes, infra errors, trial count and budgets",
+      "command": "aggregate trial results",
+      "actor": "statistics-agent"
     },
     {
       "phase": "F. Independent agent adjudication",
@@ -318,7 +351,10 @@
         "freshness check",
         "credential scan"
       ],
-      "automated": true
+      "automated": true,
+      "input": "evidence pack read from disk",
+      "command": "pnpm acceptance:agent:verify --manifest <manifest>",
+      "actor": "verifier-agent"
     },
     {
       "phase": "F. Independent agent adjudication",
@@ -335,7 +371,10 @@
         "handoff artifact",
         "single-feature progress ledger"
       ],
-      "automated": true
+      "automated": true,
+      "input": "persisted manifest, progress artifact and evidence hashes",
+      "command": "resume from manifest and progress artifacts",
+      "actor": "resume-verifier-agent"
     },
     {
       "phase": "G. Publisher gate",
@@ -350,7 +389,10 @@
         "publisher decision record"
       ],
       "automated": false,
-      "agentCanProduce": false
+      "agentCanProduce": false,
+      "input": "completed acceptance pack and release scope",
+      "command": "record publication decision",
+      "actor": "publisher"
     }
   ],
   "verdictStates": [
@@ -443,7 +485,14 @@
       "No independent agent has re-read the final files after the evidence is sealed.",
       "No product runtime, package, model-quality, release or real-human claim is made."
     ],
-    "verdict": "partial"
+    "verdict": "partial",
+    "matrixSchemaTests": {
+      "command": "pnpm exec vitest run tests/unit/agent-first-acceptance.test.ts --maxWorkers=1",
+      "testFilesPassed": 1,
+      "testsPassed": 4,
+      "testsFailed": 0,
+      "exitCode": 0
+    }
   },
   "taskForestContractEvidence": {
     "recordedAt": "2026-10-29",
@@ -465,5 +514,35 @@
       "Task Forest is local-only repository continuity data.",
       "The export is a derived artifact and does not prove a clean candidate or product readiness."
     ]
-  }
+  },
+  "requiredGateFields": [
+    "id",
+    "phase",
+    "name",
+    "input",
+    "command",
+    "oracle",
+    "negative",
+    "evidence",
+    "actor",
+    "automated"
+  ],
+  "requiredVerdictStates": [
+    "pass",
+    "partial",
+    "not-run",
+    "accepted-shortfall",
+    "fail",
+    "invalid"
+  ],
+  "requiredDimensions": [
+    "source",
+    "engineering",
+    "runtime",
+    "effect",
+    "distribution",
+    "operational",
+    "agentQuality",
+    "releaseApproval"
+  ]
 }
