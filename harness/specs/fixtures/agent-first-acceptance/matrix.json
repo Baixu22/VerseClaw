@@ -516,6 +516,12 @@
       "reviewActor": "independent-verifier-agent",
       "scope": "TF-0589 contract/static validation",
       "finalSealedReadbackRequired": false
+    },
+    "candidate": {
+      "commit": "04b2db34fc8fa5db33d9a77830d32dee9176d5ba",
+      "tree": "048bdb3688e355489f7d7ef8031ae7fe9eea77da",
+      "parent": "b37f8cb97ed6fc96a9229a9fc065135e04c19f1a",
+      "cleanForReviewedPaths": true
     }
   },
   "taskForestContractEvidence": {
