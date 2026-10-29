@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   enrichWithToolResultFiles,
   enrichWithToolCallAttachments,
+  enrichWithTeamOrchestrationToolResults,
   enrichWithCachedImages,
   loadMissingPreviews,
 } from '@/stores/chat/helpers';
@@ -183,6 +184,34 @@ describe('enrichWithToolResultFiles', () => {
   });
 });
 
+describe('enrichWithTeamOrchestrationToolResults', () => {
+  it('preserves an orphaned trusted tool result after its assistant call was dropped', () => {
+    const messages: RawMessage[] = [
+      { role: 'user', content: 'fix the insert', timestamp: 1 },
+      {
+        role: 'toolresult',
+        toolCallId: 'edit-1',
+        toolName: 'edit',
+        content: [
+          { type: 'text', text: 'Successfully replaced 1 block(s) in user_router.py.' },
+          { type: 'text', text: 'diff:\n-1 old\n+1 new' },
+        ],
+      },
+      {
+        role: 'assistant',
+        content: [{ type: 'text', text: 'Fixed.' }],
+        timestamp: 2,
+      },
+    ];
+
+    const enriched = enrichWithTeamOrchestrationToolResults(messages);
+    expect(enriched.at(-1)?._toolResults).toEqual([{
+      toolCallId: 'edit-1',
+      toolName: 'edit',
+      result: messages[1]?.content,
+    }]);
+  });
+});
 describe('enrichWithCachedImages — Gateway media bubble dedup', () => {
   it('drops image-typed MEDIA: refs on the reply when the next message is a Gateway assistant-media bubble', () => {
     // When the agent emits `MEDIA:/tmp/x.png` the Gateway answers with a

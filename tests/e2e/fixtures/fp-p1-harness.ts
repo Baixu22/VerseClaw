@@ -92,6 +92,7 @@ export type LlmRequestLog = {
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
+  requestIndex: number,
 ) => { toolCall?: ToolCallSpec; text?: string };
 
 /**
@@ -144,7 +145,13 @@ export function startScriptedLlm(script: LlmScript): Promise<{
         try {
         let parsed: {
           stream?: boolean;
-          messages?: Array<{ role: string; content?: unknown; tool_call_id?: string }>;
+          messages?: Array<{
+            role: string;
+            content?: unknown;
+            tool_call_id?: string;
+            toolCallId?: string;
+            toolName?: string;
+          }>;
         } = {};
         try { parsed = JSON.parse(body); } catch { /* ignore */ }
         if (log.length > 80) {
@@ -166,13 +173,16 @@ export function startScriptedLlm(script: LlmScript): Promise<{
           .join('\n');
         const toolResults: Record<string, string> = {};
         for (const message of messages) {
-          if (message.role === 'tool' && typeof message.tool_call_id === 'string') {
-            toolResults[message.tool_call_id] = typeof message.content === 'string'
-              ? message.content
-              : JSON.stringify(message.content ?? '');
-          }
+          if (message.role !== 'tool' && message.role !== 'toolResult') continue;
+          const toolCallId = message.tool_call_id ?? message.toolCallId;
+          if (!toolCallId) continue;
+          toolResults[toolCallId] = typeof message.content === 'string'
+            ? message.content
+            : JSON.stringify(message.content ?? '');
         }
-        const action = script(userText, toolResults);
+        // A filtered tool never produces a result frame. Let the scripted
+        // control terminate from the request count in that case.
+        const action = script(userText, toolResults, log.length);
         log.push({
           turn: userText.slice(0, 60),
           toolResults,

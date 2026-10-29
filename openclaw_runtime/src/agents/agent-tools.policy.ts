@@ -27,6 +27,7 @@ import {
 import { normalizeMessageChannel } from "../utils/message-channel.js";
 import { resolveAgentConfig, resolveAgentIdFromSessionKey } from "./agent-scope.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
+import { buildRolePermissionDenyList } from "./role-permissions-policy.js";
 import { pickSandboxToolPolicy } from "./sandbox-tool-policy.js";
 import type { SandboxToolPolicy } from "./sandbox.js";
 import {
@@ -518,9 +519,25 @@ export function resolveEffectiveToolPolicy(params: {
   const profileAlsoAllow = explicitProfileAlsoAllow
     ? uniqueStrings(explicitProfileAlsoAllow)
     : undefined;
+  let globalPolicy = pickSandboxToolPolicy(globalTools);
+  const exec = globalTools?.exec;
+  if (
+    params.config?.agents?.defaults?.sandbox?.workspaceAccess === "ro" &&
+    (exec?.security === "deny" || (exec?.security === "allowlist" && exec.ask === "always"))
+  ) {
+    // Main's read-only/plan policy must also constrain native file tools when
+    // the active sandbox is off. A profile or agent allowlist cannot widen it.
+    globalPolicy = {
+      ...globalPolicy,
+      deny: uniqueStrings([
+        ...(globalPolicy?.deny ?? []),
+        ...buildRolePermissionDenyList({ permissions: { filesystem: "read", network: "full", commands: [] } }),
+      ]),
+    };
+  }
   return {
     agentId,
-    globalPolicy: pickSandboxToolPolicy(globalTools),
+    globalPolicy,
     globalProviderPolicy: pickSandboxToolPolicy(providerPolicy),
     agentPolicy: pickSandboxToolPolicy(agentTools),
     agentProviderPolicy: pickSandboxToolPolicy(agentProviderPolicy),

@@ -87,6 +87,7 @@ Workspace 主要在 Chat 旁边的 workspace panel 中，而 `/browser` 与 `/co
 
 - 允许白名单读命令；
 - 拒绝文件写；
+- 模型内置的 `write` / `edit` / `apply_patch` / `undo_write` 和 shell 工具同样被拒绝，未启用强沙箱时仍生效；模型可继续使用文件读取工具。
 - 拒绝网络/破坏性/外部写命令；
 - 仍允许读取 pending runtime approval 并回答 approval decision，否则 runtime 会永久等待。
 
@@ -94,6 +95,7 @@ Workspace 主要在 Chat 旁边的 workspace panel 中，而 `/browser` 与 `/co
 
 - 只提供规划姿态；
 - 拒绝直接命令/文件写；
+- 同一拒绝策略覆盖模型内置工具；切回 `acceptEdits` 后保留用户显式配置的 tool deny。
 - 请求权限不扩展写能力；
 - 不承诺“严格零 diff”：系统 metadata 写入是明确例外。
 

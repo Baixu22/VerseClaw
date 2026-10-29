@@ -76,7 +76,7 @@ describe('workspace runtime permission sync', () => {
           sandbox: {
             mode: 'off',
             backend: 'openshell',
-            workspaceAccess: 'none',
+            workspaceAccess: 'ro',
           },
         },
       },

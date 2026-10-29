@@ -11,7 +11,7 @@
 import type { RoleContract } from "./role-contract.js";
 
 /** Filesystem tools known to write/modify files. */
-const FS_WRITE_TOOLS = ["write", "edit", "apply_patch", "team_orchestrate", "task_loop", "mission_loop"] as const;
+const FS_WRITE_TOOLS = ["write", "edit", "apply_patch", "undo_write", "team_orchestrate", "task_loop", "mission_loop"] as const;
 
 /** Filesystem tools that only read. */
 const FS_READ_TOOLS = ["read", "glob", "grep"] as const;
@@ -50,7 +50,7 @@ const NETWORK_HIGH_RISK_TOOLS = ["x_search", "code_execution", "browser"] as con
  * These are ADDITIVE on top of the role's tools[] allowlist.
  */
 export function buildRolePermissionDenyList(
-  role: RoleContract,
+  role: Pick<RoleContract, "permissions">,
 ): string[] {
   const deny = new Set<string>();
   const fs = role.permissions.filesystem;

@@ -232,6 +232,75 @@ describe('generated-files utilities', () => {
     expect(files[0]?.patchProjection).toMatchObject({ status: 'unavailable' });
   });
 
+  it('keeps renderable edit hunks when the mutation result has no structured patch artifact', () => {
+    const messages: RawMessage[] = [
+      { role: 'user', content: 'fix the insert', timestamp: 1 },
+      {
+        role: 'assistant',
+        content: [{
+          type: 'tool_use',
+          id: 'edit-1',
+          name: 'edit',
+          input: {
+            path: 'user_router.py',
+            edits: [{
+              oldText: "sql = \"INSERT INTO yonghu VALUES ('\" + username + \"')\"",
+              newText: 'sql = "INSERT INTO yonghu VALUES (?)"',
+            }],
+          },
+        }],
+        _toolResults: [{
+          toolCallId: 'edit-1',
+          toolName: 'edit',
+          result: { content: [{ type: 'text', text: 'Successfully replaced 1 block(s)' }] },
+        }],
+      },
+    ];
+
+    const files = extractGeneratedFiles(messages, 0, 1);
+    expect(files).toHaveLength(1);
+    expect(files[0]).toMatchObject({
+      filePath: 'user_router.py',
+      edits: [{
+        old: "sql = \"INSERT INTO yonghu VALUES ('\" + username + \"')\"",
+        new: 'sql = "INSERT INTO yonghu VALUES (?)"',
+      }],
+    });
+    expect(files[0]?.patchProjection).toBeUndefined();
+  });
+
+  it('recovers an exact edit diff from a trusted orphaned edit tool result', () => {
+    const messages: RawMessage[] = [
+      { role: 'user', content: 'fix the insert', timestamp: 1 },
+      {
+        role: 'assistant',
+        content: [{ type: 'text', text: 'The fix is complete.' }],
+        _toolResults: [{
+          toolCallId: 'edit-1',
+          toolName: 'edit',
+          // History folding keeps the transcript's raw content array, so an
+          // orphaned result arrives array-shaped rather than nested in `content`.
+          result: [
+            { type: 'text', text: 'Successfully replaced 1 block(s) in user_router.py.' },
+            {
+              type: 'text',
+              text: 'diff:\n 102\n-103     old_sql\n+103     new_sql\n 104\n-104     old.execute()\n+104     new.execute()',
+            },
+          ],
+        }],
+        timestamp: 2,
+      },
+    ];
+
+    const files = extractGeneratedFiles(messages, 0, 1);
+
+    expect(files).toHaveLength(1);
+    expect(files[0]).toMatchObject({
+      filePath: 'user_router.py',
+      edits: [{ old: '    old_sql\n    old.execute()', new: '    new_sql\n    new.execute()' }],
+    });
+    expect(files[0]?.patchProjection).toBeUndefined();
+  });
   it('keeps new-file writes marked as created when the baseline says missing', () => {
     const messages: RawMessage[] = [
       { role: 'user', content: 'create file', timestamp: 1 },
