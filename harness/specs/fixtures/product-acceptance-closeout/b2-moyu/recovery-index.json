@@ -1,0 +1,28 @@
+{
+  "schema": "RecoveryIndex/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0581-moyu",
+  "candidate": {
+    "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+    "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+    "dirty": false
+  },
+  "rawRoot": "D:/ClawX/.tmp/tf0581-rerun-20261029",
+  "retainedFinalRun": true,
+  "rawSourcePreserved": true,
+  "rawSourceGuard": "Original moyu checkout, its DB and the outside sentinel were re-hashed after every journey and reported originalUnchanged=true.",
+  "journeys": [
+    {
+      "scenario": "live-1",
+      "rawDir": "live-1-1793283033393"
+    },
+    {
+      "scenario": "live-2",
+      "rawDir": "live-2-1793283242948"
+    },
+    {
+      "scenario": "live-3",
+      "rawDir": "live-3-1793283483293"
+    }
+  ]
+}

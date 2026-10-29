@@ -11,6 +11,8 @@ export type ProviderObservation = {
   requestedModel: unknown;
   stream: boolean;
   inputHash: string;
+  inputBytes?: number;
+  toolCount?: number;
   inputItems: Json[];
   fixtureResultInInput: boolean;
   fault: ResponsesFault | null;
@@ -195,6 +197,7 @@ export async function startSpaceBunnyProxy(fixtureMarker: string) {
       const injected = fault && raw.includes(fault.marker) ? fault.type : null;
       observation = { requestId: randomUUID(), path: req.url, requestedModel: body.model,
         stream: body.stream === true, inputHash: createHash('sha256').update(raw).digest('hex'),
+        inputBytes: Buffer.byteLength(raw), toolCount: Array.isArray(body.tools) ? body.tools.length : 0,
         inputItems: summarizeInput(body), fixtureResultInInput: raw.includes(fixtureMarker),
         fault: injected, events: [], aborted: false, safetyCutoff: false };
       observations.push(observation);
@@ -221,6 +224,13 @@ export async function startSpaceBunnyProxy(fixtureMarker: string) {
         frames.forEach(frame => { observation!.events.push(summarizeEvent(frame)); res.write(`data: ${JSON.stringify(frame)}\n\n`); });
         if (injected === 'malformed') res.end('data: {malformed-json}\n\n');
         else if (injected === 'drop') res.end();
+        else if (injected === 'cancel') {
+          // Let the production runner receive a short partial answer, then
+          // close the response. Its cancel path must settle any concurrent
+          // tool call before the next turn is accepted.
+          await new Promise<void>((resolve) => setTimeout(resolve, 50));
+          res.end();
+        }
         else await new Promise<void>(resolve => {
           controller.signal.addEventListener('abort', () => resolve(), { once: true });
           timer = setTimeout(() => { observation!.safetyCutoff = true; res.destroy(); resolve(); }, 180_000);
@@ -239,7 +249,7 @@ export async function startSpaceBunnyProxy(fixtureMarker: string) {
       res.writeHead(upstream.status, { 'content-type': upstream.headers.get('content-type') ?? 'application/json' });
       let pending = '';
       const decoder = new TextDecoder();
-      if (upstream.body) for await (const chunk of upstream.body) {
+      if (upstream.body) for await (const chunk of upstream.body as unknown as AsyncIterable<Uint8Array>) {
         res.write(chunk);
         pending += decoder.decode(chunk, { stream: true });
         if (body.stream === true) {

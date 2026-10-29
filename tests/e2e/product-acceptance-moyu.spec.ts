@@ -1,404 +1,418 @@
 import assert from 'node:assert/strict';
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ElectronApplication, Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import {
-  createMoyuSnapshot,
-  MOYU_ALLOWED_PATH,
-  MOYU_ORACLE_PATH,
-  MOYU_PYTHON,
-  MOYU_SUBPROJECT,
-  moyuOpenClawEnv,
-  runMoyuChecks,
-  sha256,
-} from './fixtures/moyu-acceptance';
-import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm, type LlmRequestLog } from './fixtures/fp-p1-harness';
+import { allocatePort, hostInvoke, startScriptedLlm, type LlmRequestLog } from './fixtures/fp-p1-harness';
+import { createMoyuSnapshot, git, gitState, MOYU_ALLOWED_PATH, MOYU_ORACLE_PATH, MOYU_PYTHON, moyuOpenClawEnv, runMoyuChecks, sha256 } from './fixtures/moyu-acceptance';
+import { readSpaceBunnyResource, redactSpaceBunny, startSpaceBunnyProxy } from './fixtures/space-bunny-responses';
 
 type Json = Record<string, unknown>;
 type History = { messages?: Json[] };
-const SESSION_KEY = 'agent:main:main';
-const MODEL = 'mock-moyu-coder';
+type Snapshot = Awaited<ReturnType<typeof createMoyuSnapshot>>;
+const SESSION = 'agent:main:main';
 const actor = 'codex-tf0581-moyu';
-const ROUTER_SQL = '    sql = "INSERT INTO yonghu (username, email, status, created_time, updated_time) VALUES (\'" + username + "\', \'" + email + "\', \'" + status + "\', \'" + created_time + "\', \'" + created_time + "\')"';
-const ROUTER_BLOCK = [
-  '    # 直接写 SQL',
-  '    sql = "INSERT INTO yonghu (username, email, status, created_time, updated_time) VALUES (\'" + username + "\', \'" + email + "\', \'" + status + "\', \'" + created_time + "\', \'" + created_time + "\')"',
-  '',
-  '    cursor = db.cursor()',
-  '    cursor.execute(sql)',
-].join('\n');
-const ROUTER_PARAMETERIZED = [
-  '    cursor = db.cursor()',
-  '    cursor.execute(',
+const replacement = [
+  '    cursor = db.cursor()', '    cursor.execute(',
   '        "INSERT INTO yonghu (username, email, status, created_time, updated_time) VALUES (?, ?, ?, ?, ?)",',
-  '        (username, email, status, created_time, created_time),',
-  '    )',
+  '        (username, email, status, created_time, created_time),', '    )',
 ].join('\n');
 
-async function save(name: string, value: unknown) {
-  await writeFile(name, JSON.stringify(value, null, 2) + '\n', 'utf8');
+function text(message: Json): string {
+  if (typeof message.content === 'string') return message.content;
+  return (Array.isArray(message.content) ? message.content : []).map(part => String((part as Json).text ?? '')).join('\n');
 }
 
-async function toolResult(log: LlmRequestLog[], id: string): Promise<string> {
-  const wanted = id.replace(/[^A-Za-z0-9]/g, '');
-  for (const entry of log) {
-    const key = Object.keys(entry.toolResults).find((candidate) => candidate === wanted || candidate.startsWith(wanted));
-    if (key) return entry.toolResults[key] ?? '';
-  }
-  return '';
+function alive(pid?: number): boolean {
+  if (!pid) return false;
+  try { process.kill(pid, 0); return true; } catch { return false; }
 }
 
-async function waitForLog(log: LlmRequestLog[], marker: string, timeoutMs = 240_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    if (log.some((entry) => entry.issued?.startsWith('text:MOYU_ACCEPTANCE_OK')) ) return;
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-  throw new Error(`scripted model did not finish ${marker}: ${JSON.stringify(log.slice(-2)).slice(0, 5000)}`);
+async function history(app: ElectronApplication, sessionKey: string): Promise<History> {
+  return hostInvoke<History>(app, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey, limit: 200, maxChars: 500_000 }, timeoutMs: 30_000 });
 }
 
-async function sendWithModel(app: ElectronApplication, sessionKey: string, message: string, modelRef: string) {
-  return hostInvoke<Json>(app, 'chat', 'sendWithMedia', {
-    sessionKey, message, modelRef, idempotencyKey: 'tf0581-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
-  });
+async function activeSession(app: ElectronApplication): Promise<string> {
+  const active = await hostInvoke<{ activeWorkspace?: { activeSessionKey?: string } }>(app, 'workspaces', 'getActive');
+  return active.activeWorkspace?.activeSessionKey ?? SESSION;
 }
+
 
 async function send(page: Page, message: string) {
-  const input = page.getByTestId('chat-composer-input');
-  await expect(input).toBeEnabled({ timeout: 120_000 });
-  const providerGate = page.getByTestId('chat-composer-send').locator('xpath=ancestor::body');
-  const gateDismiss = page.getByRole('dialog').getByRole('button').filter({ hasText: /Not now|Later|暂不/ });
-  const configureProvider = page.getByRole('dialog').getByRole('button', { name: /Configure provider|配置.*provider/i });
-  if (await configureProvider.count() > 0) { await configureProvider.first().click(); await page.waitForTimeout(1000); await page.reload(); await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 }); }
-  if (await gateDismiss.count() > 0) { await gateDismiss.first().click(); await page.waitForTimeout(1000); }
-  await input.fill(message);
-  const dialogs = await page.locator('[role=dialog]').allInnerTexts();
-  if (dialogs.length > 0) console.log('[tf0581-dialogs]', JSON.stringify(dialogs));
+  await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 60_000 });
+  await page.getByTestId('chat-composer-input').fill(message);
   await page.getByTestId('chat-composer-send').click();
-  console.log('[tf0581-send-state]', JSON.stringify({
-    sendState: await page.getByTestId('chat-composer-send').getAttribute('data-send-state'),
-    input: await input.inputValue(),
-  }));
 }
 
-async function history(app: ElectronApplication): Promise<History> {
-  return hostInvoke<History>(app, 'gateway', 'rpc', {
-    method: 'chat.history', params: { sessionKey: SESSION_KEY, limit: 200, maxChars: 500_000 }, timeoutMs: 60_000,
-  });
+async function final(
+  app: ElectronApplication,
+  page: Page,
+  sessionKey: string,
+  marker: string,
+  after = 0,
+  options: { autoApprove?: boolean; onApproval?: () => void; timeoutMs?: number } = {},
+): Promise<History> {
+  let result: History = {};
+  await expect.poll(async () => {
+    result = await history(app, sessionKey);
+
+    const completed = (result.messages ?? []).slice(after)
+      .filter(message => message.role === 'assistant' && message.stopReason === 'stop')
+      .map(text).join('\n');
+    if (completed.includes(marker) || !options.autoApprove) return completed;
+
+    // acceptEdits surfaces on-miss exec approvals through the real product
+    // dialog. Answer only the decision the runtime itself offered, and keep
+    // polling the same turn until the product reaches a finished reply.
+    const prompt = page.getByTestId('runtime-approval-prompt');
+    if (await prompt.isVisible().catch(() => false)) {
+      const allowOnce = page.getByTestId('runtime-approval-allow-once');
+      if (await allowOnce.isVisible().catch(() => false)) {
+        await allowOnce.click();
+        options.onApproval?.();
+      }
+    }
+    return completed;
+  }, { timeout: options.timeoutMs ?? 240_000 }).toContain(marker);
+  await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', /^(idle|ready|empty)/, { timeout: 30_000 });
+  await expect(page.locator('body')).toContainText(marker);
+  return result;
 }
 
-function assertGreen(checks: Awaited<ReturnType<typeof runMoyuChecks>>) {
-  assert.equal(checks.pytest.exitCode, 0, checks.pytest.stdout + checks.pytest.stderr);
-  assert.match(checks.pytest.stdout, /(?:1|[2-9]\d*) passed/);
-  assert.equal(checks.acceptance.exitCode, 1, checks.acceptance.stdout + checks.acceptance.stderr);
-  assert.match(checks.acceptance.stdout, /19 passed, 1 failed, 0 errors/);
-}
-
-async function configureProductProvider(app: ElectronApplication, page: Page, port: number, repetition: number) {
-  const now = new Date().toISOString();
-  const account = {
-    id: 'custom-moyu-' + repetition,
-    vendorId: 'custom',
-    label: 'Moyu ' + repetition,
-    authMode: 'api_key',
-    apiProtocol: 'openai-completions',
-    baseUrl: 'http://127.0.0.1:' + port + '/v1',
-    model: MODEL,
-    modelProfile: { contextWindow: 128000, maxTokens: 4096, supportsVision: false },
-    metadata: { validation: { status: 'valid', checkedAt: now, model: MODEL, source: 'settings' } },
-    enabled: true,
-    isDefault: true,
-    createdAt: now,
-    updatedAt: now,
+async function openProduct(
+  launch: (options: { skipSetup: boolean; env: Record<string, string> }) => Promise<ElectronApplication>,
+  homeDir: string, userDataDir: string, snapshot: Snapshot,
+  provider: { baseUrl: string; model: string; key: string; protocol: 'openai-responses' | 'openai-completions' },
+  permissionMode: 'acceptEdits' | 'readOnly' = 'acceptEdits',
+  execAsk: 'off' | 'always' = 'off',
+) {
+  const config = {
+    gateway: { mode: 'local', controlUi: { enabled: false } },
+    // Multi-tool acceptance turns legitimately exceed the 120s default. Keep
+    // the provider ceiling explicit as well; the E2E deadline remains the hard
+    // upper bound.
+    agents: { defaults: { workspace: snapshot.snapshotProject, skipBootstrap: true, timeoutSeconds: 900 }, list: [{ id: 'main', default: true }] },
+    tools: { profile: 'full', exec: { host: 'gateway', security: 'full', ask: execAsk } },
+    runtime: { coding: { staleWriteGuard: { enabled: true }, autoVerify: { enabled: false } } },
+    skills: { allowBundled: [] },
   };
-  expect(await hostInvoke<Json>(app, 'providers', 'createAccount', { account, apiKey: 'test-key-ok' })).toMatchObject({ success: true });
-  expect(await hostInvoke<Json>(app, 'providers', 'validateKey', { accountId: account.id })).toMatchObject({ valid: true });
-  expect(await hostInvoke<Json>(app, 'providers', 'setDefaultAccount', { accountId: account.id })).toMatchObject({ success: true });
-  expect(await hostInvoke<Json>(app, 'agents', 'updateModel', { id: 'main', modelRef: 'custom-moyu-' + repetition + '/' + MODEL })).toMatchObject({ success: true });
-  await page.reload();
-  await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+  await writeFile(join(homeDir, '.openclaw', 'openclaw.json'), JSON.stringify(config));
+  await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en', gatewayAutoStart: false }));
+  const app = await launch({ skipSetup: true, env: { ...moyuOpenClawEnv(homeDir), PYTHONPATH: snapshot.snapshotProject, PYTHONDONTWRITEBYTECODE: '1', CLAWX_SPACE_BUNNY_API_KEY: '' } });
+  try {
+    const page = await getStableWindow(app);
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+    const now = new Date().toISOString();
+    const account = {
+      id: 'custom-moyucode', vendorId: 'custom', label: 'Moyu Acceptance', authMode: 'api_key', apiProtocol: provider.protocol,
+      baseUrl: provider.baseUrl, model: provider.model, modelProfile: { contextWindow: 128_000, maxTokens: 4096, supportsVision: false },
+      metadata: { validation: { status: 'valid', checkedAt: now, model: provider.model, source: 'settings' } },
+      enabled: true, isDefault: true, createdAt: now, updatedAt: now,
+    };
+    expect(await hostInvoke<Json>(app, 'providers', 'createAccount', { account, apiKey: provider.key })).toMatchObject({ success: true });
+    expect(await hostInvoke<Json>(app, 'providers', 'validateKey', { accountId: account.id })).toMatchObject({ valid: true });
+    expect(await hostInvoke<Json>(app, 'providers', 'setDefaultAccount', { accountId: account.id })).toMatchObject({ success: true });
+    expect(await hostInvoke<Json>(app, 'agents', 'updateModel', { id: 'main', modelRef: account.id + '/' + provider.model })).toMatchObject({ success: true });
+    const created = await hostInvoke<{ success?: boolean; profiles?: Json[] }>(app, 'workspaces', 'create', {
+      rootPath: snapshot.snapshotProject, name: 'Moyu Acceptance', agentId: 'main', activeSessionKey: SESSION, permissionMode,
+    });
+    expect(created.success).toBe(true);
+    const profile = created.profiles?.find(entry => entry.rootPath === snapshot.snapshotProject);
+    expect(profile).toBeTruthy();
+    expect(await hostInvoke<Json>(app, 'workspaces', 'switch', { id: profile!.id })).toMatchObject({ success: true });
+    const port = await allocatePort();
+    await hostInvoke(app, 'settings', 'set', { key: 'gatewayPort', value: port });
+    await hostInvoke(app, 'gateway', 'start');
+    await expect.poll(async () => (await hostInvoke<Json>(app, 'gateway', 'status')).state, { timeout: 120_000 }).toBe('running');
+    const status = await hostInvoke<{ pid?: number }>(app, 'gateway', 'status');
+    await page.reload();
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+    return { app, page, port, pid: status.pid, profileId: profile!.id };
+  } catch (error) { await closeElectronApp(app); throw error; }
 }
 
-async function bindWorkspace(app: ElectronApplication, page: Page, snapshotProject: string, repetition: number, permissionMode: 'acceptEdits' | 'readOnly' = 'acceptEdits') {
-  await hostInvoke<Json>(app, 'workspaces', 'create', { name: 'Moyu ' + repetition, rootPath: snapshotProject, permissionMode });
-  const profiles = await hostInvoke<{ profiles?: Array<{ id?: string; rootPath?: string }> }>(app, 'workspaces', 'list');
-  const profile = profiles.profiles?.find((entry) => entry.rootPath === snapshotProject);
-  expect(profile?.id).toBeTruthy();
-  await hostInvoke<Json>(app, 'workspaces', 'switch', { id: profile!.id });
-  await page.reload();
-  await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
-  const active = await hostInvoke<{ activeWorkspace?: { rootPath?: string } }>(app, 'workspaces', 'getActive');
-  expect(active.activeWorkspace?.rootPath).toBe(snapshotProject);
-  const updateResult = await hostInvoke<Json>(app, 'agents', 'updateModel', { id: 'main', modelRef: 'custom-moyu-' + repetition + '/' + MODEL });
-  console.log('[tf0581-update-model]', JSON.stringify(updateResult));
-  expect(updateResult).toMatchObject({ success: true });
-  await page.reload();
-  await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+async function journal(snapshot: Snapshot) {
+  const root = join(snapshot.snapshotProject, '.openclaw', 'journal');
+  const files: string[] = [];
+  for (const session of await readdir(root).catch(() => [])) {
+    for (const file of await readdir(join(root, session))) if (file.endsWith('.meta.json') || file.endsWith('.pre')) files.push(join(root, session, file));
+  }
+  return files.sort();
 }
 
-test.describe('TF-0581 moyu coding acceptance', () => {
-  test.setTimeout(1_800_000);
-  for (let repetition = 1; repetition <= 3; repetition += 1) {
-    test(`positive journey ${repetition}: read, edit, verify, visible reply, undo`, async ({ homeDir, userDataDir, launchElectronApp }) => {
-      const runId = 'tf0581-moyu-' + Date.now() + '-' + repetition;
-      const root = join('D:\\tmp\\clawx-product-acceptance', runId, 'b2-moyu');
-      const snapshot = await createMoyuSnapshot(root, 'positive-' + repetition);
-      const marker = 'MOYU_FIXED_' + repetition + '_' + Date.now();
-      const llm = await startScriptedLlm((userText, results) => {
-        const has = (id: string) => Object.keys(results).some((key) => key.startsWith(id.replace(/[^A-Za-z0-9]/g, '')));
-        const isUndo = userText.lastIndexOf('UNDO-MOYU') > userText.lastIndexOf('FIX-MOYU');
-        if (isUndo) {
-          if (!has('undo-router')) return { toolCall: { id: 'undo-router', name: 'undo_write', args: { steps: 1 } } };
-          return { text: 'MOYU_UNDO_OK ' + marker };
-        }
-        if (!has('read-router')) return { toolCall: { id: 'read-router', name: 'read', args: { path: MOYU_ALLOWED_PATH } } };
-        if (!has('edit-router')) return {
-          toolCall: {
-            id: 'edit-router',
-            name: 'edit',
-            args: {
-              path: MOYU_ALLOWED_PATH,
-              edits: [{ oldText: snapshot.routerBlock, newText: ROUTER_PARAMETERIZED }],
-            },
-          },
-        };
-        if (!has('run-pytest')) return {
-          toolCall: { id: 'run-pytest', name: 'bash', args: { command: '& "' + MOYU_PYTHON + '" -m pytest ' + MOYU_ORACLE_PATH + ' -q', workdir: snapshot.snapshotProject, timeout: 120 } },
-        };
-        if (!has('run-acceptance')) return {
-          toolCall: { id: 'run-acceptance', name: 'bash', args: { command: '& "' + MOYU_PYTHON + '" -m acceptance run --mode offline --seed 20260908 --output acceptance-after', workdir: snapshot.snapshotProject, timeout: 120 } },
-        };
-        return { text: 'MOYU_ACCEPTANCE_OK ' + marker };
-      });
-      let app: ElectronApplication | undefined;
-      const receipt: Json = { actor, driven_by: 'agent', repetition, runId, marker, candidate: snapshot.originalGit, oracleHash: snapshot.oracleHash, baseline: snapshot.baselineCommit, status: 'running' };
+function has(results: Record<string, string>, id: string, requestIndex?: number) {
+  return (requestIndex === undefined || requestIndex > 0) &&
+    Object.keys(results).some(key => key.startsWith(id.replace(/[^a-zA-Z0-9]/g, '')));
+}
+
+function outcome(log: LlmRequestLog[], id: string): string {
+  const wanted = id.replace(/[^a-zA-Z0-9]/g, '');
+  return log.flatMap(entry => Object.entries(entry.toolResults)).find(([key]) => key.startsWith(wanted))?.[1] ?? '';
+}
+
+async function finish(root: string, snapshot: Snapshot, receipt: Json, app?: ElectronApplication, gatewayPid?: number) {
+  let failure: unknown;
+  const appPid = app?.process().pid;
+  try {
+    if (app) await closeElectronApp(app);
+    await expect.poll(() => alive(appPid) || alive(gatewayPid), { timeout: 20_000 }).toBe(false);
+    await snapshot.verifyOriginalUnchanged();
+    receipt.originalUnchanged = true;
+    receipt.cleanup = { electronStopped: !alive(appPid), gatewayStopped: !alive(gatewayPid) };
+  } catch (error) { receipt.status = 'fail'; receipt.cleanupError = String(error); failure = error; }
+  if (receipt.status === 'pass' && (receipt.candidate as Json).dirty === true) receipt.status = 'preflight-pass';
+  await writeFile(join(root, 'receipt.json'), redactSpaceBunny(JSON.stringify(receipt, null, 2)) + '\n');
+  await snapshot.cleanup();
+  if (failure) throw failure;
+}
+
+async function begin(name: string) {
+  const root = join(process.env.CLAWX_MOYU_ARTIFACT_ROOT ?? 'D:/tmp/clawx-product-acceptance/b2-moyu', name + '-' + Date.now());
+  await mkdir(root, { recursive: true });
+  const snapshot = await createMoyuSnapshot(root, name);
+  const receipt: Json = {
+    driven_by: 'agent', actor, scenario: name, candidate: gitState(process.cwd()), targetProject: snapshot.originalGit,
+    baselineCommit: snapshot.baselineCommit, baselineHashes: snapshot.baselineHashes, originalHashes: snapshot.originalHashes,
+    oracleHash: snapshot.oracleHash, baseline: { projectTests: snapshot.projectTestsBefore, oracle: snapshot.pytestBefore, acceptance: snapshot.acceptanceBefore }, status: 'running',
+  };
+  if (process.env.CLAWX_MOYU_PREFLIGHT !== '1') assert.equal((receipt.candidate as Json).dirty, false, 'Final acceptance needs a clean source candidate');
+  return { root, snapshot, receipt };
+}
+
+test.describe('TF-0581 real moyu product acceptance', () => {
+  test.setTimeout(720_000);
+  for (let repetition = 1; repetition <= 3; repetition++) {
+    test('live journey ' + repetition + ': cancel, fix, tests, restart readback and undo', async ({ homeDir, userDataDir, launchElectronApp }) => {
+      const { root, snapshot, receipt } = await begin('live-' + repetition);
+      const proxy = await startSpaceBunnyProxy('MOYU_' + repetition);
+      const progressTimer = setInterval(() => {
+        void writeFile(join(root, 'provider-progress.json'), redactSpaceBunny(JSON.stringify(proxy.observations, null, 2))).catch(() => undefined);
+      }, 3000).unref();
+      const resource = readSpaceBunnyResource();
+      let opened: Awaited<ReturnType<typeof openProduct>> | undefined;
+      const marker = 'MOYU_VERIFIED_' + repetition + '_' + Date.now();
+      const cancelMarker = 'MOYU_CANCEL_' + repetition + '_' + Date.now();
       try {
-        const config = buildMockProviderConfig(llm.port, snapshot.snapshotProject);
-        config.tools = { profile: 'full', exec: { host: 'gateway', security: 'full', ask: 'off' } };
-        (config.runtime as Json).coding = { ...(config.runtime as Json).coding as Json, autoVerify: { enabled: false } };
-        await writeFile(join(userDataDir, 'openclaw-source-state', 'openclaw.json'), JSON.stringify(config), 'utf8').catch(async () => {
-          const { mkdir } = await import('node:fs/promises');
-          await mkdir(join(userDataDir, 'openclaw-source-state'), { recursive: true });
-          await writeFile(join(userDataDir, 'openclaw-source-state', 'openclaw.json'), JSON.stringify(config), 'utf8');
-        });
-        app = await launchElectronApp({ skipSetup: true, env: moyuOpenClawEnv(homeDir) });
-        const page = await getStableWindow(app);
-        await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
-        await startGateway(app);
-        await configureProductProvider(app, page, llm.port, repetition);
-        await bindWorkspace(app, page, snapshot.snapshotProject, repetition);
-        await send(page, 'FIX-MOYU. Read ' + MOYU_ALLOWED_PATH + ', apply the smallest parameterized-SQL fix identified by the frozen oracle, run the project tests and acceptance, then report the outcome. Do not change the oracle.');
-        await expect.poll(() => llm.log.length + llm.anomalies.length, { timeout: 30_000 }).toBeGreaterThan(0);
-        await waitForLog(llm.log, marker);
-        const checks = await runMoyuChecks(snapshot);
-        assertGreen(checks);
-        const source = await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH), 'utf8');
-        assert.match(source, /VALUES \(\?, \?, \?, \?, \?\)/);
-        assert.equal(sha256(await readFile(join(snapshot.snapshotProject, MOYU_ORACLE_PATH))), snapshot.oracleHash);
-        const tools = llm.log.flatMap((entry) => Object.entries(entry.toolResults));
-        assert.ok(tools.some(([id, value]) => id.startsWith('readrouter') && value.includes('INSERT INTO yonghu')));
-        assert.ok((await toolResult(llm.log, 'edit-router')).includes('Successfully replaced') || tools.some(([, value]) => value.includes('Successfully replaced')));
-        assert.ok((await toolResult(llm.log, 'run-pytest')).includes('1 passed'));
-        assert.ok((await toolResult(llm.log, 'run-acceptance')).includes('19 passed, 1 failed'));
-        const transcript = await history(app);
-        assert.ok(JSON.stringify(transcript).includes(marker) || (await page.locator('body').innerText()).includes(marker));
-        const beforeUndo = await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH), 'utf8');
-        expect(beforeUndo).toContain('VALUES (?, ?, ?, ?, ?)');
-        await send(page, 'UNDO-MOYU the last edit now.');
-        await expect.poll(() => llm.log.some((entry) => entry.issued?.startsWith('text:MOYU_UNDO_OK')) , { timeout: 120_000 }).toBe(true);
-        const undoOutcome = await toolResult(llm.log, 'undo-router');
-        expect(undoOutcome.replace(/\s+/g, '')).toContain('"ok":true');
-        const restored = await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH), 'utf8');
-        expect(restored).toContain('sql = "INSERT INTO yonghu');
-        expect(restored).not.toContain('VALUES (?, ?, ?, ?, ?)');
-        await snapshot.verifyRestored();
-        receipt.undo = { outcome: undoOutcome, restored: true };
-        await save(join(root, 'positive-' + repetition + '.json'), { ...receipt, checks, tools, transcript });
-        await page.screenshot({ path: join(root, 'positive-' + repetition + '.png') });
-        receipt.status = 'pass';
-      } catch (error) {
-        receipt.status = 'fail';
-        receipt.error = String(error);
-        if (app) {
-          receipt.gatewaySnapshot = await hostInvoke<Json>(app, 'diagnostics', 'gatewaySnapshot').catch((cause) => ({ error: String(cause) }));
-          receipt.chatHistory = await hostInvoke<Json>(app, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: SESSION_KEY, limit: 50, maxChars: 200_000 }, timeoutMs: 30_000 }).catch((cause) => ({ error: String(cause) }));
-          receipt.gatewayStatus = await hostInvoke<Json>(app, 'gateway', 'status').catch((cause) => ({ error: String(cause) }));
+        opened = await openProduct(launchElectronApp, homeDir, userDataDir, snapshot, { baseUrl: proxy.baseUrl, model: resource.model, key: proxy.proxyToken, protocol: 'openai-responses' });
+        const { app, page } = opened;
+        const initialSessionKey = await activeSession(app);
+        proxy.inject('cancel', cancelMarker);
+        await send(page, cancelMarker + ': inspect the project, but do not edit anything. Do not start shell commands; only use read.');
+        await expect.poll(() => proxy.observations.some(entry => entry.fault === 'cancel'), { timeout: 30_000 }).toBe(true);
+        // A non-terminal upstream stream is a fail-closed control. Wait for
+        // the composer to enter a terminal state before deciding whether the
+        // explicit Stop affordance is still required.
+        await expect(page.getByTestId('chat-composer-send')).toHaveAttribute(
+          'data-send-state', /^(paused|idle|ready|empty)$/, { timeout: 30_000 });
+        const paused = page.getByTestId('chat-composer-send');
+        if (await paused.isEnabled()) {
+          await paused.click();
+        } else {
+          await hostInvoke(opened.app, 'gateway', 'rpc', {
+            method: 'chat.abort', params: { sessionKey: SESSION }, timeoutMs: 30_000,
+          });
         }
-        receipt.providerAnomalies = [...llm.anomalies];
-        receipt.progress = {
-          entries: llm.log.length,
-          issued: llm.log.map((entry) => entry.issued),
-          keys: llm.log.map((entry) => Object.keys(entry.toolResults)),
-          values: llm.log.map((entry) => Object.fromEntries(Object.entries(entry.toolResults).map(([key, value]) => [key, value.slice(0, 500)]))),
-          bash: await toolResult(llm.log, 'run-pytest'),
-          acceptance: await toolResult(llm.log, 'run-acceptance'),
-        };
+        await expect.poll(() => proxy.observations.filter(entry => entry.fault === 'cancel').every(entry => !entry.safetyCutoff), { timeout: 30_000 }).toBe(true);
+        await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', /^(paused|idle|ready|empty)$/, { timeout: 30_000 });
+        await snapshot.verifyAllowedChanges([]);
+        expect(await journal(snapshot)).toEqual([]);
+        await expect.poll(async () => ((await history(app, initialSessionKey)).messages ?? []).some(message => message.role === 'assistant' && ['aborted', 'error'].includes(String(message.stopReason))), { timeout: 30_000 }).toBe(true);
+        const cancelled = await history(app, initialSessionKey);
+        expect((cancelled.messages ?? []).filter(message => message.role === 'assistant' && message.stopReason === 'stop')).toEqual([]);
+        receipt.cancel = cancelled;
+        proxy.clearFault();
+        const pendingAfterCancel = (await history(app, SESSION)).messages ?? [];
+        expect(pendingAfterCancel.filter(message => message.role === 'user').map(text).join('\n')).toContain(cancelMarker);
+        expect(pendingAfterCancel.filter(message =>
+          message.role === 'assistant' && ['error', 'aborted'].includes(String(message.stopReason)))).toHaveLength(1);
+        const abortedRun = [...(await history(app, SESSION)).messages ?? []].find(message =>
+          message.role === 'assistant' && ['error', 'aborted'].includes(String(message.stopReason)));
+        expect(abortedRun).toBeTruthy();
+        // Assert the live session is reusable before branching: the new-chat
+        // button must switch to a fresh session, not inherit the failed one.
+        await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
+        await page.getByTestId('sidebar-new-chat').click();
+        const workSessionKey = await activeSession(app);
+        const python = '& "' + MOYU_PYTHON + '"';
+        await send(page, [
+          'Fix the frozen apostrophe username CRUD regression in this disposable Python project.',
+          'Workspace: ' + snapshot.snapshotProject + '. Only modify user_router.py; all tests and other source files are frozen.',
+          'Use the real read tool to inspect ' + MOYU_ORACLE_PATH + ' and user_router.py, reproduce the failing oracle, then make one minimal edit.',
+          'Use exec (not bash) with the absolute workdir above (its shell is already non-interactive PowerShell) and these commands: ' +
+          python + ' -m pytest ' + MOYU_ORACLE_PATH + ' -q; ' +
+          python + ' -m pytest tests/acceptance -q; ' +
+          python + ' -m acceptance run --mode offline --seed 20260908 --output acceptance-after.',
+          'The unrelated create_invalid_user defect is the known baseline of 19 passed / 1 failed / 0 errors; preserve that finding. Do not change a test or the Git baseline.',
+          'After executing the checks, report the actual test outcomes and end the final answer with ' + marker + '.',
+        ].join('\n'));
+        let approvals = 0;
+        const transcript = await final(app, page, workSessionKey, marker, 0, {
+          autoApprove: true,
+          onApproval: () => { approvals += 1; },
+          timeoutMs: 600_000,
+        });
+        const checks = await runMoyuChecks(snapshot);
+        await snapshot.verifyAllowedChanges([MOYU_ALLOWED_PATH]);
+        assert.equal(checks.projectTests.exitCode, 0, checks.projectTests.stdout);
+        assert.equal(checks.pytest.exitCode, 0, checks.pytest.stdout);
+        assert.equal(checks.acceptance.exitCode, 1);
+        assert.match(checks.acceptance.stdout, /19 passed, 1 failed, 0 errors/);
+        const changed = await snapshot.verifyAllowedChanges([MOYU_ALLOWED_PATH]);
+        const calls = (transcript.messages ?? []).flatMap(message => Array.isArray(message.content) ? message.content : []).filter(part => (part as Json).type === 'toolCall') as Json[];
+        // Gateway display projection may drop an intermediate assistant message
+        // while retaining its real toolResult. Use real calls when present and
+        // fall back to the toolResult's own toolName for this inventory only.
+        expect(calls.length + (transcript.messages ?? []).filter(message => message.role === 'toolResult').length).toBeGreaterThanOrEqual(4);
+        const toolNames = new Set([
+          ...calls.map(call => String(call.name ?? '')),
+          ...(transcript.messages ?? []).filter(message => message.role === 'toolResult')
+            .map(message => String(message.toolName ?? '')),
+        ]);
+        expect(toolNames.has('read')).toBe(true);
+        expect(toolNames.has('edit')).toBe(true);
+        expect(toolNames.has('bash') || toolNames.has('exec')).toBe(true);
+        // The frozen oracle must have been observed through a read result even
+        // when an earlier summary/generation dropped the corresponding call from
+        // the persisted toolCall list.
+        const readResults = (transcript.messages ?? [])
+          .filter(message => message.role === 'toolResult' && message.toolName === 'read')
+          .map(text).join('\n');
+        expect(readResults).toContain('test_apostrophe_username_round_trip');
+        const snapshots = await journal(snapshot);
+        expect(snapshots.filter(path => path.endsWith('.pre'))).toHaveLength(1);
+        await expect(page.getByTestId('chat-mutation-code-diff').first()).toBeVisible();
+        const fixSessionKey = workSessionKey;
+        receipt.fix = { checks, changed, transcript, diff: git(snapshot.snapshotRoot, ['diff']), journalFiles: snapshots, calls, sessionKey: fixSessionKey,
+          approvals: { count: approvals, driven_by: 'agent', actor } };
+        await page.screenshot({ path: join(root, 'fixed.png') });
+        await page.reload();
+        await expect(page.getByTestId('main-layout')).toBeVisible();
+        expect(JSON.stringify(await history(app, fixSessionKey))).toContain(marker);
+        await expect(page.locator('body')).toContainText(marker);
+        const undoMarker = 'MOYU_UNDONE_' + repetition + '_' + Date.now();
+        const undoBase = (await history(app, fixSessionKey)).messages?.length ?? 0;
+        await send(page, 'Use undo_write with steps=1 to undo the last edit. Report its actual result and end with ' + undoMarker + '.');
+        let undoApprovals = 0;
+        const undone = await final(app, page, fixSessionKey, undoMarker, undoBase, {
+          autoApprove: true,
+          onApproval: () => { undoApprovals += 1; },
+        });
+        const undoResults = (undone.messages ?? []).filter(message => message.role === 'toolResult' && message.toolName === 'undo_write').map(text);
+        expect(undoResults.join('\n').replace(/\s/g, '')).toContain('"ok":true');
+        await snapshot.verifyRestored();
+        await snapshot.verifyAllowedChanges([]);
+        receipt.undo = { transcript: undone, restored: true, journal: await journal(snapshot),
+          approvals: { count: undoApprovals, driven_by: 'agent', actor } };
+        receipt.taskSuccess = true; receipt.trajectorySafety = true; receipt.status = 'pass';
+      } catch (error) {
+        receipt.status = 'fail'; receipt.error = String(error);
+        receipt.transcript = opened ? await history(opened.app, await activeSession(opened.app)).catch(cause => ({ error: String(cause) })) : null;
         throw error;
       } finally {
-        if (app) await closeElectronApp(app).catch(() => undefined);
-        await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-        await snapshot.verifyOriginalUnchanged().catch((error) => { receipt.originalUnchangedError = String(error); });
-        await save(join(root, 'receipt-' + repetition + '.json'), receipt);
-        if (process.env.CLAWX_MOYU_KEEP_WS !== '1') await snapshot.cleanup();
+        clearInterval(progressTimer);
+        receipt.provider = proxy.observations; receipt.proxyCleanup = await proxy.close();
+        await finish(root, snapshot, receipt, opened?.app, opened?.pid);
       }
     });
   }
 
-  test('readOnly workspace denies mutation without an approval request or side effect', async ({ homeDir, userDataDir, launchElectronApp }) => {
-    const runId = 'tf0581-moyu-' + Date.now() + '-readonly';
-    const root = join('D:\\tmp\\clawx-product-acceptance', runId, 'b2-moyu');
-    const snapshot = await createMoyuSnapshot(root, 'readonly');
-    const llm = await startScriptedLlm(() => ({ text: 'READONLY_BRANCH_COMPLETE' }));
-    let app: ElectronApplication | undefined;
-    const receipt: Json = { actor, driven_by: 'agent', scenario: 'readOnly-denial', runId, candidate: snapshot.originalGit, status: 'running' };
+  test('readOnly policy denies a real edit without approval or file effect', async ({ homeDir, userDataDir, launchElectronApp }) => {
+    const { root, snapshot, receipt } = await begin('readonly');
+    const llm = await startScriptedLlm((_user, results, requestIndex) => requestIndex > 0 || has(results, 'readonly-edit')
+      ? { text: 'MOYU_READONLY_DONE' }
+      : { toolCall: { id: 'readonly-edit', name: 'edit', args: { path: MOYU_ALLOWED_PATH, edits: [{ oldText: snapshot.routerBlock, newText: replacement }] } } });
+    let opened: Awaited<ReturnType<typeof openProduct>> | undefined;
     try {
-      app = await launchElectronApp({ skipSetup: true, env: moyuOpenClawEnv(homeDir) });
-      const page = await getStableWindow(app);
-      await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
-      await startGateway(app);
-      await configureProductProvider(app, page, llm.port, 9);
-      await bindWorkspace(app, page, snapshot.snapshotProject, 9, 'readOnly');
-      const target = join(snapshot.snapshotProject, MOYU_ALLOWED_PATH);
-      const before = await readFile(target, 'utf8');
-      const result = await hostInvoke<{ success?: boolean; blocked?: boolean; approvalRequired?: boolean; error?: string }>(
-        app, 'gateway', 'rpc', { method: 'tools.exec', params: { command: 'echo tamper > user_router.py' }, timeoutMs: 30_000 },
-      ).catch((cause) => ({ error: String(cause) }));
-      expect(JSON.stringify(result)).toMatch(/blocked|denied|read.?only|计划模式|plan/i);
-      expect(await readFile(target, 'utf8')).toBe(before);
-      receipt.result = result;
-      receipt.sideEffect = false;
-      receipt.status = 'pass';
-    } catch (error) {
-      receipt.status = 'fail';
-      receipt.error = String(error);
-      receipt.issued = llm.log.map((entry) => entry.issued);
-      receipt.keys = llm.log.map((entry) => Object.keys(entry.toolResults));
-      receipt.values = llm.log.map((entry) => Object.fromEntries(Object.entries(entry.toolResults).map(([k, v]) => [k, String(v).slice(0, 300)])));
-      throw error;
-    } finally {
-      if (app) await closeElectronApp(app).catch(() => undefined);
-      await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-      await snapshot.verifyOriginalUnchanged().catch((error) => { receipt.originalUnchangedError = String(error); });
-      await save(join(root, 'receipt.json'), receipt);
-      if (process.env.CLAWX_MOYU_KEEP_WS !== '1') await snapshot.cleanup();
+      opened = await openProduct(launchElectronApp, homeDir, userDataDir, snapshot, { baseUrl: 'http://127.0.0.1:' + llm.port + '/v1', model: 'mock-coder', key: 'test-key-ok', protocol: 'openai-completions' }, 'readOnly');
+      await send(opened.page, 'Attempt one edit under the active readOnly policy, then report the result.');
+      const readonlySessionKey = await activeSession(opened.app);
+      const readonlyTranscript = await final(opened.app, opened.page, readonlySessionKey, 'MOYU_READONLY_DONE');
+      receipt.transcript = readonlyTranscript;
+      const toolResult = (readonlyTranscript.messages ?? []).find(message =>
+        message.role === 'toolResult' && message.toolName === 'edit');
+      const result = outcome(llm.log, 'readonly-edit') || (toolResult ? text(toolResult) : '');
+      expect(result).toMatch(/denied|read.?only|not allowed|not found|plan mode|权限|只读/i);
+      expect(result).not.toMatch(/Successfully replaced/);
+      expect(await hostInvoke<Json>(opened.app, 'runtimeApprovals', 'list')).toMatchObject({ pending: [] });
+      await snapshot.verifyAllowedChanges([]); expect(await journal(snapshot)).toEqual([]);
+      receipt.result = result; receipt.noApproval = true; receipt.noEffect = true; receipt.status = 'pass';
+    } catch (error) { receipt.status = 'fail'; receipt.error = String(error); throw error; }
+    finally {
+      receipt.modelDriver = 'scripted-negative-control'; receipt.provider = llm.log;
+      llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve()));
+      await finish(root, snapshot, receipt, opened?.app, opened?.pid);
     }
   });
 
-  test('cancelled turn leaves no edit and no completed reply, then the next turn succeeds once', async ({ homeDir, userDataDir, launchElectronApp }) => {
-    const runId = 'tf0581-moyu-' + Date.now() + '-cancel';
-    const root = join('D:\\tmp\\clawx-product-acceptance', runId, 'b2-moyu');
-    const snapshot = await createMoyuSnapshot(root, 'cancel');
-    const before = await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH), 'utf8');
-    const llm = await startScriptedLlm(() => ({ text: 'MOYU_CANCEL_BRANCH_MARKER' }));
-    let app: ElectronApplication | undefined;
-    const receipt: Json = { actor, driven_by: 'agent', scenario: 'cancel-before-edit', runId, candidate: snapshot.originalGit, status: 'running' };
-    try {
-      app = await launchElectronApp({ skipSetup: true, env: moyuOpenClawEnv(homeDir) });
-      const page = await getStableWindow(app);
-      await page.getByTestId('main-layout').waitFor({ timeout: 60_000 });
-      await startGateway(app);
-      await configureProductProvider(app, page, llm.port, 10);
-      await bindWorkspace(app, page, snapshot.snapshotProject, 10);
-      const sessionKey = await hostInvoke<{ sessionKey: string }>(app, 'workspaces', 'getActive')
-        .then((active) => ({ sessionKey: (active as { activeWorkspace?: { activeSessionKey?: string } }).activeWorkspace?.activeSessionKey ?? SESSION_KEY }));
-      const sendResult = await hostInvoke<Json>(app, 'chat', 'sendWithMedia', {
-        sessionKey: sessionKey.sessionKey, message: 'FIX-MOYU would edit, but this run is cancelled before any edit.',
-        idempotencyKey: 'tf0581-cancel-' + Date.now(),
-      });
-      receipt.sendResult = sendResult;
-      await new Promise((resolve) => setTimeout(resolve, 3_000));
-      const stop = await hostInvoke<Json>(app, 'chat', 'abort', { sessionKey: sessionKey.sessionKey }).catch((cause) => ({ error: String(cause) }));
-      receipt.abortResult = stop;
-      await new Promise((resolve) => setTimeout(resolve, 5_000));
-      const transcript = await history(app);
-      const text = JSON.stringify(transcript);
-      expect(text).not.toContain('MOYU_ACCEPTANCE_OK');
-      expect(await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH), 'utf8')).toBe(before);
-      expect(await readFile(join(snapshot.snapshotProject, MOYU_ORACLE_PATH), 'utf8')).toContain('O\'Brien');
-      receipt.transcript = transcript;
-      receipt.sideEffect = false;
-      receipt.status = 'pass';
-    } catch (error) {
-      receipt.status = 'fail';
-      receipt.error = String(error);
-      throw error;
-    } finally {
-      if (app) await closeElectronApp(app).catch(() => undefined);
-      await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-      await snapshot.verifyOriginalUnchanged().catch((error) => { receipt.originalUnchangedError = String(error); });
-      await save(join(root, 'receipt.json'), receipt);
-      if (process.env.CLAWX_MOYU_KEEP_WS !== '1') await snapshot.cleanup();
-    }
-  });
-
-  test('undo with a missing journal snapshot fails closed without partial restore', async ({ homeDir, userDataDir, launchElectronApp }) => {
-    const runId = 'tf0581-moyu-' + Date.now() + '-stalejournal';
-    const root = join('D:\\tmp\\clawx-product-acceptance', runId, 'b2-moyu');
-    const snapshot = await createMoyuSnapshot(root, 'stalejournal');
-    const marker = 'MOYU_STALE_' + Date.now();
-    // First turn: edit then remove the newest journal .pre snapshot; second turn: undo must fail closed.
-    const llm = await startScriptedLlm((userText, results) => {
-      const has = (id: string) => Object.keys(results).some((key) => key.startsWith(id.replace(/[^A-Za-z0-9]/g, '')));
-      const isUndo = userText.lastIndexOf('UNDO-STAIL') > userText.lastIndexOf('FIX-STAIL');
-      if (isUndo) {
-        if (!has('undo-stale')) return { toolCall: { id: 'undo-stale', name: 'undo_write', args: { steps: 1 } } };
-        return { text: 'MOYU_STALE_UNDO_DONE ' + marker };
-      }
-      if (!has('edit-stale')) return {
-        toolCall: { id: 'edit-stale', name: 'edit', args: { path: MOYU_ALLOWED_PATH, edits: [{ oldText: snapshot.routerBlock, newText: ROUTER_PARAMETERIZED }] } },
-      };
-      return { text: 'MOYU_STALE_EDIT_DONE ' + marker };
+  test('the UI denies an actual outside-root exec approval and the next allowed edit succeeds', async ({ homeDir, userDataDir, launchElectronApp }) => {
+    const { root, snapshot, receipt } = await begin('outside-approval');
+    const llm = await startScriptedLlm((user, results, requestIndex) => {
+      if (user.lastIndexOf('ALLOWED-EDIT') > user.lastIndexOf('OUTSIDE-WRITE')) return has(results, 'allowed-edit')
+        ? { text: 'MOYU_ALLOWED_DONE' }
+        : { toolCall: { id: 'allowed-edit', name: 'edit', args: { path: MOYU_ALLOWED_PATH, edits: [{ oldText: snapshot.routerBlock, newText: replacement }] } } };
+      return has(results, 'outside-write', requestIndex) ? { text: 'MOYU_OUTSIDE_DONE' }
+        : { toolCall: { id: 'outside-write', name: 'bash', args: { command: 'Set-Content -LiteralPath "' + snapshot.sentinel + '" -Value tampered', workdir: snapshot.snapshotProject, timeout: 60 } } };
     });
-    let app: ElectronApplication | undefined;
-    const receipt: Json = { actor, driven_by: 'agent', scenario: 'stale-journal-undo', runId, marker, candidate: snapshot.originalGit, status: 'running' };
+    let opened: Awaited<ReturnType<typeof openProduct>> | undefined;
     try {
-      app = await launchElectronApp({ skipSetup: true, env: moyuOpenClawEnv(homeDir) });
-      const page = await getStableWindow(app);
-      await page.getByTestId('main-layout').waitFor({ timeout: 60_000 });
-      await startGateway(app);
-      await configureProductProvider(app, page, llm.port, 11);
-      await bindWorkspace(app, page, snapshot.snapshotProject, 11);
-      const { readdir, unlink } = await import('node:fs/promises');
-      await send(page, 'FIX-STAIL edit user_router.py, then stop.');
-      await expect.poll(() => llm.log.some((entry) => entry.issued?.startsWith('text:MOYU_STALE_EDIT_DONE')), { timeout: 240_000 }).toBe(true);
-      const edited = await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH), 'utf8');
-      expect(edited).toContain('VALUES (?, ?, ?, ?, ?)');
-      const journalRoot = join(snapshot.snapshotProject, '.openclaw', 'journal');
-      const sessions = await readdir(journalRoot);
-      expect(sessions.length).toBeGreaterThan(0);
-      const sessionDir = join(journalRoot, sessions[0]);
-      const pres = (await readdir(sessionDir)).filter((name) => name.endsWith('.pre')).sort();
-      expect(pres.length).toBeGreaterThan(0);
-      await unlink(join(sessionDir, pres.at(-1)!));
-      await send(page, 'UNDO-STAIL the last edit now.');
-      await expect.poll(() => llm.log.some((entry) => entry.issued?.startsWith('text:MOYU_STALE_UNDO_DONE')), { timeout: 240_000 }).toBe(true);
-      const outcome = await toolResult(llm.log, 'undo-stale');
-      const compact = outcome.replace(/\s+/g, '');
-      const failedClosed = compact.includes('"ok":false') || /snapshot missing|journal/i.test(outcome);
-      expect(failedClosed).toBe(true);
-      const notHalfRestored = (await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH), 'utf8')).includes('VALUES (?, ?, ?, ?, ?)');
-      expect(notHalfRestored).toBe(true);
-      const metasLeft = (await readdir(sessionDir)).filter((name) => name.endsWith('.meta.json')).length;
-      expect(metasLeft).toBeGreaterThan(0);
-      receipt.undoOutcome = outcome;
-      receipt.failedClosed = true;
-      receipt.notHalfRestored = true;
-      receipt.status = 'pass';
-    } catch (error) {
-      receipt.status = 'fail';
-      receipt.error = String(error);
-      receipt.issued = llm.log.map((entry) => entry.issued);
-      receipt.keys = llm.log.map((entry) => Object.keys(entry.toolResults));
-      receipt.values = llm.log.map((entry) => Object.fromEntries(Object.entries(entry.toolResults).map(([k, v]) => [k, String(v).slice(0, 300)])));
-      receipt.chatHistory = app ? await hostInvoke<Json>(app, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: SESSION_KEY, limit: 50, maxChars: 200_000 }, timeoutMs: 30_000 }).catch((cause) => ({ error: String(cause) })) : null;
-      throw error;
-    } finally {
-      if (app) await closeElectronApp(app).catch(() => undefined);
-      await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-      await snapshot.verifyOriginalUnchanged().catch((error) => { receipt.originalUnchangedError = String(error); });
-      await save(join(root, 'receipt.json'), receipt);
-      if (process.env.CLAWX_MOYU_KEEP_WS !== '1') await snapshot.cleanup();
+      opened = await openProduct(launchElectronApp, homeDir, userDataDir, snapshot, { baseUrl: 'http://127.0.0.1:' + llm.port + '/v1', model: 'mock-coder', key: 'test-key-ok', protocol: 'openai-completions' }, 'acceptEdits', 'always');
+      await send(opened.page, 'OUTSIDE-WRITE: request the outside-sentinel write once.');
+      await expect(opened.page.getByTestId('runtime-approval-prompt')).toBeVisible({ timeout: 90_000 });
+      const pending = await hostInvoke<Json>(opened.app, 'runtimeApprovals', 'list');
+      expect((pending.pending as Json[]).length).toBeGreaterThan(0);
+      await opened.page.getByTestId('runtime-approval-deny').click();
+      const negativeSessionKey = await activeSession(opened.app);
+      const denied = await final(opened.app, opened.page, negativeSessionKey, 'MOYU_OUTSIDE_DONE');
+      const result = outcome(llm.log, 'outside-write');
+      expect(result).toMatch(/denied|rejected|not approved|拒绝/i);
+      await snapshot.verifyAllowedChanges([]);
+      expect(sha256(await readFile(snapshot.sentinel))).toBe(snapshot.sentinelHash);
+      await send(opened.page, 'ALLOWED-EDIT: apply one allowed edit and stop.');
+      receipt.transcript = await final(opened.app, opened.page, negativeSessionKey, 'MOYU_ALLOWED_DONE', denied.messages?.length ?? 0);
+      expect(outcome(llm.log, 'allowed-edit')).toContain('Successfully replaced');
+      await snapshot.verifyAllowedChanges([MOYU_ALLOWED_PATH]);
+      receipt.approval = { pending, result, decision: 'deny', driven_by: 'agent' };
+      receipt.noOutsideEffect = true; receipt.allowedContinuation = true; receipt.status = 'pass';
+    } catch (error) { receipt.status = 'fail'; receipt.error = String(error); throw error; }
+    finally {
+      receipt.modelDriver = 'scripted-negative-control'; receipt.provider = llm.log;
+      llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve()));
+      await finish(root, snapshot, receipt, opened?.app, opened?.pid);
+    }
+  });
+
+  test('missing journal snapshot rejects undo and preserves the full edited file and metadata', async ({ homeDir, userDataDir, launchElectronApp }) => {
+    const { root, snapshot, receipt } = await begin('missing-journal');
+    const llm = await startScriptedLlm((user, results) => {
+      if (user.lastIndexOf('UNDO-MISSING') > user.lastIndexOf('FIX-MISSING')) return has(results, 'missing-undo')
+        ? { text: 'MOYU_MISSING_UNDO_DONE' } : { toolCall: { id: 'missing-undo', name: 'undo_write', args: { steps: 1 } } };
+      return has(results, 'missing-edit') ? { text: 'MOYU_MISSING_EDIT_DONE' }
+        : { toolCall: { id: 'missing-edit', name: 'edit', args: { path: MOYU_ALLOWED_PATH, edits: [{ oldText: snapshot.routerBlock, newText: replacement }] } } };
+    });
+    let opened: Awaited<ReturnType<typeof openProduct>> | undefined;
+    try {
+      opened = await openProduct(launchElectronApp, homeDir, userDataDir, snapshot, { baseUrl: 'http://127.0.0.1:' + llm.port + '/v1', model: 'mock-coder', key: 'test-key-ok', protocol: 'openai-completions' });
+      await send(opened.page, 'FIX-MISSING: edit user_router.py once, then stop.');
+      const missingSessionKey = await activeSession(opened.app);
+      await final(opened.app, opened.page, missingSessionKey, 'MOYU_MISSING_EDIT_DONE');
+      const editedHash = sha256(await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH)));
+      await snapshot.verifyAllowedChanges([MOYU_ALLOWED_PATH]);
+      const files = await journal(snapshot);
+      const pre = files.find(path => path.endsWith('.pre')); const meta = files.find(path => path.endsWith('.meta.json'));
+      expect(pre).toBeTruthy(); expect(meta).toBeTruthy();
+      const metaHash = sha256(await readFile(meta!)); await unlink(pre!);
+      await send(opened.page, 'UNDO-MISSING: call undo_write now and report its actual failure.');
+      receipt.transcript = await final(opened.app, opened.page, missingSessionKey, 'MOYU_MISSING_UNDO_DONE');
+      const result = outcome(llm.log, 'missing-undo');
+      expect(result.replace(/\s/g, '')).toContain('"ok":false'); expect(result).toContain('journalDir');
+      expect(sha256(await readFile(join(snapshot.snapshotProject, MOYU_ALLOWED_PATH)))).toBe(editedHash);
+      expect(sha256(await readFile(meta!))).toBe(metaHash);
+      receipt.result = result; receipt.editedHash = editedHash; receipt.metaHash = metaHash; receipt.notHalfRestored = true; receipt.status = 'pass';
+    } catch (error) { receipt.status = 'fail'; receipt.error = String(error); throw error; }
+    finally {
+      receipt.modelDriver = 'scripted-negative-control'; receipt.provider = llm.log;
+      llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve()));
+      await finish(root, snapshot, receipt, opened?.app, opened?.pid);
     }
   });
 });

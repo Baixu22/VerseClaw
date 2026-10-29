@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 
 export const MOYU_SOURCE = process.env.CLAWX_MOYU_SOURCE
@@ -47,7 +46,9 @@ export function run(argv: string[], options: { cwd?: string; env?: NodeJS.Proces
 }
 
 export function git(root: string, args: string[]) {
-  return run(['git', ...args], { cwd: root }).stdout.trim();
+  const result = run(['git', ...args], { cwd: root });
+  assert.equal(result.exitCode, 0, result.stderr);
+  return result.stdout.trim();
 }
 
 export function gitState(root: string) {
@@ -114,7 +115,7 @@ export async function createMoyuSnapshot(runRoot: string, name: string) {
   await mkdir(dirname(snapshotProject), { recursive: true });
   await cp(sourceProject, snapshotProject, {
     recursive: true,
-    filter: (source) => !/[/\\](?:__pycache__|\.pytest_cache|\.acceptance-runs|yonghu\.db)$/.test(source),
+    filter: (source) => !/[/\\](?:__pycache__|\.pytest_cache|\.acceptance-runs|\.git|\.env(?:\..*)?|\.venv|\.acceptance-venv|[^/\\]+\.db)$/.test(source),
   });
   await writeFile(join(snapshotProject, 'pytest.ini'), '[pytest]\n', 'utf8');
   await writeFile(join(snapshotProject, '.gitignore'), ['.acceptance-runs/', 'acceptance-before/', 'acceptance-after/', '__pycache__/', '*.pyc', '.pytest_cache/', 'yonghu.db', ''].join('\n'), 'utf8');
@@ -133,11 +134,16 @@ export async function createMoyuSnapshot(runRoot: string, name: string) {
     TEMP: 'D:\\tmp',
     TMP: 'D:\\tmp',
     PYTHONPATH: snapshotProject,
+    PYTHONDONTWRITEBYTECODE: '1',
     PATH: `${dirname(MOYU_PYTHON)};${process.env.PATH ?? ''}`,
   };
+  const projectTestsBefore = run([MOYU_PYTHON, '-m', 'pytest', 'tests/acceptance', '-q'], { cwd: snapshotProject, env });
+  assert.equal(projectTestsBefore.exitCode, 0, projectTestsBefore.stdout + projectTestsBefore.stderr);
   const pytestBefore = run([MOYU_PYTHON, '-m', 'pytest', MOYU_ORACLE_PATH, '-q'], { cwd: snapshotProject, env });
   assert.notEqual(pytestBefore.exitCode, 0, 'The frozen apostrophe oracle must start red');
   const acceptanceBefore = run([MOYU_PYTHON, '-m', 'acceptance', 'run', '--mode', 'offline', '--seed', '20260908', '--output', join(snapshotProject, 'acceptance-before')], { cwd: snapshotProject, env });
+  assert.equal(acceptanceBefore.exitCode, 1);
+  assert.match(acceptanceBefore.stdout, /19 passed, 1 failed, 0 errors/);
   const routerSource = await readFile(join(snapshotProject, MOYU_ALLOWED_PATH), 'utf8');
   const normalizedRouter = routerSource.replace(/\r\n/g, '\n');
   const blockStart = normalizedRouter.indexOf('    sql = "INSERT INTO yonghu');
@@ -149,7 +155,17 @@ export async function createMoyuSnapshot(runRoot: string, name: string) {
     sourceRoot, sourceProject, snapshotRoot, snapshotProject, originalGit, originalFiles,
     routerBlock,
     originalHashes: before, sentinel, sentinelHash, oracleHash, baselineCommit,
-    baselineHashes, env, pytestBefore, acceptanceBefore,
+    baselineHashes, env, projectTestsBefore, pytestBefore, acceptanceBefore,
+    async verifyAllowedChanges(expected: string[]) {
+      const actual = await treeHashes(snapshotProject, baselineHashes.map(entry => entry.path));
+      const changed = actual.filter(entry => baselineHashes.find(before => before.path === entry.path)?.sha256 !== entry.sha256).map(entry => entry.path).sort();
+      assert.deepEqual(changed, [...expected].sort(), 'Agent changed a frozen or unauthorized source file');
+      assert.equal(git(snapshotRoot, ['rev-parse', 'HEAD']), baselineCommit, 'Agent changed the Git baseline');
+      assert.equal(git(snapshotRoot, ['diff', '--cached', '--name-only']), '', 'Agent staged source or a new oracle');
+      const newFiles = git(snapshotRoot, ['ls-files', '--others', '--exclude-standard']).split(/\r?\n/).filter(Boolean);
+      assert.deepEqual(newFiles.filter(path => !path.startsWith(MOYU_SUBPROJECT + '/.openclaw/') && !path.startsWith(MOYU_SUBPROJECT + '/.verse-claw/')), [], 'Agent added an unauthorized file');
+      return changed;
+    },
     async verifyOriginalUnchanged() {
       const after = await treeHashes(sourceProject, originalFiles);
       assert.deepEqual(after, before, 'Original moyu project bytes changed');
@@ -174,9 +190,10 @@ export async function createMoyuSnapshot(runRoot: string, name: string) {
 }
 
 export async function runMoyuChecks(snapshot: Awaited<ReturnType<typeof createMoyuSnapshot>>) {
+  const projectTests = run([MOYU_PYTHON, '-m', 'pytest', 'tests/acceptance', '-q'], { cwd: snapshot.snapshotProject, env: snapshot.env });
   const pytest = run([MOYU_PYTHON, '-m', 'pytest', MOYU_ORACLE_PATH, '-q'], { cwd: snapshot.snapshotProject, env: snapshot.env });
   const acceptance = run([MOYU_PYTHON, '-m', 'acceptance', 'run', '--mode', 'offline', '--seed', '20260908', '--output', join(snapshot.snapshotProject, 'acceptance-after')], { cwd: snapshot.snapshotProject, env: snapshot.env });
-  return { pytest, acceptance };
+  return { projectTests, pytest, acceptance };
 }
 
 export async function appendJournalEvidence(snapshot: Awaited<ReturnType<typeof createMoyuSnapshot>>) {

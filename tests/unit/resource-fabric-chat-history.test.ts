@@ -18,6 +18,32 @@ describe('ResourceFabric chat.history admission', () => {
     await expect(second).resolves.toEqual({ messages: ['ok'] });
   });
 
+  it('releases the singleflight after a slow history request so a later retry runs again', async () => {
+    const backpressure = new ResourceFabric({
+      accounts: { chatHistory: { initialLimit: 1, minLimit: 1, maxLimit: 1, defaultTimeoutMs: 10 } },
+    });
+    const runner = vi.fn((_method: string, _params?: unknown, timeoutMs?: number) =>
+      new Promise((_resolve, reject) => {
+        setTimeout(() => reject(new Error(`RPC timeout: chat.history (${timeoutMs})`)), timeoutMs);
+      }));
+
+    await expect(backpressure.run(
+      'chat.history',
+      { sessionKey: 'agent:main:one', limit: 200 },
+      5,
+      runner,
+    )).rejects.toThrow('RPC timeout: chat.history');
+    await expect(backpressure.run(
+      'chat.history',
+      { sessionKey: 'agent:main:one', limit: 200 },
+      5,
+      runner,
+    )).rejects.toThrow('RPC timeout: chat.history');
+
+    expect(runner).toHaveBeenCalledTimes(2);
+    expect(backpressure.getDiagnostics().chatHistory).toMatchObject({ active: 0, queued: 0 });
+  });
+
   it('limits distinct chat.history requests while allowing non-history RPCs through', async () => {
     const backpressure = new ResourceFabric({ accounts: { chatHistory: { initialLimit: 2, minLimit: 1, maxLimit: 2 } } });
     let activeHistory = 0;

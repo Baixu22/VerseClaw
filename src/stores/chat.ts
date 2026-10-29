@@ -484,6 +484,12 @@ function cloneHistoryMessages(messages: RawMessage[]): RawMessage[] {
     ...message,
     _attachedFiles: message._attachedFiles?.map((file) => ({ ...file })),
     _knowledgeRefs: message._knowledgeRefs?.map((reference) => ({ ...reference })),
+    _toolResults: message._toolResults?.map((result) => ({
+      ...result,
+      result: result.result && typeof result.result === 'object'
+        ? structuredClone(result.result)
+        : result.result,
+    })),
   }));
 }
 

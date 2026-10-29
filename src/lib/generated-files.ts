@@ -379,10 +379,58 @@ function unavailablePatchProjection(reason: string): GeneratedFilePatchProjectio
   return { status: 'unavailable', reason };
 }
 
+function resultTextBlocks(result: unknown): string[] {
+  // A folded tool result keeps the transcript's raw content array, while a
+  // structured tool result nests the same blocks under `content`.
+  const record = asRecord(result);
+  const content: unknown[] = Array.isArray(result)
+    ? result
+    : Array.isArray(record?.content) ? (record!.content as unknown[]) : [];
+  return content
+    .map((block) => asRecord(block))
+    .filter((block): block is Record<string, unknown> => block != null && block.type === 'text')
+    .map((block) => typeof block.text === 'string' ? block.text : '');
+}
+
+function parseTrustedEditResult(result: unknown): {
+  filePath?: string;
+  edits?: FileEditOp[];
+} {
+  const blocks = resultTextBlocks(result);
+  const summary = blocks.find((text) => /^Successfully replaced \d+ block\(s\) in .+\.$/m.test(text.trim())) ?? '';
+  const pathMatch = /^Successfully replaced \d+ block\(s\) in (.+)\.$/m.exec(summary.trim());
+  const diffBlock = blocks.find((text) => /(?:^|\n)diff:\n/.test(text));
+  const filePath = pathMatch?.[1]?.trim();
+  if (!filePath || !/\.[a-z0-9]{1,8}$/i.test(basenameOf(filePath))) return {};
+  if (!diffBlock) return { filePath };
+  const diff = diffBlock.slice(diffBlock.indexOf('diff:') + 'diff:'.length);
+  const edits: FileEditOp[] = [];
+  let oldLines: string[] = [];
+  let newLines: string[] = [];
+  const flush = () => {
+    if (oldLines.length > 0 || newLines.length > 0) {
+      edits.push({ old: oldLines.join('\n'), new: newLines.join('\n') });
+      oldLines = [];
+      newLines = [];
+    }
+  };
+  for (const line of diff.split(/\r?\n/)) {
+    const match = /^([-+ ])(\d+)\s(.*)$/.exec(line);
+    if (!match) continue;
+    if (match[1] === '-') oldLines.push(match[3] ?? '');
+    else if (match[1] === '+') newLines.push(match[3] ?? '');
+    else {
+      flush();
+    }
+  }
+  flush();
+  return { filePath, edits: edits.length > 0 ? edits : undefined };
+}
+
 function mutationPatchProjection(
   message: RawMessage,
   toolCallId: string | undefined,
-): GeneratedFilePatchProjection {
+): GeneratedFilePatchProjection | undefined {
   if (!toolCallId) return unavailablePatchProjection('Mutation tool call has no request id.');
   const matches = (message._toolResults ?? []).filter((result) => result.toolCallId === toolCallId);
   if (matches.length === 0) return { status: 'pending' };
@@ -395,6 +443,14 @@ function mutationPatchProjection(
       code: 'incomplete_response',
     });
     return unavailablePatchProjection(error.safeMessage);
+  }
+  if (details.patchArtifacts === undefined) {
+    // Older tool results carry only display text plus the edit arguments. The
+    // caller can still render the exact old/new hunks it submitted; absence of
+    // structured patch evidence must not hide that trusted payload. Any present
+    // patch artifact remains strict: malformed, stale or incomplete evidence
+    // below still fails closed instead of falling back.
+    return undefined;
   }
   if (!Array.isArray(details.patchArtifacts) || details.patchArtifacts.length !== 1) {
     return unavailablePatchProjection('Mutation tool result has no single patch artifact.');
@@ -507,6 +563,27 @@ export function extractGeneratedFiles(
   const map = new Map<string, GeneratedFile>();
   const start = Math.max(0, Math.min(triggerIndex + 1, messages.length));
   const end = Math.max(start - 1, Math.min(segmentEnd, messages.length - 1));
+  const consumedResultIds = new Set<string>();
+
+  const upsertEdit = (
+    filePath: string,
+    ops: FileEditOp[],
+    patchProjection: GeneratedFilePatchProjection | undefined,
+    index: number,
+  ) => {
+    const existing = map.get(filePath);
+    map.set(filePath, buildGeneratedFile(
+      filePath,
+      'modified',
+      {
+        fullContent: existing?.fullContent,
+        edits: [...(existing?.edits ?? []), ...ops],
+        baseline: existing?.baseline,
+        patchProjection,
+      },
+      index,
+    ));
+  };
 
   for (let i = start; i <= end; i += 1) {
     const message = messages[i];
@@ -531,6 +608,7 @@ export function extractGeneratedFiles(
       const patchProjection = isWrite || isEdit
         ? mutationPatchProjection(message, block.id)
         : undefined;
+      if (block.id) consumedResultIds.add(block.id);
 
       if (isWrite) {
         const newContent = pickWriteContent(input);
@@ -546,19 +624,7 @@ export function extractGeneratedFiles(
       }
 
       if (isEdit) {
-        const newOps = pickEditOps(input);
-        const next = buildGeneratedFile(
-          filePath,
-          'modified',
-          {
-            fullContent: existing?.fullContent,
-            edits: [...(existing?.edits ?? []), ...newOps],
-            baseline: existing?.baseline,
-            patchProjection,
-          },
-          i,
-        );
-        map.set(filePath, next);
+        upsertEdit(filePath, pickEditOps(input), patchProjection, i);
         continue;
       }
 
@@ -572,5 +638,20 @@ export function extractGeneratedFiles(
     }
   }
 
+  // Gateway display projection can omit an intermediate assistant tool-call
+  // row while retaining its toolResult. Recover only from the trusted edit
+  // result text itself; assistant prose is never accepted as patch evidence.
+  for (let i = start; i <= end; i += 1) {
+    const message = messages[i];
+    if (!message || message.role !== 'assistant') continue;
+    for (const result of message._toolResults ?? []) {
+      if (result.toolName !== 'edit') continue;
+      if (result.toolCallId && consumedResultIds.has(result.toolCallId)) continue;
+      const parsed = parseTrustedEditResult(result.result);
+      if (!parsed.filePath || !parsed.edits?.length) continue;
+      upsertEdit(parsed.filePath, parsed.edits, undefined, i);
+      if (result.toolCallId) consumedResultIds.add(result.toolCallId);
+    }
+  }
   return Array.from(map.values()).sort((a, b) => a.lastSeenIndex - b.lastSeenIndex);
 }

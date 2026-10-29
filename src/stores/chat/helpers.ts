@@ -668,7 +668,8 @@ function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMess
 
   if (resultsByToolCallId.size === 0) return messages;
 
-  return messages.map((msg) => {
+  const consumed = new Set<string>();
+  const folded = messages.map((msg) => {
     if (msg.role !== 'assistant') return msg;
     const content = msg.content;
     if (!Array.isArray(content)) return msg;
@@ -677,7 +678,9 @@ function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMess
       if (block.type !== 'tool_use' && block.type !== 'toolCall') continue;
       if (!block.id) continue;
       const result = resultsByToolCallId.get(block.id);
-      if (result) foldedResults.push(result);
+      if (!result) continue;
+      foldedResults.push(result);
+      consumed.add(block.id);
     }
     if (foldedResults.length === 0) return msg;
     return {
@@ -685,6 +688,31 @@ function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMess
       _toolResults: [...(msg._toolResults ?? []), ...foldedResults],
     };
   });
+
+  // The historical display projection can drop only an intermediate assistant
+  // message while keeping its real toolResult. Preserve the remaining trusted
+  // results on the next visible assistant turn so downstream projections can
+  // match them by toolCallId instead of trusting model-authored prose.
+  const orphaned = [...resultsByToolCallId.values()].filter(
+    (result) => !result.toolCallId || !consumed.has(result.toolCallId),
+  );
+  if (orphaned.length === 0) return folded;
+
+  let nextAssistantIndex = folded.length;
+  for (let index = folded.length - 1; index >= 0; index -= 1) {
+    if (folded[index]?.role === 'assistant') {
+      nextAssistantIndex = index;
+      break;
+    }
+  }
+  if (nextAssistantIndex >= folded.length) return folded;
+  const target = folded[nextAssistantIndex];
+  return folded.map((msg, index) => index === nextAssistantIndex
+    ? {
+        ...target,
+        _toolResults: [...(target._toolResults ?? []), ...orphaned],
+      }
+    : msg);
 }
 
 const DIRECTORY_MIME_TYPE = 'application/x-directory';

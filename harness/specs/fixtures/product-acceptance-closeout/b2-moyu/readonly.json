@@ -1,0 +1,1121 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0581-moyu",
+  "scenario": "readonly",
+  "candidate": {
+    "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+    "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+    "dirty": false,
+    "status": []
+  },
+  "targetProject": {
+    "commit": "162e0213717027310a3f560d7e910a5595824415",
+    "tree": "2821be552521e7fcc3cbcac71b5b4c0c85e06092",
+    "dirty": true,
+    "status": [
+      "M .gitignore",
+      " M demo/user_api/service/user_service.py",
+      " M soak-evidence/timeseries/aggregate.json",
+      " M soak-evidence/timeseries/audit.json",
+      " M soak-evidence/timeseries/daemon-state.json",
+      " M soak-evidence/timeseries/runs.jsonl",
+      "?? .live-e2e-authorized",
+      "?? .workbench/",
+      "?? _agent-command.json"
+    ]
+  },
+  "baselineCommit": "90595859170fbd8b8dcaf4665f40621af0a71c1b",
+  "baselineHashes": [
+    {
+      "path": ".gitignore",
+      "sha256": "b633193809dc669ff4ee0b51ce0fb7828e1e572efb762f30ca44d59e2918d25a",
+      "bytes": 99
+    },
+    {
+      "path": "acceptance/__init__.py",
+      "sha256": "d504cd2d300244f040444dfb04cfcc088762a1a8c002f7906dba9444e2fedff8",
+      "bytes": 169
+    },
+    {
+      "path": "acceptance/__main__.py",
+      "sha256": "aa9ff3d4b7033ad59ce3bf99791c44e4fcdf94d3f8b61145a9321edaf9638548",
+      "bytes": 109
+    },
+    {
+      "path": "acceptance/analyzer.py",
+      "sha256": "df5bfd3d2b989d71610c3a623bc2b0ccadc26ab3cbd3f81bbc677b20829e1186",
+      "bytes": 6421
+    },
+    {
+      "path": "acceptance/catalog.py",
+      "sha256": "18e14af4235fea02f89cdde3258f8c6bbb65fda1b0a194702277043b7e1dacf3",
+      "bytes": 12322
+    },
+    {
+      "path": "acceptance/cli.py",
+      "sha256": "6518f9cb9b6de4fc4962d91ac54d4e51f870b99d2fb7ac977731cea904165163",
+      "bytes": 10249
+    },
+    {
+      "path": "acceptance/models.py",
+      "sha256": "e7b4513fdea34c6d18ab30dac43f3790b864d2d7aa40afdef568bcfa680e5e97",
+      "bytes": 5632
+    },
+    {
+      "path": "acceptance/planner.py",
+      "sha256": "7c075ccf3d479ba29cb889478a41f18fa3ccb6fabbcfd149b05103e8deb70853",
+      "bytes": 14284
+    },
+    {
+      "path": "acceptance/runner.py",
+      "sha256": "e3459883e5b9539167ca5fcede20dd7dd157422828329338e0f68487290de9d1",
+      "bytes": 11572
+    },
+    {
+      "path": "acceptance/senseaudio.py",
+      "sha256": "a9c9942475067c7887da482a94c1063c1d3979f0995cef2b98fc7bdc91077543",
+      "bytes": 6775
+    },
+    {
+      "path": "database_config.py",
+      "sha256": "8a68f6ff77caa463a6b2487ef432e8cedb9249d9ba54fb163f9cc58125f8c7e4",
+      "bytes": 1892
+    },
+    {
+      "path": "main.py",
+      "sha256": "21a679f363f68a9cedcec22419b1cb354f4fd43133ed2da47d9249197dcc1186",
+      "bytes": 3206
+    },
+    {
+      "path": "pytest.ini",
+      "sha256": "8250d20f42b419af40706490ead78aabab9feba93eab09a3f626e3de5256e1f4",
+      "bytes": 9
+    },
+    {
+      "path": "README.md",
+      "sha256": "eee444a028078c6f3268e3a0a5a89b03e08cda7d4b5a80a35d65c0a447f7c22b",
+      "bytes": 5889
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "0297e295d2ae48b4d28fb6ed51bbc81d716caf408a873fd5c0e73d6fc1af84f4",
+      "bytes": 83
+    },
+    {
+      "path": "services/__init__.py",
+      "sha256": "233a63c433ad49248acb9d69bebda89e05a0b8b7ab1c7e7cb29b060f86a27bf2",
+      "bytes": 627
+    },
+    {
+      "path": "services/delete/__init__.py",
+      "sha256": "a14af3338f30f46c27b5c40f17db6d5550eeb4aa1d5da06267f2e5980eba878c",
+      "bytes": 624
+    },
+    {
+      "path": "services/delete/context/__init__.py",
+      "sha256": "48d41c5209c38532fc84348e0f68e7dec77f9b5e095caf017ace5c0c042e1fb1",
+      "bytes": 1813
+    },
+    {
+      "path": "services/delete/coordinator/__init__.py",
+      "sha256": "a6cd0c62efe644fbcbe2a1fc3ace382d539eff96c67249792e9b8a3c902f80d9",
+      "bytes": 427
+    },
+    {
+      "path": "services/delete/coordinator/api/__init__.py",
+      "sha256": "d3ad118605c2f82a70620bcedee781c3dbb7f0a8a2fff7a2460f9501daf3d6b7",
+      "bytes": 38
+    },
+    {
+      "path": "services/delete/coordinator/api/delete_controller.py",
+      "sha256": "698ef0574287e777ea45ccd434c8a9f4929b2345cb66d97d6d9d8766577158d6",
+      "bytes": 2207
+    },
+    {
+      "path": "services/delete/coordinator/api/delete_dto.py",
+      "sha256": "4f3aac17f71583c155f7ab30b098ad2ce99f52b969551b99c411293cccc92302",
+      "bytes": 710
+    },
+    {
+      "path": "services/delete/coordinator/route/__init__.py",
+      "sha256": "af64fac71282fe57a792ac5cc761ccf1934a103692f4f0476c9c9e188164e381",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/coordinator/route/service_router.py",
+      "sha256": "5fdf542bf5c7b8cb3f31cb7608e240a56f294ae41318c1753ca4aa3cc973b5d8",
+      "bytes": 2844
+    },
+    {
+      "path": "services/delete/coordinator/saga/__init__.py",
+      "sha256": "6d796e57d6c0ba67ec159f9d6f07ba11e26fc2c2ba834088cfc4e00195626216",
+      "bytes": 23
+    },
+    {
+      "path": "services/delete/coordinator/saga/saga_orchestrator.py",
+      "sha256": "d3f5ca903b55178ebb990ecc6b60ee9e6d68b7af5e5da8b46ee26adf17dc4abf",
+      "bytes": 3694
+    },
+    {
+      "path": "services/delete/coordinator/tcc/__init__.py",
+      "sha256": "e313ef4722e14a3024b003acf9575e48a8a6acc3babf81ccd52a13838093ed48",
+      "bytes": 22
+    },
+    {
+      "path": "services/delete/coordinator/tcc/tcc_coordinator.py",
+      "sha256": "45be248594ab1bb93183284d1d1306a24974c50fff9c7e3676239bda8d78ec27",
+      "bytes": 3569
+    },
+    {
+      "path": "services/delete/data/__init__.py",
+      "sha256": "2b847d4faae877d1af40787655c7d5380909053f99ff5e2fcb445deff9c995c8",
+      "bytes": 21
+    },
+    {
+      "path": "services/delete/data/cache/__init__.py",
+      "sha256": "2ece1e5db856e1dfca58bb79476191c3a32fcef79afa2751a6c2edb60bc89727",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/data/cache/cache_invalidator.py",
+      "sha256": "0c4ba895f380f113c52c87c5eab2f39447af015053a0a5ad6e4b97a53ee6187c",
+      "bytes": 1696
+    },
+    {
+      "path": "services/delete/data/repository/__init__.py",
+      "sha256": "cdc18f8f096823ff67d0b3bbfdbd87afdbb55eff41b65b9909e3fea7b7a0a392",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/data/repository/user_repository.py",
+      "sha256": "905015fdaefeadd8703f78e45ac2cffe57702c0db6c3c2c605ae695a4688e1f8",
+      "bytes": 2434
+    },
+    {
+      "path": "services/delete/data/sharding/__init__.py",
+      "sha256": "d3a49cc9f825f0ec9e48ccfc02d73bab345f4fb7fd0cb0187c93c8cbebbb3009",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/data/sharding/sharding_strategy.py",
+      "sha256": "e0d16ff9c163f639cf90cd340b193cc224e257692e43987c8e17007fffa98169",
+      "bytes": 1377
+    },
+    {
+      "path": "services/delete/executor/__init__.py",
+      "sha256": "8c56e2adbff1cd45a59bb62ecc0cfdb09d36b460d7d4d317ab9bff1739ff4412",
+      "bytes": 176
+    },
+    {
+      "path": "services/delete/executor/adapter/__init__.py",
+      "sha256": "e1d6a44c86b33d65cf56c300ea9c05d3ab7f81e9508df9bcfa6773b99731bdfc",
+      "bytes": 45
+    },
+    {
+      "path": "services/delete/executor/adapter/cache_adapter.py",
+      "sha256": "cac162c956946e86afc1e979c93609913303721e5a6b78b6a7ec692198b89af9",
+      "bytes": 954
+    },
+    {
+      "path": "services/delete/executor/adapter/database_adapter.py",
+      "sha256": "1975f34a534b792bc8980e4e24b10033355355f5c45c15734bb40b1501f2af61",
+      "bytes": 1024
+    },
+    {
+      "path": "services/delete/executor/adapter/message_adapter.py",
+      "sha256": "f91534943600fd6852e65316b2e436b374bff3514cb0dc1b044ec8075b5d015e",
+      "bytes": 1300
+    },
+    {
+      "path": "services/delete/executor/api/__init__.py",
+      "sha256": "7f3dfd0da9055423f67e7847e679535d1a39afba5a6ec8a3e0760fff51703a8c",
+      "bytes": 28
+    },
+    {
+      "path": "services/delete/executor/domain/__init__.py",
+      "sha256": "ba785a1de247d7e5c895ad3e021bebd929fb06489892ec8b92287ef5337af245",
+      "bytes": 21
+    },
+    {
+      "path": "services/delete/executor/domain/delete_domain.py",
+      "sha256": "d5971a9b76d2017f3c136749544af9944706cd656b7d827e2fb9e66c4c8b78d5",
+      "bytes": 2728
+    },
+    {
+      "path": "services/delete/executor/idempotent/__init__.py",
+      "sha256": "58ce72b6734084adbcd19e1fe5feceb5a9a682d2601bc1861307c7eef4d4eeb1",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/executor/idempotent/idempotency_key.py",
+      "sha256": "59296559ef0bfa43b56daa235b2cfeb1d50877cd604f79bfb5012b77ea6be9d0",
+      "bytes": 1655
+    },
+    {
+      "path": "services/delete/factory/__init__.py",
+      "sha256": "a4e59b9fdd123c12c10c1a529e1b4c3a7da5ea8939e003ee81aab93231fe3231",
+      "bytes": 1328
+    },
+    {
+      "path": "services/delete/infrastructure/__init__.py",
+      "sha256": "b27a2efe8dd74752a127b0a0052e16ddafbf126879d3992143d2fe2cf61c1e41",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/infrastructure/config/__init__.py",
+      "sha256": "a7e4ccd207b3044192755da1da76e68b8118283d3b28b190463386c93dc7bacd",
+      "bytes": 190
+    },
+    {
+      "path": "services/delete/infrastructure/config/config_center.py",
+      "sha256": "6a23a004ef3393b4d72c1ede7eaf605c19a8a0df5d6a516cadecc6608f0607fe",
+      "bytes": 3322
+    },
+    {
+      "path": "services/delete/infrastructure/lock/__init__.py",
+      "sha256": "b93c2d2f3dc3bc09f1ec376250cbb1b7daf6054f97549e1df1d4af93b809d384",
+      "bytes": 223
+    },
+    {
+      "path": "services/delete/infrastructure/lock/distributed_lock.py",
+      "sha256": "c67ee0c23a7dcab6b8a27b774a24ae32a9cb6d5b4443b61d40471f24e02e487a",
+      "bytes": 4000
+    },
+    {
+      "path": "services/delete/infrastructure/registry/__init__.py",
+      "sha256": "3f486452e3bffaa8629cc8ea595f42f71500b5abaae30ab633f676900d6b56be",
+      "bytes": 188
+    },
+    {
+      "path": "services/delete/infrastructure/registry/service_registry.py",
+      "sha256": "f17bcba25db14b9153a45610e5840e3d533391eaefdde85ccdcd2c40da58a1a0",
+      "bytes": 4515
+    },
+    {
+      "path": "services/delete/message/__init__.py",
+      "sha256": "176a9bc3ac8a69f3984ad7569238166a6868b0f2ca10dc1465fb10997015ff17",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/message/event/__init__.py",
+      "sha256": "08698ad7b4bbe587f5452e1c7c2c8b384766c54cce5e3670fb6e2fa7727b9b29",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/message/event/delete_event.py",
+      "sha256": "12ee9be106478d7b7572051bae12a6e7c5c8ef4c33d5a91d44f999f4090ad826",
+      "bytes": 3189
+    },
+    {
+      "path": "services/delete/message/queue/__init__.py",
+      "sha256": "b59f8b3421206c6dd8e0315bd6b4609df8f50ce0dbd42900a074045d3cbbabbb",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/message/queue/delete_request_queue.py",
+      "sha256": "d7fadbf3f5ef876220fdca0fe5484df371bba6a00f5f4a64809641cf9342ff8c",
+      "bytes": 2664
+    },
+    {
+      "path": "services/delete/model/__init__.py",
+      "sha256": "f7fef757ae76e8dcb2a68b920bb93681a8c1de84ff0b13a39a93f21bdfbe2ada",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/model/delete_result.py",
+      "sha256": "9a56e315a3766b639f6e0b1d1fe35c131e72f393bdad5b96c4f61265c5ed6277",
+      "bytes": 1115
+    },
+    {
+      "path": "services/delete/monitoring/__init__.py",
+      "sha256": "9285e5e5907fed3db3fdc2a384043e6fdc8cd93b766c48e06ac2e556e8be45a9",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/monitoring/alert/__init__.py",
+      "sha256": "3694bb30b1190696a05e0ad07847b32c636d8fd433b6d53c2dbff3fef466a04e",
+      "bytes": 187
+    },
+    {
+      "path": "services/delete/monitoring/alert/alert_manager.py",
+      "sha256": "b1a8e07c564a06bd4c799b592f2e1d3777fbf625ae45e8cead2aaf2beeb924b3",
+      "bytes": 3071
+    },
+    {
+      "path": "services/delete/monitoring/metrics/__init__.py",
+      "sha256": "4763dc0df946f541652862180ae5659188ed0b81ec71a5a33a420f145825326b",
+      "bytes": 189
+    },
+    {
+      "path": "services/delete/monitoring/metrics/prometheus_client.py",
+      "sha256": "e21c555affe684e332a1c2ac6c6800d03f4fd3c212b0a2103431651ef3f78a9b",
+      "bytes": 6928
+    },
+    {
+      "path": "services/delete/monitoring/trace/__init__.py",
+      "sha256": "898ec59bfcc50364cb1f7fc1c65d658b4e372c81ae0169448e6e43bcb3fb0644",
+      "bytes": 160
+    },
+    {
+      "path": "services/delete/monitoring/trace/open_telemetry.py",
+      "sha256": "795db44ea936e96dac10691aed0e1b9d65f79d1ea574a55544952f11e2f97407",
+      "bytes": 4301
+    },
+    {
+      "path": "services/delete/notification/__init__.py",
+      "sha256": "08f822bd5acef4531ed222073082a899cdfa05547e2249032b2b097f4d565347",
+      "bytes": 194
+    },
+    {
+      "path": "services/delete/notification/message/__init__.py",
+      "sha256": "bb5f42fd7d507722631b9623b16a3acf700ba9e4e56af3eccf7b8983817207cd",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/notification/message/kafka_producer.py",
+      "sha256": "102874d1c24aa40075944c62da93ec644410c5d8155c68b9f06b1db88cb71bd0",
+      "bytes": 1397
+    },
+    {
+      "path": "services/delete/notification/observer/__init__.py",
+      "sha256": "8e75ccac28c0f51eae65c2e4eafc2f391c470e5f83032431cdd81ec6e3342507",
+      "bytes": 21
+    },
+    {
+      "path": "services/delete/notification/observer/distributed_observer.py",
+      "sha256": "388ed97a061ac4d1f682942cb896fe546444cbfa7c94b631f1218749306d242c",
+      "bytes": 4577
+    },
+    {
+      "path": "services/delete/observer/__init__.py",
+      "sha256": "9163164ebafec83f9debb1eaa9cb9d0a50bf2166a259cb4f2ad937defafdaee6",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/observer/observer_manager.py",
+      "sha256": "b67573fec2554c28aed90381089c386d5577e6c53c74fb7d754161f43de1d4d5",
+      "bytes": 2229
+    },
+    {
+      "path": "services/delete/pipeline/__init__.py",
+      "sha256": "904628ff4a601b64c98c65fde00a938e9314be34f39af2a61a1ec778d6236a03",
+      "bytes": 1450
+    },
+    {
+      "path": "services/delete/repository/__init__.py",
+      "sha256": "11b925f9eba25b4bd54ab1d1102b71ff8c2f19fc1cad3e474ab215fd856be83e",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/repository/yonghu_repository.py",
+      "sha256": "68acda8e9a2e696aa6e47913dc33cb5a4a898dac2d41e034323e5e2688fa2490",
+      "bytes": 1130
+    },
+    {
+      "path": "services/delete/strategy/__init__.py",
+      "sha256": "4de9351d4f2dc963163cca06514be9c12543aa759d2b356b54ac210b9798148f",
+      "bytes": 560
+    },
+    {
+      "path": "services/delete/strategy/base.py",
+      "sha256": "cc4910f5b36fed6282956efa12bfae7d593ae8e7fa14b0184efd0d2037fe7a88",
+      "bytes": 560
+    },
+    {
+      "path": "services/delete/strategy/batch.py",
+      "sha256": "fd33de16f43a4cac9d02957c93a542c51478b064785d3d4a0852015cf262e24b",
+      "bytes": 1355
+    },
+    {
+      "path": "services/delete/strategy/hard.py",
+      "sha256": "cfd73ed43259ef5e4ed9f5cbc981ecd6a4ea6edc8753bc3ab2b6d88ac3953c89",
+      "bytes": 1160
+    },
+    {
+      "path": "services/delete/strategy/soft.py",
+      "sha256": "d8ead1bc2c9e877b37babd130e7fe6b8ce05c6788178cbe674c7d99aac7989db",
+      "bytes": 1142
+    },
+    {
+      "path": "services/delete/validator/__init__.py",
+      "sha256": "9a9d276d0eccb13d4cee35e15b0c1844d7f94ba22aa53fa681ac89687acfcd25",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/validator/validator_chain.py",
+      "sha256": "d3ac3b0cf1fefb70d935c3477f06ba95f0c2be6cc12268b8548dc2dec8f563b9",
+      "bytes": 1324
+    },
+    {
+      "path": "tests/acceptance/test_contracts.py",
+      "sha256": "9025e9458d871f6f328480f45f23f2886563930986cc509402de36fd9365b810",
+      "bytes": 4985
+    },
+    {
+      "path": "tests/acceptance/test_integration.py",
+      "sha256": "633e4874aceb022a31ab6aa5ad2e3f0d2d7d998e6f5f55f2f9d7f1984013e897",
+      "bytes": 3732
+    },
+    {
+      "path": "tests/test_frozen_contract.py",
+      "sha256": "b5657b91b654ff39f345d32b59e548c879ef100f6f85097697eefcf8d0da46d2",
+      "bytes": 1707
+    },
+    {
+      "path": "user_model.py",
+      "sha256": "08038f2ff80aa529dd2cf5d5cd1c4860a8db3055193442a0cb1fd0fff89d98b6",
+      "bytes": 1736
+    },
+    {
+      "path": "user_router.py",
+      "sha256": "504b1cdee26713f073d4428ddc4a48e2e59268bc91a08f5b08847a888598e326",
+      "bytes": 8072
+    },
+    {
+      "path": "user_schema.py",
+      "sha256": "ce7c0bb4e2aeb2d646b2362b186b59f9cdc8d9a9fe7b6c6d8611b4736c4f7595",
+      "bytes": 1257
+    },
+    {
+      "path": "user_service.py",
+      "sha256": "638f8f830100fb70442933e5729d78d30a76905b1dcc85965566f79991e93cc9",
+      "bytes": 5881
+    }
+  ],
+  "originalHashes": [
+    {
+      "path": "README.md",
+      "sha256": "eee444a028078c6f3268e3a0a5a89b03e08cda7d4b5a80a35d65c0a447f7c22b",
+      "bytes": 5889
+    },
+    {
+      "path": "acceptance/__init__.py",
+      "sha256": "d504cd2d300244f040444dfb04cfcc088762a1a8c002f7906dba9444e2fedff8",
+      "bytes": 169
+    },
+    {
+      "path": "acceptance/__main__.py",
+      "sha256": "aa9ff3d4b7033ad59ce3bf99791c44e4fcdf94d3f8b61145a9321edaf9638548",
+      "bytes": 109
+    },
+    {
+      "path": "acceptance/analyzer.py",
+      "sha256": "df5bfd3d2b989d71610c3a623bc2b0ccadc26ab3cbd3f81bbc677b20829e1186",
+      "bytes": 6421
+    },
+    {
+      "path": "acceptance/catalog.py",
+      "sha256": "18e14af4235fea02f89cdde3258f8c6bbb65fda1b0a194702277043b7e1dacf3",
+      "bytes": 12322
+    },
+    {
+      "path": "acceptance/cli.py",
+      "sha256": "6518f9cb9b6de4fc4962d91ac54d4e51f870b99d2fb7ac977731cea904165163",
+      "bytes": 10249
+    },
+    {
+      "path": "acceptance/models.py",
+      "sha256": "e7b4513fdea34c6d18ab30dac43f3790b864d2d7aa40afdef568bcfa680e5e97",
+      "bytes": 5632
+    },
+    {
+      "path": "acceptance/planner.py",
+      "sha256": "7c075ccf3d479ba29cb889478a41f18fa3ccb6fabbcfd149b05103e8deb70853",
+      "bytes": 14284
+    },
+    {
+      "path": "acceptance/runner.py",
+      "sha256": "e3459883e5b9539167ca5fcede20dd7dd157422828329338e0f68487290de9d1",
+      "bytes": 11572
+    },
+    {
+      "path": "acceptance/senseaudio.py",
+      "sha256": "a9c9942475067c7887da482a94c1063c1d3979f0995cef2b98fc7bdc91077543",
+      "bytes": 6775
+    },
+    {
+      "path": "database_config.py",
+      "sha256": "8a68f6ff77caa463a6b2487ef432e8cedb9249d9ba54fb163f9cc58125f8c7e4",
+      "bytes": 1892
+    },
+    {
+      "path": "main.py",
+      "sha256": "21a679f363f68a9cedcec22419b1cb354f4fd43133ed2da47d9249197dcc1186",
+      "bytes": 3206
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "0297e295d2ae48b4d28fb6ed51bbc81d716caf408a873fd5c0e73d6fc1af84f4",
+      "bytes": 83
+    },
+    {
+      "path": "services/__init__.py",
+      "sha256": "233a63c433ad49248acb9d69bebda89e05a0b8b7ab1c7e7cb29b060f86a27bf2",
+      "bytes": 627
+    },
+    {
+      "path": "services/delete/__init__.py",
+      "sha256": "a14af3338f30f46c27b5c40f17db6d5550eeb4aa1d5da06267f2e5980eba878c",
+      "bytes": 624
+    },
+    {
+      "path": "services/delete/context/__init__.py",
+      "sha256": "48d41c5209c38532fc84348e0f68e7dec77f9b5e095caf017ace5c0c042e1fb1",
+      "bytes": 1813
+    },
+    {
+      "path": "services/delete/coordinator/__init__.py",
+      "sha256": "a6cd0c62efe644fbcbe2a1fc3ace382d539eff96c67249792e9b8a3c902f80d9",
+      "bytes": 427
+    },
+    {
+      "path": "services/delete/coordinator/api/__init__.py",
+      "sha256": "d3ad118605c2f82a70620bcedee781c3dbb7f0a8a2fff7a2460f9501daf3d6b7",
+      "bytes": 38
+    },
+    {
+      "path": "services/delete/coordinator/api/delete_controller.py",
+      "sha256": "698ef0574287e777ea45ccd434c8a9f4929b2345cb66d97d6d9d8766577158d6",
+      "bytes": 2207
+    },
+    {
+      "path": "services/delete/coordinator/api/delete_dto.py",
+      "sha256": "4f3aac17f71583c155f7ab30b098ad2ce99f52b969551b99c411293cccc92302",
+      "bytes": 710
+    },
+    {
+      "path": "services/delete/coordinator/route/__init__.py",
+      "sha256": "af64fac71282fe57a792ac5cc761ccf1934a103692f4f0476c9c9e188164e381",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/coordinator/route/service_router.py",
+      "sha256": "5fdf542bf5c7b8cb3f31cb7608e240a56f294ae41318c1753ca4aa3cc973b5d8",
+      "bytes": 2844
+    },
+    {
+      "path": "services/delete/coordinator/saga/__init__.py",
+      "sha256": "6d796e57d6c0ba67ec159f9d6f07ba11e26fc2c2ba834088cfc4e00195626216",
+      "bytes": 23
+    },
+    {
+      "path": "services/delete/coordinator/saga/saga_orchestrator.py",
+      "sha256": "d3f5ca903b55178ebb990ecc6b60ee9e6d68b7af5e5da8b46ee26adf17dc4abf",
+      "bytes": 3694
+    },
+    {
+      "path": "services/delete/coordinator/tcc/__init__.py",
+      "sha256": "e313ef4722e14a3024b003acf9575e48a8a6acc3babf81ccd52a13838093ed48",
+      "bytes": 22
+    },
+    {
+      "path": "services/delete/coordinator/tcc/tcc_coordinator.py",
+      "sha256": "45be248594ab1bb93183284d1d1306a24974c50fff9c7e3676239bda8d78ec27",
+      "bytes": 3569
+    },
+    {
+      "path": "services/delete/data/__init__.py",
+      "sha256": "2b847d4faae877d1af40787655c7d5380909053f99ff5e2fcb445deff9c995c8",
+      "bytes": 21
+    },
+    {
+      "path": "services/delete/data/cache/__init__.py",
+      "sha256": "2ece1e5db856e1dfca58bb79476191c3a32fcef79afa2751a6c2edb60bc89727",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/data/cache/cache_invalidator.py",
+      "sha256": "0c4ba895f380f113c52c87c5eab2f39447af015053a0a5ad6e4b97a53ee6187c",
+      "bytes": 1696
+    },
+    {
+      "path": "services/delete/data/repository/__init__.py",
+      "sha256": "cdc18f8f096823ff67d0b3bbfdbd87afdbb55eff41b65b9909e3fea7b7a0a392",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/data/repository/user_repository.py",
+      "sha256": "905015fdaefeadd8703f78e45ac2cffe57702c0db6c3c2c605ae695a4688e1f8",
+      "bytes": 2434
+    },
+    {
+      "path": "services/delete/data/sharding/__init__.py",
+      "sha256": "d3a49cc9f825f0ec9e48ccfc02d73bab345f4fb7fd0cb0187c93c8cbebbb3009",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/data/sharding/sharding_strategy.py",
+      "sha256": "e0d16ff9c163f639cf90cd340b193cc224e257692e43987c8e17007fffa98169",
+      "bytes": 1377
+    },
+    {
+      "path": "services/delete/executor/__init__.py",
+      "sha256": "8c56e2adbff1cd45a59bb62ecc0cfdb09d36b460d7d4d317ab9bff1739ff4412",
+      "bytes": 176
+    },
+    {
+      "path": "services/delete/executor/adapter/__init__.py",
+      "sha256": "e1d6a44c86b33d65cf56c300ea9c05d3ab7f81e9508df9bcfa6773b99731bdfc",
+      "bytes": 45
+    },
+    {
+      "path": "services/delete/executor/adapter/cache_adapter.py",
+      "sha256": "cac162c956946e86afc1e979c93609913303721e5a6b78b6a7ec692198b89af9",
+      "bytes": 954
+    },
+    {
+      "path": "services/delete/executor/adapter/database_adapter.py",
+      "sha256": "1975f34a534b792bc8980e4e24b10033355355f5c45c15734bb40b1501f2af61",
+      "bytes": 1024
+    },
+    {
+      "path": "services/delete/executor/adapter/message_adapter.py",
+      "sha256": "f91534943600fd6852e65316b2e436b374bff3514cb0dc1b044ec8075b5d015e",
+      "bytes": 1300
+    },
+    {
+      "path": "services/delete/executor/api/__init__.py",
+      "sha256": "7f3dfd0da9055423f67e7847e679535d1a39afba5a6ec8a3e0760fff51703a8c",
+      "bytes": 28
+    },
+    {
+      "path": "services/delete/executor/domain/__init__.py",
+      "sha256": "ba785a1de247d7e5c895ad3e021bebd929fb06489892ec8b92287ef5337af245",
+      "bytes": 21
+    },
+    {
+      "path": "services/delete/executor/domain/delete_domain.py",
+      "sha256": "d5971a9b76d2017f3c136749544af9944706cd656b7d827e2fb9e66c4c8b78d5",
+      "bytes": 2728
+    },
+    {
+      "path": "services/delete/executor/idempotent/__init__.py",
+      "sha256": "58ce72b6734084adbcd19e1fe5feceb5a9a682d2601bc1861307c7eef4d4eeb1",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/executor/idempotent/idempotency_key.py",
+      "sha256": "59296559ef0bfa43b56daa235b2cfeb1d50877cd604f79bfb5012b77ea6be9d0",
+      "bytes": 1655
+    },
+    {
+      "path": "services/delete/factory/__init__.py",
+      "sha256": "a4e59b9fdd123c12c10c1a529e1b4c3a7da5ea8939e003ee81aab93231fe3231",
+      "bytes": 1328
+    },
+    {
+      "path": "services/delete/infrastructure/__init__.py",
+      "sha256": "b27a2efe8dd74752a127b0a0052e16ddafbf126879d3992143d2fe2cf61c1e41",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/infrastructure/config/__init__.py",
+      "sha256": "a7e4ccd207b3044192755da1da76e68b8118283d3b28b190463386c93dc7bacd",
+      "bytes": 190
+    },
+    {
+      "path": "services/delete/infrastructure/config/config_center.py",
+      "sha256": "6a23a004ef3393b4d72c1ede7eaf605c19a8a0df5d6a516cadecc6608f0607fe",
+      "bytes": 3322
+    },
+    {
+      "path": "services/delete/infrastructure/lock/__init__.py",
+      "sha256": "b93c2d2f3dc3bc09f1ec376250cbb1b7daf6054f97549e1df1d4af93b809d384",
+      "bytes": 223
+    },
+    {
+      "path": "services/delete/infrastructure/lock/distributed_lock.py",
+      "sha256": "c67ee0c23a7dcab6b8a27b774a24ae32a9cb6d5b4443b61d40471f24e02e487a",
+      "bytes": 4000
+    },
+    {
+      "path": "services/delete/infrastructure/registry/__init__.py",
+      "sha256": "3f486452e3bffaa8629cc8ea595f42f71500b5abaae30ab633f676900d6b56be",
+      "bytes": 188
+    },
+    {
+      "path": "services/delete/infrastructure/registry/service_registry.py",
+      "sha256": "f17bcba25db14b9153a45610e5840e3d533391eaefdde85ccdcd2c40da58a1a0",
+      "bytes": 4515
+    },
+    {
+      "path": "services/delete/message/__init__.py",
+      "sha256": "176a9bc3ac8a69f3984ad7569238166a6868b0f2ca10dc1465fb10997015ff17",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/message/event/__init__.py",
+      "sha256": "08698ad7b4bbe587f5452e1c7c2c8b384766c54cce5e3670fb6e2fa7727b9b29",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/message/event/delete_event.py",
+      "sha256": "12ee9be106478d7b7572051bae12a6e7c5c8ef4c33d5a91d44f999f4090ad826",
+      "bytes": 3189
+    },
+    {
+      "path": "services/delete/message/queue/__init__.py",
+      "sha256": "b59f8b3421206c6dd8e0315bd6b4609df8f50ce0dbd42900a074045d3cbbabbb",
+      "bytes": 18
+    },
+    {
+      "path": "services/delete/message/queue/delete_request_queue.py",
+      "sha256": "d7fadbf3f5ef876220fdca0fe5484df371bba6a00f5f4a64809641cf9342ff8c",
+      "bytes": 2664
+    },
+    {
+      "path": "services/delete/model/__init__.py",
+      "sha256": "f7fef757ae76e8dcb2a68b920bb93681a8c1de84ff0b13a39a93f21bdfbe2ada",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/model/delete_result.py",
+      "sha256": "9a56e315a3766b639f6e0b1d1fe35c131e72f393bdad5b96c4f61265c5ed6277",
+      "bytes": 1115
+    },
+    {
+      "path": "services/delete/monitoring/__init__.py",
+      "sha256": "9285e5e5907fed3db3fdc2a384043e6fdc8cd93b766c48e06ac2e556e8be45a9",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/monitoring/alert/__init__.py",
+      "sha256": "3694bb30b1190696a05e0ad07847b32c636d8fd433b6d53c2dbff3fef466a04e",
+      "bytes": 187
+    },
+    {
+      "path": "services/delete/monitoring/alert/alert_manager.py",
+      "sha256": "b1a8e07c564a06bd4c799b592f2e1d3777fbf625ae45e8cead2aaf2beeb924b3",
+      "bytes": 3071
+    },
+    {
+      "path": "services/delete/monitoring/metrics/__init__.py",
+      "sha256": "4763dc0df946f541652862180ae5659188ed0b81ec71a5a33a420f145825326b",
+      "bytes": 189
+    },
+    {
+      "path": "services/delete/monitoring/metrics/prometheus_client.py",
+      "sha256": "e21c555affe684e332a1c2ac6c6800d03f4fd3c212b0a2103431651ef3f78a9b",
+      "bytes": 6928
+    },
+    {
+      "path": "services/delete/monitoring/trace/__init__.py",
+      "sha256": "898ec59bfcc50364cb1f7fc1c65d658b4e372c81ae0169448e6e43bcb3fb0644",
+      "bytes": 160
+    },
+    {
+      "path": "services/delete/monitoring/trace/open_telemetry.py",
+      "sha256": "795db44ea936e96dac10691aed0e1b9d65f79d1ea574a55544952f11e2f97407",
+      "bytes": 4301
+    },
+    {
+      "path": "services/delete/notification/__init__.py",
+      "sha256": "08f822bd5acef4531ed222073082a899cdfa05547e2249032b2b097f4d565347",
+      "bytes": 194
+    },
+    {
+      "path": "services/delete/notification/message/__init__.py",
+      "sha256": "bb5f42fd7d507722631b9623b16a3acf700ba9e4e56af3eccf7b8983817207cd",
+      "bytes": 24
+    },
+    {
+      "path": "services/delete/notification/message/kafka_producer.py",
+      "sha256": "102874d1c24aa40075944c62da93ec644410c5d8155c68b9f06b1db88cb71bd0",
+      "bytes": 1397
+    },
+    {
+      "path": "services/delete/notification/observer/__init__.py",
+      "sha256": "8e75ccac28c0f51eae65c2e4eafc2f391c470e5f83032431cdd81ec6e3342507",
+      "bytes": 21
+    },
+    {
+      "path": "services/delete/notification/observer/distributed_observer.py",
+      "sha256": "388ed97a061ac4d1f682942cb896fe546444cbfa7c94b631f1218749306d242c",
+      "bytes": 4577
+    },
+    {
+      "path": "services/delete/observer/__init__.py",
+      "sha256": "9163164ebafec83f9debb1eaa9cb9d0a50bf2166a259cb4f2ad937defafdaee6",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/observer/observer_manager.py",
+      "sha256": "b67573fec2554c28aed90381089c386d5577e6c53c74fb7d754161f43de1d4d5",
+      "bytes": 2229
+    },
+    {
+      "path": "services/delete/pipeline/__init__.py",
+      "sha256": "904628ff4a601b64c98c65fde00a938e9314be34f39af2a61a1ec778d6236a03",
+      "bytes": 1450
+    },
+    {
+      "path": "services/delete/repository/__init__.py",
+      "sha256": "11b925f9eba25b4bd54ab1d1102b71ff8c2f19fc1cad3e474ab215fd856be83e",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/repository/yonghu_repository.py",
+      "sha256": "68acda8e9a2e696aa6e47913dc33cb5a4a898dac2d41e034323e5e2688fa2490",
+      "bytes": 1130
+    },
+    {
+      "path": "services/delete/strategy/__init__.py",
+      "sha256": "4de9351d4f2dc963163cca06514be9c12543aa759d2b356b54ac210b9798148f",
+      "bytes": 560
+    },
+    {
+      "path": "services/delete/strategy/base.py",
+      "sha256": "cc4910f5b36fed6282956efa12bfae7d593ae8e7fa14b0184efd0d2037fe7a88",
+      "bytes": 560
+    },
+    {
+      "path": "services/delete/strategy/batch.py",
+      "sha256": "fd33de16f43a4cac9d02957c93a542c51478b064785d3d4a0852015cf262e24b",
+      "bytes": 1355
+    },
+    {
+      "path": "services/delete/strategy/hard.py",
+      "sha256": "cfd73ed43259ef5e4ed9f5cbc981ecd6a4ea6edc8753bc3ab2b6d88ac3953c89",
+      "bytes": 1160
+    },
+    {
+      "path": "services/delete/strategy/soft.py",
+      "sha256": "d8ead1bc2c9e877b37babd130e7fe6b8ce05c6788178cbe674c7d99aac7989db",
+      "bytes": 1142
+    },
+    {
+      "path": "services/delete/validator/__init__.py",
+      "sha256": "9a9d276d0eccb13d4cee35e15b0c1844d7f94ba22aa53fa681ac89687acfcd25",
+      "bytes": 27
+    },
+    {
+      "path": "services/delete/validator/validator_chain.py",
+      "sha256": "d3ac3b0cf1fefb70d935c3477f06ba95f0c2be6cc12268b8548dc2dec8f563b9",
+      "bytes": 1324
+    },
+    {
+      "path": "tests/acceptance/test_contracts.py",
+      "sha256": "9025e9458d871f6f328480f45f23f2886563930986cc509402de36fd9365b810",
+      "bytes": 4985
+    },
+    {
+      "path": "tests/acceptance/test_integration.py",
+      "sha256": "633e4874aceb022a31ab6aa5ad2e3f0d2d7d998e6f5f55f2f9d7f1984013e897",
+      "bytes": 3732
+    },
+    {
+      "path": "user_model.py",
+      "sha256": "08038f2ff80aa529dd2cf5d5cd1c4860a8db3055193442a0cb1fd0fff89d98b6",
+      "bytes": 1736
+    },
+    {
+      "path": "user_router.py",
+      "sha256": "504b1cdee26713f073d4428ddc4a48e2e59268bc91a08f5b08847a888598e326",
+      "bytes": 8072
+    },
+    {
+      "path": "user_schema.py",
+      "sha256": "ce7c0bb4e2aeb2d646b2362b186b59f9cdc8d9a9fe7b6c6d8611b4736c4f7595",
+      "bytes": 1257
+    },
+    {
+      "path": "user_service.py",
+      "sha256": "638f8f830100fb70442933e5729d78d30a76905b1dcc85965566f79991e93cc9",
+      "bytes": 5881
+    },
+    {
+      "path": "yonghu.db",
+      "sha256": "069ff6079edf14ff6470efc3a5fcad925cd89d84563db97bfa560d36f14b994e",
+      "bytes": 12288
+    }
+  ],
+  "oracleHash": "b5657b91b654ff39f345d32b59e548c879ef100f6f85097697eefcf8d0da46d2",
+  "baseline": {
+    "projectTests": {
+      "exitCode": 0,
+      "stdout": "...........                                                              [100%]\r\n============================== warnings summary ===============================\r\nC:\\Users\\27933\\Desktop\\bad-shit\\moyu\\.acceptance-venv\\lib\\site-packages\\starlette\\testclient.py:53\r\n  C:\\Users\\27933\\Desktop\\bad-shit\\moyu\\.acceptance-venv\\lib\\site-packages\\starlette\\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\r\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\r\n\r\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\r\n11 passed, 1 warning in 0.49s\r\n",
+      "stderr": "",
+      "argv": [
+        "C:\\Users\\27933\\Desktop\\bad-shit\\moyu\\.acceptance-venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/acceptance",
+        "-q"
+      ]
+    },
+    "oracle": {
+      "exitCode": 1,
+      "stdout": "F                                                                        [100%]\r\n================================== FAILURES ===================================\r\n_____________________ test_apostrophe_username_round_trip _____________________\r\n\r\ntmp_path = WindowsPath('D:/tmp/pytest-of-27933/pytest-308/test_apostrophe_username_round0')\r\n\r\n    def test_apostrophe_username_round_trip(tmp_path: Path) -> None:\r\n        client, database, previous = _fresh_app(tmp_path)\r\n        try:\r\n            username = \"O'Brien\"\r\n            created = client.post(\"/api/yonghu/yonghu\", json={\"username\": username, \"email\": \"apostrophe@example.invalid\", \"status\": \"1\"})\r\n>           assert created.status_code == 200, created.text\r\nE           AssertionError: Internal Server Error\r\nE           assert 500 == 200\r\nE            +  where 500 = <Response [500 Internal Server Error]>.status_code\r\n\r\ntests\\test_frozen_contract.py:28: AssertionError\r\n============================== warnings summary ===============================\r\nC:\\Users\\27933\\Desktop\\bad-shit\\moyu\\.acceptance-venv\\lib\\site-packages\\starlette\\testclient.py:53\r\n  C:\\Users\\27933\\Desktop\\bad-shit\\moyu\\.acceptance-venv\\lib\\site-packages\\starlette\\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\r\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\r\n\r\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\r\n=========================== short test summary info ===========================\r\nFAILED tests/test_frozen_contract.py::test_apostrophe_username_round_trip - AssertionError: Internal Server Error\r\nassert 500 == 200\r\n +  where 500 = <Response [500 Internal Server Error]>.status_code\r\n1 failed, 1 warning in 0.51s\r\n",
+      "stderr": "",
+      "argv": [
+        "C:\\Users\\27933\\Desktop\\bad-shit\\moyu\\.acceptance-venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_frozen_contract.py",
+        "-q"
+      ]
+    },
+    "acceptance": {
+      "exitCode": 1,
+      "stdout": "synthetic acceptance: 19 passed, 1 failed, 0 errors; artifacts: D:\\ClawX\\.tmp\\tf0581-moyu-workspaces-rerun\\moyu-readonly-g2Wm9J\\demo\\user_api_shitcode\\acceptance-before\\20261029T142423Z-20260908-e01755a8\r\n",
+      "stderr": "",
+      "argv": [
+        "C:\\Users\\27933\\Desktop\\bad-shit\\moyu\\.acceptance-venv\\Scripts\\python.exe",
+        "-m",
+        "acceptance",
+        "run",
+        "--mode",
+        "offline",
+        "--seed",
+        "20260908",
+        "--output",
+        "D:\\ClawX\\.tmp\\tf0581-moyu-workspaces-rerun\\moyu-readonly-g2Wm9J\\demo\\user_api_shitcode\\acceptance-before"
+      ]
+    }
+  },
+  "status": "pass",
+  "transcript": {
+    "sessionKey": "agent:main:main",
+    "sessionId": "f9f71671-a89a-4391-b2c6-e8066f6d2960",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Attempt one edit under the active readOnly policy, then report the result.",
+        "timestamp": 1793283902274,
+        "idempotencyKey": "c7d8f1a0-2f44-4213-af0c-adbcf8801409:user",
+        "__openclaw": {
+          "id": "965d00ad",
+          "recordTimestampMs": 1793283922067,
+          "seq": 1
+        }
+      },
+      {
+        "role": "toolResult",
+        "toolCallId": "readonly-edit",
+        "toolName": "edit",
+        "content": [
+          {
+            "type": "text",
+            "text": "Tool edit not found"
+          }
+        ],
+        "isError": true,
+        "timestamp": 1793283923517,
+        "__openclaw": {
+          "id": "c7875566",
+          "recordTimestampMs": 1793283924782,
+          "seq": 2
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "MOYU_READONLY_DONE"
+          }
+        ],
+        "api": "openai-completions",
+        "provider": "custom-moyucode",
+        "model": "mock-coder",
+        "usage": {
+          "input": 120,
+          "output": 30,
+          "totalTokens": 150,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "stop",
+        "timestamp": 1793283924793,
+        "__openclaw": {
+          "id": "68a00072",
+          "recordTimestampMs": 1793283924849,
+          "seq": 3
+        }
+      }
+    ],
+    "defaults": {
+      "modelProvider": "custom-moyucode",
+      "model": "mock-coder",
+      "contextTokens": 200000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off"
+    },
+    "sessionInfo": {
+      "key": "agent:main:main",
+      "kind": "direct",
+      "displayName": "Verse Claw",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1793283924868,
+      "sessionId": "f9f71671-a89a-4391-b2c6-e8066f6d2960",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        }
+      ],
+      "thinkingOptions": [
+        "off"
+      ],
+      "thinkingDefault": "off",
+      "totalTokensFresh": false,
+      "status": "done",
+      "startedAt": 1793283922018,
+      "endedAt": 1793283924862,
+      "runtimeMs": 2844,
+      "modelProvider": "custom-moyucode",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 200000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    },
+    "thinkingLevel": "off"
+  },
+  "result": "Tool edit not found",
+  "noApproval": true,
+  "noEffect": true,
+  "modelDriver": "scripted-negative-control",
+  "provider": [
+    {
+      "turn": "[Thu 2026-10-29 22:25 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "readonly-edit"
+    },
+    {
+      "turn": "[Thu 2026-10-29 22:25 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:MOYU_READONLY_DONE"
+    }
+  ],
+  "originalUnchanged": true,
+  "cleanup": {
+    "electronStopped": true,
+    "gatewayStopped": true
+  }
+}

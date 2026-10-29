@@ -593,7 +593,10 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         logger.info(
           `[chat:sendWithMedia] Sending: message="${message.substring(0, 100)}", attachments=${imageAttachments.length}, fileRefs=${fileReferences.length}`,
         );
-        const result = await gatewayManager.rpc('chat.send', rpcParams, 120000);
+        // The host action carries a bounded logical deadline (15 minutes for a
+        // real chat turn); use that same budget here instead of a second fixed
+        // 120s ceiling that would cancel a valid multi-tool turn early.
+        const result = await gatewayManager.rpc('chat.send', rpcParams, 15 * 60_000);
         if (pendingCoordinatorBinding && workspaceId) {
           try {
             const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(

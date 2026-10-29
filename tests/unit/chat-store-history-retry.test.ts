@@ -602,6 +602,49 @@ describe('useChatStore startup history retry', () => {
     expect(useChatStore.getState().messages.map((message) => message.content)).toEqual(['你好']);
   });
 
+  it('switchSession restores trusted tool results from the session history cache', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({
+      currentSessionKey: 'agent:main:session-tool-results',
+      currentAgentId: 'main',
+      sessions: [{ key: 'agent:main:session-tool-results' }, { key: 'agent:main:other' }],
+      messages: [{
+        role: 'assistant',
+        id: 'assistant-with-result',
+        content: [{ type: 'text', text: 'Fixed.' }],
+        _toolResults: [{
+          toolCallId: 'edit-1',
+          toolName: 'edit',
+          result: { content: [{ type: 'text', text: 'Successfully replaced 1 block(s) in x.py.' }] },
+        }],
+        timestamp: 1000,
+      }],
+      sessionLabels: {},
+      sessionLastActivity: { 'agent:main:session-tool-results': 1000 },
+      sending: false,
+      activeRunId: null,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingFinal: false,
+      lastUserMessageAt: null,
+      pendingToolImages: [],
+      error: null,
+      loading: false,
+      thinkingLevel: null,
+    });
+    gatewayRpcMock.mockResolvedValue({ messages: [] });
+
+    useChatStore.getState().switchSession('agent:main:other');
+    useChatStore.getState().switchSession('agent:main:session-tool-results');
+
+    expect(useChatStore.getState().messages[0]?._toolResults).toEqual([{
+      toolCallId: 'edit-1',
+      toolName: 'edit',
+      result: { content: [{ type: 'text', text: 'Successfully replaced 1 block(s) in x.py.' }] },
+    }]);
+  });
+
   it('switchSession restores in-flight run state so Thinking indicator survives navigation', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({

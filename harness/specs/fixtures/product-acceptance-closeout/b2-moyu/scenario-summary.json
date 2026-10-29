@@ -1,0 +1,131 @@
+{
+  "schema": "MoyuAcceptanceScenarioSummary/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0581-moyu",
+  "rawRoot": "D:/ClawX/.tmp/tf0581-rerun-20261029",
+  "scenarios": [
+    {
+      "scenario": "live-1",
+      "rawDir": "live-1-1793283033393",
+      "status": "pass",
+      "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+      "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+      "dirty": false,
+      "originalUnchanged": true,
+      "sessionKey": "agent:main:session-1793283086240-4n7jxl",
+      "checks": {
+        "project": 0,
+        "oracle": 0,
+        "acceptance": 1
+      },
+      "acceptanceSummary": "19 passed, 1 failed, 0 errors",
+      "baselineOracleExit": 1,
+      "changed": [
+        "user_router.py"
+      ],
+      "fixApprovals": 6,
+      "undoApprovals": 1,
+      "undoRestored": true,
+      "undoOkTrue": true,
+      "journalPreCount": 1,
+      "providerRequests": 13,
+      "taskSuccess": true,
+      "trajectorySafety": true
+    },
+    {
+      "scenario": "live-2",
+      "rawDir": "live-2-1793283242948",
+      "status": "pass",
+      "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+      "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+      "dirty": false,
+      "originalUnchanged": true,
+      "sessionKey": "agent:main:session-1793283306995-o5rcz3",
+      "checks": {
+        "project": 0,
+        "oracle": 0,
+        "acceptance": 1
+      },
+      "acceptanceSummary": "19 passed, 1 failed, 0 errors",
+      "baselineOracleExit": 1,
+      "changed": [
+        "user_router.py"
+      ],
+      "fixApprovals": 7,
+      "undoApprovals": 1,
+      "undoRestored": true,
+      "undoOkTrue": true,
+      "journalPreCount": 1,
+      "providerRequests": 14,
+      "taskSuccess": true,
+      "trajectorySafety": true
+    },
+    {
+      "scenario": "live-3",
+      "rawDir": "live-3-1793283483293",
+      "status": "pass",
+      "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+      "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+      "dirty": false,
+      "originalUnchanged": true,
+      "sessionKey": "agent:main:session-1793283547872-bmw4dj",
+      "checks": {
+        "project": 0,
+        "oracle": 0,
+        "acceptance": 1
+      },
+      "acceptanceSummary": "19 passed, 1 failed, 0 errors",
+      "baselineOracleExit": 1,
+      "changed": [
+        "user_router.py"
+      ],
+      "fixApprovals": 9,
+      "undoApprovals": 1,
+      "undoRestored": true,
+      "undoOkTrue": true,
+      "journalPreCount": 1,
+      "providerRequests": 20,
+      "taskSuccess": true,
+      "trajectorySafety": true
+    },
+    {
+      "scenario": "readonly",
+      "rawDir": "readonly-1793283860136",
+      "status": "pass",
+      "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+      "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+      "dirty": false,
+      "originalUnchanged": true,
+      "result": "Tool edit not found",
+      "noApproval": true,
+      "noEffect": true,
+      "modelDriver": "scripted-negative-control"
+    },
+    {
+      "scenario": "outside-approval",
+      "rawDir": "outside-approval-1793283934171",
+      "status": "pass",
+      "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+      "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+      "dirty": false,
+      "originalUnchanged": true,
+      "result": "",
+      "noOutsideEffect": true,
+      "allowedContinuation": true,
+      "approvalDecision": "deny",
+      "modelDriver": "scripted-negative-control"
+    },
+    {
+      "scenario": "missing-journal",
+      "rawDir": "missing-journal-1793284026347",
+      "status": "pass",
+      "commit": "6e937223fb26ddb7a9ddd286a3b89bf950b0f133",
+      "tree": "bca19dee5e250af492da68277594e5b4e651fe27",
+      "dirty": false,
+      "originalUnchanged": true,
+      "result": "{\n  \"ok\": false,\n  \"restored\": [],\n  \"errors\": [\n    \"user_router.py: journal snapshot missing: D:\\\\ClawX\\\\.tmp\\\\tf0581-moyu-workspaces-rerun\\\\moyu-missing-journal-oRFswY\\\\demo\\\\user_api_shitcode\\\\.openclaw\\\\journal\\\\d541edb4-cebc-419d-8973-f61faca75428\\\\0001-user_router.py.pre\"\n  ],\n  \"journalDir\": \"D:\\\\ClawX\\\\.tmp\\\\tf0581-moyu-workspaces-rerun\\\\moyu-missing-journal-oRFswY\\\\demo\\\\user_api_shitcode\\\\.openclaw\\\\journal\\\\d541edb4-cebc-419d-8973-f61faca75428\",\n  \"remainingEntries\": 1,\n  \"recovery\": \"Undo stopped at the first failure. Nothing was discarded: snapshots and metadata remain in journalDir for manual restore.\"\n}",
+      "notHalfRestored": true,
+      "modelDriver": "scripted-negative-control"
+    }
+  ]
+}

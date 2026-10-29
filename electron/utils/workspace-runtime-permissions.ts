@@ -187,11 +187,11 @@ export function mapWorkspacePermissionToSandboxConfig(
   const backend = useSshSandbox ? 'ssh' : useDockerSandbox ? 'docker' : 'openshell';
   const execHost: SandboxExecPolicy['host'] = useStrongSandbox ? 'auto' : 'gateway';
 
-  const lightSandbox = (): SandboxOpenClawConfig['agents']['defaults']['sandbox'] => ({
+  const lightSandbox = (workspaceAccess: 'none' | 'ro' = 'none'): SandboxOpenClawConfig['agents']['defaults']['sandbox'] => ({
     mode: 'off',
     backend,
     scope: 'session',
-    workspaceAccess: 'none',
+    workspaceAccess,
   });
 
   const strongSandbox = (
@@ -210,7 +210,7 @@ export function mapWorkspacePermissionToSandboxConfig(
       return {
         agents: {
           defaults: {
-            sandbox: useStrongSandbox ? strongSandbox('ro') : lightSandbox(),
+            sandbox: useStrongSandbox ? strongSandbox('ro') : lightSandbox('ro'),
           },
         },
         tools: {
@@ -222,7 +222,7 @@ export function mapWorkspacePermissionToSandboxConfig(
       return {
         agents: {
           defaults: {
-            sandbox: useStrongSandbox ? strongSandbox('ro') : lightSandbox(),
+            sandbox: useStrongSandbox ? strongSandbox('ro') : lightSandbox('ro'),
           },
         },
         tools: {

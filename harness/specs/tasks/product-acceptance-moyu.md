@@ -4,6 +4,7 @@ id: product-acceptance-moyu
 title: Moyu coding, approval boundary, undo and recovery acceptance
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+diffBase: 0ee49aecb671ec6b7fb7a5fa0e8425864aa462e6
 intent: Verify that real ClawX coding tools, approval boundaries, write journal and recovery work against a disposable snapshot of the authorized moyu project, with deterministic file, test, database and trajectory oracles.
 requiredRules:
   - backend-communication-boundary
@@ -20,6 +21,24 @@ touchedAreas:
   - harness/specs/fixtures/product-acceptance-closeout/b2-moyu/**
   - tests/e2e/product-acceptance-moyu.spec.ts
   - tests/e2e/fixtures/moyu-acceptance.ts
+  - tests/e2e/fixtures/space-bunny-responses.ts
+  - openclaw_runtime/src/agents/agent-tools.policy.ts
+  - openclaw_runtime/src/agents/role-permissions-policy.ts
+  - openclaw_runtime/src/agents/agent-tools.workspace-readonly.test.ts
+  - electron/utils/workspace-runtime-permissions.ts
+  - tests/unit/workspace-runtime-sync.test.ts
+  - docs/modules/workspace-and-coding.md
+  - electron/services/chat-api.ts
+  - shared/host-api/host-action-timeouts.ts
+  - src/lib/generated-files.ts
+  - src/stores/chat.ts
+  - src/stores/chat/helpers.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
+  - tests/unit/chat-helpers-enrichment.test.ts
+  - tests/unit/chat-store-history-retry.test.ts
+  - tests/unit/generated-files.test.ts
+  - tests/unit/host-action-timeouts.test.ts
+  - tests/unit/resource-fabric-chat-history.test.ts
   - playwright.config.ts
   - scripts/repository-artifacts.json
   - README.md
@@ -34,6 +53,9 @@ requiredProfiles:
   - comms
 requiredTests:
   - pnpm exec playwright test tests/e2e/product-acceptance-moyu.spec.ts --workers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/tool-policy-pipeline.test.ts
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/agents/agent-tools.workspace-readonly.test.ts
+  - pnpm exec vitest run tests/unit/role-spawn.test.ts tests/unit/role-path-permissions-p2-003.test.ts tests/unit/role-mcp-capability-policy.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm run typecheck:test
   - pnpm comms:replay
@@ -115,13 +137,30 @@ Each positive journey:
 7. reopens the session and checks that durable transcript/state agrees with the
    final response and undo outcome.
 
-The local model endpoint is a scripted OpenAI-compatible provider for this
-acceptance only. It selects tool calls but cannot decide pass/fail; all verdicts
+The three positive journeys use the owner-authorized live `space-bunny` Responses
+resource through the existing observation/fault proxy and the production UI,
+host bridge and Gateway. The model reads and edits the snapshot itself; the test
+driver never supplies a replacement or writes the repair. Scripted providers are
+used only for deterministic denial and journal-failure controls. All verdicts
 come from files, HTTP behavior, SQLite, process state and test exit codes.
 Secrets are process-environment inputs and are never persisted in requests,
 screenshots or retained evidence.
+Set `CLAWX_MOYU_ACCEPTANCE=1` and inject the already authorized Responses resource
+in the runner environment. Default E2E discovery excludes this resource-dependent
+suite; final product acceptance selects it explicitly and cannot skip it.
 
 ## Approval, cancellation and journal negatives
+
+The frozen read-only contract includes the native model tool surface. With the
+Main-owned `allowlist/always` read-only exec policy or the plan `deny` policy,
+the final shared tool-policy pipeline must exclude filesystem mutations,
+shell execution and untrusted writable MCP capabilities even when Docker is
+unavailable. Reuse the existing role filesystem deny policy; preserve explicit
+operator denies and derive the restriction without adding persisted ownership
+state. Bind the restriction to the explicit read-only workspace-access marker,
+including a light sandbox whose physical mode is off; a shell-only always-ask
+configuration must not become a filesystem denial. An accept-edits policy must
+remain able to perform the allowed edit.
 
 - In a separate `readOnly` workspace, a real Gateway/tool write attempt must be
   blocked with no `approvalRequired` demand and zero file effect. The denial is
