@@ -585,7 +585,7 @@
     "proposal": "TFP-20261030-agent-first-contract-closeout",
     "proposalStatus": "applied",
     "graphHashBefore": "976ae8e0cfde0a8050865cda2b64d141651dd69a478e027f87a2953bf31feca3",
-    "graphHashAfter": "0fef4ff64dfa4633e0e1c606646f9bddf77dc66bb3e0248b9d1be78c21bcf4b9d1be78c21bcf4b1",
+    "graphHashAfter": "0fef4ff64dfa4633e0e1c606646f9bddf77dc66bb3e0248b9d1be78c21bcf4b1",
     "nextAction": "TF-0589 closed; proceed with ready TF-0590 and TF-0591.",
     "humanAcceptanceRequired": false,
     "claim": "Contract and static validation only"

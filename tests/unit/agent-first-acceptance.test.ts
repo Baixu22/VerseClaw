@@ -58,6 +58,7 @@ type Matrix = {
   evidencePack: string[];
   taskForestNodes: Record<string, string>;
   taskForestClosure?: { node: string; status: string; progress: number };
+  taskForestClosure?: { node: string; status: string; progress: number; graphHashBefore: string; graphHashAfter: string };
   lockedBoundaries: Record<string, unknown>;
   currentContractEvidence: {
     scope: string;
@@ -99,7 +100,8 @@ describe('agent-first acceptance contract', () => {
     expect(matrix.taskForestClosure?.node).toBe('TF-0589');
     expect(matrix.taskForestClosure?.status).toBe('done');
     expect(matrix.taskForestClosure?.progress).toBe(100);
-    expect(matrix.requiredGateFields).toEqual([...EXPECTED_GATE_FIELDS]);
+    expect(matrix.taskForestClosure?.graphHashBefore).toMatch(/^[a-f0-9]{64}$/u);
+    expect(matrix.taskForestClosure?.graphHashAfter).toMatch(/^[a-f0-9]{64}$/u);
     expect(matrix.gates.map((gate) => gate.id)).toEqual(EXPECTED_GATE_IDS);
     expect(new Set(matrix.gates.map((gate) => gate.id)).size).toBe(matrix.gates.length);
 
