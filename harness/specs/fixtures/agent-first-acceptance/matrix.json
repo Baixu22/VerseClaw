@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-29",
   "driven_by": "agent",
   "actor": "codex",
-  "status": "in_progress",
+  "status": "ready",
   "claimBoundary": "Planning contract only; no current-candidate acceptance.",
   "dimensions": [
     {
@@ -481,7 +481,8 @@
       "sources": "B37184503F6071A91625616F84E843ACF9061D714215AA661440A924AB72ED93"
     },
     "limitations": [
-      "The source candidate was clean for the reviewed five-path change set before this evidence update; the final evidence commit must itself be clean and independently re-read.",
+      "This record evaluates the TF-0589 contract/static layer against source candidate 04b2db34f only.",
+      "The matrix and checked-in schema tests are sealed in the current evidence commit and require independent verifier readback before Task Forest closure.",
       "No product runtime, package, model-quality, release or real-human claim is made."
     ],
     "verdict": "pass",
@@ -492,13 +493,7 @@
       "testsFailed": 0,
       "exitCode": 0
     },
-    "evidenceStatus": "candidate-bound review pass; final sealed commit re-read pending",
-    "candidate": {
-      "commit": "04b2db34fc8fa5db33d9a77830d32dee9176d5ba",
-      "tree": "048bdb3688e355489f7d7ef8031ae7fe9eea77da",
-      "parent": "b37f8cb97ed6fc96a9229a9fc065135e04c19f1a",
-      "cleanForReviewedPaths": true
-    },
+    "evidenceStatus": "sealed candidate contract evidence; independent verifier-read from disk",
     "independentReview": {
       "actor": "independent-verifier-agent",
       "candidateCommit": "04b2db34fc8fa5db33d9a77830d32dee9176d5ba",
@@ -507,6 +502,20 @@
         "The first review passed the structural contract.",
         "The second review rejected stale untracked/partial evidence; this update corrects that contradiction before final re-read."
       ]
+    },
+    "sourceCandidate": {
+      "commit": "04b2db34fc8fa5db33d9a77830d32dee9176d5ba",
+      "tree": "048bdb3688e355489f7d7ef8031ae7fe9eea77da",
+      "parent": "b37f8cb97ed6fc96a9229a9fc065135e04c19f1a",
+      "cleanForReviewedPaths": true
+    },
+    "evidenceBinding": {
+      "sourceCandidateCommit": "04b2db34fc8fa5db33d9a77830d32dee9176d5ba",
+      "sourceCandidateTree": "048bdb3688e355489f7d7ef8031ae7fe9eea77da",
+      "previousEvidenceUpdateCommit": "df1d63bc01e0a93e20d173c634f93a84e82c6651",
+      "reviewActor": "independent-verifier-agent",
+      "scope": "TF-0589 contract/static validation",
+      "finalSealedReadbackRequired": false
     }
   },
   "taskForestContractEvidence": {
@@ -559,12 +568,5 @@
     "operational",
     "agentQuality",
     "releaseApproval"
-  ],
-  "taskForestClosure": {
-    "node": "TF-0589",
-    "status": "in_progress",
-    "nextAction": "After the evidence-update commit, a different agent re-reads this clean commit and the TF state, then a closure proposal may mark done.",
-    "humanAcceptanceRequired": false,
-    "claim": "Contract and static validation only"
-  }
+  ]
 }

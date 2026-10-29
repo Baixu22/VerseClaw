@@ -65,6 +65,8 @@ type Matrix = {
     actor: string;
     limitations: string[];
     independentReview?: { actor: string; verdict: string };
+    evidenceStatus?: string;
+    evidenceBinding?: { sourceCandidateCommit: string; finalSealedReadbackRequired: boolean };
     focusedTests: { exitCode: number; testsPassed: number; testsFailed: number };
   };
 };
@@ -169,6 +171,9 @@ describe('agent-first acceptance contract', () => {
     if (matrix.currentContractEvidence.verdict === 'pass') {
       expect(matrix.currentContractEvidence.independentReview?.verdict).toBe('pass');
       expect(matrix.currentContractEvidence.independentReview?.actor).not.toBe(matrix.currentContractEvidence.actor);
+      expect(matrix.currentContractEvidence.evidenceStatus).toContain('sealed');
+      expect(matrix.currentContractEvidence.evidenceBinding?.sourceCandidateCommit).toMatch(/^[a-f0-9]{40}$/u);
+      expect(matrix.currentContractEvidence.evidenceBinding?.finalSealedReadbackRequired).toBe(false);
     }
   });
 
