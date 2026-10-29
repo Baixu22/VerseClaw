@@ -574,5 +574,15 @@
     "operational",
     "agentQuality",
     "releaseApproval"
-  ]
+  ],
+  "taskForestClosure": {
+    "node": "TF-0589",
+    "status": "in_progress",
+    "graphGeneratedAt": "2026-10-29T16:15:36.747785Z",
+    "graphNodeCount": 610,
+    "graphEdgeCount": 1208,
+    "nextAction": "Create a fresh closure proposal against the current graph hash, then apply done only after final verifier readback.",
+    "humanAcceptanceRequired": false,
+    "claim": "Contract and static validation only"
+  }
 }
