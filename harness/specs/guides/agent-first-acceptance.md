@@ -8,7 +8,7 @@ appliesTo:
 
 # Agent-First Acceptance System
 
-Status: proposed
+Status: active
 Owner policy: the repository owner supplies no first-line manual acceptance.
 Evidence mode: machine-executable, agent-driven, reproducibly retained.
 Product release authority: unchanged; publishing still needs a publisher decision.

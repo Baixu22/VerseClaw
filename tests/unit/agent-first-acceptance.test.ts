@@ -188,6 +188,7 @@ describe('agent-first acceptance contract', () => {
     const closeout = readFileSync(CLOSEOUT_PATH, 'utf8');
 
     expect(guide).toMatch(/^---\r?\nid: agent-first-acceptance\r?\n/u);
+    expect(guide).toContain('Status: active');
     for (const phrase of [
       'software-testing practice',
       'Agent evaluation',
