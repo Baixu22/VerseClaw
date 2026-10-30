@@ -17,6 +17,9 @@ requiredRules:
   - disk-temp-policy
   - docs-sync
 touchedAreas:
+  - .gitignore
+  - scripts/repository-artifacts.json
+  - docs/dev/change-context-review-loop/**
   - harness/specs/guides/delta-informed-change-context-review-loop-options.md
   - harness/specs/tasks/change-context-review-loop.md
   - shared/types/change-context.ts
@@ -80,6 +83,7 @@ requiredProfiles:
   - comms
 requiredTests:
   - pnpm exec vitest run tests/unit/change-context-projection.test.ts tests/unit/change-context-review-anchors.test.ts tests/unit/change-context-review-verdict.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/change-context-vg-evidence.test.ts tests/unit/versegit-candidate-receipts.test.ts tests/unit/versegit-receipt-authority.test.ts tests/unit/versegit-wp3-receipts.test.ts tests/unit/versegit-observation-basis.test.ts tests/unit/versegit-runtime-bindings.test.ts --maxWorkers=1
   - pnpm contract:check
   - pnpm i18n:lint
   - pnpm run typecheck
