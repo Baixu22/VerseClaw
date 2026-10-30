@@ -1400,18 +1400,6 @@ openclaw_runtime/_tmp_*
 !/artifacts/windows-delivery-blocker-fixes/SHA256SUMS
 !/artifacts/windows-delivery-blocker-fixes/credential-scan.json
 !/artifacts/windows-delivery-blocker-fixes/report.json
-!/docs/modules/README.md
-!/docs/modules/llm-and-models.md
-!/docs/modules/sessions.md
-!/docs/modules/context-and-memory.md
-!/docs/modules/workspace-and-coding.md
-!/docs/modules/knowledge-base.md
-!/docs/modules/multi-agent-and-tasks.md
-!/docs/modules/verse-tools.md
-!/docs/modules/resources-and-observability.md
-!/docs/modules/integrations-and-surfaces.md
-!/docs/modules/development-and-validation.md
-!/docs/modules/component-inventory.md
 !/docs/CONTEXT_ENGINE_REBUILD_SPEC.md
 !/docs/README.md
 !/docs/SEAM_MAP.md
@@ -1460,6 +1448,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/capability-registry-v3-skill-resolver-acceptance.md
 !/docs/dev/capability-registry-v3-trusted-catalog-acceptance.md
 !/docs/dev/capability-registry-v3-unified-resolver-acceptance.md
+!/docs/dev/change-context-review-loop/TF0616-SHA256SUMS
+!/docs/dev/change-context-review-loop/tf0616-acceptance.json
 !/docs/dev/chat-session-control-isolation.md
 !/docs/dev/codex-parity/runtime-interaction-maturity.md
 !/docs/dev/coding-parity-gap-inventory.md
@@ -2076,6 +2066,19 @@ openclaw_runtime/_tmp_*
 !/docs/generated/catalogs/prod-flags.md
 !/docs/generated/catalogs/tools.md
 !/docs/mock-ui-dev.md
+!/docs/modules/README.md
+!/docs/modules/component-inventory.md
+!/docs/modules/context-and-memory.md
+!/docs/modules/development-and-validation.md
+!/docs/modules/harness-and-codex.md
+!/docs/modules/integrations-and-surfaces.md
+!/docs/modules/knowledge-base.md
+!/docs/modules/llm-and-models.md
+!/docs/modules/multi-agent-and-tasks.md
+!/docs/modules/resources-and-observability.md
+!/docs/modules/sessions.md
+!/docs/modules/verse-tools.md
+!/docs/modules/workspace-and-coding.md
 !/docs/multi-agent-orchestration/README.md
 !/docs/multi-agent-orchestration/acceptance-and-test-matrix.md
 !/docs/multi-agent-orchestration/goal-mode-development-protocol.md
@@ -2271,7 +2274,6 @@ openclaw_runtime/_tmp_*
 !/team/dcs/dcs-v1.6-spec.md
 !/team/dcs/dcs-v1.6.1-addendum.md
 !/team/role-architecture-design/area-4-role-memory-completion.md
-!/docs/modules/harness-and-codex.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

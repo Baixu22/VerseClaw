@@ -1,0 +1,229 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "8d78ee86ad3d72822fbf7588d573d4c8814e44ca",
+  "tree": "042ab544e9258d81dc4a20125b3ebf6e7e96ddbe",
+  "gates": [
+    {
+      "name": "unit",
+      "command": "pnpm exec vitest run tests/unit/change-context-review-verdict.test.ts tests/unit/change-context-contract.test.ts tests/unit/change-context-projection.test.ts tests/unit/change-context-review-anchors.test.ts tests/unit/git-api.test.ts --maxWorkers=1",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 9829,
+      "log": "D:\\tmp\\change-context-relay\\616\\unit.log"
+    },
+    {
+      "name": "contract",
+      "command": "pnpm contract:check",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 642,
+      "log": "D:\\tmp\\change-context-relay\\616\\contract.log"
+    },
+    {
+      "name": "i18n",
+      "command": "pnpm i18n:lint",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 735,
+      "log": "D:\\tmp\\change-context-relay\\616\\i18n.log"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 35480,
+      "log": "D:\\tmp\\change-context-relay\\616\\typecheck.log"
+    },
+    {
+      "name": "build",
+      "command": "pnpm run build:vite",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 42017,
+      "log": "D:\\tmp\\change-context-relay\\616\\build.log"
+    },
+    {
+      "name": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/change-context-review-loop.md",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1527,
+      "log": "D:\\tmp\\change-context-relay\\616\\harness-validate.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/change-context-review-loop.md --dry-run",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1317,
+      "log": "D:\\tmp\\change-context-relay\\616\\harness-dry-run.log"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 734,
+      "log": "D:\\tmp\\change-context-relay\\616\\comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 679,
+      "log": "D:\\tmp\\change-context-relay\\616\\comms-compare.log"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "17cfaced2e12ed83953194ebee6f8d3b17d7d944a182731758d23a6e5b1317cb"
+    },
+    {
+      "path": "README.md",
+      "sha256": "8c836b3152f70c0e63336b19becdae263c1dcba150818048dca1ff7b8ea51103"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "3980e1be06ae0f616f7995c8345f2b73b464f66cd10bebf03128db57cb104ae3"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "ab09b9f3bf014d46a0992ac2818375e8ebcbbd659b4b9c21201420ab5fc73d0a"
+    },
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "sha256": "a0b700d471ea5901768d3cc6e6340fd1c58ecf1555d987308a3b00f520de2405"
+    },
+    {
+      "path": "electron/services/change-context-anchor-workspace.ts",
+      "sha256": "2903c4e91934ab6919c7ce65cf08f906397fed9264f9164f57fa92b537eb86bb"
+    },
+    {
+      "path": "electron/services/change-context-api.ts",
+      "sha256": "7618032f63288e6701ddaf932ddd1727641edf252b6957decfc3686a43de033a"
+    },
+    {
+      "path": "electron/services/change-context-review.ts",
+      "sha256": "cc5c8c75b71f7f4509670489798dc9c14cac6aeb21f05a84d766feeb72d86f46"
+    },
+    {
+      "path": "electron/services/git-api.ts",
+      "sha256": "b67e8ba699ae5b85ae08b75b7d889e2ec16c22041c51efa25e2bbb3410cfdd90"
+    },
+    {
+      "path": "harness/specs/tasks/change-context-review-loop.md",
+      "sha256": "e0e4f72d076f312d1f76151cd3897ad89f6b7b832fa82674a2b5a25f020cee25"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts",
+      "sha256": "587e5d9bf97b024647753e169db60dc46673a7fd92619d2a454b62bcc88ce196"
+    },
+    {
+      "path": "shared/i18n/locales/en/codeReview.json",
+      "sha256": "32f13cc790a919c4ca2d3df626b29433267705b176d775ce1335f8fcd7ba3a35"
+    },
+    {
+      "path": "shared/i18n/locales/ja/codeReview.json",
+      "sha256": "6f7fd898122eda4dd7b50ce81e7a051058a376bc9df4c37204b0f2995e9e9e36"
+    },
+    {
+      "path": "shared/i18n/locales/ru/codeReview.json",
+      "sha256": "03f94e26795108091fb72e2ad5e923cf16e00730e351670253e7570682b61766"
+    },
+    {
+      "path": "shared/i18n/locales/zh/codeReview.json",
+      "sha256": "ff0a83afe093ae57d12079e4c2141a07fca92300eabc63f2497cecb4606a914e"
+    },
+    {
+      "path": "shared/types/change-context.ts",
+      "sha256": "f5b3ba35302105b382a6ae2f41c4f12a7b441b09ccdf590aeecbc96a616fb888"
+    },
+    {
+      "path": "shared/types/git.ts",
+      "sha256": "5a3f7024643d18a7828d7846410fa59ac83a76a90330a9a6bd6fe1aebc745a0f"
+    },
+    {
+      "path": "src/pages/CodeReview/ChangeContextPanel.tsx",
+      "sha256": "40009cb4548f4b936ad4280d8c20b4f2003edf07eea3c93785858e7005d14f92"
+    },
+    {
+      "path": "src/pages/CodeReview/index.tsx",
+      "sha256": "09c40623783845997f8086840a53f4042e514e766c4bb695527a95004d24118f"
+    },
+    {
+      "path": "tests/e2e/change-context-review-loop.spec.ts",
+      "sha256": "723057f332bb0b848d84ae97ebf004c8d2cce3c541b0a4f7ec23a8ca0a601290"
+    },
+    {
+      "path": "tests/unit/change-context-review-verdict.test.ts",
+      "sha256": "10100b938b9add0987dfb59e91a0dec335c3d839263487b286d891efe5d9c90e"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "47737d5d57960d5b7b14a64dcf237ee53170462a12d1041e825d871f86b496e1"
+    }
+  ],
+  "rawEvidence": [
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\unit.log",
+      "sha256": "590b03e9a25940d9d9583566ca26fcb0543b5e8dc2c2dbf011aff87688dcc5d5"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\contract.log",
+      "sha256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\i18n.log",
+      "sha256": "7dcd6b3579b0480e13f2f9fc44b9c81cebe8ec45b0b06d24192d568710809661"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\typecheck.log",
+      "sha256": "c7260afd2a9f86d3d4546b68ec95e9a5333fca548966aa3bd82ec376f67bcd2c"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\build.log",
+      "sha256": "b1bb3774c0a3fe80fe0b65fb54840102a30f87bcbd8937722d8372ceefa19760"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\harness-validate.log",
+      "sha256": "825fda63988b7644aaf3fe143bbc8abc774d3fe967040ca910c7202c843a16c3"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\harness-dry-run.log",
+      "sha256": "99ab9ae1f05c5f1fa63b4b0712a4f40dbb6778b0f52652250c18db567dbe6855"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\comms-replay.log",
+      "sha256": "8cd854a59636fb1d95376232bb673785505bb47a2eee8dbc825868140161edbd"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\comms-compare.log",
+      "sha256": "711ef4032500efc9a7cc51d632899da17e299d7b59f9b2397c423f2727e5e9e3"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\electron-visible.log",
+      "sha256": "88a7667e5cd4bfcc58f01b826b98a15e3a91acae5d0439ecfe320b503301c1f0"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\616\\e2e-visible\\change-context-review-loop-2ff02-shness-never-move-an-anchor\\anchor-stale.png",
+      "sha256": "dda1416cd74a3df95e9e9d592d2277aa688913431898f7646dbae977c66833d9"
+    }
+  ],
+  "schema": "clawx.change-context.tf0616-acceptance/v1",
+  "unitTests": 82,
+  "electron": {
+    "passed": 1,
+    "scope": "Real Electron renderer/IPC, replayed read model. Real Git/permission/journal/Task Ledger covered by integration unit fixture."
+  },
+  "limitations": [
+    "Full production-owner Electron flow remains TF-0618.",
+    "VG and rollout closure remain TF-0617/TF-0619.",
+    "Verdicts are local view evidence.",
+    "Windows source-host only; no packaged/live model claim."
+  ],
+  "correction": "TF-0615 locale keys did not prove visible UI. Actual controls, visible stale-state E2E and screenshot review now pass. Recovery-required/unknown is an additive error variant."
+}
