@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "AgentFirstEvaluationLoop/v1",
+  "generatedAt": "2026-10-30",
+  "driven_by": "agent",
+  "actor": "codex",
+  "claimBoundary": "Loop contract only. The acceptance suite corpus is not frozen, the self-improvement candidate producer is not implemented, and no candidate or evaluation has been run. The signals are evaluation gaps, not regressions; nothing here is a measured result.",
+  "profileId": "acceptance-profile",
+  "verdictRef": "harness/specs/fixtures/agent-first-acceptance/matrix.json",
+  "heldOutSplit": {
+    "suiteId": "acceptance-core",
+    "digest": null,
+    "sealedAt": null,
+    "writableByCandidate": false,
+    "status": "not-frozen"
+  },
+  "signals": [
+    {
+      "id": "sig-effect-not-run",
+      "dimension": "effect",
+      "gateId": "C1",
+      "taskId": null,
+      "severity": "blocking",
+      "evidenceLinks": [
+        "harness/specs/fixtures/agent-first-acceptance/matrix.json#C1"
+      ],
+      "status": "open",
+      "kind": "evaluation-gap"
+    },
+    {
+      "id": "sig-agent-quality-not-run",
+      "dimension": "agentQuality",
+      "gateId": "E2",
+      "taskId": null,
+      "severity": "blocking",
+      "evidenceLinks": [
+        "harness/specs/fixtures/agent-first-acceptance/matrix.json#E2"
+      ],
+      "status": "open",
+      "kind": "evaluation-gap"
+    }
+  ],
+  "candidates": [],
+  "reEvaluations": [],
+  "promotions": [],
+  "publicationApproval": null,
+  "productLockChanges": [],
+  "suiteBinding": {
+    "suiteId": "acceptance-core",
+    "status": "not-frozen",
+    "contentDigest": null
+  },
+  "candidateProducer": {
+    "id": "rsi-self-improvement",
+    "layer": "self-improvement",
+    "status": "not-implemented"
+  },
+  "promotionPolicyDigest": "sha256:ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4",
+  "taskGraduationPolicies": [],
+  "taskGraduations": [],
+  "candidateDecisions": []
+}
