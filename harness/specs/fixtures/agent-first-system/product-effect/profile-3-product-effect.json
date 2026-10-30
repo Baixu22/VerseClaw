@@ -1,0 +1,273 @@
+{
+  "schemaVersion": "AgentFirstProductEffect/v1",
+  "driven_by": "agent",
+  "actor": "codex/playwright-product-proxy",
+  "profile": 3,
+  "identity": {
+    "commit": "c14769fcdf587722ffc6b99a6e3dff023f4a7e2c",
+    "tree": "9c317d03a88aab96087a42645e48e9db76d5d6bd"
+  },
+  "homeDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-8Ziwor",
+  "userDataDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-user-data-dK2PV9",
+  "gatewayPort": 52002,
+  "steps": [
+    {
+      "action": "real-gateway-running",
+      "state": {
+        "state": "running",
+        "port": 52002,
+        "reconnectAttempts": 0,
+        "gatewayReady": true,
+        "pid": 34892,
+        "connectedAt": 1793362794585,
+        "uptime": 1
+      }
+    },
+    {
+      "action": "input-and-clear-draft",
+      "state": ""
+    },
+    {
+      "action": "theme-ui",
+      "state": "dark"
+    },
+    {
+      "action": "invalid-setting-denied",
+      "state": true
+    },
+    {
+      "action": "approval-bypass-blocked-and-rejected",
+      "state": {
+        "name": "AF governed task 3",
+        "url": "https://example.com/",
+        "objective": "permission-state readback only; no navigation",
+        "mode": "headless",
+        "profile": "default",
+        "allowedDomains": [
+          "example.com"
+        ],
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "https://example.com/",
+            "id": "step-1",
+            "status": "pending"
+          }
+        ],
+        "permissionScope": [
+          "navigate",
+          "read-page"
+        ],
+        "approval": {
+          "status": "rejected",
+          "requestedAt": "2026-10-30T12:19:57.011Z",
+          "decidedAt": "2026-10-30T12:19:57.039Z"
+        },
+        "counters": {
+          "totalSteps": 1,
+          "passedSteps": 0,
+          "failedSteps": 0
+        },
+        "id": "3fd8c70a-4b61-4c50-b8ff-2d7702d32f75",
+        "status": "cancelled",
+        "statusExplain": "Cancelled by user.",
+        "retryCount": 0,
+        "createdAt": "2026-10-30T12:19:57.011Z",
+        "updatedAt": "2026-10-30T12:19:57.039Z",
+        "errorCode": "APPROVAL_REJECTED",
+        "error": "Task was rejected before browser execution"
+      }
+    },
+    {
+      "action": "cancel-final-owner-state",
+      "state": [
+        {
+          "name": "AF governed task 3",
+          "url": "https://example.com/",
+          "objective": "permission-state readback only; no navigation",
+          "mode": "headless",
+          "profile": "default",
+          "allowedDomains": [
+            "example.com"
+          ],
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "https://example.com/",
+              "id": "step-1",
+              "status": "pending"
+            }
+          ],
+          "permissionScope": [
+            "navigate",
+            "read-page"
+          ],
+          "approval": {
+            "status": "rejected",
+            "requestedAt": "2026-10-30T12:19:57.011Z",
+            "decidedAt": "2026-10-30T12:19:57.039Z"
+          },
+          "counters": {
+            "totalSteps": 1,
+            "passedSteps": 0,
+            "failedSteps": 0
+          },
+          "id": "3fd8c70a-4b61-4c50-b8ff-2d7702d32f75",
+          "status": "cancelled",
+          "statusExplain": "Cancelled by user.",
+          "retryCount": 0,
+          "createdAt": "2026-10-30T12:19:57.011Z",
+          "updatedAt": "2026-10-30T12:19:57.039Z",
+          "errorCode": "APPROVAL_REJECTED",
+          "error": "Task was rejected before browser execution"
+        },
+        {
+          "name": "AF cancellable task 3",
+          "url": "https://example.com/",
+          "objective": "cancel without navigation",
+          "mode": "headless",
+          "profile": "default",
+          "allowedDomains": [
+            "example.com"
+          ],
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "https://example.com/",
+              "id": "step-1",
+              "status": "pending"
+            }
+          ],
+          "permissionScope": [
+            "navigate",
+            "read-page"
+          ],
+          "approval": {
+            "status": "pending",
+            "requestedAt": "2026-10-30T12:19:57.047Z"
+          },
+          "counters": {
+            "totalSteps": 1,
+            "passedSteps": 0,
+            "failedSteps": 0
+          },
+          "id": "c807d3ef-bfef-47e2-8b04-85de16a01c25",
+          "status": "cancelled",
+          "statusExplain": "Cancelled by user.",
+          "retryCount": 0,
+          "createdAt": "2026-10-30T12:19:57.047Z",
+          "updatedAt": "2026-10-30T12:19:57.056Z"
+        }
+      ]
+    },
+    {
+      "action": "real-permission-reject-approve-undo",
+      "state": {
+        "denied": {
+          "success": false,
+          "blocked": true,
+          "approvalRequired": true,
+          "approval": {
+            "id": "approval-mvuxwmuo-yhlxpw",
+            "workspaceId": "af-approval-3",
+            "sessionKey": "agent:main:main",
+            "runId": null,
+            "mode": "acceptEdits",
+            "source": "git",
+            "requestedAt": 1793362797744,
+            "status": "pending",
+            "risk": "dangerous",
+            "command": "git restore --source=HEAD --staged --worktree -- effect.txt",
+            "cwd": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-8Ziwor\\approval-workspace",
+            "paths": [
+              "effect.txt"
+            ],
+            "requestHash": "af-approval-3:agent:main:main:git:revertFile:{\"command\":\"git restore --source=HEAD --staged --worktree -- effect.txt\",\"paths\":[\"effect.txt\"]}",
+            "reason": "This Git/GitHub operation can rewrite or publish repository state and requires approval."
+          },
+          "reason": "This Git/GitHub operation can rewrite or publish repository state and requires approval."
+        },
+        "requested": {
+          "success": false,
+          "blocked": true,
+          "approvalRequired": true,
+          "approval": {
+            "id": "approval-mvuxwmxx-smbwyy",
+            "workspaceId": "af-approval-3",
+            "sessionKey": "agent:main:main",
+            "runId": null,
+            "mode": "acceptEdits",
+            "source": "git",
+            "requestedAt": 1793362797861,
+            "status": "pending",
+            "risk": "dangerous",
+            "command": "git restore --source=HEAD --staged --worktree -- effect.txt",
+            "cwd": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-8Ziwor\\approval-workspace",
+            "paths": [
+              "effect.txt"
+            ],
+            "requestHash": "af-approval-3:agent:main:main:git:revertFile:{\"command\":\"git restore --source=HEAD --staged --worktree -- effect.txt\",\"paths\":[\"effect.txt\"]}",
+            "reason": "This Git/GitHub operation can rewrite or publish repository state and requires approval."
+          },
+          "reason": "This Git/GitHub operation can rewrite or publish repository state and requires approval."
+        },
+        "restored": {
+          "success": true,
+          "stdout": "",
+          "stderr": "",
+          "exitCode": 0,
+          "status": {
+            "isRepository": true,
+            "workspaceRoot": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-8Ziwor\\approval-workspace",
+            "repoRoot": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-8Ziwor\\approval-workspace",
+            "branch": "master",
+            "detached": false,
+            "ahead": 0,
+            "behind": 0,
+            "clean": false,
+            "hasConflicts": false,
+            "changes": [
+              {
+                "path": ".verse-claw/",
+                "absolutePath": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-8Ziwor\\approval-workspace\\.verse-claw",
+                "status": "??",
+                "staged": false,
+                "unstaged": false,
+                "untracked": true,
+                "conflicted": false,
+                "bucket": "untracked",
+                "additions": null,
+                "deletions": null,
+                "binary": true
+              }
+            ],
+            "stagedCount": 0,
+            "unstagedCount": 0,
+            "untrackedCount": 1,
+            "conflictedCount": 0
+          }
+        },
+        "file": "before\n"
+      }
+    },
+    {
+      "action": "restart-persistence-and-undo",
+      "state": "light restored after observing dark persistence"
+    }
+  ],
+  "finalState": {
+    "theme": "light",
+    "taskStates": [
+      "cancelled",
+      "cancelled"
+    ]
+  },
+  "cleanup": {
+    "appExitCode": 1,
+    "appSignal": null,
+    "gatewayPortClosed": true
+  },
+  "limitations": [
+    "source-host product effects; no live model or package verdict"
+  ]
+}
