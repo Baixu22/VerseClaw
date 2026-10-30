@@ -2,7 +2,7 @@
   "schemaVersion": "AgentFirstEvaluationLoopValidation/v1",
   "checkedAt": "2026-10-30",
   "driven_by": "agent",
-  "actor": "codex",
+  "actor": "codex/tf0590-corpus-owner",
   "command": "node scripts/agent-first-loop-check.mjs",
   "scope": "TF-0621 evaluation loop validation over file bodies read from disk",
   "counts": {
@@ -13,8 +13,8 @@
   },
   "inputDigests": {
     "harness/specs/guides/agent-first-acceptance.md": "sha256:1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
-    "harness/specs/fixtures/agent-first-framework/registry.json": "sha256:f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
-    "harness/specs/fixtures/agent-first-framework/loop-record.json": "sha256:ab3fa0c0f9cb1c88e3e6d2a3ae83974c53c50a084970a80a9341f52e89431fa6",
+    "harness/specs/fixtures/agent-first-framework/registry.json": "sha256:1a7b024a29e7caef3b1e0f64fe4bb7c78d322b61a0474aa6842289388d72202a",
+    "harness/specs/fixtures/agent-first-framework/loop-record.json": "sha256:c83bd3997d7575c769ae068d870010e15d42f1027f4c5c154d1384388951cfb3",
     "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json": "sha256:ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4"
   },
   "evaluationStatus": "not-run",
@@ -76,7 +76,8 @@
       "baselineValid": true,
       "rejected": true,
       "observedCodes": [
-        "heldout.digest-before-freeze"
+        "heldout.digest-before-freeze",
+        "heldout.not-frozen-for-run"
       ]
     },
     {
@@ -210,7 +211,8 @@
       "baselineValid": true,
       "rejected": true,
       "observedCodes": [
-        "loop.unknown-profile"
+        "loop.unknown-profile",
+        "heldout.digest-stale"
       ]
     },
     {

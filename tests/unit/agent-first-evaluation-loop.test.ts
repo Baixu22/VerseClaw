@@ -170,9 +170,16 @@ describe('agent-first evaluation loop contract', () => {
   });
 
   it('keeps an unfrozen held-out split digest-free and rejects a falsely sealed digest', () => {
-    const files = loadLoopFiles(ROOT);
+    const files = structuredClone(loadLoopFiles(ROOT));
     const loop = files.loop as Loop;
     const registry = files.registry as Registry;
+    registry.registeredSuites[0].corpusStatus = 'not-frozen';
+    registry.registeredSuites[0].contentDigest = null;
+    loop.suiteBinding.status = 'not-frozen';
+    loop.suiteBinding.contentDigest = null;
+    loop.heldOutSplit.status = 'not-frozen';
+    loop.heldOutSplit.digest = null;
+    loop.heldOutSplit.sealedAt = null;
 
     expect(loop.heldOutSplit.status).toBe('not-frozen');
     expect(loop.heldOutSplit.digest).toBeNull();

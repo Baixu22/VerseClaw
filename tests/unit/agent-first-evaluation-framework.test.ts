@@ -39,7 +39,7 @@ describe('agent-first evaluation framework core', () => {
     const { violations, counts } = validateFrameworkContract(files);
 
     expect(violations).toEqual([]);
-    expect(counts).toEqual({ subjects: 1, suites: 1, graders: 2, profiles: 1 });
+    expect(counts).toEqual({ subjects: 1, suites: 1, graders: 3, profiles: 1 });
   });
 
   it('admits a new evaluation surface as registry entries only, without a core edit', () => {
@@ -78,7 +78,7 @@ describe('agent-first evaluation framework core', () => {
     const { violations, counts } = validateFrameworkRegistry(registry);
 
     expect(violations).toEqual([]);
-    expect(counts).toEqual({ subjects: 2, suites: 2, graders: 3, profiles: 2 });
+    expect(counts).toEqual({ subjects: 2, suites: 2, graders: 4, profiles: 2 });
   });
 
   it('fails closed on every declared negative control', () => {
@@ -124,6 +124,6 @@ describe('agent-first evaluation framework core', () => {
     const registry = files.registry as Registry;
 
     expect(registry.registeredProfiles[0].status).toBe('not-run');
-    expect(countFramework(registry)).toEqual({ subjects: 1, suites: 1, graders: 2, profiles: 1 });
+    expect(countFramework(registry)).toEqual({ subjects: 1, suites: 1, graders: 3, profiles: 1 });
   });
 });
