@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "AgentFirstCandidateReportVerification/v1",
+  "verification": "pass",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "gates": 14,
+  "verdict": "not-release-ready",
+  "productLocks": {
+    "humanAcceptanceRequired": false,
+    "humanEvidenceClaimed": false,
+    "drivenBy": "agent",
+    "releaseApproved": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  },
+  "reportDigest": "sha256:0e2cf6c367d331481938ffa00b7149f4db0f97ead9b66ccb96daa278f16653cf"
+}
