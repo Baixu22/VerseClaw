@@ -1,0 +1,3 @@
+acac019b09ed40ade7b3abda70c1ab85b45ba686ee08185211511297ff8045f1  harness/specs/fixtures/agent-first-system/oat/acceptance.json
+8e27d4ccf5d6c8aff0587a15574a68a52196588aebd33287f24475c281c684dc  harness/specs/fixtures/agent-first-system/oat/operational.json
+f088796bce720d8a4adfc15f3cca9aa95a0207741ec4a8e91849639753869d88  harness/specs/fixtures/agent-first-system/oat/provider-faults.json

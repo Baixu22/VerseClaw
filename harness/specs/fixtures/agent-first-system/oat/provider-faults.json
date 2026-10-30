@@ -1,0 +1,1649 @@
+{
+  "actor": "codex-playwright",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false,
+    "grade": "source-host-operational",
+    "sourceCount": 6638,
+    "buildCount": 8263,
+    "runtimeBuildStamp": {
+      "builtAt": 1793384256784,
+      "head": "3cbd0c1ebc0b74d59afee98011bbec5d3ed60e9d"
+    },
+    "inputDigest": "9d25d719958d958fceaeeecfb6d6edac02e3516d30182572e6276f56f1cf2de7"
+  },
+  "cases": [
+    {
+      "type": "timeout",
+      "marker": "FAULT_timeout_eb5da4c4",
+      "sessionKey": "agent:main:session-1793384669899-b4wjg7",
+      "faultRequests": 1,
+      "elapsedMs": 211583,
+      "failed": {
+        "sessionKey": "agent:main:session-1793384669899-b4wjg7",
+        "sessionId": "b2d474b6-d7b9-4be5-a061-af460d8e3ac7",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Probe FAULT_timeout_eb5da4c4: use no tools and reply with exactly SHOULD_NOT_COMPLETE.",
+            "timestamp": 1793384670559,
+            "idempotencyKey": "f4269dd1-3dab-403c-86aa-1e1ebdfc0479:user",
+            "__openclaw": {
+              "id": "8339c23d",
+              "recordTimestampMs": 1793384683030,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [],
+            "api": "openai-responses",
+            "provider": "custom-gasmok01",
+            "model": "space-bunny",
+            "usage": {
+              "input": 0,
+              "output": 0,
+              "totalTokens": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "error",
+            "timestamp": 1793384683054,
+            "responseId": "1ac690b3-9602-4235-9fe7-d318e8fb34f5",
+            "errorMessage": "terminated",
+            "__openclaw": {
+              "id": "97225548",
+              "recordTimestampMs": 1793384863138,
+              "seq": 2
+            }
+          }
+        ],
+        "defaults": {
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "contextTokens": 200000,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off"
+        },
+        "sessionInfo": {
+          "key": "agent:main:session-1793384669899-b4wjg7",
+          "kind": "direct",
+          "displayName": "Verse Claw",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1793384683010,
+          "sessionId": "b2d474b6-d7b9-4be5-a061-af460d8e3ac7",
+          "systemSent": true,
+          "abortedLastRun": false,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off",
+          "totalTokensFresh": false,
+          "status": "running",
+          "startedAt": 1793384682983,
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 200000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        },
+        "thinkingLevel": "off"
+      },
+      "settlement": {
+        "settled": true,
+        "requests": 1,
+        "quietMs": 3500,
+        "elapsedMs": 3604
+      },
+      "runtimeEvents": [
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "f4269dd1-3dab-403c-86aa-1e1ebdfc0479",
+              "sessionKey": "agent:main:session-1793384669899-b4wjg7",
+              "seq": 1,
+              "ts": 1793384682984,
+              "startedAt": 1793384682983
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.ended",
+              "runId": "f4269dd1-3dab-403c-86aa-1e1ebdfc0479",
+              "sessionKey": "agent:main:session-1793384669899-b4wjg7",
+              "seq": 2,
+              "ts": 1793384863154,
+              "status": "error",
+              "endedAt": 1793384863154,
+              "error": "LLM request timed out.",
+              "livenessState": "blocked"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "f4269dd1-3dab-403c-86aa-1e1ebdfc0479",
+                "sessionKey": "agent:main:session-1793384669899-b4wjg7",
+                "seq": 4,
+                "state": "error",
+                "errorMessage": "⚠️ Agent failed before reply: LLM request timed out.\nLogs: openclaw logs --follow",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "⚠️ Agent failed before reply: LLM request timed out.\nLogs: openclaw logs --follow"
+                    }
+                  ],
+                  "timestamp": 1793384865177
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "ae0b5540-f641-443e-a652-cefd9c426178",
+              "sessionKey": "agent:main:session-1793384869918-ce3oet",
+              "seq": 1,
+              "ts": 1793384873401,
+              "startedAt": 1793384873401
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "ae0b5540-f641-443e-a652-cefd9c426178",
+              "sessionKey": "agent:main:session-1793384869918-ce3oet",
+              "seq": 2,
+              "ts": 1793384877248,
+              "text": "RECOVER_69A5A4195978",
+              "delta": "RECOVER_69A5A4195978"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "ae0b5540-f641-443e-a652-cefd9c426178",
+                "sessionKey": "agent:main:session-1793384869918-ce3oet",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "RECOVER_69A5A4195978",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "RECOVER_69A5A4195978"
+                    }
+                  ],
+                  "timestamp": 1793384877253
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "ae0b5540-f641-443e-a652-cefd9c426178",
+                "sessionKey": "agent:main:session-1793384869918-ce3oet",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "RECOVER_69A5A4195978"
+                    }
+                  ],
+                  "timestamp": 1793384877260
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "cancelledAfterRecovery": {
+        "sessionKey": "agent:main:session-1793384669899-b4wjg7",
+        "sessionId": "b2d474b6-d7b9-4be5-a061-af460d8e3ac7",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Probe FAULT_timeout_eb5da4c4: use no tools and reply with exactly SHOULD_NOT_COMPLETE.",
+            "timestamp": 1793384670559,
+            "idempotencyKey": "f4269dd1-3dab-403c-86aa-1e1ebdfc0479:user",
+            "__openclaw": {
+              "id": "8339c23d",
+              "recordTimestampMs": 1793384683030,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [],
+            "api": "openai-responses",
+            "provider": "custom-gasmok01",
+            "model": "space-bunny",
+            "usage": {
+              "input": 0,
+              "output": 0,
+              "totalTokens": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "error",
+            "timestamp": 1793384683054,
+            "responseId": "1ac690b3-9602-4235-9fe7-d318e8fb34f5",
+            "errorMessage": "terminated",
+            "__openclaw": {
+              "id": "97225548",
+              "recordTimestampMs": 1793384863138,
+              "seq": 2
+            }
+          }
+        ],
+        "defaults": {
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "contextTokens": 200000,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off"
+        },
+        "sessionInfo": {
+          "key": "agent:main:session-1793384669899-b4wjg7",
+          "kind": "direct",
+          "displayName": "Verse Claw",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1793384683010,
+          "sessionId": "b2d474b6-d7b9-4be5-a061-af460d8e3ac7",
+          "systemSent": true,
+          "abortedLastRun": false,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off",
+          "totalTokensFresh": false,
+          "status": "running",
+          "startedAt": 1793384682983,
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 200000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        },
+        "thinkingLevel": "off"
+      },
+      "lateEffectExists": false,
+      "recovery": {
+        "sessionKey": "agent:main:session-1793384869918-ce3oet",
+        "sessionId": "2a2432c0-39e0-4843-9d90-711f938da477",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Without tools, copy this opaque identifier exactly: RECOVER_69A5A4195978",
+            "timestamp": 1793384871706,
+            "idempotencyKey": "ae0b5540-f641-443e-a652-cefd9c426178:user",
+            "__openclaw": {
+              "id": "c49819cf",
+              "recordTimestampMs": 1793384873421,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "RECOVER_69A5A4195978"
+              }
+            ],
+            "api": "openai-responses",
+            "provider": "custom-gasmok01",
+            "model": "space-bunny",
+            "usage": {
+              "input": 20569,
+              "output": 12,
+              "totalTokens": 20709,
+              "cacheRead": 128,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "stop",
+            "timestamp": 1793384873429,
+            "responseId": "01a18e11801f796981c4d655dda4688e",
+            "__openclaw": {
+              "id": "7c236617",
+              "recordTimestampMs": 1793384877250,
+              "seq": 2
+            }
+          }
+        ],
+        "defaults": {
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "contextTokens": 200000,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off"
+        },
+        "sessionInfo": {
+          "key": "agent:main:session-1793384869918-ce3oet",
+          "kind": "direct",
+          "displayName": "Verse Claw",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1793384877572,
+          "sessionId": "2a2432c0-39e0-4843-9d90-711f938da477",
+          "systemSent": true,
+          "abortedLastRun": false,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off",
+          "inputTokens": 20569,
+          "outputTokens": 12,
+          "totalTokens": 20697,
+          "totalTokensFresh": true,
+          "estimatedCostUsd": 0,
+          "status": "done",
+          "startedAt": 1793384873401,
+          "endedAt": 1793384877257,
+          "runtimeMs": 3856,
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 200000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        },
+        "thinkingLevel": "off"
+      },
+      "status": "pass",
+      "runtimeProbe": {
+        "faultRequests": 1,
+        "settled": true,
+        "responseCompleted": false,
+        "providerCalls": 0,
+        "trajectoryTools": 0,
+        "activeRequests": 0
+      }
+    },
+    {
+      "type": "cancel",
+      "marker": "FAULT_cancel_e0737dbd",
+      "sessionKey": "agent:main:session-1793384882622-z4sil1",
+      "faultRequests": 1,
+      "elapsedMs": 24946,
+      "failed": {
+        "sessionKey": "agent:main:session-1793384882622-z4sil1",
+        "sessionId": "58736f25-9c32-4928-a111-cd13ae4ff6d7",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Probe FAULT_cancel_e0737dbd: use no tools and reply with exactly SHOULD_NOT_COMPLETE.",
+            "timestamp": 1793384884394,
+            "idempotencyKey": "c4d16fdb-0660-4880-8d63-550814ed024f:user",
+            "__openclaw": {
+              "id": "b4d2a132",
+              "recordTimestampMs": 1793384886216,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "INCOMPLETE_PROVIDER_FRAGMENT"
+              }
+            ],
+            "api": "openai-responses",
+            "provider": "custom-gasmok01",
+            "model": "space-bunny",
+            "usage": {
+              "input": 0,
+              "output": 0,
+              "totalTokens": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "aborted",
+            "timestamp": 1793384886221,
+            "responseId": "2a55d31a-aebf-41c4-bf89-6266aebcc7ed",
+            "errorMessage": "Responses stream ended without a terminal response event",
+            "__openclaw": {
+              "id": "5782a1cb",
+              "recordTimestampMs": 1793384887295,
+              "seq": 2
+            }
+          }
+        ],
+        "defaults": {
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "contextTokens": 200000,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off"
+        },
+        "sessionInfo": {
+          "key": "agent:main:session-1793384882622-z4sil1",
+          "kind": "direct",
+          "displayName": "Verse Claw",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1793384888507,
+          "sessionId": "58736f25-9c32-4928-a111-cd13ae4ff6d7",
+          "systemSent": true,
+          "abortedLastRun": true,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off",
+          "totalTokensFresh": false,
+          "status": "killed",
+          "startedAt": 1793384884394,
+          "endedAt": 1793384887266,
+          "runtimeMs": 2872,
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 200000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        },
+        "thinkingLevel": "off"
+      },
+      "settlement": {
+        "settled": true,
+        "requests": 1,
+        "quietMs": 3500,
+        "elapsedMs": 3675
+      },
+      "runtimeEvents": [
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+              "sessionKey": "agent:main:session-1793384882622-z4sil1",
+              "seq": 1,
+              "ts": 1793384886194,
+              "startedAt": 1793384886194
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+                "sessionKey": "agent:main:session-1793384882622-z4sil1",
+                "seq": 2,
+                "state": "aborted",
+                "stopReason": "rpc"
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+              "seq": 1,
+              "ts": 1793384887294,
+              "text": "INCOMPLETE_PROVIDER_FRAGMENT",
+              "delta": "INCOMPLETE_PROVIDER_FRAGMENT"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+                "sessionKey": "agent:main:session-1793384882622-z4sil1",
+                "seq": 9001,
+                "state": "delta",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "LATE_E21FFC192527"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+                "sessionKey": "agent:main:session-1793384882622-z4sil1",
+                "seq": 9002,
+                "state": "final",
+                "stopReason": "toolUse",
+                "message": {
+                  "role": "assistant",
+                  "stopReason": "toolUse",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "late-cancelled-call",
+                      "name": "write",
+                      "arguments": {
+                        "path": "late-effect.txt",
+                        "content": "LATE_E21FFC192527"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+                "sessionKey": "agent:main:session-1793384882622-z4sil1",
+                "seq": 9003,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "stopReason": "stop",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "LATE_E21FFC192527"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+                "sessionKey": "agent:main:session-1793384882622-z4sil1",
+                "seq": 10001,
+                "state": "delta",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "LATE_E21FFC192527"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+                "sessionKey": "agent:main:session-1793384882622-z4sil1",
+                "seq": 10002,
+                "state": "final",
+                "stopReason": "toolUse",
+                "message": {
+                  "role": "assistant",
+                  "stopReason": "toolUse",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "late-cancelled-call",
+                      "name": "write",
+                      "arguments": {
+                        "path": "late-effect.txt",
+                        "content": "LATE_E21FFC192527"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+                "sessionKey": "agent:main:session-1793384882622-z4sil1",
+                "seq": 10003,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "stopReason": "stop",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "LATE_E21FFC192527"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "run.started",
+              "runId": "1a78aee5-4203-4089-9e82-17290d38d5c1",
+              "sessionKey": "agent:main:session-1793384895490-cm6wia",
+              "seq": 1,
+              "ts": 1793384900205,
+              "startedAt": 1793384900205
+            }
+          ]
+        },
+        {
+          "channel": "chat:runtime-event",
+          "args": [
+            {
+              "type": "assistant.delta",
+              "runId": "1a78aee5-4203-4089-9e82-17290d38d5c1",
+              "sessionKey": "agent:main:session-1793384895490-cm6wia",
+              "seq": 2,
+              "ts": 1793384902723,
+              "text": "RECOVER_337A75D91C37",
+              "delta": "RECOVER_337A75D91C37"
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "1a78aee5-4203-4089-9e82-17290d38d5c1",
+                "sessionKey": "agent:main:session-1793384895490-cm6wia",
+                "seq": 2,
+                "state": "delta",
+                "deltaText": "RECOVER_337A75D91C37",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "RECOVER_337A75D91C37"
+                    }
+                  ],
+                  "timestamp": 1793384902725
+                }
+              }
+            }
+          ]
+        },
+        {
+          "channel": "gateway:chat-message",
+          "args": [
+            {
+              "message": {
+                "runId": "1a78aee5-4203-4089-9e82-17290d38d5c1",
+                "sessionKey": "agent:main:session-1793384895490-cm6wia",
+                "seq": 3,
+                "state": "final",
+                "stopReason": "stop",
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "RECOVER_337A75D91C37"
+                    }
+                  ],
+                  "timestamp": 1793384902732
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "lateDelivery": {
+        "driven_by": "agent",
+        "actor": "codex-delayed-delivery",
+        "boundary": "Main-to-Renderer",
+        "source": "explicit synthetic late canceled-run events",
+        "frames": [
+          {
+            "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+            "sessionKey": "agent:main:session-1793384882622-z4sil1",
+            "seq": 9001,
+            "state": "delta",
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "LATE_E21FFC192527"
+                }
+              ]
+            }
+          },
+          {
+            "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+            "sessionKey": "agent:main:session-1793384882622-z4sil1",
+            "seq": 9002,
+            "state": "final",
+            "stopReason": "toolUse",
+            "message": {
+              "role": "assistant",
+              "stopReason": "toolUse",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "late-cancelled-call",
+                  "name": "write",
+                  "arguments": {
+                    "path": "late-effect.txt",
+                    "content": "LATE_E21FFC192527"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+            "sessionKey": "agent:main:session-1793384882622-z4sil1",
+            "seq": 9003,
+            "state": "final",
+            "stopReason": "stop",
+            "message": {
+              "role": "assistant",
+              "stopReason": "stop",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "LATE_E21FFC192527"
+                }
+              ]
+            }
+          }
+        ],
+        "recoveryFrames": {
+          "driven_by": "agent",
+          "actor": "codex-delayed-delivery",
+          "boundary": "Main-to-Renderer",
+          "source": "explicit synthetic late canceled-run events",
+          "frames": [
+            {
+              "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+              "sessionKey": "agent:main:session-1793384882622-z4sil1",
+              "seq": 10001,
+              "state": "delta",
+              "message": {
+                "role": "assistant",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "LATE_E21FFC192527"
+                  }
+                ]
+              }
+            },
+            {
+              "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+              "sessionKey": "agent:main:session-1793384882622-z4sil1",
+              "seq": 10002,
+              "state": "final",
+              "stopReason": "toolUse",
+              "message": {
+                "role": "assistant",
+                "stopReason": "toolUse",
+                "content": [
+                  {
+                    "type": "toolCall",
+                    "id": "late-cancelled-call",
+                    "name": "write",
+                    "arguments": {
+                      "path": "late-effect.txt",
+                      "content": "LATE_E21FFC192527"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "runId": "c4d16fdb-0660-4880-8d63-550814ed024f",
+              "sessionKey": "agent:main:session-1793384882622-z4sil1",
+              "seq": 10003,
+              "state": "final",
+              "stopReason": "stop",
+              "message": {
+                "role": "assistant",
+                "stopReason": "stop",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "LATE_E21FFC192527"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "cancelledAfterRecovery": {
+        "sessionKey": "agent:main:session-1793384882622-z4sil1",
+        "sessionId": "58736f25-9c32-4928-a111-cd13ae4ff6d7",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Probe FAULT_cancel_e0737dbd: use no tools and reply with exactly SHOULD_NOT_COMPLETE.",
+            "timestamp": 1793384884394,
+            "idempotencyKey": "c4d16fdb-0660-4880-8d63-550814ed024f:user",
+            "__openclaw": {
+              "id": "b4d2a132",
+              "recordTimestampMs": 1793384886216,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "INCOMPLETE_PROVIDER_FRAGMENT"
+              }
+            ],
+            "api": "openai-responses",
+            "provider": "custom-gasmok01",
+            "model": "space-bunny",
+            "usage": {
+              "input": 0,
+              "output": 0,
+              "totalTokens": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "aborted",
+            "timestamp": 1793384886221,
+            "responseId": "2a55d31a-aebf-41c4-bf89-6266aebcc7ed",
+            "errorMessage": "Responses stream ended without a terminal response event",
+            "__openclaw": {
+              "id": "5782a1cb",
+              "recordTimestampMs": 1793384887295,
+              "seq": 2
+            }
+          }
+        ],
+        "defaults": {
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "contextTokens": 200000,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off"
+        },
+        "sessionInfo": {
+          "key": "agent:main:session-1793384882622-z4sil1",
+          "kind": "direct",
+          "displayName": "Verse Claw",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1793384888507,
+          "sessionId": "58736f25-9c32-4928-a111-cd13ae4ff6d7",
+          "systemSent": true,
+          "abortedLastRun": true,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off",
+          "totalTokensFresh": false,
+          "status": "killed",
+          "startedAt": 1793384884394,
+          "endedAt": 1793384887266,
+          "runtimeMs": 2872,
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 200000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        },
+        "thinkingLevel": "off"
+      },
+      "lateEffectExists": false,
+      "recovery": {
+        "sessionKey": "agent:main:session-1793384895490-cm6wia",
+        "sessionId": "9f926418-bf52-45ac-96c3-7b6d3a468f59",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Without tools, copy this opaque identifier exactly: RECOVER_337A75D91C37",
+            "timestamp": 1793384897382,
+            "idempotencyKey": "1a78aee5-4203-4089-9e82-17290d38d5c1:user",
+            "__openclaw": {
+              "id": "18b22648",
+              "recordTimestampMs": 1793384900227,
+              "seq": 1
+            }
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "RECOVER_337A75D91C37"
+              }
+            ],
+            "api": "openai-responses",
+            "provider": "custom-gasmok01",
+            "model": "space-bunny",
+            "usage": {
+              "input": 20555,
+              "output": 12,
+              "totalTokens": 20709,
+              "cacheRead": 142,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "stopReason": "stop",
+            "timestamp": 1793384900232,
+            "responseId": "01a18e11e7aa7db39d1085e703693da8",
+            "__openclaw": {
+              "id": "8ae04851",
+              "recordTimestampMs": 1793384902724,
+              "seq": 2
+            }
+          }
+        ],
+        "defaults": {
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "contextTokens": 200000,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off"
+        },
+        "sessionInfo": {
+          "key": "agent:main:session-1793384895490-cm6wia",
+          "kind": "direct",
+          "displayName": "Verse Claw",
+          "chatType": "direct",
+          "origin": {
+            "label": "Verse Claw",
+            "provider": "webchat",
+            "surface": "webchat",
+            "chatType": "direct"
+          },
+          "updatedAt": 1793384902960,
+          "sessionId": "9f926418-bf52-45ac-96c3-7b6d3a468f59",
+          "systemSent": true,
+          "abortedLastRun": false,
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            }
+          ],
+          "thinkingOptions": [
+            "off"
+          ],
+          "thinkingDefault": "off",
+          "inputTokens": 20555,
+          "outputTokens": 12,
+          "totalTokens": 20697,
+          "totalTokensFresh": true,
+          "estimatedCostUsd": 0,
+          "status": "done",
+          "startedAt": 1793384900205,
+          "endedAt": 1793384902728,
+          "runtimeMs": 2523,
+          "modelProvider": "custom-gasmok01",
+          "model": "space-bunny",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 200000,
+          "deliveryContext": {
+            "channel": "webchat"
+          },
+          "lastChannel": "webchat",
+          "hasActiveRun": false
+        },
+        "thinkingLevel": "off"
+      },
+      "status": "pass",
+      "runtimeProbe": {
+        "faultRequests": 1,
+        "settled": true,
+        "responseCompleted": false,
+        "providerCalls": 0,
+        "trajectoryTools": 0,
+        "activeRequests": 0
+      }
+    }
+  ],
+  "status": "pass",
+  "gatewayCleanup": {
+    "pid": 48448,
+    "statusBefore": "running",
+    "aliveAfterStop": false
+  },
+  "electronCleanup": {
+    "pid": 28772,
+    "aliveAfterClose": false
+  },
+  "cleanup": {
+    "listening": false,
+    "sockets": 0,
+    "requests": 0
+  },
+  "provider": [
+    {
+      "requestId": "1ac690b3-9602-4235-9fe7-d318e8fb34f5",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "1f10ae81b61f25cb8d53b0a097953a30ed9e50e5887fa528c20c48dc4abc2510",
+      "inputBytes": 77274,
+      "toolCount": 33,
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "be2f4cb08bde40675776fc7132cd83438d9e4ee8fdd6b9f29fec9ec25fe21369"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Sat 2026-10-31 02:24 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nProbe FAULT_timeout_eb5da4c4: use no tools and reply with exactly SHOULD_NOT_COMPLETE."
+            }
+          ]
+        }
+      ],
+      "fixtureResultInInput": false,
+      "fault": "timeout",
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "1ac690b3-9602-4235-9fe7-d318e8fb34f5",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        }
+      ],
+      "aborted": true,
+      "safetyCutoff": true,
+      "httpStatus": 200,
+      "completionMs": 180028.3119
+    },
+    {
+      "requestId": "819a87be-74a3-4410-9bc6-9b0209f0bcaa",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "bb9314ba2723d7eec40f817ceca9903287316f231ffc2b9e5e9f5c7bf229736a",
+      "inputBytes": 77260,
+      "toolCount": 33,
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "be2f4cb08bde40675776fc7132cd83438d9e4ee8fdd6b9f29fec9ec25fe21369"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Sat 2026-10-31 02:27 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nWithout tools, copy this opaque identifier exactly: RECOVER_69A5A4195978"
+            }
+          ]
+        }
+      ],
+      "fixtureResultInInput": false,
+      "fault": null,
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "01a18e11801f796981c4d655dda4688e",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        },
+        {
+          "type": "response.output_item.added",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "text": "",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_4389d9504710c24220ecb8445e4f734d",
+            "role": "assistant",
+            "status": "in_progress",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.content_part.added",
+          "item_id": "msg_4389d9504710c24220ecb8445e4f734d",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "RECOVER_69",
+          "item_id": "msg_4389d9504710c24220ecb8445e4f734d",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "A5A419",
+          "item_id": "msg_4389d9504710c24220ecb8445e4f734d",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "5978",
+          "item_id": "msg_4389d9504710c24220ecb8445e4f734d",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.done",
+          "text": "RECOVER_69A5A4195978",
+          "item_id": "msg_4389d9504710c24220ecb8445e4f734d",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.content_part.done",
+          "item_id": "msg_4389d9504710c24220ecb8445e4f734d",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_item.done",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "RECOVER_69A5A4195978",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_4389d9504710c24220ecb8445e4f734d",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.completed",
+          "response": {
+            "id": "01a18e11801f796981c4d655dda4688e",
+            "model": "space-bunny",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 20697,
+              "input_tokens_details": {
+                "cached_tokens": 128
+              },
+              "output_tokens": 12,
+              "total_tokens": 20709
+            },
+            "error": null,
+            "output": [
+              {
+                "content": [
+                  {
+                    "annotations": [],
+                    "logprobs": [],
+                    "text": "RECOVER_69A5A4195978",
+                    "type": "output_text"
+                  }
+                ],
+                "id": "msg_4389d9504710c24220ecb8445e4f734d",
+                "role": "assistant",
+                "status": "completed",
+                "type": "message"
+              }
+            ],
+            "text": "RECOVER_69A5A4195978"
+          }
+        }
+      ],
+      "aborted": false,
+      "safetyCutoff": false,
+      "httpStatus": 200,
+      "providerRequestId": null,
+      "firstByteMs": 3192.663900000014,
+      "completionMs": 3784.4428999999946
+    },
+    {
+      "requestId": "2a55d31a-aebf-41c4-bf89-6266aebcc7ed",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "31082b83c3220eed8e32a134cc66f4732a01f3bfa48643d1774f9566b8965030",
+      "inputBytes": 77273,
+      "toolCount": 33,
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "be2f4cb08bde40675776fc7132cd83438d9e4ee8fdd6b9f29fec9ec25fe21369"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Sat 2026-10-31 02:28 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nProbe FAULT_cancel_e0737dbd: use no tools and reply with exactly SHOULD_NOT_COMPLETE."
+            }
+          ]
+        }
+      ],
+      "fixtureResultInInput": false,
+      "fault": "cancel",
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "2a55d31a-aebf-41c4-bf89-6266aebcc7ed",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        },
+        {
+          "type": "response.content_part.added",
+          "output_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "INCOMPLETE_PROVIDER_FRAGMENT",
+          "output_index": 0,
+          "content_index": 0
+        }
+      ],
+      "aborted": true,
+      "safetyCutoff": false,
+      "httpStatus": 200,
+      "completionMs": 1026.488799999992
+    },
+    {
+      "requestId": "b3d07d38-6f54-4406-97f3-13785b9afbc7",
+      "path": "/v1/responses",
+      "requestedModel": "space-bunny",
+      "stream": true,
+      "inputHash": "5ee10243e36492b042a86e46cbf1bfa21a58e23ca06ea7b1175090d49da5d57c",
+      "inputBytes": 77260,
+      "toolCount": 33,
+      "inputItems": [
+        {
+          "role": "system",
+          "contentHash": "be2f4cb08bde40675776fc7132cd83438d9e4ee8fdd6b9f29fec9ec25fe21369"
+        },
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "[Sat 2026-10-31 02:28 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"gateway-client\",\n  \"name\": \"Verse Claw\",\n  \"username\": \"Verse Claw\"\n}\n```\n\nWithout tools, copy this opaque identifier exactly: RECOVER_337A75D91C37"
+            }
+          ]
+        }
+      ],
+      "fixtureResultInInput": false,
+      "fault": null,
+      "events": [
+        {
+          "type": "response.created",
+          "response": {
+            "id": "01a18e11e7aa7db39d1085e703693da8",
+            "model": "space-bunny",
+            "status": "in_progress",
+            "usage": null,
+            "error": null,
+            "output": [],
+            "text": ""
+          }
+        },
+        {
+          "type": "response.output_item.added",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "text": "",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+            "role": "assistant",
+            "status": "in_progress",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.content_part.added",
+          "item_id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "RE",
+          "item_id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "COVER_337A75D91C",
+          "item_id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.delta",
+          "delta": "37",
+          "item_id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_text.done",
+          "text": "RECOVER_337A75D91C37",
+          "item_id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.content_part.done",
+          "item_id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+          "output_index": 0,
+          "content_index": 0
+        },
+        {
+          "type": "response.output_item.done",
+          "item": {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "RECOVER_337A75D91C37",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          },
+          "output_index": 0
+        },
+        {
+          "type": "response.completed",
+          "response": {
+            "id": "01a18e11e7aa7db39d1085e703693da8",
+            "model": "space-bunny",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 20697,
+              "input_tokens_details": {
+                "cached_tokens": 142
+              },
+              "output_tokens": 12,
+              "total_tokens": 20709
+            },
+            "error": null,
+            "output": [
+              {
+                "content": [
+                  {
+                    "annotations": [],
+                    "logprobs": [],
+                    "text": "RECOVER_337A75D91C37",
+                    "type": "output_text"
+                  }
+                ],
+                "id": "msg_07a7bdd10cbca4e11bf83cc927028a86",
+                "role": "assistant",
+                "status": "completed",
+                "type": "message"
+              }
+            ],
+            "text": "RECOVER_337A75D91C37"
+          }
+        }
+      ],
+      "aborted": false,
+      "safetyCutoff": false,
+      "httpStatus": 200,
+      "providerRequestId": null,
+      "firstByteMs": 2108.1729999999807,
+      "completionMs": 2474.590499999991
+    }
+  ]
+}

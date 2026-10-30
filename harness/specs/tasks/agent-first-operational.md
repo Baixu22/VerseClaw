@@ -10,6 +10,7 @@ touchedAreas:
   - harness/specs/tasks/agent-first-operational.md
   - tests/e2e/agent-first-operational.spec.ts
   - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/space-bunny-responses.ts
   - tests/e2e/product-acceptance-space-bunny.spec.ts
   - scripts/agent-first-operational-check.mjs
   - scripts/agent-first-operational-check.d.mts
