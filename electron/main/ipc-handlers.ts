@@ -68,6 +68,7 @@ import { createAgentsApi } from '../services/agents-api';
 import { createRolesApi } from '../services/roles-api';
 import { createChatApi } from '../services/chat-api';
 import { createCodeReviewApi } from '../services/code-review-api';
+import { createChangeContextApi } from '../services/change-context-api';
 import { createRemoteForgeApi } from '../services/remote-forge-api';
 import { createWorkProvidersApi } from '../services/work-providers-api';
 import { createKnowledgeApi } from '../services/knowledge-api';
@@ -263,6 +264,7 @@ function registerTypedHostHandlers(
     }),
     chat: createChatApi({ gatewayManager }),
     codeReview: createCodeReviewApi({ gatewayManager }),
+    changeContext: createChangeContextApi(),
     remoteForge: remoteForgeApi,
     workProviders: createWorkProvidersApi(),
     knowledge: knowledgeApi,

@@ -170,6 +170,19 @@ import type {
   CodeReviewCreateTaskLedgerNodeResult,
   CodeReviewRunPayload,
   CodeReviewRunResult,
+  ChangeContextProjectionPayload,
+  ChangeContextProjectionResult,
+  ChangeContextPullChangesPayload,
+  ChangeContextPullChangesResult,
+  ChangeContextReviewCommentCreatePayload,
+  ChangeContextReviewCommentDeletePayload,
+  ChangeContextReviewCommentListPayload,
+  ChangeContextReviewCommentListResult,
+  ChangeContextReviewCommentMutationResult,
+  ChangeContextReviewCommentReanchorPayload,
+  ChangeContextReviewCommentResolvePayload,
+  ChangeContextReviewVerdictPayload,
+  ChangeContextReviewVerdictResult,
   CronSessionHistoryPayload,
   DialogMessagePayload,
   DialogOpenPayload,
@@ -491,6 +504,11 @@ export type {
   ClawGraphStatusResult,
   CodeReviewCreateTaskLedgerNodeResult,
   CodeReviewRunResult,
+  ChangeContextProjectionResult,
+  ChangeContextPullChangesResult,
+  ChangeContextReviewCommentListResult,
+  ChangeContextReviewCommentMutationResult,
+  ChangeContextReviewVerdictResult,
   ClawHubInstalledSkill,
   ClawHubListResult,
   ClawHubSearchResult,
@@ -1559,6 +1577,48 @@ export const hostApi = {
       input: CodeReviewCreateTaskLedgerNodePayload,
     ): Promise<CodeReviewCreateTaskLedgerNodeResult> => (
       invokeHost('codeReview', 'createTaskLedgerNode', input)
+    ),
+  },
+  changeContext: {
+    getProjection: (
+      input: ChangeContextProjectionPayload,
+    ): Promise<ChangeContextProjectionResult> => (
+      invokeHost('changeContext', 'getProjection', input)
+    ),
+    listComments: (
+      input: ChangeContextReviewCommentListPayload,
+    ): Promise<ChangeContextReviewCommentListResult> => (
+      invokeHost('changeContext', 'listComments', input)
+    ),
+    createComment: (
+      input: ChangeContextReviewCommentCreatePayload,
+    ): Promise<ChangeContextReviewCommentMutationResult> => (
+      invokeHost('changeContext', 'createComment', input)
+    ),
+    resolveComment: (
+      input: ChangeContextReviewCommentResolvePayload,
+    ): Promise<ChangeContextReviewCommentMutationResult> => (
+      invokeHost('changeContext', 'resolveComment', input)
+    ),
+    reanchorComment: (
+      input: ChangeContextReviewCommentReanchorPayload,
+    ): Promise<ChangeContextReviewCommentMutationResult> => (
+      invokeHost('changeContext', 'reanchorComment', input)
+    ),
+    deleteComment: (
+      input: ChangeContextReviewCommentDeletePayload,
+    ): Promise<ChangeContextReviewCommentMutationResult> => (
+      invokeHost('changeContext', 'deleteComment', input)
+    ),
+    submitVerdict: (
+      input: ChangeContextReviewVerdictPayload,
+    ): Promise<ChangeContextReviewVerdictResult> => (
+      invokeHost('changeContext', 'submitVerdict', input)
+    ),
+    pullChanges: (
+      input: ChangeContextPullChangesPayload,
+    ): Promise<ChangeContextPullChangesResult> => (
+      invokeHost('changeContext', 'pullChanges', input)
     ),
   },
   remoteForge: {
