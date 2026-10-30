@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "AgentFirstEvaluationFramework/v1",
+  "generatedAt": "2026-10-30",
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "TF-0620 framework core registry. One registered subject adapter, one suite, one deterministic and one rubric grader, and the acceptance profile that composes them. Registering a new evaluation surface is an entry in this file plus a calibration fixture; no core edit.",
+  "claimBoundary": "Framework contract only. The acceptance profile has never been run, so its status is not-run. Nothing here is a current-candidate result.",
+  "registeredSubjects": [
+    {
+      "id": "clawx-electron",
+      "version": "1.0.0",
+      "kind": "product",
+      "title": "ClawX Electron application against the local Gateway",
+      "methods": ["identity", "setup", "invoke", "observe", "teardown"],
+      "identityFields": ["commit", "tree", "buildHash", "runtimeVersion", "modelId", "providerId", "adapterId"],
+      "observesFinalStateFrom": "product",
+      "authoredBy": "framework",
+      "adapterEntrypoint": "harness/specs/tasks/product-acceptance-closeout.md"
+    }
+  ],
+  "registeredSuites": [
+    {
+      "id": "acceptance-core",
+      "version": "1.0.0",
+      "title": "Agent-first acceptance suite (TF-0589 gate matrix)",
+      "provenance": "harness/specs/fixtures/agent-first-acceptance/matrix.json",
+      "taskSchemaVersion": "AgentFirstTask/v1",
+      "subjectKinds": ["product"],
+      "k": 3,
+      "minCases": 20,
+      "requiresDeterministicGrader": true,
+      "split": {
+        "public": 12,
+        "heldOut": 8,
+        "heldOutWritableByCandidate": false
+      },
+      "timeouts": {
+        "perTrialMs": 900000,
+        "suiteMs": 7200000
+      },
+      "budgets": {
+        "tokensPerCase": 200000,
+        "turnsPerCase": 60,
+        "toolCallsPerCase": 200,
+        "retriesPerTrial": 1
+      },
+      "authoredBy": "framework"
+    }
+  ],
+  "registeredGraders": [
+    {
+      "id": "deterministic-final-state",
+      "version": "1.0.0",
+      "kind": "deterministic",
+      "precedence": 1,
+      "authoredBy": "framework",
+      "calibration": {
+        "knownGood": ["harness/specs/fixtures/agent-first-framework/calibration/deterministic/known-good.json"],
+        "knownBad": ["harness/specs/fixtures/agent-first-framework/calibration/deterministic/known-bad.json"]
+      }
+    },
+    {
+      "id": "rubric-clarity",
+      "version": "1.0.0",
+      "kind": "rubric",
+      "precedence": 3,
+      "authoredBy": "framework",
+      "promptDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "calibration": {
+        "knownGood": ["harness/specs/fixtures/agent-first-framework/calibration/rubric/known-good.json"],
+        "knownBad": ["harness/specs/fixtures/agent-first-framework/calibration/rubric/known-bad.json"]
+      }
+    }
+  ],
+  "registeredProfiles": [
+    {
+      "id": "acceptance-profile",
+      "version": "1.0.0",
+      "title": "Windows acceptance profile",
+      "subjectId": "clawx-electron",
+      "suiteId": "acceptance-core",
+      "graderIds": ["deterministic-final-state", "rubric-clarity"],
+      "runner": {
+        "mode": "isolated",
+        "seeds": [1, 2, 3],
+        "maxWorkers": 2
+      },
+      "resourceEnvelope": {
+        "cpuFloor": 2,
+        "memoryMbFloor": 4096,
+        "diskFreeMbFloor": 2048,
+        "network": "bounded",
+        "wallClockMsCeiling": 7200000
+      },
+      "status": "not-run"
+    }
+  ]
+}

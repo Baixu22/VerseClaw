@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "AgentFirstCalibrationFixture/v1",
+  "graderId": "deterministic-final-state",
+  "expectation": "pass",
+  "cases": [
+    {
+      "id": "final-state-matches-request",
+      "finalStateMatchesRequest": true,
+      "productReportsOwnSuccess": false,
+      "expected": "pass"
+    }
+  ],
+  "note": "A deterministic final-state grader must pass a case whose persistent product state matches the request."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "AgentFirstCalibrationFixture/v1",
+  "graderId": "rubric-clarity",
+  "expectation": "unknown-or-fail",
+  "cases": [
+    {
+      "id": "insufficient-evidence",
+      "evidenceLinked": false,
+      "deterministicConflict": false,
+      "expected": "unknown"
+    },
+    {
+      "id": "conflicts-with-deterministic",
+      "evidenceLinked": true,
+      "deterministicConflict": true,
+      "expected": "fail"
+    }
+  ],
+  "note": "Missing evidence is unknown, never a pass; a deterministic failure always dominates a rubric."
+}
