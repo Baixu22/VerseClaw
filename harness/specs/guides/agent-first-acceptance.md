@@ -556,7 +556,7 @@ profile (the acceptance profile), not hard-coded into the framework.
 
 ### 16.5 Closed loop
 
-The framework closes the loop the sealed contract left open:
+The framework defines the loop the sealed contract left open:
 
 ```text
 verdict + residuals
@@ -570,6 +570,33 @@ The loop does **not** generate candidates itself, change product defaults or loc
 approve publication. Candidate generation belongs to the self-improvement (RSI) layer;
 the framework only guarantees that a candidate is measured against criteria it could not
 edit.
+
+The executable **contract check** is `node scripts/agent-first-loop-check.mjs`; its input
+is `harness/specs/fixtures/agent-first-framework/loop-record.json` plus the registered
+profile and the frozen RSI promotion policy. This is a schema and binding check, not a
+runner or a result-artifact verifier. Its report preserves input digests and states
+`evaluationStatus=not-run` when the record contains no re-evaluation.
+
+- Signals distinguish `evaluation-gap`, `observed-regression` and `residual`. Evidence
+  links must be nonempty; task references resolve to the selected suite's `taskIds`.
+  An observation also needs a complete source run. A missing evaluation is a gap.
+- A planned corpus has no content or held-out digest. A frozen record must match the
+  registered corpus state, corpus digest and digest of the declared held-out split.
+  Re-evaluations bind the same corpus, split, candidate and frozen RSI policy.
+- Candidate decisions are records supplied by the RSI producer. A not-run placeholder,
+  another candidate's run or the executor acting as its own verifier cannot support one.
+- `taskGraduations` is the authoritative capability-to-regression record. It binds a
+  registered task, a digest of pre-registered numeric criteria, the candidate's policy
+  binding and distinct consecutive complete runs. Every run meets the sample/k floors,
+  pass^k lower confidence bound and flake ceiling, with no safety skips, safety flakes,
+  negative-control regressions or unresolved infrastructure/task/grader failures.
+  Bare `promotions` records are invalid; they cannot bypass this contract.
+
+The known-good sealed-result examples are labelled deterministic contract fixtures.
+They prove that admissible records can pass and that altered records are rejected;
+they do not prove that results exist on disk or that the current system improved.
+Executable runners, statistical recomputation and independent result adjudication
+remain TF-0592/TF-0595 work after TF-0590 freezes the task corpus and calibrates graders.
 
 ### 16.6 Boundaries
 

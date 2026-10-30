@@ -1,0 +1,454 @@
+{
+  "schemaVersion": "AgentFirstEvaluationLoopValidation/v1",
+  "checkedAt": "2026-10-30",
+  "driven_by": "agent",
+  "actor": "codex",
+  "command": "node scripts/agent-first-loop-check.mjs",
+  "scope": "TF-0621 evaluation loop validation over file bodies read from disk",
+  "counts": {
+    "signals": 2,
+    "candidates": 0,
+    "reEvaluations": 0,
+    "promotions": 0
+  },
+  "inputDigests": {
+    "harness/specs/guides/agent-first-acceptance.md": "sha256:1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
+    "harness/specs/fixtures/agent-first-framework/registry.json": "sha256:f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
+    "harness/specs/fixtures/agent-first-framework/loop-record.json": "sha256:ab3fa0c0f9cb1c88e3e6d2a3ae83974c53c50a084970a80a9341f52e89431fa6",
+    "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json": "sha256:ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4"
+  },
+  "evaluationStatus": "not-run",
+  "negativeControls": [
+    {
+      "id": "signal-unknown-dimension",
+      "requirement": "a signal outside the sealed dimensions cannot be acted on",
+      "expectedCode": "signal.unknown-dimension",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.unknown-dimension"
+      ]
+    },
+    {
+      "id": "signal-evidence-missing",
+      "requirement": "a signal with no evidence link cannot justify a change",
+      "expectedCode": "signal.evidence-missing",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.evidence-missing"
+      ]
+    },
+    {
+      "id": "signal-unresolved",
+      "requirement": "a signal that resolves to neither a gate nor a task is unusable",
+      "expectedCode": "signal.unresolved",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.unresolved"
+      ]
+    },
+    {
+      "id": "signal-kind-ambiguous",
+      "requirement": "an evaluation gap must not be mislabeled as an observed regression",
+      "expectedCode": "signal.invalid-kind",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.invalid-kind"
+      ]
+    },
+    {
+      "id": "heldout-candidate-writable",
+      "requirement": "a held-out split writable by the candidate cannot back a loop decision",
+      "expectedCode": "heldout.candidate-writable",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "heldout.candidate-writable"
+      ]
+    },
+    {
+      "id": "heldout-falsely-sealed",
+      "requirement": "a planned, unfrozen split must not be represented as sealed",
+      "expectedCode": "heldout.digest-before-freeze",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "heldout.digest-before-freeze"
+      ]
+    },
+    {
+      "id": "heldout-suite-mismatch",
+      "requirement": "a held-out split from a different suite cannot back this profile",
+      "expectedCode": "heldout.suite-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "heldout.suite-mismatch"
+      ]
+    },
+    {
+      "id": "candidate-producer-unregistered",
+      "requirement": "an absent self-improvement producer cannot emit candidates",
+      "expectedCode": "candidate.producer-not-implemented",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "candidate.producer-not-implemented"
+      ]
+    },
+    {
+      "id": "reevaluation-before-freeze",
+      "requirement": "an evaluation cannot run against an unfrozen suite",
+      "expectedCode": "reevaluation.suite-not-frozen",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "candidate.suite-not-frozen",
+        "reevaluation.suite-not-frozen",
+        "reevaluation.suite-content-mismatch",
+        "reevaluation.heldout-digest-mismatch",
+        "loop.not-run-suite-mutated"
+      ]
+    },
+    {
+      "id": "reevaluation-unknown-suite",
+      "requirement": "a re-evaluation must use the frozen suite, not another one",
+      "expectedCode": "reevaluation.suite-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.suite-mismatch"
+      ]
+    },
+    {
+      "id": "candidate-unlinked-signal",
+      "requirement": "a candidate must be grounded in a declared improvement signal",
+      "expectedCode": "candidate.signal-unlinked",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "candidate.signal-unlinked"
+      ]
+    },
+    {
+      "id": "candidate-policy-mismatch",
+      "requirement": "a candidate must bind the frozen decision policy identity",
+      "expectedCode": "candidate.policy-digest-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "candidate.policy-digest-mismatch"
+      ]
+    },
+    {
+      "id": "reevaluation-unsealed",
+      "requirement": "a complete re-evaluation without a sealed independent evidence pack is invalid",
+      "expectedCode": "reevaluation.evidence-unsealed",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.evidence-unsealed"
+      ]
+    },
+    {
+      "id": "candidate-decision-without-run",
+      "requirement": "a candidate decision must reference measured re-evaluation evidence",
+      "expectedCode": "candidate-decision.evidence-missing",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "candidate-decision.evidence-missing"
+      ]
+    },
+    {
+      "id": "graduation-policy-not-frozen",
+      "requirement": "task graduation criteria must be frozen before candidate evaluation",
+      "expectedCode": "graduation.policy-not-frozen",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.policy-not-frozen"
+      ]
+    },
+    {
+      "id": "graduation-reverse-direction",
+      "requirement": "a task graduation cannot demote regression to capability",
+      "expectedCode": "graduation.direction-invalid",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.direction-invalid"
+      ]
+    },
+    {
+      "id": "loop-publication-approval",
+      "requirement": "the loop never approves publication",
+      "expectedCode": "loop.publication-approval",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "loop.publication-approval"
+      ]
+    },
+    {
+      "id": "loop-locked-default-change",
+      "requirement": "the loop may not change a product lock or frozen default",
+      "expectedCode": "loop.locked-default-change",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "loop.locked-default-change"
+      ]
+    },
+    {
+      "id": "loop-unknown-profile",
+      "requirement": "a loop over an unregistered profile cannot run",
+      "expectedCode": "loop.unknown-profile",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "loop.unknown-profile"
+      ]
+    },
+    {
+      "id": "loop-malformed-collection",
+      "requirement": "malformed collections cannot be treated as an empty not-run loop",
+      "expectedCode": "loop.collection-invalid",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "loop.collection-invalid"
+      ]
+    },
+    {
+      "id": "loop-fabricated-human",
+      "requirement": "automated artifacts may never claim a human actor",
+      "expectedCode": "loop.actor-invalid",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "loop.actor-invalid"
+      ]
+    },
+    {
+      "id": "signal-blank-id",
+      "requirement": "a signal needs a stable identity",
+      "expectedCode": "signal.id-missing",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.id-missing"
+      ]
+    },
+    {
+      "id": "signal-empty-evidence-entry",
+      "requirement": "an empty evidence entry is not a link",
+      "expectedCode": "signal.evidence-missing",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.evidence-missing"
+      ]
+    },
+    {
+      "id": "signal-unknown-task",
+      "requirement": "a task signal must resolve inside the selected suite",
+      "expectedCode": "signal.unresolved",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.unresolved"
+      ]
+    },
+    {
+      "id": "signal-unobserved-regression",
+      "requirement": "an evaluation gap is not a measured regression",
+      "expectedCode": "signal.unobserved-result",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "signal.unobserved-result"
+      ]
+    },
+    {
+      "id": "suite-freeze-state-mismatch",
+      "requirement": "loop and registry freeze state must agree",
+      "expectedCode": "suite.binding-status-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "suite.binding-status-mismatch",
+        "suite.content-digest-mismatch"
+      ]
+    },
+    {
+      "id": "heldout-retuned",
+      "requirement": "a retuned held-out split cannot reuse its original seal",
+      "expectedCode": "heldout.digest-stale",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "heldout.digest-stale"
+      ]
+    },
+    {
+      "id": "reevaluation-heldout-mismatch",
+      "requirement": "each re-evaluation binds the exact held-out digest",
+      "expectedCode": "reevaluation.heldout-digest-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.heldout-digest-mismatch"
+      ]
+    },
+    {
+      "id": "reevaluation-content-mismatch",
+      "requirement": "each re-evaluation binds the exact corpus digest",
+      "expectedCode": "reevaluation.suite-content-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.suite-content-mismatch"
+      ]
+    },
+    {
+      "id": "reevaluation-candidate-mismatch",
+      "requirement": "each re-evaluation binds the exact candidate digest",
+      "expectedCode": "reevaluation.candidate-digest-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.candidate-digest-mismatch"
+      ]
+    },
+    {
+      "id": "reevaluation-same-actor",
+      "requirement": "the executor cannot impersonate its independent verifier",
+      "expectedCode": "reevaluation.actor-not-independent",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.actor-not-independent"
+      ]
+    },
+    {
+      "id": "reevaluation-recounted-run",
+      "requirement": "one result cannot count as two independent runs",
+      "expectedCode": "reevaluation.duplicate-run",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.duplicate-run"
+      ]
+    },
+    {
+      "id": "reevaluation-invalid-metric",
+      "requirement": "impossible probabilities do not support promotion",
+      "expectedCode": "reevaluation.metrics-invalid",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "reevaluation.metrics-invalid"
+      ]
+    },
+    {
+      "id": "candidate-decision-not-run",
+      "requirement": "a placeholder re-evaluation cannot support an RSI decision",
+      "expectedCode": "candidate-decision.evidence-missing",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "candidate-decision.evidence-missing"
+      ]
+    },
+    {
+      "id": "graduation-below-threshold",
+      "requirement": "saturation requires every run to meet the frozen lower confidence bound",
+      "expectedCode": "graduation.threshold-failed",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.threshold-failed"
+      ]
+    },
+    {
+      "id": "graduation-safety-skip",
+      "requirement": "safety skips forbid graduation",
+      "expectedCode": "graduation.threshold-failed",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.threshold-failed"
+      ]
+    },
+    {
+      "id": "graduation-duplicate-run",
+      "requirement": "graduation needs distinct complete runs",
+      "expectedCode": "graduation.runs-insufficient",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.runs-insufficient"
+      ]
+    },
+    {
+      "id": "graduation-skipped-run",
+      "requirement": "nonconsecutive runs cannot hide an intervening failure",
+      "expectedCode": "graduation.runs-not-consecutive",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.runs-not-consecutive"
+      ]
+    },
+    {
+      "id": "graduation-retuned-policy",
+      "requirement": "the policy digest must cover the actual threshold values",
+      "expectedCode": "graduation.policy-not-frozen",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.policy-not-frozen"
+      ]
+    },
+    {
+      "id": "graduation-policy-not-bound-to-candidate",
+      "requirement": "task thresholds must be bound before the candidate is measured",
+      "expectedCode": "graduation.candidate-policy-unbound",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.candidate-policy-unbound"
+      ]
+    },
+    {
+      "id": "graduation-bare-promotion",
+      "requirement": "an unverified bare promotion cannot bypass the measured graduation contract",
+      "expectedCode": "graduation.legacy-promotion",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "graduation.legacy-promotion"
+      ]
+    },
+    {
+      "id": "loop-policy-source-mismatch",
+      "requirement": "the loop cannot substitute a different RSI decision policy",
+      "expectedCode": "loop.policy-source-mismatch",
+      "baselineValid": true,
+      "rejected": true,
+      "observedCodes": [
+        "loop.policy-source-mismatch"
+      ]
+    }
+  ],
+  "violations": [],
+  "limitations": [
+    "This is a static contract check: it proves the loop record is internally complete and fails closed, not that any candidate was generated or measured.",
+    "Sealed-result and graduation examples in the negative controls are deterministic contract fixtures, not measured evidence about the current system.",
+    "Run result artifacts, their provenance and statistics are not replayed by this static validator; executable runners and independent adjudication remain later nodes."
+  ]
+}
