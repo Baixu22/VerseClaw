@@ -94,7 +94,9 @@
   /* Height follows content — one Git section must not stretch to the window
    * floor. The card scrolls once its sections outgrow the space. */
   max-height: calc(100% - 68px);
-  overflow: hidden auto;
+  /* One scroller: the card body. The rail used to scroll too, so a long card
+   * showed two nested scrollbars and the head scrolled away with the rows. */
+  overflow: hidden;
   padding: 4px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
@@ -169,7 +171,12 @@
   padding: 6px 0;
 }
 .codex-session-activity .codex-session-activity__section + .codex-session-activity__section {
-  padding-top: 2px;
+  /* A hairline inset to the gutter: with seven possible groups, whitespace
+   * alone stopped telling where one ended. */
+  margin-top: 2px;
+  padding-top: 6px;
+  border-top: 0.5px solid var(--csa-border);
+  border-image: linear-gradient(to right, transparent var(--csa-gutter), var(--csa-border) var(--csa-gutter), var(--csa-border) calc(100% - var(--csa-gutter)), transparent calc(100% - var(--csa-gutter))) 1;
 }
 
 /* Section head. Title in the gutter, actions hugging the right edge. */
@@ -187,10 +194,11 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: var(--csa-text-tertiary);
+  color: var(--csa-text-secondary);
   font-size: 12px;
   line-height: 16px;
   font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 /* Right-aligned summary on the head — a count, a progress figure, a state. */
@@ -257,7 +265,9 @@
   min-height: 30px;
   padding: 2px var(--csa-gutter);
   border: 0;
-  border-radius: 0;
+  /* Rounded so the hover wash nests inside the card's radius instead of
+   * cutting square corners against it. */
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--csa-text-strong);
   font: inherit;
@@ -277,22 +287,23 @@
 
 /* Policy facts stack their value under the label so long source and model
  * identifiers never collapse the label to an unreadable ellipsis. */
+/* Stacked rows carry no icon, so they drop the icon column too — otherwise the
+ * label sits one empty column in from the section title above it. */
 .codex-session-activity .codex-session-activity__row.is-stacked {
-  grid-template-columns: var(--csa-icon-size) minmax(0, 1fr) var(--csa-trail-size);
+  grid-template-columns: minmax(0, 1fr) var(--csa-trail-size);
   align-items: start;
   row-gap: 2px;
   padding-block: 4px;
 }
 
-.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-icon,
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-stack,
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-label {
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 1;
 }
 
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-icon {
-  grid-column: 1;
+  display: none;
 }
 
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-label {
@@ -302,7 +313,7 @@
 }
 
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-value {
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 2;
   min-width: 0;
   white-space: normal;
@@ -311,13 +322,14 @@
 }
 
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-trail {
-  grid-column: 3;
+  grid-column: 2;
   grid-row: 1 / span 2;
 }
 
 /* Taller variant: a 24px avatar cannot breathe in a 30px row. */
 .codex-session-activity .codex-session-activity__row.is-tall {
-  min-height: 38px;
+  min-height: 40px;
+  padding-block: 4px;
   --csa-icon-size: 24px;
 }
 
@@ -480,7 +492,29 @@
   font-size: 11px;
   line-height: 15px;
   cursor: pointer;
-  list-style-position: inside;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.codex-session-activity .codex-session-activity__policy-details > summary::-webkit-details-marker { display: none; }
+
+/* Same chevron language as the collapsible section heads, drawn in CSS. */
+.codex-session-activity .codex-session-activity__policy-details > summary::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin: 0 2px 0 1px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 140ms var(--ease-enter);
+}
+
+.codex-session-activity .codex-session-activity__policy-details[open] > summary::before {
+  transform: rotate(45deg);
 }
 
 .codex-session-activity .codex-session-activity__policy-details > summary:hover {
@@ -527,7 +561,9 @@
 
 .codex-session-activity .codex-session-activity__policy-detail-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  /* The value is capped: an `auto` track let a long reason sentence squeeze
+   * the label down to one character per line. */
+  grid-template-columns: minmax(0, 1fr) fit-content(62%);
   gap: 8px;
   align-items: baseline;
   color: var(--csa-text-secondary);
@@ -545,7 +581,7 @@
 }
 
 .codex-session-activity .codex-session-activity__policy-detail-row.is-multiline {
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) fit-content(62%);
 }
 
 .codex-session-activity .codex-session-activity__policy-detail-row.is-multiline > p {
@@ -593,6 +629,139 @@
   max-height: min(62vh, 520px);
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+
+/* Inside the rail the rail's own max-height is the bound; the body just fills
+ * it, so the card is never capped shorter than the space it was given. */
+.codex-session-activity-rail > .codex-session-activity {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.codex-session-activity-rail .codex-session-activity__body.is-scrollable {
+  max-height: none;
+  flex: 1 1 auto;
+}
+
+/* ── Card head ─────────────────────────────────────────────────────────────
+ * Sticky so the title and the card actions stay put while rows scroll. */
+.codex-session-activity .codex-session-activity__head {
+  position: sticky;
+  top: -2px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin-top: -2px;
+  /* An edge for rows scrolling under it, in the border role. */
+  box-shadow: 0 0.5px 0 var(--csa-border);
+  padding: 2px var(--csa-gutter) 2px;
+  background-color: var(--color-background-elevated-primary-opaque);
+}
+.codex-session-activity-rail[data-layer='inline'] .codex-session-activity__head {
+  background-color: var(--color-background-elevated-secondary-opaque);
+}
+.codex-session-activity .codex-session-activity__head-title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--csa-text-strong);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+/* Status pill: the head's live count and any running/attention value. */
+.codex-session-activity .codex-session-activity__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: color-mix(in oklab, currentColor 12%, transparent);
+  font-size: 11px;
+  line-height: 18px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.codex-session-activity .codex-session-activity__pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  animation: codex-session-activity-pulse 1.4s ease-in-out infinite;
+}
+@keyframes codex-session-activity-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* Row values that carry a status read as a soft chip, so "失败" or "等待审批"
+ * is scannable down the right edge instead of being one more grey word. */
+.codex-session-activity .codex-session-activity__row:not(.is-stacked) > .codex-session-activity__row-value:is([data-state='ok'], [data-state='warn'], [data-state='error']):not(:empty) {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in oklab, currentColor 11%, transparent);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+/* ── Collapsible sections (policy, lifecycle boundaries) ─────────────────── */
+.codex-session-activity .codex-session-activity__collapsible > summary {
+  list-style: none;
+  margin: 0 0 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 100ms ease;
+}
+.codex-session-activity .codex-session-activity__collapsible > summary::-webkit-details-marker { display: none; }
+.codex-session-activity .codex-session-activity__collapsible > summary:hover,
+.codex-session-activity .codex-session-activity__collapsible > summary:focus-visible {
+  background: var(--csa-row-hover);
+  outline: none;
+}
+.codex-session-activity .codex-session-activity__section-head.is-toggle {
+  gap: 6px;
+  padding-left: calc(var(--csa-gutter) - 2px);
+}
+.codex-session-activity .codex-session-activity__collapse-icon {
+  flex: none;
+  color: var(--csa-icon);
+  transition: transform 140ms var(--ease-enter);
+}
+.codex-session-activity .codex-session-activity__collapsible[open] > summary .codex-session-activity__collapse-icon {
+  transform: rotate(90deg);
+}
+
+/* ── Alerts ────────────────────────────────────────────────────────────────
+ * Leads the card when present; a tinted block so it cannot be mistaken for a
+ * row. */
+.codex-session-activity .codex-session-activity__alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px var(--csa-gutter) 6px;
+  padding: 6px 0 4px;
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--csa-error) 8%, transparent);
+}
+.codex-session-activity .codex-session-activity__alerts .codex-session-activity__empty {
+  padding: 0 8px;
+}
+.codex-session-activity .codex-session-activity__alerts .codex-session-activity__retry {
+  margin: 4px 8px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-session-activity .codex-session-activity__pulse { animation: none; }
+  .codex-session-activity .codex-session-activity__collapse-icon { transition: none; }
 }
 
 /* ── Session policy projection ─────────────────────────────────────────────

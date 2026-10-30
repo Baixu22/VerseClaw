@@ -134,6 +134,47 @@ function Section({
 }
 
 /**
+ * A section whose body is secondary detail — policy facts, lifecycle notes.
+ *
+ * Native `<details>` so the content stays in the DOM (and in the accessibility
+ * tree once expanded) without the card spending a dozen rows on it by default.
+ * The summary reuses the section head so a collapsed section still reads as a
+ * peer of the others rather than as a footnote.
+ */
+function CollapsibleSection({
+  title,
+  summary,
+  summaryState,
+  testId,
+  defaultOpen = false,
+  children,
+}: {
+  title: string;
+  summary?: React.ReactNode;
+  summaryState?: RowState;
+  testId: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <details
+      className="codex-session-activity__section codex-session-activity__collapsible"
+      data-testid={testId}
+      open={defaultOpen || undefined}
+    >
+      <summary className="codex-session-activity__section-head is-toggle" data-testid={`${testId}-toggle`}>
+        <ChevronRight className="codex-session-activity__collapse-icon h-3 w-3" aria-hidden="true" />
+        <span className="codex-session-activity__section-title">{title}</span>
+        {summary != null ? (
+          <span className="codex-session-activity__section-summary" data-state={summaryState}>{summary}</span>
+        ) : null}
+      </summary>
+      <div className="codex-session-activity__section-body">{children}</div>
+    </details>
+  );
+}
+
+/**
  * One row. `onOpen` makes it a button; the trailing chevron column exists either
  * way so values keep a single right edge across sections.
  */
@@ -440,6 +481,7 @@ export function SessionActivityPanel({
 
   const runningSubagents = snapshot.subagents.filter((agent) => agent.status === 'started').length;
   const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
+  const runningTotal = runningSubagents + runningProcesses;
 
   if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses && !policy
     && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert && !backgroundUnknown) return null;
@@ -451,31 +493,85 @@ export function SessionActivityPanel({
       aria-label={t('sessionActivity.title')}
     >
       <div className={cn('codex-session-activity__body', compact && 'is-scrollable')}>
+        {/* ── Head ───────────────────────────────────────────────────────
+         * Title, a live "n running" pill, and the card-level actions. The
+         * actions used to live on the Git section head, so a session outside a
+         * repository could never reach recovery or the memory draft. */}
+        <header className="codex-session-activity__head">
+          <span className="codex-session-activity__head-title">{t('sessionActivity.title')}</span>
+          {runningTotal > 0 ? (
+            <span className="codex-session-activity__pill" data-state="running" data-testid="session-activity-running">
+              <span className="codex-session-activity__pulse" aria-hidden="true" />
+              {t('sessionActivity.runningCount', { count: runningTotal })}
+            </span>
+          ) : null}
+          <span className="codex-session-activity__section-actions">
+            {onCreateMemoryDraft ? (
+              <HeaderAction
+                label={t('sessionActivity.createMemoryDraft')}
+                icon={<FilePlus2 className="h-3.5 w-3.5" />}
+                onClick={onCreateMemoryDraft}
+                testId="session-activity-create-memory-draft"
+              />
+            ) : null}
+            {onOpenRecovery && hasContinuity ? (
+              <HeaderAction
+                label={t('sessionActivity.openRecovery')}
+                icon={<RotateCcw className="h-3.5 w-3.5" />}
+                onClick={onOpenRecovery}
+                testId="session-activity-open-recovery"
+              />
+            ) : null}
+          </span>
+        </header>
+
+        {alert || backgroundUnknown ? (
+          <div className="codex-session-activity__alerts" role="status">
+            {/* A failure must not be silently dropped just because it has no section
+             * of its own. It leads the card — a scrolled-away error is a hidden one —
+             * and it only renders when present, so a healthy run has no empty slot. */}
+            {alert ? (
+              <p className="codex-session-activity__empty" data-state="error" data-testid="session-activity-alert">
+                {alert}
+              </p>
+            ) : null}
+            {backgroundUnknown ? (
+              <p
+                className="codex-session-activity__empty"
+                data-state="error"
+                data-testid="session-activity-background-unknown"
+              >
+                {t('sessionActivity.background.unknown')}
+              </p>
+            ) : null}
+            {backgroundStale ? (
+              <p
+                className="codex-session-activity__empty"
+                data-state="warn"
+                data-testid="session-activity-background-stale"
+              >
+                {t('sessionActivity.background.stale')}
+              </p>
+            ) : null}
+            {(availabilityErrors.length > 0 || backgroundUnknown) && onRetryStatus ? (
+              <button
+                type="button"
+                className="codex-session-activity__retry"
+                onClick={onRetryStatus}
+                data-testid="session-activity-retry"
+              >
+                {t('retry')}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+
         {/* ── 环境 ─────────────────────────────────────────────────────── */}
         {hasGit && gitStats ? (
           <Section
             title={t('sessionActivity.sections.environment')}
             testId="session-activity-environment"
-            actions={(
-              <>
-                {onCreateMemoryDraft ? (
-                  <HeaderAction
-                    label={t('sessionActivity.createMemoryDraft')}
-                    icon={<FilePlus2 className="h-3.5 w-3.5" />}
-                    onClick={onCreateMemoryDraft}
-                    testId="session-activity-create-memory-draft"
-                  />
-                ) : null}
-                {onOpenRecovery && hasContinuity ? (
-                  <HeaderAction
-                    label={t('sessionActivity.openRecovery')}
-                    icon={<RotateCcw className="h-3.5 w-3.5" />}
-                    onClick={onOpenRecovery}
-                    testId="session-activity-open-recovery"
-                  />
-                ) : null}
-              </>
-            )}
+            summary={git?.hasConflicts ? t('sessionActivity.git.conflicts') : undefined}
           >
             <Row
               icon={<GitBranch className="h-3.5 w-3.5" aria-hidden="true" />}
@@ -557,7 +653,9 @@ export function SessionActivityPanel({
                     />
                   )}
                   label={identity.name}
-                  sublabel={agent.role ?? t('sessionActivity.subagents.unknown')}
+                  sublabel={[agent.role ?? t('sessionActivity.subagents.unknown'), agent.task]
+                    .filter(Boolean)
+                    .join(' · ')}
                   value={agent.status === 'started'
                     ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
                     : t(`sessionActivity.subagentStatus.${agent.status}`, { defaultValue: agent.status })}
@@ -574,14 +672,111 @@ export function SessionActivityPanel({
           </Section>
         ) : null}
 
-        {/* ── 运行策略 ─────────────────────────────────────────────────── */}
-        {policy ? (
+        {/* ── 进程 ─────────────────────────────────────────────────────── */}
+        {hasProcesses ? (
           <Section
+            title={t('sessionActivity.sections.processes')}
+            summary={runningProcesses > 0
+              ? t('sessionActivity.runningCount', { count: runningProcesses })
+              : formatCount(visibleProcesses.length + snapshotOnlyProcesses.length)}
+            testId="session-activity-processes"
+          >
+            {visibleProcesses.slice(-6).map((entry) => (
+              <Row
+                key={entry.id}
+                testId={`session-activity-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={<span className="codex-session-activity__mono">{commandDigest(entry.command)}</span>}
+                value={entry.status === 'running'
+                  ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                  : entry.exitCode != null
+                    ? t('processPanel.exitCode', { code: entry.exitCode })
+                    : t(`processPanel.status.${entry.status}`)}
+                state={rowState(entry.status)}
+                title={onOpenProcess
+                  ? t('sessionActivity.processes.openOutput', { command: entry.command })
+                  : entry.command}
+                onOpen={onOpenProcess ? () => onOpenProcess(entry.id, entry.command) : undefined}
+              />
+            ))}
+            {/* Host-projected processes. Deliberately INERT: this projection is
+             * redacted by contract, so the row can report that a process exists
+             * but there is no output behind it to open. Offering a chevron here
+             * would promise a pane that cannot be filled. */}
+            {snapshotOnlyProcesses.slice(-6).map((entry) => (
+              <Row
+                key={entry.id}
+                testId={`session-activity-snapshot-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={`${t(`sessionActivity.processKinds.${entry.kind}`, { defaultValue: entry.kind })} ${entry.label}`}
+                sublabel={entry.digest}
+                value={t(`sessionActivity.processStatus.${entry.status}`, { defaultValue: entry.status })}
+                state={rowState(entry.status)}
+                title={entry.pid != null ? `PID ${entry.pid}` : entry.label}
+              />
+            ))}
+          </Section>
+        ) : null}
+
+        {/* ── Host-projected read models ────────────────────────────────────
+         *
+         * Goals and lineage come from the host's own session projection and have
+         * no runtime counterpart to open, so both are read-only like the
+         * snapshot processes above. They appear only when the host supplies
+         * them, which is why they are below the four sections the card is
+         * organised around rather than interleaved with them. */}
+        {snapshot.goals.length > 0 ? (
+          <Section
+            title={t('sessionActivity.sections.goals')}
+            summary={formatCount(snapshot.goals.length)}
+            testId="session-activity-goals"
+          >
+            {snapshot.goals.slice(-6).map((goal) => (
+              <Row
+                key={goal.id}
+                testId={`session-activity-goal-${goal.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<Target className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={`${t(`sessionActivity.goalKinds.${goal.kind}`, { defaultValue: goal.kind })} ${goal.label}`}
+                sublabel={goal.digest}
+                value={t(`sessionActivity.goalStatus.${goal.status}`, { defaultValue: goal.status })}
+                state={rowState(goal.status)}
+              />
+            ))}
+          </Section>
+        ) : null}
+
+        {snapshot.lineage.length > 0 ? (
+          <Section
+            title={t('sessionActivity.sections.lineage')}
+            summary={formatCount(snapshot.lineage.length)}
+            testId="session-activity-lineage"
+          >
+            {snapshot.lineage.slice(-6).map((entry) => (
+              <Row
+                key={entry.id}
+                testId={`session-activity-lineage-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<GitBranch className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={entry.role ?? t(`sessionActivity.lineage.${entry.kind}`, { defaultValue: entry.kind })}
+                sublabel={t(`sessionActivity.lineage.${entry.kind}`, { defaultValue: entry.kind })}
+                value={t(`sessionActivity.lineageStatus.${entry.status}`, { defaultValue: entry.status })}
+                state={rowState(entry.status)}
+                title={entry.sessionKey}
+              />
+            ))}
+          </Section>
+        ) : null}
+
+        {/* ── 运行策略 / 生命周期边界 ─────────────────────────────────────
+         * Reference detail, not live state: collapsed by default and last, so
+         * it can no longer push the processes section below the fold. */}
+        {policy ? (
+          <CollapsibleSection
             title={t('sessionActivity.sections.policy')}
             testId="session-activity-policy"
             summary={t(`sessionActivity.policy.generation.${policy.generation.state}`, {
               defaultValue: policy.generation.state,
             })}
+            summaryState={policy.generation.state === 'effective' ? 'ok' : 'warn'}
           >
             <Row
               testId="session-activity-policy-backend"
@@ -734,11 +929,11 @@ export function SessionActivityPanel({
                 </div>
               </div>
             </details>
-          </Section>
+          </CollapsibleSection>
         ) : null}
 
         {policy ? (
-          <Section
+          <CollapsibleSection
             title={t('sessionActivity.policy.boundaries.title')}
             testId="session-activity-policy-boundaries"
           >
@@ -762,139 +957,9 @@ export function SessionActivityPanel({
               body={t('sessionActivity.policy.boundaries.fork.description')}
               testId="session-activity-boundary-fork"
             />
-          </Section>
+          </CollapsibleSection>
         ) : null}
 
-        {/* ── 进程 ─────────────────────────────────────────────────────── */}
-        {hasProcesses ? (
-          <Section
-            title={t('sessionActivity.sections.processes')}
-            summary={runningProcesses > 0
-              ? t('sessionActivity.runningCount', { count: runningProcesses })
-              : formatCount(visibleProcesses.length + snapshotOnlyProcesses.length)}
-            testId="session-activity-processes"
-          >
-            {visibleProcesses.slice(-6).map((entry) => (
-              <Row
-                key={entry.id}
-                testId={`session-activity-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
-                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={<span className="codex-session-activity__mono">{commandDigest(entry.command)}</span>}
-                value={entry.status === 'running'
-                  ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
-                  : entry.exitCode != null
-                    ? t('processPanel.exitCode', { code: entry.exitCode })
-                    : t(`processPanel.status.${entry.status}`)}
-                state={rowState(entry.status)}
-                title={onOpenProcess
-                  ? t('sessionActivity.processes.openOutput', { command: entry.command })
-                  : entry.command}
-                onOpen={onOpenProcess ? () => onOpenProcess(entry.id, entry.command) : undefined}
-              />
-            ))}
-            {/* Host-projected processes. Deliberately INERT: this projection is
-             * redacted by contract, so the row can report that a process exists
-             * but there is no output behind it to open. Offering a chevron here
-             * would promise a pane that cannot be filled. */}
-            {snapshotOnlyProcesses.slice(-6).map((entry) => (
-              <Row
-                key={entry.id}
-                testId={`session-activity-snapshot-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
-                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={`${t(`sessionActivity.processKinds.${entry.kind}`, { defaultValue: entry.kind })} ${entry.label}`}
-                sublabel={entry.digest}
-                value={t(`sessionActivity.processStatus.${entry.status}`, { defaultValue: entry.status })}
-                state={rowState(entry.status)}
-                title={entry.pid != null ? `PID ${entry.pid}` : entry.label}
-              />
-            ))}
-          </Section>
-        ) : null}
-
-        {/* ── Host-projected read models ────────────────────────────────────
-         *
-         * Goals and lineage come from the host's own session projection and have
-         * no runtime counterpart to open, so both are read-only like the
-         * snapshot processes above. They appear only when the host supplies
-         * them, which is why they are below the four sections the card is
-         * organised around rather than interleaved with them. */}
-        {snapshot.goals.length > 0 ? (
-          <Section
-            title={t('sessionActivity.sections.goals')}
-            summary={formatCount(snapshot.goals.length)}
-            testId="session-activity-goals"
-          >
-            {snapshot.goals.slice(-6).map((goal) => (
-              <Row
-                key={goal.id}
-                testId={`session-activity-goal-${goal.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
-                icon={<Target className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={`${t(`sessionActivity.goalKinds.${goal.kind}`, { defaultValue: goal.kind })} ${goal.label}`}
-                sublabel={goal.digest}
-                value={t(`sessionActivity.goalStatus.${goal.status}`, { defaultValue: goal.status })}
-                state={rowState(goal.status)}
-              />
-            ))}
-          </Section>
-        ) : null}
-
-        {snapshot.lineage.length > 0 ? (
-          <Section
-            title={t('sessionActivity.sections.lineage')}
-            summary={formatCount(snapshot.lineage.length)}
-            testId="session-activity-lineage"
-          >
-            {snapshot.lineage.slice(-6).map((entry) => (
-              <Row
-                key={entry.id}
-                testId={`session-activity-lineage-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
-                icon={<GitBranch className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={entry.role ?? t(`sessionActivity.lineage.${entry.kind}`, { defaultValue: entry.kind })}
-                sublabel={t(`sessionActivity.lineage.${entry.kind}`, { defaultValue: entry.kind })}
-                value={t(`sessionActivity.lineageStatus.${entry.status}`, { defaultValue: entry.status })}
-                state={rowState(entry.status)}
-                title={entry.sessionKey}
-              />
-            ))}
-          </Section>
-        ) : null}
-
-        {/* A failure must not be silently dropped just because it has no section
-         * of its own. It is the last thing in the card, not the first, so a
-         * healthy run is not led by an empty alert slot. */}
-        {alert ? (
-          <p className="codex-session-activity__empty" data-state="error" data-testid="session-activity-alert">
-            {alert}
-          </p>
-        ) : null}
-        {backgroundUnknown ? (
-          <p
-            className="codex-session-activity__empty"
-            data-state="error"
-            data-testid="session-activity-background-unknown"
-          >
-            {t('sessionActivity.background.unknown')}
-          </p>
-        ) : null}
-        {backgroundStale ? (
-          <p
-            className="codex-session-activity__empty"
-            data-state="warn"
-            data-testid="session-activity-background-stale"
-          >
-            {t('sessionActivity.background.stale')}
-          </p>
-        ) : null}
-        {(availabilityErrors.length > 0 || backgroundUnknown) && onRetryStatus ? (
-          <button
-            type="button"
-            className="codex-session-activity__retry"
-            onClick={onRetryStatus}
-            data-testid="session-activity-retry"
-          >
-            {t('retry')}
-          </button>
-        ) : null}
       </div>
     </aside>
   );

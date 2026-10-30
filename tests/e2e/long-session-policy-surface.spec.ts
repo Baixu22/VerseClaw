@@ -306,6 +306,11 @@ test('policy surface explains provenance, lifecycle boundaries, narrow layout, a
     await page.keyboard.press('Enter');
     await expect(page.getByTestId('session-activity-panel')).toBeVisible();
 
+    // Policy and lifecycle boundaries are reference detail: collapsed by default.
+    await expect(page.getByTestId('session-activity-policy-backend')).toBeHidden();
+    await page.getByTestId('session-activity-policy-toggle').click();
+    await page.getByTestId('session-activity-policy-boundaries-toggle').click();
+
     const configured = page.getByTestId('session-activity-policy-backend');
     await expect(configured).toContainText('codex');
     await expect(configured).toContainText('session.runtime');
