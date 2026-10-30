@@ -14,6 +14,10 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import { projectReviewAnchorRangeFreshness } from './change-context-anchor';
 import { resolveWorkspaceReviewAnchor } from './change-context-anchor-workspace';
+import { createChangeContextReviewActions, reviewDigest } from './change-context-review';
+import { createTaskLedgerApi } from './task-ledger-api';
+import { createGitApi } from './git-api';
+import { getActiveWorkspaceProfile } from './workspaces-api';
 import {
   createChangeContextReviewCommentStore,
   type ChangeContextReviewCommentStore,
@@ -33,6 +37,8 @@ export type ChangeContextApiContext = {
   resolveReviewAnchor?: ChangeContextReviewAnchorResolver;
   createRequestId?: () => string;
   now?: () => string;
+  taskLedger?: Pick<CompleteHostServiceRegistry['taskLedger'], 'snapshot' | 'appendEvents'>;
+  applyPatch?: CompleteHostServiceRegistry['git']['applyPatch'];
 };
 
 const STATE_SEVERITY: Record<ChangeContextState, number> = {
@@ -176,6 +182,9 @@ function projectionFromFacts(input: {
     issues,
     generatedAt: input.resolvedAt,
   };
+  projection.reviewedDigest = reviewDigest(projection);
+  projection.contextId = contextIdFor({ workspaceId: projection.identity.workspaceId,
+    sessionKey: projection.identity.sessionKey, comparison: [input.payload.comparison, projection.reviewedDigest] });
 
   if (state === 'available') {
     return { success: true, projection };
@@ -196,15 +205,18 @@ export function createChangeContextApi(
   context: ChangeContextApiContext = {},
 ): CompleteHostServiceRegistry['changeContext'] {
   const store = context.store ?? createChangeContextReviewCommentStore();
-  const resolveReviewAnchor = context.resolveReviewAnchor ?? resolveWorkspaceReviewAnchor;
+  const resolveReviewAnchor = context.resolveReviewAnchor;
   const sourceReader = context.sourceReader ?? createDefaultChangeContextSourceReader({
     gatewayManager: context.gatewayManager,
     checkpointDiff: context.checkpointDiff,
   });
   const createRequestId = context.createRequestId ?? (() => randomUUID());
   const now = context.now ?? (() => new Date().toISOString());
-
-  return {
+  const loaded: Parameters<typeof createChangeContextReviewActions>[0]['loaded'] = new Map();
+  const actions = createChangeContextReviewActions({ loaded,
+    refresh: (payload) => api.getProjection(payload), listComments: (payload) => api.listComments(payload),
+    taskLedger: context.taskLedger ?? createTaskLedgerApi(), applyPatch: context.applyPatch ?? createGitApi().applyPatch });
+  const api: CompleteHostServiceRegistry['changeContext'] = {
     getProjection: async (payload) => {
       const requestId = createRequestId();
       const sessionKey = typeof payload?.sessionKey === 'string' ? payload.sessionKey.trim() : '';
@@ -214,6 +226,9 @@ export function createChangeContextApi(
           error: errorEnvelope(requestId, 'validation', 'sessionKey and comparison are required.'),
         };
       }
+      if (!context.sourceReader && payload.workspaceId && (await getActiveWorkspaceProfile())?.id !== payload.workspaceId) {
+        return { success: false, error: errorEnvelope(requestId, 'unavailable', 'The selected workspace is not active.') };
+      }
       const resolvedAt = now();
       const facts = await sourceReader.read({
         workspaceId: payload.workspaceId ?? null,
@@ -222,7 +237,7 @@ export function createChangeContextApi(
         resolvedAt,
         requestId,
       });
-      return projectionFromFacts({
+      const result = projectionFromFacts({
         payload: {
           workspaceId: payload.workspaceId ?? null,
           sessionKey,
@@ -232,6 +247,11 @@ export function createChangeContextApi(
         resolvedAt,
         facts,
       });
+      if (result.success && result.projection) {
+        loaded.set(result.projection.contextId, { projection: result.projection, payload, loadedAt: Date.now() });
+        if (loaded.size > 100) loaded.delete(loaded.keys().next().value!);
+      }
+      return result;
     },
 
     listComments: async (payload) => {
@@ -246,7 +266,10 @@ export function createChangeContextApi(
         };
       }
       const comments = await Promise.all(result.value.comments.map((comment) => (
-        projectStoredComment(comment, resolveReviewAnchor)
+        projectStoredComment(comment, resolveReviewAnchor ?? (async (anchor) => {
+          if (comment.workspaceId !== (await getActiveWorkspaceProfile())?.id) throw new Error('The anchored workspace is not active.');
+          return resolveWorkspaceReviewAnchor(anchor);
+        }))
       )));
       if (result.value.state !== 'available') {
         return {
@@ -284,34 +307,9 @@ export function createChangeContextApi(
       mutationResult(createRequestId(), await store.delete(payload))
     ),
 
-    submitVerdict: async (payload) => {
-      const requestId = createRequestId();
-      void payload;
-      return {
-        success: false,
-        error: errorEnvelope(
-          requestId,
-          'not_implemented',
-          'Review verdict is contract-only in TF-0613; TF-0616 owns verdict and Task Ledger linkage.',
-        ),
-      };
-    },
-
-    pullChanges: async (payload) => {
-      const requestId = createRequestId();
-      void payload;
-      return {
-        success: false,
-        state: 'unavailable',
-        destinationMutated: false,
-        error: errorEnvelope(
-          requestId,
-          'not_implemented',
-          'Pull Changes is contract-only in TF-0613; TF-0616 owns the controlled apply path.',
-        ),
-      };
-    },
+    ...actions,
   };
+  return api;
 }
 
 export type ChangeContextReviewCommentStoreOwner = Pick<

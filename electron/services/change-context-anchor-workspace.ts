@@ -31,8 +31,9 @@ export async function resolveWorkspaceReviewAnchor(
   let content: string;
   try {
     content = await readFile(absolutePath, 'utf8');
-  } catch {
-    return null;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
+    throw error;
   }
 
   const contentForDigest = content.endsWith('\n') ? content.slice(0, -1) : content;

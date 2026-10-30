@@ -64,7 +64,7 @@ import {
   recordPermissionAudit,
 } from './permissions-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
-import { isPathInsideWorkspace, requireWorkspace } from './workspace-permissions';
+import { isPathInsideWorkspace, isPathInsideWorkspaceResolved, requireWorkspace } from './workspace-permissions';
 
 type ExecResult = {
   exitCode: number | null;
@@ -1190,6 +1190,173 @@ async function localBranchExists(ctx: RepoContext, branch: string): Promise<bool
   return result.exitCode === 0 && result.stdout.split(/\r?\n/).some((entry) => entry.trim() === branch);
 }
 
+async function applyGitPatch(payload: GitApplyPatchPayload, journaled = false): Promise<GitApplyPatchResult> {
+      const patch = typeof payload.patch === 'string' ? payload.patch : '';
+      if (!patch.trim()) throw new Error('patch is required');
+      if (!/^diff --git /m.test(patch)) {
+        throw new Error('patch must be a unified diff (git format)');
+      }
+      const mode: 'preflight' | 'apply' | 'revert' =
+        payload.mode === 'revert' ? 'revert' : payload.mode === 'apply' ? 'apply' : 'preflight';
+      const ctx = await requireRepoContext();
+
+      const binding = payload.reviewBinding;
+      const validateBinding = async () => {
+        if (!binding) return;
+        if (binding.workspaceId !== ctx.workspace.id || !binding.contextId || !binding.sessionKey
+          || binding.patchDigest !== `sha256:${createHash('sha256').update(patch).digest('hex')}`) {
+          throw new Error('Invalid review patch binding.');
+        }
+        const active = await getActiveWorkspaceProfile();
+        const head = await git(['rev-parse', 'HEAD'], ctx.workspaceRoot);
+        if (active?.id !== binding.workspaceId || active.rootPath !== ctx.workspace.rootPath
+          || head.exitCode !== 0 || head.stdout.trim() !== binding.expectedHead) {
+          throw new Error('Review destination is stale; refresh its HEAD before applying.');
+        }
+      };
+      if (binding && !journaled && mode !== 'preflight') {
+        const rejected = (reason: string): GitApplyPatchResult => ({ success: false, reason,
+          appliedPaths: [], skippedPaths: [], conflictedPaths: [], preflight: false, stale: /stale/.test(reason) });
+        if (mode !== 'apply') return rejected('Review patches cannot use reverse apply.');
+        const parsed = adaptUnifiedDiffToGitPatchArtifacts({ patch, sourceCompleteness: 'complete' });
+        if (parsed.kind !== 'artifacts' || parsed.artifacts.length === 0
+          || parsed.artifacts.some((file) => file.completeness !== 'complete' || file.contentKind !== 'text')) {
+          return rejected('Review patch must be a complete text patch.');
+        }
+        const paths = [...new Set(parsed.artifacts.flatMap((file) => [file.file, file.oldPath, file.newPath].filter((p): p is string => Boolean(p))))];
+        const absolutePaths: string[] = [];
+        for (const path of paths) {
+          const resolvedPath = resolveGitPath(ctx, path);
+          if (/(^|[\\/])\.(git|openclaw)([\\/]|$)/i.test(path)
+            || !(await isPathInsideWorkspaceResolved(resolvedPath.absolutePath, ctx.workspaceRoot))) {
+            return rejected('Review patch path is outside the writable workspace.');
+          }
+          absolutePaths.push(resolvedPath.absolutePath);
+        }
+        const { journaledGitApply } = await import('../../openclaw_runtime/src/plugin-sdk/journaled-git-apply');
+        const outcome = await journaledGitApply({ workspaceRoot: ctx.workspaceRoot, sessionKey: binding.sessionKey,
+          paths: absolutePaths, validate: validateBinding,
+          preflight: () => applyGitPatch({ ...payload, mode: 'preflight' }, true),
+          apply: () => applyGitPatch(payload, true) });
+        const result = outcome.result ?? rejected(outcome.error ?? 'Journaled review apply unavailable.');
+        return { ...result, preflight: false, writeJournalId: outcome.journalRef,
+          recoveryRequired: outcome.recoveryRequired,
+          destinationHead: result.success ? binding.expectedHead : undefined };
+      }
+      try { await validateBinding(); } catch (error) {
+        return { success: false, stale: true, reason: String(error), appliedPaths: [], skippedPaths: [], conflictedPaths: [], preflight: mode === 'preflight' };
+      }
+
+      // Write the patch to a temp file so the diff never crosses a shell or argv.
+      const tempDir = await mkdtemp(join(tmpdir(), 'verse-claw-apply-'));
+      const patchFile = join(tempDir, 'input.patch');
+      try {
+        await writeFile(patchFile, patch, 'utf8');
+
+        // Preflight first so dangerous approval is only requested for patches
+        // that actually parse. Check mode never writes.
+        const checkArgs = ['apply', '--check', '--verbose'];
+        if (mode === 'revert') checkArgs.push('--reverse');
+        const checkResult = await git([...checkArgs, patchFile], ctx.workspaceRoot);
+        const checkParsed = parseGitApplyOutput(checkResult.stdout, checkResult.stderr);
+
+        if (mode === 'preflight') {
+          // Only real paths go in conflictedPaths. A patch can fail before git
+          // attributes the failure to any file (unparsable header, bad binary
+          // hunk); success:false plus stderr carries that, and a synthetic
+          // path would be rendered as a filename by callers.
+          return {
+            success: checkResult.exitCode === 0,
+            appliedPaths: [],
+            skippedPaths: [],
+            conflictedPaths: checkParsed.conflictedPaths,
+            preflight: true,
+            exitCode: checkResult.exitCode,
+            stdout: trimOutput(checkResult.stdout),
+            stderr: trimOutput(checkResult.stderr),
+          };
+        }
+
+        // A patch that fails --check cannot apply, so fail closed here rather
+        // than spending a dangerous approval on an operation that would abort.
+        // git apply without --reject/--3way is all-or-nothing, so nothing was
+        // written either way.
+        if (checkResult.exitCode !== 0) {
+          return {
+            success: false,
+            appliedPaths: [],
+            skippedPaths: [],
+            conflictedPaths: checkParsed.conflictedPaths,
+            preflight: false,
+            exitCode: checkResult.exitCode,
+            stdout: trimOutput(checkResult.stdout),
+            stderr: trimOutput(checkResult.stderr),
+          };
+        }
+
+        // Name the files in the approval prompt so the user is not asked to
+        // allow an opaque patch. numstat runs on the same temp file that
+        // --check just validated, so the list matches what apply will touch.
+        const numstatArgs = mode === 'revert'
+          ? ['apply', '--numstat', '-z', '--reverse']
+          : ['apply', '--numstat', '-z'];
+        const numstat = await git([...numstatArgs, patchFile], ctx.workspaceRoot);
+        const targetPaths = numstat.exitCode === 0 ? parseApplyNumstatZ(numstat.stdout) : [];
+
+        // Apply/revert mutates the working tree: dangerous approval.
+        const runArgs = mode === 'revert'
+          ? ['apply', '--reverse', '--verbose']
+          : ['apply', '--verbose'];
+        // Bind the approval to this exact patch. requestHash is derived from
+        // the command string and paths, so without the digest an approval for
+        // one patch would be reusable for any other patch touching the same
+        // files — including one with entirely different content.
+        const patchDigest = createHash('sha256').update(patch, 'utf8').digest('hex').slice(0, 16);
+        const command = `git ${[...runArgs, `<patch-file sha256:${patchDigest}>`].join(' ')}${binding ? ` head:${binding.expectedHead} context:${binding.contextId}` : ''}`;
+        const blocked = await enforcePermission({
+          workspace: ctx.workspace,
+          action: mode === 'revert' ? 'applyRevert' : 'applyPatch',
+          risk: 'dangerous',
+          approvalId: payload.approvalId,
+          command,
+          paths: targetPaths,
+          grading: [
+            targetPaths.length > 0
+              ? `${mode === 'revert' ? 'Reverts' : 'Applies'} a patch to ${targetPaths.length} file(s): ${targetPaths.join(', ')}.`
+              : `${mode === 'revert' ? 'Reverts' : 'Applies'} a patch whose target files could not be enumerated.`,
+          ],
+        });
+        if (blocked) {
+          return {
+            ...blocked,
+            appliedPaths: [],
+            skippedPaths: [],
+            conflictedPaths: [],
+            preflight: false,
+          } as GitApplyPatchResult;
+        }
+
+        try { await validateBinding(); } catch (error) {
+          return { success: false, stale: true, reason: String(error), appliedPaths: [], skippedPaths: [], conflictedPaths: [], preflight: false };
+        }
+        const result = await git([...runArgs, patchFile], ctx.workspaceRoot);
+        const parsed = parseGitApplyOutput(result.stdout, result.stderr);
+        return {
+          success: result.exitCode === 0,
+          appliedPaths: parsed.appliedPaths,
+          skippedPaths: parsed.skippedPaths,
+          conflictedPaths: parsed.conflictedPaths,
+          preflight: false,
+          exitCode: result.exitCode,
+          stdout: trimOutput(result.stdout),
+          stderr: trimOutput(result.stderr),
+          status: result.exitCode === 0 ? await readCurrentGitStatus().catch(() => undefined) : undefined,
+        };
+      } finally {
+        await rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
+      }
+    }
+
 export function createGitApi(): CompleteHostServiceRegistry['git'] {
   return {
     capabilities: async () => {
@@ -1292,122 +1459,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         error: result.exitCode === 0 ? undefined : result.stderr,
       };
     },
-    applyPatch: async (payload: GitApplyPatchPayload): Promise<GitApplyPatchResult> => {
-      const patch = typeof payload.patch === 'string' ? payload.patch : '';
-      if (!patch.trim()) throw new Error('patch is required');
-      if (!/^diff --git /m.test(patch)) {
-        throw new Error('patch must be a unified diff (git format)');
-      }
-      const mode: 'preflight' | 'apply' | 'revert' =
-        payload.mode === 'revert' ? 'revert' : payload.mode === 'apply' ? 'apply' : 'preflight';
-      const ctx = await requireRepoContext();
-
-      // Write the patch to a temp file so the diff never crosses a shell or argv.
-      const tempDir = await mkdtemp(join(tmpdir(), 'verse-claw-apply-'));
-      const patchFile = join(tempDir, 'input.patch');
-      try {
-        await writeFile(patchFile, patch, 'utf8');
-
-        // Preflight first so dangerous approval is only requested for patches
-        // that actually parse. Check mode never writes.
-        const checkArgs = ['apply', '--check', '--verbose'];
-        if (mode === 'revert') checkArgs.push('--reverse');
-        const checkResult = await git([...checkArgs, patchFile], ctx.workspaceRoot);
-        const checkParsed = parseGitApplyOutput(checkResult.stdout, checkResult.stderr);
-
-        if (mode === 'preflight') {
-          // Only real paths go in conflictedPaths. A patch can fail before git
-          // attributes the failure to any file (unparsable header, bad binary
-          // hunk); success:false plus stderr carries that, and a synthetic
-          // path would be rendered as a filename by callers.
-          return {
-            success: checkResult.exitCode === 0,
-            appliedPaths: [],
-            skippedPaths: [],
-            conflictedPaths: checkParsed.conflictedPaths,
-            preflight: true,
-            exitCode: checkResult.exitCode,
-            stdout: trimOutput(checkResult.stdout),
-            stderr: trimOutput(checkResult.stderr),
-          };
-        }
-
-        // A patch that fails --check cannot apply, so fail closed here rather
-        // than spending a dangerous approval on an operation that would abort.
-        // git apply without --reject/--3way is all-or-nothing, so nothing was
-        // written either way.
-        if (checkResult.exitCode !== 0) {
-          return {
-            success: false,
-            appliedPaths: [],
-            skippedPaths: [],
-            conflictedPaths: checkParsed.conflictedPaths,
-            preflight: false,
-            exitCode: checkResult.exitCode,
-            stdout: trimOutput(checkResult.stdout),
-            stderr: trimOutput(checkResult.stderr),
-          };
-        }
-
-        // Name the files in the approval prompt so the user is not asked to
-        // allow an opaque patch. numstat runs on the same temp file that
-        // --check just validated, so the list matches what apply will touch.
-        const numstatArgs = mode === 'revert'
-          ? ['apply', '--numstat', '-z', '--reverse']
-          : ['apply', '--numstat', '-z'];
-        const numstat = await git([...numstatArgs, patchFile], ctx.workspaceRoot);
-        const targetPaths = numstat.exitCode === 0 ? parseApplyNumstatZ(numstat.stdout) : [];
-
-        // Apply/revert mutates the working tree: dangerous approval.
-        const runArgs = mode === 'revert'
-          ? ['apply', '--reverse', '--verbose']
-          : ['apply', '--verbose'];
-        // Bind the approval to this exact patch. requestHash is derived from
-        // the command string and paths, so without the digest an approval for
-        // one patch would be reusable for any other patch touching the same
-        // files — including one with entirely different content.
-        const patchDigest = createHash('sha256').update(patch, 'utf8').digest('hex').slice(0, 16);
-        const command = `git ${[...runArgs, `<patch-file sha256:${patchDigest}>`].join(' ')}`;
-        const blocked = await enforcePermission({
-          workspace: ctx.workspace,
-          action: mode === 'revert' ? 'applyRevert' : 'applyPatch',
-          risk: 'dangerous',
-          approvalId: payload.approvalId,
-          command,
-          paths: targetPaths,
-          grading: [
-            targetPaths.length > 0
-              ? `${mode === 'revert' ? 'Reverts' : 'Applies'} a patch to ${targetPaths.length} file(s): ${targetPaths.join(', ')}.`
-              : `${mode === 'revert' ? 'Reverts' : 'Applies'} a patch whose target files could not be enumerated.`,
-          ],
-        });
-        if (blocked) {
-          return {
-            ...blocked,
-            appliedPaths: [],
-            skippedPaths: [],
-            conflictedPaths: [],
-            preflight: false,
-          } as GitApplyPatchResult;
-        }
-
-        const result = await git([...runArgs, patchFile], ctx.workspaceRoot);
-        const parsed = parseGitApplyOutput(result.stdout, result.stderr);
-        return {
-          success: result.exitCode === 0,
-          appliedPaths: parsed.appliedPaths,
-          skippedPaths: parsed.skippedPaths,
-          conflictedPaths: parsed.conflictedPaths,
-          preflight: false,
-          exitCode: result.exitCode,
-          stdout: trimOutput(result.stdout),
-          stderr: trimOutput(result.stderr),
-          status: result.exitCode === 0 ? await readCurrentGitStatus().catch(() => undefined) : undefined,
-        };
-      } finally {
-        await rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
-      }
-    },
+    applyPatch: (payload: GitApplyPatchPayload) => applyGitPatch(payload),
     diffToBase: async (payload): Promise<GitDiffToBaseResult> => {
       const body = (isRecord(payload) ? payload : {}) as GitDiffToBasePayload;
       const ctx = await requireRepoContext();

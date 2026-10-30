@@ -299,5 +299,59 @@
     "patchUnavailable": "Git diff を安全に検証できなかったため、AI レビューは開始されませんでした。",
     "reviewFailed": "レビューに失敗しました。",
     "ledgerFailed": "Task Ledger review node を作成できませんでした。"
+  },
+  "changeContext": {
+    "title": "変更コンテキスト（詳細）",
+    "optIn": "このビューで明示的に有効化します。閉じると無効になり、コードは適用されません。",
+    "session": "セッション",
+    "mode": "比較",
+    "revision": "リビジョンまたはチェックポイント",
+    "load": "コンテキストを読込",
+    "refresh": "コメントを更新",
+    "path": "相対ファイルパス",
+    "startLine": "開始行",
+    "endLine": "終了行",
+    "comment": "コメント",
+    "addComment": "コメントを追加",
+    "resolve": "解決",
+    "reopen": "再開",
+    "delete": "コメントを削除",
+    "failed": "変更コンテキストに失敗しました。",
+    "sourceUnavailable": "ソース内容を取得できません。",
+    "invalidRange": "有効な行範囲を選択してください。",
+    "modes": {
+      "merge-base": "マージベース",
+      "last-commit": "直近のコミット",
+      "last-turn": "直近のターン",
+      "checkpoint": "チェックポイント"
+    },
+    "states": {
+      "available": "利用可能",
+      "partial": "部分的",
+      "truncated": "切り詰め",
+      "stale": "古い",
+      "removed": "削除済み",
+      "unavailable": "利用不可"
+    },
+    "taskNode": "Task Ledger ノード（任意）",
+    "verdictBoundary": "審査判断はタスク完了、実行、承認権限、マージを行いません。結果は読込中のビューにのみ保持します。",
+    "destinationHead": "適用先の完全な HEAD",
+    "approval": "既存の承認 ID",
+    "pull": "変更を取り込む",
+    "verdicts": {
+      "approve": "承認",
+      "request_changes": "変更を要求",
+      "comment_only": "コメントのみ"
+    },
+    "pullStates": {
+      "applied": "適用済み",
+      "denied": "拒否",
+      "stale": "古い",
+      "conflicted": "競合",
+      "unavailable": "利用不可",
+      "partial": "部分的",
+      "truncated": "切り詰め",
+      "recovery_required": "ジャーナルの復旧が必要です。再試行前に確認してください。"
+    }
   }
 }

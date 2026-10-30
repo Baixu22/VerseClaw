@@ -46,6 +46,7 @@ const bundledMainRuntimeDependencies = new Set([
   'shiki',
   'kysely',
   'tslog',
+  'typebox',
   '@openclaw/fs-safe',
 ]);
 const alias = {

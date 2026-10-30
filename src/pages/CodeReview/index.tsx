@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import type { CodeReviewFinding, CodeReviewRun, CodeReviewTarget } from '@shared/types/code-review';
 import type { GitBranch as GitBranchInfo } from '@shared/types/git';
 import { RemoteForgePanel } from './RemoteForgePanel';
+import { ChangeContextPanel } from './ChangeContextPanel';
 
 type TargetKind = CodeReviewTarget['kind'];
 
@@ -189,6 +190,7 @@ export function CodeReviewPanel({ embedded = false }: { embedded?: boolean }) {
         </div>
       </header>}
 
+      {viewMode === 'local' && <ChangeContextPanel />}
       {!embedded && viewMode === 'remote' ? <RemoteForgePanel /> : (
       <main className="grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden lg:grid-cols-[360px_minmax(0,1fr)]">
         <section className="border-b border-border/60 p-4 lg:border-b-0 lg:border-r">

@@ -37,6 +37,11 @@ touchedAreas:
   - electron/services/change-context-anchor.ts
   - electron/services/change-context-anchor-workspace.ts
   - electron/services/change-context-review-store.ts
+  - electron/services/change-context-review.ts
+  - openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts
+  - shared/types/git.ts
+  - vite.config.ts
+  - src/pages/CodeReview/ChangeContextPanel.tsx
   - electron/main/ipc-handlers.ts
   - electron/services/code-review-api.ts
   - electron/services/git-api.ts
@@ -199,6 +204,20 @@ Acceptance:
 - Pull Changes requires an available digest-bound patch and existing approval.
 - Stale or conflicted apply produces zero destination mutation.
 - Pull Changes never bypasses the write journal or approval owner.
+
+The loaded Main read model is bounded to 100 entries with a 15-minute TTL.
+Verdicts require its exact digest and revalidate source facts; review decisions
+are returned as local view evidence. Task Ledger links are durable references
+through its existing event API, with one deterministic review-node identity.
+The review store remains the sole comment owner, including deletion tombstones.
+
+Pull Changes reuses Git preflight, digest/head/context-bound permission approval,
+and Coding's existing journal and per-file leases through a public SDK seam.
+Structured patch transport restores its final LF before computing the effective
+patch digest. Unknown apply/rollback results remain `recovery_required` with
+`destinationMutated=unknown`; they must never masquerade as a zero-write rejection
+or be retried automatically. This additive error variant records a discovered
+contract gap without changing any product lock or default.
 
 ### F. VG evidence projection
 

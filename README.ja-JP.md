@@ -2,6 +2,8 @@
   <img src="src/assets/logo.png" width="96" height="96" alt="Verse Claw logo" />
 </p>
 
+Review Center の折りたたまれた Change Context は明示的に有効化し、4 種類の比較、ダイジェスト固定コメント、審査判断を表示します。変更適用は既存の承認・Git・Coding journal を使用し、審査承認でタスク完了やマージは行いません。[詳細](docs/modules/workspace-and-coding.md)。
+
 # Verse Claw
 
 **チャット、コード、知識、Agent 実行を 1 つのデスクトップ作業空間に。**

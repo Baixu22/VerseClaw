@@ -2,6 +2,8 @@
   <img src="src/assets/logo.png" width="96" height="96" alt="Verse Claw logo" />
 </p>
 
+审查中心提供折叠、显式启用的 Change Context：四种比较方式、digest 锚定评论与显式审查结论。拉取变更复用现有审批、Git 与 Coding journal；审查通过不完成任务或合并代码。详见[工作区与编码](docs/modules/workspace-and-coding.md)。
+
 # Verse Claw
 
 **在一个桌面工作空间里完成对话、编码、知识与 Agent 执行。**

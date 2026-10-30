@@ -299,5 +299,59 @@
     "patchUnavailable": "The Git diff could not be verified safely, so AI review was not started.",
     "reviewFailed": "Review failed.",
     "ledgerFailed": "Could not create the Task Ledger review node."
+  },
+  "changeContext": {
+    "title": "Change Context (advanced)",
+    "optIn": "Opt in for this view. Close to disable; closing or reopening does not apply changes.",
+    "session": "Session",
+    "mode": "Comparison",
+    "revision": "Revision or checkpoint",
+    "load": "Load context",
+    "refresh": "Refresh comments",
+    "path": "Relative file path",
+    "startLine": "Start line",
+    "endLine": "End line",
+    "comment": "Comment",
+    "addComment": "Add comment",
+    "resolve": "Resolve",
+    "reopen": "Reopen",
+    "delete": "Delete comment",
+    "failed": "Change Context failed.",
+    "sourceUnavailable": "Source content unavailable.",
+    "invalidRange": "Choose a valid line range.",
+    "modes": {
+      "merge-base": "Merge base",
+      "last-commit": "Last commit",
+      "last-turn": "Last turn",
+      "checkpoint": "Checkpoint"
+    },
+    "states": {
+      "available": "Available",
+      "partial": "Partial",
+      "truncated": "Truncated",
+      "stale": "Stale",
+      "removed": "Removed",
+      "unavailable": "Unavailable"
+    },
+    "taskNode": "Task Ledger node (optional)",
+    "verdictBoundary": "Review decisions do not complete tasks, execute code, grant approval or merge. Results are local to this loaded view.",
+    "destinationHead": "Full destination HEAD",
+    "approval": "Existing approval ID",
+    "pull": "Pull Changes",
+    "verdicts": {
+      "approve": "Approve",
+      "request_changes": "Request changes",
+      "comment_only": "Comment only"
+    },
+    "pullStates": {
+      "applied": "Applied",
+      "denied": "Denied",
+      "stale": "Stale",
+      "conflicted": "Conflicted",
+      "unavailable": "Unavailable",
+      "partial": "Partial",
+      "truncated": "Truncated",
+      "recovery_required": "Journal recovery required; inspect before retrying"
+    }
   }
 }

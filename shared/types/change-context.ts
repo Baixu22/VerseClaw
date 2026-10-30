@@ -300,6 +300,7 @@ export type ChangeContextProjection = {
   evidence: ChangeContextEvidenceProjection[];
   issues: ChangeContextIssue[];
   generatedAt: string;
+  reviewedDigest?: string;
 };
 
 export type ChangeContextErrorCode =
@@ -491,6 +492,13 @@ export type ChangeContextPullChangesResult =
       success: false;
       state: ChangeContextPullChangesDeniedState;
       destinationMutated: false;
+      error: ChangeContextErrorEnvelope;
+    }
+  | {
+      success: false;
+      state: 'recovery_required';
+      destinationMutated: 'unknown';
+      writeJournalId?: string;
       error: ChangeContextErrorEnvelope;
     };
 
