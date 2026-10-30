@@ -1,0 +1,2 @@
+export function buildAdjudicationReport(root: string, planPath: string, reviewerActor: string): any;
+export function verifyAdjudicationReport(root: string, planPath: string, reportPath: string, verifierActor?: string): any;
