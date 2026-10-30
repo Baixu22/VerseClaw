@@ -589,5 +589,56 @@
     "nextAction": "TF-0589 closed; proceed with ready TF-0590 and TF-0591.",
     "humanAcceptanceRequired": false,
     "claim": "Contract and static validation only"
+  },
+  "staticContractValidation": {
+    "recordedAt": "2026-10-30",
+    "driven_by": "agent",
+    "actor": "claude/tf0589-verifier",
+    "scope": "Additive readback of the same contract file bodies: does the static validator actually reject a malformed contract?",
+    "relationToSealedEvidence": "This block is layered on top of the sealed currentContractEvidence record and does not replace, re-sequence, re-hash or re-date it. The sealed candidate binding in currentContractEvidence.evidenceBinding still identifies its original candidate, and taskForestClosure still records the closure that was applied for it.",
+    "validator": "scripts/lib/agent-first-acceptance-contract.mjs",
+    "command": "node scripts/agent-first-acceptance-check.mjs",
+    "exitCode": 0,
+    "report": "harness/specs/fixtures/agent-first-acceptance/validation-report.json",
+    "counts": {
+      "gates": 14,
+      "dimensions": 8,
+      "verdictStates": 6,
+      "sources": 19,
+      "findings": 10
+    },
+    "negativeControls": {
+      "total": 15,
+      "rejected": 15
+    },
+    "failureClassesCovered": [
+      "missing requirement (a frozen gate or finding dropped from the contract)",
+      "invalid dimension (an invented or non-blocking dimension)",
+      "unknown verdict state (a verdict outside the frozen six)",
+      "blocking gate without a negative control"
+    ],
+    "rejectedControls": [
+      "gate-missing-negative",
+      "gate-missing-oracle",
+      "gate-missing-field",
+      "gate-duplicate-id",
+      "publisher-gate-automated",
+      "requirement-gate-dropped",
+      "requirement-finding-malformed",
+      "dimension-unknown",
+      "dimension-not-blocking",
+      "verdict-unknown-state",
+      "locked-boundary-opened",
+      "source-count-thin",
+      "provider-request-failed",
+      "guide-human-gate-removed",
+      "evidence-unlabelled"
+    ],
+    "limitations": [
+      "Proves the validator rejects the mutations it declares. It does not execute the 14 gates, and it does not re-derive the sealed verdict above.",
+      "The validator reads file bodies and reports every violation in one run instead of stopping at the first one.",
+      "The report it writes is asserted to stay in structural lockstep with a fresh read of the contract, so a change to the gate set, the dimension or verdict sets, or any negative-control outcome without a regeneration fails the focused test. It is not a byte hash of the three contract files.",
+      "No product runtime, package, model-quality, release or real-human claim is made."
+    ]
   }
 }

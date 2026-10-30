@@ -21,6 +21,10 @@ touchedAreas:
   - harness/specs/guides/agent-first-acceptance.md
   - harness/specs/fixtures/agent-first-acceptance/**
   - tests/unit/agent-first-acceptance.test.ts
+  - scripts/agent-first-acceptance-check.mjs
+  - scripts/agent-first-acceptance-check.d.mts
+  - scripts/lib/agent-first-acceptance-contract.mjs
+  - scripts/lib/agent-first-acceptance-contract.d.mts
   - harness/specs/fixtures/product-acceptance-shortfalls/**
   - harness/specs/fixtures/product-acceptance-research/**
   - harness/specs/fixtures/product-acceptance-closeout/**
