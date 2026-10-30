@@ -1,0 +1,651 @@
+{
+  "schemaVersion": "AgentFirstLoopDevelopmentEvidence/v1",
+  "recordedAt": "2026-10-30T09:46:44.001Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0621-evidence-script",
+  "scope": "TF-0621 static evaluation-loop contract development. Source candidate is fixed; subsequent evidence-only commits do not change the tested source inputs.",
+  "sourceCandidate": {
+    "commit": "47ea90efc841e9d03fd954f4ff39de783341d6e0",
+    "tree": "bf61561a0d6085eb28d751ad62b334d6bf97c03b",
+    "dirty": false,
+    "base": "c97589e791c7cdc1b25af9ae9c919fe1ae38be11"
+  },
+  "verificationMode": "separate-checkout deterministic script replay",
+  "independentAgentReview": false,
+  "engineeringAcceptedByAgent": false,
+  "executor": {
+    "schemaVersion": "AgentFirstLoopScopedDevelopmentRun/v1",
+    "driven_by": "agent",
+    "actor": "codex/tf0621-executor-script",
+    "role": "executor",
+    "implementation": "deterministic PowerShell gate driver",
+    "startedAt": "2026-10-30T08:55:42.0964016+00:00",
+    "candidate": {
+      "commit": "47ea90efc841e9d03fd954f4ff39de783341d6e0",
+      "tree": "bf61561a0d6085eb28d751ad62b334d6bf97c03b",
+      "dirty": false,
+      "base": "c97589e791c7cdc1b25af9ae9c919fe1ae38be11"
+    },
+    "sourceInputs": [
+      {
+        "path": "harness/specs/guides/agent-first-acceptance.md",
+        "sha256": "1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
+        "bytes": 30569
+      },
+      {
+        "path": "harness/specs/tasks/agent-first-evaluation-loop.md",
+        "sha256": "178e3d3168b03f8f34819e60efc261482eb17fbcda51797b954c5469b284e3a7",
+        "bytes": 10218
+      },
+      {
+        "path": "harness/specs/fixtures/agent-first-framework/registry.json",
+        "sha256": "f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
+        "bytes": 3454
+      },
+      {
+        "path": "harness/specs/fixtures/agent-first-framework/loop-record.json",
+        "sha256": "ab3fa0c0f9cb1c88e3e6d2a3ae83974c53c50a084970a80a9341f52e89431fa6",
+        "bytes": 1882
+      },
+      {
+        "path": "harness/specs/fixtures/agent-first-framework/loop-validation-report.json",
+        "sha256": "119b93d795f3e87b3cb33826027e6bbc5a01e39dfe9c7f06137d7f93735dff35",
+        "bytes": 14804
+      },
+      {
+        "path": "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json",
+        "sha256": "ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4",
+        "bytes": 13977
+      },
+      {
+        "path": "scripts/lib/agent-first-evaluation-framework.mjs",
+        "sha256": "3fab68930689b379c50296e58dbe30a55e86f7adc01f6f4dd7f72d127ed750f2",
+        "bytes": 18168
+      },
+      {
+        "path": "scripts/lib/agent-first-evaluation-loop.mjs",
+        "sha256": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
+        "bytes": 44414
+      },
+      {
+        "path": "scripts/lib/agent-first-evaluation-loop.d.mts",
+        "sha256": "7b72a3b39c24044a6de8ace235703c4abbc036783932da3b4c3f42225918d434",
+        "bytes": 2115
+      },
+      {
+        "path": "scripts/agent-first-loop-check.mjs",
+        "sha256": "14d753d73c9dd0f9eec5ace42e11cbe2808b5ad66ad88dba55b0e41b4165592c",
+        "bytes": 4497
+      },
+      {
+        "path": "scripts/agent-first-loop-check.d.mts",
+        "sha256": "5e2e7e941607ea110336b93fe2460a938aee8b328a47b9fa54a61378e88ecf3e",
+        "bytes": 791
+      },
+      {
+        "path": "tests/unit/agent-first-evaluation-loop.test.ts",
+        "sha256": "aafa24981f08f1cfd43278c17e0507aee9d854ad3bd6b322f4fb3a1a4fce2059",
+        "bytes": 9704
+      }
+    ],
+    "tempPolicy": {
+      "TEMP": "D:\\tmp",
+      "TMP": "D:\\tmp"
+    },
+    "gates": [
+      {
+        "arguments": [
+          "scripts/agent-first-loop-check.mjs",
+          "--actor",
+          "codex/tf0621-executor-script"
+        ],
+        "log": "loop-contract.log",
+        "durationMs": 231,
+        "logSha256": "2eecb8d9af2aaa00bdc6a5a7b0f200b5a3a13fc5fa190966b5dfe364075cbc74",
+        "command": "node",
+        "exitCode": 0,
+        "id": "loop-contract"
+      },
+      {
+        "arguments": [
+          "scripts/agent-first-framework-check.mjs"
+        ],
+        "log": "framework-contract.log",
+        "durationMs": 64,
+        "logSha256": "aac21067af715b6f044c9ef3fdc3f22dee08f78a5a0738b0c81c54ef3e62c181",
+        "command": "node",
+        "exitCode": 0,
+        "id": "framework-contract"
+      },
+      {
+        "arguments": [
+          "scripts/agent-first-acceptance-check.mjs"
+        ],
+        "log": "sealed-acceptance-contract.log",
+        "durationMs": 70,
+        "logSha256": "8ffc3042ecf1bfb8a4edefa4fe74bfe823dbbe52f77e3c3bb7cb6843eaa52e4d",
+        "command": "node",
+        "exitCode": 0,
+        "id": "sealed-acceptance-contract"
+      },
+      {
+        "arguments": [
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/agent-first-evaluation-loop.test.ts",
+          "tests/unit/agent-first-evaluation-framework.test.ts",
+          "tests/unit/agent-first-acceptance.test.ts",
+          "tests/unit/rsi-evidence-loop-contract.test.ts",
+          "--maxWorkers=1"
+        ],
+        "log": "focused-unit.log",
+        "durationMs": 8686,
+        "logSha256": "393b68146e7833fdc58e43f4d2ec7ced4455a8539fbb084500a914fceab5b050",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "focused-unit"
+      },
+      {
+        "arguments": [
+          "run",
+          "typecheck"
+        ],
+        "log": "full-typecheck.log",
+        "durationMs": 41435,
+        "logSha256": "6d6dc7fdd2b8a1f98610844b40601402a9b1050d0e8c2f099d30428a0b879e17",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "full-typecheck"
+      },
+      {
+        "arguments": [
+          "exec",
+          "eslint",
+          "scripts/lib/agent-first-evaluation-framework.mjs",
+          "scripts/lib/agent-first-evaluation-loop.mjs",
+          "scripts/lib/agent-first-evaluation-loop.d.mts",
+          "scripts/agent-first-loop-check.mjs",
+          "scripts/agent-first-loop-check.d.mts",
+          "tests/unit/agent-first-evaluation-loop.test.ts"
+        ],
+        "log": "scoped-lint.log",
+        "durationMs": 6731,
+        "logSha256": "005c12a6e65eee38fdd5a9c36f19c0da341c841156d74a328407f1cc470fd04d",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "scoped-lint"
+      },
+      {
+        "arguments": [
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/agent-first-evaluation-loop.md",
+          "--since",
+          "c97589e791c7cdc1b25af9ae9c919fe1ae38be11"
+        ],
+        "log": "harness-validate.log",
+        "durationMs": 2916,
+        "logSha256": "891f40ac44554bef869fa4d24e03af4c68ba29e464fa497ee1a012fdd300e971",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "harness-validate"
+      },
+      {
+        "arguments": [
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/tasks/agent-first-evaluation-loop.md",
+          "--dry-run"
+        ],
+        "log": "harness-dry-run.log",
+        "durationMs": 2037,
+        "logSha256": "0946c2667dda5c7a4ee725419abb8bd3704e44482233494bd3c15f95ca5efa67",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "harness-dry-run"
+      },
+      {
+        "arguments": [
+          "harness:specs:lifecycle"
+        ],
+        "log": "spec-lifecycle.log",
+        "durationMs": 1321,
+        "logSha256": "6931c6a3f765714f4a2439f333c65dfdccc85826b459e4a0da3a9c9aac0a5bb8",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "spec-lifecycle"
+      },
+      {
+        "arguments": [
+          "repo:artifacts:check"
+        ],
+        "log": "artifact-retention.log",
+        "durationMs": 4201,
+        "logSha256": "e29341930edd1f8eaa4e6b3327380426cbe554bbf50abe101ce28020b677f6b6",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "artifact-retention"
+      },
+      {
+        "arguments": [
+          "docs:policy:validate"
+        ],
+        "log": "policy-docs.log",
+        "durationMs": 838,
+        "logSha256": "3e7917fc820437e17f07e30c2b8f359d6514943d3eaf405b07e70122d9759244",
+        "command": "pnpm",
+        "exitCode": 0,
+        "id": "policy-docs"
+      },
+      {
+        "arguments": [
+          "diff",
+          "--check",
+          "c97589e791c7cdc1b25af9ae9c919fe1ae38be11"
+        ],
+        "log": "diff-whitespace.log",
+        "durationMs": 75,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "command": "git",
+        "exitCode": 0,
+        "id": "diff-whitespace"
+      }
+    ],
+    "engineeringAcceptedByAgent": false,
+    "currentSystemEvaluationStatus": "not-run",
+    "sourceInputsUnchanged": true,
+    "sourceDirtyAfter": false,
+    "completedAt": "2026-10-30T08:56:51.0404517+00:00",
+    "requiredGatesPassed": true,
+    "testCounts": {
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0,
+      "total": 31,
+      "source": "parsed",
+      "segments": 1
+    },
+    "archiveReport": "executor/run.json"
+  },
+  "verifier": {
+    "schemaVersion": "AgentFirstLoopScopedDevelopmentRun/v1",
+    "driven_by": "agent",
+    "actor": "codex/tf0621-verifier-provisioned-script",
+    "role": "verifier",
+    "implementation": "deterministic PowerShell gate driver",
+    "startedAt": "2026-10-30T09:36:12.3595776+00:00",
+    "candidate": {
+      "commit": "47ea90efc841e9d03fd954f4ff39de783341d6e0",
+      "tree": "bf61561a0d6085eb28d751ad62b334d6bf97c03b",
+      "dirty": false,
+      "base": "c97589e791c7cdc1b25af9ae9c919fe1ae38be11"
+    },
+    "sourceInputs": [
+      {
+        "path": "harness/specs/guides/agent-first-acceptance.md",
+        "sha256": "1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
+        "bytes": 30569
+      },
+      {
+        "path": "harness/specs/tasks/agent-first-evaluation-loop.md",
+        "sha256": "178e3d3168b03f8f34819e60efc261482eb17fbcda51797b954c5469b284e3a7",
+        "bytes": 10218
+      },
+      {
+        "path": "harness/specs/fixtures/agent-first-framework/registry.json",
+        "sha256": "f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
+        "bytes": 3454
+      },
+      {
+        "path": "harness/specs/fixtures/agent-first-framework/loop-record.json",
+        "sha256": "ab3fa0c0f9cb1c88e3e6d2a3ae83974c53c50a084970a80a9341f52e89431fa6",
+        "bytes": 1882
+      },
+      {
+        "path": "harness/specs/fixtures/agent-first-framework/loop-validation-report.json",
+        "sha256": "119b93d795f3e87b3cb33826027e6bbc5a01e39dfe9c7f06137d7f93735dff35",
+        "bytes": 14804
+      },
+      {
+        "path": "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json",
+        "sha256": "ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4",
+        "bytes": 13977
+      },
+      {
+        "path": "scripts/lib/agent-first-evaluation-framework.mjs",
+        "sha256": "3fab68930689b379c50296e58dbe30a55e86f7adc01f6f4dd7f72d127ed750f2",
+        "bytes": 18168
+      },
+      {
+        "path": "scripts/lib/agent-first-evaluation-loop.mjs",
+        "sha256": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
+        "bytes": 44414
+      },
+      {
+        "path": "scripts/lib/agent-first-evaluation-loop.d.mts",
+        "sha256": "7b72a3b39c24044a6de8ace235703c4abbc036783932da3b4c3f42225918d434",
+        "bytes": 2115
+      },
+      {
+        "path": "scripts/agent-first-loop-check.mjs",
+        "sha256": "14d753d73c9dd0f9eec5ace42e11cbe2808b5ad66ad88dba55b0e41b4165592c",
+        "bytes": 4497
+      },
+      {
+        "path": "scripts/agent-first-loop-check.d.mts",
+        "sha256": "5e2e7e941607ea110336b93fe2460a938aee8b328a47b9fa54a61378e88ecf3e",
+        "bytes": 791
+      },
+      {
+        "path": "tests/unit/agent-first-evaluation-loop.test.ts",
+        "sha256": "aafa24981f08f1cfd43278c17e0507aee9d854ad3bd6b322f4fb3a1a4fce2059",
+        "bytes": 9704
+      }
+    ],
+    "tempPolicy": {
+      "TEMP": "D:\\tmp",
+      "TMP": "D:\\tmp"
+    },
+    "gates": [
+      {
+        "durationMs": 79,
+        "exitCode": 0,
+        "logSha256": "2eecb8d9af2aaa00bdc6a5a7b0f200b5a3a13fc5fa190966b5dfe364075cbc74",
+        "arguments": [
+          "scripts/agent-first-loop-check.mjs",
+          "--actor",
+          "codex/tf0621-verifier-provisioned-script"
+        ],
+        "id": "loop-contract",
+        "log": "loop-contract.log",
+        "command": "node"
+      },
+      {
+        "durationMs": 50,
+        "exitCode": 0,
+        "logSha256": "aac21067af715b6f044c9ef3fdc3f22dee08f78a5a0738b0c81c54ef3e62c181",
+        "arguments": [
+          "scripts/agent-first-framework-check.mjs"
+        ],
+        "id": "framework-contract",
+        "log": "framework-contract.log",
+        "command": "node"
+      },
+      {
+        "durationMs": 59,
+        "exitCode": 0,
+        "logSha256": "8ffc3042ecf1bfb8a4edefa4fe74bfe823dbbe52f77e3c3bb7cb6843eaa52e4d",
+        "arguments": [
+          "scripts/agent-first-acceptance-check.mjs"
+        ],
+        "id": "sealed-acceptance-contract",
+        "log": "sealed-acceptance-contract.log",
+        "command": "node"
+      },
+      {
+        "durationMs": 5680,
+        "exitCode": 0,
+        "logSha256": "00112cd16f7599709bec087ab8fe6821836e886f9c58c1267bd944ee3e61ea0d",
+        "arguments": [
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/agent-first-evaluation-loop.test.ts",
+          "tests/unit/agent-first-evaluation-framework.test.ts",
+          "tests/unit/agent-first-acceptance.test.ts",
+          "tests/unit/rsi-evidence-loop-contract.test.ts",
+          "--maxWorkers=1"
+        ],
+        "id": "focused-unit",
+        "log": "focused-unit.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 29255,
+        "exitCode": 0,
+        "logSha256": "2f5da2400074ce53c6253484e5bdc7d5104372918139f747a7d72d56bcd3a533",
+        "arguments": [
+          "run",
+          "typecheck"
+        ],
+        "id": "full-typecheck",
+        "log": "full-typecheck.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 7052,
+        "exitCode": 0,
+        "logSha256": "86771b2cd6c27a28769456bce4e89aec98ace7defbd622b0bcc7466e8eb6345a",
+        "arguments": [
+          "exec",
+          "eslint",
+          "scripts/lib/agent-first-evaluation-framework.mjs",
+          "scripts/lib/agent-first-evaluation-loop.mjs",
+          "scripts/lib/agent-first-evaluation-loop.d.mts",
+          "scripts/agent-first-loop-check.mjs",
+          "scripts/agent-first-loop-check.d.mts",
+          "tests/unit/agent-first-evaluation-loop.test.ts"
+        ],
+        "id": "scoped-lint",
+        "log": "scoped-lint.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 1761,
+        "exitCode": 0,
+        "logSha256": "891f40ac44554bef869fa4d24e03af4c68ba29e464fa497ee1a012fdd300e971",
+        "arguments": [
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/agent-first-evaluation-loop.md",
+          "--since",
+          "c97589e791c7cdc1b25af9ae9c919fe1ae38be11"
+        ],
+        "id": "harness-validate",
+        "log": "harness-validate.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 1552,
+        "exitCode": 0,
+        "logSha256": "7e7339ff6ae5c8bf414b7e1e504b6c6e1bc651e92e7e7ccca79ff5089703de50",
+        "arguments": [
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/tasks/agent-first-evaluation-loop.md",
+          "--dry-run"
+        ],
+        "id": "harness-dry-run",
+        "log": "harness-dry-run.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 1159,
+        "exitCode": 0,
+        "logSha256": "6931c6a3f765714f4a2439f333c65dfdccc85826b459e4a0da3a9c9aac0a5bb8",
+        "arguments": [
+          "harness:specs:lifecycle"
+        ],
+        "id": "spec-lifecycle",
+        "log": "spec-lifecycle.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 5326,
+        "exitCode": 0,
+        "logSha256": "e29341930edd1f8eaa4e6b3327380426cbe554bbf50abe101ce28020b677f6b6",
+        "arguments": [
+          "repo:artifacts:check"
+        ],
+        "id": "artifact-retention",
+        "log": "artifact-retention.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 863,
+        "exitCode": 0,
+        "logSha256": "fefed6424d48170eb3a3307333ca972ae68e2e1daa575cfd90ccdf9f18047c14",
+        "arguments": [
+          "docs:policy:validate"
+        ],
+        "id": "policy-docs",
+        "log": "policy-docs.log",
+        "command": "pnpm"
+      },
+      {
+        "durationMs": 94,
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "arguments": [
+          "diff",
+          "--check",
+          "c97589e791c7cdc1b25af9ae9c919fe1ae38be11"
+        ],
+        "id": "diff-whitespace",
+        "log": "diff-whitespace.log",
+        "command": "git"
+      }
+    ],
+    "engineeringAcceptedByAgent": false,
+    "currentSystemEvaluationStatus": "not-run",
+    "sourceInputsUnchanged": true,
+    "sourceDirtyAfter": false,
+    "completedAt": "2026-10-30T09:37:05.5664515+00:00",
+    "requiredGatesPassed": true,
+    "testCounts": {
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0,
+      "total": 31,
+      "source": "parsed",
+      "segments": 1
+    },
+    "archiveReport": "verifier-provisioned/run.json"
+  },
+  "staticContract": {
+    "report": "harness/specs/fixtures/agent-first-framework/loop-validation-report.json",
+    "sha256": "119b93d795f3e87b3cb33826027e6bbc5a01e39dfe9c7f06137d7f93735dff35",
+    "counts": {
+      "signals": 2,
+      "candidates": 0,
+      "reEvaluations": 0,
+      "promotions": 0
+    },
+    "validNegativeControlBaselines": 42,
+    "rejectedNegativeControls": 42,
+    "evaluationStatus": "not-run"
+  },
+  "sealedHistory": [
+    {
+      "path": "harness/specs/fixtures/agent-first-acceptance/matrix.json",
+      "sha256": "66d4ed42bbc29669a65bd1dfc3d687dd0f43ac958967fc5b8d48517cc4619e2d",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "harness/specs/fixtures/agent-first-acceptance/sources.json",
+      "sha256": "b37184503f6071a91625616f84e843acf9061d714215aa661440a924ab72ed93",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "harness/specs/fixtures/agent-first-framework/registry.json",
+      "sha256": "f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "harness/specs/fixtures/agent-first-framework/validation-report.json",
+      "sha256": "a92bd407d07adfa50fa1fb919ae59526ab147c8213276ce958f609e24d11e2f1",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json",
+      "sha256": "ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4",
+      "unchangedFromBase": true
+    }
+  ],
+  "repositoryBaseline": {
+    "schemaVersion": "AgentFirstLoopRepositoryBaselineRun/v1",
+    "driven_by": "agent",
+    "actor": "codex/tf0621-baseline-script",
+    "candidate": "47ea90efc841e9d03fd954f4ff39de783341d6e0",
+    "command": "pnpm run harness:ci",
+    "exitCode": 1,
+    "durationMs": 44630,
+    "log": "repository-baseline.log",
+    "logSha256": "ee34b3b4231b1dfbbee36875119d65ef00ed2c50c1483044d403d6122fcc9993",
+    "completedAt": "2026-10-30T09:27:16.3574135+00:00",
+    "testCounts": {
+      "passed": 59,
+      "failed": 0,
+      "skipped": 0,
+      "total": 59,
+      "source": "parsed",
+      "segments": 1
+    },
+    "knownFailure": {
+      "schemaVersion": "AgentFirstLoopBaselineFailureProof/v1",
+      "driven_by": "agent",
+      "actor": "codex/tf0621-baseline-proof-script",
+      "base": "c97589e791c7cdc1b25af9ae9c919fe1ae38be11",
+      "sourceCandidate": "47ea90efc841e9d03fd954f4ff39de783341d6e0",
+      "files": [
+        {
+          "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/profile.json",
+          "baseSha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+          "currentSha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+          "unchanged": true
+        },
+        {
+          "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
+          "baseSha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+          "currentSha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+          "unchanged": true
+        }
+      ],
+      "preExisting": true
+    },
+    "affectsTf0621ChangedSource": false,
+    "unexecutedTail": [
+      "docs:policy:validate",
+      "catalogs:check",
+      "agent-dev:audit",
+      "repo:evidence:check",
+      "repo:test-coverage:check"
+    ]
+  },
+  "setupAttempts": [
+    {
+      "report": "verifier/run.json",
+      "status": "failed-before-test-runner",
+      "reason": "ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY with shared node_modules; original directory preserved"
+    },
+    {
+      "report": "verifier-offline/run.json",
+      "status": "typecheck-failed",
+      "reason": "Missing generated @verse-claw/versebrowser declarations after ignore-scripts install; fixed with the existing versebrowser:build step"
+    }
+  ],
+  "privateArchive": {
+    "path": "D:/ClawX/artifacts/runs/agent-first-loop/tf0621-relay-01a18be8",
+    "indexSha256": "4c35d8a2c7a085a643b05c9cc9b2190b0364aca4d00a650d694fc2e7db55070e",
+    "files": 61
+  },
+  "recovery": [
+    "Check out sourceCandidate.commit into an isolated worktree on D:.",
+    "Set TEMP/TMP to D:/tmp; install root and openclaw_runtime with pnpm install --offline --frozen-lockfile --ignore-scripts.",
+    "Run pnpm versebrowser:build before typecheck; run the archived run-scoped-gates.ps1 with a unique output directory.",
+    "Reparse persisted unit logs with scripts/lib/agent-engineering-acceptance.mjs parseTestCounts and recheck every log/input SHA256.",
+    "Run the archived seal-loop-evidence.mjs in --verify mode to recheck credential shapes and the complete retained evidence manifest."
+  ],
+  "limitations": [
+    "All measured-run and graduation examples are deterministic contract fixtures. No candidate, current-system trial, online skill evaluator or promotion was run.",
+    "The two scripted roles share the same implementing agent; this is separate-checkout replay, not independent LLM review or full engineering/product/release acceptance.",
+    "Repository harness:ci exits 1 on a byte-identical pre-existing duplicate fixture group. Its later gates were not reached; applicable policy-doc checks passed separately.",
+    "Result-file provenance/statistics replay, real runners, task corpus and grader calibration remain TF-0590/TF-0592/TF-0595 work.",
+    "An automatic approval review rejected removal of the original verifier dependency junctions with blocked by policy. That directory and its links were preserved; the successful verifier uses independently installed dependencies."
+  ]
+}

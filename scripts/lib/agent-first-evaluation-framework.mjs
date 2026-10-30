@@ -154,6 +154,15 @@ export function validateFrameworkRegistry(registry) {
     } else if (split.heldOutWritableByCandidate === true) {
       push(violations, 'suite.held-out-writable', path, 'the held-out split must never be writable by the candidate');
     }
+    if (suite?.corpusStatus !== undefined && !['not-frozen', 'frozen'].includes(suite.corpusStatus)) {
+      push(violations, 'suite.corpus-status-invalid', path, 'corpusStatus must be not-frozen or frozen');
+    }
+    if (suite?.corpusStatus === 'frozen' && !/^sha256:[a-f0-9]{64}$/u.test(String(suite?.contentDigest ?? ''))) {
+      push(violations, 'suite.content-digest-missing', path, 'a frozen suite corpus must declare a sha256 content digest');
+    }
+    if (suite?.corpusStatus === 'not-frozen' && suite?.contentDigest !== null) {
+      push(violations, 'suite.content-digest-premature', path, 'an unfrozen suite corpus must use contentDigest=null');
+    }
     if (!Number.isInteger(suite?.k) || suite.k < MINIMUM_SUITE_K) {
       push(violations, 'suite.floor-too-low', path, `k must be an integer >= ${MINIMUM_SUITE_K}`);
     }
