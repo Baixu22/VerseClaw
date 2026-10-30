@@ -71,6 +71,7 @@ for (const profile of [1, 2, 3]) {
       await mkdir(workspaceRoot, { recursive: true });
       const fixtureGit = (...args: string[]) => execFileSync('git', args, { cwd: workspaceRoot, encoding: 'utf8', windowsHide: true }).trim();
       fixtureGit('init', '-q'); fixtureGit('config', 'user.name', 'Agent Fixture'); fixtureGit('config', 'user.email', 'fixture@example.invalid');
+      fixtureGit('config', 'core.autocrlf', 'false'); fixtureGit('config', 'core.eol', 'lf');
       await writeFile(join(workspaceRoot, 'effect.txt'), 'before\n'); fixtureGit('add', 'effect.txt'); fixtureGit('commit', '-qm', 'fixture base');
       await writeFile(join(workspaceRoot, 'effect.txt'), 'after\n');
       const workspace = await hostInvoke<{ activeWorkspaceId: string }>(app, 'workspaces', 'create', { name: `AF approval ${profile}`, rootPath: workspaceRoot, agentId: 'main', permissionMode: 'acceptEdits' });
