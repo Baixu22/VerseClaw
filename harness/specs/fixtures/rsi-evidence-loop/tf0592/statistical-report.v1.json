@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-10-30T08:59:31.549Z",
+  "generatedAt": "2026-10-30T09:03:37.988Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,20 +17,15 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-10-30T08:59:31.549Z",
+    "generatedAt": "2026-10-30T09:03:37.988Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "8b9a937f0259893de6919eea1d043d46712a25d2",
-      "tree": "d22d0e3469c150e7d4af4872cb2a181e6f2b6ae4",
+      "commit": "748a52eac3c7ea3c94cd74c4bf68f383ad9e453c",
+      "tree": "90591e1b823f019c56df4959a98842d19329b79c",
       "branch": "codex/tf0604-rsi-baseline",
-      "dirty": true,
-      "dirtyPaths": [
-        "M harness/specs/tasks/rsi-tf0592-statistical-adjudication.md",
-        " M scripts/rsi-tf0592-statistical-adjudication.d.mts",
-        " M scripts/rsi-tf0592-statistical-adjudication.mjs",
-        " M tests/unit/rsi-tf0592-statistical-adjudication.test.ts"
-      ],
+      "dirty": false,
+      "dirtyPaths": [],
       "sourceHashes": {
         "scripts/rsi-tf0592-statistical-adjudication.mjs": "a55605a077958ff1a663a89c6a1602c8262581e26f74951c88b9cf2ea19c79a7",
         "scripts/rsi-tf0592-statistical-adjudication.d.mts": "ed8f70486fcea6a78271e8112c2c366b22a7f7f23aea5ab89a2c01aafacb45ed",
@@ -61,9 +56,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 2616762368,
+      "freeMemoryBytes": 914694144,
       "disk": {
-        "freeBytes": 15399862272,
+        "freeBytes": 15401197568,
         "totalBytes": 322122543104,
         "status": "measured"
       }
