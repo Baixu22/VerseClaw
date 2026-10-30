@@ -1,0 +1,572 @@
+{
+  "schema": "OntologyProvenanceAudit/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts-relay-01a18d03",
+  "checkedAt": "2026-10-30T14:07:35.483Z",
+  "candidate": {
+    "commit": "5a67ae4aa68573aa59b57211c838051a904ff9a6",
+    "tree": "6a2ee0c895849588a334d943f6b4f203f6e43f6a",
+    "dirty": false
+  },
+  "candidateCapturedBeforeWritingDerivedArtifacts": true,
+  "sourceRefs": [
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "canonicalSha256": "9897a4f0dd837022dc62c87b9ff50c2cfbe19c3f18882b35090b85112495c7a1",
+      "rawSha256": "f5aaf5ffa271ebc23163706a45cc2ccc55ebbe3e3d3b159d29dcc76d33495b8a",
+      "candidateBlobRawSha256": "f5aaf5ffa271ebc23163706a45cc2ccc55ebbe3e3d3b159d29dcc76d33495b8a",
+      "tracked": true
+    },
+    {
+      "path": "docs/context-family/axioms.md",
+      "canonicalSha256": "2f9aac552c7c99b3fccd5ef2d612281d5494cfefab32c45112298f7a4f7cb3dc",
+      "rawSha256": "2f9aac552c7c99b3fccd5ef2d612281d5494cfefab32c45112298f7a4f7cb3dc",
+      "candidateBlobRawSha256": "2f9aac552c7c99b3fccd5ef2d612281d5494cfefab32c45112298f7a4f7cb3dc",
+      "tracked": true
+    },
+    {
+      "path": "docs/context-family/glossary.md",
+      "canonicalSha256": "34f0353028f0e13c8aeb83dd92af96a4e215b0e84b67fe574ca73e3ddf67cc62",
+      "rawSha256": "34f0353028f0e13c8aeb83dd92af96a4e215b0e84b67fe574ca73e3ddf67cc62",
+      "candidateBlobRawSha256": "34f0353028f0e13c8aeb83dd92af96a4e215b0e84b67fe574ca73e3ddf67cc62",
+      "tracked": true
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "canonicalSha256": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec",
+      "rawSha256": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec",
+      "candidateBlobRawSha256": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec",
+      "tracked": true
+    },
+    {
+      "path": "electron/services/task-ledger-api.ts",
+      "canonicalSha256": "b9f469fb56b4125eb2a0ed87342dd0c43bf8fe8807d800899899dfd24737044f",
+      "rawSha256": "b9f469fb56b4125eb2a0ed87342dd0c43bf8fe8807d800899899dfd24737044f",
+      "candidateBlobRawSha256": "b9f469fb56b4125eb2a0ed87342dd0c43bf8fe8807d800899899dfd24737044f",
+      "tracked": true
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "canonicalSha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8",
+      "rawSha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8",
+      "candidateBlobRawSha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8",
+      "tracked": true
+    },
+    {
+      "path": "harness/specs/fixtures/ontology-lite-existing-contracts/relations.invalid.json",
+      "canonicalSha256": "0cf28c67dffc4fa2d4043575bb07bcde6e040690d003e92c626ecd539340f834",
+      "rawSha256": "0cf28c67dffc4fa2d4043575bb07bcde6e040690d003e92c626ecd539340f834",
+      "candidateBlobRawSha256": "0cf28c67dffc4fa2d4043575bb07bcde6e040690d003e92c626ecd539340f834",
+      "tracked": true
+    },
+    {
+      "path": "harness/specs/fixtures/ontology-lite-existing-contracts/relations.valid.json",
+      "canonicalSha256": "5634b70311951823a73e89f05bc169970c4d4636507434d035833bbf1f304c1e",
+      "rawSha256": "5634b70311951823a73e89f05bc169970c4d4636507434d035833bbf1f304c1e",
+      "candidateBlobRawSha256": "5634b70311951823a73e89f05bc169970c4d4636507434d035833bbf1f304c1e",
+      "tracked": true
+    },
+    {
+      "path": "harness/specs/fixtures/ontology-lite-existing-contracts/sources.json",
+      "canonicalSha256": "80042bce59870278cb4e57825fc8a473e9835fad1f81bec24b8b851b62779495",
+      "rawSha256": "80042bce59870278cb4e57825fc8a473e9835fad1f81bec24b8b851b62779495",
+      "candidateBlobRawSha256": "80042bce59870278cb4e57825fc8a473e9835fad1f81bec24b8b851b62779495",
+      "tracked": true
+    },
+    {
+      "path": "harness/specs/rules/context-family-boundary.md",
+      "canonicalSha256": "a64257e132c3a3ccafe694dd9ef99ca6ced3988645bb7a54413e29f3746c55ba",
+      "rawSha256": "a64257e132c3a3ccafe694dd9ef99ca6ced3988645bb7a54413e29f3746c55ba",
+      "candidateBlobRawSha256": "a64257e132c3a3ccafe694dd9ef99ca6ced3988645bb7a54413e29f3746c55ba",
+      "tracked": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+      "canonicalSha256": "fd3527a77b8b6db1956ee649fa9aa29aa9db3092679aa0a44889d1ce721abdc7",
+      "rawSha256": "fd3527a77b8b6db1956ee649fa9aa29aa9db3092679aa0a44889d1ce721abdc7",
+      "candidateBlobRawSha256": "fd3527a77b8b6db1956ee649fa9aa29aa9db3092679aa0a44889d1ce721abdc7",
+      "tracked": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
+      "canonicalSha256": "6543804277d808a4c63f70678887684d784a41e99760b9b05eeb2647d856b5c5",
+      "rawSha256": "6543804277d808a4c63f70678887684d784a41e99760b9b05eeb2647d856b5c5",
+      "candidateBlobRawSha256": "6543804277d808a4c63f70678887684d784a41e99760b9b05eeb2647d856b5c5",
+      "tracked": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/routing-memo.ts",
+      "canonicalSha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea",
+      "rawSha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea",
+      "candidateBlobRawSha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea",
+      "tracked": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "canonicalSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "rawSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "candidateBlobRawSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "tracked": true
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+      "canonicalSha256": "bfa7bed5fb78a3949c215c46026447d20373b86fcdf0466e732cf3394e2a806b",
+      "rawSha256": "bfa7bed5fb78a3949c215c46026447d20373b86fcdf0466e732cf3394e2a806b",
+      "candidateBlobRawSha256": "bfa7bed5fb78a3949c215c46026447d20373b86fcdf0466e732cf3394e2a806b",
+      "tracked": true
+    },
+    {
+      "path": "scripts/check-evidence-refs.mjs",
+      "canonicalSha256": "e3cf053fc50dcb7c6756fd85d68131ca4dc54b7bd1fea4bff9fc7c71ac1d0ea4",
+      "rawSha256": "e3cf053fc50dcb7c6756fd85d68131ca4dc54b7bd1fea4bff9fc7c71ac1d0ea4",
+      "candidateBlobRawSha256": "e3cf053fc50dcb7c6756fd85d68131ca4dc54b7bd1fea4bff9fc7c71ac1d0ea4",
+      "tracked": true
+    },
+    {
+      "path": "scripts/lib/canonical-evidence-hash.mjs",
+      "canonicalSha256": "f9ccaa17d188819f80b5b037e28d7ef0cbe0ec93d0fed0419a32d038ca300082",
+      "rawSha256": "f9ccaa17d188819f80b5b037e28d7ef0cbe0ec93d0fed0419a32d038ca300082",
+      "candidateBlobRawSha256": "f9ccaa17d188819f80b5b037e28d7ef0cbe0ec93d0fed0419a32d038ca300082",
+      "tracked": true
+    },
+    {
+      "path": "shared/permission-effect-contract.ts",
+      "canonicalSha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087",
+      "rawSha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087",
+      "candidateBlobRawSha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087",
+      "tracked": true
+    },
+    {
+      "path": "shared/product-semantic-unsafe-claims.ts",
+      "canonicalSha256": "08ee7ec6cfbfa998e65cda9eed53aa63041df2f0182c8d0cd6f80f1906a8bb53",
+      "rawSha256": "08ee7ec6cfbfa998e65cda9eed53aa63041df2f0182c8d0cd6f80f1906a8bb53",
+      "candidateBlobRawSha256": "08ee7ec6cfbfa998e65cda9eed53aa63041df2f0182c8d0cd6f80f1906a8bb53",
+      "tracked": true
+    },
+    {
+      "path": "shared/product-semantics.ts",
+      "canonicalSha256": "55e3de16fa49841f804492e43742fc9e951ed0af61493f1f8470bf61e00679a1",
+      "rawSha256": "55e3de16fa49841f804492e43742fc9e951ed0af61493f1f8470bf61e00679a1",
+      "candidateBlobRawSha256": "55e3de16fa49841f804492e43742fc9e951ed0af61493f1f8470bf61e00679a1",
+      "tracked": true
+    },
+    {
+      "path": "shared/types/coding-run.ts",
+      "canonicalSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "rawSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "candidateBlobRawSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "tracked": true
+    },
+    {
+      "path": "shared/types/identity-scope.ts",
+      "canonicalSha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc",
+      "rawSha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc",
+      "candidateBlobRawSha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc",
+      "tracked": true
+    },
+    {
+      "path": "shared/types/task-ledger-reference.ts",
+      "canonicalSha256": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d",
+      "rawSha256": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d",
+      "candidateBlobRawSha256": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d",
+      "tracked": true
+    },
+    {
+      "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+      "canonicalSha256": "70f045e1d49333ee4788c97d2deb726cdc274f5e4be4aa60d2f2b6a7980b5798",
+      "rawSha256": "70f045e1d49333ee4788c97d2deb726cdc274f5e4be4aa60d2f2b6a7980b5798",
+      "candidateBlobRawSha256": "70f045e1d49333ee4788c97d2deb726cdc274f5e4be4aa60d2f2b6a7980b5798",
+      "tracked": true
+    },
+    {
+      "path": "src/lib/task-ledger-plan-projection.ts",
+      "canonicalSha256": "0865a9aba2710d254a8d8ab7e9c64eaf94391c577df173f6269f632e6f8279a6",
+      "rawSha256": "0865a9aba2710d254a8d8ab7e9c64eaf94391c577df173f6269f632e6f8279a6",
+      "candidateBlobRawSha256": "0865a9aba2710d254a8d8ab7e9c64eaf94391c577df173f6269f632e6f8279a6",
+      "tracked": true
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "canonicalSha256": "e34935803a6fdc3f03fd72879e9a8b39a000856353d1ddab0e55c984c82a45df",
+      "rawSha256": "e34935803a6fdc3f03fd72879e9a8b39a000856353d1ddab0e55c984c82a45df",
+      "candidateBlobRawSha256": "e34935803a6fdc3f03fd72879e9a8b39a000856353d1ddab0e55c984c82a45df",
+      "tracked": true
+    },
+    {
+      "path": "src/pages/Chat/task-loop-upgrade.ts",
+      "canonicalSha256": "7c069d30743011fdb05cc1dc36c354bdd33c18e52e4deb9b3c93620de723c531",
+      "rawSha256": "7c069d30743011fdb05cc1dc36c354bdd33c18e52e4deb9b3c93620de723c531",
+      "candidateBlobRawSha256": "7c069d30743011fdb05cc1dc36c354bdd33c18e52e4deb9b3c93620de723c531",
+      "tracked": true
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "canonicalSha256": "049add8d737bc314bbd0643fac3bcf98700d7936586e1f88efde3c2e7ec5ad6a",
+      "rawSha256": "049add8d737bc314bbd0643fac3bcf98700d7936586e1f88efde3c2e7ec5ad6a",
+      "candidateBlobRawSha256": "049add8d737bc314bbd0643fac3bcf98700d7936586e1f88efde3c2e7ec5ad6a",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/identity-scope.test.ts",
+      "canonicalSha256": "338d0e68099b18b75b8670f600eabf4d8878025e7c7c17f67b0e291f985fcb3e",
+      "rawSha256": "338d0e68099b18b75b8670f600eabf4d8878025e7c7c17f67b0e291f985fcb3e",
+      "candidateBlobRawSha256": "338d0e68099b18b75b8670f600eabf4d8878025e7c7c17f67b0e291f985fcb3e",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/orchestration-plan-edit-draft.test.ts",
+      "canonicalSha256": "c74e1d38015c0e01c0ea84993bd8ea177f3ee9ccab60cec873e5b7da80ff7be7",
+      "rawSha256": "c74e1d38015c0e01c0ea84993bd8ea177f3ee9ccab60cec873e5b7da80ff7be7",
+      "candidateBlobRawSha256": "c74e1d38015c0e01c0ea84993bd8ea177f3ee9ccab60cec873e5b7da80ff7be7",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/orchestration-plan-ledger-projection.test.ts",
+      "canonicalSha256": "5b64f83d2772f7b4915ec5106a20c752b353551c85d2173a096054c03fc19451",
+      "rawSha256": "5b64f83d2772f7b4915ec5106a20c752b353551c85d2173a096054c03fc19451",
+      "candidateBlobRawSha256": "5b64f83d2772f7b4915ec5106a20c752b353551c85d2173a096054c03fc19451",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/permission-effect-contract.test.ts",
+      "canonicalSha256": "ea947f5d3f692d57531657b595732d3777fd9bcd9aa5eb6b28a65d62129b8b26",
+      "rawSha256": "ea947f5d3f692d57531657b595732d3777fd9bcd9aa5eb6b28a65d62129b8b26",
+      "candidateBlobRawSha256": "ea947f5d3f692d57531657b595732d3777fd9bcd9aa5eb6b28a65d62129b8b26",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/permission-effect-wiring.test.ts",
+      "canonicalSha256": "a4012472dd4af0ed21f6c79a892b3028a763d00a1ca989c830769fd3bec8d06f",
+      "rawSha256": "a4012472dd4af0ed21f6c79a892b3028a763d00a1ca989c830769fd3bec8d06f",
+      "candidateBlobRawSha256": "a4012472dd4af0ed21f6c79a892b3028a763d00a1ca989c830769fd3bec8d06f",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/product-semantics.test.ts",
+      "canonicalSha256": "65c352a7c8952f80ad6585ccebc26f1308d8a3b063ea1624400f5fc3591810ed",
+      "rawSha256": "65c352a7c8952f80ad6585ccebc26f1308d8a3b063ea1624400f5fc3591810ed",
+      "candidateBlobRawSha256": "65c352a7c8952f80ad6585ccebc26f1308d8a3b063ea1624400f5fc3591810ed",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/routing-memo.test.ts",
+      "canonicalSha256": "e16840383a9302c478e467bece5708b0f8a4d14f9fe4b27691bb9ee1c72b068b",
+      "rawSha256": "e16840383a9302c478e467bece5708b0f8a4d14f9fe4b27691bb9ee1c72b068b",
+      "candidateBlobRawSha256": "e16840383a9302c478e467bece5708b0f8a4d14f9fe4b27691bb9ee1c72b068b",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "canonicalSha256": "faaf02c1c3688308d5e7e7656def58c8fd540de1d9769d0880e8331bc9d5c007",
+      "rawSha256": "faaf02c1c3688308d5e7e7656def58c8fd540de1d9769d0880e8331bc9d5c007",
+      "candidateBlobRawSha256": "faaf02c1c3688308d5e7e7656def58c8fd540de1d9769d0880e8331bc9d5c007",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/task-ledger-reference.test.ts",
+      "canonicalSha256": "16dc948dacc0afc4a059695e09c99ffa1fc1f67e19d2c9af7874994ebccf4606",
+      "rawSha256": "16dc948dacc0afc4a059695e09c99ffa1fc1f67e19d2c9af7874994ebccf4606",
+      "candidateBlobRawSha256": "16dc948dacc0afc4a059695e09c99ffa1fc1f67e19d2c9af7874994ebccf4606",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/task-ledger-service.test.ts",
+      "canonicalSha256": "d588f7fcc7af26cab4a3c089855e6a356d74c17146470359509a934bff33fa6e",
+      "rawSha256": "d588f7fcc7af26cab4a3c089855e6a356d74c17146470359509a934bff33fa6e",
+      "candidateBlobRawSha256": "d588f7fcc7af26cab4a3c089855e6a356d74c17146470359509a934bff33fa6e",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/task-loop-controller.test.ts",
+      "canonicalSha256": "2599b38b67194f2f1f82b833498fea06c2415c0111fb46872def82cae043f009",
+      "rawSha256": "2599b38b67194f2f1f82b833498fea06c2415c0111fb46872def82cae043f009",
+      "candidateBlobRawSha256": "2599b38b67194f2f1f82b833498fea06c2415c0111fb46872def82cae043f009",
+      "tracked": true
+    },
+    {
+      "path": "tests/unit/task-loop-upgrade.test.ts",
+      "canonicalSha256": "334cfd863ff3d78dac80210c0582c740a28b64a82b512c2cb89bb2f41c891ba1",
+      "rawSha256": "334cfd863ff3d78dac80210c0582c740a28b64a82b512c2cb89bb2f41c891ba1",
+      "candidateBlobRawSha256": "334cfd863ff3d78dac80210c0582c740a28b64a82b512c2cb89bb2f41c891ba1",
+      "tracked": true
+    }
+  ],
+  "hashPolicy": {
+    "algorithm": "sha256",
+    "canonical": "canonical-evidence-hash/v1",
+    "normalization": "UTF-8 CRLF/CR to LF; binary bytes unchanged",
+    "raw": "Separate original-byte digest for recovery; not the cross-platform integrity comparison"
+  },
+  "counts": {
+    "relations": 6,
+    "sources": 40,
+    "testFiles": 6,
+    "passed": 136,
+    "failed": 0,
+    "skipped": 0,
+    "reportNegativeControls": 8,
+    "sourceAndReportCases": [
+      {
+        "name": "evidence reference path validation (#92) resolves every declared shared evidence path from a clean checkout",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding derives a versioned source report from a clean candidate and recomputes its bindings",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects old-contract at report-version",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects old-report at report-version",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-actor at actor-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects human-claim at actor-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-command at command-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-time at report-time",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-checks at checks-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects empty-checks at checks-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects failed-check at checks-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-digests at source-digest",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects wrong-digest at source-digest",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects wrong-candidate at candidate-mismatch",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects wrong-tree at candidate-mismatch",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects wrong-policy at hash-policy",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-relations at relation-coverage",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-owner-map at relation-coverage",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects missing-limitations at limitations-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects replaced-limitations at limitations-required",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects forged-grant at undeclared-report-field",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects empty or incomplete reports: null",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects empty or incomplete reports: {}",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects empty or incomplete reports: undefined",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects empty or incomplete reports: {\"status\":\"valid\"}",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding loads and rejects an unsupported version from the supplied candidate contract",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects a repository escape ../outside.md before reading its bytes",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects a repository escape /outside.md before reading its bytes",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects a repository escape C:/outside.md before reading its bytes",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects symlink/junction escape for an otherwise tracked source path",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects delete source input without accepting an old pass",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects move source input without accepting an old pass",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects change source input without accepting an old pass",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding rejects untracked source input without accepting an old pass",
+        "status": "passed"
+      },
+      {
+        "name": "semantic evidence version, candidate and source binding distinguishes original CRLF bytes from the LF canonical candidate digest",
+        "status": "passed"
+      }
+    ]
+  },
+  "typecheck": {
+    "success": true,
+    "mode": "parallel",
+    "testTypes": {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 36225,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    },
+    "cache": {
+      "enabled": false,
+      "status": "disabled",
+      "key": "848fde11d74e0ff5c76f94cd917d039cc29573e9759048eead9297c088cf8cb6",
+      "inputCount": 12865,
+      "report": "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\artifacts\\typecheck-cache\\report.json"
+    },
+    "totalDurationMs": 61882,
+    "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+    "results": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 58
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 48567
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 8613
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 36225,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  },
+  "criteria": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "artifact": "semantic-report.json: schema/version/candidate/actor/time/checks/diagnostics/unverified"
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "artifact": "sourceAndReportCases: source-scope/symlink/untracked; semantic-report.json: sourceRefs"
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "artifact": "report-controls.json and sourceAndReportCases: version/digest/candidate/missing/CRLF negatives"
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "artifact": "git diff of source candidate and 136-test compatibility suite"
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "artifact": "SHA256SUMS + credential-scan.json; historical commit paths unchanged"
+    }
+  ],
+  "rawRunRoot": "D:/tmp/ontology-practice-20261030/runs/TF-0626/clean-5a67ae4aa",
+  "rawVitest": {
+    "path": "D:\\tmp\\ontology-practice-20261030\\runs\\TF-0626\\clean-5a67ae4aa\\vitest.json",
+    "sha256": "1d8cb402b2e5875e66525286bac3426f9c67caba173876e0d15a0b69d1ca342b"
+  },
+  "failuresRetained": [
+    {
+      "path": "D:/tmp/ontology-practice-20261030/runs/TF-0626/vitest-development.json",
+      "exitCode": 1,
+      "passed": 79,
+      "failed": 1,
+      "cause": "CRLF fixture changed Git conversion mode without refreshing index"
+    },
+    {
+      "path": "D:/tmp/ontology-practice-20261030/runs/TF-0626/relay-module-cache-reproduction.json",
+      "exitCode": 1,
+      "cause": "Same-process module cache returned previous source version; fixed by per-load namespace"
+    }
+  ],
+  "environment": {
+    "node": "v24.22.1",
+    "pnpm": "11.2.2",
+    "GOMAXPROCS": "4",
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "dependencies": "Existing D:/ClawX/node_modules and source-parity-verified VerseBrowser dist reused; not a fresh install/build."
+  },
+  "readmeReview": {
+    "paths": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "decision": "No product behavior or user entry change; existing boundary references remain accurate. Product semantics explains the new source audit."
+  },
+  "historicalEvidence": {
+    "policy": "Original source-audit, constraint-audit and research manifests retain their original candidates and verdicts.",
+    "unchangedPaths": true
+  },
+  "notRun": [
+    "TF-0627 native gate integration negatives",
+    "full Harness CI",
+    "Electron E2E",
+    "live provider",
+    "independent engineering acceptance",
+    "business benefit / GA / release approval"
+  ],
+  "limitation": "Static source and synthetic metadata only. Does not verify owner-store state, runtime receipt, grant or actual task completion."
+}

@@ -1,0 +1,131 @@
+{
+  "schema": "ProductSemanticReportControls/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts-relay-01a18d03",
+  "checkedAt": "2026-10-30T14:07:35.482Z",
+  "candidate": {
+    "commit": "5a67ae4aa68573aa59b57211c838051a904ff9a6",
+    "tree": "6a2ee0c895849588a334d943f6b4f203f6e43f6a",
+    "dirty": false
+  },
+  "positive": {
+    "valid": true,
+    "checkCount": 3,
+    "relationCount": 6
+  },
+  "negative": [
+    {
+      "id": "unsupported-contract",
+      "expectedRule": "report-version",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "contractVersion",
+          "rule": "report-version",
+          "message": "Unsupported report or semantic contract version."
+        }
+      ]
+    },
+    {
+      "id": "missing-actor",
+      "expectedRule": "actor-required",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "actor",
+          "rule": "actor-required",
+          "message": "The report must identify its actual agent actor."
+        }
+      ]
+    },
+    {
+      "id": "missing-checks",
+      "expectedRule": "checks-required",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "checks",
+          "rule": "checks-required",
+          "message": "Every declared relation, source and candidate check must be present and successful."
+        }
+      ]
+    },
+    {
+      "id": "wrong-digest",
+      "expectedRule": "source-digest",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "sourceRefs",
+          "rule": "source-digest",
+          "message": "Source paths or their candidate/canonical digests do not match."
+        }
+      ]
+    },
+    {
+      "id": "wrong-candidate",
+      "expectedRule": "candidate-mismatch",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "candidate",
+          "rule": "candidate-mismatch",
+          "message": "The report does not identify this current clean candidate."
+        }
+      ]
+    },
+    {
+      "id": "wrong-policy",
+      "expectedRule": "hash-policy",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "hashPolicy",
+          "rule": "hash-policy",
+          "message": "Hash algorithm and normalization must match the canonical evidence policy."
+        }
+      ]
+    },
+    {
+      "id": "missing-limitations",
+      "expectedRule": "limitations-required",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "unverified",
+          "rule": "limitations-required",
+          "message": "Every source-declared static-evidence limitation must remain explicit."
+        }
+      ]
+    },
+    {
+      "id": "empty-report",
+      "expectedRule": "report-required",
+      "valid": false,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "report",
+          "rule": "report-required",
+          "message": "A nonempty semantic report is required."
+        }
+      ]
+    }
+  ],
+  "unverified": [
+    "Static declarations and source bytes only; no owner-store, runtime receipt, actual task completion or grant was verified.",
+    "No Electron confirmation journey was executed in this source audit.",
+    "No live Chat/ledger refresh receipt; source references do not establish task completion.",
+    "No live plan/edit journey; this does not prove an editable DAG or transactional rollback.",
+    "No live Task Loop execution; a successful run alone is not a completed task.",
+    "The contract and coordinator reference path are source-backed, but a complete scheduling-card-to-ledger production journey and an inheritance writer were not established; documented-only for that claim.",
+    "No live same-session receipt; blocked terminal evidence can represent poor quality and is not task completion."
+  ]
+}
