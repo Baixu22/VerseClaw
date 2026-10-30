@@ -1,7 +1,9 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { buildTaskCorpus, buildCalibrationSamples, RUBRIC_CONFIG } from '../../scripts/lib/rsi-historical-task-corpus.mjs';
-import { gradeExecutionRecord, gradeExecutionArtifact, gradeTaskExecutions, gradeTraceEvidence, gradeRubricReceipts, buildRubricRequest, graderDigest, combineGraderVerdicts, classifyZeroPassTrials, type RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
+import { gradeExecutionRecord, gradeExecutionCalibration, gradeExecutionArtifact, gradeTaskExecutions, gradeTraceEvidence, gradeTraceCalibration, gradeRubricReceipts, buildRubricRequest, graderDigest, combineGraderVerdicts, classifyZeroPassTrials, runTaskOracles, type RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
 
 const corpus = buildTaskCorpus();
 const samples = buildCalibrationSamples(corpus);
@@ -9,7 +11,7 @@ const task = corpus.tasks[0];
 
 describe('Agent-first executable graders', () => {
   it('calibrates code grading against known good, bad and unknown raw evidence', () => {
-    for (const sample of samples.deterministic) expect(gradeExecutionRecord(task, sample.record, sample.stdout, sample.stderr, { calibration: true }).verdict, sample.id).toBe(sample.expected);
+    for (const sample of samples.deterministic) expect(gradeExecutionCalibration(task, sample.record, sample.stdout, sample.stderr), sample.id).toMatchObject({ verdict: sample.expected, evidenceKind: 'calibration' });
   });
   it('requires the complete frozen oracle set rather than a duplicated passing command', () => {
     const good = samples.deterministic[0];
@@ -17,7 +19,7 @@ describe('Agent-first executable graders', () => {
     expect(gradeTaskExecutions(multi, [{ record: good.record, stdout: good.stdout, stderr: '' }]).verdict).toBe('unknown');
   });
   it('calibrates authorization traces without treating missing effects as a pass', () => {
-    for (const sample of samples.trace) expect(gradeTraceEvidence(sample.trace).verdict, sample.id).toBe(sample.expected);
+    for (const sample of samples.trace) expect(gradeTraceCalibration(sample.trace).verdict, sample.id).toBe(sample.expected);
     const good = samples.trace[0].trace!;
     expect(gradeTraceEvidence({ ...good, events: [{ kind: 'invented-kind', authorized: true }] }).verdict).toBe('unknown');
     expect(gradeTraceEvidence({ ...good, runId: '' }).verdict).toBe('unknown');
@@ -31,6 +33,34 @@ describe('Agent-first executable graders', () => {
     const pass = { verdict: 'pass' as const }, fail = { verdict: 'fail' as const }, unknown = { verdict: 'unknown' as const };
     expect(combineGraderVerdicts(fail, pass, pass).verdict).toBe('fail');
     expect(combineGraderVerdicts(unknown, pass, pass).verdict).toBe('unknown');
+    expect(combineGraderVerdicts(pass, pass, pass).verdict).toBe('unknown');
+    const good = samples.deterministic[0];
+    expect(combineGraderVerdicts(gradeExecutionCalibration(task, good.record, good.stdout), gradeTraceCalibration(samples.trace[0].trace), pass).verdict).toBe('unknown');
+  });
+  it('accepts an actual oracle, then rejects copied attestations and post-run mutation', () => {
+    const frozen = JSON.parse(readFileSync('harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json', 'utf8')).tasks[0];
+    const run = runTaskOracles(frozen, process.cwd(), 'D:/tmp/rsi-grader-ownership-tests');
+    const execution = run.executions[0];
+    expect(run.verdict.verdict).toBe('pass');
+    expect(gradeExecutionArtifact(frozen, execution.artifactDirectory, execution.attestation).verdict).toBe('pass');
+    expect(gradeExecutionArtifact(frozen, execution.artifactDirectory, { ...execution.attestation }).verdict).toBe('unknown');
+    expect(gradeTraceEvidence(run.trace).verdict).toBe('pass');
+    expect(combineGraderVerdicts(run.verdict, gradeTraceEvidence(run.trace), { verdict: 'pass' }).verdict).toBe('unknown');
+    run.trace.events[0].authorized = false;
+    expect(gradeTraceEvidence(run.trace).verdict).toBe('unknown');
+    execution.record.exitCode = 7;
+    expect(gradeExecutionRecord(frozen, execution.record, execution.stdout, execution.stderr).verdict).toBe('unknown');
+    expect(() => runTaskOracles({ ...frozen, id: 'invented-task' }, process.cwd())).toThrow('frozen historical execution corpus');
+  }, 30000);
+  it('rejects fabricated files even when their caller supplies matching hashes', () => {
+    mkdirSync('D:/tmp/rsi-grader-ownership-tests', { recursive: true });
+    const dir = mkdtempSync('D:/tmp/rsi-grader-ownership-tests/forged-');
+    const stdout = samples.deterministic[0].stdout, stderr = '';
+    const text = JSON.stringify({ ...samples.deterministic[0].record, stdoutSha256: graderDigest(stdout), stderrSha256: graderDigest(stderr) });
+    writeFileSync(join(dir, 'execution-receipt.json'), text);
+    writeFileSync(join(dir, 'stdout.log'), stdout); writeFileSync(join(dir, 'stderr.log'), stderr);
+    const attestation = { receiptSha256: graderDigest(text), stdoutSha256: graderDigest(stdout), stderrSha256: graderDigest(stderr) };
+    expect(gradeExecutionArtifact(task, dir, attestation).verdict).toBe('unknown');
   });
   it('distinguishes a valid unknown vote from missing or forged model receipts', () => {
     const sample = samples.rubric[0];

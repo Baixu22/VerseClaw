@@ -22,6 +22,72 @@ ownedPaths:
   - package.json
   - docs/README.md
   - docs/dev/rsi-capability-and-boundaries.md
+residualPaths:
+  - harness/specs/fixtures/agent-first-framework/SHA256SUMS
+  - harness/specs/fixtures/agent-first-framework/calibration/deterministic/known-bad.json
+  - harness/specs/fixtures/agent-first-framework/calibration/deterministic/known-good.json
+  - harness/specs/fixtures/agent-first-framework/calibration/rubric/known-bad.json
+  - harness/specs/fixtures/agent-first-framework/calibration/rubric/known-good.json
+  - harness/specs/fixtures/agent-first-framework/credential-scan.json
+  - harness/specs/fixtures/agent-first-framework/loop-credential-scan.json
+  - harness/specs/fixtures/agent-first-framework/loop-development-evidence.json
+  - harness/specs/fixtures/agent-first-framework/loop-record.json
+  - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
+  - harness/specs/fixtures/agent-first-framework/registry.json
+  - harness/specs/fixtures/agent-first-framework/validation-report.json
+  - harness/specs/fixtures/agent-first-system/SHA256SUMS
+  - harness/specs/fixtures/agent-first-system/calibration.v1.json
+  - harness/specs/fixtures/agent-first-system/corpus-validation.v1.json
+  - harness/specs/fixtures/agent-first-system/credential-scan.json
+  - harness/specs/fixtures/agent-first-system/development-evidence.v1.json
+  - harness/specs/fixtures/agent-first-system/registry-extension.v1.json
+  - harness/specs/fixtures/agent-first-system/tasks.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS
+  - harness/specs/fixtures/agent-first-task-corpus/calibration-results.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration-samples.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/known-bad.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/known-good.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/unknown.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/rubric/known-bad.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/rubric/known-good.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/rubric/unknown.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/trace/known-bad.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/trace/known-good.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/trace/unknown.json
+  - harness/specs/fixtures/agent-first-task-corpus/credential-scan.json
+  - harness/specs/fixtures/agent-first-task-corpus/model-calibration-attempt1.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/model-calibration.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json
+  - harness/specs/guides/agent-first-acceptance.md
+  - harness/specs/tasks/agent-first-evaluation-framework.md
+  - harness/specs/tasks/agent-first-evaluation-loop.md
+  - harness/specs/tasks/agent-first-task-corpus-calibration.md
+  - harness/specs/tasks/agent-first-task-corpus.md
+  - scripts/agent-first-corpus-check.d.mts
+  - scripts/agent-first-corpus-check.mjs
+  - scripts/agent-first-framework-check.d.mts
+  - scripts/agent-first-framework-check.mjs
+  - scripts/agent-first-loop-check.d.mts
+  - scripts/agent-first-loop-check.mjs
+  - scripts/lib/agent-first-evaluation-framework.d.mts
+  - scripts/lib/agent-first-evaluation-framework.mjs
+  - scripts/lib/agent-first-evaluation-loop.d.mts
+  - scripts/lib/agent-first-evaluation-loop.mjs
+  - scripts/lib/agent-first-graders.d.mts
+  - scripts/lib/agent-first-graders.mjs
+  - scripts/lib/agent-first-task-corpus.d.mts
+  - scripts/lib/agent-first-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/rsi-historical-task-corpus.d.mts
+  - scripts/rsi-historical-task-corpus.mjs
+  - tests/unit/agent-first-evaluation-framework.test.ts
+  - tests/unit/agent-first-evaluation-loop.test.ts
+  - tests/unit/agent-first-graders.test.ts
+  - tests/unit/agent-first-task-corpus.test.ts
+  - tests/unit/rsi-historical-task-corpus.test.ts
 requiredProfiles:
   - fast
 requiredRules:
@@ -33,6 +99,9 @@ requiredRules:
   - agent-engineering-acceptance-boundary
 humanEvidence: not-required
 requiredTests:
+  - pnpm rsi:corpus:check
+  - node scripts/agent-first-corpus-check.mjs
+  - pnpm harness validate --spec harness/specs/tasks/agent-first-task-corpus-calibration.md
   - pnpm rsi:tf0592:check
   - pnpm exec vitest run tests/unit/rsi-tf0592-statistical-adjudication.test.ts tests/unit/rsi-tf0604-baseline.test.ts --maxWorkers=1
   - pnpm harness validate --spec harness/specs/tasks/rsi-tf0592-statistical-adjudication.md
@@ -85,3 +154,10 @@ approximation at 95% confidence and 80% target power, using observed case-pair
 variance and the already frozen absolute effect. Zero variance does not establish
 an interval or a zero-sample power design.
 It is not a measured provider benefit or an authority to change product locks.
+
+The exact residualPaths are the retained framework and two corpus prerequisites
+already present in commits `7d687f0b4` and `da531317e`. They remain governed by
+`agent-first-task-corpus-calibration.md`, whose checker and Harness validation
+are required above. The original diffBase and every statistical acceptance
+criterion remain unchanged. Residual declaration records separate ownership;
+it does not make their evidence current or omit their validation.

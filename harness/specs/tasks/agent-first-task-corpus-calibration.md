@@ -80,6 +80,8 @@ ownedPaths:
   - scripts/agent-first-corpus-check.mjs
   - scripts/agent-first-corpus-check.d.mts
   - tests/unit/agent-first-task-corpus.test.ts
+residualPaths:
+  - harness/specs/tasks/rsi-tf0592-statistical-adjudication.md
 requiredProfiles:
   - fast
 requiredRules:
@@ -145,3 +147,12 @@ Its registered extension composes with the sealed base registry without rewritin
 the historical TF-0620/0621 snapshots or either corpus. Main implementation/evidence
 bytes were imported from `b6b50ceaf4578134eea81f9790a85adac25b7b18`; displaced
 working/index/HEAD bytes and the original reference failures have a private recovery index.
+
+The historical grader implementation is now `tf0590-graders/v2`: calibration
+returns an explicit calibration evidence kind; only runner-issued unmodified
+execution/trace objects can enter runtime grading. Persisted hash-only
+attestations are audit information and cannot prove ownership across processes.
+Independent replay therefore reruns the locked oracle rather than importing a
+caller-signed receipt. Provider votes retained here are calibration evidence;
+a production rubric verdict remains unavailable, so calibration cannot yield
+a combined production pass.

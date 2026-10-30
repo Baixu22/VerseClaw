@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { parseFrontmatter } from '../../harness/src/specs.mjs';
 import { sha256File, TF0604_PACK_DIR } from '../rsi-tf0604-baseline.mjs';
-import { GRADER_VERSION, RUBRIC_SYSTEM_PROMPT, graderDigest, gradeExecutionRecord, gradeTraceEvidence, gradeRubricReceipts, combineGraderVerdicts, classifyZeroPassTrials } from './agent-first-graders.mjs';
+import { GRADER_VERSION, RUBRIC_SYSTEM_PROMPT, graderDigest, gradeExecutionCalibration, gradeTraceCalibration, gradeRubricReceipts, combineGraderVerdicts, classifyZeroPassTrials } from './agent-first-graders.mjs';
 
 export const TF0590_PACK_DIR = 'harness/specs/fixtures/agent-first-task-corpus';
 export const CORPUS_ACTOR = 'codex/tf0590-corpus-owner';
@@ -129,8 +129,8 @@ export function buildCalibrationSamples(corpus) {
 
 export function replayCalibration(corpus, samples, modelReceipts = []) {
   const rows = [
-    ...samples.deterministic.map((sample) => ({ graderId: 'deterministic-final-state', id: sample.id, expected: sample.expected, observed: gradeExecutionRecord(corpus.tasks[0], sample.record, sample.stdout, sample.stderr, { calibration: true }).verdict })),
-    ...samples.trace.map((sample) => ({ graderId: 'trace-authorization', id: sample.id, expected: sample.expected, observed: gradeTraceEvidence(sample.trace).verdict })),
+    ...samples.deterministic.map((sample) => ({ graderId: 'deterministic-final-state', id: sample.id, expected: sample.expected, observed: gradeExecutionCalibration(corpus.tasks[0], sample.record, sample.stdout, sample.stderr).verdict })),
+    ...samples.trace.map((sample) => ({ graderId: 'trace-authorization', id: sample.id, expected: sample.expected, observed: gradeTraceCalibration(sample.trace).verdict })),
     ...samples.rubric.map((sample) => { const result = gradeRubricReceipts(sample, modelReceipts.filter((receipt) => receipt.sampleId === sample.id), samples.rubricConfig); return { graderId: 'rubric-clarity', id: sample.id, expected: sample.expected, observed: result.verdict, receiptsValid: result.receiptsValid }; }),
   ];
   const pass = { verdict: 'pass' }, fail = { verdict: 'fail' }, unknown = { verdict: 'unknown' };

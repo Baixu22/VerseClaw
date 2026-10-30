@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { buildTaskCorpus, validateTaskCorpus, buildCalibrationSamples, replayCalibration, TF0590_PACK_DIR } from '../../scripts/lib/rsi-historical-task-corpus.mjs';
-import { validateTaskCorpusPack } from '../../scripts/rsi-historical-task-corpus.mjs';
+import { validateTaskCorpusPack, validateTaskCorpusRegistry } from '../../scripts/rsi-historical-task-corpus.mjs';
 import { loadCorpus, checkCorpus } from '../../scripts/lib/agent-first-task-corpus.mjs';
 import { validateFrameworkRegistry } from '../../scripts/lib/agent-first-evaluation-framework.mjs';
 import type { RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
@@ -54,5 +54,16 @@ describe('TF-0590 real task corpus and grader calibration', () => {
     expect(base.registeredSuites[0].provenance).toBe('harness/specs/fixtures/agent-first-acceptance/matrix.json');
     expect(base.registeredSuites[0].taskIds).toBeUndefined();
     expect(extension.registeredSuites[0]).toMatchObject({ id: 'rsi-historical-core', split: { public: 12, heldOut: 12 } });
+  });
+  it('rejects altered profile, adapter and rubric bindings even with valid registry structure', () => {
+    const original = JSON.parse(readFileSync(`${TF0590_PACK_DIR}/registry-extension.v1.json`, 'utf8'));
+    expect(validateTaskCorpusRegistry(original).passed).toBe(true);
+    for (const change of ['profile', 'adapter', 'rubric']) {
+      const extension = structuredClone(original);
+      if (change === 'profile') extension.registeredProfiles[0].runner.seeds = [4, 5, 6];
+      if (change === 'adapter') extension.registeredSubjects[0].adapterEntrypoint = 'scripts/agent-first-corpus-check.mjs';
+      if (change === 'rubric') extension.registeredGraders[2].promptDigest = `sha256:${'a'.repeat(64)}`;
+      expect(validateTaskCorpusRegistry(extension).errors, change).toContain('registry-extension-binding');
+    }
   });
 });

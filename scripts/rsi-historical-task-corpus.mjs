@@ -93,6 +93,14 @@ export async function runModelCalibration(root = ROOT, resource = {}) {
 }
 
 export function registerTaskCorpus(root = ROOT) {
+  const { extension, composed } = buildRegistryExtension(root);
+  const validation = validateFrameworkRegistry(composed);
+  if (validation.violations.length) throw new Error(JSON.stringify(validation.violations));
+  writeJson(join(root, TF0590_PACK_DIR, 'registry-extension.v1.json'), extension);
+  return validation;
+}
+
+function buildRegistryExtension(root) {
   const pack = join(root, TF0590_PACK_DIR);
   const corpus = readJson(join(pack, FILES[0]));
   const registryPath = join(root, 'harness/specs/fixtures/agent-first-framework/registry.json');
@@ -116,20 +124,25 @@ export function registerTaskCorpus(root = ROOT) {
   const profile = { ...registry.registeredProfiles[0], id: 'rsi-historical-profile', title: 'RSI historical task calibration profile', subjectId, suiteId: suite.id, graderIds: graders.map((grader) => grader.id), status: 'not-run' };
   const extension = { schemaVersion: 'AgentFirstRegistryExtension/v1', driven_by: 'agent', actor: CORPUS_ACTOR, baseRegistry: 'harness/specs/fixtures/agent-first-framework/registry.json', baseRegistryDigest: `sha256:${sha256File(registryPath)}`, registeredSubjects: [subject], registeredSuites: [suite], registeredGraders: graders, registeredProfiles: [profile] };
   const composed = { ...registry, registeredSubjects: [...registry.registeredSubjects, subject], registeredSuites: [...registry.registeredSuites, suite], registeredGraders: [...registry.registeredGraders, ...graders], registeredProfiles: [...registry.registeredProfiles, profile] };
-  const validation = validateFrameworkRegistry(composed);
-  if (validation.violations.length) throw new Error(JSON.stringify(validation.violations));
-  writeJson(join(pack, 'registry-extension.v1.json'), extension);
-  return validation;
+  return { extension, composed };
 }
 
 function readComposedRegistry(root) {
   const extension = readJson(join(root, TF0590_PACK_DIR, 'registry-extension.v1.json'));
+  if (!validateTaskCorpusRegistry(extension, root).passed) throw new Error('registry-extension-binding');
   const registryPath = join(root, extension.baseRegistry);
   if (extension.baseRegistry !== 'harness/specs/fixtures/agent-first-framework/registry.json' || extension.baseRegistryDigest !== `sha256:${sha256File(registryPath)}`) throw new Error('registry-base-drift');
   const base = readJson(registryPath);
   const composed = { ...base };
   for (const field of ['registeredSubjects', 'registeredSuites', 'registeredGraders', 'registeredProfiles']) composed[field] = [...base[field], ...(extension[field] ?? [])];
   return composed;
+}
+
+export function validateTaskCorpusRegistry(extension, root = ROOT) {
+  const expected = buildRegistryExtension(root);
+  const errors = JSON.stringify(extension) === JSON.stringify(expected.extension) ? [] : ['registry-extension-binding'];
+  errors.push(...validateFrameworkRegistry(expected.composed).violations.map((entry) => entry.code));
+  return { passed: errors.length === 0, errors };
 }
 
 export function validateTaskCorpusPack(root = ROOT, options = {}) {

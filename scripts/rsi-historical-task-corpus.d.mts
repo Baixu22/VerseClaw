@@ -3,4 +3,5 @@ export type TaskCorpusValidation = { schemaVersion: string; driven_by: string; a
 export function writeTaskCorpusPack(root?: string): TaskCorpusValidation;
 export function runModelCalibration(root?: string, resource?: { endpoint?: string; apiKey?: string }): Promise<TaskCorpusValidation>;
 export function registerTaskCorpus(root?: string): { violations: Array<{ code: string; path: string; message: string }>; counts: Record<string, number> };
+export function validateTaskCorpusRegistry(extension: unknown, root?: string): { passed: boolean; errors: string[] };
 export function validateTaskCorpusPack(root?: string, options?: { allowDraft?: boolean }): { passed: boolean; errors: string[]; taskCount: number | null; calibratedRows: number };
