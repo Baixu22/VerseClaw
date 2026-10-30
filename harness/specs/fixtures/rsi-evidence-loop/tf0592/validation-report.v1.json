@@ -136,5 +136,310 @@
     "liveProvider": false,
     "promotionReady": false,
     "productLocksChanged": false
+  },
+  "independentReview": {
+    "driven_by": "agent",
+    "actor": "codex/rsi-tf0592-verifier-01a18bf9",
+    "status": "scoped-instrument-verification-pass",
+    "scope": "scoped instrument verification only",
+    "testedCommit": "fe8c940d64a891b8d49cff36c8fbd5a7b9ff1599",
+    "testedTree": "9589cb918468a665353768b973b9086fa373ef6b",
+    "implementationCommit": "748a52eac3c7ea3c94cd74c4bf68f383ad9e453c",
+    "testedStatisticalReport": {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json",
+      "sha256": "d9785feb1289e96207a7c95b1d21c35f396bb76eb9f72dbdcceb6386f9c5e252",
+      "detachedSha256": "d9785feb1289e96207a7c95b1d21c35f396bb76eb9f72dbdcceb6386f9c5e252"
+    },
+    "taskSpec": {
+      "path": "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md",
+      "sha256": "a7038706dde2ef90a923ce5e37e494389696b4da52a3a5816670d8ce059c6092",
+      "diffBase": "5bf8a0b253f9b195067f30e6789861d0eba48245",
+      "declaredProfiles": [
+        "fast"
+      ],
+      "requiredCommands": [
+        "pnpm rsi:tf0592:check",
+        "pnpm exec vitest run tests/unit/rsi-tf0592-statistical-adjudication.test.ts tests/unit/rsi-tf0604-baseline.test.ts --maxWorkers=1",
+        "pnpm harness validate --spec harness/specs/tasks/rsi-tf0592-statistical-adjudication.md",
+        "pnpm run typecheck",
+        "git diff --check"
+      ],
+      "expectedTestCount": 26,
+      "expectedSkips": 0
+    },
+    "resolvedFindings": [
+      {
+        "id": "partial-case-inference",
+        "resolved": true
+      },
+      {
+        "id": "repeat-pseudoreplication",
+        "resolved": true
+      },
+      {
+        "id": "incomplete-consumption",
+        "resolved": true
+      },
+      {
+        "id": "degenerate-variance",
+        "resolved": true
+      }
+    ],
+    "gates": [
+      {
+        "id": "gate-01",
+        "commandLine": "pnpm rsi:tf0592:check",
+        "required": true,
+        "exitCode": 0,
+        "durationMs": 905,
+        "timedOut": false,
+        "expectedCounts": null,
+        "counts": null,
+        "passed": true,
+        "stdout": {
+          "path": "logs-final/gate-01.stdout.log",
+          "sha256": "53d6a3962a29356cfca1e2a666b53e244098de8af82cdeeefa6bd05870500276",
+          "bytes": 130
+        },
+        "stderr": {
+          "path": "logs-final/gate-01.stderr.log",
+          "sha256": "ca44b554a90720d3a5a39610740afc48a8a60b333dffa3d22a284498d2b5b478",
+          "bytes": 70
+        }
+      },
+      {
+        "id": "gate-02",
+        "commandLine": "pnpm exec vitest run tests/unit/rsi-tf0592-statistical-adjudication.test.ts tests/unit/rsi-tf0604-baseline.test.ts --maxWorkers=1",
+        "required": true,
+        "exitCode": 0,
+        "durationMs": 5611,
+        "timedOut": false,
+        "expectedCounts": {
+          "passed": 26,
+          "failed": 0,
+          "skipped": 0,
+          "total": 26
+        },
+        "counts": {
+          "passed": 26,
+          "failed": 0,
+          "skipped": 0,
+          "total": 26,
+          "source": "parsed",
+          "segments": 1
+        },
+        "passed": true,
+        "stdout": {
+          "path": "logs-final/gate-02.stdout.log",
+          "sha256": "b75321009d887c9a664cad19c7305c29e3dcb8d7613587d729e006487246658d",
+          "bytes": 198
+        },
+        "stderr": {
+          "path": "logs-final/gate-02.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      {
+        "id": "gate-03",
+        "commandLine": "pnpm harness validate --spec harness/specs/tasks/rsi-tf0592-statistical-adjudication.md",
+        "required": true,
+        "exitCode": 0,
+        "durationMs": 1373,
+        "timedOut": false,
+        "expectedCounts": null,
+        "counts": null,
+        "passed": true,
+        "stdout": {
+          "path": "logs-final/gate-03.stdout.log",
+          "sha256": "988f076f4d9c1055b96fd636c6991ee5b468b822c3625400778cf04899c2df71",
+          "bytes": 74
+        },
+        "stderr": {
+          "path": "logs-final/gate-03.stderr.log",
+          "sha256": "493d7fd343ced3c5f3f125e85db3d62ece961e21ce4d4b610e0f9a691206c047",
+          "bytes": 231
+        }
+      },
+      {
+        "id": "gate-04",
+        "commandLine": "pnpm run typecheck",
+        "required": true,
+        "exitCode": 0,
+        "durationMs": 26558,
+        "timedOut": false,
+        "expectedCounts": null,
+        "counts": null,
+        "passed": true,
+        "stdout": {
+          "path": "logs-final/gate-04.stdout.log",
+          "sha256": "499bb55b0a31628c39090658f0aea679de560515beb5172d7ba1b765e5b9868b",
+          "bytes": 1388
+        },
+        "stderr": {
+          "path": "logs-final/gate-04.stderr.log",
+          "sha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a",
+          "bytes": 150
+        }
+      },
+      {
+        "id": "gate-05",
+        "commandLine": "git diff --check",
+        "required": true,
+        "exitCode": 0,
+        "durationMs": 331,
+        "timedOut": false,
+        "expectedCounts": null,
+        "counts": null,
+        "passed": true,
+        "stdout": {
+          "path": "logs-final/gate-05.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "path": "logs-final/gate-05.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      {
+        "id": "gate-06",
+        "commandLine": "pnpm exec eslint scripts/rsi-tf0592-statistical-adjudication.mjs tests/unit/rsi-tf0592-statistical-adjudication.test.ts --max-warnings 0",
+        "required": false,
+        "exitCode": 0,
+        "durationMs": 3096,
+        "timedOut": false,
+        "expectedCounts": null,
+        "counts": null,
+        "passed": true,
+        "stdout": {
+          "path": "logs-final/gate-06.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "path": "logs-final/gate-06.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      {
+        "id": "gate-07",
+        "commandLine": "pnpm repo:artifacts:check",
+        "required": false,
+        "exitCode": 0,
+        "durationMs": 3112,
+        "timedOut": false,
+        "expectedCounts": null,
+        "counts": null,
+        "passed": true,
+        "stdout": {
+          "path": "logs-final/gate-07.stdout.log",
+          "sha256": "752759ed23a1835e22e616d627c4225f9a32ec4c113da5f0796b7388476e43f5",
+          "bytes": 60
+        },
+        "stderr": {
+          "path": "logs-final/gate-07.stderr.log",
+          "sha256": "f62d1dbbb5220d55c5deff1fc44b06476881b770066fcf3c9d0ecb2c407bb252",
+          "bytes": 46
+        }
+      }
+    ],
+    "sourceAndDetachedClean": true,
+    "boundInputCount": 27,
+    "dependencyReuse": {
+      "method": "Initial junction mirroring; cache-backed ignored dependency reconstruction in first checkout; final checkout reused its mirrors with auto-install disabled and copied hash-bound workspace build assets",
+      "pinnedPnpmVersion": "11.2.2",
+      "cacheBackedReconstruction": {
+        "observed": true,
+        "rootPackages": 1822,
+        "runtimePackages": 1098,
+        "printedDownloadCounts": [
+          0
+        ]
+      },
+      "finalRunPolicy": {
+        "checkout": "<private-evidence-root>",
+        "verifyDepsBeforeRun": "false",
+        "automaticInstallObserved": false,
+        "mirroredJunctionCount": 908,
+        "workspaceBuildCopyFiles": 508,
+        "workspaceBuildCopyBytes": 3119903
+      }
+    },
+    "workspaceBuildReuse": {
+      "directory": "packages/versebrowser/dist",
+      "fileCount": 508,
+      "bytes": 3119903,
+      "manifestSha256": "1d32eb70e9dbc86385d25420ba193a6f1572d35f360fdffd07c5aa433fe91068",
+      "changedInputs": [],
+      "builtOrInstalledInFinalRun": false
+    },
+    "earlierAttempt": {
+      "status": "interrupted-during-typecheck-after-unexpected-pnpm-auto-install",
+      "allFinalRequiredCommandsRerun": true
+    },
+    "preProvisionFailure": {
+      "failedCommand": "pnpm run typecheck",
+      "exitCode": 1,
+      "durationMs": 20693,
+      "cause": "Missing installed VerseBrowser dist declarations in fresh checkout; original failure and raw logs preserved"
+    },
+    "credentialScan": {
+      "sanitizedEnvironmentPassed": true,
+      "persistedKnownSecretHits": 0,
+      "credentialsPersisted": false,
+      "method": "Repository validateAcceptanceEnvironment plus nonempty credential-name regex scan over inherited environment; matched variables removed before all child processes; no credential-store access"
+    },
+    "uncachedTypecheck": {
+      "success": true,
+      "cacheEnabled": false,
+      "cacheStatus": "disabled",
+      "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+      "phases": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 45
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 21751
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 6229
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 20138,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "<worktree>\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ],
+      "totalDurationMs": 26040
+    },
+    "rawEvidence": {
+      "archiveKey": "rsi-tf0592/fe8c940d6",
+      "archiveIndexSha256": "43636c60b26690656607207e5d827a97ce54ce9de52898188e04cc118541abdf",
+      "summarySha256": "d55b4c5a0b375bde6eb5b0da3d4870f008c92f538a7dc7d83e7ff2244bbf207c",
+      "logReplayPassed": true
+    },
+    "boundary": {
+      "scope": "scoped instrument verification only",
+      "fullTf0592TrialsCalibrationIsolation": "unestablished",
+      "tf0604ExecutedBaseline": "unestablished",
+      "engineeringAcceptedByAgent": false,
+      "formalBroadProfileAcceptance": false,
+      "realHuman": false,
+      "liveProvider": false,
+      "promotionReady": false,
+      "productLocksChanged": false
+    }
   }
 }
