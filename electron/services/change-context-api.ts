@@ -1,21 +1,43 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import type {
   ChangeContextErrorCode,
   ChangeContextErrorEnvelope,
+  ChangeContextProjection,
+  ChangeContextProjectionResult,
   ChangeContextReviewCommentMutationResult,
   ChangeContextReviewCommentProjection,
   ChangeContextReviewCommentStorePolicy,
+  ChangeContextState,
 } from '@shared/types/change-context';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
+import type { GatewayManager } from '../gateway/manager';
 import {
   createChangeContextReviewCommentStore,
   type ChangeContextReviewCommentStore,
   type ChangeContextReviewCommentStoreFailure,
 } from './change-context-review-store';
+import {
+  createDefaultChangeContextSourceReader,
+  type ChangeContextComparisonFacts,
+  type ChangeContextSourceReader,
+} from './change-context-projection';
 
 export type ChangeContextApiContext = {
   store?: ChangeContextReviewCommentStore;
+  sourceReader?: ChangeContextSourceReader;
+  gatewayManager?: Pick<GatewayManager, 'rpc'>;
+  checkpointDiff?: CompleteHostServiceRegistry['sessions']['checkpointDiff'];
   createRequestId?: () => string;
+  now?: () => string;
+};
+
+const STATE_SEVERITY: Record<ChangeContextState, number> = {
+  available: 0,
+  partial: 1,
+  truncated: 2,
+  stale: 3,
+  removed: 4,
+  unavailable: 5,
 };
 
 function errorEnvelope(
@@ -65,24 +87,137 @@ function mutationResult(
   return { success: true, comment: result.value };
 }
 
+function combineStates(...states: ChangeContextState[]): ChangeContextState {
+  return states.reduce<ChangeContextState>(
+    (worst, state) => (STATE_SEVERITY[state] > STATE_SEVERITY[worst] ? state : worst),
+    'available',
+  );
+}
+
+function errorCodeForState(state: ChangeContextState): ChangeContextErrorCode {
+  switch (state) {
+    case 'available':
+      return 'unavailable';
+    case 'partial':
+      return 'partial';
+    case 'truncated':
+      return 'truncated';
+    case 'stale':
+      return 'stale';
+    case 'removed':
+      return 'removed';
+    case 'unavailable':
+      return 'unavailable';
+  }
+}
+
+function contextIdFor(input: {
+  workspaceId: string | null;
+  sessionKey: string;
+  comparison: unknown;
+}): string {
+  const digest = createHash('sha256')
+    .update(JSON.stringify([input.workspaceId, input.sessionKey, input.comparison]))
+    .digest('hex')
+    .slice(0, 24);
+  return `change-context:${digest}`;
+}
+
+function projectionFromFacts(input: {
+  payload: {
+    workspaceId?: string | null;
+    sessionKey: string;
+    comparison: unknown;
+  };
+  requestId: string;
+  resolvedAt: string;
+  facts: ChangeContextComparisonFacts;
+}): ChangeContextProjectionResult {
+  const state = combineStates(input.facts.comparison.state, input.facts.diff.state);
+  const issues = [...input.facts.comparison.issues, ...input.facts.diff.issues];
+  const projection: ChangeContextProjection = {
+    schemaVersion: 1,
+    contextId: contextIdFor({
+      workspaceId: input.payload.workspaceId ?? null,
+      sessionKey: input.payload.sessionKey,
+      comparison: input.payload.comparison,
+    }),
+    identity: {
+      workspaceId: input.payload.workspaceId ?? null,
+      sessionKey: input.payload.sessionKey,
+      runId: input.facts.identity?.runId ?? null,
+      turn: input.facts.identity?.turn ?? null,
+    },
+    comparison: {
+      ...input.facts.comparison,
+      state,
+      issues,
+    },
+    diff: {
+      ...input.facts.diff,
+      state: combineStates(input.facts.diff.state, state),
+      issues,
+    },
+    comments: [],
+    evidence: [],
+    issues,
+    generatedAt: input.resolvedAt,
+  };
+
+  if (state === 'available') {
+    return { success: true, projection };
+  }
+  return {
+    success: false,
+    error: errorEnvelope(
+      input.requestId,
+      errorCodeForState(state),
+      issues[0]?.message ?? `Change Context comparison is ${state}.`,
+      { state, issues },
+    ),
+    projection,
+  };
+}
+
 export function createChangeContextApi(
   context: ChangeContextApiContext = {},
 ): CompleteHostServiceRegistry['changeContext'] {
   const store = context.store ?? createChangeContextReviewCommentStore();
+  const sourceReader = context.sourceReader ?? createDefaultChangeContextSourceReader({
+    gatewayManager: context.gatewayManager,
+    checkpointDiff: context.checkpointDiff,
+  });
   const createRequestId = context.createRequestId ?? (() => randomUUID());
+  const now = context.now ?? (() => new Date().toISOString());
 
   return {
     getProjection: async (payload) => {
       const requestId = createRequestId();
-      void payload;
-      return {
-        success: false,
-        error: errorEnvelope(
-          requestId,
-          'not_implemented',
-          'Change Context projection is contract-only in TF-0613; TF-0614 owns the read-only projection.',
-        ),
-      };
+      const sessionKey = typeof payload?.sessionKey === 'string' ? payload.sessionKey.trim() : '';
+      if (!sessionKey || !payload?.comparison?.mode) {
+        return {
+          success: false,
+          error: errorEnvelope(requestId, 'validation', 'sessionKey and comparison are required.'),
+        };
+      }
+      const resolvedAt = now();
+      const facts = await sourceReader.read({
+        workspaceId: payload.workspaceId ?? null,
+        sessionKey,
+        comparison: payload.comparison,
+        resolvedAt,
+        requestId,
+      });
+      return projectionFromFacts({
+        payload: {
+          workspaceId: payload.workspaceId ?? null,
+          sessionKey,
+          comparison: payload.comparison,
+        },
+        requestId,
+        resolvedAt,
+        facts,
+      });
     },
 
     listComments: async (payload) => {

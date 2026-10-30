@@ -29,6 +29,7 @@ touchedAreas:
   - shared/i18n/locales/ru/changeContext.json
   - src/lib/host-api.ts
   - electron/services/change-context-api.ts
+  - electron/services/change-context-projection.ts
   - electron/services/change-context-review-store.ts
   - electron/main/ipc-handlers.ts
   - electron/services/code-review-api.ts

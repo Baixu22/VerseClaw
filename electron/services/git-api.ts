@@ -669,6 +669,15 @@ async function readUncachedGitStatus(
   return enrichStatusWithDiffStats(ctx, parsePorcelainStatus(ctx, result.stdout));
 }
 
+export async function resolveGitCommitAtOrBefore(isoTimestamp: string): Promise<string | null> {
+  const parsed = Date.parse(isoTimestamp);
+  if (!Number.isFinite(parsed)) throw new Error('A valid ISO timestamp is required');
+  const ctx = await requireRepoContext();
+  const result = await git(['rev-list', '-1', `--before=${new Date(parsed).toISOString()}`, 'HEAD'], ctx.workspaceRoot);
+  if (result.exitCode !== 0) return null;
+  const commit = result.stdout.trim();
+  return commit || null;
+}
 export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
   const workspace = requireWorkspace(await getActiveWorkspaceProfile());
   const key = gitStatusCacheKey(workspace);

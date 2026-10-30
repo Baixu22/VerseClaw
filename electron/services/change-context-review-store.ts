@@ -161,7 +161,7 @@ function normalizeRevision(value: unknown): ChangeContextRevisionRef | null {
       treeDigest: isNullableString(value.treeDigest) ? value.treeDigest : null,
     };
   }
-  if (value.kind === 'git-worktree' && typeof value.workspaceId === 'string') {
+  if (value.kind === 'git-worktree' && (typeof value.workspaceId === 'string' || value.workspaceId === null)) {
     return {
       kind: 'git-worktree',
       workspaceId: value.workspaceId,
@@ -169,24 +169,36 @@ function normalizeRevision(value: unknown): ChangeContextRevisionRef | null {
       worktreeDigest: isNullableString(value.worktreeDigest) ? value.worktreeDigest : null,
     };
   }
-  if (value.kind === 'turn' && isRecord(value.turn)) {
-    const turn = value.turn;
-    if (
-      typeof turn.sessionKey !== 'string'
-      || typeof turn.runId !== 'string'
-      || !Number.isInteger(turn.attemptIndex)
-      || !Number.isInteger(turn.modelCallIndex)
-    ) {
-      return null;
-    }
+  if (value.kind === 'turn') {
+    const turn = isRecord(value.turn) ? value.turn : null;
+    const transcriptSeq = isRecord(value.transcriptSeq)
+      ? value.transcriptSeq
+      : null;
+    const normalizedTurn = turn
+      && typeof turn.sessionKey === 'string'
+      && typeof turn.runId === 'string'
+      && Number.isInteger(turn.attemptIndex)
+      && Number.isInteger(turn.modelCallIndex)
+      ? {
+          sessionKey: turn.sessionKey,
+          runId: turn.runId,
+          attemptIndex: Number(turn.attemptIndex),
+          modelCallIndex: Number(turn.modelCallIndex),
+        }
+      : null;
+    const normalizedSeq = transcriptSeq
+      && Number.isInteger(transcriptSeq.start)
+      && Number.isInteger(transcriptSeq.end)
+      && Number(transcriptSeq.start) >= 1
+      && Number(transcriptSeq.end) >= Number(transcriptSeq.start)
+      ? { start: Number(transcriptSeq.start), end: Number(transcriptSeq.end) }
+      : null;
+    if (!normalizedTurn && !normalizedSeq && typeof value.runtimeTurnId !== 'string') return null;
     return {
       kind: 'turn',
-      turn: {
-        sessionKey: turn.sessionKey,
-        runId: turn.runId,
-        attemptIndex: Number(turn.attemptIndex),
-        modelCallIndex: Number(turn.modelCallIndex),
-      },
+      turn: normalizedTurn,
+      runtimeTurnId: typeof value.runtimeTurnId === 'string' ? value.runtimeTurnId : null,
+      transcriptSeq: normalizedSeq,
       transcriptDigest: isNullableString(value.transcriptDigest) ? value.transcriptDigest : null,
     };
   }

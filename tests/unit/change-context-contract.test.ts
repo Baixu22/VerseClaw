@@ -163,8 +163,9 @@ describe('change context contract', () => {
       comparison: { mode: 'last-turn' },
     });
     expect(projection.success).toBe(false);
-    expect(projection.projection).toBeUndefined();
-    expect(projection.error).toMatchObject({ code: 'not_implemented', requestId: 'request-1' });
+    expect(projection.projection?.comparison?.state).toBe('unavailable');
+    expect(projection.projection?.diff?.state).toBe('unavailable');
+    expect(projection.error).toMatchObject({ code: 'unavailable', requestId: 'request-1' });
 
     const pull = await api.pullChanges({} as ChangeContextPullChangesPayload);
     expect(pull.success).toBe(false);

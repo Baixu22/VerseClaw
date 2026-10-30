@@ -65,14 +65,21 @@ export type ChangeContextGitCommitRevision = {
 
 export type ChangeContextGitWorktreeRevision = {
   kind: 'git-worktree';
-  workspaceId: string;
+  workspaceId: string | null;
   headCommit: string | null;
   worktreeDigest: string | null;
 };
 
+export type ChangeContextTranscriptSeqBounds = {
+  start: number;
+  end: number;
+};
+
 export type ChangeContextTurnRevision = {
   kind: 'turn';
-  turn: TurnIdentity;
+  turn: TurnIdentity | null;
+  runtimeTurnId: string | null;
+  transcriptSeq: ChangeContextTranscriptSeqBounds | null;
   transcriptDigest: string | null;
 };
 
