@@ -5,7 +5,7 @@
  * the claim's source evidence.
  */
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
-import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
@@ -224,15 +224,49 @@ export function checkEvidenceRefs(root = ROOT) {
 }
 
 function main() {
-  const result = checkEvidenceRefs(ROOT);
+  let root = ROOT;
+  let reportPath;
+  let outputPath;
+  try {
+    for (let index = 2; index < process.argv.length; index += 2) {
+      const option = process.argv[index];
+      const value = process.argv[index + 1];
+      if (!value || !['--root', '--semantic-report', '--write-semantic-report'].includes(option)) throw new Error('Expected --root, --semantic-report or --write-semantic-report followed by a path.');
+      if (option === '--root') root = resolve(value);
+      if (option === '--semantic-report') reportPath = resolve(value);
+      if (option === '--write-semantic-report') outputPath = resolve(value);
+    }
+  } catch (error) {
+    console.error('[evidence-refs] FAIL ' + error.message);
+    process.exitCode = 1;
+    return;
+  }
+  const result = checkEvidenceRefs(root);
   if (!result.ok) {
     console.error('[evidence-refs] FAIL missing referenced paths:');
     for (const entry of result.missing) console.error(`  ${entry.owner}: ${entry.ref}`);
     process.exitCode = 1;
     return;
   }
-  const count = [...collectEvidenceRefs(ROOT).values()].reduce((sum, refs) => sum + refs.length, 0);
+  const count = [...collectEvidenceRefs(root).values()].reduce((sum, refs) => sum + refs.length, 0);
   console.log(`[evidence-refs] PASS ${count} referenced path(s)`);
+  try {
+    const report = reportPath ? jsonFile(reportPath) : createProductSemanticEvidence(root, {
+      actor: 'native-semantic-evidence-auditor', command: 'node scripts/check-evidence-refs.mjs' + (root === ROOT ? '' : ' --root ' + root),
+    });
+    const validation = validateProductSemanticEvidence(root, report);
+    if (outputPath) writeFileSync(outputPath, JSON.stringify(report, null, 2) + '\n');
+    if (!validation.valid) {
+      console.error('[semantic-evidence] FAIL ' + JSON.stringify(validation.diagnostics));
+      process.exitCode = 1;
+      return;
+    }
+    console.log(`[semantic-evidence] PASS ${report.relationKeys.length} relations, ${report.sourceRefs.length} candidate sources`);
+    console.log(JSON.stringify(report));
+  } catch (error) {
+    console.error('[semantic-evidence] FAIL ' + JSON.stringify({ relationKey: '$contract', field: 'report', rule: 'report-input', message: error.message }));
+    process.exitCode = 1;
+  }
 }
 
 if (isMainEntrypoint(import.meta.url)) main();

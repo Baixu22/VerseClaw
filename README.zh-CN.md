@@ -61,6 +61,8 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 
 改默认值或做发布声明前，请先读[默认配置矩阵](docs/dev/default-config-matrix.md)、[产品语义](docs/clawx-product-semantics.md)和[能力声明矩阵](shared/capability-claims.ts)。
 
+现有 `pnpm repo:evidence:check` 也会对干净 Git 候选校验语义合同版本和来源摘要。这是静态门禁，保留既有运行时 owner 和默认值，不产生授权或产品验收结论。
+
 ## 应用截图
 
 截图来自 2026-10-05 的 Windows Electron source build；当前 header 已使用之后的 B2 身份。Knowledge 截图明确启用了 `memory-wiki`，没有使用模型账户或模型请求。

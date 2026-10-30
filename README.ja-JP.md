@@ -61,6 +61,8 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 
 Default や release claim を変更する前に、[default configuration](docs/dev/default-config-matrix.md)、[product semantics](docs/clawx-product-semantics.md)、[capability claims](shared/capability-claims.ts) を確認してください。
 
+既存の `pnpm repo:evidence:check` は、clean な Git candidate に対して semantic contract の version と source digest も検証します。これは静的 gate であり、既存の runtime owner と default を維持し、authorization や product acceptance を与えません。
+
 ## アプリ画面
 
 画像は 2026-10-05 の Windows Electron source build で取得されました。現在の header は後続の B2 identity を使用します。Knowledge 画像では `memory-wiki` を明示的に有効化し、model account / model request は使用していません。

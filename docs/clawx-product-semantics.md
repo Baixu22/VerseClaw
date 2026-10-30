@@ -31,6 +31,12 @@ incomplete reports and dirty candidates. Text integrity normalizes UTF-8 CRLF/CR
 separate raw-byte digest supports byte recovery. Each run creates new evidence while historical
 manifests retain their original candidate and verdict.
 
+The existing `pnpm repo:evidence:check` gate now runs the original path check and this semantic
+audit together. Its CLI can recheck a saved report with `--semantic-report <file>` or write a
+fresh report outside the repository with `--write-semantic-report <file>`. A missing check,
+empty report, changed source or invalid relation exits with failure. The combined gate needs
+a clean candidate; it is static governance and does not change runtime or authorization.
+
 ## Identity and scope vocabulary
 
 Workspace is not an alias for Project. A Workspace identifies a local executable

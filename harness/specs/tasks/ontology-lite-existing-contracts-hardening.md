@@ -11,6 +11,10 @@ touchedAreas:
   - scripts/check-evidence-refs.d.mts
   - tests/unit/evidence-refs-exist.test.ts
   - docs/clawx-product-semantics.md
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
   - harness/specs/tasks/ontology-informed-product-semantics.md
   - harness/specs/guides/ontology-agent-systems-research.md
   - harness/specs/tasks/ontology-lite-existing-contracts-hardening.md
@@ -154,6 +158,12 @@ candidate/version 不匹配；报告缺字段、缺 actor 或缺实际检查结�
 如果现有入口足以触发，不增加 package script。检查命令可输出到现有 fixture/
 evidence 路径；不加服务、UI、动态工具或新的评测执行器。
 Agent-first 只引用静态证据，不改框架核心、已密封矩阵或当前 not-run profile。
+
+原 `repo:evidence:check` 在原有路径检查后生成并重验当前干净候选的语义报告。
+传入 `--semantic-report <file>` 时重验指定报告；`--write-semantic-report <file>`
+把本次报告写到仓库外（本机使用 `D:/tmp`）。`--root <repo>` 支持有界测试 fixture。
+四类集成坏例与原路径缺失负例都通过同一 CLI 的退出码和诊断判断，不能只相信
+路径检查的 PASS 行。脏候选只产生 invalid 诊断，不能用于节点收口。
 
 集成负例要通过真实门禁入口确认：错误关系、陈旧来源、空报告、遗漏执行检查
 都会失败；不能只单测 checker 自己。既有证据路径检查继续通过且保留原覆盖。

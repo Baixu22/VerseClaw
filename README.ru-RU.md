@@ -61,6 +61,8 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 
 Перед изменением default или release claim прочитайте [default configuration](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) и [capability claims](shared/capability-claims.ts).
 
+Существующая команда `pnpm repo:evidence:check` также проверяет version semantic contract и source digest для clean Git candidate. Этот статический gate сохраняет существующих runtime owners и defaults и не предоставляет authorization или product acceptance.
+
 ## Скриншоты
 
 Скриншоты сделаны из Windows Electron source build 2026-10-05. Текущий header использует более позднюю B2 identity. В Knowledge capture явно включён `memory-wiki`; model account и model request не использовались.

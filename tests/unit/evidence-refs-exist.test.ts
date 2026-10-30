@@ -1,17 +1,102 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it } from 'vitest';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import validInput from '../../harness/specs/fixtures/ontology-lite-existing-contracts/relations.valid.json';
-import { checkEvidenceRefs, createProductSemanticEvidence, validateProductSemanticEvidence } from '../../scripts/check-evidence-refs.mjs';
+import { checkEvidenceRefs, collectEvidenceRefs, createProductSemanticEvidence, validateProductSemanticEvidence } from '../../scripts/check-evidence-refs.mjs';
 
 describe('evidence reference path validation (#92)', () => {
   it('resolves every declared shared evidence path from a clean checkout', () => {
     const result = checkEvidenceRefs(process.cwd());
     expect(result.missing).toEqual([]);
     expect(result.ok).toBe(true);
+  });
+});
+
+function nativeSetup() {
+  const fixture = setup();
+  for (const path of ['shared/capability-claims.ts', 'shared/sensitive-content-boundary.ts', 'shared/reliability-boundaries.ts', 'shared/dcs/prod-flags-catalog.ts']) {
+    write(fixture.root, path, '// Bounded native evidence fixture\n');
+  }
+  for (const refs of collectEvidenceRefs(fixture.root).values()) {
+    for (const ref of refs) {
+      try { readFileSync(join(fixture.root, ref)); }
+      catch { write(fixture.root, ref, '// Bounded native path reference\n'); }
+    }
+  }
+  commit(fixture.root);
+  const output = mkdtempSync(join(tempRoot, 'semantic-gate-output-'));
+  temporaryRoots.push(output);
+  return { ...fixture, output };
+}
+
+function nativeGate(root: string, ...args: string[]) {
+  return spawnSync(process.execPath, [resolve(process.cwd(), 'scripts/check-evidence-refs.mjs'), '--root', root, ...args], {
+    cwd: process.cwd(), windowsHide: true, encoding: 'utf8', timeout: 30_000, maxBuffer: 4 * 1024 * 1024,
+  });
+}
+
+describe('native repo evidence gate integration', () => {
+  it('runs the existing path gate and derives all semantic checks through the actual CLI', () => {
+    const scripts = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')).scripts;
+    expect(scripts['repo:evidence:check']).toBe('node scripts/check-evidence-refs.mjs');
+    const spec = readFileSync(resolve(process.cwd(), 'harness/specs/tasks/ontology-lite-existing-contracts-hardening.md'), 'utf8');
+    expect(spec).toContain('  - pnpm repo:evidence:check');
+    expect(spec).toContain('tests/unit/evidence-refs-exist.test.ts');
+    const { root, output } = nativeSetup();
+    const path = join(output, 'semantic-report.json');
+    const result = nativeGate(root, '--write-semantic-report', path);
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain('[evidence-refs] PASS');
+    expect(result.stdout).toContain('[semantic-evidence] PASS');
+    const report = JSON.parse(readFileSync(path, 'utf8'));
+    expect(report.candidate.dirty).toBe(false);
+    expect(report.checks.map((row: {id: string}) => row.id)).toEqual(['relations', 'sources', 'candidate']);
+    expect(report.driven_by).toBe('agent');
+    expect(nativeGate(root, '--semantic-report', path).status).toBe(0);
+  });
+
+  it('still rejects a missing original capability evidence path before semantic acceptance', () => {
+    const { root } = nativeSetup();
+    write(root, 'shared/capability-claims.ts', '// docs/missing-capability.md\n');
+    commit(root);
+    const result = nativeGate(root);
+    expect(result.status, result.stderr).toBe(1);
+    expect(result.stderr).toContain('shared/capability-claims.ts: docs/missing-capability.md');
+    expect(result.stdout).not.toContain('[semantic-evidence] PASS');
+  });
+
+  it.each(['wrong-relation', 'stale-source', 'empty-report', 'omitted-check'])('rejects %s through the actual CLI', action => {
+    const { root, output } = nativeSetup();
+    const report = createProductSemanticEvidence(root);
+    expect(report.status).toBe('valid');
+    let expectedRule;
+    if (action === 'wrong-relation') {
+      const input = JSON.parse(readFileSync(join(root, fixtures, 'relations.valid.json'), 'utf8'));
+      input.relations[0].authorityBoundary = 'read-only-projection';
+      write(root, fixtures + '/relations.valid.json', JSON.stringify(input));
+      commit(root);
+      expectedRule = 'authority-combination';
+    }
+    if (action === 'stale-source') {
+      write(root, 'docs/source.md', 'Static owner-source fixture changed after audit\n');
+      commit(root);
+      expectedRule = 'source-digest';
+    }
+    if (action === 'omitted-check') {
+      report.checks.splice(0, 1);
+      expectedRule = 'checks-required';
+    }
+    if (action === 'empty-report') expectedRule = 'report-version';
+    const path = join(output, 'input-report.json');
+    writeFileSync(path, JSON.stringify(action === 'empty-report' ? {} : report));
+    const result = nativeGate(root, '--semantic-report', path);
+    expect(result.status, result.stderr).toBe(1);
+    expect(result.stdout).toContain('[evidence-refs] PASS');
+    expect(result.stdout).not.toContain('[semantic-evidence] PASS');
+    expect(result.stderr).toContain(expectedRule);
   });
 });
 

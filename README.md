@@ -61,6 +61,8 @@ Important current defaults:
 
 See the [default configuration matrix](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) and [capability claims](shared/capability-claims.ts) before changing a default or making a release claim.
 
+The existing `pnpm repo:evidence:check` also checks semantic contract versions and source digests against a clean Git candidate. This static gate preserves existing runtime owners and defaults; it does not provide authorization or product acceptance.
+
 ## Inside the app
 
 The screenshots below were captured from the Windows Electron source build on 2026-10-05. The header now uses the later B2 identity. The Knowledge capture explicitly enables `memory-wiki`; no model account or model request was used.

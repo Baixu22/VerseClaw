@@ -123,8 +123,9 @@ tool/approval/storage/UI 路径或默认值变化。用已有 fixture 做必要�
 目标，且会增加需要维护的运行时和真源。无需新增第三条技术路线。
 
 验收指标只覆盖：六条基线关系有效、独立负例拒绝率、证据绑定完整性、旧报告
-失效能力、门禁调用覆盖及原行为兼容性。当前尚未实现这些新增检查，相关指标
-一律 `not-run`；之前单测的通过数不能充当新增能力的结果。
+失效能力、门禁调用覆盖及原行为兼容性。在本次研究快照的规划基线中，这些新增
+检查尚未实现，指标为 `not-run`。后续实施证据另行绑定各自候选；研究快照和
+之前单测的通过数不能充当新增能力的结果。
 
 若未来确有关系遍历、推理、ontology grounding 或 RAG 的需求，另起经授权的
 窄任务，并预注册 baseline、held-out、负向控制、成本/延迟、回滚与 flag-off
@@ -142,4 +143,10 @@ parity。此实施方案不预留这些功能，也不新增等待人工操作�
 [独立负例](../fixtures/ontology-lite-existing-contracts/relations.invalid.json) 提供显式
 输入及预期拒绝规则；`tests/unit/product-semantics.test.ts` 验证结构化诊断与兼容性。
 同 session 字段只校验静态说明，始终不替代运行时 owner receipt。
+
+版本和来源绑定由原 `scripts/check-evidence-refs.mjs` 的派生报告实现；原
+`pnpm repo:evidence:check` 在路径检查后执行和重验这一报告。报告不建立新的
+状态真源；原生 CLI 拒绝关系错误、陈旧来源、空报告和遗漏检查。历史 research、
+source-audit、constraint-audit 和 provenance-audit 保留原候选及摘要，最终结果
+另写候选对应的 evidence 包，不把这里的研究方法升级成产品验收。
 研究来源、文件摘要及限制：[research.json](../fixtures/ontology-lite-existing-contracts/research/research.json)。
