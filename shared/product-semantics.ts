@@ -143,6 +143,39 @@ export const PRODUCT_SEMANTIC_CONCEPTS = [
   },
 ] as const satisfies readonly ProductSemanticConcept[];
 
+export type ProductSemanticRelationKind =
+  | 'suggests-upgrade-to'
+  | 'projects'
+  | 'roots-in'
+  | 'references-one-way'
+  | 'quality-gated-by';
+
+export type ProductSemanticAuthorityBoundary =
+  | 'advisory-only'
+  | 'read-only-projection'
+  | 'task-ledger-authority'
+  | 'one-way-reference'
+  | 'same-session-scorecard';
+
+export type ProductSemanticRelation = {
+  from: ProductSemanticConceptId;
+  kind: ProductSemanticRelationKind;
+  to: ProductSemanticConceptId;
+  authorityBoundary: ProductSemanticAuthorityBoundary;
+  evidenceRefs: readonly string[];
+};
+
+/** Directed metadata edges; they neither grant permissions nor imply inverse or transitive facts. */
+export const PRODUCT_SEMANTIC_RELATIONS = [
+  { from: 'chat', kind: 'suggests-upgrade-to', to: 'task-loop', authorityBoundary: 'advisory-only', evidenceRefs: ['docs/clawx-product-semantics.md', 'docs/modules/multi-agent-and-tasks.md'] },
+  { from: 'chat', kind: 'projects', to: 'task-ledger', authorityBoundary: 'read-only-projection', evidenceRefs: ['docs/clawx-product-semantics.md'] },
+  { from: 'chat-plan', kind: 'projects', to: 'task-ledger', authorityBoundary: 'read-only-projection', evidenceRefs: ['docs/clawx-product-semantics.md'] },
+  { from: 'task-loop', kind: 'roots-in', to: 'task-ledger', authorityBoundary: 'task-ledger-authority', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] },
+  { from: 'workboard', kind: 'references-one-way', to: 'task-ledger', authorityBoundary: 'one-way-reference', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md', 'shared/types/task-ledger-reference.ts'] },
+  { from: 'routing-memo', kind: 'quality-gated-by', to: 'task-loop', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] },
+] as const satisfies readonly ProductSemanticRelation[];
+
+
 export type ProductSemanticTaskId = `P0-${string}` | `P1-${string}`;
 export type ProductSemanticImplementationStatus = 'done' | 'todo' | 'defer';
 export type ProductSemanticTaskLane =
