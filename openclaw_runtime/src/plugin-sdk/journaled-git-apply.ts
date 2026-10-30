@@ -5,7 +5,7 @@ import { acquirePatchBatchLocks } from '../agents/apply-patch-batch-lock.js';
 import {
   journalEntryId, snapshotBeforeWrite, setWriteJournalBatchState, undoLastWrites, clearWriteJournal, discardWriteJournalEntries,
   type WriteJournalEntry,
-} from '../agents/tools/write-journal.js';
+} from '../agents/tools/write-journal-core.js';
 
 export async function journaledGitApply<T extends { success: boolean; approvalRequired?: boolean; blocked?: boolean; stale?: boolean }>(input: {
   workspaceRoot: string;

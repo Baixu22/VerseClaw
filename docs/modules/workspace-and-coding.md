@@ -254,6 +254,7 @@ Remote forge 有独立 Host API：
 
 - `openclaw_runtime/src/agents/agent-tools.ts`
 - `openclaw_runtime/src/agents/tools/write-journal.ts`
+- `openclaw_runtime/src/agents/tools/write-journal-core.ts`（同一 journal 的存储/恢复核心；原入口保留导出与路径校验）
 - `openclaw_runtime/src/agents/apply-patch.ts`
 - `openclaw_runtime/src/agents/coding-control-dispositions.ts`
 - `shared/types/coding-run.ts`

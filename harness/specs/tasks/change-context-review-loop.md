@@ -47,6 +47,8 @@ touchedAreas:
   - tests/unit/change-context-vg-evidence.test.ts
   - tests/unit/versegit-candidate-receipts.test.ts
   - openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts
+  - openclaw_runtime/src/agents/tools/write-journal.ts
+  - openclaw_runtime/src/agents/tools/write-journal-core.ts
   - shared/types/git.ts
   - vite.config.ts
   - src/pages/CodeReview/ChangeContextPanel.tsx
@@ -82,6 +84,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/tools/write-journal.test.ts src/agents/apply-patch-consistency.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/change-context-projection.test.ts tests/unit/change-context-review-anchors.test.ts tests/unit/change-context-review-verdict.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/change-context-vg-evidence.test.ts tests/unit/versegit-candidate-receipts.test.ts tests/unit/versegit-receipt-authority.test.ts tests/unit/versegit-wp3-receipts.test.ts tests/unit/versegit-observation-basis.test.ts tests/unit/versegit-runtime-bindings.test.ts --maxWorkers=1
   - pnpm contract:check
@@ -227,6 +230,13 @@ patch digest. Unknown apply/rollback results remain `recovery_required` with
 `destinationMutated=unknown`; they must never masquerade as a zero-write rejection
 or be retried automatically. This additive error variant records a discovered
 contract gap without changing any product lock or default.
+
+The existing journal entrypoint re-exports its storage/recovery core, preserving
+the tool workspace-path validator. The host SDK imports that same core without
+tool-schema/media dependencies. This is a module boundary extraction, not a new
+journal or filesystem authority. Denied/pre-write failures discard only their
+prepared journal evidence and leave destination bytes and modification times
+unchanged; committed writes retain the original journal recovery evidence.
 
 ### F. VG evidence projection
 
