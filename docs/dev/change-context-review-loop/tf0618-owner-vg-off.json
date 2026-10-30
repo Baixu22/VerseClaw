@@ -1,0 +1,2667 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "runtimeFacts": "scripted history/checkpoint only",
+  "transportAnnotation": "test IPC stamps agent actor",
+  "base": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+  "candidate": "76f340f4055b36e091df01d9dc72e8e753c03871",
+  "workspaceId": "review-owner-acceptance",
+  "taskNode": {
+    "id": "change-context-review:change-context:55f1157d8cec149b63b7694b",
+    "title": "Review changes: change-context:55f1157d8cec149b63b7694b",
+    "kind": "review",
+    "parentId": null,
+    "status": "todo",
+    "owner": "agent",
+    "priority": "normal",
+    "tags": [
+      "change-context"
+    ],
+    "description": "Explicit request changes; review evidence does not authorize execution.",
+    "evidenceRefs": [
+      {
+        "type": "other",
+        "ref": "change-context:55f1157d8cec149b63b7694b",
+        "label": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6"
+      }
+    ],
+    "metadata": {
+      "source": "change-context",
+      "contextId": "change-context:55f1157d8cec149b63b7694b",
+      "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6",
+      "driven_by": "agent",
+      "actor": "agent:electron-e2e"
+    },
+    "createdAt": "2026-10-30T08:27:37.509Z",
+    "updatedAt": "2026-10-30T08:27:37.509Z",
+    "completedAt": null
+  },
+  "comments": {
+    "success": true,
+    "storeState": "available",
+    "comments": [
+      {
+        "comment": {
+          "id": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+          "schemaVersion": 1,
+          "workspaceId": "review-owner-acceptance",
+          "sessionKey": "agent:main:main",
+          "contextId": "change-context:55f1157d8cec149b63b7694b",
+          "body": "Agent-driven anchor acceptance",
+          "author": {
+            "id": "agent:electron-e2e",
+            "kind": "agent",
+            "drivenBy": "agent"
+          },
+          "anchor": {
+            "path": "example.txt",
+            "range": {
+              "startLine": 1,
+              "endLine": 1
+            },
+            "fileDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+            "rangeDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+            "baseRevision": {
+              "kind": "git-commit",
+              "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+              "treeDigest": null
+            },
+            "candidateRevision": {
+              "kind": "git-commit",
+              "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+              "treeDigest": null
+            },
+            "originalExcerpt": "changed after review"
+          },
+          "createdAt": "2026-10-30T08:27:36.995Z",
+          "updatedAt": "2026-10-30T08:27:37.280Z",
+          "resolvedAt": null,
+          "deletedAt": null,
+          "deletionReason": null,
+          "reanchorCount": 1
+        },
+        "anchorState": "stale",
+        "anchorIssues": [
+          {
+            "code": "source_stale",
+            "message": "The anchored file changed; the comment was not moved.",
+            "source": "review-store"
+          }
+        ]
+      }
+    ]
+  },
+  "calls": [
+    {
+      "id": "1f2189fd-bc8e-4db1-950a-f8b6487ef421",
+      "module": "permissions",
+      "action": "approvals",
+      "payload": {
+        "includeExpired": true,
+        "limit": 200
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348913569,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "1f2189fd-bc8e-4db1-950a-f8b6487ef421"
+      },
+      "reply": {
+        "id": "1f2189fd-bc8e-4db1-950a-f8b6487ef421",
+        "ok": true,
+        "data": {
+          "success": true,
+          "approvals": []
+        }
+      }
+    },
+    {
+      "id": "e53155f1-28a3-4509-adc8-2addf03cfab9",
+      "module": "permissions",
+      "action": "approvals",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "status": "pending",
+        "limit": 50
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348913640,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e53155f1-28a3-4509-adc8-2addf03cfab9"
+      },
+      "reply": {
+        "id": "e53155f1-28a3-4509-adc8-2addf03cfab9",
+        "ok": true,
+        "data": {
+          "success": true,
+          "approvals": []
+        }
+      }
+    },
+    {
+      "id": "dca15072-95a1-43a2-b85d-bd1b1130d17b",
+      "module": "taskLedger",
+      "action": "snapshot",
+      "payload": {
+        "workspaceId": "review-owner-acceptance"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348913628,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "dca15072-95a1-43a2-b85d-bd1b1130d17b"
+      },
+      "reply": {
+        "id": "dca15072-95a1-43a2-b85d-bd1b1130d17b",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:33.656Z",
+            "nodes": [],
+            "edges": [],
+            "sessionLinks": [],
+            "rootNodeIds": [],
+            "reviewNodeIds": [],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 0,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "20f03399-81fe-4aa6-9555-e31a047b88fa",
+      "module": "taskLedger",
+      "action": "snapshot",
+      "payload": {
+        "workspaceId": "review-owner-acceptance"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348913628,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "20f03399-81fe-4aa6-9555-e31a047b88fa"
+      },
+      "reply": {
+        "id": "20f03399-81fe-4aa6-9555-e31a047b88fa",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:33.656Z",
+            "nodes": [],
+            "edges": [],
+            "sessionLinks": [],
+            "rootNodeIds": [],
+            "reviewNodeIds": [],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 0,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "74829625-30ec-42be-b273-64692d65f913",
+      "module": "taskLedger",
+      "action": "appendEvents",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "events": [
+          {
+            "type": "node_created",
+            "actor": "assistant",
+            "taskId": "agent:main:main:turn:hwuc",
+            "sessionId": "agent:main:main",
+            "idempotencyKey": "turn-node:agent:main:main:turn:hwuc",
+            "payload": {
+              "node": {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              }
+            }
+          },
+          {
+            "type": "session_linked",
+            "actor": "assistant",
+            "taskId": "agent:main:main:turn:hwuc",
+            "sessionId": "agent:main:main",
+            "idempotencyKey": "turn-link:agent:main:main:turn:hwuc",
+            "payload": {
+              "sessionLink": {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            }
+          }
+        ],
+        "idempotencyKey": "turn:agent:main:main:1793348853767"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348913767,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "74829625-30ec-42be-b273-64692d65f913"
+      },
+      "reply": {
+        "id": "74829625-30ec-42be-b273-64692d65f913",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:33.771Z",
+            "nodes": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "edges": [],
+            "sessionLinks": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "rootNodeIds": [
+              "agent:main:main:turn:hwuc"
+            ],
+            "reviewNodeIds": [],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 2,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "cf59f4e0-7894-4173-9249-6a5d448e9647",
+      "module": "permissions",
+      "action": "approvals",
+      "payload": {
+        "includeExpired": true,
+        "limit": 200
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348914387,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "cf59f4e0-7894-4173-9249-6a5d448e9647"
+      },
+      "reply": {
+        "id": "cf59f4e0-7894-4173-9249-6a5d448e9647",
+        "ok": true,
+        "data": {
+          "success": true,
+          "approvals": []
+        }
+      }
+    },
+    {
+      "id": "b4f555db-02fd-4982-813b-9a969d99751f",
+      "module": "permissions",
+      "action": "approvals",
+      "payload": {
+        "includeExpired": true,
+        "limit": 200
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348914476,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "b4f555db-02fd-4982-813b-9a969d99751f"
+      },
+      "reply": {
+        "id": "b4f555db-02fd-4982-813b-9a969d99751f",
+        "ok": true,
+        "data": {
+          "success": true,
+          "approvals": []
+        }
+      }
+    },
+    {
+      "id": "9bcf3fcd-2448-4589-a996-ec9a221009f6",
+      "module": "permissions",
+      "action": "approvals",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "status": "pending",
+        "limit": 50
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348914502,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "9bcf3fcd-2448-4589-a996-ec9a221009f6"
+      },
+      "reply": {
+        "id": "9bcf3fcd-2448-4589-a996-ec9a221009f6",
+        "ok": true,
+        "data": {
+          "success": true,
+          "approvals": []
+        }
+      }
+    },
+    {
+      "id": "e43b6cc0-12ed-47b6-af12-3f34303ee35a",
+      "module": "taskLedger",
+      "action": "snapshot",
+      "payload": {
+        "workspaceId": "review-owner-acceptance"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348914479,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e43b6cc0-12ed-47b6-af12-3f34303ee35a"
+      },
+      "reply": {
+        "id": "e43b6cc0-12ed-47b6-af12-3f34303ee35a",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:34.532Z",
+            "nodes": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "edges": [],
+            "sessionLinks": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "rootNodeIds": [
+              "agent:main:main:turn:hwuc"
+            ],
+            "reviewNodeIds": [],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 2,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "8f4db009-44d6-4631-95ed-5d855e5f9e31",
+      "module": "taskLedger",
+      "action": "snapshot",
+      "payload": {
+        "workspaceId": "review-owner-acceptance"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348914480,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "8f4db009-44d6-4631-95ed-5d855e5f9e31"
+      },
+      "reply": {
+        "id": "8f4db009-44d6-4631-95ed-5d855e5f9e31",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:34.532Z",
+            "nodes": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "edges": [],
+            "sessionLinks": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "rootNodeIds": [
+              "agent:main:main:turn:hwuc"
+            ],
+            "reviewNodeIds": [],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 2,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "c0db94f4-f226-4c56-9e66-8b11441deccc",
+      "module": "taskLedger",
+      "action": "appendEvents",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "events": [
+          {
+            "type": "node_created",
+            "actor": "assistant",
+            "taskId": "agent:main:main:turn:hwuc",
+            "sessionId": "agent:main:main",
+            "idempotencyKey": "turn-node:agent:main:main:turn:hwuc",
+            "payload": {
+              "node": {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:34.548Z",
+                "updatedAt": "2026-10-30T08:27:34.548Z",
+                "completedAt": "2026-10-30T08:27:34.548Z"
+              }
+            }
+          },
+          {
+            "type": "session_linked",
+            "actor": "assistant",
+            "taskId": "agent:main:main:turn:hwuc",
+            "sessionId": "agent:main:main",
+            "idempotencyKey": "turn-link:agent:main:main:turn:hwuc",
+            "payload": {
+              "sessionLink": {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:34.548Z"
+              }
+            }
+          }
+        ],
+        "idempotencyKey": "turn:agent:main:main:1793348854548"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348914548,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "c0db94f4-f226-4c56-9e66-8b11441deccc"
+      },
+      "reply": {
+        "id": "c0db94f4-f226-4c56-9e66-8b11441deccc",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:34.551Z",
+            "nodes": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "edges": [],
+            "sessionLinks": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "rootNodeIds": [
+              "agent:main:main:turn:hwuc"
+            ],
+            "reviewNodeIds": [],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 2,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "3bcde744-1831-48f5-9fdd-8a821e2ac5b0",
+      "module": "changeContext",
+      "action": "getProjection",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "comparison": {
+          "mode": "merge-base",
+          "baseRef": "4524d5d418152611fb2962bb94dfc9d5866ec6e6"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348915066,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "3bcde744-1831-48f5-9fdd-8a821e2ac5b0"
+      },
+      "reply": {
+        "id": "3bcde744-1831-48f5-9fdd-8a821e2ac5b0",
+        "ok": true,
+        "data": {
+          "success": true,
+          "projection": {
+            "schemaVersion": 1,
+            "contextId": "change-context:dc4b78b4121e9015d0c51470",
+            "identity": {
+              "workspaceId": "review-owner-acceptance",
+              "sessionKey": "agent:main:main",
+              "runId": null,
+              "turn": null
+            },
+            "comparison": {
+              "mode": "merge-base",
+              "state": "available",
+              "base": {
+                "kind": "git-commit",
+                "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                "treeDigest": null
+              },
+              "candidate": {
+                "kind": "git-commit",
+                "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                "treeDigest": null
+              },
+              "resolvedAt": "2026-10-30T08:27:35.067Z",
+              "issues": []
+            },
+            "diff": {
+              "state": "available",
+              "files": [
+                {
+                  "path": "example.txt",
+                  "changeKind": "modified",
+                  "additions": null,
+                  "deletions": null,
+                  "patchDigest": "sha256:ff36b915f3028df9a0fe39f8906c1b8b7bafffcb97a9498d2a6e6666c026e1b5",
+                  "contentState": "available"
+                }
+              ],
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "example.txt",
+                  "status": "modified",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 1,
+                      "oldLines": 1,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "deletion",
+                          "text": "before",
+                          "oldLine": 1,
+                          "newLine": null
+                        },
+                        {
+                          "kind": "addition",
+                          "text": "after",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+                  "completeness": "complete"
+                }
+              ],
+              "stats": {
+                "files": 1,
+                "additions": 1,
+                "deletions": 1,
+                "patchBytes": 132
+              },
+              "truncated": false,
+              "issues": []
+            },
+            "comments": [],
+            "evidence": [],
+            "issues": [],
+            "generatedAt": "2026-10-30T08:27:35.067Z",
+            "reviewedDigest": "sha256:f7297da38297ba9ebdd3fa48a96816a09619b3984f89a16d7c01b774db182903"
+          }
+        }
+      }
+    },
+    {
+      "id": "8e93574b-4cb1-4ab7-8c96-566ec6db2fe1",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:dc4b78b4121e9015d0c51470"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348915287,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "8e93574b-4cb1-4ab7-8c96-566ec6db2fe1"
+      },
+      "reply": {
+        "id": "8e93574b-4cb1-4ab7-8c96-566ec6db2fe1",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": []
+        }
+      }
+    },
+    {
+      "id": "a3fbd01c-0947-41b7-9caa-1fab833bbf1e",
+      "module": "changeContext",
+      "action": "getProjection",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "comparison": {
+          "mode": "last-commit",
+          "commit": "76f340f4055b36e091df01d9dc72e8e753c03871"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348915489,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "a3fbd01c-0947-41b7-9caa-1fab833bbf1e"
+      },
+      "reply": {
+        "id": "a3fbd01c-0947-41b7-9caa-1fab833bbf1e",
+        "ok": true,
+        "data": {
+          "success": true,
+          "projection": {
+            "schemaVersion": 1,
+            "contextId": "change-context:55f1157d8cec149b63b7694b",
+            "identity": {
+              "workspaceId": "review-owner-acceptance",
+              "sessionKey": "agent:main:main",
+              "runId": null,
+              "turn": null
+            },
+            "comparison": {
+              "mode": "last-commit",
+              "state": "available",
+              "base": {
+                "kind": "git-commit",
+                "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                "treeDigest": null
+              },
+              "candidate": {
+                "kind": "git-commit",
+                "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                "treeDigest": null
+              },
+              "resolvedAt": "2026-10-30T08:27:35.490Z",
+              "issues": []
+            },
+            "diff": {
+              "state": "available",
+              "files": [
+                {
+                  "path": "example.txt",
+                  "changeKind": "modified",
+                  "additions": null,
+                  "deletions": null,
+                  "patchDigest": "sha256:ff36b915f3028df9a0fe39f8906c1b8b7bafffcb97a9498d2a6e6666c026e1b5",
+                  "contentState": "available"
+                }
+              ],
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "example.txt",
+                  "status": "modified",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 1,
+                      "oldLines": 1,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "deletion",
+                          "text": "before",
+                          "oldLine": 1,
+                          "newLine": null
+                        },
+                        {
+                          "kind": "addition",
+                          "text": "after",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+                  "completeness": "complete"
+                }
+              ],
+              "stats": {
+                "files": 1,
+                "additions": 1,
+                "deletions": 1,
+                "patchBytes": 132
+              },
+              "truncated": false,
+              "issues": []
+            },
+            "comments": [],
+            "evidence": [],
+            "issues": [],
+            "generatedAt": "2026-10-30T08:27:35.490Z",
+            "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6"
+          }
+        }
+      }
+    },
+    {
+      "id": "39e47426-1f0b-4412-9003-bbfcc7a17932",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348915688,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "39e47426-1f0b-4412-9003-bbfcc7a17932"
+      },
+      "reply": {
+        "id": "39e47426-1f0b-4412-9003-bbfcc7a17932",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": []
+        }
+      }
+    },
+    {
+      "id": "6c3cfcfe-adfa-4cb7-9e52-a944f6d14547",
+      "module": "changeContext",
+      "action": "getProjection",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "comparison": {
+          "mode": "last-turn"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348915905,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "6c3cfcfe-adfa-4cb7-9e52-a944f6d14547"
+      },
+      "reply": {
+        "id": "6c3cfcfe-adfa-4cb7-9e52-a944f6d14547",
+        "ok": true,
+        "data": {
+          "success": true,
+          "projection": {
+            "schemaVersion": 1,
+            "contextId": "change-context:ab06ed07da5f171c0c9763fc",
+            "identity": {
+              "workspaceId": "review-owner-acceptance",
+              "sessionKey": "agent:main:main",
+              "runId": "fixture-run",
+              "turn": {
+                "sessionKey": "agent:main:main",
+                "runId": "fixture-run",
+                "attemptIndex": 0,
+                "modelCallIndex": 1
+              }
+            },
+            "comparison": {
+              "mode": "last-turn",
+              "state": "available",
+              "base": {
+                "kind": "git-commit",
+                "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                "treeDigest": null
+              },
+              "candidate": {
+                "kind": "git-worktree",
+                "workspaceId": "review-owner-acceptance",
+                "headCommit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                "worktreeDigest": null
+              },
+              "resolvedAt": "2026-10-30T08:27:35.906Z",
+              "issues": []
+            },
+            "diff": {
+              "state": "available",
+              "files": [
+                {
+                  "path": "example.txt",
+                  "changeKind": "modified",
+                  "additions": null,
+                  "deletions": null,
+                  "patchDigest": "sha256:ff36b915f3028df9a0fe39f8906c1b8b7bafffcb97a9498d2a6e6666c026e1b5",
+                  "contentState": "available"
+                }
+              ],
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "example.txt",
+                  "status": "modified",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 1,
+                      "oldLines": 1,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "deletion",
+                          "text": "before",
+                          "oldLine": 1,
+                          "newLine": null
+                        },
+                        {
+                          "kind": "addition",
+                          "text": "after",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+                  "completeness": "complete"
+                }
+              ],
+              "stats": {
+                "files": 1,
+                "additions": 1,
+                "deletions": 1,
+                "patchBytes": 131
+              },
+              "truncated": false,
+              "issues": []
+            },
+            "comments": [],
+            "evidence": [],
+            "issues": [],
+            "generatedAt": "2026-10-30T08:27:35.906Z",
+            "reviewedDigest": "sha256:04691b91aba72a2a8b769aaadec5f2257a8ddf5566ee65e39965942432b78cbd"
+          }
+        }
+      }
+    },
+    {
+      "id": "a030716c-9017-4f2d-ba33-799242fd3848",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:ab06ed07da5f171c0c9763fc"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916182,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "a030716c-9017-4f2d-ba33-799242fd3848"
+      },
+      "reply": {
+        "id": "a030716c-9017-4f2d-ba33-799242fd3848",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": []
+        }
+      }
+    },
+    {
+      "id": "88053197-8182-484f-8ce4-d0a893e7c17c",
+      "module": "changeContext",
+      "action": "getProjection",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "comparison": {
+          "mode": "checkpoint",
+          "checkpointId": "fixture-checkpoint"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916339,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "88053197-8182-484f-8ce4-d0a893e7c17c"
+      },
+      "reply": {
+        "id": "88053197-8182-484f-8ce4-d0a893e7c17c",
+        "ok": true,
+        "data": {
+          "success": true,
+          "projection": {
+            "schemaVersion": 1,
+            "contextId": "change-context:b3c7197794cd0be54770a9af",
+            "identity": {
+              "workspaceId": "review-owner-acceptance",
+              "sessionKey": "agent:main:main",
+              "runId": null,
+              "turn": null
+            },
+            "comparison": {
+              "mode": "checkpoint",
+              "state": "available",
+              "base": {
+                "kind": "checkpoint",
+                "checkpointId": "fixture-checkpoint",
+                "checkpointDigest": "sha256:39cf807bf6161b8e59bb1c44db559c169aaeebc01f313703d39a33b282f3f103"
+              },
+              "candidate": {
+                "kind": "git-worktree",
+                "workspaceId": "review-owner-acceptance",
+                "headCommit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                "worktreeDigest": null
+              },
+              "resolvedAt": "2026-10-30T08:27:36.341Z",
+              "issues": []
+            },
+            "diff": {
+              "state": "available",
+              "files": [
+                {
+                  "path": "example.txt",
+                  "changeKind": "modified",
+                  "additions": null,
+                  "deletions": null,
+                  "patchDigest": "sha256:ff36b915f3028df9a0fe39f8906c1b8b7bafffcb97a9498d2a6e6666c026e1b5",
+                  "contentState": "available"
+                }
+              ],
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "example.txt",
+                  "status": "modified",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 1,
+                      "oldLines": 1,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "deletion",
+                          "text": "before",
+                          "oldLine": 1,
+                          "newLine": null
+                        },
+                        {
+                          "kind": "addition",
+                          "text": "after",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+                  "completeness": "complete"
+                }
+              ],
+              "stats": {
+                "files": 1,
+                "additions": 1,
+                "deletions": 1,
+                "patchBytes": 132
+              },
+              "truncated": false,
+              "issues": []
+            },
+            "comments": [],
+            "evidence": [],
+            "issues": [],
+            "generatedAt": "2026-10-30T08:27:36.341Z",
+            "reviewedDigest": "sha256:c909ef903699c15dbfa2eafbbd1623bf23c307d6b6f53a83f49a2c91c1b6a94e"
+          }
+        }
+      }
+    },
+    {
+      "id": "780924e4-2760-4dd5-a8fb-3e5d71e02fda",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:b3c7197794cd0be54770a9af"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916433,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "780924e4-2760-4dd5-a8fb-3e5d71e02fda"
+      },
+      "reply": {
+        "id": "780924e4-2760-4dd5-a8fb-3e5d71e02fda",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": []
+        }
+      }
+    },
+    {
+      "id": "7b75e7ea-ac79-4b52-b5a5-9697e3fb9aaf",
+      "module": "changeContext",
+      "action": "getProjection",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "comparison": {
+          "mode": "checkpoint",
+          "checkpointId": "missing-checkpoint"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916508,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "7b75e7ea-ac79-4b52-b5a5-9697e3fb9aaf"
+      },
+      "reply": {
+        "id": "7b75e7ea-ac79-4b52-b5a5-9697e3fb9aaf",
+        "ok": true,
+        "data": {
+          "success": false,
+          "error": {
+            "schema": "ChangeContextError/v1",
+            "code": "unavailable",
+            "retryable": true,
+            "requestId": "4d43f1bd-fa68-4a75-a26d-cdbbbc4c37f2",
+            "safeMessage": "Fixture checkpoint unavailable",
+            "details": {
+              "state": "unavailable",
+              "issues": [
+                {
+                  "code": "source_unavailable",
+                  "message": "Fixture checkpoint unavailable",
+                  "source": "checkpoint"
+                },
+                {
+                  "code": "source_unavailable",
+                  "message": "Fixture checkpoint unavailable",
+                  "source": "checkpoint"
+                }
+              ]
+            }
+          },
+          "projection": {
+            "schemaVersion": 1,
+            "contextId": "change-context:2082bfbce7192eeb75f32455",
+            "identity": {
+              "workspaceId": "review-owner-acceptance",
+              "sessionKey": "agent:main:main",
+              "runId": null,
+              "turn": null
+            },
+            "comparison": {
+              "mode": "checkpoint",
+              "state": "unavailable",
+              "base": null,
+              "candidate": null,
+              "resolvedAt": "2026-10-30T08:27:36.509Z",
+              "issues": [
+                {
+                  "code": "source_unavailable",
+                  "message": "Fixture checkpoint unavailable",
+                  "source": "checkpoint"
+                },
+                {
+                  "code": "source_unavailable",
+                  "message": "Fixture checkpoint unavailable",
+                  "source": "checkpoint"
+                }
+              ]
+            },
+            "diff": {
+              "state": "unavailable",
+              "files": [],
+              "patchArtifacts": [],
+              "stats": null,
+              "truncated": false,
+              "issues": [
+                {
+                  "code": "source_unavailable",
+                  "message": "Fixture checkpoint unavailable",
+                  "source": "checkpoint"
+                },
+                {
+                  "code": "source_unavailable",
+                  "message": "Fixture checkpoint unavailable",
+                  "source": "checkpoint"
+                }
+              ]
+            },
+            "comments": [],
+            "evidence": [],
+            "issues": [
+              {
+                "code": "source_unavailable",
+                "message": "Fixture checkpoint unavailable",
+                "source": "checkpoint"
+              },
+              {
+                "code": "source_unavailable",
+                "message": "Fixture checkpoint unavailable",
+                "source": "checkpoint"
+              }
+            ],
+            "generatedAt": "2026-10-30T08:27:36.509Z",
+            "reviewedDigest": "sha256:4e1591d991bb6b80e29a5b0ef238be208a64c5316ab8e8881714d396c56a7e2e"
+          }
+        }
+      }
+    },
+    {
+      "id": "084b39f9-8c57-441e-ac86-9b7743787443",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:2082bfbce7192eeb75f32455"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916512,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "084b39f9-8c57-441e-ac86-9b7743787443"
+      },
+      "reply": {
+        "id": "084b39f9-8c57-441e-ac86-9b7743787443",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": []
+        }
+      }
+    },
+    {
+      "id": "e2d1fde9-bcf3-4a63-9ec6-f463585f959c",
+      "module": "changeContext",
+      "action": "getProjection",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "comparison": {
+          "mode": "last-commit",
+          "commit": "76f340f4055b36e091df01d9dc72e8e753c03871"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916571,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e2d1fde9-bcf3-4a63-9ec6-f463585f959c"
+      },
+      "reply": {
+        "id": "e2d1fde9-bcf3-4a63-9ec6-f463585f959c",
+        "ok": true,
+        "data": {
+          "success": true,
+          "projection": {
+            "schemaVersion": 1,
+            "contextId": "change-context:55f1157d8cec149b63b7694b",
+            "identity": {
+              "workspaceId": "review-owner-acceptance",
+              "sessionKey": "agent:main:main",
+              "runId": null,
+              "turn": null
+            },
+            "comparison": {
+              "mode": "last-commit",
+              "state": "available",
+              "base": {
+                "kind": "git-commit",
+                "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                "treeDigest": null
+              },
+              "candidate": {
+                "kind": "git-commit",
+                "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                "treeDigest": null
+              },
+              "resolvedAt": "2026-10-30T08:27:36.571Z",
+              "issues": []
+            },
+            "diff": {
+              "state": "available",
+              "files": [
+                {
+                  "path": "example.txt",
+                  "changeKind": "modified",
+                  "additions": null,
+                  "deletions": null,
+                  "patchDigest": "sha256:ff36b915f3028df9a0fe39f8906c1b8b7bafffcb97a9498d2a6e6666c026e1b5",
+                  "contentState": "available"
+                }
+              ],
+              "patchArtifacts": [
+                {
+                  "schema": "GitPatchArtifact/v1",
+                  "file": "example.txt",
+                  "status": "modified",
+                  "contentKind": "text",
+                  "hunks": [
+                    {
+                      "oldStart": 1,
+                      "oldLines": 1,
+                      "newStart": 1,
+                      "newLines": 1,
+                      "lines": [
+                        {
+                          "kind": "deletion",
+                          "text": "before",
+                          "oldLine": 1,
+                          "newLine": null
+                        },
+                        {
+                          "kind": "addition",
+                          "text": "after",
+                          "oldLine": null,
+                          "newLine": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+                  "completeness": "complete"
+                }
+              ],
+              "stats": {
+                "files": 1,
+                "additions": 1,
+                "deletions": 1,
+                "patchBytes": 132
+              },
+              "truncated": false,
+              "issues": []
+            },
+            "comments": [],
+            "evidence": [],
+            "issues": [],
+            "generatedAt": "2026-10-30T08:27:36.571Z",
+            "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6"
+          }
+        }
+      }
+    },
+    {
+      "id": "44c08bf4-1493-4b32-b06f-4389956298f8",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916764,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "44c08bf4-1493-4b32-b06f-4389956298f8"
+      },
+      "reply": {
+        "id": "44c08bf4-1493-4b32-b06f-4389956298f8",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": []
+        }
+      }
+    },
+    {
+      "id": "e93a5fe1-6f18-43a5-ae32-4718f4253b36",
+      "module": "changeContext",
+      "action": "createComment",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b",
+        "body": "Agent-driven anchor acceptance",
+        "author": {
+          "id": "agent:electron-e2e",
+          "kind": "agent",
+          "drivenBy": "agent"
+        },
+        "anchor": {
+          "path": "example.txt",
+          "range": {
+            "startLine": 1,
+            "endLine": 1
+          },
+          "fileDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+          "rangeDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+          "originalExcerpt": "after",
+          "baseRevision": {
+            "kind": "git-commit",
+            "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+            "treeDigest": null
+          },
+          "candidateRevision": {
+            "kind": "git-commit",
+            "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+            "treeDigest": null
+          }
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348916995,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e93a5fe1-6f18-43a5-ae32-4718f4253b36"
+      },
+      "reply": {
+        "id": "e93a5fe1-6f18-43a5-ae32-4718f4253b36",
+        "ok": true,
+        "data": {
+          "success": true,
+          "comment": {
+            "id": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance",
+            "sessionKey": "agent:main:main",
+            "contextId": "change-context:55f1157d8cec149b63b7694b",
+            "body": "Agent-driven anchor acceptance",
+            "author": {
+              "id": "agent:electron-e2e",
+              "kind": "agent",
+              "drivenBy": "agent"
+            },
+            "anchor": {
+              "path": "example.txt",
+              "range": {
+                "startLine": 1,
+                "endLine": 1
+              },
+              "fileDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+              "rangeDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+              "baseRevision": {
+                "kind": "git-commit",
+                "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                "treeDigest": null
+              },
+              "candidateRevision": {
+                "kind": "git-commit",
+                "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                "treeDigest": null
+              },
+              "originalExcerpt": "after"
+            },
+            "createdAt": "2026-10-30T08:27:36.995Z",
+            "updatedAt": "2026-10-30T08:27:36.995Z",
+            "resolvedAt": null,
+            "deletedAt": null,
+            "deletionReason": null,
+            "reanchorCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "564f91cd-df14-46a4-8106-06860b9e3c59",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348917000,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "564f91cd-df14-46a4-8106-06860b9e3c59"
+      },
+      "reply": {
+        "id": "564f91cd-df14-46a4-8106-06860b9e3c59",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": [
+            {
+              "comment": {
+                "id": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+                "schemaVersion": 1,
+                "workspaceId": "review-owner-acceptance",
+                "sessionKey": "agent:main:main",
+                "contextId": "change-context:55f1157d8cec149b63b7694b",
+                "body": "Agent-driven anchor acceptance",
+                "author": {
+                  "id": "agent:electron-e2e",
+                  "kind": "agent",
+                  "drivenBy": "agent"
+                },
+                "anchor": {
+                  "path": "example.txt",
+                  "range": {
+                    "startLine": 1,
+                    "endLine": 1
+                  },
+                  "fileDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+                  "rangeDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+                  "baseRevision": {
+                    "kind": "git-commit",
+                    "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                    "treeDigest": null
+                  },
+                  "candidateRevision": {
+                    "kind": "git-commit",
+                    "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                    "treeDigest": null
+                  },
+                  "originalExcerpt": "after"
+                },
+                "createdAt": "2026-10-30T08:27:36.995Z",
+                "updatedAt": "2026-10-30T08:27:36.995Z",
+                "resolvedAt": null,
+                "deletedAt": null,
+                "deletionReason": null,
+                "reanchorCount": 0
+              },
+              "anchorState": "live",
+              "anchorIssues": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "aa1f5ba1-fd20-441f-b897-dfdd0252fa6e",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348917050,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "aa1f5ba1-fd20-441f-b897-dfdd0252fa6e"
+      },
+      "reply": {
+        "id": "aa1f5ba1-fd20-441f-b897-dfdd0252fa6e",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": [
+            {
+              "comment": {
+                "id": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+                "schemaVersion": 1,
+                "workspaceId": "review-owner-acceptance",
+                "sessionKey": "agent:main:main",
+                "contextId": "change-context:55f1157d8cec149b63b7694b",
+                "body": "Agent-driven anchor acceptance",
+                "author": {
+                  "id": "agent:electron-e2e",
+                  "kind": "agent",
+                  "drivenBy": "agent"
+                },
+                "anchor": {
+                  "path": "example.txt",
+                  "range": {
+                    "startLine": 1,
+                    "endLine": 1
+                  },
+                  "fileDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+                  "rangeDigest": "sha256:f39592393ef0859cb196a52693d2cea00fb2df784b3c04ae54aa7cadb8e562f8",
+                  "baseRevision": {
+                    "kind": "git-commit",
+                    "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                    "treeDigest": null
+                  },
+                  "candidateRevision": {
+                    "kind": "git-commit",
+                    "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                    "treeDigest": null
+                  },
+                  "originalExcerpt": "after"
+                },
+                "createdAt": "2026-10-30T08:27:36.995Z",
+                "updatedAt": "2026-10-30T08:27:36.995Z",
+                "resolvedAt": null,
+                "deletedAt": null,
+                "deletionReason": null,
+                "reanchorCount": 0
+              },
+              "anchorState": "stale",
+              "anchorIssues": [
+                {
+                  "code": "source_stale",
+                  "message": "The anchored file changed; the comment was not moved.",
+                  "source": "review-store"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e4f99220-a953-4eb3-a441-2e87a40f48e1",
+      "module": "changeContext",
+      "action": "reanchorComment",
+      "payload": {
+        "commentId": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+        "expectedUpdatedAt": "2026-10-30T08:27:36.995Z",
+        "author": {
+          "id": "agent:electron-e2e",
+          "kind": "agent",
+          "drivenBy": "agent"
+        },
+        "anchor": {
+          "path": "example.txt",
+          "range": {
+            "startLine": 1,
+            "endLine": 1
+          },
+          "fileDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+          "rangeDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+          "originalExcerpt": "changed after review",
+          "baseRevision": {
+            "kind": "git-commit",
+            "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+            "treeDigest": null
+          },
+          "candidateRevision": {
+            "kind": "git-commit",
+            "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+            "treeDigest": null
+          }
+        },
+        "reason": "Re-anchor comment"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348917280,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e4f99220-a953-4eb3-a441-2e87a40f48e1"
+      },
+      "reply": {
+        "id": "e4f99220-a953-4eb3-a441-2e87a40f48e1",
+        "ok": true,
+        "data": {
+          "success": true,
+          "comment": {
+            "id": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance",
+            "sessionKey": "agent:main:main",
+            "contextId": "change-context:55f1157d8cec149b63b7694b",
+            "body": "Agent-driven anchor acceptance",
+            "author": {
+              "id": "agent:electron-e2e",
+              "kind": "agent",
+              "drivenBy": "agent"
+            },
+            "anchor": {
+              "path": "example.txt",
+              "range": {
+                "startLine": 1,
+                "endLine": 1
+              },
+              "fileDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+              "rangeDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+              "baseRevision": {
+                "kind": "git-commit",
+                "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                "treeDigest": null
+              },
+              "candidateRevision": {
+                "kind": "git-commit",
+                "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                "treeDigest": null
+              },
+              "originalExcerpt": "changed after review"
+            },
+            "createdAt": "2026-10-30T08:27:36.995Z",
+            "updatedAt": "2026-10-30T08:27:37.280Z",
+            "resolvedAt": null,
+            "deletedAt": null,
+            "deletionReason": null,
+            "reanchorCount": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "854d3652-be43-49c9-b723-2452bcb82771",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348917284,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "854d3652-be43-49c9-b723-2452bcb82771"
+      },
+      "reply": {
+        "id": "854d3652-be43-49c9-b723-2452bcb82771",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": [
+            {
+              "comment": {
+                "id": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+                "schemaVersion": 1,
+                "workspaceId": "review-owner-acceptance",
+                "sessionKey": "agent:main:main",
+                "contextId": "change-context:55f1157d8cec149b63b7694b",
+                "body": "Agent-driven anchor acceptance",
+                "author": {
+                  "id": "agent:electron-e2e",
+                  "kind": "agent",
+                  "drivenBy": "agent"
+                },
+                "anchor": {
+                  "path": "example.txt",
+                  "range": {
+                    "startLine": 1,
+                    "endLine": 1
+                  },
+                  "fileDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+                  "rangeDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+                  "baseRevision": {
+                    "kind": "git-commit",
+                    "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                    "treeDigest": null
+                  },
+                  "candidateRevision": {
+                    "kind": "git-commit",
+                    "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                    "treeDigest": null
+                  },
+                  "originalExcerpt": "changed after review"
+                },
+                "createdAt": "2026-10-30T08:27:36.995Z",
+                "updatedAt": "2026-10-30T08:27:37.280Z",
+                "resolvedAt": null,
+                "deletedAt": null,
+                "deletionReason": null,
+                "reanchorCount": 1
+              },
+              "anchorState": "live",
+              "anchorIssues": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fp-p1-1793348857293-0.39012017224725204",
+      "module": "taskLedger",
+      "action": "snapshot",
+      "payload": {
+        "workspaceId": "review-owner-acceptance"
+      },
+      "reply": {
+        "id": "fp-p1-1793348857293-0.39012017224725204",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:37.294Z",
+            "nodes": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "edges": [],
+            "sessionLinks": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "rootNodeIds": [
+              "agent:main:main:turn:hwuc"
+            ],
+            "reviewNodeIds": [],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 2,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "a12c95a8-3055-40db-87b1-18b2ac62bfe5",
+      "module": "changeContext",
+      "action": "submitVerdict",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b",
+        "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6",
+        "author": {
+          "id": "agent:electron-e2e",
+          "kind": "agent",
+          "drivenBy": "agent"
+        },
+        "decision": "request_changes"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348917313,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "a12c95a8-3055-40db-87b1-18b2ac62bfe5"
+      },
+      "reply": {
+        "id": "a12c95a8-3055-40db-87b1-18b2ac62bfe5",
+        "ok": true,
+        "data": {
+          "success": true,
+          "verdict": {
+            "id": "28895a79-6500-4905-bd83-3d1c2b9179df",
+            "schemaVersion": 1,
+            "contextId": "change-context:55f1157d8cec149b63b7694b",
+            "workspaceId": "review-owner-acceptance",
+            "sessionKey": "agent:main:main",
+            "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6",
+            "commentIds": [],
+            "author": {
+              "id": "agent:electron-e2e",
+              "kind": "agent",
+              "drivenBy": "agent"
+            },
+            "createdAt": "2026-10-30T08:27:37.509Z",
+            "authority": {
+              "completesTaskLedgerNode": false,
+              "executesCode": false,
+              "grantsApproval": false
+            },
+            "decision": "request_changes",
+            "taskLedgerEffect": "link_only",
+            "taskLedgerLink": {
+              "direction": "review-to-task-ledger",
+              "taskLedgerNodeId": "change-context-review:change-context:55f1157d8cec149b63b7694b",
+              "taskLedgerWorkspaceId": "review-owner-acceptance",
+              "linkedAt": "2026-10-30T08:27:37.509Z",
+              "created": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "fp-p1-1793348857703-0.06674924068498955",
+      "module": "taskLedger",
+      "action": "snapshot",
+      "payload": {
+        "workspaceId": "review-owner-acceptance"
+      },
+      "reply": {
+        "id": "fp-p1-1793348857703-0.06674924068498955",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:37.704Z",
+            "nodes": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              },
+              {
+                "id": "change-context-review:change-context:55f1157d8cec149b63b7694b",
+                "title": "Review changes: change-context:55f1157d8cec149b63b7694b",
+                "kind": "review",
+                "parentId": null,
+                "status": "todo",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [
+                  "change-context"
+                ],
+                "description": "Explicit request changes; review evidence does not authorize execution.",
+                "evidenceRefs": [
+                  {
+                    "type": "other",
+                    "ref": "change-context:55f1157d8cec149b63b7694b",
+                    "label": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6"
+                  }
+                ],
+                "metadata": {
+                  "source": "change-context",
+                  "contextId": "change-context:55f1157d8cec149b63b7694b",
+                  "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6",
+                  "driven_by": "agent",
+                  "actor": "agent:electron-e2e"
+                },
+                "createdAt": "2026-10-30T08:27:37.509Z",
+                "updatedAt": "2026-10-30T08:27:37.509Z",
+                "completedAt": null
+              }
+            ],
+            "edges": [],
+            "sessionLinks": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "rootNodeIds": [
+              "agent:main:main:turn:hwuc",
+              "change-context-review:change-context:55f1157d8cec149b63b7694b"
+            ],
+            "reviewNodeIds": [
+              "change-context-review:change-context:55f1157d8cec149b63b7694b"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 3,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "ac1747a0-6436-49bb-9fdb-80487c55133c",
+      "module": "changeContext",
+      "action": "submitVerdict",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b",
+        "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6",
+        "author": {
+          "id": "agent:electron-e2e",
+          "kind": "agent",
+          "drivenBy": "agent"
+        },
+        "decision": "approve"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348917727,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "ac1747a0-6436-49bb-9fdb-80487c55133c"
+      },
+      "reply": {
+        "id": "ac1747a0-6436-49bb-9fdb-80487c55133c",
+        "ok": true,
+        "data": {
+          "success": true,
+          "verdict": {
+            "id": "6a6e06bd-97a2-4498-a6f3-db96ccab5fb4",
+            "schemaVersion": 1,
+            "contextId": "change-context:55f1157d8cec149b63b7694b",
+            "workspaceId": "review-owner-acceptance",
+            "sessionKey": "agent:main:main",
+            "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6",
+            "commentIds": [],
+            "author": {
+              "id": "agent:electron-e2e",
+              "kind": "agent",
+              "drivenBy": "agent"
+            },
+            "createdAt": "2026-10-30T08:27:37.960Z",
+            "authority": {
+              "completesTaskLedgerNode": false,
+              "executesCode": false,
+              "grantsApproval": false
+            },
+            "decision": "approve",
+            "taskLedgerEffect": "none",
+            "taskLedgerLink": null
+          }
+        }
+      }
+    },
+    {
+      "id": "fp-p1-1793348858001-0.16152419838158094",
+      "module": "taskLedger",
+      "action": "snapshot",
+      "payload": {
+        "workspaceId": "review-owner-acceptance"
+      },
+      "reply": {
+        "id": "fp-p1-1793348858001-0.16152419838158094",
+        "ok": true,
+        "data": {
+          "success": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "workspaceId": "review-owner-acceptance-44391c249f",
+            "generatedAt": "2026-10-30T08:27:38.002Z",
+            "nodes": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "title": "User asked: \"Agent fixture change\". ",
+                "kind": "check",
+                "parentId": null,
+                "status": "done",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [],
+                "description": "User asked: \"Agent fixture change\". ",
+                "evidenceRefs": [
+                  {
+                    "type": "session",
+                    "ref": "agent:main:main",
+                    "label": "Turn transcript"
+                  }
+                ],
+                "metadata": {
+                  "sourceWorkspaceId": "review-owner-acceptance"
+                },
+                "createdAt": "2026-10-30T08:27:33.767Z",
+                "updatedAt": "2026-10-30T08:27:33.767Z",
+                "completedAt": "2026-10-30T08:27:33.767Z"
+              },
+              {
+                "id": "change-context-review:change-context:55f1157d8cec149b63b7694b",
+                "title": "Review changes: change-context:55f1157d8cec149b63b7694b",
+                "kind": "review",
+                "parentId": null,
+                "status": "todo",
+                "owner": "agent",
+                "priority": "normal",
+                "tags": [
+                  "change-context"
+                ],
+                "description": "Explicit request changes; review evidence does not authorize execution.",
+                "evidenceRefs": [
+                  {
+                    "type": "other",
+                    "ref": "change-context:55f1157d8cec149b63b7694b",
+                    "label": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6"
+                  }
+                ],
+                "metadata": {
+                  "source": "change-context",
+                  "contextId": "change-context:55f1157d8cec149b63b7694b",
+                  "reviewedDigest": "sha256:029747f32da4819be19cb6dc59efde034ef8e8554770b4936475c65d686361e6",
+                  "driven_by": "agent",
+                  "actor": "agent:electron-e2e"
+                },
+                "createdAt": "2026-10-30T08:27:37.509Z",
+                "updatedAt": "2026-10-30T08:27:37.509Z",
+                "completedAt": null
+              }
+            ],
+            "edges": [],
+            "sessionLinks": [
+              {
+                "id": "agent:main:main:turn:hwuc",
+                "sessionKey": "agent:main:main",
+                "nodeId": "agent:main:main:turn:hwuc",
+                "relation": "related",
+                "summary": "User asked: \"Agent fixture change\". ",
+                "createdAt": "2026-10-30T08:27:33.767Z"
+              }
+            ],
+            "rootNodeIds": [
+              "agent:main:main:turn:hwuc",
+              "change-context-review:change-context:55f1157d8cec149b63b7694b"
+            ],
+            "reviewNodeIds": [
+              "change-context-review:change-context:55f1157d8cec149b63b7694b"
+            ],
+            "activeNodeIds": [],
+            "blockedNodeIds": [],
+            "currentGoalId": null,
+            "recentDecisions": [],
+            "eventsCount": 3,
+            "warnings": []
+          }
+        }
+      }
+    },
+    {
+      "id": "df3a6f73-9319-4b25-840b-630aff04a734",
+      "module": "changeContext",
+      "action": "pullChanges",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b",
+        "patchArtifact": {
+          "schema": "GitPatchArtifact/v1",
+          "file": "example.txt",
+          "status": "modified",
+          "contentKind": "text",
+          "hunks": [
+            {
+              "oldStart": 1,
+              "oldLines": 1,
+              "newStart": 1,
+              "newLines": 1,
+              "lines": [
+                {
+                  "kind": "deletion",
+                  "text": "before",
+                  "oldLine": 1,
+                  "newLine": null
+                },
+                {
+                  "kind": "addition",
+                  "text": "after",
+                  "oldLine": null,
+                  "newLine": 1
+                }
+              ]
+            }
+          ],
+          "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+          "completeness": "complete"
+        },
+        "expectedDestinationHead": "ffffffffffffffffffffffffffffffffffffffff",
+        "approvalId": ""
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348918042,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "df3a6f73-9319-4b25-840b-630aff04a734"
+      },
+      "reply": {
+        "id": "df3a6f73-9319-4b25-840b-630aff04a734",
+        "ok": true,
+        "data": {
+          "success": false,
+          "state": "stale",
+          "destinationMutated": false,
+          "error": {
+            "schema": "ChangeContextError/v1",
+            "code": "stale",
+            "safeMessage": "Review destination is stale; refresh its HEAD before applying.",
+            "details": {},
+            "requestId": "076d5a22-9dbd-43ae-933c-7872230bd5a1",
+            "retryable": false
+          }
+        }
+      }
+    },
+    {
+      "id": "6d101114-0b79-4d54-b436-9458c1fe1130",
+      "module": "changeContext",
+      "action": "pullChanges",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b",
+        "patchArtifact": {
+          "schema": "GitPatchArtifact/v1",
+          "file": "example.txt",
+          "status": "modified",
+          "contentKind": "text",
+          "hunks": [
+            {
+              "oldStart": 1,
+              "oldLines": 1,
+              "newStart": 1,
+              "newLines": 1,
+              "lines": [
+                {
+                  "kind": "deletion",
+                  "text": "before",
+                  "oldLine": 1,
+                  "newLine": null
+                },
+                {
+                  "kind": "addition",
+                  "text": "after",
+                  "oldLine": null,
+                  "newLine": 1
+                }
+              ]
+            }
+          ],
+          "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+          "completeness": "complete"
+        },
+        "expectedDestinationHead": "76f340f4055b36e091df01d9dc72e8e753c03871",
+        "approvalId": ""
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348918458,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "6d101114-0b79-4d54-b436-9458c1fe1130"
+      },
+      "reply": {
+        "id": "6d101114-0b79-4d54-b436-9458c1fe1130",
+        "ok": true,
+        "data": {
+          "success": false,
+          "state": "conflicted",
+          "destinationMutated": false,
+          "error": {
+            "schema": "ChangeContextError/v1",
+            "code": "conflict",
+            "safeMessage": "Checking patch example.txt...\nerror: while searching for:\nbefore\n\nerror: patch failed: example.txt:1\nerror: example.txt: patch does not apply\n",
+            "details": {},
+            "requestId": "b991fdb6-327b-4f7d-84d7-64a70cf922e8",
+            "retryable": false
+          }
+        }
+      }
+    },
+    {
+      "id": "5867f46e-19f9-4c46-8a8f-aae426501a73",
+      "module": "changeContext",
+      "action": "pullChanges",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b",
+        "patchArtifact": {
+          "schema": "GitPatchArtifact/v1",
+          "file": "example.txt",
+          "status": "modified",
+          "contentKind": "text",
+          "hunks": [
+            {
+              "oldStart": 1,
+              "oldLines": 1,
+              "newStart": 1,
+              "newLines": 1,
+              "lines": [
+                {
+                  "kind": "deletion",
+                  "text": "before",
+                  "oldLine": 1,
+                  "newLine": null
+                },
+                {
+                  "kind": "addition",
+                  "text": "after",
+                  "oldLine": null,
+                  "newLine": 1
+                }
+              ]
+            }
+          ],
+          "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+          "completeness": "complete"
+        },
+        "expectedDestinationHead": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+        "approvalId": ""
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348919449,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "5867f46e-19f9-4c46-8a8f-aae426501a73"
+      },
+      "reply": {
+        "id": "5867f46e-19f9-4c46-8a8f-aae426501a73",
+        "ok": true,
+        "data": {
+          "success": false,
+          "state": "denied",
+          "destinationMutated": false,
+          "error": {
+            "schema": "ChangeContextError/v1",
+            "code": "approval_required",
+            "safeMessage": "This Git/GitHub operation can rewrite or publish repository state and requires approval. Applies a patch to 1 file(s): example.txt.",
+            "details": {
+              "approval": {
+                "id": "approval-mvuplwhf-p859m8",
+                "workspaceId": "review-owner-acceptance",
+                "sessionKey": "agent:main:main",
+                "runId": null,
+                "mode": "acceptEdits",
+                "source": "git",
+                "requestedAt": 1793348860083,
+                "status": "pending",
+                "risk": "dangerous",
+                "command": "git apply --verbose <patch-file sha256:8c2410fc3d51eaf5> head:4524d5d418152611fb2962bb94dfc9d5866ec6e6 context:change-context:55f1157d8cec149b63b7694b",
+                "cwd": "${FIXTURE_ROOT}",
+                "paths": [
+                  "example.txt"
+                ],
+                "requestHash": "review-owner-acceptance:agent:main:main:git:applyPatch:{\"command\":\"git apply --verbose <patch-file sha256:8c2410fc3d51eaf5> head:4524d5d418152611fb2962bb94dfc9d5866ec6e6 context:change-context:55f1157d8cec149b63b7694b\",\"paths\":[\"example.txt\"]}",
+                "reason": "This Git/GitHub operation can rewrite or publish repository state and requires approval. Applies a patch to 1 file(s): example.txt."
+              }
+            },
+            "requestId": "155a5781-57ed-4ccb-b287-7bda463a5e10",
+            "retryable": false
+          }
+        }
+      }
+    },
+    {
+      "id": "fp-p1-1793348860387-0.9019127289782123",
+      "module": "permissions",
+      "action": "decideApproval",
+      "payload": {
+        "id": "approval-mvuplwhf-p859m8",
+        "decision": "approved"
+      },
+      "reply": {
+        "id": "fp-p1-1793348860387-0.9019127289782123",
+        "ok": true,
+        "data": {
+          "success": true,
+          "approval": {
+            "id": "approval-mvuplwhf-p859m8",
+            "workspaceId": "review-owner-acceptance",
+            "sessionKey": "agent:main:main",
+            "runId": null,
+            "mode": "acceptEdits",
+            "source": "git",
+            "requestedAt": 1793348860083,
+            "status": "approved",
+            "risk": "dangerous",
+            "command": "git apply --verbose <patch-file sha256:8c2410fc3d51eaf5> head:4524d5d418152611fb2962bb94dfc9d5866ec6e6 context:change-context:55f1157d8cec149b63b7694b",
+            "cwd": "${FIXTURE_ROOT}",
+            "paths": [
+              "example.txt"
+            ],
+            "requestHash": "review-owner-acceptance:agent:main:main:git:applyPatch:{\"command\":\"git apply --verbose <patch-file sha256:8c2410fc3d51eaf5> head:4524d5d418152611fb2962bb94dfc9d5866ec6e6 context:change-context:55f1157d8cec149b63b7694b\",\"paths\":[\"example.txt\"]}",
+            "reason": "This Git/GitHub operation can rewrite or publish repository state and requires approval. Applies a patch to 1 file(s): example.txt.",
+            "resolvedAt": 1793348860387
+          }
+        }
+      }
+    },
+    {
+      "id": "b0fa69d2-2a84-4901-b571-fdb0eb595dd7",
+      "module": "changeContext",
+      "action": "pullChanges",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b",
+        "patchArtifact": {
+          "schema": "GitPatchArtifact/v1",
+          "file": "example.txt",
+          "status": "modified",
+          "contentKind": "text",
+          "hunks": [
+            {
+              "oldStart": 1,
+              "oldLines": 1,
+              "newStart": 1,
+              "newLines": 1,
+              "lines": [
+                {
+                  "kind": "deletion",
+                  "text": "before",
+                  "oldLine": 1,
+                  "newLine": null
+                },
+                {
+                  "kind": "addition",
+                  "text": "after",
+                  "oldLine": null,
+                  "newLine": 1
+                }
+              ]
+            }
+          ],
+          "patch": "diff --git a/example.txt b/example.txt\nindex 90be1f3..294186e 100644\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after",
+          "completeness": "complete"
+        },
+        "expectedDestinationHead": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+        "approvalId": "approval-mvuplwhf-p859m8"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348920416,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "b0fa69d2-2a84-4901-b571-fdb0eb595dd7"
+      },
+      "reply": {
+        "id": "b0fa69d2-2a84-4901-b571-fdb0eb595dd7",
+        "ok": true,
+        "data": {
+          "success": true,
+          "state": "applied",
+          "destinationMutated": true,
+          "receipt": {
+            "approvalId": "approval-mvuplwhf-p859m8",
+            "patchDigest": "sha256:8c2410fc3d51eaf5ebd02c7b28e9da5d8f9d32eb0741e19f139416490b57d2cd",
+            "destinationHeadBefore": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+            "destinationHeadAfter": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+            "writeJournalId": "write-journal:review-apply-2d766753-d95e-4442-aeca-a8b8a07b1dc1:1"
+          }
+        }
+      }
+    },
+    {
+      "id": "b1842956-a327-430c-af39-a02dbe96b78f",
+      "module": "changeContext",
+      "action": "listComments",
+      "payload": {
+        "workspaceId": "review-owner-acceptance",
+        "sessionKey": "agent:main:main",
+        "contextId": "change-context:55f1157d8cec149b63b7694b"
+      },
+      "deadline": {
+        "deadlineAtMs": 1793348921365,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "b1842956-a327-430c-af39-a02dbe96b78f"
+      },
+      "reply": {
+        "id": "b1842956-a327-430c-af39-a02dbe96b78f",
+        "ok": true,
+        "data": {
+          "success": true,
+          "storeState": "available",
+          "comments": [
+            {
+              "comment": {
+                "id": "75ed64c9-a977-401a-90ea-b38bd83c4b7e",
+                "schemaVersion": 1,
+                "workspaceId": "review-owner-acceptance",
+                "sessionKey": "agent:main:main",
+                "contextId": "change-context:55f1157d8cec149b63b7694b",
+                "body": "Agent-driven anchor acceptance",
+                "author": {
+                  "id": "agent:electron-e2e",
+                  "kind": "agent",
+                  "drivenBy": "agent"
+                },
+                "anchor": {
+                  "path": "example.txt",
+                  "range": {
+                    "startLine": 1,
+                    "endLine": 1
+                  },
+                  "fileDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+                  "rangeDigest": "sha256:e8e8d46f4596a88b62286491f602bc396ad32127eb32d89af19d06d8249d2e9b",
+                  "baseRevision": {
+                    "kind": "git-commit",
+                    "commit": "4524d5d418152611fb2962bb94dfc9d5866ec6e6",
+                    "treeDigest": null
+                  },
+                  "candidateRevision": {
+                    "kind": "git-commit",
+                    "commit": "76f340f4055b36e091df01d9dc72e8e753c03871",
+                    "treeDigest": null
+                  },
+                  "originalExcerpt": "changed after review"
+                },
+                "createdAt": "2026-10-30T08:27:36.995Z",
+                "updatedAt": "2026-10-30T08:27:37.280Z",
+                "resolvedAt": null,
+                "deletedAt": null,
+                "deletionReason": null,
+                "reanchorCount": 1
+              },
+              "anchorState": "stale",
+              "anchorIssues": [
+                {
+                  "code": "source_stale",
+                  "message": "The anchored file changed; the comment was not moved.",
+                  "source": "review-store"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "rollback": {
+    "countBeforeClose": 25,
+    "countAfterClose": 25,
+    "countAfterReload": 25,
+    "commentsRetained": true,
+    "destinationPreserved": true
+  }
+}

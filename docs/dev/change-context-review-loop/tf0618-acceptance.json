@@ -1,0 +1,980 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF0618",
+  "candidate": {
+    "commit": "2cd487418f735c8be1f66b3ff50632bf9c0e9b10",
+    "tree": "f12a322110d9dd924ffd9039a2a3ea22ee46d0e8",
+    "dirty": false,
+    "cleanSourceAuditAt": "2026-10-30T08:49:11.799731+00:00",
+    "cleanSourceAuditScope": "Working bytes and Git blobs match the recorded tested candidate; pre-run cleanliness recorded when provided."
+  },
+  "preRun": null,
+  "gates": [
+    {
+      "name": "unit",
+      "command": "pnpm exec vitest run tests/unit/change-context-review-verdict.test.ts tests/unit/change-context-contract.test.ts tests/unit/change-context-projection.test.ts tests/unit/change-context-review-anchors.test.ts tests/unit/git-api.test.ts tests/unit/uas-04-coding-mutation-consistency.test.ts tests/unit/change-context-vg-evidence.test.ts tests/unit/versegit-candidate-receipts.test.ts tests/unit/versegit-receipt-authority.test.ts tests/unit/versegit-wp3-receipts.test.ts tests/unit/versegit-observation-basis.test.ts tests/unit/versegit-runtime-bindings.test.ts --maxWorkers=1",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 32572,
+      "log": "unit.log",
+      "logSHA256": "2ade238fc666cb50897751581e0b4d3b27ddfe860fcfff3fc7ab1cf5aee1a091"
+    },
+    {
+      "name": "runtime-journal",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/tools/write-journal.test.ts src/agents/apply-patch-consistency.test.ts --maxWorkers=1",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 6482,
+      "log": "runtime-journal.log",
+      "logSHA256": "0320de39dfd18f5e9b75ffade1fdc870e926788b8553b84bb239afe8c835f51d"
+    },
+    {
+      "name": "lint",
+      "command": "pnpm exec eslint .",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 303552,
+      "log": "lint.log",
+      "logSHA256": "221ae753d43c79db06f55c7b8211b58aa86982ff7b7015f50262003097505e29"
+    },
+    {
+      "name": "contract",
+      "command": "pnpm contract:check",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1045,
+      "log": "contract.log",
+      "logSHA256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10"
+    },
+    {
+      "name": "i18n",
+      "command": "pnpm i18n:lint",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1036,
+      "log": "i18n.log",
+      "logSHA256": "7dcd6b3579b0480e13f2f9fc44b9c81cebe8ec45b0b06d24192d568710809661"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 27404,
+      "log": "typecheck.log",
+      "logSHA256": "a0b257c9aa49db3f1dc92e4e942082b12ccd9953ea5758e38040a960ab8b3c12"
+    },
+    {
+      "name": "build",
+      "command": "pnpm run build:vite",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 60400,
+      "log": "build.log",
+      "logSHA256": "cbf5c7b3bb8feb92f7995330985da151170465785f7635c299e4c6ebd7a39f71"
+    },
+    {
+      "name": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/change-context-review-loop.md",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1836,
+      "log": "harness-validate.log",
+      "logSHA256": "825fda63988b7644aaf3fe143bbc8abc774d3fe967040ca910c7202c843a16c3"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/change-context-review-loop.md --dry-run",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1561,
+      "log": "harness-dry-run.log",
+      "logSHA256": "99ab9ae1f05c5f1fa63b4b0712a4f40dbb6778b0f52652250c18db567dbe6855"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 947,
+      "log": "comms-replay.log",
+      "logSHA256": "8cd854a59636fb1d95376232bb673785505bb47a2eee8dbc825868140161edbd"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 819,
+      "log": "comms-compare.log",
+      "logSHA256": "59e9f16b34c9f80df9c5a4928fbb36cef7ff61f0758d30ba3b0f687b42652ea3"
+    }
+  ],
+  "electron": {
+    "exit": 0,
+    "command": "pnpm exec playwright test tests/e2e/change-context-review-loop.spec.ts --workers=1 --retries=0 --repeat-each=3 --reporter=list,json --output=${RAW_EVIDENCE_ROOT}/e2e",
+    "stats": {
+      "startTime": "2026-10-30T08:27:00.670Z",
+      "duration": 205083.745,
+      "expected": 9,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "results": [
+      {
+        "title": "opt-in context comparisons and visible comment freshness never move an anchor",
+        "durationMs": 26306,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "real Main owners bind comments, verdicts and approved journaled apply (VG off)",
+        "durationMs": 21441,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "real Main owners bind comments, verdicts and approved journaled apply (VG opt-in)",
+        "durationMs": 21184,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "opt-in context comparisons and visible comment freshness never move an anchor",
+        "durationMs": 22025,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "real Main owners bind comments, verdicts and approved journaled apply (VG off)",
+        "durationMs": 22126,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "real Main owners bind comments, verdicts and approved journaled apply (VG opt-in)",
+        "durationMs": 20934,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "opt-in context comparisons and visible comment freshness never move an anchor",
+        "durationMs": 21807,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "real Main owners bind comments, verdicts and approved journaled apply (VG off)",
+        "durationMs": 23756,
+        "status": "passed",
+        "retry": 0
+      },
+      {
+        "title": "real Main owners bind comments, verdicts and approved journaled apply (VG opt-in)",
+        "durationMs": 22449,
+        "status": "passed",
+        "retry": 0
+      }
+    ],
+    "sourceHost": "Windows Electron 40.8.4; existing dependency and binary installation reused"
+  },
+  "ownerFlows": [
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in-/owner-flow.json",
+      "sha256": "28af11ab99d7123062e60186cff9a94b4b5cfd9356b22f20ac2a159bc456b1d9",
+      "vgGate": "opt-in",
+      "comparisonModes": [
+        "checkpoint",
+        "last-commit",
+        "last-turn",
+        "merge-base"
+      ],
+      "pullStates": [
+        "stale",
+        "conflicted",
+        "denied",
+        "applied"
+      ],
+      "rejectedDestinationMutation": [
+        false,
+        false,
+        false
+      ],
+      "taskStatusAfterApprove": "todo",
+      "commentReanchors": [
+        1
+      ],
+      "rollback": {
+        "countBeforeClose": 25,
+        "countAfterClose": 25,
+        "countAfterReload": 25,
+        "commentsRetained": true,
+        "destinationPreserved": true
+      },
+      "journal": {
+        "id": "write-journal:review-apply-3a0b8156-4a60-487d-bf32-d849d3b7fe9e:1",
+        "state": "committed",
+        "preimageSHA256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+        "metadataSHA256": "3cda79d0f40f58e3cb7d1f5826f8fb1f1f7ccaa0f4a90c815ecadf7ef9836db5",
+        "destinationSHA256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+      }
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat1/owner-flow.json",
+      "sha256": "c03caf62b5ab2dd9bdea32a833dc76e0b3e0c5eaea782582c841f4c147307695",
+      "vgGate": "opt-in",
+      "comparisonModes": [
+        "checkpoint",
+        "last-commit",
+        "last-turn",
+        "merge-base"
+      ],
+      "pullStates": [
+        "stale",
+        "conflicted",
+        "denied",
+        "applied"
+      ],
+      "rejectedDestinationMutation": [
+        false,
+        false,
+        false
+      ],
+      "taskStatusAfterApprove": "todo",
+      "commentReanchors": [
+        1
+      ],
+      "rollback": {
+        "countBeforeClose": 25,
+        "countAfterClose": 25,
+        "countAfterReload": 25,
+        "commentsRetained": true,
+        "destinationPreserved": true
+      },
+      "journal": {
+        "id": "write-journal:review-apply-7e811844-d956-4d63-a7fc-516e501945a4:1",
+        "state": "committed",
+        "preimageSHA256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+        "metadataSHA256": "4689caf030a24d05165c10eff7105d282d621ee4884d1b95246c6f091219cfbd",
+        "destinationSHA256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+      }
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat2/owner-flow.json",
+      "sha256": "2d605fa78d4e68ac561fce4da140a05c547e2ad5feb68ec3829f2e976564e7bd",
+      "vgGate": "opt-in",
+      "comparisonModes": [
+        "checkpoint",
+        "last-commit",
+        "last-turn",
+        "merge-base"
+      ],
+      "pullStates": [
+        "stale",
+        "conflicted",
+        "denied",
+        "applied"
+      ],
+      "rejectedDestinationMutation": [
+        false,
+        false,
+        false
+      ],
+      "taskStatusAfterApprove": "todo",
+      "commentReanchors": [
+        1
+      ],
+      "rollback": {
+        "countBeforeClose": 25,
+        "countAfterClose": 25,
+        "countAfterReload": 25,
+        "commentsRetained": true,
+        "destinationPreserved": true
+      },
+      "journal": {
+        "id": "write-journal:review-apply-c23ab07a-3719-4f9f-ab35-a94f2525faf1:1",
+        "state": "committed",
+        "preimageSHA256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+        "metadataSHA256": "26162ae2bbb65572eec151b862b82b4d95de746db18000d148d58fbf631771f8",
+        "destinationSHA256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+      }
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off-/owner-flow.json",
+      "sha256": "ad8c5e0bbf5d985969a5e3e405b86a95e179e9234c16d4267cd74374933c0a72",
+      "vgGate": "off",
+      "comparisonModes": [
+        "checkpoint",
+        "last-commit",
+        "last-turn",
+        "merge-base"
+      ],
+      "pullStates": [
+        "stale",
+        "conflicted",
+        "denied",
+        "applied"
+      ],
+      "rejectedDestinationMutation": [
+        false,
+        false,
+        false
+      ],
+      "taskStatusAfterApprove": "todo",
+      "commentReanchors": [
+        1
+      ],
+      "rollback": {
+        "countBeforeClose": 25,
+        "countAfterClose": 25,
+        "countAfterReload": 25,
+        "commentsRetained": true,
+        "destinationPreserved": true
+      },
+      "journal": {
+        "id": "write-journal:review-apply-2d766753-d95e-4442-aeca-a8b8a07b1dc1:1",
+        "state": "committed",
+        "preimageSHA256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+        "metadataSHA256": "225b0933f55da50fc24435162e1633a802c31f0eacb8be3d8143e8a861835dc5",
+        "destinationSHA256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+      }
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat1/owner-flow.json",
+      "sha256": "b0e1f5e42994cbbe3ecff69c3c012b8a33cafd7f28bc674436f02c09889a4cea",
+      "vgGate": "off",
+      "comparisonModes": [
+        "checkpoint",
+        "last-commit",
+        "last-turn",
+        "merge-base"
+      ],
+      "pullStates": [
+        "stale",
+        "conflicted",
+        "denied",
+        "applied"
+      ],
+      "rejectedDestinationMutation": [
+        false,
+        false,
+        false
+      ],
+      "taskStatusAfterApprove": "todo",
+      "commentReanchors": [
+        1
+      ],
+      "rollback": {
+        "countBeforeClose": 25,
+        "countAfterClose": 25,
+        "countAfterReload": 25,
+        "commentsRetained": true,
+        "destinationPreserved": true
+      },
+      "journal": {
+        "id": "write-journal:review-apply-dfff7206-e72b-4459-ab26-f720d4aefba2:1",
+        "state": "committed",
+        "preimageSHA256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+        "metadataSHA256": "18f86d2a94ff773b08c2d0fac54f511126e7222eb6a85fb93a6e43137f43364f",
+        "destinationSHA256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+      }
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat2/owner-flow.json",
+      "sha256": "bfb9be29989ac356c26a65c573b02ac4e29a799f9dd3f9e460ff7e0b93dbbd56",
+      "vgGate": "off",
+      "comparisonModes": [
+        "checkpoint",
+        "last-commit",
+        "last-turn",
+        "merge-base"
+      ],
+      "pullStates": [
+        "stale",
+        "conflicted",
+        "denied",
+        "applied"
+      ],
+      "rejectedDestinationMutation": [
+        false,
+        false,
+        false
+      ],
+      "taskStatusAfterApprove": "todo",
+      "commentReanchors": [
+        1
+      ],
+      "rollback": {
+        "countBeforeClose": 25,
+        "countAfterClose": 25,
+        "countAfterReload": 25,
+        "commentsRetained": true,
+        "destinationPreserved": true
+      },
+      "journal": {
+        "id": "write-journal:review-apply-c74e6159-8891-42bd-9406-5e10d09980d7:1",
+        "state": "committed",
+        "preimageSHA256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+        "metadataSHA256": "c8f22f62d0fa7f2d07de1d8111c45725354d43c308b4fb94dbc5b807a69c54b5",
+        "destinationSHA256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": ".gitignore",
+      "gitBlob": "cf025bdc488bdd840a71913ae86f9844e6b4149b",
+      "sha256": "cc44a844fe5ef9253bc6569066892cdcfc29d10295458062a9ddd042af6da5c1"
+    },
+    {
+      "path": "AGENTS.md",
+      "gitBlob": "fd97abd701ee07314017396602cd3fabaa7d2da6",
+      "sha256": "9165d4d04e0c797e0287e8663bca2c19635b1334d096437665361b2ae4fefbfd"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "f4c7dfcfbb622d908c8bb3c47ee8c7a9a19c9e4e",
+      "sha256": "17cfaced2e12ed83953194ebee6f8d3b17d7d944a182731758d23a6e5b1317cb"
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "29590dcb97e194eb236da0285bf583d5ed495735",
+      "sha256": "8c836b3152f70c0e63336b19becdae263c1dcba150818048dca1ff7b8ea51103"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "gitBlob": "daefbad3b85159b591e47c2ba46b300e3f5a3c55",
+      "sha256": "3980e1be06ae0f616f7995c8345f2b73b464f66cd10bebf03128db57cb104ae3"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "73c0c216b3e08db19474bd356baedd37061f051d",
+      "sha256": "ab09b9f3bf014d46a0992ac2818375e8ebcbbd659b4b9c21201420ab5fc73d0a"
+    },
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "gitBlob": "dbf3940d2d91f77b91768fa380a4f2c1a86ef410",
+      "sha256": "78e5ebe2d4e742f91d4b13d67df71a70e90a4df3199d1c39070991f8702f0b62"
+    },
+    {
+      "path": "electron/gateway/versegit-bridge.ts",
+      "gitBlob": "fd3899899e9d0520863ec089f8c8fbf1ff48d942",
+      "sha256": "6617052fe2cb8b9a84352c2169fcafb8bea2f8d17b3edf78421e5480d0ab6689"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "gitBlob": "5c01286952a3c766e301ea2ea6e338a5a1995a66",
+      "sha256": "78927543e1511e603ce907606ddf4248d7b0c78b5b6ef3d0afdf87055bdeafdb"
+    },
+    {
+      "path": "electron/services/change-context-anchor-workspace.ts",
+      "gitBlob": "e27c4da1bc9ec629eeee20e78c8cb499cd08944c",
+      "sha256": "2903c4e91934ab6919c7ce65cf08f906397fed9264f9164f57fa92b537eb86bb"
+    },
+    {
+      "path": "electron/services/change-context-anchor.ts",
+      "gitBlob": "8caf81063a3181a9422cbceed1cc2cd545811856",
+      "sha256": "7b88e896757674c635477319cdbcd8b7f6253e30692c15b2c2dc91010b95e442"
+    },
+    {
+      "path": "electron/services/change-context-api.ts",
+      "gitBlob": "70f860296a545f8966bfa33058d7c645417c5946",
+      "sha256": "824f7fab682195f64ea69ca8f1a02213c99c47fce6157080cc7d4b1225c23fda"
+    },
+    {
+      "path": "electron/services/change-context-projection.ts",
+      "gitBlob": "de324277f46701fdf8951ffe9f88dfb8f1037e63",
+      "sha256": "bb16900e764491f7f1326a7c8c338e5439ce2d2a56a99200fa98ebfe2f8b8657"
+    },
+    {
+      "path": "electron/services/change-context-review-store.ts",
+      "gitBlob": "a71781f62c8668227035f5910a061cf4c6af4440",
+      "sha256": "52473989ee1b05df02e2f2eac14210380f68afe04e01ec8903f393fa755092ff"
+    },
+    {
+      "path": "electron/services/change-context-review.ts",
+      "gitBlob": "b879896ecfd0d6b87bb18d0d4d986310d679b209",
+      "sha256": "cc5c8c75b71f7f4509670489798dc9c14cac6aeb21f05a84d766feeb72d86f46"
+    },
+    {
+      "path": "electron/services/change-context-vg-evidence.ts",
+      "gitBlob": "79bc476870a1241bda993afb286ef69886880f3a",
+      "sha256": "8f4852993929997a6888f8234cca3a897e9fde1ad0e2b849dff1c4478e2c8e9f"
+    },
+    {
+      "path": "electron/services/code-review-api.ts",
+      "gitBlob": "6ece054375600d31f82b854a885bde7a39d83390",
+      "sha256": "175c093026b2e60d8dbdbd9636b18624bcfe731f6139ae1b399c90dfbd8134f7"
+    },
+    {
+      "path": "electron/services/git-api.ts",
+      "gitBlob": "d9ffa3fad8b9f504bfa543b39f421eba8f154b65",
+      "sha256": "b67e8ba699ae5b85ae08b75b7d889e2ec16c22041c51efa25e2bbb3410cfdd90"
+    },
+    {
+      "path": "electron/services/versegit-receipt-evidence.ts",
+      "gitBlob": "900e3ec660cf6f1318934803379560141998552f",
+      "sha256": "3a5c0312e760721860315785409e3e14aad7716308c53ed96d420570d27a9104"
+    },
+    {
+      "path": "harness/specs/guides/delta-informed-change-context-review-loop-options.md",
+      "gitBlob": "b06801fce749cd2ce63baf127baefb4f697b85d9",
+      "sha256": "df493f72386610d428c5970b95e51b30f3d4a6c0dad209d1cc2a57f64c0ad0a2"
+    },
+    {
+      "path": "harness/specs/rules/task-forest-autoclose-and-roles.md",
+      "gitBlob": "a64efe2f149d9257aee3fbd1266e050107b851f3",
+      "sha256": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7"
+    },
+    {
+      "path": "harness/specs/tasks/change-context-review-loop.md",
+      "gitBlob": "53d7ea08d1e3079924b9b801646bc47cfec36503",
+      "sha256": "7de9cdde6673f39d56482a29a21412665994bfd19033186dff9dd220452db78e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+      "gitBlob": "e5751659c62ef78de4986b4906e980ed38c57d5c",
+      "sha256": "8ef63c67cce5fdf356cc56c2d657b584b52704342125808e924db059954582ac"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "gitBlob": "90bc941f00892d0a5c06cd45bb64326a68a1e142",
+      "sha256": "b8abcc9dda4ed98f62941930bb0fc2bba43aab83920db04fab4970bd1112a72f"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts",
+      "gitBlob": "e161e0e68500153619756b2c487786f37ce9c290",
+      "sha256": "5cc2d19126168e13d90a4bf468307949ffb7e0a6074c89ca770e0fff2771bd3b"
+    },
+    {
+      "path": "package.json",
+      "gitBlob": "9cb7bdbeddb74d5537d90b28d6a156a611b1a350",
+      "sha256": "1db85af13fc2db8a255ff57d117a501e87c7d75150e6212797e7fd23dff4df10"
+    },
+    {
+      "path": "playwright.config.ts",
+      "gitBlob": "a8c16bf07da309833817c7206e3699b0fcbc0db7",
+      "sha256": "ae29e70cca19833ad684d64a45e345b2d1deea5db88ade0258d96c1f1730f98d"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "gitBlob": "473048677f2ccaf3396b123d5cebb728e7450eff",
+      "sha256": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "gitBlob": "9bf4bd14f3786b32dbfed43b3118386ea81f19fa",
+      "sha256": "1a7fadfbf22ef3baa94e402e70a4e6b367c40ff4ba428e1da5c175dca1e79bd9"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "gitBlob": "52fe54fbf4cf5cefa04e7d6d531c5ae42de1496c",
+      "sha256": "74b5ee69d819990131d57f8d95dbce08e9ae30aac7953c841fefe4c7d2f907c5"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "gitBlob": "fe75567cfc88387a250f362c053aab49252555dc",
+      "sha256": "a6adb557800e8450ad4c73349a7130ccfc8c6ece16bdb91f9e62041cbc5768a4"
+    },
+    {
+      "path": "shared/i18n/locales/en/codeReview.json",
+      "gitBlob": "892cb7263cf0f18ab885271e85e8027185837d4b",
+      "sha256": "8b48616fff27b436e0e4ba2473190c1cadae87aac5a2932ea9d93a5e24bbc1b4"
+    },
+    {
+      "path": "shared/i18n/locales/ja/codeReview.json",
+      "gitBlob": "6cd0043de3dd28751e6f90bc0fa50e506992ba61",
+      "sha256": "a993b91b35c1ee6fe8b9101a09ce06c8365aeb76c49d325e898db8a327a45221"
+    },
+    {
+      "path": "shared/i18n/locales/ru/codeReview.json",
+      "gitBlob": "6dff451737a9958fdd68098be54a043912ab9f5c",
+      "sha256": "2ae96178a6397df4b57e18323c0f9191d3c085f262a180ba6bdfcc63523e488c"
+    },
+    {
+      "path": "shared/i18n/locales/zh/codeReview.json",
+      "gitBlob": "2e5e9b3ab886db4ad928f3dcfa3187204b8b9e5c",
+      "sha256": "d2e88082c6dbea0e5fd5e9e2ef25bd7e48096bb79cef3bfe90c799465de56be6"
+    },
+    {
+      "path": "shared/types/change-context.ts",
+      "gitBlob": "36b11a48d320a5fa6eb8b549d82ff7a4fc7f50cc",
+      "sha256": "21055307d9e690de7aca4d433ea3731cb7f3e68f4c69835acbb41e7cfda4cd31"
+    },
+    {
+      "path": "shared/types/git.ts",
+      "gitBlob": "c9261f714de1d553058d9c09d335a0549998178d",
+      "sha256": "5a3f7024643d18a7828d7846410fa59ac83a76a90330a9a6bd6fe1aebc745a0f"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "gitBlob": "c80ba6f7558b2420a734f70b33b5500e474dee62",
+      "sha256": "6fcbb8d6431c15b146ca3b8c73c8536bc0711b7f2e9519f7b8203015e068eaf7"
+    },
+    {
+      "path": "src/pages/CodeReview/ChangeContextPanel.tsx",
+      "gitBlob": "cd29b2a4ac1402a884c82d962da8bf88770696d8",
+      "sha256": "0b777e1b30bcbd6834801af73e8d2071de40d08e63429e85dc95ca81091f7cd6"
+    },
+    {
+      "path": "src/pages/CodeReview/index.tsx",
+      "gitBlob": "2bbea6610fe893502d51361b8d3e73b71cddd886",
+      "sha256": "09c40623783845997f8086840a53f4042e514e766c4bb695527a95004d24118f"
+    },
+    {
+      "path": "tests/e2e/change-context-review-loop.spec.ts",
+      "gitBlob": "a4656fa9e28142815dc80fe14b9bdb0d9ddda5ff",
+      "sha256": "30a2febe29c94203fdcf7e1fd7330c55a799a9edf8ef4d1d54d9eac89be5eb0b"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "gitBlob": "b404d43ffecd127209b1008d4a3e80176302e2af",
+      "sha256": "5185b3635d1f96f168b9c4bf0d837224df7c197640ff6986ce5c2fa29ab1d58f"
+    },
+    {
+      "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "gitBlob": "cf7a74956642d0234a096801384e9ad9bcf49441",
+      "sha256": "5882bd14fddef513f142ca2258d47f5a655cbe940ecef4ddbc93f7e8d9fd316c"
+    },
+    {
+      "path": "tests/e2e/runtime-approval-bridge.spec.ts",
+      "gitBlob": "27368cb92b4b3e5a4f86a774c6f3e9b134d89549",
+      "sha256": "a6c4dc574d8f9c1a5cb4252acff019ea84e807f97c95b79f793d9d2fc36840b5"
+    },
+    {
+      "path": "tests/unit/change-context-contract.test.ts",
+      "gitBlob": "9046a12b291049699a890c47406912f457f1c2eb",
+      "sha256": "fbdcb1b511c9f2e683833487f8e5e55a0dfbbd15079fbc10654182c36f135957"
+    },
+    {
+      "path": "tests/unit/change-context-projection.test.ts",
+      "gitBlob": "c65b4988af44412624a5d2da948c2fa704e16c43",
+      "sha256": "39153fb7c51c1bab80fbc451dc0f6779fc684ffdec4b1add6651369ffa36c6a7"
+    },
+    {
+      "path": "tests/unit/change-context-review-anchors.test.ts",
+      "gitBlob": "b3fdc4e6eb6eec0c54fff5c3549c6908ee994321",
+      "sha256": "d7c6f8228fa37c64f3ba46415c4b14b5a8a76561144fb84e08ade955cfb93992"
+    },
+    {
+      "path": "tests/unit/change-context-review-verdict.test.ts",
+      "gitBlob": "ad6b4612abd089886ea149a9da6381af88268bf1",
+      "sha256": "4d04c7ceafb0e4095129c2904071631a399dd71603d2749f9981df4228c6c2cf"
+    },
+    {
+      "path": "tests/unit/change-context-vg-evidence.test.ts",
+      "gitBlob": "b1cb1f350ca594c7d96cd2cdbc316780dbb253a4",
+      "sha256": "b787576d558d397a8597fb2a88f2bb318a177245107291dc086ced183eacd873"
+    },
+    {
+      "path": "tests/unit/uas-04-coding-mutation-consistency.test.ts",
+      "gitBlob": "313d38638baf794f70c71ad1d7cf29fbf5318c62",
+      "sha256": "8aa5956ce4a14a060a6c7036f2c5d81ce85799966d176de4841a7b75e1011005"
+    },
+    {
+      "path": "tests/unit/versegit-candidate-receipts.test.ts",
+      "gitBlob": "babd9e87bbb3ced08e2743f25bcd402aacacccaf",
+      "sha256": "0f53cba28df0ee242af1ba0bf9808d21dd30c313c795a49abebf53aa3bcd2832"
+    },
+    {
+      "path": "vite.config.ts",
+      "gitBlob": "2ee62ea95d3c88ca7baa1ecf91965617c79a2468",
+      "sha256": "359bdbe6c00e338a2bd1adb9ec36dad90f286e44c82ae757028bd1f4450e1cd8"
+    }
+  ],
+  "rawInventory": [
+    {
+      "path": "build.log",
+      "sha256": "cbf5c7b3bb8feb92f7995330985da151170465785f7635c299e4c6ebd7a39f71",
+      "bytes": 48658
+    },
+    {
+      "path": "comms-compare.log",
+      "sha256": "59e9f16b34c9f80df9c5a4928fbb36cef7ff61f0758d30ba3b0f687b42652ea3",
+      "bytes": 3485
+    },
+    {
+      "path": "comms-replay.log",
+      "sha256": "8cd854a59636fb1d95376232bb673785505bb47a2eee8dbc825868140161edbd",
+      "bytes": 159
+    },
+    {
+      "path": "contract.log",
+      "sha256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10",
+      "bytes": 57
+    },
+    {
+      "path": "e2e/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in-/owner-flow.json",
+      "sha256": "28af11ab99d7123062e60186cff9a94b4b5cfd9356b22f20ac2a159bc456b1d9",
+      "bytes": 100103
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in-/real-anchor-stale.png",
+      "sha256": "e1c452aaee8d78927ca5ff4eaf88ba679e1f6fdd81b535e5cd6781ffc2e6a922",
+      "bytes": 23969
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in-/real-review-final.png",
+      "sha256": "e73e8a5f0bf05bc56d824341238900d77d470d2e3b66ab7dfd2dfe064424ef77",
+      "bytes": 548280
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat1/owner-flow.json",
+      "sha256": "c03caf62b5ab2dd9bdea32a833dc76e0b3e0c5eaea782582c841f4c147307695",
+      "bytes": 100107
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat1/real-anchor-stale.png",
+      "sha256": "e1c452aaee8d78927ca5ff4eaf88ba679e1f6fdd81b535e5cd6781ffc2e6a922",
+      "bytes": 23969
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat1/real-review-final.png",
+      "sha256": "7d967a5414c9f9e212c2aeb07b5710fd9cb7db2c8e685f9809734f83bb695934",
+      "bytes": 548146
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat2/owner-flow.json",
+      "sha256": "2d605fa78d4e68ac561fce4da140a05c547e2ad5feb68ec3829f2e976564e7bd",
+      "bytes": 100103
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat2/real-anchor-stale.png",
+      "sha256": "e1c452aaee8d78927ca5ff4eaf88ba679e1f6fdd81b535e5cd6781ffc2e6a922",
+      "bytes": 23969
+    },
+    {
+      "path": "e2e/change-context-review-loop-15935--journaled-apply-VG-opt-in--repeat2/real-review-final.png",
+      "sha256": "9f30aa9e9b6306a12a6a878159b9df10a976400f7524cc11ff0c7a273e250def",
+      "bytes": 548637
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor/anchor-en.png",
+      "sha256": "601cc4b7ceeda04eb76da204e3f7f318d503d0c092da70440e8d85a1616bf84f",
+      "bytes": 24847
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor/anchor-ja.png",
+      "sha256": "8e92b51f3dc8e1c8eb335e92a1abd52d58f74c24ea6b8bce71ffdbd7e357ed73",
+      "bytes": 21204
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor/anchor-ru.png",
+      "sha256": "709bf2732a8b0b541cdd81f8eb7ea87918d1f107a0049a71581baed8eee6de33",
+      "bytes": 31618
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor/anchor-stale.png",
+      "sha256": "dda1416cd74a3df95e9e9d592d2277aa688913431898f7646dbae977c66833d9",
+      "bytes": 24846
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor/anchor-zh.png",
+      "sha256": "15bf8c74940f9ab47c64c11d11f339612488435436dd961e68d363d5bcfbc72f",
+      "bytes": 19072
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat1/anchor-en.png",
+      "sha256": "601cc4b7ceeda04eb76da204e3f7f318d503d0c092da70440e8d85a1616bf84f",
+      "bytes": 24847
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat1/anchor-ja.png",
+      "sha256": "8e92b51f3dc8e1c8eb335e92a1abd52d58f74c24ea6b8bce71ffdbd7e357ed73",
+      "bytes": 21204
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat1/anchor-ru.png",
+      "sha256": "709bf2732a8b0b541cdd81f8eb7ea87918d1f107a0049a71581baed8eee6de33",
+      "bytes": 31618
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat1/anchor-stale.png",
+      "sha256": "84dbd22ea3ef5596ac5cbe0bcc67f91f6cbb09dd543d868ad71c7b81ef91988b",
+      "bytes": 24849
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat1/anchor-zh.png",
+      "sha256": "15bf8c74940f9ab47c64c11d11f339612488435436dd961e68d363d5bcfbc72f",
+      "bytes": 19072
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat2/anchor-en.png",
+      "sha256": "601cc4b7ceeda04eb76da204e3f7f318d503d0c092da70440e8d85a1616bf84f",
+      "bytes": 24847
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat2/anchor-ja.png",
+      "sha256": "8e92b51f3dc8e1c8eb335e92a1abd52d58f74c24ea6b8bce71ffdbd7e357ed73",
+      "bytes": 21204
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat2/anchor-ru.png",
+      "sha256": "709bf2732a8b0b541cdd81f8eb7ea87918d1f107a0049a71581baed8eee6de33",
+      "bytes": 31618
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat2/anchor-stale.png",
+      "sha256": "dda1416cd74a3df95e9e9d592d2277aa688913431898f7646dbae977c66833d9",
+      "bytes": 24846
+    },
+    {
+      "path": "e2e/change-context-review-loop-2ff02-shness-never-move-an-anchor-repeat2/anchor-zh.png",
+      "sha256": "15bf8c74940f9ab47c64c11d11f339612488435436dd961e68d363d5bcfbc72f",
+      "bytes": 19072
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off-/owner-flow.json",
+      "sha256": "ad8c5e0bbf5d985969a5e3e405b86a95e179e9234c16d4267cd74374933c0a72",
+      "bytes": 91695
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off-/real-anchor-stale.png",
+      "sha256": "c45a591347f40f00a1708f49cb2ac54e8a68061333337bf4482a4e0615fda243",
+      "bytes": 23970
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off-/real-review-final.png",
+      "sha256": "1683da875d65d0ed448c0286287fd5acee7f930b59f0978dadb3302b883d9e5b",
+      "bytes": 548319
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat1/owner-flow.json",
+      "sha256": "b0e1f5e42994cbbe3ecff69c3c012b8a33cafd7f28bc674436f02c09889a4cea",
+      "bytes": 91689
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat1/real-anchor-stale.png",
+      "sha256": "c45a591347f40f00a1708f49cb2ac54e8a68061333337bf4482a4e0615fda243",
+      "bytes": 23970
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat1/real-review-final.png",
+      "sha256": "c712f2950e136fdfcdae06fdb5791fda37f7f67000023a5ba00429b8d86a1f1b",
+      "bytes": 548782
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat2/owner-flow.json",
+      "sha256": "bfb9be29989ac356c26a65c573b02ac4e29a799f9dd3f9e460ff7e0b93dbbd56",
+      "bytes": 96068
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat2/real-anchor-stale.png",
+      "sha256": "c45a591347f40f00a1708f49cb2ac54e8a68061333337bf4482a4e0615fda243",
+      "bytes": 23970
+    },
+    {
+      "path": "e2e/change-context-review-loop-b3100-ved-journaled-apply-VG-off--repeat2/real-review-final.png",
+      "sha256": "61a07966ce03fea6f2d7aac6708770ff8312fe134b8adeb768f3efd047b5b903",
+      "bytes": 548057
+    },
+    {
+      "path": "e2e/electron-process-cleanup.json",
+      "sha256": "7eb98811948b855442e9d410bfec461e63ae2afc6771ed4e5b1d1eed4c188e71",
+      "bytes": 1376
+    },
+    {
+      "path": "e2e/electron-process-run.json",
+      "sha256": "279bbace712a1b57ead960824ed401aeca1d89564a14f5afb4b73a58e0af7e6c",
+      "bytes": 188
+    },
+    {
+      "path": "e2e/source-mutation-guard.json",
+      "sha256": "545ad012e66aa355a804b6c8874a19dc8cb396a2ffffaeea4ea9c9d5c86c33f0",
+      "bytes": 585
+    },
+    {
+      "path": "e2e/source-state-after.json",
+      "sha256": "2062b40e7520acdc80e1662dab1a71ed6d2494ec937f4d6682a18ed7c54fca17",
+      "bytes": 194
+    },
+    {
+      "path": "e2e/source-state-before.json",
+      "sha256": "2062b40e7520acdc80e1662dab1a71ed6d2494ec937f4d6682a18ed7c54fca17",
+      "bytes": 194
+    },
+    {
+      "path": "electron-exit.json",
+      "sha256": "80df714963daae12ba02a08b4b5ebe142c653dfd9204aa740baa70a4b3efe8cf",
+      "bytes": 180
+    },
+    {
+      "path": "electron-report.json",
+      "sha256": "fcd6591f1385c376b583b924bdce63064c50363115e03d4b58ceaf6e3440ec93",
+      "bytes": 12898
+    },
+    {
+      "path": "electron.log",
+      "sha256": "212a4ccf8281958554b3ed139e815e28677ad9d798e471ee757fc0e1704d318d",
+      "bytes": 2574
+    },
+    {
+      "path": "gates.json",
+      "sha256": "eded9f8b85078e4a324dff909bfe227f097246923015131935dc05f633a1a52b",
+      "bytes": 3462
+    },
+    {
+      "path": "harness-dry-run.log",
+      "sha256": "99ab9ae1f05c5f1fa63b4b0712a4f40dbb6778b0f52652250c18db567dbe6855",
+      "bytes": 352
+    },
+    {
+      "path": "harness-validate.log",
+      "sha256": "825fda63988b7644aaf3fe143bbc8abc774d3fe967040ca910c7202c843a16c3",
+      "bytes": 278
+    },
+    {
+      "path": "i18n.log",
+      "sha256": "7dcd6b3579b0480e13f2f9fc44b9c81cebe8ec45b0b06d24192d568710809661",
+      "bytes": 47
+    },
+    {
+      "path": "lint.log",
+      "sha256": "221ae753d43c79db06f55c7b8211b58aa86982ff7b7015f50262003097505e29",
+      "bytes": 21951
+    },
+    {
+      "path": "runtime-journal.log",
+      "sha256": "0320de39dfd18f5e9b75ffade1fdc870e926788b8553b84bb239afe8c835f51d",
+      "bytes": 931
+    },
+    {
+      "path": "typecheck.log",
+      "sha256": "a0b257c9aa49db3f1dc92e4e942082b12ccd9953ea5758e38040a960ab8b3c12",
+      "bytes": 1703
+    },
+    {
+      "path": "unit.log",
+      "sha256": "2ade238fc666cb50897751581e0b4d3b27ddfe860fcfff3fc7ab1cf5aee1a091",
+      "bytes": 612
+    }
+  ],
+  "recovery": {
+    "rawRoot": "${RAW_EVIDENCE_ROOT}",
+    "localIndex": "Private session handoff maps RAW_EVIDENCE_ROOT to the retained run on D:"
+  },
+  "boundaries": {
+    "runtimeFacts": "Scripted history/checkpoint; real Main/Git/comment/permission/journal/Task Ledger fixture effects",
+    "actorAnnotation": "IPC test annotation marks review actions agent driven",
+    "defaultOff": true,
+    "vg": "Binding gate off/on; evidence advisory; missing verified receipt remains unmeasured; host verdict unchanged",
+    "productLocksChanged": false,
+    "taskCompletedByApprove": false,
+    "publicRelease": false,
+    "M4": false
+  },
+  "limitations": [
+    "No packaged, non-Windows, live-provider, collaboration or concurrency/stress acceptance.",
+    "These are agent-driven fixture workflows; no real-human evidence is claimed.",
+    "Earlier node evidence identifies historical candidates; this bundle audits the selected candidate.",
+    "Dependency reuse does not prove a fresh installation."
+  ]
+}
