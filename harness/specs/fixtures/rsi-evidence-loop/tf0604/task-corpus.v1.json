@@ -7,8 +7,8 @@
   "corpusKind": "historical-agent-task-corpus",
   "claimBoundary": "These are real repository tasks and committed agent-driven acceptance records. They are not real-human traffic, live-provider quality evidence, or promotion evidence.",
   "provenance": {
-    "sourceCommit": "c48eb670ed78e00aee8480bd6f137378f3560a60",
-    "sourceTree": "0c61690bda427516eb7e6a5af3e23c3ee9dc7013",
+    "sourceCommit": "e001b38553efe9599ce375f035f017375328690e",
+    "sourceTree": "fb982335b712715951bd9bf51065ee7a0ea12eb5",
     "sourcePolicy": "Only committed repository artefacts are admitted; source digests are checked before every report.",
     "realProvider": false,
     "realHuman": false,
