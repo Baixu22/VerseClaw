@@ -1,0 +1,151 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts",
+  "candidate": {
+    "commit": "df10f057319cc17c7653e86c5bd31f66c2ff1323",
+    "tree": "a903d0b73790cb6c7a1c2956487156fb1d9dbbd0",
+    "dirty": false
+  },
+  "checks": [
+    {
+      "id": "harness-context",
+      "command": "pnpm harness context --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+      "tool": "pnpm",
+      "argv": [
+        "harness",
+        "context",
+        "--spec",
+        "harness/specs/tasks/ontology-lite-existing-contracts-hardening.md"
+      ],
+      "startedAt": "2026-10-30T12:10:55.061Z",
+      "endedAt": "2026-10-30T12:10:57.231Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/harness-context.log",
+      "logSha256": "6434a789bb6aee4e4f854a1f8380318e911ad699001d232a3440a720985b582d"
+    },
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run tests/unit/product-semantics.test.ts tests/unit/evidence-refs-exist.test.ts tests/unit/identity-scope.test.ts tests/unit/task-ledger-reference.test.ts tests/unit/task-ledger-reference-inheritance.test.ts tests/unit/permission-effect-contract.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=D:/tmp/ontology-practice-20261030/runs/TF-0624/vitest-clean.json",
+      "tool": "pnpm",
+      "argv": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/product-semantics.test.ts",
+        "tests/unit/evidence-refs-exist.test.ts",
+        "tests/unit/identity-scope.test.ts",
+        "tests/unit/task-ledger-reference.test.ts",
+        "tests/unit/task-ledger-reference-inheritance.test.ts",
+        "tests/unit/permission-effect-contract.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/ontology-practice-20261030/runs/TF-0624/vitest-clean.json"
+      ],
+      "startedAt": "2026-10-30T12:10:57.233Z",
+      "endedAt": "2026-10-30T12:11:08.115Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/focused-unit.log",
+      "logSha256": "287c35c2ddbc9363fc60f9fd56c63dac2a141dc91cd3a9a178db9825eca57927"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+      "tool": "pnpm",
+      "argv": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/ontology-lite-existing-contracts-hardening.md"
+      ],
+      "startedAt": "2026-10-30T12:11:08.116Z",
+      "endedAt": "2026-10-30T12:11:10.025Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/harness-validate.log",
+      "logSha256": "9cdf3c272384bd46705b963fcae3a0b3296abfa6d4152f413fe4ff679cdccef0"
+    },
+    {
+      "id": "harness-dry-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md --dry-run",
+      "tool": "pnpm",
+      "argv": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-10-30T12:11:10.026Z",
+      "endedAt": "2026-10-30T12:11:11.208Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/harness-dry-run.log",
+      "logSha256": "91880077986586f0ca4b57f73b7431afede82cd61bd12e33e16f6979687d1441"
+    },
+    {
+      "id": "evidence-paths",
+      "command": "pnpm repo:evidence:check",
+      "tool": "pnpm",
+      "argv": [
+        "repo:evidence:check"
+      ],
+      "startedAt": "2026-10-30T12:11:11.209Z",
+      "endedAt": "2026-10-30T12:11:11.604Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/evidence-paths.log",
+      "logSha256": "4aa4dd0a4c528849a36f47030c70f07943f378db6da0b33838e2a93ab466471a"
+    },
+    {
+      "id": "repository-artifacts",
+      "command": "pnpm repo:artifacts:check",
+      "tool": "pnpm",
+      "argv": [
+        "repo:artifacts:check"
+      ],
+      "startedAt": "2026-10-30T12:11:11.605Z",
+      "endedAt": "2026-10-30T12:11:14.592Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/repository-artifacts.log",
+      "logSha256": "31c23f50d10e3c0c7899416872687fe70dd2ce9c7082f94f67e23fec80ad4a9c"
+    },
+    {
+      "id": "consumer-search",
+      "command": "rg -n PRODUCT_SEMANTIC_RELATIONS src electron openclaw_runtime/src shared scripts tests -g *.ts -g *.tsx -g *.mjs",
+      "tool": "rg",
+      "argv": [
+        "-n",
+        "PRODUCT_SEMANTIC_RELATIONS",
+        "src",
+        "electron",
+        "openclaw_runtime/src",
+        "shared",
+        "scripts",
+        "tests",
+        "-g",
+        "*.ts",
+        "-g",
+        "*.tsx",
+        "-g",
+        "*.mjs"
+      ],
+      "startedAt": "2026-10-30T12:11:14.593Z",
+      "endedAt": "2026-10-30T12:11:14.985Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/consumer-search.log",
+      "logSha256": "872c53174083c470c94f600299bc70f4cc21c03c7675926f745662a95cb4d26f"
+    },
+    {
+      "id": "diff-check",
+      "command": "git diff --check",
+      "tool": "git",
+      "argv": [
+        "diff",
+        "--check"
+      ],
+      "startedAt": "2026-10-30T12:11:14.986Z",
+      "endedAt": "2026-10-30T12:11:15.049Z",
+      "exitCode": 0,
+      "log": "D:/tmp/ontology-practice-20261030/runs/TF-0624/diff-check.log",
+      "logSha256": "2c9a06765cf578046ebe8724625556c0de7b0c605e36a7a43f9b4e2b68c54345"
+    }
+  ]
+}
