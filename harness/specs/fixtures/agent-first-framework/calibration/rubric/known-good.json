@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "AgentFirstCalibrationFixture/v1",
+  "graderId": "rubric-clarity",
+  "expectation": "pass",
+  "cases": [
+    {
+      "id": "clear-explanation",
+      "evidenceLinked": true,
+      "deterministicConflict": false,
+      "expected": "pass"
+    }
+  ],
+  "note": "A rubric grader may only pass a qualitative dimension when the evidence is present and no deterministic grader disagrees."
+}
