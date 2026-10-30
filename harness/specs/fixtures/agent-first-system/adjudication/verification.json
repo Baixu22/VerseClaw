@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "AgentFirstAdjudicationVerification/v1",
+  "verification": "pass",
+  "reportVerdict": "not-release-ready",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "planDigest": "sha256:3f0182517f090e088a1a1d6117f434098a0c09b7f860d438680bd8a49cd8ee87",
+  "reportDigest": "sha256:6fa538f1d3e2c664f9d674f87ed45c05c97602146af3d7704b30ad33eef09ccf",
+  "reviewer": "codex/adjudicator-reviewer",
+  "verifier": "codex/adjudicator-verifier",
+  "dimensions": {
+    "source": "pass",
+    "engineering": "pass",
+    "runtime": "pass-source",
+    "effect": "partial",
+    "distribution": "not-run",
+    "operational": "pass",
+    "agentQuality": "partial",
+    "releaseApproval": "not-approved"
+  },
+  "nextGate": "distribution: build a frozen win-unpacked artifact and rerun packaged parity"
+}
