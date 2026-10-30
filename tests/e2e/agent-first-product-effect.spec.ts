@@ -31,7 +31,12 @@ for (const profile of [1, 2, 3]) {
     try {
       let page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible();
+      gatewayPort = await startGateway(app);
+      const gateway = await hostInvoke<{ state: string; gatewayReady?: boolean; port?: number }>(app, 'gateway', 'status');
+      expect(gateway.gatewayReady === true || gateway.state === 'running').toBe(true);
+      steps.push({ action: 'real-gateway-running', state: gateway });
       const composer = page.getByTestId('chat-composer-input');
+      await expect(composer).toBeEnabled();
       await composer.fill(`Agent First profile ${profile} draft`);
       await expect(composer).toHaveValue(`Agent First profile ${profile} draft`);
       await composer.fill('');
@@ -45,11 +50,6 @@ for (const profile of [1, 2, 3]) {
       steps.push({ action: 'theme-ui', state: 'dark' });
       await expect(hostInvoke(app, 'settings', 'set', { key: 'not-a-real-setting', value: true })).rejects.toThrow();
       steps.push({ action: 'invalid-setting-denied', state: true });
-
-      gatewayPort = await startGateway(app);
-      const gateway = await hostInvoke<{ state: string; gatewayReady?: boolean; port?: number }>(app, 'gateway', 'status');
-      expect(gateway.gatewayReady === true || gateway.state === 'running').toBe(true);
-      steps.push({ action: 'real-gateway-running', state: gateway });
 
       await expect(hostInvoke(app, 'agentBrowser', 'createTask', { name: 'Invalid URL', url: 'file:///outside-workspace', objective: 'invalid-input control', mode: 'headless', profile: 'default' })).rejects.toThrow();
       const created = await hostInvoke<TaskResult>(app, 'agentBrowser', 'createTask', { name: `AF governed task ${profile}`, url: 'https://example.com', objective: 'permission-state readback only; no navigation', mode: 'headless', profile: 'default' });
