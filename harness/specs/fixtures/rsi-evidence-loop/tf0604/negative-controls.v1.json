@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "RsiTf0604NegativeControls/v1",
+  "taskId": "TF-0604",
+  "generatedAt": "2026-10-30T00:00:00+08:00",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-rsi-baseline",
+  "claimBoundary": "Controls test corpus integrity and gate honesty. A control pass does not prove model quality or promotion readiness.",
+  "controls": [
+    {
+      "id": "case-count-floor",
+      "mutation": "remove-case",
+      "expected": "reject",
+      "expectedCode": "case-count-floor"
+    },
+    {
+      "id": "duplicate-case-id",
+      "mutation": "duplicate-case-id",
+      "expected": "reject",
+      "expectedCode": "duplicate-case-id"
+    },
+    {
+      "id": "source-digest-tamper",
+      "mutation": "source-digest-tamper",
+      "expected": "reject",
+      "expectedCode": "source-digest-mismatch"
+    },
+    {
+      "id": "missing-source-record",
+      "mutation": "missing-source-record",
+      "expected": "reject",
+      "expectedCode": "missing-source-record"
+    },
+    {
+      "id": "real-human-claim",
+      "mutation": "real-human-claim",
+      "expected": "reject",
+      "expectedCode": "real-human-claim"
+    },
+    {
+      "id": "unknown-failure-class",
+      "mutation": "unknown-failure-class",
+      "expected": "reject",
+      "expectedCode": "unknown-failure-class"
+    },
+    {
+      "id": "negative-anchor-pass",
+      "mutation": "negative-anchor-pass",
+      "expected": "reject",
+      "expectedCode": "negative-anchor-violated"
+    },
+    {
+      "id": "baseline-pass-without-complete-cases",
+      "mutation": "baseline-pass-without-complete-cases",
+      "expected": "reject",
+      "expectedCode": "insufficient-evidence-bypass"
+    }
+  ]
+}

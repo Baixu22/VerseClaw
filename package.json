@@ -99,6 +99,8 @@
     "catalogs:gen": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs",
     "catalogs:check": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs --check",
     "agent-dev:evaluate": "node scripts/agent-dev-benefit-eval.mjs",
+    "rsi:tf0604:write": "node scripts/rsi-tf0604-baseline.mjs --write --json",
+    "rsi:tf0604:check": "node scripts/rsi-tf0604-baseline.mjs --check --json",
     "agent-dev:unit:node": "pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts",
     "agent-dev:unit:fast": "pnpm agent-dev:unit",
     "agent-dev:unit": "pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts",

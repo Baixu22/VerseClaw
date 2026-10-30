@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "RsiTf0604ValidationReport/v1",
+  "taskId": "TF-0604",
+  "generatedAt": "2026-10-30T00:00:00+08:00",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-rsi-baseline",
+  "corpus": {
+    "status": "sealed",
+    "caseCount": 24,
+    "minimumCompleteCases": 20,
+    "sourceFileCount": 24
+  },
+  "baseline": {
+    "status": "insufficient-evidence",
+    "completeCaseCount": 0,
+    "reason": "The 24-case corpus is sealed, but no model/provider baseline trials have been executed. The floor is not bypassed by corpus size.",
+    "performanceClaim": false
+  },
+  "gates": {
+    "corpusIntegrity": {
+      "passed": true,
+      "errors": []
+    },
+    "rawTrialShape": {
+      "passed": true,
+      "errors": []
+    },
+    "aggregateFloor": {
+      "passed": true,
+      "errors": []
+    },
+    "negativeControls": {
+      "passed": true,
+      "count": 8,
+      "results": [
+        {
+          "id": "case-count-floor",
+          "mutation": "remove-case",
+          "expectedCode": "case-count-floor",
+          "observedCode": "case-count-floor",
+          "passed": true
+        },
+        {
+          "id": "duplicate-case-id",
+          "mutation": "duplicate-case-id",
+          "expectedCode": "duplicate-case-id",
+          "observedCode": "duplicate-case-id",
+          "passed": true
+        },
+        {
+          "id": "source-digest-tamper",
+          "mutation": "source-digest-tamper",
+          "expectedCode": "source-digest-mismatch",
+          "observedCode": "source-digest-mismatch",
+          "passed": true
+        },
+        {
+          "id": "missing-source-record",
+          "mutation": "missing-source-record",
+          "expectedCode": "missing-source-record",
+          "observedCode": "missing-source-record",
+          "passed": true
+        },
+        {
+          "id": "real-human-claim",
+          "mutation": "real-human-claim",
+          "expectedCode": "real-human-claim",
+          "observedCode": "real-human-claim",
+          "passed": true
+        },
+        {
+          "id": "unknown-failure-class",
+          "mutation": "unknown-failure-class",
+          "expectedCode": "unknown-failure-class",
+          "observedCode": "unknown-failure-class",
+          "passed": true
+        },
+        {
+          "id": "negative-anchor-pass",
+          "mutation": "negative-anchor-pass",
+          "expectedCode": "negative-anchor-violated",
+          "observedCode": "negative-anchor-violated",
+          "passed": true
+        },
+        {
+          "id": "baseline-pass-without-complete-cases",
+          "mutation": "baseline-pass-without-complete-cases",
+          "expectedCode": "insufficient-evidence-bypass",
+          "observedCode": "insufficient-evidence-bypass",
+          "passed": true
+        }
+      ]
+    }
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": false,
+    "promotionReady": false,
+    "productLocksChanged": false
+  },
+  "sourceIdentity": {
+    "commit": "c48eb670ed78e00aee8480bd6f137378f3560a60",
+    "tree": "0c61690bda427516eb7e6a5af3e23c3ee9dc7013",
+    "corpusDigest": "1bbd8fcedf1275f75c30cee1d0ea0c4a13d666f006fc010f7fb153e12b154532"
+  }
+}

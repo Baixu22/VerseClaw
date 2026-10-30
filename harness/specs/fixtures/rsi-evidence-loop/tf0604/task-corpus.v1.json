@@ -1,0 +1,2888 @@
+{
+  "schemaVersion": "RsiTf0604TaskCorpus/v1",
+  "taskId": "TF-0604",
+  "generatedAt": "2026-10-30T00:00:00+08:00",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-rsi-baseline",
+  "corpusKind": "historical-agent-task-corpus",
+  "claimBoundary": "These are real repository tasks and committed agent-driven acceptance records. They are not real-human traffic, live-provider quality evidence, or promotion evidence.",
+  "provenance": {
+    "sourceCommit": "c48eb670ed78e00aee8480bd6f137378f3560a60",
+    "sourceTree": "0c61690bda427516eb7e6a5af3e23c3ee9dc7013",
+    "sourcePolicy": "Only committed repository artefacts are admitted; source digests are checked before every report.",
+    "realProvider": false,
+    "realHuman": false,
+    "userData": false,
+    "syntheticTaskInputs": false,
+    "sourceFileCount": 24
+  },
+  "protocol": {
+    "minimumCompleteCases": 20,
+    "k": 3,
+    "heldOutRequired": true,
+    "baselineArm": "current-system-before-any-rsi-candidate",
+    "failureClasses": [
+      "infrastructure",
+      "task",
+      "grader",
+      "agent"
+    ],
+    "incompleteTrialRule": "missing, timeout, crash and skip remain visible and never count as complete.",
+    "promotionReady": false
+  },
+  "cases": [
+    {
+      "id": "tf-0274-e01",
+      "taskId": "TF-0274",
+      "packet": "E01",
+      "category": "reliability",
+      "title": "Reliability aggregation and positive/negative eval gate",
+      "taskIntent": "Reliability aggregation and positive/negative eval gate",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0274",
+          "packet": "E01",
+          "title": "Reliability aggregation and positive/negative eval gate",
+          "source": "deterministic pre-registered fixture (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "reuse-report",
+              "status": "pass",
+              "note": "Reuses the existing agent-dev benefit report and scenario registry; no new metrics platform or store; thresholds pre-registered in the fixture."
+            },
+            {
+              "id": "passk-vs-passatk",
+              "status": "pass",
+              "note": "pass^k and pass@k reported separately (fixture: 0.25 vs 0.75); never mixed."
+            },
+            {
+              "id": "incomplete-preserved",
+              "status": "pass",
+              "note": "missing/timeout/crash/skip cases are incomplete, excluded from denominators, and preserved in the incomplete list."
+            },
+            {
+              "id": "flake-semantics",
+              "status": "pass",
+              "note": "flake = first trial failed and a later fixed re-run passed; first failure preserved; safety-required cases must be 0 skip / 0 flake."
+            },
+            {
+              "id": "anchors",
+              "status": "pass",
+              "note": "positive must all-pass, negative must all-reject; violating either sets gate=fail."
+            },
+            {
+              "id": "insufficient-sample",
+              "status": "pass",
+              "note": "Complete cases < minCases (20) yields gate=insufficient-sample, not PASS."
+            },
+            {
+              "id": "report-fields",
+              "status": "pass",
+              "note": "Report carries raw denominator, pass^k, pass@k, flake, missing, gate and reasons; fixture labelled deterministic."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "Focused tests + typecheck:test + scoped lint + harness validate/dry-run passed; credential scan 0 hits; SHA256SUMS verifiable."
+            },
+            {
+              "id": "boundaries",
+              "status": "pass",
+              "note": "No product default/lock/approval change; no scheduled automation; no live-provider or human claim."
+            }
+          ],
+          "gateIds": [
+            "focusedTests",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "runner"
+          ]
+        },
+        "forbiddenClaims": [
+          "Real-model reliability (deterministic fixture only).",
+          "Remote CI.",
+          "A separate second-agent independent verifier role.",
+          "Comms gates (this packet does not touch comms paths)."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/e01-acceptance.json"
+      ],
+      "sourceDigest": "b0f0214881444c68e9c7b339a528c80cc9d2894831191cd6ee16ed8825afdb94",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-e01-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+        "candidateTree": "0751fd29d53ef491972dc48d73029dc8a35fc366",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 9
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0275-e02",
+      "taskId": "TF-0275",
+      "packet": "E02",
+      "category": "paired-ablation",
+      "title": "First real effective single-component paired ablation",
+      "taskIntent": "First real effective single-component paired ablation",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0275",
+          "packet": "E02",
+          "title": "First real effective single-component paired ablation",
+          "source": "real RuntimeMemoryStore over a deterministic local fixture (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "real-component",
+              "status": "pass",
+              "note": "Reversible, non-safety real component (Phase-4 type-aware eviction) vs its FIFO leave-one-out on the real RuntimeMemoryStore."
+            },
+            {
+              "id": "effect-trace",
+              "status": "pass",
+              "note": "Baseline vs treatment retained/evicted sets differ; success-rate gap (0.1667 vs 1.0) is the trace."
+            },
+            {
+              "id": "corpus-shape",
+              "status": "pass",
+              "note": "20 cases x 3 repeats x 2 conditions, per-case seeded order, isolated store, deterministic fixture."
+            },
+            {
+              "id": "report-fields",
+              "status": "pass",
+              "note": "Success, pass^k, p50/p95, tokens proxy, false blocks, safety violations, effect size and 95% CI all reported."
+            },
+            {
+              "id": "pre-registered",
+              "status": "pass",
+              "note": "Primary metric, k, minCases, degradation budget pre-registered in the fixture before the run."
+            },
+            {
+              "id": "no-winner-picking",
+              "status": "pass",
+              "note": "Verdict derived from the CI; zero/negative effect would be reported as-is."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "Unit tests 6/6, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, credential scan 0 hits, SHA256SUMS verifiable."
+            },
+            {
+              "id": "boundaries",
+              "status": "pass",
+              "note": "No product default/lock/approval change; no live provider; tokens explicitly a proxy; not real-human evidence."
+            }
+          ],
+          "gateIds": [
+            "unitTests",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun"
+          ]
+        },
+        "forbiddenClaims": [
+          "Real model task success/tokens/cost (deterministic memory-store fixture only).",
+          "Live provider calls.",
+          "Non-Windows / remote CI.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/e02-acceptance.json"
+      ],
+      "sourceDigest": "67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-e02-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+        "candidateTree": "7e9cbee0ee5993e2d4bb21a9555f4af6f1867e8e",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 8
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0289-g01",
+      "taskId": "TF-0289",
+      "packet": "G01",
+      "category": "error-governance",
+      "title": "Errors return an executable, permission-scoped repair action",
+      "taskIntent": "Errors return an executable, permission-scoped repair action",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0289",
+          "packet": "G01",
+          "title": "Errors return an executable, permission-scoped repair action",
+          "source": "deterministic AppError fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "total-table",
+              "status": "pass",
+              "note": "Every AppErrorCode has a recovery entry (retryable + scope + optional action)."
+            },
+            {
+              "id": "retryable-scope",
+              "status": "pass",
+              "note": "Only self-retry classes are retryable and their action is exactly { kind: 'retry' }; others are user-action-required and never 'retry'."
+            },
+            {
+              "id": "bounded-action",
+              "status": "pass",
+              "note": "nextAction.kind is one of five fixed verbs; keys are only kind(+target); no command/script/shell/exec/argv fields."
+            },
+            {
+              "id": "unknown-surfaced",
+              "status": "pass",
+              "note": "UNKNOWN carries no action, so the original error must be surfaced to the user (no fabricated repair)."
+            },
+            {
+              "id": "single-envelope",
+              "status": "pass",
+              "note": "Reuses HostResponse + AppError; the error-governance check still PASSes (16 checks)."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "5 new + 39 governance tests pass, typecheck:web 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "g01Tests",
+            "errorGovernanceRegression",
+            "errorGovernanceCheck",
+            "typecheckWeb",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Renderer 'next step' control integration.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/g01-acceptance.json"
+      ],
+      "sourceDigest": "09390cf33cf15bb05097f38d8cb9cf845962bf17958d90befdde235218176407",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-g01-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+        "candidateTree": "81bdefa45a6a88fbf45c04422b1696c789bcb772",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0290-g02",
+      "taskId": "TF-0290",
+      "packet": "G02",
+      "category": "documentation",
+      "title": "Slim the spec entry and prevent doc ossification",
+      "taskIntent": "Slim the spec entry and prevent doc ossification",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0290",
+          "packet": "G02",
+          "title": "Slim the spec entry and prevent doc ossification",
+          "source": "repo-tree governance checks (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "lifecycle-total",
+              "status": "pass",
+              "note": "All 518 task specs carry a valid lifecycleStatus; the 17 previously-missing (including this program's packets) were fixed."
+            },
+            {
+              "id": "archive-not-delete",
+              "status": "pass",
+              "note": "Retirement is by archived status; no spec or doc is mechanically deleted and product/rule/source retention is unchanged."
+            },
+            {
+              "id": "references-resolve",
+              "status": "pass",
+              "note": "validate-policy-docs (10) and check-error-governance (16) both PASS."
+            },
+            {
+              "id": "lightweight-entry",
+              "status": "pass",
+              "note": "AGENTS.md is <=400 lines and routes to harness/specs/** as the durable policy home."
+            },
+            {
+              "id": "single-rule",
+              "status": "pass",
+              "note": "Exactly one doc-gardening rule exists and it names its executable check (check-spec-lifecycle.mjs); no parallel source of truth."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "3 tests pass, lifecycle/policy/error-governance checks pass, scoped lint 0, harness validate/dry-run pass, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "g02Tests",
+            "specLifecycle",
+            "policyDocs",
+            "errorGovernance",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Long-term doc staleness trend over real calendar time.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/g02-acceptance.json"
+      ],
+      "sourceDigest": "1bb54cbc25f437496ffdecb71f808562d633b123bd115901e91ef0c3d94aaea0",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-g02-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+        "candidateTree": "1df6485c89dbda850dd078eca6aa9a4325d74688",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0291-g03",
+      "taskId": "TF-0291",
+      "packet": "G03",
+      "category": "trace-to-eval",
+      "title": "Turn redacted failure traces into re-runnable eval samples",
+      "taskIntent": "Turn redacted failure traces into re-runnable eval samples",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0291",
+          "packet": "G03",
+          "title": "Turn redacted failure traces into re-runnable eval samples",
+          "source": "deterministic trace fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "reproducible-sample",
+              "status": "pass",
+              "note": "A failure trace becomes a sample expected to fail before the fix and pass after; success/refusal/cancelled stay pass."
+            },
+            {
+              "id": "bounded",
+              "status": "pass",
+              "note": "Reproducer kind is scenario|route|command-id (never shell); selector is runId+attempt; digest is deterministic."
+            },
+            {
+              "id": "redaction-gate",
+              "status": "pass",
+              "note": "A trace with a raw content field or a secret-like value is refused whole (trace-not-redacted); no sample is written."
+            },
+            {
+              "id": "explicit-trigger",
+              "status": "pass",
+              "note": "traceToEvalSamples converts only selected traces and records per-trace rejections; no scheduler/daemon added."
+            },
+            {
+              "id": "no-regression-of-others",
+              "status": "pass",
+              "note": "No product default/lock/approval change; original evidence is not deleted; no new scenario registry."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "6 tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "g03Tests",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Wiring the converter to a concrete trace store/runner.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/g03-acceptance.json"
+      ],
+      "sourceDigest": "b2936554a04cf2500ca099bb643a6345aadf451b0c77bcbe76428271c7452949",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-g03-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+        "candidateTree": "35c7825dac3dc5baf4a084d5776983315378b74f",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0283-l01",
+      "taskId": "TF-0283",
+      "packet": "L01",
+      "category": "long-session-context",
+      "title": "Working Context ledger as the single live-task read/write source",
+      "taskIntent": "Working Context ledger as the single live-task read/write source",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0283",
+          "packet": "L01",
+          "title": "Working Context ledger as the single live-task read/write source",
+          "source": "real filesystem JSONL append/read against a temp config dir (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "single-source",
+              "status": "pass",
+              "note": "Working Context reuses the existing workspace Task Ledger JSONL append/read/projection; no new table/snapshot/daemon/second store."
+            },
+            {
+              "id": "consistent-view",
+              "status": "pass",
+              "note": "Appended proposal events read back into a consistent projection (pending contains the written proposal)."
+            },
+            {
+              "id": "idempotent",
+              "status": "pass",
+              "note": "Replaying the same batchIdempotencyKey appends no duplicate event and yields an identical projection."
+            },
+            {
+              "id": "observable-write-failure",
+              "status": "pass",
+              "note": "When the ledger directory path is occupied by a file, append rejects (does not report success)."
+            },
+            {
+              "id": "isolation",
+              "status": "pass",
+              "note": "A different workspaceId reads an empty view and has no ledger file."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "4 new + 10 regression tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "l01Tests",
+            "stage3Regression",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Corrupt-ledger behavior under a torn write (parser warnings only).",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/l01-acceptance.json"
+      ],
+      "sourceDigest": "0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-l01-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "f42bb417b862784ad37e3f488f844cc697dbea51",
+        "candidateTree": "3b8b66cb601a175786bafd3aeb866af26e414b1f",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0284-l02",
+      "taskId": "TF-0284",
+      "packet": "L02",
+      "category": "long-session-pressure",
+      "title": "Context-pressure recovery of objective/unfinished/dependencies/recent evidence",
+      "taskIntent": "Context-pressure recovery of objective/unfinished/dependencies/recent evidence",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0284",
+          "packet": "L02",
+          "title": "Context-pressure recovery of objective/unfinished/dependencies/recent evidence",
+          "source": "deterministic Working Context snapshot fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "recoverable",
+              "status": "pass",
+              "note": "objective / unfinished / dependencies / recent evidence all recovered from the Working Context snapshot, deterministically."
+            },
+            {
+              "id": "no-silent-drop",
+              "status": "pass",
+              "note": "Over-budget entries are counted in dropped[section] and truncated=true; kept+dropped equals the total candidate count."
+            },
+            {
+              "id": "no-silent-recursion",
+              "status": "pass",
+              "note": "depth beyond maxDepth returns status 'depth-exceeded' with no sections."
+            },
+            {
+              "id": "no-fake-completion",
+              "status": "pass",
+              "note": "complete is always false; an empty snapshot is 'unknown', never 'recovered'."
+            },
+            {
+              "id": "handoff-half",
+              "status": "pass",
+              "note": "Handoff chain depth/bounded recursion landed by #179 on main; subagent maxSpawnDepth and frozen values unchanged."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "4 tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "l02Tests",
+            "typecheckCore",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Compaction injection-point assembly.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/l02-acceptance.json"
+      ],
+      "sourceDigest": "27ba5b7c62e490e116af31e380292647c3c1ce177962dbe78515e6d19ff9bca1",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-l02-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "e355beea81075df4ca53b0434689adcdc508f5e6",
+        "candidateTree": "01128def4ceba513f9c07960ea893a0f1c184b30",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0285-l03",
+      "taskId": "TF-0285",
+      "packet": "L03",
+      "category": "long-session-steering",
+      "title": "Safely accept in-run revision/cancel (steering)",
+      "taskIntent": "Safely accept in-run revision/cancel (steering)",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0285",
+          "packet": "L03",
+          "title": "Safely accept in-run revision/cancel (steering)",
+          "source": "in-memory subagent-run fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "lease",
+              "status": "pass",
+              "note": "Pending completions are leased to in_progress with a leaseId and a bounded merged prompt containing the result."
+            },
+            {
+              "id": "ack-monotonic-idempotent",
+              "status": "pass",
+              "note": "Only a matching lease acks; wrong lease is a no-op; repeat ack returns 0 (no double injection)."
+            },
+            {
+              "id": "release",
+              "status": "pass",
+              "note": "A failed turn returns items to pending; the old lease cannot ack; the next lease takes exactly one batch."
+            },
+            {
+              "id": "cancel-stops-effect",
+              "status": "pass",
+              "note": "delivered/discarded/failed items are never listed or re-leased."
+            },
+            {
+              "id": "restart-safe",
+              "status": "pass",
+              "note": "A stale in_progress lease is re-leasable so a completion is not stranded."
+            },
+            {
+              "id": "isolation",
+              "status": "pass",
+              "note": "A different requesterSessionKey is ignored."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "6 tests pass, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable; only the pre-existing tsgo:core:test baseline is red."
+            }
+          ],
+          "gateIds": [
+            "l03Tests",
+            "lintTouched",
+            "typecheckTest",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Renderer revision/cancel UI + Electron E2E.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/l03-acceptance.json"
+      ],
+      "sourceDigest": "8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-l03-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+        "candidateTree": "c525383e39bc18d553958b2936410d959f2d934a",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 7
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0286-l04",
+      "taskId": "TF-0286",
+      "packet": "L04",
+      "category": "checkpoint-binding",
+      "title": "Persisted attachment constrained to a recoverable minimal checkpoint",
+      "taskIntent": "Persisted attachment constrained to a recoverable minimal checkpoint",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0286",
+          "packet": "L04",
+          "title": "Persisted attachment constrained to a recoverable minimal checkpoint",
+          "source": "pure-function fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "bounded-kinds",
+              "status": "pass",
+              "note": "Only five reference kinds are allowed; no arbitrary cursor or blob."
+            },
+            {
+              "id": "hash-owner-ttl",
+              "status": "pass",
+              "note": "Missing/invalid sha256 hash, missing owner and expired TTL each map to an explicit state and are excluded from recovery."
+            },
+            {
+              "id": "conflict-repair",
+              "status": "pass",
+              "note": "Same attachmentRef with a different hash becomes an explicit conflict state (first binding kept); identical refs are de-duplicated."
+            },
+            {
+              "id": "pure-recovery",
+              "status": "pass",
+              "note": "Recovery does not mutate input, returns an identical digest on repeat, and re-runs no side effect."
+            },
+            {
+              "id": "deterministic",
+              "status": "pass",
+              "note": "Recovered bindings are sorted by attachmentRef and the result carries a digest."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "4 tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "l04Tests",
+            "typecheckCore",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Integration into a concrete persisted-attachment write path.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/l04-acceptance.json"
+      ],
+      "sourceDigest": "e3e32b5f69a9d210cc57ccaa34b61e76c4f1dfb94984db776bdc8d5d4eb3f953",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-l04-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+        "candidateTree": "d0ce2ca6fbcd2433f3385895770bec27a9e914d0",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0287-l05",
+      "taskId": "TF-0287",
+      "packet": "L05",
+      "category": "rate-control",
+      "title": "Finite-state circuit breaker for abnormal call rates",
+      "taskIntent": "Finite-state circuit breaker for abnormal call rates",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0287",
+          "packet": "L05",
+          "title": "Finite-state circuit breaker for abnormal call rates",
+          "source": "virtual-clock fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "finite-state",
+              "status": "pass",
+              "note": "Closed/open/half-open state machine, deterministic under an injected clock."
+            },
+            {
+              "id": "open-refuses",
+              "status": "pass",
+              "note": "Requests are refused during the cooldown (no further effect) and only then move to half-open."
+            },
+            {
+              "id": "single-probe",
+              "status": "pass",
+              "note": "Exactly one half-open probe is admitted; a second is refused while it is in flight."
+            },
+            {
+              "id": "recovery",
+              "status": "pass",
+              "note": "A clean probe closes the breaker; a failed probe re-opens it with a fresh cooldown."
+            },
+            {
+              "id": "no-false-trip",
+              "status": "pass",
+              "note": "A purely legal rate never trips; sliding-window pruning prevents false trips in later legal windows."
+            },
+            {
+              "id": "no-weakening",
+              "status": "pass",
+              "note": "No SSRF/loop-guard/approval change; complements the existing blocking-signal guardian breaker and the outbound budget."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "6 new + 31 loop-guard regression tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "l05Tests",
+            "loopGuardRegression",
+            "typecheckCore",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Wiring into a concrete provider/run call site.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/l05-acceptance.json"
+      ],
+      "sourceDigest": "985fd1b987c5b48dc7e69c512784465008cff242a06626c9ea27f24efb784e93",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-l05-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+        "candidateTree": "415e15ea8e0ebe57acff403a0bfc0eca685047d7",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 7
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0288-l06",
+      "taskId": "TF-0288",
+      "packet": "L06",
+      "category": "write-owner",
+      "title": "One verified write owner for a hot file",
+      "taskIntent": "One verified write owner for a hot file",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0288",
+          "packet": "L06",
+          "title": "One verified write owner for a hot file",
+          "source": "in-memory claim + real per-file mutation queue fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "single-owner",
+              "status": "pass",
+              "note": "One verified owner at a time; a second different owner gets an explicit conflict with the holder, not a silent concurrent write."
+            },
+            {
+              "id": "idempotent-reentrant",
+              "status": "pass",
+              "note": "A same-owner re-claim is idempotent (reentrant) and is not counted as a conflict."
+            },
+            {
+              "id": "token-release-recovery",
+              "status": "pass",
+              "note": "Only a matching token releases; after release another owner can claim (conflict recovered)."
+            },
+            {
+              "id": "serialize",
+              "status": "pass",
+              "note": "Concurrent same-file writes serialize via the existing mutation queue (start/end never interleave); no active owner remains after completion."
+            },
+            {
+              "id": "rollback",
+              "status": "pass",
+              "note": "A thrown write rolls back the owner claim (no leak)."
+            },
+            {
+              "id": "no-second-scheduler",
+              "status": "pass",
+              "note": "Reuses the existing fileMutation lease kernel; no new scheduler/platform."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "5 tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "l06Tests",
+            "typecheckCore",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Cross-process/cross-runtime write ownership.",
+          "Wiring into concrete hot-file write points.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/l06-acceptance.json"
+      ],
+      "sourceDigest": "17682ec3f46b3f3d0ac6d8469bcd9fc3a97f95c5e0eea7dbcf99ac4a16400272",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-l06-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+        "candidateTree": "960c121c7d334c3fdc004ea08debc60d9bdef81d",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 7
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0276-s01",
+      "taskId": "TF-0276",
+      "packet": "S01",
+      "category": "provider-boundary",
+      "title": "Rejectable provider envelope boundary (opt-in, pre-wire)",
+      "taskIntent": "Rejectable provider envelope boundary (opt-in, pre-wire)",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0276",
+          "packet": "S01",
+          "title": "Rejectable provider envelope boundary (opt-in, pre-wire)",
+          "source": "local mocked provider fetch (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "reuse-boundary",
+              "status": "pass",
+              "note": "Reuses the RC-02 shadow boundary and the existing digest-only shadow_wire receipt; no new store/registry/router."
+            },
+            {
+              "id": "opt-in-default-off",
+              "status": "pass",
+              "note": "resolveEnvelopeRejectEnabled defaults false; explicit false and unset env keep the observational path byte-identical."
+            },
+            {
+              "id": "reject-before-wire",
+              "status": "pass",
+              "note": "Invalid envelope refused before fetchWithSsrFGuard; measured provider fetch calls = 0 and a typed ProviderEnvelopeRejectedError is raised."
+            },
+            {
+              "id": "digest-only",
+              "status": "pass",
+              "note": "The pre-existing digest-only wire receipt is written before the refusal; no raw prompt/body/headers are persisted."
+            },
+            {
+              "id": "no-network-rule-change",
+              "status": "pass",
+              "note": "SSRF, timeout, proxy, redirect and outbound-budget rules are untouched."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "S01 tests 3/3, guard regression 15/15, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms replay/compare 0, credential scan 0 hits, SHA256SUMS verifiable."
+            },
+            {
+              "id": "boundaries",
+              "status": "pass",
+              "note": "No product default/lock/approval change; README reviewed (no user-visible change); not real-human evidence."
+            }
+          ],
+          "gateIds": [
+            "s01Tests",
+            "guardRegression",
+            "typecheckCore",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Non-Windows / remote CI.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/s01-acceptance.json"
+      ],
+      "sourceDigest": "91eccf66cb8f2b34a5289cd264ff90bf1319c0181c4bc0a4ef8ccd43bea5d276",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-s01-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "f064ff2c592580763a564c5635f554130a8fa992",
+        "candidateTree": "a9f4c53922f413afe5474e4529a34a86583579fc",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 7
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0277-s02",
+      "taskId": "TF-0277",
+      "packet": "S02",
+      "category": "sensitive-sink",
+      "title": "Sensitive-sink coverage ledger with residual egress guard",
+      "taskIntent": "Sensitive-sink coverage ledger with residual egress guard",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0277",
+          "packet": "S02",
+          "title": "Sensitive-sink coverage ledger with residual egress guard",
+          "source": "working-tree verification of existing provenance policies/tests (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "per-sink-ledger",
+              "status": "pass",
+              "note": "All six sink kinds recorded with enforcement level, policy file, exported symbol, production call site and denial style, sourced from code."
+            },
+            {
+              "id": "residual-listed",
+              "status": "pass",
+              "note": "Six network-send egress entry points listed as residual (not wired to the shared gate), verified by 0 matches and pinned by an executable test."
+            },
+            {
+              "id": "no-overclaim",
+              "status": "pass",
+              "note": "Ledger states explicitly it is not full enforcement; narrow means one production path rejects; command-exec is source-dependent."
+            },
+            {
+              "id": "drift-guard",
+              "status": "pass",
+              "note": "Existing drift guard passes (declared points exist and are invoked; new gates must be registered)."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "43 provenance tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            },
+            {
+              "id": "boundaries",
+              "status": "pass",
+              "note": "No new provenance engine; no product default/lock/approval change; README reviewed (no user-visible change); not real-human evidence."
+            }
+          ],
+          "gateIds": [
+            "rootProvenance",
+            "runtimeProvenance",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Whether every residual egress path is reachable in production (only that it does not consult the shared gate).",
+          "Non-Windows / remote CI.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/s02-acceptance.json"
+      ],
+      "sourceDigest": "2d02761a45c25e9c96b3ba0cd9d8016355e1ced5fb9f69fd9b43f30467cb9e64",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-s02-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+        "candidateTree": "fbea8e33fcb3de7b265dd775ce5f2b741d509bc4",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0278-s03",
+      "taskId": "TF-0278",
+      "packet": "S03",
+      "category": "external-write",
+      "title": "Workspace external-write source + path boundary verification",
+      "taskIntent": "Workspace external-write source + path boundary verification",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0278",
+          "packet": "S03",
+          "title": "Workspace external-write source + path boundary verification",
+          "source": "real filesystem tests over the existing policy (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "illegal-no-side-effect",
+              "status": "pass",
+              "note": "external/derived/invalid/missing provenance is refused before the filesystem mutation; target file remains 'original\\n' for write/edit/apply_patch."
+            },
+            {
+              "id": "legal-external-write",
+              "status": "pass",
+              "note": "trusted system / direct operator external write still succeeds with exact content."
+            },
+            {
+              "id": "path-escape-matrix",
+              "status": "pass",
+              "note": "parent '..', absolute outside, win32 case-variant, symlink/junction alias, hardlink alias all denied with the target unchanged."
+            },
+            {
+              "id": "single-boundary",
+              "status": "pass",
+              "note": "Reuses the existing single policy + fs-safe alias resolution; no second strategy; in-workspace write semantics unchanged."
+            },
+            {
+              "id": "residual-recorded",
+              "status": "pass",
+              "note": "UNC/device-namespace and the absent EffectReceipt assertion are recorded as residual rather than claimed covered."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "64 required tests pass, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable; the only red is the pre-existing tsgo:core:test baseline."
+            }
+          ],
+          "gateIds": [
+            "policyUnit",
+            "workspaceBoundary",
+            "rootProvenance",
+            "typecheck",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "UNC / device-namespace path escapes.",
+          "Live provider calls.",
+          "Non-Windows case-insensitive edge cases beyond win32 case-variant.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/s03-acceptance.json"
+      ],
+      "sourceDigest": "6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-s03-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "3f7060cb2bade7b693c407b70cfa71c698988444",
+        "candidateTree": "7e9717c991dc22885aa5cf58ed26e6edc6ef756b",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0279-s04",
+      "taskId": "TF-0279",
+      "packet": "S04",
+      "category": "browser-boundary",
+      "title": "Browser source / session-ownership / side-effect boundary ledger",
+      "taskIntent": "Browser source / session-ownership / side-effect boundary ledger",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0279",
+          "packet": "S04",
+          "title": "Browser source / session-ownership / side-effect boundary ledger",
+          "source": "policy unit verification + source wiring pin (no live browser/account)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "source-gate",
+              "status": "pass",
+              "note": "external/derived-untrusted/missing/invalid provenance is denied auto-connect/cdp/external-profile; managed allowed; trusted system/operator unrestricted."
+            },
+            {
+              "id": "session-ownership",
+              "status": "pass",
+              "note": "click/type under external/unknown provenance require a Main-owned managed session; otherwise denied."
+            },
+            {
+              "id": "per-action-ledger",
+              "status": "pass",
+              "note": "Every action recorded; only click/type carry the extra session-ownership gate."
+            },
+            {
+              "id": "residual-recorded",
+              "status": "pass",
+              "note": "evaluate/command/close recorded as residual (side-effecting but not session-gated); no over-claim."
+            },
+            {
+              "id": "no-weakening",
+              "status": "pass",
+              "note": "SSRF/private-network/kill switch untouched; no third policy introduced."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "42 existing + 5 new tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "existingBrowserProvenance",
+            "ledgerGuard",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live browser / real account sessions.",
+          "Renderer-side browser entry points.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/s04-acceptance.json"
+      ],
+      "sourceDigest": "b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-s04-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+        "candidateTree": "4d038424920bc057be14bf93a774888aacf3966a",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0280-s05",
+      "taskId": "TF-0280",
+      "packet": "S05",
+      "category": "credential-boundary",
+      "title": "Provider credential-use boundary ledger (image override)",
+      "taskIntent": "Provider credential-use boundary ledger (image override)",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0280",
+          "packet": "S05",
+          "title": "Provider credential-use boundary ledger (image override)",
+          "source": "policy unit verification + call-site pin (no live provider/credential)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "trusted-and-default-unchanged",
+              "status": "pass",
+              "note": "trusted/operator override and the no-override default/fallback path are unchanged."
+            },
+            {
+              "id": "external-override-scope",
+              "status": "pass",
+              "note": "external/derived-untrusted/missing/invalid provenance with an explicit override may only use a host-bound image provider; otherwise denied."
+            },
+            {
+              "id": "no-credential-input",
+              "status": "pass",
+              "note": "The policy input type carries provenance + provider scope only; no credential value is an input, and denial happens before any credential read."
+            },
+            {
+              "id": "residual-recorded",
+              "status": "pass",
+              "note": "Single call site and the hardcoded override flag are recorded as residual; other credential users are out of scope."
+            },
+            {
+              "id": "no-new-policy",
+              "status": "pass",
+              "note": "No second credential strategy; default provider, fallback and credential storage unchanged."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "15 existing + 4 new tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "existingCredentialUse",
+            "ledgerGuard",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider / real credential use.",
+          "Other credential-consumer paths (out of scope).",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/s05-acceptance.json"
+      ],
+      "sourceDigest": "a8422e790efb7ccd9c3f3b9dbbf7c2115d56a37f2081b774d0232eceb9acc4be",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-s05-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+        "candidateTree": "21be6728f3879681c8c1215ebc99336ed12df0f8",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0281-s06",
+      "taskId": "TF-0281",
+      "packet": "S06",
+      "category": "memory-effect-receipt",
+      "title": "Memory writes correlate with the RC-04 EffectReceipt recovery loop",
+      "taskIntent": "Memory writes correlate with the RC-04 EffectReceipt recovery loop",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0281",
+          "packet": "S06",
+          "title": "Memory writes correlate with the RC-04 EffectReceipt recovery loop",
+          "source": "real EffectReceiptStore + real RuntimeMemoryStore (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "reuse-store",
+              "status": "pass",
+              "note": "Reuses RC-04 EffectReceiptStore (append-only, idempotency unique, identical-content vs conflict); no second effect store."
+            },
+            {
+              "id": "digest-only",
+              "status": "pass",
+              "note": "proposal carries identifiers only; no memory content, credentials, or raw payload."
+            },
+            {
+              "id": "traceable",
+              "status": "pass",
+              "note": "stage1Context carries actor (sessionKey/runId/attempt/modelCall) and effect (toolCallId/toolName/resource/action); the store returns an effectReceiptId."
+            },
+            {
+              "id": "idempotent",
+              "status": "pass",
+              "note": "Replaying the same intent hits the same idempotency key and returns duplicate:true with the same effectReceiptId; 0 duplicate effects."
+            },
+            {
+              "id": "outcome-honest",
+              "status": "pass",
+              "note": "applied / not_applied / unknown mapped explicitly; a partial failure is recorded unknown, never disguised as applied."
+            },
+            {
+              "id": "fail-open",
+              "status": "pass",
+              "note": "A missing or throwing sink never blocks or fails the memory write."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "5 new + 86 regression tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "s06Tests",
+            "effectReceiptRegression",
+            "memorySuite",
+            "typecheckCore",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Production assembly of the RC-04 sink into the agent tool context.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/s06-acceptance.json"
+      ],
+      "sourceDigest": "a07f47b7576a95958f361fe54a6add343a4c54938ab8ce5db216cade59b98b2e",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-s06-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+        "candidateTree": "a8a370415a67aae26f33f2a57d3a8d804f59a0a2",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 7
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0282-s07",
+      "taskId": "TF-0282",
+      "packet": "S07",
+      "category": "completion-verdict",
+      "title": "Bounded, revocable verifier completion-verdict entry",
+      "taskIntent": "Bounded, revocable verifier completion-verdict entry",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0282",
+          "packet": "S07",
+          "title": "Bounded, revocable verifier completion-verdict entry",
+          "source": "deterministic evidence-verifier fixtures (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "reuse-authority",
+              "status": "pass",
+              "note": "Reuses evaluateEvidenceVerifier; no second verifier authority layer."
+            },
+            {
+              "id": "bounded",
+              "status": "pass",
+              "note": "Only scope.taskIds receive a verdict; out-of-scope tasks get out-of-scope and no transition."
+            },
+            {
+              "id": "single-transition",
+              "status": "pass",
+              "note": "Only approved yields { nodeId, from: priorStatus, to: 'done' }; other verdicts never transition."
+            },
+            {
+              "id": "digest-only",
+              "status": "pass",
+              "note": "Record carries taskId/verdict/evidenceDigest/findingCodes/priorStatus only; no raw evidence content."
+            },
+            {
+              "id": "revocable",
+              "status": "pass",
+              "note": "Revocation restores the recorded priorStatus; non-approved verdicts have nothing to revoke."
+            },
+            {
+              "id": "no-publish-lock",
+              "status": "pass",
+              "note": "Record explicitly grantsPublish=false and grantsProductLock=false; no release capability."
+            },
+            {
+              "id": "deterministic",
+              "status": "pass",
+              "note": "Same evidence -> same evidenceDigest and identical record (replay-safe)."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "6 new + 5 regression tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "verdictTests",
+            "verifierRegression",
+            "typecheckCore",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Electron main assembly of the verdict entry.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/s07-acceptance.json"
+      ],
+      "sourceDigest": "e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-s07-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+        "candidateTree": "b880e2d16bbc736c5ac900398e40c2897914fab5",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 8
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0293-a01",
+      "taskId": "TF-0293",
+      "packet": "A01",
+      "category": "isolation",
+      "title": "Re-verify A1 layered-isolation controlled pilot gate",
+      "taskIntent": "Re-verify A1 layered-isolation controlled pilot gate",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0293",
+          "packet": "A01",
+          "title": "Re-verify A1 layered-isolation controlled pilot gate",
+          "source": "current-candidate unit tests (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "criterion1",
+              "status": "pass",
+              "note": "legacy fallback rate budget asserted at the original 5% threshold."
+            },
+            {
+              "id": "criterion2",
+              "status": "pass",
+              "note": "p99<=200ms partition asserted."
+            },
+            {
+              "id": "criterion3",
+              "status": "pass",
+              "note": "declaredPathViolationCount tracked separately."
+            },
+            {
+              "id": "criterion4",
+              "status": "pass",
+              "note": "checkBudgetViolation('a1') returns degrade_to_legacy above 5%."
+            },
+            {
+              "id": "spec-drift-fixed",
+              "status": "pass",
+              "note": "counter tests wired into the A1 spec requiredTests; thresholds unchanged; coverage guard added."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "64 required + 22 counter + 3 coverage tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "a1RequiredTests",
+            "counterTests",
+            "a01Coverage",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Real-human pilot data.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/a01-acceptance.json"
+      ],
+      "sourceDigest": "7f45be3ac002e36b10061dd201d6768763011ff2805c30dec4f9ba122efbe1ef",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-a01-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "46e553fd87d5fadf14d6f7aa7a7a85b614aef466",
+        "candidateTree": "3d2e7f7e5e7d6b071405ee24be65fb0e07db9849",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0294-a02",
+      "taskId": "TF-0294",
+      "packet": "A02",
+      "category": "orchestration",
+      "title": "Re-verify A2 multi-agent orchestration controlled pilot gate",
+      "taskIntent": "Re-verify A2 multi-agent orchestration controlled pilot gate",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0294",
+          "packet": "A02",
+          "title": "Re-verify A2 multi-agent orchestration controlled pilot gate",
+          "source": "current-candidate unit tests (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "criterion1",
+              "status": "pass",
+              "note": "deferral agreement budget + degrade_to_live_only asserted at the original 10% threshold."
+            },
+            {
+              "id": "criterion2",
+              "status": "pass",
+              "note": "started-wave re-plan ignored; taskNodeIds preserved."
+            },
+            {
+              "id": "criterion3",
+              "status": "pass",
+              "note": "p99<=80ms partition asserted."
+            },
+            {
+              "id": "criterion4",
+              "status": "pass",
+              "note": "Multi-worker resume creates new child sessions (no reconnect); covered by tests/unit/cross-area-composition.test.ts Stage 3 / 3.7."
+            },
+            {
+              "id": "spec-drift-fixed",
+              "status": "pass",
+              "note": "two non-existent paths removed; counter tests wired; coverage guard added."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "14 + 22 + 26 + 3 tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "a2Required",
+            "counterTests",
+            "a2Deep",
+            "a02Coverage",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/a02-acceptance.json"
+      ],
+      "sourceDigest": "99b89c7ab9a53518eaefba20210dd23ca9f624eab0705ca0ad87d572cd6234ed",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-a02-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "4359e684b795a4033592da4e7c270ce56f9c3711",
+        "candidateTree": "83a8db4cd029c158fb393f1919f4c38f60e086bd",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 6
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0295-a03",
+      "taskId": "TF-0295",
+      "packet": "A03",
+      "category": "resilience",
+      "title": "Re-verify A3 runtime-resilience controlled pilot gate",
+      "taskIntent": "Re-verify A3 runtime-resilience controlled pilot gate",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0295",
+          "packet": "A03",
+          "title": "Re-verify A3 runtime-resilience controlled pilot gate",
+          "source": "current-candidate unit tests (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "criterion1",
+              "status": "pass",
+              "note": "anomaly rate budget asserted at the original 20% threshold."
+            },
+            {
+              "id": "criterion2",
+              "status": "pass",
+              "note": "p99<=15ms partition asserted."
+            },
+            {
+              "id": "criterion3",
+              "status": "pass",
+              "note": "flag-off parity (undefined) asserted."
+            },
+            {
+              "id": "criterion4",
+              "status": "pass",
+              "note": "degrade_to_default_decision on budget violation asserted."
+            },
+            {
+              "id": "augmentation-only",
+              "status": "pass",
+              "note": "A3 does not change the terminal Mission decision."
+            },
+            {
+              "id": "spec-drift-fixed",
+              "status": "pass",
+              "note": "classifier + counter tests wired into the A3 spec; coverage guard added."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "72 evidence + 3 coverage tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "a3Evidence",
+            "a03Coverage",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "Runtime false-positive review packet sampling.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/a03-acceptance.json"
+      ],
+      "sourceDigest": "94560219120997217ba78b0d8d3378d1a96649850e702b12cd418ad9fbbc6fec",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-a03-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "fe392a70e9afbf76238a88d4e87c08b557898940",
+        "candidateTree": "554e25ff62167680db796c45a8a659ebbf44d369",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-acceptance",
+        "acceptanceCounts": {
+          "pass": 7
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0296-a04",
+      "taskId": "TF-0296",
+      "packet": "A04",
+      "category": "decision-quality",
+      "title": "Re-verify A4 decision-quality controlled pilot gate",
+      "taskIntent": "Re-verify A4 decision-quality controlled pilot gate",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0296",
+          "packet": "A04",
+          "title": "Re-verify A4 decision-quality controlled pilot gate",
+          "source": "current-candidate unit tests (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "NO-GO",
+          "acceptanceCriteria": [
+            {
+              "id": "criterion1",
+              "status": "pass",
+              "note": "low-quality rate <=10% and >10% violation asserted at original threshold."
+            },
+            {
+              "id": "criterion2",
+              "status": "no-go",
+              "note": "module-level 1:1 audit counting exists, but no production caller and the manual prohibits production A4 wiring."
+            },
+            {
+              "id": "criterion3",
+              "status": "pass",
+              "note": "degrade_to_audit_only asserted on >10%."
+            },
+            {
+              "id": "criterion4",
+              "status": "partial",
+              "note": "degradation order A4->A3->A5->A1 proven via trace truncation; A4 cumulative latency not measured."
+            },
+            {
+              "id": "spec-drift-fixed",
+              "status": "pass",
+              "note": "missing requiredTests wired and coverage guard added; thresholds unchanged."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "6 files / 67 tests pass; typecheck:test, scoped lint, harness validate/dry-run and comms replay/compare pass; credential scan 0 hits; SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "a4Evidence",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Production A4 audit coverage (no production caller by documented offline-only boundary).",
+          "A4 per-turn cumulative latency smoke (A4 absent from the performance budget test).",
+          "Live provider calls.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/a04-acceptance.json"
+      ],
+      "sourceDigest": "2df9f728a9c7867659b2ce03135e1754a26b7a57fe7f51be80d4ae64c6d18e0c",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-a04-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "0f6d21f673ba491527fc3161dafc8430edb655d8",
+        "candidateTree": "485791b4570118f920a0c26923f28fed1096d99f",
+        "candidateDirty": false,
+        "recordedDecision": "NO-GO",
+        "evidenceTier": "clean-candidate-local-automated-reverification",
+        "acceptanceCounts": {
+          "pass": 4,
+          "no-go": 1,
+          "partial": 1
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0297-a05",
+      "taskId": "TF-0297",
+      "packet": "A05",
+      "category": "adaptive-budget",
+      "title": "Re-verify A5 adaptive-context-budget controlled pilot gate",
+      "taskIntent": "Re-verify A5 adaptive-context-budget controlled pilot gate",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0297",
+          "packet": "A05",
+          "title": "Re-verify A5 adaptive-context-budget controlled pilot gate",
+          "source": "current-candidate unit tests (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "criterion1",
+              "status": "pass",
+              "note": "plan adoption/ignored rate asserted at original 20% budget."
+            },
+            {
+              "id": "criterion2",
+              "status": "pass",
+              "note": "planner p99<=30ms asserted."
+            },
+            {
+              "id": "criterion3",
+              "status": "pass",
+              "note": "ContextBudgetPlanner.replanOnResume implemented and covered by cross-area + deep tests."
+            },
+            {
+              "id": "criterion4",
+              "status": "pass",
+              "note": "started wave cannot be re-planned."
+            },
+            {
+              "id": "criterion5",
+              "status": "pass",
+              "note": "degrade_to_default_budget asserted at >20%."
+            },
+            {
+              "id": "criterion6",
+              "status": "pass",
+              "note": "A1+A5+A3 cumulative smoke p99<=300ms asserted."
+            },
+            {
+              "id": "p5-acceptance",
+              "status": "pass",
+              "note": "threshold clamp, diagnostics-only shadow, negotiation/provenance, and real counter call sites covered."
+            },
+            {
+              "id": "spec-drift-fixed",
+              "status": "pass",
+              "note": "stale legacy paths removed; requiredTests/guard updated; thresholds unchanged."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "9 files / 80 tests pass; typecheck:test, scoped lint, harness validate/dry-run and comms replay/compare pass; credential scan 0 hits; SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "rootEvidence",
+            "runtimeEvidence",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "Live provider calls.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/a05-acceptance.json"
+      ],
+      "sourceDigest": "4cec9973dc952b2793b2d64da099e26a54752788505363922040f426ce2c9819",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-a05-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "47388bf320000a203b096992c9ddb8a3b2bca487",
+        "candidateTree": "00bb8b7243c3a49a32a4f43bde859803868c2475",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-reverification",
+        "acceptanceCounts": {
+          "pass": 9
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    },
+    {
+      "id": "tf-0298-a06",
+      "taskId": "TF-0298",
+      "packet": "A06",
+      "category": "persistence",
+      "title": "Re-verify A6 long-running-persistence controlled pilot gate",
+      "taskIntent": "Re-verify A6 long-running-persistence controlled pilot gate",
+      "taskDefinition": {
+        "input": {
+          "taskId": "TF-0298",
+          "packet": "A06",
+          "title": "Re-verify A6 long-running-persistence controlled pilot gate",
+          "source": "current-candidate unit tests (no live provider)"
+        },
+        "referenceOutcome": {
+          "decision": "PASS",
+          "acceptanceCriteria": [
+            {
+              "id": "criterion1",
+              "status": "partial",
+              "note": "counter critical gate pass; production volatile-mislabel detection caller absent."
+            },
+            {
+              "id": "criterion2",
+              "status": "partial",
+              "note": "counter fail-rate gate pass; production verifier caller absent."
+            },
+            {
+              "id": "criterion3",
+              "status": "not-measured",
+              "note": "no A6 pause/resume p99 test."
+            },
+            {
+              "id": "criterion4",
+              "status": "no-go",
+              "note": "ResumeContractVerifier/requiresReverification absent."
+            },
+            {
+              "id": "criterion5",
+              "status": "no-go",
+              "note": "FingerprintLeaseCoordinator/lease ordering absent."
+            },
+            {
+              "id": "criterion6",
+              "status": "pass",
+              "note": "degrade_to_full_reverification asserted on volatile/high fail rate."
+            },
+            {
+              "id": "spec-drift-fixed",
+              "status": "pass",
+              "note": "stale legacy paths removed; existing counter/fingerprint/resume tests and guard wired; thresholds unchanged."
+            },
+            {
+              "id": "clean-candidate-gates",
+              "status": "pass",
+              "note": "8 files / 74 tests pass; typecheck:test, scoped lint, harness validate/dry-run and comms replay/compare pass; credential scan 0 hits; SHA256SUMS verifiable."
+            }
+          ],
+          "gateIds": [
+            "rootEvidence",
+            "runtimeEvidence",
+            "typecheckTest",
+            "lintTouched",
+            "harnessValidate",
+            "harnessDryRun",
+            "commsReplay",
+            "commsCompare"
+          ]
+        },
+        "forbiddenClaims": [
+          "A6 production resume-contract verification (class absent).",
+          "A6 fingerprint-lease-before-checkpoint ordering (class absent).",
+          "A6 pause/resume 10-cycle p99.",
+          "Live provider calls.",
+          "A separate second-agent independent verifier role."
+        ]
+      },
+      "sourceKind": "historical-agent-acceptance-record",
+      "sourceRefs": [
+        "docs/dev/harness-gap-closure/a06-acceptance.json"
+      ],
+      "sourceDigest": "053a3892c62f918db7b61718eadc84e5c8419e6e9d138a261ffcc97d6f5105aa",
+      "sourceClaims": {
+        "driven_by": "agent",
+        "actor": "codex-a06-mainline-developer",
+        "liveProvider": false,
+        "realHuman": false
+      },
+      "oracle": {
+        "kind": "sealed-acceptance-record",
+        "requiredFields": [
+          "scope.task",
+          "decision.status",
+          "candidate",
+          "acceptanceCriteria"
+        ],
+        "deterministic": true,
+        "modelGraderMayNotOverride": true
+      },
+      "reference": {
+        "candidateCommit": "bd8dca0a342f75f19e021509e42c16f016f0d891",
+        "candidateTree": "be9449506d1916626faac625f5ad9dbc47f91bf2",
+        "candidateDirty": false,
+        "recordedDecision": "PASS",
+        "evidenceTier": "clean-candidate-local-automated-reverification",
+        "acceptanceCounts": {
+          "partial": 2,
+          "not-measured": 1,
+          "no-go": 2,
+          "pass": 3
+        }
+      },
+      "baselinePlan": {
+        "arm": "current-system-before-any-rsi-candidate",
+        "k": 3,
+        "trialStatus": "not-run",
+        "performanceClaim": false,
+        "note": "The source record is a real repository task reference, not a model-quality trial. It is never converted into pass^k evidence."
+      },
+      "negativeControlIds": [
+        "case-count-floor",
+        "duplicate-case-id",
+        "source-digest-tamper",
+        "missing-source-record",
+        "real-human-claim",
+        "unknown-failure-class",
+        "negative-anchor-pass",
+        "baseline-pass-without-complete-cases"
+      ]
+    }
+  ]
+}

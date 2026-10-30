@@ -44,6 +44,7 @@ The deep dives are maintained in Simplified Chinese. Code paths, API names and e
 - [Agent development tooling evaluation](agent-dev-tooling-evaluation.md)
 - [Product acceptance strategy and shortfall ledger](../harness/specs/guides/product-acceptance-strategy.md)
 - [Agent-first acceptance system](../harness/specs/guides/agent-first-acceptance.md)
+- [RSI TF-0604 baseline corpus](../harness/specs/tasks/rsi-tf0604-baseline-corpus.md): sealed agent-driven task corpus, baseline reservation and negative controls.
 - [Coding and DCS design lessons](agent-coding-and-dcs-design-lessons.md)
 - [Capability parity for basic chat](codex-capability-parity-basic-chat.md)
 - [DCS production P0 runbook](dcs-production-p0-runbook.md)
