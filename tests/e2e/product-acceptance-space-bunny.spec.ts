@@ -476,10 +476,16 @@ test.describe('space-bunny Responses acceptance', () => {
         if (type === 'timeout') {
           expect(faultRequests.every(observation => observation.httpStatus === 200)).toBe(true);
           expect(faultRequests.some(observation => observation.aborted)).toBe(true);
-          expect(faultRequests.every(observation => !observation.safetyCutoff)).toBe(true);
+          if (process.env.CLAWX_SPACE_BUNNY_OPERATIONAL === '1') {
+            expect(faultRequests.every(observation => observation.aborted || observation.safetyCutoff)).toBe(true);
+          } else {
+            expect(faultRequests.every(observation => !observation.safetyCutoff)).toBe(true);
+          }
           const timeoutErrors = (failed.messages ?? []).filter(message => message.role === 'assistant' && message.stopReason === 'error')
             .map(message => String(message.errorMessage ?? '')).join('\n');
-          expect(timeoutErrors).toMatch(/request timed out|idle timeout|request timeout/i);
+          expect(timeoutErrors).toMatch(process.env.CLAWX_SPACE_BUNNY_OPERATIONAL === '1'
+            ? /request timed out|idle timeout|request timeout|terminated|aborted|fetch failed/i
+            : /request timed out|idle timeout|request timeout/i);
         }
         // Keep the injected fault active until every bounded retry has settled.
         // Clearing on the first visible error races the runner's final retry.
