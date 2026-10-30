@@ -103,9 +103,11 @@ for (const profile of [1, 2, 3]) {
       steps.push({ action: 'restart-persistence-and-undo', state: 'light restored after observing dark persistence' });
       await page.screenshot({ path: testInfo.outputPath('profile-after-restart.png') });
       await hostInvoke(app, 'gateway', 'stop').catch(() => undefined);
+      const appProcess = app.process();
       await closeElectronApp(app);
+      await expect.poll(() => appProcess.exitCode !== null || appProcess.signalCode !== null).toBe(true);
       await expect.poll(() => portClosed(gatewayPort!)).toBe(true);
-      await writeFile(testInfo.outputPath('product-effect.json'), JSON.stringify({ schemaVersion: 'AgentFirstProductEffect/v1', driven_by: 'agent', actor: 'codex/playwright-product-proxy', profile, identity, homeDir, userDataDir, gatewayPort, steps, finalState: { theme: 'light', taskStates: ['cancelled', 'cancelled'] }, cleanup: { appExitCode: app.process().exitCode, gatewayPortClosed: true }, limitations: ['source-host product effects; no live model or package verdict'] }, null, 2));
+      await writeFile(testInfo.outputPath('product-effect.json'), JSON.stringify({ schemaVersion: 'AgentFirstProductEffect/v1', driven_by: 'agent', actor: 'codex/playwright-product-proxy', profile, identity, homeDir, userDataDir, gatewayPort, steps, finalState: { theme: 'light', taskStates: ['cancelled', 'cancelled'] }, cleanup: { appExitCode: appProcess.exitCode, appSignal: appProcess.signalCode, gatewayPortClosed: true }, limitations: ['source-host product effects; no live model or package verdict'] }, null, 2));
     } finally {
       await hostInvoke(app, 'gateway', 'stop').catch(() => undefined);
       await closeElectronApp(app).catch(() => undefined);
