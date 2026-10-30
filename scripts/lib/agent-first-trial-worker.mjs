@@ -96,7 +96,9 @@ if (isMainEntrypoint(import.meta.url)) {
     if (sha256(readFileSync(join(job.sourceRoot, job.task.source.path))) !== job.task.source.sha256) {
       throw Object.assign(new Error('Frozen task source changed before execution'), { failureClass: 'task' });
     }
-    const adapter = await import(pathToFileURL(join(job.sourceRoot, job.adapter.entrypoint)));
+    const adapterUrl = pathToFileURL(join(job.sourceRoot, job.adapter.entrypoint)).href;
+    // A worker cannot await its own module while its main entrypoint is still evaluating.
+    const adapter = adapterUrl === import.meta.url ? { executeLoopControl, executeQaScenario } : await import(adapterUrl);
     assert.equal(typeof adapter[job.adapter.export], 'function', 'registered execution adapter required');
     observation = await adapter[job.adapter.export](job, directory);
   } catch (caught) {
