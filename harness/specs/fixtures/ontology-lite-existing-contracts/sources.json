@@ -31,7 +31,8 @@
       ],
       "callPath": "detectTaskLoopUpgradeSuggestion -> advisory suggestion -> handleConfirmTaskLoopUpgrade -> startTaskLoopUpgradeRun -> hostApi.gateway.rpc('task_loop.run')",
       "valueConsumers": [
-        "tests/unit/product-semantics.test.ts"
+        "tests/unit/product-semantics.test.ts",
+        "scripts/check-evidence-refs.mjs"
       ],
       "regressions": [
         "tests/unit/product-semantics.test.ts",
@@ -66,7 +67,8 @@
       ],
       "callPath": "Chat workspace refresh -> chat store refreshTaskLedger -> hostApi.taskLedger.snapshot -> existing Task Ledger service",
       "valueConsumers": [
-        "tests/unit/product-semantics.test.ts"
+        "tests/unit/product-semantics.test.ts",
+        "scripts/check-evidence-refs.mjs"
       ],
       "regressions": [
         "tests/unit/product-semantics.test.ts",
@@ -101,7 +103,8 @@
       ],
       "callPath": "RolesOrchestrationPanel plan -> buildOrchestrationPlanLedgerEvents -> Task Ledger appendEvents; readonlyProjection/projection metadata -> isReadOnlyTaskLedgerProjection; edit draft is projection metadata",
       "valueConsumers": [
-        "tests/unit/product-semantics.test.ts"
+        "tests/unit/product-semantics.test.ts",
+        "scripts/check-evidence-refs.mjs"
       ],
       "regressions": [
         "tests/unit/orchestration-plan-ledger-projection.test.ts",
@@ -132,7 +135,8 @@
       ],
       "callPath": "runTaskLoop -> ensureTaskLedgerRoot / ensureLongTaskLedgerRoot -> existing Task Ledger root; missing/empty root rejects startup; loop/checkpoint state remains execution-owned",
       "valueConsumers": [
-        "tests/unit/product-semantics.test.ts"
+        "tests/unit/product-semantics.test.ts",
+        "scripts/check-evidence-refs.mjs"
       ],
       "regressions": [
         "tests/unit/task-loop-controller.test.ts",
@@ -171,7 +175,8 @@
       ],
       "callPath": "runtime coordinator -> Task Ledger snapshot -> validateCoordinatorTaskReferences -> createTaskLedgerReference; inheritance helper projects only allowed task-fact fields",
       "valueConsumers": [
-        "tests/unit/product-semantics.test.ts"
+        "tests/unit/product-semantics.test.ts",
+        "scripts/check-evidence-refs.mjs"
       ],
       "regressions": [
         "tests/unit/task-ledger-reference.test.ts",
@@ -206,7 +211,8 @@
       ],
       "callPath": "resolveQualityAuthority -> existing Task Loop record with matching session -> matching scorecard -> buildTaskLoopVerifiedQualityAuthority -> resolveRoutingMemoAuthority; caller qualityState does not supply authority",
       "valueConsumers": [
-        "tests/unit/product-semantics.test.ts"
+        "tests/unit/product-semantics.test.ts",
+        "scripts/check-evidence-refs.mjs"
       ],
       "regressions": [
         "tests/unit/routing-memo.test.ts"
@@ -299,6 +305,7 @@
     "command": "rg -n PRODUCT_SEMANTIC_RELATIONS src electron openclaw_runtime/src shared scripts tests -g *.ts -g *.tsx -g *.mjs",
     "productionValueConsumers": [],
     "textReferenceChecker": "scripts/check-evidence-refs.mjs",
+    "offlineValueConsumer": "scripts/check-evidence-refs.mjs validates declarations and produces source-bound evidence; no product/runtime consumer",
     "limitation": "This searches the named source roots for the exact value identifier; it is not an exhaustive semantic audit."
   },
   "originalPreservationIndex": "D:/tmp/ontology-practice-20261030/original-snapshot.json",

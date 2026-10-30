@@ -59,7 +59,7 @@ describe('ClawX product semantics', () => {
     for (const relation of sources.relations) {
       expect(relation.documentation.length, relation.relationKey).toBeGreaterThan(0);
       expect(relation.owners.length, relation.relationKey).toBeGreaterThan(0);
-      expect(relation.valueConsumers).toEqual(['tests/unit/product-semantics.test.ts']);
+      expect(relation.valueConsumers).toEqual(['tests/unit/product-semantics.test.ts', 'scripts/check-evidence-refs.mjs']);
       expect(relation.regressions.length).toBeGreaterThan(0);
       expect(relation.unverified.length).toBeGreaterThan(0);
       for (const { path, locator } of [...relation.documentation, ...relation.owners]) {
