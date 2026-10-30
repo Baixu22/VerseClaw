@@ -89,7 +89,10 @@ test(`real Main owners bind comments, verdicts and approved journaled apply (VG 
   git('init', '-q'); git('config', 'user.name', 'Agent Fixture'); git('config', 'user.email', 'fixture@example.invalid');
   git('config', 'core.autocrlf', 'false'); git('config', 'core.eol', 'lf');
   const file = join(root, 'example.txt');
-  await writeFile(file, 'before\n'); git('add', 'example.txt'); git('commit', '-qm', 'base');
+  // Host-owned metadata is intentionally outside this fixture's code changes.
+  // The production collector still reports unavailable user sources as partial.
+  await writeFile(join(root, '.gitignore'), '.verse-claw/\n.openclaw/\n');
+  await writeFile(file, 'before\n'); git('add', '.gitignore', 'example.txt'); git('commit', '-qm', 'base');
   const base = git('rev-parse', 'HEAD');
   await writeFile(file, 'after\n'); git('add', 'example.txt');
   execFileSync('git', ['commit', '-qm', 'candidate'], { cwd: root, windowsHide: true,
@@ -143,7 +146,12 @@ test(`real Main owners bind comments, verdicts and approved journaled apply (VG 
       await page.getByTestId('change-context-mode').selectOption(mode);
       if (revision) await page.getByTestId('change-context-revision').fill(revision);
       await page.getByTestId('change-context-load').click();
-      await expect(page.getByTestId('change-context-state')).toHaveText('Available');
+      try { await expect(page.getByTestId('change-context-state')).toHaveText('Available'); }
+      catch (error) {
+        const calls = await app.evaluate(() => (globalThis as unknown as { __changeContextRelayCalls: unknown[] }).__changeContextRelayCalls);
+        await writeFile(testInfo.outputPath(`projection-${mode}.json`), JSON.stringify(calls, null, 2));
+        throw new Error(`${mode}: ${String(error)}; calls=${JSON.stringify(calls.at(-1))}`);
+      }
       await expect(page.getByTestId('change-context-error')).toHaveCount(0);
     }
     await page.getByTestId('change-context-revision').fill('missing-checkpoint'); await page.getByTestId('change-context-load').click();
@@ -165,9 +173,12 @@ test(`real Main owners bind comments, verdicts and approved journaled apply (VG 
     await expect(page.getByTestId('review-comment')).toContainText('example.txt:1–1');
     await page.getByTestId('review-comment').screenshot({ path: testInfo.outputPath('real-anchor-stale.png') });
     await page.getByTestId('comment-reanchor').click(); await expect(page.getByTestId('comment-anchor-state')).toHaveText('Live anchor');
+    const initial = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId });
     await page.getByTestId('review-verdict-request_changes').click(); await expect(page.getByTestId('review-verdict-result')).toContainText('Request changes');
     const before = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId });
-    expect(before.snapshot.nodes).toHaveLength(1); expect(before.snapshot.nodes[0].completedAt).toBeNull();
+    expect(before.snapshot.nodes).toHaveLength(initial.snapshot.nodes.length + 1);
+    const reviewNodes = before.snapshot.nodes.filter((node) => node.metadata?.source === 'change-context');
+    expect(reviewNodes).toHaveLength(1); expect(reviewNodes[0].completedAt).toBeNull(); expect(reviewNodes[0].status).toBe('todo');
     await page.getByTestId('review-verdict-approve').click(); await expect(page.getByTestId('review-verdict-result')).toHaveText('Approve');
     const after = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId });
     expect(after.snapshot.nodes).toEqual(before.snapshot.nodes);
@@ -198,7 +209,7 @@ test(`real Main owners bind comments, verdicts and approved journaled apply (VG 
     const comments = await hostInvoke<ChangeContextReviewCommentListResult>(app, 'changeContext', 'listComments', { workspaceId, sessionKey, contextId });
     expect(comments.comments[0].comment.reanchorCount).toBe(1); expect(comments.comments[0].comment.author).toMatchObject({ kind: 'agent', drivenBy: 'agent' });
     await page.getByTestId('pull-state').scrollIntoViewIfNeeded(); await page.screenshot({ path: testInfo.outputPath('real-review-final.png') });
-    await writeFile(testInfo.outputPath('owner-flow.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex', runtimeFacts: 'scripted history/checkpoint only', transportAnnotation: 'test IPC stamps agent actor', base, candidate, workspaceId, taskNode: after.snapshot.nodes[0], comments, calls: finalCalls }, null, 2));
+    await writeFile(testInfo.outputPath('owner-flow.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex', runtimeFacts: 'scripted history/checkpoint only', transportAnnotation: 'test IPC stamps agent actor', base, candidate, workspaceId, taskNode: after.snapshot.nodes.find((node) => node.id === reviewNodes[0].id), comments, calls: finalCalls }, null, 2));
   } finally { await closeElectronApp(app); }
 });
 }

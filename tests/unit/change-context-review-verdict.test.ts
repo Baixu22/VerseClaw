@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -98,9 +98,11 @@ describe('review verdict and existing mutation owners', () => {
     ]) expect((await api.submitVerdict(payload)).success).toBe(false);
   });
   it('requires approval and then applies via real Git and Coding journal', async () => {
+    const mtimeBefore = (await stat(destination)).mtimeMs;
     const denied = await api.pullChanges(pull());
     expect(denied).toMatchObject({ success: false, state: 'denied', destinationMutated: false });
     expect(await readFile(destination, 'utf8')).toBe('before\n');
+    expect((await stat(destination)).mtimeMs).toBe(mtimeBefore);
     if (denied.success) throw new Error('Expected approval request');
     const approvalId = (denied.error.details?.approval as { id: string }).id;
     await createPermissionsApi().decideApproval({ id: approvalId, decision: 'approved' });

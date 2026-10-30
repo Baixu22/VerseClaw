@@ -13,6 +13,8 @@
 - Only runtime history/checkpoint facts are scripted. Git repositories, file
   digests, comment freshness/re-anchor, task events, permission consumption,
   successful application, preimages and journal sidecars are real fixture effects.
+- Fixture Git ignores only host-owned `.verse-claw/` and `.openclaw/` metadata.
+  Other missing/unavailable files retain the production partial-state behavior.
 - Check merge-base, last-commit, last-turn and checkpoint; preserve missing-source
   errors; prove live-to-stale without movement and explicit re-anchor; prove
   request-changes linkage and approve without task completion; prove stale,
