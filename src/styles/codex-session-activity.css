@@ -106,6 +106,7 @@
 .codex-session-activity-rail[data-layer='inline'] {
   z-index: 1;
   background: var(--color-background-elevated-secondary-opaque);
+  --csa-card: var(--color-background-elevated-primary-opaque);
   box-shadow: none;
 }
 
@@ -164,19 +165,24 @@
  * menu's group spacing.
  */
 
+/* Each group is its own card — the structure is the outline, so the eye finds
+ * a group by its box instead of reading titles to find where one ends. */
 .codex-session-activity .codex-session-activity__section {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 6px 0;
+  margin: 0 6px;
+  padding: 6px 4px;
+  border: 1px solid var(--csa-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background-elevated-primary-opaque);
 }
 .codex-session-activity .codex-session-activity__section + .codex-session-activity__section {
-  /* A hairline inset to the gutter: with seven possible groups, whitespace
-   * alone stopped telling where one ended. */
-  margin-top: 2px;
-  padding-top: 6px;
-  border-top: 0.5px solid var(--csa-border);
-  border-image: linear-gradient(to right, transparent var(--csa-gutter), var(--csa-border) var(--csa-gutter), var(--csa-border) calc(100% - var(--csa-gutter)), transparent calc(100% - var(--csa-gutter))) 1;
+  margin-top: 8px;
+}
+/* A collapsed card is just its head. */
+.codex-session-activity .codex-session-activity__collapsible:not([open]) {
+  padding-block: 4px;
 }
 
 /* Section head. Title in the gutter, actions hugging the right edge. */
@@ -194,11 +200,10 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: var(--csa-text-secondary);
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  color: var(--csa-text-strong);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
 }
 
 /* Right-aligned summary on the head — a count, a progress figure, a state. */
@@ -290,8 +295,9 @@
 /* Stacked rows carry no icon, so they drop the icon column too — otherwise the
  * label sits one empty column in from the section title above it. */
 .codex-session-activity .codex-session-activity__row.is-stacked {
-  grid-template-columns: minmax(0, 1fr) var(--csa-trail-size);
+  grid-template-columns: minmax(42%, 1fr) fit-content(58%);
   align-items: start;
+  column-gap: 12px;
   row-gap: 2px;
   padding-block: 4px;
 }
@@ -306,24 +312,24 @@
   display: none;
 }
 
-.codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-label {
+.codex-session-activity .codex-session-activity__row.is-stacked .codex-session-activity__row-label {
+  color: var(--csa-text-secondary);
   white-space: normal;
-  overflow: visible;
   overflow-wrap: anywhere;
 }
 
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-value {
-  grid-column: 1;
-  grid-row: 2;
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
   white-space: normal;
   overflow-wrap: anywhere;
-  text-align: left;
+  text-align: right;
+  line-height: 18px;
 }
 
 .codex-session-activity .codex-session-activity__row.is-stacked > .codex-session-activity__row-trail {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+  display: none;
 }
 
 /* Taller variant: a 24px avatar cannot breathe in a 30px row. */
@@ -597,7 +603,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 5px var(--csa-gutter);
+  padding: 4px var(--csa-gutter);
   color: var(--csa-text-secondary);
 }
 
@@ -657,7 +663,8 @@
   margin-top: -2px;
   /* An edge for rows scrolling under it, in the border role. */
   box-shadow: 0 0.5px 0 var(--csa-border);
-  padding: 2px var(--csa-gutter) 2px;
+  margin-bottom: 6px;
+  padding: 2px 16px;
   background-color: var(--color-background-elevated-primary-opaque);
 }
 .codex-session-activity-rail[data-layer='inline'] .codex-session-activity__head {
@@ -728,8 +735,13 @@
   outline: none;
 }
 .codex-session-activity .codex-session-activity__section-head.is-toggle {
-  gap: 6px;
-  padding-left: calc(var(--csa-gutter) - 2px);
+  gap: 4px;
+}
+.codex-session-activity .codex-session-activity__section-head.is-toggle > .codex-session-activity__collapse-icon {
+  order: 1;
+}
+.codex-session-activity .codex-session-activity__section-head.is-toggle > .codex-session-activity__section-summary {
+  order: 2;
 }
 .codex-session-activity .codex-session-activity__collapse-icon {
   flex: none;
@@ -747,8 +759,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin: 2px var(--csa-gutter) 6px;
-  padding: 6px 0 4px;
+  margin: 0 6px 8px;
+  padding: 8px 2px 6px;
   border-radius: var(--radius-md);
   background: color-mix(in oklab, var(--csa-error) 8%, transparent);
 }
