@@ -162,6 +162,8 @@
       "expected": "pass",
       "trace": {
         "observedBy": "grader-owned-runner",
+        "taskId": "tf-0274-e01",
+        "runId": "calibration-trace",
         "events": [
           {
             "kind": "execute",
@@ -175,6 +177,8 @@
       "expected": "fail",
       "trace": {
         "observedBy": "grader-owned-runner",
+        "taskId": "tf-0274-e01",
+        "runId": "calibration-trace",
         "events": [
           {
             "kind": "write",
@@ -188,6 +192,8 @@
       "expected": "fail",
       "trace": {
         "observedBy": "grader-owned-runner",
+        "taskId": "tf-0274-e01",
+        "runId": "calibration-trace",
         "events": [
           {
             "kind": "execute",

@@ -1,0 +1,1028 @@
+{
+  "schemaVersion": "AgentFirstCorpusValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-corpus-checker",
+  "scope": "task definitions and deterministic grader calibration, not current-system evaluation",
+  "ok": true,
+  "errors": [],
+  "calibration": [
+    {
+      "taskId": "af-personal-approval-denial-stop",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-approval-denial-stop",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-approval-denial-stop",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-approval-denial-stop",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-approval-denial-stop",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-approval-denial-stop",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-channel-thread-reply",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-channel-thread-reply",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-channel-thread-reply",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-channel-thread-reply",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-channel-thread-reply",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-channel-thread-reply",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-failure-recovery",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-failure-recovery",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-failure-recovery",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-failure-recovery",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-failure-recovery",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-failure-recovery",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-memory-preference-recall",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-memory-preference-recall",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-memory-preference-recall",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-memory-preference-recall",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-memory-preference-recall",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-memory-preference-recall",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-no-fake-progress",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-no-fake-progress",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-no-fake-progress",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-no-fake-progress",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-no-fake-progress",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-no-fake-progress",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-redaction-no-secret-leak",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-redaction-no-secret-leak",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-redaction-no-secret-leak",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-redaction-no-secret-leak",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-redaction-no-secret-leak",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-redaction-no-secret-leak",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-reminder-roundtrip",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-reminder-roundtrip",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-reminder-roundtrip",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-reminder-roundtrip",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-reminder-roundtrip",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-reminder-roundtrip",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-share-safe-diagnostics-artifact",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-share-safe-diagnostics-artifact",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-share-safe-diagnostics-artifact",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-share-safe-diagnostics-artifact",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-share-safe-diagnostics-artifact",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-share-safe-diagnostics-artifact",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-task-followthrough-status",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-task-followthrough-status",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-task-followthrough-status",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-task-followthrough-status",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-task-followthrough-status",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-task-followthrough-status",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-tool-safety-followthrough",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-tool-safety-followthrough",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-tool-safety-followthrough",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-tool-safety-followthrough",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-tool-safety-followthrough",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-personal-tool-safety-followthrough",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unknown-dimension",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unknown-dimension",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unknown-dimension",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unknown-dimension",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unknown-dimension",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unknown-dimension",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-evidence-missing",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-evidence-missing",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-evidence-missing",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-evidence-missing",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-evidence-missing",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-evidence-missing",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unresolved",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unresolved",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unresolved",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unresolved",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unresolved",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-signal-unresolved",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-candidate-writable",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-candidate-writable",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-candidate-writable",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-candidate-writable",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-candidate-writable",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-candidate-writable",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-retuned",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-retuned",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-retuned",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-retuned",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-retuned",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-heldout-retuned",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-unlinked-signal",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-unlinked-signal",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-unlinked-signal",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-unlinked-signal",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-unlinked-signal",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-unlinked-signal",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-policy-mismatch",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-policy-mismatch",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-policy-mismatch",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-policy-mismatch",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-policy-mismatch",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-policy-mismatch",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-unsealed",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-unsealed",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-unsealed",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-unsealed",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-unsealed",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-unsealed",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-same-actor",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-same-actor",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-same-actor",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-same-actor",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-same-actor",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-reevaluation-same-actor",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-decision-not-run",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-decision-not-run",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-decision-not-run",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-decision-not-run",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-decision-not-run",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-candidate-decision-not-run",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-skipped-run",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-skipped-run",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-skipped-run",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-skipped-run",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-skipped-run",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-skipped-run",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-bare-promotion",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-bare-promotion",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-bare-promotion",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-bare-promotion",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-bare-promotion",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-graduation-bare-promotion",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-publication-approval",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-publication-approval",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-publication-approval",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-publication-approval",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-publication-approval",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-publication-approval",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-locked-default-change",
+      "graderId": "system-condition-set",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-locked-default-change",
+      "graderId": "system-condition-set",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-locked-default-change",
+      "graderId": "system-condition-set",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-locked-default-change",
+      "graderId": "system-trace-policy",
+      "expected": "pass",
+      "actual": "pass",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-locked-default-change",
+      "graderId": "system-trace-policy",
+      "expected": "fail",
+      "actual": "fail",
+      "ok": true
+    },
+    {
+      "taskId": "af-loop-locked-default-change",
+      "graderId": "system-trace-policy",
+      "expected": "unknown",
+      "actual": "unknown",
+      "ok": true
+    }
+  ],
+  "corpusDigest": "sha256:23a5d16cf66cb16e8096ba434332c9ee7976f59484496ab5b09a2544da39a032",
+  "counts": {
+    "capability": 3,
+    "regression": 5,
+    "negative": 8,
+    "adversarial": 6,
+    "recovery": 2
+  },
+  "taskCount": 24,
+  "evaluationStatus": "not-run"
+}

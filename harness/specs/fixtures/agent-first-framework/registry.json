@@ -11,22 +11,8 @@
       "version": "1.0.0",
       "kind": "product",
       "title": "ClawX Electron application against the local Gateway",
-      "methods": [
-        "identity",
-        "setup",
-        "invoke",
-        "observe",
-        "teardown"
-      ],
-      "identityFields": [
-        "commit",
-        "tree",
-        "buildHash",
-        "runtimeVersion",
-        "modelId",
-        "providerId",
-        "adapterId"
-      ],
+      "methods": ["identity", "setup", "invoke", "observe", "teardown"],
+      "identityFields": ["commit", "tree", "buildHash", "runtimeVersion", "modelId", "providerId", "adapterId"],
       "observesFinalStateFrom": "product",
       "authoredBy": "framework",
       "adapterEntrypoint": "harness/specs/tasks/product-acceptance-closeout.md"
@@ -37,17 +23,15 @@
       "id": "acceptance-core",
       "version": "1.0.0",
       "title": "Agent-first acceptance suite (TF-0589 gate matrix)",
-      "provenance": "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json",
+      "provenance": "harness/specs/fixtures/agent-first-acceptance/matrix.json",
       "taskSchemaVersion": "AgentFirstTask/v1",
-      "subjectKinds": [
-        "product"
-      ],
+      "subjectKinds": ["product"],
       "k": 3,
       "minCases": 20,
       "requiresDeterministicGrader": true,
       "split": {
         "public": 12,
-        "heldOut": 12,
+        "heldOut": 8,
         "heldOutWritableByCandidate": false
       },
       "timeouts": {
@@ -60,94 +44,31 @@
         "toolCallsPerCase": 200,
         "retriesPerTrial": 1
       },
-      "authoredBy": "framework",
-      "corpusStatus": "frozen",
-      "contentDigest": "sha256:cd98632dfab218831da9280165b15f9c2b44deaa4777a8bf0ca02702e5bbe9db",
-      "taskIds": [
-        "tf-0274-e01",
-        "tf-0275-e02",
-        "tf-0289-g01",
-        "tf-0290-g02",
-        "tf-0291-g03",
-        "tf-0283-l01",
-        "tf-0284-l02",
-        "tf-0285-l03",
-        "tf-0286-l04",
-        "tf-0287-l05",
-        "tf-0288-l06",
-        "tf-0276-s01",
-        "tf-0277-s02",
-        "tf-0278-s03",
-        "tf-0279-s04",
-        "tf-0280-s05",
-        "tf-0281-s06",
-        "tf-0282-s07",
-        "tf-0293-a01",
-        "tf-0294-a02",
-        "tf-0295-a03",
-        "tf-0296-a04",
-        "tf-0297-a05",
-        "tf-0298-a06"
-      ]
+      "authoredBy": "framework"
     }
   ],
   "registeredGraders": [
     {
       "id": "deterministic-final-state",
-      "version": "tf0590-graders/v1",
+      "version": "1.0.0",
       "kind": "deterministic",
       "precedence": 1,
       "authoredBy": "framework",
       "calibration": {
-        "knownGood": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/known-good.json"
-        ],
-        "knownBad": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/known-bad.json"
-        ],
-        "unknown": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/unknown.json"
-        ]
-      },
-      "implementation": "scripts/lib/agent-first-graders.mjs"
+        "knownGood": ["harness/specs/fixtures/agent-first-framework/calibration/deterministic/known-good.json"],
+        "knownBad": ["harness/specs/fixtures/agent-first-framework/calibration/deterministic/known-bad.json"]
+      }
     },
     {
       "id": "rubric-clarity",
-      "version": "tf0590-graders/v1",
+      "version": "1.0.0",
       "kind": "rubric",
       "precedence": 3,
       "authoredBy": "framework",
-      "promptDigest": "sha256:b94e0e448d7b060b60c51df04bad22d268e4f8ab49c9c8899ac475fa399cf639",
+      "promptDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "calibration": {
-        "knownGood": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/rubric/known-good.json"
-        ],
-        "knownBad": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/rubric/known-bad.json"
-        ],
-        "unknown": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/rubric/unknown.json"
-        ]
-      },
-      "implementation": "scripts/lib/agent-first-graders.mjs"
-    },
-    {
-      "id": "trace-authorization",
-      "version": "tf0590-graders/v1",
-      "kind": "heuristic",
-      "precedence": 2,
-      "authoredBy": "framework",
-      "implementation": "scripts/lib/agent-first-graders.mjs",
-      "calibration": {
-        "knownGood": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/trace/known-good.json"
-        ],
-        "knownBad": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/trace/known-bad.json"
-        ],
-        "unknown": [
-          "harness/specs/fixtures/agent-first-task-corpus/calibration/trace/unknown.json"
-        ]
+        "knownGood": ["harness/specs/fixtures/agent-first-framework/calibration/rubric/known-good.json"],
+        "knownBad": ["harness/specs/fixtures/agent-first-framework/calibration/rubric/known-bad.json"]
       }
     }
   ],
@@ -158,18 +79,10 @@
       "title": "Windows acceptance profile",
       "subjectId": "clawx-electron",
       "suiteId": "acceptance-core",
-      "graderIds": [
-        "deterministic-final-state",
-        "trace-authorization",
-        "rubric-clarity"
-      ],
+      "graderIds": ["deterministic-final-state", "rubric-clarity"],
       "runner": {
         "mode": "isolated",
-        "seeds": [
-          1,
-          2,
-          3
-        ],
+        "seeds": [1, 2, 3],
         "maxWorkers": 2
       },
       "resourceEnvelope": {

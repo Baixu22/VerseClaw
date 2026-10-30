@@ -5,19 +5,34 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
-import { buildTaskCorpus, validateTaskCorpus, buildCalibrationSamples, replayCalibration, TF0590_PACK_DIR, CORPUS_ACTOR } from './lib/agent-first-task-corpus.mjs';
+import { buildTaskCorpus, validateTaskCorpus, buildCalibrationSamples, replayCalibration, TF0590_PACK_DIR, CORPUS_ACTOR } from './lib/rsi-historical-task-corpus.mjs';
 import { buildRubricRequest, graderDigest, GRADER_VERSION } from './lib/agent-first-graders.mjs';
 import { sha256File } from './rsi-tf0604-baseline.mjs';
 import { validateFrameworkRegistry } from './lib/agent-first-evaluation-framework.mjs';
-import { computeHeldOutDigest } from './lib/agent-first-evaluation-loop.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CALIBRATION_GROUPS = { 'deterministic-final-state': 'deterministic', 'trace-authorization': 'trace', 'rubric-clarity': 'rubric' };
 const CALIBRATION_FILES = Object.values(CALIBRATION_GROUPS).flatMap((group) => ['known-good', 'known-bad', 'unknown'].map((kind) => `calibration/${group}/${kind}.json`));
-const FILES = ['task-corpus.v1.json', 'calibration-samples.v1.json', 'model-calibration.v1.json', 'calibration-results.v1.json', 'validation-report.v1.json', ...CALIBRATION_FILES, 'model-calibration-attempt1.v1.json'];
-const SOURCE_FILES = ['scripts/agent-first-task-corpus.mjs', 'scripts/agent-first-task-corpus.d.mts', 'scripts/lib/agent-first-task-corpus.mjs', 'scripts/lib/agent-first-task-corpus.d.mts', 'scripts/lib/agent-first-graders.mjs', 'scripts/lib/agent-first-graders.d.mts', 'tests/unit/agent-first-task-corpus.test.ts', 'tests/unit/agent-first-graders.test.ts', 'tests/unit/agent-first-evaluation-framework.test.ts', 'tests/unit/agent-first-evaluation-loop.test.ts', 'harness/specs/tasks/agent-first-task-corpus-calibration.md', 'harness/specs/guides/agent-first-acceptance.md', 'scripts/lib/agent-first-evaluation-framework.mjs', 'scripts/lib/agent-first-evaluation-loop.mjs', 'package.json', 'docs/README.md', 'docs/dev/rsi-capability-and-boundaries.md'];
+const FILES = ['task-corpus.v1.json', 'calibration-samples.v1.json', 'model-calibration.v1.json', 'calibration-results.v1.json', 'validation-report.v1.json', ...CALIBRATION_FILES, 'model-calibration-attempt1.v1.json', 'registry-extension.v1.json', 'credential-scan.json'];
+const SOURCE_FILES = ['scripts/rsi-historical-task-corpus.mjs', 'scripts/rsi-historical-task-corpus.d.mts', 'scripts/lib/rsi-historical-task-corpus.mjs', 'scripts/lib/rsi-historical-task-corpus.d.mts', 'scripts/lib/agent-first-graders.mjs', 'scripts/lib/agent-first-graders.d.mts', 'tests/unit/rsi-historical-task-corpus.test.ts', 'tests/unit/agent-first-graders.test.ts', 'tests/unit/agent-first-evaluation-framework.test.ts', 'tests/unit/agent-first-evaluation-loop.test.ts', 'harness/specs/tasks/agent-first-task-corpus-calibration.md', 'harness/specs/guides/agent-first-acceptance.md', 'scripts/lib/agent-first-evaluation-framework.mjs', 'scripts/lib/agent-first-evaluation-loop.mjs', 'package.json', 'docs/README.md', 'docs/dev/rsi-capability-and-boundaries.md'];
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const writeJson = (path, value) => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, JSON.stringify(value, null, 2) + '\n'); };
+const CREDENTIAL_PATTERNS = [
+  ['provider-key', /\bsk-[A-Za-z0-9_-]{16,}\b/u],
+  ['github-key', /\bgh[pousr]_[A-Za-z0-9]{16,}\b/u],
+  ['aws-key', /\bAKIA[0-9A-Z]{16}\b/u],
+  ['private-key', /-----BEGIN [A-Z ]*PRIVATE KEY-----/u],
+  ['bearer-value', /Bearer [A-Za-z0-9._-]{24,}/u],
+];
+
+function scanCredentials(root) {
+  const scope = [...SOURCE_FILES, ...FILES.filter((file) => file !== 'credential-scan.json').map((file) => `${TF0590_PACK_DIR}/${file}`)].sort();
+  const hits = scope.flatMap((path) => {
+    const text = readFileSync(join(root, path), 'utf8');
+    return CREDENTIAL_PATTERNS.filter(([, pattern]) => pattern.test(text)).map(([id]) => ({ path, pattern: id }));
+  });
+  return { schemaVersion: 'RsiHistoricalCredentialScan/v1', driven_by: 'agent', actor: CORPUS_ACTOR, scope, patterns: CREDENTIAL_PATTERNS.map(([id]) => id), hits, passed: hits.length === 0, limitation: 'Recognized credential patterns; no claim of exhaustive secret detection.' };
+}
 
 function identity(root) {
   const git = (args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
@@ -40,6 +55,10 @@ export function writeTaskCorpusPack(root = ROOT) {
       cases: samples[group].filter((sample) => sample.expected === expected), claimBoundary: 'Labelled grader calibration fixtures; no product trial is claimed.' });
   }
   if (!existsSync(join(pack, 'model-calibration-attempt1.v1.json'))) writeJson(join(pack, 'model-calibration-attempt1.v1.json'), { driven_by: 'agent', actor: CORPUS_ACTOR, status: 'not-recorded' });
+  registerTaskCorpus(root);
+  const scan = scanCredentials(root);
+  writeJson(join(pack, 'credential-scan.json'), scan);
+  if (!scan.passed) throw new Error('Credential scan rejected the retained pack');
   writeFileSync(join(pack, 'SHA256SUMS'), FILES.map((file) => `${sha256File(join(pack, file))}  ${file}`).join('\n') + '\n');
   return validation;
 }
@@ -78,31 +97,39 @@ export function registerTaskCorpus(root = ROOT) {
   const corpus = readJson(join(pack, FILES[0]));
   const registryPath = join(root, 'harness/specs/fixtures/agent-first-framework/registry.json');
   const registry = readJson(registryPath);
-  const suite = registry.registeredSuites.find((suite) => suite.id === 'acceptance-core');
-  if (!suite) throw new Error('Existing acceptance-core suite is missing');
+  const baseSuite = registry.registeredSuites.find((suite) => suite.id === 'acceptance-core');
+  if (!baseSuite) throw new Error('Existing acceptance-core suite is missing');
+  const subjectId = 'rsi-historical-subject';
+  const suite = { ...baseSuite, id: 'rsi-historical-core', title: 'RSI historical engineering task corpus', subjectKinds: ['runtime-module'] };
   suite.corpusStatus = 'frozen'; suite.contentDigest = `sha256:${sha256File(join(pack, FILES[0]))}`;
   suite.taskIds = corpus.tasks.map((task) => task.id); suite.provenance = `${TF0590_PACK_DIR}/${FILES[0]}`;
   suite.split = { public: corpus.split.public.length, heldOut: corpus.split.heldOut.length, heldOutWritableByCandidate: false };
-  for (const grader of registry.registeredGraders) {
-    const group = CALIBRATION_GROUPS[grader.id];
-    if (!group) throw new Error(`Unknown grader ${grader.id}`);
-    grader.version = GRADER_VERSION;
-    grader.calibration = { knownGood: [`${TF0590_PACK_DIR}/calibration/${group}/known-good.json`], knownBad: [`${TF0590_PACK_DIR}/calibration/${group}/known-bad.json`], unknown: [`${TF0590_PACK_DIR}/calibration/${group}/unknown.json`] };
-    grader.implementation = 'scripts/lib/agent-first-graders.mjs';
-    if (grader.kind === 'rubric') grader.promptDigest = `sha256:${readJson(join(pack, FILES[1])).rubricConfig.promptDigest}`;
-  }
-  if (!registry.registeredGraders.some((grader) => grader.id === 'trace-authorization')) registry.registeredGraders.push({ id: 'trace-authorization', version: GRADER_VERSION, kind: 'heuristic', precedence: 2, authoredBy: 'framework', implementation: 'scripts/lib/agent-first-graders.mjs', calibration: { knownGood: [`${TF0590_PACK_DIR}/calibration/trace/known-good.json`], knownBad: [`${TF0590_PACK_DIR}/calibration/trace/known-bad.json`], unknown: [`${TF0590_PACK_DIR}/calibration/trace/unknown.json`] } });
-  for (const profile of registry.registeredProfiles) if (profile.suiteId === suite.id && !profile.graderIds.includes('trace-authorization')) profile.graderIds.splice(1, 0, 'trace-authorization');
-  const validation = validateFrameworkRegistry(registry);
+  const graders = Object.entries(CALIBRATION_GROUPS).map(([id, group], index) => ({
+    id: `rsi-${id}`, version: GRADER_VERSION,
+    kind: group === 'deterministic' ? 'deterministic' : group === 'trace' ? 'heuristic' : 'rubric',
+    precedence: index + 1, authoredBy: 'framework', implementation: 'scripts/lib/agent-first-graders.mjs',
+    calibration: Object.fromEntries([['knownGood', 'known-good'], ['knownBad', 'known-bad'], ['unknown', 'unknown']]
+      .map(([field, kind]) => [field, [`${TF0590_PACK_DIR}/calibration/${group}/${kind}.json`]])),
+    ...(group === 'rubric' ? { promptDigest: `sha256:${readJson(join(pack, FILES[1])).rubricConfig.promptDigest}` } : {}),
+  }));
+  const subject = { ...registry.registeredSubjects[0], id: subjectId, kind: 'runtime-module', title: 'Historical reference oracle subject', adapterEntrypoint: 'scripts/lib/agent-first-graders.mjs' };
+  const profile = { ...registry.registeredProfiles[0], id: 'rsi-historical-profile', title: 'RSI historical task calibration profile', subjectId, suiteId: suite.id, graderIds: graders.map((grader) => grader.id), status: 'not-run' };
+  const extension = { schemaVersion: 'AgentFirstRegistryExtension/v1', driven_by: 'agent', actor: CORPUS_ACTOR, baseRegistry: 'harness/specs/fixtures/agent-first-framework/registry.json', baseRegistryDigest: `sha256:${sha256File(registryPath)}`, registeredSubjects: [subject], registeredSuites: [suite], registeredGraders: graders, registeredProfiles: [profile] };
+  const composed = { ...registry, registeredSubjects: [...registry.registeredSubjects, subject], registeredSuites: [...registry.registeredSuites, suite], registeredGraders: [...registry.registeredGraders, ...graders], registeredProfiles: [...registry.registeredProfiles, profile] };
+  const validation = validateFrameworkRegistry(composed);
   if (validation.violations.length) throw new Error(JSON.stringify(validation.violations));
-  writeJson(registryPath, registry);
-  const loopPath = join(root, 'harness/specs/fixtures/agent-first-framework/loop-record.json');
-  const loop = readJson(loopPath);
-  loop.suiteBinding = { suiteId: suite.id, status: 'frozen', contentDigest: suite.contentDigest };
-  loop.heldOutSplit = { suiteId: suite.id, status: 'frozen', digest: computeHeldOutDigest(suite), sealedAt: '2026-10-30', writableByCandidate: false };
-  loop.claimBoundary = 'TF-0590 task corpus and grader calibration are frozen. No current-system baseline, RSI candidate, re-evaluation or promotion has run; the existing signals remain evaluation gaps.';
-  writeJson(loopPath, loop);
+  writeJson(join(pack, 'registry-extension.v1.json'), extension);
   return validation;
+}
+
+function readComposedRegistry(root) {
+  const extension = readJson(join(root, TF0590_PACK_DIR, 'registry-extension.v1.json'));
+  const registryPath = join(root, extension.baseRegistry);
+  if (extension.baseRegistry !== 'harness/specs/fixtures/agent-first-framework/registry.json' || extension.baseRegistryDigest !== `sha256:${sha256File(registryPath)}`) throw new Error('registry-base-drift');
+  const base = readJson(registryPath);
+  const composed = { ...base };
+  for (const field of ['registeredSubjects', 'registeredSuites', 'registeredGraders', 'registeredProfiles']) composed[field] = [...base[field], ...(extension[field] ?? [])];
+  return composed;
 }
 
 export function validateTaskCorpusPack(root = ROOT, options = {}) {
@@ -114,6 +141,8 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
     if (JSON.stringify(actualFiles.sort()) !== JSON.stringify([...FILES, 'SHA256SUMS'].sort())) errors.push('pack-file-coverage');
     const actualSums = FILES.map((file) => `${sha256File(join(pack, file))}  ${file}`).sort();
     if (JSON.stringify(readFileSync(join(pack, 'SHA256SUMS'), 'utf8').trim().split(/\r?\n/u).sort()) !== JSON.stringify(actualSums)) errors.push('pack-digest');
+    const scan = scanCredentials(root);
+    if (!scan.passed || JSON.stringify(readJson(join(pack, 'credential-scan.json'))) !== JSON.stringify(scan)) errors.push('credential-scan');
     corpus = readJson(join(pack, FILES[0])); const samples = readJson(join(pack, FILES[1])); const model = readJson(join(pack, FILES[2]));
     errors.push(...validateTaskCorpus(corpus, root).errors);
     if (JSON.stringify(samples) !== JSON.stringify(buildCalibrationSamples(corpus))) errors.push('calibration-input-tamper');
@@ -124,7 +153,12 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
     if (!replay.passed) errors.push('calibration-not-passing');
     if (JSON.stringify(replay) !== JSON.stringify(readJson(join(pack, FILES[3])))) errors.push('calibration-replay');
     const validation = readJson(join(pack, FILES[4]));
-    if (validation.corpus?.passed !== true || validation.calibration?.passed !== replay.passed || validation.taskCount !== corpus.tasks.length) errors.push('validation-report');
+    if (validation.driven_by !== 'agent' || validation.actor !== CORPUS_ACTOR
+      || JSON.stringify(validation.corpus) !== JSON.stringify(validateTaskCorpus(corpus, root))
+      || JSON.stringify(validation.distribution) !== JSON.stringify(corpus.distribution)
+      || JSON.stringify(validation.calibration) !== JSON.stringify({ passed: replay.passed, rowCount: replay.rows.length, rubricRunStatus: replay.rubricRunStatus })
+      || validation.taskCount !== corpus.tasks.length
+      || JSON.stringify(validation.claims) !== JSON.stringify({ realHuman: false, actualSystemBaselineRun: false, liveModelCalibration: model.receipts.length > 0, rsiCandidateGenerated: false, productLocksChanged: false })) errors.push('validation-report');
     if (JSON.stringify(Object.keys(validation.candidate?.sourceHashes ?? {}).sort()) !== JSON.stringify([...SOURCE_FILES].sort())) errors.push('source-fingerprint-missing');
     for (const path of SOURCE_FILES) if (validation.candidate?.sourceHashes?.[path] !== sha256File(join(root, path))) errors.push(`source-fingerprint:${path}`);
     if (!options.allowDraft) {
@@ -144,19 +178,18 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
       const fixture = readJson(join(pack, `calibration/${group}/${kind}.json`));
       if (fixture.graderId !== graderId || fixture.expectation !== expected || JSON.stringify(fixture.cases) !== JSON.stringify(samples[group].filter((sample) => sample.expected === expected))) errors.push(`calibration-fixture:${graderId}:${kind}`);
     }
-    const registry = readJson(join(root, 'harness/specs/fixtures/agent-first-framework/registry.json'));
+    const registry = readComposedRegistry(root);
     if (validateFrameworkRegistry(registry).violations.length) errors.push('registry-contract');
     for (const [graderId, group] of Object.entries(CALIBRATION_GROUPS)) {
-      const grader = registry.registeredGraders.find((entry) => entry.id === graderId);
+      const grader = registry.registeredGraders.find((entry) => entry.id === `rsi-${graderId}`);
       if (grader?.version !== GRADER_VERSION || grader?.implementation !== 'scripts/lib/agent-first-graders.mjs'
         || JSON.stringify(grader?.calibration?.knownGood) !== JSON.stringify([`${TF0590_PACK_DIR}/calibration/${group}/known-good.json`])
         || JSON.stringify(grader?.calibration?.knownBad) !== JSON.stringify([`${TF0590_PACK_DIR}/calibration/${group}/known-bad.json`])
         || JSON.stringify(grader?.calibration?.unknown) !== JSON.stringify([`${TF0590_PACK_DIR}/calibration/${group}/unknown.json`])) errors.push(`grader-binding:${graderId}`);
     }
-    const suite = registry.registeredSuites.find((suite) => suite.id === 'acceptance-core');
+    const suite = registry.registeredSuites.find((suite) => suite.id === 'rsi-historical-core');
     if (suite?.corpusStatus !== 'frozen' || suite?.contentDigest !== `sha256:${sha256File(join(pack, FILES[0]))}` || JSON.stringify(suite?.taskIds) !== JSON.stringify(corpus.tasks.map((task) => task.id))) errors.push('registry-corpus-binding');
-    const loop = readJson(join(root, 'harness/specs/fixtures/agent-first-framework/loop-record.json'));
-    if (loop.suiteBinding?.contentDigest !== suite?.contentDigest || loop.heldOutSplit?.digest !== computeHeldOutDigest(suite)) errors.push('loop-corpus-binding');
+    if (suite?.split?.public !== corpus.split.public.length || suite?.split?.heldOut !== corpus.split.heldOut.length) errors.push('registry-split-binding');
   } catch (error) { errors.push(error.message); }
   return { passed: !errors.length, errors, taskCount: corpus?.tasks.length ?? null, calibratedRows: replay?.rows?.filter((row) => row.observed === row.expected).length ?? 0 };
 }

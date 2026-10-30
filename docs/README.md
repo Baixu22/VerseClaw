@@ -46,7 +46,8 @@ The deep dives are maintained in Simplified Chinese. Code paths, API names and e
 - [Agent-first acceptance system](../harness/specs/guides/agent-first-acceptance.md)
 - [RSI TF-0604 baseline corpus](../harness/specs/tasks/rsi-tf0604-baseline-corpus.md): sealed agent-driven task corpus, baseline reservation and negative controls.
 - [RSI TF-0592 statistical adjudication](../harness/specs/tasks/rsi-tf0592-statistical-adjudication.md): resource/source fingerprints, repeated-trial aggregation, paired uncertainty and sealed readback.
-- [Agent-first task corpus and grader calibration](../harness/specs/tasks/agent-first-task-corpus-calibration.md): 24 source-bound engineering tasks, executable reference oracles, held-out membership and known-good/bad/unknown grader calibration.
+- [Agent-first system task corpus](../harness/specs/tasks/agent-first-task-corpus.md): 24 maintained QA and failure-boundary tasks with a frozen 16/8 split and deterministic grader calibration.
+- [RSI historical task corpus and grader calibration](../harness/specs/tasks/agent-first-task-corpus-calibration.md): 24 historical engineering tasks, a separate frozen 12/12 split, executable reference oracles and qualitative calibration receipts.
 - [Coding and DCS design lessons](agent-coding-and-dcs-design-lessons.md)
 - [Capability parity for basic chat](codex-capability-parity-basic-chat.md)
 - [DCS production P0 runbook](dcs-production-p0-runbook.md)

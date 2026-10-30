@@ -1,4 +1,4 @@
-import type { TaskCorpus } from './lib/agent-first-task-corpus.mjs';
+import type { TaskCorpus } from './lib/rsi-historical-task-corpus.mjs';
 export type TaskCorpusValidation = { schemaVersion: string; driven_by: string; actor: string; candidate: { commit: string; tree: string; dirty: boolean }; corpus: { passed: boolean; errors: string[] }; taskCount: number; distribution: TaskCorpus['distribution']; calibration: { passed: boolean; rowCount: number; rubricRunStatus: string }; claims: Record<string, boolean> };
 export function writeTaskCorpusPack(root?: string): TaskCorpusValidation;
 export function runModelCalibration(root?: string, resource?: { endpoint?: string; apiKey?: string }): Promise<TaskCorpusValidation>;

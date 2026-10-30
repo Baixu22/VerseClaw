@@ -2,13 +2,13 @@
   "schemaVersion": "AgentFirstEvaluationFrameworkValidation/v1",
   "checkedAt": "2026-10-30",
   "driven_by": "agent",
-  "actor": "codex/tf0590-corpus-owner",
+  "actor": "codex",
   "command": "node scripts/agent-first-framework-check.mjs",
   "scope": "TF-0620 framework core registry validation over file bodies read from disk",
   "counts": {
     "subjects": 1,
     "suites": 1,
-    "graders": 3,
+    "graders": 2,
     "profiles": 1
   },
   "negativeControls": [

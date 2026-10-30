@@ -2,7 +2,7 @@
 lifecycleStatus: active
 id: agent-first-task-corpus-calibration
 title: Freeze real engineering tasks, references and executable grader calibration
-intent: Complete TF-0590 by turning the sealed historical cohort into explicit executable Agent-first tasks with source/test digests, reference oracles, preserved negative outcomes, and calibrated deterministic, trace and qualitative graders before any system baseline or RSI candidate run.
+intent: Supply TF-0592 with the historical execution cohort by turning the sealed historical cohort into explicit executable Agent-first tasks with source/test digests, reference oracles, preserved negative outcomes, and calibrated deterministic, trace and qualitative graders before any system baseline or RSI candidate run.
 diffBase: 1b05846affe9134708c4cc1d920f3f0aa399dc3b
 touchedAreas:
   - harness/specs/tasks/agent-first-task-corpus-calibration.md
@@ -19,20 +19,29 @@ touchedAreas:
   - scripts/agent-first-framework-check.d.mts
   - scripts/agent-first-loop-check.mjs
   - scripts/agent-first-loop-check.d.mts
-  - scripts/lib/agent-first-task-corpus.mjs
-  - scripts/lib/agent-first-task-corpus.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
   - scripts/lib/agent-first-graders.mjs
   - scripts/lib/agent-first-graders.d.mts
+  - scripts/rsi-historical-task-corpus.mjs
+  - scripts/rsi-historical-task-corpus.d.mts
   - scripts/agent-first-task-corpus.mjs
   - scripts/agent-first-task-corpus.d.mts
   - tests/unit/agent-first-evaluation-framework.test.ts
   - tests/unit/agent-first-evaluation-loop.test.ts
-  - tests/unit/agent-first-task-corpus.test.ts
+  - tests/unit/rsi-historical-task-corpus.test.ts
   - tests/unit/agent-first-graders.test.ts
   - package.json
   - docs/README.md
   - docs/dev/rsi-capability-and-boundaries.md
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/**
+  - harness/specs/tasks/agent-first-task-corpus.md
+  - harness/specs/fixtures/agent-first-system/**
+  - scripts/lib/agent-first-task-corpus.mjs
+  - scripts/lib/agent-first-task-corpus.d.mts
+  - scripts/agent-first-corpus-check.mjs
+  - scripts/agent-first-corpus-check.d.mts
+  - tests/unit/agent-first-task-corpus.test.ts
 ownedPaths:
   - harness/specs/tasks/agent-first-task-corpus-calibration.md
   - harness/specs/tasks/agent-first-evaluation-framework.md
@@ -48,20 +57,29 @@ ownedPaths:
   - scripts/agent-first-framework-check.d.mts
   - scripts/agent-first-loop-check.mjs
   - scripts/agent-first-loop-check.d.mts
-  - scripts/lib/agent-first-task-corpus.mjs
-  - scripts/lib/agent-first-task-corpus.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
   - scripts/lib/agent-first-graders.mjs
   - scripts/lib/agent-first-graders.d.mts
+  - scripts/rsi-historical-task-corpus.mjs
+  - scripts/rsi-historical-task-corpus.d.mts
   - scripts/agent-first-task-corpus.mjs
   - scripts/agent-first-task-corpus.d.mts
   - tests/unit/agent-first-evaluation-framework.test.ts
   - tests/unit/agent-first-evaluation-loop.test.ts
-  - tests/unit/agent-first-task-corpus.test.ts
+  - tests/unit/rsi-historical-task-corpus.test.ts
   - tests/unit/agent-first-graders.test.ts
   - package.json
   - docs/README.md
   - docs/dev/rsi-capability-and-boundaries.md
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/**
+  - harness/specs/tasks/agent-first-task-corpus.md
+  - harness/specs/fixtures/agent-first-system/**
+  - scripts/lib/agent-first-task-corpus.mjs
+  - scripts/lib/agent-first-task-corpus.d.mts
+  - scripts/agent-first-corpus-check.mjs
+  - scripts/agent-first-corpus-check.d.mts
+  - tests/unit/agent-first-task-corpus.test.ts
 requiredProfiles:
   - fast
 requiredRules:
@@ -72,8 +90,9 @@ requiredRules:
   - reliability-aggregation-boundary
 humanEvidence: not-required
 requiredTests:
-  - pnpm agent-first:corpus:check
-  - pnpm exec vitest run tests/unit/agent-first-task-corpus.test.ts tests/unit/agent-first-graders.test.ts tests/unit/agent-first-evaluation-framework.test.ts tests/unit/agent-first-evaluation-loop.test.ts --maxWorkers=1
+  - node scripts/agent-first-corpus-check.mjs
+  - pnpm rsi:corpus:check
+  - pnpm exec vitest run tests/unit/rsi-historical-task-corpus.test.ts tests/unit/agent-first-task-corpus.test.ts tests/unit/agent-first-graders.test.ts tests/unit/agent-first-evaluation-framework.test.ts tests/unit/agent-first-evaluation-loop.test.ts --maxWorkers=1
   - pnpm harness validate --spec harness/specs/tasks/agent-first-task-corpus-calibration.md
   - pnpm run typecheck
   - git diff --check
@@ -118,3 +137,11 @@ provider. Secrets remain in memory; request/response bodies exclude authorizatio
 material and are hashed. Formal offline tests replay sealed receipts without
 provider credentials. Any missing or failed provider calibration remains explicit
 and cannot count as a calibrated grader. No human action or human data is needed.
+
+The accepted main TF-0590 corpus lives under `agent-first-system` with its original
+16/8 split and generic module. This historical 12/12 cohort now uses
+`scripts/lib/rsi-historical-task-corpus.mjs` and `scripts/rsi-historical-task-corpus.mjs`.
+Its registered extension composes with the sealed base registry without rewriting
+the historical TF-0620/0621 snapshots or either corpus. Main implementation/evidence
+bytes were imported from `b6b50ceaf4578134eea81f9790a85adac25b7b18`; displaced
+working/index/HEAD bytes and the original reference failures have a private recovery index.

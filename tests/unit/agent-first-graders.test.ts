@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
-import { buildTaskCorpus, buildCalibrationSamples, RUBRIC_CONFIG } from '../../scripts/lib/agent-first-task-corpus.mjs';
-import { gradeExecutionRecord, gradeTaskExecutions, gradeTraceEvidence, gradeRubricReceipts, buildRubricRequest, graderDigest, combineGraderVerdicts, classifyZeroPassTrials, type RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
+import { buildTaskCorpus, buildCalibrationSamples, RUBRIC_CONFIG } from '../../scripts/lib/rsi-historical-task-corpus.mjs';
+import { gradeExecutionRecord, gradeExecutionArtifact, gradeTaskExecutions, gradeTraceEvidence, gradeRubricReceipts, buildRubricRequest, graderDigest, combineGraderVerdicts, classifyZeroPassTrials, type RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
 
 const corpus = buildTaskCorpus();
 const samples = buildCalibrationSamples(corpus);
@@ -9,7 +9,7 @@ const task = corpus.tasks[0];
 
 describe('Agent-first executable graders', () => {
   it('calibrates code grading against known good, bad and unknown raw evidence', () => {
-    for (const sample of samples.deterministic) expect(gradeExecutionRecord(task, sample.record, sample.stdout, sample.stderr).verdict, sample.id).toBe(sample.expected);
+    for (const sample of samples.deterministic) expect(gradeExecutionRecord(task, sample.record, sample.stdout, sample.stderr, { calibration: true }).verdict, sample.id).toBe(sample.expected);
   });
   it('requires the complete frozen oracle set rather than a duplicated passing command', () => {
     const good = samples.deterministic[0];
@@ -18,6 +18,14 @@ describe('Agent-first executable graders', () => {
   });
   it('calibrates authorization traces without treating missing effects as a pass', () => {
     for (const sample of samples.trace) expect(gradeTraceEvidence(sample.trace).verdict, sample.id).toBe(sample.expected);
+    const good = samples.trace[0].trace!;
+    expect(gradeTraceEvidence({ ...good, events: [{ kind: 'invented-kind', authorized: true }] }).verdict).toBe('unknown');
+    expect(gradeTraceEvidence({ ...good, runId: '' }).verdict).toBe('unknown');
+  });
+  it('does not accept a self-contained claimed grader receipt without owner attestation', () => {
+    expect(gradeExecutionArtifact(task, 'D:/tmp/untrusted-artifact').verdict).toBe('unknown');
+    const good = samples.deterministic[0];
+    expect(gradeExecutionRecord(task, good.record, good.stdout, good.stderr).verdict).toBe('unknown');
   });
   it('does not permit supplementary votes to override deterministic fail or unknown', () => {
     const pass = { verdict: 'pass' as const }, fail = { verdict: 'fail' as const }, unknown = { verdict: 'unknown' as const };
@@ -35,6 +43,8 @@ describe('Agent-first executable graders', () => {
     expect(gradeRubricReceipts(sample, [], RUBRIC_CONFIG)).toMatchObject({ verdict: 'unknown', receiptsValid: false });
     receipts[1] = { ...receipts[0] };
     expect(gradeRubricReceipts(sample, receipts, RUBRIC_CONFIG).receiptsValid).toBe(false);
+    const duplicateOrdinal = [make('vote-0'), make('vote-1'), { ...make('vote-2'), vote: 1 }];
+    expect(gradeRubricReceipts(sample, duplicateOrdinal, RUBRIC_CONFIG).receiptsValid).toBe(false);
   });
   it('does not let a claimed request digest hide changed provider request parameters', () => {
     const sample = samples.rubric[0];
@@ -51,5 +61,7 @@ describe('Agent-first executable graders', () => {
     expect(classifyZeroPassTrials(trials, true, false).classification).toBe('grader-defect-investigation');
     expect(classifyZeroPassTrials([{ verdict: 'unknown' }], true, true).classification).toBe('insufficient-evidence');
     expect(classifyZeroPassTrials(trials, true, true).classification).toBe('agent');
+    expect(classifyZeroPassTrials([{ verdict: 'fail', failureClass: 'task' }], true, true).classification).toBe('task-defect-investigation');
+    expect(classifyZeroPassTrials([{ verdict: 'fail', failureClass: 'grader' }], true, true).classification).toBe('grader-defect-investigation');
   });
 });

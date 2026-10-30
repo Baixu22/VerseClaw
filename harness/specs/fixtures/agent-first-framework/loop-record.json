@@ -3,15 +3,15 @@
   "generatedAt": "2026-10-30",
   "driven_by": "agent",
   "actor": "codex",
-  "claimBoundary": "TF-0590 task corpus and grader calibration are frozen. No current-system baseline, RSI candidate, re-evaluation or promotion has run; the existing signals remain evaluation gaps.",
+  "claimBoundary": "Loop contract only. The acceptance suite corpus is not frozen, the self-improvement candidate producer is not implemented, and no candidate or evaluation has been run. The signals are evaluation gaps, not regressions; nothing here is a measured result.",
   "profileId": "acceptance-profile",
   "verdictRef": "harness/specs/fixtures/agent-first-acceptance/matrix.json",
   "heldOutSplit": {
     "suiteId": "acceptance-core",
-    "status": "frozen",
-    "digest": "sha256:954db09f02aca59d2b472cd86ab5b62c523c76fdffed0b73a2fe2f56e865d42b",
-    "sealedAt": "2026-10-30",
-    "writableByCandidate": false
+    "digest": null,
+    "sealedAt": null,
+    "writableByCandidate": false,
+    "status": "not-frozen"
   },
   "signals": [
     {
@@ -46,8 +46,8 @@
   "productLockChanges": [],
   "suiteBinding": {
     "suiteId": "acceptance-core",
-    "status": "frozen",
-    "contentDigest": "sha256:cd98632dfab218831da9280165b15f9c2b44deaa4777a8bf0ca02702e5bbe9db"
+    "status": "not-frozen",
+    "contentDigest": null
   },
   "candidateProducer": {
     "id": "rsi-self-improvement",

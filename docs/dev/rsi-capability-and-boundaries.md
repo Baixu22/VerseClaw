@@ -35,7 +35,7 @@ Agent-first prerequisites. `pnpm rsi:tf0592:check` re-reads and recomputes the
 retained pack; `pnpm rsi:tf0592:write` prepares evidence and labels dirty source
 as a draft. These tools leave the product capability boundary unchanged.
 
-TF-0590 adds explicit input/acceptance text and current executable oracle/test
+The historical execution cohort adds explicit input/acceptance text and current executable oracle/test
 digests for these 24 historical tasks, a sealed 12-public/12-held-out split, and
 three graders. Its calibration has 16 good/bad/unknown samples; qualitative
 calibration uses three actual provider votes per sample at temperature 0.3 with
@@ -44,6 +44,16 @@ failure remains in the pack alongside v2. Historical A04 `NO-GO` and nonzero
 gates remain visible. Task/grader calibration does not provide system baseline
 trials; the acceptance profile and RSI baseline still report not-run or
 insufficient-evidence until their actual execution is performed.
+
+The accepted TF-0590 system corpus is separately retained under
+`harness/specs/fixtures/agent-first-system`: 24 maintained QA and failure-boundary
+tasks, a 16-public/8-held-out split and 144 deterministic grader calibrations.
+`pnpm agent-first:corpus:check` verifies that collection. The historical cohort
+uses `pnpm rsi:corpus:check` and a registry extension with distinct IDs; neither
+collection rewrites the sealed base acceptance registry or the other's split.
+The original historical reference execution observed 23/24 passing tasks and an
+S04 runtime failure. That dirty-worktree reference replay is preserved separately
+and supplies no complete system baseline cases.
 
 The capability question is asked at three layers, and the three answers are
 different.

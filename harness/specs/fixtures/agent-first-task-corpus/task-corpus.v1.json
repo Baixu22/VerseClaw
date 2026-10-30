@@ -4,7 +4,7 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "89d89fe88787d8602918e0665c8ac127b321dbb7",
+  "sourceCommit": "aef0b82b5743e4497d3610cbbcfad581b2d32a9c",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
   "sourceCorpusSha256": "c1b464613c2ca39f28722c56b3a75281a222420d7491aafc8a6854434c983432",
   "tasks": [
@@ -408,7 +408,8 @@
         "graderId": "deterministic-final-state",
         "commandLine": "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
         "commandLines": [
-          "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1"
+          "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
+          "node scripts/check-spec-lifecycle.mjs"
         ],
         "originalRequiredTests": [
           "tests/unit/spec-doc-gardening.test.ts",
@@ -421,7 +422,8 @@
         "expectedTestCount": null,
         "inputDigests": {
           "harness/specs/tasks/harness-gap-spec-doc-gardening.md": "ec5004bce21e5ab4a017830c20fe0116fe77e0ea6cdc58711a89ec51ab218535",
-          "tests/unit/spec-doc-gardening.test.ts": "968bf0a818599d9b0dd5d912d676aa287ea895cbabc23288ab613f1e393f0837"
+          "tests/unit/spec-doc-gardening.test.ts": "968bf0a818599d9b0dd5d912d676aa287ea895cbabc23288ab613f1e393f0837",
+          "scripts/check-spec-lifecycle.mjs": "b06eb534725cd3941048076d5c1fd73941be8eb0110b7c768d37f17da967ae02"
         }
       },
       "referenceSolution": {

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "AgentFirstNodeDevelopment/v1",
+  "taskId": "TF-0590",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-developer",
+  "recordedAt": "2026-10-30T10:42:48.907Z",
+  "candidate": {
+    "commit": "cf39f48a83efdcf3114d7693c5a9167a86947214",
+    "tree": "c1b557c6c26377170e76fdbd7e1bdf3b0c7e178b",
+    "dirty": false
+  },
+  "scope": "frozen task definitions, reference entrypoints and executable grader calibration",
+  "testCounts": {
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "total": 22,
+    "source": "parsed",
+    "segments": 1
+  },
+  "taskCount": 24,
+  "calibrations": 144,
+  "taskClassCounts": {
+    "capability": 3,
+    "regression": 5,
+    "negative": 8,
+    "adversarial": 6,
+    "recovery": 2
+  },
+  "corpusDigest": "sha256:23a5d16cf66cb16e8096ba434332c9ee7976f59484496ab5b09a2544da39a032",
+  "rawArchive": "D:/tmp/agent-first-full-01a18be8",
+  "logs": [
+    {
+      "path": "tf0590-clean-unit.log",
+      "sha256": "83055dc44c45a19694ed0f147e566b730736fbf33ccb32e3d28b745baeed6850",
+      "exitCode": 0
+    },
+    {
+      "path": "tf0590-clean-typecheck.log",
+      "sha256": "83bbce3f9ff70aa7903b387809c41ad543b5632506407315dc8a060482139bfd",
+      "exitCode": 0
+    },
+    {
+      "path": "tf0590-clean-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0
+    },
+    {
+      "path": "tf0590-clean-harness.log",
+      "sha256": "c1dffcea1ce818dc88c94af6d85cacbf4f10d0a35078394fbf399dbc989b47e2",
+      "exitCode": 0
+    },
+    {
+      "path": "tf0590-artifacts.log",
+      "sha256": "090ca5629a6ae8acf90fa5c6c92f6fe9f3c4d8be8e15f16266da924dbbf63aa9",
+      "exitCode": 0
+    }
+  ],
+  "evaluationStatus": "not-run",
+  "limitations": [
+    "Calibration observations are deterministic fixtures; no system trial or live-model quality claim.",
+    "Model rubric and independent review are TF-0593/TF-0595 work.",
+    "Product interaction and isolated execution are TF-0591/TF-0592 work."
+  ]
+}
