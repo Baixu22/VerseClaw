@@ -1,0 +1,688 @@
+{
+  "schema": "ProductSemanticConstraintReadback/v1",
+  "driven_by": "agent",
+  "actor": "node-semantic-fixture-reader",
+  "checkedAt": "2026-10-30T13:02:24.888Z",
+  "command": "C:\\Program Files\\nodejs\\node.exe D:\\tmp\\ontology-practice-20261030\\dump-constraint-fixtures.mjs",
+  "exitCode": 0,
+  "candidate": {
+    "commit": "1b0f81ee0dd0cfaf49fedd0f600eea99794c06d9",
+    "tree": "fb8d9785450058d1f625f5306b952dcb12860328",
+    "dirty": false
+  },
+  "source": "shared/product-semantics.ts",
+  "sourceRawSha256": "912f12e1adb6e37e7ef24e18a9b72726988bfae7dabcf55dfe0b20d46684c9c1",
+  "positive": [
+    {
+      "id": "canonical-six",
+      "result": {
+        "valid": true,
+        "diagnostics": [],
+        "unverified": [
+          "Static declarations only: no owner-store, runtime receipt, completion fact or grant was verified."
+        ]
+      }
+    },
+    {
+      "id": "independent-static-same-session",
+      "result": {
+        "valid": true,
+        "diagnostics": [],
+        "unverified": [
+          "Static declarations only: no owner-store, runtime receipt, completion fact or grant was verified."
+        ]
+      }
+    },
+    {
+      "id": "legacy-workspace-task-owner",
+      "result": {
+        "valid": true,
+        "diagnostics": [],
+        "unverified": [
+          "Static declarations only: no owner-store, runtime receipt, completion fact or grant was verified."
+        ]
+      }
+    }
+  ],
+  "negative": [
+    {
+      "id": "unknown-from",
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "from"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$relations[0]",
+          "field": "from",
+          "rule": "unknown-vocabulary",
+          "message": "The field must use the existing declared vocabulary."
+        },
+        {
+          "relationKey": "$relations[0]",
+          "field": "kind",
+          "rule": "relation-combination",
+          "message": "These individually declared endpoints and kind do not form an existing relation."
+        }
+      ]
+    },
+    {
+      "id": "unknown-to",
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "to"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$relations[0]",
+          "field": "to",
+          "rule": "unknown-vocabulary",
+          "message": "The field must use the existing declared vocabulary."
+        },
+        {
+          "relationKey": "$relations[0]",
+          "field": "kind",
+          "rule": "relation-combination",
+          "message": "These individually declared endpoints and kind do not form an existing relation."
+        }
+      ]
+    },
+    {
+      "id": "unknown-kind",
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "kind"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$relations[0]",
+          "field": "kind",
+          "rule": "unknown-vocabulary",
+          "message": "The field must use the existing declared vocabulary."
+        },
+        {
+          "relationKey": "$relations[0]",
+          "field": "kind",
+          "rule": "relation-combination",
+          "message": "These individually declared endpoints and kind do not form an existing relation."
+        }
+      ]
+    },
+    {
+      "id": "unknown-authority",
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "authorityBoundary"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "authorityBoundary",
+          "rule": "unknown-vocabulary",
+          "message": "The field must use the existing declared vocabulary."
+        },
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "authorityBoundary",
+          "rule": "authority-combination",
+          "message": "The authority boundary does not match this directed relation."
+        }
+      ]
+    },
+    {
+      "id": "duplicate",
+      "expected": {
+        "rule": "duplicate-relation",
+        "field": "relationKey"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "relationKey",
+          "rule": "duplicate-relation",
+          "message": "A directed relation may occur only once."
+        }
+      ]
+    },
+    {
+      "id": "self-loop",
+      "expected": {
+        "rule": "self-loop",
+        "field": "to"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:chat",
+          "field": "to",
+          "rule": "self-loop",
+          "message": "A product relation cannot point to itself."
+        },
+        {
+          "relationKey": "chat:projects:chat",
+          "field": "kind",
+          "rule": "relation-combination",
+          "message": "These individually declared endpoints and kind do not form an existing relation."
+        }
+      ]
+    },
+    {
+      "id": "missing-evidence",
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "evidenceRefs",
+          "rule": "evidence-required",
+          "message": "Nonempty explicit evidence references are required."
+        }
+      ]
+    },
+    {
+      "id": "empty-evidence",
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "evidenceRefs",
+          "rule": "evidence-required",
+          "message": "Nonempty explicit evidence references are required."
+        }
+      ]
+    },
+    {
+      "id": "whitespace-evidence",
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "evidenceRefs",
+          "rule": "evidence-required",
+          "message": "Nonempty explicit evidence references are required."
+        }
+      ]
+    },
+    {
+      "id": "nonstring-evidence",
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "evidenceRefs",
+          "rule": "evidence-required",
+          "message": "Nonempty explicit evidence references are required."
+        }
+      ]
+    },
+    {
+      "id": "wrong-combination",
+      "expected": {
+        "rule": "relation-combination",
+        "field": "kind"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "workboard:roots-in:task-ledger",
+          "field": "kind",
+          "rule": "relation-combination",
+          "message": "These individually declared endpoints and kind do not form an existing relation."
+        }
+      ]
+    },
+    {
+      "id": "wrong-authority-combination",
+      "expected": {
+        "rule": "authority-combination",
+        "field": "authorityBoundary"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "authorityBoundary",
+          "rule": "authority-combination",
+          "message": "The authority boundary does not match this directed relation."
+        }
+      ]
+    },
+    {
+      "id": "reverse-ledger-authority",
+      "expected": {
+        "rule": "task-ledger-direction",
+        "field": "from"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "task-ledger:references-one-way:workboard",
+          "field": "from",
+          "rule": "task-ledger-direction",
+          "message": "Task Ledger does not derive scheduling or mirror authority from an outgoing relation."
+        },
+        {
+          "relationKey": "task-ledger:references-one-way:workboard",
+          "field": "kind",
+          "rule": "relation-combination",
+          "message": "These individually declared endpoints and kind do not form an existing relation."
+        }
+      ]
+    },
+    {
+      "id": "inverse-fact",
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "inverse"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "inverse",
+          "rule": "no-derived-authority",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "transitive-grant",
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "transitive"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "transitive",
+          "rule": "no-derived-authority",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "fabricated-grant",
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "grant"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "grant",
+          "rule": "no-derived-authority",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "two-way-sync",
+      "expected": {
+        "rule": "task-ledger-direction",
+        "field": "sync"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "workboard:references-one-way:task-ledger",
+          "field": "sync",
+          "rule": "task-ledger-direction",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "ledger-mirror",
+      "expected": {
+        "rule": "task-ledger-direction",
+        "field": "taskLedgerMirror"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "workboard:references-one-way:task-ledger",
+          "field": "taskLedgerMirror",
+          "rule": "task-ledger-direction",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "undeclared-field",
+      "expected": {
+        "rule": "undeclared-field",
+        "field": "priority"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "chat:projects:task-ledger",
+          "field": "priority",
+          "rule": "undeclared-field",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "cross-session-quality",
+      "expected": {
+        "rule": "quality-session",
+        "field": "context.quality.sourceSessionKey"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "routing-memo:quality-gated-by:task-loop",
+          "field": "context.quality.sourceSessionKey",
+          "rule": "quality-session",
+          "message": "Active-quality declarations must name the same session."
+        }
+      ]
+    },
+    {
+      "id": "caller-quality",
+      "expected": {
+        "rule": "quality-authority",
+        "field": "context.quality.source"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "routing-memo:quality-gated-by:task-loop",
+          "field": "context.quality.source",
+          "rule": "quality-authority",
+          "message": "Caller quality cannot supply Task Loop scorecard authority."
+        }
+      ]
+    },
+    {
+      "id": "missing-quality-owner-reference",
+      "expected": {
+        "rule": "quality-authority",
+        "field": "context.quality.ownerEvidenceRef"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "routing-memo:quality-gated-by:task-loop",
+          "field": "context.quality.ownerEvidenceRef",
+          "rule": "quality-authority",
+          "message": "An explicit existing-owner source reference is required."
+        }
+      ]
+    },
+    {
+      "id": "unobserved-receipt-claim",
+      "expected": {
+        "rule": "quality-receipt-scope",
+        "field": "context.quality.evidenceLevel"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "routing-memo:quality-gated-by:task-loop",
+          "field": "context.quality.evidenceLevel",
+          "rule": "quality-receipt-scope",
+          "message": "This static checker cannot attest an observed runtime receipt."
+        }
+      ]
+    },
+    {
+      "id": "unknown-quality-state",
+      "expected": {
+        "rule": "quality-vocabulary",
+        "field": "context.quality.state"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "routing-memo:quality-gated-by:task-loop",
+          "field": "context.quality.state",
+          "rule": "quality-vocabulary",
+          "message": "Unknown quality state."
+        }
+      ]
+    },
+    {
+      "id": "session-as-workspace",
+      "expected": {
+        "rule": "identity-scope",
+        "field": "context.scope"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.scope",
+          "rule": "identity-scope",
+          "message": "Identity boundary requires scope.workspaceId (or owner-resolved workspaceKey)"
+        }
+      ]
+    },
+    {
+      "id": "run-as-task",
+      "expected": {
+        "rule": "identity-task-reference",
+        "field": "context.taskReference"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.taskReference",
+          "rule": "identity-task-reference",
+          "message": "Task reference requires an explicit owner kind"
+        }
+      ]
+    },
+    {
+      "id": "mixed-task-facts",
+      "expected": {
+        "rule": "identity-task-reference",
+        "field": "context.taskReference"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.taskReference",
+          "rule": "identity-task-reference",
+          "message": "Task reference requires taskNodeId; bare or mixed task IDs are forbidden"
+        }
+      ]
+    },
+    {
+      "id": "run-success-as-task-completion",
+      "expected": {
+        "rule": "task-completion-authority",
+        "field": "context.completion.taskStatus"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.completion.taskStatus",
+          "rule": "task-completion-authority",
+          "message": "A turn or run result cannot establish task completion; use the existing task/verification owner."
+        }
+      ]
+    },
+    {
+      "id": "turn-success-as-task-completion",
+      "expected": {
+        "rule": "task-completion-authority",
+        "field": "context.completion.taskStatus"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.completion.taskStatus",
+          "rule": "task-completion-authority",
+          "message": "A turn or run result cannot establish task completion; use the existing task/verification owner."
+        }
+      ]
+    },
+    {
+      "id": "unverified-loop-as-task-completion",
+      "expected": {
+        "rule": "task-completion-authority",
+        "field": "context.completion.taskStatus"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.completion.taskStatus",
+          "rule": "task-completion-authority",
+          "message": "A turn or run result cannot establish task completion; use the existing task/verification owner."
+        }
+      ]
+    },
+    {
+      "id": "unknown-completion-status",
+      "expected": {
+        "rule": "completion-vocabulary",
+        "field": "context.completion.runStatus"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.completion.runStatus",
+          "rule": "completion-vocabulary",
+          "message": "Unknown completion or authority vocabulary."
+        }
+      ]
+    },
+    {
+      "id": "context-grant",
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "context.grant"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.grant",
+          "rule": "no-derived-authority",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "scope-grant",
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "context.scope.scope.grant"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "context.scope.scope.grant",
+          "rule": "no-derived-authority",
+          "message": "This declaration cannot introduce an owner, inverse fact, mirror or authorization."
+        }
+      ]
+    },
+    {
+      "id": "malformed-relation",
+      "expected": {
+        "rule": "relation-shape",
+        "field": "relation"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$relations[0]",
+          "field": "relation",
+          "rule": "relation-shape",
+          "message": "A relation must be a metadata object."
+        }
+      ]
+    },
+    {
+      "id": "missing-relations",
+      "expected": {
+        "rule": "relations-required",
+        "field": "relations"
+      },
+      "valid": false,
+      "matched": true,
+      "diagnostics": [
+        {
+          "relationKey": "$contract",
+          "field": "relations",
+          "rule": "relations-required",
+          "message": "A nonempty relation array is required."
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "valid": 3,
+    "invalid": 35,
+    "expectedRejections": 35
+  },
+  "unverified": [
+    "Inputs are synthetic static metadata. No runtime receipt, grant or Task Ledger completion was observed."
+  ]
+}
