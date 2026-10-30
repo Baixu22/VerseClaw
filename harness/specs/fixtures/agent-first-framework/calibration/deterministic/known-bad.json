@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "AgentFirstCalibrationFixture/v1",
+  "graderId": "deterministic-final-state",
+  "expectation": "fail",
+  "cases": [
+    {
+      "id": "text-claims-success-state-wrong",
+      "finalStateMatchesRequest": false,
+      "productReportsOwnSuccess": true,
+      "expected": "fail"
+    },
+    {
+      "id": "missing-persistent-effect",
+      "finalStateMatchesRequest": false,
+      "productReportsOwnSuccess": false,
+      "expected": "fail"
+    }
+  ],
+  "note": "Text that claims success while the persistent state is wrong must be rejected."
+}
