@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
+  "generatedAt": "2026-10-30T08:51:07.086Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-tf0592-executor",
+  "candidate": {
+    "commit": "5bf8a0b253f9b195067f30e6789861d0eba48245",
+    "tree": "e1e265a8b07a6a4b8770222d950a5975cca25d94",
+    "branch": "codex/tf0604-rsi-baseline",
+    "dirty": true,
+    "dirtyPaths": [
+      "M  docs/README.md",
+      "M  docs/dev/rsi-capability-and-boundaries.md",
+      "A  harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS",
+      "A  harness/specs/fixtures/rsi-evidence-loop/tf0592/negative-control-results.v1.json",
+      "A  harness/specs/fixtures/rsi-evidence-loop/tf0592/negative-controls.v1.json",
+      "A  harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json",
+      "A  harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json",
+      "A  harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json",
+      "A  harness/specs/tasks/rsi-tf0592-statistical-adjudication.md",
+      "M  package.json",
+      "A  scripts/rsi-tf0592-statistical-adjudication.d.mts",
+      "A  scripts/rsi-tf0592-statistical-adjudication.mjs",
+      "AM tests/unit/rsi-tf0592-statistical-adjudication.test.ts"
+    ],
+    "sourceHashes": {
+      "scripts/rsi-tf0592-statistical-adjudication.mjs": "843511b621540f375cb7d0389ad6099f7b54eaf3ffcbada137bf41e35e0dc734",
+      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "1168cc32095633d54cae32a157b6a7e129da1cb80de3fbb9fa91b81602853b75",
+      "scripts/rsi-tf0604-baseline.mjs": "16bdf38533c9f97f81780f86ac62abd407b9e7ec99fca281614cd8c754d7ce60",
+      "scripts/lib/reliability-aggregation.mjs": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
+      "scripts/lib/paired-ablation.mjs": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
+      "scripts/lib/entrypoint.mjs": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b",
+      "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "2a73c2bab489c1980f4725939773f8cd577e2c884bc54bbb280cb1b8ffc4f0d2",
+      "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "bb3e40b126f2d2534b3b130748be67e62a56a208ceb735e0e15a6e4eb1c48d47",
+      "harness/specs/rules/reliability-aggregation-boundary.md": "9286c8b4a0d07368336d1269fe90dd93f5be7712b47fb20bf6e582b6d9249192",
+      "harness/specs/rules/paired-ablation-boundary.md": "0d9677ef4278a38d34cc710afe759a8e903db1300088358275fa93eab97faf03",
+      "harness/specs/rules/agent-engineering-acceptance-boundary.md": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
+      "harness/specs/rules/task-forest-autoclose-and-roles.md": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
+      "harness/src/profiles.mjs": "b8b2992c58362fa16c4f0f3b40886fe96ab6d1dea690537cec81df3634899622",
+      "package.json": "edb4f657978d1bc0001b29caabe62e21157d9a571784e2b01e0105e36ac868b6",
+      "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+      "docs/README.md": "cbeb6891d9a50513b89fcdba8c272c17a6c6f6b32f030a0cd0165e86b7a5ca03",
+      "docs/dev/rsi-capability-and-boundaries.md": "6c9248a8dac71d6cbab6fad821ed1f423aa6d0403fd4850221c76614aa4e9c20"
+    }
+  },
+  "runtime": {
+    "node": "v24.22.1",
+    "pnpm": "11.2.2",
+    "platform": "win32",
+    "arch": "x64",
+    "osRelease": "10.0.26200"
+  },
+  "observedResources": {
+    "cpuCount": 16,
+    "totalMemoryBytes": 16295432192,
+    "freeMemoryBytes": 4233457664,
+    "disk": {
+      "freeBytes": 15416524800,
+      "totalBytes": 322122543104,
+      "status": "measured"
+    }
+  },
+  "envelope": {
+    "cpuFloorCores": 1,
+    "cpuCeilingCores": 1,
+    "memoryFloorBytes": 268435456,
+    "memoryCeilingBytes": 4294967296,
+    "concurrency": 1,
+    "timeoutMs": 900000,
+    "retries": 0,
+    "workerCount": 1,
+    "model": {
+      "status": "not-run",
+      "id": null,
+      "version": null
+    },
+    "tools": {
+      "status": "not-run",
+      "manifestDigest": null
+    },
+    "grader": {
+      "status": "not-run",
+      "id": null,
+      "version": null
+    },
+    "seed": {
+      "status": "not-run",
+      "value": null
+    },
+    "networkMode": "not-run",
+    "externalCalls": 0,
+    "isolation": "not-run",
+    "enforcement": "not-run"
+  },
+  "claimBoundary": "Observed host resources and a planned envelope; no model trial or enforced trial isolation is claimed."
+}

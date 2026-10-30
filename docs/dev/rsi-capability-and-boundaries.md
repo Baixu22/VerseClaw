@@ -24,6 +24,17 @@ trusting this page.
 
 ## Three layers
 
+The TF-0604 historical corpus now contains 24 repository-sourced task definitions
+and eight integrity controls. TF-0592 adds resource/source fingerprints, separate
+pass^k/pass@k with Wilson case intervals, paired-trial comparison, a labelled
+power-design approximation and twelve fail-closed controls. Its checked-in raw
+input still reserves zero completed model trials: the resulting report is
+`insufficient-evidence`, with no model/provider gain or promotion readiness.
+Trial execution, calibrated graders and enforced clean profile isolation remain
+Agent-first prerequisites. `pnpm rsi:tf0592:check` re-reads and recomputes the
+retained pack; `pnpm rsi:tf0592:write` prepares evidence and labels dirty source
+as a draft. These tools leave the product capability boundary unchanged.
+
 The capability question is asked at three layers, and the three answers are
 different.
 
