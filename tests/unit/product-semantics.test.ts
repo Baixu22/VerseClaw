@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import sources from '../../harness/specs/fixtures/ontology-lite-existing-contracts/sources.json';
 import {
   PRODUCT_SEMANTIC_CONCEPTS,
   PRODUCT_SEMANTIC_RELATIONS,
@@ -12,6 +15,28 @@ import {
 } from '@shared/product-semantics';
 
 describe('ClawX product semantics', () => {
+  it('maps every derived relation key to source anchors, consumers and bounded regressions', () => {
+    expect(sources.relations.map(({ relationKey }) => relationKey)).toEqual(
+      PRODUCT_SEMANTIC_RELATIONS.map(({ from, kind, to }) => `${from}:${kind}:${to}`),
+    );
+    for (const relation of sources.relations) {
+      expect(relation.documentation.length, relation.relationKey).toBeGreaterThan(0);
+      expect(relation.owners.length, relation.relationKey).toBeGreaterThan(0);
+      expect(relation.valueConsumers).toEqual(['tests/unit/product-semantics.test.ts']);
+      expect(relation.regressions.length).toBeGreaterThan(0);
+      expect(relation.unverified.length).toBeGreaterThan(0);
+      for (const { path, locator } of [...relation.documentation, ...relation.owners]) {
+        expect(readFileSync(resolve(process.cwd(), path), 'utf8'), path).toContain(locator);
+      }
+    }
+    for (const boundary of sources.boundaries) {
+      for (const { path, locator } of boundary.sources) {
+        expect(readFileSync(resolve(process.cwd(), path), 'utf8'), path).toContain(locator);
+      }
+    }
+    expect(sources.consumerSearch.productionValueConsumers).toEqual([]);
+  });
+
   it('pins the seven product concepts to distinct responsibilities', () => {
     expect(PRODUCT_SEMANTIC_CONCEPTS.map((concept) => concept.id)).toEqual([
       'chat',

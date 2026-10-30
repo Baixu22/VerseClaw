@@ -1,0 +1,306 @@
+{
+  "schema": "ProductSemanticSources/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts",
+  "relationSource": "shared/product-semantics.ts",
+  "keyDerivation": "from:kind:to",
+  "claimBoundary": "Static source readback only; no runtime, independent acceptance, or authorization claim.",
+  "relations": [
+    {
+      "relationKey": "chat:suggests-upgrade-to:task-loop",
+      "evidenceGrade": "source-backed",
+      "documentation": [
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "locator": "Ordinary Chat"
+        },
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "locator": "Task Loop"
+        }
+      ],
+      "owners": [
+        {
+          "path": "src/pages/Chat/task-loop-upgrade.ts",
+          "locator": "detectTaskLoopUpgradeSuggestion"
+        },
+        {
+          "path": "src/pages/Chat/index.tsx",
+          "locator": "handleConfirmTaskLoopUpgrade"
+        }
+      ],
+      "callPath": "detectTaskLoopUpgradeSuggestion -> advisory suggestion -> handleConfirmTaskLoopUpgrade -> startTaskLoopUpgradeRun -> hostApi.gateway.rpc('task_loop.run')",
+      "valueConsumers": [
+        "tests/unit/product-semantics.test.ts"
+      ],
+      "regressions": [
+        "tests/unit/product-semantics.test.ts",
+        "tests/unit/task-loop-upgrade.test.ts"
+      ],
+      "unverified": [
+        "No Electron confirmation journey was executed in this source audit."
+      ]
+    },
+    {
+      "relationKey": "chat:projects:task-ledger",
+      "evidenceGrade": "source-backed",
+      "documentation": [
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "locator": "Task Ledger"
+        }
+      ],
+      "owners": [
+        {
+          "path": "src/pages/Chat/index.tsx",
+          "locator": "refreshTaskLedger"
+        },
+        {
+          "path": "src/stores/chat.ts",
+          "locator": "refreshTaskLedger"
+        },
+        {
+          "path": "electron/services/task-ledger-api.ts",
+          "locator": "snapshot"
+        }
+      ],
+      "callPath": "Chat workspace refresh -> chat store refreshTaskLedger -> hostApi.taskLedger.snapshot -> existing Task Ledger service",
+      "valueConsumers": [
+        "tests/unit/product-semantics.test.ts"
+      ],
+      "regressions": [
+        "tests/unit/product-semantics.test.ts",
+        "tests/unit/task-ledger-service.test.ts"
+      ],
+      "unverified": [
+        "No live Chat/ledger refresh receipt; source references do not establish task completion."
+      ]
+    },
+    {
+      "relationKey": "chat-plan:projects:task-ledger",
+      "evidenceGrade": "source-backed",
+      "documentation": [
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "locator": "Chat Plan"
+        }
+      ],
+      "owners": [
+        {
+          "path": "src/lib/task-ledger-plan-projection.ts",
+          "locator": "buildOrchestrationPlanLedgerEvents"
+        },
+        {
+          "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+          "locator": "buildOrchestrationPlanLedgerEvents"
+        },
+        {
+          "path": "src/lib/task-ledger-plan-projection.ts",
+          "locator": "isReadOnlyTaskLedgerProjection"
+        }
+      ],
+      "callPath": "RolesOrchestrationPanel plan -> buildOrchestrationPlanLedgerEvents -> Task Ledger appendEvents; readonlyProjection/projection metadata -> isReadOnlyTaskLedgerProjection; edit draft is projection metadata",
+      "valueConsumers": [
+        "tests/unit/product-semantics.test.ts"
+      ],
+      "regressions": [
+        "tests/unit/orchestration-plan-ledger-projection.test.ts",
+        "tests/unit/orchestration-plan-edit-draft.test.ts"
+      ],
+      "unverified": [
+        "No live plan/edit journey; this does not prove an editable DAG or transactional rollback."
+      ]
+    },
+    {
+      "relationKey": "task-loop:roots-in:task-ledger",
+      "evidenceGrade": "source-backed",
+      "documentation": [
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "locator": "Task Ledger"
+        }
+      ],
+      "owners": [
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "locator": "ensureLongTaskLedgerRoot"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+          "locator": "ensureLongTaskLedgerRoot"
+        }
+      ],
+      "callPath": "runTaskLoop -> ensureTaskLedgerRoot / ensureLongTaskLedgerRoot -> existing Task Ledger root; missing/empty root rejects startup; loop/checkpoint state remains execution-owned",
+      "valueConsumers": [
+        "tests/unit/product-semantics.test.ts"
+      ],
+      "regressions": [
+        "tests/unit/task-loop-controller.test.ts",
+        "tests/unit/identity-scope.test.ts"
+      ],
+      "unverified": [
+        "No live Task Loop execution; a successful run alone is not a completed task."
+      ]
+    },
+    {
+      "relationKey": "workboard:references-one-way:task-ledger",
+      "evidenceGrade": "documented-only",
+      "documentation": [
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "locator": "Workboard"
+        },
+        {
+          "path": "shared/types/task-ledger-reference.ts",
+          "locator": "TASK_LEDGER_REFERENCE_INHERITANCE"
+        }
+      ],
+      "owners": [
+        {
+          "path": "shared/types/task-ledger-reference.ts",
+          "locator": "createTaskLedgerReference"
+        },
+        {
+          "path": "shared/types/task-ledger-reference.ts",
+          "locator": "applyTaskLedgerReferenceInheritance"
+        },
+        {
+          "path": "electron/services/workspaces-api.ts",
+          "locator": "validateCoordinatorTaskReferences"
+        }
+      ],
+      "callPath": "runtime coordinator -> Task Ledger snapshot -> validateCoordinatorTaskReferences -> createTaskLedgerReference; inheritance helper projects only allowed task-fact fields",
+      "valueConsumers": [
+        "tests/unit/product-semantics.test.ts"
+      ],
+      "regressions": [
+        "tests/unit/task-ledger-reference.test.ts",
+        "tests/unit/task-ledger-reference-inheritance.test.ts"
+      ],
+      "unverified": [
+        "The contract and coordinator reference path are source-backed, but a complete scheduling-card-to-ledger production journey and an inheritance writer were not established; documented-only for that claim."
+      ]
+    },
+    {
+      "relationKey": "routing-memo:quality-gated-by:task-loop",
+      "evidenceGrade": "source-backed",
+      "documentation": [
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "locator": "Routing Memo"
+        }
+      ],
+      "owners": [
+        {
+          "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+          "locator": "resolveQualityAuthority"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
+          "locator": "buildTaskLoopVerifiedQualityAuthority"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/routing-memo.ts",
+          "locator": "resolveRoutingMemoAuthority"
+        }
+      ],
+      "callPath": "resolveQualityAuthority -> existing Task Loop record with matching session -> matching scorecard -> buildTaskLoopVerifiedQualityAuthority -> resolveRoutingMemoAuthority; caller qualityState does not supply authority",
+      "valueConsumers": [
+        "tests/unit/product-semantics.test.ts"
+      ],
+      "regressions": [
+        "tests/unit/routing-memo.test.ts"
+      ],
+      "unverified": [
+        "No live same-session receipt; blocked terminal evidence can represent poor quality and is not task completion."
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary": "identity compatibility",
+      "sources": [
+        {
+          "path": "shared/types/identity-scope.ts",
+          "locator": "resolveProjectIdForWorkspace"
+        },
+        {
+          "path": "shared/types/identity-scope.ts",
+          "locator": "resolveWorkspaceIdForProject"
+        },
+        {
+          "path": "shared/types/identity-scope.ts",
+          "locator": "normalizeRunScope"
+        },
+        {
+          "path": "shared/types/identity-scope.ts",
+          "locator": "completionView"
+        }
+      ],
+      "regressions": [
+        "tests/unit/identity-scope.test.ts"
+      ],
+      "meaning": "Equal Workspace/Project bytes from the existing compatibility projection are valid. Session is not a workspace fallback; run/turn completion does not create task completion."
+    },
+    {
+      "boundary": "Task Ledger one-way inheritance",
+      "sources": [
+        {
+          "path": "shared/types/task-ledger-reference.ts",
+          "locator": "TASK_LEDGER_REFERENCE_INHERITANCE"
+        }
+      ],
+      "regressions": [
+        "tests/unit/task-ledger-reference.test.ts",
+        "tests/unit/task-ledger-reference-inheritance.test.ts"
+      ],
+      "meaning": "Only priority/tags/labels/owner project across the reference. Status/projectId/assignee/team/cycle stay with the Ledger; projection does not grant write authority."
+    },
+    {
+      "boundary": "Permission Effect final owner",
+      "sources": [
+        {
+          "path": "shared/permission-effect-contract.ts",
+          "locator": "verifyPermissionEffectAtFinalCheckpoint"
+        },
+        {
+          "path": "tests/unit/permission-effect-wiring.test.ts",
+          "locator": "final production checkpoint"
+        }
+      ],
+      "regressions": [
+        "tests/unit/permission-effect-contract.test.ts",
+        "tests/unit/permission-effect-wiring.test.ts"
+      ],
+      "meaning": "Existing permission policy, approval/grant and execution owners retain final authorization. Semantic validity never supplies a grant."
+    },
+    {
+      "boundary": "Context Family truth sources",
+      "evidenceGrade": "documented-only",
+      "sources": [
+        {
+          "path": "docs/context-family/axioms.md",
+          "locator": "Prompt is a projection"
+        },
+        {
+          "path": "harness/specs/rules/context-family-boundary.md",
+          "locator": "does not"
+        },
+        {
+          "path": "docs/context-family/glossary.md",
+          "locator": "ContextItem"
+        }
+      ],
+      "regressions": [],
+      "meaning": "Context semantic indexes and Prompt projections do not replace transcript, Task Ledger, ClawGraph, Observability, Memory, Knowledge or checkpoint owner stores."
+    }
+  ],
+  "consumerSearch": {
+    "command": "rg -n PRODUCT_SEMANTIC_RELATIONS src electron openclaw_runtime/src shared scripts tests -g *.ts -g *.tsx -g *.mjs",
+    "productionValueConsumers": [],
+    "textReferenceChecker": "scripts/check-evidence-refs.mjs",
+    "limitation": "This searches the named source roots for the exact value identifier; it is not an exhaustive semantic audit."
+  },
+  "originalPreservationIndex": "D:/tmp/ontology-practice-20261030/original-snapshot.json",
+  "historicalEvidencePolicy": "Research manifests, TF-0622 and TF-0370 retain their original candidate/verdict/hash. New checks produce new evidence."
+}

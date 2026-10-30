@@ -12,6 +12,11 @@ ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is 
 
 `PRODUCT_SEMANTIC_RELATIONS` in `shared/product-semantics.ts` records a small set of directed, evidence-linked relationships among the existing product concepts. Each edge names the owning authority boundary; it is not permission, an inverse relation, or a transitively inferred fact. Scope is deliberately narrow: this is not a universal enterprise ontology, a graph database, an inference engine, a runtime path, or prompt injection.
 
+The [relation source inventory](../harness/specs/fixtures/ontology-lite-existing-contracts/sources.json)
+maps each derived relation key to documentation, existing owner calls, consumers and regression
+entry points. Its claims are source-level: unobserved runtime journeys remain explicit, and the
+Workboard scheduling-card claim is documented-only. It does not change those owners or defaults.
+
 ## Identity and scope vocabulary
 
 Workspace is not an alias for Project. A Workspace identifies a local executable

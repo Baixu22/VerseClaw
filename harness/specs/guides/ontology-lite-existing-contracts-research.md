@@ -131,4 +131,9 @@ tool/approval/storage/UI 路径或默认值变化。用已有 fixture 做必要�
 parity。此实施方案不预留这些功能，也不新增等待人工操作或真人数据的条件。
 
 实施合同：[ontology-lite-existing-contracts-hardening.md](../tasks/ontology-lite-existing-contracts-hardening.md)。
+
+来源核对索引：[sources.json](../fixtures/ontology-lite-existing-contracts/sources.json)。
+该索引记录六条派生关系的文档、实际 owner 调用路径和回归入口；未观测的运行时
+链路保留限制，Workboard 调度卡片到 Ledger 的完整链路标为 documented-only。
+研究快照及其旧候选、摘要和 verdict 保留原值，实施验证另写新证据。
 研究来源、文件摘要及限制：[research.json](../fixtures/ontology-lite-existing-contracts/research/research.json)。
