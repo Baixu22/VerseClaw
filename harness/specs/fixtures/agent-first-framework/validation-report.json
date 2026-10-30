@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "AgentFirstEvaluationFrameworkValidation/v1",
+  "checkedAt": "2026-10-30",
+  "driven_by": "agent",
+  "actor": "codex",
+  "command": "node scripts/agent-first-framework-check.mjs",
+  "scope": "TF-0620 framework core registry validation over file bodies read from disk",
+  "counts": {
+    "subjects": 1,
+    "suites": 1,
+    "graders": 2,
+    "profiles": 1
+  },
+  "negativeControls": [
+    {
+      "id": "subject-method-missing",
+      "requirement": "a subject adapter that does not expose observe() cannot be evaluated",
+      "expectedCode": "subject.method-missing",
+      "rejected": true,
+      "observedCodes": [
+        "subject.method-missing"
+      ]
+    },
+    {
+      "id": "subject-self-observation",
+      "requirement": "a subject that reads its final state from its own output is invalid",
+      "expectedCode": "subject.self-observation",
+      "rejected": true,
+      "observedCodes": [
+        "subject.self-observation"
+      ]
+    },
+    {
+      "id": "subject-identity-incomplete",
+      "requirement": "a subject that cannot name its commit/tree/build identity is invalid",
+      "expectedCode": "subject.identity-empty",
+      "rejected": true,
+      "observedCodes": [
+        "subject.identity-empty"
+      ]
+    },
+    {
+      "id": "suite-held-out-missing",
+      "requirement": "a suite without a held-out split cannot be accepted",
+      "expectedCode": "suite.split-missing",
+      "rejected": true,
+      "observedCodes": [
+        "suite.split-missing"
+      ]
+    },
+    {
+      "id": "suite-held-out-writable",
+      "requirement": "a held-out split writable by the candidate cannot be accepted",
+      "expectedCode": "suite.held-out-writable",
+      "rejected": true,
+      "observedCodes": [
+        "suite.held-out-writable"
+      ]
+    },
+    {
+      "id": "suite-subject-authored",
+      "requirement": "a suite authored by the subject under test cannot be accepted",
+      "expectedCode": "suite.subject-authored",
+      "rejected": true,
+      "observedCodes": [
+        "suite.subject-authored"
+      ]
+    },
+    {
+      "id": "grader-subject-authored",
+      "requirement": "a grader authored by the subject under test cannot be accepted",
+      "expectedCode": "grader.subject-authored",
+      "rejected": true,
+      "observedCodes": [
+        "grader.subject-authored"
+      ]
+    },
+    {
+      "id": "grader-rubric-unsafe",
+      "requirement": "a rubric grader without a frozen prompt digest cannot be accepted",
+      "expectedCode": "grader.rubric-unsafe",
+      "rejected": true,
+      "observedCodes": [
+        "grader.rubric-unsafe"
+      ]
+    },
+    {
+      "id": "grader-duplicate-id",
+      "requirement": "a duplicated registry id cannot be accepted",
+      "expectedCode": "registry.duplicate-id",
+      "rejected": true,
+      "observedCodes": [
+        "registry.duplicate-id",
+        "profile.unknown-grader",
+        "profile.no-deterministic-grader"
+      ]
+    },
+    {
+      "id": "profile-unknown-suite",
+      "requirement": "a profile referencing an unregistered suite cannot be accepted",
+      "expectedCode": "profile.unknown-suite",
+      "rejected": true,
+      "observedCodes": [
+        "profile.unknown-suite"
+      ]
+    },
+    {
+      "id": "profile-no-deterministic-grader",
+      "requirement": "a profile that omits the deterministic grader where the suite requires one cannot be accepted",
+      "expectedCode": "profile.no-deterministic-grader",
+      "rejected": true,
+      "observedCodes": [
+        "profile.no-deterministic-grader"
+      ]
+    },
+    {
+      "id": "profile-pass-without-run",
+      "requirement": "a profile cannot report pass without a bound run",
+      "expectedCode": "profile.pass-without-run",
+      "rejected": true,
+      "observedCodes": [
+        "profile.pass-without-run"
+      ]
+    },
+    {
+      "id": "guide-framework-section-removed",
+      "requirement": "removing the framework contract section fails closed",
+      "expectedCode": "guide.required-phrase",
+      "rejected": true,
+      "observedCodes": [
+        "guide.required-phrase"
+      ]
+    }
+  ],
+  "violations": [],
+  "limitations": [
+    "This is a static contract check: it proves the framework registry is internally complete and fails closed, not that any profile has been run.",
+    "The acceptance profile is registered but not run; its status stays not-run and no current-candidate result is claimed."
+  ]
+}
