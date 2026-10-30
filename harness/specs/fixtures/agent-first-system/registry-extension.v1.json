@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "AgentFirstRegistryExtension/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-registry",
+  "baseRegistry": "harness/specs/fixtures/agent-first-framework/registry.json",
+  "baseRegistryDigest": "sha256:f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
+  "registeredSubjects": [
+    {
+      "id": "clawx-system",
+      "version": "1.0.0",
+      "kind": "product",
+      "title": "ClawX product and evaluation harness",
+      "methods": [
+        "identity",
+        "setup",
+        "invoke",
+        "observe",
+        "teardown"
+      ],
+      "identityFields": [
+        "commit",
+        "tree",
+        "buildHash",
+        "runtimeVersion",
+        "modelId",
+        "providerId",
+        "adapterId"
+      ],
+      "observesFinalStateFrom": "product",
+      "authoredBy": "framework",
+      "adapterEntrypoint": "harness/specs/tasks/agent-first-task-corpus.md"
+    }
+  ],
+  "registeredSuites": [
+    {
+      "id": "agent-first-system-core",
+      "version": "1.0.0",
+      "title": "24 maintained QA and failure-boundary tasks",
+      "provenance": "harness/specs/fixtures/agent-first-system/tasks.v1.json",
+      "taskSchemaVersion": "AgentFirstTask/v1",
+      "subjectKinds": [
+        "product"
+      ],
+      "k": 3,
+      "minCases": 20,
+      "requiresDeterministicGrader": true,
+      "split": {
+        "public": 16,
+        "heldOut": 8,
+        "heldOutWritableByCandidate": false
+      },
+      "timeouts": {
+        "perTrialMs": 900000,
+        "suiteMs": 7200000
+      },
+      "budgets": {
+        "tokensPerCase": 200000,
+        "turnsPerCase": 60,
+        "toolCallsPerCase": 200,
+        "retriesPerTrial": 1
+      },
+      "authoredBy": "framework",
+      "corpusStatus": "frozen",
+      "contentDigest": "sha256:23a5d16cf66cb16e8096ba434332c9ee7976f59484496ab5b09a2544da39a032",
+      "taskIds": [
+        "af-personal-approval-denial-stop",
+        "af-personal-channel-thread-reply",
+        "af-personal-failure-recovery",
+        "af-personal-memory-preference-recall",
+        "af-personal-no-fake-progress",
+        "af-personal-redaction-no-secret-leak",
+        "af-personal-reminder-roundtrip",
+        "af-personal-share-safe-diagnostics-artifact",
+        "af-personal-task-followthrough-status",
+        "af-personal-tool-safety-followthrough",
+        "af-signal-unknown-dimension",
+        "af-signal-evidence-missing",
+        "af-signal-unresolved",
+        "af-heldout-candidate-writable",
+        "af-heldout-retuned",
+        "af-candidate-unlinked-signal",
+        "af-candidate-policy-mismatch",
+        "af-reevaluation-unsealed",
+        "af-reevaluation-same-actor",
+        "af-candidate-decision-not-run",
+        "af-graduation-skipped-run",
+        "af-graduation-bare-promotion",
+        "af-loop-publication-approval",
+        "af-loop-locked-default-change"
+      ]
+    }
+  ],
+  "registeredGraders": [
+    {
+      "id": "system-condition-set",
+      "version": "1.0.0",
+      "kind": "deterministic",
+      "precedence": 1,
+      "authoredBy": "framework",
+      "implementation": "scripts/lib/agent-first-task-corpus.mjs",
+      "calibration": {
+        "knownGood": [
+          "harness/specs/fixtures/agent-first-system/calibration.v1.json"
+        ],
+        "knownBad": [
+          "harness/specs/fixtures/agent-first-system/calibration.v1.json"
+        ],
+        "unknown": [
+          "harness/specs/fixtures/agent-first-system/calibration.v1.json"
+        ]
+      }
+    },
+    {
+      "id": "system-trace-policy",
+      "version": "1.0.0",
+      "kind": "heuristic",
+      "precedence": 2,
+      "authoredBy": "framework",
+      "implementation": "scripts/lib/agent-first-task-corpus.mjs",
+      "calibration": {
+        "knownGood": [
+          "harness/specs/fixtures/agent-first-system/calibration.v1.json"
+        ],
+        "knownBad": [
+          "harness/specs/fixtures/agent-first-system/calibration.v1.json"
+        ],
+        "unknown": [
+          "harness/specs/fixtures/agent-first-system/calibration.v1.json"
+        ]
+      }
+    }
+  ],
+  "registeredProfiles": [
+    {
+      "id": "agent-first-system-profile",
+      "version": "1.0.0",
+      "title": "Windows acceptance profile",
+      "subjectId": "clawx-system",
+      "suiteId": "agent-first-system-core",
+      "graderIds": [
+        "system-condition-set",
+        "system-trace-policy"
+      ],
+      "runner": {
+        "mode": "isolated",
+        "seeds": [
+          1,
+          2,
+          3
+        ],
+        "maxWorkers": 2
+      },
+      "resourceEnvelope": {
+        "cpuFloor": 2,
+        "memoryMbFloor": 4096,
+        "diskFreeMbFloor": 2048,
+        "network": "bounded",
+        "wallClockMsCeiling": 7200000
+      },
+      "status": "not-run"
+    }
+  ]
+}

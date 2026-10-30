@@ -1,0 +1,10 @@
+export const CORPUS_DIR: string;
+export const TASK_CLASSES: string[];
+export const GRADER_IDS: string[];
+export const sha256: (bytes: string | Uint8Array) => string;
+export function loadCorpus(root?: string): { corpus: any; registry: any; extension: any; corpusDigest: string; root: string };
+export function validateCorpus(corpus: any, root?: string): { code: string; detail: string }[];
+export function gradeObservation(task: any, observation: any, graderId?: string): { graderId: string; version: string; verdict: string; reason: string };
+export function zeroPassDiagnosis(passed: number, total: number): { category: string; agentFailure: boolean } | null;
+export function runCalibration(corpus: any, fixtures: any[]): { taskId: string; graderId: string; expected: string; actual: string; ok: boolean }[];
+export function checkCorpus(root?: string): { ok: boolean; errors: { code: string; detail: string }[]; calibration: ReturnType<typeof runCalibration>; corpusDigest: string; counts: Record<string, number>; taskCount: number; evaluationStatus: string };
