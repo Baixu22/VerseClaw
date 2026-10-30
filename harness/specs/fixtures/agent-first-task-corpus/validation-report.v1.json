@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "AgentFirstTaskCorpusValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-corpus-owner",
+  "candidate": {
+    "commit": "7d687f0b4435039a82103e6b0b8ecc25eb612d84",
+    "tree": "7e2da73d121d98b1b22a74e820ae43f15b9a730e",
+    "dirty": false,
+    "sourceHashes": {
+      "scripts/rsi-historical-task-corpus.mjs": "ff347ca30b06fb173a12497606167c0ea045e164ffe98f4ad6f6f8830b0d25d8",
+      "scripts/rsi-historical-task-corpus.d.mts": "fc0a19370c47b08addc9730c68278ba7b392fc16bf5dd60034b420d438242683",
+      "scripts/lib/rsi-historical-task-corpus.mjs": "934d278293d5aefb99fa7076b2a34624ec1cb1ebea4c28f4be5e84823c63cc81",
+      "scripts/lib/rsi-historical-task-corpus.d.mts": "43156741a909994f933c99973ecc941e0a45caef13dcc4ac8f48327a2e58955a",
+      "scripts/lib/agent-first-graders.mjs": "16073b5108f5118cd1ac8285837205942136bd5e3f069dce13512b2da16d6a0e",
+      "scripts/lib/agent-first-graders.d.mts": "730c6865c5f16202e35272245f499505a6fe1d9bb2e16caf9ed196192f5d7a97",
+      "tests/unit/rsi-historical-task-corpus.test.ts": "f746e7f846d935c843e306d8cb84f8fd3a4c1d0d5c1cbb414ee493f43ec3bb61",
+      "tests/unit/agent-first-graders.test.ts": "54eb094f7d6af69439b10cf6c5f5963d89eec7b99b49d51b4e7fe926aad63dfb",
+      "tests/unit/agent-first-evaluation-framework.test.ts": "3d01944ec3d056105d2fd4ae5e6c13538deee95f07b21d3fd96ee7c8f2f0ce40",
+      "tests/unit/agent-first-evaluation-loop.test.ts": "aafa24981f08f1cfd43278c17e0507aee9d854ad3bd6b322f4fb3a1a4fce2059",
+      "harness/specs/tasks/agent-first-task-corpus-calibration.md": "45777f95e66881651d3ed699d2c2af2e9d32617b420d7d3dc0626e67f183ee56",
+      "harness/specs/guides/agent-first-acceptance.md": "1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
+      "scripts/lib/agent-first-evaluation-framework.mjs": "3fab68930689b379c50296e58dbe30a55e86f7adc01f6f4dd7f72d127ed750f2",
+      "scripts/lib/agent-first-evaluation-loop.mjs": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
+      "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
+      "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
+      "docs/dev/rsi-capability-and-boundaries.md": "eec5c14def4b61210e0c0e94198e4757b4ef6628f6d8a8838313bed634e3df2b"
+    }
+  },
+  "corpus": {
+    "passed": true,
+    "errors": []
+  },
+  "taskCount": 24,
+  "distribution": {
+    "capability": 4,
+    "regression": 6,
+    "negative": 5,
+    "adversarial": 3,
+    "recovery": 4,
+    "efficiency": 2
+  },
+  "calibration": {
+    "passed": true,
+    "rowCount": 16,
+    "rubricRunStatus": "provider-calibration-recorded"
+  },
+  "claims": {
+    "realHuman": false,
+    "actualSystemBaselineRun": false,
+    "liveModelCalibration": true,
+    "rsiCandidateGenerated": false,
+    "productLocksChanged": false
+  }
+}

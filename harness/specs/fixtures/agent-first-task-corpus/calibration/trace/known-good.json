@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "AgentFirstCalibrationFixture/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-corpus-owner",
+  "graderId": "trace-authorization",
+  "version": "tf0590-graders/v1",
+  "expectation": "pass",
+  "cases": [
+    {
+      "id": "known-good",
+      "expected": "pass",
+      "trace": {
+        "observedBy": "grader-owned-runner",
+        "taskId": "tf-0274-e01",
+        "runId": "calibration-trace",
+        "events": [
+          {
+            "kind": "execute",
+            "authorized": true
+          }
+        ]
+      }
+    }
+  ],
+  "claimBoundary": "Labelled grader calibration fixtures; no product trial is claimed."
+}

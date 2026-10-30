@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "AgentFirstCalibrationFixture/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-corpus-owner",
+  "graderId": "rubric-clarity",
+  "version": "tf0590-graders/v1",
+  "expectation": "unknown",
+  "cases": [
+    {
+      "id": "unknown-no-facts",
+      "expected": "unknown",
+      "facts": null,
+      "explanation": "The evaluation appears successful."
+    },
+    {
+      "id": "unknown-no-explanation",
+      "expected": "unknown",
+      "facts": {
+        "completeCases": 20
+      },
+      "explanation": null
+    }
+  ],
+  "claimBoundary": "Labelled grader calibration fixtures; no product trial is claimed."
+}

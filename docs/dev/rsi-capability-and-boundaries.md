@@ -24,6 +24,37 @@ trusting this page.
 
 ## Three layers
 
+The TF-0604 historical corpus now contains 24 repository-sourced task definitions
+and eight integrity controls. TF-0592 adds resource/source fingerprints, separate
+pass^k/pass@k with Wilson case intervals, paired-trial comparison, a labelled
+power-design approximation and twelve fail-closed controls. Its checked-in raw
+input still reserves zero completed model trials: the resulting report is
+`insufficient-evidence`, with no model/provider gain or promotion readiness.
+Trial execution, calibrated graders and enforced clean profile isolation remain
+Agent-first prerequisites. `pnpm rsi:tf0592:check` re-reads and recomputes the
+retained pack; `pnpm rsi:tf0592:write` prepares evidence and labels dirty source
+as a draft. These tools leave the product capability boundary unchanged.
+
+The historical execution cohort adds explicit input/acceptance text and current executable oracle/test
+digests for these 24 historical tasks, a sealed 12-public/12-held-out split, and
+three graders. Its calibration has 16 good/bad/unknown samples; qualitative
+calibration uses three actual provider votes per sample at temperature 0.3 with
+the dated `claude-haiku-4-5-20251001` model. The first prompt's missing-evidence
+failure remains in the pack alongside v2. Historical A04 `NO-GO` and nonzero
+gates remain visible. Task/grader calibration does not provide system baseline
+trials; the acceptance profile and RSI baseline still report not-run or
+insufficient-evidence until their actual execution is performed.
+
+The accepted TF-0590 system corpus is separately retained under
+`harness/specs/fixtures/agent-first-system`: 24 maintained QA and failure-boundary
+tasks, a 16-public/8-held-out split and 144 deterministic grader calibrations.
+`pnpm agent-first:corpus:check` verifies that collection. The historical cohort
+uses `pnpm rsi:corpus:check` and a registry extension with distinct IDs; neither
+collection rewrites the sealed base acceptance registry or the other's split.
+The original historical reference execution observed 23/24 passing tasks and an
+S04 runtime failure. That dirty-worktree reference replay is preserved separately
+and supplies no complete system baseline cases.
+
 The capability question is asked at three layers, and the three answers are
 different.
 

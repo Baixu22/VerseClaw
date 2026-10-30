@@ -1,0 +1,20 @@
+import type { ExecutionRecord, TraceEvidence, RubricConfig, RubricSample, RubricReceipt, GraderTask, GraderVerdict } from './agent-first-graders.mjs';
+export type CorpusTask = GraderTask & {
+  schemaVersion: string; version: string; sourceTaskId: string; title: string; kind: string; split: string; driven_by: string; actor: string;
+  input: { prompt: string; acceptanceCriteria: string[]; contextRefs: string[]; targetScope: string[] };
+  oracle: GraderTask['oracle'] & { commandLines: string[]; originalRequiredTests: string[]; testPaths: string[]; inputDigests: Record<string, string> };
+  referenceSolution: { kind: string; referenceCommit: string | null; sourceRecord: string; sourceRecordSha256: string; historicalDecision: string; passingOracleEvidence: Array<{ id: string; commandLine: string; exitCode: number; counts: Record<string, number | null> }>; nonzeroHistoricalGates: Array<{ id: string; exitCode: number; commandLine: string }>; currentReferenceExecution: string; boundary: string };
+  provenance: { kind: string; packet: string; specPath: string; specSha256: string; recordPath: string; recordSha256: string; realHuman: boolean };
+  feasibility: { establishedAtReferenceRevision: boolean; currentSystemPassClaimed: boolean };
+  counterexamples: string[]; graderIds: string[]; successState: Record<string, unknown>; coverageRationale: string;
+};
+export type TaskCorpus = { schemaVersion: string; version: string; driven_by: string; actor: string; taskNode: string; sourceCommit: string; sourceCorpusPath: string; sourceCorpusSha256: string; tasks: CorpusTask[]; split: { public: string[]; heldOut: string[]; heldOutWritableByCandidate: boolean }; distribution: Record<string, number>; claims: Record<string, boolean> };
+export type CalibrationSamples = { schemaVersion: string; version: string; driven_by: string; actor: string; evidenceKind: string; deterministic: Array<{ id: string; expected: GraderVerdict; record: ExecutionRecord; stdout: string; stderr: string }>; trace: Array<{ id: string; expected: GraderVerdict; trace: TraceEvidence | null }>; rubric: Array<RubricSample & { id: string; expected: GraderVerdict }>; rubricConfig: RubricConfig };
+export type CalibrationResults = { schemaVersion: string; driven_by: string; actor: string; rows: Array<{ graderId: string; id: string; expected: GraderVerdict; observed: GraderVerdict; receiptsValid?: boolean }>; controls: Record<string, boolean>; passed: boolean; rubricRunStatus: string };
+export const TF0590_PACK_DIR: string;
+export const CORPUS_ACTOR: string;
+export const RUBRIC_CONFIG: Readonly<RubricConfig>;
+export function buildTaskCorpus(root?: string): TaskCorpus;
+export function validateTaskCorpus(corpus: TaskCorpus, root?: string): { passed: boolean; errors: string[] };
+export function buildCalibrationSamples(corpus: TaskCorpus): CalibrationSamples;
+export function replayCalibration(corpus: TaskCorpus, samples: CalibrationSamples, modelReceipts?: RubricReceipt[]): CalibrationResults;
