@@ -79,7 +79,7 @@ for (const profile of [1, 2, 3]) {
       const denied = await hostInvoke<GitResult>(app, 'git', 'revertFile', { path: 'effect.txt' });
       expect(denied.success).toBe(false); expect(denied.approvalRequired).toBe(true);
       expect(await readFile(join(workspaceRoot, 'effect.txt'), 'utf8')).toBe('after\n');
-      await hostInvoke(app, 'permissions', 'decideApproval', { id: denied.approval!.id, decision: 'rejected' });
+      await hostInvoke(app, 'permissions', 'decideApproval', { id: denied.approval!.id, decision: 'denied' });
       expect(await readFile(join(workspaceRoot, 'effect.txt'), 'utf8')).toBe('after\n');
       const requested = await hostInvoke<GitResult>(app, 'git', 'revertFile', { path: 'effect.txt' });
       expect(requested.approvalRequired).toBe(true);
