@@ -46,6 +46,7 @@ touchedAreas:
   - electron/services/versegit-receipt-evidence.ts
   - tests/unit/change-context-vg-evidence.test.ts
   - tests/unit/versegit-candidate-receipts.test.ts
+  - tests/unit/uas-04-coding-mutation-consistency.test.ts
   - openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts
   - openclaw_runtime/src/agents/tools/write-journal.ts
   - openclaw_runtime/src/agents/tools/write-journal-core.ts
@@ -84,6 +85,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
+  - pnpm exec vitest run tests/unit/uas-04-coding-mutation-consistency.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/tools/write-journal.test.ts src/agents/apply-patch-consistency.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/change-context-projection.test.ts tests/unit/change-context-review-anchors.test.ts tests/unit/change-context-review-verdict.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/change-context-vg-evidence.test.ts tests/unit/versegit-candidate-receipts.test.ts tests/unit/versegit-receipt-authority.test.ts tests/unit/versegit-wp3-receipts.test.ts tests/unit/versegit-observation-basis.test.ts tests/unit/versegit-runtime-bindings.test.ts --maxWorkers=1

@@ -140,6 +140,7 @@ test(`real Main owners bind comments, verdicts and approved journaled apply (VG 
     await page.reload();
     await expect(page.getByTestId('main-layout')).toBeVisible();
     await page.getByTestId('sidebar-footer-menu-trigger').click(); await page.getByTestId('sidebar-more-code-review').click();
+    expect(await app.evaluate(() => (globalThis as unknown as { __changeContextRelayCalls: Array<{ module: string }> }).__changeContextRelayCalls.filter((call) => call.module === 'changeContext').length)).toBe(0);
     await page.getByTestId('change-context-toggle').click(); await page.getByTestId('change-context-session').fill(sessionKey);
     const comparisons: Record<string, string> = { 'merge-base': base, 'last-commit': candidate, 'last-turn': '', checkpoint: 'fixture-checkpoint' };
     for (const [mode, revision] of Object.entries(comparisons)) {
@@ -209,7 +210,20 @@ test(`real Main owners bind comments, verdicts and approved journaled apply (VG 
     const comments = await hostInvoke<ChangeContextReviewCommentListResult>(app, 'changeContext', 'listComments', { workspaceId, sessionKey, contextId });
     expect(comments.comments[0].comment.reanchorCount).toBe(1); expect(comments.comments[0].comment.author).toMatchObject({ kind: 'agent', drivenBy: 'agent' });
     await page.getByTestId('pull-state').scrollIntoViewIfNeeded(); await page.screenshot({ path: testInfo.outputPath('real-review-final.png') });
-    await writeFile(testInfo.outputPath('owner-flow.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex', runtimeFacts: 'scripted history/checkpoint only', transportAnnotation: 'test IPC stamps agent actor', base, candidate, workspaceId, taskNode: after.snapshot.nodes.find((node) => node.id === reviewNodes[0].id), comments, calls: finalCalls }, null, 2));
+    const countBeforeClose = await app.evaluate(() => (globalThis as unknown as { __changeContextRelayCalls: Array<{ module: string }> }).__changeContextRelayCalls.filter((call) => call.module === 'changeContext').length);
+    await page.getByTestId('change-context-toggle').click(); await expect(page.getByTestId('change-context-load')).toHaveCount(0);
+    await page.getByTestId('code-review-focus').fill('Feature gate rollback acceptance');
+    const countAfterClose = await app.evaluate(() => (globalThis as unknown as { __changeContextRelayCalls: Array<{ module: string }> }).__changeContextRelayCalls.filter((call) => call.module === 'changeContext').length);
+    expect(countAfterClose).toBe(countBeforeClose); expect(await readFile(file, 'utf8')).toBe('after\n');
+    await page.reload(); await expect(page.getByTestId('main-layout')).toBeVisible();
+    await page.getByTestId('sidebar-footer-menu-trigger').click(); await page.getByTestId('sidebar-more-code-review').click();
+    await expect(page.getByTestId('change-context-load')).toHaveCount(0);
+    const countAfterReload = await app.evaluate(() => (globalThis as unknown as { __changeContextRelayCalls: Array<{ module: string }> }).__changeContextRelayCalls.filter((call) => call.module === 'changeContext').length);
+    expect(countAfterReload).toBe(countAfterClose);
+    const retained = await hostInvoke<ChangeContextReviewCommentListResult>(app, 'changeContext', 'listComments', { workspaceId, sessionKey, contextId });
+    expect(retained.comments.map((entry) => entry.comment)).toEqual(comments.comments.map((entry) => entry.comment));
+    await writeFile(testInfo.outputPath('owner-flow.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex', runtimeFacts: 'scripted history/checkpoint only', transportAnnotation: 'test IPC stamps agent actor', base, candidate, workspaceId, taskNode: after.snapshot.nodes.find((node) => node.id === reviewNodes[0].id), comments, calls: finalCalls,
+      rollback: { countBeforeClose, countAfterClose, countAfterReload, commentsRetained: true, destinationPreserved: true } }, null, 2));
   } finally { await closeElectronApp(app); }
 });
 }
