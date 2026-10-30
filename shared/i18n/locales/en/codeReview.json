@@ -352,6 +352,25 @@
       "partial": "Partial",
       "truncated": "Truncated",
       "recovery_required": "Journal recovery required; inspect before retrying"
+    },
+    "vgKinds": {
+      "stale-read": "Stale reads",
+      "candidate": "Candidate",
+      "receipt": "Execution receipt"
+    },
+    "vgBoundary": "Advisory only; host verdict unchanged.",
+    "vgSummary": {
+      "stale-read-observed": "Stale read observed under declared coverage.",
+      "coverage-partial": "Read coverage is partial; absence of a warning is not a clean verdict.",
+      "candidate-unmeasured": "Candidate not measured in this context.",
+      "candidate-observed": "Host candidate facts are available; no landing authority.",
+      "receipt-unmeasured": "No host-authoritative receipt is available.",
+      "receipt-bound": "Bound host receipt is available."
+    },
+    "vgExecution": {
+      "unmeasured": "Unmeasured execution",
+      "verified": "Receipt-verified execution",
+      "failed": "Execution failed"
     }
   }
 }

@@ -384,5 +384,9 @@ approve/comment-only 不写 Task Ledger；request changes 只创建或引用一�
 Pull Changes 对完整 text patch 绑定实际字节摘要、目标完整 HEAD 和现有审批，
 通过 Git preflight 与 Coding 的既有 journal/lease 执行；过期或冲突不修改目标。
 若 apply 或 journal 的结果未知，会显示 recovery_required，不声称零写入，也不自动重试。
+VG 卡片只读取现有 host binding/observation 和 receipt owner 已接收的结果；
+既有 `CLAWX_VERSGIT_BINDING_ENABLED` 未开启时，不调用 VG 事实读取器。
+卡片不运行 VG 或 verifier。缺失、过期、未与当前 immutable candidate 绑定的回执
+保持 partial/unmeasured；stale-read 仅作提示，host verdict 始终 unchanged。
 
 延伸阅读：[Verse 系列组件](verse-tools.md)、[资源与可观测性](resources-and-observability.md)、[默认配置矩阵](../dev/default-config-matrix.md)。

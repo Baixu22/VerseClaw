@@ -352,6 +352,25 @@
       "partial": "部分",
       "truncated": "截断",
       "recovery_required": "需要 journal 恢复；检查后才能重试"
+    },
+    "vgKinds": {
+      "stale-read": "过期读取",
+      "candidate": "候选",
+      "receipt": "执行回执"
+    },
+    "vgBoundary": "仅供参考；host verdict 保持不变。",
+    "vgSummary": {
+      "stale-read-observed": "在声明覆盖范围内观察到过期读取。",
+      "coverage-partial": "读取覆盖不完整；没有警告不表示干净或安全。",
+      "candidate-unmeasured": "当前上下文未测量候选。",
+      "candidate-observed": "存在 host 候选事实；不授予 landing 权限。",
+      "receipt-unmeasured": "缺少 host 权威执行回执。",
+      "receipt-bound": "已取得绑定的 host 执行回执。"
+    },
+    "vgExecution": {
+      "unmeasured": "执行未测量",
+      "verified": "回执验证的执行",
+      "failed": "执行失败"
     }
   }
 }

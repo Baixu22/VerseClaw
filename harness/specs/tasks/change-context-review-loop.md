@@ -38,6 +38,11 @@ touchedAreas:
   - electron/services/change-context-anchor-workspace.ts
   - electron/services/change-context-review-store.ts
   - electron/services/change-context-review.ts
+  - electron/services/change-context-vg-evidence.ts
+  - electron/gateway/versegit-bridge.ts
+  - electron/services/versegit-receipt-evidence.ts
+  - tests/unit/change-context-vg-evidence.test.ts
+  - tests/unit/versegit-candidate-receipts.test.ts
   - openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts
   - shared/types/git.ts
   - vite.config.ts
@@ -230,6 +235,15 @@ Acceptance:
 - missing host-authoritative receipt remains partial or unmeasured.
 - host verdict is unchanged.
 - no land/admit or M4 UI.
+
+The existing binding opt-in (`CLAWX_VERSGIT_BINDING_ENABLED=1`) gates all VG
+evidence reads. A view reads already-held binding/observation facts and the
+receipt owner's bounded read model; it never starts VG, registers a candidate,
+executes verification or creates a receipt. Receipt artifacts are revalidated by
+their owner on every read. A verified execution requires the same run, receipt
+and immutable candidate commit; missing, changed or unbound proof remains
+partial/unmeasured. Candidate/worktree facts without that binding cannot be
+promoted to verified. All cards stay advisory with host verdict unchanged.
 
 ### G. Electron E2E and acceptance
 

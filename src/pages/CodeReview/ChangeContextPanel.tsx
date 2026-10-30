@@ -109,6 +109,15 @@ function ActiveChangeContextPanel() {
       {error && <p role="alert" data-testid="change-context-error" className="text-sm text-red-700 dark:text-red-400">{error}</p>}
       {projection && <div className="space-y-3" data-testid="change-context-projection">
         <p data-testid="change-context-state" className="text-sm">{t(`changeContext.states.${projection.diff?.state ?? 'unavailable'}`)}</p>
+        {projection.evidence.map((evidence, index) => <article key={index} data-testid="change-context-vg-evidence" className="rounded-md border border-border bg-surface-modal p-3 text-sm">
+          <p>{t(`changeContext.vgKinds.${evidence.kind ?? 'receipt'}`)} · {t(`changeContext.states.${evidence.state}`)}</p>
+          <p>{t(`changeContext.vgSummary.${evidence.summary}`)}</p>
+          <p>{t('changeContext.vgBoundary')}</p>
+          {evidence.candidateId && <p>{evidence.candidateId}</p>}
+          {evidence.receiptId && <p>{evidence.receiptId}</p>}
+          {evidence.paths?.map((path) => <p key={path}>{path}</p>)}
+          <p>{t(`changeContext.vgExecution.${evidence.execution ?? 'unmeasured'}`)}</p>
+        </article>)}
         <ul className="text-sm">{projection.diff?.files.map((file) => <li key={file.path}>{file.path}</li>)}</ul>
         {projection.diff?.patchArtifacts.map((patch, index) => <pre key={index} className="max-h-60 overflow-auto rounded-md bg-surface-modal p-3 text-xs">{patch.patch ?? patch.message}</pre>)}
         <div className="flex flex-wrap gap-2">

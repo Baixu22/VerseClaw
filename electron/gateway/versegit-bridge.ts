@@ -189,6 +189,22 @@ export class VerseGitBindingBridge {
     return address && typeof address !== 'string' ? `http://127.0.0.1:${address.port}` : null;
   }
 
+  /** Read existing host observations only; never attach, start or query VG. */
+  readReviewFacts(input: { workspaceRoot: string; sessionKey: string; runId: string | null }) {
+    if (!this.config.enabled) return null;
+    const canonical = (path: string) => process.platform === 'win32' ? resolve(path).toLowerCase() : resolve(path);
+    const record = [...this.bindings.values()].filter((entry) =>
+      canonical(entry.worktreePath) === canonical(input.workspaceRoot)
+      && entry.childSessionKey === input.sessionKey
+      && (!input.runId || entry.childRunId === input.runId)).at(-1);
+    if (!record) return null;
+    return {
+      bindingId: record.bindingId, baseCommit: record.baseOid, phase: record.phase,
+      coverage: record.childRunId ? this.observationBridge.snapshot(record.childRunId) : null,
+      staleReads: this.observationBridge.staleReadFindings().filter((finding) => finding.readerSessionId === record.agentSessionId),
+    };
+  }
+
   async start(): Promise<string | null> {
     if (!this.config.enabled) return null;
     if (
@@ -722,6 +738,10 @@ export class VerseGitBindingBridge {
 }
 
 let bridge: VerseGitBindingBridge | null = null;
+
+export function readCurrentVerseGitReviewFacts(input: Parameters<VerseGitBindingBridge['readReviewFacts']>[0]) {
+  return bridge?.readReviewFacts(input) ?? null;
+}
 
 export async function ensureVerseGitBindingBridge(): Promise<VerseGitBindingBridge | null> {
   if (!bridge) {

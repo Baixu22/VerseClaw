@@ -190,6 +190,11 @@ export type ChangeContextEvidenceProjection = {
   hostVerdict: 'unchanged';
   summary: string;
   refs: string[];
+  kind?: 'stale-read' | 'candidate' | 'receipt';
+  execution?: 'unmeasured' | 'verified' | 'failed';
+  candidateId?: string | null;
+  receiptId?: string | null;
+  paths?: string[];
 };
 
 export type ChangeContextReviewCommentRange = {

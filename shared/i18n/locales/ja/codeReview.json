@@ -352,6 +352,25 @@
       "partial": "部分的",
       "truncated": "切り詰め",
       "recovery_required": "ジャーナルの復旧が必要です。再試行前に確認してください。"
+    },
+    "vgKinds": {
+      "stale-read": "古い読み取り",
+      "candidate": "候補",
+      "receipt": "実行レシート"
+    },
+    "vgBoundary": "参考情報のみ。host verdict は変更しません。",
+    "vgSummary": {
+      "stale-read-observed": "宣言された範囲で古い読み取りを観測しました。",
+      "coverage-partial": "読み取りの網羅性は部分的です。警告なしは安全判定ではありません。",
+      "candidate-unmeasured": "このコンテキストの候補は未測定です。",
+      "candidate-observed": "host の候補情報があります。landing 権限はありません。",
+      "receipt-unmeasured": "host 権威の実行レシートはありません。",
+      "receipt-bound": "紐付けられた host レシートがあります。"
+    },
+    "vgExecution": {
+      "unmeasured": "実行は未測定",
+      "verified": "レシートで検証された実行",
+      "failed": "実行失敗"
     }
   }
 }

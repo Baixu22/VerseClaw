@@ -24,6 +24,23 @@ import type {
   VerseShellReceiptAuthority,
 } from './versegit-receipt-bridge.ts';
 
+// A bounded read-model of results already admitted by this receipt owner. This
+// does not manufacture receipts or run verification when a view requests data.
+const completedReviewFacts = new Map<string, { workspaceRoot: string; candidateId: string; receiptId: string;
+  candidateCommitOid: string | null; verify: () => boolean;
+  verdict: import('./versegit-receipt-bridge').VerdictFacts; refs: string[] }>();
+
+export function readCompletedVerseGitReviewFacts(runId: string, workspaceRoot: string) {
+  const fact = completedReviewFacts.get(runId);
+  const canonical = (path: string) => process.platform === 'win32' ? resolve(path).toLowerCase() : resolve(path);
+  if (!fact || canonical(fact.workspaceRoot) !== canonical(workspaceRoot)) return null;
+  try {
+    if (!fact.verify()) return null;
+    const { verify: _verify, ...projection } = fact;
+    return structuredClone(projection);
+  } catch { return null; }
+}
+
 export const VG_HOST_EVIDENCE_SCHEMA = 'clawx.versegit.host-evidence/v1' as const;
 export const VG_HOST_OBSERVATION_SCHEMA = 'clawx.versegit.host-observation/v1' as const;
 export const VG_HOST_EVIDENCE_MANIFEST_SCHEMA = 'clawx.versegit.host-evidence-manifest/v1' as const;
@@ -421,6 +438,12 @@ export function completeCandidateVerificationEvidence(input: {
   };
   const receiptRef = authority.recordReceipt(receipt);
   const receiptResult = bridge.receive(prepared.plan.runId, receipt);
+  const verdict = bridge.verdict(prepared.plan.runId);
+  completedReviewFacts.set(prepared.plan.runId, { workspaceRoot: prepared.plan.commands[0]?.cwd ?? '',
+    candidateId: prepared.plan.candidateId, receiptId, verdict, refs: [receiptRef.path],
+    candidateCommitOid: authority.candidateCommitForReview(prepared.plan.candidateId),
+    verify: () => authority.verifyReceipt({ plan: prepared.plan, receipt }).ok });
+  if (completedReviewFacts.size > 100) completedReviewFacts.delete(completedReviewFacts.keys().next().value!);
   return {
     receiptId,
     receipt,
@@ -428,7 +451,7 @@ export function completeCandidateVerificationEvidence(input: {
     observationRef,
     cleanupRef,
     receiptResult,
-    verdict: bridge.verdict(prepared.plan.runId),
+    verdict,
   };
 }
 export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthority {
@@ -571,6 +594,13 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
 
   fileDigest(path: string): string {
     return sha256(readFileSync(this.absolute(path)));
+  }
+
+  candidateCommitForReview(candidateId: string): string | null {
+    try {
+      const input = this.readJson<{ manifest?: CandidateInputManifest }>(join('inputs', idFile(candidateId)));
+      return input.manifest?.candidateCommitOid ?? null;
+    } catch { return null; }
   }
 
   manifest(): HostEvidenceManifest {

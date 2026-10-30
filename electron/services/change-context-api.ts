@@ -18,6 +18,7 @@ import { createChangeContextReviewActions, reviewDigest } from './change-context
 import { createTaskLedgerApi } from './task-ledger-api';
 import { createGitApi } from './git-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
+import { createChangeContextVgEvidenceReader } from './change-context-vg-evidence';
 import {
   createChangeContextReviewCommentStore,
   type ChangeContextReviewCommentStore,
@@ -39,6 +40,7 @@ export type ChangeContextApiContext = {
   now?: () => string;
   taskLedger?: Pick<CompleteHostServiceRegistry['taskLedger'], 'snapshot' | 'appendEvents'>;
   applyPatch?: CompleteHostServiceRegistry['git']['applyPatch'];
+  readEvidence?: ReturnType<typeof createChangeContextVgEvidenceReader>;
 };
 
 const STATE_SEVERITY: Record<ChangeContextState, number> = {
@@ -212,6 +214,7 @@ export function createChangeContextApi(
   });
   const createRequestId = context.createRequestId ?? (() => randomUUID());
   const now = context.now ?? (() => new Date().toISOString());
+  const readEvidence = context.readEvidence ?? createChangeContextVgEvidenceReader();
   const loaded: Parameters<typeof createChangeContextReviewActions>[0]['loaded'] = new Map();
   const actions = createChangeContextReviewActions({ loaded,
     refresh: (payload) => api.getProjection(payload), listComments: (payload) => api.listComments(payload),
@@ -248,6 +251,7 @@ export function createChangeContextApi(
         facts,
       });
       if (result.success && result.projection) {
+        result.projection.evidence = await readEvidence(result.projection);
         loaded.set(result.projection.contextId, { projection: result.projection, payload, loadedAt: Date.now() });
         if (loaded.size > 100) loaded.delete(loaded.keys().next().value!);
       }
