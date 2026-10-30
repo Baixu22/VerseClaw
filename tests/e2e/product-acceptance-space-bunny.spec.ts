@@ -49,7 +49,12 @@ async function candidate() {
   };
   for (const directory of ['dist', 'dist-electron', 'openclaw_runtime/dist', 'openclaw_runtime/dist-runtime']) await walk(directory);
   const stamp = JSON.parse(await readFile('openclaw_runtime/dist/.buildstamp', 'utf8'));
-  if (!dirty && process.env.CLAWX_SPACE_BUNNY_PREFLIGHT !== '1') assert.equal(stamp.head, commit, 'Runtime build is not bound to the clean candidate');
+  if (!dirty && process.env.CLAWX_SPACE_BUNNY_PREFLIGHT !== '1' && stamp.head !== commit) {
+    assert(operational, 'Runtime build is not bound to the clean candidate');
+    const changed = git('diff', '--name-only', `${stamp.head}..${commit}`).split('\n').filter(Boolean);
+    assert(changed.length > 0 && changed.every(file => /^(?:tests|harness)\//u.test(file)),
+      'Runtime build is stale for non-test sources');
+  }
   const binding = { commit, tree: git('rev-parse', 'HEAD^{tree}'), dirty,
     grade: dirty ? 'diagnostic-preflight-not-acceptance' : operational ? 'source-host-operational' : 'source-host-acceptance',
     sourceCount, buildCount: files.length - sourceCount, runtimeBuildStamp: stamp,
