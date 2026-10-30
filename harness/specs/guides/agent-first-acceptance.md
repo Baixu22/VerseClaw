@@ -492,7 +492,89 @@ authoritative.
 - TF-0594: package, OAT and long-running recovery.
 - TF-0595: independent adjudicator, evidence pack and cross-session resumability.
 - TF-0596: integration with the existing Windows acceptance mainline.
+- TF-0620: framework core - subject-under-test adapter, suite registry, grader registry and the composition/insertion contract.
+- TF-0621: closed loop - verdict to improvement signal, re-evaluation against the frozen suite, and capability-to-regression graduation.
 
 The dependency graph is serial where evidence must mature, while semantically independent preparation nodes share the contract prerequisite. No node may use a human verdict or human-provided data as an open condition.
 
 For the first implementation node (TF-0589), acceptance is complete only after the contract files are tracked as a coherent change set, the focused harness/document tests and repository-artifact gate pass, the spec validation and dry-run pass, and an independent agent reads the files and the retained output from disk. Task Forest status changes only through a proposal applied after that evidence chain is complete.
+
+## 16. Framework layer: pluggable subjects, suites, graders and the loop
+
+Sections 1-14 define *what acceptance means* for one candidate. This section defines
+the layer above it: the reusable framework that lets the same semantics evaluate
+different subjects, suites and graders without rewriting the contract.
+
+The framework is not a second source of truth. It composes the sealed semantics in
+`harness/specs/fixtures/agent-first-acceptance/matrix.json` and the frozen protocol in
+`harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json`.
+
+### 16.1 Layers
+
+```text
+Layer 0  acceptance semantics   shipped (TF-0589): dimensions, gates, evidence pack, verdict states
+Layer 1  framework core         subject adapter | suite registry | grader registry | runner | evidence store
+Layer 2  registered profiles    acceptance profile | RSI baseline profile | future memory/browser/skill profiles
+Layer 3  closed loop            verdict -> improvement signal -> candidate -> re-evaluation -> regression graduation
+```
+
+### 16.2 Subject-under-test adapter
+
+An evaluation run never reaches into product internals directly. It calls a registered
+**subject adapter** that exposes one fixed, minimal surface:
+
+- `identity()` - commit/tree/build hash, runtime/Electron/Node version, model and provider ids, adapter id and version;
+- `setup(profile)` - clean isolated state, resource envelope and credentials policy; returns a setup receipt;
+- `invoke(task)` - drive one trial through the *real* production path and return a trace handle;
+- `observe()` - read the final product state from the product itself, never from the agent's own text;
+- `teardown()` - process, port, file and temp cleanup; returns a cleanup receipt.
+
+A missing method, a missing identity field, or a subject that reads its own final state
+from its own output makes the run `invalid`, never `partial`.
+
+### 16.3 Suite and grader registries
+
+- A **suite** declares `id`, `version`, provenance, public/held-out split, task schema
+  version, `k`, `minCases`, timeouts, retries and token/turn/tool budgets.
+- A **grader** declares `id`, `version`, kind (`deterministic` | `heuristic` | `rubric`),
+  precedence, calibration fixture references and, for rubric graders, a frozen prompt digest.
+- Neither a suite nor a grader may be authored by the subject under test. The held-out
+  split is readable by the grader and never writable by the candidate.
+
+### 16.4 Composition and insertion
+
+A registered **profile** is the unit that is planned, run, sealed and re-verified:
+
+```text
+profile = subject adapter x suite x grader set x runner config x resource envelope
+```
+
+Adding a subject, suite or grader is a registry entry plus a calibration fixture - not a
+core edit. An unregistered subject, suite or grader fails closed; there is no implicit
+default. The sealed TF-0589 eight dimensions and fourteen gates are registered as *one*
+profile (the acceptance profile), not hard-coded into the framework.
+
+### 16.5 Closed loop
+
+The framework closes the loop the sealed contract left open:
+
+```text
+verdict + residuals
+  -> improvement signal: which dimension, gate or task regressed, with an evidence link
+  -> candidate change (owned by the self-improvement layer, not the framework)
+  -> re-evaluation against the same frozen suite and held-out split
+  -> regression graduation: a saturated capability task becomes a regression task
+```
+
+The loop does **not** generate candidates itself, change product defaults or locks, or
+approve publication. Candidate generation belongs to the self-improvement (RSI) layer;
+the framework only guarantees that a candidate is measured against criteria it could not
+edit.
+
+### 16.6 Boundaries
+
+- The framework changes no product default, lock, approval or release state.
+- Building the framework is not the same as running an evaluation: a registered profile
+  with no current run is `not-run`, never `pass`.
+- The sealed TF-0589 matrix, its sources and its verdict are historical records and are
+  not rewritten by this layer.
