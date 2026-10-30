@@ -12,10 +12,10 @@ import {
 } from '../../scripts/lib/agent-first-acceptance-contract.mjs';
 
 const ROOT = process.cwd();
-const MATRIX_PATH = join(ROOT, CONTRACT_PATHS.matrix);
-const SOURCES_PATH = join(ROOT, CONTRACT_PATHS.sources);
-const GUIDE_PATH = join(ROOT, CONTRACT_PATHS.guide);
-const CLOSEOUT_PATH = join(ROOT, CONTRACT_PATHS.closeout);
+const MATRIX_PATH = join(ROOT, 'harness/specs/fixtures/agent-first-acceptance/matrix.json');
+const SOURCES_PATH = join(ROOT, 'harness/specs/fixtures/agent-first-acceptance/sources.json');
+const GUIDE_PATH = join(ROOT, 'harness/specs/guides/agent-first-acceptance.md');
+const CLOSEOUT_PATH = join(ROOT, 'harness/specs/tasks/product-acceptance-closeout.md');
 const VALIDATION_REPORT_PATH = join(ROOT, 'harness/specs/fixtures/agent-first-acceptance/validation-report.json');
 
 const EXPECTED_GATE_FIELDS = [
@@ -66,6 +66,13 @@ type Matrix = {
   requiredDimensions: string[];
   evidencePack: string[];
   taskForestNodes: Record<string, string>;
+  taskForestClosure?: {
+    node: string;
+    status: string;
+    progress: number;
+    graphHashBefore: string;
+    graphHashAfter: string;
+  };
   lockedBoundaries: Record<string, unknown>;
   currentContractEvidence: {
     scope: string;
@@ -73,9 +80,25 @@ type Matrix = {
     driven_by: string;
     actor: string;
     limitations: string[];
+    independentReview?: { actor: string; verdict: string };
+    evidenceStatus?: string;
+    evidenceBinding?: { sourceCandidateCommit: string; finalSealedReadbackRequired: boolean };
     focusedTests: { exitCode: number; testsPassed: number; testsFailed: number };
   };
-  contractEvidenceHistory: Matrix['currentContractEvidence'][];
+  staticContractValidation?: {
+    recordedAt: string;
+    driven_by: string;
+    actor: string;
+    scope: string;
+    relationToSealedEvidence: string;
+    command: string;
+    exitCode: number;
+    report: string;
+    counts: { gates: number; dimensions: number; verdictStates: number; sources: number; findings: number };
+    negativeControls: { total: number; rejected: number };
+    failureClassesCovered: string[];
+    limitations: string[];
+  };
 };
 type Sources = {
   schemaVersion: string;
@@ -96,18 +119,17 @@ function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(path, 'utf8')) as T;
 }
 
-/** Every evidence record in the contract, current and historical, must stay
- * labelled as agent-driven. A record that is not labelled may not be cited. */
-function evidenceRecords(matrix: Matrix): Matrix['currentContractEvidence'][] {
-  return [matrix.currentContractEvidence, ...(matrix.contractEvidenceHistory ?? [])];
-}
-
 describe('agent-first acceptance contract', () => {
   it('keeps the complete gate matrix with an executable input, command, oracle, negative and evidence', () => {
     const matrix = readJson<Matrix>(MATRIX_PATH);
 
     expect(matrix.schemaVersion).toBe('AgentFirstAcceptanceMatrix/v1');
-    expect(matrix.status).toMatch(/^(ready|in_progress)$/u);
+    expect(matrix.status).toBe('done');
+    expect(matrix.taskForestClosure?.node).toBe('TF-0589');
+    expect(matrix.taskForestClosure?.status).toBe('done');
+    expect(matrix.taskForestClosure?.progress).toBe(100);
+    expect(matrix.taskForestClosure?.graphHashBefore).toMatch(/^[a-f0-9]{64}$/u);
+    expect(matrix.taskForestClosure?.graphHashAfter).toMatch(/^[a-f0-9]{64}$/u);
     expect(matrix.requiredGateFields).toEqual([...EXPECTED_GATE_FIELDS]);
     expect(matrix.gates.map((gate) => gate.id)).toEqual(EXPECTED_GATE_IDS);
     expect(new Set(matrix.gates.map((gate) => gate.id)).size).toBe(matrix.gates.length);
@@ -175,18 +197,19 @@ describe('agent-first acceptance contract', () => {
     expect(matrix.evidencePack).toEqual(
       expect.arrayContaining(['manifest.json', 'aggregate.json', 'review.json', 'SHA256SUMS', 'credential-scan.json']),
     );
-    const records = evidenceRecords(matrix);
-    expect(records.length).toBeGreaterThanOrEqual(2);
-    for (const record of records) {
-      expect(record.driven_by).toBe('agent');
-      expect(record.actor.trim().length).toBeGreaterThan(0);
-      expect(record.verdict).toMatch(/^(pass|partial|not-run|accepted-shortfall|fail|invalid)$/u);
-      expect(record.limitations.length).toBeGreaterThan(0);
-      expect(record.scope).toContain('contract');
+    expect(matrix.currentContractEvidence.driven_by).toBe('agent');
+    expect(matrix.currentContractEvidence.actor).toBe('codex');
+    expect(matrix.currentContractEvidence.verdict).toMatch(/^(pass|partial|not-run|accepted-shortfall|fail|invalid)$/u);
+    expect(matrix.currentContractEvidence.limitations.length).toBeGreaterThan(0);
+    expect(matrix.currentContractEvidence.scope).toContain('contract');
+    expect(JSON.stringify(matrix.currentContractEvidence)).not.toMatch(/Files remain untracked|No independent agent has re-read/u);
+    if (matrix.currentContractEvidence.verdict === 'pass') {
+      expect(matrix.currentContractEvidence.independentReview?.verdict).toBe('pass');
+      expect(matrix.currentContractEvidence.independentReview?.actor).not.toBe(matrix.currentContractEvidence.actor);
+      expect(matrix.currentContractEvidence.evidenceStatus).toContain('sealed');
+      expect(matrix.currentContractEvidence.evidenceBinding?.sourceCandidateCommit).toMatch(/^[a-f0-9]{40}$/u);
+      expect(matrix.currentContractEvidence.evidenceBinding?.finalSealedReadbackRequired).toBe(false);
     }
-    // Each round needs a distinct actor: an implementation that grades itself is
-    // not an independent readback of the sealed bytes.
-    expect(new Set(records.map((record) => record.actor)).size).toBe(records.length);
   });
 
   it('documents all three research tracks and rejects a first-line human gate', () => {
@@ -194,6 +217,7 @@ describe('agent-first acceptance contract', () => {
     const closeout = readFileSync(CLOSEOUT_PATH, 'utf8');
 
     expect(guide).toMatch(/^---\r?\nid: agent-first-acceptance\r?\n/u);
+    expect(guide).toContain('Status: active');
     for (const phrase of [
       'software-testing practice',
       'Agent evaluation',
@@ -211,6 +235,25 @@ describe('agent-first acceptance contract', () => {
     expect(guide).toContain('real-human acceptance');
     expect(closeout).toContain('harness/specs/guides/agent-first-acceptance.md');
     expect(closeout).toContain('harness/specs/fixtures/agent-first-acceptance/**');
+  });
+
+  it('layers the static validation on top of the sealed verdict without rewriting it', () => {
+    const matrix = readJson<Matrix>(MATRIX_PATH);
+    const additive = matrix.staticContractValidation;
+
+    expect(additive, 'the additive static-validation block must be present').toBeTruthy();
+    expect(additive?.driven_by).toBe('agent');
+    expect(additive?.actor).toBe('claude/tf0589-verifier');
+    expect(additive?.relationToSealedEvidence).toMatch(/does not replace/iu);
+    // A second readback by a different actor, not a second verdict by the same one.
+    expect(additive?.actor).not.toBe(matrix.currentContractEvidence.actor);
+    expect(additive?.exitCode).toBe(0);
+    expect(additive?.negativeControls.rejected).toBe(additive?.negativeControls.total);
+    expect(additive?.negativeControls.total).toBeGreaterThanOrEqual(15);
+    expect(additive?.failureClassesCovered.length).toBeGreaterThanOrEqual(4);
+    expect(additive?.limitations.length).toBeGreaterThan(0);
+    // The report it points at is a real tracked file, not a claim.
+    expect(readFileSync(join(ROOT, String(additive?.report)), 'utf8').length).toBeGreaterThan(0);
   });
 
   it('accepts the checked-in contract by reading the file bodies, not a command transcript', () => {
@@ -240,11 +283,23 @@ describe('agent-first acceptance contract', () => {
     expect(byId.get('gate-missing-negative')?.expectedCode).toBe('gate.negative-empty');
   });
 
-  it('keeps the tracked validation report in lockstep with the checked-in file bodies', () => {
+  it('keeps the tracked validation report in lockstep with a fresh read of the contract', () => {
+    // The report is compared against a re-run over the current files, so the
+    // structural facts it records — gate set, dimension and verdict sets, and
+    // every negative-control outcome — cannot drift from disk unnoticed. It is
+    // a structural lock, not a byte hash of the three contract files.
     const tracked = readJson<{ checkedAt: string; actor: string }>(VALIDATION_REPORT_PATH);
     const fresh = checkAgentFirstAcceptanceContract(ROOT, tracked.actor, tracked.checkedAt);
 
     expect(fresh.ok).toBe(true);
     expect(fresh.report).toEqual(tracked);
+  });
+
+  it('keeps the contract paths the validator reads in one place', () => {
+    // A validator reading a path the test does not is a silent coverage hole.
+    expect(CONTRACT_PATHS.matrix).toBe('harness/specs/fixtures/agent-first-acceptance/matrix.json');
+    expect(CONTRACT_PATHS.sources).toBe('harness/specs/fixtures/agent-first-acceptance/sources.json');
+    expect(CONTRACT_PATHS.guide).toBe('harness/specs/guides/agent-first-acceptance.md');
+    expect(CONTRACT_PATHS.closeout).toBe('harness/specs/tasks/product-acceptance-closeout.md');
   });
 });

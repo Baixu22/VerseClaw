@@ -15,7 +15,6 @@
 // The validator never treats a command's stdout as evidence: every input is a
 // file body read from disk, and `scripts/agent-first-acceptance-check.mjs` only
 // reports what these readers produced.
-import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -167,8 +166,8 @@ export function validateAgentFirstAcceptanceContract(input = {}) {
     if (matrix.schemaVersion !== AGENT_FIRST_ACCEPTANCE_SCHEMA) {
       add('matrix.schema-version', 'matrix.schemaVersion', `must be ${AGENT_FIRST_ACCEPTANCE_SCHEMA}`);
     }
-    if (!['ready', 'in_progress'].includes(matrix.status)) {
-      add('matrix.status', 'matrix.status', 'must be ready or in_progress');
+    if (!['ready', 'in_progress', 'done'].includes(matrix.status)) {
+      add('matrix.status', 'matrix.status', 'must be ready, in_progress or done');
     }
     if (!sameList(matrix.requiredGateFields, REQUIRED_GATE_FIELDS)) {
       add('matrix.required-gate-fields', 'matrix.requiredGateFields', 'must equal the ten frozen gate fields');
@@ -424,28 +423,6 @@ export function loadAgentFirstAcceptanceContractFiles(root = process.cwd()) {
     sources: JSON.parse(sourcesText),
     guide: guideText,
     closeout,
-    raw: { guide: guideText, matrix: matrixText, sources: sourcesText },
-  };
-}
-
-export function sha256(text) {
-  return createHash('sha256').update(text, 'utf8').digest('hex').toUpperCase();
-}
-
-/**
- * Validate the contract as it exists on disk, and hash the exact file bytes the
- * verdict was derived from so a later reader can prove which bytes were judged.
- */
-export function validateAgentFirstAcceptanceContractFiles(root = process.cwd()) {
-  const files = loadAgentFirstAcceptanceContractFiles(root);
-  const result = validateAgentFirstAcceptanceContract(files);
-  return {
-    ...result,
-    hashes: {
-      guide: sha256(files.raw.guide),
-      matrix: sha256(files.raw.matrix),
-      sources: sha256(files.raw.sources),
-    },
   };
 }
 

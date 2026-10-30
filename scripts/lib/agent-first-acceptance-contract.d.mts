@@ -49,7 +49,6 @@ export interface LoadedAgentFirstAcceptanceContract {
   sources: unknown;
   guide: string;
   closeout: string;
-  raw: { guide: string; matrix: string; sources: string };
 }
 
 export interface NegativeControl {
@@ -76,12 +75,6 @@ export function validateAgentFirstAcceptanceContract(
 export function countContract(matrix: unknown, sources: unknown): ContractCounts;
 
 export function loadAgentFirstAcceptanceContractFiles(root?: string): LoadedAgentFirstAcceptanceContract;
-
-export function sha256(text: string): string;
-
-export function validateAgentFirstAcceptanceContractFiles(
-  root?: string,
-): { violations: ContractViolation[]; counts: ContractCounts; hashes: { guide: string; matrix: string; sources: string } };
 
 export function runAgentFirstAcceptanceNegativeControls(
   files: LoadedAgentFirstAcceptanceContract,
