@@ -116,7 +116,7 @@ test.describe('Runtime approval bridge', () => {
             && box.y + box.height <= viewport.height - 12;
         }, { timeout: 5_000 }).toBe(true);
         const promptBox = (await prompt.boundingBox())!;
-        const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
+        const _viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
         expect(await prompt.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
         for (const testId of ['runtime-approval-command', 'runtime-approval-deny', 'runtime-approval-allow-always', 'runtime-approval-allow-once']) {
           const box = (await page.getByTestId(testId).boundingBox())!;

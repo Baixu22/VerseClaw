@@ -151,7 +151,7 @@ test(`real Main owners bind comments, verdicts and approved journaled apply (VG 
       catch (error) {
         const calls = await app.evaluate(() => (globalThis as unknown as { __changeContextRelayCalls: unknown[] }).__changeContextRelayCalls);
         await writeFile(testInfo.outputPath(`projection-${mode}.json`), JSON.stringify(calls, null, 2));
-        throw new Error(`${mode}: ${String(error)}; calls=${JSON.stringify(calls.at(-1))}`);
+        throw new Error(`${mode}: ${String(error)}; calls=${JSON.stringify(calls.at(-1))}`, { cause: error });
       }
       await expect(page.getByTestId('change-context-error')).toHaveCount(0);
     }

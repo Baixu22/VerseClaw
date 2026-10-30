@@ -68,6 +68,7 @@ touchedAreas:
   - tests/unit/change-context-review-verdict.test.ts
   - tests/unit/change-context-contract.test.ts
   - tests/e2e/change-context-review-loop.spec.ts
+  - tests/e2e/runtime-approval-bridge.spec.ts
   - docs/modules/workspace-and-coding.md
   - docs/modules/sessions.md
   - README.md

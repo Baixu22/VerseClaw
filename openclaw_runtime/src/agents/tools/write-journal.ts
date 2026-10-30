@@ -30,7 +30,7 @@ import type {
   RemoteForgeErrorV1,
 } from "../../../../shared/types/remote-forge.js";
 
-import { journalEntryId, journalDirFor, getOrCreateWriteJournal, snapshotBeforeWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
+import { journalEntryId, journalDirFor, snapshotBeforeWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
 export * from "./write-journal-core.js";
 
 /** Preserve the original workspace path policy at the existing tool entrypoint. */
