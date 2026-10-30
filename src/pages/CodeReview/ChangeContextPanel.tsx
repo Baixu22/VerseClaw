@@ -64,7 +64,10 @@ function ActiveChangeContextPanel() {
     if (!Number.isInteger(startLine) || !Number.isInteger(endLine) || startLine < 1 || endLine < startLine) {
       throw new Error(t('changeContext.invalidRange'));
     }
-    const file = await hostApi.files.readText(path);
+    if (!workspace || !path.trim() || /^(?:[a-z]:|[\\/])|(?:^|[\\/])\.\.(?:[\\/]|$)/i.test(path)) {
+      throw new Error(t('changeContext.sourceUnavailable'));
+    }
+    const file = await hostApi.files.readText(`${workspace.rootPath.replace(/[\\/]+$/, '')}/${path}`);
     if (!file.ok || typeof file.content !== 'string') throw new Error(t('changeContext.sourceUnavailable'));
     const lines = file.content.replace(/\r\n/g, '\n').split('\n');
     if (endLine > lines.length) throw new Error(t('changeContext.invalidRange'));
@@ -142,6 +145,7 @@ function ActiveChangeContextPanel() {
                 expectedDestinationHead: destinationHead.trim(), approvalId: approvalId.trim() });
               setPullState(result.state);
               if (!result.success) throw new Error(result.error.safeMessage);
+              await refreshComments(projection.contextId);
             })}>{t('changeContext.pull')} · {patch.file}</button>)}
         </div>
         {pullState && <p data-testid="pull-state" className="text-sm">{t(`changeContext.pullStates.${pullState}`)}</p>}

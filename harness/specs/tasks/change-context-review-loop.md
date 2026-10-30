@@ -262,6 +262,10 @@ Acceptance:
 - Stale or conflicted Pull Changes fails closed.
 - Screenshots/final-state evidence and SHA256 manifest are retained.
 
+Pre-registration: `docs/dev/change-context-review-loop/e2e-plan.md` fixes one
+worker, zero retries, three repeats of all three targeted Electron tests (nine
+executions), with zero failures or skips allowed on the final candidate.
+
 ### H. Rollout gate
 
 Enable the feature only behind an explicit advanced/opt-in entry until acceptance evidence is complete.
