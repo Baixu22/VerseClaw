@@ -1450,6 +1450,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/capability-registry-v3-unified-resolver-acceptance.md
 !/docs/dev/change-context-review-loop/TF0616-SHA256SUMS
 !/docs/dev/change-context-review-loop/TF0617-SHA256SUMS
+!/docs/dev/change-context-review-loop/e2e-plan.md
 !/docs/dev/change-context-review-loop/tf0616-acceptance.json
 !/docs/dev/change-context-review-loop/tf0617-acceptance.json
 !/docs/dev/chat-session-control-isolation.md
