@@ -1,0 +1,12 @@
+2d3ed6de4ec89ce85f4da56ea2733b6040375fa928c73c8bb50e023e2ee39da1  harness/specs/fixtures/agent-first-system/product-effect/acceptance.json
+cd43900063d1c61110220c196dd286d3f3e0a8f8762a5db041f4714e2ff7e495  harness/specs/fixtures/agent-first-system/product-effect/build-identity.json
+dbc5c86403358c23c0726f4708bcc0731b037f16c8164cd496b402385c18a813  harness/specs/fixtures/agent-first-system/product-effect/credential-scan.json
+a2ffc8335f40658e955fc1bbcf1063be1f47946866c1889832e82bd0d7594665  harness/specs/fixtures/agent-first-system/product-effect/profile-1-product-effect.json
+b3c64e6fa03b22a43121fd1048807a0b71929b493078a54f8e6bea53c0b34e25  harness/specs/fixtures/agent-first-system/product-effect/profile-1-profile-after-restart.png
+769011d7244bbeece7091afab1ca83e8080124abb89236fe60e1f483c0d0cef5  harness/specs/fixtures/agent-first-system/product-effect/profile-1-profile-before-restart.png
+8c2f5122400bb3b01372fcc034fa4e8c162784c38d975a578d738b6fe7d7d43d  harness/specs/fixtures/agent-first-system/product-effect/profile-2-product-effect.json
+3e88d6394a201331a9cbc03049aa94be707f050c788345c8f3b4b74b5a64003a  harness/specs/fixtures/agent-first-system/product-effect/profile-2-profile-after-restart.png
+769011d7244bbeece7091afab1ca83e8080124abb89236fe60e1f483c0d0cef5  harness/specs/fixtures/agent-first-system/product-effect/profile-2-profile-before-restart.png
+9117b76df6ac11c94bdb61170afd36749ce0471237ee7ab31be77a53742151ee  harness/specs/fixtures/agent-first-system/product-effect/profile-3-product-effect.json
+d79c0bc647001da02225b0ebf77e49c540a85493ca202637805502b2be3040f9  harness/specs/fixtures/agent-first-system/product-effect/profile-3-profile-after-restart.png
+769011d7244bbeece7091afab1ca83e8080124abb89236fe60e1f483c0d0cef5  harness/specs/fixtures/agent-first-system/product-effect/profile-3-profile-before-restart.png
