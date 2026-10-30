@@ -173,6 +173,9 @@ export type ProductSemanticRelation = {
   evidenceRefs: readonly string[];
 };
 
+/** Version of the existing directed metadata contract; independent of product releases. */
+export const PRODUCT_SEMANTIC_CONTRACT_VERSION = 'ProductSemanticRelations/v1';
+
 /** Directed metadata edges; they neither grant permissions nor imply inverse or transitive facts. */
 export const PRODUCT_SEMANTIC_RELATIONS = [
   { from: 'chat', kind: 'suggests-upgrade-to', to: 'task-loop', authorityBoundary: 'advisory-only', evidenceRefs: ['docs/clawx-product-semantics.md', 'docs/modules/multi-agent-and-tasks.md'] },

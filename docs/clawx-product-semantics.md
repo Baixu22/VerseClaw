@@ -22,6 +22,15 @@ relations and reuses the identity/completion normalizers. Its structured diagnos
 the relation, field and rule. Optional quality declarations remain documented-only; this
 check does not attest a runtime receipt or supply authorization.
 
+`ProductSemanticRelations/v1` names this existing metadata contract.
+`createProductSemanticEvidence` in the existing evidence checker reads the selected candidate's
+contract and source inventory, binds Git commit/tree and canonical source digests, and records
+the agent actor, executed checks and limitations. `validateProductSemanticEvidence` recomputes
+those bindings and rejects unsupported versions, escaped or untracked paths, changed sources,
+incomplete reports and dirty candidates. Text integrity normalizes UTF-8 CRLF/CR to LF; a
+separate raw-byte digest supports byte recovery. Each run creates new evidence while historical
+manifests retain their original candidate and verdict.
+
 ## Identity and scope vocabulary
 
 Workspace is not an alias for Project. A Workspace identifies a local executable
