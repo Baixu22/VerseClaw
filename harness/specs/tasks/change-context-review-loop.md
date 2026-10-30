@@ -24,12 +24,18 @@ touchedAreas:
   - shared/types/workspace.ts
   - shared/host-api/contract.ts
   - shared/i18n/locales/en/changeContext.json
+  - shared/i18n/locales/en/codeReview.json
+  - shared/i18n/locales/zh/codeReview.json
+  - shared/i18n/locales/ja/codeReview.json
+  - shared/i18n/locales/ru/codeReview.json
   - shared/i18n/locales/zh/changeContext.json
   - shared/i18n/locales/ja/changeContext.json
   - shared/i18n/locales/ru/changeContext.json
   - src/lib/host-api.ts
   - electron/services/change-context-api.ts
   - electron/services/change-context-projection.ts
+  - electron/services/change-context-anchor.ts
+  - electron/services/change-context-anchor-workspace.ts
   - electron/services/change-context-review-store.ts
   - electron/main/ipc-handlers.ts
   - electron/services/code-review-api.ts

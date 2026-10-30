@@ -7,6 +7,17 @@
     "local": "Local changes",
     "remote": "Remote PR"
   },
+  "reviewComments": {
+    "title": "Review comments",
+    "anchorState": {
+      "live": "Live anchor",
+      "stale": "Stale anchor",
+      "removed": "Removed anchor",
+      "unavailable": "Anchor unavailable"
+    },
+    "reanchor": "Re-anchor comment",
+    "staleHelper": "The reviewed range changed. Re-anchor explicitly to move this comment."
+  },
   "yes": "Yes",
   "no": "No",
   "empty": "Choose a review target, add an optional focus, then run review.",
@@ -131,7 +142,11 @@
       "sandboxOnly": "Only a Main-approved sandbox repository can request this action.",
       "agentOff": "Agent merge off",
       "strategy": "Strategy",
-      "strategies": { "merge": "Merge commit", "squash": "Squash", "rebase": "Rebase" },
+      "strategies": {
+        "merge": "Merge commit",
+        "squash": "Squash",
+        "rebase": "Rebase"
+      },
       "commitTitle": "Commit title (optional)",
       "commitMessage": "Commit message (optional)",
       "requestApproval": "Request merge approval",
@@ -212,7 +227,10 @@
       "selectFile": "Select a changed file",
       "line": "Line",
       "side": "Diff side",
-      "sides": { "LEFT": "Old", "RIGHT": "New" },
+      "sides": {
+        "LEFT": "Old",
+        "RIGHT": "New"
+      },
       "commentId": "Comment ID",
       "metadataTitle": "Title",
       "metadataBody": "Description",

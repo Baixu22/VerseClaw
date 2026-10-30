@@ -7,6 +7,17 @@
     "local": "ローカル変更",
     "remote": "リモート PR"
   },
+  "reviewComments": {
+    "title": "レビューコメント",
+    "anchorState": {
+      "live": "アンカー有効",
+      "stale": "アンカー期限切れ",
+      "removed": "アンカー先が削除済み",
+      "unavailable": "アンカー利用不可"
+    },
+    "reanchor": "コメントを再アンカー",
+    "staleHelper": "レビュー対象の範囲が変わりました。移動するには明示的に再アンカーしてください。"
+  },
   "yes": "はい",
   "no": "いいえ",
   "empty": "レビュー対象を選び、必要なら focus を入力してからレビューを実行します。",
@@ -131,7 +142,11 @@
       "sandboxOnly": "Main が承認した sandbox リポジトリだけがこの操作を要求できます。",
       "agentOff": "Agent マージはオフ",
       "strategy": "戦略",
-      "strategies": { "merge": "マージコミット", "squash": "Squash", "rebase": "Rebase" },
+      "strategies": {
+        "merge": "マージコミット",
+        "squash": "Squash",
+        "rebase": "Rebase"
+      },
       "commitTitle": "コミットタイトル（任意）",
       "commitMessage": "コミットメッセージ（任意）",
       "requestApproval": "マージ承認を要求",
@@ -212,7 +227,10 @@
       "selectFile": "変更ファイルを選択",
       "line": "行",
       "side": "Diff 側",
-      "sides": { "LEFT": "旧", "RIGHT": "新" },
+      "sides": {
+        "LEFT": "旧",
+        "RIGHT": "新"
+      },
       "commentId": "コメント ID",
       "metadataTitle": "タイトル",
       "metadataBody": "説明",

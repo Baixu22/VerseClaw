@@ -209,6 +209,26 @@ export type ChangeContextReviewCommentAnchor = {
   originalExcerpt: string;
 };
 
+export type ChangeContextReviewAnchorRevision = {
+  kind: 'source-snapshot';
+  revisionId: string;
+  fileDigest: string;
+  rangeDigest: string;
+};
+
+export type ChangeContextReviewAnchorFacetState = 'match' | 'changed' | 'missing';
+
+export type ChangeContextReviewAnchorFreshness = {
+  state: ChangeContextReviewAnchorState;
+  fileDigestState: ChangeContextReviewAnchorFacetState;
+  rangeDigestState: ChangeContextReviewAnchorFacetState;
+  issues: ChangeContextIssue[];
+};
+
+export type ChangeContextReviewAnchorResolver = (
+  anchor: ChangeContextReviewCommentAnchor,
+) => Promise<ChangeContextReviewAnchorRevision | null>;
+
 export type ChangeContextReviewComment = {
   id: string;
   schemaVersion: 1;

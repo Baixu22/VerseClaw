@@ -7,6 +7,17 @@
     "local": "Локальные изменения",
     "remote": "Удалённый PR"
   },
+  "reviewComments": {
+    "title": "Комментарии ревью",
+    "anchorState": {
+      "live": "Якорь актуален",
+      "stale": "Якорь устарел",
+      "removed": "Якорь указывает на удалённый фрагмент",
+      "unavailable": "Якорь недоступен"
+    },
+    "reanchor": "Перепривязать комментарий",
+    "staleHelper": "Проверяемый диапазон изменился. Перепривяжите комментарий явно, чтобы переместить его."
+  },
   "yes": "Да",
   "no": "Нет",
   "empty": "Выберите цель review, при необходимости добавьте focus и запустите проверку.",
@@ -131,7 +142,11 @@
       "sandboxOnly": "Запрос доступен только для sandbox-репозитория, разрешённого Main.",
       "agentOff": "Слияние Agent отключено",
       "strategy": "Стратегия",
-      "strategies": { "merge": "Merge commit", "squash": "Squash", "rebase": "Rebase" },
+      "strategies": {
+        "merge": "Merge commit",
+        "squash": "Squash",
+        "rebase": "Rebase"
+      },
       "commitTitle": "Заголовок коммита (необязательно)",
       "commitMessage": "Сообщение коммита (необязательно)",
       "requestApproval": "Запросить разрешение на слияние",
@@ -212,7 +227,10 @@
       "selectFile": "Выберите изменённый файл",
       "line": "Строка",
       "side": "Сторона diff",
-      "sides": { "LEFT": "Старая", "RIGHT": "Новая" },
+      "sides": {
+        "LEFT": "Старая",
+        "RIGHT": "Новая"
+      },
       "commentId": "ID комментария",
       "metadataTitle": "Заголовок",
       "metadataBody": "Описание",

@@ -7,10 +7,13 @@ import type {
   ChangeContextReviewCommentMutationResult,
   ChangeContextReviewCommentProjection,
   ChangeContextReviewCommentStorePolicy,
+  ChangeContextReviewAnchorResolver,
   ChangeContextState,
 } from '@shared/types/change-context';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
+import { projectReviewAnchorRangeFreshness } from './change-context-anchor';
+import { resolveWorkspaceReviewAnchor } from './change-context-anchor-workspace';
 import {
   createChangeContextReviewCommentStore,
   type ChangeContextReviewCommentStore,
@@ -27,6 +30,7 @@ export type ChangeContextApiContext = {
   sourceReader?: ChangeContextSourceReader;
   gatewayManager?: Pick<GatewayManager, 'rpc'>;
   checkpointDiff?: CompleteHostServiceRegistry['sessions']['checkpointDiff'];
+  resolveReviewAnchor?: ChangeContextReviewAnchorResolver;
   createRequestId?: () => string;
   now?: () => string;
 };
@@ -63,17 +67,26 @@ function failureEnvelope(
   return errorEnvelope(requestId, failure.code, failure.message, failure.details);
 }
 
-function projectStoredComment(
+async function projectStoredComment(
   comment: ChangeContextReviewCommentProjection['comment'],
-): ChangeContextReviewCommentProjection {
+  resolveReviewAnchor?: ChangeContextReviewAnchorResolver,
+): Promise<ChangeContextReviewCommentProjection> {
+  if (!resolveReviewAnchor) {
+    return {
+      comment,
+      anchorState: 'unavailable',
+      anchorIssues: [{
+        code: 'digest_missing',
+        message: 'The anchored source resolver is unavailable; the comment was not moved.',
+        source: 'review-store',
+      }],
+    };
+  }
+  const freshness = await projectReviewAnchorRangeFreshness(comment.anchor, resolveReviewAnchor);
   return {
     comment,
-    anchorState: 'unavailable',
-    anchorIssues: [{
-      code: 'not_implemented',
-      message: 'Anchor freshness projection is implemented by TF-0615; the stored anchor is unchanged.',
-      source: 'review-store',
-    }],
+    anchorState: freshness.state,
+    anchorIssues: freshness.issues,
   };
 }
 
@@ -183,6 +196,7 @@ export function createChangeContextApi(
   context: ChangeContextApiContext = {},
 ): CompleteHostServiceRegistry['changeContext'] {
   const store = context.store ?? createChangeContextReviewCommentStore();
+  const resolveReviewAnchor = context.resolveReviewAnchor ?? resolveWorkspaceReviewAnchor;
   const sourceReader = context.sourceReader ?? createDefaultChangeContextSourceReader({
     gatewayManager: context.gatewayManager,
     checkpointDiff: context.checkpointDiff,
@@ -231,7 +245,9 @@ export function createChangeContextApi(
           comments: [],
         };
       }
-      const comments = result.value.comments.map(projectStoredComment);
+      const comments = await Promise.all(result.value.comments.map((comment) => (
+        projectStoredComment(comment, resolveReviewAnchor)
+      )));
       if (result.value.state !== 'available') {
         return {
           success: false,
