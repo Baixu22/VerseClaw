@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import sources from '../../harness/specs/fixtures/ontology-lite-existing-contracts/sources.json';
+import validRelations from '../../harness/specs/fixtures/ontology-lite-existing-contracts/relations.valid.json';
+import invalidRelations from '../../harness/specs/fixtures/ontology-lite-existing-contracts/relations.invalid.json';
 import {
   PRODUCT_SEMANTIC_CONCEPTS,
   PRODUCT_SEMANTIC_RELATIONS,
@@ -12,9 +14,44 @@ import {
   createTaskLoopUpgradeSuggestion,
   normalizeOrchestrationQualityState,
   orchestrationQualityAffectsRouting,
+  validateProductSemanticRelations,
 } from '@shared/product-semantics';
 
 describe('ClawX product semantics', () => {
+  it('accepts the six existing relations and independent static same-session/identity declarations', () => {
+    expect(validateProductSemanticRelations(PRODUCT_SEMANTIC_RELATIONS).valid).toBe(true);
+    const before = JSON.stringify(validRelations);
+    const result = validateProductSemanticRelations(validRelations.relations, validRelations.context);
+    expect(result.valid).toBe(true);
+    expect(result.diagnostics).toEqual([]);
+    expect(result.unverified).toEqual([expect.stringContaining('no owner-store')]);
+    expect(result).not.toHaveProperty('grant');
+    expect(JSON.stringify(validRelations)).toBe(before);
+    expect(PRODUCT_SEMANTIC_RELATIONS.some(row => String(row.from) === 'plan-mode')).toBe(false);
+  });
+
+  it('preserves owner-resolved legacy workspace compatibility and task completion facts', () => {
+    const result = validateProductSemanticRelations(validRelations.relations, {
+      scope: { runId: 'attempt-one', scope: { workspaceKey: 'workspace-one' } },
+      taskReference: { kind: 'ledger', taskNodeId: 'ledger-one' },
+      completion: { taskStatus: 'completed', authority: 'task-ledger' },
+    });
+    expect(result.valid).toBe(true);
+    expect(result).not.toHaveProperty('grant');
+  });
+
+  it.each(invalidRelations.cases)('rejects independent $id at its declared rule/field', fixture => {
+    const before = JSON.stringify(fixture);
+    const result = validateProductSemanticRelations(fixture.relations, fixture.context);
+    expect(result.valid).toBe(false);
+    expect(result.diagnostics).toEqual(expect.arrayContaining([expect.objectContaining(fixture.expected)]));
+    for (const diagnostic of result.diagnostics) {
+      for (const value of Object.values(diagnostic)) expect(value.trim().length).toBeGreaterThan(0);
+    }
+    expect(result).not.toHaveProperty('grant');
+    expect(JSON.stringify(fixture)).toBe(before);
+  });
+
   it('maps every derived relation key to source anchors, consumers and bounded regressions', () => {
     expect(sources.relations.map(({ relationKey }) => relationKey)).toEqual(
       PRODUCT_SEMANTIC_RELATIONS.map(({ from, kind, to }) => `${from}:${kind}:${to}`),

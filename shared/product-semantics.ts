@@ -3,6 +3,14 @@ import {
   type TaskLedgerReference,
 } from './types/task-ledger-reference.js';
 import type { WorkspacePermissionMode } from './types/workspace.js';
+import {
+  completionView as semanticCompletionView,
+  normalizeRunScope as normalizeSemanticRunScope,
+  normalizeTaskReference as normalizeSemanticTaskReference,
+  type CompletionAuthority,
+  type CompletionStatus,
+  type VerificationStatus,
+} from './types/identity-scope.js';
 
 export type { TaskLedgerReference } from './types/task-ledger-reference.js';
 export {
@@ -175,6 +183,185 @@ export const PRODUCT_SEMANTIC_RELATIONS = [
   { from: 'routing-memo', kind: 'quality-gated-by', to: 'task-loop', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] },
 ] as const satisfies readonly ProductSemanticRelation[];
 
+
+export type ProductSemanticDiagnostic = {
+  relationKey: string;
+  field: string;
+  rule: string;
+  message: string;
+};
+
+export function productSemanticRelationKey(
+  relation: Pick<ProductSemanticRelation, 'from' | 'kind' | 'to'>,
+): string {
+  return [relation.from, relation.kind, relation.to].join(':');
+}
+
+function semanticRecord(value: unknown): value is Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+/** Checks declarations only. It never reads an owner store, creates a grant or changes a run. */
+export function validateProductSemanticRelations(relations: unknown, context: unknown = {}): {
+  valid: boolean;
+  diagnostics: ProductSemanticDiagnostic[];
+  unverified: string[];
+} {
+  const diagnostics: ProductSemanticDiagnostic[] = [];
+  const add = (relationKey: string, field: string, rule: string, message: string) => {
+    diagnostics.push({ relationKey, field, rule, message });
+  };
+  const checkFields = (value: Record<string, unknown>, allowed: readonly string[], key: string, prefix = '') => {
+    for (const field of Object.keys(value)) {
+      if (allowed.includes(field)) continue;
+      const rule = ['grant', 'permissions', 'authorization', 'approval', 'inverse', 'transitive'].includes(field)
+        ? 'no-derived-authority'
+        : ['sync', 'taskLedgerMirror'].includes(field) ? 'task-ledger-direction' : 'undeclared-field';
+      add(key, prefix + field, rule, 'This declaration cannot introduce an owner, inverse fact, mirror or authorization.');
+    }
+  };
+  const concepts = new Set<string>(PRODUCT_SEMANTIC_CONCEPTS.map(({ id }) => id));
+  const vocabulary = {
+    from: concepts, to: concepts,
+    kind: new Set<string>(PRODUCT_SEMANTIC_RELATIONS.map(({ kind }) => kind)),
+    authorityBoundary: new Set<string>(PRODUCT_SEMANTIC_RELATIONS.map(({ authorityBoundary }) => authorityBoundary)),
+  };
+  const seen = new Set<string>();
+  if (!Array.isArray(relations) || relations.length === 0) {
+    add('$contract', 'relations', 'relations-required', 'A nonempty relation array is required.');
+  } else {
+    relations.forEach((value, index) => {
+      const fallback = '$relations[' + index + ']';
+      if (!semanticRecord(value)) {
+        add(fallback, 'relation', 'relation-shape', 'A relation must be a metadata object.');
+        return;
+      }
+      const knownKey = ['from', 'kind', 'to'].every(field => {
+        const word = value[field];
+        return typeof word === 'string' && vocabulary[field as 'from' | 'kind' | 'to'].has(word);
+      });
+      const key = knownKey ? productSemanticRelationKey(value as ProductSemanticRelation) : fallback;
+      for (const [field, words] of Object.entries(vocabulary)) {
+        const word = value[field];
+        if (typeof word !== 'string' || !words.has(word)) {
+          add(key, field, 'unknown-vocabulary', 'The field must use the existing declared vocabulary.');
+        }
+      }
+      checkFields(value, ['from', 'kind', 'to', 'authorityBoundary', 'evidenceRefs'], key);
+      if (knownKey && seen.has(key)) add(key, 'relationKey', 'duplicate-relation', 'A directed relation may occur only once.');
+      if (knownKey) seen.add(key);
+      if (typeof value.from === 'string' && value.from === value.to) {
+        add(key, 'to', 'self-loop', 'A product relation cannot point to itself.');
+      }
+      if (!Array.isArray(value.evidenceRefs) || value.evidenceRefs.length === 0
+        || value.evidenceRefs.some(ref => typeof ref !== 'string' || ref.trim().length === 0)) {
+        add(key, 'evidenceRefs', 'evidence-required', 'Nonempty explicit evidence references are required.');
+      }
+      if (value.from === 'task-ledger') {
+        add(key, 'from', 'task-ledger-direction', 'Task Ledger does not derive scheduling or mirror authority from an outgoing relation.');
+      }
+      const declared = PRODUCT_SEMANTIC_RELATIONS.find(row =>
+        row.from === value.from && row.kind === value.kind && row.to === value.to);
+      if (!declared) {
+        add(key, 'kind', 'relation-combination', 'These individually declared endpoints and kind do not form an existing relation.');
+      } else if (value.authorityBoundary !== declared.authorityBoundary) {
+        add(key, 'authorityBoundary', 'authority-combination', 'The authority boundary does not match this directed relation.');
+      }
+    });
+  }
+  if (!semanticRecord(context)) {
+    add('$contract', 'context', 'context-shape', 'Audit context must be a metadata object.');
+  } else {
+    checkFields(context, ['scope', 'taskReference', 'completion', 'quality'], '$contract', 'context.');
+    for (const [field, normalize, rule] of [
+      ['scope', normalizeSemanticRunScope, 'identity-scope'],
+      ['taskReference', normalizeSemanticTaskReference, 'identity-task-reference'],
+    ] as const) {
+      if (context[field] === undefined) continue;
+      if (field === 'scope' && semanticRecord(context.scope)) {
+        checkFields(context.scope, ['runId', 'scope'], '$contract', 'context.scope.');
+        if (semanticRecord(context.scope.scope)) {
+          checkFields(context.scope.scope, ['workspaceId', 'workspaceKey', 'projectId', 'sessionKey'], '$contract', 'context.scope.scope.');
+        }
+      }
+      try {
+        normalize(context[field]);
+      } catch (error) {
+        add('$contract', 'context.' + field, rule,
+          error instanceof Error ? error.message : 'The existing identity owner rejected the declaration.');
+      }
+    }
+    if (context.completion !== undefined) {
+      const completion = context.completion;
+      if (!semanticRecord(completion)) {
+        add('$contract', 'context.completion', 'completion-shape', 'Completion facts must use the existing owner vocabulary.');
+      } else {
+        checkFields(completion, ['turnStatus', 'runStatus', 'taskStatus', 'verification', 'authority'], '$contract', 'context.completion.');
+        const statuses: readonly CompletionStatus[] = ['running', 'completed', 'error', 'aborted', 'unavailable'];
+        const authorities: readonly CompletionAuthority[] = ['turn', 'run', 'task-loop-verification', 'task-ledger'];
+        const verification: readonly VerificationStatus[] = ['passed', 'unavailable', 'failed'];
+        let known = true;
+        for (const [field, words] of [
+          ['turnStatus', statuses], ['runStatus', statuses], ['taskStatus', statuses],
+          ['verification', verification], ['authority', authorities],
+        ] as const) {
+          const word = completion[field];
+          if (word === undefined || (field === 'authority' && word === null)) continue;
+          if (typeof word !== 'string' || !(words as readonly string[]).includes(word)) {
+            known = false;
+            add('$contract', 'context.completion.' + field, 'completion-vocabulary', 'Unknown completion or authority vocabulary.');
+          }
+        }
+        if (known && completion.taskStatus === 'completed') {
+          const view = semanticCompletionView(completion as Parameters<typeof semanticCompletionView>[0]);
+          if (view.taskStatus !== 'completed') {
+            add('$contract', 'context.completion.taskStatus', 'task-completion-authority',
+              'A turn or run result cannot establish task completion; use the existing task/verification owner.');
+          }
+        }
+      }
+    }
+    if (context.quality !== undefined) {
+      const quality = context.quality;
+      const key = productSemanticRelationKey(PRODUCT_SEMANTIC_RELATIONS.find(row => row.kind === 'quality-gated-by')!);
+      if (!semanticRecord(quality)) {
+        add(key, 'context.quality', 'quality-shape', 'Quality must be a bounded source declaration.');
+      } else {
+        checkFields(quality, ['state', 'source', 'sessionKey', 'sourceSessionKey', 'ownerEvidenceRef', 'callerSupplied', 'evidenceLevel'], key, 'context.quality.');
+        if (![null, 'unavailable', 'shadow', 'active'].includes(quality.state as string | null)) {
+          add(key, 'context.quality.state', 'quality-vocabulary', 'Unknown quality state.');
+        }
+        if (!['none', 'ordinary_orchestration_scorecard', 'task_loop_verified_scorecard'].includes(quality.source as string)) {
+          add(key, 'context.quality.source', 'quality-vocabulary', 'Unknown quality source.');
+        }
+        if (quality.evidenceLevel !== 'documented-only') {
+          add(key, 'context.quality.evidenceLevel', 'quality-receipt-scope',
+            'This static checker cannot attest an observed runtime receipt.');
+        }
+        if (quality.state === 'active') {
+          if (quality.source !== 'task_loop_verified_scorecard' || quality.callerSupplied !== false) {
+            add(key, 'context.quality.source', 'quality-authority', 'Caller quality cannot supply Task Loop scorecard authority.');
+          }
+          if (typeof quality.ownerEvidenceRef !== 'string' || !quality.ownerEvidenceRef.trim()) {
+            add(key, 'context.quality.ownerEvidenceRef', 'quality-authority', 'An explicit existing-owner source reference is required.');
+          }
+          if (typeof quality.sessionKey !== 'string' || !quality.sessionKey.trim()
+            || typeof quality.sourceSessionKey !== 'string' || !quality.sourceSessionKey.trim()
+            || quality.sessionKey !== quality.sourceSessionKey) {
+            add(key, 'context.quality.sourceSessionKey', 'quality-session', 'Active-quality declarations must name the same session.');
+          }
+        }
+      }
+    }
+  }
+  return {
+    valid: diagnostics.length === 0,
+    diagnostics,
+    unverified: ['Static declarations only: no owner-store, runtime receipt, completion fact or grant was verified.'],
+  };
+}
 
 export type ProductSemanticTaskId = `P0-${string}` | `P1-${string}`;
 export type ProductSemanticImplementationStatus = 'done' | 'todo' | 'defer';

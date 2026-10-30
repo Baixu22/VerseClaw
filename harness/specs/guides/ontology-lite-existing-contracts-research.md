@@ -136,4 +136,10 @@ parity。此实施方案不预留这些功能，也不新增等待人工操作�
 该索引记录六条派生关系的文档、实际 owner 调用路径和回归入口；未观测的运行时
 链路保留限制，Workboard 调度卡片到 Ledger 的完整链路标为 documented-only。
 研究快照及其旧候选、摘要和 verdict 保留原值，实施验证另写新证据。
+
+确定性检查入口为 `shared/product-semantics.ts` 的 `validateProductSemanticRelations`。
+[正例](../fixtures/ontology-lite-existing-contracts/relations.valid.json) 和
+[独立负例](../fixtures/ontology-lite-existing-contracts/relations.invalid.json) 提供显式
+输入及预期拒绝规则；`tests/unit/product-semantics.test.ts` 验证结构化诊断与兼容性。
+同 session 字段只校验静态说明，始终不替代运行时 owner receipt。
 研究来源、文件摘要及限制：[research.json](../fixtures/ontology-lite-existing-contracts/research/research.json)。

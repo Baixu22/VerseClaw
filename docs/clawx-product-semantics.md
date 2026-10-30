@@ -1,6 +1,6 @@
 # ClawX Product Semantics
 
-Last updated: 2026-10-22
+Last updated: 2026-10-30
 
 Evidence boundary: this document is a product-semantics guardrail that complements `shared/capability-claims.ts` and `artifacts/capability-claims/status-table.json`.
 
@@ -16,6 +16,11 @@ The [relation source inventory](../harness/specs/fixtures/ontology-lite-existing
 maps each derived relation key to documentation, existing owner calls, consumers and regression
 entry points. Its claims are source-level: unobserved runtime journeys remain explicit, and the
 Workboard scheduling-card claim is documented-only. It does not change those owners or defaults.
+
+`validateProductSemanticRelations` checks independent metadata against the existing directed
+relations and reuses the identity/completion normalizers. Its structured diagnostics identify
+the relation, field and rule. Optional quality declarations remain documented-only; this
+check does not attest a runtime receipt or supply authorization.
 
 ## Identity and scope vocabulary
 

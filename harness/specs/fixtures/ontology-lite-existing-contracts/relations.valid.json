@@ -1,0 +1,92 @@
+{
+  "schema": "ProductSemanticRelationInput/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts",
+  "claimBoundary": "Synthetic static declarations; source references are not observed owner receipts.",
+  "relations": [
+    {
+      "from": "chat",
+      "kind": "suggests-upgrade-to",
+      "to": "task-loop",
+      "authorityBoundary": "advisory-only",
+      "evidenceRefs": [
+        "docs/clawx-product-semantics.md",
+        "docs/modules/multi-agent-and-tasks.md"
+      ]
+    },
+    {
+      "from": "chat",
+      "kind": "projects",
+      "to": "task-ledger",
+      "authorityBoundary": "read-only-projection",
+      "evidenceRefs": [
+        "docs/clawx-product-semantics.md"
+      ]
+    },
+    {
+      "from": "chat-plan",
+      "kind": "projects",
+      "to": "task-ledger",
+      "authorityBoundary": "read-only-projection",
+      "evidenceRefs": [
+        "docs/clawx-product-semantics.md"
+      ]
+    },
+    {
+      "from": "task-loop",
+      "kind": "roots-in",
+      "to": "task-ledger",
+      "authorityBoundary": "task-ledger-authority",
+      "evidenceRefs": [
+        "docs/modules/multi-agent-and-tasks.md"
+      ]
+    },
+    {
+      "from": "workboard",
+      "kind": "references-one-way",
+      "to": "task-ledger",
+      "authorityBoundary": "one-way-reference",
+      "evidenceRefs": [
+        "docs/modules/multi-agent-and-tasks.md",
+        "shared/types/task-ledger-reference.ts"
+      ]
+    },
+    {
+      "from": "routing-memo",
+      "kind": "quality-gated-by",
+      "to": "task-loop",
+      "authorityBoundary": "same-session-scorecard",
+      "evidenceRefs": [
+        "docs/modules/multi-agent-and-tasks.md"
+      ]
+    }
+  ],
+  "context": {
+    "scope": {
+      "runId": "attempt-one",
+      "scope": {
+        "workspaceId": "workspace-one",
+        "projectId": "workspace-one",
+        "sessionKey": "session-one"
+      }
+    },
+    "taskReference": {
+      "kind": "ledger",
+      "taskNodeId": "ledger-one"
+    },
+    "completion": {
+      "runStatus": "completed",
+      "taskStatus": "unavailable",
+      "authority": "run"
+    },
+    "quality": {
+      "state": "active",
+      "source": "task_loop_verified_scorecard",
+      "sessionKey": "session-one",
+      "sourceSessionKey": "session-one",
+      "ownerEvidenceRef": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
+      "callerSupplied": false,
+      "evidenceLevel": "documented-only"
+    }
+  }
+}

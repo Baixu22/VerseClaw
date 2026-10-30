@@ -1,0 +1,774 @@
+{
+  "schema": "ProductSemanticRelationNegativeCases/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts",
+  "claimBoundary": "Independent authored synthetic inputs and expected refusal rules; no runtime or authorization verdict.",
+  "cases": [
+    {
+      "id": "unknown-from",
+      "relations": [
+        {
+          "from": "scheduler",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "from"
+      }
+    },
+    {
+      "id": "unknown-to",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "run",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "to"
+      }
+    },
+    {
+      "id": "unknown-kind",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "executes",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "kind"
+      }
+    },
+    {
+      "id": "unknown-authority",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "automatic-grant",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "unknown-vocabulary",
+        "field": "authorityBoundary"
+      }
+    },
+    {
+      "id": "duplicate",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        },
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "duplicate-relation",
+        "field": "relationKey"
+      }
+    },
+    {
+      "id": "self-loop",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "chat",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "self-loop",
+        "field": "to"
+      }
+    },
+    {
+      "id": "missing-evidence",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection"
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      }
+    },
+    {
+      "id": "empty-evidence",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": []
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      }
+    },
+    {
+      "id": "whitespace-evidence",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            " "
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      }
+    },
+    {
+      "id": "nonstring-evidence",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            42
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "evidence-required",
+        "field": "evidenceRefs"
+      }
+    },
+    {
+      "id": "wrong-combination",
+      "relations": [
+        {
+          "from": "workboard",
+          "kind": "roots-in",
+          "to": "task-ledger",
+          "authorityBoundary": "task-ledger-authority",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "relation-combination",
+        "field": "kind"
+      }
+    },
+    {
+      "id": "wrong-authority-combination",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "one-way-reference",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "authority-combination",
+        "field": "authorityBoundary"
+      }
+    },
+    {
+      "id": "reverse-ledger-authority",
+      "relations": [
+        {
+          "from": "task-ledger",
+          "kind": "references-one-way",
+          "to": "workboard",
+          "authorityBoundary": "one-way-reference",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "task-ledger-direction",
+        "field": "from"
+      }
+    },
+    {
+      "id": "inverse-fact",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ],
+          "inverse": true
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "inverse"
+      }
+    },
+    {
+      "id": "transitive-grant",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ],
+          "transitive": true
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "transitive"
+      }
+    },
+    {
+      "id": "fabricated-grant",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ],
+          "grant": {
+            "decision": "allow"
+          }
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "grant"
+      }
+    },
+    {
+      "id": "two-way-sync",
+      "relations": [
+        {
+          "from": "workboard",
+          "kind": "references-one-way",
+          "to": "task-ledger",
+          "authorityBoundary": "one-way-reference",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ],
+          "sync": "two-way"
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "task-ledger-direction",
+        "field": "sync"
+      }
+    },
+    {
+      "id": "ledger-mirror",
+      "relations": [
+        {
+          "from": "workboard",
+          "kind": "references-one-way",
+          "to": "task-ledger",
+          "authorityBoundary": "one-way-reference",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ],
+          "taskLedgerMirror": {
+            "status": "completed"
+          }
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "task-ledger-direction",
+        "field": "taskLedgerMirror"
+      }
+    },
+    {
+      "id": "undeclared-field",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ],
+          "priority": "urgent"
+        }
+      ],
+      "context": {},
+      "expected": {
+        "rule": "undeclared-field",
+        "field": "priority"
+      }
+    },
+    {
+      "id": "cross-session-quality",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "quality": {
+          "state": "active",
+          "source": "task_loop_verified_scorecard",
+          "sessionKey": "session-one",
+          "sourceSessionKey": "another-session",
+          "ownerEvidenceRef": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
+          "callerSupplied": false,
+          "evidenceLevel": "documented-only"
+        }
+      },
+      "expected": {
+        "rule": "quality-session",
+        "field": "context.quality.sourceSessionKey"
+      }
+    },
+    {
+      "id": "caller-quality",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "quality": {
+          "state": "active",
+          "source": "ordinary_orchestration_scorecard",
+          "sessionKey": "session-one",
+          "sourceSessionKey": "session-one",
+          "ownerEvidenceRef": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
+          "callerSupplied": true,
+          "evidenceLevel": "documented-only"
+        }
+      },
+      "expected": {
+        "rule": "quality-authority",
+        "field": "context.quality.source"
+      }
+    },
+    {
+      "id": "missing-quality-owner-reference",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "quality": {
+          "state": "active",
+          "source": "task_loop_verified_scorecard",
+          "sessionKey": "session-one",
+          "sourceSessionKey": "session-one",
+          "ownerEvidenceRef": "",
+          "callerSupplied": false,
+          "evidenceLevel": "documented-only"
+        }
+      },
+      "expected": {
+        "rule": "quality-authority",
+        "field": "context.quality.ownerEvidenceRef"
+      }
+    },
+    {
+      "id": "unobserved-receipt-claim",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "quality": {
+          "state": "active",
+          "source": "task_loop_verified_scorecard",
+          "sessionKey": "session-one",
+          "sourceSessionKey": "session-one",
+          "ownerEvidenceRef": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
+          "callerSupplied": false,
+          "evidenceLevel": "runtime-receipt"
+        }
+      },
+      "expected": {
+        "rule": "quality-receipt-scope",
+        "field": "context.quality.evidenceLevel"
+      }
+    },
+    {
+      "id": "unknown-quality-state",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "quality": {
+          "state": "verified",
+          "source": "task_loop_verified_scorecard",
+          "sessionKey": "session-one",
+          "sourceSessionKey": "session-one",
+          "ownerEvidenceRef": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
+          "callerSupplied": false,
+          "evidenceLevel": "documented-only"
+        }
+      },
+      "expected": {
+        "rule": "quality-vocabulary",
+        "field": "context.quality.state"
+      }
+    },
+    {
+      "id": "session-as-workspace",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "scope": {
+          "runId": "attempt-one",
+          "scope": {
+            "sessionKey": "session-one"
+          }
+        }
+      },
+      "expected": {
+        "rule": "identity-scope",
+        "field": "context.scope"
+      }
+    },
+    {
+      "id": "run-as-task",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "taskReference": {
+          "kind": "run",
+          "runId": "attempt-one"
+        }
+      },
+      "expected": {
+        "rule": "identity-task-reference",
+        "field": "context.taskReference"
+      }
+    },
+    {
+      "id": "mixed-task-facts",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "taskReference": {
+          "kind": "ledger",
+          "taskNodeId": "ledger-one",
+          "runtimeTaskId": "attempt-one"
+        }
+      },
+      "expected": {
+        "rule": "identity-task-reference",
+        "field": "context.taskReference"
+      }
+    },
+    {
+      "id": "run-success-as-task-completion",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "completion": {
+          "runStatus": "completed",
+          "taskStatus": "completed",
+          "authority": "run"
+        }
+      },
+      "expected": {
+        "rule": "task-completion-authority",
+        "field": "context.completion.taskStatus"
+      }
+    },
+    {
+      "id": "turn-success-as-task-completion",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "completion": {
+          "turnStatus": "completed",
+          "taskStatus": "completed",
+          "authority": "turn"
+        }
+      },
+      "expected": {
+        "rule": "task-completion-authority",
+        "field": "context.completion.taskStatus"
+      }
+    },
+    {
+      "id": "unverified-loop-as-task-completion",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "completion": {
+          "taskStatus": "completed",
+          "authority": "task-loop-verification",
+          "verification": "unavailable"
+        }
+      },
+      "expected": {
+        "rule": "task-completion-authority",
+        "field": "context.completion.taskStatus"
+      }
+    },
+    {
+      "id": "unknown-completion-status",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "completion": {
+          "runStatus": "accepted",
+          "authority": "run"
+        }
+      },
+      "expected": {
+        "rule": "completion-vocabulary",
+        "field": "context.completion.runStatus"
+      }
+    },
+    {
+      "id": "context-grant",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "grant": {
+          "decision": "allow"
+        }
+      },
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "context.grant"
+      }
+    },
+    {
+      "id": "scope-grant",
+      "relations": [
+        {
+          "from": "chat",
+          "kind": "projects",
+          "to": "task-ledger",
+          "authorityBoundary": "read-only-projection",
+          "evidenceRefs": [
+            "docs/clawx-product-semantics.md"
+          ]
+        }
+      ],
+      "context": {
+        "scope": {
+          "runId": "attempt-one",
+          "scope": {
+            "workspaceId": "workspace-one",
+            "grant": {
+              "decision": "allow"
+            }
+          }
+        }
+      },
+      "expected": {
+        "rule": "no-derived-authority",
+        "field": "context.scope.scope.grant"
+      }
+    },
+    {
+      "id": "malformed-relation",
+      "relations": [
+        null
+      ],
+      "context": {},
+      "expected": {
+        "rule": "relation-shape",
+        "field": "relation"
+      }
+    },
+    {
+      "id": "missing-relations",
+      "relations": [],
+      "context": {},
+      "expected": {
+        "rule": "relations-required",
+        "field": "relations"
+      }
+    }
+  ]
+}

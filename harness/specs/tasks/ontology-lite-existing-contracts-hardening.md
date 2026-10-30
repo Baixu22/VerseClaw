@@ -3,7 +3,7 @@ id: ontology-lite-existing-contracts-hardening
 lifecycleStatus: active
 title: 现有语义合同的来源、约束、版本与门禁收敛
 type: task
-intent: 在现有产品语义、身份、Task Ledger、Context Family 和权限合同上补齐可执行约束与可追溯证据，提升规整程度和可控性，不新增产品功能、模块、运行时或第二真源。本轮只完成调研和任务拆解，后续按四个串行节点实施。
+intent: 在现有产品语义、身份、Task Ledger、Context Family 和权限合同上补齐可执行约束与可追溯证据，提升规整程度和可控性，不新增产品功能、模块、运行时或第二真源。按四个串行节点实施；研究快照不作为实施验收。
 touchedAreas:
   - shared/product-semantics.ts
   - tests/unit/product-semantics.test.ts
@@ -58,8 +58,8 @@ docs:
 
 ## 当前阶段与入口
 
-研究与 Task Forest 拆解可以先交付。本合同的新增校验、来源绑定和门禁集成尚未
-实现，不能因方案落盘或旧 focused tests 通过而标成新增能力已通过。
+规划基线只交付研究与 Task Forest 拆解。新增校验、来源绑定和门禁集成必须以
+各自当前候选的证据验证，不能因方案落盘或旧 focused tests 通过而标成已通过。
 四步串行执行，每次只推进一个 ready leaf；Task Forest 为本地进度源，源码合同
 和精选证据不依赖本地任务图或会话日志。研究方法与来源见同目录配套 guide。
 
