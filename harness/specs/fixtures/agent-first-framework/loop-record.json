@@ -9,7 +9,7 @@
   "heldOutSplit": {
     "suiteId": "acceptance-core",
     "status": "frozen",
-    "digest": "sha256:3394ebf76eacf8674086ba659382e939a8d91b7c6f1a27c436e59f77387a9f5b",
+    "digest": "sha256:954db09f02aca59d2b472cd86ab5b62c523c76fdffed0b73a2fe2f56e865d42b",
     "sealedAt": "2026-10-30",
     "writableByCandidate": false
   },
@@ -47,7 +47,7 @@
   "suiteBinding": {
     "suiteId": "acceptance-core",
     "status": "frozen",
-    "contentDigest": "sha256:641dab6b2fdd6157121e834ebe42c474712027e9fc717106a570c7e6874872d3"
+    "contentDigest": "sha256:cd98632dfab218831da9280165b15f9c2b44deaa4777a8bf0ca02702e5bbe9db"
   },
   "candidateProducer": {
     "id": "rsi-self-improvement",

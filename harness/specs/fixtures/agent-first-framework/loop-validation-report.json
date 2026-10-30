@@ -13,8 +13,8 @@
   },
   "inputDigests": {
     "harness/specs/guides/agent-first-acceptance.md": "sha256:1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
-    "harness/specs/fixtures/agent-first-framework/registry.json": "sha256:1a7b024a29e7caef3b1e0f64fe4bb7c78d322b61a0474aa6842289388d72202a",
-    "harness/specs/fixtures/agent-first-framework/loop-record.json": "sha256:c83bd3997d7575c769ae068d870010e15d42f1027f4c5c154d1384388951cfb3",
+    "harness/specs/fixtures/agent-first-framework/registry.json": "sha256:c4be525df5d38d6a33b2ff3b98d22289189e395d61f6d6a530b81dfb79b9229c",
+    "harness/specs/fixtures/agent-first-framework/loop-record.json": "sha256:e735a6f02551b799a28e470c3c3274d63ece15dcf8c389ed07767f9e0389f906",
     "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json": "sha256:ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4"
   },
   "evaluationStatus": "not-run",
