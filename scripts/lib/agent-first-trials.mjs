@@ -126,19 +126,51 @@ export function createTrialPlan(root, runDir) {
   return manifest;
 }
 
-export function verifyPlanInputs(manifest, root = manifest.source.root) {
+export function verifyPlanInputs(manifest, root = manifest.source.root, options = {}) {
   const loaded = loadCorpus(root), profile = loaded.registry.registeredProfiles.find((entry) => entry.id === manifest.profileId);
   assert(profile, 'unregistered execution profile');
   validateTrialManifest(manifest, loaded.corpus, profile, loadTrialAdapters(root));
   assert(git(root, ['rev-parse', `${manifest.source.candidate.commit}^{tree}`]) === manifest.source.candidate.tree, 'invalid source candidate');
-  assert.equal(git(root, ['status', '--porcelain']), '', 'source must stay clean during execution/replay');
-  assert.deepEqual(sourceBindings(root, loaded.corpus.tasks), manifest.source.bindings, 'frozen source inputs changed');
+  if (!options.retained) assert.equal(git(root, ['status', '--porcelain']), '', 'source must stay clean during execution/replay');
+  if (!options.retained) assert.deepEqual(sourceBindings(root, loaded.corpus.tasks), manifest.source.bindings, 'frozen source inputs changed');
   assert.equal(loaded.corpusDigest, manifest.corpusDigest, 'corpus content changed');
   assert.deepEqual(manifest.model, { provider: 'mock-openai', id: 'mock-openai/gpt-5.5', version: sha256(readFileSync(join(root, 'openclaw_runtime/extensions/qa-lab/src/providers/shared/mock-provider-definition.ts'))), stochastic: false, seed: 'deterministic-script-v1' }, 'model or seed drift');
-  assert.deepEqual(buildInventory(root), manifest.build.files, 'build inventory changed or omitted');
+  if (!options.retained) assert.deepEqual(buildInventory(root), manifest.build.files, 'build inventory changed or omitted');
   assert.equal(sha256(JSON.stringify(manifest.build.files)), manifest.build.inventoryDigest);
-  assert.deepEqual(read(join(root, 'openclaw_runtime/dist/.buildstamp')), manifest.build.stamp, 'build provenance changed');
+  if (!options.retained) assert.deepEqual(read(join(root, 'openclaw_runtime/dist/.buildstamp')), manifest.build.stamp, 'build provenance changed');
+  if (options.retained) {
+    assert(manifest.build.files.length > 0 && manifest.build.files.every((file) =>
+      /^(?:openclaw_runtime\/dist|openclaw_runtime\/dist-runtime)\//u.test(file.path) && /^sha256:[a-f0-9]{64}$/u.test(file.sha256)), 'invalid archived build receipt');
+    verifyCandidateBlobs(root, manifest.source.candidate.commit, manifest.source.bindings);
+    // Archive verification reports the measured candidate. Its grader and task
+    // inputs stay byte-identical; later reader/evidence-only work is separate.
+    for (const path of [
+      `${CORPUS_DIR}/tasks.v1.json`, `${CORPUS_DIR}/registry-extension.v1.json`,
+      'scripts/lib/agent-first-task-corpus.mjs', 'scripts/rsi-tf0592-statistical-adjudication.mjs',
+      'scripts/lib/reliability-aggregation.mjs', 'scripts/lib/paired-ablation.mjs',
+    ]) assert.equal(sha256(readFileSync(join(root, path))), manifest.source.bindings[path], `frozen replay grader changed: ${path}`);
+  }
   assert.equal(manifest.build.stamp.head, manifest.source.candidate.commit);
+}
+
+function verifyCandidateBlobs(root, commit, bindings) {
+  const paths = Object.keys(bindings);
+  const blobs = execFileSync('git', ['cat-file', '--batch'], {
+    cwd: root, input: paths.map((path) => `${commit}:${path}`).join('\n') + '\n',
+    windowsHide: true, maxBuffer: 128 * 1024 ** 2,
+  });
+  let offset = 0;
+  for (const path of paths) {
+    const end = blobs.indexOf(10, offset);
+    assert(end >= 0, 'candidate object response is incomplete');
+    const header = blobs.subarray(offset, end).toString('utf8');
+    const size = Number(header.split(' ')[2]);
+    assert(/^[a-f0-9]+ blob \d+$/u.test(header) && Number.isSafeInteger(size), `candidate input missing: ${path}`);
+    offset = end + 1;
+    assert.equal(sha256(blobs.subarray(offset, offset + size)), bindings[path], `candidate input differs: ${path}`);
+    offset += size + 1;
+  }
+  assert.equal(offset, blobs.length, 'candidate object count differs');
 }
 
 export function classifyTrial(worker, grades, observation, execution) {
@@ -292,7 +324,7 @@ export async function runTrialPlan(runDir, options = {}) {
 
 export function checkTrialRun(runDir, options = {}) {
   const manifest = read(join(runDir, 'manifest.json')), root = options.root ?? manifest.source.root;
-  verifyPlanInputs(manifest, root);
+  verifyPlanInputs(manifest, root, options);
   const progress = read(join(runDir, 'progress.json'));
   assert.equal(progress.manifestDigest, sha256(readFileSync(join(runDir, 'manifest.json'))));
   assert(new Set(progress.completed).size === progress.completed.length && progress.completed.every((id) => manifest.trials.some((trial) => trial.trialId === id)), 'duplicate/unknown completed trial');
@@ -344,9 +376,89 @@ export function verifyRetainedRun(runDir, options = {}) {
   const observedFiles = walk(runDir).map((path) => relative(runDir, path).replaceAll('\\', '/')).sort();
   assert(observedFiles.every((path) => allowedFiles.includes(path)), 'unregistered retained artifact');
   for (const file of receipt.files) assert.equal(sha256(readFileSync(artifactPath(runDir, file.path))), file.sha256, `retained evidence changed: ${file.path}`);
-  const report = checkTrialRun(runDir, { ...options, write: false });
+  const report = checkTrialRun(runDir, { ...options, retained: true, write: false });
   assert(report.complete, 'incomplete retained run');
   assert.deepEqual(report, read(join(runDir, 'aggregate.json')), 'retained aggregate differs from disk recomputation');
   assert.equal(report.manifestDigest, receipt.manifestDigest);
   return report;
+}
+
+/** Verify the small, tracked acceptance summary and, when available, its raw retained run. */
+export function verifyTrialAcceptance(file, options = {}) {
+  const root = options.root ?? process.cwd(), acceptancePath = resolve(root, file), directory = dirname(acceptancePath);
+  const acceptance = read(acceptancePath);
+  assert.equal(acceptance.schemaVersion, 'AgentFirstTrialAcceptance/v1', 'invalid trial acceptance schema');
+  assert.equal(acceptance.driven_by, 'agent', 'trial acceptance must be agent-driven');
+  assert(text(acceptance.actor) && acceptance.taskId === 'TF-0592', 'invalid trial acceptance provenance');
+  assert(acceptance.sourceCandidate && text(acceptance.sourceCandidate.commit) && text(acceptance.sourceCandidate.tree), 'missing candidate identity');
+  assert(text(acceptance.manifestDigest) && text(acceptance.rawEvidence?.path) && Number.isInteger(acceptance.rawEvidence?.fileCount), 'missing raw evidence identity');
+  assert(acceptance.claims && Object.values(acceptance.claims).every((value) => value === false), 'trial acceptance overclaims');
+  assert(text(acceptance.scope) && Array.isArray(acceptance.limitations) && acceptance.limitations.length > 0, 'trial acceptance must state its scope');
+
+  const artifact = (name) => {
+    const entry = acceptance.artifacts?.[name];
+    assert(entry && text(entry.path) && /^sha256:[a-f0-9]{64}$/u.test(entry.sha256), `missing ${name} artifact receipt`);
+    const path = artifactPath(directory, entry.path);
+    assert.equal(sha256(readFileSync(path)), entry.sha256, `${name} acceptance artifact changed`);
+    return read(path);
+  };
+  const aggregate = artifact('aggregate'), controls = artifact('controls'), retention = artifact('retention');
+
+  assert.equal(git(root, ['rev-parse', `${acceptance.sourceCandidate.commit}^{tree}`]), acceptance.sourceCandidate.tree, 'candidate tree does not match acceptance');
+  try { git(root, ['merge-base', '--is-ancestor', acceptance.sourceCandidate.commit, 'HEAD']); }
+  catch { assert.fail('acceptance candidate is not in the current history'); }
+
+  assert.equal(retention.schemaVersion, 'AgentFirstTrialRetention/v1', 'invalid retention schema');
+  assert.equal(retention.driven_by, 'agent', 'retention must be agent-driven');
+  assert(text(retention.actor) && Array.isArray(retention.files), 'invalid retention provenance');
+  assert.equal(retention.manifestDigest, acceptance.manifestDigest, 'retention manifest differs');
+  assert.equal(retention.files.length, acceptance.rawEvidence.fileCount, 'retention file count differs');
+  const retained = new Map(retention.files.map((entry) => [entry.path, entry.sha256]));
+  assert.equal(retained.get(acceptance.artifacts.aggregate.path), acceptance.artifacts.aggregate.sha256, 'retained aggregate receipt differs');
+
+  assert.equal(aggregate.schemaVersion, 'AgentFirstTrialAggregate/v1', 'invalid aggregate schema');
+  assert.equal(aggregate.manifestDigest, acceptance.manifestDigest, 'aggregate manifest differs');
+  assert.deepEqual(aggregate.sourceCandidate, acceptance.sourceCandidate, 'aggregate candidate differs');
+  assert.equal(aggregate.complete, true, 'aggregate is incomplete');
+  assert.equal(aggregate.recordedTrials, acceptance.protocol.recordedTrials, 'recorded trial count differs');
+  assert.equal(aggregate.expectedTrials, acceptance.protocol.expectedTrials, 'expected trial count differs');
+  assert.equal(aggregate.statistics.run.k, acceptance.protocol.k, 'k differs');
+  assert.equal(aggregate.statistics.run.completeCaseCount, acceptance.protocol.completeCaseCount, 'complete case count differs');
+  assert.equal(aggregate.statistics.run.incompleteCaseCount, 0, 'incomplete cases remain');
+
+  const baseline = aggregate.statistics.perTask, treatment = aggregate.statistics.treatment.perTask;
+  assert(Array.isArray(baseline) && Array.isArray(treatment), 'missing per-arm statistics');
+  const trials = [...baseline.flatMap((entry) => entry.trials.map((trial) => ({ ...trial, taskId: entry.taskId }))),
+    ...treatment.flatMap((entry) => entry.trials.map((trial) => ({ ...trial, taskId: entry.taskId })))];
+  assert.equal(trials.length, aggregate.recordedTrials, 'per-task trials differ from recorded total');
+  assert.equal(new Set(trials.map((trial) => `${trial.taskId}/${trial.arm}/${trial.repeat}`)).size, trials.length, 'duplicate trial identity');
+  for (const trial of trials) assert(['baseline', 'treatment'].includes(trial.arm) && Number.isInteger(trial.repeat) && trial.repeat > 0, 'invalid trial identity');
+  const outcomes = trials.reduce((counts, trial) => ({ ...counts, [trial.outcome]: (counts[trial.outcome] ?? 0) + 1 }), {});
+  assert.deepEqual(outcomes, acceptance.expected.outcomes, 'trial outcomes differ');
+  const failureClasses = Object.fromEntries(['infrastructure', 'task', 'grader', 'agent'].map((name) => [name,
+    (aggregate.statistics.failureClasses[name]?.trialCount ?? 0) + (aggregate.statistics.treatment.failureClasses[name]?.trialCount ?? 0)]));
+  assert.deepEqual(failureClasses, acceptance.expected.failureClasses, 'failure classes differ');
+  assert.equal(aggregate.statistics.status, acceptance.expected.statisticsStatus, 'statistics status differs');
+  assert.equal(aggregate.statistics.aggregate.passK, acceptance.expected.passK, 'pass^k differs');
+  assert.deepEqual(aggregate.statistics.aggregate.confidenceInterval95, acceptance.expected.confidenceInterval95, 'confidence interval differs');
+  assert.equal(aggregate.statistics.pairedDiff.status, acceptance.expected.pairedDiffStatus, 'paired diff status differs');
+  assert.equal(aggregate.statistics.power.status, acceptance.expected.powerStatus, 'power status differs');
+
+  assert.equal(controls.schemaVersion, 'AgentFirstTrialReplayControls/v1', 'invalid replay control schema');
+  assert.equal(controls.driven_by, 'agent', 'replay controls must be agent-driven');
+  assert(text(controls.actor) && controls.passed === true, 'replay controls did not pass');
+  assert.equal(controls.sourceManifestDigest, acceptance.manifestDigest, 'replay controls manifest differs');
+  assert.equal(controls.results.length, acceptance.controls.expectedCount, 'replay control count differs');
+  assert(controls.results.every((row) => row.validBaseline === true && row.rejected === true && text(row.reason)), 'a negative replay control was not rejected');
+
+  let rawVerified = false;
+  if (options.raw) {
+    const report = verifyRetainedRun(resolve(root, options.raw), { root });
+    assert.equal(report.manifestDigest, acceptance.manifestDigest, 'raw retained manifest differs');
+    assert.deepEqual(report, aggregate, 'raw retained aggregate differs from tracked evidence');
+    rawVerified = true;
+  }
+  return { schemaVersion: 'AgentFirstTrialAcceptanceCheck/v1', complete: true, taskId: acceptance.taskId,
+    sourceCandidate: acceptance.sourceCandidate, recordedTrials: aggregate.recordedTrials,
+    controls: controls.results.length, rawVerified };
 }

@@ -1,8 +1,8 @@
 // @vitest-environment node
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { artifactPath, classifyTrial, loadTrialAdapters, validateTrialManifest } from '../../scripts/lib/agent-first-trials.mjs';
+import { artifactPath, classifyTrial, loadTrialAdapters, validateTrialManifest, verifyTrialAcceptance } from '../../scripts/lib/agent-first-trials.mjs';
 import { loadCorpus, sha256 } from '../../scripts/lib/agent-first-task-corpus.mjs';
 
 const root = process.cwd();
@@ -70,5 +70,16 @@ describe('Agent First trial binding and failure attribution', () => {
     expect(sha256(readFileSync(path))).toBe(sha256(readFileSync(join(dir, 'record.json'))));
     expect(() => artifactPath(dir, '../outside.json')).toThrow();
     expect(() => artifactPath(dir, root)).toThrow();
+  });
+
+  it('replays the tracked trial acceptance summary and rejects a changed claim', () => {
+    const acceptance = 'harness/specs/fixtures/agent-first-system/trials/acceptance.json';
+    expect(verifyTrialAcceptance(acceptance, { root })).toMatchObject({ complete: true, taskId: 'TF-0592', recordedTrials: 144, controls: 10, rawVerified: false });
+    const fixture = mkdtempSync('D:/tmp/agent-first-acceptance-test-');
+    cpSync(join(root, 'harness/specs/fixtures/agent-first-system/trials'), fixture, { recursive: true });
+    const target = join(fixture, 'acceptance.json'), value = JSON.parse(readFileSync(target, 'utf8'));
+    value.expected.outcomes.pass = 143;
+    writeFileSync(target, JSON.stringify(value));
+    expect(() => verifyTrialAcceptance(target, { root })).toThrow('trial outcomes differ');
   });
 });

@@ -35,7 +35,7 @@ requiredRules:
 humanEvidence: not-required
 requiredTests:
   - pnpm exec vitest run tests/unit/agent-first-trials.test.ts tests/unit/rsi-tf0592-statistical-adjudication.test.ts tests/unit/agent-first-task-corpus.test.ts --maxWorkers=1
-  - node scripts/agent-first-trials.mjs check --run-dir harness/specs/fixtures/agent-first-system/trials --retained
+  - node scripts/agent-first-trials.mjs verify-acceptance --acceptance harness/specs/fixtures/agent-first-system/trials/acceptance.json
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.extension-qa.config.ts extensions/qa-lab/src/scenario-flow-runner.test.ts extensions/qa-lab/src/suite-startup.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm harness validate --spec harness/specs/tasks/agent-first-isolated-trials.md
@@ -65,3 +65,5 @@ readmeUpdates: not-required
 资源声明保留主机观测值、单任务 timeout、并发和 RSS 监测。硬内存/cpu 限制没有真实实施凭据时只写为未实施，不把声称的 ceiling 当 kernel containment。失败或未跑记录仍进入失败分类和 incomplete 分布。
 
 QA 可选 `onFlowEvent` 回调只观测实际动作和断言，不替代 executor、oracle 或产品 owner。工具 workspaceOnly 和 config patch 仅用于本 trial 的临时配置，正式产品默认值不变。结果属于源宿主/脚本 provider 的实际控制流；定性模型审查与发布仍属于后续独立节点。
+
+`harness/specs/fixtures/agent-first-system/trials/acceptance.json` 是可移植的精选终态摘要，绑定候选、manifest、聚合、retention 与 10 个篡改负例的摘要。完整 per-trial 原始包保留在本地 `.agent-workbench/acceptance-private/agent-first-tf0592/retained02`；`verify-acceptance --raw <path>` 会在原始包存在时从磁盘重算并与其逐项比对。缺少原始包时只验证已提交的精选摘要，不把摘要存在写成完整重放通过。
