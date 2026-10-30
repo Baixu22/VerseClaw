@@ -2,7 +2,7 @@
   <img src="src/assets/logo.png" width="96" height="96" alt="Verse Claw logo" />
 </p>
 
-В Review Center доступен свернутый, явно включаемый Change Context: четыре режима сравнения, комментарии с привязкой к дайджесту и решения проверки. Применение использует существующие разрешения, Git и Coding journal; одобрение не завершает задачи и не сливает код. [Подробнее](docs/modules/workspace-and-coding.md).
+В Review Center доступен свернутый, явно включаемый Change Context: четыре режима сравнения, комментарии с привязкой к дайджесту и решения проверки. Применение использует существующие разрешения, Git и Coding journal; одобрение не завершает задачи и не сливает код. [Подробнее](docs/modules/workspace-and-coding.md). Границы проверки в Windows и откат через отключение функции описаны в [управляемом включении](docs/dev/change-context-review-loop/rollout.md).
 
 # Verse Claw
 

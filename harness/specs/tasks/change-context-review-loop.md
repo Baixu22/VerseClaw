@@ -6,6 +6,7 @@ type: task
 intent: Add a read-only Change Context projection, digest-anchored review comments, explicit comparison modes and a controlled review verdict/Pull Changes loop over existing ClawX owners without introducing a second version-control, task, execution or approval authority.
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+diffBase: origin/main
 requiredRules:
   - contract-first-boundary
   - renderer-main-boundary
@@ -278,6 +279,10 @@ Acceptance:
 Pre-registration: `docs/dev/change-context-review-loop/e2e-plan.md` fixes one
 worker, zero retries, three repeats of all three targeted Electron tests (nine
 executions), with zero failures or skips allowed on the final candidate.
+
+Rollout and feature-gate rollback: `docs/dev/change-context-review-loop/rollout.md`.
+The final TF-0619 bundle records the integrated source candidate, all required
+gates, raw-artifact hashes and the explicit unmeasured platform/provider scope.
 
 ### H. Rollout gate
 

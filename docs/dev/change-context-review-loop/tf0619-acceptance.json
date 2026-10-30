@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF0619",
+  "status": "not-run",
+  "purpose": "Pre-registration placeholder; replaced by disk-read candidate evidence before closure.",
+  "acceptancePlan": "e2e-plan.md",
+  "rolloutPlan": "rollout.md",
+  "claims": []
+}

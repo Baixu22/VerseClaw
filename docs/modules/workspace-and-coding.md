@@ -390,4 +390,7 @@ VG 卡片只读取现有 host binding/observation 和 receipt owner 已接收的
 卡片不运行 VG 或 verifier。缺失、过期、未与当前 immutable candidate 绑定的回执
 保持 partial/unmeasured；stale-read 仅作提示，host verdict 始终 unchanged。
 
+入口关闭和重新加载的回滚行为、评论保留及本次验收范围见
+[受控启用与回滚](../dev/change-context-review-loop/rollout.md)。
+
 延伸阅读：[Verse 系列组件](verse-tools.md)、[资源与可观测性](resources-and-observability.md)、[默认配置矩阵](../dev/default-config-matrix.md)。
