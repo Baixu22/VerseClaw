@@ -1,5 +1,6 @@
 276951cfb9afc3fc35890863b4ea4e4680125b6f2caedd0675713768909d8141  harness/specs/fixtures/agent-first-system/calibration.v1.json
 95297f7546c5a0f5eae03b3c7293484672cdc022158dc1f649b4aa8cc983e9c7  harness/specs/fixtures/agent-first-system/corpus-validation.v1.json
-71e3a2798141b93a52935a921f7ac2a0d66c236eeaee55d968b2e49565f38ed7  harness/specs/fixtures/agent-first-system/credential-scan.json
+66ab04a9884de59beb44be56ce11728734add40d3e65f2e93955c8f4cd621eff  harness/specs/fixtures/agent-first-system/credential-scan.json
+4641d483b6b9dae0f7d4e3afbc8e7ea9f217cc3448404ea5092f57979560e636  harness/specs/fixtures/agent-first-system/development-evidence.v1.json
 4a5a7eff9f561c8fa39d92eb4dbbed1f480154ff197bf269bd079e0405a9e9b4  harness/specs/fixtures/agent-first-system/registry-extension.v1.json
 23a5d16cf66cb16e8096ba434332c9ee7976f59484496ab5b09a2544da39a032  harness/specs/fixtures/agent-first-system/tasks.v1.json
