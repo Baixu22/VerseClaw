@@ -11,6 +11,7 @@ import { recordElectronProcess } from './electron-process-cleanup';
 
 type LaunchElectronOptions = {
   skipSetup?: boolean;
+  skipSeed?: boolean;
   flags?: string[];
   visualMode?: boolean;
   devScenario?: string;
@@ -18,6 +19,9 @@ type LaunchElectronOptions = {
   settingsSectionDelayMs?: number;
   theme?: 'light' | 'dark' | 'system';
   env?: Record<string, string>;
+  profileDir?: string;
+  packaged?: boolean;
+  executablePath?: string;
 };
 
 type IpcMockConfig = {
@@ -379,7 +383,8 @@ async function launchVerseClawElectron(
   userDataDir: string,
   options: LaunchElectronOptions = {},
 ): Promise<ElectronApplication> {
-  await seedE2eSettings(userDataDir, options.theme);
+  const profileDir = options.profileDir ?? userDataDir;
+  if (!options.skipSeed) await seedE2eSettings(profileDir, options.theme);
   const hostApiPort = await allocatePort();
   const cdpPort = await allocatePort();
   const electronEnv = process.platform === 'linux'
@@ -389,18 +394,18 @@ async function launchVerseClawElectron(
     }
     : {};
   const app = await electron.launch({
-    executablePath: String(electronBinaryPath),
+    executablePath: options.executablePath ?? String(electronBinaryPath),
     args: [
       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.
       ...(process.platform === 'win32' ? ['--no-sandbox'] : []),
-      `--user-data-dir=${userDataDir}`,
+      `--user-data-dir=${profileDir}`,
       '--lang=en-US',
       '--disable-gpu',
       '--disable-gpu-compositing',
       '--disable-software-rasterizer',
       '--in-process-gpu',
       '--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization',
-      electronEntry,
+      ...(options.packaged ? [] : [electronEntry]),
     ],
     env: envWithoutUndefined({
       ...process.env,
@@ -425,7 +430,7 @@ async function launchVerseClawElectron(
       ...(typeof options.settingsSectionDelayMs === 'number'
         ? { CLAWX_E2E_SETTINGS_SECTION_DELAY_MS: String(Math.max(0, Math.round(options.settingsSectionDelayMs))) }
         : {}),
-      VERSE_CLAW_USER_DATA_DIR: userDataDir,
+      VERSE_CLAW_USER_DATA_DIR: profileDir,
       ...(options.skipSetup ? { VERSE_CLAW_E2E_SKIP_SETUP: '1' } : {}),
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(hostApiPort),
       VERSE_CLAW_REMOTE_DEBUGGING_PORT: String(cdpPort),
@@ -515,7 +520,7 @@ export const test = base.extend<ElectronFixtures>({
         // Most production-path specs use this explicit launcher instead of the
         // `electronApp` fixture. Keep the FP-P3-05 stale-runtime guard on both
         // paths so a direct launch cannot silently test an older child bundle.
-        await assertRuntimeDistFresh();
+        if (!options?.packaged) await assertRuntimeDistFresh();
         const app = await launchVerseClawElectron(homeDir, userDataDir, options);
         const entry = { app, closed: false };
         app.once('close', () => {

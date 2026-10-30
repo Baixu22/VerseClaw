@@ -26,6 +26,7 @@ async function candidate() {
   const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 }).trim();
   const commit = git('rev-parse', 'HEAD');
   const dirty = git('status', '--porcelain').length > 0;
+  const operational = process.env.CLAWX_SPACE_BUNNY_OPERATIONAL === '1';
   assert(!dirty || process.env.CLAWX_SPACE_BUNNY_PREFLIGHT === '1', 'Acceptance requires a clean committed candidate');
   const files: Array<{ path: string; sha256: string; bytes: number }> = [];
   const sources = git('ls-files').split('\n').filter(file =>
@@ -50,10 +51,10 @@ async function candidate() {
   const stamp = JSON.parse(await readFile('openclaw_runtime/dist/.buildstamp', 'utf8'));
   if (!dirty && process.env.CLAWX_SPACE_BUNNY_PREFLIGHT !== '1') assert.equal(stamp.head, commit, 'Runtime build is not bound to the clean candidate');
   const binding = { commit, tree: git('rev-parse', 'HEAD^{tree}'), dirty,
-    grade: dirty ? 'diagnostic-preflight-not-acceptance' : 'source-host-acceptance',
+    grade: dirty ? 'diagnostic-preflight-not-acceptance' : operational ? 'source-host-operational' : 'source-host-acceptance',
     sourceCount, buildCount: files.length - sourceCount, runtimeBuildStamp: stamp,
     inputDigest: createHash('sha256').update(JSON.stringify(files)).digest('hex') };
-  if (!dirty) {
+  if (!dirty && !operational) {
     const proofPath = process.env.CLAWX_SPACE_BUNNY_BUILD_PROOF;
     assert(proofPath, 'A sealed fresh-build proof is required for acceptance');
     const proof = JSON.parse(await readFile(proofPath, 'utf8'));
@@ -446,7 +447,11 @@ test.describe('space-bunny Responses acceptance', () => {
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
       await prepare(page, proxy, workspace);
       await observeRuntime(page);
-      for (const type of ['timeout', 'cancel', '401', '404', '429', '500', '504', 'malformed', 'drop'] as ResponsesFault[]) {
+      const allFaultTypes: ResponsesFault[] = ['timeout', 'cancel', '401', '404', '429', '500', '504', 'malformed', 'drop'];
+      const requestedFaults = (process.env.CLAWX_SPACE_BUNNY_FAULTS ?? '').split(',').map((value) => value.trim()).filter(Boolean);
+      const faultTypes = requestedFaults.length > 0 ? allFaultTypes.filter((type) => requestedFaults.includes(type)) : allFaultTypes;
+      expect(faultTypes.length).toBeGreaterThan(0);
+      for (const type of faultTypes) {
         await page.getByTestId('sidebar-new-chat').click();
         const marker = `FAULT_${type}_${randomUUID().slice(0, 8)}`;
         const start = proxy.observations.length;
