@@ -45,15 +45,19 @@ test('opt-in context comparisons and visible comment freshness never move an anc
       await page.getByTestId('change-context-mode').selectOption(mode);
       if (mode !== 'last-turn') await page.getByTestId('change-context-revision').fill('base');
       await page.getByTestId('change-context-load').click();
+      await page.getByTestId('comment-anchor-state').scrollIntoViewIfNeeded();
       await expect(page.getByTestId('comment-anchor-state')).toHaveText('Live anchor');
+      await expect(page.getByTestId('comment-anchor-state')).toBeVisible();
     }
     fixtures[listKey] = { success: true, storeState: 'available', comments: [{ comment, anchorState: 'stale', anchorIssues: [] }] };
     await installIpcMocks(app, { hostApi: fixtures });
     await page.getByTestId('comments-refresh').click();
+    await page.getByTestId('comment-anchor-state').scrollIntoViewIfNeeded();
     await expect(page.getByTestId('comment-anchor-state')).toHaveText('Stale anchor');
+    await expect(page.getByTestId('comment-anchor-state')).toBeVisible();
     await expect(page.getByTestId('review-comment')).toContainText('src/example.ts:1–1');
     await expect(page.getByTestId('comment-reanchor')).toBeVisible();
-    await page.getByTestId('change-context').screenshot({ path: testInfo.outputPath('anchor-stale.png') });
+    await page.getByTestId('review-comment').screenshot({ path: testInfo.outputPath('anchor-stale.png') });
     await page.getByTestId('change-context-toggle').click();
     await expect(page.getByTestId('change-context-projection')).toHaveCount(0);
   } finally { await closeElectronApp(app); }

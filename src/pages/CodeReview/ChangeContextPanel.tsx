@@ -78,7 +78,7 @@ function ActiveChangeContextPanel() {
     };
   }
 
-  return <section data-testid="change-context" className="border-b border-border p-4">
+  return <section data-testid="change-context" className="max-h-[60vh] shrink-0 overflow-auto border-b border-border p-4">
     <button type="button" data-testid="change-context-toggle" className={buttonClass} aria-expanded={enabled} disabled={busy}
       onClick={() => { setEnabled(!enabled); setProjection(null); setComments([]); setError(''); }}>
       {t('changeContext.title')}
@@ -86,14 +86,14 @@ function ActiveChangeContextPanel() {
     {enabled && <fieldset disabled={busy} className="mt-3 space-y-3">
       <p className="text-sm text-muted-foreground">{t('changeContext.optIn')}</p>
       <div className="flex flex-wrap gap-2">
-        <input aria-label={t('changeContext.session')} data-testid="change-context-session" className={inputClass}
+        <input aria-label={t('changeContext.session')} placeholder={t('changeContext.session')} data-testid="change-context-session" className={inputClass}
           value={sessionKey} onChange={(event) => { setSessionKey(event.target.value); setProjection(null); setComments([]); }} />
         <select aria-label={t('changeContext.mode')} data-testid="change-context-mode" className={inputClass} value={mode}
           onChange={(event) => { setMode(event.target.value as ChangeContextComparisonMode); setProjection(null); setComments([]); }}>
           {CHANGE_CONTEXT_COMPARISON_MODES.map((value) => <option key={value} value={value}>{t(`changeContext.modes.${value}`)}</option>)}
         </select>
         {mode !== 'last-turn' && <input data-testid="change-context-revision" aria-label={t('changeContext.revision')}
-          className={inputClass} value={revision} onChange={(event) => { setRevision(event.target.value); setProjection(null); setComments([]); }} />}
+          placeholder={t('changeContext.revision')} className={inputClass} value={revision} onChange={(event) => { setRevision(event.target.value); setProjection(null); setComments([]); }} />}
         <button type="button" data-testid="change-context-load" className={buttonClass} disabled={busy || !sessionKey.trim()}
           onClick={() => void perform(async () => {
             setVerdict(null); setPullState('');
@@ -112,7 +112,7 @@ function ActiveChangeContextPanel() {
         <ul className="text-sm">{projection.diff?.files.map((file) => <li key={file.path}>{file.path}</li>)}</ul>
         {projection.diff?.patchArtifacts.map((patch, index) => <pre key={index} className="max-h-60 overflow-auto rounded-md bg-surface-modal p-3 text-xs">{patch.patch ?? patch.message}</pre>)}
         <div className="flex flex-wrap gap-2">
-          <input aria-label={t('changeContext.taskNode')} data-testid="review-task-node" className={inputClass} value={nodeId} onChange={(event) => setNodeId(event.target.value)} />
+          <input aria-label={t('changeContext.taskNode')} placeholder={t('changeContext.taskNode')} data-testid="review-task-node" className={inputClass} value={nodeId} onChange={(event) => setNodeId(event.target.value)} />
           {(['approve', 'request_changes', 'comment_only'] as const).map((decision) => <button type="button" key={decision} data-testid={`review-verdict-${decision}`} className={buttonClass} disabled={busy || !projection.reviewedDigest}
             onClick={() => void perform(async () => {
               const result = await hostApi.changeContext.submitVerdict({ ...identity, contextId: projection.contextId, reviewedDigest: projection.reviewedDigest!, author, decision,
@@ -125,8 +125,8 @@ function ActiveChangeContextPanel() {
         {verdict && <p data-testid="review-verdict-result" className="text-sm">{t(`changeContext.verdicts.${verdict.decision}`)}{verdict.taskLedgerLink ? ` · ${verdict.taskLedgerLink.taskLedgerNodeId}` : ''}</p>}
         <p className="text-sm text-muted-foreground">{t('changeContext.verdictBoundary')}</p>
         <div className="flex flex-wrap gap-2">
-          <input aria-label={t('changeContext.destinationHead')} data-testid="pull-head" className={inputClass} value={destinationHead} onChange={(event) => setDestinationHead(event.target.value)} />
-          <input aria-label={t('changeContext.approval')} data-testid="pull-approval" className={inputClass} value={approvalId} onChange={(event) => setApprovalId(event.target.value)} />
+          <input aria-label={t('changeContext.destinationHead')} placeholder={t('changeContext.destinationHead')} data-testid="pull-head" className={inputClass} value={destinationHead} onChange={(event) => setDestinationHead(event.target.value)} />
+          <input aria-label={t('changeContext.approval')} placeholder={t('changeContext.approval')} data-testid="pull-approval" className={inputClass} value={approvalId} onChange={(event) => setApprovalId(event.target.value)} />
           {projection.diff?.patchArtifacts.map((patch, index) => <button type="button" key={index} className={buttonClass} data-testid="pull-changes" disabled={busy || patch.completeness !== 'complete' || patch.contentKind !== 'text' || !destinationHead.trim() || pullState === 'recovery_required'}
             onClick={() => void perform(async () => {
               const result = await hostApi.changeContext.pullChanges({ ...identity, contextId: projection.contextId, patchArtifact: patch,
@@ -138,10 +138,10 @@ function ActiveChangeContextPanel() {
         {pullState && <p data-testid="pull-state" className="text-sm">{t(`changeContext.pullStates.${pullState}`)}</p>}
         <h2 className="font-serif font-normal tracking-tight">{t('reviewComments.title')}</h2>
         <div className="flex flex-wrap gap-2">
-          <input data-testid="comment-path" aria-label={t('changeContext.path')} className={inputClass} value={path} onChange={(event) => setPath(event.target.value)} />
-          <input data-testid="comment-start" aria-label={t('changeContext.startLine')} className={inputClass} type="number" min={1} value={startLine} onChange={(event) => setStartLine(Number(event.target.value))} />
-          <input data-testid="comment-end" aria-label={t('changeContext.endLine')} className={inputClass} type="number" min={startLine} value={endLine} onChange={(event) => setEndLine(Number(event.target.value))} />
-          <input data-testid="comment-body" aria-label={t('changeContext.comment')} className={inputClass} value={body} onChange={(event) => setBody(event.target.value)} />
+          <input data-testid="comment-path" aria-label={t('changeContext.path')} placeholder={t('changeContext.path')} className={inputClass} value={path} onChange={(event) => setPath(event.target.value)} />
+          <label className="text-xs text-muted-foreground">{t('changeContext.startLine')}<input data-testid="comment-start" className={inputClass} type="number" min={1} value={startLine} onChange={(event) => setStartLine(Number(event.target.value))} /></label>
+          <label className="text-xs text-muted-foreground">{t('changeContext.endLine')}<input data-testid="comment-end" className={inputClass} type="number" min={startLine} value={endLine} onChange={(event) => setEndLine(Number(event.target.value))} /></label>
+          <input data-testid="comment-body" aria-label={t('changeContext.comment')} placeholder={t('changeContext.comment')} className={inputClass} value={body} onChange={(event) => setBody(event.target.value)} />
           <button type="button" data-testid="comment-create" className={buttonClass} disabled={busy || !body.trim() || !path.trim()}
             onClick={() => void perform(async () => {
               const result = await hostApi.changeContext.createComment({ ...identity, contextId: projection.contextId, body, author, anchor: await anchor() });
