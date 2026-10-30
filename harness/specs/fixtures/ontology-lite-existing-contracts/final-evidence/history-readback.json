@@ -1,0 +1,108 @@
+{
+  "schema": "SemanticHistoryReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts-final-01a18d03",
+  "checkedAt": "2026-10-30T15:40:49.863Z",
+  "historical": [
+    {
+      "path": "harness/specs/fixtures/ontology-lite-existing-contracts/research",
+      "hashEntries": 2,
+      "unchangedSince": "2427ab157c4699bfaa451ecd62554b741816b783",
+      "manifestSha256": "0c1cc837d10eb4ef3d8b9ff9c85e5287a39ea460abc28091fc28a938a575d626"
+    },
+    {
+      "path": "harness/specs/fixtures/ontology-lite-existing-contracts/source-audit",
+      "hashEntries": 4,
+      "unchangedSince": "2427ab157c4699bfaa451ecd62554b741816b783",
+      "manifestSha256": "73bf6e2365cad618385981fa9e645404088530ac155aa610323afc0966db3ed5"
+    },
+    {
+      "path": "harness/specs/fixtures/ontology-lite-existing-contracts/constraint-audit",
+      "hashEntries": 4,
+      "unchangedSince": "2427ab157c4699bfaa451ecd62554b741816b783",
+      "manifestSha256": "e4ea61544ec1b1c2fb835ef3773c8078321ba91dd4cfcf4f7074f300e4d1e9f1"
+    },
+    {
+      "path": "harness/specs/fixtures/ontology-lite-existing-contracts/provenance-audit",
+      "hashEntries": 5,
+      "unchangedSince": "2427ab157c4699bfaa451ecd62554b741816b783",
+      "manifestSha256": "d5187a2e01623a20bc94b10e89348996c208936a683e77dfff7dd4e57ad2acec"
+    }
+  ],
+  "originalPreservation": {
+    "files": [
+      {
+        "path": "docs/clawx-product-semantics.md",
+        "working": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-source\\docs\\clawx-product-semantics.md",
+          "bytes": 38569,
+          "rawSha256": "da975f1c77f1cd7348d68056ae440a4ae15cc52d8489fda239f6fe3ac1d324a5"
+        },
+        "index": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-index\\docs\\clawx-product-semantics.md",
+          "rawSha256": "865a00f709485ffde589a6ee4b3c52039af68fc24038968d593453d53bfcbbca"
+        },
+        "plannedCandidate": "515176b1383a6fc6cc845c3ea1b9ce778eb601a1",
+        "plannedCanonicalSha256": "c2ca368f24a0df7dd69f5dea2fd6b382fa81f2133ea3abef3251269eb392babd",
+        "canonicalPreserved": true
+      },
+      {
+        "path": "shared/product-semantics.ts",
+        "working": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-source\\shared\\product-semantics.ts",
+          "bytes": 30572,
+          "rawSha256": "b251bfd36acef1ffe2249f6c3f3cd6959cdbc47a910dec50143846324cd3430b"
+        },
+        "index": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-index\\shared\\product-semantics.ts",
+          "rawSha256": "12a32f9ac1cd392503cfc9894a42f3af8a5135a67cbfcedfb5143f7a4e9df506"
+        },
+        "plannedCandidate": "515176b1383a6fc6cc845c3ea1b9ce778eb601a1",
+        "plannedCanonicalSha256": "b251bfd36acef1ffe2249f6c3f3cd6959cdbc47a910dec50143846324cd3430b",
+        "canonicalPreserved": true
+      },
+      {
+        "path": "tests/unit/product-semantics.test.ts",
+        "working": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-source\\tests\\unit\\product-semantics.test.ts",
+          "bytes": 9541,
+          "rawSha256": "3c087161b68408b32435f8771d9328c1c63b02d7ddc803306bc8e0ece244ac11"
+        },
+        "index": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-index\\tests\\unit\\product-semantics.test.ts",
+          "rawSha256": "231aa5ea58a041b7c1f16c6ae3377197639315c432594c01e672e5bb647fdcb7"
+        },
+        "plannedCandidate": "515176b1383a6fc6cc845c3ea1b9ce778eb601a1",
+        "plannedCanonicalSha256": "3c087161b68408b32435f8771d9328c1c63b02d7ddc803306bc8e0ece244ac11",
+        "canonicalPreserved": true
+      },
+      {
+        "path": "harness/specs/guides/ontology-agent-systems-research.md",
+        "working": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-source\\harness\\specs\\guides\\ontology-agent-systems-research.md",
+          "bytes": 6372,
+          "rawSha256": "2ea7f847d7da8de15bd4d3dc59dfad18e5dfd0f8e2cbb203b796827d1428418c"
+        },
+        "index": null,
+        "plannedCandidate": "515176b1383a6fc6cc845c3ea1b9ce778eb601a1",
+        "plannedCanonicalSha256": "2ea7f847d7da8de15bd4d3dc59dfad18e5dfd0f8e2cbb203b796827d1428418c",
+        "canonicalPreserved": true
+      },
+      {
+        "path": "harness/specs/tasks/ontology-informed-product-semantics.md",
+        "working": {
+          "recovery": "D:\\tmp\\ontology-practice-20261030\\original-source\\harness\\specs\\tasks\\ontology-informed-product-semantics.md",
+          "bytes": 1984,
+          "rawSha256": "6999dcc5b22222fbddfa6832bce9329761f8741928c5ef71d8c5010ac2cc45f9"
+        },
+        "index": null,
+        "plannedCandidate": "515176b1383a6fc6cc845c3ea1b9ce778eb601a1",
+        "plannedCanonicalSha256": "6999dcc5b22222fbddfa6832bce9329761f8741928c5ef71d8c5010ac2cc45f9",
+        "canonicalPreserved": true
+      }
+    ],
+    "workingCopies": 5,
+    "indexCopies": 3
+  },
+  "policy": "Old candidate/verdict/hash are unchanged; old source hashes refer to their original Git candidates, never to the current source."
+}

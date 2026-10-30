@@ -1,0 +1,109 @@
+{
+  "schema": "SemanticCompatibilityReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts-final-01a18d03",
+  "checkedAt": "2026-10-30T15:40:49.862Z",
+  "candidate": {
+    "commit": "0adbaf7f56240d567893fcb96daf3123237466aa",
+    "tree": "6f334621f253860d9f7cf731d0e337f88f92ca91",
+    "dirty": false
+  },
+  "comparisonBase": "515176b1383a6fc6cc845c3ea1b9ce778eb601a1",
+  "changedPaths": [
+    "README.ja-JP.md",
+    "README.md",
+    "README.ru-RU.md",
+    "README.zh-CN.md",
+    "docs/clawx-product-semantics.md",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/constraint-audit/SHA256SUMS",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/constraint-audit/checks.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/constraint-audit/constraint-readback.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/constraint-audit/credential-scan.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/constraint-audit/manifest.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/provenance-audit/SHA256SUMS",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/provenance-audit/checks.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/provenance-audit/credential-scan.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/provenance-audit/manifest.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/provenance-audit/report-controls.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/provenance-audit/semantic-report.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/relations.invalid.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/relations.valid.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/source-audit/SHA256SUMS",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/source-audit/checks.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/source-audit/credential-scan.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/source-audit/manifest.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/source-audit/original-preservation.json",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/sources.json",
+    "harness/specs/guides/ontology-lite-existing-contracts-research.md",
+    "harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+    "scripts/check-evidence-refs.d.mts",
+    "scripts/check-evidence-refs.mjs",
+    "shared/product-semantics.ts",
+    "tests/unit/evidence-refs-exist.test.ts",
+    "tests/unit/product-semantics.test.ts"
+  ],
+  "productPathsChanged": [],
+  "unchangedOwners": [
+    "shared/types/identity-scope.ts",
+    "shared/types/task-ledger-reference.ts",
+    "shared/permission-effect-contract.ts",
+    "src",
+    "electron",
+    "openclaw_runtime",
+    "shared/agent-first",
+    "scripts/agent-first"
+  ],
+  "conceptsAndSixRelationsUnchanged": true,
+  "existingTaskAndPermissionFunctionsUnchanged": true,
+  "consumerSearch": {
+    "command": "rg -n PRODUCT_SEMANTIC_RELATIONS src electron openclaw_runtime/src shared scripts tests -g *.ts -g *.tsx -g *.mjs",
+    "output": "scripts\\check-evidence-refs.mjs:82:    const { PRODUCT_SEMANTIC_CONTRACT_VERSION, PRODUCT_SEMANTIC_RELATIONS, productSemanticRelationKey, validateProductSemanticRelations } = semanticContract(root);\nscripts\\check-evidence-refs.mjs:91:    if (!isDeepStrictEqual(report.relationKeys, PRODUCT_SEMANTIC_RELATIONS.map(productSemanticRelationKey))) rejectSource('relationKeys', 'relation-coverage', 'The input must cover exactly the six existing directed relations.');\nshared\\product-semantics.ts:180:export const PRODUCT_SEMANTIC_RELATIONS = [\nshared\\product-semantics.ts:231:    kind: new Set<string>(PRODUCT_SEMANTIC_RELATIONS.map(({ kind }) => kind)),\nshared\\product-semantics.ts:232:    authorityBoundary: new Set<string>(PRODUCT_SEMANTIC_RELATIONS.map(({ authorityBoundary }) => authorityBoundary)),\nshared\\product-semantics.ts:268:      const declared = PRODUCT_SEMANTIC_RELATIONS.find(row =>\nshared\\product-semantics.ts:331:      const key = productSemanticRelationKey(PRODUCT_SEMANTIC_RELATIONS.find(row => row.kind === 'quality-gated-by')!);\ntests\\unit\\product-semantics.test.ts:9:  PRODUCT_SEMANTIC_RELATIONS,\ntests\\unit\\product-semantics.test.ts:22:    expect(validateProductSemanticRelations(PRODUCT_SEMANTIC_RELATIONS).valid).toBe(true);\ntests\\unit\\product-semantics.test.ts:30:    expect(PRODUCT_SEMANTIC_RELATIONS.some(row => String(row.from) === 'plan-mode')).toBe(false);\ntests\\unit\\product-semantics.test.ts:57:      PRODUCT_SEMANTIC_RELATIONS.map(({ from, kind, to }) => `${from}:${kind}:${to}`),\ntests\\unit\\product-semantics.test.ts:105:    const keys = PRODUCT_SEMANTIC_RELATIONS.map(({ from, kind, to }) => [from, kind, to].join(':'));\ntests\\unit\\product-semantics.test.ts:107:    for (const relation of PRODUCT_SEMANTIC_RELATIONS) {\ntests\\unit\\product-semantics.test.ts:113:    expect(PRODUCT_SEMANTIC_RELATIONS.filter(({ from }) => String(from) === 'task-ledger')).toHaveLength(0);\ntests\\unit\\product-semantics.test.ts:114:    expect(PRODUCT_SEMANTIC_RELATIONS.find(({ kind, to }) => kind === 'references-one-way' && to === 'task-ledger')).toMatchObject({\n",
+    "productionConsumers": 0,
+    "offlineConsumer": "scripts/check-evidence-refs.mjs"
+  },
+  "readmeReview": [
+    {
+      "path": "README.md",
+      "status": "pass",
+      "reason": "Static gate described; runtime owners, authorization and frozen defaults remain unchanged.",
+      "canonicalSha256": "03903efa4e847af49cd276cf1eae609b9d1c3d74dc05ea07383859833274bdbc"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "status": "pass",
+      "reason": "Static gate described; runtime owners, authorization and frozen defaults remain unchanged.",
+      "canonicalSha256": "b82d2ddd81de9bdc3f28096e1ed04af5a71ae893ae62fe8bcf503b986057fd25"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "status": "pass",
+      "reason": "Static gate described; runtime owners, authorization and frozen defaults remain unchanged.",
+      "canonicalSha256": "ce1f134c1382d002f41d2b305b258fd05f91b887fbb0244c66f6ccb070e10ca1"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "status": "pass",
+      "reason": "Static gate described; runtime owners, authorization and frozen defaults remain unchanged.",
+      "canonicalSha256": "3023e1f4168ee06d72003067ba14636d369ca81664dee6b447487a5b5a840112"
+    }
+  ],
+  "ownerRegression": {
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0,
+    "files": [
+      "C:/Users/27933/.codex/worktrees/ontology-contracts/ClawX/tests/unit/permission-effect-wiring.test.ts",
+      "C:/Users/27933/.codex/worktrees/ontology-contracts/ClawX/tests/unit/routing-memo.test.ts",
+      "C:/Users/27933/.codex/worktrees/ontology-contracts/ClawX/tests/unit/task-loop-upgrade.test.ts"
+    ]
+  },
+  "limitations": [
+    "Static declarations and source bytes only; no owner-store, runtime receipt, actual task completion or grant was verified.",
+    "No Electron confirmation journey was executed in this source audit.",
+    "No live Chat/ledger refresh receipt; source references do not establish task completion.",
+    "No live plan/edit journey; this does not prove an editable DAG or transactional rollback.",
+    "No live Task Loop execution; a successful run alone is not a completed task.",
+    "The contract and coordinator reference path are source-backed, but a complete scheduling-card-to-ledger production journey and an inheritance writer were not established; documented-only for that claim.",
+    "No live same-session receipt; blocked terminal evidence can represent poor quality and is not task completion."
+  ]
+}

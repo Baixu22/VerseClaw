@@ -1,0 +1,89 @@
+{
+  "schema": "SemanticValidationEnvironment/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts-final-01a18d03",
+  "candidate": {
+    "commit": "0adbaf7f56240d567893fcb96daf3123237466aa",
+    "tree": "6f334621f253860d9f7cf731d0e337f88f92ca91",
+    "dirty": false
+  },
+  "node": "v24.22.1",
+  "pnpm": "11.2.2",
+  "TEMP": "D:/tmp",
+  "TMP": "D:/tmp",
+  "GOMAXPROCS": "4",
+  "workerCount": 1,
+  "dependencyReuse": {
+    "nodeModules": "D:\\ClawX\\node_modules",
+    "runtimeNodeModules": "D:\\ClawX\\openclaw_runtime\\node_modules",
+    "verseBrowserDist": "D:/ClawX/packages/versebrowser/dist",
+    "sourceFilesCompared": 280,
+    "canonicalSourceParity": true,
+    "freshInstall": false
+  },
+  "isolation": {
+    "projection": "D:/tmp/ontology-practice-20261030/runs/final/source-projection-0adbaf7f5",
+    "commit": "0adbaf7f56240d567893fcb96daf3123237466aa",
+    "tree": "6f334621f253860d9f7cf731d0e337f88f92ca91",
+    "dirty": false,
+    "privateTaskForestPresent": false,
+    "privateHandoffPresent": false,
+    "testsPassed": 142,
+    "typecheck": {
+      "success": true,
+      "mode": "parallel",
+      "testTypes": {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 54011,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\source-projection-0adbaf7f5\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      },
+      "cache": {
+        "enabled": false,
+        "status": "disabled",
+        "key": "0bf4f26c970c479d6542e74ed0c9e9881c2440bfe71c4232e8271d2542c6b71e",
+        "inputCount": 12865,
+        "report": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\source-projection-0adbaf7f5\\artifacts\\typecheck-cache\\report.json"
+      },
+      "totalDurationMs": 61104,
+      "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+      "results": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 90
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 44879
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 6282
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 54011,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\source-projection-0adbaf7f5\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    }
+  },
+  "observedInfrastructureFailure": {
+    "run": "D:/tmp/ontology-practice-20261030/runs/final/clean-0adbaf7f5",
+    "failedTest": "missing-limitations",
+    "durationMs": 73159.53,
+    "testTimeoutMs": 30000,
+    "cpuLoadObserved": 100,
+    "classification": "Observed timeout under saturated host load; precise cause not independently measured.",
+    "sameCandidateRerunPassed": true,
+    "timeoutOrAssertionsChanged": false
+  }
+}

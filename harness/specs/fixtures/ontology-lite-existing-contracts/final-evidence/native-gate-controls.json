@@ -1,0 +1,153 @@
+{
+  "schema": "NativeSemanticGateControls/v1",
+  "driven_by": "agent",
+  "actor": "codex-ontology-contracts-final-01a18d03",
+  "checkedAt": "2026-10-30T15:40:49.861Z",
+  "candidate": {
+    "commit": "0adbaf7f56240d567893fcb96daf3123237466aa",
+    "tree": "6f334621f253860d9f7cf731d0e337f88f92ca91",
+    "dirty": false
+  },
+  "controls": [
+    {
+      "id": "valid-native",
+      "command": "node scripts/check-evidence-refs.mjs --write-semantic-report D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\positive-report.json",
+      "argv": [
+        "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\scripts\\check-evidence-refs.mjs",
+        "--root",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\fixture",
+        "--write-semantic-report",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\positive-report.json"
+      ],
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "expectedRule": null,
+      "fixtureCandidate": {
+        "commit": "e28fd95e9d7293ec260a193890980ee29d450c49",
+        "tree": "6b7ad8744c490d633d54abc6961f5095d42cf1a2",
+        "dirty": false
+      },
+      "oldPathGatePassed": true,
+      "diagnostics": "",
+      "log": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\valid-native.log",
+      "logSha256": "13f6f11ee8cd215639d2de06ab461597c1fb65373877b35377c8723430e08875"
+    },
+    {
+      "id": "wrong-relation",
+      "command": "node scripts/check-evidence-refs.mjs ",
+      "argv": [
+        "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\scripts\\check-evidence-refs.mjs",
+        "--root",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\fixture"
+      ],
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "expectedRule": "authority-combination",
+      "fixtureCandidate": {
+        "commit": "79ef0585f2dfa20f88c0e3173aba121ef26d326d",
+        "tree": "708c6dd5f3232320543829e3b0b10405947063e2",
+        "dirty": false
+      },
+      "oldPathGatePassed": true,
+      "diagnostics": "[semantic-evidence] FAIL [{\"relationKey\":\"chat:suggests-upgrade-to:task-loop\",\"field\":\"authorityBoundary\",\"rule\":\"authority-combination\",\"message\":\"The authority boundary does not match this directed relation.\"},{\"relationKey\":\"$contract\",\"field\":\"checks\",\"rule\":\"checks-required\",\"message\":\"Every declared relation, source and candidate check must be present and successful.\"},{\"relationKey\":\"$contract\",\"field\":\"status\",\"rule\":\"report-status\",\"message\":\"An invalid or incomplete report cannot be a pass.\"}]",
+      "log": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\wrong-relation.log",
+      "logSha256": "1a6681031c10d6bb830fa99b6b1b4dd45ab81ed3c54ec2001cf35d0f63c3a2af"
+    },
+    {
+      "id": "stale-source",
+      "command": "node scripts/check-evidence-refs.mjs --semantic-report D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\stale-report.json",
+      "argv": [
+        "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\scripts\\check-evidence-refs.mjs",
+        "--root",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\fixture",
+        "--semantic-report",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\stale-report.json"
+      ],
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "expectedRule": "source-digest",
+      "fixtureCandidate": {
+        "commit": "5a5c8981827f31229a6ac54a3072412a29d28580",
+        "tree": "df0cb3874aeb51b51192ccab531572a8d58cb91e",
+        "dirty": false
+      },
+      "oldPathGatePassed": true,
+      "diagnostics": "[semantic-evidence] FAIL [{\"relationKey\":\"$contract\",\"field\":\"candidate\",\"rule\":\"candidate-mismatch\",\"message\":\"The report does not identify this current clean candidate.\"},{\"relationKey\":\"$contract\",\"field\":\"sourceRefs\",\"rule\":\"source-digest\",\"message\":\"Source paths or their candidate/canonical digests do not match.\"}]",
+      "log": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\stale-source.log",
+      "logSha256": "386d3a8ccaa5c694ffd709633c98869f5249a6be9b2a055dd292e3d9d9025ba2"
+    },
+    {
+      "id": "empty-report",
+      "command": "node scripts/check-evidence-refs.mjs --semantic-report D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\empty-report.json",
+      "argv": [
+        "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\scripts\\check-evidence-refs.mjs",
+        "--root",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\fixture",
+        "--semantic-report",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\empty-report.json"
+      ],
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "expectedRule": "report-version",
+      "fixtureCandidate": {
+        "commit": "93dab1cf61e561128bcfd2c074202f0b1c880916",
+        "tree": "6b7ad8744c490d633d54abc6961f5095d42cf1a2",
+        "dirty": false
+      },
+      "oldPathGatePassed": true,
+      "diagnostics": "[semantic-evidence] FAIL [{\"relationKey\":\"$contract\",\"field\":\"contractVersion\",\"rule\":\"report-version\",\"message\":\"Unsupported report or semantic contract version.\"},{\"relationKey\":\"$contract\",\"field\":\"actor\",\"rule\":\"actor-required\",\"message\":\"The report must identify its actual agent actor.\"},{\"relationKey\":\"$contract\",\"field\":\"command\",\"rule\":\"command-required\",\"message\":\"The executed audit command is required.\"},{\"relationKey\":\"$contract\",\"field\":\"checkedAt\",\"rule\":\"report-time\",\"message\":\"A valid check timestamp is required.\"},{\"relationKey\":\"$contract\",\"field\":\"hashPolicy\",\"rule\":\"hash-policy\",\"message\":\"Hash algorithm and normalization must match the canonical evidence policy.\"},{\"relationKey\":\"$contract\",\"field\":\"candidate\",\"rule\":\"candidate-mismatch\",\"message\":\"The report does not identify this current clean candidate.\"},{\"relationKey\":\"$contract\",\"field\":\"relationKeys\",\"rule\":\"relation-coverage\",\"message\":\"Relation keys and owner references differ from current source declarations.\"},{\"relationKey\":\"$contract\",\"field\":\"relationSources\",\"rule\":\"relation-coverage\",\"message\":\"Relation keys and owner references differ from current source declarations.\"},{\"relationKey\":\"$contract\",\"field\":\"sourceRefs\",\"rule\":\"source-digest\",\"message\":\"Source references and canonical digests are required.\"},{\"relationKey\":\"$contract\",\"field\":\"checks\",\"rule\":\"checks-required\",\"message\":\"Every declared relation, source and candidate check must be present and successful.\"},{\"relationKey\":\"$contract\",\"field\":\"status\",\"rule\":\"report-status\",\"message\":\"An invalid or incomplete report cannot be a pass.\"},{\"relationKey\":\"$contract\",\"field\":\"unverified\",\"rule\":\"limitations-required\",\"message\":\"Every source-declared static-evidence limitation must remain explicit.\"}]",
+      "log": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\empty-report.log",
+      "logSha256": "0ec7221e4d4ec8ecbe01186b44c2755336c26bac4577f2860c7a7c75d08e03a1"
+    },
+    {
+      "id": "omitted-check",
+      "command": "node scripts/check-evidence-refs.mjs --semantic-report D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\omitted-report.json",
+      "argv": [
+        "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\scripts\\check-evidence-refs.mjs",
+        "--root",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\fixture",
+        "--semantic-report",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\omitted-report.json"
+      ],
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "expectedRule": "checks-required",
+      "fixtureCandidate": {
+        "commit": "93dab1cf61e561128bcfd2c074202f0b1c880916",
+        "tree": "6b7ad8744c490d633d54abc6961f5095d42cf1a2",
+        "dirty": false
+      },
+      "oldPathGatePassed": true,
+      "diagnostics": "[semantic-evidence] FAIL [{\"relationKey\":\"$contract\",\"field\":\"checks\",\"rule\":\"checks-required\",\"message\":\"Every declared relation, source and candidate check must be present and successful.\"}]",
+      "log": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\omitted-check.log",
+      "logSha256": "7b09c7ad674bd7f4841d722ae19d357b7e9476f01b42bc5833f5d45e85a615a5"
+    },
+    {
+      "id": "missing-original-path",
+      "command": "node scripts/check-evidence-refs.mjs ",
+      "argv": [
+        "C:\\Users\\27933\\.codex\\worktrees\\ontology-contracts\\ClawX\\scripts\\check-evidence-refs.mjs",
+        "--root",
+        "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\fixture"
+      ],
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "expectedRule": "docs/missing-capability.md",
+      "fixtureCandidate": {
+        "commit": "f9ef9ee19c302c642ad6cd2283c3351dc92d7268",
+        "tree": "fe8c12ab0e76ad525d31708d68c50e90c5ac0f37",
+        "dirty": false
+      },
+      "oldPathGatePassed": false,
+      "diagnostics": "[evidence-refs] FAIL missing referenced paths:\n  shared/capability-claims.ts: docs/missing-capability.md",
+      "log": "D:\\tmp\\ontology-practice-20261030\\runs\\final\\native-controls-0adbaf7f5\\missing-original-path.log",
+      "logSha256": "e6b237b6961af017281aa4f86937d213377ee24e1b51feca0ef4db692c1bd947"
+    }
+  ],
+  "positiveCheckIds": [
+    "relations",
+    "sources",
+    "candidate"
+  ],
+  "limitation": "Agent-authored bounded source fixture through the real native CLI; no runtime or human acceptance."
+}
