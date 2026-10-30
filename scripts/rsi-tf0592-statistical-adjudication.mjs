@@ -180,18 +180,27 @@ function armSummary(corpus, arm) {
   const complete = perTask.filter((task) => task.complete);
   const sufficient = complete.length >= MIN_CASES;
   const completeTrials = complete.flatMap((task) => task.trials);
+  const allTrials = perTask.flatMap((task) => task.trials);
+  const incompleteTrials = perTask.filter((task) => !task.complete).flatMap((task) => task.trials);
   const failureClasses = Object.fromEntries(FAILURE_CLASSES.map((name) => [name, {
-    trialCount: perTask.flatMap((task) => task.trials).filter((trial) => trial.failureClass === name).length,
+    trialCount: allTrials.filter((trial) => trial.failureClass === name).length,
     caseCount: perTask.filter((task) => task.trials.some((trial) => trial.failureClass === name)).length,
   }]));
-  const budget = {};
+  const sumMetric = (trials, metric) => trials.length && trials.every((trial) => typeof trial[metric] === 'number') ? round(trials.reduce((sum, trial) => sum + trial[metric], 0)) : null;
+  const budget = { recordedTotals: {}, incompleteCaseConsumption: {}, completedCaseOnly: {}, observedTrialCount: allTrials.length };
   for (const [metric, label] of [['tokens', 'tokensPerCompletedCase'], ['turns', 'turnsPerCompletedCase'], ['toolCalls', 'toolCallsPerCompletedCase'], ['cost', 'costPerCompletedCase']]) {
-    budget[label] = complete.length && completeTrials.every((trial) => typeof trial[metric] === 'number')
-      ? round(completeTrials.reduce((sum, trial) => sum + trial[metric], 0) / complete.length) : null;
+    const total = sumMetric(allTrials, metric);
+    const completedTotal = sumMetric(completeTrials, metric);
+    budget[label] = complete.length && total !== null ? round(total / complete.length) : null;
+    budget.recordedTotals[metric] = total;
+    budget.incompleteCaseConsumption[metric] = sumMetric(incompleteTrials, metric);
+    budget.completedCaseOnly[label] = complete.length && completedTotal !== null ? round(completedTotal / complete.length) : null;
   }
-  const latencies = completeTrials.map((trial) => trial.wallClockMs).filter((value) => typeof value === 'number').sort((a, b) => a - b);
+  budget.recordedTotals.wallClockMs = sumMetric(allTrials, 'wallClockMs');
+  budget.incompleteCaseConsumption.wallClockMs = sumMetric(incompleteTrials, 'wallClockMs');
+  const latencies = allTrials.map((trial) => trial.wallClockMs).filter((value) => typeof value === 'number').sort((a, b) => a - b);
   const quantile = (q) => {
-    if (!latencies.length || latencies.length !== completeTrials.length) return null;
+    if (!latencies.length || latencies.length !== allTrials.length) return null;
     const position = (latencies.length - 1) * q;
     return round(latencies[Math.floor(position)] + (latencies[Math.ceil(position)] - latencies[Math.floor(position)]) * (position % 1));
   };
@@ -234,35 +243,50 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
       } else if (base || treat) unmatched.push({ caseId: task.id, repeat, baseline: base?.outcome ?? 'missing', treatment: treat?.outcome ?? 'missing' });
     }
   }
-  const completePairCases = corpus.cases.filter((task) => baselineRuns.filter((trial) => trial.caseId === task.id).length === K).length;
   const pairedCaseIds = new Set(corpus.cases.filter((task) => baselineRuns.filter((trial) => trial.caseId === task.id).length === K).map((task) => task.id));
+  const completePairCases = pairedCaseIds.size;
   const enoughPairs = completePairCases >= MIN_CASES;
-  const effect = pairedEffect(baselineRuns, treatmentRuns, { metric: 'success' });
-  const diffs = baselineRuns.map((trial, index) => treatmentRuns[index].success - trial.success);
+  const baseCases = baseline.perTask.filter((task) => pairedCaseIds.has(task.caseId));
+  const treatCases = treatment.perTask.filter((task) => pairedCaseIds.has(task.caseId));
+  // Repeat keys establish matching; inference uses independent case clusters, not k correlated observations.
+  const effect = pairedEffect(
+    baseCases.map((task) => ({ caseId: task.caseId, repeat: 0, success: task.passK ? 1 : 0 })),
+    treatCases.map((task) => ({ caseId: task.caseId, repeat: 0, success: task.passK ? 1 : 0 })),
+    { metric: 'success' },
+  );
+  const diffs = baseCases.map((task, index) => Number(treatCases[index].passK) - Number(task.passK));
   const average = mean(diffs);
   const sd = diffs.length > 1 ? Math.sqrt(diffs.reduce((sum, diff) => sum + (diff - average) ** 2, 0) / (diffs.length - 1)) : null;
   const mde = policy.promotion?.thresholds?.passKAbsoluteImprovement?.minimum;
   if (mde !== 0.05) throw new Error('policy-drift');
-  const detectableEffect = enoughPairs ? (1.959964 + 0.841621) * sd / Math.sqrt(diffs.length) : null;
+  const varianceUsable = enoughPairs && sd !== null && sd > 0;
+  const detectableEffect = varianceUsable ? (1.959964 + 0.841621) * sd / Math.sqrt(diffs.length) : null;
+  const powerStatus = !varianceUsable ? 'insufficient-evidence' : detectableEffect > mde ? 'underpowered' : 'design-computed';
   return {
     status: baseline.status,
     reason: baseline.completeCaseCount < MIN_CASES ? `complete cases ${baseline.completeCaseCount} < required ${MIN_CASES}` : null,
     run: { k: K, minimumCompleteCases: MIN_CASES, trialCount: baseline.trialCount + treatment.trialCount, baselineTrialCount: baseline.trialCount, treatmentTrialCount: treatment.trialCount, completeCaseCount: baseline.completeCaseCount, incompleteCaseCount: baseline.incompleteCaseCount, cleanStateRequired: true },
     perTask: baseline.perTask, aggregate: baseline.aggregate, failureClasses: baseline.failureClasses, treatment,
     pairedDiff: {
-      status: enoughPairs ? 'computed' : 'insufficient-evidence', metric: 'per-trial success', pairUnit: 'caseId/repeat',
+      status: enoughPairs ? 'computed' : 'insufficient-evidence', metric: 'pass^k', pairUnit: 'caseId/repeat', inferenceUnit: 'caseId',
       pairCount: diffs.length, completePairCaseCount: completePairCases, unmatched,
-      meanDiff: enoughPairs ? effect.meanDiff : null, ci95: enoughPairs ? effect.ci95 : null,
-      effectSize: enoughPairs ? effect.cohensDz : null,
-      passKDelta: enoughPairs ? round((treatment.perTask.filter((task) => pairedCaseIds.has(task.caseId) && task.passK).length - baseline.perTask.filter((task) => pairedCaseIds.has(task.caseId) && task.passK).length) / completePairCases) : null,
+      repeatPairCount: baselineRuns.length,
+      excludedPartialPairs: baselineRuns.flatMap((trial, index) => pairedCaseIds.has(trial.caseId) ? [] : [{ caseId: trial.caseId, repeat: trial.repeat, baseline: trial.success, treatment: treatmentRuns[index].success }]),
+      intervalMethod: 'normal-approximation over complete case clusters',
+      varianceStatus: sd === null ? 'not-estimable' : sd === 0 ? 'degenerate' : 'estimated',
+      meanDiff: enoughPairs ? effect.meanDiff : null, ci95: varianceUsable ? effect.ci95 : null,
+      effectSize: varianceUsable ? effect.cohensDz : null,
+      passKDelta: enoughPairs ? round(average) : null,
     },
     power: {
-      status: !enoughPairs ? 'insufficient-evidence' : detectableEffect > mde ? 'underpowered' : 'design-computed',
-      method: 'normal-approximation paired per-trial success; planning only, not pass^k power',
+      status: powerStatus,
+      method: 'normal-approximation paired pass^k over complete case clusters; planning only',
+      inferenceUnit: 'caseId', reason: !enoughPairs ? 'paired-case-floor-not-met' : !varianceUsable ? 'degenerate-variance' : 'observed-variance-design',
       confidenceLevel: 0.95, targetPower: 0.8, minimumDetectableEffect: mde,
       observedDetectableEffect: round(detectableEffect),
-      requiredPairsApprox: sd === null ? null : Math.ceil(((1.959964 + 0.841621) * sd / mde) ** 2),
-      passKPower: 'insufficient-evidence',
+      requiredCasesApprox: varianceUsable ? Math.ceil(((1.959964 + 0.841621) * sd / mde) ** 2) : null,
+      requiredPairsApprox: varianceUsable ? K * Math.ceil(((1.959964 + 0.841621) * sd / mde) ** 2) : null,
+      passKPower: powerStatus,
     },
     budget: { ...baseline.budget, costCeilingRelativeIncrease: policy.budgets.costCeiling.maxRelativeIncrease },
     claims: { realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },

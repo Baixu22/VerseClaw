@@ -99,14 +99,14 @@ describe('TF-0592 statistical adjudication', () => {
     const result = summarizeTf0592Trials(corpus, trials(baseline, treatment), policy);
     expect(result.run.trialCount).toBe(120);
     expect(result.pairedDiff.status).toBe('computed');
-    expect(result.pairedDiff.pairCount).toBe(60);
+    expect(result.pairedDiff.pairCount).toBe(20);
+    expect(result.pairedDiff.repeatPairCount).toBe(60);
     expect(result.pairedDiff.meanDiff).toBe(difference);
     expect(result.pairedDiff.passKDelta).toBe(difference);
-    const interval = result.pairedDiff.ci95!;
-    if (difference > 0) expect(interval[0]).toBeGreaterThan(0);
-    else if (difference < 0) expect(interval[1]).toBeLessThan(0);
-    else expect(interval).toEqual([0, 0]);
-    expect(result.power.passKPower).toBe('insufficient-evidence');
+    if (difference > 0) expect(result.pairedDiff.ci95![0]).toBeGreaterThan(0);
+    else if (difference < 0) expect(result.pairedDiff.ci95![1]).toBeLessThan(0);
+    else expect(result.pairedDiff.ci95).toBeNull();
+    expect(result.power.passKPower).toBe(difference === 0 ? 'insufficient-evidence' : 'underpowered');
   });
 
   it('counts timeout trials, excludes incomplete cases and audits infra separately', () => {
@@ -128,7 +128,8 @@ describe('TF-0592 statistical adjudication', () => {
     raw.cases[0].trials.pop();
     const result = summarizeTf0592Trials(corpus, raw, policy);
     expect(result.run.trialCount).toBe(119);
-    expect(result.pairedDiff.pairCount).toBe(59);
+    expect(result.pairedDiff.pairCount).toBe(19);
+    expect(result.pairedDiff.repeatPairCount).toBe(59);
     expect(result.pairedDiff.status).toBe('insufficient-evidence');
     expect(result.pairedDiff.ci95).toBeNull();
     expect(result.pairedDiff.unmatched).toContainEqual({ caseId: corpus.cases[0].id, repeat: 3, baseline: 'fail', treatment: 'missing' });
@@ -153,6 +154,49 @@ describe('TF-0592 statistical adjudication', () => {
     expect(result.run.completeCaseCount).toBe(24);
     expect(result.pairedDiff.completePairCaseCount).toBe(20);
     expect(result.pairedDiff.passKDelta).toBe(0.2);
+  });
+
+  it('excludes every partial-case pair from inference and retains it in the audit', () => {
+    const raw = trials(0, 0);
+    for (const entry of raw.cases.slice(20)) entry.trials = [1, 2].flatMap((repeat) => [
+      { arm: 'baseline' as const, repeat, outcome: 'fail' as const, failureClass: 'agent' as const },
+      { arm: 'treatment' as const, repeat, outcome: 'pass' as const, failureClass: null },
+    ]);
+    const result = summarizeTf0592Trials(corpus, raw, policy);
+    expect(result.pairedDiff.repeatPairCount).toBe(68);
+    expect(result.pairedDiff.pairCount).toBe(20);
+    expect(result.pairedDiff.meanDiff).toBe(0);
+    expect(result.pairedDiff.ci95).toBeNull();
+    expect(result.pairedDiff.excludedPartialPairs).toHaveLength(8);
+  });
+
+  it('does not manufacture significance by treating correlated repeats as independent', () => {
+    const result = summarizeTf0592Trials(corpus, trials(2, 0), policy);
+    expect(result.pairedDiff.meanDiff).toBe(0.1);
+    expect(result.pairedDiff.inferenceUnit).toBe('caseId');
+    expect(result.pairedDiff.ci95![0]).toBeLessThan(0);
+    expect(result.pairedDiff.ci95![1]).toBeGreaterThan(0);
+  });
+
+  it('does not hide incomplete-case spend from the cost ceiling numerator', () => {
+    const raw = trials();
+    raw.cases[20].trials = [{ outcome: 'timeout', failureClass: 'agent', repeat: 1, cost: 100, tokens: 10000, turns: 1, toolCalls: 1, wallClockMs: 60000 }];
+    const result = summarizeTf0592Trials(corpus, raw, policy);
+    expect(result.budget.costPerCompletedCase).toBe(5.03);
+    expect(result.budget.tokensPerCompletedCase).toBe(530);
+    expect(result.budget.incompleteCaseConsumption.cost).toBe(100);
+    expect(result.budget.completedCaseOnly.costPerCompletedCase).toBe(0.03);
+    expect(result.budget.observedTrialCount).toBe(61);
+  });
+
+  it('keeps zero-variance standardized effect and power unavailable', () => {
+    const result = summarizeTf0592Trials(corpus, trials(20, 0), policy);
+    expect(result.pairedDiff.meanDiff).toBe(1);
+    expect(result.pairedDiff.effectSize).toBeNull();
+    expect(result.pairedDiff.ci95).toBeNull();
+    expect(result.power.status).toBe('insufficient-evidence');
+    expect(result.power.requiredCasesApprox).toBeNull();
+    expect(result.power.requiredPairsApprox).toBeNull();
   });
 
   it('reports measured cost per case and latency without invented missing values', () => {

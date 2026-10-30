@@ -21,6 +21,13 @@ export type Tf0592Resources = {
   observedResources: { cpuCount: number; totalMemoryBytes: number; freeMemoryBytes: number; disk: { freeBytes: number; totalBytes: number; status: string } };
   envelope: Record<string, unknown>;
 };
+export type Tf0592Budget = {
+  tokensPerCompletedCase: number | null; turnsPerCompletedCase: number | null;
+  toolCallsPerCompletedCase: number | null; costPerCompletedCase: number | null;
+  wallClockP50Ms: number | null; wallClockP95Ms: number | null; observedTrialCount: number;
+  recordedTotals: Record<string, number | null>; incompleteCaseConsumption: Record<string, number | null>;
+  completedCaseOnly: Record<string, number | null>; costCeilingRelativeIncrease?: number;
+};
 export type Tf0592Arm = {
   status: string; trialCount: number; completeCaseCount: number; incompleteCaseCount: number;
   perTask: Array<{ caseId: string; taskId: string; trialCount: number; complete: boolean; status: string; passK: boolean | null; passAtK: boolean | null; trials: Tf0592Trial[] }>;
@@ -31,16 +38,16 @@ export type Tf0592Arm = {
     incomplete: Array<{ caseId: string; trialIndex: number; outcome: string }>; reasons: string[];
   };
   failureClasses: Record<FailureClass, { trialCount: number; caseCount: number }>;
-  budget: Record<string, number | null>;
+  budget: Tf0592Budget;
 };
 export type Tf0592Summary = {
   status: string; reason: string | null;
   run: { k: number; minimumCompleteCases: number; trialCount: number; baselineTrialCount: number; treatmentTrialCount: number; completeCaseCount: number; incompleteCaseCount: number; cleanStateRequired: boolean };
   perTask: Tf0592Arm['perTask']; aggregate: Tf0592Arm['aggregate']; failureClasses: Tf0592Arm['failureClasses'];
   treatment: Tf0592Arm;
-  pairedDiff: { status: string; metric: string; pairUnit: string; pairCount: number; completePairCaseCount: number; unmatched: Array<{ caseId: string; repeat: number; baseline: string; treatment: string }>; meanDiff: number | null; ci95: [number, number] | null; effectSize: number | null; passKDelta: number | null };
-  power: { status: string; method: string; confidenceLevel: number; targetPower: number; minimumDetectableEffect: number; observedDetectableEffect: number | null; requiredPairsApprox: number | null; passKPower: string };
-  budget: Record<string, number | null>;
+  pairedDiff: { status: string; metric: string; pairUnit: string; inferenceUnit: string; pairCount: number; repeatPairCount: number; completePairCaseCount: number; unmatched: Array<{ caseId: string; repeat: number; baseline: string; treatment: string }>; excludedPartialPairs: Array<{ caseId: string; repeat: number; baseline: number; treatment: number }>; intervalMethod: string; varianceStatus: string; meanDiff: number | null; ci95: [number, number] | null; effectSize: number | null; passKDelta: number | null };
+  power: { status: string; method: string; inferenceUnit: string; reason: string; confidenceLevel: number; targetPower: number; minimumDetectableEffect: number; observedDetectableEffect: number | null; requiredCasesApprox: number | null; requiredPairsApprox: number | null; passKPower: string };
+  budget: Tf0592Budget;
   claims: { realHuman: boolean; liveProvider: boolean; promotionReady: boolean; productLocksChanged: boolean };
 };
 export type Tf0592Report = Tf0592Summary & {

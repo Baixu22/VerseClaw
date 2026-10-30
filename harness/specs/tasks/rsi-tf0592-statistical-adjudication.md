@@ -41,8 +41,9 @@ requiredTests:
 acceptance:
   - The manifest binds the candidate commit/tree and source digests, sealed corpus/raw trials/policy hashes, actual runtime resources and an explicit unrun model/tool/network/seed envelope.
   - The reader independently recomputes per-task and total trial counts, pass^k and pass@k, Wilson intervals with case denominators, four failure classes, incomplete records and cost metrics from the bound raw inputs.
-  - Paired comparison uses baseline and treatment keyed by caseId/repeat, preserves unmatched or incomplete trials and reports insufficient-evidence below the complete-case floor.
-  - Paired uncertainty and an explicitly labelled normal-approximation power design use the frozen five-percentage-point effect; no actual model gain is invented.
+  - Paired comparison matches baseline and treatment by caseId/repeat, uses complete case clusters as independent inference units, preserves unmatched and excluded partial pairs, and reports insufficient-evidence below the complete-case floor.
+  - Paired uncertainty and an explicitly labelled normal-approximation power design use the frozen five-percentage-point effect; degenerate variance reports unavailable interval/effect/power rather than zero required samples.
+  - Budget totals preserve recorded consumption from incomplete cases; conditional completed-only averages remain separate from the total consumption per completed case.
   - Every registered negative control is rejected, including dirty source, input tamper, fabricated metrics, missing resources, dropped failures and invalid paired evidence.
   - SHA256SUMS covers every retained pack file; a fresh check verifies all bytes, the control registry, saved results and semantic recomputation.
   - Draft generation may observe a dirty candidate, but final check rejects it; final evidence may descend from the clean implementation commit only through declared derived pack files.
@@ -77,7 +78,10 @@ not-run reservation. Real trial isolation and grader calibration belong to the
 Agent-first execution prerequisites; absence of those effects remains visible.
 
 The interval for absolute pass^k is Wilson over complete cases. The paired
-interval reuses the existing paired-ablation instrument over caseId/repeat.
-Power is a labelled planning approximation at 95% confidence and 80% target
-power, using observed paired variance and the already frozen absolute effect.
+interval reuses the existing paired-ablation instrument after matching
+caseId/repeat and aggregating pass^k over complete case clusters. Repeats are
+not counted as independent observations. Power is a labelled planning
+approximation at 95% confidence and 80% target power, using observed case-pair
+variance and the already frozen absolute effect. Zero variance does not establish
+an interval or a zero-sample power design.
 It is not a measured provider benefit or an authority to change product locks.
