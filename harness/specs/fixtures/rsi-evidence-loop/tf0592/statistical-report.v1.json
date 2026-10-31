@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-10-30T14:53:50.981Z",
+  "generatedAt": "2026-10-31T02:01:08.890Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,23 +17,28 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-10-30T14:53:50.981Z",
+    "generatedAt": "2026-10-31T02:01:08.890Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "510cbff4fe12a541c250aff785fd2c68e48e2c1a",
-      "tree": "968c25d26efc6201d5027d07f164ff16d69f3968",
+      "commit": "03a5b17d22e67c2e6399c7e4b5f8ce2e28759a81",
+      "tree": "4e22803b6776f33efb925f29306d91b18ad7fe04",
       "branch": "codex/tf0604-rsi-baseline",
-      "dirty": false,
-      "dirtyPaths": [],
+      "dirty": true,
+      "dirtyPaths": [
+        "M harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS",
+        " M harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json",
+        " M harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json",
+        " M harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json"
+      ],
       "sourceHashes": {
-        "scripts/rsi-tf0592-statistical-adjudication.mjs": "a55605a077958ff1a663a89c6a1602c8262581e26f74951c88b9cf2ea19c79a7",
+        "scripts/rsi-tf0592-statistical-adjudication.mjs": "9b9a144151bef0fac8861331aeaa946ab61f2cb0b2c9ae66d757718e41faeaab",
         "scripts/rsi-tf0592-statistical-adjudication.d.mts": "ed8f70486fcea6a78271e8112c2c366b22a7f7f23aea5ab89a2c01aafacb45ed",
-        "scripts/rsi-tf0604-baseline.mjs": "16bdf38533c9f97f81780f86ac62abd407b9e7ec99fca281614cd8c754d7ce60",
+        "scripts/rsi-tf0604-baseline.mjs": "2d81e9b337a99b767c9fdeb5057815c44cbdec1f5700ab056d9da97b871a6329",
         "scripts/lib/reliability-aggregation.mjs": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
         "scripts/lib/paired-ablation.mjs": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
         "scripts/lib/entrypoint.mjs": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b",
-        "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "3a3637119c4c8fdcd14fe9d4987b8b01bf57f0268973c8f74b0d644915ebab18",
+        "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "8b831dca6d043b0ca090cf91aca33e130fa60ee4a5b4f13f902363fb7e84b180",
         "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "5c1dbe245bb6c139af66da6cd14a1e8ada8e7e8cb8a6a2bb070815114cad54dd",
         "harness/specs/rules/reliability-aggregation-boundary.md": "9286c8b4a0d07368336d1269fe90dd93f5be7712b47fb20bf6e582b6d9249192",
         "harness/specs/rules/paired-ablation-boundary.md": "0d9677ef4278a38d34cc710afe759a8e903db1300088358275fa93eab97faf03",
@@ -43,7 +48,7 @@
         "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
         "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
         "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
-        "docs/dev/rsi-capability-and-boundaries.md": "1b76863e1dd0e906111fb534330909a2e77319620551dbfe81eb7eb2ceb8618e"
+        "docs/dev/rsi-capability-and-boundaries.md": "c71f76f56c8db36253d62976d3f0c29e4dcc501d16eb5b74513c988889422598"
       }
     },
     "runtime": {
@@ -56,9 +61,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 4486926336,
+      "freeMemoryBytes": 1248940032,
       "disk": {
-        "freeBytes": 16612261888,
+        "freeBytes": 15876235264,
         "totalBytes": 322122543104,
         "status": "measured"
       }
