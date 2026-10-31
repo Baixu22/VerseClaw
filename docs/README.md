@@ -33,6 +33,7 @@ The deep dives are maintained in Simplified Chinese. Code paths, API names and e
 - [Context orchestrator](dev/context-orchestrator.md)
 - [Memory control plane](dev/memory-control-plane.md)
 - [Component disposition matrix](dev/component-disposition-matrix-20261021.md)
+- [Architecture skeleton convergence charter](dev/architecture-skeleton/CHARTER.md)
 - [Role-first design](role-first-design.md)
 - [Role identity taxonomy](role-identity-taxonomy.md)
 - [Role packs](role-packs.md)

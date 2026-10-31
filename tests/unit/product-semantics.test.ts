@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   PRODUCT_SEMANTIC_CONCEPTS,
+  PRODUCT_SEMANTIC_RELATIONS,
   PRODUCT_SEMANTIC_TASK_BOUNDARIES,
   PRODUCT_SEMANTIC_UNSAFE_CLAIMS,
   createPermissionDecisionEvent,
@@ -34,6 +35,23 @@ describe('ClawX product semantics', () => {
       forbiddenClaims: expect.arrayContaining([
         expect.stringContaining('two-way sync'),
       ]),
+    });
+  });
+
+  it('keeps product relationships typed, directed, evidence-backed, and authority-bounded', () => {
+    const concepts = new Set(PRODUCT_SEMANTIC_CONCEPTS.map(({ id }) => id));
+    const keys = PRODUCT_SEMANTIC_RELATIONS.map(({ from, kind, to }) => [from, kind, to].join(':'));
+    expect(new Set(keys).size).toBe(keys.length);
+    for (const relation of PRODUCT_SEMANTIC_RELATIONS) {
+      expect(concepts.has(relation.from)).toBe(true);
+      expect(concepts.has(relation.to)).toBe(true);
+      expect(relation.from).not.toBe(relation.to);
+      expect(relation.evidenceRefs.length).toBeGreaterThan(0);
+    }
+    expect(PRODUCT_SEMANTIC_RELATIONS.filter(({ from }) => String(from) === 'task-ledger')).toHaveLength(0);
+    expect(PRODUCT_SEMANTIC_RELATIONS.find(({ kind, to }) => kind === 'references-one-way' && to === 'task-ledger')).toMatchObject({
+      from: 'workboard',
+      authorityBoundary: 'one-way-reference',
     });
   });
 

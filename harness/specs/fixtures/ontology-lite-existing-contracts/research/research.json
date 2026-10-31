@@ -1,0 +1,475 @@
+{
+  "schemaVersion": "OntologyLiteExistingContractsResearch/v1",
+  "researchedOn": "2026-10-30",
+  "timezone": "Asia/Shanghai",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "research-and-planning",
+  "claimBoundary": "Static source inspection and official-source research only. Hardening implementation and its acceptance are not-run.",
+  "candidateObservation": {
+    "commit": "bc6685aa9a7a256b68fd356075c72b658485ec6f",
+    "tree": "0922726e13f74df7b4ee97d8e9f1b7d39153ce09",
+    "dirty": true,
+    "meaning": "HEAD plus explicitly hashed working-source inputs; not a clean acceptance candidate"
+  },
+  "originalWork": {
+    "localTaskRecordObserved": "TF-0622 done/100",
+    "historicalVerdictRewritten": false,
+    "workingSourceFiles": [
+      {
+        "path": "docs/clawx-product-semantics.md",
+        "sha256": "da975f1c77f1cd7348d68056ae440a4ae15cc52d8489fda239f6fe3ac1d324a5",
+        "tracked": true
+      },
+      {
+        "path": "shared/product-semantics.ts",
+        "sha256": "b251bfd36acef1ffe2249f6c3f3cd6959cdbc47a910dec50143846324cd3430b",
+        "tracked": true
+      },
+      {
+        "path": "tests/unit/product-semantics.test.ts",
+        "sha256": "3c087161b68408b32435f8771d9328c1c63b02d7ddc803306bc8e0ece244ac11",
+        "tracked": true
+      },
+      {
+        "path": "harness/specs/guides/ontology-agent-systems-research.md",
+        "sha256": "2ea7f847d7da8de15bd4d3dc59dfad18e5dfd0f8e2cbb203b796827d1428418c",
+        "tracked": false
+      },
+      {
+        "path": "harness/specs/tasks/ontology-informed-product-semantics.md",
+        "sha256": "6999dcc5b22222fbddfa6832bce9329761f8741928c5ef71d8c5010ac2cc45f9",
+        "tracked": false
+      }
+    ],
+    "recoveryIndex": "D:\\tmp\\ontology-practice-20261030\\original-snapshot.json",
+    "note": "Three modified tracked files and two untracked sources observed. Closure record does not establish that these bytes are landed."
+  },
+  "search": {
+    "route": "versesearch/anysearch",
+    "generalQueries": [
+      "site:w3.org/TR/shacl/ closed shapes constraint validation report",
+      "site:w3.org/TR/prov-dm/ entity activity agent derivation",
+      "site:docs.cedarpolicy.com schema validation authorization policies entities",
+      "site:semver.org public API backwards compatibility versioning"
+    ],
+    "verticalQuery": {
+      "domain": "code",
+      "subDomain": "code.doc",
+      "requiredParameters": {
+        "library": "zod"
+      },
+      "query": "Zod object schema refinement strict safeParse cross field constraints",
+      "selectedForExtraction": false,
+      "discoveredUrl": "https://zod.dev/api"
+    },
+    "discoveryRecovery": [
+      "D:\\tmp\\ontology-practice-20261030\\discovery.txt",
+      "D:\\tmp\\ontology-practice-20261030\\zod-doc-discovery.txt"
+    ],
+    "cliOriginalSha256": "04a501664ff07b898a1712b9cdd1fe73cee446fc830677d774fca55c9841df77"
+  },
+  "sources": [
+    {
+      "id": "shacl",
+      "url": "https://www.w3.org/TR/shacl/",
+      "title": "Shapes Constraint Language (SHACL)",
+      "route": "versesearch/anysearch/extract",
+      "extractionExitCode": 0,
+      "rawSha256": "c3688f6baed072833b35f043aa26207a9a1c5ef485aad67aac99dbf6d608cb32",
+      "contentSha256": "9cc222febc7e30f89a7f1ecd1e8817adee319ad611d9483489d179d5cb5202b0",
+      "recovery": {
+        "raw": "D:\\tmp\\ontology-practice-20261030\\shacl.md",
+        "content": "D:\\tmp\\ontology-practice-20261030\\shacl.content.md"
+      },
+      "excerpts": [
+        {
+          "locatedBy": "W3C Recommendation",
+          "text": ".org/StyleSheets/TR/2016/logos/W3C)](https://www.w3.org/) # Shapes Constraint Language (SHACL) ## W3C Recommendation 20 July 2017 This version: [https://www.w3.org/TR/2017/REC-shacl-20170720/](https://www.w3.org/TR/2017/REC-shacl-20170720/) Latest published version: [https://www.w3.org/TR/shacl/](https://www.w3.org/TR/shacl/) Latest editor's draft: [https://w3c.github.io/data-shapes/shacl/](https://w3c.github.io/data-shapes/shacl/) Implementation report: [https://w3c.github.io/data-shapes/data-shapes-test-suite/](https://w3c.github.io/data-shapes/data-shapes-test-suite/) Previous version: [https://www.w3.org/TR/2017/PR-shacl-20170608/](https://www.w3.org/TR/2017/PR-shacl-20170608/) Editors: [Holger Knublauch](http://knublauch."
+        },
+        {
+          "locatedBy": "sh:closed",
+          "text": " # _:b2 sh:path ex:worksFor ; sh:class ex:Company ; sh:nodeKind sh:IRI ; ] ; sh:closed true ; sh:ignoredProperties ( rdf:type ) . ``` The example below shows the same shape definition as a possible JSON-LD \\[[json-ld](https://www.w3.org/TR/shacl/#bib-json-ld)] fragment. Note that we have left out a `@context` declaration, and depending on the `@context` the rendering may look quite different. Therefore this example should be understood as an illustration only. ``` { \"@id\" : \"ex:PersonShape\", \"@type\" : \"NodeShape\", \"targetClass\" : \"ex:Person\", \"property\" : [ { \"path\" : \"ex:ssn\", \"maxCount\" : 1, \"datatype\" : \"xsd:string\" , \"pattern\" : \"^\\\\d{3}-\\\\d{2}-\\\\d{4}$\" }, { \"path\" : \"ex:worksFor\", \""
+        },
+        {
+          "locatedBy": "sh:conforms",
+          "text": "/www.w3.org/TR/shacl/#validation-report) for details on the format. ``` [ a sh:ValidationReport ; sh:conforms false ; sh:result [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Alice ; sh:resultPath ex:ssn ; sh:value \"987-65-432A\" ; sh:sourceConstraintComponent sh:RegexConstraintComponent ; sh:sourceShape ... blank node _:b1 on ex:ssn above ... ; ] , [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Bob ; sh:resultPath ex:ssn ; sh:sourceConstraintComponent sh:MaxCountConstraintComponent ; sh:sourceShape ... blank node _:b1 on ex:ssn above ... ; ] , [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Calvin ; sh:resultPath ex:worksFo"
+        },
+        {
+          "locatedBy": "sh:sourceConstraintComponent",
+          "text": "rity sh:Violation ; sh:focusNode ex:Alice ; sh:resultPath ex:ssn ; sh:value \"987-65-432A\" ; sh:sourceConstraintComponent sh:RegexConstraintComponent ; sh:sourceShape ... blank node _:b1 on ex:ssn above ... ; ] , [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Bob ; sh:resultPath ex:ssn ; sh:sourceConstraintComponent sh:MaxCountConstraintComponent ; sh:sourceShape ... blank node _:b1 on ex:ssn above ... ; ] , [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Calvin ; sh:resultPath ex:worksFor ; sh:value ex:UntypedCompany ; sh:sourceConstraintComponent sh:ClassConstraintComponent ; sh:sourceShape ... blank node _:b2 on ex:worksFor above ... ; ] , [ a sh:"
+        },
+        {
+          "locatedBy": "sh:resultPath",
+          "text": "sh:result [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Alice ; sh:resultPath ex:ssn ; sh:value \"987-65-432A\" ; sh:sourceConstraintComponent sh:RegexConstraintComponent ; sh:sourceShape ... blank node _:b1 on ex:ssn above ... ; ] , [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Bob ; sh:resultPath ex:ssn ; sh:sourceConstraintComponent sh:MaxCountConstraintComponent ; sh:sourceShape ... blank node _:b1 on ex:ssn above ... ; ] , [ a sh:ValidationResult ; sh:resultSeverity sh:Violation ; sh:focusNode ex:Calvin ; sh:resultPath ex:worksFor ; sh:value ex:UntypedCompany ; sh:sourceConstraintComponent sh:ClassConstraintComponent ; sh:sourceShape ... blan"
+        }
+      ],
+      "reviewedAs": "W3C Recommendation"
+    },
+    {
+      "id": "prov",
+      "url": "https://www.w3.org/TR/prov-dm/",
+      "title": "PROV-DM: The PROV Data Model",
+      "route": "versesearch/anysearch/extract",
+      "extractionExitCode": 0,
+      "rawSha256": "6c0787140a9f4c1d36f43ee6a88b723d5354b0e0511bc7f67f73a5cd7e7f4e8c",
+      "contentSha256": "f573d10c1a2fc4474d570c2f3d63202c3aae8a37d038ec7a60ffd1fb01c53d83",
+      "recovery": {
+        "raw": "D:\\tmp\\ontology-practice-20261030\\prov.md",
+        "content": "D:\\tmp\\ontology-practice-20261030\\prov.content.md"
+      },
+      "excerpts": [
+        {
+          "locatedBy": "W3C Recommendation",
+          "text": "![W3C](https://www.w3.org/Icons/w3c_home)](https://www.w3.org/) # PROV-DM: The PROV Data Model ## W3C Recommendation 30 April 2013 This version: [http://www.w3.org/TR/2013/REC-prov-dm-20130430/](https://www.w3.org/TR/2013/REC-prov-dm-20130430/) Latest published version: [http://www.w3.org/TR/prov-dm/](https://www.w3.org/TR/prov-dm/) Implementation report: [http://www.w3.org/TR/2013/NOTE-prov-implementations-20130430/](https://www.w3.org/TR/2013/NOTE-prov-implementations-20130430/) Previous version: [http://www.w3.org/TR/2013/PR-prov-dm-20130312/](https://www.w3.org/TR/2013/PR-prov-dm-20130312/) [(color-coded diff)](https://www.w3.org/TR/prov-dm/diff.html) Editors: [Luc Moreau](http://www.ecs.soton.ac.uk/~lavm/), University of So"
+        },
+        {
+          "locatedBy": "provenance is information",
+          "text": "ent use](https://www.w3.org/Consortium/Legal/copyright-documents) rules apply. * * * ## Abstract Provenance is information about entities, activities, and people involved in producing a piece of data or thing, which can be used to form assessments about its quality, reliability or trustworthiness. PROV-DM is the conceptual data model that forms a basis for the W3C provenance (PROV) family of specifications. PROV-DM distinguishes core structures, forming the essence of provenance information, from extended structures catering for more specific uses of provenance. PROV-DM is organized in six components, respectively dealing with: (1) entities and activities, and the time at which they were created, used, or ended; (2) derivations of entiti"
+        },
+        {
+          "locatedBy": "An entity is",
+          "text": "s such as a mountain, a building, a printed book, or a car as well as abstract concepts and ideas. An entity is a physical, digital, conceptual, or other kind of thing with some fixed aspects; entities may be real or imaginary. \\[[Detailed specification](https://www.w3.org/TR/prov-dm/#term-entity)] Example 1 [◊](https://www.w3.org/TR/prov-dm/#entity-example) An entity may be the document at IRI [http://www.bbc.co.uk/news/science-environment-17526723](http://www.bbc.co.uk/news/science-environment-17526723), a file in a file system, a car, or an idea. An activity is something that occurs over a period of time and acts upon or with entities; it may include consuming, processing, transforming, modifying, relocating, using, or generating ent"
+        },
+        {
+          "locatedBy": "An activity is",
+          "text": "tp://www.bbc.co.uk/news/science-environment-17526723), a file in a file system, a car, or an idea. An activity is something that occurs over a period of time and acts upon or with entities; it may include consuming, processing, transforming, modifying, relocating, using, or generating entities. \\[[Detailed specification](https://www.w3.org/TR/prov-dm/#term-Activity)] Just as entities cover a broad range of notions, activities can cover a broad range of notions: information processing activities may for example move, copy, or duplicate digital entities; physical activities can include driving a car between two locations or printing a book. Example 2 [◊](https://www.w3.org/TR/prov-dm/#activity-example) An activity may be the publishing of "
+        },
+        {
+          "locatedBy": "An agent is",
+          "text": "ation performed by an established software library may be more reliable than by a one-off program. An agent is something that bears some form of responsibility for an activity taking place, for the existence of an entity, or for another agent's activity. \\[[Detailed specification](https://www.w3.org/TR/prov-dm/#term-agent)] An agent may be a particular type of entity or activity. This means that the model can be used to express provenance of the agents themselves. Example 8 [◊](https://www.w3.org/TR/prov-dm/#agent-example) Software for checking the use of grammar in a document may be defined as an agent of a document preparation activity; one can also describe its provenance, including for instance the vendor and the version history. A s"
+        },
+        {
+          "locatedBy": "derivation is",
+          "text": " another in some way. This notion of 'influence' is captured by derivations, defined as follows. A derivation is a transformation of an entity into another, an update of an entity resulting in a new one, or the construction of a new entity based on a pre-existing entity. \\[[Detailed specification](https://www.w3.org/TR/prov-dm/#term-Derivation)] Example 7 [◊](https://www.w3.org/TR/prov-dm/#derivation-example) Examples of derivation include the transformation of a relational table into a linked data set, the transformation of a canvas into a painting, the transportation of a work of art from London to New York, and a physical transformation such as the melting of ice into water. The focus of derivation is on connecting a generated entity"
+        }
+      ],
+      "reviewedAs": "W3C Recommendation"
+    },
+    {
+      "id": "cedar",
+      "url": "https://docs.cedarpolicy.com/policies/validation.html",
+      "title": "Policy validation | Cedar Policy Language Reference Guide",
+      "route": "versesearch/anysearch/extract",
+      "extractionExitCode": 0,
+      "rawSha256": "fabebaca074a6f45f7cc3c9c63d472ace7e74f0dadefcb3e41e7466c5e5d99a8",
+      "contentSha256": "f5f72a6f9cc7c4f54c605f0cc7b1a73f7edb1bbbbbff2f0063d0cab74c62aab3",
+      "recovery": {
+        "raw": "D:\\tmp\\ontology-practice-20261030\\cedar.md",
+        "content": "D:\\tmp\\ontology-practice-20261030\\cedar.content.md"
+      },
+      "excerpts": [
+        {
+          "locatedBy": "authorization APIs do not perform validation",
+          "text": "e* a policy is used by the authorization engine to decide authorization requests. Indeed, the Cedar authorization APIs do not perform validation at the same time that a request is evaluated. Rather, validation is an entirely separate API which can be invoked when policies are loaded or created. We expect that **all authorization requests adhere to the rules given in the schema** used to validate the policies. In particular: - For a request with components *PARC* (principal, action, resource, context), the *A* component must be an action enumerated in the `actions` part of the schema, and the *PRC* components will have the types given with *A* in the schema. Our example schema above states that *A* must always be `ExampleCo::Personnel::Act"
+        },
+        {
+          "locatedBy": "validation is an entirely separate API",
+          "text": " authorization APIs do not perform validation at the same time that a request is evaluated. Rather, validation is an entirely separate API which can be invoked when policies are loaded or created. We expect that **all authorization requests adhere to the rules given in the schema** used to validate the policies. In particular: - For a request with components *PARC* (principal, action, resource, context), the *A* component must be an action enumerated in the `actions` part of the schema, and the *PRC* components will have the types given with *A* in the schema. Our example schema above states that *A* must always be `ExampleCo::Personnel::Action::\"remoteAccess\"` (since it’s the only action given in the schema), and for this action *P* must"
+        },
+        {
+          "locatedBy": "If these expectations are not met",
+          "text": "ay also specify the expected hierarchical relationships among entities (not shown in the example). If these expectations are not met then a policy that the validator accepts as valid may fail with an error when evaluated, causing it to be ignored. To see why, consider the following policy, which passes validation when using our example schema. ```cedar permit (principal, action, resource) when { principal.name == \"superuser\" || principal.jobLevel > 8 }; ``` This policy states that any principal whose `name` is `\"superuser\"` or whose `jobLevel` is greater than 8 can perform any action on any resource. According to our example schema, all principals are expected to have type `Employee`, which is the only principal type given for th"
+        },
+        {
+          "locatedBy": "validation against schema",
+          "text": "Reference Guide # [](https://docs.cedarpolicy.com/policies/validation.html#validation)Cedar policy validation against schema Cedar policies are code, and as with all code it is possible to make mistakes that mean the code will not behave as expected. For example, the following is a well-formed Cedar policy according to syntax rules, but with a number of typos and type errors. ```cedar permit ( principal == ExampleCo::Uzer::\"12345\", // should be \"User\", not \"Uzer\" action == ExampleCo::Action::\"ReadFile\", // should be \"readFile\", not \"ReadFile\" resource == ExampleCo::User::\"67890\" // \"readFile\" isn't a valid operation on a User ) when { principal.isAcctive // should be \"isActive\", not \"isAcctive\" && "
+        },
+        {
+          "locatedBy": "type errors",
+          "text": "e following is a well-formed Cedar policy according to syntax rules, but with a number of typos and type errors. ```cedar permit ( principal == ExampleCo::Uzer::\"12345\", // should be \"User\", not \"Uzer\" action == ExampleCo::Action::\"ReadFile\", // should be \"readFile\", not \"ReadFile\" resource == ExampleCo::User::\"67890\" // \"readFile\" isn't a valid operation on a User ) when { principal.isAcctive // should be \"isActive\", not \"isAcctive\" && principal.username > 2 // comparing a string against a number }; ``` Cedar can’t know whether this policy is right or wrong by examining it in isolation. For example, Cedar does not know if the policy author meant `Uzer` or `User` because both are well-forme"
+        }
+      ],
+      "reviewedAs": "official documentation"
+    },
+    {
+      "id": "semver",
+      "url": "https://semver.org/spec/v2.0.0.html",
+      "title": "Semantic Versioning 2.0.0 | Semantic Versioning",
+      "route": "versesearch/anysearch/extract",
+      "extractionExitCode": 0,
+      "rawSha256": "0a89b13f5b4d6319d9afea0a12363846408d3ff43d3b1458262a2d56da6fe446",
+      "contentSha256": "61e03af6189133130fa9bfb4ab68208d93070407ccbf71d67ea9783931d3656b",
+      "recovery": {
+        "raw": "D:\\tmp\\ontology-practice-20261030\\semver.md",
+        "content": "D:\\tmp\\ontology-practice-20261030\\semver.content.md"
+      },
+      "excerpts": [
+        {
+          "locatedBy": "declare a public API",
+          "text": "ractices in use in both closed and open-source software. For this system to work, you first need to declare a public API. This may consist of documentation or be enforced by the code itself. Regardless, it is important that this API be clear and precise. Once you identify your public API, you communicate changes to it with specific increments to your version number. Consider a version format of X.Y.Z (Major.Minor.Patch). Bug fixes not affecting the API increment the patch version, backward compatible API additions/changes increment the minor version, and backward incompatible API changes increment the major version. We call this system “Semantic Versioning.” Under this scheme, version numbers and the way they change convey meaning about th"
+        },
+        {
+          "locatedBy": "backward.{0,100}incompatible",
+          "text": "n format of X.Y.Z (Major.Minor.Patch). Bug fixes not affecting the API increment the patch version, backward compatible API additions/changes increment the minor version, and backward incompatible API changes increment the major version. We call this system “Semantic Versioning.” Under this scheme, version numbers and the way they change convey meaning about the underlying code and what has been modified from one version to the next. ## Semantic Versioning Specification (SemVer) The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119). 01. Software using Semantic V"
+        },
+        {
+          "locatedBy": "contents.{0,100}MUST NOT",
+          "text": " For instance: 1.9.0 -&gt; 1.10.0 -&gt; 1.11.0. 03. Once a versioned package has been released, the contents of that version MUST NOT be modified. Any modifications MUST be released as a new version. 04. Major version zero (0.y.z) is for initial development. Anything MAY change at any time. The public API SHOULD NOT be considered stable. 05. Version 1.0.0 defines the public API. The way in which the version number is incremented after this release is dependent on this public API and how it changes. 06. Patch version Z (x.y.Z | x &gt; 0) MUST be incremented if only backward compatible bug fixes are introduced. A bug fix is defined as an internal change that fixes incorrect behavior. 07. Minor version Y (x.Y.z | x &gt; 0) MUST be incremented "
+        }
+      ],
+      "reviewedAs": "official documentation"
+    }
+  ],
+  "sourceInventory": [
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "sha256": "da975f1c77f1cd7348d68056ae440a4ae15cc52d8489fda239f6fe3ac1d324a5",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "shared/product-semantics.ts",
+      "sha256": "b251bfd36acef1ffe2249f6c3f3cd6959cdbc47a910dec50143846324cd3430b",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "tests/unit/product-semantics.test.ts",
+      "sha256": "3c087161b68408b32435f8771d9328c1c63b02d7ddc803306bc8e0ece244ac11",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "harness/specs/guides/ontology-agent-systems-research.md",
+      "sha256": "2ea7f847d7da8de15bd4d3dc59dfad18e5dfd0f8e2cbb203b796827d1428418c",
+      "trackedAtResearchTime": false
+    },
+    {
+      "path": "harness/specs/tasks/ontology-informed-product-semantics.md",
+      "sha256": "6999dcc5b22222fbddfa6832bce9329761f8741928c5ef71d8c5010ac2cc45f9",
+      "trackedAtResearchTime": false
+    },
+    {
+      "path": "shared/types/identity-scope.ts",
+      "sha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "shared/types/task-ledger-reference.ts",
+      "sha256": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "shared/permission-effect-contract.ts",
+      "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "scripts/check-evidence-refs.mjs",
+      "sha256": "f51b2d1299bc0a99c6c0661985a0b51dbd4ce613ca80b21b0ac0a0c97d2eb769",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "scripts/lib/canonical-evidence-hash.mjs",
+      "sha256": "4e89a805ba41e3dea73836fc7e7993a2b6afb60f19c906ea9f649d5f8f89871e",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "harness/specs/rules/context-family-boundary.md",
+      "sha256": "a64257e132c3a3ccafe694dd9ef99ca6ced3988645bb7a54413e29f3746c55ba",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "harness/specs/fixtures/agent-first-framework/registry.json",
+      "sha256": "f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "docs/context-family/axioms.md",
+      "sha256": "e32e75c595172febe04c2cfc4302bfdf7003413ee5923a973ffbf304347988f9",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "docs/context-family/glossary.md",
+      "sha256": "2b557c40a30e7695595285fdcf3ab2875d5d26d99dee4447f272995f8181ec55",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "6bc123c5a25c14f89cc22b6efe19b2bdb77de07bf0c2e80db40c0d60e8136185",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "c1fe1bf875d121f4f39c8a01924692789e6a840ffe60756f71b7edfce1c3f0e3",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "75184d39b255a9e7508bcb55a2bee0ef01c98adb59f5d21188b8835d47139e42",
+      "trackedAtResearchTime": true
+    },
+    {
+      "path": "harness/specs/guides/ontology-lite-existing-contracts-research.md",
+      "sha256": "38d251f2e4bb5fc08f4b1fb318cf4105c23ad9ed0522aecbd68416190c762e92",
+      "trackedAtResearchTime": false
+    },
+    {
+      "path": "harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+      "sha256": "318d07667c26f5bab4f62ceeec8f1c67fb052c5c95a54f7a9ad842737b3d917c",
+      "trackedAtResearchTime": false
+    }
+  ],
+  "observedPlanningChecks": {
+    "checks": [
+      {
+        "command": "pnpm harness context --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+        "exit_code": 0
+      },
+      {
+        "command": "pnpm harness validate --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+        "exit_code": 0,
+        "log": "harness-validate.log"
+      },
+      {
+        "command": "pnpm harness run --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md --dry-run",
+        "exit_code": 0,
+        "log": "harness-dry-run.log",
+        "limitation": "dry-run only; requiredTests were not executed by this command"
+      },
+      {
+        "command": "pnpm exec vitest run tests/unit/product-semantics.test.ts tests/unit/evidence-refs-exist.test.ts tests/unit/identity-scope.test.ts tests/unit/task-ledger-reference.test.ts tests/unit/task-ledger-reference-inheritance.test.ts tests/unit/permission-effect-contract.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=D:/tmp/ontology-practice-20261030/baseline-vitest.json",
+        "exit_code": 0,
+        "log": "baseline-vitest.log",
+        "json": "baseline-vitest.json",
+        "claim": "existing baseline only"
+      },
+      {
+        "command": "pnpm repo:evidence:check",
+        "exit_code": 0,
+        "log": "repository-gates.log"
+      },
+      {
+        "command": "pnpm repo:artifacts:check",
+        "exit_code": 0,
+        "log": "repository-gates.log"
+      },
+      {
+        "command": "pnpm harness:specs:lifecycle",
+        "exit_code": 0,
+        "log": "repository-gates.log"
+      },
+      {
+        "command": "pnpm docs:policy:validate",
+        "exit_code": 0,
+        "log": "repository-gates.log"
+      },
+      {
+        "command": "git diff --check",
+        "exit_code": 0,
+        "log": "repository-gates.log"
+      }
+    ],
+    "recoveryRoot": "D:\\tmp\\ontology-practice-20261030",
+    "baseline": {
+      "testFiles": 6,
+      "total": 64,
+      "passed": 64,
+      "failed": 0,
+      "source": "D:\\tmp\\ontology-practice-20261030\\baseline-vitest.json",
+      "claim": "Existing baseline only; not new hardening capability"
+    },
+    "notRun": [
+      "new semantic validator/negative fixtures",
+      "semantic version and candidate-source freshness checks",
+      "gate integration",
+      "full typecheck",
+      "full Harness CI",
+      "Electron E2E",
+      "live provider or business-benefit evaluation"
+    ]
+  },
+  "baseline": {
+    "concepts": 7,
+    "directedRelations": 6,
+    "relationKeys": [
+      "chat:suggests-upgrade-to:task-loop",
+      "chat:projects:task-ledger",
+      "chat-plan:projects:task-ledger",
+      "task-loop:roots-in:task-ledger",
+      "workboard:references-one-way:task-ledger",
+      "routing-memo:quality-gated-by:task-loop"
+    ],
+    "countingMethod": "Source declaration rows, not a new runtime validator",
+    "valueReferences": [
+      "shared/product-semantics.ts:146:export type ProductSemanticRelationKind =",
+      "shared/product-semantics.ts:160:export type ProductSemanticRelation = {",
+      "shared/product-semantics.ts:162:  kind: ProductSemanticRelationKind;",
+      "shared/product-semantics.ts:169:export const PRODUCT_SEMANTIC_RELATIONS = [",
+      "shared/product-semantics.ts:176:] as const satisfies readonly ProductSemanticRelation[];",
+      "tests/unit/product-semantics.test.ts:4:  PRODUCT_SEMANTIC_RELATIONS,",
+      "tests/unit/product-semantics.test.ts:43:    const keys = PRODUCT_SEMANTIC_RELATIONS.map(({ from, kind, to }) => [from, kind, to].join(':'));",
+      "tests/unit/product-semantics.test.ts:45:    for (const relation of PRODUCT_SEMANTIC_RELATIONS) {",
+      "tests/unit/product-semantics.test.ts:51:    expect(PRODUCT_SEMANTIC_RELATIONS.filter(({ from }) => String(from) === 'task-ledger')).toHaveLength(0);",
+      "tests/unit/product-semantics.test.ts:52:    expect(PRODUCT_SEMANTIC_RELATIONS.find(({ kind, to }) => kind === 'references-one-way' && to === 'task-ledger')).toMatchObject({"
+    ],
+    "applicationValueConsumersObserved": 0,
+    "existingEvidenceCheckerAlreadyScansProductSemantics": true,
+    "existingCanonicalHashHelper": "scripts/lib/canonical-evidence-hash.mjs"
+  },
+  "findings": [
+    {
+      "id": "relation-combinations",
+      "finding": "Independent enums do not constrain kind/endpoints/authority combinations.",
+      "proposedStep": 2
+    },
+    {
+      "id": "negative-oracle-gap",
+      "finding": "Existing relation test inspects valid constants, not an invalid input through a validator.",
+      "proposedStep": 2
+    },
+    {
+      "id": "reference-proof-gap",
+      "finding": "Path existence checking does not establish owner, tracking, freshness or candidate binding.",
+      "proposedStep": 3
+    },
+    {
+      "id": "contract-provenance-gap",
+      "finding": "Relation contract lacks explicit version and source/candidate digest binding.",
+      "proposedStep": 3
+    },
+    {
+      "id": "source-retention-gap",
+      "finding": "The prior semantic work remains three dirty and two untracked sources.",
+      "proposedStep": 1
+    }
+  ],
+  "selectedApproach": "Harden the existing typed relation contract through deterministic checks, provenance bindings and existing gates.",
+  "alternatives": [
+    {
+      "approach": "Documentation only",
+      "reasonRejected": "Does not detect invalid combinations or stale evidence."
+    },
+    {
+      "approach": "New RDF/OWL/graph/runtime platform",
+      "reasonRejected": "Exceeds the requested maturity and preservation scope."
+    }
+  ],
+  "implementationPlan": [
+    {
+      "step": 1,
+      "title": "核对已有语义合同及源码来源",
+      "implementation": "not-run"
+    },
+    {
+      "step": 2,
+      "title": "补齐语义关系约束与可拒绝错误的负例",
+      "implementation": "not-run"
+    },
+    {
+      "step": 3,
+      "title": "为语义合同绑定版本、候选和来源摘要",
+      "implementation": "not-run"
+    },
+    {
+      "step": 4,
+      "title": "接入原生门禁并验证兼容性和证据闭环",
+      "implementation": "not-run"
+    }
+  ],
+  "limitations": [
+    "No new validator, runtime path, permission decision, graph module, default or lock was implemented.",
+    "No task-success, RAG, latency, cost, user adoption, SHACL/PROV conformance or GA benefit was measured.",
+    "Source-owner enforcement paths still require the first implementation node's per-relation readback.",
+    "Working-source observation is dirty; this research snapshot is not formal acceptance.",
+    "Historical test counts are not reused as current or new-hardening acceptance."
+  ]
+}

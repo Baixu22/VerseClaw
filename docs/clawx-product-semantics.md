@@ -8,6 +8,10 @@ Evidence boundary: this document is a product-semantics guardrail that complemen
 
 ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is for immediate collaboration. Durable task facts belong to Task Ledger. High-constraint execution belongs to explicit Task Loop runs. Runtime/plugin scheduling belongs to Workboard. Routing Memo is an internal diagnostic; it cannot affect routing until same-session scorecard-backed quality input is available.
 
+## Typed product relations
+
+`PRODUCT_SEMANTIC_RELATIONS` in `shared/product-semantics.ts` records a small set of directed, evidence-linked relationships among the existing product concepts. Each edge names the owning authority boundary; it is not permission, an inverse relation, or a transitively inferred fact. Scope is deliberately narrow: this is not a universal enterprise ontology, a graph database, an inference engine, a runtime path, or prompt injection.
+
 ## Identity and scope vocabulary
 
 Workspace is not an alias for Project. A Workspace identifies a local executable
