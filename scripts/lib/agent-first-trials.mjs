@@ -133,6 +133,17 @@ function directoryFingerprint(directory, excluded = new Set(['node_modules', 'ag
   const files = walk(directory).map((path) => relative(directory, path).replaceAll('\\', '/')).filter((path) => !path.split('/').some((part) => excluded.has(part))).sort();
   return Object.fromEntries(files.map((path) => [path, sha256(readFileSync(join(directory, path)))]));
 }
+export function consolidateForbiddenWrites(paths) {
+  const groups = new Map();
+  for (const path of [...new Set(paths)].sort()) {
+    const top = String(path).split('/')[0];
+    const group = groups.get(top) ?? { topLevelPath: top, fileCount: 0, samplePaths: [] };
+    group.fileCount += 1;
+    if (group.samplePaths.length < 8) group.samplePaths.push(path);
+    groups.set(top, group);
+  }
+  return [...groups.values()].sort((a, b) => a.topLevelPath.localeCompare(b.topLevelPath));
+}
 function diffFingerprint(before, after) {
   const added = Object.keys(after).filter((path) => !Object.hasOwn(before, path)).sort();
   const changed = Object.keys(after).filter((path) => Object.hasOwn(before, path) && before[path] !== after[path]).sort();
@@ -498,6 +509,8 @@ export async function runHistoricalTrial(runDir, options = {}) {
     // there cannot influence the verdict; they are recorded for audit instead of failing the trial.
     const oracleWrites = touched.filter((path) => oraclePaths.includes(path));
     const forbidden = touched.filter((path) => path.startsWith('.git/'));
+    const forbiddenWrites = consolidateForbiddenWrites(forbidden);
+    const forbiddenFileCount = forbidden.length;
     if (exit.timedOut) failureClass = 'infrastructure';
     if (exit.error) failureClass = 'infrastructure';
     if (forbidden.length) failureClass = 'agent';
@@ -512,7 +525,7 @@ export async function runHistoricalTrial(runDir, options = {}) {
     const traceGrade = gradeTraceEvidence(oracle.trace);
     const verdict = oracle.verdict.verdict === 'pass' && traceGrade.verdict === 'pass' && !forbidden.length && !failureClass ? 'pass' : oracle.verdict.verdict === 'unknown' || traceGrade.verdict === 'unknown' ? 'unknown' : 'fail';
     if (verdict !== 'pass' && !failureClass) failureClass = verdict === 'unknown' ? 'grader' : 'agent';
-    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit, startedAt, completedAt: new Date().toISOString(), agent: { exitCode: exit.code, timedOut: exit.timedOut, error: exit.error ?? null }, diff: agentDiff, forbiddenPaths: forbidden, oracleWrites, scrubbedOraclePaths, preexistingOraclePaths, grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory }, failureClass, checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, hiddenTestsHiddenFromAgent: oraclePaths.every((path) => !existsSync(join(agentRoot, path))), noGitMetadataAtStart: !existsSync(join(agentRoot,'.git')) }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
+    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit, startedAt, completedAt: new Date().toISOString(), agent: { exitCode: exit.code, timedOut: exit.timedOut, error: exit.error ?? null }, diff: agentDiff, forbiddenPaths: forbidden, forbiddenWrites, forbiddenFileCount, oracleWrites, scrubbedOraclePaths, preexistingOraclePaths, grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory }, failureClass, checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, hiddenTestsAbsentFromAgentBeforeRun: preexistingOraclePaths.every((path) => !existsSync(join(agentRoot, path))), hiddenTestPathsOverwrittenByGrader: oracleWrites.length, agentLeftTestAtHiddenPathCount: oraclePaths.filter((path) => existsSync(join(agentRoot, path))).length, noGitMetadataAtStart: !existsSync(join(agentRoot,'.git')) }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
     writeHistoricalResult(trialDir,result);
     // The 212 MB snapshot trees are scratch; only the result, logs and grader receipts are
     // evidence. Prune them so a 144-trial campaign cannot exhaust the D: volume, which would

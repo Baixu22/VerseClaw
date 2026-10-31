@@ -25,3 +25,5 @@ export function checkHistoricalRun(runDir: string, options?: { root?: string; wr
 export function retainHistoricalRun(runDir: string, outputDir: string, options?: { root?: string }): any;
 
 export function historicalTaskDefect(task: any, hiddenSignalPaths?: string[]): string | null;
+
+export function consolidateForbiddenWrites(paths: string[]): Array<{ topLevelPath: string; fileCount: number; samplePaths: string[] }>;
