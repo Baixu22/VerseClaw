@@ -129,9 +129,15 @@ export type GitApplyPatchPayload = {
   patch: string;
   mode?: GitApplyPatchMode;
   approvalId?: string;
+  /** Explicit review operation; ordinary Git apply retains its existing path. */
+  reviewBinding?: { workspaceId: string; sessionKey: string; contextId: string; expectedHead: string; patchDigest: string };
 };
 
 export type GitApplyPatchResult = GitOperationResult & {
+  writeJournalId?: string;
+  recoveryRequired?: boolean;
+  stale?: boolean;
+  destinationHead?: string;
   /** Paths successfully written/reverted by `git apply`. */
   appliedPaths: string[];
   /** Paths git skipped (already applied, missing, etc.). */

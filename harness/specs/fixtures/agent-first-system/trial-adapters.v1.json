@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "AgentFirstTrialAdapters/v1",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-execution-registry",
+  "adapters": {
+    "loop-control": {
+      "entrypoint": "scripts/lib/agent-first-trial-worker.mjs",
+      "export": "executeLoopControl"
+    },
+    "qa-scenario": {
+      "entrypoint": "scripts/lib/agent-first-trial-worker.mjs",
+      "export": "executeQaScenario"
+    }
+  }
+}

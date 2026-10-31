@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "AgentFirstProductEffectAcceptance/v1",
+  "taskId": "TF-0591",
+  "driven_by": "agent",
+  "actor": "codex/tf0591-evidence",
+  "sourceCandidate": {
+    "commit": "c14769fcdf587722ffc6b99a6e3dff023f4a7e2c",
+    "tree": "9c317d03a88aab96087a42645e48e9db76d5d6bd",
+    "dirty": false
+  },
+  "profiles": [
+    {
+      "profile": 1,
+      "receipt": "profile-1-product-effect.json",
+      "sourceSha256": "a2ffc8335f40658e955fc1bbcf1063be1f47946866c1889832e82bd0d7594665",
+      "trace": {
+        "path": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\results\\agent-first-product-effect-5c84e-fects-in-isolated-profile-1\\trace.zip",
+        "sha256": "b86661beafddd5110b3559fb0277bcee38856e6eed8e319df8c54bd1ba025153"
+      },
+      "cleanup": {
+        "appExitCode": 1,
+        "appSignal": null,
+        "gatewayPortClosed": true
+      },
+      "homeDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-dRzYYk",
+      "userDataDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-user-data-5WqZQO"
+    },
+    {
+      "profile": 2,
+      "receipt": "profile-2-product-effect.json",
+      "sourceSha256": "8c2f5122400bb3b01372fcc034fa4e8c162784c38d975a578d738b6fe7d7d43d",
+      "trace": {
+        "path": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\results\\agent-first-product-effect-6e897-fects-in-isolated-profile-2\\trace.zip",
+        "sha256": "ce163f75fd5b5337fb5d4d9d6f86ecf7066fbeca7a804934c98a6694bb6290db"
+      },
+      "cleanup": {
+        "appExitCode": 1,
+        "appSignal": null,
+        "gatewayPortClosed": true
+      },
+      "homeDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-p192eQ",
+      "userDataDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-user-data-cCvFqZ"
+    },
+    {
+      "profile": 3,
+      "receipt": "profile-3-product-effect.json",
+      "sourceSha256": "9117b76df6ac11c94bdb61170afd36749ce0471237ee7ab31be77a53742151ee",
+      "trace": {
+        "path": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\results\\agent-first-product-effect-fedf2-fects-in-isolated-profile-3\\trace.zip",
+        "sha256": "7db210db9ce944d6784dd51683961283a34ab74c0f8f91f7313a04655f666454"
+      },
+      "cleanup": {
+        "appExitCode": 1,
+        "appSignal": null,
+        "gatewayPortClosed": true
+      },
+      "homeDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-home-8Ziwor",
+      "userDataDir": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\verse-claw-e2e-user-data-dK2PV9"
+    }
+  ],
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "total": 3,
+    "source": "parsed",
+    "segments": 1
+  },
+  "buildIdentity": "build-identity.json",
+  "buildIdentitySha256": "cd43900063d1c61110220c196dd286d3f3e0a8f8762a5db041f4714e2ff7e495",
+  "sourceMutationGuard": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "b3603def72ae7b17025b24575add68e20e4c7d4d9eca627dc1b3377850401170",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "b3603def72ae7b17025b24575add68e20e4c7d4d9eca627dc1b3377850401170",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "processCleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r",
+    "ledgerEntries": 6,
+    "reaped": [
+      {
+        "pid": 39708,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 22772,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 15968,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 38132,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 47600,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 24584,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      }
+    ],
+    "survivors": [],
+    "sweep": {
+      "status": "ok",
+      "runRoot": "D:\\ClawX\\.agent-workbench\\acceptance-private\\agent-first-tf0591\\run06-full\\verse-claw-e2e-run-ng8W6r\\",
+      "owned": [],
+      "remaining": []
+    }
+  },
+  "rawArchive": "D:/ClawX/.agent-workbench/acceptance-private/agent-first-tf0591/run06-full",
+  "rawReportSha256": "bbc2723426f877c2f2ff98071c981c197dedce33072b504864cf02204da5e78d",
+  "logSha256": "d370c3ef8eb02f6dae6ec97ce0dfc1c0e3693e417a58afcf93a2b31189ebdfdb",
+  "typecheck": {
+    "exitCode": 0,
+    "path": "D:/tmp/agent-first-full-01a18be8/tf0591-final-typecheck.log",
+    "sha256": "51a47cdcaf9f1ec63bdf182df3844c43f4ffa253022eb24e53bad5b68032bd7f"
+  },
+  "comms": {
+    "replay": 0,
+    "compare": 0
+  },
+  "limitations": [
+    "Source-host real product effects, not installed-package or live-model quality evidence.",
+    "Windows fixture deliberately kills the owned Electron process; observed appExitCode=1 is bounded forced cleanup, not graceful operational shutdown.",
+    "Runtime and Electron builds precede test-only fixes; Git confirms product source unchanged, build identity is recorded rather than re-signed."
+  ]
+}

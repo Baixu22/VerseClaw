@@ -7,6 +7,17 @@
     "local": "本地改动",
     "remote": "远程 PR"
   },
+  "reviewComments": {
+    "title": "审查评论",
+    "anchorState": {
+      "live": "锚点有效",
+      "stale": "锚点已过期",
+      "removed": "锚点对应内容已删除",
+      "unavailable": "锚点不可用"
+    },
+    "reanchor": "重新锚定评论",
+    "staleHelper": "被审查的代码范围已变化。请显式重新锚定后再移动评论。"
+  },
   "yes": "是",
   "no": "否",
   "empty": "选择审查目标，按需填写 focus，然后运行审查。",
@@ -131,7 +142,11 @@
       "sandboxOnly": "仅 Main 批准的 sandbox 仓库可以请求此操作。",
       "agentOff": "Agent 合并已关闭",
       "strategy": "合并策略",
-      "strategies": { "merge": "合并提交", "squash": "压缩合并", "rebase": "变基合并" },
+      "strategies": {
+        "merge": "合并提交",
+        "squash": "压缩合并",
+        "rebase": "变基合并"
+      },
       "commitTitle": "提交标题（可选）",
       "commitMessage": "提交说明（可选）",
       "requestApproval": "请求合并审批",
@@ -212,7 +227,10 @@
       "selectFile": "请选择改动文件",
       "line": "行号",
       "side": "Diff 侧",
-      "sides": { "LEFT": "旧侧", "RIGHT": "新侧" },
+      "sides": {
+        "LEFT": "旧侧",
+        "RIGHT": "新侧"
+      },
       "commentId": "评论 ID",
       "metadataTitle": "标题",
       "metadataBody": "描述",
@@ -281,5 +299,78 @@
     "patchUnavailable": "无法安全验证 Git diff，因此未启动 AI 审查。",
     "reviewFailed": "审查失败。",
     "ledgerFailed": "无法创建 Task Ledger review node。"
+  },
+  "changeContext": {
+    "title": "变更上下文（高级）",
+    "optIn": "仅在当前视图显式启用；关闭即可停用，打开或关闭均不会应用代码。",
+    "session": "会话",
+    "mode": "比较方式",
+    "revision": "版本或检查点",
+    "load": "加载上下文",
+    "refresh": "刷新评论",
+    "path": "相对文件路径",
+    "startLine": "起始行",
+    "endLine": "结束行",
+    "comment": "评论",
+    "addComment": "添加评论",
+    "resolve": "解决",
+    "reopen": "重新打开",
+    "delete": "删除评论",
+    "failed": "变更上下文失败。",
+    "sourceUnavailable": "源文件内容不可用。",
+    "invalidRange": "请选择有效行范围。",
+    "modes": {
+      "merge-base": "合并基线",
+      "last-commit": "上次提交",
+      "last-turn": "上次回合",
+      "checkpoint": "检查点"
+    },
+    "states": {
+      "available": "可用",
+      "partial": "部分",
+      "truncated": "截断",
+      "stale": "过期",
+      "removed": "已删除",
+      "unavailable": "不可用"
+    },
+    "taskNode": "Task Ledger 节点（可选）",
+    "verdictBoundary": "审查结论不完成任务、不执行代码、不授予审批或合并；结论仅保留在当前加载视图。",
+    "destinationHead": "目标完整 HEAD",
+    "approval": "现有审批 ID",
+    "pull": "拉取变更",
+    "verdicts": {
+      "approve": "通过审查",
+      "request_changes": "请求修改",
+      "comment_only": "仅评论"
+    },
+    "pullStates": {
+      "applied": "已应用",
+      "denied": "已拒绝",
+      "stale": "已过期",
+      "conflicted": "有冲突",
+      "unavailable": "不可用",
+      "partial": "部分",
+      "truncated": "截断",
+      "recovery_required": "需要 journal 恢复；检查后才能重试"
+    },
+    "vgKinds": {
+      "stale-read": "过期读取",
+      "candidate": "候选",
+      "receipt": "执行回执"
+    },
+    "vgBoundary": "仅供参考；host verdict 保持不变。",
+    "vgSummary": {
+      "stale-read-observed": "在声明覆盖范围内观察到过期读取。",
+      "coverage-partial": "读取覆盖不完整；没有警告不表示干净或安全。",
+      "candidate-unmeasured": "当前上下文未测量候选。",
+      "candidate-observed": "存在 host 候选事实；不授予 landing 权限。",
+      "receipt-unmeasured": "缺少 host 权威执行回执。",
+      "receipt-bound": "已取得绑定的 host 执行回执。"
+    },
+    "vgExecution": {
+      "unmeasured": "执行未测量",
+      "verified": "回执验证的执行",
+      "failed": "执行失败"
+    }
   }
 }

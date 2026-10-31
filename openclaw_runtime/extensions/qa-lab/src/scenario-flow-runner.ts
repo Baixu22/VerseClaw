@@ -28,6 +28,11 @@ type QaFlowApi = Record<string, unknown> & {
 
 type QaFlowVars = Record<string, unknown>;
 
+/** Observations of executed flow actions; no arguments, secrets or substituted verdicts. */
+export type QaFlowEvent =
+  | { kind: "call"; call: string; phase: "begin" | "complete" }
+  | { kind: "assert"; expression: string; actual: boolean };
+
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
   ...args: string[]
 ) => (...fnArgs: unknown[]) => Promise<unknown>;
@@ -137,16 +142,18 @@ function resolveCallable(path: string, api: QaFlowApi, vars: QaFlowVars) {
   return parent ? value.bind(parent) : value;
 }
 
-async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars) {
+async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars, observe?: (event: QaFlowEvent) => void) {
   if (!isPlainObject(action)) {
     throw new Error(`invalid qa flow action: ${JSON.stringify(action)}`);
   }
   if (typeof action.call === "string") {
+    observe?.({ kind: "call", call: action.call, phase: "begin" });
     const callable = resolveCallable(action.call, api, vars);
     const args = Array.isArray(action.args)
       ? await Promise.all(action.args.map((entry) => resolveValue(entry, api, vars)))
       : [];
     const result = await callable(...args);
+    observe?.({ kind: "call", call: action.call, phase: "complete" });
     if (typeof action.saveAs === "string" && action.saveAs.trim()) {
       vars[action.saveAs.trim()] = result;
     }
@@ -168,6 +175,7 @@ async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars) 
       throw new Error(`invalid qa flow assertion: ${JSON.stringify(action.assert)}`);
     }
     const passed = Boolean(await evalExpr(spec.expr, api, vars));
+    observe?.({ kind: "assert", expression: spec.expr, actual: passed });
     if (!passed) {
       const message =
         spec.message === undefined ? undefined : await resolveValue(spec.message, api, vars);
@@ -206,7 +214,7 @@ async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars) 
     const passed = Boolean(await evalExpr(ifAction.expr, api, vars));
     const branch = passed ? ifAction.then : (ifAction.else ?? []);
     for (const nested of branch) {
-      await runFlowAction(nested, api, vars);
+      await runFlowAction(nested, api, vars, observe);
     }
     return;
   }
@@ -227,7 +235,7 @@ async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars) 
         vars[forEachAction.index] = index;
       }
       for (const nested of forEachAction.actions) {
-        await runFlowAction(nested, api, vars);
+        await runFlowAction(nested, api, vars, observe);
       }
     }
     return;
@@ -241,7 +249,7 @@ async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars) 
     };
     try {
       for (const nested of tryAction.actions) {
-        await runFlowAction(nested, api, vars);
+        await runFlowAction(nested, api, vars, observe);
       }
     } catch (error) {
       if (!tryAction.catch && !tryAction.finally) {
@@ -252,7 +260,7 @@ async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars) 
       }
       if (tryAction.catch) {
         for (const nested of tryAction.catch) {
-          await runFlowAction(nested, api, vars);
+          await runFlowAction(nested, api, vars, observe);
         }
       } else {
         throw error;
@@ -260,7 +268,7 @@ async function runFlowAction(action: unknown, api: QaFlowApi, vars: QaFlowVars) 
     } finally {
       if (tryAction.finally) {
         for (const nested of tryAction.finally) {
-          await runFlowAction(nested, api, vars);
+          await runFlowAction(nested, api, vars, observe);
         }
       }
     }
@@ -273,13 +281,14 @@ export async function runScenarioFlow(params: {
   api: QaFlowApi;
   flow: QaScenarioFlow;
   scenarioTitle: string;
+  observe?: (event: QaFlowEvent) => void;
 }) {
   const vars: QaFlowVars = {};
   const steps: QaSuiteStep[] = params.flow.steps.map((step) => ({
     name: step.name,
     run: async () => {
       for (const action of step.actions) {
-        await runFlowAction(action, params.api, vars);
+        await runFlowAction(action, params.api, vars, params.observe);
       }
       if (!step.detailsExpr) {
         return undefined;

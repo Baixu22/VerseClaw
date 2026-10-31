@@ -1,0 +1,193 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "704616baf683b7ed25a66c1d0d51732b6de5afc9",
+  "tree": "660b88607ce6f1a05cef6200dfcc1e3db78b2904",
+  "gates": [
+    {
+      "name": "unit",
+      "command": "pnpm exec vitest run tests/unit/change-context-review-verdict.test.ts tests/unit/change-context-contract.test.ts tests/unit/change-context-projection.test.ts tests/unit/change-context-review-anchors.test.ts tests/unit/git-api.test.ts tests/unit/change-context-vg-evidence.test.ts tests/unit/versegit-candidate-receipts.test.ts tests/unit/versegit-receipt-authority.test.ts tests/unit/versegit-wp3-receipts.test.ts tests/unit/versegit-observation-basis.test.ts tests/unit/versegit-runtime-bindings.test.ts --maxWorkers=1",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 28986,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\unit.log"
+    },
+    {
+      "name": "contract",
+      "command": "pnpm contract:check",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 627,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\contract.log"
+    },
+    {
+      "name": "i18n",
+      "command": "pnpm i18n:lint",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 733,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\i18n.log"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 30886,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\typecheck.log"
+    },
+    {
+      "name": "build",
+      "command": "pnpm run build:vite",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 43235,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\build.log"
+    },
+    {
+      "name": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/change-context-review-loop.md",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1611,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\harness-validate.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/change-context-review-loop.md --dry-run",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 1431,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\harness-dry-run.log"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 752,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exit": 0,
+      "signal": null,
+      "durationMs": 696,
+      "log": "D:\\tmp\\change-context-relay\\617-final\\comms-compare.log"
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "sha256": "e8db6e15801387d59f3dda4402505b3d5599c91176648a237658d2611105ef32"
+    },
+    {
+      "path": "electron/gateway/versegit-bridge.ts",
+      "sha256": "6617052fe2cb8b9a84352c2169fcafb8bea2f8d17b3edf78421e5480d0ab6689"
+    },
+    {
+      "path": "electron/services/change-context-api.ts",
+      "sha256": "824f7fab682195f64ea69ca8f1a02213c99c47fce6157080cc7d4b1225c23fda"
+    },
+    {
+      "path": "electron/services/change-context-vg-evidence.ts",
+      "sha256": "8f4852993929997a6888f8234cca3a897e9fde1ad0e2b849dff1c4478e2c8e9f"
+    },
+    {
+      "path": "electron/services/versegit-receipt-evidence.ts",
+      "sha256": "3a5c0312e760721860315785409e3e14aad7716308c53ed96d420570d27a9104"
+    },
+    {
+      "path": "harness/specs/tasks/change-context-review-loop.md",
+      "sha256": "73b1a776ee54a041da29d06a0e884b17d443c1a94895bc575dc966980f434584"
+    },
+    {
+      "path": "shared/i18n/locales/en/codeReview.json",
+      "sha256": "8b48616fff27b436e0e4ba2473190c1cadae87aac5a2932ea9d93a5e24bbc1b4"
+    },
+    {
+      "path": "shared/i18n/locales/ja/codeReview.json",
+      "sha256": "a993b91b35c1ee6fe8b9101a09ce06c8365aeb76c49d325e898db8a327a45221"
+    },
+    {
+      "path": "shared/i18n/locales/ru/codeReview.json",
+      "sha256": "2ae96178a6397df4b57e18323c0f9191d3c085f262a180ba6bdfcc63523e488c"
+    },
+    {
+      "path": "shared/i18n/locales/zh/codeReview.json",
+      "sha256": "d2e88082c6dbea0e5fd5e9e2ef25bd7e48096bb79cef3bfe90c799465de56be6"
+    },
+    {
+      "path": "shared/types/change-context.ts",
+      "sha256": "21055307d9e690de7aca4d433ea3731cb7f3e68f4c69835acbb41e7cfda4cd31"
+    },
+    {
+      "path": "src/pages/CodeReview/ChangeContextPanel.tsx",
+      "sha256": "d781521ffdd39d8ff53a56ea1f85669b3e698367d77946da8b345f1688377715"
+    },
+    {
+      "path": "tests/unit/change-context-vg-evidence.test.ts",
+      "sha256": "b787576d558d397a8597fb2a88f2bb318a177245107291dc086ced183eacd873"
+    },
+    {
+      "path": "tests/unit/versegit-candidate-receipts.test.ts",
+      "sha256": "0f53cba28df0ee242af1ba0bf9808d21dd30c313c795a49abebf53aa3bcd2832"
+    }
+  ],
+  "rawEvidence": [
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\unit.log",
+      "sha256": "35ac4525dcaac9f19f64bdf977e9b0296bcfb05bdac3da21b3272076906a943c"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\contract.log",
+      "sha256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\i18n.log",
+      "sha256": "7dcd6b3579b0480e13f2f9fc44b9c81cebe8ec45b0b06d24192d568710809661"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\typecheck.log",
+      "sha256": "b74f535c8d20e66653d8cbbafeda48afbe5f97bf2945faf5e223b8b2f884a116"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\build.log",
+      "sha256": "8102f30413e492dc9926192fe0f7b9f9cec2e7cd8314f615b4462149489a22a6"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\harness-validate.log",
+      "sha256": "825fda63988b7644aaf3fe143bbc8abc774d3fe967040ca910c7202c843a16c3"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\harness-dry-run.log",
+      "sha256": "99ab9ae1f05c5f1fa63b4b0712a4f40dbb6778b0f52652250c18db567dbe6855"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\comms-replay.log",
+      "sha256": "8cd854a59636fb1d95376232bb673785505bb47a2eee8dbc825868140161edbd"
+    },
+    {
+      "path": "D:\\tmp\\change-context-relay\\617-final\\comms-compare.log",
+      "sha256": "4cb65cde813811bad00e6ff6f8bcb1fedff32bd0466f48bf2e20e4e550cb8091"
+    }
+  ],
+  "schema": "clawx.change-context.tf0617-acceptance/v1",
+  "unitTests": {
+    "passed": 119,
+    "skipped": 1
+  },
+  "verified": [
+    "Default-off: zero workspace, observation and receipt reader calls.",
+    "Stale-read remains advisory with host verdict unchanged.",
+    "Missing/structural/stale/unbound receipts remain partial/unmeasured.",
+    "Receipt owner revalidates disk evidence on each read.",
+    "No VG startup, verifier, landing or M4 action from Change Context."
+  ],
+  "limitations": [
+    "The existing real VerseShell binary test is skipped when ae.exe is absent. This is not live provider evidence.",
+    "Receipt facts require matching run, workspace, receipt and immutable candidate commit; other contexts remain unmeasured.",
+    "Real Electron owner-path acceptance remains TF-0618."
+  ]
+}

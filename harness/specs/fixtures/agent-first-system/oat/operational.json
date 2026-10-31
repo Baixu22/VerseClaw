@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "AgentFirstOperationalAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-oat",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "source": {
+    "core": {
+      "taskStatus": "cancelled",
+      "gatewayReady": true,
+      "theme": "light"
+    },
+    "drills": {
+      "gatewayLoss": {
+        "observed": true,
+        "portClosed": true
+      },
+      "gatewayRecovery": {
+        "state": "running"
+      },
+      "gatewayStartupFailure": {
+        "observed": true,
+        "failedState": "reconnecting",
+        "recovered": true
+      },
+      "diagnostics": {
+        "observed": true,
+        "gatewayState": "healthy"
+      },
+      "writeFailure": {
+        "observed": true,
+        "recoveryExport": true,
+        "exportBytes": 26354
+      },
+      "restart": {
+        "observed": true,
+        "theme": "dark"
+      },
+      "crashRecovery": {
+        "observed": true,
+        "crashedPid": 5956,
+        "recovered": true,
+        "followUpTask": "cancelled"
+      }
+    },
+    "cleanup": {
+      "appExitObserved": true,
+      "gatewayPortClosed": true,
+      "crashRelaunchClean": true
+    }
+  },
+  "packaged": null,
+  "verdict": {
+    "operational": "pass",
+    "distribution": "not-run"
+  },
+  "distribution": {
+    "status": "not-run",
+    "reason": "CLAWX_AGENT_FIRST_PACKAGED_APP was not provided; source OAT remains valid and distribution is not inferred."
+  },
+  "claims": {
+    "realHuman": false,
+    "releaseApproved": false,
+    "signedInstaller": false,
+    "crossPlatform": false
+  },
+  "limitations": [
+    "Provider timeout/cancel evidence is produced by the existing space-bunny fault suite and is retained separately.",
+    "Source and packaged results are separate real Electron/Gateway runs; distribution is not extrapolated from source."
+  ]
+}

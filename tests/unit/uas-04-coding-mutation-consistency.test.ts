@@ -9,7 +9,8 @@ describe("UAS-04 Coding mutation consistency boundary", () => {
   const preflight = read("openclaw_runtime/src/agents/apply-patch-preflight.ts");
   const batchLock = read("openclaw_runtime/src/agents/apply-patch-batch-lock.ts");
   const applyPatch = read("openclaw_runtime/src/agents/apply-patch.ts");
-  const journal = read("openclaw_runtime/src/agents/tools/write-journal.ts");
+  const journalEntrypoint = read("openclaw_runtime/src/agents/tools/write-journal.ts");
+  const journal = read("openclaw_runtime/src/agents/tools/write-journal-core.ts");
   const toolKit = read("openclaw_runtime/src/agents/agent-tools.ts");
 
   it("holds path-sorted leases across preflight and mutation", () => {
@@ -31,6 +32,8 @@ describe("UAS-04 Coding mutation consistency boundary", () => {
     expect(preflight).toContain('setWriteJournalBatchState(batch.journalEntries, batchState)');
     expect(journal).toContain('entry.batch?.state === "prepared"');
     expect(journal).toContain("writeJournalRecoveryRef");
+    expect(journalEntrypoint).toContain('export * from "./write-journal-core.js"');
+    expect(journalEntrypoint).toContain("undoJournalWrites(params, toRelativeWorkspacePath)");
     expect(toolKit).toContain('if (kind !== "apply_patch")');
     expect(applyPatch).toContain("write_journal: result.journal");
   });

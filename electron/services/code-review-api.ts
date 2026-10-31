@@ -250,19 +250,23 @@ function evidenceRefsForFiles(files: string[]): TaskLedgerEvidenceRef[] {
   }));
 }
 
-async function collectUncommittedDiff(ctx: RepoContext, requestId: string): Promise<ReviewDiffBundle> {
+async function collectUntrackedPatches(ctx: RepoContext): Promise<string[]> {
   const status = await readCurrentGitStatus();
-  const staged = await git(['diff', '--cached'], ctx.workspaceRoot);
-  const unstaged = await git(['diff'], ctx.workspaceRoot);
-  if (staged.exitCode !== 0) throw new Error(staged.stderr.trim() || 'Failed to read staged diff');
-  if (unstaged.exitCode !== 0) throw new Error(unstaged.stderr.trim() || 'Failed to read unstaged diff');
-
   const untrackedPatches: string[] = [];
   for (const change of status.changes.filter((entry) => entry.untracked)) {
     const path = resolveRepoPath(ctx, change.path);
     const content = await readTextFile(path.absolutePath);
     untrackedPatches.push(syntheticUntrackedPatch(path.gitPath, content));
   }
+  return untrackedPatches;
+}
+
+async function collectUncommittedDiff(ctx: RepoContext, requestId: string): Promise<ReviewDiffBundle> {
+  const staged = await git(['diff', '--cached'], ctx.workspaceRoot);
+  const unstaged = await git(['diff'], ctx.workspaceRoot);
+  if (staged.exitCode !== 0) throw new Error(staged.stderr.trim() || 'Failed to read staged diff');
+  if (unstaged.exitCode !== 0) throw new Error(unstaged.stderr.trim() || 'Failed to read unstaged diff');
+  const untrackedPatches = await collectUntrackedPatches(ctx);
 
   const rawPatch = [staged.stdout, unstaged.stdout, ...untrackedPatches]
     .map((entry) => entry.trimEnd())
@@ -315,13 +319,21 @@ async function collectCommitDiff(ctx: RepoContext, commit: string, requestId: st
     throw new Error(resolved.stderr.trim() || `Failed to resolve commit ${input}`);
   }
   const resolvedCommit = resolved.stdout.trim();
+  const parent = await git(['rev-parse', '--verify', `${resolvedCommit}^`], ctx.workspaceRoot);
+  const baseCommit = parent.exitCode === 0 && parent.stdout.trim() ? parent.stdout.trim() : undefined;
   const show = await git(['show', '--format=', '--patch', resolvedCommit], ctx.workspaceRoot);
   if (show.exitCode !== 0) throw new Error(show.stderr.trim() || `Failed to read commit ${input}`);
   const limited = trimOutput(show.stdout);
   const projection = projectReviewPatch(limited.adapterText, limited.truncated, requestId);
   const files = filesFromArtifacts(projection.patchArtifacts);
   return {
-    target: { kind: 'commit', commit: input, label: input, resolvedCommit },
+    target: {
+      kind: 'commit',
+      commit: input,
+      label: input,
+      resolvedCommit,
+      ...(baseCommit ? { baseCommit } : {}),
+    },
     patch: limited.text,
     ...projection,
     files,
@@ -330,6 +342,46 @@ async function collectCommitDiff(ctx: RepoContext, commit: string, requestId: st
   };
 }
 
+export async function collectCodeReviewWorktreeDiffAgainstCommit(
+  commit: string,
+  requestId = `change-context-${randomUUID()}`,
+): Promise<ReviewDiffBundle> {
+  const ctx = await requireRepoContext();
+  const input = normalizeString(commit);
+  if (!input) throw new Error('Commit is required');
+  const resolved = await git(['rev-parse', '--verify', `${input}^{commit}`], ctx.workspaceRoot);
+  if (resolved.exitCode !== 0 || !resolved.stdout.trim()) {
+    throw new Error(resolved.stderr.trim() || `Failed to resolve commit ${input}`);
+  }
+  const resolvedCommit = resolved.stdout.trim();
+  const diff = await git(['diff', resolvedCommit], ctx.workspaceRoot);
+  if (diff.exitCode !== 0) throw new Error(diff.stderr.trim() || `Failed to diff worktree against ${input}`);
+  const untrackedPatches = await collectUntrackedPatches(ctx);
+  const rawPatch = [diff.stdout, ...untrackedPatches]
+    .map((entry) => entry.trimEnd())
+    .filter(Boolean)
+    .join('\n');
+  const limited = trimOutput(rawPatch);
+  const projection = projectReviewPatch(limited.adapterText, limited.truncated, requestId);
+  const files = filesFromArtifacts(projection.patchArtifacts);
+  const head = await git(['rev-parse', '--verify', 'HEAD'], ctx.workspaceRoot);
+  const headCommit = head.exitCode === 0 && head.stdout.trim() ? head.stdout.trim() : undefined;
+  return {
+    target: {
+      kind: 'commit',
+      commit: input,
+      label: `Worktree against ${input}`,
+      resolvedCommit,
+      baseCommit: resolvedCommit,
+      ...(headCommit ? { headCommit } : {}),
+    },
+    patch: limited.text,
+    ...projection,
+    files,
+    stats: diffStatsFromPatch(limited.text, limited.truncated),
+    evidenceRefs: evidenceRefsForFiles(files),
+  };
+}
 export async function collectCodeReviewDiffForTarget(
   target: CodeReviewTarget,
   requestId = `code-review-${randomUUID()}`,

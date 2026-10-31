@@ -1,0 +1,2466 @@
+{
+  "schemaVersion": "AgentFirstTrialAggregate/v1",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-statistical-reader",
+  "manifestDigest": "sha256:ca705e8c8cba602d24ceee531ed49643ee43a5d515e382c18a772f49c60a4448",
+  "sourceCandidate": {
+    "commit": "0b973170082d2e8e4f6882ffda23dc9fd9ede3dd",
+    "tree": "7a182120f8e1523246baf9c646bcebe54e565f2d",
+    "dirty": false
+  },
+  "complete": true,
+  "recordedTrials": 144,
+  "expectedTrials": 144,
+  "statistics": {
+    "status": "pass",
+    "reason": null,
+    "run": {
+      "k": 3,
+      "minimumCompleteCases": 20,
+      "trialCount": 144,
+      "baselineTrialCount": 72,
+      "treatmentTrialCount": 72,
+      "completeCaseCount": 24,
+      "incompleteCaseCount": 0,
+      "cleanStateRequired": true
+    },
+    "perTask": [
+      {
+        "caseId": "af-personal-approval-denial-stop",
+        "taskId": "af-personal-approval-denial-stop",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 41554,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-approval-denial-stop"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 40694,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-approval-denial-stop"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 38919,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-approval-denial-stop"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-channel-thread-reply",
+        "taskId": "af-personal-channel-thread-reply",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 44900,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-channel-thread-reply"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 42500,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-channel-thread-reply"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 40879,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-channel-thread-reply"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-failure-recovery",
+        "taskId": "af-personal-failure-recovery",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 50138,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-failure-recovery"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 51357,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-failure-recovery"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 47822,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-failure-recovery"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-memory-preference-recall",
+        "taskId": "af-personal-memory-preference-recall",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 35397,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-memory-preference-recall"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 34425,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-memory-preference-recall"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 34838,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-memory-preference-recall"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-no-fake-progress",
+        "taskId": "af-personal-no-fake-progress",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 35469,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-no-fake-progress"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 35330,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-no-fake-progress"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 34564,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-no-fake-progress"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-redaction-no-secret-leak",
+        "taskId": "af-personal-redaction-no-secret-leak",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 34409,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-redaction-no-secret-leak"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 36064,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-redaction-no-secret-leak"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 34310,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-redaction-no-secret-leak"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-reminder-roundtrip",
+        "taskId": "af-personal-reminder-roundtrip",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 38244,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-reminder-roundtrip"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 50162,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-reminder-roundtrip"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 51080,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-reminder-roundtrip"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-share-safe-diagnostics-artifact",
+        "taskId": "af-personal-share-safe-diagnostics-artifact",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 38483,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-share-safe-diagnostics-artifact"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 37809,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-share-safe-diagnostics-artifact"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 41185,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-share-safe-diagnostics-artifact"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-task-followthrough-status",
+        "taskId": "af-personal-task-followthrough-status",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 50279,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-task-followthrough-status"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 42439,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-task-followthrough-status"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 37896,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-task-followthrough-status"
+          }
+        ]
+      },
+      {
+        "caseId": "af-personal-tool-safety-followthrough",
+        "taskId": "af-personal-tool-safety-followthrough",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 42679,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-tool-safety-followthrough"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 43802,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-tool-safety-followthrough"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 40889,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-personal-tool-safety-followthrough"
+          }
+        ]
+      },
+      {
+        "caseId": "af-signal-unknown-dimension",
+        "taskId": "af-signal-unknown-dimension",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 115,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-unknown-dimension"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 109,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-unknown-dimension"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 115,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-unknown-dimension"
+          }
+        ]
+      },
+      {
+        "caseId": "af-signal-evidence-missing",
+        "taskId": "af-signal-evidence-missing",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 117,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-evidence-missing"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 161,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-evidence-missing"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 251,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-evidence-missing"
+          }
+        ]
+      },
+      {
+        "caseId": "af-signal-unresolved",
+        "taskId": "af-signal-unresolved",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 134,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-unresolved"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 133,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-unresolved"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 136,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-signal-unresolved"
+          }
+        ]
+      },
+      {
+        "caseId": "af-heldout-candidate-writable",
+        "taskId": "af-heldout-candidate-writable",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 136,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-heldout-candidate-writable"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 134,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-heldout-candidate-writable"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 135,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-heldout-candidate-writable"
+          }
+        ]
+      },
+      {
+        "caseId": "af-heldout-retuned",
+        "taskId": "af-heldout-retuned",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 153,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-heldout-retuned"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 140,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-heldout-retuned"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 147,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-heldout-retuned"
+          }
+        ]
+      },
+      {
+        "caseId": "af-candidate-unlinked-signal",
+        "taskId": "af-candidate-unlinked-signal",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 120,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-unlinked-signal"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 193,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-unlinked-signal"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 165,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-unlinked-signal"
+          }
+        ]
+      },
+      {
+        "caseId": "af-candidate-policy-mismatch",
+        "taskId": "af-candidate-policy-mismatch",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 130,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-policy-mismatch"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 147,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-policy-mismatch"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 128,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-policy-mismatch"
+          }
+        ]
+      },
+      {
+        "caseId": "af-reevaluation-unsealed",
+        "taskId": "af-reevaluation-unsealed",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 116,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-reevaluation-unsealed"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 126,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-reevaluation-unsealed"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 128,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-reevaluation-unsealed"
+          }
+        ]
+      },
+      {
+        "caseId": "af-reevaluation-same-actor",
+        "taskId": "af-reevaluation-same-actor",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 145,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-reevaluation-same-actor"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 122,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-reevaluation-same-actor"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 152,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-reevaluation-same-actor"
+          }
+        ]
+      },
+      {
+        "caseId": "af-candidate-decision-not-run",
+        "taskId": "af-candidate-decision-not-run",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 116,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-decision-not-run"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 126,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-decision-not-run"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 121,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-candidate-decision-not-run"
+          }
+        ]
+      },
+      {
+        "caseId": "af-graduation-skipped-run",
+        "taskId": "af-graduation-skipped-run",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 121,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-graduation-skipped-run"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 121,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-graduation-skipped-run"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 125,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-graduation-skipped-run"
+          }
+        ]
+      },
+      {
+        "caseId": "af-graduation-bare-promotion",
+        "taskId": "af-graduation-bare-promotion",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 129,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-graduation-bare-promotion"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 133,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-graduation-bare-promotion"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 136,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-graduation-bare-promotion"
+          }
+        ]
+      },
+      {
+        "caseId": "af-loop-publication-approval",
+        "taskId": "af-loop-publication-approval",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 147,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-loop-publication-approval"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 126,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-loop-publication-approval"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 132,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-loop-publication-approval"
+          }
+        ]
+      },
+      {
+        "caseId": "af-loop-locked-default-change",
+        "taskId": "af-loop-locked-default-change",
+        "trialCount": 3,
+        "complete": true,
+        "status": "complete",
+        "passK": true,
+        "passAtK": true,
+        "trials": [
+          {
+            "arm": "baseline",
+            "repeat": 1,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 128,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-loop-locked-default-change"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 2,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 121,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-loop-locked-default-change"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "pass",
+            "failureClass": null,
+            "wallClockMs": 133,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "af-loop-locked-default-change"
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "passK": 1,
+      "passAtK": 1,
+      "perTrialSuccessRate": 1,
+      "confidenceInterval95": [
+        0.862024,
+        1
+      ],
+      "passAtKConfidenceInterval95": [
+        0.862024,
+        1
+      ],
+      "intervalMethod": "wilson-over-complete-cases",
+      "flakeRate": 0,
+      "incomplete": [],
+      "reasons": []
+    },
+    "failureClasses": {
+      "infrastructure": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "task": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "grader": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "agent": {
+        "trialCount": 0,
+        "caseCount": 0
+      }
+    },
+    "treatment": {
+      "status": "pass",
+      "perTask": [
+        {
+          "caseId": "af-personal-approval-denial-stop",
+          "taskId": "af-personal-approval-denial-stop",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 37995,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-approval-denial-stop"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 47221,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-approval-denial-stop"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 46965,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-approval-denial-stop"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-channel-thread-reply",
+          "taskId": "af-personal-channel-thread-reply",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 42637,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-channel-thread-reply"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 41557,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-channel-thread-reply"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 43718,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-channel-thread-reply"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-failure-recovery",
+          "taskId": "af-personal-failure-recovery",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 59365,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-failure-recovery"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 70908,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-failure-recovery"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 42362,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-failure-recovery"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-memory-preference-recall",
+          "taskId": "af-personal-memory-preference-recall",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 34369,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-memory-preference-recall"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 35194,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-memory-preference-recall"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 35118,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-memory-preference-recall"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-no-fake-progress",
+          "taskId": "af-personal-no-fake-progress",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 34552,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-no-fake-progress"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 34718,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-no-fake-progress"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 33369,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-no-fake-progress"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-redaction-no-secret-leak",
+          "taskId": "af-personal-redaction-no-secret-leak",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 34709,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-redaction-no-secret-leak"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 34560,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-redaction-no-secret-leak"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 34634,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-redaction-no-secret-leak"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-reminder-roundtrip",
+          "taskId": "af-personal-reminder-roundtrip",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 40439,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-reminder-roundtrip"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 44613,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-reminder-roundtrip"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 45305,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-reminder-roundtrip"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-share-safe-diagnostics-artifact",
+          "taskId": "af-personal-share-safe-diagnostics-artifact",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 71556,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-share-safe-diagnostics-artifact"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 48316,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-share-safe-diagnostics-artifact"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 40753,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-share-safe-diagnostics-artifact"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-task-followthrough-status",
+          "taskId": "af-personal-task-followthrough-status",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 42245,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-task-followthrough-status"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 43684,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-task-followthrough-status"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 41256,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-task-followthrough-status"
+            }
+          ]
+        },
+        {
+          "caseId": "af-personal-tool-safety-followthrough",
+          "taskId": "af-personal-tool-safety-followthrough",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 38989,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-tool-safety-followthrough"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 38031,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-tool-safety-followthrough"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 37626,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-personal-tool-safety-followthrough"
+            }
+          ]
+        },
+        {
+          "caseId": "af-signal-unknown-dimension",
+          "taskId": "af-signal-unknown-dimension",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 108,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-unknown-dimension"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 129,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-unknown-dimension"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 275,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-unknown-dimension"
+            }
+          ]
+        },
+        {
+          "caseId": "af-signal-evidence-missing",
+          "taskId": "af-signal-evidence-missing",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 162,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-evidence-missing"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 133,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-evidence-missing"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 130,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-evidence-missing"
+            }
+          ]
+        },
+        {
+          "caseId": "af-signal-unresolved",
+          "taskId": "af-signal-unresolved",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 130,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-unresolved"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 124,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-unresolved"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 141,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-signal-unresolved"
+            }
+          ]
+        },
+        {
+          "caseId": "af-heldout-candidate-writable",
+          "taskId": "af-heldout-candidate-writable",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 140,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-heldout-candidate-writable"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 134,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-heldout-candidate-writable"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 132,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-heldout-candidate-writable"
+            }
+          ]
+        },
+        {
+          "caseId": "af-heldout-retuned",
+          "taskId": "af-heldout-retuned",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 152,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-heldout-retuned"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 125,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-heldout-retuned"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 114,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-heldout-retuned"
+            }
+          ]
+        },
+        {
+          "caseId": "af-candidate-unlinked-signal",
+          "taskId": "af-candidate-unlinked-signal",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 128,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-unlinked-signal"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 141,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-unlinked-signal"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 133,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-unlinked-signal"
+            }
+          ]
+        },
+        {
+          "caseId": "af-candidate-policy-mismatch",
+          "taskId": "af-candidate-policy-mismatch",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 136,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-policy-mismatch"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 138,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-policy-mismatch"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 119,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-policy-mismatch"
+            }
+          ]
+        },
+        {
+          "caseId": "af-reevaluation-unsealed",
+          "taskId": "af-reevaluation-unsealed",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 122,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-reevaluation-unsealed"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 119,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-reevaluation-unsealed"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 121,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-reevaluation-unsealed"
+            }
+          ]
+        },
+        {
+          "caseId": "af-reevaluation-same-actor",
+          "taskId": "af-reevaluation-same-actor",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 122,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-reevaluation-same-actor"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 125,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-reevaluation-same-actor"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 142,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-reevaluation-same-actor"
+            }
+          ]
+        },
+        {
+          "caseId": "af-candidate-decision-not-run",
+          "taskId": "af-candidate-decision-not-run",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 120,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-decision-not-run"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 120,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-decision-not-run"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 119,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-candidate-decision-not-run"
+            }
+          ]
+        },
+        {
+          "caseId": "af-graduation-skipped-run",
+          "taskId": "af-graduation-skipped-run",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 132,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-graduation-skipped-run"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 128,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-graduation-skipped-run"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 125,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-graduation-skipped-run"
+            }
+          ]
+        },
+        {
+          "caseId": "af-graduation-bare-promotion",
+          "taskId": "af-graduation-bare-promotion",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 133,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-graduation-bare-promotion"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 122,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-graduation-bare-promotion"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 132,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-graduation-bare-promotion"
+            }
+          ]
+        },
+        {
+          "caseId": "af-loop-publication-approval",
+          "taskId": "af-loop-publication-approval",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 129,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-loop-publication-approval"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 130,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-loop-publication-approval"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 143,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-loop-publication-approval"
+            }
+          ]
+        },
+        {
+          "caseId": "af-loop-locked-default-change",
+          "taskId": "af-loop-locked-default-change",
+          "trialCount": 3,
+          "complete": true,
+          "status": "complete",
+          "passK": true,
+          "passAtK": true,
+          "trials": [
+            {
+              "arm": "treatment",
+              "repeat": 1,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 114,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-loop-locked-default-change"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 2,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 112,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-loop-locked-default-change"
+            },
+            {
+              "arm": "treatment",
+              "repeat": 3,
+              "outcome": "pass",
+              "failureClass": null,
+              "wallClockMs": 132,
+              "tokens": null,
+              "turns": null,
+              "toolCalls": null,
+              "cost": null,
+              "caseId": "af-loop-locked-default-change"
+            }
+          ]
+        }
+      ],
+      "failureClasses": {
+        "infrastructure": {
+          "trialCount": 0,
+          "caseCount": 0
+        },
+        "task": {
+          "trialCount": 0,
+          "caseCount": 0
+        },
+        "grader": {
+          "trialCount": 0,
+          "caseCount": 0
+        },
+        "agent": {
+          "trialCount": 0,
+          "caseCount": 0
+        }
+      },
+      "budget": {
+        "recordedTotals": {
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "cost": null,
+          "wallClockMs": 1282330
+        },
+        "incompleteCaseConsumption": {
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "cost": null,
+          "wallClockMs": null
+        },
+        "completedCaseOnly": {
+          "tokensPerCompletedCase": null,
+          "turnsPerCompletedCase": null,
+          "toolCallsPerCompletedCase": null,
+          "costPerCompletedCase": null
+        },
+        "observedTrialCount": 72,
+        "tokensPerCompletedCase": null,
+        "turnsPerCompletedCase": null,
+        "toolCallsPerCompletedCase": null,
+        "costPerCompletedCase": null,
+        "wallClockP50Ms": 141,
+        "wallClockP95Ms": 47713.75
+      },
+      "trialCount": 72,
+      "completeCaseCount": 24,
+      "incompleteCaseCount": 0,
+      "aggregate": {
+        "passK": 1,
+        "passAtK": 1,
+        "perTrialSuccessRate": 1,
+        "confidenceInterval95": [
+          0.862024,
+          1
+        ],
+        "passAtKConfidenceInterval95": [
+          0.862024,
+          1
+        ],
+        "intervalMethod": "wilson-over-complete-cases",
+        "flakeRate": 0,
+        "incomplete": [],
+        "reasons": []
+      }
+    },
+    "pairedDiff": {
+      "status": "computed",
+      "metric": "pass^k",
+      "pairUnit": "caseId/repeat",
+      "inferenceUnit": "caseId",
+      "pairCount": 24,
+      "completePairCaseCount": 24,
+      "unmatched": [],
+      "repeatPairCount": 72,
+      "excludedPartialPairs": [],
+      "intervalMethod": "normal-approximation over complete case clusters",
+      "varianceStatus": "degenerate",
+      "meanDiff": 0,
+      "ci95": null,
+      "effectSize": null,
+      "passKDelta": 0
+    },
+    "power": {
+      "status": "insufficient-evidence",
+      "method": "normal-approximation paired pass^k over complete case clusters; planning only",
+      "inferenceUnit": "caseId",
+      "reason": "degenerate-variance",
+      "confidenceLevel": 0.95,
+      "targetPower": 0.8,
+      "minimumDetectableEffect": 0.05,
+      "observedDetectableEffect": null,
+      "requiredCasesApprox": null,
+      "requiredPairsApprox": null,
+      "passKPower": "insufficient-evidence"
+    },
+    "budget": {
+      "recordedTotals": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": 1234219
+      },
+      "incompleteCaseConsumption": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": null
+      },
+      "completedCaseOnly": {
+        "tokensPerCompletedCase": null,
+        "turnsPerCompletedCase": null,
+        "toolCallsPerCompletedCase": null,
+        "costPerCompletedCase": null
+      },
+      "observedTrialCount": 72,
+      "tokensPerCompletedCase": null,
+      "turnsPerCompletedCase": null,
+      "toolCallsPerCompletedCase": null,
+      "costPerCompletedCase": null,
+      "wallClockP50Ms": 149.5,
+      "wallClockP95Ms": 50148.8,
+      "costCeilingRelativeIncrease": 0.1
+    },
+    "claims": {
+      "realHuman": false,
+      "liveProvider": false,
+      "promotionReady": false,
+      "productLocksChanged": false
+    }
+  },
+  "investigations": [],
+  "claims": {
+    "liveProvider": false,
+    "realHuman": false,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

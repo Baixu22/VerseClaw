@@ -35,6 +35,7 @@ import {
   prepareCandidateVerificationEvidence,
   cleanupBarrierEvidenceFromRecord,
   stableJson,
+  readCompletedVerseGitReviewFacts,
   type CandidateInputManifest,
 } from '../../electron/services/versegit-receipt-evidence';
 
@@ -463,6 +464,15 @@ function installSyntheticEvidence(root: string) {
 }
 
 describe('candidate receipt v2 host authority', () => {
+  it('revalidates cached review facts against the same receipt owner on every read', () => {
+    const root = mkdtempSync(join(tempRoot, 'versegit-review-cache-')); roots.push(root);
+    const installed = installSyntheticEvidence(root);
+    const cwd = installed.plan.commands[0].cwd;
+    expect(readCompletedVerseGitReviewFacts(installed.plan.runId, cwd)).toMatchObject({ candidateId: installed.candidateId, receiptId: installed.completed.receiptId });
+    expect(readCompletedVerseGitReviewFacts(installed.plan.runId, join(root, 'other-workspace'))).toBeNull();
+    writeFileSync(join(root, installed.completed.receiptRef.path), '{}');
+    expect(readCompletedVerseGitReviewFacts(installed.plan.runId, cwd)).toBeNull();
+  });
   it('accepts only a complete v2 binding and rejects each required negative independently', () => {
     const root = mkdtempSync(join(tempRoot, 'versegit-e2-negative-'));
     roots.push(root);

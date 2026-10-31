@@ -1,0 +1,1 @@
+export function verifyOperationalAcceptance(file: string, root?: string): any;

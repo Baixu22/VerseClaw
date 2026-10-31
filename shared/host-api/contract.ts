@@ -208,6 +208,22 @@ import type {
   CodeReviewRun,
   CodeReviewTarget,
 } from '../types/code-review';
+import type { ChangeContextApiContract } from '../types/change-context';
+export type {
+  ChangeContextProjectionPayload,
+  ChangeContextProjectionResult,
+  ChangeContextPullChangesPayload,
+  ChangeContextPullChangesResult,
+  ChangeContextReviewCommentCreatePayload,
+  ChangeContextReviewCommentDeletePayload,
+  ChangeContextReviewCommentListPayload,
+  ChangeContextReviewCommentListResult,
+  ChangeContextReviewCommentMutationResult,
+  ChangeContextReviewCommentReanchorPayload,
+  ChangeContextReviewCommentResolvePayload,
+  ChangeContextReviewVerdictPayload,
+  ChangeContextReviewVerdictResult,
+} from '../types/change-context';
 import type {
   TaskLedgerEdge,
   TaskLedgerEvidenceRef,
@@ -5576,6 +5592,7 @@ export type HostApiContract = {
     run: (payload: CodeReviewRunPayload) => CodeReviewRunResult;
     createTaskLedgerNode: (payload: CodeReviewCreateTaskLedgerNodePayload) => CodeReviewCreateTaskLedgerNodeResult;
   };
+  changeContext: ChangeContextApiContract;
   remoteForge: {
     capabilities: (payload: RemoteForgeRepositoryPayload) => RemoteForgeCapabilitiesResult;
     readPullRequest: (payload: RemoteForgePullRequestReadPayload) => RemoteForgePullRequestReadResult;

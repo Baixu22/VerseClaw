@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0611",
+  "sourceCandidate": {
+    "commit": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+    "tree": "45c438dd17e8dc14cb747c58f97998830757ae1d",
+    "dirty": false,
+    "cleanSourceAuditAt": "2026-10-30T09:26:26.958890+00:00",
+    "cleanSourceAuditScope": "Working bytes and Git blobs match the recorded tested candidate; pre-run cleanliness recorded when provided."
+  },
+  "acceptanceEvidence": "tf0619-acceptance.json",
+  "sourceAuditFiles": 55,
+  "children": [
+    {
+      "id": "TF-0612",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Option B decision and official source guide",
+      "source": "harness/specs/guides/delta-informed-change-context-review-loop-options.md",
+      "sourceSHA256": "df493f72386610d428c5970b95e51b30f3d4a6c0dad209d1cc2a57f64c0ad0a2"
+    },
+    {
+      "id": "TF-0613",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Contract, bounded comment owner and error states",
+      "source": "tests/unit/change-context-contract.test.ts",
+      "sourceSHA256": "fbdcb1b511c9f2e683833487f8e5e55a0dfbbd15079fbc10654182c36f135957"
+    },
+    {
+      "id": "TF-0614",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Four comparisons and Main-owned runtime identity",
+      "source": "tests/unit/change-context-projection.test.ts",
+      "sourceSHA256": "39153fb7c51c1bab80fbc451dc0f6779fc684ffdec4b1add6651369ffa36c6a7"
+    },
+    {
+      "id": "TF-0615",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Four anchor states, explicit re-anchor and four locales",
+      "source": "tests/unit/change-context-review-anchors.test.ts",
+      "sourceSHA256": "d7c6f8228fa37c64f3ba46415c4b14b5a8a76561144fb84e08ade955cfb93992"
+    },
+    {
+      "id": "TF-0616",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Explicit verdict, todo linkage, governed apply and journal",
+      "source": "tests/unit/change-context-review-verdict.test.ts",
+      "sourceSHA256": "4d04c7ceafb0e4095129c2904071631a399dd71603d2749f9981df4228c6c2cf"
+    },
+    {
+      "id": "TF-0617",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Default-off advisory VG and unmeasured missing receipts",
+      "source": "tests/unit/change-context-vg-evidence.test.ts",
+      "sourceSHA256": "b787576d558d397a8597fb2a88f2bb318a177245107291dc086ced183eacd873"
+    },
+    {
+      "id": "TF-0618",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Nine Electron executions, six owner effects and eighteen zero-write controls",
+      "source": "tests/e2e/change-context-review-loop.spec.ts",
+      "sourceSHA256": "30a2febe29c94203fdcf7e1fd7330c55a799a9edf8ef4d1d54d9eac89be5eb0b"
+    },
+    {
+      "id": "TF-0619",
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "verified": true,
+      "criterion": "Entry rollback, reload, preservation and explicit residuals",
+      "source": "docs/dev/change-context-review-loop/rollout.md",
+      "sourceSHA256": "4ecab4cb84c317e02f875ee6b16d88df64c882adabcd762e61d76579db7a1787"
+    }
+  ],
+  "checks": {
+    "targetUnit": {
+      "passed": 177,
+      "failed": 0,
+      "skipped": 1,
+      "skippedTests": [
+        {
+          "file": "versegit-candidate-receipts.test.ts",
+          "test": "real governed candidate receipts preserves a failed receipt before a refreshed candidate continuation passes and cleans every managed process",
+          "status": "skipped"
+        }
+      ],
+      "skipReason": "Existing real governed candidate receipt integration needs its optional external binary; its absence is not verified execution evidence."
+    },
+    "journal": {
+      "passed": 27,
+      "failed": 0
+    },
+    "electron": {
+      "startTime": "2026-10-30T09:21:05.912Z",
+      "duration": 293292.74600000004,
+      "expected": 9,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "sourceOnly": {
+      "dependenciesReused": true,
+      "sourceStatus": null,
+      "sourceOnly": true,
+      "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+      "driven_by": "agent",
+      "actor": "codex",
+      "pnpmAutomaticInstallDisabled": true,
+      "handoffPresent": false,
+      "unitExit": 0,
+      "taskForestPresent": false,
+      "artifactExit": 0,
+      "passedTests": 37,
+      "failedTests": 0,
+      "logSHA256": "f780e89f82d7d3fa35990ca99c65982ab196e5bd8b1c4836f3d678e621ab2f52",
+      "reportSHA256": "8d60f17ae8ed04dec45375b7cfebfa50d1568a1a0b061aab4f5b2a8c620fe9a8"
+    },
+    "taskGates": [
+      {
+        "name": "unit",
+        "exit": 0
+      },
+      {
+        "name": "runtime-journal",
+        "exit": 0
+      },
+      {
+        "name": "contract",
+        "exit": 0
+      },
+      {
+        "name": "i18n",
+        "exit": 0
+      },
+      {
+        "name": "repo-artifacts",
+        "exit": 0
+      },
+      {
+        "name": "harness-validate",
+        "exit": 0
+      },
+      {
+        "name": "harness-dry-run",
+        "exit": 0
+      },
+      {
+        "name": "typecheck",
+        "exit": 0
+      },
+      {
+        "name": "build",
+        "exit": 0
+      },
+      {
+        "name": "lint",
+        "exit": 0
+      },
+      {
+        "name": "comms-replay",
+        "exit": 0
+      },
+      {
+        "name": "comms-compare",
+        "exit": 0
+      },
+      {
+        "name": "diff-check",
+        "exit": 0
+      }
+    ]
+  },
+  "protectedSources": [
+    {
+      "path": "shared/product-semantics.ts",
+      "sha256": "12a32f9ac1cd392503cfc9894a42f3af8a5135a67cbfcedfb5143f7a4e9df506",
+      "unchangedFromMain": true
+    },
+    {
+      "path": "docs/clawx-product-semantics.md",
+      "sha256": "865a00f709485ffde589a6ee4b3c52039af68fc24038968d593453d53bfcbbca",
+      "unchangedFromMain": true
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "sha256": "782bc1c21584af22e9a4ad18dff71664ccdddf3798db8717644ca61bfe8341db",
+      "unchangedFromMain": true
+    },
+    {
+      "path": "harness/specs/rules/active-config-guards.md",
+      "sha256": "7662379ed0ed9e8a02b7b900eddcd07d7603411111125edd54bebff10cbecda7",
+      "unchangedFromMain": true
+    },
+    {
+      "path": "harness/specs/rules/versegit-validation-layer-extension-boundary.md",
+      "sha256": "e5ff2ee1d166d138b0faf49cd97f15005251deedf4af1e02f2cf50dbf6314b1b",
+      "unchangedFromMain": true
+    }
+  ],
+  "repositoryBaseline": {
+    "actor": "codex",
+    "sourceStatus": null,
+    "exit": 1,
+    "driven_by": "agent",
+    "log": "harness-ci.log",
+    "candidate": "900c5ba2bccbf85c8f0367729abd0f76d0373af3",
+    "scope": "repository-wide baseline in retained-source checkout",
+    "command": "pnpm run harness:ci",
+    "failure": "existing-unapproved-duplicate-fixture",
+    "blockingStage": "pnpm repo:duplicates:check",
+    "duplicates": [
+      {
+        "path": "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/profile.json",
+        "sha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+        "unchangedFromMain": true
+      },
+      {
+        "path": "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json",
+        "sha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+        "unchangedFromMain": true
+      }
+    ],
+    "taskHarnessValidate": "passed",
+    "taskHarnessDryRun": "passed",
+    "pipelineAfterDuplicateGate": "not-run",
+    "remainingPipelineCommands": [
+      "pnpm docs:policy:validate",
+      "pnpm catalogs:check",
+      "pnpm agent-dev:audit",
+      "pnpm repo:evidence:check",
+      "pnpm repo:test-coverage:check"
+    ],
+    "scopeDecision": "Record the repository-wide baseline veto; no duplicate allowlist, historical fixture, product lock or unrelated task scope changed."
+  },
+  "historicalEvidence": "TF-0613 through TF-0618 reports retain original candidate identities; no historical verdict is promoted. The final source and tests requalify every child on the selected source candidate.",
+  "scope": "Windows source-host Electron, agent-driven fixtures, reused dependencies. Packaged, non-Windows, live-provider, collaboration/stress and verified external VG execution remain unmeasured.",
+  "landing": "Private main reachability and Task Forest closure are recorded in the local handoff after landing; no public-release authority is claimed."
+}

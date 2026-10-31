@@ -68,6 +68,7 @@ import { createAgentsApi } from '../services/agents-api';
 import { createRolesApi } from '../services/roles-api';
 import { createChatApi } from '../services/chat-api';
 import { createCodeReviewApi } from '../services/code-review-api';
+import { createChangeContextApi } from '../services/change-context-api';
 import { createRemoteForgeApi } from '../services/remote-forge-api';
 import { createWorkProvidersApi } from '../services/work-providers-api';
 import { createKnowledgeApi } from '../services/knowledge-api';
@@ -214,6 +215,13 @@ function registerTypedHostHandlers(
   const gatewayApi = createGatewayApi(gatewayManager, resourceFabric, {
     createKnowledgeInboxItem: knowledgeApi.createInboxItem,
   });
+  const sessionsApi = createSessionsApi({
+    gatewayManager,
+    terminalManager,
+    coordinatorLifecycle: workspacesApi.coordinatorLifecycle,
+    resolveCoordinator: workspacesApi.resolveCoordinator,
+    gatewayRpcForDelegation: gatewayApi.rpc,
+  });
 
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
@@ -254,15 +262,13 @@ function registerTypedHostHandlers(
     providers: createProvidersApi({ gatewayManager, mainWindow }),
     files: createFilesApi(),
     media: createMediaApi(),
-    sessions: createSessionsApi({
-      gatewayManager,
-      terminalManager,
-      coordinatorLifecycle: workspacesApi.coordinatorLifecycle,
-      resolveCoordinator: workspacesApi.resolveCoordinator,
-      gatewayRpcForDelegation: gatewayApi.rpc,
-    }),
+    sessions: sessionsApi,
     chat: createChatApi({ gatewayManager }),
     codeReview: createCodeReviewApi({ gatewayManager }),
+    changeContext: createChangeContextApi({
+      gatewayManager,
+      checkpointDiff: sessionsApi.checkpointDiff,
+    }),
     remoteForge: remoteForgeApi,
     workProviders: createWorkProvidersApi(),
     knowledge: knowledgeApi,

@@ -199,6 +199,11 @@ Compaction 的目标是减小后续 prompt，而不是改写原始 transcript。
 
 ## 9. Archive、restore、delete 和 reset
 
+Change Context 评论由独立的 Main review store 保留为审查证据。会话 archive、
+restore、delete 或 reset 不赋予评论任何会话权威，也不会自动移动或淘汰评论。
+评论删除使用显式 tombstone；源已不可读取时显示 unavailable。入口回滚与范围见
+[Change Context 受控启用](../dev/change-context-review-loop/rollout.md)。
+
 ### Archive
 
 - 将活动 transcript 变成 `<id>.archived.jsonl`；

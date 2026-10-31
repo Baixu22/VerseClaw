@@ -605,3 +605,12 @@ remain TF-0592/TF-0595 work after TF-0590 freezes the task corpus and calibrates
   with no current run is `not-run`, never `pass`.
 - The sealed TF-0589 matrix, its sources and its verdict are historical records and are
   not rewritten by this layer.
+
+## 17. Current sealed candidate (2026-10-31)
+
+- Candidate `fc4deb709e2bc88d299599d417273bda93cc5b93` has a clean, hash-bound evidence chain for TF-0590 through TF-0596.
+- Engineering evidence: 24 tasks x 2 arms x k=3 (144 trials), 144/144 complete, 10/10 tamper controls rejected; independent transcript review 144/144 pass with 6-sample rubric calibration and 7 negative controls.
+- Operational evidence: 7 source Electron/Gateway OAT drills pass, plus provider timeout/cancel fault recovery. Final cleanup is observed; source and operational verdicts remain separate.
+- Effect remains partial (OAT core journey only), agent quality remains partial (deterministic scripted provider; no live-quality claim), distribution is `not-run`, and release approval is `not-approved`.
+- The next gate is packaged distribution: build a frozen win-unpacked artifact and rerun source/package parity. `releaseApproved`, `liveReady`, `productApproved` and `defaultOn` remain false.
+- The machine-readable candidate report and hashes live under `harness/specs/fixtures/agent-first-system/mainline/` and `harness/specs/fixtures/agent-first-system/adjudication/`.

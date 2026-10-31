@@ -254,6 +254,7 @@ Remote forge 有独立 Host API：
 
 - `openclaw_runtime/src/agents/agent-tools.ts`
 - `openclaw_runtime/src/agents/tools/write-journal.ts`
+- `openclaw_runtime/src/agents/tools/write-journal-core.ts`（同一 journal 的存储/恢复核心；原入口保留导出与路径校验）
 - `openclaw_runtime/src/agents/apply-patch.ts`
 - `openclaw_runtime/src/agents/coding-control-dispositions.ts`
 - `shared/types/coding-run.ts`
@@ -370,5 +371,26 @@ Workspace 删除或 root 变化时：
 - `openclaw_runtime/src/agents/coding-control-dispositions.ts`
 - `shared/types/workspace.ts`
 - `shared/types/coding-run.ts`
+
+### Change Context 评论入口
+
+Review Center 的本地审查视图提供折叠的「变更上下文（高级）」入口。
+只有显式展开并加载后才读取 Change Context；关闭会清除当前投影和评论视图。
+支持合并基线、上次提交、上次回合和检查点比较；源缺失、截断和过期保持可见。
+评论展示原始路径、行范围及 live/stale/removed/unavailable 状态；刷新不会移动锚点。
+重新锚定必须显式填写目标路径/行范围并提交，使用 updatedAt 乐观并发控制。
+评论的解决和删除只修改审查证据；删除保留 tombstone，不改变代码或任务状态。
+approve/comment-only 不写 Task Ledger；request changes 只创建或引用一个待办 review 节点。
+审查结论仅保留在当前加载视图；任务关联由 Task Ledger 自己持久化。
+Pull Changes 对完整 text patch 绑定实际字节摘要、目标完整 HEAD 和现有审批，
+通过 Git preflight 与 Coding 的既有 journal/lease 执行；过期或冲突不修改目标。
+若 apply 或 journal 的结果未知，会显示 recovery_required，不声称零写入，也不自动重试。
+VG 卡片只读取现有 host binding/observation 和 receipt owner 已接收的结果；
+既有 `CLAWX_VERSGIT_BINDING_ENABLED` 未开启时，不调用 VG 事实读取器。
+卡片不运行 VG 或 verifier。缺失、过期、未与当前 immutable candidate 绑定的回执
+保持 partial/unmeasured；stale-read 仅作提示，host verdict 始终 unchanged。
+
+入口关闭和重新加载的回滚行为、评论保留及本次验收范围见
+[受控启用与回滚](../dev/change-context-review-loop/rollout.md)。
 
 延伸阅读：[Verse 系列组件](verse-tools.md)、[资源与可观测性](resources-and-observability.md)、[默认配置矩阵](../dev/default-config-matrix.md)。
