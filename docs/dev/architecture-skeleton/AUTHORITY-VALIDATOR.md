@@ -252,7 +252,17 @@ git diff --stat 1090f0b88..HEAD -- shared/ electron/ src/ openclaw_runtime/ pack
 
 ### 11.1 本文件入库与候选提交后复核
 
-（候选提交后回填：候选 commit / tree、`dirty: false` 的报告读数、#14 / #17 复跑结果、`git diff --stat 1090f0b88..<candidate>` 对禁改路径的 0 行。）
+本文件经 `scripts/repository-artifacts.json` `retainedFiles`（ASCII 序插入 AUTHORITY-RECONCILIATION 之后）+ `node scripts/check-repository-artifacts.mjs --write-ignore` + 普通 `git add` 跟踪。候选提交 **`aebf87169c812ba2093e384683603ea336cf6e78`**（tree `038b2ce3ed7e8ce3af02d22d0fc9a10713643aa5`，21 文件 +3544 行，基于 `1090f0b88`；本节由紧随其后的仅文档提交回填）。提交后在干净工作区复跑：
+
+| # | 命令（在 `aebf87169` 上，`git status --porcelain` 0 行） | exit | 关键输出 |
+|---|---|---|---|
+| 19 | `node scripts/check-semantic-authority.mjs --report D:/tmp/tf0632/report-candidate.json --actor claude-fable-5` | 0 | 报告 `candidate.commit aebf87169…`、`candidate.tree 038b2ce3e…`、**`candidate.dirty false`**、`exitCode 0`、`diagnostics []`；summary 与 #4 逐字相同 |
+| 20 | `node scripts/check-repository-artifacts.mjs` | 0 | `Repository artifact retention passed (20012 tracked paths).` |
+| 21 | `git diff --check` | 0 | 无输出 |
+| 22 | `pnpm harness validate --spec harness/specs/tasks/architecture-skeleton-authority-validator.md --since HEAD` | 0 | `Spec is valid` |
+| 23 | `pnpm harness validate --spec harness/specs/tasks/architecture-skeleton-authority-validator.md`（无 `--since`） | 1 | 与 #2 同因：`origin/main`（`2b87c1c44`）到 HEAD 的差异含决策轮提交 `1090f0b88` 的 4 个非本节点文件；本节点写集全部在 `ownedPaths` 内 |
+| 24 | `pnpm exec vitest run tests/unit/semantic-authority-consistency.test.ts --maxWorkers=1` | 0 | `Tests 38 passed (38)` |
+| 25 | `git diff --stat 1090f0b88..HEAD -- shared/ electron/ src/ openclaw_runtime/ package.json docs/dev/default-config-matrix.md docs/clawx-product-semantics.md scripts/contract-check.mjs scripts/contract-check-flat-ipc.json scripts/check-evidence-refs.mjs \| wc -l` | 0 | `0` |
 
 **验收逐条对照**（合同 frontmatter `acceptance`）：
 
