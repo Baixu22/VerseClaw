@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-bypass-registry",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry] ipcMain.handle('rogue:bypass') is registered outside electron/main/ipc-handlers.ts",
+  "description": "A channel registered straight from ipcMain.handle in another Main file, bypassing HostApiRegistry and the adjudication file.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\nipcMain.handle('rogue:bypass', () => undefined);\n"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-unregistered-channel",
+  "rule": "flat-ipc/unregistered-channel",
+  "expect": "[flat-ipc/unregistered-channel] ipcMain.handle('rogue:thing') is not adjudicated",
+  "description": "A new flat ipcMain.handle channel that is not adjudicated in scripts/contract-check-flat-ipc.json.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc-handlers.ts",
+      "append": "\nipcMain.handle('rogue:thing', () => undefined);\n"
+    }
+  ]
+}

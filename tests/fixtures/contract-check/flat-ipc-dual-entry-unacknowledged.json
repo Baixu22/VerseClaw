@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-dual-entry-unacknowledged",
+  "rule": "flat-ipc/dual-entry-unacknowledged",
+  "expect": "[flat-ipc/dual-entry-unacknowledged] 'openclaw:status' shares domain 'openclaw' with the typed Host API but has no reason",
+  "description": "A flat channel in a dual-entry domain whose compatibility exception lost its justification, so the intersection is no longer explicitly acknowledged.",
+  "mutations": [
+    {
+      "file": "scripts/contract-check-flat-ipc.json",
+      "find": "\"reason\": \"No renderer or test consumer; hostApi.openclaw.status is the sole entry.\"",
+      "replace": "\"reason\": \"\""
+    }
+  ]
+}

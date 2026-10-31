@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "host-api-unresolved-alias-member",
+  "rule": "host-api/unresolved-alias-member",
+  "expect": "[host-api/unresolved-alias-member] HostApiContract.changeContext aliases type 'TotallyUnknownContractShape', which could not be resolved",
+  "description": "An alias member pointing at a type the checker cannot resolve. Fails closed instead of silently skipping the member.",
+  "mutations": [
+    {
+      "file": "shared/host-api/contract.ts",
+      "find": "  changeContext: ChangeContextApiContract;",
+      "replace": "  changeContext: TotallyUnknownContractShape;"
+    }
+  ]
+}

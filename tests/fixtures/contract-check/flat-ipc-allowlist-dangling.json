@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-allowlist-dangling",
+  "rule": "flat-ipc/allowlist-dangling",
+  "expect": "[flat-ipc/allowlist-dangling] 'rogue:dangling' is in validChannels but has no ipcMain.handle",
+  "description": "A preload allowlist entry with no handler behind it and no adjudication, i.e. the open side of the known allowlist drift.",
+  "mutations": [
+    {
+      "file": "electron/preload/index.ts",
+      "find": "        'openclaw:getCliCommand',\n      ];",
+      "replace": "        'openclaw:getCliCommand',\n        'rogue:dangling',\n      ];"
+    }
+  ]
+}

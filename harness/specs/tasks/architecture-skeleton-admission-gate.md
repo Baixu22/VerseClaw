@@ -11,8 +11,13 @@ requiredRules:
 ownedPaths:
   - scripts/contract-check.mjs
   - scripts/contract-check.d.mts
+  - scripts/contract-check-flat-ipc.json
+  - scripts/repository-artifacts.json
+  - .gitignore
   - tests/unit/contract-check.test.ts
+  - tests/fixtures/contract-check/**
   - docs/dev/architecture-skeleton/ADMISSION-INVENTORY.md
+  - docs/dev/architecture-skeleton/ADMISSION-GATE.md
   - harness/specs/tasks/architecture-skeleton-admission-gate.md
 requiredTests:
   - pnpm harness context --spec harness/specs/tasks/architecture-skeleton-admission-gate.md
@@ -34,6 +39,7 @@ docs:
   required: true
   files:
     - docs/dev/architecture-skeleton/CHARTER.md
+    - docs/dev/architecture-skeleton/ADMISSION-GATE.md
 ---
 
 # 让 contract:check 覆盖扁平 IPC 接入面
@@ -68,6 +74,12 @@ docs:
 
 - 不迁移 handler，不改名，不改顺序。
 - 需要新增清单文件时，放在既有 evidence/docs 根下，不新建顶层目录。
+
+## 落地形态（TF-0630，2026-10-31）
+
+- 冻结清单：`scripts/contract-check-flat-ipc.json`（`ContractCheckFlatIpcAdjudication/v1`），是 `docs/dev/architecture-skeleton/ADMISSION-INVENTORY.md` §6 裁定表的机器形式，每个扁平 channel 记 `typedModule` / `typedAction` / `preload` / `disposition` / `reason`，`migrate` 与 `freeze` 另记 `removalPlan`；preload 悬空条目单列。
+- 门禁入口不变：`pnpm contract:check`。负例经同一入口的 `--fixture <json>` 模式执行（只在读入后改写文本，不触盘），fixture 在 `tests/fixtures/contract-check/`，坏 fixture 以 exit 2 与门禁失败的 exit 1 区分。
+- 规则、诊断格式与证据见 `docs/dev/architecture-skeleton/ADMISSION-GATE.md`。
 
 ## 验收
 

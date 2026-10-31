@@ -264,11 +264,13 @@
 
 | 处置 | channel 数 | 清单 |
 |---|---|---|
-| retire（可直接退役） | 32 | `app:version/name/platform/request`、`dialog:*`(2)、`openclaw:*`(3)、`settings:get/set/setMany/reset`、`shell:showItemInFolder/openPath`、`window:*`(5)、`provider:*` 除 `save`(11，含 `getApiKey`)、`file:readBinary/writeText/listDir/listTree` |
+| retire（可直接退役） | 35 | `app:version/name/platform/request`(4)、`dialog:*`(2)、`openclaw:*`(3)、`settings:get/set/setMany/reset`(4)、`shell:showItemInFolder/openPath`(2)、`window:*`(5)、`provider:*` 除 `save`(11，含 `getApiKey`)、`file:readBinary/writeText/listDir/listTree`(4) |
 | migrate → retire（有活体消费者） | 4 | `shell:openExternal`（renderer 4 处）、`settings:getAll`（E2E 4 spec）、`usage:recentTokenHistory`（E2E 1 spec）、`provider:save`（E2E 1 spec） |
 | freeze → retire（E2E mock 缝） | 4 | `gateway:status`、`gateway:rpc`、`file:stat`、`file:readText` |
 | gap（无法裁定） | **0** | 见 §7，所有发现项都能给出处置或归属到后续节点 |
 | 未分类 | **0** | |
+
+> 勘误（TF-0630，2026-10-31）：本表首版把 retire 写成 32，但逐行相加为 35（4+2+3+4+2+5+11+4），35+4+4=43 才与 §4 的 43 条一致。机器清单 `scripts/contract-check-flat-ipc.json` 以逐行裁定为准（35 / 4 / 4）；TF-0629 节点摘要中的 "32 retire" 为同一笔误，裁定内容本身未变。
 
 **不是裁定对象但附带退役**：preload 白名单 3 个无 handler 的 `env:*` 条目（§7.2）。
 
@@ -282,6 +284,7 @@
 - `scripts/contract-check.mjs:36` 的正则 `^  ([A-Za-z]…): \{\r?\n…^  \};` 只匹配**内联块**，因此 `parseContractActions` 返回 57 个模块，`changeContext` 的 8 个 action **不参与** facade / `invokeHost` 对账。
 - 现状下 facade（`host-api.ts:1582-1624`）恰好也是 8 个 action，所以没有实际漂移；但这是**门禁覆盖缺口**，不是"已验证一致"。
 - **归属**：TF-0630（contract:check 覆盖面）。本轮不改 checker。
+- **后续（TF-0630 已落地）**：`parseContractActions` 现在解析别名成员并从 `import type` 的相对路径读取定义文件；无法解析的别名成员以 `[host-api/unresolved-alias-member]` 失败。见 `ADMISSION-GATE.md`。
 
 ### 7.2 preload 白名单是第三份未受校验的清单，且已漂移
 
@@ -292,6 +295,7 @@
 
 - 44 ≠ 43，交集 41。没有任何脚本校验该白名单与 handler 集合或与类型化合同的一致性。
 - **裁定**：白名单的 owner 应与 `host:invoke` 相同（类型化接入面），终态白名单收敛为 `host:invoke` 单项；`env:*` 三条直接退役。**归属**：TF-0630 把白名单纳入 fail-closed 对账。
+- **后续（TF-0630 已落地）**：白名单与 handler 集合双向对账；2 条不可达 handler 以 `preload: "unreachable"`、3 条 `env:*` 以 `danglingAllowlistEntries` 显式登记在 `scripts/contract-check-flat-ipc.json`，任何未登记漂移以 `[flat-ipc/preload-mismatch]` / `[flat-ipc/allowlist-dangling]` 失败。
 
 ### 7.3 两条入口在 Main 侧**重复实现**而非共享
 

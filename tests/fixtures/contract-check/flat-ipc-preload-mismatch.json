@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-preload-mismatch",
+  "rule": "flat-ipc/preload-mismatch",
+  "expect": "[flat-ipc/preload-mismatch] 'gateway:status' is unreachable in validChannels but the registry declares allowlisted",
+  "description": "A handler that the registry declares renderer-reachable but which the preload allowlist no longer exposes, i.e. the closed side of the known allowlist drift.",
+  "mutations": [
+    {
+      "file": "electron/preload/index.ts",
+      "find": "        // Gateway\n        'gateway:status',\n",
+      "replace": "        // Gateway\n"
+    }
+  ]
+}

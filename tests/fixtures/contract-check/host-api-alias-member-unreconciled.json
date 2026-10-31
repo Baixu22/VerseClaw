@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "host-api-alias-member-unreconciled",
+  "rule": "host-api/facade-missing-action",
+  "expect": "src/lib/host-api.ts: missing hostApi.changeContext.newUnreconciledAction facade",
+  "description": "A new action on the aliased changeContext contract type. Before alias members were parsed this mutation produced no issue at all, which is the blind spot this gate closes.",
+  "mutations": [
+    {
+      "file": "shared/types/change-context.ts",
+      "find": "  pullChanges: (payload: ChangeContextPullChangesPayload) => ChangeContextPullChangesResult;\n};",
+      "replace": "  pullChanges: (payload: ChangeContextPullChangesPayload) => ChangeContextPullChangesResult;\n  newUnreconciledAction: () => void;\n};"
+    }
+  ]
+}

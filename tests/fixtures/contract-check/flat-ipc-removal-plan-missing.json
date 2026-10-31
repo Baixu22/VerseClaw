@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-removal-plan-missing",
+  "rule": "flat-ipc/removal-plan-missing",
+  "expect": "[flat-ipc/removal-plan-missing] 'file:stat' is freeze but declares no removalPlan",
+  "description": "A frozen channel that lost its removal plan, so the freeze has no exit path.",
+  "mutations": [
+    {
+      "file": "scripts/contract-check-flat-ipc.json",
+      "find": "\"removalPlan\": \"Supply files.stat responses to the host:invoke interceptor in tests/e2e/fixtures/electron.ts directly and drop the legacy-override branch, then retire handler + allowlist entry.\"",
+      "replace": "\"removalPlan\": \"\""
+    }
+  ]
+}
