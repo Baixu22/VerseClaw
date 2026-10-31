@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-10-31T16:11:03.239Z",
+  "generatedAt": "2026-10-31T16:15:42.608Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,12 +17,12 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-10-31T16:11:03.239Z",
+    "generatedAt": "2026-10-31T16:15:42.608Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "928053fdd1a93312daa7a33e544de2131eb35de8",
-      "tree": "cee138c9df8f053a61f48d26816bdba1b04c5634",
+      "commit": "e1d547d53a803ca8c2d110321ff86ff3cac057bd",
+      "tree": "cbe83c0198c6fb415b268a79fca6ac422c86ce35",
       "branch": "codex/tf0604-rsi-baseline",
       "dirty": false,
       "dirtyPaths": [],
@@ -34,7 +34,7 @@
         "scripts/lib/paired-ablation.mjs": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
         "scripts/lib/entrypoint.mjs": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b",
         "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "8b831dca6d043b0ca090cf91aca33e130fa60ee4a5b4f13f902363fb7e84b180",
-        "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "a3b6cfdf5d45ad915affe55ef891e6b5bf627a22a6a5735fe923b6d8a873f341",
+        "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "09f277e78e28f709eef0875343698227fab9c6f062fa868294d48de9f6789197",
         "harness/specs/rules/reliability-aggregation-boundary.md": "9286c8b4a0d07368336d1269fe90dd93f5be7712b47fb20bf6e582b6d9249192",
         "harness/specs/rules/paired-ablation-boundary.md": "0d9677ef4278a38d34cc710afe759a8e903db1300088358275fa93eab97faf03",
         "harness/specs/rules/agent-engineering-acceptance-boundary.md": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
@@ -56,9 +56,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 2245640192,
+      "freeMemoryBytes": 1012912128,
       "disk": {
-        "freeBytes": 18419064832,
+        "freeBytes": 18407108608,
         "totalBytes": 322122543104,
         "status": "measured"
       }
