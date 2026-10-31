@@ -27,6 +27,11 @@ touchedAreas:
   - scripts/lib/rsi-historical-task-corpus.mjs
   - scripts/lib/rsi-historical-task-corpus.d.mts
   - tests/unit/rsi-*.test.ts
+  - scripts/lib/rsi-oracle-bindings.mjs
+  - scripts/lib/rsi-oracle-bindings.d.mts
+  - tests/unit/rsi-oracle-bindings.test.ts
+  - harness/specs/fixtures/agent-first-framework/SHA256SUMS
+  - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
 ownedPaths:
   - scripts/rsi-tf0592-statistical-adjudication.mjs
   - scripts/rsi-tf0592-statistical-adjudication.d.mts

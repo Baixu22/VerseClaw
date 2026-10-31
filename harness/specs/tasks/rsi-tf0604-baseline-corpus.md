@@ -74,6 +74,9 @@ touchedAreas:
   - scripts/repository-artifacts.json
   - .gitignore
   - harness/specs/tasks/rsi-evidence-loop-contract.md
+  - tests/unit/rsi-oracle-bindings.test.ts
+  - harness/specs/fixtures/agent-first-framework/SHA256SUMS
+  - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
 ownedPaths:
   - scripts/rsi-tf0604-baseline.mjs
   - scripts/rsi-tf0604-baseline.d.mts

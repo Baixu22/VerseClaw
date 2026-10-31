@@ -33,6 +33,11 @@ touchedAreas:
   - scripts/lib/rsi-tf*.d.mts
   - tests/unit/rsi-*.test.ts
   - docs/dev/rsi-capability-and-boundaries.md
+  - scripts/lib/rsi-oracle-bindings.mjs
+  - scripts/lib/rsi-oracle-bindings.d.mts
+  - tests/unit/rsi-oracle-bindings.test.ts
+  - harness/specs/fixtures/agent-first-framework/SHA256SUMS
+  - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
 ownedPaths:
   - harness/specs/tasks/rsi-tf0607-contamination-gate.md
   - scripts/rsi-tf0607-contamination-gate.mjs
