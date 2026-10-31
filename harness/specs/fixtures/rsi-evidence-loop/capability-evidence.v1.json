@@ -18,6 +18,11 @@
     "systemRunRecordedTrials": 3,
     "systemRunCompleteCaseCount": 0,
     "systemRunStatus": "insufficient-evidence",
+    "systemRunPassK": null,
+    "systemRunPassAtK": null,
+    "systemRunConfidenceInterval95": null,
+    "systemRunPairedDiffStatus": "insufficient-evidence",
+    "systemRunPairedDiff": null,
     "heldOutDigest": null,
     "codeCandidateGenerated": false,
     "codeCandidateExecuted": false
