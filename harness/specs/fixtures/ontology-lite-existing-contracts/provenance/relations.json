@@ -1,0 +1,296 @@
+{
+  "schema": "ProductSemanticRelationProvenance/v1",
+  "node": "TF-0634",
+  "leaf": "C1",
+  "generatedAt": "2026-10-31T17:30:58Z",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "claimBoundary": "Static source and test reading on a clean candidate. Records where each relation is documented, which code path actually enforces its authority boundary, who consumes the relation constant, and which existing test exercises the owner. It implements no validator, changes no runtime path and proves nothing about live sessions.",
+  "contract": {
+    "implementation": "harness/specs/tasks/ontology-lite-contract-implementation.md",
+    "umbrella": "harness/specs/tasks/ontology-lite-existing-contracts-hardening.md",
+    "relationKeyFormat": "${from}--${kind}--${to}",
+    "relationSource": { "path": "shared/product-semantics.ts", "line": 169, "symbol": "PRODUCT_SEMANTIC_RELATIONS" },
+    "kindEnum": { "path": "shared/product-semantics.ts", "line": 146, "symbol": "ProductSemanticRelationKind" },
+    "authorityBoundaryEnum": { "path": "shared/product-semantics.ts", "line": 153, "symbol": "ProductSemanticAuthorityBoundary" }
+  },
+  "candidate": {
+    "commit": "b442f5dd53be761f4ad3d11755d8b1e278cccfaa",
+    "tree": "bf02d1db2c9adceb38fedfd7965a4fee215bb886",
+    "dirty": false,
+    "porcelainLines": 0,
+    "meaning": "HEAD at the start of this leaf with an empty `git status --porcelain`; the provenance files in this directory are the only additions of the C1 candidate."
+  },
+  "preservation": {
+    "status": "not-applicable",
+    "reason": "The umbrella contract step one asked to preserve five uncommitted semantic source files. On this candidate `git status --porcelain` is empty, so there are no working or staged bytes to preserve and no preservation hashes are recorded. The earlier dirty observation remains in harness/specs/fixtures/ontology-lite-existing-contracts/research/research.json (originalWork) and is not rewritten here.",
+    "reading": { "command": "git status --porcelain | wc -l", "output": "0", "exitCode": 0 }
+  },
+  "consumerScan": {
+    "command": "grep -rnE \"PRODUCT_SEMANTIC_RELATIONS\" --include=*.ts --include=*.tsx --include=*.mjs electron/ src/ shared/ openclaw_runtime/src/ scripts/ tests/",
+    "exitCode": 0,
+    "matches": [
+      { "path": "shared/product-semantics.ts", "line": 169, "role": "declaration", "text": "export const PRODUCT_SEMANTIC_RELATIONS = [" },
+      { "path": "scripts/check-semantic-authority.mjs", "line": 790, "role": "gate-input", "text": "relations: modules.semantics.PRODUCT_SEMANTIC_RELATIONS," },
+      { "path": "tests/unit/product-semantics.test.ts", "line": 4, "role": "test-import", "text": "PRODUCT_SEMANTIC_RELATIONS," },
+      { "path": "tests/unit/product-semantics.test.ts", "line": 43, "role": "test-assertion", "text": "const keys = PRODUCT_SEMANTIC_RELATIONS.map(({ from, kind, to }) => [from, kind, to].join(':'));" },
+      { "path": "tests/unit/product-semantics.test.ts", "line": 45, "role": "test-assertion", "text": "for (const relation of PRODUCT_SEMANTIC_RELATIONS) {" },
+      { "path": "tests/unit/product-semantics.test.ts", "line": 51, "role": "test-assertion", "text": "expect(PRODUCT_SEMANTIC_RELATIONS.filter(({ from }) => String(from) === 'task-ledger')).toHaveLength(0);" },
+      { "path": "tests/unit/product-semantics.test.ts", "line": 52, "role": "test-assertion", "text": "expect(PRODUCT_SEMANTIC_RELATIONS.find(({ kind, to }) => kind === 'references-one-way' && to === 'task-ledger')).toMatchObject({" }
+    ],
+    "applicationValueConsumers": 0,
+    "applicationValueConsumersScope": ["electron/", "src/", "openclaw_runtime/src/"],
+    "changeSinceResearch": "research.json (2026-10-30) observed only tests/unit/product-semantics.test.ts; TF-0632 (commit aebf87169) added scripts/check-semantic-authority.mjs as a gate-input consumer. No renderer, main or runtime value consumer exists on this candidate."
+  },
+  "setLevelGates": {
+    "description": "Rules that TF-0632's validator already evaluates over the whole relation set. They constrain shape (uniqueness, endpoint membership, single authority per target), not the per-relation semantics listed below; the C2 validator must not duplicate them as a second rule source.",
+    "owner": { "path": "scripts/check-semantic-authority.mjs" },
+    "rules": [
+      { "rule": "identity-key", "line": 103, "detail": "relationKey(relation) = `${from}--${kind}--${to}`" },
+      { "rule": "identity-key", "line": 369, "detail": "relations unique by from--kind--to" },
+      { "rule": "identity-key", "line": 370, "detail": "from/to must be a declared PRODUCT_SEMANTIC_CONCEPTS id" },
+      { "rule": "authority-boundary", "line": 549, "detail": "a concept claimed with an authority-class boundary by two or more relations is rejected" }
+    ],
+    "regressionEntry": "tests/unit/semantic-authority-consistency.test.ts",
+    "evidenceGrade": "executed"
+  },
+  "relations": [
+    {
+      "relationKey": "chat--suggests-upgrade-to--task-loop",
+      "from": "chat",
+      "kind": "suggests-upgrade-to",
+      "to": "task-loop",
+      "authorityBoundary": "advisory-only",
+      "declaration": { "path": "shared/product-semantics.ts", "line": 170 },
+      "docBasis": [
+        { "path": "docs/clawx-product-semantics.md", "line": 9, "excerpt": "Ordinary Chat is for immediate collaboration ... High-constraint execution belongs to explicit Task Loop runs." },
+        { "path": "docs/modules/multi-agent-and-tasks.md", "line": 317, "excerpt": "Chat 可以显示升级建议；创建 root/启动 run 需要显式确认。" },
+        { "path": "shared/product-semantics.ts", "line": 76, "excerpt": "allowedReferences: ['Task Loop upgrade suggestion', ...]" }
+      ],
+      "enforcingOwner": {
+        "path": "shared/product-semantics.ts",
+        "line": 703,
+        "symbol": "createTaskLoopUpgradeSuggestion",
+        "mechanism": "The only constructor of TaskLoopUpgradeSuggestion hard-codes requiresUserConfirmation: true, createsTaskLedgerRoot: true and startsRun: 'after-user-confirmation' (lines 713-715); the Chat detector at src/pages/Chat/task-loop-upgrade.ts:74 can only emit this shape, so Chat cannot start a Task Loop run on its own."
+      },
+      "ownerCallSites": [
+        { "path": "src/pages/Chat/task-loop-upgrade.ts", "line": 74 }
+      ],
+      "consumers": [
+        { "path": "shared/product-semantics.ts", "lines": [169], "role": "declaration" },
+        { "path": "scripts/check-semantic-authority.mjs", "lines": [790], "role": "gate-input" },
+        { "path": "tests/unit/product-semantics.test.ts", "lines": [4, 43, 45], "role": "test" }
+      ],
+      "regressionEntry": [
+        { "path": "tests/unit/task-loop-upgrade.test.ts", "line": 18, "asserts": "requiresUserConfirmation: true / createsTaskLedgerRoot: true / startsRun: 'after-user-confirmation'" },
+        { "path": "tests/unit/product-semantics.test.ts", "line": 108, "asserts": "createTaskLoopUpgradeSuggestion output shape" },
+        { "path": "tests/e2e/chat-task-loop-upgrade.spec.ts", "line": 1, "asserts": "Electron upgrade flow", "runState": "not-run-in-this-leaf" }
+      ],
+      "evidenceGrade": "executed",
+      "notes": "Unit-level enforcement is executed; the Electron E2E exists but was not run in C1."
+    },
+    {
+      "relationKey": "chat--projects--task-ledger",
+      "from": "chat",
+      "kind": "projects",
+      "to": "task-ledger",
+      "authorityBoundary": "read-only-projection",
+      "declaration": { "path": "shared/product-semantics.ts", "line": 171 },
+      "docBasis": [
+        { "path": "docs/clawx-product-semantics.md", "line": 9, "excerpt": "Durable task facts belong to Task Ledger." },
+        { "path": "docs/clawx-product-semantics.md", "line": 13, "excerpt": "Each edge names the owning authority boundary; it is not permission, an inverse relation, or a transitively inferred fact." },
+        { "path": "shared/product-semantics.ts", "line": 76, "excerpt": "allowedReferences: [..., 'bounded Chat Plan projection/edit draft']" }
+      ],
+      "enforcingOwner": {
+        "path": "src/lib/task-ledger-plan-projection.ts",
+        "line": 113,
+        "symbol": "buildProjectionMetadata / isReadOnlyTaskLedgerProjection",
+        "mechanism": "Every Task Ledger node projected from a Chat session's orchestrator plan is stamped readonlyProjection: true, source: 'orchestrator.plan' (lines 113-122); isReadOnlyTaskLedgerProjection (line 142) is the single predicate the Task Ledger page uses to treat such nodes as read-only (src/pages/TaskLedger/index.tsx:50)."
+      },
+      "ownerCallSites": [
+        { "path": "src/pages/TaskLedger/index.tsx", "line": 50 }
+      ],
+      "consumers": [
+        { "path": "shared/product-semantics.ts", "lines": [169], "role": "declaration" },
+        { "path": "scripts/check-semantic-authority.mjs", "lines": [790], "role": "gate-input" },
+        { "path": "tests/unit/product-semantics.test.ts", "lines": [4, 43, 45], "role": "test" }
+      ],
+      "regressionEntry": [
+        { "path": "tests/unit/orchestration-plan-ledger-projection.test.ts", "line": 105, "asserts": "every created node has metadata.readonlyProjection === true" },
+        { "path": "tests/unit/orchestration-plan-ledger-projection.test.ts", "line": 155, "asserts": "isReadOnlyTaskLedgerProjection distinguishes projected from ordinary nodes" }
+      ],
+      "evidenceGrade": "executed",
+      "notes": "Shares its enforcing owner with chat-plan--projects--task-ledger: the code tags the projection source as 'orchestrator.plan' and does not distinguish an ordinary Chat initiator from a Chat Plan initiator. The split into two `from` endpoints is documentary; no second code path exists for ordinary Chat."
+    },
+    {
+      "relationKey": "chat-plan--projects--task-ledger",
+      "from": "chat-plan",
+      "kind": "projects",
+      "to": "task-ledger",
+      "authorityBoundary": "read-only-projection",
+      "declaration": { "path": "shared/product-semantics.ts", "line": 172 },
+      "docBasis": [
+        { "path": "docs/clawx-product-semantics.md", "line": 337, "excerpt": "Chat Plan supports read-only projection plus lightweight edit drafts ... It is not a full DAG editor." },
+        { "path": "shared/product-semantics.ts", "line": 96, "excerpt": "allowedReferences: ['Task Ledger read-only node projection', 'lightweight reorder/disable/note edit draft']" }
+      ],
+      "enforcingOwner": {
+        "path": "src/lib/task-ledger-plan-projection.ts",
+        "line": 113,
+        "symbol": "buildProjectionMetadata / isReadOnlyTaskLedgerProjection",
+        "mechanism": "Same owner as chat--projects--task-ledger (lines 113-152)."
+      },
+      "ownerCallSites": [
+        { "path": "src/pages/TaskLedger/index.tsx", "line": 50 }
+      ],
+      "consumers": [
+        { "path": "shared/product-semantics.ts", "lines": [169], "role": "declaration" },
+        { "path": "scripts/check-semantic-authority.mjs", "lines": [790], "role": "gate-input" },
+        { "path": "tests/unit/product-semantics.test.ts", "lines": [4, 43, 45], "role": "test" }
+      ],
+      "regressionEntry": [
+        { "path": "tests/unit/orchestration-plan-ledger-projection.test.ts", "line": 105, "asserts": "every created node has metadata.readonlyProjection === true" },
+        { "path": "tests/unit/orchestration-plan-ledger-projection.test.ts", "line": 155, "asserts": "isReadOnlyTaskLedgerProjection distinguishes projected from ordinary nodes" }
+      ],
+      "evidenceGrade": "executed",
+      "notes": "Lightweight edit drafts (P1-02) live in src/lib/orchestration-plan-edit-draft.ts and write projectionEdit metadata, not Task Ledger facts; they do not widen this boundary."
+    },
+    {
+      "relationKey": "task-loop--roots-in--task-ledger",
+      "from": "task-loop",
+      "kind": "roots-in",
+      "to": "task-ledger",
+      "authorityBoundary": "task-ledger-authority",
+      "declaration": { "path": "shared/product-semantics.ts", "line": 173 },
+      "docBasis": [
+        { "path": "docs/modules/multi-agent-and-tasks.md", "line": 310, "excerpt": "它拥有：Task Ledger root；checkpoint；repair；blocked；evidence gate；loop run state。" },
+        { "path": "docs/modules/multi-agent-and-tasks.md", "line": 285, "excerpt": "Task Ledger 拥有用户可见任务事实、review flags、history 和 Task Loop 相关根节点。" },
+        { "path": "docs/modules/multi-agent-and-tasks.md", "line": 387, "excerpt": "ClawGraph/Task Loop 不能替代 Task Ledger 验收。" },
+        { "path": "shared/product-semantics.ts", "line": 127, "excerpt": "sourceOfTruth: 'Task Ledger root plus loop run/checkpoint state'" }
+      ],
+      "enforcingOwner": {
+        "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+        "line": 3377,
+        "symbol": "startTaskLoop → ensureTaskLedgerRoot",
+        "mechanism": "A loop run resolves or creates its Task Ledger root before any record exists (lines 3377-3394) and throws 'Cannot start /loop without a Task Ledger root' when the root creator fails or returns an empty id (lines 3395-3405); recordTaskLoopCheckpoint (line 2808) refuses to checkpoint without taskLedgerRootId. Completion authority stays with Task Ledger, not with the loop."
+      },
+      "ownerCallSites": [
+        { "path": "openclaw_runtime/src/agents/task-loop-controller.ts", "line": 2808 }
+      ],
+      "consumers": [
+        { "path": "shared/product-semantics.ts", "lines": [169], "role": "declaration" },
+        { "path": "scripts/check-semantic-authority.mjs", "lines": [790], "role": "gate-input" },
+        { "path": "tests/unit/product-semantics.test.ts", "lines": [4, 43, 45, 51], "role": "test" }
+      ],
+      "regressionEntry": [
+        { "path": "tests/unit/task-loop-controller.test.ts", "line": 596, "asserts": "started run carries taskLedgerRootId" },
+        { "path": "tests/unit/task-loop-controller.test.ts", "line": 632, "asserts": "rejects with /Cannot start \\/loop without a Task Ledger root/ when the root cannot be created" },
+        { "path": "tests/unit/product-semantics.test.ts", "line": 51, "asserts": "no relation has from === 'task-ledger' (Task Ledger never roots in, projects to or references another concept)" }
+      ],
+      "evidenceGrade": "executed"
+    },
+    {
+      "relationKey": "workboard--references-one-way--task-ledger",
+      "from": "workboard",
+      "kind": "references-one-way",
+      "to": "task-ledger",
+      "authorityBoundary": "one-way-reference",
+      "declaration": { "path": "shared/product-semantics.ts", "line": 174 },
+      "docBasis": [
+        { "path": "docs/clawx-product-semantics.md", "line": 299, "excerpt": "May reference a Task Ledger node id one-way. It must not mirror or two-way-sync Task Ledger." },
+        { "path": "docs/clawx-product-semantics.md", "line": 317, "excerpt": "`TaskLedgerReference` is one-way from Workboard/runtime/plugin scheduling state to a Task Ledger node id." },
+        { "path": "docs/modules/multi-agent-and-tasks.md", "line": 285, "excerpt": "Workboard/ClawGraph 的调度状态可以单向引用 Task Ledger node，但不应双向镜像成第二任务账本。" },
+        { "path": "shared/types/task-ledger-reference.ts", "line": 46, "excerpt": "TF-0449: explicit inheritance semantics for the one-way Workboard -> Task Ledger reference" }
+      ],
+      "enforcingOwner": {
+        "path": "shared/types/task-ledger-reference.ts",
+        "line": 14,
+        "symbol": "createTaskLedgerReference / isTaskLedgerReference / TASK_LEDGER_REFERENCE_INHERITANCE",
+        "mechanism": "The reference type carries a single literal direction 'workboard-to-task-ledger' (line 2), the constructor can only emit that direction (line 25), the guard accepts only the closed key set direction/source/taskLedgerNodeId/workboardCardId (line 36-38), and the inheritance table (line 82) is the sole owner of which fields may cross one-way. Workboard consumes the type verbatim at openclaw_runtime/extensions/workboard/src/types.ts:287,302."
+      },
+      "ownerCallSites": [
+        { "path": "openclaw_runtime/extensions/workboard/src/types.ts", "line": 287 },
+        { "path": "openclaw_runtime/extensions/workboard/src/types.ts", "line": 302 },
+        { "path": "shared/product-semantics.ts", "line": 685 }
+      ],
+      "consumers": [
+        { "path": "shared/product-semantics.ts", "lines": [169], "role": "declaration" },
+        { "path": "scripts/check-semantic-authority.mjs", "lines": [790], "role": "gate-input" },
+        { "path": "tests/unit/product-semantics.test.ts", "lines": [4, 43, 45, 52], "role": "test" }
+      ],
+      "regressionEntry": [
+        { "path": "tests/unit/task-ledger-reference.test.ts", "line": 16, "asserts": "direction === 'workboard-to-task-ledger' and no 'sync' property" },
+        { "path": "tests/unit/task-ledger-reference-inheritance.test.ts", "line": 17, "asserts": "closed doesNotInherit list (status, completion and ledger-owned fields never cross)" },
+        { "path": "tests/unit/product-semantics.test.ts", "line": 52, "asserts": "the references-one-way edge into task-ledger comes from workboard with authorityBoundary one-way-reference" },
+        { "path": "tests/unit/product-semantics.test.ts", "line": 70, "asserts": "createTaskLedgerReference has no sync / taskLedgerMirror property" }
+      ],
+      "evidenceGrade": "executed"
+    },
+    {
+      "relationKey": "routing-memo--quality-gated-by--task-loop",
+      "from": "routing-memo",
+      "kind": "quality-gated-by",
+      "to": "task-loop",
+      "authorityBoundary": "same-session-scorecard",
+      "declaration": { "path": "shared/product-semantics.ts", "line": 175 },
+      "docBasis": [
+        { "path": "docs/clawx-product-semantics.md", "line": 9, "excerpt": "Routing Memo is an internal diagnostic; it cannot affect routing until same-session scorecard-backed quality input is available." },
+        { "path": "docs/modules/multi-agent-and-tasks.md", "line": 233, "excerpt": "`active`：只有同 session Task Loop scorecard-backed quality 才能影响路由。" },
+        { "path": "shared/product-semantics.ts", "line": 519, "excerpt": "P1-07 safeClaim: Routing Memo may become active only from a server-resolved, same-session Task Loop scorecard authority reference." }
+      ],
+      "enforcingOwner": {
+        "path": "openclaw_runtime/src/agents/routing-memo.ts",
+        "line": 143,
+        "symbol": "resolveRoutingMemoAuthority",
+        "mechanism": "Authority becomes 'active' only when the quality authority has state 'active', source 'task_loop_verified_scorecard', scorecardBacked, verified and routingEligible (lines 155-161); anything else stays 'shadow' with reason 'missing-scorecard-quality' (lines 169-174). The authority object is produced server-side by resolveQualityAuthority (openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts:124-157), which ignores client-supplied qualityState (line 131), requires the originating sessionKey (line 136) and rejects a Task Loop run that belongs to a different session (line 146). orchestrationQualityAffectsRouting (shared/product-semantics.ts:631) is the shared predicate state === 'active'."
+      },
+      "ownerCallSites": [
+        { "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts", "line": 124 },
+        { "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts", "line": 445 },
+        { "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts", "line": 542 },
+        { "path": "shared/product-semantics.ts", "line": 631 }
+      ],
+      "consumers": [
+        { "path": "shared/product-semantics.ts", "lines": [169], "role": "declaration" },
+        { "path": "scripts/check-semantic-authority.mjs", "lines": [790], "role": "gate-input" },
+        { "path": "tests/unit/product-semantics.test.ts", "lines": [4, 43, 45], "role": "test" }
+      ],
+      "regressionEntry": [
+        { "path": "tests/unit/routing-memo.test.ts", "line": 508, "asserts": "pilot active without verified scorecard stays shadow (missing-scorecard-quality)" },
+        { "path": "tests/unit/routing-memo.test.ts", "line": 560, "asserts": "verified same-session scorecard yields scorecard-quality-present" },
+        { "path": "tests/integration/p1-orchestration-boundary.integration.test.ts", "line": 296, "asserts": "a Task Loop run from a different session resolves to authority state 'unavailable' (/different session/i)" },
+        { "path": "tests/unit/product-semantics.test.ts", "line": 58, "asserts": "orchestrationQualityAffectsRouting is true only for 'active'" }
+      ],
+      "evidenceGrade": "executed",
+      "notes": "Static reading only: this manifest does not prove any live session produced a verified scorecard. A documented same-session claim without a server-resolved receipt remains documented-only at runtime, which is exactly what resolveQualityAuthority enforces."
+    }
+  ],
+  "summary": {
+    "relations": 6,
+    "evidenceGrades": { "executed": 6, "documented-only": 0, "gap": 0 },
+    "distinctEnforcingOwners": 5,
+    "sharedOwner": ["chat--projects--task-ledger", "chat-plan--projects--task-ledger"],
+    "applicationValueConsumers": 0,
+    "gateInputConsumers": 1,
+    "testConsumers": 1
+  },
+  "commands": [
+    { "id": "candidate-commit", "command": "git rev-parse HEAD", "output": "b442f5dd53be761f4ad3d11755d8b1e278cccfaa", "exitCode": 0 },
+    { "id": "candidate-tree", "command": "git rev-parse 'HEAD^{tree}'", "output": "bf02d1db2c9adceb38fedfd7965a4fee215bb886", "exitCode": 0 },
+    { "id": "clean-tree", "command": "git status --porcelain | wc -l", "output": "0", "exitCode": 0 },
+    { "id": "consumer-scan", "command": "grep -rnE \"PRODUCT_SEMANTIC_RELATIONS\" --include=*.ts --include=*.tsx --include=*.mjs electron/ src/ shared/ openclaw_runtime/src/ scripts/ tests/", "expectedLines": 7, "exitCode": 0 },
+    { "id": "application-consumers", "command": "grep -rnE \"PRODUCT_SEMANTIC_RELATIONS\" --include=*.ts --include=*.tsx electron/ src/ openclaw_runtime/src/ | grep -v '^shared/' ; echo $?", "expectedLines": 0, "expectedExitCode": 1 },
+    { "id": "set-gates", "command": "grep -nE \"relationKey\\(relation\\)|not unique by from--kind--to|cannot be a second authority\" scripts/check-semantic-authority.mjs", "expectedLines": 5 },
+    { "id": "owner-r1", "command": "grep -nE \"requiresUserConfirmation: true|startsRun: 'after-user-confirmation'\" shared/product-semantics.ts", "expectedLines": 4 },
+    { "id": "owner-r2-r3", "command": "grep -nE \"readonlyProjection: true|export function isReadOnlyTaskLedgerProjection\" src/lib/task-ledger-plan-projection.ts", "expectedLines": 2 },
+    { "id": "owner-r4", "command": "grep -nE \"Cannot start /loop without a Task Ledger root|task loop checkpoint requires Task Ledger root\" openclaw_runtime/src/agents/task-loop-controller.ts", "expectedLines": 3 },
+    { "id": "owner-r5", "command": "grep -nE \"direction: 'workboard-to-task-ledger'|export const TASK_LEDGER_REFERENCE_INHERITANCE\" shared/types/task-ledger-reference.ts", "expectedLines": 3 },
+    { "id": "owner-r6", "command": "grep -nE \"missing-scorecard-quality|scorecard-quality-present|task_loop_verified_scorecard\" openclaw_runtime/src/agents/routing-memo.ts; grep -nE \"belongs to a different session|non-authoritative and was ignored\" openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts", "expectedLines": 6 },
+    { "id": "digest", "command": "cd harness/specs/fixtures/ontology-lite-existing-contracts/provenance && sha256sum -c SHA256SUMS", "exitCode": 0 }
+  ],
+  "limitations": [
+    "Line numbers are valid for the candidate commit above; they are not stable identifiers and C3 will replace them with content digests.",
+    "evidenceGrade 'executed' means an existing unit or integration test exercises the enforcing owner; it does not mean the test was re-run as part of this leaf beyond the focused baseline recorded in the C1 acceptance log.",
+    "The Electron E2E tests/e2e/chat-task-loop-upgrade.spec.ts was not run.",
+    "No validator, relation key export, report or gate was implemented here; those belong to C2-C4."
+  ]
+}
