@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { WorkspaceBrowserBody } from '@/components/file-preview/WorkspaceBrowserBody';
 import type { WorkspaceTreeNode } from '@/lib/workspace-tree';
@@ -12,6 +12,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 const readTextFile = vi.fn();
+const readBinaryFile = vi.fn();
 const statFile = vi.fn();
 const startOfficeWatch = vi.fn();
 const stopOfficeWatch = vi.fn();
@@ -19,6 +20,7 @@ const installOfficeCli = vi.fn();
 const syncOfficeSkills = vi.fn();
 
 vi.mock('@/lib/file-preview-client', () => ({
+  readBinaryFile: (...args: unknown[]) => readBinaryFile(...args),
   readTextFile: (...args: unknown[]) => readTextFile(...args),
   statFile: (...args: unknown[]) => statFile(...args),
   registerHtmlPreviewDocument: async () => ({ ok: true, url: 'clawx-preview://document/test-token' }),
@@ -61,6 +63,28 @@ const docxNode: WorkspaceTreeNode = {
   contentType: 'document',
 };
 
+const audioNode: WorkspaceTreeNode = {
+  name: 'speech.wav',
+  relPath: 'speech.wav',
+  absPath: '/workspace/speech.wav',
+  isDir: false,
+  size: 2048,
+  ext: '.wav',
+  mimeType: 'audio/wav',
+  contentType: 'audio',
+};
+
+const videoNode: WorkspaceTreeNode = {
+  name: 'clip.mp4',
+  relPath: 'clip.mp4',
+  absPath: '/workspace/clip.mp4',
+  isDir: false,
+  size: 4096,
+  ext: '.mp4',
+  mimeType: 'video/mp4',
+  contentType: 'video',
+};
+
 vi.mock('@/lib/workspace-tree', () => ({
   loadWorkspaceTree: vi.fn(async () => ({
     root: {
@@ -68,7 +92,7 @@ vi.mock('@/lib/workspace-tree', () => ({
       relPath: '',
       absPath: '/workspace',
       isDir: true,
-      children: [htmlNode, docxNode],
+      children: [htmlNode, docxNode, audioNode, videoNode],
     },
     truncated: false,
   })),
@@ -76,6 +100,8 @@ vi.mock('@/lib/workspace-tree', () => ({
   findNode: vi.fn((root: WorkspaceTreeNode, relPath: string) => {
     if (relPath === 'dashboard.html') return htmlNode;
     if (relPath === 'report.docx') return docxNode;
+    if (relPath === 'speech.wav') return audioNode;
+    if (relPath === 'clip.mp4') return videoNode;
     return null;
   }),
 }));
@@ -167,5 +193,65 @@ describe('WorkspaceBrowserBody', () => {
     expect(syncOfficeSkills).toHaveBeenCalledTimes(1);
     expect(startOfficeWatch).toHaveBeenCalledTimes(2);
     expect(frame).toHaveAttribute('src', 'http://127.0.0.1:24001/');
+  });
+
+  describe('audio and video', () => {
+    beforeEach(() => {
+      readBinaryFile.mockReset();
+      vi.stubGlobal('URL', Object.assign(URL, {
+        createObjectURL: vi.fn(() => 'blob:workspace'),
+        revokeObjectURL: vi.fn(),
+      }));
+      statFile.mockResolvedValue({ ok: true, isFile: true, size: 2048 });
+      readBinaryFile.mockResolvedValue({ ok: true, data: new Uint8Array([1, 2, 3]), size: 2048 });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it.each([
+      ['speech.wav', 'AUDIO'],
+      ['clip.mp4', 'VIDEO'],
+    ])('plays %s instead of opening an empty text editor', async (name, tag) => {
+      render(
+        <WorkspaceBrowserBody
+          agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' } as never}
+        />,
+      );
+
+      fireEvent.click(await screen.findByText(name));
+
+      const player = await screen.findByTestId('chat-resource-player');
+      expect(player.tagName).toBe(tag);
+      expect(player).toHaveAttribute('controls');
+      expect(readTextFile).not.toHaveBeenCalled();
+      expect(screen.queryByTestId('monaco-viewer')).toBeNull();
+    });
+
+    it('previews a file outside the workspace tree instead of reporting it missing', async () => {
+      render(
+        <WorkspaceBrowserBody
+          agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' } as never}
+          selectedPath="/home/me/.openclaw/media/generated.mp4"
+        />,
+      );
+
+      const player = await screen.findByTestId('chat-resource-player');
+      expect(player.tagName).toBe('VIDEO');
+      expect(readBinaryFile).toHaveBeenCalledWith('/home/me/.openclaw/media/generated.mp4', expect.anything());
+      expect(screen.queryByText('File not found')).toBeNull();
+    });
+
+    it('still reports a relative path that is not in the tree as missing', async () => {
+      render(
+        <WorkspaceBrowserBody
+          agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' } as never}
+          selectedPath="missing/report.md"
+        />,
+      );
+
+      expect(await screen.findByText('File not found')).toBeVisible();
+    });
   });
 });

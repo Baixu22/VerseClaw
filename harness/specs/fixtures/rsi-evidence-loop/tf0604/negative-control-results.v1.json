@@ -1,0 +1,58 @@
+[
+  {
+    "id": "case-count-floor",
+    "mutation": "remove-case",
+    "expectedCode": "case-count-floor",
+    "observedCode": "case-count-floor",
+    "passed": true
+  },
+  {
+    "id": "duplicate-case-id",
+    "mutation": "duplicate-case-id",
+    "expectedCode": "duplicate-case-id",
+    "observedCode": "duplicate-case-id",
+    "passed": true
+  },
+  {
+    "id": "source-digest-tamper",
+    "mutation": "source-digest-tamper",
+    "expectedCode": "source-digest-mismatch",
+    "observedCode": "source-digest-mismatch",
+    "passed": true
+  },
+  {
+    "id": "missing-source-record",
+    "mutation": "missing-source-record",
+    "expectedCode": "missing-source-record",
+    "observedCode": "missing-source-record",
+    "passed": true
+  },
+  {
+    "id": "real-human-claim",
+    "mutation": "real-human-claim",
+    "expectedCode": "real-human-claim",
+    "observedCode": "real-human-claim",
+    "passed": true
+  },
+  {
+    "id": "unknown-failure-class",
+    "mutation": "unknown-failure-class",
+    "expectedCode": "unknown-failure-class",
+    "observedCode": "unknown-failure-class",
+    "passed": true
+  },
+  {
+    "id": "negative-anchor-pass",
+    "mutation": "negative-anchor-pass",
+    "expectedCode": "negative-anchor-violated",
+    "observedCode": "negative-anchor-violated",
+    "passed": true
+  },
+  {
+    "id": "baseline-pass-without-complete-cases",
+    "mutation": "baseline-pass-without-complete-cases",
+    "expectedCode": "insufficient-evidence-bypass",
+    "observedCode": "insufficient-evidence-bypass",
+    "passed": true
+  }
+]

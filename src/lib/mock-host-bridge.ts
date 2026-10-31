@@ -150,6 +150,32 @@ const DEMO_SESSIONS = [
 
 let folderSeq = workspaceFolders.length;
 
+/**
+ * `?sessions=rich` adds the session list's harder cases, opt-in so the default
+ * fixture stays what other walkthroughs expect:
+ *  - a title far wider than a row, for the hover marquee;
+ *  - a session with a run in flight, for the row orb and the header bell's
+ *    live ring and "Running" section;
+ *  - a session blocked on the user, for the amber "needs you" state.
+ */
+const RICH_SESSIONS = [
+  { key: 'agent:main:long-title', displayName: '侧边栏会话区域的交互与视觉打磨：悬停跑马灯、操作收纳与活动中心', updatedAt: SESSION_NOW - 30_000, status: 'active' },
+  { key: 'agent:main:live-run', displayName: '后台构建与回归测试', updatedAt: SESSION_NOW - 10_000, status: 'running', hasActiveRun: true },
+  { key: 'agent:main:needs-input', displayName: '数据库迁移审批', updatedAt: SESSION_NOW - 20_000, status: 'waiting_approval', hasActiveRun: true },
+];
+
+function richSessionsRequested(): boolean {
+  return stickyMockParam('sessions') === 'rich';
+}
+
+/** Keys archived through the sidebar; `sessions.restore` brings them back. */
+const archivedSessionKeys = new Set<string>();
+
+/** Every session this workspace owns, before archive filtering. */
+function workspaceSessions() {
+  return richSessionsRequested() ? [...DEMO_SESSIONS, ...RICH_SESSIONS] : DEMO_SESSIONS;
+}
+
 /** The workspace snapshot is derived per call so folder mutations are visible. */
 function currentWorkspace() {
   return {
@@ -163,7 +189,7 @@ function currentWorkspace() {
     updatedAt: NOW,
     lastOpenedAt: NOW,
     state: 'active',
-    sessionStates: Object.fromEntries(DEMO_SESSIONS.map((session) => [session.key, {}])),
+    sessionStates: Object.fromEntries(workspaceSessions().map((session) => [session.key, {}])),
     sessionFolders: workspaceFolders.map((folder) => ({ ...folder })),
     sessionFolderAssignments: { ...sessionFolderAssignments },
   };
@@ -210,9 +236,10 @@ function secondWorkspace() {
 
 /** The second workspace's session has to be resolvable, or its group renders empty. */
 function listedSessions() {
-  return secondWorkspaceRequested()
-    ? [...DEMO_SESSIONS, SECOND_WORKSPACE_SESSION]
-    : DEMO_SESSIONS;
+  const sessions = secondWorkspaceRequested()
+    ? [...workspaceSessions(), SECOND_WORKSPACE_SESSION]
+    : workspaceSessions();
+  return sessions.filter((session) => !archivedSessionKeys.has(session.key));
 }
 
 function workspaceSnapshot(extra?: Record<string, unknown>) {
@@ -714,6 +741,28 @@ const FIXTURES: Record<string, (req: HostRequest) => unknown> = {
 
   'sessions.list': () => ({ ok: true, sessions: listedSessions() }),
   'sessions.summaries': () => [],
+  /* Rename and archive really mutate, for the same reason folders do: the
+   * sidebar's ⋯ menu cannot be exercised against answers that never land. */
+  'sessions.rename': (req) => {
+    const payload = (req.payload ?? {}) as { id?: string; title?: string };
+    const title = payload.title?.trim();
+    const session = [...workspaceSessions(), SECOND_WORKSPACE_SESSION].find((entry) => entry.key === payload.id) as
+      | { displayName: string }
+      | undefined;
+    if (!session || !title) return { success: false, error: 'unknown session' };
+    session.displayName = title;
+    return { success: true };
+  },
+  'sessions.archive': (req) => {
+    const payload = (req.payload ?? {}) as { id?: string };
+    if (payload.id) archivedSessionKeys.add(payload.id);
+    return { success: true };
+  },
+  'sessions.restore': (req) => {
+    const payload = (req.payload ?? {}) as { id?: string };
+    if (payload.id) archivedSessionKeys.delete(payload.id);
+    return { success: true };
+  },
   /* A child sessionKey gets that sub-agent's own transcript; anything else
    * gets the main one. Answering the parent transcript for every key would make
    * the Agents tab look wired while showing the wrong conversation. */

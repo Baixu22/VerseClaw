@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "AgentFirstAdjudicationPlan/v1",
+  "taskId": "TF-0595",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-adjudicator-planner",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "actors": {
+    "executor": "codex/agent-first-executor",
+    "reviewer": "codex/adjudicator-reviewer",
+    "verifier": "codex/adjudicator-verifier"
+  },
+  "requiredArtifacts": [
+    {
+      "id": "tf0592",
+      "dimension": "engineering",
+      "path": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
+      "sha256": "sha256:1608b8a5fdc3d36b280ec744bef7886914befe75528ea8a40f988cfc214e055b"
+    },
+    {
+      "id": "tf0593-review",
+      "dimension": "engineering",
+      "path": "harness/specs/fixtures/agent-first-system/review/actual-review.json",
+      "sha256": "sha256:4c4baeeab38235f76873a1160a0d8c84a6e711934165d68a5c144f5a683084f0"
+    },
+    {
+      "id": "tf0593-controls",
+      "dimension": "engineering",
+      "path": "harness/specs/fixtures/agent-first-system/review/controls.json",
+      "sha256": "sha256:e77a2b4588b5b8e00162a843cf8016dd5a2f31e6975b6a2491adb3100c9d87c3"
+    },
+    {
+      "id": "tf0594",
+      "dimension": "operational",
+      "path": "harness/specs/fixtures/agent-first-system/oat/acceptance.json",
+      "sha256": "sha256:acac019b09ed40ade7b3abda70c1ab85b45ba686ee08185211511297ff8045f1"
+    }
+  ],
+  "requiredDimensions": [
+    "source",
+    "engineering",
+    "runtime",
+    "effect",
+    "distribution",
+    "operational",
+    "agentQuality",
+    "releaseApproval"
+  ],
+  "residualOwner": "codex/agent-first-maintainer",
+  "reviewBy": "2026-11-30",
+  "claims": {
+    "realHuman": false,
+    "releaseApproved": false,
+    "distributionApproved": false
+  }
+}

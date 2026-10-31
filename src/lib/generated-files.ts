@@ -124,8 +124,8 @@ const FILE_PATH_KEYS = ['file_path', 'filepath', 'path', 'fileName', 'file_name'
 const SNAPSHOT_EXTS = new Set([
   '.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.svg', '.ico',
 ]);
-const VIDEO_EXTS = new Set(['.mp4', '.webm', '.mov', '.avi', '.mkv']);
-const AUDIO_EXTS = new Set(['.mp3', '.wav', '.ogg', '.flac', '.m4a']);
+const VIDEO_EXTS = new Set(['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v']);
+const AUDIO_EXTS = new Set(['.mp3', '.wav', '.ogg', '.oga', '.opus', '.aac', '.flac', '.m4a']);
 const DOCUMENT_EXTS = new Set([
   '.md', '.markdown', '.txt', '.rst', '.adoc', '.html', '.htm',
   '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
@@ -177,9 +177,16 @@ const EXT_MIME_MAP: Record<string, string> = {
   '.mp4': 'video/mp4',
   '.webm': 'video/webm',
   '.mov': 'video/quicktime',
+  '.avi': 'video/x-msvideo',
+  '.mkv': 'video/x-matroska',
+  '.m4v': 'video/mp4',
   '.mp3': 'audio/mpeg',
   '.wav': 'audio/wav',
   '.ogg': 'audio/ogg',
+  '.oga': 'audio/ogg',
+  '.opus': 'audio/opus',
+  '.aac': 'audio/aac',
+  '.m4a': 'audio/mp4',
   '.flac': 'audio/flac',
   '.pdf': 'application/pdf',
   '.csv': 'text/csv',

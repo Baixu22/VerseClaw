@@ -1,6 +1,12 @@
 /* Rare UI interactions adapted to the shared compact grayscale material. */
-.rare-hook-sidebar { position: relative; }
-.rare-hook-sidebar__rail { position: absolute; inset: 0 auto 0 0; width: 15px; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
+.rare-hook-sidebar { position: relative; --hook-active-ink: 62%; --hook-ghost-ink: 26%; }
+.rare-hook-sidebar__rail { position: absolute; inset: 0 auto 0 0; width: 48px; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
+.rare-hook-sidebar__active { color: color-mix(in srgb, var(--color-text-foreground) var(--hook-active-ink), transparent); }
+.rare-hook-sidebar__ghost { color: color-mix(in srgb, var(--color-text-foreground) var(--hook-ghost-ink), transparent); }
+/* In the session list the hook is a branch from a project into its current
+ * session: a quieter line than a menu's selection rail, so it reads as
+ * structure rather than as a second selection highlight. */
+.codex-sidebar .rare-hook-sidebar { --hook-active-ink: 34%; --hook-ghost-ink: 20%; }
 .rare-hook-sidebar > [data-hook-key].codex-header-menu__item { padding-left: 22px; }
 .rare-duration-picker { display: inline-flex; align-items: center; height: 34px; gap: 2px; border-radius: 10px; color: var(--color-text-foreground); }
 .rare-duration-picker__segment { display: inline-flex; align-items: center; height: 34px; gap: 4px; padding: 0 8px; background: var(--color-background-editor-opaque); border-radius: 9px 2px 2px 9px; transition: transform 160ms ease-out; }
@@ -13,14 +19,126 @@
 .rare-duration-picker > button { display: grid; place-items: center; width: 32px; height: 34px; margin-left: 2px; background: var(--color-background-editor-opaque); border-radius: 2px 9px 9px 2px; }
 .rare-delete-button, .rare-notification-bell { position: relative; display: inline-grid; place-items: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; color: var(--color-text-foreground-secondary); transition: background-color 140ms ease-out, color 140ms ease-out; }
 .rare-delete-button:hover, .rare-delete-button:focus-visible { color: var(--color-text-error); background: var(--color-background-row-hover); }
-.rare-notification-bell:hover, .rare-notification-bell[data-state='open'] { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
+/* ---------------------------------------------------------------- activity bell
+ * The bell answers three questions at a glance, each from real state:
+ *   - is anything running?    a blue comet orbiting the bell (amber, breathing,
+ *                             while a session waits on the user)
+ *   - how much is new?        a numeric badge, coloured by the most severe entry
+ *   - did something just ask? the bell swings once
+ * -------------------------------------------------------------------------- */
 .rare-notification-bell { width: 30px; height: 30px; border-radius: var(--radius-sm); }
-.rare-notification-bell__count { position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; border: 1px solid var(--color-background-elevated-primary-opaque); border-radius: 999px; background: var(--cdx-blue-300, #4fa8e0); }
+.rare-notification-bell:hover, .rare-notification-bell[aria-expanded='true'] { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
+.rare-notification-bell > svg { position: relative; z-index: 1; }
+.rare-notification-bell[data-live='running'], .rare-notification-bell[data-live='waiting'] { color: var(--color-text-foreground); }
+.rare-notification-bell__live {
+  --live: var(--cdx-blue-300, #339cff);
+  position: absolute;
+  inset: 3px;
+  border-radius: 999px;
+  pointer-events: none;
+  /* Head at 12 o'clock, tail fading counter-clockwise behind it; rotating
+   * clockwise makes the bright end lead. A faint full track sits underneath. */
+  background:
+    conic-gradient(from 0turn, transparent 0turn 0.4turn, color-mix(in srgb, var(--live) 22%, transparent) 0.66turn, color-mix(in srgb, var(--live) 75%, transparent) 0.94turn, var(--live) 1turn),
+    color-mix(in srgb, var(--live) 12%, transparent);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.75px), #000 calc(100% - 1.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.75px), #000 calc(100% - 1.5px));
+  animation: rare-bell-orbit 1.6s linear infinite;
+}
+.rare-notification-bell[data-live='waiting'] .rare-notification-bell__live {
+  --live: var(--color-text-warning);
+  background: var(--live);
+  animation: rare-bell-breathe 2.2s ease-in-out infinite;
+}
+@keyframes rare-bell-orbit { to { transform: rotate(1turn); } }
+@keyframes rare-bell-breathe { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.rare-notification-bell__count {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  z-index: 2;
+  display: inline-flex;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 999px;
+  /* The sidebar colour as a 2px gap separates the badge from the ring. */
+  box-shadow: 0 0 0 2px hsl(var(--surface-sidebar));
+  background: var(--color-text-foreground);
+  color: hsl(var(--surface-sidebar));
+  font-size: 9.5px;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.rare-notification-bell[data-tone='warning'] .rare-notification-bell__count { background: var(--color-text-warning); color: #fff; }
+.rare-notification-bell[data-tone='error'] .rare-notification-bell__count { background: var(--color-text-error); color: #fff; }
+.rare-notification-bell__count-digit { display: inline-block; animation: rare-bell-digit-in 220ms var(--ease-enter); }
+@keyframes rare-bell-digit-in { from { opacity: 0; transform: translateY(60%); } }
+
+/* ---------------------------------------------------------------- activity panel */
 .rare-completion-menu__anchor { display: inline-flex; align-items: center; }
-.rare-completion-menu { width: min(336px, calc(100vw - 24px)); max-height: min(390px, calc(100vh - 80px)); overflow-y: auto; }
+.rare-completion-menu { width: min(336px, calc(100vw - 24px)); }
 .rare-completion-menu__item { display: flex; align-items: flex-start; gap: 8px; padding: 9px 8px; }
-.rare-completion-menu__item:focus { background: var(--color-background-row-hover); }
+.rare-completion-menu__item:focus-visible { background: var(--color-background-row-hover); }
 .rare-completion-menu__preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.rare-activity-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(520px, calc(100vh - 72px));
+  overflow: hidden;
+  color: var(--color-text-foreground);
+  background: var(--color-background-elevated-primary-opaque);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl-spread);
+  outline: none;
+  transform-origin: top right;
+  animation: rare-activity-panel-in 160ms var(--ease-enter);
+}
+@keyframes rare-activity-panel-in { from { opacity: 0; transform: translateY(-4px) scale(0.985); } }
+.rare-activity-panel__head { display: flex; align-items: baseline; gap: 8px; padding: 12px 14px 4px; }
+.rare-activity-panel__title { font-size: 13px; font-weight: 600; }
+.rare-activity-panel__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 6px 6px; scrollbar-width: thin; }
+.rare-activity-section + .rare-activity-section { margin-top: 4px; padding-top: 4px; border-top: 1px solid color-mix(in srgb, var(--color-text-foreground) 7%, transparent); }
+.rare-activity-section__label { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 8px; color: var(--color-text-foreground-tertiary); font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+.rare-activity-section__count { display: inline-grid; min-width: 16px; height: 16px; padding: 0 5px; place-items: center; border-radius: 999px; background: color-mix(in srgb, var(--cdx-blue-300, #339cff) 14%, transparent); color: var(--cdx-blue-300, #339cff); font-size: 10px; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.rare-activity-live { display: flex; width: 100%; height: 34px; align-items: center; gap: 10px; padding: 0 8px; border-radius: var(--radius-lg); outline: none; text-align: left; transition: background-color 100ms ease; }
+.rare-activity-live:hover, .rare-activity-live:focus-visible { background: var(--color-background-row-hover); }
+.rare-activity-live__title { flex: 1; min-width: 0; overflow: hidden; font-size: 13px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.rare-activity-live__meta { flex: none; color: var(--cdx-blue-300, #339cff); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.rare-activity-live[data-state='waiting'] .rare-activity-live__meta { color: var(--color-text-warning); font-weight: 500; }
+/* Icons hang in a 22px gutter so every line of text in the feed (session
+ * headings, previews, times) shares one left edge. */
+.rare-activity-group + .rare-activity-group { margin-top: 2px; }
+.rare-activity-group__head { overflow: hidden; padding: 6px 8px 1px 30px; color: var(--color-text-foreground); font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.rare-activity-entry { width: 100%; padding: 5px 8px 6px; border-radius: var(--radius-lg); outline: none; text-align: left; cursor: pointer; transition: background-color 100ms ease; }
+.rare-activity-entry:hover, .rare-activity-entry:focus-visible { background: var(--color-background-row-hover); }
+.rare-activity-entry__icon { width: 14px; height: 14px; flex: none; margin-top: 2px; }
+.rare-activity-entry__body { flex: 1; min-width: 0; }
+.rare-activity-entry__preview { color: var(--color-text-foreground-secondary); font-size: 12.5px; line-height: 18px; }
+.rare-activity-entry[data-fresh='true'] .rare-activity-entry__preview { color: var(--color-text-foreground); }
+.rare-activity-entry__meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; color: var(--color-text-foreground-tertiary); font-size: 11px; line-height: 15px; font-variant-numeric: tabular-nums; }
+.rare-activity-entry__kind { font-weight: 600; }
+.rare-activity-entry__kind[data-kind='error'] { color: var(--color-text-error); }
+.rare-activity-entry__kind[data-kind='action-required'] { color: var(--color-text-warning); }
+.rare-activity-entry__fresh { flex: none; width: 6px; height: 6px; margin-top: 6px; border-radius: 999px; background: var(--cdx-blue-300, #339cff); }
+.rare-activity-empty { display: grid; justify-items: center; gap: 4px; padding: 22px 16px 18px; text-align: center; }
+.rare-activity-empty__icon { width: 20px; height: 20px; margin-bottom: 4px; color: var(--color-text-foreground-tertiary); }
+.rare-activity-empty__title { font-size: 13px; font-weight: 600; }
+.rare-activity-empty__desc { max-width: 248px; color: var(--color-text-foreground-tertiary); font-size: 12px; line-height: 17px; }
+.rare-activity-panel__foot { display: flex; align-items: center; gap: 12px; padding: 10px 14px 11px; border-top: 1px solid color-mix(in srgb, var(--color-text-foreground) 7%, transparent); }
+.rare-activity-panel__foot-text { display: grid; flex: 1; min-width: 0; gap: 1px; }
+.rare-activity-panel__foot-state { font-size: 12.5px; font-weight: 500; }
+.rare-activity-panel__foot-desc { color: var(--color-text-foreground-tertiary); font-size: 11px; line-height: 15px; }
+@media (prefers-reduced-motion: reduce) {
+  .rare-notification-bell__live { animation: none; }
+  .rare-notification-bell[data-live='running'] .rare-notification-bell__live { background: color-mix(in srgb, var(--live) 55%, transparent); }
+  .rare-notification-bell__count-digit, .rare-activity-panel { animation: none; }
+}
 .rare-turn-rail { position: absolute; top: 0; bottom: 0; left: 0; z-index: 20; display: flex; align-items: center; width: 28px; }
 .rare-turn-rail__marks { width: 28px; max-height: min(46vh, 320px); overflow-y: auto; scrollbar-width: none; }
 .rare-turn-rail__marks::-webkit-scrollbar { display: none; }

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "AgentFirstOperationalEvidence/v1",
+  "taskId": "TF-0594",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-oat-evidence",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "artifacts": {
+    "operational": {
+      "path": "operational.json",
+      "sha256": "sha256:8e27d4ccf5d6c8aff0587a15574a68a52196588aebd33287f24475c281c684dc"
+    },
+    "providerFaults": {
+      "path": "provider-faults.json",
+      "sha256": "sha256:f088796bce720d8a4adfc15f3cca9aa95a0207741ec4a8e91849639753869d88"
+    }
+  },
+  "requiredDrills": [
+    "gatewayLoss",
+    "gatewayRecovery",
+    "gatewayStartupFailure",
+    "diagnostics",
+    "writeFailure",
+    "restart",
+    "crashRecovery"
+  ],
+  "requiredProviderFaults": [
+    "timeout",
+    "cancel"
+  ],
+  "claims": {
+    "realHuman": false,
+    "releaseApproved": false,
+    "signedInstaller": false,
+    "crossPlatform": false
+  },
+  "limitations": [
+    "distribution=not-run because this worktree could not build win-unpacked: the pinned VerseShell source commit is no longer available from the recorded repository.",
+    "Provider timeout in operational mode is allowed to terminate via the proxy safety cutoff; the receipt records the bounded failure and subsequent normal recovery.",
+    "No signed installer, public release, or cross-platform package is claimed."
+  ]
+}

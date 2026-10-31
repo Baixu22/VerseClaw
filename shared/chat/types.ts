@@ -13,7 +13,17 @@ export interface AttachedFileMeta {
   preview: string | null;
   previewStatus?: 'unavailable';
   filePath?: string;
-  source?: 'user-upload' | 'tool-result' | 'message-ref' | 'gateway-media';
+  /**
+   * `tool-media` marks audio/video a tool explicitly declared in its result.
+   * `tool-result` is a path found in tool output: it may be an artifact from any
+   * tool the turn ran, or noise such as `ls *.mp3`. `producedAfter` tells them apart.
+   */
+  source?: 'user-upload' | 'tool-result' | 'message-ref' | 'gateway-media' | 'tool-media';
+  /**
+   * Start of the turn (ms) that found this `tool-result` path. Audio and video only
+   * count as that turn's output if the file was written at or after this time.
+   */
+  producedAfter?: number;
   /**
    * For Gateway-injected outgoing media (assistant-media). The Gateway emits
    * an `image` content block with a relative URL like
@@ -24,6 +34,10 @@ export interface AttachedFileMeta {
    * loads the original file off disk.
    */
   gatewayUrl?: string;
+  /** http(s) location. Never loaded by the renderer; the card only opens it externally. */
+  remoteUrl?: string;
+  /** Set when the Gateway delivered audio as a voice note. */
+  isVoiceNote?: boolean;
 }
 
 /** Raw message from OpenClaw chat.history */
@@ -57,10 +71,30 @@ export interface RawMessage {
 
 /** Content block inside a message */
 export interface ContentBlock {
-  type: 'text' | 'image' | 'thinking' | 'tool_use' | 'tool_result' | 'toolCall' | 'toolResult';
+  type:
+    | 'text'
+    | 'image'
+    | 'thinking'
+    | 'tool_use'
+    | 'tool_result'
+    | 'toolCall'
+    | 'toolResult'
+    | 'attachment'
+    | 'audio'
+    | 'video'
+    | 'input_image'
+    | 'image_url';
   text?: string;
   thinking?: string;
-  source?: { type: string; media_type?: string; data?: string; url?: string };
+  source?: {
+    type: string;
+    media_type?: string;
+    data?: string;
+    url?: string;
+    /** History projection removed the base64 payload; only the size survives. */
+    omitted?: boolean;
+    bytes?: number;
+  };
   /** Flat image format from Gateway tool results (no source wrapper) */
   data?: string;
   mimeType?: string;
@@ -79,6 +113,22 @@ export interface ContentBlock {
   height?: number;
   /** Human-readable filename / alt text emitted by the Gateway. */
   alt?: string;
+  /** History projection removed flat image `data`; only the size survives. */
+  omitted?: boolean;
+  bytes?: number;
+  /** `input_image` carries a string, `image_url` an OpenAI-style `{ url }`. */
+  image_url?: string | { url?: string };
+  /** Gateway media block: `{ type:'attachment', attachment:{ url, kind, label, ... } }`. */
+  attachment?: {
+    url?: string;
+    kind?: string;
+    label?: string;
+    mimeType?: string;
+    isVoiceNote?: boolean;
+  };
+  /** Display name on `{ type:'audio' }` blocks. */
+  label?: string;
+  isVoiceNote?: boolean;
   id?: string;
   name?: string;
   input?: unknown;

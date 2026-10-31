@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "AgentFirstAdjudicationReport/v1",
+  "taskId": "TF-0595",
+  "driven_by": "agent",
+  "actor": "codex/adjudicator-reviewer",
+  "sourceCandidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "plan": {
+    "path": "harness/specs/fixtures/agent-first-system/adjudication/plan.v1.json",
+    "digest": "sha256:3f0182517f090e088a1a1d6117f434098a0c09b7f860d438680bd8a49cd8ee87"
+  },
+  "requiredDimensions": [
+    "source",
+    "engineering",
+    "runtime",
+    "effect",
+    "distribution",
+    "operational",
+    "agentQuality",
+    "releaseApproval"
+  ],
+  "dimensions": {
+    "source": {
+      "status": "pass",
+      "candidate": {
+        "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+        "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+        "dirty": false
+      },
+      "checked": [
+        "commit",
+        "tree",
+        "clean",
+        "history",
+        "source-closure"
+      ]
+    },
+    "engineering": {
+      "status": "pass",
+      "trials": 144,
+      "controls": 7,
+      "rubricAgreement": 1,
+      "staleEvidence": [],
+      "sourceClosure": {
+        "tf0592": {
+          "status": "evaluation-only-closure",
+          "changedPaths": 27,
+          "evaluationOnly": true,
+          "productPaths": []
+        },
+        "tf0593": {
+          "status": "evaluation-only-closure",
+          "changedPaths": 27,
+          "evaluationOnly": true,
+          "productPaths": []
+        },
+        "tf0594": {
+          "status": "same-candidate",
+          "changedPaths": 0,
+          "evaluationOnly": true
+        }
+      }
+    },
+    "runtime": {
+      "status": "pass-source",
+      "scope": "source Electron/Gateway OAT; package runtime not run"
+    },
+    "effect": {
+      "status": "partial",
+      "scope": "OAT core journey only; full current-candidate product-effect matrix is not rerun here"
+    },
+    "distribution": {
+      "status": "not-run",
+      "source": {
+        "schemaVersion": "AgentFirstOperationalAcceptanceCheck/v1",
+        "operational": {
+          "operational": "pass",
+          "distribution": "not-run"
+        },
+        "drills": 7,
+        "providerFaults": 2,
+        "distribution": "not-run",
+        "candidate": {
+          "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+          "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+          "dirty": false
+        }
+      }
+    },
+    "operational": {
+      "status": "pass",
+      "drills": 7,
+      "providerFaults": 2
+    },
+    "agentQuality": {
+      "status": "partial",
+      "reason": "TF-0592/0593 use a deterministic scripted provider; no live-provider quality claim"
+    },
+    "releaseApproval": {
+      "status": "not-approved",
+      "releaseApproved": false
+    }
+  },
+  "sourceClosure": {
+    "tf0592": {
+      "status": "evaluation-only-closure",
+      "changedPaths": 27,
+      "evaluationOnly": true,
+      "productPaths": []
+    },
+    "tf0593": {
+      "status": "evaluation-only-closure",
+      "changedPaths": 27,
+      "evaluationOnly": true,
+      "productPaths": []
+    },
+    "tf0594": {
+      "status": "same-candidate",
+      "changedPaths": 0,
+      "evaluationOnly": true
+    }
+  },
+  "residuals": [
+    {
+      "dimension": "distribution",
+      "status": "not-run",
+      "owner": "codex/agent-first-maintainer",
+      "reviewBy": "2026-11-30",
+      "reason": "frozen package unavailable or not executed"
+    },
+    {
+      "dimension": "agentQuality",
+      "status": "partial",
+      "owner": "codex/agent-first-maintainer",
+      "reviewBy": "2026-11-30",
+      "reason": "scripted provider and partial current-candidate effect matrix; no live quality claim"
+    },
+    {
+      "dimension": "releaseApproval",
+      "status": "not-approved",
+      "owner": "codex/agent-first-maintainer",
+      "reviewBy": "2026-11-30",
+      "reason": "release is outside agent authority"
+    }
+  ],
+  "verdict": "not-release-ready",
+  "nextGate": "distribution: build a frozen win-unpacked artifact and rerun packaged parity",
+  "limitations": [
+    "Adjudication reads retained disk evidence; it does not infer a live model quality result from a scripted provider.",
+    "Distribution remains not-run when no frozen package was executed."
+  ],
+  "claims": {
+    "realHuman": false,
+    "releaseApproved": false,
+    "distributionApproved": false,
+    "evidenceFresh": true
+  }
+}

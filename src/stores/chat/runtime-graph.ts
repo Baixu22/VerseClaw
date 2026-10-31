@@ -1,4 +1,5 @@
 import type { ChatRuntimeEvent } from '../../../shared/chat-runtime-events';
+import { extractToolResultMedia } from '@/pages/Chat/conversation-resources';
 import {
   extractImagesAsAttachedFiles,
   extractMediaRefs,
@@ -170,12 +171,20 @@ function collectRuntimeResultTexts(result: unknown): string[] {
   return texts;
 }
 
-export function extractToolCompletedFiles(event: ChatRuntimeEvent): AttachedFileMeta[] {
+export function extractToolCompletedFiles(event: ChatRuntimeEvent, turnStartMs?: number): AttachedFileMeta[] {
   if (event.type !== 'tool.completed') return [];
 
   const files: AttachedFileMeta[] = extractImagesAsAttachedFiles(event.result)
     .filter((file) => !file.mimeType.startsWith('image/'))
     .map((file) => (file.source ? file : { ...file, source: 'tool-result' as const }));
+
+  // Audio and video from any tool the turn ran, declared or found in its output.
+  const resultRecord = asRecord(event.result);
+  files.push(...extractToolResultMedia({
+    content: resultRecord?.content ?? event.result,
+    details: resultRecord?.details ?? event.result,
+    producedAfter: turnStartMs,
+  }));
 
   const seenPaths = new Set(files.map((file) => file.filePath).filter(Boolean));
   for (const text of collectRuntimeResultTexts(event.result)) {

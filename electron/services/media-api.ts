@@ -100,7 +100,7 @@ export function createMediaApi(): CompleteHostServiceRegistry['media'] {
     thumbnails: async (payload) => {
       const entries = normalizeThumbnailEntries(payload);
       const fsP = await import('node:fs/promises');
-      const results: Record<string, { preview: string | null; fileSize: number }> = {};
+      const results: Record<string, { preview: string | null; fileSize: number; resolvedPath?: string }> = {};
       for (const entry of entries) {
         const mimeType = typeof entry.mimeType === 'string' ? entry.mimeType : 'application/octet-stream';
         if (typeof entry.filePath === 'string' && entry.filePath) {
@@ -127,7 +127,7 @@ export function createMediaApi(): CompleteHostServiceRegistry['media'] {
             const preview = resolved.mimeType.startsWith('image/')
               ? await generateImagePreview(resolved.path, resolved.mimeType)
               : null;
-            results[entry.gatewayUrl] = { preview, fileSize: stat.size };
+            results[entry.gatewayUrl] = { preview, fileSize: stat.size, resolvedPath: resolved.path };
           } catch {
             results[entry.gatewayUrl] = { preview: null, fileSize: 0 };
           }

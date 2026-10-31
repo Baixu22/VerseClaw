@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "AgentFirstAdjudicationAcceptance/v1",
+  "taskId": "TF-0595",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-adjudicator-evidence",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "reviewers": {
+    "executor": "codex/agent-first-executor",
+    "reviewer": "codex/adjudicator-reviewer",
+    "verifier": "codex/adjudicator-verifier"
+  },
+  "checkouts": [
+    "detached:e9833d121",
+    "detached:e9833d121"
+  ],
+  "artifacts": {
+    "plan": {
+      "path": "plan.v1.json",
+      "sha256": "sha256:3f0182517f090e088a1a1d6117f434098a0c09b7f860d438680bd8a49cd8ee87"
+    },
+    "review": {
+      "path": "review.json",
+      "sha256": "sha256:6fa538f1d3e2c664f9d674f87ed45c05c97602146af3d7704b30ad33eef09ccf"
+    },
+    "verification": {
+      "path": "verification.json",
+      "sha256": "sha256:2b2a22f7c1ec2d6eb5e843bcf0112a1669861c9e50a0dab85de473ad830a8c25"
+    }
+  },
+  "result": {
+    "verification": "pass",
+    "reportVerdict": "not-release-ready",
+    "nextGate": "distribution: build a frozen win-unpacked artifact and rerun packaged parity"
+  },
+  "claims": {
+    "realHuman": false,
+    "releaseApproved": false,
+    "distributionApproved": false
+  },
+  "limitations": [
+    "Reviewer and verifier ran in two detached checkouts at the same commit with different actors and separate outputs.",
+    "Distribution remains not-run; no packaged or live-quality claim is inferred from source OAT.",
+    "TF-0592/0593 evidence has evaluation-system-only source closure; product-runtime drift would invalidate the report."
+  ]
+}

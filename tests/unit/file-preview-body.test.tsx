@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { FilePreviewBody } from '@/components/file-preview/FilePreviewBody';
 import type { FilePreviewTarget } from '@/components/file-preview/types';
@@ -17,18 +17,21 @@ vi.mock('react-i18next', () => ({
 const {
   dialogMessageMock,
   shellOpenPathMock,
+  readBinaryFile,
   readTextFile,
   statFile,
   writeTextFile,
 } = vi.hoisted(() => ({
   dialogMessageMock: vi.fn(async () => ({ response: 1 })),
   shellOpenPathMock: vi.fn(async () => ''),
+  readBinaryFile: vi.fn(),
   readTextFile: vi.fn(),
   statFile: vi.fn(),
   writeTextFile: vi.fn(),
 }));
 
 vi.mock('@/lib/file-preview-client', () => ({
+  readBinaryFile: (...args: unknown[]) => readBinaryFile(...args),
   readTextFile: (...args: unknown[]) => readTextFile(...args),
   statFile: (...args: unknown[]) => statFile(...args),
   writeTextFile: (...args: unknown[]) => writeTextFile(...args),
@@ -108,6 +111,66 @@ describe('FilePreviewBody', () => {
         buttons: expect.arrayContaining(['Open directly']),
       }));
       expect(shellOpenPathMock).toHaveBeenCalledWith('/tmp/large-report.pdf');
+    });
+  });
+
+  describe('audio and video', () => {
+    beforeEach(() => {
+      readTextFile.mockReset();
+      readBinaryFile.mockReset();
+      statFile.mockReset();
+      vi.stubGlobal('URL', Object.assign(URL, {
+        createObjectURL: vi.fn(() => 'blob:preview'),
+        revokeObjectURL: vi.fn(),
+      }));
+      statFile.mockResolvedValue({ ok: true, isFile: true, size: 2048 });
+      readBinaryFile.mockResolvedValue({ ok: true, data: new Uint8Array([1, 2, 3]), size: 2048 });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it.each([
+      ['audio', 'speech.wav', '.wav', 'audio/wav', 'AUDIO'],
+      ['video', 'clip.mp4', '.mp4', 'video/mp4', 'VIDEO'],
+    ] as const)('plays %s in the preview tab instead of reporting no preview', async (contentType, fileName, ext, mimeType, tag) => {
+      render(
+        <FilePreviewBody
+          file={makePreviewTarget({ filePath: `/tmp/${fileName}`, fileName, ext, mimeType, contentType, size: 2048 })}
+          mode="preview"
+        />,
+      );
+
+      const player = await screen.findByTestId('chat-resource-player');
+      expect(player.tagName).toBe(tag);
+      expect(player).toHaveAttribute('controls');
+      expect(readTextFile).not.toHaveBeenCalled();
+    });
+
+    it('skips the inline size gate, because opening the panel was an explicit request', async () => {
+      statFile.mockResolvedValue({ ok: true, isFile: true, size: 30 * 1024 * 1024 });
+      render(
+        <FilePreviewBody
+          file={makePreviewTarget({ filePath: '/tmp/big.mp4', fileName: 'big.mp4', ext: '.mp4', mimeType: 'video/mp4', contentType: 'video' })}
+          mode="preview"
+        />,
+      );
+
+      await screen.findByTestId('chat-resource-player');
+      expect(screen.queryByTestId('chat-resource-load')).toBeNull();
+    });
+
+    it('reports a missing file in the panel', async () => {
+      statFile.mockResolvedValue({ ok: false, error: 'notFound' });
+      render(
+        <FilePreviewBody
+          file={makePreviewTarget({ filePath: '/tmp/gone.wav', fileName: 'gone.wav', ext: '.wav', mimeType: 'audio/wav', contentType: 'audio' })}
+          mode="preview"
+        />,
+      );
+
+      await waitFor(() => expect(screen.getByTestId('chat-resource-audio')).toHaveAttribute('data-status', 'notFound'));
     });
   });
 });

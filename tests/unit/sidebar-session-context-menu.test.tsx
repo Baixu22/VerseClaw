@@ -1,14 +1,17 @@
 /**
- * Sidebar conversation action menu (right-click).
+ * Sidebar conversation action menu (the row's ⋯ button, or right-click).
  *
  * What is worth locking here is the CONTRACT of the menu, not its markup:
  *
- *  1. right-click on a session row opens it, anchored to that session;
- *  2. "mark as unread" is reachable ONLY from the menu now — the permanent
- *     hover button is gone, and it must not come back by accident;
+ *  1. the row's hover strip is exactly pin + ⋯; ⋯ (and right-click) open the
+ *     same menu, anchored to that session;
+ *  2. "mark as unread", rename, move and delete are reachable from the menu —
+ *     the permanent hover buttons are gone and must not come back by accident;
  *  3. the migrate page files the session by (workspaceId, sessionKey, folderId),
- *     the same by-id dispatch the folder tree's regression tests hold;
- *  4. handoff parks an intent instead of trying to own the draft dialog, so the
+ *     including back OUT of a workgroup (the audit's F3 one-way door);
+ *  4. archive is one click and offers an undo; permanent delete keeps its
+ *     confirmation dialog;
+ *  5. handoff parks an intent instead of trying to own the draft dialog, so the
  *     chat page stays the single owner of that flow.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -22,6 +25,11 @@ const { gatewayState, agentsState } = vi.hoisted(() => ({
 }));
 
 const { navigateMock } = vi.hoisted(() => ({ navigateMock: vi.fn() }));
+const { toastMock } = vi.hoisted(() => ({
+  toastMock: { success: vi.fn(), error: vi.fn() },
+}));
+
+vi.mock('sonner', () => ({ toast: toastMock }));
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
@@ -64,7 +72,12 @@ vi.mock('react-i18next', () => ({
 const SESSION_KEY = 'agent:main:one';
 const OTHER_SESSION_KEY = 'agent:main:two';
 
-async function renderSidebar(overrides?: { moveSessionToFolder?: ReturnType<typeof vi.fn> }) {
+async function renderSidebar(overrides?: {
+  moveSessionToFolder?: ReturnType<typeof vi.fn>;
+  archiveSession?: ReturnType<typeof vi.fn>;
+  restoreSession?: ReturnType<typeof vi.fn>;
+  assignments?: Record<string, string>;
+}) {
   const { useChatStore } = await import('@/stores/chat');
   const { useWorkspacesStore } = await import('@/stores/workspaces');
   const { useSessionIntentStore } = await import('@/stores/session-intent');
@@ -78,7 +91,7 @@ async function renderSidebar(overrides?: { moveSessionToFolder?: ReturnType<type
     sessionFolders: [
       { id: 'folder-a', name: 'Research', parentId: null, order: 0, createdAt: 1, updatedAt: 2 },
     ],
-    sessionFolderAssignments: {},
+    sessionFolderAssignments: overrides?.assignments ?? {},
     lastOpenedAt: 1_700_000_000_000,
   };
 
@@ -106,6 +119,8 @@ async function renderSidebar(overrides?: { moveSessionToFolder?: ReturnType<type
     pendingFinal: false,
     runError: null,
     startupPhase: 'ready',
+    ...(overrides?.archiveSession ? { archiveSession: overrides.archiveSession } : {}),
+    ...(overrides?.restoreSession ? { restoreSession: overrides.restoreSession } : {}),
   } as never);
 
   useSessionIntentStore.getState().clear();
@@ -120,18 +135,25 @@ describe('sidebar conversation action menu', () => {
   beforeEach(() => {
     vi.resetModules();
     navigateMock.mockClear();
+    toastMock.success.mockClear();
+    toastMock.error.mockClear();
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText: vi.fn().mockResolvedValue(undefined) },
     });
   });
 
-  it('opens on right-click and offers the actions the hover strip no longer carries', async () => {
+  it('keeps the hover strip to pin + more and opens the full menu on right-click', async () => {
     await renderSidebar();
 
-    // The hover strip is down to pin / migrate / rename / delete.
-    expect(screen.queryByTestId(`sidebar-session-read-${SESSION_KEY}`)).toBeNull();
-    expect(screen.getByTestId(`sidebar-session-pin-${SESSION_KEY}`)).toBeInTheDocument();
+    const strip = screen.getByTestId(`sidebar-session-pin-${SESSION_KEY}`).parentElement!;
+    expect([...strip.querySelectorAll('button')].map((button) => button.dataset.testid)).toEqual([
+      `sidebar-session-pin-${SESSION_KEY}`,
+      `sidebar-session-more-${SESSION_KEY}`,
+    ]);
+    for (const retired of ['read', 'rename', 'delete', 'move']) {
+      expect(screen.queryByTestId(`sidebar-session-${retired}-${SESSION_KEY}`)).toBeNull();
+    }
 
     fireEvent.contextMenu(screen.getByTestId(`sidebar-session-${SESSION_KEY}`));
 
@@ -145,10 +167,92 @@ describe('sidebar conversation action menu', () => {
       'sidebar-session-context-handoff',
       'sidebar-session-context-copy-path',
       'sidebar-session-context-copy-id',
+      'sidebar-session-context-archive',
       'sidebar-session-context-delete',
     ]) {
       expect(screen.getByTestId(testId)).toBeInTheDocument();
     }
+  });
+
+  it('opens the same menu from the row\'s ⋯ button, anchored under it, and toggles closed', async () => {
+    await renderSidebar();
+    const more = screen.getByTestId(`sidebar-session-more-${SESSION_KEY}`);
+    expect(more).toHaveAttribute('aria-haspopup', 'menu');
+    expect(more).toHaveAttribute('aria-expanded', 'false');
+
+    fireEvent.click(more);
+
+    const menu = screen.getByTestId(`sidebar-session-context-menu-${SESSION_KEY}`);
+    expect(menu).toHaveAttribute('data-align', 'end');
+    expect(more).toHaveAttribute('aria-expanded', 'true');
+    // The row keeps its controls and highlight while its menu is open.
+    expect(more.closest('.sidebar-row')).toHaveAttribute('data-force-actions', 'true');
+
+    // Pressing ⋯ again must close, not close-then-reopen.
+    fireEvent.pointerDown(more);
+    fireEvent.click(more);
+    expect(screen.queryByTestId(`sidebar-session-context-menu-${SESSION_KEY}`)).toBeNull();
+    expect(more).toHaveAttribute('aria-expanded', 'false');
+    expect(more.closest('.sidebar-row')).not.toHaveAttribute('data-force-actions');
+  });
+
+  it('hands the open state to the next row when another row\'s menu opens', async () => {
+    await renderSidebar();
+    const first = screen.getByTestId(`sidebar-session-more-${SESSION_KEY}`);
+    fireEvent.click(first);
+    expect(first).toHaveAttribute('aria-expanded', 'true');
+
+    fireEvent.contextMenu(screen.getByTestId(`sidebar-session-${OTHER_SESSION_KEY}`));
+
+    expect(first).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByTestId(`sidebar-session-context-menu-${OTHER_SESSION_KEY}`)).toBeInTheDocument();
+    expect(screen.queryByTestId(`sidebar-session-context-menu-${SESSION_KEY}`)).toBeNull();
+  });
+
+  it('moves a session filed inside a workgroup back out from its ⋯ menu', async () => {
+    const moveSessionToFolder = vi.fn().mockResolvedValue(undefined);
+    await renderSidebar({ moveSessionToFolder, assignments: { [SESSION_KEY]: 'folder-a' } });
+
+    // The row now renders inside the workgroup and still carries ⋯.
+    expect(screen.getByTestId('sidebar-folder-folder-a')).toContainElement(screen.getByTestId(`sidebar-session-${SESSION_KEY}`));
+    fireEvent.click(screen.getByTestId(`sidebar-session-more-${SESSION_KEY}`));
+    fireEvent.click(screen.getByTestId('sidebar-session-context-move'));
+
+    // The current group is the checked entry; "no workgroup" is the way out.
+    expect(screen.getByTestId('sidebar-session-context-move-to-folder-a')).toHaveClass('checked');
+    fireEvent.click(screen.getByTestId('sidebar-session-context-move-none'));
+
+    await waitFor(() => expect(moveSessionToFolder).toHaveBeenCalledWith('ws-1', SESSION_KEY, null));
+  });
+
+  it('archives in one click and offers an undo that restores the session', async () => {
+    const archiveSession = vi.fn().mockResolvedValue(undefined);
+    const restoreSession = vi.fn().mockResolvedValue(undefined);
+    await renderSidebar({ archiveSession, restoreSession });
+
+    fireEvent.click(screen.getByTestId(`sidebar-session-more-${SESSION_KEY}`));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('sidebar-session-context-archive'));
+    });
+
+    // The archive records where the session lived (project, no workgroup here).
+    expect(archiveSession).toHaveBeenCalledWith(SESSION_KEY, { workspaceId: 'ws-1', folderId: null });
+    // No confirmation dialog for a reversible action.
+    expect(screen.queryByTestId('session-delete-dialog')).toBeNull();
+    await waitFor(() => expect(toastMock.success).toHaveBeenCalledTimes(1));
+    const [, options] = toastMock.success.mock.calls[0] as [string, { action: { label: string; onClick: () => void } }];
+    expect(options.action.label).toBe('chat:sidebar.undo');
+    options.action.onClick();
+    expect(restoreSession).toHaveBeenCalledWith(SESSION_KEY);
+  });
+
+  it('keeps permanent deletion behind the confirmation dialog', async () => {
+    await renderSidebar();
+
+    fireEvent.click(screen.getByTestId(`sidebar-session-more-${SESSION_KEY}`));
+    fireEvent.click(screen.getByTestId('sidebar-session-context-delete'));
+
+    expect(await screen.findByTestId('session-delete-dialog')).toBeInTheDocument();
   });
 
   it('files the session into a workstream from the migrate page', async () => {

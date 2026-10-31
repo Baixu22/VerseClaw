@@ -3,12 +3,16 @@ import { useCallback, useMemo, useState } from 'react';
 import { Check, CheckCircle2, ChevronLeft, Clipboard, Copy, HelpCircle, Table as TableIcon, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
 import { SlidersHorizontal } from '@/components/icons/codex-icons';
 import { useTranslation } from 'react-i18next';
+import { ConversationImage } from '@/components/assistant-render/resources/ConversationImage';
+import { WebsiteLinkCard } from '@/components/assistant-render/resources/ResourceCards';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
+import { toUnknownResource, type ConversationUnknownResource } from '@/pages/Chat/conversation-resources';
+import { ChartView, type ChartData, type ChartType } from './chart/chart-view';
 import { ToolUiPlanView, type ToolUiPlanTodoStatus } from './plan-view';
 import { TestResults, type TestResultSuite, type TestStatus } from '@/components/ai-elements/test-results';
 import { StackTrace, type StackTraceProps } from '@/components/ai-elements/stack-trace';
@@ -247,13 +251,18 @@ type KeyValueInteraction = {
   entries: Array<{ key: string; value: string; mono?: boolean }>;
 };
 
-type ChartInteraction = {
+type ChartInteraction = ChartData & {
   type: 'chart';
   id: string;
   title?: string;
-  chartType: 'bar' | 'line' | 'pie' | 'area';
-  labels: string[];
-  series: Array<{ name?: string; data: number[] }>;
+};
+
+type WebsiteLinkInteraction = {
+  type: 'website-link';
+  id: string;
+  url: string;
+  title?: string;
+  description?: string;
 };
 
 type ImageGalleryInteraction = {
@@ -391,6 +400,7 @@ export type ToolUiInteraction =
   | AlertInteraction
   | KeyValueInteraction
   | ChartInteraction
+  | WebsiteLinkInteraction
   | ImageGalleryInteraction
   | CodeBlockInteraction
   | TestResultsInteraction
@@ -428,6 +438,8 @@ type ActionFooterProps = {
 type ParsedToolUiContent = {
   displayText: string;
   interactions: ToolUiInteraction[];
+  /** Explicit Tool UI payloads with no renderer; they get a fallback card, not raw JSON. */
+  unknownResources: ConversationUnknownResource[];
 };
 
 const TOOL_UI_FENCE_RE = /```([^\n`]*)\r?\n([\s\S]*?)```/g;
@@ -514,6 +526,7 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   if (normalized === 'alert' || normalized === 'alert-banner' || normalized === 'notification') return 'alert';
   if (normalized === 'key-value' || normalized === 'keyvalue' || normalized === 'definition-list' || normalized === 'details-list') return 'key-value';
   if (normalized === 'chart' || normalized === 'chart-card' || normalized === 'graph') return 'chart';
+  if (normalized === 'website-link' || normalized === 'link-preview' || normalized === 'link-card') return 'website-link';
   if (normalized === 'image-gallery' || normalized === 'gallery' || normalized === 'image-grid') return 'image-gallery';
   if (normalized === 'code-block' || normalized === 'code-snippet' || normalized === 'code') return 'code-block';
   if (normalized === 'test-results' || normalized === 'test-result' || normalized === 'tests' || normalized === 'test-report') return 'test-results';
@@ -1162,23 +1175,74 @@ function parseKeyValue(payload: Record<string, unknown>, fallbackId: string): Ke
   return { type: 'key-value', id: asString(payload.id) ?? fallbackId, title: asString(payload.title), entries };
 }
 
+const CHART_TYPE_ALIASES: Readonly<Partial<Record<string, ChartType>>> = {
+  bar: 'bar',
+  'bar-chart': 'bar',
+  column: 'bar',
+  'column-chart': 'bar',
+  line: 'line',
+  'line-chart': 'line',
+  area: 'area',
+  'area-chart': 'area',
+  pie: 'pie',
+  'pie-chart': 'pie',
+  donut: 'pie',
+  doughnut: 'pie',
+};
+
+function toChartValue(value: unknown): number | null {
+  const number = typeof value === 'string' && value.trim() ? Number(value) : value;
+  return typeof number === 'number' && Number.isFinite(number) ? number : null;
+}
+
+/**
+ * Rejects what has nothing to draw, so it reaches the fallback card. Values keep
+ * their position: dropping a bad entry would shift every later value onto the
+ * wrong label. A type we cannot draw is kept as `unsupported` and shown as a table,
+ * never drawn as a different chart.
+ */
 function parseChart(payload: Record<string, unknown>, fallbackId: string): ChartInteraction | null {
-  const labels = Array.isArray(payload.labels) ? payload.labels.filter((l): l is string => typeof l === 'string') : [];
-  const seriesRaw = Array.isArray(payload.series) ? payload.series : [];
-  const series: ChartInteraction['series'] = seriesRaw
+  const labels = Array.isArray(payload.labels)
+    ? payload.labels.map((label) => (typeof label === 'string' ? label : typeof label === 'number' ? String(label) : ''))
+    : [];
+  if (labels.length === 0) return null;
+  const series: ChartInteraction['series'] = (Array.isArray(payload.series) ? payload.series : [])
     .filter(isRecord)
-    .map((s) => ({
-      name: asString(s.name) ?? asString(s.label),
-      data: Array.isArray(s.data) ? s.data.filter((d): d is number => typeof d === 'number') : [],
-    }));
-  if (labels.length === 0 || series.length === 0) return null;
-  const chartTypeRaw = normalizeType(payload.chartType) ?? normalizeType(payload.chart_type) ?? normalizeType(payload.type);
-  const chartType: ChartInteraction['chartType'] =
-    chartTypeRaw === 'line' ? 'line'
-    : chartTypeRaw === 'pie' ? 'pie'
-    : chartTypeRaw === 'area' ? 'area'
+    .map((entry) => {
+      const raw = Array.isArray(entry.data) ? entry.data : Array.isArray(entry.values) ? entry.values : [];
+      return {
+        name: asString(entry.name) ?? asString(entry.label),
+        data: labels.map((_, index) => toChartValue(raw[index])),
+      };
+    })
+    .filter((entry) => entry.data.some((value) => value != null));
+  if (series.length === 0) return null;
+
+  const requestedType = asString(payload.chartType) ?? asString(payload.chart_type) ?? asString(payload.variant);
+  const chartType: ChartData['chartType'] = requestedType
+    ? CHART_TYPE_ALIASES[normalizeType(requestedType)] ?? 'unsupported'
     : 'bar';
-  return { type: 'chart', id: asString(payload.id) ?? fallbackId, title: asString(payload.title), chartType, labels, series };
+  return {
+    type: 'chart',
+    id: asString(payload.id) ?? fallbackId,
+    title: asString(payload.title),
+    chartType,
+    ...(chartType === 'unsupported' ? { requestedType: requestedType?.slice(0, 48) } : {}),
+    labels,
+    series,
+  };
+}
+
+function parseWebsiteLink(payload: Record<string, unknown>, fallbackId: string): WebsiteLinkInteraction | null {
+  const url = asString(payload.url) ?? asString(payload.href) ?? asString(payload.link);
+  if (!url || !/^https?:\/\//i.test(url)) return null;
+  return {
+    type: 'website-link',
+    id: asString(payload.id) ?? fallbackId,
+    url,
+    title: asString(payload.title) ?? asString(payload.label),
+    description: asString(payload.description) ?? asString(payload.summary),
+  };
 }
 
 function parseImageGallery(payload: Record<string, unknown>, fallbackId: string): ImageGalleryInteraction | null {
@@ -1575,6 +1639,7 @@ export function parseToolUiInteraction(candidate: unknown, fallbackId = 'tool-ui
   if (type === 'alert') return parseAlert(payload, fallbackId);
   if (type === 'key-value') return parseKeyValue(payload, fallbackId);
   if (type === 'chart') return parseChart(payload, fallbackId);
+  if (type === 'website-link') return parseWebsiteLink(payload, fallbackId);
   if (type === 'image-gallery') return parseImageGallery(payload, fallbackId);
   if (type === 'code-block') return parseCodeBlock(payload, fallbackId);
   if (type === 'test-results') return parseTestResults(payload, fallbackId);
@@ -1716,7 +1781,16 @@ function parseJsonLike(body: string): unknown | null {
   return null;
 }
 
-function interactionTypeFromFenceInfo(info: string): { allow: boolean; type?: ToolUiInteraction['type'] } {
+/** Fence languages that only ever mean "render this", so a failed parse is not ordinary code. */
+const EXPLICIT_RESOURCE_FENCE_TYPES: ReadonlySet<ToolUiInteraction['type']> = new Set<ToolUiInteraction['type']>([
+  'chart',
+  'weather',
+  'image-gallery',
+  'web-search',
+  'website-link',
+]);
+
+function interactionTypeFromFenceInfo(info: string): { allow: boolean; explicit?: boolean; type?: ToolUiInteraction['type'] } {
   const tokens = info
     .trim()
     .split(/[\s,]+/)
@@ -1729,7 +1803,9 @@ function interactionTypeFromFenceInfo(info: string): { allow: boolean; type?: To
   const type = tokens
     .map((token) => normalizeInteractionType(token, {}))
     .find((entry): entry is ToolUiInteraction['type'] => entry != null);
-  return { allow, type };
+  const explicit = tokens.some((token) => token === 'tool-ui' || token === 'toolui' || token === 'tool-ui-json')
+    || (type != null && EXPLICIT_RESOURCE_FENCE_TYPES.has(type));
+  return { allow, explicit, type };
 }
 
 function parseToolUiFenceBody(body: string, fallbackId: string, typeHint?: ToolUiInteraction['type']): ToolUiInteraction[] {
@@ -1781,7 +1857,7 @@ function parseMarkdownInteractions(
   text: string,
   fallbackId: string,
   forcedType?: ToolUiInteraction['type'],
-): ParsedToolUiContent {
+): Pick<ParsedToolUiContent, 'displayText' | 'interactions'> {
   const lines = getMarkdownLines(text);
   const blocks: MarkdownInteractionBlock[] = [];
 
@@ -2252,6 +2328,7 @@ function removeMarkdownRanges(text: string, blocks: MarkdownInteractionBlock[]):
 
 export function parseToolUiContent(text: string): ParsedToolUiContent {
   const interactions: ToolUiInteraction[] = [];
+  const unknownResources: ConversationUnknownResource[] = [];
   let output = '';
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -2268,6 +2345,16 @@ export function parseToolUiContent(text: string): ParsedToolUiContent {
       output += text.slice(lastIndex, match.index);
       lastIndex = match.index + match[0].length;
       interactions.push(...parsedInteractions);
+    } else if (fenceInfo.explicit) {
+      const unknown = toUnknownResource(parseJsonLike(body), {
+        key: `tool-ui-unknown-${unknownResources.length + 1}`,
+        fallbackType: fenceInfo.type,
+      });
+      if (unknown) {
+        output += text.slice(lastIndex, match.index);
+        lastIndex = match.index + match[0].length;
+        unknownResources.push(unknown);
+      }
     }
   }
   output += text.slice(lastIndex);
@@ -2276,6 +2363,7 @@ export function parseToolUiContent(text: string): ParsedToolUiContent {
   return {
     displayText: markdownFallback.displayText.replace(/\n{3,}/g, '\n\n').trim(),
     interactions: [...interactions, ...markdownFallback.interactions],
+    unknownResources,
   };
 }
 
@@ -3093,86 +3181,11 @@ function KeyValueCard({ interaction }: { interaction: KeyValueInteraction }) {
   );
 }
 
-const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-
 function ChartCard({ interaction }: { interaction: ChartInteraction }) {
   const { t } = useTranslation('chat');
-  const maxVal = Math.max(1, ...interaction.series.flatMap((s) => s.data));
   return (
     <ToolUiShell icon={<BarChart3 className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.chart.label', 'Chart')}>
-      {interaction.chartType === 'pie' ? (
-        <div className="flex items-center gap-4">
-          <div className="relative h-24 w-24">
-            <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
-              {(() => {
-                const total = interaction.series[0]?.data.reduce((a, b) => a + b, 0) ?? 1;
-                let offset = 0;
-                return interaction.series[0]?.data.map((val, i) => {
-                  const pct = val / total;
-                  const dash = `${pct * 100} ${100 - pct * 100}`;
-                  const circle = (
-                    <circle
-                      key={i}
-                      cx="18"
-                      cy="18"
-                      r="15.915"
-                      fill="none"
-                      stroke={CHART_COLORS[i % CHART_COLORS.length]}
-                      strokeWidth="3.5"
-                      strokeDasharray={dash}
-                      strokeDashoffset={-offset}
-                    />
-                  );
-                  offset += pct * 100;
-                  return circle;
-                });
-              })()}
-            </svg>
-          </div>
-          <ul className="space-y-1 text-xs">
-            {interaction.labels.map((label, i) => (
-              <li key={i} className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
-                <span className="text-muted-foreground">{label}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <div className="flex items-end gap-2 h-32">
-            {interaction.labels.map((label, i) => (
-              <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                <div className="flex w-full items-end justify-center gap-0.5 h-full">
-                  {interaction.series.map((s, si) => {
-                    const val = s.data[i] ?? 0;
-                    const h = Math.max(2, (val / maxVal) * 100);
-                    return (
-                      <div
-                        key={si}
-                        className="w-full max-w-[20px] rounded-t-sm transition-all"
-                        style={{ height: `${h}%`, backgroundColor: CHART_COLORS[si % CHART_COLORS.length] }}
-                        title={`${s.name ?? ''}: ${val}`}
-                      />
-                    );
-                  })}
-                </div>
-                <span className="text-meta text-muted-foreground/60 truncate" title={label}>{label}</span>
-              </div>
-            ))}
-          </div>
-          {interaction.series.length > 1 && (
-            <ul className="flex flex-wrap gap-3 text-meta">
-              {interaction.series.map((s, i) => (
-                <li key={i} className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-sm" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
-                  <span className="text-muted-foreground">{s.name ?? `Series ${i + 1}`}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      <ChartView chart={interaction} />
     </ToolUiShell>
   );
 }
@@ -3181,10 +3194,12 @@ function ImageGalleryCard({ interaction }: { interaction: ImageGalleryInteractio
   const { t } = useTranslation('chat');
   return (
     <ToolUiShell icon={<ImageIcon className="h-3.5 w-3.5" />} label={interaction.title ?? t('toolUi.imageGallery.label', 'Images')}>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" data-testid="chat-tool-ui-image-gallery">
         {interaction.images.map((img, i) => (
           <figure key={i} className="overflow-hidden rounded-md border border-black/5 dark:border-white/5">
-            <img src={img.url} alt={img.alt ?? ''} className="h-24 w-full object-cover" loading="lazy" />
+            <div className="h-24 w-full">
+              <ConversationImage url={img.url} alt={img.alt} variant="tile" />
+            </div>
             {img.caption && <figcaption className="px-2 py-1 text-meta text-muted-foreground truncate">{img.caption}</figcaption>}
           </figure>
         ))}
@@ -3304,6 +3319,16 @@ export function AgentInteractionRenderer({
             return <KeyValueCard key={key} interaction={interaction} />;
           case 'chart':
             return <ChartCard key={key} interaction={interaction} />;
+          case 'website-link':
+            return (
+              <WebsiteLinkCard
+                key={key}
+                url={interaction.url}
+                title={interaction.title}
+                description={interaction.description}
+                allowSidePreview
+              />
+            );
           case 'image-gallery':
             return <ImageGalleryCard key={key} interaction={interaction} />;
           case 'code-block':

@@ -14,7 +14,6 @@ import {
   PanelLeft,
   Trash2,
   Archive as ArchiveIcon,
-  Pencil,
   Check,
   X,
   Loader2,
@@ -23,7 +22,6 @@ import {
   Workflow,
   Plus,
   FolderPlus,
-  MoreVertical,
   Clock3,
   Folder,
   GitBranch,
@@ -52,9 +50,10 @@ import { SessionSearchModal } from './SessionSearchModal';
 import { SessionFolderTree } from './SessionFolderTree';
 import { SessionContextMenu, type SessionContextMenuTarget } from './SessionContextMenu';
 import { SidebarRow } from './SidebarRow';
+import { useTitleMarquee } from './use-title-marquee';
 import { HookSidebar } from '@/components/rareui/HookSidebar';
 import { CompletionActivityMenu } from '@/components/rareui/CompletionActivityMenu';
-import { DeleteButton } from '@/components/rareui/DeleteButton';
+import type { LiveSessionActivity } from '@/components/rareui/completion-activity';
 import {
   OfficialArchiveIcon,
   OfficialFolderClosedIcon,
@@ -137,15 +136,30 @@ interface SessionRowProps {
   onSwitch: (key: string) => void;
   onLoadHistory: (force: boolean) => Promise<void>;
   navigate: (to: string) => void;
-  onDeleteClick: (key: string, label: string) => void;
   onDismissSessionStatus: (key: string, signature: string) => void;
   onMarkRead: (key: string) => void;
   onTogglePinned: (key: string) => void;
-  /** Right-click opens the full action menu (SessionContextMenu). */
-  onOpenContextMenu: (key: string, x: number, y: number) => void;
-  leadingActions?: React.ReactNode;
-  forceActionsVisible?: boolean;
+  /**
+   * Opens the row's action menu (SessionContextMenu) — from a right-click at
+   * the pointer, or from the ⋯ button anchored under it. `onClose` lets the
+   * row keep its own "menu open" state without the Sidebar re-rendering every
+   * row on open/close.
+   */
+  onOpenContextMenu: (key: string, x: number, y: number, options?: SessionContextMenuAnchor) => void;
+  onCloseContextMenu: () => void;
 }
+
+/** How a menu opened from a row is anchored, beyond its x/y. */
+type SessionContextMenuAnchor = {
+  /** `end`: x is the menu's RIGHT edge (opened from the trailing ⋯ button). */
+  align?: 'start' | 'end';
+  /** When the menu flips above its anchor, its bottom edge goes here. */
+  flipY?: number;
+  onClose?: () => void;
+};
+
+/** The info card waits for a deliberate dwell, so a passing hover only scrolls the title. */
+const SESSION_TOOLTIP_DELAY_MS = 700;
 
 type SidebarSessionStatusKind = 'running' | 'waiting' | 'completed' | 'error' | 'aborted';
 
@@ -155,6 +169,8 @@ type SidebarSessionStatus = {
   labelKey: string;
   signature: string;
   dismissible: boolean;
+  /** Start of the run in flight (running/waiting only) — feeds the bell's live clock. */
+  startedAt: number | null;
 };
 
 /** TF-0423: rows mounted per incremental chunk (bounded DOM for long-lived sidebars). */
@@ -242,6 +258,11 @@ function buildSidebarSessionStatus(input: {
     labelKey: `sessionStatus.${kind}`,
     signature,
     dismissible: kind === 'completed',
+    // Only a run that is still open has a meaningful start: a stale completed
+    // run would make the live clock count from the previous turn.
+    startedAt: (kind === 'running' || kind === 'waiting') && latestRun?.status === 'running'
+      ? latestRun.startedAt ?? null
+      : null,
   };
 }
 
@@ -267,59 +288,26 @@ const SessionRowMemo = memo(function SessionRow({
   onSwitch,
   onLoadHistory,
   navigate,
-  onDeleteClick,
   onDismissSessionStatus,
   onMarkRead,
   onTogglePinned,
   onOpenContextMenu,
-  leadingActions,
-  forceActionsVisible = false,
+  onCloseContextMenu,
 }: SessionRowProps) {
   const { t } = useTranslation(['common', 'chat']);
   const sessionStatusLabel = sessionStatus ? t(`chat:${sessionStatus.labelKey}`) : '';
   const isSelected = isOnChat && currentSessionKey === s.key;
-
-  /* Long-title marquee: on row hover, measure how far the title overflows past
-     the action strip and pan it left so the full name scrolls into view. The
-     three hover buttons are absolute-positioned over the right edge; reserving
-     their width keeps the title from sliding under them. The outer `.marquee-
-     text` span stays fixed (overflow clip + fade mask); only the inner span
-     translates, so the text scrolls inside the clipped frame. */
-  const taskSelectRef = useRef<HTMLButtonElement>(null);
-
-  const handleRowHoverStart = useCallback(() => {
-    const btn = taskSelectRef.current;
-    if (!btn) return;
-    const wrapper = btn.querySelector<HTMLElement>('.marquee-text');
-    const inner = wrapper?.querySelector<HTMLElement>('.marquee-text__inner');
-    if (!wrapper || !inner) return;
-    const row = btn.closest('.sidebar-row');
-    const actionsEl = row?.querySelector<HTMLElement>('.sidebar-row__actions');
-    /* actions is absolute; offsetWidth is layout-stable even at opacity 0.
-       +8px breathes between the title end and the first button. */
-    const actionsWidth = actionsEl ? actionsEl.offsetWidth + 8 : 72;
-    const available = wrapper.clientWidth - actionsWidth;
-    const overflow = inner.scrollWidth - available;
-    if (overflow > 4) {
-      inner.style.setProperty('--marquee-distance', `-${overflow}px`);
-      /* Expose the measured action-strip width to CSS so the fade mask can
-         terminate exactly at the buttons' left edge — the panning text stays
-         legible up to that point and never slides under the buttons. */
-      wrapper.style.setProperty('--marquee-actions-width', `${actionsWidth}px`);
-      wrapper.classList.add('is-marqueeing');
-    }
-  }, []);
-
-  const handleRowHoverEnd = useCallback(() => {
-    const btn = taskSelectRef.current;
-    if (!btn) return;
-    const wrapper = btn.querySelector<HTMLElement>('.marquee-text');
-    const inner = wrapper?.querySelector<HTMLElement>('.marquee-text__inner');
-    if (!wrapper || !inner) return;
-    wrapper.classList.remove('is-marqueeing');
-    inner.style.removeProperty('--marquee-distance');
-    wrapper.style.removeProperty('--marquee-actions-width');
-  }, []);
+  /* Long titles scroll as a seamless loop while the row is hovered (or reached
+     by keyboard); see use-title-marquee.ts. */
+  const {
+    clipRef: titleClipRef,
+    textRef: titleTextRef,
+    start: startTitleMarquee,
+    stop: stopTitleMarquee,
+  } = useTitleMarquee();
+  /* The row owns whether ITS menu is open, so opening one never re-renders the
+     whole list. The Sidebar calls `onClose` back when the menu goes away. */
+  const [menuOpen, setMenuOpen] = useState(false);
 
   if (isEditing) {
     return (
@@ -355,30 +343,35 @@ const SessionRowMemo = memo(function SessionRow({
   const tooltipTime = activityMs > 0
     ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(activityMs)
     : '';
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={SESSION_TOOLTIP_DELAY_MS}>
     <SidebarRow
       className="task-row"
       hookKey={s.key}
       selected={isSelected}
       actionsClassName="task-hover-actions"
-      onMouseEnter={handleRowHoverStart}
-      onMouseLeave={handleRowHoverEnd}
-      /* Right-click anywhere on the row — including its hover controls — opens
-         the action menu. Everything that is not worth a permanent 22px button
-         lives there (migrate, fork, hand off, copy paths, unread). */
+      onPointerEnter={startTitleMarquee}
+      onPointerLeave={stopTitleMarquee}
+      /* Right-click anywhere on the row opens the same menu as the ⋯ button,
+         at the pointer. Everything not worth a permanent button lives there. */
       onContextMenu={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        onOpenContextMenu(s.key, event.clientX, event.clientY);
+        setMenuOpen(true);
+        onOpenContextMenu(s.key, event.clientX, event.clientY, { onClose: closeMenu });
       }}
+      /* Two controls, one job each: pin is the only action worth a single
+         click; ⋯ is the visible way into everything else (rename, move,
+         unread, fork, handoff, copy, archive, delete). */
       actions={(
         <>
           <button
             type="button"
             data-testid={`sidebar-session-pin-${s.key}`}
             aria-label={t(isPinned ? 'chat:sidebar.unpinSession' : 'chat:sidebar.pinSession')}
+            aria-pressed={isPinned}
             title={t(isPinned ? 'chat:sidebar.unpinSession' : 'chat:sidebar.pinSession')}
             onClick={(e) => {
               e.stopPropagation();
@@ -388,38 +381,40 @@ const SessionRowMemo = memo(function SessionRow({
           >
             <Pin />
           </button>
-          {leadingActions}
           <button
             type="button"
-            data-testid={`sidebar-session-rename-${s.key}`}
-            aria-label={t('common:sidebar.renameSession', { ns: 'common' })}
+            data-testid={`sidebar-session-more-${s.key}`}
+            aria-label={t('chat:sidebar.moreActions')}
+            title={t('chat:sidebar.moreActions')}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
             onClick={(e) => {
               e.stopPropagation();
-              onStartRename(s.key, sessionLabel);
+              if (menuOpen) {
+                onCloseContextMenu();
+                return;
+              }
+              const rect = e.currentTarget.getBoundingClientRect();
+              setMenuOpen(true);
+              onOpenContextMenu(s.key, rect.right, rect.bottom + 4, {
+                align: 'end',
+                flipY: rect.top - 4,
+                onClose: closeMenu,
+              });
             }}
-            className="task-hover-btn"
+            className="task-hover-btn sidebar-session-more-trigger"
           >
-            <Pencil />
+            <OfficialMoreIcon size={16} />
           </button>
-          <DeleteButton
-            type="button"
-            data-testid={`sidebar-session-delete-${s.key}`}
-            aria-label={t('common:sidebar.deleteSession', { ns: 'common' })}
-            onClick={(e) => {
-              e.stopPropagation();
-              onDeleteClick(s.key, sessionLabel);
-            }}
-            className="task-hover-btn hover:!text-destructive"
-          />
         </>
       )}
-      /* While a row's move-menu is open the controls must not fade out from
-         under the open popover; `.sidebar-row[data-force-actions]` pins them. */
-      data-force-actions={forceActionsVisible ? 'true' : undefined}
+      /* While this row's menu is open its controls must not fade out from under
+         the popover, and the row keeps its highlight so the menu's target is
+         unambiguous. */
+      data-force-actions={menuOpen ? 'true' : undefined}
     >
       <TooltipTrigger asChild>
         <button
-        ref={taskSelectRef}
         type="button"
         data-testid={`sidebar-session-${s.key}`}
         onClick={() => {
@@ -432,17 +427,21 @@ const SessionRowMemo = memo(function SessionRow({
           navigate('/');
         }}
         onDoubleClick={() => onStartRename(s.key, sessionLabel)}
+        onFocus={(event) => {
+          if (event.currentTarget.matches(':focus-visible')) startTitleMarquee();
+        }}
+        onBlur={stopTitleMarquee}
         className="task-select"
       >
-        {/* One line, one title. The project name used to ride here as a
-            subtitle, which doubled every row's height for a fact that is
-            identical for every session in the group — it now lives in the
-            pinned project header (and in this row's tooltip). */}
-        <div className="task-title-block">
-          <span className={cn('marquee-text', isUnread && 'task-title--unread')}>
-            <span className="marquee-text__inner">{sessionLabel}</span>
+        {/* One line, one title. `task-title` is the layout box (it starts at
+            the row's indent, aligned with the project name); `__clip` reaches
+            a few px further left so a scrolling title fades out instead of
+            being cut, and `__text` is the layer that moves. */}
+        <span className={cn('task-title', isUnread && 'task-title--unread')}>
+          <span ref={titleClipRef} className="task-title__clip">
+            <span ref={titleTextRef} className="task-title__text" data-text={sessionLabel}>{sessionLabel}</span>
           </span>
-        </div>
+        </span>
         {isPinned && (
           <Pin
             className="task-pinned-marker"
@@ -463,6 +462,7 @@ const SessionRowMemo = memo(function SessionRow({
             data-state={sessionStatus.kind}
             role="status"
             aria-label={sessionStatusLabel}
+            title={sessionStatus.dismissible ? t('chat:sessionStatus.dismissCompleted') : sessionStatusLabel}
             onClick={(event) => {
               if (!sessionStatus.dismissible) return;
               event.stopPropagation();
@@ -488,7 +488,7 @@ const SessionRowMemo = memo(function SessionRow({
         data-testid={`sidebar-session-tooltip-${s.key}`}
       >
         <div className="grid gap-2 px-3 py-2.5">
-          <div className="min-w-0 truncate text-sm font-medium leading-5">{sessionLabel}</div>
+          <div className="min-w-0 break-words text-sm font-medium leading-5">{sessionLabel}</div>
           {tooltipTime && (
             <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
               <Clock3 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -577,6 +577,7 @@ export function Sidebar() {
   const switchSession = useChatStore((s) => s.switchSession);
   const deleteSession = useChatStore((s) => s.deleteSession);
   const archiveSession = useChatStore((s) => s.archiveSession);
+  const restoreSession = useChatStore((s) => s.restoreSession);
   const renameSession = useChatStore((s) => s.renameSession);
   const loadHistory = useChatStore((s) => s.loadHistory);
   const loadSessions = useChatStore((s) => s.loadSessions);
@@ -643,6 +644,11 @@ export function Sidebar() {
   }, [location.pathname, refreshInbox]);
 
   const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'codeReview']);
+  /* The delete target outlives the dialog on purpose: the closing animation
+     still shows its name, and the next request replaces it. It used to be
+     cleared by a 160ms timer, which raced the 130ms exit animation under load
+     and blanked the dialog's text mid-close. The actions read it only while the
+     dialog is open. */
   const [sessionToDelete, setSessionToDelete] = useState<{ key: string; label: string } | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingSessionKey, setEditingSessionKey] = useState<string | null>(null);
@@ -675,10 +681,20 @@ export function Sidebar() {
   const [collapsedWorkspaceIds, setCollapsedWorkspaceIds] = useState<Record<string, boolean>>({});
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [projectMenu, setProjectMenu] = useState<{ workspaceId: string; top: number; left: number } | null>(null);
-  /* Right-click target for the conversation action menu. Kept as the anchor
-     only: everything the menu renders is derived at render time, so a session
-     that changes while the menu is open cannot show stale state. */
-  const [sessionContextMenu, setSessionContextMenu] = useState<{ sessionKey: string; x: number; y: number } | null>(null);
+  /* Anchor for the conversation action menu (right-click or the row's ⋯).
+     Kept as the anchor only: everything the menu renders is derived at render
+     time, so a session that changes while the menu is open cannot show stale
+     state. */
+  const [sessionContextMenu, setSessionContextMenu] = useState<{
+    sessionKey: string;
+    x: number;
+    y: number;
+    align?: 'start' | 'end';
+    flipY?: number;
+  } | null>(null);
+  /* The open row's "my menu closed" callback. A ref, not state: it is only
+     ever called from event handlers, and storing it must not re-render. */
+  const sessionContextMenuCloseRef = useRef<(() => void) | null>(null);
   const requestSessionIntent = useSessionIntentStore((state) => state.request);
 
   useEffect(() => {
@@ -707,12 +723,6 @@ export function Sidebar() {
       removeEventListener('keydown', escape);
     };
   }, [footerMenu, projectMenu, sessionOrganizeMenu]);
-
-  useEffect(() => {
-    if (deleteDialogOpen || !sessionToDelete) return;
-    const timer = window.setTimeout(() => setSessionToDelete(null), 160);
-    return () => window.clearTimeout(timer);
-  }, [deleteDialogOpen, sessionToDelete]);
 
   /*
    * These four are `useCallback` because `renderSessionRow` depends on them and
@@ -806,10 +816,6 @@ export function Sidebar() {
     await deleteWorkspaceFolder(workspaceId, folderId);
   }, [deleteWorkspaceFolder]);
 
-  const handleMoveSessionToFolder = useCallback(async (workspaceId: string, sessionKey: string, folderId: string | null) => {
-    await moveSessionToFolder(workspaceId, sessionKey, folderId);
-  }, [moveSessionToFolder]);
-
   const handleDropSessionToGroup = useCallback(async (
     workspaceId: string,
     sourceSessionKey: string,
@@ -857,18 +863,31 @@ export function Sidebar() {
   }, [findWorkspaceForSession, updateSessionListState]);
 
   /*
-   * Conversation action menu (right-click).
+   * Conversation action menu (right-click, or the row's ⋯ button).
    *
-   * `openSessionContextMenu` MUST keep a stable identity: it is threaded into
+   * Both callbacks MUST keep a stable identity: they are threaded into
    * `renderSessionRow`, which is a prop of the memoized `SessionFolderTree`.
    * Closing over the menu's own state here would re-render every session row on
    * open/close — the exact regression `sidebar-render-containment` locks down.
+   * The row that opened the menu is told it closed through its own callback.
    */
-  const openSessionContextMenu = useCallback((sessionKey: string, x: number, y: number) => {
-    setSessionContextMenu({ sessionKey, x, y });
+  const openSessionContextMenu = useCallback((
+    sessionKey: string,
+    x: number,
+    y: number,
+    options?: { align?: 'start' | 'end'; flipY?: number; onClose?: () => void },
+  ) => {
+    // Opening a menu for another row closes the previous row's state first.
+    sessionContextMenuCloseRef.current?.();
+    sessionContextMenuCloseRef.current = options?.onClose ?? null;
+    setSessionContextMenu({ sessionKey, x, y, align: options?.align, flipY: options?.flipY });
   }, []);
 
-  const closeSessionContextMenu = useCallback(() => setSessionContextMenu(null), []);
+  const closeSessionContextMenu = useCallback(() => {
+    sessionContextMenuCloseRef.current?.();
+    sessionContextMenuCloseRef.current = null;
+    setSessionContextMenu(null);
+  }, []);
 
   const copyTextToClipboard = useCallback(async (text: string) => {
     try {
@@ -944,6 +963,32 @@ export function Sidebar() {
     if (currentSessionKey !== sessionKey) switchSession(sessionKey);
     navigate('/');
   }, [currentSessionKey, navigate, requestSessionIntent, switchSession]);
+
+  /**
+   * Archive is reversible (Settings › Archived, or the toast's Undo), so it is a
+   * single click in the menu. Permanent deletion keeps its confirmation dialog.
+   */
+  const handleArchiveSessionFromMenu = useCallback(async (sessionKey: string, label: string) => {
+    // Record where the session lived, so the archive lists it under its project
+    // and workgroup and the host scopes its resource cleanup to that project.
+    const workspace = findWorkspaceForSession(sessionKey);
+    try {
+      await archiveSession(sessionKey, {
+        workspaceId: workspace?.id ?? null,
+        folderId: workspace?.sessionFolderAssignments?.[sessionKey] ?? null,
+      });
+    } catch {
+      toast.error(t('chat:sidebar.archiveFailed'));
+      return;
+    }
+    if (currentSessionKey === sessionKey) navigate('/');
+    toast.success(t('chat:sidebar.archivedToast', { label }), {
+      action: {
+        label: t('chat:sidebar.undo'),
+        onClick: () => void restoreSession(sessionKey),
+      },
+    });
+  }, [archiveSession, currentSessionKey, findWorkspaceForSession, navigate, restoreSession, t]);
 
   const handleRenameKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -1132,10 +1177,7 @@ export function Sidebar() {
     }))
   ), [decorateSessionEntry, sessionSort, workspaceSessionGroups]);
 
-  const renderSessionRow = useCallback((entry: SidebarSessionEntry, options?: {
-    leadingActions?: React.ReactNode;
-    forceActionsVisible?: boolean;
-  }) => {
+  const renderSessionRow = useCallback((entry: SidebarSessionEntry) => {
     const { session: s } = entry;
     const workspace = findWorkspaceForSession(s.key);
     const sessionBranch = (s as ChatSession & { branch?: string; gitBranch?: string }).branch
@@ -1165,21 +1207,43 @@ export function Sidebar() {
       onSwitch={switchSession}
       onLoadHistory={loadHistory}
       navigate={navigate}
-      onDeleteClick={handleSessionDeleteClick}
       onDismissSessionStatus={handleDismissSessionStatus}
       onMarkRead={markSessionRead}
       onTogglePinned={toggleSessionPinned}
       onOpenContextMenu={openSessionContextMenu}
-      leadingActions={options?.leadingActions}
-      forceActionsVisible={options?.forceActionsVisible}
+      onCloseContextMenu={closeSessionContextMenu}
     />;
   }, [
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
     currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
-    handleSessionDeleteClick, handleDismissSessionStatus, findWorkspaceForSession,
-    markSessionRead, openSessionContextMenu, toggleSessionPinned,
+    handleDismissSessionStatus, findWorkspaceForSession,
+    markSessionRead, openSessionContextMenu, closeSessionContextMenu, toggleSessionPinned,
   ]);
+
+  /*
+   * What the header bell shows as "running now". Derived from the same
+   * value-frozen status map as the row orbs, so it changes only when a row's
+   * visible state does — not once per streamed token.
+   */
+  const liveSessionActivity = useMemo<LiveSessionActivity[]>(() => {
+    const labelOf = (key: string) => {
+      const session = sidebarSessions.find((entry) => entry.key === key);
+      return sessionLabels[key] ?? session?.label ?? session?.displayName ?? key;
+    };
+    return Object.entries(sessionStatuses)
+      .filter(([, status]) => status.kind === 'running' || status.kind === 'waiting')
+      .map(([sessionKey, status]) => ({
+        sessionKey,
+        label: labelOf(sessionKey),
+        state: status.kind === 'waiting' ? 'waiting' as const : 'running' as const,
+        startedAt: status.startedAt,
+      }))
+      // Sessions waiting on the user first, then the most recently started.
+      .sort((left, right) => (left.state === right.state
+        ? (right.startedAt ?? 0) - (left.startedAt ?? 0)
+        : left.state === 'waiting' ? -1 : 1));
+  }, [sessionLabels, sessionStatuses, sidebarSessions]);
 
   const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && !workspacesLoading)
     ? sortedTimeSessions
@@ -1239,7 +1303,7 @@ export function Sidebar() {
           </div>
         )}
         <div className="sidebar-heading-actions ml-auto flex shrink-0 items-center gap-[2px]">
-          <CompletionActivityMenu />
+          <CompletionActivityMenu liveSessions={liveSessionActivity} />
           <button
             type="button"
             data-testid="sidebar-collapse-toggle"
@@ -1368,11 +1432,14 @@ export function Sidebar() {
                       key={group.workspace.id}
                       data-testid={`sidebar-session-project-${group.workspace.id}`}
                       data-state={workspaceCollapsed ? 'collapsed' : 'expanded'}
+                      /* The selection hook branches out of this project's
+                         folder icon into its current session (HookSidebar). */
+                      data-hook-scope="true"
                     >
                       {showWorkspaceRow && (
                       <SidebarRow
                         className="project-row-wrap"
-                        hookKey={group.workspace.id}
+                        data-hook-origin="true"
                         actionsClassName="project-hover-actions"
                         actions={(
                           <>
@@ -1404,7 +1471,7 @@ export function Sidebar() {
                                 }));
                               }}
                             >
-                              <MoreVertical className="h-4 w-4" />
+                              <OfficialMoreIcon size={16} />
                             </button>
                           </>
                         )}
@@ -1441,7 +1508,6 @@ export function Sidebar() {
                             onCreateFolder={handleCreateFolder}
                             onRenameFolder={handleRenameFolder}
                             onDeleteFolder={handleDeleteFolder}
-                            onMoveSession={handleMoveSessionToFolder}
                             onDropSession={handleDropSessionToGroup}
                             renderSessionRow={renderSessionRow}
                           />
@@ -1592,6 +1658,8 @@ export function Sidebar() {
             ?? sessionContextMenu.sessionKey,
           x: sessionContextMenu.x,
           y: sessionContextMenu.y,
+          align: sessionContextMenu.align,
+          flipY: sessionContextMenu.flipY,
           isPinned: listState?.pinned === true,
           isUnread: listState?.unread === true,
           workspaceId: workspace?.id ?? null,
@@ -1601,6 +1669,8 @@ export function Sidebar() {
         };
         return (
           <SessionContextMenu
+            /* A new target is a new menu: page and draft state never carry over. */
+            key={sessionContextMenu.sessionKey}
             target={target}
             onClose={closeSessionContextMenu}
             onRename={handleStartRename}
@@ -1612,6 +1682,7 @@ export function Sidebar() {
             onHandoff={handleHandoffSessionFromMenu}
             onCopyWorkPath={handleCopySessionWorkPath}
             onCopySessionId={(sessionKey) => void copyTextToClipboard(sessionKey)}
+            onArchive={(sessionKey, label) => void handleArchiveSessionFromMenu(sessionKey, label)}
             onDelete={handleSessionDeleteClick}
           />
         );

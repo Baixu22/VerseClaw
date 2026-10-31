@@ -62,6 +62,9 @@ const { approvalsMock } = vi.hoisted(() => ({
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
+    // The Chat page notifies the window when an approval arrives; the approval
+    // tests below cannot mount without it.
+    window: { notify: vi.fn().mockResolvedValue(undefined) },
     git: { status: vi.fn().mockResolvedValue({ success: true, status: { isRepository: false } }) },
     sessionActivity: {
       snapshot: vi.fn().mockResolvedValue({ success: true, snapshot: null }),

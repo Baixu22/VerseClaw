@@ -1,5 +1,13 @@
 import { hostApi } from '@/lib/host-api';
 import {
+  attachToolMediaToTurns,
+  classifyResourceUrl,
+  isUserFacingMediaBlock,
+  mediaKindOf,
+  messageHasUserFacingMedia,
+  stripToolUiFences,
+} from '@/pages/Chat/conversation-resources';
+import {
   isGeneratingStatusNarration,
   isInternalAssistantReplyText,
   isOpenClawRuntimeEventPrompt,
@@ -514,6 +522,8 @@ function mimeFromExtension(filePath: string): string {
     'aac': 'audio/aac',
     'flac': 'audio/flac',
     'm4a': 'audio/mp4',
+    'oga': 'audio/ogg',
+    'opus': 'audio/opus',
     // Video
     'mp4': 'video/mp4',
     'mov': 'video/quicktime',
@@ -592,7 +602,9 @@ function enrichWithToolCallAttachments(messages: RawMessage[]): RawMessage[] {
     );
     const newFiles = [...attachmentPaths]
       .filter((filePath) => !existingPaths.has(filePath))
-      .map((filePath) => makeAttachedFile({ filePath, mimeType: mimeFromExtension(filePath) }, 'tool-result'));
+      .map((filePath) => makeAttachedFile({ filePath, mimeType: mimeFromExtension(filePath) }, 'tool-result'))
+      // Audio and video belong to the turn, not the calling message; see attachToolMediaToTurns.
+      .filter((file) => !mediaKindOf(file));
 
     if (newFiles.length === 0) return msg;
     return {
@@ -776,7 +788,7 @@ function extractMarkdownImageRefs(text: string): MarkdownImageRef[] {
 function extractRawFilePaths(text: string): Array<{ filePath: string; mimeType: string }> {
   const refs: Array<{ filePath: string; mimeType: string }> = [];
   const seen = new Set<string>();
-  const exts = 'png|jpe?g|gif|webp|bmp|avif|svg|pdf|docx?|xlsx?|pptx?|html?|txt|csv|md|rtf|epub|zip|tar|gz|rar|7z|mp3|wav|ogg|aac|flac|m4a|mp4|mov|avi|mkv|webm|m4v';
+  const exts = 'png|jpe?g|gif|webp|bmp|avif|svg|pdf|docx?|xlsx?|pptx?|html?|txt|csv|md|rtf|epub|zip|tar|gz|rar|7z|mp3|wav|ogg|oga|opus|aac|flac|m4a|mp4|mov|avi|mkv|webm|m4v';
   // Tagged media references (MEDIA:/path, media:~/path, MEDIA:C:\path, ...).  The agent
   // runtime uses this prefix as an explicit "this is an artifact" marker,
   // so we want them recognised even though the leading colon would
@@ -791,9 +803,10 @@ function extractRawFilePaths(text: string): Array<{ filePath: string; mimeType: 
   // The non-greedy `*?` anchored to `\.<ext>` keeps the match minimal so
   // multiple `MEDIA:` markers in one paragraph still match independently.
   const taggedRegex = new RegExp(`(?:^|[\\s(\\[{>])(?:MEDIA|media):((?:\\/|~\\/|[A-Za-z]:\\\\)[^\\n"'()\\[\\],<>` + '`' + `]*?\\.(?:${exts}))(?=$|[\\s\\n"'()\\[\\],<>` + '`' + `]|[，。；;,.!?])`, 'g');
-  let workingText = text;
+  const scanText = stripToolUiFences(text);
+  let workingText = scanText;
   let taggedMatch: RegExpExecArray | null;
-  while ((taggedMatch = taggedRegex.exec(text)) !== null) {
+  while ((taggedMatch = taggedRegex.exec(scanText)) !== null) {
     const p = taggedMatch[1];
     if (p && !seen.has(p)) {
       seen.add(p);
@@ -882,7 +895,8 @@ function extractImagesAsAttachedFiles(content: unknown): AttachedFileMeta[] {
       // to the Gateway HTTP server which the renderer cannot reach directly
       // (CORS / env drift). We surface it as an `_attachedFiles` entry whose
       // preview is filled in later by `loadMissingPreviews` -> Main proxy.
-      else if (block.url) {
+      // Other flat URLs are not Gateway media; the projection resolves those.
+      else if (block.url && classifyResourceUrl(block.url)?.kind === 'gateway') {
         const mimeType = block.mimeType || 'image/jpeg';
         const fileName = typeof block.alt === 'string' && block.alt
           ? block.alt
@@ -1008,7 +1022,7 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
   const pending: AttachedFileMeta[] = [];
   const toolCallPaths = new Map<string, string>();
 
-  return messages.map((msg) => {
+  const enriched = messages.map((msg) => {
     // Track file paths from assistant tool call arguments for later matching
     if (msg.role === 'assistant') {
       collectToolCallPaths(msg, toolCallPaths);
@@ -1041,6 +1055,8 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
         const mediaRefs = extractMediaRefs(text);
         const mediaRefPaths = new Set(mediaRefs.map(r => r.filePath));
         for (const ref of mediaRefs) {
+          // Audio and video belong to the turn, not the next message; see attachToolMediaToTurns.
+          if (mediaKindOf(ref)) continue;
           pending.push(makeAttachedFile(ref, 'tool-result'));
         }
         // 3. Raw NON-image file paths in tool result text (documents,
@@ -1049,7 +1065,7 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
         //    are deliberately ignored — see comment on Path 1.
         for (const ref of extractRawFilePaths(text)) {
           if (mediaRefPaths.has(ref.filePath)) continue;
-          if (ref.mimeType.startsWith('image/')) continue;
+          if (ref.mimeType.startsWith('image/') || mediaKindOf(ref)) continue;
           pending.push(makeAttachedFile(ref, 'tool-result'));
         }
       }
@@ -1078,6 +1094,8 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
 
     return msg;
   });
+
+  return attachToolMediaToTurns(enriched, shouldDropMessageFromHistory);
 }
 
 /**
@@ -1419,10 +1437,10 @@ function isToolOnlyMessage(message: RawMessage | undefined): boolean {
       hasText = true;
       continue;
     }
-    // Only actual image output disqualifies a tool-only message.
+    // Only actual media output disqualifies a tool-only message.
     // Thinking blocks are internal reasoning that can accompany tool_use — they
     // should NOT prevent the message from being treated as an intermediate tool step.
-    if (block.type === 'image') {
+    if (block.type === 'image' || isUserFacingMediaBlock(block)) {
       hasNonToolContent = true;
     }
   }
@@ -1453,6 +1471,8 @@ function isInternalMessage(msg: { role?: unknown; content?: unknown; text?: unkn
   if (msg.role === 'system') return true;
   const text = getMessageTextForFilter(msg);
   if (msg.role === 'assistant') {
+    // Media is the user-facing part of the turn, whatever text came with it.
+    if (messageHasUserFacingMedia(msg)) return false;
     if (isInternalAssistantReplyText(text)) return true;
     if (isGeneratingStatusNarration(text)) return true;
     if (!text.trim() && Array.isArray(msg.content)) {
@@ -1712,7 +1732,7 @@ function hasNonToolAssistantContent(message: RawMessage | undefined): boolean {
   if (Array.isArray(content)) {
     for (const block of content as ContentBlock[]) {
       if (block.type === 'text' && block.text && block.text.trim()) return true;
-      if (block.type === 'image') return true;
+      if (block.type === 'image' || isUserFacingMediaBlock(block)) return true;
     }
   }
 
@@ -1819,6 +1839,7 @@ function takeBlockedRunEvents(runId: string): Record<string, unknown>[] {
 }
 
 export {
+  extractMarkdownImageRefs,
   toMs,
   clearErrorRecoveryTimer,
   clearHistoryPoll,

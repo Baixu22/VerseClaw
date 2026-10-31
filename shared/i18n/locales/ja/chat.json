@@ -534,7 +534,21 @@
       "label": "詳細"
     },
     "chart": {
-      "label": "チャート"
+      "label": "チャート",
+      "category": "カテゴリ",
+      "seriesFallback": "系列 {{index}}",
+      "showData": "データ表を表示",
+      "hideData": "データ表を非表示",
+      "summary": "{{type}}（{{series}} 系列、{{points}} データポイント）",
+      "types": {
+        "bar": "棒グラフ",
+        "line": "折れ線グラフ",
+        "area": "面グラフ",
+        "pie": "円グラフ"
+      },
+      "unsupportedType": "「{{type}}」グラフはここでは対応していないため、データを表示しています。",
+      "pieInvalid": "円グラフでは負の値やすべてゼロの値を表せないため、データを表示しています。",
+      "tooMany": "データが多すぎて明確に描画できないため、データを表示しています。"
     },
     "imageGallery": {
       "label": "画像"
@@ -2261,7 +2275,12 @@
     "searchHintNavigate": "移動",
     "searchHintSelect": "選択",
     "searchHintClose": "閉じる",
-    "longSession": "長期セッションのメイン会話"
+    "longSession": "長期セッションのメイン会話",
+    "moreActions": "その他の操作",
+    "archiveSession": "アーカイブ",
+    "archivedToast": "「{{label}}」をアーカイブしました",
+    "undo": "元に戻す",
+    "archiveFailed": "アーカイブできませんでした"
   },
   "folders": {
     "create": "新規フォルダ",
@@ -2639,8 +2658,8 @@
     "resolveFailed": "ランタイムはこの判断を受け付けませんでした。"
   },
   "completionActivity": {
-    "label": "通知、{{count}} 件の未読",
-    "title": "通知",
+    "label": "アクティビティ、未読 {{count}} 件",
+    "title": "アクティビティ",
     "empty": "完了した実行、エラー、対応が必要なリクエストがここに表示されます。",
     "completed": "実行が完了しました",
     "desktopDescription": "実行の完了、失敗、承認待ちをデスクトップ通知で知らせます。",
@@ -2660,7 +2679,19 @@
       "completed": "完了",
       "error": "エラー",
       "action-required": "対応が必要"
-    }
+    },
+    "labelLive": "アクティビティ、実行中 {{running}} 件、未読 {{count}} 件",
+    "summaryRunning": "{{count}} 件実行中",
+    "summaryUnread": "新着 {{count}} 件",
+    "liveTitle": "実行中",
+    "recentTitle": "最近",
+    "live": {
+      "running": "実行中",
+      "waiting": "対応待ち"
+    },
+    "emptyTitle": "新しいアクティビティはありません",
+    "fresh": "新着",
+    "untitledSession": "会話"
   },
   "sessionPolicy": {
     "title": "セッションポリシー",
@@ -2702,6 +2733,49 @@
       "abort": "Abort は現在の run のみ停止します。session stop はキューを空にし、ランタイムリソースを解放します。",
       "retention": "アクティビティ保持はこの UI のみに影響します。transcript とリソース TTL は各 owner が管理します。",
       "fork": "Fork は transcript コンテキストを複製します。worktree 分離は別のリソース境界です。"
+    }
+  },
+  "resources": {
+    "media": {
+      "loading": "メディアを読み込み中…",
+      "largeFile": "このファイルは {{size}} です。読み込むとここで再生できます。",
+      "load": "読み込んで再生",
+      "retry": "再試行",
+      "voiceNote": "ボイスメッセージ",
+      "openInPanel": "サイドパネルで開く",
+      "openWithSystem": "システムのアプリで開く",
+      "revealInFolder": "ファイルマネージャーで表示",
+      "openFailed": "このリソースを開けませんでした",
+      "errors": {
+        "notFound": "ファイルが見つかりません。移動または削除された可能性があります。",
+        "outsideSandbox": "Verse Claw にはこの場所を読み取る権限がありません。",
+        "tooLarge": "このファイルは {{size}} で、ここで再生できる上限 {{limit}} を超えています。",
+        "unsupported": "この形式はここでは再生できないか、ファイルが破損しています。",
+        "failed": "このメディアを読み込めませんでした。",
+        "unavailable": "このメディアは会話内で利用できなくなりました。",
+        "remote": "リモートメディアは自動で読み込まれません。ブラウザーで開いてください。"
+      }
+    },
+    "image": {
+      "untitled": "画像",
+      "loading": "画像を読み込み中…",
+      "unavailable": "画像を利用できません",
+      "omitted": "画像データは会話履歴に保持されていません",
+      "omittedWithSize": "画像データ（{{size}}）は会話履歴に保持されていません",
+      "remote": "リモート画像は読み込まれていません",
+      "view": "画像を表示: {{name}}"
+    },
+    "link": {
+      "open": "ブラウザーで開く",
+      "copy": "リンクをコピー",
+      "copied": "リンクをコピーしました",
+      "preview": "サイドパネルでプレビュー"
+    },
+    "unknown": {
+      "title": "未対応のリソース",
+      "typeLabel": "種類",
+      "hint": "このリソースはここでは表示できません。",
+      "copy": "詳細をコピー"
     }
   }
 }

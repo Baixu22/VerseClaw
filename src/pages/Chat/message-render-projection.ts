@@ -52,6 +52,13 @@ import {
 } from '@/components/assistant-render/model';
 import type { AttachedFileMeta, RawMessage } from '@/stores/chat';
 import type { ChatKnowledgeReference } from '@shared/host-api/contract';
+import {
+  extractRelativeArtifactPaths,
+  mediaKindOf,
+  mediaResourceKey,
+  projectContentBlockResources,
+  type ConversationResource,
+} from './conversation-resources';
 import { extractImages, extractText, extractToolUse, isUnresolvableImageUrl } from './message-utils';
 import { isPlanToolName, MESSAGE_CARD_EXCLUDED_TOOL_UI_TYPES } from './run-surface-promotion';
 
@@ -87,6 +94,8 @@ export type MessageRenderProjection = {
   visibleTools: MessageToolUse[];
   contentImages: ExtractedImage[];
   candidateAttachments: AttachedFileMeta[];
+  /** Images needing the resolver, website links, and unrecognized structured resources. */
+  resources: ConversationResource[];
   knowledgeRefs: ChatKnowledgeReference[];
   /**
    * The authority for row visibility. `index.tsx` may only drop a row when this
@@ -284,6 +293,41 @@ function projectWebSearchInteractions(message: RawMessage, tools: MessageToolUse
   return interactions;
 }
 
+/**
+ * Merge block-derived resources with what enrichment already attached. A block
+ * whose bytes were dropped from history is only reported when nothing else shows
+ * that kind of media, because uploads keep their file on `_attachedFiles`.
+ */
+function mergeContentBlockResources(
+  message: RawMessage,
+  isUser: boolean,
+  contentImageCount: number,
+  rawAttachedFiles: AttachedFileMeta[],
+): { attachedFiles: AttachedFileMeta[]; blockAttachments: AttachedFileMeta[]; blockResources: ConversationResource[] } {
+  const { attachments, resources } = projectContentBlockResources(message, { isUser });
+  const attachedKeys = new Set(rawAttachedFiles.map(mediaResourceKey).filter(Boolean));
+  const hasAttachedMedia = rawAttachedFiles.some((file) => mediaKindOf(file));
+  const hasImage = contentImageCount > 0 || rawAttachedFiles.some((file) => file.mimeType.startsWith('image/'));
+  const attachedLocations = new Set(
+    rawAttachedFiles.flatMap((file) => [file.gatewayUrl, file.filePath]).filter(Boolean),
+  );
+  const voiceNoteKeys = new Set(attachments.filter((file) => file.isVoiceNote).map(mediaResourceKey));
+  return {
+    attachedFiles: rawAttachedFiles.map((file) => (
+      !file.isVoiceNote && voiceNoteKeys.has(mediaResourceKey(file)) ? { ...file, isVoiceNote: true } : file
+    )),
+    blockAttachments: attachments.filter((file) => {
+      const key = mediaResourceKey(file);
+      return key ? !attachedKeys.has(key) : !hasAttachedMedia;
+    }),
+    blockResources: resources.filter((resource) => {
+      if (resource.kind !== 'image') return true;
+      if (resource.omitted) return !hasImage;
+      return !resource.url || !attachedLocations.has(resource.url);
+    }),
+  };
+}
+
 const projectionCache = new WeakMap<RawMessage, Map<string, MessageRenderProjection>>();
 
 function flagKey(flags: MessageRenderFlags): string {
@@ -300,7 +344,7 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
   const { isUser, suppressAssistantText, suppressToolCards, suppressReasoning } = flags;
   const rawText = flags.textOverride ?? extractText(message);
   const parsed = isUser
-    ? { displayText: rawText, interactions: [] as ToolUiInteraction[] }
+    ? { displayText: rawText, interactions: [] as ToolUiInteraction[], unknownResources: [] as ConversationResource[] }
     : parseToolUiContent(rawText);
 
   const reasoning = isUser || suppressReasoning ? [] : extractAssistantReasoning(message);
@@ -328,18 +372,35 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
 
   const rawAttachedFiles = message._attachedFiles ?? [];
   const knowledgeRefs = message._knowledgeRefs ?? [];
-  const textPreviewFiles = isUser ? [] : extractPreviewDocumentPaths(displayText);
-  const rawAttachedPaths = new Set(rawAttachedFiles.map((file) => file.filePath).filter(Boolean));
+  const { attachedFiles, blockAttachments, blockResources } = mergeContentBlockResources(
+    message,
+    isUser,
+    contentImages.length,
+    rawAttachedFiles,
+  );
+  // Folded narration names paths too; only text the user can read may add a relative card.
+  const textPreviewFiles = isUser
+    ? []
+    : [
+        ...extractPreviewDocumentPaths(displayText),
+        ...(hideAssistantText ? [] : extractRelativeArtifactPaths(displayText)),
+      ];
+  const knownAttachedPaths = new Set(
+    [...attachedFiles, ...blockAttachments].map((file) => file.filePath).filter(Boolean),
+  );
   const candidateAttachments = [
-    ...rawAttachedFiles,
-    ...textPreviewFiles.filter((file) => !file.filePath || !rawAttachedPaths.has(file.filePath)),
+    ...attachedFiles,
+    ...blockAttachments,
+    ...textPreviewFiles.filter((file) => !file.filePath || !knownAttachedPaths.has(file.filePath)),
   ];
+  const resources = [...blockResources, ...parsed.unknownResources];
 
   const hasRenderableContent = hasText
     || contentImages.length > 0
     || visibleTools.length > 0
     || toolUiInteractions.length > 0
     || candidateAttachments.length > 0
+    || resources.length > 0
     || knowledgeRefs.length > 0
     || reasoning.length > 0;
 
@@ -351,6 +412,7 @@ function computeProjection(message: RawMessage, flags: MessageRenderFlags): Mess
     visibleTools,
     contentImages,
     candidateAttachments,
+    resources,
     knowledgeRefs,
     hasRenderableContent,
   };

@@ -534,7 +534,21 @@
       "label": "详情"
     },
     "chart": {
-      "label": "图表"
+      "label": "图表",
+      "category": "类别",
+      "seriesFallback": "系列 {{index}}",
+      "showData": "显示数据表",
+      "hideData": "隐藏数据表",
+      "summary": "{{type}}，{{series}} 个系列，{{points}} 个数据点",
+      "types": {
+        "bar": "柱状图",
+        "line": "折线图",
+        "area": "面积图",
+        "pie": "饼图"
+      },
+      "unsupportedType": "此处不支持“{{type}}”图表，已改为显示数据。",
+      "pieInvalid": "饼图无法表示负值或全为零的数据，已改为显示数据。",
+      "tooMany": "数据过多，无法清晰绘制，已改为显示数据。"
     },
     "imageGallery": {
       "label": "图片"
@@ -2261,7 +2275,12 @@
     "searchHintNavigate": "导航",
     "searchHintSelect": "选择",
     "searchHintClose": "关闭",
-    "longSession": "长期协作主会话"
+    "longSession": "长期协作主会话",
+    "moreActions": "更多操作",
+    "archiveSession": "归档",
+    "archivedToast": "已归档「{{label}}」",
+    "undo": "撤销",
+    "archiveFailed": "归档失败"
   },
   "folders": {
     "create": "新建文件夹",
@@ -2639,8 +2658,8 @@
     "resolveFailed": "运行时没有接受这个决定。"
   },
   "completionActivity": {
-    "label": "提醒，{{count}} 条未读",
-    "title": "提醒",
+    "label": "活动，{{count}} 条未读",
+    "title": "活动",
     "empty": "完成的运行、错误和需要你处理的请求会显示在这里。",
     "completed": "运行已完成",
     "desktopDescription": "运行完成、出错或需要审批时发送系统提醒。",
@@ -2660,7 +2679,19 @@
       "completed": "已完成",
       "error": "出错",
       "action-required": "待处理"
-    }
+    },
+    "labelLive": "活动，{{running}} 个进行中，{{count}} 条未读",
+    "summaryRunning": "{{count}} 个进行中",
+    "summaryUnread": "{{count}} 条新动态",
+    "liveTitle": "进行中",
+    "recentTitle": "最近",
+    "live": {
+      "running": "运行中",
+      "waiting": "等待处理"
+    },
+    "emptyTitle": "暂无新动态",
+    "fresh": "新",
+    "untitledSession": "会话"
   },
   "sessionPolicy": {
     "title": "会话策略",
@@ -2702,6 +2733,49 @@
       "abort": "Abort 只停止当前 run；session stop 会清空排队并释放运行时资源。",
       "retention": "活动保留窗口只影响当前 UI；transcript 与资源 TTL 仍由各 owner 控制。",
       "fork": "Fork 复制 transcript 上下文；worktree 隔离仍是独立资源边界。"
+    }
+  },
+  "resources": {
+    "media": {
+      "loading": "正在载入媒体…",
+      "largeFile": "文件大小为 {{size}}，载入后可在此播放。",
+      "load": "载入并播放",
+      "retry": "重试",
+      "voiceNote": "语音消息",
+      "openInPanel": "在侧栏打开",
+      "openWithSystem": "用系统应用打开",
+      "revealInFolder": "在文件管理器中显示",
+      "openFailed": "无法打开此资源",
+      "errors": {
+        "notFound": "找不到文件，它可能已被移动或删除。",
+        "outsideSandbox": "Verse Claw 无权读取此位置。",
+        "tooLarge": "文件大小为 {{size}}，超过了此处播放的上限 {{limit}}。",
+        "unsupported": "此处无法播放该格式，或文件已损坏。",
+        "failed": "无法载入此媒体。",
+        "unavailable": "此媒体在会话中已不可用。",
+        "remote": "远程媒体不会自动载入，请在浏览器中打开。"
+      }
+    },
+    "image": {
+      "untitled": "图片",
+      "loading": "正在载入图片…",
+      "unavailable": "图片不可用",
+      "omitted": "会话历史未保留图片数据",
+      "omittedWithSize": "会话历史未保留图片数据（{{size}}）",
+      "remote": "远程图片未载入",
+      "view": "查看图片：{{name}}"
+    },
+    "link": {
+      "open": "在浏览器中打开",
+      "copy": "复制链接",
+      "copied": "链接已复制",
+      "preview": "在侧栏预览"
+    },
+    "unknown": {
+      "title": "不支持的资源",
+      "typeLabel": "类型",
+      "hint": "此处无法显示该资源。",
+      "copy": "复制详情"
     }
   }
 }

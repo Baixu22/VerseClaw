@@ -1,0 +1,536 @@
+{
+  "schemaVersion": "AgentFirstCandidateReport/v1",
+  "taskId": "TF-0596",
+  "driven_by": "agent",
+  "actor": "codex/agent-first-mainline-builder",
+  "recordedAt": "2026-10-31",
+  "candidate": {
+    "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+    "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+    "dirty": false
+  },
+  "adjudication": {
+    "review": "harness/specs/fixtures/agent-first-system/adjudication/review.json",
+    "verification": "harness/specs/fixtures/agent-first-system/adjudication/verification.json",
+    "reportDigest": "sha256:6fa538f1d3e2c664f9d674f87ed45c05c97602146af3d7704b30ad33eef09ccf",
+    "verificationDigest": "sha256:2b2a22f7c1ec2d6eb5e843bcf0112a1669861c9e50a0dab85de473ad830a8c25"
+  },
+  "dimensions": {
+    "source": {
+      "status": "pass",
+      "candidate": {
+        "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+        "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+        "dirty": false
+      },
+      "checked": [
+        "commit",
+        "tree",
+        "clean",
+        "history",
+        "source-closure"
+      ]
+    },
+    "engineering": {
+      "status": "pass",
+      "trials": 144,
+      "controls": 7,
+      "rubricAgreement": 1,
+      "staleEvidence": [],
+      "sourceClosure": {
+        "tf0592": {
+          "status": "evaluation-only-closure",
+          "changedPaths": 27,
+          "evaluationOnly": true,
+          "productPaths": []
+        },
+        "tf0593": {
+          "status": "evaluation-only-closure",
+          "changedPaths": 27,
+          "evaluationOnly": true,
+          "productPaths": []
+        },
+        "tf0594": {
+          "status": "same-candidate",
+          "changedPaths": 0,
+          "evaluationOnly": true
+        }
+      }
+    },
+    "runtime": {
+      "status": "pass-source",
+      "scope": "source Electron/Gateway OAT; package runtime not run"
+    },
+    "effect": {
+      "status": "partial",
+      "scope": "OAT core journey only; full current-candidate product-effect matrix is not rerun here"
+    },
+    "distribution": {
+      "status": "not-run",
+      "source": {
+        "schemaVersion": "AgentFirstOperationalAcceptanceCheck/v1",
+        "operational": {
+          "operational": "pass",
+          "distribution": "not-run"
+        },
+        "drills": 7,
+        "providerFaults": 2,
+        "distribution": "not-run",
+        "candidate": {
+          "commit": "fc4deb709e2bc88d299599d417273bda93cc5b93",
+          "tree": "6ee45f267e7c4e15616f9c3fb2e271c11b388f32",
+          "dirty": false
+        }
+      }
+    },
+    "operational": {
+      "status": "pass",
+      "drills": 7,
+      "providerFaults": 2
+    },
+    "agentQuality": {
+      "status": "partial",
+      "reason": "TF-0592/0593 use a deterministic scripted provider; no live-provider quality claim"
+    },
+    "releaseApproval": {
+      "status": "not-approved",
+      "releaseApproved": false
+    }
+  },
+  "gates": [
+    {
+      "id": "A1",
+      "phase": "A. Contract and task validity",
+      "name": "Traceability and task contract",
+      "input": "task spec and actual changed-path set",
+      "command": "pnpm harness validate --spec <task-spec>",
+      "oracle": "Every requirement maps to at least one executable gate or an explicit not-run/accepted-shortfall row; every changed path has an owning spec.",
+      "negative": [
+        "unowned path",
+        "requirement with no gate",
+        "ambiguous success criterion"
+      ],
+      "evidence": [
+        "requirement-gate matrix",
+        "spec digest",
+        "changed-path ownership"
+      ],
+      "actor": "planner-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "A2",
+      "phase": "A. Contract and task validity",
+      "name": "Task and grader calibration",
+      "input": "task, reference solution, bad fixtures and rubric",
+      "command": "run grader self-test fixture",
+      "oracle": "Each task has a reference solution where feasible; each critical grader rejects known-bad and ambiguous fixtures; zero-pass tasks become task-quality findings.",
+      "negative": [
+        "reference solution fails",
+        "bad fixture passes",
+        "judge guesses pass from missing evidence"
+      ],
+      "evidence": [
+        "task calibration report",
+        "grader self-test",
+        "rubric version"
+      ],
+      "actor": "grader-calibration-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "B1",
+      "phase": "B. Engineering gates",
+      "name": "Static and contract layer",
+      "input": "candidate source, locks and task spec",
+      "command": "run task-spec static gates",
+      "oracle": "Lint/typecheck/schema/license/secret/static security/contract checks meet declared policy; source locks match.",
+      "negative": [
+        "contract drift",
+        "secret-shaped leak",
+        "changed lock without consumer"
+      ],
+      "evidence": [
+        "commands",
+        "exit codes",
+        "findings by severity",
+        "source digests"
+      ],
+      "actor": "executor-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/adjudication/review.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "B2",
+      "phase": "B. Engineering gates",
+      "name": "Unit, property, mutation and integration",
+      "input": "candidate tests, fixed seeds and skip budget",
+      "command": "run task-spec unit/property/integration gates",
+      "oracle": "Required happy/failure/cancel/timeout/idempotency tests pass; critical invariants and selected mutation thresholds hold.",
+      "negative": [
+        "unexpected skip",
+        "mutant survives critical boundary",
+        "property seed changes result"
+      ],
+      "evidence": [
+        "test summaries",
+        "fixed skip budget",
+        "seeds",
+        "mutation report"
+      ],
+      "actor": "executor-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/adjudication/review.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "B3",
+      "phase": "B. Engineering gates",
+      "name": "Independent candidate verification",
+      "input": "sealed manifest, logs, hashes and executor report",
+      "command": "pnpm acceptance:agent:verify --manifest <manifest>",
+      "oracle": "Executor and a distinct verifier rerun the same rederived gate set in separate detached worktrees with matching artifact digests.",
+      "negative": [
+        "same actor",
+        "dirty candidate",
+        "omitted or overridden gate",
+        "rehashed contradictory report"
+      ],
+      "evidence": [
+        "manifest",
+        "executor report",
+        "verifier report",
+        "logs",
+        "hashes"
+      ],
+      "actor": "verifier-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/adjudication/review.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "C1",
+      "phase": "C. Product effect and safety",
+      "name": "Real product journey",
+      "input": "clean profile, fixture and final-state getter",
+      "command": "run declared Electron journey",
+      "oracle": "Agent-driven Electron UI reaches deterministic final product state with a clean profile; denial/cancel/recovery cases also pass.",
+      "negative": [
+        "text claims success but persistent state is wrong",
+        "approval bypass",
+        "resource leak"
+      ],
+      "evidence": [
+        "E2E trace",
+        "final-state readback",
+        "screenshots where needed",
+        "cleanup receipt"
+      ],
+      "actor": "product-evaluator-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/oat/acceptance.json",
+      "skipBudget": 0,
+      "status": "partial"
+    },
+    {
+      "id": "C2",
+      "phase": "C. Product effect and safety",
+      "name": "Transcript and adversarial audit",
+      "input": "trace, tool receipts and held-out adversarial fixtures",
+      "command": "run transcript and adversarial audit",
+      "oracle": "Trace shows policy-compliant evidence causality; prompt injection, malicious tool output, unauthorized path and grader-bypass cases fail closed.",
+      "negative": [
+        "hidden secret access",
+        "prompt injection succeeds",
+        "task reads prior trial state",
+        "hard-coded held-out success"
+      ],
+      "evidence": [
+        "trace taxonomy findings",
+        "security receipts",
+        "held-out variants"
+      ],
+      "actor": "trace-auditor-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/oat/acceptance.json",
+      "skipBudget": 0,
+      "status": "partial"
+    },
+    {
+      "id": "D1",
+      "phase": "D. Distribution and operations",
+      "name": "Frozen package",
+      "input": "frozen package, provenance manifest and install root",
+      "command": "run installed-layout journey",
+      "oracle": "A frozen artifact has provenance/hash and reproduces the critical journey from installed layout.",
+      "negative": [
+        "artifact digest changes",
+        "packaged app uses source fallback",
+        "install path differs from asserted path"
+      ],
+      "evidence": [
+        "artifact manifest",
+        "installed-layout journey",
+        "post-install readback"
+      ],
+      "actor": "package-verifier-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/oat/acceptance.json",
+      "skipBudget": 0,
+      "status": "not-run"
+    },
+    {
+      "id": "D2",
+      "phase": "D. Distribution and operations",
+      "name": "Operational drills",
+      "input": "fault injection plan and process/port/file baseline",
+      "command": "run declared OAT drill set",
+      "oracle": "Startup failure, Gateway loss, provider timeout, cancel, restart, crash recovery, write failure, diagnostics and bounded cleanup all have expected final receipts.",
+      "negative": [
+        "hung process after timeout",
+        "replayed side effect",
+        "unbounded temporary data"
+      ],
+      "evidence": [
+        "OAT report",
+        "fault receipts",
+        "process/port/file cleanup"
+      ],
+      "actor": "oat-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/oat/acceptance.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "E1",
+      "phase": "E. Agent quality and statistics",
+      "name": "Trials and environment identity",
+      "input": "task suite, model/harness versions and resource envelope",
+      "command": "run isolated repeated trials",
+      "oracle": "Trials start clean and isolated; model/harness/tool versions, CPU/memory floor and ceiling, time, network, retries and seeds are identical within a comparison.",
+      "negative": [
+        "prior trial git history visible",
+        "resource ceiling silently varied",
+        "infrastructure failures merged into agent failures"
+      ],
+      "evidence": [
+        "environment fingerprint",
+        "trial isolation receipt",
+        "resource envelope",
+        "error taxonomy"
+      ],
+      "actor": "evaluation-runner-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
+      "skipBudget": 0,
+      "status": "partial"
+    },
+    {
+      "id": "E2",
+      "phase": "E. Agent quality and statistics",
+      "name": "Quality and efficiency aggregation",
+      "input": "per-trial outcomes, infra errors, trial count and budgets",
+      "command": "aggregate trial results",
+      "oracle": "Per-task outcomes, pass@k or pass^k as appropriate, paired differences, confidence intervals, power/insufficient-evidence status and efficiency budgets are reported.",
+      "negative": [
+        "drop hard trials",
+        "use top-line average to hide P1 failure",
+        "omit trial count",
+        "unbounded skip/retry"
+      ],
+      "evidence": [
+        "aggregate.json",
+        "confidence intervals",
+        "trial matrix",
+        "residual ledger"
+      ],
+      "actor": "statistics-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
+      "skipBudget": 0,
+      "status": "partial"
+    },
+    {
+      "id": "F1",
+      "phase": "F. Independent agent adjudication",
+      "name": "Evidence review",
+      "input": "evidence pack read from disk",
+      "command": "pnpm acceptance:agent:verify --manifest <manifest>",
+      "oracle": "A distinct agent reviewer reads disk artifacts, recomputes digests/counts/statistics, checks cross-document consistency and emits dimension-specific verdicts.",
+      "negative": [
+        "executor self-accepts",
+        "review trusts printed stdout",
+        "stale evidence promoted",
+        "real-human evidence fabricated"
+      ],
+      "evidence": [
+        "review.json",
+        "SHA256SUMS",
+        "freshness check",
+        "credential scan"
+      ],
+      "actor": "verifier-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/adjudication/review.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "F2",
+      "phase": "F. Independent agent adjudication",
+      "name": "Synthesis and resumability",
+      "input": "persisted manifest, progress artifact and evidence hashes",
+      "command": "resume from manifest and progress artifacts",
+      "oracle": "A fresh agent can resume from manifests and progress artifacts, identify the next incomplete gate and reproduce the verdict from persisted evidence.",
+      "negative": [
+        "reliance on chat memory",
+        "missing intermediate state",
+        "premature whole-project victory"
+      ],
+      "evidence": [
+        "resume test",
+        "handoff artifact",
+        "single-feature progress ledger"
+      ],
+      "actor": "resume-verifier-agent",
+      "automated": true,
+      "artifact": "harness/specs/fixtures/agent-first-system/adjudication/review.json",
+      "skipBudget": 0,
+      "status": "pass"
+    },
+    {
+      "id": "G1",
+      "phase": "G. Publisher gate",
+      "name": "Publication decision",
+      "input": "completed acceptance pack and release scope",
+      "command": "record publication decision",
+      "oracle": "A publisher decision exists and matches the accepted artifact and scope.",
+      "negative": [
+        "agent treats an acceptance pass as publication approval",
+        "product lock changes implicitly"
+      ],
+      "evidence": [
+        "publisher decision record"
+      ],
+      "actor": "publisher",
+      "automated": false,
+      "artifact": "harness/specs/fixtures/agent-first-acceptance/matrix.json",
+      "skipBudget": 0,
+      "status": "not-approved"
+    }
+  ],
+  "productLocks": {
+    "humanAcceptanceRequired": false,
+    "humanEvidenceClaimed": false,
+    "drivenBy": "agent",
+    "releaseApproved": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  },
+  "historicalVerdicts": [
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a0-contract/manifest.json",
+      "sha256": "sha256:647b38f6963ffe37c400555c2daa56c9a579d667ce3067845b76bf06300497b2",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a1-memory/receipt.json",
+      "sha256": "sha256:45ccc79680cf10629b2c82f473ca797bdb0a9563101ec119c2a211ff7ab007de",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a2-runner-path/receipt.json",
+      "sha256": "sha256:3161d3db048577523b10f2a8365bae89a7502ba49ba3a6241e3cf824afa50710",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a3-source-safety/receipt.json",
+      "sha256": "sha256:9902cc13e584d41adb93e077fd3b200a5edca2ec4209e95d5c8ff83a0d4ec2dc",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/receipt.json",
+      "sha256": "sha256:c32f5a61e3364412ab7919b6873594eea919a464f1500a38cd2414adcf5d2912",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/a5-qa-pack/receipt.json",
+      "sha256": "sha256:2ff537674e16585621051234c5bf2b34140843ec302af7933a07951872c3c91b",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/b1-space-bunny/receipt.json",
+      "sha256": "sha256:f93379129acb6f421e270c6d74d6ac47c8a4b258cd990a722914b16d1e9f8a80",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    },
+    {
+      "path": "harness/specs/fixtures/product-acceptance-closeout/b2-moyu/manifest.json",
+      "sha256": "sha256:dfe5389338ea110adc08b546972bcfac22ca380ee3373c963e8dd8a5d1129157",
+      "currentCandidate": false,
+      "historical": true,
+      "note": "Preserved; not rewritten by the current candidate."
+    }
+  ],
+  "verdict": "not-release-ready",
+  "nextGates": [
+    {
+      "dimension": "distribution",
+      "status": "not-run",
+      "owner": "codex/agent-first-maintainer",
+      "reviewBy": "2026-11-30",
+      "reason": "frozen package unavailable or not executed"
+    },
+    {
+      "dimension": "agentQuality",
+      "status": "partial",
+      "owner": "codex/agent-first-maintainer",
+      "reviewBy": "2026-11-30",
+      "reason": "scripted provider and partial current-candidate effect matrix; no live quality claim"
+    },
+    {
+      "dimension": "releaseApproval",
+      "status": "not-approved",
+      "owner": "codex/agent-first-maintainer",
+      "reviewBy": "2026-11-30",
+      "reason": "release is outside agent authority"
+    }
+  ],
+  "releaseApproved": false,
+  "claims": {
+    "realHuman": false,
+    "releaseApproved": false,
+    "distributionApproved": false,
+    "defaultOn": false
+  },
+  "limitations": [
+    "Mainline status is not a release approval; G1 remains not-approved and D1 distribution is not-run.",
+    "Historical product-acceptance verdicts are retained by hash and are not promoted to current-candidate gates.",
+    "Agent quality remains partial: the current evidence uses a deterministic scripted provider, not a live-provider quality run."
+  ]
+}

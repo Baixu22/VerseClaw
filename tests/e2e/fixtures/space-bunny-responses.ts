@@ -225,11 +225,12 @@ export async function startSpaceBunnyProxy(fixtureMarker: string) {
         if (injected === 'malformed') res.end('data: {malformed-json}\n\n');
         else if (injected === 'drop') res.end();
         else if (injected === 'cancel') {
-          // Let the production runner receive a short partial answer, then
-          // close the response. Its cancel path must settle any concurrent
-          // tool call before the next turn is accepted.
-          await new Promise<void>((resolve) => setTimeout(resolve, 50));
-          res.end();
+          // Keep the response open until the product cancels the real request.
+          // Closing immediately makes the fixture race the UI cancel action.
+          await new Promise<void>((resolve) => {
+            controller.signal.addEventListener('abort', () => resolve(), { once: true });
+            timer = setTimeout(() => { observation!.safetyCutoff = true; res.destroy(); resolve(); }, 180_000);
+          });
         }
         else await new Promise<void>(resolve => {
           controller.signal.addEventListener('abort', () => resolve(), { once: true });

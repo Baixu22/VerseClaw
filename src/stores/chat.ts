@@ -64,8 +64,19 @@ import { applyRuntimeEventToRuns, extractToolCompletedFiles } from './chat/runti
 import {
   enrichWithTeamOrchestrationToolResults,
   enrichWithToolCallAttachments,
+  extractMarkdownImageRefs,
   shouldDropMessageFromHistory,
 } from './chat/helpers';
+import {
+  attachToolMediaToTurns,
+  classifyResourceUrl,
+  dedupeConversationMedia,
+  extractToolResultMedia,
+  isUserFacingMediaBlock,
+  mediaKindOf,
+  messageHasUserFacingMedia,
+  stripToolUiFences,
+} from '@/pages/Chat/conversation-resources';
 import {
   isGeneratingStatusNarration,
   isInternalAssistantReplyText,
@@ -1227,6 +1238,8 @@ function mimeFromExtension(filePath: string): string {
     'aac': 'audio/aac',
     'flac': 'audio/flac',
     'm4a': 'audio/mp4',
+    'oga': 'audio/ogg',
+    'opus': 'audio/opus',
     // Video
     'mp4': 'video/mp4',
     'mov': 'video/quicktime',
@@ -1278,7 +1291,7 @@ function trimPathTerminators(filePath: string): string {
 function extractRawFilePaths(text: string): Array<{ filePath: string; mimeType: string }> {
   const refs: Array<{ filePath: string; mimeType: string }> = [];
   const seen = new Set<string>();
-  const exts = 'png|jpe?g|gif|webp|bmp|avif|svg|pdf|docx?|xlsx?|pptx?|txt|csv|md|rtf|epub|zip|tar|gz|rar|7z|mp3|wav|ogg|aac|flac|m4a|mp4|mov|avi|mkv|webm|m4v';
+  const exts = 'png|jpe?g|gif|webp|bmp|avif|svg|pdf|docx?|xlsx?|pptx?|txt|csv|md|rtf|epub|zip|tar|gz|rar|7z|mp3|wav|ogg|oga|opus|aac|flac|m4a|mp4|mov|avi|mkv|webm|m4v';
   // Tagged media references (MEDIA:/path, media:~/path, MEDIA:C:\path, ...). The agent
   // runtime uses this prefix as an explicit "this is an artifact" marker,
   // so we want them recognised even though the leading colon would
@@ -1291,9 +1304,10 @@ function extractRawFilePaths(text: string): Array<{ filePath: string; mimeType: 
   // `MEDIA:` marker still resolve. Newline and quote characters remain
   // path terminators so we don't accidentally swallow trailing prose.
   const taggedRegex = new RegExp(`(?:^|[\\s(\\[{>])(?:MEDIA|media):((?:\\/|~\\/|[A-Za-z]:\\\\)[^\\n"'()\\[\\],<>` + '`' + `]*?\\.(?:${exts}))(?=$|[\\s\\n"'()\\[\\],<>` + '`' + `]|[，。；;,.!?])`, 'g');
-  let workingText = text;
+  const scanText = stripToolUiFences(text);
+  let workingText = scanText;
   let taggedMatch: RegExpExecArray | null;
-  while ((taggedMatch = taggedRegex.exec(text)) !== null) {
+  while ((taggedMatch = taggedRegex.exec(scanText)) !== null) {
     const p = taggedMatch[1];
     if (p && !seen.has(p)) {
       seen.add(p);
@@ -1376,7 +1390,8 @@ function extractImagesAsAttachedFiles(content: unknown): AttachedFileMeta[] {
       }
       // Path 3: Flat URL form from Gateway-injected assistant-media messages.
       // See `src/stores/chat/helpers.ts` for the canonical implementation.
-      else if (block.url) {
+      // Other flat URLs are not Gateway media; the projection resolves those.
+      else if (block.url && classifyResourceUrl(block.url)?.kind === 'gateway') {
         const mimeType = block.mimeType || 'image/jpeg';
         const fileName = typeof block.alt === 'string' && block.alt
           ? block.alt
@@ -1499,7 +1514,7 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
   const pending: AttachedFileMeta[] = [];
   const toolCallPaths = new Map<string, string>();
 
-  return messages.map((msg) => {
+  const enriched = messages.map((msg) => {
     // Track file paths from assistant tool call arguments for later matching
     if (msg.role === 'assistant') {
       collectToolCallPaths(msg, toolCallPaths);
@@ -1537,6 +1552,8 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
         const mediaRefs = extractMediaRefs(text);
         const mediaRefPaths = new Set(mediaRefs.map(r => r.filePath));
         for (const ref of mediaRefs) {
+          // Audio and video belong to the turn, not the next message; see attachToolMediaToTurns.
+          if (mediaKindOf(ref)) continue;
           pending.push({ ...makeAttachedFile(ref), source: 'tool-result' });
         }
         // 3. Raw NON-image file paths in tool result text (documents,
@@ -1548,7 +1565,7 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
         //    the Gateway turns into a dedicated assistant-media bubble).
         for (const ref of extractRawFilePaths(text)) {
           if (mediaRefPaths.has(ref.filePath)) continue;
-          if (ref.mimeType.startsWith('image/')) continue;
+          if (ref.mimeType.startsWith('image/') || mediaKindOf(ref)) continue;
           pending.push({ ...makeAttachedFile(ref), source: 'tool-result' });
         }
       }
@@ -1557,6 +1574,9 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
     }
 
     if (msg.role === 'assistant' && pending.length > 0) {
+      // Internal-only turns (NO_REPLY, ...) are dropped from history right after
+      // this pass; attachments they consumed would vanish with them.
+      if (shouldDropMessageFromHistory(msg)) return msg;
       const toAttach = pending.splice(0);
       // Deduplicate against files already on the assistant message
       const existingPaths = new Set(
@@ -1572,6 +1592,8 @@ function enrichWithToolResultFiles(messages: RawMessage[]): RawMessage[] {
 
     return msg;
   });
+
+  return attachToolMediaToTurns(enriched, shouldDropMessageFromHistory);
 }
 
 /**
@@ -1617,6 +1639,13 @@ function enrichWithCachedImages(messages: RawMessage[]): RawMessage[] {
     if (msg.role === 'assistant' && !isToolOnlyMessage(msg)) {
       // Own text
       rawRefs = extractRawFilePaths(text).filter(r => !mediaRefPaths.has(r.filePath));
+      const rawPathSet = new Set(rawRefs.map((ref) => ref.filePath));
+      for (const ref of extractMarkdownImageRefs(text)) {
+        if ('filePath' in ref && !mediaRefPaths.has(ref.filePath) && !rawPathSet.has(ref.filePath)) {
+          rawPathSet.add(ref.filePath);
+          rawRefs.push({ filePath: ref.filePath, mimeType: ref.mimeType });
+        }
+      }
 
       // Nearest preceding user message text (look back up to 5 messages)
       const seenPaths = new Set(rawRefs.map(r => r.filePath));
@@ -1644,7 +1673,13 @@ function enrichWithCachedImages(messages: RawMessage[]): RawMessage[] {
     }
 
     const allRefs = [...mediaRefs, ...rawRefs];
-    if (allRefs.length === 0 && gatewayMediaFiles.length === 0) {
+    // `extractText` removes Gateway Markdown images from the bubble, so this is
+    // the only surface they reach.
+    const markdownImageRefs = msg.role === 'assistant' && !isToolOnlyMessage(msg)
+      ? extractMarkdownImageRefs(text)
+      : [];
+    const hasMarkdownGatewayRef = markdownImageRefs.some((ref) => 'gatewayUrl' in ref);
+    if (allRefs.length === 0 && gatewayMediaFiles.length === 0 && !hasMarkdownGatewayRef) {
       // Preserve any previously-attached `_attachedFiles` (e.g. set by
       // `enrichWithToolResultFiles` for non-image artifacts). When nothing
       // new applies, returning `msg` unmodified keeps those attachments.
@@ -1667,8 +1702,21 @@ function enrichWithCachedImages(messages: RawMessage[]): RawMessage[] {
     const dedupedGatewayMedia = gatewayMediaFiles.filter(
       file => file.gatewayUrl && !existingGatewayUrls.has(file.gatewayUrl),
     );
-    if (files.length === 0 && dedupedGatewayMedia.length === 0) return msg;
-    return { ...msg, _attachedFiles: [...existingFiles, ...files, ...dedupedGatewayMedia] };
+    const blockGatewayUrls = new Set(dedupedGatewayMedia.map((file) => file.gatewayUrl));
+    const markdownGatewayMedia: AttachedFileMeta[] = markdownImageRefs.flatMap((ref) => (
+      'gatewayUrl' in ref && !existingGatewayUrls.has(ref.gatewayUrl) && !blockGatewayUrls.has(ref.gatewayUrl)
+        ? [{
+            fileName: ref.fileName,
+            mimeType: ref.mimeType,
+            fileSize: 0,
+            preview: null,
+            gatewayUrl: ref.gatewayUrl,
+            source: 'gateway-media' as const,
+          }]
+        : []
+    ));
+    if (files.length === 0 && dedupedGatewayMedia.length === 0 && markdownGatewayMedia.length === 0) return msg;
+    return { ...msg, _attachedFiles: [...existingFiles, ...files, ...dedupedGatewayMedia, ...markdownGatewayMedia] };
   });
 }
 
@@ -2098,10 +2146,10 @@ function isToolOnlyMessage(message: RawMessage | undefined): boolean {
       hasText = true;
       continue;
     }
-    // Only actual image output disqualifies a tool-only message.
+    // Only actual media output disqualifies a tool-only message.
     // Thinking blocks are internal reasoning that can accompany tool_use — they
     // should NOT prevent the message from being treated as an intermediate tool step.
-    if (block.type === 'image') {
+    if (block.type === 'image' || isUserFacingMediaBlock(block)) {
       hasNonToolContent = true;
     }
   }
@@ -2120,6 +2168,10 @@ function isInternalMessage(msg: { role?: unknown; content?: unknown; idempotency
   if (msg.role === 'system') return true;
   const text = getMessageTextForFilter(msg);
   if (msg.role === 'assistant') {
+    // Media is the user-facing part of the turn, whatever text came with it.
+    // That includes the Gateway's audio bubble (`attachment` block), which shares
+    // the `assistant-media` markers with the text-only fallback hidden below.
+    if (messageHasUserFacingMedia(msg)) return false;
     if (isInternalAssistantReplyText(text)) return true;
     if (isGeneratingStatusNarration(text)) return true;
     // OpenClaw's gateway writes a fallback `assistant-media` transcript
@@ -2455,7 +2507,9 @@ function messageHasImageContent(message: RawMessage | undefined): boolean {
   if (!message) return false;
   if ((message._attachedFiles ?? []).some((file) => file.mimeType.startsWith('image/'))) return true;
   const content = message.content;
-  return Array.isArray(content) && (content as ContentBlock[]).some((block) => block.type === 'image');
+  return Array.isArray(content) && (content as ContentBlock[]).some(
+    (block) => block.type === 'image' || isUserFacingMediaBlock(block),
+  );
 }
 
 function hasNonToolAssistantContent(message: RawMessage | undefined): boolean {
@@ -3548,7 +3602,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       );
       const filteredMessages = messagesWithToolAttachments.filter((msg) => !shouldDropMessageFromHistory(msg));
       // Restore file attachments for user/assistant messages (from cache + text patterns)
-      const enrichedMessages = enrichWithCachedImages(filteredMessages);
+      const enrichedMessages = dedupeConversationMedia(enrichWithCachedImages(filteredMessages));
 
       // Preserve optimistic user messages independently from sending state.
       // Gateway phase=end can clear sending before chat.history has persisted
@@ -4058,7 +4112,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         enrichWithToolCallAttachments(messagesWithToolImages),
       );
       const filteredMessages = messagesWithToolAttachments.filter((msg) => !shouldDropMessageFromHistory(msg));
-      const enrichedMessages = enrichWithCachedImages(filteredMessages);
+      const enrichedMessages = dedupeConversationMedia(enrichWithCachedImages(filteredMessages));
       set({
         messages: applyHistoryMemoryCap(enrichedMessages),
         loadingMoreHistory: false,
@@ -4749,6 +4803,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 }
               }
             }
+            // Declared media first: `dedupeAttachedFiles` keeps the first entry per path.
+            toolFiles.push(...extractToolResultMedia({
+              content: normalizedFinalMessage.content,
+              details: normalizedFinalMessage.details,
+              producedAfter: get().lastUserMessageAt ?? undefined,
+            }));
             const text = getMessageText(normalizedFinalMessage.content);
             if (text) {
               const mediaRefs = extractMediaRefs(text);
@@ -5083,7 +5143,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
 
     if (event.type === 'tool.completed' && appliesToActiveUi) {
-      const files = extractToolCompletedFiles(event);
+      const files = extractToolCompletedFiles(event, initialState.lastUserMessageAt ?? undefined);
       if (files.length > 0) {
         nextPatch.pendingToolImages = dedupeAttachedFiles([
           ...initialState.pendingToolImages,

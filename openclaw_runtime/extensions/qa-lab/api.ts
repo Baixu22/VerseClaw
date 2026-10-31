@@ -1,4 +1,5 @@
 // Qa Lab API module exposes the plugin public contract.
+export type { QaFlowEvent } from "./src/scenario-flow-runner.js";
 export {
   buildQaBusSnapshot,
   cloneEvent,
