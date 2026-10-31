@@ -3,7 +3,7 @@ lifecycleStatus: active
 id: rsi-tf0592-statistical-adjudication
 title: Bind RSI trials to resources and rederive statistical adjudication
 intent: Finish the TF-0592 statistical instrument on the sealed TF-0604 inputs, preserving unrun trials and four failure classes while making reliability, paired comparison, uncertainty, budgets and artifact readback executable.
-diffBase: 5bf8a0b253f9b195067f30e6789861d0eba48245
+diffBase: a96ff08923ca3ec9665de4e74e383fc9ddc70843
 touchedAreas:
   - scripts/rsi-tf0592-statistical-adjudication.mjs
   - scripts/rsi-tf0592-statistical-adjudication.d.mts
@@ -88,6 +88,7 @@ residualPaths:
   - tests/unit/agent-first-graders.test.ts
   - tests/unit/agent-first-task-corpus.test.ts
   - tests/unit/rsi-historical-task-corpus.test.ts
+  - harness/specs/tasks/rsi-tf0604-baseline-corpus.md
 requiredProfiles:
   - fast
 requiredRules:

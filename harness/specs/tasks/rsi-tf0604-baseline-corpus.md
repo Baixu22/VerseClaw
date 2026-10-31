@@ -3,6 +3,7 @@ lifecycleStatus: active
 id: rsi-tf0604-baseline-corpus
 title: Build the RSI TF-0604 historical baseline corpus and negative controls
 intent: Seal a reproducible, agent-driven 20+ case task corpus from committed repository acceptance records, reserve the baseline trial shape without fabricating model results, and provide fail-closed negative controls and separate failure-class aggregation for later RSI gates.
+diffBase: a96ff08923ca3ec9665de4e74e383fc9ddc70843
 touchedAreas:
   - scripts/rsi-tf0604-baseline.mjs
   - scripts/rsi-tf0604-baseline.d.mts
@@ -23,6 +24,18 @@ ownedPaths:
   - docs/README.md
   - scripts/repository-artifacts.json
   - .gitignore
+residualPaths:
+  - harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS
+  - harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json
+  - harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS
+  - harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json
+  - harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json
+  - harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json
+  - harness/specs/tasks/agent-first-task-corpus-calibration.md
+  - harness/specs/tasks/rsi-tf0592-statistical-adjudication.md
+  - scripts/rsi-tf0592-statistical-adjudication.d.mts
 requiredProfiles:
   - fast
 requiredRules:

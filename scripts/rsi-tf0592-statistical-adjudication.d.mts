@@ -1,6 +1,6 @@
 export type Tf0592Error = { code: string; message: string };
 export type Tf0592Validation = { passed: boolean; errors: Tf0592Error[] };
-export type Tf0592Options = { allowDraft?: boolean; verifyCandidate?: boolean };
+export type Tf0592Options = { allowDraft?: boolean; verifyCandidate?: boolean; sourceChecks?: boolean };
 export type FailureClass = 'infrastructure' | 'task' | 'grader' | 'agent';
 export type Tf0592Trial = {
   outcome: 'pass' | 'fail' | 'missing' | 'timeout' | 'crash' | 'skip';

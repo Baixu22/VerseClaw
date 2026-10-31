@@ -3,7 +3,7 @@ lifecycleStatus: active
 id: agent-first-task-corpus-calibration
 title: Freeze real engineering tasks, references and executable grader calibration
 intent: Supply TF-0592 with the historical execution cohort by turning the sealed historical cohort into explicit executable Agent-first tasks with source/test digests, reference oracles, preserved negative outcomes, and calibrated deterministic, trace and qualitative graders before any system baseline or RSI candidate run.
-diffBase: 1b05846affe9134708c4cc1d920f3f0aa399dc3b
+diffBase: a96ff08923ca3ec9665de4e74e383fc9ddc70843
 touchedAreas:
   - harness/specs/tasks/agent-first-task-corpus-calibration.md
   - harness/specs/tasks/agent-first-evaluation-framework.md
@@ -82,6 +82,8 @@ ownedPaths:
   - tests/unit/agent-first-task-corpus.test.ts
 residualPaths:
   - harness/specs/tasks/rsi-tf0592-statistical-adjudication.md
+  - harness/specs/tasks/rsi-tf0604-baseline-corpus.md
+  - scripts/rsi-tf0592-statistical-adjudication.d.mts
 requiredProfiles:
   - fast
 requiredRules:
