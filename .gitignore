@@ -1441,6 +1441,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/agent-engineering-acceptance.md
 !/docs/dev/architecture-skeleton/ADMISSION-GATE.md
 !/docs/dev/architecture-skeleton/ADMISSION-INVENTORY.md
+!/docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md
 !/docs/dev/architecture-skeleton/CHARTER.md
 !/docs/dev/browser-security-recovery.md
 !/docs/dev/capability-registry-v3-code-mode-acceptance.md

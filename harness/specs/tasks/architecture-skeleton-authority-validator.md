@@ -32,7 +32,7 @@ nonGoals:
 docs:
   required: true
   files:
-    - docs/dev/architecture-skeleton/CHARTER.md
+    - docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md
 ---
 
 # 唯一 owner 冲突的确定性校验与门禁接入
