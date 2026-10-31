@@ -1,6 +1,6 @@
-import { readFileSync, realpathSync, lstatSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, lstatSync, mkdirSync, mkdtempSync, writeFileSync, symlinkSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-import { join, resolve, relative, isAbsolute, sep } from 'node:path';
+import { dirname, join, resolve, relative, isAbsolute, sep } from 'node:path';
 import { createHash } from 'node:crypto';
 import { parseTestCounts, redactText } from './agent-engineering-acceptance.mjs';
 import { sha256File } from '../rsi-tf0604-baseline.mjs';
@@ -146,20 +146,37 @@ export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles',
   if (!verifyInputs()) throw new Error('Frozen oracle input changed before execution');
   mkdirSync(outputRoot, { recursive: true });
   const directory = mkdtempSync(join(outputRoot, 'task-oracle-'));
+  // Reuse the manifest-validated dependency root without copying its pnpm layout.
+  // Package-manager/path checks are disabled by the caller; the execution receipts
+  // bind the exact candidate files and frozen tests to this run.
+  let linkedDependencies = false;
+  const authorityRoot = options.authorityRoot ? resolve(options.authorityRoot) : base;
+  if (options.dependenciesRoot) {
+    const deps = resolve(options.dependenciesRoot);
+    symlinkSync(join(deps, 'node_modules'), join(authorityRoot, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
+    const runtimeTarget = join(authorityRoot, 'openclaw_runtime', 'node_modules');
+    mkdirSync(dirname(runtimeTarget), { recursive: true });
+    symlinkSync(join(deps, 'openclaw_runtime', 'node_modules'), runtimeTarget, process.platform === 'win32' ? 'junction' : 'dir');
+    for (const manifest of ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml']) {
+      const source = join(deps, manifest);
+      if (existsSync(source)) writeFileSync(join(authorityRoot, manifest), readFileSync(source));
+    }
+    linkedDependencies = true;
+  }
   const env = { ...process.env, TEMP: 'D:/tmp', TMP: 'D:/tmp', TMPDIR: 'D:/tmp', GIT_OPTIONAL_LOCKS: '0', FORCE_COLOR: '0' };
+  if (linkedDependencies) { env.npm_config_verify_deps_before_run = 'false'; env.pnpm_config_verify_deps_before_run = 'false'; }
   const credentialNames = Object.keys(env).filter((name) => /API[_-]?KEY|TOKEN|SECRET|PASSWORD|PRIVATE[_-]?KEY|CREDENTIAL/iu.test(name));
   const secrets = credentialNames.map((name) => env[name]).filter((value) => value && value.length >= 4);
   for (const name of credentialNames) delete env[name];
   delete env.NODE_TLS_REJECT_UNAUTHORIZED;
   env.npm_config_verify_deps_before_run = 'false';
-  env.pnpm_config_verify_deps_before_run = 'warn';
+  env.pnpm_config_verify_deps_before_run = 'false';
   const commandLines = options.commandLines ?? task.oracle.commandLines;
   if (!Array.isArray(commandLines) || commandLines.length !== task.oracle.commandLines.length) throw new Error('Oracle command override must match the frozen command count');
   const executions = [];
   for (const [index, commandLine] of commandLines.entries()) {
     if (/[;&|<>`$]/u.test(commandLine) || !/^(?:pnpm (?:exec vitest run |--dir openclaw_runtime exec node scripts\/run-vitest\.mjs run )|node scripts\/[\w.-]+\.mjs(?: |$))/u.test(commandLine)) throw new Error('Unregistered oracle command');
     const startedAt = new Date().toISOString(); const started = performance.now();
-    const authorityRoot = options.authorityRoot ? resolve(options.authorityRoot) : base;
     const run = spawnSync(process.env.ComSpec ?? 'cmd.exe', ['/d', '/s', '/c', commandLine], { cwd: authorityRoot, env, encoding: 'utf8', windowsHide: true, timeout: 900000, maxBuffer: 16 * 1024 * 1024 });
     const stdout = redactText(run.stdout ?? '', { sourceRoot: base, outputDir: directory, secrets });
     const stderr = redactText(run.stderr ?? '', { sourceRoot: base, outputDir: directory, secrets });

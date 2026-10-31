@@ -397,18 +397,18 @@ export function writeHistoricalManifest(runDir, options = {}) {
   const tree = git(root, ['rev-parse', 'HEAD^{tree}']);
   const manifest = { schemaVersion: 'RsiHistoricalTrialManifest/v1', driven_by: 'agent', actor: 'codex/tf0604-historical-planner', runId: randomUUID(), createdAt: new Date().toISOString(), source: { root, candidate: { commit, tree, dirty: Boolean(dirty) } }, suite: { id: 'rsi-historical-core', caseCount: plan.corpus.tasks.length, publicCaseCount: plan.corpus.split.public.length, heldOutCaseCount: plan.corpus.split.heldOut.length, heldOutDigest: plan.splitDigest }, model: { provider: 'custom', id: options.model ?? 'ccs-404/deepseek-v4.1-flash', reasoningEffort: 'high', stochastic: true, seed: null }, nodeModulesPath, tasks: plan.corpus.tasks, trials: plan.trials, hiddenTestPaths: plan.hiddenTestPaths, envelope: { concurrency: 1, timeoutMs: 900000, retries: 0, network: 'disabled', isolation: 'fresh git-archive directory per trial', agentSeesHiddenTests: false }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
   write(join(runDir,'manifest.json'), manifest);
-  write(join(runDir,'progress.json'), { schemaVersion: 'RsiHistoricalTrialProgress/v1', manifestDigest: sha256(readFileSync(join(runDir,'manifest.json'))), completed: [], recordDigests: {} });
+  write(join(runDir,'progress.json'), { schemaVersion: 'RsiHistoricalTrialProgress/v1', manifestDigest: 'sha256:' + createHash('sha256').update(readFileSync(join(runDir,'manifest.json'))).digest('hex'), completed: [], recordDigests: {} });
   return manifest;
 }
 export function checkHistoricalRun(runDir, options = {}) {
   const manifest = read(join(runDir,'manifest.json'));
   assert(manifest.schemaVersion==='RsiHistoricalTrialManifest/v1','invalid historical manifest');
   const progress=read(join(runDir,'progress.json'));
-  assert(progress.manifestDigest===sha256(readFileSync(join(runDir,'manifest.json'))),'manifest changed');
+  assert(progress.manifestDigest==='sha256:' + createHash('sha256').update(readFileSync(join(runDir,'manifest.json'))).digest('hex'),'manifest changed');
   const results=manifest.trials.filter((trial)=>progress.completed.includes(trial.trialId)).map((trial)=>read(join(runDir,'trials',trial.trialId,'historical-result.json')));
   assert(progress.completed.length===new Set(progress.completed).size,'duplicate trial completion');
   assert(progress.completed.length===Object.keys(progress.recordDigests).length,'missing result seal');
-  for(const trial of progress.completed){const p=join(runDir,'trials',trial,'historical-result.json'); assert(sha256(readFileSync(p))===progress.recordDigests[trial],'trial result changed');}
+  for(const trial of progress.completed){const p=join(runDir,'trials',trial,'historical-result.json'); assert('sha256:' + createHash('sha256').update(readFileSync(p)).digest('hex')===progress.recordDigests[trial],'trial result changed');}
   const complete = results.length===manifest.trials.length;
   const raw={cases:manifest.tasks.map((task)=>({caseId:task.id,trials:results.filter((result)=>result.taskId===task.id).map((result)=>({arm:result.arm,repeat:result.repeat,outcome:result.grader?.verdict ?? (result.failureClass==='infrastructure'?'timeout':'fail'),failureClass:result.failureClass,wallClockMs:null,tokens:null,turns:null,toolCalls:null,cost:null}))}))};
   const statistics=summarizeTf0592Trials({cases:manifest.tasks.map((task)=>({id:task.id,taskId:task.id}))},raw,read(join(manifest.source.root,'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json')));
@@ -449,7 +449,9 @@ export async function runHistoricalTrial(runDir, options = {}) {
     write(join(rsiRoot, 'RESULT_SCHEMA.json'), { type: 'object', additionalProperties: false, required: ['status','summary','testsRun'], properties: { status: { type: 'string', enum: ['completed','blocked'] }, summary: { type: 'string' }, testsRun: { type: 'array', items: { type: 'string' } } } });
     const before = directoryFingerprint(agentRoot);
     stage = 'agent';
-    const cli = process.env.CODEX_CLI_PATH || 'C:/Users/27933/AppData/Local/OpenAI/Codex/bin/0ab0e7a8f3779036/codex.exe';
+    const configuredCli = process.env.CODEX_CLI_PATH;
+    const cli = configuredCli && existsSync(configuredCli) ? configuredCli : 'C:/Users/27933/AppData/Local/OpenAI/Codex/bin/0ab0e7a8f3779036/codex.exe';
+    assert(existsSync(cli), 'Codex CLI executable is missing');
     const args = ['exec','--ignore-user-config','--json','--ephemeral', ...(entry.arm === 'treatment' ? ['-c','project_doc_fallback_filenames=[".rsi/AGENT_INSTRUCTIONS.md"]'] : []), '--disable','memories','--disable','plugins','--disable','hooks','--disable','in_app_browser','--model', manifest.model.id, '-c','model_providers.custom.name="custom"','-c','model_providers.custom.base_url="http://127.0.0.1:15721/v1"','-c','model_providers.custom.wire_api="responses"','-c','model_providers.custom.experimental_bearer_token="PROXY_MANAGED"','-c','model_provider="custom"','-c','model_reasoning_effort="high"','-c','approval_policy="never"','--sandbox','danger-full-access','--skip-git-repo-check','-C',agentRoot,'--output-schema',join(rsiRoot,'RESULT_SCHEMA.json'),'-o',join(trialDir,'agent-last.json'), 'You are executing an isolated repository task. Read README.md, AGENTS.md if present, and .rsi/TASK.json. Implement the requested change in this workspace, run relevant existing checks that do not install dependencies, and return the required structured result. Do not use network.'];
     const child = spawn(cli, args, { cwd: agentRoot, env: cleanEnv({ OPENAI_BASE_URL: 'http://127.0.0.1:15721/v1', OPENAI_API_KEY: process.env.Z30_API_KEY ?? '' }), windowsHide: true, stdio: ['ignore','pipe','pipe'] });
     const stdout = []; const stderr = [];
@@ -459,25 +461,23 @@ export async function runHistoricalTrial(runDir, options = {}) {
     writeFileSync(join(trialDir,'agent.stdout.log'), Buffer.concat(stdout)); writeFileSync(join(trialDir,'agent.stderr.log'), Buffer.concat(stderr));
     const after = directoryFingerprint(agentRoot);
     const diff = diffFingerprint(before, after);
-    const forbidden = [...diff.added,...diff.changed].filter((path) => FROZEN_TEST_PATHS.has(path) || path.startsWith('.rsi/'));
+    const agentDiff = { ...diff, added: diff.added.filter((path) => !path.startsWith('.rsi/')), changed: diff.changed.filter((path) => !path.startsWith('.rsi/')), removed: diff.removed.filter((path) => !path.startsWith('.rsi/')) };
+    const forbidden = [...agentDiff.added,...agentDiff.changed].filter((path) => FROZEN_TEST_PATHS.has(path));
     if (exit.timedOut) failureClass = 'infrastructure';
     if (exit.error) failureClass = 'infrastructure';
     if (forbidden.length) failureClass = 'agent';
+    if (exit.code !== 0 && !failureClass) failureClass = 'agent';
     stage = 'grade';
     const graderRoot = join(trialDir,'grader');
-    cpSync(agentRoot, graderRoot, { recursive: true, filter: (path) => !path.includes(join(agentRoot, 'node_modules')) });
+    cpSync(agentRoot, graderRoot, { recursive: true, filter: (path) => !path.includes(join(agentRoot, 'node_modules')) && !path.includes(join(agentRoot, '.rsi')) });
     for (const taskTest of task.oracle.testPaths) { const source = readFileSync(join(root, taskTest)); mkdirSync(dirname(join(graderRoot, taskTest)), { recursive: true }); writeFileSync(join(graderRoot, taskTest), source); }
 
-    const dependencyNodeModules = options.dependenciesRoot ? join(resolve(options.dependenciesRoot), 'node_modules') : manifest.nodeModulesPath;
-    const runtimeNodeModules = options.dependenciesRoot ? join(resolve(options.dependenciesRoot), 'openclaw_runtime', 'node_modules') : null;
-    mkdirSync(join(graderRoot, 'node_modules'), { recursive: true });
-    for (const name of readdirSync(dependencyNodeModules, { withFileTypes: true })) { const source = join(dependencyNodeModules, name.name); if (existsSync(source)) cpSync(source, join(graderRoot, 'node_modules', name.name), { recursive: true, dereference: true }); }
-    if (runtimeNodeModules && existsSync(runtimeNodeModules)) { mkdirSync(join(graderRoot, 'openclaw_runtime', 'node_modules'), { recursive: true }); for (const name of readdirSync(runtimeNodeModules, { withFileTypes: true })) { const source = join(runtimeNodeModules, name.name); if (existsSync(source)) cpSync(source, join(graderRoot, 'openclaw_runtime', 'node_modules', name.name), { recursive: true, dereference: true }); } }
-    const oracle = runTaskOracles(task, root, join(trialDir,'oracle'), { authorityRoot: graderRoot });
+    const dependenciesRoot = options.dependenciesRoot ? resolve(options.dependenciesRoot) : manifest.source.root;
+    const oracle = runTaskOracles(task, root, join(trialDir,'oracle'), { authorityRoot: graderRoot, dependenciesRoot });
     const traceGrade = gradeTraceEvidence(oracle.trace);
-    const verdict = oracle.verdict.verdict === 'pass' && traceGrade.verdict === 'pass' && !forbidden.length && !exit.timedOut && !exit.error && exit.code === 0 ? 'pass' : oracle.verdict.verdict === 'unknown' || traceGrade.verdict === 'unknown' ? 'unknown' : 'fail';
+    const verdict = oracle.verdict.verdict === 'pass' && traceGrade.verdict === 'pass' && !forbidden.length && !failureClass ? 'pass' : oracle.verdict.verdict === 'unknown' || traceGrade.verdict === 'unknown' ? 'unknown' : 'fail';
     if (verdict !== 'pass' && !failureClass) failureClass = verdict === 'unknown' ? 'grader' : 'agent';
-    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit, startedAt, completedAt: new Date().toISOString(), agent: { exitCode: exit.code, timedOut: exit.timedOut, error: exit.error ?? null }, diff, forbiddenPaths: forbidden, grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory }, failureClass, checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, noGitMetadataAtStart: !existsSync(join(agentRoot,'.git')) }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
+    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit, startedAt, completedAt: new Date().toISOString(), agent: { exitCode: exit.code, timedOut: exit.timedOut, error: exit.error ?? null }, diff: agentDiff, forbiddenPaths: forbidden, grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory }, failureClass, checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, noGitMetadataAtStart: !existsSync(join(agentRoot,'.git')) }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
     writeHistoricalResult(trialDir,result);
     return result;
   } catch (error) {

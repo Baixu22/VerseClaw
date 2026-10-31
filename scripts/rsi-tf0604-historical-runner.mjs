@@ -30,7 +30,7 @@ if (isMainEntrypoint(import.meta.url)) {
         if (limit && executed >= limit) break;
         const trial = await runHistoricalTrial(runDir, { root, trialId: entry.trialId });
         const resultPath = join(runDir,'trials',entry.trialId,'historical-result.json');
-        const digest = createHash('sha256').update(readFileSync(resultPath)).digest('hex');
+        const digest = 'sha256:' + createHash('sha256').update(readFileSync(resultPath)).digest('hex');
         progress.completed.push(entry.trialId); progress.recordDigests[entry.trialId]=digest; write(join(runDir,'progress.json'),progress); executed++;
         console.log(JSON.stringify({trialId:entry.trialId,failureClass:trial.failureClass,grader:trial.grader?.verdict ?? 'unknown'}));
       }
