@@ -8,14 +8,14 @@ import { validateTrialPack, TF0604_SYSTEM_RUN_DIR } from '../../scripts/lib/rsi-
 
 const packDir = join(process.cwd(), TF0604_SYSTEM_RUN_DIR);
 
-function reseal(dir) {
+function reseal(dir: string) {
   const lines = readFileSync(join(dir, 'SHA256SUMS'), 'utf8').trimEnd().split(/\r?\n/u)
     .map((line) => line.slice(66)).filter(Boolean);
   const sums = lines.map((name) => createHash('sha256').update(readFileSync(join(dir, name))).digest('hex') + '  ' + name);
   writeFileSync(join(dir, 'SHA256SUMS'), sums.join('\n') + '\n');
 }
 
-function withCopy(mutate) {
+function withCopy(mutate: (dir: string) => void) {
   const dir = mkdtempSync(join(tmpdir(), 'tf0604-pack-'));
   cpSync(packDir, dir, { recursive: true });
   mutate(dir);
@@ -33,7 +33,7 @@ describe('TF-0604 real trial-run pack readback', () => {
   });
 
   it('rejects a tampered result payload (digest mismatch)', () => {
-    const result = withCopy((dir) => {
+    const result = withCopy((dir: string) => {
       const progress = JSON.parse(readFileSync(join(dir, 'progress.json'), 'utf8'));
       const file = join(dir, progress.completed[0], 'historical-result.json');
       const body = JSON.parse(readFileSync(file, 'utf8'));

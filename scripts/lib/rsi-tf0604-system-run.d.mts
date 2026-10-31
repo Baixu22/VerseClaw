@@ -6,3 +6,9 @@ export function preserveTrialEvidence(runDir: string, outputDir: string, options
   failureClasses: Record<string, { trialCount: number; caseCount: number }>;
   fileCount: number; complete: boolean; claims: Record<string, boolean>;
 };
+export function validateTrialPack(packDir?: string, options?: { root?: string }): {
+  schemaVersion: string; passed: boolean; errors: Array<{ code: string; message: string }>;
+  manifestDigest: string; recordedTrials: number; expectedTrials: number | null;
+  completeCaseCount: number; complete: boolean;
+  failureClasses: Record<string, { trialCount: number; caseCount: number }> | null; fileCount: number;
+};
