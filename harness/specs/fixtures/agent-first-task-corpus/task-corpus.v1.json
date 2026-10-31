@@ -4,7 +4,7 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "86af9f11238b6ae77b71f1ab37f8c28961860de9",
+  "sourceCommit": "93ced49ae616d9eec93143c333640e94793d1c1a",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
   "sourceCorpusSha256": "c1b464613c2ca39f28722c56b3a75281a222420d7491aafc8a6854434c983432",
   "tasks": [
@@ -58,6 +58,10 @@
         "testPaths": [
           "tests/unit/agent-dev-reliability-aggregation.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "tests/unit/agent-dev-reliability-aggregation.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -172,6 +176,11 @@
           "tests/unit/agent-dev-paired-ablation.test.ts",
           "tests/unit/runtime-memory-paired-ablation.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "tests/unit/agent-dev-paired-ablation.test.ts",
+          "tests/unit/runtime-memory-paired-ablation.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -281,6 +290,12 @@
         ],
         "testPaths": [
           "tests/unit/error-recovery-next-action.test.ts",
+          "tests/unit/error-governance-boundary.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/error-recovery-next-action.test.ts"
+        ],
+        "preexistingGuardPaths": [
           "tests/unit/error-governance-boundary.test.ts"
         ],
         "expectedSkips": 0,
@@ -421,6 +436,10 @@
         "testPaths": [
           "tests/unit/spec-doc-gardening.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "tests/unit/spec-doc-gardening.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -531,6 +550,10 @@
         "testPaths": [
           "tests/unit/trace-to-eval-sample.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "tests/unit/trace-to-eval-sample.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -638,6 +661,12 @@
         ],
         "testPaths": [
           "tests/unit/task-ledger-working-context-single-source.test.ts",
+          "tests/unit/context-control-plane-stage3-contracts.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/task-ledger-working-context-single-source.test.ts"
+        ],
+        "preexistingGuardPaths": [
           "tests/unit/context-control-plane-stage3-contracts.test.ts"
         ],
         "expectedSkips": 0,
@@ -759,6 +788,10 @@
         "testPaths": [
           "openclaw_runtime/src/runtime-core/context-pressure-recovery.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/runtime-core/context-pressure-recovery.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -867,6 +900,10 @@
         "testPaths": [
           "openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -981,6 +1018,10 @@
         "testPaths": [
           "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -1089,6 +1130,12 @@
         ],
         "testPaths": [
           "openclaw_runtime/src/agents/rate-circuit-breaker.test.ts",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/agents/rate-circuit-breaker.test.ts"
+        ],
+        "preexistingGuardPaths": [
           "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts"
         ],
         "expectedSkips": 0,
@@ -1210,6 +1257,10 @@
         "testPaths": [
           "openclaw_runtime/src/agents/hot-file-write-owner.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/agents/hot-file-write-owner.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -1320,6 +1371,10 @@
         "testPaths": [
           "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts"
+        ],
+        "preexistingGuardPaths": [],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -1441,6 +1496,12 @@
         "testPaths": [
           "tests/unit/sensitive-sink-enforcement-drift.test.ts",
           "tests/unit/sensitive-sink-residual-ledger.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/sensitive-sink-residual-ledger.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "tests/unit/sensitive-sink-enforcement-drift.test.ts"
         ],
         "expectedSkips": 0,
         "expectedTestCount": null,
@@ -1566,6 +1627,16 @@
         "testPaths": [
           "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts",
           "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+          "openclaw_runtime/src/agents/apply-patch-consistency.test.ts",
+          "openclaw_runtime/src/agents/sessions/tools/write.test.ts",
+          "openclaw_runtime/src/agents/sessions/tools/edit.test.ts",
+          "tests/unit/external-content-provenance.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts",
           "openclaw_runtime/src/agents/apply-patch-consistency.test.ts",
           "openclaw_runtime/src/agents/sessions/tools/write.test.ts",
           "openclaw_runtime/src/agents/sessions/tools/edit.test.ts",
@@ -1718,6 +1789,14 @@
           "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts",
           "tests/unit/browser-effect-boundary-ledger.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "tests/unit/browser-effect-boundary-ledger.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts",
+          "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+          "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts"
+        ],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -1845,6 +1924,13 @@
           "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts",
           "tests/unit/provider-credential-use-boundary-ledger.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "tests/unit/provider-credential-use-boundary-ledger.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts",
+          "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts"
+        ],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -1967,6 +2053,13 @@
         ],
         "testPaths": [
           "openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts",
+          "openclaw_runtime/src/agents/apply-patch-effect-receipt.test.ts",
+          "openclaw_runtime/src/agents/stage1-effect-receipt.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts"
+        ],
+        "preexistingGuardPaths": [
           "openclaw_runtime/src/agents/apply-patch-effect-receipt.test.ts",
           "openclaw_runtime/src/agents/stage1-effect-receipt.test.ts"
         ],
@@ -2103,6 +2196,12 @@
           "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts",
           "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+        ],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -2234,6 +2333,17 @@
           "tests/unit/performance-budgets.test.ts",
           "tests/unit/deprecation-counters.test.ts",
           "tests/unit/a01-a1-gate-coverage.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/a01-a1-gate-coverage.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "tests/unit/tool-registration.test.ts",
+          "tests/unit/policy-light-snapshotter.test.ts",
+          "tests/unit/shadow-write-event-recorder.test.ts",
+          "tests/unit/trace-namespace-enforcement.test.ts",
+          "tests/unit/performance-budgets.test.ts",
+          "tests/unit/deprecation-counters.test.ts"
         ],
         "expectedSkips": 0,
         "expectedTestCount": null,
@@ -2377,6 +2487,15 @@
           "openclaw_runtime/src/observability/deprecation-counters.test.ts",
           "tests/unit/performance-budgets.test.ts",
           "tests/unit/a02-a2-gate-coverage.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/a02-a2-gate-coverage.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "tests/unit/resource-aware-wave-scheduler.test.ts",
+          "tests/unit/deprecation-counters.test.ts",
+          "openclaw_runtime/src/observability/deprecation-counters.test.ts",
+          "tests/unit/performance-budgets.test.ts"
         ],
         "expectedSkips": 0,
         "expectedTestCount": null,
@@ -2530,6 +2649,15 @@
           "openclaw_runtime/src/observability/deprecation-counters.test.ts",
           "tests/unit/a03-a3-gate-coverage.test.ts"
         ],
+        "hiddenSignalPaths": [
+          "tests/unit/a03-a3-gate-coverage.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "tests/unit/performance-budgets.test.ts",
+          "tests/unit/anomaly-classifier.test.ts",
+          "tests/unit/deprecation-counters.test.ts",
+          "openclaw_runtime/src/observability/deprecation-counters.test.ts"
+        ],
         "expectedSkips": 0,
         "expectedTestCount": null,
         "inputDigests": {
@@ -2661,6 +2789,16 @@
           "tests/unit/deep/a4-deep.test.ts",
           "tests/unit/trace-truncation.test.ts",
           "tests/unit/a04-a4-gate-coverage.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/a04-a4-gate-coverage.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "tests/unit/decision-quality-auditor.test.ts",
+          "tests/unit/deprecation-counters.test.ts",
+          "tests/unit/performance-budgets.test.ts",
+          "tests/unit/deep/a4-deep.test.ts",
+          "tests/unit/trace-truncation.test.ts"
         ],
         "expectedSkips": 0,
         "expectedTestCount": null,
@@ -2796,6 +2934,19 @@
           "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
           "openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts",
           "tests/unit/a05-a5-gate-coverage.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/a05-a5-gate-coverage.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "tests/unit/resource-aware-wave-scheduler.test.ts",
+          "tests/unit/performance-budgets.test.ts",
+          "tests/unit/deprecation-counters.test.ts",
+          "openclaw_runtime/src/observability/deprecation-counters.test.ts",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+          "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts",
+          "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts"
         ],
         "expectedSkips": 0,
         "expectedTestCount": null,
@@ -2941,6 +3092,18 @@
           "tests/unit/long-task-checkpoint-builder.test.ts",
           "tests/unit/long-task-control.test.ts",
           "tests/unit/a06-a6-gate-coverage.test.ts"
+        ],
+        "hiddenSignalPaths": [
+          "tests/unit/a06-a6-gate-coverage.test.ts"
+        ],
+        "preexistingGuardPaths": [
+          "tests/unit/deprecation-counters.test.ts",
+          "openclaw_runtime/src/observability/deprecation-counters.test.ts",
+          "tests/unit/performance-budgets.test.ts",
+          "tests/unit/file-fingerprint.test.ts",
+          "tests/unit/runtime-resume-shadow.test.ts",
+          "tests/unit/long-task-checkpoint-builder.test.ts",
+          "tests/unit/long-task-control.test.ts"
         ],
         "expectedSkips": 0,
         "expectedTestCount": null,

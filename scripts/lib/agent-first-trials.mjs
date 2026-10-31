@@ -94,6 +94,20 @@ function heldOutDigest(corpus) {
   const ids = [...corpus.split.heldOut].sort();
   return sha256(JSON.stringify({ schemaVersion: 'RsiHeldOutSplit/v1', taskIds: ids, tasks: corpus.tasks.filter((task) => ids.includes(task.id)).map((task) => sha256Value(task)) }));
 }
+/**
+ * A frozen task is only unusable when no oracle path carries hidden signal, or when the sealed
+ * oracle cannot be bound to a pinned reference revision. Oracle paths that merely pre-exist at the
+ * base revision are not a defect: they are scrubbed from the agent snapshot and restored by the
+ * grader, so the verdict still depends on work the agent did not see.
+ */
+export function historicalTaskDefect(task, hiddenSignalPaths = task?.oracle?.hiddenSignalPaths ?? []) {
+  if (!task?.oracle) return 'task has no sealed oracle';
+  if (typeof task.referenceSolution?.baseCommit !== 'string' || !task.referenceSolution.baseCommit) return `task ${task.id} has no base revision`;
+  if (typeof task.referenceSolution?.referenceCommit !== 'string' || !task.referenceSolution.referenceCommit) return `task ${task.id} has no reference revision`;
+  if (!(task.oracle.testPaths ?? []).length) return `task ${task.id} has no sealed oracle test paths`;
+  if (!hiddenSignalPaths.length) return `task ${task.id} carries no hidden oracle signal`;
+  return null;
+}
 function historicalTrialIdentities(corpus) {
   return corpus.tasks.flatMap((task) => HISTORICAL_ARMS.flatMap((arm) => [1,2,3].map((repeat) => ({ taskId: task.id, arm, repeat, trialId: `${task.id}-${arm}-${repeat}` }))));
 }
@@ -438,15 +452,31 @@ export async function runHistoricalTrial(runDir, options = {}) {
   let stage = 'setup';
   try {
     materializeSnapshot(root, task.referenceSolution.baseCommit, baseDir);
-    for (const path of task.oracle.testPaths) {
-      if (existsSync(join(baseDir, path))) throw Object.assign(new Error('baseline already contains the required test: ' + path), { failureClass: 'task' });
+    const oraclePaths = task.oracle.testPaths ?? [];
+    const hiddenSignalPaths = task.oracle.hiddenSignalPaths ?? oraclePaths;
+    const taskDefect = historicalTaskDefect(task, hiddenSignalPaths);
+    if (taskDefect) {
+      rmSync(trialDir, { recursive: true, force: true });
+      throw Object.assign(new Error(taskDefect), { failureClass: 'task' });
     }
     cpSync(baseDir, agentRoot, { recursive: true });
+    // The agent must not read the sealed assertions, so every oracle path is removed from its
+    // snapshot; the grader restores the frozen copies before scoring.
+    const preexistingOraclePaths = oraclePaths.filter((path) => existsSync(join(baseDir, path)));
+    const scrubbedOraclePaths = [];
+    for (const path of oraclePaths) {
+      const snapshotPath = join(agentRoot, path);
+      if (existsSync(snapshotPath)) { rmSync(snapshotPath, { force: true }); scrubbedOraclePaths.push(path); }
+    }
     const rsiRoot = join(agentRoot, '.rsi');
     mkdirSync(rsiRoot, { recursive: true });
     write(join(rsiRoot, 'TASK.json'), { taskId: task.id, sourceTaskId: task.sourceTaskId, title: task.title, baseCommit: task.referenceSolution.baseCommit, objective: task.input.prompt, acceptanceCriteria: task.input.acceptanceCriteria, targetScope: task.input.targetScope, arm: entry.arm, instruction: 'Implement the task in this repository. Do not inspect or modify tests in the final hidden oracle. Do not install dependencies, use network, create loops/retries, or modify product locks. Report exact checks you actually ran.' });
     if (entry.arm === 'treatment') write(join(rsiRoot, 'AGENT_INSTRUCTIONS.md'), '# Agent instructions\n\n' + TREATMENT_PROMPT + '\n');
     write(join(rsiRoot, 'RESULT_SCHEMA.json'), { type: 'object', additionalProperties: false, required: ['status','summary','testsRun'], properties: { status: { type: 'string', enum: ['completed','blocked'] }, summary: { type: 'string' }, testsRun: { type: 'array', items: { type: 'string' } } } });
+    // Guarantee the sealed assertions are actually absent from the agent snapshot.
+    for (const path of preexistingOraclePaths) {
+      if (existsSync(join(agentRoot, path))) throw Object.assign(new Error('oracle test not scrubbed from agent snapshot: ' + path), { failureClass: 'grader' });
+    }
     const before = directoryFingerprint(agentRoot);
     stage = 'agent';
     const configuredCli = process.env.CODEX_CLI_PATH;
@@ -462,7 +492,11 @@ export async function runHistoricalTrial(runDir, options = {}) {
     const after = directoryFingerprint(agentRoot);
     const diff = diffFingerprint(before, after);
     const agentDiff = { ...diff, added: diff.added.filter((path) => !path.startsWith('.rsi/')), changed: diff.changed.filter((path) => !path.startsWith('.rsi/')), removed: diff.removed.filter((path) => !path.startsWith('.rsi/')) };
-    const forbidden = [...agentDiff.added,...agentDiff.changed].filter((path) => FROZEN_TEST_PATHS.has(path));
+    const touched = [...agentDiff.added, ...agentDiff.changed];
+    // Oracle paths are scrubbed from the snapshot and overwritten by the grader, so agent writes
+    // there cannot influence the verdict; they are recorded for audit instead of failing the trial.
+    const oracleWrites = touched.filter((path) => oraclePaths.includes(path));
+    const forbidden = touched.filter((path) => path.startsWith('.git/'));
     if (exit.timedOut) failureClass = 'infrastructure';
     if (exit.error) failureClass = 'infrastructure';
     if (forbidden.length) failureClass = 'agent';
@@ -477,7 +511,7 @@ export async function runHistoricalTrial(runDir, options = {}) {
     const traceGrade = gradeTraceEvidence(oracle.trace);
     const verdict = oracle.verdict.verdict === 'pass' && traceGrade.verdict === 'pass' && !forbidden.length && !failureClass ? 'pass' : oracle.verdict.verdict === 'unknown' || traceGrade.verdict === 'unknown' ? 'unknown' : 'fail';
     if (verdict !== 'pass' && !failureClass) failureClass = verdict === 'unknown' ? 'grader' : 'agent';
-    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit, startedAt, completedAt: new Date().toISOString(), agent: { exitCode: exit.code, timedOut: exit.timedOut, error: exit.error ?? null }, diff: agentDiff, forbiddenPaths: forbidden, grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory }, failureClass, checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, noGitMetadataAtStart: !existsSync(join(agentRoot,'.git')) }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
+    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit, startedAt, completedAt: new Date().toISOString(), agent: { exitCode: exit.code, timedOut: exit.timedOut, error: exit.error ?? null }, diff: agentDiff, forbiddenPaths: forbidden, oracleWrites, scrubbedOraclePaths, preexistingOraclePaths, grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory }, failureClass, checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, hiddenTestsHiddenFromAgent: oraclePaths.every((path) => !existsSync(join(agentRoot, path))), noGitMetadataAtStart: !existsSync(join(agentRoot,'.git')) }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
     writeHistoricalResult(trialDir,result);
     return result;
   } catch (error) {

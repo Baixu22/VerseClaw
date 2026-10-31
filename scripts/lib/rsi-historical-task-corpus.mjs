@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { parseFrontmatter } from '../../harness/src/specs.mjs';
 import { sha256File, TF0604_PACK_DIR } from '../rsi-tf0604-baseline.mjs';
+import { classifyOracleBindings } from './rsi-oracle-bindings.mjs';
 import { GRADER_VERSION, RUBRIC_SYSTEM_PROMPT, graderDigest, gradeExecutionCalibration, gradeTraceCalibration, gradeRubricReceipts, combineGraderVerdicts, classifyZeroPassTrials } from './agent-first-graders.mjs';
 
 export const TF0590_PACK_DIR = 'harness/specs/fixtures/agent-first-task-corpus';
@@ -44,12 +45,13 @@ export function buildTaskCorpus(root = process.cwd()) {
     if (typeof spec.intent !== 'string' || !constraints.length) throw new Error(`Ambiguous task spec for ${entry.id}`);
     const residuals = Object.entries(record.gates ?? {}).filter(([, gate]) => Number.isInteger(gate.exitCode) && gate.exitCode !== 0).map(([id, gate]) => ({ id, exitCode: gate.exitCode, commandLine: gate.command }));
     const focusedHistorical = Object.entries(record.gates ?? {}).filter(([, gate]) => /vitest|run-vitest/u.test(String(gate.command)) && gate.exitCode === 0).map(([id, gate]) => ({ id, commandLine: gate.command, exitCode: gate.exitCode, counts: { tests: gate.tests ?? null, failed: gate.failed ?? null, skipped: gate.skipped ?? null } }));
+    const bindings = classifyOracleBindings(root, testPaths, record.candidate?.base, record.candidate?.commit);
     return {
       schemaVersion: 'AgentFirstTask/v1', id: entry.id, version: '1.0.0', sourceTaskId: entry.taskId,
       title: entry.title, kind: packetKind(entry.packet), split: index % 2 ? 'held-out' : 'public',
       driven_by: 'agent', actor: CORPUS_ACTOR,
       input: { prompt: spec.intent, acceptanceCriteria: constraints, contextRefs: [specPath], targetScope: spec.touchedAreas ?? spec.ownedPaths ?? [] },
-      oracle: { graderId: 'deterministic-final-state', commandLine, commandLines, originalRequiredTests: declarations, testPaths, expectedSkips: 0, expectedTestCount: null, inputDigests: Object.fromEntries([specPath, ...testPaths, ...extraCommands.flatMap((line) => [...line.matchAll(/scripts\/[\w.-]+\.mjs/gu)].map((match) => match[0]))].map((path) => [path, sha256File(join(root, path))])) },
+      oracle: { graderId: 'deterministic-final-state', commandLine, commandLines, originalRequiredTests: declarations, testPaths, hiddenSignalPaths: bindings.hiddenSignalPaths, preexistingGuardPaths: bindings.preexistingGuardPaths, expectedSkips: 0, expectedTestCount: null, inputDigests: Object.fromEntries([specPath, ...testPaths, ...extraCommands.flatMap((line) => [...line.matchAll(/scripts\/[\w.-]+\.mjs/gu)].map((match) => match[0]))].map((path) => [path, sha256File(join(root, path))])) },
       referenceSolution: {
         kind: focusedHistorical.length ? 'revision-bound-executable-feasibility-proof' : 'unverified-reference',
         referenceCommit: record.candidate?.commit ?? null,
@@ -85,6 +87,13 @@ export function validateTaskCorpus(corpus, root = process.cwd()) {
     if (ids.has(task.id)) errors.push(`duplicate-task:${task.id}`); ids.add(task.id);
     if (task.schemaVersion !== 'AgentFirstTask/v1' || task.driven_by !== 'agent' || !task.actor || !task.version || !task.input?.prompt?.trim() || !task.input.acceptanceCriteria?.length || !task.input.targetScope?.length) errors.push(`task-ambiguous:${task.id}`);
     if (!task.feasibility?.establishedAtReferenceRevision || !task.referenceSolution?.referenceCommit || !task.referenceSolution.passingOracleEvidence?.length) errors.push(`reference-unverified:${task.id}`);
+    const hidden = task.oracle?.hiddenSignalPaths;
+    const guards = task.oracle?.preexistingGuardPaths;
+    if (!Array.isArray(hidden) || !Array.isArray(guards)) errors.push(`oracle-binding-missing:${task.id}`);
+    else if (!hidden.length) errors.push(`oracle-no-hidden-signal:${task.id}`);
+    else if (hidden.some((path) => !task.oracle.testPaths.includes(path)) || guards.some((path) => !task.oracle.testPaths.includes(path))) errors.push(`oracle-binding-unknown-path:${task.id}`);
+    else if (hidden.some((path) => guards.includes(path))) errors.push(`oracle-binding-overlap:${task.id}`);
+    else if (hidden.length + guards.length !== task.oracle.testPaths.length) errors.push(`oracle-binding-coverage:${task.id}`);
     if (!task.oracle?.commandLine || !task.oracle.commandLines?.length || task.oracle.commandLines[0] !== task.oracle.commandLine || task.oracle.commandLines.some((line) => /[;&|<>`$]/u.test(line)) || !task.oracle.testPaths?.length || task.oracle.expectedSkips !== 0) errors.push(`oracle-invalid:${task.id}`);
     for (const [path, digest] of Object.entries(task.oracle?.inputDigests ?? {})) if (!existsSync(join(root, path)) || sha256File(join(root, path)) !== digest) errors.push(`input-digest:${task.id}:${path}`);
     if (!task.provenance?.recordPath || !existsSync(join(root, task.provenance.recordPath)) || sha256File(join(root, task.provenance.recordPath)) !== task.provenance.recordSha256) errors.push(`source-digest:${task.id}`);

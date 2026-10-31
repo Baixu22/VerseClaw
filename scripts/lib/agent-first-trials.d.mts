@@ -23,3 +23,5 @@ export async function runHistoricalTrial(runDir: string, options?: { root?: stri
 export function checkHistoricalRun(runDir: string, options?: { root?: string; write?: boolean }): any;
 
 export function retainHistoricalRun(runDir: string, outputDir: string, options?: { root?: string }): any;
+
+export function historicalTaskDefect(task: any, hiddenSignalPaths?: string[]): string | null;
