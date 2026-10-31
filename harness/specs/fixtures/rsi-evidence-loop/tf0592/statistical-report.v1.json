@@ -1,0 +1,1483 @@
+{
+  "schemaVersion": "RsiTf0592StatisticalReport/v1",
+  "taskId": "TF-0592",
+  "generatedAt": "2026-10-30T13:24:52.520Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-tf0592-executor",
+  "inputs": {
+    "corpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
+    "rawTrialsPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/raw-trials.v1.json",
+    "policyPath": "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json",
+    "hashes": {
+      "corpus": "c1b464613c2ca39f28722c56b3a75281a222420d7491aafc8a6854434c983432",
+      "rawTrials": "54864ffb2a4df9fffcbe9525f32b76d89c065b47de4d24a44afc05a45a524ca8",
+      "policy": "ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4"
+    },
+    "corpusCaseCount": 24
+  },
+  "resourceFingerprint": {
+    "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
+    "generatedAt": "2026-10-30T13:24:52.520Z",
+    "driven_by": "agent",
+    "actor": "codex/rsi-tf0592-executor",
+    "candidate": {
+      "commit": "da531317eed01cbc1b1dac5147847c03497d0411",
+      "tree": "4bae69bfad72eb8ac724cebeae92d023eb15624c",
+      "branch": "codex/tf0604-rsi-baseline",
+      "dirty": false,
+      "dirtyPaths": [],
+      "sourceHashes": {
+        "scripts/rsi-tf0592-statistical-adjudication.mjs": "a55605a077958ff1a663a89c6a1602c8262581e26f74951c88b9cf2ea19c79a7",
+        "scripts/rsi-tf0592-statistical-adjudication.d.mts": "ed8f70486fcea6a78271e8112c2c366b22a7f7f23aea5ab89a2c01aafacb45ed",
+        "scripts/rsi-tf0604-baseline.mjs": "16bdf38533c9f97f81780f86ac62abd407b9e7ec99fca281614cd8c754d7ce60",
+        "scripts/lib/reliability-aggregation.mjs": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
+        "scripts/lib/paired-ablation.mjs": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
+        "scripts/lib/entrypoint.mjs": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b",
+        "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "3a3637119c4c8fdcd14fe9d4987b8b01bf57f0268973c8f74b0d644915ebab18",
+        "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "a7038706dde2ef90a923ce5e37e494389696b4da52a3a5816670d8ce059c6092",
+        "harness/specs/rules/reliability-aggregation-boundary.md": "9286c8b4a0d07368336d1269fe90dd93f5be7712b47fb20bf6e582b6d9249192",
+        "harness/specs/rules/paired-ablation-boundary.md": "0d9677ef4278a38d34cc710afe759a8e903db1300088358275fa93eab97faf03",
+        "harness/specs/rules/agent-engineering-acceptance-boundary.md": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
+        "harness/specs/rules/task-forest-autoclose-and-roles.md": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
+        "harness/src/profiles.mjs": "b8b2992c58362fa16c4f0f3b40886fe96ab6d1dea690537cec81df3634899622",
+        "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
+        "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+        "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
+        "docs/dev/rsi-capability-and-boundaries.md": "eec5c14def4b61210e0c0e94198e4757b4ef6628f6d8a8838313bed634e3df2b"
+      }
+    },
+    "runtime": {
+      "node": "v24.22.1",
+      "pnpm": "11.2.2",
+      "platform": "win32",
+      "arch": "x64",
+      "osRelease": "10.0.26200"
+    },
+    "observedResources": {
+      "cpuCount": 16,
+      "totalMemoryBytes": 16295432192,
+      "freeMemoryBytes": 2262433792,
+      "disk": {
+        "freeBytes": 16726675456,
+        "totalBytes": 322122543104,
+        "status": "measured"
+      }
+    },
+    "envelope": {
+      "cpuFloorCores": 1,
+      "cpuCeilingCores": 1,
+      "memoryFloorBytes": 268435456,
+      "memoryCeilingBytes": 4294967296,
+      "concurrency": 1,
+      "timeoutMs": 900000,
+      "retries": 0,
+      "workerCount": 1,
+      "model": {
+        "status": "not-run",
+        "id": null,
+        "version": null
+      },
+      "tools": {
+        "status": "not-run",
+        "manifestDigest": null
+      },
+      "grader": {
+        "status": "not-run",
+        "id": null,
+        "version": null
+      },
+      "seed": {
+        "status": "not-run",
+        "value": null
+      },
+      "networkMode": "not-run",
+      "externalCalls": 0,
+      "isolation": "not-run",
+      "enforcement": "not-run"
+    },
+    "claimBoundary": "Observed host resources and a planned envelope; no model trial or enforced trial isolation is claimed."
+  },
+  "status": "insufficient-evidence",
+  "reason": "complete cases 0 < required 20",
+  "run": {
+    "k": 3,
+    "minimumCompleteCases": 20,
+    "trialCount": 0,
+    "baselineTrialCount": 0,
+    "treatmentTrialCount": 0,
+    "completeCaseCount": 0,
+    "incompleteCaseCount": 24,
+    "cleanStateRequired": true
+  },
+  "perTask": [
+    {
+      "caseId": "tf-0274-e01",
+      "taskId": "TF-0274",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0275-e02",
+      "taskId": "TF-0275",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0289-g01",
+      "taskId": "TF-0289",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0290-g02",
+      "taskId": "TF-0290",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0291-g03",
+      "taskId": "TF-0291",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0283-l01",
+      "taskId": "TF-0283",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0284-l02",
+      "taskId": "TF-0284",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0285-l03",
+      "taskId": "TF-0285",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0286-l04",
+      "taskId": "TF-0286",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0287-l05",
+      "taskId": "TF-0287",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0288-l06",
+      "taskId": "TF-0288",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0276-s01",
+      "taskId": "TF-0276",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0277-s02",
+      "taskId": "TF-0277",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0278-s03",
+      "taskId": "TF-0278",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0279-s04",
+      "taskId": "TF-0279",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0280-s05",
+      "taskId": "TF-0280",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0281-s06",
+      "taskId": "TF-0281",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0282-s07",
+      "taskId": "TF-0282",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0293-a01",
+      "taskId": "TF-0293",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0294-a02",
+      "taskId": "TF-0294",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0295-a03",
+      "taskId": "TF-0295",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0296-a04",
+      "taskId": "TF-0296",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0297-a05",
+      "taskId": "TF-0297",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    },
+    {
+      "caseId": "tf-0298-a06",
+      "taskId": "TF-0298",
+      "trialCount": 0,
+      "complete": false,
+      "status": "not-run",
+      "passK": null,
+      "passAtK": null,
+      "trials": []
+    }
+  ],
+  "aggregate": {
+    "passK": null,
+    "passAtK": null,
+    "perTrialSuccessRate": null,
+    "confidenceInterval95": null,
+    "passAtKConfidenceInterval95": null,
+    "intervalMethod": "wilson-over-complete-cases",
+    "flakeRate": null,
+    "incomplete": [
+      {
+        "caseId": "tf-0274-e01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0274-e01",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0274-e01",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0275-e02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0275-e02",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0275-e02",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0276-s01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0276-s01",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0276-s01",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0279-s04",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0279-s04",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0279-s04",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0281-s06",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0281-s06",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0281-s06",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0282-s07",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0282-s07",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0282-s07",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0283-l01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0283-l01",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0283-l01",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0284-l02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0284-l02",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0284-l02",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0285-l03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0285-l03",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0285-l03",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0286-l04",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0286-l04",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0286-l04",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0287-l05",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0287-l05",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0287-l05",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0288-l06",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0288-l06",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0288-l06",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0289-g01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0289-g01",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0289-g01",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0291-g03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0291-g03",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0291-g03",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0293-a01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0293-a01",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0293-a01",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0294-a02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0294-a02",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0294-a02",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0295-a03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0295-a03",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0295-a03",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0296-a04",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0296-a04",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0296-a04",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0297-a05",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0297-a05",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0297-a05",
+        "trialIndex": 2,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0298-a06",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0298-a06",
+        "trialIndex": 1,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0298-a06",
+        "trialIndex": 2,
+        "outcome": "missing"
+      }
+    ],
+    "reasons": [
+      "complete cases 0 < required 20",
+      "72 incomplete trial(s) preserved"
+    ]
+  },
+  "failureClasses": {
+    "infrastructure": {
+      "trialCount": 0,
+      "caseCount": 0
+    },
+    "task": {
+      "trialCount": 0,
+      "caseCount": 0
+    },
+    "grader": {
+      "trialCount": 0,
+      "caseCount": 0
+    },
+    "agent": {
+      "trialCount": 0,
+      "caseCount": 0
+    }
+  },
+  "treatment": {
+    "status": "insufficient-evidence",
+    "perTask": [
+      {
+        "caseId": "tf-0274-e01",
+        "taskId": "TF-0274",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0275-e02",
+        "taskId": "TF-0275",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0289-g01",
+        "taskId": "TF-0289",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "taskId": "TF-0290",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0291-g03",
+        "taskId": "TF-0291",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0283-l01",
+        "taskId": "TF-0283",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0284-l02",
+        "taskId": "TF-0284",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0285-l03",
+        "taskId": "TF-0285",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0286-l04",
+        "taskId": "TF-0286",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0287-l05",
+        "taskId": "TF-0287",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0288-l06",
+        "taskId": "TF-0288",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0276-s01",
+        "taskId": "TF-0276",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "taskId": "TF-0277",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "taskId": "TF-0278",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0279-s04",
+        "taskId": "TF-0279",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "taskId": "TF-0280",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0281-s06",
+        "taskId": "TF-0281",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0282-s07",
+        "taskId": "TF-0282",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0293-a01",
+        "taskId": "TF-0293",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0294-a02",
+        "taskId": "TF-0294",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0295-a03",
+        "taskId": "TF-0295",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0296-a04",
+        "taskId": "TF-0296",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0297-a05",
+        "taskId": "TF-0297",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      },
+      {
+        "caseId": "tf-0298-a06",
+        "taskId": "TF-0298",
+        "trialCount": 0,
+        "complete": false,
+        "status": "not-run",
+        "passK": null,
+        "passAtK": null,
+        "trials": []
+      }
+    ],
+    "failureClasses": {
+      "infrastructure": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "task": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "grader": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "agent": {
+        "trialCount": 0,
+        "caseCount": 0
+      }
+    },
+    "budget": {
+      "recordedTotals": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": null
+      },
+      "incompleteCaseConsumption": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": null
+      },
+      "completedCaseOnly": {
+        "tokensPerCompletedCase": null,
+        "turnsPerCompletedCase": null,
+        "toolCallsPerCompletedCase": null,
+        "costPerCompletedCase": null
+      },
+      "observedTrialCount": 0,
+      "tokensPerCompletedCase": null,
+      "turnsPerCompletedCase": null,
+      "toolCallsPerCompletedCase": null,
+      "costPerCompletedCase": null,
+      "wallClockP50Ms": null,
+      "wallClockP95Ms": null
+    },
+    "trialCount": 0,
+    "completeCaseCount": 0,
+    "incompleteCaseCount": 24,
+    "aggregate": {
+      "passK": null,
+      "passAtK": null,
+      "perTrialSuccessRate": null,
+      "confidenceInterval95": null,
+      "passAtKConfidenceInterval95": null,
+      "intervalMethod": "wilson-over-complete-cases",
+      "flakeRate": null,
+      "incomplete": [
+        {
+          "caseId": "tf-0274-e01",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0274-e01",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0274-e01",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0275-e02",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0275-e02",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0275-e02",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0276-s01",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0276-s01",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0276-s01",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0277-s02",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0277-s02",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0277-s02",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0278-s03",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0278-s03",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0278-s03",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0279-s04",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0279-s04",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0279-s04",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0280-s05",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0280-s05",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0280-s05",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0281-s06",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0281-s06",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0281-s06",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0282-s07",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0282-s07",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0282-s07",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0283-l01",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0283-l01",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0283-l01",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0284-l02",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0284-l02",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0284-l02",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0285-l03",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0285-l03",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0285-l03",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0286-l04",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0286-l04",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0286-l04",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0287-l05",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0287-l05",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0287-l05",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0288-l06",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0288-l06",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0288-l06",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0289-g01",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0289-g01",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0289-g01",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0290-g02",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0290-g02",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0290-g02",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0291-g03",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0291-g03",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0291-g03",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0293-a01",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0293-a01",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0293-a01",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0296-a04",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0296-a04",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0296-a04",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "trialIndex": 2,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0298-a06",
+          "trialIndex": 0,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0298-a06",
+          "trialIndex": 1,
+          "outcome": "missing"
+        },
+        {
+          "caseId": "tf-0298-a06",
+          "trialIndex": 2,
+          "outcome": "missing"
+        }
+      ],
+      "reasons": [
+        "complete cases 0 < required 20",
+        "72 incomplete trial(s) preserved"
+      ]
+    }
+  },
+  "pairedDiff": {
+    "status": "insufficient-evidence",
+    "metric": "pass^k",
+    "pairUnit": "caseId/repeat",
+    "inferenceUnit": "caseId",
+    "pairCount": 0,
+    "completePairCaseCount": 0,
+    "unmatched": [],
+    "repeatPairCount": 0,
+    "excludedPartialPairs": [],
+    "intervalMethod": "normal-approximation over complete case clusters",
+    "varianceStatus": "not-estimable",
+    "meanDiff": null,
+    "ci95": null,
+    "effectSize": null,
+    "passKDelta": null
+  },
+  "power": {
+    "status": "insufficient-evidence",
+    "method": "normal-approximation paired pass^k over complete case clusters; planning only",
+    "inferenceUnit": "caseId",
+    "reason": "paired-case-floor-not-met",
+    "confidenceLevel": 0.95,
+    "targetPower": 0.8,
+    "minimumDetectableEffect": 0.05,
+    "observedDetectableEffect": null,
+    "requiredCasesApprox": null,
+    "requiredPairsApprox": null,
+    "passKPower": "insufficient-evidence"
+  },
+  "budget": {
+    "recordedTotals": {
+      "tokens": null,
+      "turns": null,
+      "toolCalls": null,
+      "cost": null,
+      "wallClockMs": null
+    },
+    "incompleteCaseConsumption": {
+      "tokens": null,
+      "turns": null,
+      "toolCalls": null,
+      "cost": null,
+      "wallClockMs": null
+    },
+    "completedCaseOnly": {
+      "tokensPerCompletedCase": null,
+      "turnsPerCompletedCase": null,
+      "toolCallsPerCompletedCase": null,
+      "costPerCompletedCase": null
+    },
+    "observedTrialCount": 0,
+    "tokensPerCompletedCase": null,
+    "turnsPerCompletedCase": null,
+    "toolCallsPerCompletedCase": null,
+    "costPerCompletedCase": null,
+    "wallClockP50Ms": null,
+    "wallClockP95Ms": null,
+    "costCeilingRelativeIncrease": 0.1
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": false,
+    "promotionReady": false,
+    "productLocksChanged": false
+  }
+}

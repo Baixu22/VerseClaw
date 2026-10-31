@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "AgentFirstTrialAcceptance/v1",
+  "taskId": "TF-0592",
+  "driven_by": "agent",
+  "actor": "codex/tf0592-evidence",
+  "createdAt": "2026-10-31",
+  "sourceCandidate": {
+    "commit": "0b973170082d2e8e4f6882ffda23dc9fd9ede3dd",
+    "tree": "7a182120f8e1523246baf9c646bcebe54e565f2d",
+    "dirty": false
+  },
+  "manifestDigest": "sha256:ca705e8c8cba602d24ceee531ed49643ee43a5d515e382c18a772f49c60a4448",
+  "rawEvidence": {
+    "path": ".agent-workbench/acceptance-private/agent-first-tf0592/retained02",
+    "fileCount": 1539,
+    "note": "Local-only raw replay package. The tracked acceptance summary is self-contained; --raw verifies these bytes when present."
+  },
+  "protocol": {
+    "k": 3,
+    "recordedTrials": 144,
+    "expectedTrials": 144,
+    "completeCaseCount": 24
+  },
+  "artifacts": {
+    "aggregate": {
+      "path": "aggregate.json",
+      "sha256": "sha256:e32888a3ed2c00d31984f36b6f0ce0129a2c5d493004cf13637190d2a005f2ba"
+    },
+    "controls": {
+      "path": "control-results.json",
+      "sha256": "sha256:80fd94ee1451952c44d3ec9df1f1ca92d97dead12807377d2b9180dbad6ee6d9"
+    },
+    "retention": {
+      "path": "retention.json",
+      "sha256": "sha256:21d626be6592ca794070adc3064e5021369e07b496b3763069ac6696090367b3"
+    }
+  },
+  "expected": {
+    "statisticsStatus": "pass",
+    "outcomes": {
+      "pass": 144
+    },
+    "failureClasses": {
+      "infrastructure": 0,
+      "task": 0,
+      "grader": 0,
+      "agent": 0
+    },
+    "passK": 1,
+    "confidenceInterval95": [
+      0.862024,
+      1
+    ],
+    "pairedDiffStatus": "computed",
+    "powerStatus": "insufficient-evidence"
+  },
+  "controls": {
+    "expectedCount": 10
+  },
+  "claims": {
+    "liveProvider": false,
+    "realHuman": false,
+    "rsiImprovement": false,
+    "promotionReady": false,
+    "productLocksChanged": false
+  },
+  "scope": "Actual 24-task, two-arm, k=3 isolated replay with the deterministic script provider; both arms replay the same candidate, so this is execution/statistics evidence rather than an RSI improvement or model-quality claim.",
+  "limitations": [
+    "The tracked summary retains aggregate, retention and negative-control receipts; full per-trial bytes remain in the local retained package and can be replayed with --raw.",
+    "All 144 trials describe expected behavior of the frozen scripted task corpus; they do not establish live-provider quality or generalization.",
+    "No human verdict, release approval, product lock or default value is claimed."
+  ]
+}

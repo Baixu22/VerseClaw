@@ -1,0 +1,234 @@
+{
+  "schemaVersion": "RsiTf0604BaselineAggregate/v1",
+  "taskId": "TF-0604",
+  "generatedAt": "2026-10-30T00:00:00+08:00",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-rsi-baseline",
+  "status": "insufficient-evidence",
+  "reason": "The 24-case corpus is sealed, but no model/provider baseline trials have been executed. The floor is not bypassed by corpus size.",
+  "corpusCaseCount": 24,
+  "completeCaseCount": 0,
+  "incompleteCaseCount": 24,
+  "k": 3,
+  "minimumCompleteCases": 20,
+  "passK": null,
+  "passAtK": null,
+  "confidenceInterval95": null,
+  "perTask": [
+    {
+      "caseId": "tf-0274-e01",
+      "taskId": "TF-0274",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0275-e02",
+      "taskId": "TF-0275",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0289-g01",
+      "taskId": "TF-0289",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0290-g02",
+      "taskId": "TF-0290",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0291-g03",
+      "taskId": "TF-0291",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0283-l01",
+      "taskId": "TF-0283",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0284-l02",
+      "taskId": "TF-0284",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0285-l03",
+      "taskId": "TF-0285",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0286-l04",
+      "taskId": "TF-0286",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0287-l05",
+      "taskId": "TF-0287",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0288-l06",
+      "taskId": "TF-0288",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0276-s01",
+      "taskId": "TF-0276",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0277-s02",
+      "taskId": "TF-0277",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0278-s03",
+      "taskId": "TF-0278",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0279-s04",
+      "taskId": "TF-0279",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0280-s05",
+      "taskId": "TF-0280",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0281-s06",
+      "taskId": "TF-0281",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0282-s07",
+      "taskId": "TF-0282",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0293-a01",
+      "taskId": "TF-0293",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0294-a02",
+      "taskId": "TF-0294",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0295-a03",
+      "taskId": "TF-0295",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0296-a04",
+      "taskId": "TF-0296",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0297-a05",
+      "taskId": "TF-0297",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    },
+    {
+      "caseId": "tf-0298-a06",
+      "taskId": "TF-0298",
+      "trialCount": 0,
+      "complete": false,
+      "outcome": "not-run",
+      "failureClass": null
+    }
+  ],
+  "failureClasses": {
+    "infrastructure": {
+      "trialCount": 0,
+      "caseCount": 0
+    },
+    "task": {
+      "trialCount": 0,
+      "caseCount": 0
+    },
+    "grader": {
+      "trialCount": 0,
+      "caseCount": 0
+    },
+    "agent": {
+      "trialCount": 0,
+      "caseCount": 0
+    }
+  },
+  "negativeControls": {
+    "required": true,
+    "regressionCount": 0,
+    "status": "reserved"
+  }
+}

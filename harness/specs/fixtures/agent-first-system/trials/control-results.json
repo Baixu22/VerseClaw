@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "AgentFirstTrialReplayControls/v1",
+  "driven_by": "agent",
+  "actor": "codex/trial-replay-controls",
+  "sourceCandidate": {
+    "commit": "0b973170082d2e8e4f6882ffda23dc9fd9ede3dd",
+    "tree": "7a182120f8e1523246baf9c646bcebe54e565f2d",
+    "dirty": false
+  },
+  "sourceManifestDigest": "sha256:ca705e8c8cba602d24ceee531ed49643ee43a5d515e382c18a772f49c60a4448",
+  "sourceTrialRecordDigest": "sha256:88ae3f4b4218148e1c37c80697206c98c0bef39955145ab537ca6996616bbba5",
+  "results": [
+    {
+      "id": "final-state-changed",
+      "validBaseline": true,
+      "rehashed": false,
+      "rejected": true,
+      "reason": "trial artifact changed: final-state.json"
+    },
+    {
+      "id": "rehashed-final-state-contradiction",
+      "validBaseline": true,
+      "rehashed": true,
+      "rejected": true,
+      "reason": "grader result differs from final-state replay"
+    },
+    {
+      "id": "wrong-task",
+      "validBaseline": true,
+      "rehashed": true,
+      "rejected": true,
+      "reason": "grader result differs from final-state replay"
+    },
+    {
+      "id": "duplicate-trial-identity",
+      "validBaseline": true,
+      "rehashed": false,
+      "rejected": true,
+      "reason": "trial identity changed"
+    },
+    {
+      "id": "unknown-as-pass",
+      "validBaseline": true,
+      "rehashed": false,
+      "rejected": true,
+      "reason": "grader result differs from final-state replay"
+    },
+    {
+      "id": "failure-class-forgery",
+      "validBaseline": true,
+      "rehashed": false,
+      "rejected": true,
+      "reason": "outcome/failure class differs"
+    },
+    {
+      "id": "raw-trace-missing",
+      "validBaseline": true,
+      "rehashed": true,
+      "rejected": true,
+      "reason": "trace differs from observation"
+    },
+    {
+      "id": "cross-trial-trace",
+      "validBaseline": true,
+      "rehashed": true,
+      "rejected": true,
+      "reason": "trace differs from observation"
+    },
+    {
+      "id": "process-outcome-forgery",
+      "validBaseline": true,
+      "rehashed": true,
+      "rejected": true,
+      "reason": "process outcome contradicted"
+    },
+    {
+      "id": "fabricated-human",
+      "validBaseline": true,
+      "rehashed": true,
+      "rejected": true,
+      "reason": "Expected values to be strictly equal:"
+    }
+  ],
+  "passed": true,
+  "scope": "Mutated copies of actual executed evidence; original artifacts are unchanged."
+}

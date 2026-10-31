@@ -45,7 +45,7 @@ import {
   type RuntimeParityResult,
 } from "./runtime-parity.js";
 import { readQaBootstrapScenarioCatalog } from "./scenario-catalog.js";
-import { runScenarioFlow } from "./scenario-flow-runner.js";
+import { runScenarioFlow, type QaFlowEvent } from "./scenario-flow-runner.js";
 import {
   applyQaMergePatch,
   collectQaSuiteGatewayConfigPatch,
@@ -115,6 +115,9 @@ export type QaSuiteRunParams = {
   forcedRuntime?: RuntimeId;
   runtimePair?: [RuntimeId, RuntimeId];
   captureRuntimeParityCell?: boolean;
+  /** Trial-local configuration overlay; product defaults are never changed. */
+  gatewayConfigPatch?: Record<string, unknown>;
+  onFlowEvent?: (event: QaFlowEvent & { scenarioId: string }) => void;
 };
 
 function parseQaSuiteBooleanEnv(value: string | undefined): boolean | undefined {
@@ -342,6 +345,7 @@ function createScenarioFlowApi(
 async function runScenarioDefinition(
   env: QaSuiteEnvironment,
   scenario: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"][number],
+  observe?: QaSuiteRunParams["onFlowEvent"],
 ) {
   const api = createScenarioFlowApi(env, scenario);
   if (!scenario.execution.flow) {
@@ -351,6 +355,7 @@ async function runScenarioDefinition(
     api,
     flow: scenario.execution.flow,
     scenarioTitle: scenario.title,
+    observe: observe ? (event) => observe({ ...event, scenarioId: scenario.id }) : undefined,
   });
 }
 
@@ -1034,7 +1039,10 @@ export async function runQaSuite(params?: QaSuiteRunParams): Promise<QaSuiteResu
         : []),
     ]),
   ];
-  const gatewayConfigPatch = collectQaSuiteGatewayConfigPatch(selectedCatalogScenarios);
+  const gatewayConfigPatch = applyQaMergePatch(
+    collectQaSuiteGatewayConfigPatch(selectedCatalogScenarios) ?? {},
+    params?.gatewayConfigPatch ?? {},
+  ) as Record<string, unknown>;
   const gatewayRuntimeOptions = collectQaSuiteGatewayRuntimeOptions(selectedCatalogScenarios);
   const concurrency = normalizeQaSuiteConcurrency(
     params?.concurrency,
@@ -1475,7 +1483,7 @@ export async function runQaSuite(params?: QaSuiteRunParams): Promise<QaSuiteResu
         scenarios: [...liveScenarioOutcomes],
       });
 
-      const result = await runScenarioDefinition(env, scenario);
+      const result = await runScenarioDefinition(env, scenario, params?.onFlowEvent);
       sampleGatewayProcessRss(`scenario:${scenario.id}:finish`);
       scenarios.push(result);
       writeQaSuiteProgress(
