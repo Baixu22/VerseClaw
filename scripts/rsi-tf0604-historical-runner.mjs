@@ -3,13 +3,13 @@ import { mkdirSync, writeFileSync, renameSync, readFileSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
-import { buildHistoricalTrialPlan, writeHistoricalManifest, runHistoricalTrial, checkHistoricalRun } from './lib/agent-first-trials.mjs';
+import { buildHistoricalTrialPlan, writeHistoricalManifest, runHistoricalTrial, checkHistoricalRun, retainHistoricalRun } from './lib/agent-first-trials.mjs';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const write = (path, value) => { mkdirSync(dirname(path), { recursive: true }); const tmp = path + '.' + process.pid + '.tmp'; writeFileSync(tmp, JSON.stringify(value, null, 2) + '\n'); renameSync(tmp, path); };
 if (isMainEntrypoint(import.meta.url)) {
-  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' } } });
+  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' }, 'retain-dir': { type: 'string' } } });
   try {
     const root = resolve(values.root ?? process.cwd());
     const runDir = resolve(values['run-dir'] ?? 'D:/tmp/rsi-tf0604-system-trials');
@@ -35,8 +35,9 @@ if (isMainEntrypoint(import.meta.url)) {
         console.log(JSON.stringify({trialId:entry.trialId,failureClass:trial.failureClass,grader:trial.grader?.verdict ?? 'unknown'}));
       }
       result=checkHistoricalRun(runDir,{root});
-    } else if (command === 'check') result=checkHistoricalRun(runDir,{root});
-    else throw new Error('use plan, list, run or check');
+    } else if (command === 'retain') { if (!values['retain-dir']) throw new Error('retain-dir is required'); result=retainHistoricalRun(runDir, values['retain-dir'], { root }); }
+    else if (command === 'check') result=checkHistoricalRun(runDir,{root});
+    else throw new Error('use plan, list, run, retain or check');
     console.log(JSON.stringify(result));
   } catch (error) { console.error(error?.stack ?? String(error)); process.exitCode=1; }
 }

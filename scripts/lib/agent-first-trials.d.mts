@@ -21,3 +21,5 @@ export function buildHistoricalTrialPlan(root?: string): {
 export function writeHistoricalManifest(runDir: string, options?: { root?: string; dependenciesRoot?: string; model?: string }): any;
 export async function runHistoricalTrial(runDir: string, options?: { root?: string; trialId: string }): Promise<any>;
 export function checkHistoricalRun(runDir: string, options?: { root?: string; write?: boolean }): any;
+
+export function retainHistoricalRun(runDir: string, outputDir: string, options?: { root?: string }): any;

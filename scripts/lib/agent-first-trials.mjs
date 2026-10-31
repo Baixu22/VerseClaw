@@ -486,6 +486,41 @@ export async function runHistoricalTrial(runDir, options = {}) {
   }
 }
 
+export function retainHistoricalRun(runDir, outputDir, options = {}) {
+  const root = options.root ?? process.cwd();
+  const run = resolve(runDir);
+  const out = resolve(outputDir);
+  assert(!existsSync(out), 'preserve an existing retained pack');
+  const report = checkHistoricalRun(run, { root, write: false });
+  const manifest = read(join(run, 'manifest.json'));
+  const progress = read(join(run, 'progress.json'));
+  const files = new Map();
+  const add = (name, bytes) => files.set(name.replaceAll('\\', '/'), Buffer.from(bytes));
+  add('manifest.json', readFileSync(join(run, 'manifest.json')));
+  add('progress.json', readFileSync(join(run, 'progress.json')));
+  add('aggregate.json', Buffer.from(JSON.stringify(report, null, 2) + '\n'));
+  for (const trialId of progress.completed) {
+    const dir = join(run, 'trials', trialId);
+    add(join(trialId, 'historical-result.json'), readFileSync(join(dir, 'historical-result.json')));
+    for (const name of ['agent-last.json', 'agent.stdout.log', 'agent.stderr.log']) {
+      const path = join(dir, name);
+      if (existsSync(path)) add(join(trialId, name), readFileSync(path));
+    }
+    const result = read(join(dir, 'historical-result.json'));
+    const oracleDirectory = result.grader?.oracleDirectory;
+    if (oracleDirectory && existsSync(oracleDirectory)) {
+      for (const path of walk(oracleDirectory)) add(join(trialId, 'oracle', relative(oracleDirectory, path)), readFileSync(path));
+    }
+  }
+  const sums = [...files.keys()].sort().map((name) => sha256(files.get(name)).concat('  ', name));
+  files.set('SHA256SUMS', Buffer.from(sums.join('\n') + '\n'));
+  mkdirSync(out, { recursive: true });
+  for (const [name, bytes] of files) { const target = artifactPath(out, name); mkdirSync(dirname(target), { recursive: true }); writeFileSync(target, bytes); }
+  return { schemaVersion: 'RsiHistoricalTrialRetention/v1', driven_by: 'agent', actor: 'codex/tf0604-historical-retainer', directory: out,
+    manifestDigest: progress.manifestDigest, recordedTrials: report.recordedTrials, completeCaseCount: report.completeCaseCount,
+    fileCount: files.size, complete: report.complete, claims: manifest.claims };
+}
+
 export function checkTrialRun(runDir, options = {}) {
   const manifest = read(join(runDir, 'manifest.json')), root = options.root ?? manifest.source.root;
   verifyPlanInputs(manifest, root, options);
