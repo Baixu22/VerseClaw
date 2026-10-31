@@ -1,11 +1,11 @@
 {
   "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-  "generatedAt": "2026-10-31T10:56:11.235Z",
+  "generatedAt": "2026-10-31T11:39:18.295Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "candidate": {
-    "commit": "2a8be7f2184b2662540fa96432b927eb545a03a1",
-    "tree": "d34bb925f8d5f1fc3b4f77f95836ac18d60a9cd6",
+    "commit": "4d8d7286965439ab6db98123884aee05daf66e76",
+    "tree": "982fb1461e09688aa849b198960a4d6a9b94f696",
     "branch": "codex/tf0604-rsi-baseline",
     "dirty": false,
     "dirtyPaths": [],
@@ -39,9 +39,9 @@
   "observedResources": {
     "cpuCount": 16,
     "totalMemoryBytes": 16295432192,
-    "freeMemoryBytes": 3795021824,
+    "freeMemoryBytes": 1911472128,
     "disk": {
-      "freeBytes": 17613291520,
+      "freeBytes": 18515857408,
       "totalBytes": 322122543104,
       "status": "measured"
     }
