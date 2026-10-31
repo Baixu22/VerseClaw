@@ -230,3 +230,34 @@ candidate has been evaluated, that the aggregation gate has ever run here, that
 any default should change, or that anything is ready for release. Enabling,
 promoting, publishing or changing a product default is a separate decision, and
 none of it is authorized by this page.
+
+## Final engineering evidence boundary (2026-10-31)
+
+TF-0610 adds a machine-readable report at
+`harness/specs/fixtures/rsi-evidence-loop/capability-evidence.v1.json`.
+It separates engineering closure from actual RSI capability:
+
+- The baseline corpus, candidate gate, SEKB delta candidate, Self-Harness
+  research loop, contamination gate, independent adjudicator and bounded
+  code-self-modification eligibility gate now have executable implementations,
+  negative controls, focused tests and source-checkout evidence.
+- The historical TF-0604 baseline still has zero complete system cases. TF-0599
+  therefore remains `insufficient-evidence`; it has no sealed held-out digest
+  and exposes neither `pass^k` nor `pass@k`.
+- TF-0606's advisory candidate remains unmeasured by an eligible held-out run.
+  TF-0608 returns `insufficient-evidence/not-promote`. TF-0607 proves the static
+  pre-commit boundary only; behavioral rollback remains unrun.
+- TF-0609 correctly returns `no-go` without generating or executing a code
+  candidate because the required trials, held-out seal, paired cost/safety
+  evidence, behavioral rollback and positive independent bounded-research
+  verdict are absent.
+- The accepted Agent-first trial summary has 24 complete script-provider cases
+  and 144 trial records, but both arms replay the same candidate. It proves
+  execution and aggregation mechanics, not model quality, generalization or RSI
+  benefit.
+
+The report's residual entries are owned by agent roles and name the concrete
+evidence trigger for re-evaluation. They are not waiting for a human verdict or
+human data. No product default, lock, approval semantic, `liveReady`, release
+state or real-human/live-provider claim changes: `ClawX has no complete RSI
+capability and no measured RSI benefit.`

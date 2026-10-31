@@ -1,0 +1,319 @@
+{
+  "schemaVersion": "RsiCapabilityEvidenceReport/v1",
+  "taskId": "TF-0610",
+  "generatedAt": "2026-10-31T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0610-capability-reporter",
+  "overall": {
+    "engineeringClosure": "complete",
+    "rsiCapability": "not-complete",
+    "evidenceDecision": "insufficient-evidence",
+    "codeSelfModification": "no-go"
+  },
+  "executionSummary": {
+    "taskForestBaselineCompleteCases": 0,
+    "candidateCompleteCases": 0,
+    "systemTrialSummaryCompleteCases": 24,
+    "systemTrialKind": "script-provider-equivalent replay, not RSI-model benefit",
+    "heldOutDigest": null,
+    "codeCandidateGenerated": false,
+    "codeCandidateExecuted": false
+  },
+  "layers": [
+    {
+      "id": "experience-loop",
+      "title": "Experience loop (SEKB)",
+      "capabilityVerdict": "partial",
+      "implementation": "flag-gated SEKB plus offline evaluation utilities",
+      "evidenceLevels": {
+        "source": "present",
+        "engineering": "present",
+        "runtime": "partial",
+        "effect": "not-run"
+      },
+      "evidence": [
+        {
+          "id": "capture",
+          "verdict": "partial",
+          "status": "present-flag-gated",
+          "effect": "not-run"
+        },
+        {
+          "id": "suggest",
+          "verdict": "partial",
+          "status": "present",
+          "effect": "not-run"
+        },
+        {
+          "id": "confirm",
+          "verdict": "partial",
+          "status": "present",
+          "effect": "partial"
+        },
+        {
+          "id": "retrieve",
+          "verdict": "partial",
+          "status": "present-advisory-only",
+          "effect": "not-run"
+        },
+        {
+          "id": "adoption",
+          "verdict": "not-run",
+          "status": "typed-surface-only",
+          "effect": "not-run"
+        }
+      ]
+    },
+    {
+      "id": "harness-self-modification",
+      "title": "Harness self-modification",
+      "capabilityVerdict": "not-run",
+      "implementation": "no production self-modification capability",
+      "evidenceLevels": {
+        "source": "absent",
+        "engineering": "gate-only",
+        "runtime": "absent",
+        "effect": "not-run"
+      },
+      "evidence": [
+        {
+          "id": "harness-candidate-generation",
+          "verdict": "not-run",
+          "status": "absent",
+          "effect": "not-run"
+        },
+        {
+          "id": "harness-candidate-evaluation",
+          "verdict": "not-run",
+          "status": "absent",
+          "effect": "not-run"
+        },
+        {
+          "id": "harness-candidate-landing",
+          "verdict": "not-run",
+          "status": "absent",
+          "effect": "not-run"
+        }
+      ]
+    },
+    {
+      "id": "code-self-modification",
+      "title": "Code self-modification",
+      "capabilityVerdict": "not-run",
+      "implementation": "no production self-modification capability",
+      "evidenceLevels": {
+        "source": "absent",
+        "engineering": "gate-only",
+        "runtime": "absent",
+        "effect": "not-run"
+      },
+      "evidence": [
+        {
+          "id": "code-candidate-generation",
+          "verdict": "not-run",
+          "status": "absent",
+          "effect": "not-run"
+        },
+        {
+          "id": "code-candidate-evaluation",
+          "verdict": "not-run",
+          "status": "absent",
+          "effect": "not-run"
+        },
+        {
+          "id": "code-candidate-merge",
+          "verdict": "not-run",
+          "status": "absent",
+          "effect": "not-run"
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "id": "TF-0604",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604/aggregate.v1.json",
+      "status": "insufficient-evidence",
+      "verdict": "insufficient-evidence",
+      "evidence": {
+        "completeCaseCount": 0,
+        "caseCount": 24,
+        "passK": null,
+        "passAtK": null
+      },
+      "controls": 8
+    },
+    {
+      "id": "TF-0599",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
+      "status": "not-run",
+      "verdict": "insufficient-evidence",
+      "evidence": {
+        "caseCount": 24,
+        "completeCaseCount": 0,
+        "k": 3,
+        "heldOutDigest": null
+      },
+      "controls": 10
+    },
+    {
+      "id": "TF-0605",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0605/delta-playbook-report.v1.json",
+      "status": "candidate",
+      "verdict": "candidate-not-evaluated",
+      "evidence": {
+        "pairs": 1,
+        "candidates": 1,
+        "promotionReady": false
+      },
+      "controls": 6
+    },
+    {
+      "id": "TF-0606",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
+      "status": "insufficient-evidence",
+      "verdict": "insufficient-evidence",
+      "evidence": {
+        "weakenedTaskCount": 24,
+        "completeCaseCount": 0,
+        "passK": null
+      },
+      "controls": 7
+    },
+    {
+      "id": "TF-0607",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
+      "status": "pass-precommit",
+      "verdict": "static-only",
+      "evidence": {
+        "staticValidation": true,
+        "behavioralEffects": "not-run"
+      },
+      "controls": 10
+    },
+    {
+      "id": "TF-0608",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
+      "status": "insufficient-evidence",
+      "verdict": "not-promote",
+      "evidence": {
+        "completeCaseCount": 0,
+        "passK": null,
+        "heldOutDigest": null
+      },
+      "controls": 12
+    },
+    {
+      "id": "TF-0609",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json",
+      "status": "no-go",
+      "verdict": "no-go",
+      "evidence": {
+        "codeCandidateGenerated": false,
+        "codeCandidateExecuted": false,
+        "residualCount": 11
+      },
+      "controls": 8
+    }
+  ],
+  "checks": {
+    "tf0604": true,
+    "tf0608": true,
+    "tf0609": true,
+    "agentFirstTrialSummary": true,
+    "noCompleteRsiClaim": true,
+    "allClaimsBounded": true
+  },
+  "residuals": [
+    {
+      "code": "tf0604-baseline-incomplete",
+      "owner": "RSI evaluation owner (agent)",
+      "reviewTrigger": "run the frozen corpus with a fixed provider/tool/resource envelope until >=20 complete cases at k=3 are sealed"
+    },
+    {
+      "code": "held-out-digest-unsealed",
+      "owner": "RSI evaluation owner (agent)",
+      "reviewTrigger": "freeze a real 12-case held-out digest and bind it into TF-0599, TF-0606 and TF-0609 coherently"
+    },
+    {
+      "code": "independent-verdict-not-promote",
+      "owner": "independent RSI verifier (agent)",
+      "reviewTrigger": "re-adjudicate from complete, sealed system evidence before any bounded code trial"
+    },
+    {
+      "code": "stage3-behavioral-rollback-unproven",
+      "owner": "stage-3 owner (agent)",
+      "reviewTrigger": "execute a real agent-driven rollback and parity drill against the frozen candidate and baseline"
+    },
+    {
+      "code": "tf0609-no-go",
+      "owner": "RSI evaluation owner (agent)",
+      "reviewTrigger": "rerun TF-0609 after 20 complete cases, paired statistics and behavioral rollback exist"
+    },
+    {
+      "code": "task-forest-export-large",
+      "owner": "task-forest maintainer (agent)",
+      "reviewTrigger": "implement bounded projected-history export while preserving full snapshot history; current local export is retained only as a diagnosed artifact"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json",
+      "digest": "d689f8c2d6c56fcd435d0a68a765bc767bb2de6cb866d1d525ff3d41269f91c1"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json",
+      "digest": "ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604/aggregate.v1.json",
+      "digest": "cd4c6a9c5ed5cde957d510265a3c778e06f06d5771c99f0f58570d0232c758f3"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
+      "digest": "7fff7ca22d2eecd46f460b0c093438e3c67efd9486e90c7c5cb8739f79778b8f"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0605/delta-playbook-report.v1.json",
+      "digest": "0946099a1bc07e4329468df3f39fce319edfb115d1f1e0a72e42fe20bafe692a"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0605/comparison-report.v1.json",
+      "digest": "554286e80d084fa6ecd9b6f6f8f1c2de37b776378f58661cbfcecd8c32d40049"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
+      "digest": "84c5a3f00508f29be5500477682af0ebca236bcacd6e608165516f9bb571ea6c"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
+      "digest": "5ae09ecd4ab596e68a97c945d8141852165a453c33485ea7240850c69523f246"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
+      "digest": "77f7f186690a8f0b5b2b627b06aa6dd3e58e2b8be98815ae1b93c01183a482d1"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json",
+      "digest": "f872b72691287b7cc5b1483830a7765932e8b37f59dec5c4f0ab61153332c6c8"
+    },
+    {
+      "path": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
+      "digest": "1608b8a5fdc3d36b280ec744bef7886914befe75528ea8a40f988cfc214e055b"
+    }
+  ],
+  "claims": {
+    "completeRsiImplementation": false,
+    "rsiBenefit": false,
+    "realHuman": false,
+    "liveProvider": false,
+    "promotionReady": false,
+    "productLocksChanged": false
+  },
+  "limitations": [
+    "The 144 script-provider trials are execution/statistics evidence and replay the same candidate in both arms; they do not establish model-quality or RSI benefit.",
+    "No production RSI capability, automatic experience write-back, code self-modification trial or product promotion is claimed.",
+    "The TF-0609 No-Go is a start-eligibility decision, not a measured negative performance result.",
+    "Task Forest validate/export must be checked separately; its local history currently creates a very large HTML/timeline artifact."
+  ]
+}

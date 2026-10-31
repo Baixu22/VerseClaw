@@ -1,0 +1,21 @@
+export type RsiCapabilityResidual = { code: string; owner: string; reviewTrigger: string };
+export type RsiCapabilityEvidence = {
+  schemaVersion: string;
+  taskId: string;
+  generatedAt: string;
+  driven_by: "agent";
+  actor: string;
+  overall: { engineeringClosure: string; rsiCapability: string; evidenceDecision: string; codeSelfModification: string };
+  executionSummary: { taskForestBaselineCompleteCases: number; candidateCompleteCases: number; systemTrialSummaryCompleteCases: number; systemTrialKind: string; heldOutDigest: string | null; codeCandidateGenerated: false; codeCandidateExecuted: false };
+  layers: unknown[];
+  gates: unknown[];
+  checks: Record<string, boolean>;
+  residuals: RsiCapabilityResidual[];
+  sourceFiles: Array<{ path: string; digest: string }>;
+  claims: { completeRsiImplementation: false; rsiBenefit: false; realHuman: false; liveProvider: false; promotionReady: false; productLocksChanged: false };
+  limitations: string[];
+};
+export type RsiCapabilityValidation = { passed: boolean; errors: Array<{ code: string; message: string }>; report?: RsiCapabilityEvidence };
+export function buildCapabilityEvidence(root?: string): RsiCapabilityEvidence;
+export function validateCapabilityEvidence(root?: string): RsiCapabilityValidation;
+export function writeCapabilityEvidence(root?: string): RsiCapabilityValidation;
