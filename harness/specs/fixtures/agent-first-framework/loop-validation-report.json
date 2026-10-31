@@ -1,6 +1,6 @@
 {
   "schemaVersion": "AgentFirstEvaluationLoopValidation/v1",
-  "checkedAt": "2026-10-30",
+  "checkedAt": "2026-11-01",
   "driven_by": "agent",
   "actor": "codex",
   "command": "node scripts/agent-first-loop-check.mjs",
@@ -12,7 +12,7 @@
     "promotions": 0
   },
   "inputDigests": {
-    "harness/specs/guides/agent-first-acceptance.md": "sha256:1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
+    "harness/specs/guides/agent-first-acceptance.md": "sha256:b62bf239dc25e251869a872ca0f771ac683de3e2dbe0024f7a9b560bee4509c7",
     "harness/specs/fixtures/agent-first-framework/registry.json": "sha256:f14c5529c493117d7472381cd0963d997cedcb7f144d334a56b136522f634b0a",
     "harness/specs/fixtures/agent-first-framework/loop-record.json": "sha256:ab3fa0c0f9cb1c88e3e6d2a3ae83974c53c50a084970a80a9341f52e89431fa6",
     "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json": "sha256:ea1f63776b2592085dd0f52795c11b822f7bc3b0a2090a27df745b50bba906e4"
