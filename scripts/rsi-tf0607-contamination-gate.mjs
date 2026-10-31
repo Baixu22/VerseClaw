@@ -114,10 +114,9 @@ export function writeGatePack() {
     limitations: ["Finite scan; not a general security proof.", "Behavioral effects remain not-run."]
   };
   const pack = join(ROOT, TF0607_PACK_DIR);
-  mkdirSync(pack, { recursive: true });
-  writeFileSync(join(pack, "gate-report.v1.json"), JSON.stringify(report, null, 2) + "\n");
-  writeFileSync(join(pack, "control-results.v1.json"), JSON.stringify(controls, null, 2) + "\n");
+  writeFileSync(join(pack, "gate-report.v1.json"), JSON.stringify(report, null, 2) + String.fromCharCode(10));
+  writeFileSync(join(pack, "control-results.v1.json"), JSON.stringify(controls, null, 2) + String.fromCharCode(10));
   const files = ["gate-report.v1.json", "control-results.v1.json"];
-  writeFileSync(join(pack, "SHA256SUMS"), files.map((file) => hash(readFileSync(join(pack, file))).concat("  ", file)).join("\n") + "\n");
+  writeFileSync(join(pack, "SHA256SUMS"), files.map((file) => [createHash("sha256").update(readFileSync(join(pack, file))).digest("hex"), file].join("  ")).join(String.fromCharCode(10)) + String.fromCharCode(10));
   return { report, controls };
 }
