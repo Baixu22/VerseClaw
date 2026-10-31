@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "RsiIndependentAdjudication/v1",
+  "taskId": "TF-0608",
+  "generatedAt": "2026-10-31T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0608-adjudicator",
+  "executorActor": "codex/tf0599-executor",
+  "sourceVerifierActor": "codex/tf0599-verifier",
+  "verdict": "insufficient-evidence",
+  "disposition": "not-promote",
+  "promotionReady": false,
+  "reasons": [
+    {
+      "code": "insufficient-evidence",
+      "message": "zero complete held-out system trials; no quality benefit can be inferred"
+    }
+  ],
+  "recomputed": {
+    "corpusCaseCount": 24,
+    "publicCaseCount": 12,
+    "heldOutCaseCount": 12,
+    "completeCaseCount": 0,
+    "incompleteCaseCount": 24,
+    "trialCount": 0,
+    "k": 3,
+    "minimumCompleteCases": 20,
+    "passK": null,
+    "passAtK": null,
+    "confidenceInterval95": null,
+    "costStatus": "not-run",
+    "heldOutDigest": null,
+    "heldOutBindingStatus": "unavailable",
+    "researchControlCount": 7,
+    "contaminationControlCount": 10,
+    "upstreamDigestsVerified": true
+  },
+  "evidence": {
+    "gate": {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
+      "digest": "7fff7ca22d2eecd46f460b0c093438e3c67efd9486e90c7c5cb8739f79778b8f"
+    },
+    "candidate": {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/candidate.v1.json",
+      "digest": "2150fb5342e22c963392dc1331a7966821b3fb86e9070fc88910a07c5ba267c9"
+    },
+    "research": {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
+      "digest": "84c5a3f00508f29be5500477682af0ebca236bcacd6e608165516f9bb571ea6c"
+    },
+    "contamination": {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
+      "digest": "5ae09ecd4ab596e68a97c945d8141852165a453c33485ea7240850c69523f246"
+    }
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": false,
+    "promotionReady": false,
+    "autoMerge": false,
+    "productLocksChanged": false
+  },
+  "limitations": [
+    "The sealed corpus contains task definitions, not completed RSI system trials; completeCaseCount is zero.",
+    "No confidence interval, cost comparison, quality gain or promotion decision is available.",
+    "The held-out digest is not present in TF-0599; the TF-0606 all-ones value is a placeholder, not a sealed split digest.",
+    "The contamination scan is finite and static; behavioral rollback and live effects remain untested.",
+    "Adjudication does not merge, publish, enable defaults or change product locks."
+  ]
+}

@@ -1,0 +1,113 @@
+[
+  {
+    "id": "same-actor",
+    "expectedCode": "same-actor",
+    "observedCodes": [
+      "same-actor",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "self-promotion",
+    "expectedCode": "candidate-self-promotion",
+    "observedCodes": [
+      "candidate-self-promotion",
+      "candidate-recomputation",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "fabricated-pass",
+    "expectedCode": "thin-sample-claim",
+    "observedCodes": [
+      "thin-sample-claim",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "not-run-gate",
+    "expectedCode": "not-run-boundary",
+    "observedCodes": [
+      "not-run-boundary",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "contamination-failure",
+    "expectedCode": "contamination-rejected",
+    "observedCodes": [
+      "contamination-rejected",
+      "contamination-recomputation",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "control-failure",
+    "expectedCode": "contamination-control-failed",
+    "observedCodes": [
+      "contamination-control-failed",
+      "contamination-recomputation",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "research-regression",
+    "expectedCode": "research-not-run",
+    "observedCodes": [
+      "research-not-run",
+      "research-recomputation",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "false-human-claim",
+    "expectedCode": "claim-boundary",
+    "observedCodes": [
+      "claim-boundary",
+      "research-recomputation",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "stale-evidence",
+    "expectedCode": "stale-evidence",
+    "observedCodes": [
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "missing-held-out-binding",
+    "expectedCode": "gate-contract",
+    "observedCodes": [
+      "gate-contract",
+      "stale-evidence"
+    ],
+    "passed": true
+  },
+  {
+    "id": "wrong-evidence-path",
+    "expectedCode": "evidence-path",
+    "observedCodes": [
+      "evidence-path"
+    ],
+    "passed": true
+  },
+  {
+    "id": "fabricated-confidence-interval",
+    "expectedCode": "thin-sample-claim",
+    "observedCodes": [
+      "thin-sample-claim",
+      "stale-evidence"
+    ],
+    "passed": true
+  }
+]

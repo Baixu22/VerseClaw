@@ -1,0 +1,14 @@
+export type RsiAdjudicationReason = { code: string; message: string };
+export type RsiAdjudicationEvidence = { path: string; digest: string; value: Record<string, unknown> };
+export type RsiAdjudicationInputs = { gate: RsiAdjudicationEvidence; candidate: RsiAdjudicationEvidence; research: RsiAdjudicationEvidence; contamination: RsiAdjudicationEvidence };
+export type RsiAdjudicationVerdict = { schemaVersion: string; taskId: string; generatedAt: string; driven_by: string; actor: string; executorActor: string; sourceVerifierActor: string; verdict: 'insufficient-evidence' | 'invalid'; disposition: 'not-promote' | 'reject'; promotionReady: false; reasons: RsiAdjudicationReason[]; recomputed: { corpusCaseCount: number | null; publicCaseCount: number | null; heldOutCaseCount: number | null; completeCaseCount: number | null; incompleteCaseCount: number | null; trialCount: number | null; k: number | null; minimumCompleteCases: number | null; passK: number | null; passAtK: number | null; confidenceInterval95: null; costStatus: string; heldOutDigest: string | null; heldOutBindingStatus: string; researchControlCount: number | null; contaminationControlCount: number | null; upstreamDigestsVerified: boolean }; evidence: Record<string, { path: string; digest: string }>; claims: { realHuman: false; liveProvider: false; promotionReady: false; autoMerge: false; productLocksChanged: false }; limitations: string[] };
+export type RsiAdjudicationControl = { id: string; expectedCode: string; observedCodes: string[]; passed: boolean };
+export type RsiAdjudicationPackValidation = { passed: boolean; errors: RsiAdjudicationReason[]; verdict?: RsiAdjudicationVerdict; controls?: RsiAdjudicationControl[] };
+export const TF0608_PACK_DIR: string;
+export const TF0608_SCHEMA: string;
+export const TF0608_ACTOR: string;
+export function loadAdjudicationInputs(root?: string): RsiAdjudicationInputs;
+export function adjudicate(inputs: RsiAdjudicationInputs, verifierActor?: string, root?: string): RsiAdjudicationVerdict;
+export function runNegativeControls(inputs: RsiAdjudicationInputs, root?: string): RsiAdjudicationControl[];
+export function validateAdjudicationPack(root?: string): RsiAdjudicationPackValidation;
+export function writeAdjudicationPack(root?: string): { verdict: RsiAdjudicationVerdict; controls: RsiAdjudicationControl[]; validation: RsiAdjudicationPackValidation };
