@@ -12,6 +12,10 @@ touchedAreas:
   - harness/specs/tasks/rsi-tf0604-baseline-corpus.md
   - tests/unit/rsi-tf0604-baseline.test.ts
   - scripts/rsi-tf0604-historical-runner.mjs
+  - scripts/rsi-tf0604-system-run.mjs
+  - scripts/lib/rsi-tf0604-system-run.mjs
+  - scripts/lib/rsi-tf0604-system-run.d.mts
+  - harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/**
   - scripts/rsi-tf0604-historical-runner.d.mts
   - scripts/lib/agent-first-graders.mjs
   - scripts/lib/agent-first-graders.d.mts
