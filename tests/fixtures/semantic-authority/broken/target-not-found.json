@@ -1,0 +1,12 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "broken-target-not-found",
+  "description": "The mutation anchor does not exist in the registry; the gate must report a fixture error (exit 2), not a pass and not a gate failure.",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "find": "owner: 'no-such-owner-anchor'",
+      "replace": "owner: 'x'"
+    }
+  ]
+}

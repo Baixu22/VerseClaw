@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "exemption-stale",
+  "class": "exemption-hygiene",
+  "rule": "exemption-stale",
+  "expect": "[semantic-authority/exemption-stale] C-02/R-D1 (default-activation, working-memory-context-source) recorded defaultMode=\"opt-in\" but the registries now say \"baseline\"",
+  "expectIssueCount": 2,
+  "description": "C-02 is corrected in the authority manifest (working-memory-context-source becomes baseline) while the registry still carries the pending-fix entries; both C-02 entries are rejected as stale so the exemption cannot outlive its conflict.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "find": "runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'opt-in',",
+      "replace": "runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'baseline',"
+    }
+  ]
+}

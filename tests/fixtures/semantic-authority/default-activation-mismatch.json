@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "default-activation-mismatch",
+  "class": "conflicting-default",
+  "rule": "default-activation",
+  "expect": "[semantic-authority/default-activation] component 'dcs-fact-view-and-tools' has defaultMode 'opt-in' but disposition 'component.dcs-context-tools' has currentMode 'shadow'",
+  "expectIssueCount": 2,
+  "description": "Both sides on the activation axis but unequal (R-D1): the disposition moves to shadow while the manifest still says opt-in. The disposition catalog's own validator additionally rejects a user-visible shadow surface (visible_shadow_surface), passed through as registry-self-validation.",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "find": "owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'opt-in', targetDefaultMode: 'baseline'",
+      "replace": "owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'shadow', targetDefaultMode: 'baseline'"
+    }
+  ]
+}

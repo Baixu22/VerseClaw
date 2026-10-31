@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "exemption-reason-missing",
+  "class": "exemption-without-reason",
+  "rule": "exemption-reason-missing",
+  "expect": "[semantic-authority/exemption-reason-missing] exemptions entry 'X-03' has no reason; an entry without reason, review condition, source and basis is itself a failure",
+  "expectIssueCount": 1,
+  "description": "The X-03 entry for dcs-context-authority loses its reason; an exemption without a reason is itself a failure and is not applied.",
+  "mutations": [
+    {
+      "file": "scripts/check-semantic-authority-adjudication.json",
+      "find": "      \"target\": \"dcs-context-authority\",\n      \"observed\": {\n        \"defaultMode\": \"baseline\",\n        \"dispositionId\": \"component.dcs-context-authority\",\n        \"targetDefaultMode\": \"internal\"\n      },\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03\",\n      \"reason\": \"targetDefaultMode",
+      "replace": "      \"target\": \"dcs-context-authority\",\n      \"observed\": {\n        \"defaultMode\": \"baseline\",\n        \"dispositionId\": \"component.dcs-context-authority\",\n        \"targetDefaultMode\": \"internal\"\n      },\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03\",\n      \"reason\": \"\", \"reasonRemoved\": \"targetDefaultMode"
+    }
+  ]
+}

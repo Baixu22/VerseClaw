@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "default-retirement-asymmetry",
+  "class": "conflicting-default",
+  "rule": "default-retirement",
+  "expect": "[semantic-authority/default-retirement] component 'dcs-context-authority' has defaultMode 'retired' while disposition 'component.dcs-context-authority' has disposition 'internal'",
+  "expectIssueCount": 2,
+  "description": "The authority manifest retires dcs-context-authority while the disposition catalog still runs it (R-D2). The manifest's own validator accepts the value; the X-03 pin for this component also goes stale because its recorded defaultMode changed.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "find": "runtimeAvailabilitySource: 'static:dcs-context-orchestrator',\n    defaultMode: 'baseline',",
+      "replace": "runtimeAvailabilitySource: 'static:dcs-context-orchestrator',\n    defaultMode: 'retired',"
+    }
+  ]
+}

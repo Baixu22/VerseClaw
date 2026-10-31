@@ -1,0 +1,12 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "broken-never-applied",
+  "description": "The mutation targets a file this gate never reads; an unapplied mutation must be a fixture error (exit 2) so a mis-targeted negative cannot pass.",
+  "mutations": [
+    {
+      "file": "package.json",
+      "find": "\"name\"",
+      "replace": "\"name\""
+    }
+  ]
+}

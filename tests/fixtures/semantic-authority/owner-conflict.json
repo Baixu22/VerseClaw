@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "owner-conflict",
+  "class": "conflicting-owner",
+  "rule": "owner-namespace",
+  "expect": "[semantic-authority/owner-namespace] disposition 'component.task-ledger' names owner 'permission-approval-authority' but covers authority component(s) task-ledger",
+  "expectIssueCount": 1,
+  "description": "component.task-ledger names another authority component as owner while its coverage is unchanged; owner is declared by the authority manifest and reached through coverage, never through the bookkeeping field (C-01 reading rule).",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "find": "owner: 'task-ledger', implementationNodeId:",
+      "replace": "owner: 'permission-approval-authority', implementationNodeId:"
+    }
+  ]
+}

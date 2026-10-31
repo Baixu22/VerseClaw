@@ -1,0 +1,1445 @@
+{
+  "schema": "SemanticAuthorityAdjudication/v1",
+  "description": "Machine form of the TF-0631 rulings in docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md for scripts/check-semantic-authority.mjs. Bookkeeping of adjudications, not a source of truth for owner, default or authority: every entry names registry ids, records the values it was adjudicated against (so exemption-stale rejects it once a registry changes) and carries reason, reviewCondition and the document section it transcribes. Sections: exemptions (structural, X-01..X-05), adjudicatedConflicts (registered-pending-fix, C-02..C-06), gaps (registered, G-01..G-06), conceptAliases (I-4), authorityBindings (A-01..A-03). C-01 is not an entry: its reading rule is implemented as owner-namespace and is not exemptable.",
+  "drivenBy": "agent",
+  "adjudicatedBy": "TF-0631 (agent-driven); transcribed by TF-0632 (agent-driven)",
+  "exemptions": [
+    {
+      "id": "X-01",
+      "rule": "flag-binding",
+      "disposition": "structural",
+      "targetKind": "flag",
+      "target": "isolation-request",
+      "observed": {
+        "manifestComponentId": "coding-execution-backend",
+        "dispositionEntryId": "feature.worktree-isolation",
+        "risk": "request-only"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
+      "reason": "This flag is bound to one component in the authority manifest but to a feature-level disposition entry in the disposition catalog. Both granularities are legitimate; the checker compares owner and activation per flag (R-F) instead of comparing the component-level defaultMode, which is a lossy aggregate of mixed flag risks.",
+      "reviewCondition": "A feature-level entry whose owner is neither the manifest-bound component nor its implementation/retirement node is a conflict, not a granularity difference; re-adjudicate if the binding moves."
+    },
+    {
+      "id": "X-01",
+      "rule": "flag-binding",
+      "disposition": "structural",
+      "targetKind": "flag",
+      "target": "patch-flow",
+      "observed": {
+        "manifestComponentId": "coding-execution-backend",
+        "dispositionEntryId": "feature.patch-flow",
+        "risk": "api-only"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
+      "reason": "This flag is bound to one component in the authority manifest but to a feature-level disposition entry in the disposition catalog. Both granularities are legitimate; the checker compares owner and activation per flag (R-F) instead of comparing the component-level defaultMode, which is a lossy aggregate of mixed flag risks.",
+      "reviewCondition": "A feature-level entry whose owner is neither the manifest-bound component nor its implementation/retirement node is a conflict, not a granularity difference; re-adjudicate if the binding moves."
+    },
+    {
+      "id": "X-01",
+      "rule": "flag-binding",
+      "disposition": "structural",
+      "targetKind": "flag",
+      "target": "stale-write-guard",
+      "observed": {
+        "manifestComponentId": "coding-execution-backend",
+        "dispositionEntryId": "feature.stale-write-guard",
+        "risk": "opt-in"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
+      "reason": "This flag is bound to one component in the authority manifest but to a feature-level disposition entry in the disposition catalog. Both granularities are legitimate; the checker compares owner and activation per flag (R-F) instead of comparing the component-level defaultMode, which is a lossy aggregate of mixed flag risks.",
+      "reviewCondition": "A feature-level entry whose owner is neither the manifest-bound component nor its implementation/retirement node is a conflict, not a granularity difference; re-adjudicate if the binding moves."
+    },
+    {
+      "id": "X-01",
+      "rule": "flag-binding",
+      "disposition": "structural",
+      "targetKind": "flag",
+      "target": "symbol-lease",
+      "observed": {
+        "manifestComponentId": "coding-execution-backend",
+        "dispositionEntryId": "feature.symbol-lease",
+        "risk": "opt-in"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
+      "reason": "This flag is bound to one component in the authority manifest but to a feature-level disposition entry in the disposition catalog. Both granularities are legitimate; the checker compares owner and activation per flag (R-F) instead of comparing the component-level defaultMode, which is a lossy aggregate of mixed flag risks.",
+      "reviewCondition": "A feature-level entry whose owner is neither the manifest-bound component nor its implementation/retirement node is a conflict, not a granularity difference; re-adjudicate if the binding moves."
+    },
+    {
+      "id": "X-01",
+      "rule": "flag-binding",
+      "disposition": "structural",
+      "targetKind": "flag",
+      "target": "symbol-lease-mode",
+      "observed": {
+        "manifestComponentId": "coding-execution-backend",
+        "dispositionEntryId": "feature.symbol-lease",
+        "risk": "opt-in"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
+      "reason": "This flag is bound to one component in the authority manifest but to a feature-level disposition entry in the disposition catalog. Both granularities are legitimate; the checker compares owner and activation per flag (R-F) instead of comparing the component-level defaultMode, which is a lossy aggregate of mixed flag risks.",
+      "reviewCondition": "A feature-level entry whose owner is neither the manifest-bound component nor its implementation/retirement node is a conflict, not a granularity difference; re-adjudicate if the binding moves."
+    },
+    {
+      "id": "X-01",
+      "rule": "flag-binding",
+      "disposition": "structural",
+      "targetKind": "flag",
+      "target": "worktree-backend",
+      "observed": {
+        "manifestComponentId": "coding-execution-backend",
+        "dispositionEntryId": "feature.worktree-isolation",
+        "risk": "api-only"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
+      "reason": "This flag is bound to one component in the authority manifest but to a feature-level disposition entry in the disposition catalog. Both granularities are legitimate; the checker compares owner and activation per flag (R-F) instead of comparing the component-level defaultMode, which is a lossy aggregate of mixed flag risks.",
+      "reviewCondition": "A feature-level entry whose owner is neither the manifest-bound component nor its implementation/retirement node is a conflict, not a granularity difference; re-adjudicate if the binding moves."
+    },
+    {
+      "id": "X-01",
+      "rule": "flag-binding",
+      "disposition": "structural",
+      "targetKind": "flag",
+      "target": "write-journal",
+      "observed": {
+        "manifestComponentId": "coding-execution-backend",
+        "dispositionEntryId": "feature.coding-recovery",
+        "risk": "baseline-on"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
+      "reason": "This flag is bound to one component in the authority manifest but to a feature-level disposition entry in the disposition catalog. Both granularities are legitimate; the checker compares owner and activation per flag (R-F) instead of comparing the component-level defaultMode, which is a lossy aggregate of mixed flag risks.",
+      "reviewCondition": "A feature-level entry whose owner is neither the manifest-bound component nor its implementation/retirement node is a conflict, not a granularity difference; re-adjudicate if the binding moves."
+    },
+    {
+      "id": "X-02",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "knowledge-review-authority",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.knowledge-review-authority",
+        "disposition": "default"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-02",
+      "reason": "Manifest `internal` means ungated infrastructure availability; disposition `internal` means no user surface. The same word on two axes is not a component-level conflict, so the checker never compares manifest defaultMode with disposition disposition.",
+      "reviewCondition": "Re-evaluate once the manifest enum vocabulary is documented or split by axis."
+    },
+    {
+      "id": "X-02",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "skills-mcp-source-registry",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.skills-mcp-source-registry",
+        "disposition": "default"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-02",
+      "reason": "Manifest `internal` means ungated infrastructure availability; disposition `internal` means no user surface. The same word on two axes is not a component-level conflict, so the checker never compares manifest defaultMode with disposition disposition.",
+      "reviewCondition": "Re-evaluate once the manifest enum vocabulary is documented or split by axis."
+    },
+    {
+      "id": "X-02",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "tool-search-schema-expander",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.tool-search-schema-expander",
+        "disposition": "default"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-02",
+      "reason": "Manifest `internal` means ungated infrastructure availability; disposition `internal` means no user surface. The same word on two axes is not a component-level conflict, so the checker never compares manifest defaultMode with disposition disposition.",
+      "reviewCondition": "Re-evaluate once the manifest enum vocabulary is documented or split by axis."
+    },
+    {
+      "id": "X-02",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "task-ledger",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.task-ledger",
+        "disposition": "default"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-02",
+      "reason": "Manifest `internal` means ungated infrastructure availability; disposition `internal` means no user surface. The same word on two axes is not a component-level conflict, so the checker never compares manifest defaultMode with disposition disposition.",
+      "reviewCondition": "Re-evaluate once the manifest enum vocabulary is documented or split by axis."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "dcs-context-authority",
+      "observed": {
+        "defaultMode": "baseline",
+        "dispositionId": "component.dcs-context-authority",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "context-enhancement-gate",
+      "observed": {
+        "defaultMode": "baseline",
+        "dispositionId": "component.context-enhancement-gate",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "compass-context-source",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.compass-context",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "dcs-fact-view-and-tools",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.dcs-context-tools",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "role-memory-card-governance",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.role-memory",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "runtime-memory-store",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.runtime-memory-store",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "memory-candidate-queue",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.memory-candidate-queue",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "memory-embedding-provider",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.memory-embedding-provider",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "knowledge-review-authority",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.knowledge-review-authority",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "knowledge-retrieval-source",
+      "observed": {
+        "defaultMode": "read-only",
+        "dispositionId": "component.knowledge-retrieval-source",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "sekb-candidate-provider",
+      "observed": {
+        "defaultMode": "shadow",
+        "dispositionId": "component.sekb-candidate-provider",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "skills-mcp-source-registry",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.skills-mcp-source-registry",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "tool-search-schema-expander",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.tool-search-schema-expander",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "coding-execution-backend",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.coding-execution-backend",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "verseshell-execution-adapter",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.verseshell-execution-adapter",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "task-ledger",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.task-ledger",
+        "targetDefaultMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "routing-memo-observation",
+      "observed": {
+        "defaultMode": "shadow",
+        "dispositionId": "component.routing-memo-observation",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-03",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "host-api-transport-owner",
+      "observed": {
+        "defaultMode": "baseline",
+        "dispositionId": "component.host-api-transport-owner",
+        "targetDefaultMode": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-03",
+      "reason": "targetDefaultMode is a disposition target expressed with the manifest's mixed-axis enum; comparing it for equality with the manifest's current declaration is semantically invalid (axis conflation, not an unreached target: the implementing nodes are all done). The checker uses R-D1..R-D4 instead.",
+      "reviewCondition": "Re-evaluate if the authority manifest gains an independent visibility or target field, or if either recorded value changes."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "context-runtime-kit",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.context-runtime-kit",
+        "currentMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "dcs-assembler-compat-adapter",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.dcs-assembler-adapter",
+        "currentMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "provider-request-guard",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.provider-request-guard",
+        "currentMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "c6-context-ladder-source",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.c6-context-ladder",
+        "currentMode": "opt-in"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "native-file-memory-retrieval",
+      "observed": {
+        "defaultMode": "read-only",
+        "dispositionId": "component.native-file-memory-retrieval",
+        "currentMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "dreaming-derived-cache",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.dreaming-derived-cache",
+        "currentMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "knowledge-review-authority",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.knowledge-review-authority",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "knowledge-retrieval-source",
+      "observed": {
+        "defaultMode": "read-only",
+        "dispositionId": "component.knowledge-retrieval-source",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "sekb-candidate-provider",
+      "observed": {
+        "defaultMode": "shadow",
+        "dispositionId": "component.sekb-candidate-provider",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "v3-capability-catalog",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.v3-capability-catalog",
+        "currentMode": "shadow"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "skills-mcp-source-registry",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.skills-mcp-source-registry",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "tool-search-schema-expander",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.tool-search-schema-expander",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "coding-execution-backend",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.coding-execution-backend",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "permission-approval-authority",
+      "observed": {
+        "defaultMode": "baseline",
+        "dispositionId": "component.permission-approval-authority",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "task-ledger",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.task-ledger",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "browser-session-owner",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.browser-session-owner",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "browser-task-projection-owner",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.browser-task-projection",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "observability-recorder",
+      "observed": {
+        "defaultMode": "internal",
+        "dispositionId": "component.observability-recorder",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "routing-memo-observation",
+      "observed": {
+        "defaultMode": "shadow",
+        "dispositionId": "component.routing-memo-observation",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-04",
+      "rule": "default-activation",
+      "disposition": "structural",
+      "targetKind": "component",
+      "target": "renderer-ui-surface",
+      "observed": {
+        "defaultMode": "baseline",
+        "dispositionId": "component.renderer-ui-surface",
+        "currentMode": "mixed"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04",
+      "reason": "Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).",
+      "reviewCondition": "Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated."
+    },
+    {
+      "id": "X-05",
+      "rule": "default-matrix-row",
+      "disposition": "structural",
+      "targetKind": "doc-row",
+      "target": "DCS Fact view tools",
+      "observed": {
+        "defaultMatrixValue": "auto"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-05",
+      "reason": "This linked document row carries a value outside the ComponentAuthorityDefaultMode enum (auto / deferred / diagnostics-only), so R-D3 cannot map it; it is listed, not judged.",
+      "reviewCondition": "Re-evaluate if the document adopts enum vocabulary for this row; the entry then goes stale."
+    },
+    {
+      "id": "X-05",
+      "rule": "default-matrix-row",
+      "disposition": "structural",
+      "targetKind": "doc-row",
+      "target": "Coding auto verify",
+      "observed": {
+        "defaultMatrixValue": "auto"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-05",
+      "reason": "This linked document row carries a value outside the ComponentAuthorityDefaultMode enum (auto / deferred / diagnostics-only), so R-D3 cannot map it; it is listed, not judged.",
+      "reviewCondition": "Re-evaluate if the document adopts enum vocabulary for this row; the entry then goes stale."
+    },
+    {
+      "id": "X-05",
+      "rule": "default-matrix-row",
+      "disposition": "structural",
+      "targetKind": "doc-row",
+      "target": "SEKB automatic writeback",
+      "observed": {
+        "productSurfaceValue": "deferred"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-05",
+      "reason": "This linked document row carries a value outside the ComponentAuthorityDefaultMode enum (auto / deferred / diagnostics-only), so R-D3 cannot map it; it is listed, not judged.",
+      "reviewCondition": "Re-evaluate if the document adopts enum vocabulary for this row; the entry then goes stale."
+    },
+    {
+      "id": "X-05",
+      "rule": "default-matrix-row",
+      "disposition": "structural",
+      "targetKind": "doc-row",
+      "target": "C7 knowledge/routing cutover",
+      "observed": {
+        "productSurfaceValue": "deferred"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-05",
+      "reason": "This linked document row carries a value outside the ComponentAuthorityDefaultMode enum (auto / deferred / diagnostics-only), so R-D3 cannot map it; it is listed, not judged.",
+      "reviewCondition": "Re-evaluate if the document adopts enum vocabulary for this row; the entry then goes stale."
+    },
+    {
+      "id": "X-05",
+      "rule": "default-matrix-row",
+      "disposition": "structural",
+      "targetKind": "doc-row",
+      "target": "Runtime Memory injection",
+      "observed": {
+        "productSurfaceValue": "diagnostics-only"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-05",
+      "reason": "This linked document row carries a value outside the ComponentAuthorityDefaultMode enum (auto / deferred / diagnostics-only), so R-D3 cannot map it; it is listed, not judged.",
+      "reviewCondition": "Re-evaluate if the document adopts enum vocabulary for this row; the entry then goes stale."
+    }
+  ],
+  "adjudicatedConflicts": [
+    {
+      "id": "C-02/R-D1",
+      "rule": "default-activation",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "working-memory-context-source",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.working-memory-context",
+        "currentMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-02",
+      "reason": "Adjudicated stale authority-manifest default: the component's own runtimeAvailabilitySource flag, the disposition catalog, docs/dev/default-config-matrix.md and docs/clawx-product-semantics.md all agree on the baseline activation TF-0494 landed; the manifest is the lone dissenting source and was not rewritten after closure. Registered pending fix; the rule is not relaxed.",
+      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for working-memory-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
+    },
+    {
+      "id": "C-02/R-D4",
+      "rule": "default-flag-risk",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "working-memory-context-source",
+      "observed": {
+        "defaultMode": "opt-in",
+        "sourceFlag": "working-memory",
+        "flagRisk": "baseline-on"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-02",
+      "reason": "Adjudicated stale authority-manifest default: the component's own runtimeAvailabilitySource flag, the disposition catalog, docs/dev/default-config-matrix.md and docs/clawx-product-semantics.md all agree on the baseline activation TF-0494 landed; the manifest is the lone dissenting source and was not rewritten after closure. Registered pending fix; the rule is not relaxed.",
+      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for working-memory-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
+    },
+    {
+      "id": "C-03/R-D1",
+      "rule": "default-activation",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "tool-registry-context-source",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.tool-registry-context",
+        "currentMode": "baseline"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-03",
+      "reason": "Same shape as C-02: flag catalog, disposition catalog, default-matrix document and product-surface document agree on baseline activation from TF-0494; the authority manifest is the lone stale source. Registered pending fix; the rule is not relaxed.",
+      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for tool-registry-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
+    },
+    {
+      "id": "C-03/R-D4",
+      "rule": "default-flag-risk",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "tool-registry-context-source",
+      "observed": {
+        "defaultMode": "opt-in",
+        "sourceFlag": "tool-registry",
+        "flagRisk": "baseline-on"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-03",
+      "reason": "Same shape as C-02: flag catalog, disposition catalog, default-matrix document and product-surface document agree on baseline activation from TF-0494; the authority manifest is the lone stale source. Registered pending fix; the rule is not relaxed.",
+      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for tool-registry-context-source is corrected by a later node; exemption-stale then rejects this entry automatically."
+    },
+    {
+      "id": "C-04/R-D2",
+      "rule": "default-retirement",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "vtoken-context-source",
+      "observed": {
+        "defaultMode": "opt-in",
+        "dispositionId": "component.vtoken-context",
+        "disposition": "retired"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-04",
+      "reason": "Adjudicated as retired: the disposition catalog, the default-matrix row the manifest entry itself cites as runtimeAvailabilitySource, the product-surface document, docs/dev/vtoken-retirement-decision.md and the tracked TF-0496 verification fixtures all record retirement; the authority manifest still carries the pre-TF-0496 activation value. Registered pending fix.",
+      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for vtoken-context-source is set to retired by a later node."
+    },
+    {
+      "id": "C-04/R-D3",
+      "rule": "default-matrix-row",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "vtoken-context-source",
+      "observed": {
+        "defaultMode": "opt-in",
+        "matrixRow": "VToken assembly",
+        "matrixValue": "retired"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-04",
+      "reason": "Adjudicated as retired: the disposition catalog, the default-matrix row the manifest entry itself cites as runtimeAvailabilitySource, the product-surface document, docs/dev/vtoken-retirement-decision.md and the tracked TF-0496 verification fixtures all record retirement; the authority manifest still carries the pre-TF-0496 activation value. Registered pending fix.",
+      "reviewCondition": "Remove once shared/component-authority-manifest.ts defaultMode for vtoken-context-source is set to retired by a later node."
+    },
+    {
+      "id": "C-05/R-D3",
+      "rule": "default-matrix-row",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "vtoken-bridge",
+      "observed": {
+        "defaultMode": "opt-in",
+        "matrixRow": "VToken bridge",
+        "matrixValue": "retired"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-05",
+      "reason": "Product default adjudicated as retired from the default-matrix row the manifest entry cites; both registries' activation value can only be read as test/diagnostic availability (disposition visibilityReason and currentConsumers), which the current enum cannot distinguish from product availability. Registered pending fix.",
+      "reviewCondition": "Remove once the manifest defaultMode / disposition currentMode for vtoken-bridge are corrected, or the enum gains a product-vs-diagnostic availability distinction."
+    },
+    {
+      "id": "C-06/R-D2",
+      "rule": "default-retirement",
+      "disposition": "registered-pending-fix",
+      "targetKind": "component",
+      "target": "retired-surface-registry",
+      "observed": {
+        "defaultMode": "retired",
+        "dispositionId": "component.retired-surface-registry",
+        "disposition": "internal"
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-06",
+      "reason": "The manifest's `retired` describes the data the component owns and the product surface it links to, not the component's own lifecycle: it has a write authority row, update/record effects and two readers, and the disposition catalog records it as an active internal component (rule 3: descriptive fields are not status declarations). Registered pending fix.",
+      "reviewCondition": "Remove once a later node sets both the manifest defaultMode and the disposition targetDefaultMode for retired-surface-registry to the internal lifecycle value."
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G-01",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "component-owner-unresolvable",
+      "target": "feature.agent-map",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-01",
+      "reason": "Feature-level disposition entry with no authority coverage, no DCS flag and a TF node as owner: no registry can locate its component owner. Registered as a gap, not guessed.",
+      "reviewCondition": "Resolve by declaring the component in the authority manifest or an explicit by-design-no-component record; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-02",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "component-owner-unresolvable",
+      "target": "feature.runtime-shadow-governance",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-02",
+      "reason": "Feature-level disposition entry with no authority coverage, no DCS flag and a TF node as owner: no registry can locate its component owner. Registered as a gap, not guessed.",
+      "reviewCondition": "Resolve by declaring the component in the authority manifest or an explicit by-design-no-component record; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-03",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "concept-without-component",
+      "target": "chat",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-03",
+      "reason": "The authority manifest has no session, orchestration or scheduling domain, so this product concept resolves to no component; relations touching it can only be checked for reference integrity, not authority consistency.",
+      "reviewCondition": "Resolve by declaring a component (or an explicit external-owner table) in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-03",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "concept-without-component",
+      "target": "chat-plan",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-03",
+      "reason": "The authority manifest has no session, orchestration or scheduling domain, so this product concept resolves to no component; relations touching it can only be checked for reference integrity, not authority consistency.",
+      "reviewCondition": "Resolve by declaring a component (or an explicit external-owner table) in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-03",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "concept-without-component",
+      "target": "plan-mode",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-03",
+      "reason": "The authority manifest has no session, orchestration or scheduling domain, so this product concept resolves to no component; relations touching it can only be checked for reference integrity, not authority consistency.",
+      "reviewCondition": "Resolve by declaring a component (or an explicit external-owner table) in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-03",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "concept-without-component",
+      "target": "task-loop",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-03",
+      "reason": "The authority manifest has no session, orchestration or scheduling domain, so this product concept resolves to no component; relations touching it can only be checked for reference integrity, not authority consistency.",
+      "reviewCondition": "Resolve by declaring a component (or an explicit external-owner table) in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-03",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "concept-without-component",
+      "target": "workboard",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-03",
+      "reason": "The authority manifest has no session, orchestration or scheduling domain, so this product concept resolves to no component; relations touching it can only be checked for reference integrity, not authority consistency.",
+      "reviewCondition": "Resolve by declaring a component (or an explicit external-owner table) in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "capability.execution-schema",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "context.candidate-fragment",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "context.owner-reference",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "context.source-reference",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "context.token-pressure",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "knowledge.candidate",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "mcp.tool-schema",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "memory.native-file",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "provider.media",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "provider.model-identity",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "provider.transform-declaration",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "runtime.config",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "runtime.env",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "session.transcript",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "skill.manifest",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-04",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "data-type-without-owner",
+      "target": "workspace.permission-mode",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-04",
+      "reason": "Data type that appears only in allowedReads with no owner row; the manifest validator does not check allowedReads, so by-design-external and missing-owner cannot be told apart.",
+      "reviewCondition": "Resolve by adding an owner row or an explicit external-owner marker in the authority manifest; gap-stale then rejects this entry."
+    },
+    {
+      "id": "G-05",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "subsystem-without-anchor",
+      "target": "dangerous-approvals",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-05",
+      "reason": "Reliability subsystem whose evidenceRefs share no exact path with any component sourceAnchors (I-5 admits exact path joins only; directory-level joins were rejected as too noisy). Manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-05",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "subsystem-without-anchor",
+      "target": "file-writes",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-05",
+      "reason": "Reliability subsystem whose evidenceRefs share no exact path with any component sourceAnchors (I-5 admits exact path joins only; directory-level joins were rejected as too noisy). Manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-05",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "subsystem-without-anchor",
+      "target": "gateway-startup",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-05",
+      "reason": "Reliability subsystem whose evidenceRefs share no exact path with any component sourceAnchors (I-5 admits exact path joins only; directory-level joins were rejected as too noisy). Manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-05",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "subsystem-without-anchor",
+      "target": "session-restore-replay",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-05",
+      "reason": "Reliability subsystem whose evidenceRefs share no exact path with any component sourceAnchors (I-5 admits exact path joins only; directory-level joins were rejected as too noisy). Manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-05",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "subsystem-without-anchor",
+      "target": "task-loop-repair-retry",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-05",
+      "reason": "Reliability subsystem whose evidenceRefs share no exact path with any component sourceAnchors (I-5 admits exact path joins only; directory-level joins were rejected as too noisy). Manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-06",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "surface-without-anchor",
+      "target": "compaction",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-06",
+      "reason": "Sensitive surface whose evidenceRefs share no exact path with any component sourceAnchors; manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-06",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "surface-without-anchor",
+      "target": "file",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-06",
+      "reason": "Sensitive surface whose evidenceRefs share no exact path with any component sourceAnchors; manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-06",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "surface-without-anchor",
+      "target": "memory",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-06",
+      "reason": "Sensitive surface whose evidenceRefs share no exact path with any component sourceAnchors; manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-06",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "surface-without-anchor",
+      "target": "modelEcho",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-06",
+      "reason": "Sensitive surface whose evidenceRefs share no exact path with any component sourceAnchors; manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-06",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "surface-without-anchor",
+      "target": "sekb",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-06",
+      "reason": "Sensitive surface whose evidenceRefs share no exact path with any component sourceAnchors; manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-06",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "surface-without-anchor",
+      "target": "trace",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-06",
+      "reason": "Sensitive surface whose evidenceRefs share no exact path with any component sourceAnchors; manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    },
+    {
+      "id": "G-06",
+      "rule": "gap-registration",
+      "disposition": "registered",
+      "class": "surface-without-anchor",
+      "target": "transcript",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-06",
+      "reason": "Sensitive surface whose evidenceRefs share no exact path with any component sourceAnchors; manual candidates exist but are not adjudication evidence.",
+      "reviewCondition": "Resolve by giving the entry a component field or an evidence path equal to a component source anchor."
+    }
+  ],
+  "conceptAliases": [
+    {
+      "id": "I-4",
+      "rule": "concept-alias",
+      "conceptId": "routing-memo",
+      "componentId": "routing-memo-observation",
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#3.1-I-4",
+      "reason": "Manual alias ruled by TF-0631: the concept id is a prefix of the component id and both describe the same routing-memo observation (purpose and sourceOfTruth agree); task-ledger is the only exact concept/component id match.",
+      "reviewCondition": "Drop this alias once product-semantics concepts carry an explicit component reference."
+    }
+  ],
+  "authorityBindings": [
+    {
+      "id": "A-01",
+      "rule": "authority-boundary",
+      "relation": "task-loop--roots-in--task-ledger",
+      "expectedBoundary": "task-ledger-authority",
+      "componentId": "task-ledger",
+      "requires": {
+        "ownedDataTypes": [
+          "task.fact",
+          "task.working-context"
+        ]
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#4.3",
+      "reason": "The relation names Task Ledger as the authority; the authority manifest agrees by giving task-ledger ownership of task.fact and task.working-context.",
+      "reviewCondition": "Re-adjudicate if the relation boundary, the task-ledger owned data types, or the task-loop concept gains a component."
+    },
+    {
+      "id": "A-02",
+      "rule": "authority-boundary",
+      "relation": "workboard--references-one-way--task-ledger",
+      "expectedBoundary": "one-way-reference",
+      "forbiddenBoundaries": [
+        "task-ledger-authority"
+      ],
+      "componentId": "task-ledger",
+      "requires": {
+        "forbiddenActions": [
+          "own-runtime-scheduler"
+        ]
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#4.3",
+      "reason": "Workboard may only reference Task Ledger one way; the manifest agrees because task-ledger forbids owning a runtime scheduler. A task-ledger-authority boundary here would make Workboard a second authority.",
+      "reviewCondition": "Re-adjudicate if the relation boundary changes or task-ledger forbiddenActions drop own-runtime-scheduler."
+    },
+    {
+      "id": "A-03",
+      "rule": "authority-boundary",
+      "relation": "routing-memo--quality-gated-by--task-loop",
+      "expectedBoundary": "same-session-scorecard",
+      "componentId": "routing-memo-observation",
+      "requires": {
+        "forbiddenActions": [
+          "grant-routing-permissions"
+        ]
+      },
+      "basis": "explicit-adjudication",
+      "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#4.3",
+      "reason": "Active routing requires same-session Task Loop authority; the manifest agrees because routing-memo-observation forbids granting routing permissions.",
+      "reviewCondition": "Re-adjudicate if the relation boundary changes, routing-memo-observation forbiddenActions change, or the task-loop concept gains a component."
+    }
+  ]
+}

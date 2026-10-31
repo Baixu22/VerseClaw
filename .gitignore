@@ -1442,6 +1442,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/architecture-skeleton/ADMISSION-GATE.md
 !/docs/dev/architecture-skeleton/ADMISSION-INVENTORY.md
 !/docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md
+!/docs/dev/architecture-skeleton/AUTHORITY-VALIDATOR.md
 !/docs/dev/architecture-skeleton/CHARTER.md
 !/docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md
 !/docs/dev/architecture-skeleton/OPERATOR-PLAN-20261031.md

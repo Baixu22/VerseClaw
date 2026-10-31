@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "authority-boundary-reversed",
+  "class": "conflicting-authority",
+  "rule": "authority-boundary",
+  "expect": "[semantic-authority/authority-boundary] product relation workboard--references-one-way--task-ledger declares authorityBoundary 'task-ledger-authority' but binding A-02 requires 'one-way-reference'",
+  "expectIssueCount": 4,
+  "description": "workboard→task-ledger is flipped to task-ledger-authority: binding A-02 is violated (expected boundary and forbidden boundary) and Task Ledger now has two authority-class claimants, which is reported on both relations (R-A).",
+  "mutations": [
+    {
+      "file": "shared/product-semantics.ts",
+      "find": "{ from: 'workboard', kind: 'references-one-way', to: 'task-ledger', authorityBoundary: 'one-way-reference',",
+      "replace": "{ from: 'workboard', kind: 'references-one-way', to: 'task-ledger', authorityBoundary: 'task-ledger-authority',"
+    }
+  ]
+}

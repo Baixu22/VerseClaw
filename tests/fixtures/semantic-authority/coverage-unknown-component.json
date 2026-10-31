@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "coverage-unknown-component",
+  "class": "missing-component",
+  "rule": "registry-self-validation",
+  "expect": "[semantic-authority/registry-self-validation] unknown_coverage: component.task-ledger references unknown authorityComponentIds: ghost-component",
+  "expectIssueCount": 4,
+  "description": "component.task-ledger covers a component the authority matrix does not know. The disposition catalog's own validator rejects it (unknown_coverage, reused not rewritten) and also reports task-ledger as unclassified; identity-key and owner-namespace then fail for the orphaned component.",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "find": "coverage: { authorityComponentIds: ['task-ledger'],",
+      "replace": "coverage: { authorityComponentIds: ['ghost-component'],"
+    }
+  ]
+}

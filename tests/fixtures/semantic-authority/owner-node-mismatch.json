@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "owner-node-mismatch",
+  "class": "conflicting-owner",
+  "rule": "owner-namespace",
+  "expect": "[semantic-authority/owner-namespace] disposition 'component.vtoken-context' names accountable node TF-0001 but its implementation/retirement node is TF-0496",
+  "expectIssueCount": 1,
+  "description": "A TF node in the owner field that is not the entry's own implementation/retirement node; the node value is only acceptable as the accountable node (C-01).",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "find": "disposition: 'retired', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'retired'",
+      "replace": "disposition: 'retired', owner: 'TF-0001', implementationNodeId: 'TF-0496', currentMode: 'retired'"
+    }
+  ]
+}

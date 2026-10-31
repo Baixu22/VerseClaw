@@ -1,0 +1,26 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "authority-data-type-multi-owner",
+  "class": "conflicting-authority",
+  "rule": "authority-boundary",
+  "expect": "[semantic-authority/authority-boundary] data type 'task.fact' has 2 authority owners: browser-task-projection-owner, task-ledger",
+  "expectIssueCount": 2,
+  "description": "A second component owns task.fact through a row with a different scope. The manifest's own validator only checks dataType::scope::operation uniqueness and accepts it; one data type with two owners is the authority conflict the gate exists for (R-A).",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "find": "ownedDataTypes: ['browser.task-projection'],",
+      "replace": "ownedDataTypes: ['browser.task-projection', 'task.fact'],"
+    },
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "find": "allowedWrites: ['browser.task-projection'],",
+      "replace": "allowedWrites: ['browser.task-projection', 'task.fact'],"
+    },
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "find": "      dataType: 'vtoken.bridge-runtime', scope: 'global', operation: 'update', authorityComponentId: 'vtoken-bridge',",
+      "replace": "      dataType: 'task.fact', scope: 'task', operation: 'update', authorityComponentId: 'browser-task-projection-owner',\n      notes: 'fixture: second owner for task.fact',\n    }),\n    authority({\n      dataType: 'vtoken.bridge-runtime', scope: 'global', operation: 'update', authorityComponentId: 'vtoken-bridge',"
+    }
+  ]
+}
