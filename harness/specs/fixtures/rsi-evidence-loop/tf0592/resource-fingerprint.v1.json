@@ -1,11 +1,11 @@
 {
   "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-  "generatedAt": "2026-10-31T02:13:09.949Z",
+  "generatedAt": "2026-10-31T10:56:11.235Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "candidate": {
-    "commit": "26b664c5c976383d7b3bd515293dec2f3775abea",
-    "tree": "e86eb373a2eb4a5b7d37739d82ab2e7b9bf9a01d",
+    "commit": "2a8be7f2184b2662540fa96432b927eb545a03a1",
+    "tree": "d34bb925f8d5f1fc3b4f77f95836ac18d60a9cd6",
     "branch": "codex/tf0604-rsi-baseline",
     "dirty": false,
     "dirtyPaths": [],
@@ -26,7 +26,7 @@
       "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
       "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
       "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
-      "docs/dev/rsi-capability-and-boundaries.md": "c71f76f56c8db36253d62976d3f0c29e4dcc501d16eb5b74513c988889422598"
+      "docs/dev/rsi-capability-and-boundaries.md": "73e16ebe4e720cb8605017fcac0bbaef39082178ae3b8491f51672c23bd7d029"
     }
   },
   "runtime": {
@@ -39,9 +39,9 @@
   "observedResources": {
     "cpuCount": 16,
     "totalMemoryBytes": 16295432192,
-    "freeMemoryBytes": 996544512,
+    "freeMemoryBytes": 3795021824,
     "disk": {
-      "freeBytes": 15858155520,
+      "freeBytes": 17613291520,
       "totalBytes": 322122543104,
       "status": "measured"
     }
