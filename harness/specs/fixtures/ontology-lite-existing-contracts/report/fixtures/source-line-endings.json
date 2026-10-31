@@ -1,0 +1,25 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "source-line-endings",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "leaf": "C3",
+  "purpose": "Positive case for the two-digest contract: one relation points at the two tracked sources under report/sources/. The LF file must record digest === rawDigest; the lone-CR file must record digest !== rawDigest with digest equal to the sha256 of its CR-normalized text and rawDigest equal to the sha256 of its stored bytes. The report stays valid (exit 0) because both sources exist, are inside the root and are tracked.",
+  "expect": {
+    "mode": "report",
+    "exitCode": 0,
+    "status": "valid",
+    "relationKey": "chat-plan--projects--task-ledger",
+    "paths": {
+      "lf": "harness/specs/fixtures/ontology-lite-existing-contracts/report/sources/lf-line-endings.md",
+      "cr": "harness/specs/fixtures/ontology-lite-existing-contracts/report/sources/cr-line-endings.md"
+    }
+  },
+  "mutations": [
+    {
+      "file": "shared/product-semantics.ts",
+      "find": "{ from: 'chat-plan', kind: 'projects', to: 'task-ledger', authorityBoundary: 'read-only-projection', evidenceRefs: ['docs/clawx-product-semantics.md'] },",
+      "replace": "{ from: 'chat-plan', kind: 'projects', to: 'task-ledger', authorityBoundary: 'read-only-projection', evidenceRefs: ['harness/specs/fixtures/ontology-lite-existing-contracts/report/sources/lf-line-endings.md', 'harness/specs/fixtures/ontology-lite-existing-contracts/report/sources/cr-line-endings.md'] },"
+    }
+  ]
+}

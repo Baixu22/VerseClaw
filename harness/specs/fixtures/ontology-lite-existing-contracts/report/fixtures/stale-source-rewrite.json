@@ -1,0 +1,21 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "stale-source-rewrite",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "leaf": "C3",
+  "purpose": "Simulates a source that changed after a report was written, without touching the working tree: used with --verify, the appended text is served in memory in place of docs/clawx-product-semantics.md, so the recomputed canonical and raw digests no longer match the ones the report recorded and --verify judges the report invalid with source-digest-mismatch for every relation that cites that document.",
+  "expect": {
+    "mode": "verify",
+    "exitCode": 1,
+    "status": "invalid",
+    "rule": "source-digest-mismatch",
+    "path": "docs/clawx-product-semantics.md"
+  },
+  "mutations": [
+    {
+      "file": "docs/clawx-product-semantics.md",
+      "append": "\n<!-- ontology-lite C3 stale-source probe: this line exists only in memory during a negative test -->\n"
+    }
+  ]
+}

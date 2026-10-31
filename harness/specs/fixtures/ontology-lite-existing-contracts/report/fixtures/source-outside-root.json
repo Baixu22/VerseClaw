@@ -1,0 +1,23 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "source-outside-root",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "leaf": "C3",
+  "purpose": "A relation whose evidence reference escapes the repository root lexically. The gate must not read or hash anything outside the root and must reject with source-outside-root regardless of whether such a file exists.",
+  "expect": {
+    "mode": "report",
+    "exitCode": 1,
+    "status": "invalid",
+    "rule": "source-outside-root",
+    "relationKey": "task-loop--roots-in--task-ledger",
+    "path": "../outside-the-repository.md"
+  },
+  "mutations": [
+    {
+      "file": "shared/product-semantics.ts",
+      "find": "{ from: 'task-loop', kind: 'roots-in', to: 'task-ledger', authorityBoundary: 'task-ledger-authority', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] },",
+      "replace": "{ from: 'task-loop', kind: 'roots-in', to: 'task-ledger', authorityBoundary: 'task-ledger-authority', evidenceRefs: ['../outside-the-repository.md'] },"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "version-unsupported",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "leaf": "C3",
+  "purpose": "The registry declares a contract version this checker does not bind. The gate must report version-unsupported instead of reading the unknown version as the latest or migrating it; relations and sources are still recorded.",
+  "expect": {
+    "mode": "report",
+    "exitCode": 1,
+    "status": "invalid",
+    "rule": "version-unsupported",
+    "field": "contractVersion",
+    "contractVersion": "ProductSemanticRelations/v2"
+  },
+  "mutations": [
+    {
+      "file": "shared/product-semantics.ts",
+      "find": "export const PRODUCT_SEMANTIC_CONTRACT_VERSION = 'ProductSemanticRelations/v1' as const;",
+      "replace": "export const PRODUCT_SEMANTIC_CONTRACT_VERSION = 'ProductSemanticRelations/v2' as const;"
+    }
+  ]
+}

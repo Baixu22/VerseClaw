@@ -1,0 +1,23 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "bad-relation-self-loop",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "leaf": "C3",
+  "purpose": "A relation whose endpoints coincide must be rejected by the registry's own validator (C2 rule self-loop) when the gate runs through the real entry; the report is still written and records the diagnostic.",
+  "expect": {
+    "mode": "report",
+    "exitCode": 1,
+    "status": "invalid",
+    "rule": "self-loop",
+    "relationKey": "chat--suggests-upgrade-to--chat",
+    "field": "to"
+  },
+  "mutations": [
+    {
+      "file": "shared/product-semantics.ts",
+      "find": "{ from: 'chat', kind: 'suggests-upgrade-to', to: 'task-loop', authorityBoundary: 'advisory-only',",
+      "replace": "{ from: 'chat', kind: 'suggests-upgrade-to', to: 'chat', authorityBoundary: 'advisory-only',"
+    }
+  ]
+}
