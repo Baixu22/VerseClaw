@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-10-31T13:13:30.768Z",
+  "generatedAt": "2026-10-31T14:25:38.500Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,12 +17,12 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-10-31T13:13:30.768Z",
+    "generatedAt": "2026-10-31T14:25:38.500Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "404b295e1f86138b0066d717792049706cce7653",
-      "tree": "213e39b4cccc5d4aeaaa860e6ec17ece594eaeb0",
+      "commit": "8f865a660bb649282ad553fc23f1fa08341eae40",
+      "tree": "994c82cf149f9c9f049474045573c2afb86059ed",
       "branch": "codex/tf0604-rsi-baseline",
       "dirty": false,
       "dirtyPaths": [],
@@ -56,9 +56,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 1812344832,
+      "freeMemoryBytes": 2379177984,
       "disk": {
-        "freeBytes": 18412322816,
+        "freeBytes": 18453856256,
         "totalBytes": 322122543104,
         "status": "measured"
       }
