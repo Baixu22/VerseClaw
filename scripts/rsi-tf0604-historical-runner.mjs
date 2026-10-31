@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync, renameSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
@@ -9,7 +9,7 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const write = (path, value) => { mkdirSync(dirname(path), { recursive: true }); const tmp = path + '.' + process.pid + '.tmp'; writeFileSync(tmp, JSON.stringify(value, null, 2) + '\n'); renameSync(tmp, path); };
 if (isMainEntrypoint(import.meta.url)) {
-  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' }, 'retain-dir': { type: 'string' } } });
+  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' }, 'retain-dir': { type: 'string' }, restart: { type: 'boolean' } } });
   try {
     const root = resolve(values.root ?? process.cwd());
     const runDir = resolve(values['run-dir'] ?? 'D:/tmp/rsi-tf0604-system-trials');
@@ -24,6 +24,13 @@ if (isMainEntrypoint(import.meta.url)) {
       if (progress.manifestDigest !== manifestDigest) throw new Error('historical manifest changed');
       for (const trialId of progress.completed) { const resultPath = join(runDir,'trials',trialId,'historical-result.json'); const actual = 'sha256:' + createHash('sha256').update(readFileSync(resultPath)).digest('hex'); if (progress.recordDigests[trialId] !== actual) throw new Error('sealed historical result changed'); }
       const limit = values.limit ? Number(values.limit) : undefined;
+      if (values.restart) {
+        for (const entry of manifest.trials) {
+          if (progress.completed.includes(entry.trialId)) continue;
+          const dir = join(runDir, 'trials', entry.trialId);
+          if (existsSync(dir)) { rmSync(dir, { recursive: true, force: true }); console.error('[restart] cleared ' + entry.trialId); }
+        }
+      }
       let executed = 0;
       for (const entry of manifest.trials.filter((trial) => values['trial-id'] ? trial.trialId === values['trial-id'] : true)) {
         if (progress.completed.includes(entry.trialId)) continue;
