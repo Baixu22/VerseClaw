@@ -11,6 +11,57 @@ touchedAreas:
   - harness/specs/fixtures/rsi-evidence-loop/tf0604/**
   - harness/specs/tasks/rsi-tf0604-baseline-corpus.md
   - tests/unit/rsi-tf0604-baseline.test.ts
+  - scripts/rsi-tf0604-historical-runner.mjs
+  - scripts/rsi-tf0604-historical-runner.d.mts
+  - scripts/lib/agent-first-graders.mjs
+  - scripts/lib/agent-first-graders.d.mts
+  - scripts/lib/agent-first-trials.mjs
+  - scripts/lib/agent-first-trials.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
+  - harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS
+  - harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration-samples.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/**
+  - harness/specs/fixtures/rsi-evidence-loop/capability-evidence.d.ts
+  - harness/specs/fixtures/rsi-evidence-loop/capability-evidence.v1.json
+  - harness/specs/fixtures/rsi-evidence-loop/tf0599/**
+  - harness/specs/fixtures/rsi-evidence-loop/tf0605/**
+  - harness/specs/fixtures/rsi-evidence-loop/tf0606/**
+  - harness/specs/fixtures/rsi-evidence-loop/tf0607/**
+  - harness/specs/fixtures/rsi-evidence-loop/tf0608/**
+  - harness/specs/fixtures/rsi-evidence-loop/tf0609/**
+  - harness/specs/tasks/rsi-tf0599-candidate-gate.md
+  - harness/specs/tasks/rsi-tf0605-delta-playbook.md
+  - harness/specs/tasks/rsi-tf0606-self-harness.md
+  - harness/specs/tasks/rsi-tf0607-contamination-gate.md
+  - harness/specs/tasks/rsi-tf0608-adjudication.md
+  - harness/specs/tasks/rsi-tf0609-code-self-modification.md
+  - harness/specs/tasks/rsi-tf0610-evidence-closeout.md
+  - docs/dev/rsi-capability-and-boundaries.md
+  - openclaw_runtime/scripts/generate-rsi-tf0605-evidence.ts
+  - openclaw_runtime/src/knowledge/sekb/**
+  - scripts/rsi-tf0599-candidate-gate.mjs
+  - scripts/rsi-tf0599-candidate-gate.d.mts
+  - scripts/rsi-tf0606-self-harness.mjs
+  - scripts/rsi-tf0606-self-harness.d.mts
+  - scripts/rsi-tf0607-contamination-gate.mjs
+  - scripts/rsi-tf0607-contamination-gate.d.mts
+  - scripts/rsi-tf0608-adjudication.mjs
+  - scripts/rsi-tf0608-adjudication.d.mts
+  - scripts/rsi-tf0609-code-self-modification.mjs
+  - scripts/rsi-tf0609-code-self-modification.d.mts
+  - scripts/rsi-tf0610-capability-report.mjs
+  - scripts/rsi-tf0610-capability-report.d.mts
+  - tests/unit/rsi-tf0599-candidate-gate.test.ts
+  - tests/unit/rsi-tf0606-self-harness.test.ts
+  - tests/unit/rsi-tf0607-contamination-gate.test.ts
+  - tests/unit/rsi-tf0608-adjudication.test.ts
+  - tests/unit/rsi-tf0609-code-self-modification.test.ts
+  - tests/unit/rsi-tf0610-capability-report.test.ts
+  - harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json
+  - harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json
+  - tests/unit/rsi-tf0604-historical-runner.test.ts
   - docs/README.md
   - scripts/repository-artifacts.json
   - .gitignore
@@ -48,6 +99,7 @@ humanEvidence: not-required
 requiredTests:
   - pnpm rsi:tf0604:check
   - pnpm exec vitest run tests/unit/rsi-tf0604-baseline.test.ts
+  - pnpm exec vitest run tests/unit/rsi-tf0604-historical-runner.test.ts
   - pnpm harness validate --spec harness/specs/tasks/rsi-tf0604-baseline-corpus.md
   - pnpm run typecheck
 acceptance:
