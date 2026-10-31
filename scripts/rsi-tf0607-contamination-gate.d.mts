@@ -1,0 +1,16 @@
+export type RsiContaminationError = { code: string; message: string };
+export type RsiContaminationValidation = { passed: boolean; errors: RsiContaminationError[] };
+export type RsiCandidateChange = { path: string; surface: string; content: string };
+export type RsiCandidateManifest = { candidateId: string; parentLineage: string[]; changed: RsiCandidateChange[]; diffDigest: string };
+export type RsiGateTrial = { caseId: string; repeat: number; status: string; teardown: string; crossTrialLeakage?: boolean; safetyRequired?: boolean; flake?: boolean };
+export type RsiContaminationControl = { id: string; expected: string; observedCodes: string[]; passed: boolean };
+export const TF0607_PACK_DIR: string;
+export const TF0607_SCHEMA: string;
+export const TF0607_ACTOR: string;
+export function validateCandidate(candidate: RsiCandidateManifest): RsiContaminationError[];
+export function scanContent(entries: RsiCandidateChange[]): RsiContaminationError[];
+export function validateTrials(trials: RsiGateTrial[]): RsiContaminationError[];
+export function validateGate(candidate: RsiCandidateManifest, content: RsiCandidateChange[], trials: RsiGateTrial[], options?: { externalGateStatus?: string }): RsiContaminationValidation;
+export function buildSampleContext(): { candidate: RsiCandidateManifest; content: RsiCandidateChange[]; trials: RsiGateTrial[]; options: { externalGateStatus?: string } };
+export function runControls(context: ReturnType<typeof buildSampleContext>): RsiContaminationControl[];
+export function writeGatePack(): { report: { status: string; validation: RsiContaminationValidation }; controls: RsiContaminationControl[] };

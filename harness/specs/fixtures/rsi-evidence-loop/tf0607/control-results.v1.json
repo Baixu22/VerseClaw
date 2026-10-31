@@ -1,0 +1,84 @@
+[
+  {
+    "id": "evaluator-tamper",
+    "expected": "evaluator-write",
+    "observedCodes": [
+      "candidate-digest",
+      "evaluator-write"
+    ],
+    "passed": true
+  },
+  {
+    "id": "prompt-injection",
+    "expected": "prompt-injection",
+    "observedCodes": [
+      "candidate-digest",
+      "prompt-injection"
+    ],
+    "passed": true
+  },
+  {
+    "id": "duplicate-trial",
+    "expected": "duplicate-trial",
+    "observedCodes": [
+      "duplicate-trial"
+    ],
+    "passed": true
+  },
+  {
+    "id": "cross-trial",
+    "expected": "cross-trial-leakage",
+    "observedCodes": [
+      "cross-trial-leakage"
+    ],
+    "passed": true
+  },
+  {
+    "id": "teardown",
+    "expected": "missing-teardown",
+    "observedCodes": [
+      "missing-teardown"
+    ],
+    "passed": true
+  },
+  {
+    "id": "skip",
+    "expected": "incomplete-trial",
+    "observedCodes": [
+      "incomplete-trial"
+    ],
+    "passed": true
+  },
+  {
+    "id": "safety-flake",
+    "expected": "safety-flake",
+    "observedCodes": [
+      "safety-flake"
+    ],
+    "passed": true
+  },
+  {
+    "id": "lineage",
+    "expected": "candidate-lineage",
+    "observedCodes": [
+      "candidate-lineage"
+    ],
+    "passed": true
+  },
+  {
+    "id": "digest",
+    "expected": "candidate-digest",
+    "observedCodes": [
+      "candidate-digest"
+    ],
+    "passed": true
+  },
+  {
+    "id": "external-gate",
+    "expected": "external-gate-status",
+    "observedCodes": [
+      "external-gate-status"
+    ],
+    "passed": true
+  }
+]
