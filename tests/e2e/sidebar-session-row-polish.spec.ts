@@ -157,10 +157,11 @@ test.describe('Sidebar session rows and activity bell', () => {
       const menu = page.getByTestId(`sidebar-session-context-menu-${LONG}`);
       await expect(menu).toBeVisible();
       await expect(more).toHaveAttribute('aria-expanded', 'true');
+      // Geometry belongs to the settled menu, not the 140ms scale/fade frame.
+      await settleAnimations(page, `sidebar-session-context-menu-${LONG}`);
       const [menuBox, moreBox] = await Promise.all([menu.boundingBox(), more.boundingBox()]);
       expect(Math.abs((menuBox!.x + menuBox!.width) - (moreBox!.x + moreBox!.width))).toBeLessThanOrEqual(2);
       expect(menuBox!.y).toBeGreaterThanOrEqual(moreBox!.y + moreBox!.height);
-      await settleAnimations(page, `sidebar-session-context-menu-${LONG}`);
       await capture(page, 'more-menu-light');
 
       // The keyboard works inside the menu, and Escape closes it.

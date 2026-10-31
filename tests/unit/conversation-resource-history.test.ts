@@ -239,6 +239,30 @@ describe('conversation resources through the production history path', () => {
     ]);
   });
 
+  it('does not turn a Tool UI payload path into a second file card', async () => {
+    const localPath = String.raw`C:\work\local.png`;
+    const gallery = JSON.stringify({
+      type: 'image-gallery',
+      id: 'gallery-1',
+      images: [{ url: localPath, alt: 'Local tile' }],
+    });
+    const messages = await loadMessages([
+      user('show the image'),
+      reply([
+        'Here it is.',
+        '',
+        'MEDIA:' + localPath,
+        '',
+        '```tool-ui',
+        gallery,
+        '```',
+      ].join('\n')),
+    ]);
+
+    const files = (messages.at(-1)?._attachedFiles ?? []).filter((file) => file.filePath === localPath);
+    expect(files).toHaveLength(1);
+  });
+
   it('survives a history reload with the same result', async () => {
     const history = [
       user('make a clip'),

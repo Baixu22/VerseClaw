@@ -5,6 +5,7 @@ import {
   isUserFacingMediaBlock,
   mediaKindOf,
   messageHasUserFacingMedia,
+  stripToolUiFences,
 } from '@/pages/Chat/conversation-resources';
 import {
   isGeneratingStatusNarration,
@@ -802,9 +803,10 @@ function extractRawFilePaths(text: string): Array<{ filePath: string; mimeType: 
   // The non-greedy `*?` anchored to `\.<ext>` keeps the match minimal so
   // multiple `MEDIA:` markers in one paragraph still match independently.
   const taggedRegex = new RegExp(`(?:^|[\\s(\\[{>])(?:MEDIA|media):((?:\\/|~\\/|[A-Za-z]:\\\\)[^\\n"'()\\[\\],<>` + '`' + `]*?\\.(?:${exts}))(?=$|[\\s\\n"'()\\[\\],<>` + '`' + `]|[，。；;,.!?])`, 'g');
-  let workingText = text;
+  const scanText = stripToolUiFences(text);
+  let workingText = scanText;
   let taggedMatch: RegExpExecArray | null;
-  while ((taggedMatch = taggedRegex.exec(text)) !== null) {
+  while ((taggedMatch = taggedRegex.exec(scanText)) !== null) {
     const p = taggedMatch[1];
     if (p && !seen.has(p)) {
       seen.add(p);

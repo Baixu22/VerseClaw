@@ -109,6 +109,15 @@ const SENSITIVE_QUERY_KEY_RE = /token|key|secret|sig|password|passwd|pwd|auth|cr
 const MAX_TITLE_CHARS = 120;
 const MAX_DESCRIPTION_CHARS = 280;
 
+/**
+ * A Tool UI fence names its own files inside JSON. Mask the whole payload before
+ * scanning prose for paths, or a local image becomes both a structured card and
+ * an unrelated attachment (with JSON's doubled Windows separators).
+ */
+export function stripToolUiFences(text: string): string {
+  return text.replace(/```tool-ui\b[\s\S]*?```/gi, '');
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

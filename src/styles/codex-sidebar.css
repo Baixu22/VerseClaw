@@ -458,6 +458,7 @@
   display: block;
   overflow: hidden;
   white-space: nowrap;
+  pointer-events: none;
   margin-left: calc(-1 * var(--task-title-gutter));
   padding-left: var(--task-title-gutter);
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--task-title-gutter), #000 calc(100% - 16px), transparent 100%);
