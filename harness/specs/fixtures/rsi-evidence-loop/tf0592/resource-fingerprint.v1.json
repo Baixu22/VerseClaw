@@ -1,19 +1,14 @@
 {
   "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-  "generatedAt": "2026-10-31T02:01:08.890Z",
+  "generatedAt": "2026-10-31T02:03:28.667Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "candidate": {
-    "commit": "03a5b17d22e67c2e6399c7e4b5f8ce2e28759a81",
-    "tree": "4e22803b6776f33efb925f29306d91b18ad7fe04",
-    "branch": "codex/tf0604-rsi-baseline",
-    "dirty": true,
-    "dirtyPaths": [
-      "M harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS",
-      " M harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json",
-      " M harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json",
-      " M harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json"
-    ],
+    "commit": "1854afa7be94c4d32eea426be1faff2661218385",
+    "tree": "4db6109f6cf9f5ebc7b038c1b32b129e47481e00",
+    "branch": "",
+    "dirty": false,
+    "dirtyPaths": [],
     "sourceHashes": {
       "scripts/rsi-tf0592-statistical-adjudication.mjs": "9b9a144151bef0fac8861331aeaa946ab61f2cb0b2c9ae66d757718e41faeaab",
       "scripts/rsi-tf0592-statistical-adjudication.d.mts": "ed8f70486fcea6a78271e8112c2c366b22a7f7f23aea5ab89a2c01aafacb45ed",
@@ -44,10 +39,10 @@
   "observedResources": {
     "cpuCount": 16,
     "totalMemoryBytes": 16295432192,
-    "freeMemoryBytes": 1248940032,
+    "freeMemoryBytes": 2108227584,
     "disk": {
-      "freeBytes": 15876235264,
-      "totalBytes": 322122543104,
+      "freeBytes": 130322628608,
+      "totalBytes": 701020237824,
       "status": "measured"
     }
   },
