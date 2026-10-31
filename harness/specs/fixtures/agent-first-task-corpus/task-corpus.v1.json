@@ -4,7 +4,7 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "fa5098c985f737f5b4a2af65f9a4a1b9e34bf298",
+  "sourceCommit": "3b407c93ecc7466a64ff82eaa8c4f8d60273a2e5",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
   "sourceCorpusSha256": "c1b464613c2ca39f28722c56b3a75281a222420d7491aafc8a6854434c983432",
   "tasks": [
@@ -68,6 +68,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+        "baseCommit": "874befaaa018bdb1160f8f064b17f053fcfe8512",
         "sourceRecord": "docs/dev/harness-gap-closure/e01-acceptance.json",
         "sourceRecordSha256": "b0f0214881444c68e9c7b339a528c80cc9d2894831191cd6ee16ed8825afdb94",
         "historicalDecision": "PASS",
@@ -182,6 +183,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+        "baseCommit": "6b56992a2a55127c7175fda3a3b7c3206736b485",
         "sourceRecord": "docs/dev/harness-gap-closure/e02-acceptance.json",
         "sourceRecordSha256": "67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd",
         "historicalDecision": "PASS",
@@ -292,6 +294,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+        "baseCommit": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
         "sourceRecord": "docs/dev/harness-gap-closure/g01-acceptance.json",
         "sourceRecordSha256": "09390cf33cf15bb05097f38d8cb9cf845962bf17958d90befdde235218176407",
         "historicalDecision": "PASS",
@@ -429,6 +432,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+        "baseCommit": "c708133cc789e38c19c3412c68751b5cf42a0bce",
         "sourceRecord": "docs/dev/harness-gap-closure/g02-acceptance.json",
         "sourceRecordSha256": "1bb54cbc25f437496ffdecb71f808562d633b123bd115901e91ef0c3d94aaea0",
         "historicalDecision": "PASS",
@@ -537,6 +541,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+        "baseCommit": "6df7bd8cbdd9456612b5524dae18ec618343152e",
         "sourceRecord": "docs/dev/harness-gap-closure/g03-acceptance.json",
         "sourceRecordSha256": "b2936554a04cf2500ca099bb643a6345aadf451b0c77bcbe76428271c7452949",
         "historicalDecision": "PASS",
@@ -646,6 +651,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "f42bb417b862784ad37e3f488f844cc697dbea51",
+        "baseCommit": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
         "sourceRecord": "docs/dev/harness-gap-closure/l01-acceptance.json",
         "sourceRecordSha256": "0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141",
         "historicalDecision": "PASS",
@@ -763,6 +769,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "e355beea81075df4ca53b0434689adcdc508f5e6",
+        "baseCommit": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
         "sourceRecord": "docs/dev/harness-gap-closure/l02-acceptance.json",
         "sourceRecordSha256": "27ba5b7c62e490e116af31e380292647c3c1ce177962dbe78515e6d19ff9bca1",
         "historicalDecision": "PASS",
@@ -870,6 +877,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+        "baseCommit": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
         "sourceRecord": "docs/dev/harness-gap-closure/l03-acceptance.json",
         "sourceRecordSha256": "8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8",
         "historicalDecision": "PASS",
@@ -983,6 +991,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+        "baseCommit": "2813bfcfc95d913c9a914bb082a709988480722e",
         "sourceRecord": "docs/dev/harness-gap-closure/l04-acceptance.json",
         "sourceRecordSha256": "e3e32b5f69a9d210cc57ccaa34b61e76c4f1dfb94984db776bdc8d5d4eb3f953",
         "historicalDecision": "PASS",
@@ -1093,6 +1102,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+        "baseCommit": "679b7124972f25a68d8ab15032afe4aee44ef19b",
         "sourceRecord": "docs/dev/harness-gap-closure/l05-acceptance.json",
         "sourceRecordSha256": "985fd1b987c5b48dc7e69c512784465008cff242a06626c9ea27f24efb784e93",
         "historicalDecision": "PASS",
@@ -1210,6 +1220,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+        "baseCommit": "4afa1e94a73f200a29713566b5759b92a115f70a",
         "sourceRecord": "docs/dev/harness-gap-closure/l06-acceptance.json",
         "sourceRecordSha256": "17682ec3f46b3f3d0ac6d8469bcd9fc3a97f95c5e0eea7dbcf99ac4a16400272",
         "historicalDecision": "PASS",
@@ -1319,6 +1330,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "f064ff2c592580763a564c5635f554130a8fa992",
+        "baseCommit": "ca24fb81ae83dde9907561b583b7990df6844b67",
         "sourceRecord": "docs/dev/harness-gap-closure/s01-acceptance.json",
         "sourceRecordSha256": "91eccf66cb8f2b34a5289cd264ff90bf1319c0181c4bc0a4ef8ccd43bea5d276",
         "historicalDecision": "PASS",
@@ -1441,6 +1453,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+        "baseCommit": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
         "sourceRecord": "docs/dev/harness-gap-closure/s02-acceptance.json",
         "sourceRecordSha256": "2d02761a45c25e9c96b3ba0cd9d8016355e1ced5fb9f69fd9b43f30467cb9e64",
         "historicalDecision": "PASS",
@@ -1573,6 +1586,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "3f7060cb2bade7b693c407b70cfa71c698988444",
+        "baseCommit": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
         "sourceRecord": "docs/dev/harness-gap-closure/s03-acceptance.json",
         "sourceRecordSha256": "6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02",
         "historicalDecision": "PASS",
@@ -1717,6 +1731,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+        "baseCommit": "ca413cdc436c00f7eddb06584783fd98996939c9",
         "sourceRecord": "docs/dev/harness-gap-closure/s04-acceptance.json",
         "sourceRecordSha256": "b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e",
         "historicalDecision": "PASS",
@@ -1842,6 +1857,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+        "baseCommit": "ae9ea9162c105f734566f5a696d55b5eae5071df",
         "sourceRecord": "docs/dev/harness-gap-closure/s05-acceptance.json",
         "sourceRecordSha256": "a8422e790efb7ccd9c3f3b9dbbf7c2115d56a37f2081b774d0232eceb9acc4be",
         "historicalDecision": "PASS",
@@ -1966,6 +1982,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+        "baseCommit": "8c34f6ca3a4151bf60626447a250044bba8ac423",
         "sourceRecord": "docs/dev/harness-gap-closure/s06-acceptance.json",
         "sourceRecordSha256": "a07f47b7576a95958f361fe54a6add343a4c54938ab8ce5db216cade59b98b2e",
         "historicalDecision": "PASS",
@@ -2097,6 +2114,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+        "baseCommit": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
         "sourceRecord": "docs/dev/harness-gap-closure/s07-acceptance.json",
         "sourceRecordSha256": "e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb",
         "historicalDecision": "PASS",
@@ -2233,6 +2251,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "46e553fd87d5fadf14d6f7aa7a7a85b614aef466",
+        "baseCommit": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
         "sourceRecord": "docs/dev/harness-gap-closure/a01-acceptance.json",
         "sourceRecordSha256": "7f45be3ac002e36b10061dd201d6768763011ff2805c30dec4f9ba122efbe1ef",
         "historicalDecision": "PASS",
@@ -2373,6 +2392,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "4359e684b795a4033592da4e7c270ce56f9c3711",
+        "baseCommit": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
         "sourceRecord": "docs/dev/harness-gap-closure/a02-acceptance.json",
         "sourceRecordSha256": "99b89c7ab9a53518eaefba20210dd23ca9f624eab0705ca0ad87d572cd6234ed",
         "historicalDecision": "PASS",
@@ -2524,6 +2544,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "fe392a70e9afbf76238a88d4e87c08b557898940",
+        "baseCommit": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
         "sourceRecord": "docs/dev/harness-gap-closure/a03-acceptance.json",
         "sourceRecordSha256": "94560219120997217ba78b0d8d3378d1a96649850e702b12cd418ad9fbbc6fec",
         "historicalDecision": "PASS",
@@ -2656,6 +2677,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "0f6d21f673ba491527fc3161dafc8430edb655d8",
+        "baseCommit": "65ecf51657e25297b48bf002ac0af5344362487e",
         "sourceRecord": "docs/dev/harness-gap-closure/a04-acceptance.json",
         "sourceRecordSha256": "2df9f728a9c7867659b2ce03135e1754a26b7a57fe7f51be80d4ae64c6d18e0c",
         "historicalDecision": "NO-GO",
@@ -2793,6 +2815,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "47388bf320000a203b096992c9ddb8a3b2bca487",
+        "baseCommit": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
         "sourceRecord": "docs/dev/harness-gap-closure/a05-acceptance.json",
         "sourceRecordSha256": "4cec9973dc952b2793b2d64da099e26a54752788505363922040f426ce2c9819",
         "historicalDecision": "PASS",
@@ -2936,6 +2959,7 @@
       "referenceSolution": {
         "kind": "revision-bound-executable-feasibility-proof",
         "referenceCommit": "bd8dca0a342f75f19e021509e42c16f016f0d891",
+        "baseCommit": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
         "sourceRecord": "docs/dev/harness-gap-closure/a06-acceptance.json",
         "sourceRecordSha256": "053a3892c62f918db7b61718eadc84e5c8419e6e9d138a261ffcc97d6f5105aa",
         "historicalDecision": "PASS",

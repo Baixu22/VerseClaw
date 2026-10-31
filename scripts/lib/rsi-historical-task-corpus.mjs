@@ -52,7 +52,9 @@ export function buildTaskCorpus(root = process.cwd()) {
       oracle: { graderId: 'deterministic-final-state', commandLine, commandLines, originalRequiredTests: declarations, testPaths, expectedSkips: 0, expectedTestCount: null, inputDigests: Object.fromEntries([specPath, ...testPaths, ...extraCommands.flatMap((line) => [...line.matchAll(/scripts\/[\w.-]+\.mjs/gu)].map((match) => match[0]))].map((path) => [path, sha256File(join(root, path))])) },
       referenceSolution: {
         kind: focusedHistorical.length ? 'revision-bound-executable-feasibility-proof' : 'unverified-reference',
-        referenceCommit: record.candidate?.commit ?? null, sourceRecord: recordPath, sourceRecordSha256: sha256File(join(root, recordPath)),
+        referenceCommit: record.candidate?.commit ?? null,
+        baseCommit: record.candidate?.base ?? null,
+        sourceRecord: recordPath, sourceRecordSha256: sha256File(join(root, recordPath)),
         historicalDecision: record.decision?.status ?? 'unknown', passingOracleEvidence: focusedHistorical,
         nonzeroHistoricalGates: residuals, currentReferenceExecution: 'not-run',
         boundary: 'Historical feasibility and source/test bindings do not claim a current model/system trial.',

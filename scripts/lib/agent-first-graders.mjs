@@ -131,7 +131,7 @@ export function gradeTaskExecutions(task, executions) {
   return result('pass', 'Every frozen oracle completed with independent evidence', { grades, evidenceKind: 'owned-execution' });
 }
 
-export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles') {
+export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles', options = {}) {
   try { task = freezeOwned(structuredClone(task)); } catch { throw new Error('Frozen task must be plain data'); }
   if (!task?.oracle?.commandLines?.length || !task.oracle.testPaths?.length) throw new Error('Frozen task oracles are required');
   const base = resolve(root);
@@ -153,11 +153,14 @@ export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles')
   delete env.NODE_TLS_REJECT_UNAUTHORIZED;
   env.npm_config_verify_deps_before_run = 'false';
   env.pnpm_config_verify_deps_before_run = 'warn';
+  const commandLines = options.commandLines ?? task.oracle.commandLines;
+  if (!Array.isArray(commandLines) || commandLines.length !== task.oracle.commandLines.length) throw new Error('Oracle command override must match the frozen command count');
   const executions = [];
-  for (const [index, commandLine] of task.oracle.commandLines.entries()) {
+  for (const [index, commandLine] of commandLines.entries()) {
     if (/[;&|<>`$]/u.test(commandLine) || !/^(?:pnpm (?:exec vitest run |--dir openclaw_runtime exec node scripts\/run-vitest\.mjs run )|node scripts\/[\w.-]+\.mjs(?: |$))/u.test(commandLine)) throw new Error('Unregistered oracle command');
     const startedAt = new Date().toISOString(); const started = performance.now();
-    const run = spawnSync(process.env.ComSpec ?? 'cmd.exe', ['/d', '/s', '/c', commandLine], { cwd: base, env, encoding: 'utf8', windowsHide: true, timeout: 900000, maxBuffer: 16 * 1024 * 1024 });
+    const authorityRoot = options.authorityRoot ? resolve(options.authorityRoot) : base;
+    const run = spawnSync(process.env.ComSpec ?? 'cmd.exe', ['/d', '/s', '/c', commandLine], { cwd: authorityRoot, env, encoding: 'utf8', windowsHide: true, timeout: 900000, maxBuffer: 16 * 1024 * 1024 });
     const stdout = redactText(run.stdout ?? '', { sourceRoot: base, outputDir: directory, secrets });
     const stderr = redactText(run.stderr ?? '', { sourceRoot: base, outputDir: directory, secrets });
     const verified = verifyInputs();

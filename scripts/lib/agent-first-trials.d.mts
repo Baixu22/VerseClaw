@@ -11,3 +11,13 @@ export function checkTrialRun(runDir: string, options?: { root?: string; write?:
 export function retainTrialRun(runDir: string, outputDir: string, options?: { root?: string }): any;
 export function verifyRetainedRun(runDir: string, options?: { root?: string }): any;
 export function verifyTrialAcceptance(file: string, options?: { root?: string; raw?: string }): any;
+
+export function buildHistoricalTrialPlan(root?: string): {
+  corpus: any;
+  splitDigest: string;
+  trials: Array<{ taskId: string; arm: 'baseline' | 'treatment'; repeat: number; trialId: string }>;
+  hiddenTestPaths: string[];
+};
+export function writeHistoricalManifest(runDir: string, options?: { root?: string; dependenciesRoot?: string; model?: string }): any;
+export async function runHistoricalTrial(runDir: string, options?: { root?: string; trialId: string }): Promise<any>;
+export function checkHistoricalRun(runDir: string, options?: { root?: string; write?: boolean }): any;

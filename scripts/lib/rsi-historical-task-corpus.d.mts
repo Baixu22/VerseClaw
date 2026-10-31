@@ -3,7 +3,7 @@ export type CorpusTask = GraderTask & {
   schemaVersion: string; version: string; sourceTaskId: string; title: string; kind: string; split: string; driven_by: string; actor: string;
   input: { prompt: string; acceptanceCriteria: string[]; contextRefs: string[]; targetScope: string[] };
   oracle: GraderTask['oracle'] & { commandLines: string[]; originalRequiredTests: string[]; testPaths: string[]; inputDigests: Record<string, string> };
-  referenceSolution: { kind: string; referenceCommit: string | null; sourceRecord: string; sourceRecordSha256: string; historicalDecision: string; passingOracleEvidence: Array<{ id: string; commandLine: string; exitCode: number; counts: Record<string, number | null> }>; nonzeroHistoricalGates: Array<{ id: string; exitCode: number; commandLine: string }>; currentReferenceExecution: string; boundary: string };
+  referenceSolution: { kind: string; referenceCommit: string | null; baseCommit: string | null; sourceRecord: string; sourceRecordSha256: string; historicalDecision: string; passingOracleEvidence: Array<{ id: string; commandLine: string; exitCode: number; counts: Record<string, number | null> }>; nonzeroHistoricalGates: Array<{ id: string; exitCode: number; commandLine: string }>; currentReferenceExecution: string; boundary: string };
   provenance: { kind: string; packet: string; specPath: string; specSha256: string; recordPath: string; recordSha256: string; realHuman: boolean };
   feasibility: { establishedAtReferenceRevision: boolean; currentSystemPassClaimed: boolean };
   counterexamples: string[]; graderIds: string[]; successState: Record<string, unknown>; coverageRationale: string;
