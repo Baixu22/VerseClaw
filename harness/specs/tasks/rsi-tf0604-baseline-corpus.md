@@ -137,3 +137,24 @@ The pack contains:
 The later baseline runner may replace only the raw trial and aggregate evidence through a separately reviewed change. It may not change the frozen task definitions, source digests, negative controls, k=3, minimum complete-case floor of 20, or the agent-driven evidence boundary.
 
 No human step is required. Any later human-shaped review is represented by an automated agent-driven path and labelled accordingly.
+
+## Real system trials
+
+`scripts/rsi-tf0604-historical-runner.mjs` executes the sealed corpus as real isolated trials:
+24 cases x {baseline, treatment} x k=3 = 144 trials, each in a fresh `git archive` of the task's
+own `baseCommit`. Arm separation is exact: the baseline snapshot contains only `.rsi/TASK.json`
+and `.rsi/RESULT_SCHEMA.json`, while the treatment snapshot additionally carries the TF-0606
+candidate prompt in `.rsi/AGENT_INSTRUCTIONS.md`, injected via the documented project-doc
+fallback filename. The agent never sees the hidden oracle; graders restore frozen tests into a
+separate copy and run them there.
+
+Results are sealed per trial (`historical-result.json` plus grader execution receipts) and
+preserved with `scripts/rsi-tf0604-system-run.mjs` into
+`harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run`. `validateTrialPack` re-reads that
+pack from disk and recomputes every seal; tampered payloads and unclassified failures are
+rejected. Failure classes stay separated: `infrastructure` for envelope timeouts or environment
+errors, `agent` for subject-level failures, `task` for infeasible snapshots, `grader` for
+insufficient grader evidence.
+
+As long as fewer than 20 cases complete at k=3, the aggregate and capability report stay
+`insufficient-evidence` and expose no `pass^k`, `pass@k` or paired interval.
