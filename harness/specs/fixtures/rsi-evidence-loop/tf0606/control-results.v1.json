@@ -1,0 +1,58 @@
+[
+  {
+    "id": "missing-task-weakeness",
+    "expectedCode": "weakness-coverage",
+    "observedCodes": [
+      "weakness-coverage"
+    ],
+    "passed": true
+  },
+  {
+    "id": "unsafe-surface",
+    "expectedCode": "candidate-surface",
+    "observedCodes": [
+      "candidate-surface"
+    ],
+    "passed": true
+  },
+  {
+    "id": "auto-merge",
+    "expectedCode": "automatic-merge",
+    "observedCodes": [
+      "automatic-merge"
+    ],
+    "passed": true
+  },
+  {
+    "id": "self-promote",
+    "expectedCode": "promotion-claim",
+    "observedCodes": [
+      "promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "missing-contrast",
+    "expectedCode": "contrastive-lineage",
+    "observedCodes": [
+      "contrastive-lineage"
+    ],
+    "passed": true
+  },
+  {
+    "id": "non-not-run-gate",
+    "expectedCode": "gate-boundary",
+    "observedCodes": [
+      "gate-boundary"
+    ],
+    "passed": true
+  },
+  {
+    "id": "report-promotes",
+    "expectedCode": "report-promotion",
+    "observedCodes": [
+      "report-promotion"
+    ],
+    "passed": true
+  }
+]
