@@ -3,8 +3,8 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "5c196c32d4ab95714a9a5e2ea8347ec8ca059f84",
-    "tree": "c90611ed00db3436f1d1990022a38015e90efa68",
+    "commit": "86af9f11238b6ae77b71f1ab37f8c28961860de9",
+    "tree": "6a68f3ca8f06ece11f48534248c12b670a1e13f4",
     "dirty": false,
     "sourceHashes": {
       "scripts/rsi-historical-task-corpus.mjs": "8945419f9f7916aee91915b561c1191760be14de8b15365ee7ae9ce1c991da53",
