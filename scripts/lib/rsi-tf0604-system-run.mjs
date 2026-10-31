@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { checkHistoricalRun } from '../lib/agent-first-trials.mjs';
 
@@ -9,6 +9,7 @@ export const TF0604_SYSTEM_RUN_ACTOR = 'codex/tf0604-system-runner';
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const err = (code, message) => ({ code, message });
+const rel = (path) => path.split('\\').join('/');
 
 function walk(path) {
   return readdirSync(path, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? walk(join(path, entry.name)) : entry.isFile() ? [join(path, entry.name)] : []);
@@ -21,8 +22,25 @@ export function preserveTrialEvidence(runDir, outputDir, options = {}) {
   const report = checkHistoricalRun(run, { root, write: false });
   const manifest = read(join(run, 'manifest.json'));
   const progress = read(join(run, 'progress.json'));
+  const trialIds = new Set(progress.completed ?? []);
+
+  // Never mix two runs, and never leave an orphan trial directory behind: a stale
+  // directory would break the SHA256SUMS coverage check in a fresh checkout.
+  const existingManifestPath = join(out, 'manifest.json');
+  if (existsSync(existingManifestPath)) {
+    const sameRun = read(existingManifestPath).runId === manifest.runId;
+    if (!sameRun && !options.replace) throw new Error(`refusing to overwrite a different run pack: ${out}`);
+    if (sameRun && !options.replace) {
+      for (const entry of readdirSync(out, { withFileTypes: true })) {
+        if (entry.isDirectory() && !trialIds.has(entry.name)) rmSync(join(out, entry.name), { recursive: true, force: true });
+      }
+    } else {
+      rmSync(out, { recursive: true, force: true });
+    }
+  }
+
   const files = new Map();
-  const add = (name, bytes) => files.set(name.split('\\').join('/'), Buffer.from(bytes));
+  const add = (name, bytes) => files.set(rel(name), Buffer.from(bytes));
   add('manifest.json', readFileSync(join(run, 'manifest.json')));
   add('progress.json', readFileSync(join(run, 'progress.json')));
   add('aggregate.json', Buffer.from(JSON.stringify(report, null, 2) + '\n'));
@@ -50,10 +68,10 @@ export function preserveTrialEvidence(runDir, outputDir, options = {}) {
   }
   return {
     schemaVersion: 'RsiTf0604SystemRunRetention/v1', driven_by: 'agent', actor: TF0604_SYSTEM_RUN_ACTOR,
-    directory: out, manifestDigest: progress.manifestDigest, recordedTrials: report.recordedTrials,
-    expectedTrials: report.expectedTrials, completeCaseCount: report.completeCaseCount,
-    failureClasses: report.failureClasses, fileCount: files.size, complete: report.complete,
-    claims: manifest.claims,
+    directory: out, manifestDigest: progress.manifestDigest, runId: manifest.runId,
+    recordedTrials: report.recordedTrials, expectedTrials: report.expectedTrials,
+    completeCaseCount: report.completeCaseCount, failureClasses: report.failureClasses,
+    fileCount: files.size, complete: report.complete, claims: manifest.claims,
   };
 }
 
@@ -80,9 +98,9 @@ export function validateTrialPack(packDir, options = {}) {
   for (const line of summed) {
     const match = /^([a-f0-9]{64})  (.+)$/u.exec(line);
     if (!match) { errors.push(err('sums-format', 'malformed manifest line')); continue; }
-    listed.set(match[2].split('\\').join('/'), match[1]);
+    listed.set(rel(match[2]), match[1]);
   }
-  const onDisk = walk(dir).map((path) => relative(dir, path).split('\\').join('/')).filter((name) => name !== 'SHA256SUMS').sort();
+  const onDisk = walk(dir).map((path) => rel(relative(dir, path))).filter((name) => name !== 'SHA256SUMS').sort();
   if (JSON.stringify([...listed.keys()].sort()) !== JSON.stringify(onDisk)) errors.push(err('sums-coverage', 'SHA256SUMS does not cover exactly the files on disk'));
   for (const name of onDisk) {
     const expected = listed.get(name);
@@ -95,7 +113,7 @@ export function validateTrialPack(packDir, options = {}) {
   for (const trialId of trialIds) {
     let result;
     try { result = read(join(dir, trialId, 'historical-result.json')); }
-    catch (error) { errors.push(err('missing-result', trialId)); continue; }
+    catch { errors.push(err('missing-result', trialId)); continue; }
     if (result.schemaVersion !== 'RsiHistoricalTrialResult/v1' || result.driven_by !== 'agent') errors.push(err('result-producer', trialId));
     if (result.trialId !== trialId) errors.push(err('result-identity', trialId));
     if (!['baseline', 'treatment'].includes(result.arm)) errors.push(err('result-arm', trialId));
@@ -104,7 +122,8 @@ export function validateTrialPack(packDir, options = {}) {
     if (verdict === 'pass' && result.failureClass) errors.push(err('failure-class-on-pass', trialId));
     if (verdict !== 'pass' && !['infrastructure', 'task', 'grader', 'agent'].includes(result.failureClass ?? '')) errors.push(err('unclassified-failure', trialId));
     if (result.claims?.realHuman !== false) errors.push(err('claim-boundary', trialId));
-    const receipts = walk(join(dir, trialId, 'oracle')).filter((path) => path.endsWith('execution-receipt.json'));
+    const oracleDir = join(dir, trialId, 'oracle');
+    const receipts = existsSync(oracleDir) ? walk(oracleDir).filter((path) => path.endsWith('execution-receipt.json')) : [];
     if (!receipts.length) errors.push(err('missing-receipt', trialId));
     for (const receiptPath of receipts) {
       const receipt = read(receiptPath);
