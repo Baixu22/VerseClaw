@@ -1,0 +1,13 @@
+export type Tf0609Reason = { code: string; message: string };
+export type Tf0609Control = { id: string; expectedCode: string; observedCodes: string[]; passed: boolean };
+export type Tf0609Inputs = Record<string, { path: string; digest: string | null; value: Record<string, any> | null; present?: boolean }>;
+export type Tf0609Decision = { schemaVersion: string; taskId: string; generatedAt: string; driven_by: 'agent'; actor: string; decision: 'go' | 'no-go'; go: boolean; codeCandidateGenerated: false; codeCandidateExecuted: false; promotionReady: false; reasons: Tf0609Reason[]; residuals: Array<{ code: string; owner: string; reviewTrigger: string }>; upstream: Record<string, unknown>; claims: { realHuman: false; liveProvider: false; promotionReady: false; productLocksChanged: false; codeCandidateGenerated: false; codeCandidateExecuted: false }; limitations: string[] };
+export type Tf0609Check = { passed: boolean; errors: Tf0609Reason[]; report?: Tf0609Decision; controls?: Tf0609Control[] };
+export const TF0609_PACK_DIR: string;
+export const TF0609_SCHEMA: string;
+export const TF0609_ACTOR: string;
+export function loadTf0609Inputs(root?: string): Tf0609Inputs;
+export function evaluateTf0609(inputs: Tf0609Inputs, actor?: string): Tf0609Decision;
+export function runTf0609Controls(inputs: Tf0609Inputs): Tf0609Control[];
+export function checkTf0609Evidence(root?: string): Tf0609Check;
+export function writeTf0609Evidence(root?: string): Tf0609Check;

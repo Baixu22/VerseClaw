@@ -1,0 +1,81 @@
+[
+  {
+    "id": "invented-baseline-count",
+    "expectedCode": "baseline-floor",
+    "observedCodes": [
+      "baseline-floor",
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "heldout-mismatch",
+    "expectedCode": "held-out-unsealed",
+    "observedCodes": [
+      "held-out-unsealed",
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "unapproved-adjudication",
+    "expectedCode": "independent-verdict-not-ready",
+    "observedCodes": [
+      "independent-verdict-not-ready",
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "missing-rollback",
+    "expectedCode": "behavioral-rollback-missing",
+    "observedCodes": [
+      "behavioral-rollback-missing",
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "unsafe-contamination",
+    "expectedCode": "contamination-gate-failed",
+    "observedCodes": [
+      "contamination-gate-failed",
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "real-human-claim",
+    "expectedCode": "real-human-claim",
+    "observedCodes": [
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "actor-collision",
+    "expectedCode": "actor-collision",
+    "observedCodes": [
+      "actor-collision",
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "cost-overrun",
+    "expectedCode": "cost-ceiling",
+    "observedCodes": [
+      "cost-ceiling",
+      "real-human-claim",
+      "upstream-promotion-claim"
+    ],
+    "passed": true
+  }
+]
