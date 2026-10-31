@@ -175,6 +175,162 @@ export const PRODUCT_SEMANTIC_RELATIONS = [
   { from: 'routing-memo', kind: 'quality-gated-by', to: 'task-loop', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] },
 ] as const satisfies readonly ProductSemanticRelation[];
 
+/** Version of the directed relation metadata contract above; independent of product releases. */
+export const PRODUCT_SEMANTIC_CONTRACT_VERSION = 'ProductSemanticRelations/v1' as const;
+
+/** Closed rule set; every diagnostic rule produced below is a member of this list. */
+export const PRODUCT_SEMANTIC_RELATION_RULES = [
+  'unknown-endpoint',
+  'unknown-kind',
+  'unknown-authority-boundary',
+  'self-loop',
+  'duplicate-relation',
+  'missing-evidence',
+  'kind-boundary-mismatch',
+  'reverse-task-authority',
+  'forged-grant-field',
+  'cross-session-quality',
+  'unsupported-contract-version',
+] as const;
+
+export type ProductSemanticRelationDiagnostic = {
+  /** `${from}--${kind}--${to}`; a part that cannot be read is written as '?'. */
+  relationKey: string;
+  /** from | kind | to | authorityBoundary | evidenceRefs | relation | contractVersion */
+  field: string;
+  rule: (typeof PRODUCT_SEMANTIC_RELATION_RULES)[number];
+  message: string;
+};
+
+/**
+ * Each relation kind is legal with exactly one authority boundary. The `satisfies` clause keeps this
+ * map exhaustive over the type literals above, so the runtime vocabularies for kinds and boundaries
+ * are derived here instead of being copied into a second table.
+ */
+const PRODUCT_SEMANTIC_KIND_AUTHORITY_BOUNDARY = {
+  'suggests-upgrade-to': 'advisory-only',
+  projects: 'read-only-projection',
+  'roots-in': 'task-ledger-authority',
+  'references-one-way': 'one-way-reference',
+  'quality-gated-by': 'same-session-scorecard',
+} as const satisfies Record<ProductSemanticRelationKind, ProductSemanticAuthorityBoundary>;
+
+const PRODUCT_SEMANTIC_RELATION_FIELDS = ['from', 'kind', 'to', 'authorityBoundary', 'evidenceRefs'] as const;
+
+function readRelationPart(record: Record<string, unknown>, field: 'from' | 'kind' | 'to'): string {
+  const value = record[field];
+  return typeof value === 'string' && value.trim().length > 0 ? value : '?';
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+export function relationKey(relation: { from: string; kind: string; to: string }): string {
+  const record = isPlainRecord(relation) ? relation : {};
+  return `${readRelationPart(record, 'from')}--${readRelationPart(record, 'kind')}--${readRelationPart(record, 'to')}`;
+}
+
+/**
+ * Metadata-only check of one candidate relation. It never reads an owner store, creates a grant,
+ * changes a run or infers inverse/transitive facts; the real authority stays with the owners that
+ * `PRODUCT_SEMANTIC_RELATIONS` points at.
+ */
+export function validateProductSemanticRelation(
+  candidate: unknown,
+  context?: { concepts?: readonly string[]; contractVersion?: string; sessionScope?: 'same-session' | 'cross-session' },
+): ProductSemanticRelationDiagnostic[] {
+  const diagnostics: ProductSemanticRelationDiagnostic[] = [];
+  const record = isPlainRecord(candidate) ? candidate : {};
+  const key = relationKey(record as { from: string; kind: string; to: string });
+  const add = (field: string, rule: ProductSemanticRelationDiagnostic['rule'], message: string) => {
+    diagnostics.push({ relationKey: key, field, rule, message });
+  };
+  const concepts = new Set<string>(context?.concepts ?? PRODUCT_SEMANTIC_CONCEPTS.map(({ id }) => id));
+  const kinds = Object.keys(PRODUCT_SEMANTIC_KIND_AUTHORITY_BOUNDARY);
+  const boundaries = Object.values(PRODUCT_SEMANTIC_KIND_AUTHORITY_BOUNDARY) as readonly string[];
+
+  if (context?.contractVersion !== undefined && context.contractVersion !== PRODUCT_SEMANTIC_CONTRACT_VERSION) {
+    add('contractVersion', 'unsupported-contract-version',
+      `Contract version "${context.contractVersion}" is not ${PRODUCT_SEMANTIC_CONTRACT_VERSION}; it is neither interpreted as latest nor migrated.`);
+  }
+
+  if (!isPlainRecord(candidate)) {
+    add('relation', 'unknown-endpoint', 'A relation must be a plain metadata object with from, kind, to, authorityBoundary and evidenceRefs.');
+  }
+
+  const { from, kind, to, authorityBoundary, evidenceRefs } = record;
+  const fromKnown = typeof from === 'string' && concepts.has(from);
+  const toKnown = typeof to === 'string' && concepts.has(to);
+  const kindKnown = typeof kind === 'string' && kinds.includes(kind);
+  const boundaryKnown = typeof authorityBoundary === 'string' && boundaries.includes(authorityBoundary);
+
+  if (!fromKnown) add('from', 'unknown-endpoint', `"${String(from)}" is not a declared product concept id.`);
+  if (!toKnown) add('to', 'unknown-endpoint', `"${String(to)}" is not a declared product concept id.`);
+  if (!kindKnown) add('kind', 'unknown-kind', `"${String(kind)}" is not a declared relation kind.`);
+  if (!boundaryKnown) add('authorityBoundary', 'unknown-authority-boundary', `"${String(authorityBoundary)}" is not a declared authority boundary.`);
+
+  if (typeof from === 'string' && typeof to === 'string' && from === to) {
+    add('to', 'self-loop', `"${from}" cannot relate to itself.`);
+  }
+
+  if (!Array.isArray(evidenceRefs) || evidenceRefs.length === 0
+    || evidenceRefs.some((ref) => typeof ref !== 'string' || ref.trim().length === 0)) {
+    add('evidenceRefs', 'missing-evidence', 'evidenceRefs must list at least one non-empty reference; no default "verified" value is assumed.');
+  }
+
+  if (kindKnown && boundaryKnown) {
+    const expected = PRODUCT_SEMANTIC_KIND_AUTHORITY_BOUNDARY[kind as ProductSemanticRelationKind];
+    if (expected !== authorityBoundary) {
+      add('authorityBoundary', 'kind-boundary-mismatch',
+        `Kind "${kind}" is only legal with authority boundary "${expected}", not "${String(authorityBoundary)}".`);
+    }
+  }
+
+  if (from === 'task-ledger') {
+    add('from', 'reverse-task-authority',
+      'Task Ledger owns task facts; it does not project to, reference or root in another concept.');
+  }
+  if (authorityBoundary === 'task-ledger-authority' && to !== 'task-ledger') {
+    add('authorityBoundary', 'reverse-task-authority',
+      `task-ledger-authority can only point at task-ledger, not "${String(to)}"; mirrors and schedulers do not inherit it.`);
+  }
+
+  for (const field of Object.keys(record)) {
+    if ((PRODUCT_SEMANTIC_RELATION_FIELDS as readonly string[]).includes(field)) continue;
+    add('relation', 'forged-grant-field',
+      `Field "${field}" is outside the closed relation shape; a relation grants nothing and declares no inverse, transitive or bidirectional fact.`);
+  }
+
+  if (kind === 'quality-gated-by' && context?.sessionScope === 'cross-session') {
+    add('authorityBoundary', 'cross-session-quality',
+      'Cross-session or caller-reported quality cannot stand in for a same-session scorecard; it stays shadow.');
+  }
+
+  return diagnostics;
+}
+
+/** Validates a set; adds `duplicate-relation` for a relation key that occurs more than once. */
+export function validateProductSemanticRelations(
+  candidates: readonly unknown[],
+  context?: Parameters<typeof validateProductSemanticRelation>[1],
+): { ok: boolean; diagnostics: ProductSemanticRelationDiagnostic[] } {
+  const diagnostics: ProductSemanticRelationDiagnostic[] = [];
+  const seen = new Set<string>();
+  for (const candidate of candidates) {
+    diagnostics.push(...validateProductSemanticRelation(candidate, context));
+    const key = relationKey(candidate as { from: string; kind: string; to: string });
+    if (key.includes('?')) continue;
+    if (seen.has(key)) {
+      diagnostics.push({ relationKey: key, field: 'relation', rule: 'duplicate-relation', message: `Relation "${key}" is declared more than once.` });
+    }
+    seen.add(key);
+  }
+  return { ok: diagnostics.length === 0, diagnostics };
+}
+
 
 export type ProductSemanticTaskId = `P0-${string}` | `P1-${string}`;
 export type ProductSemanticImplementationStatus = 'done' | 'todo' | 'defer';

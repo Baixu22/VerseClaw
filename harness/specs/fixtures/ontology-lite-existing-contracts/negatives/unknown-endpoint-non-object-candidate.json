@@ -1,0 +1,18 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "unknown-endpoint-non-object-candidate",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    1
+  ],
+  "umbrellaRowTitle": [
+    "未声明端点 / kind / authorityBoundary → 定位未知词汇，返回 invalid"
+  ],
+  "candidate": "chat -> task-loop",
+  "expect": {
+    "rule": "unknown-endpoint",
+    "field": "relation"
+  },
+  "note": "A string is not a relation; the validator reports the whole relation as unreadable with key ?--?--?."
+}

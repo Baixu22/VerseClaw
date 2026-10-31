@@ -1,0 +1,26 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "unsupported-contract-version-v2",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [],
+  "umbrellaRowTitle": [],
+  "candidate": {
+    "from": "chat",
+    "kind": "suggests-upgrade-to",
+    "to": "task-loop",
+    "authorityBoundary": "advisory-only",
+    "evidenceRefs": [
+      "docs/clawx-product-semantics.md",
+      "docs/modules/multi-agent-and-tasks.md"
+    ]
+  },
+  "context": {
+    "contractVersion": "ProductSemanticRelations/v2"
+  },
+  "expect": {
+    "rule": "unsupported-contract-version",
+    "field": "contractVersion"
+  },
+  "note": "Not one of the eight umbrella rows; covers the version rule of the implementation contract. The relation itself is the live one and is otherwise valid."
+}

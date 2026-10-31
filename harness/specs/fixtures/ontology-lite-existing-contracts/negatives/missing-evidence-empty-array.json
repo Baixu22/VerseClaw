@@ -1,0 +1,23 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "missing-evidence-empty-array",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    3
+  ],
+  "umbrellaRowTitle": [
+    "空或缺失证据依据 → 定位证据字段，不能填入默认“已验证”"
+  ],
+  "candidate": {
+    "from": "chat",
+    "kind": "suggests-upgrade-to",
+    "to": "task-loop",
+    "authorityBoundary": "advisory-only",
+    "evidenceRefs": []
+  },
+  "expect": {
+    "rule": "missing-evidence",
+    "field": "evidenceRefs"
+  }
+}

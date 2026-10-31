@@ -1,0 +1,28 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "unknown-endpoint-session-as-workspace",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    1,
+    8
+  ],
+  "umbrellaRowTitle": [
+    "未声明端点 / kind / authorityBoundary → 定位未知词汇，返回 invalid",
+    "将 Session 当 Workspace、Run 当 Task、run 成功当 task 完成 → 复用原身份与完成权威判据，不能建立推断"
+  ],
+  "candidate": {
+    "from": "session",
+    "kind": "projects",
+    "to": "task-ledger",
+    "authorityBoundary": "read-only-projection",
+    "evidenceRefs": [
+      "docs/clawx-product-semantics.md"
+    ]
+  },
+  "expect": {
+    "rule": "unknown-endpoint",
+    "field": "from"
+  },
+  "note": "Session is an identity scope (shared/types/identity-scope.ts), not a product concept; treating it as a Workspace-like endpoint is rejected as an unknown endpoint rather than inferred into one."
+}

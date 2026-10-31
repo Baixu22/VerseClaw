@@ -1,0 +1,25 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "missing-evidence-blank-ref",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    3
+  ],
+  "umbrellaRowTitle": [
+    "空或缺失证据依据 → 定位证据字段，不能填入默认“已验证”"
+  ],
+  "candidate": {
+    "from": "task-loop",
+    "kind": "roots-in",
+    "to": "task-ledger",
+    "authorityBoundary": "task-ledger-authority",
+    "evidenceRefs": [
+      "  "
+    ]
+  },
+  "expect": {
+    "rule": "missing-evidence",
+    "field": "evidenceRefs"
+  }
+}

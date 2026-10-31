@@ -1,0 +1,27 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "forged-grant-field-permission",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    6
+  ],
+  "umbrellaRowTitle": [
+    "声明逆边、传递授权或伪造 grant 字段 → 不产生任何 grant；元数据检查拒绝越权含义"
+  ],
+  "candidate": {
+    "from": "chat",
+    "kind": "suggests-upgrade-to",
+    "to": "task-loop",
+    "authorityBoundary": "advisory-only",
+    "evidenceRefs": [
+      "docs/clawx-product-semantics.md",
+      "docs/modules/multi-agent-and-tasks.md"
+    ],
+    "permission": "start-run"
+  },
+  "expect": {
+    "rule": "forged-grant-field",
+    "field": "relation"
+  }
+}

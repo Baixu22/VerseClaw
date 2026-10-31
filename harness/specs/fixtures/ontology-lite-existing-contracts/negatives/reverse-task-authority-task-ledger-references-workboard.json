@@ -1,0 +1,26 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "reverse-task-authority-task-ledger-references-workboard",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    5
+  ],
+  "umbrellaRowTitle": [
+    "Task Ledger→Workboard 的反向任务权威 → 拒绝镜像/调度权威升级"
+  ],
+  "candidate": {
+    "from": "task-ledger",
+    "kind": "references-one-way",
+    "to": "workboard",
+    "authorityBoundary": "one-way-reference",
+    "evidenceRefs": [
+      "docs/modules/multi-agent-and-tasks.md"
+    ]
+  },
+  "expect": {
+    "rule": "reverse-task-authority",
+    "field": "from"
+  },
+  "note": "The kind/boundary pair is legal on its own; the direction Task Ledger → Workboard is the forbidden mirror."
+}

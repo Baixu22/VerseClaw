@@ -1,0 +1,28 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "unknown-endpoint-workspace-target",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    1,
+    8
+  ],
+  "umbrellaRowTitle": [
+    "未声明端点 / kind / authorityBoundary → 定位未知词汇，返回 invalid",
+    "将 Session 当 Workspace、Run 当 Task、run 成功当 task 完成 → 复用原身份与完成权威判据，不能建立推断"
+  ],
+  "candidate": {
+    "from": "chat",
+    "kind": "projects",
+    "to": "workspace",
+    "authorityBoundary": "read-only-projection",
+    "evidenceRefs": [
+      "docs/clawx-product-semantics.md"
+    ]
+  },
+  "expect": {
+    "rule": "unknown-endpoint",
+    "field": "to"
+  },
+  "note": "Workspace is an identity owner, never a relation target in the product concept table."
+}

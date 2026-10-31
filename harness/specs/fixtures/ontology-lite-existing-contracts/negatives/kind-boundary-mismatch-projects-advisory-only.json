@@ -1,0 +1,26 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "kind-boundary-mismatch-projects-advisory-only",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    4
+  ],
+  "umbrellaRowTitle": [
+    "分别合法但相互不匹配的 kind、端点、权威边界 → 拒绝具体组合，不能仅检查 enum 成员"
+  ],
+  "candidate": {
+    "from": "chat",
+    "kind": "projects",
+    "to": "task-ledger",
+    "authorityBoundary": "advisory-only",
+    "evidenceRefs": [
+      "docs/clawx-product-semantics.md"
+    ]
+  },
+  "expect": {
+    "rule": "kind-boundary-mismatch",
+    "field": "authorityBoundary"
+  },
+  "note": "Every word is individually declared; only the combination projects + advisory-only is outside the closed kind→boundary map."
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "unknown-kind-mirrors",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    1
+  ],
+  "umbrellaRowTitle": [
+    "未声明端点 / kind / authorityBoundary → 定位未知词汇，返回 invalid"
+  ],
+  "candidate": {
+    "from": "workboard",
+    "kind": "mirrors",
+    "to": "task-ledger",
+    "authorityBoundary": "one-way-reference",
+    "evidenceRefs": [
+      "docs/modules/multi-agent-and-tasks.md"
+    ]
+  },
+  "expect": {
+    "rule": "unknown-kind",
+    "field": "kind"
+  },
+  "note": "\"mirrors\" is exactly the two-way sync the Workboard concept forbids; it is not a declared kind."
+}

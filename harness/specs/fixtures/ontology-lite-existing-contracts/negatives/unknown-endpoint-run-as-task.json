@@ -1,0 +1,26 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "unknown-endpoint-run-as-task",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    8
+  ],
+  "umbrellaRowTitle": [
+    "将 Session 当 Workspace、Run 当 Task、run 成功当 task 完成 → 复用原身份与完成权威判据，不能建立推断"
+  ],
+  "candidate": {
+    "from": "run",
+    "kind": "roots-in",
+    "to": "task",
+    "authorityBoundary": "task-ledger-authority",
+    "evidenceRefs": [
+      "docs/modules/multi-agent-and-tasks.md"
+    ]
+  },
+  "expect": {
+    "rule": "unknown-endpoint",
+    "field": "from"
+  },
+  "note": "Run and Task are identity references owned by shared/types/identity-scope.ts; they are not concepts and are not inferred into task-loop / task-ledger."
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "missing-evidence-absent-field",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    3
+  ],
+  "umbrellaRowTitle": [
+    "空或缺失证据依据 → 定位证据字段，不能填入默认“已验证”"
+  ],
+  "candidate": {
+    "from": "workboard",
+    "kind": "references-one-way",
+    "to": "task-ledger",
+    "authorityBoundary": "one-way-reference"
+  },
+  "expect": {
+    "rule": "missing-evidence",
+    "field": "evidenceRefs"
+  },
+  "note": "No evidenceRefs at all; the validator does not fill in a default \"verified\" reference."
+}

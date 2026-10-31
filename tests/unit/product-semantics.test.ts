@@ -1,7 +1,13 @@
+// @vitest-environment node
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   PRODUCT_SEMANTIC_CONCEPTS,
+  PRODUCT_SEMANTIC_CONTRACT_VERSION,
   PRODUCT_SEMANTIC_RELATIONS,
+  PRODUCT_SEMANTIC_RELATION_RULES,
   PRODUCT_SEMANTIC_TASK_BOUNDARIES,
   PRODUCT_SEMANTIC_UNSAFE_CLAIMS,
   createPermissionDecisionEvent,
@@ -9,7 +15,39 @@ import {
   createTaskLoopUpgradeSuggestion,
   normalizeOrchestrationQualityState,
   orchestrationQualityAffectsRouting,
+  relationKey,
+  validateProductSemanticRelation,
+  validateProductSemanticRelations,
+  type ProductSemanticRelationDiagnostic,
 } from '@shared/product-semantics';
+
+const ROOT = fileURLToPath(new URL('../..', import.meta.url));
+const NEGATIVE_FIXTURE_DIR = path.join(ROOT, 'harness/specs/fixtures/ontology-lite-existing-contracts/negatives');
+
+type RelationFixture = {
+  schema: 'ProductSemanticRelationFixture/v1';
+  id: string;
+  umbrellaRow: number[];
+  candidate: unknown;
+  context?: Parameters<typeof validateProductSemanticRelation>[1];
+  expect: { rule: ProductSemanticRelationDiagnostic['rule']; field: string };
+};
+
+function loadNegativeFixtures(): RelationFixture[] {
+  return readdirSync(NEGATIVE_FIXTURE_DIR)
+    .filter((name) => name.endsWith('.json'))
+    .sort()
+    .map((name) => JSON.parse(readFileSync(path.join(NEGATIVE_FIXTURE_DIR, name), 'utf8')) as RelationFixture)
+    .filter((fixture) => fixture.schema === 'ProductSemanticRelationFixture/v1');
+}
+
+function runFixture(fixture: RelationFixture): ProductSemanticRelationDiagnostic[] {
+  return Array.isArray(fixture.candidate)
+    ? validateProductSemanticRelations(fixture.candidate, fixture.context).diagnostics
+    : validateProductSemanticRelation(fixture.candidate, fixture.context);
+}
+
+const NEGATIVE_FIXTURES = loadNegativeFixtures();
 
 describe('ClawX product semantics', () => {
   it('pins the seven product concepts to distinct responsibilities', () => {
@@ -237,5 +275,140 @@ describe('ClawX product semantics', () => {
       safeClaim: expect.stringContaining('upgrade suggestion'),
       forbiddenClaim: expect.stringContaining('automatically starts Task Loop'),
     });
+  });
+});
+
+describe('ClawX product semantic relation contract (ProductSemanticRelations/v1)', () => {
+  const UMBRELLA_NEGATIVE_ROWS = [1, 2, 3, 4, 5, 6, 7, 8];
+
+  it('pins the contract version and a closed rule set of eleven rules', () => {
+    expect(PRODUCT_SEMANTIC_CONTRACT_VERSION).toBe('ProductSemanticRelations/v1');
+    expect(PRODUCT_SEMANTIC_RELATION_RULES).toEqual([
+      'unknown-endpoint',
+      'unknown-kind',
+      'unknown-authority-boundary',
+      'self-loop',
+      'duplicate-relation',
+      'missing-evidence',
+      'kind-boundary-mismatch',
+      'reverse-task-authority',
+      'forged-grant-field',
+      'cross-session-quality',
+      'unsupported-contract-version',
+    ]);
+    expect(new Set(PRODUCT_SEMANTIC_RELATION_RULES).size).toBe(PRODUCT_SEMANTIC_RELATION_RULES.length);
+  });
+
+  it('derives relationKey from from--kind--to and writes ? for unreadable parts', () => {
+    expect(relationKey({ from: 'chat', kind: 'projects', to: 'task-ledger' })).toBe('chat--projects--task-ledger');
+    expect(relationKey({ from: 'chat', kind: '', to: 'task-ledger' })).toBe('chat--?--task-ledger');
+    expect(relationKey({} as { from: string; kind: string; to: string })).toBe('?--?--?');
+    expect(relationKey(null as unknown as { from: string; kind: string; to: string })).toBe('?--?--?');
+    expect(PRODUCT_SEMANTIC_RELATIONS.map((relation) => relationKey(relation))).toEqual([
+      'chat--suggests-upgrade-to--task-loop',
+      'chat--projects--task-ledger',
+      'chat-plan--projects--task-ledger',
+      'task-loop--roots-in--task-ledger',
+      'workboard--references-one-way--task-ledger',
+      'routing-memo--quality-gated-by--task-loop',
+    ]);
+  });
+
+  it('accepts the live PRODUCT_SEMANTIC_RELATIONS as the positive case without copying them', () => {
+    expect(validateProductSemanticRelations(PRODUCT_SEMANTIC_RELATIONS)).toEqual({ ok: true, diagnostics: [] });
+    expect(validateProductSemanticRelations(PRODUCT_SEMANTIC_RELATIONS, {
+      contractVersion: PRODUCT_SEMANTIC_CONTRACT_VERSION,
+      sessionScope: 'same-session',
+    })).toEqual({ ok: true, diagnostics: [] });
+    for (const relation of PRODUCT_SEMANTIC_RELATIONS) {
+      expect(validateProductSemanticRelation(relation), relationKey(relation)).toEqual([]);
+    }
+  });
+
+  it('accepts an empty declaration set (Plan Mode declares no relation)', () => {
+    expect(validateProductSemanticRelations([])).toEqual({ ok: true, diagnostics: [] });
+    expect(PRODUCT_SEMANTIC_RELATIONS.some(({ from, to }) => String(from) === 'plan-mode' || String(to) === 'plan-mode')).toBe(false);
+  });
+
+  it('loads negative fixtures from disk with the ProductSemanticRelationFixture/v1 schema', () => {
+    expect(NEGATIVE_FIXTURES.length).toBeGreaterThanOrEqual(8);
+    expect(new Set(NEGATIVE_FIXTURES.map((fixture) => fixture.id)).size).toBe(NEGATIVE_FIXTURES.length);
+    for (const fixture of NEGATIVE_FIXTURES) {
+      expect(fixture.id.trim(), fixture.id).not.toHaveLength(0);
+      expect(fixture).toHaveProperty('candidate');
+      expect(PRODUCT_SEMANTIC_RELATION_RULES, fixture.id).toContain(fixture.expect.rule);
+      expect(fixture.expect.field.trim(), fixture.id).not.toHaveLength(0);
+      expect(Array.isArray(fixture.umbrellaRow), fixture.id).toBe(true);
+    }
+  });
+
+  it('covers every umbrella step-two negative row and every rule with at least one fixture', () => {
+    const coveredRows = new Set(NEGATIVE_FIXTURES.flatMap((fixture) => fixture.umbrellaRow));
+    for (const row of UMBRELLA_NEGATIVE_ROWS) {
+      expect(coveredRows.has(row), `umbrella negative row ${row}`).toBe(true);
+    }
+    const coveredRules = new Set(NEGATIVE_FIXTURES.map((fixture) => fixture.expect.rule));
+    for (const rule of PRODUCT_SEMANTIC_RELATION_RULES) {
+      expect(coveredRules.has(rule), rule).toBe(true);
+    }
+  });
+
+  for (const fixture of NEGATIVE_FIXTURES) {
+    it(`rejects negative fixture "${fixture.id}" via rule ${fixture.expect.rule} on field ${fixture.expect.field}`, () => {
+      const diagnostics = runFixture(fixture);
+      expect(diagnostics.length).toBeGreaterThan(0);
+      expect(diagnostics).toContainEqual(expect.objectContaining({
+        rule: fixture.expect.rule,
+        field: fixture.expect.field,
+        relationKey: expect.any(String),
+        message: expect.stringMatching(/\S/),
+      }));
+      for (const diagnostic of diagnostics) {
+        expect(PRODUCT_SEMANTIC_RELATION_RULES, fixture.id).toContain(diagnostic.rule);
+        expect(Object.keys(diagnostic).sort(), fixture.id).toEqual(['field', 'message', 'relationKey', 'rule']);
+      }
+      if (Array.isArray(fixture.candidate)) {
+        expect(validateProductSemanticRelations(fixture.candidate, fixture.context).ok).toBe(false);
+      } else {
+        expect(validateProductSemanticRelations([fixture.candidate], fixture.context).ok).toBe(false);
+      }
+    });
+  }
+
+  it('rejects the individually legal but mismatched combination, not only unknown enum members', () => {
+    const diagnostics = validateProductSemanticRelation({
+      from: 'chat',
+      kind: 'projects',
+      to: 'task-ledger',
+      authorityBoundary: 'advisory-only',
+      evidenceRefs: ['docs/clawx-product-semantics.md'],
+    });
+    expect(diagnostics.map(({ rule }) => rule)).toEqual(['kind-boundary-mismatch']);
+    expect(diagnostics[0]).toMatchObject({ relationKey: 'chat--projects--task-ledger', field: 'authorityBoundary' });
+  });
+
+  it('keeps the same relation valid in a same-session context and shadow in a cross-session context', () => {
+    const memo = PRODUCT_SEMANTIC_RELATIONS.find(({ kind }) => kind === 'quality-gated-by')!;
+    expect(validateProductSemanticRelation(memo, { sessionScope: 'same-session' })).toEqual([]);
+    expect(validateProductSemanticRelation(memo, { sessionScope: 'cross-session' }).map(({ rule }) => rule))
+      .toEqual(['cross-session-quality']);
+  });
+
+  it('does not interpret an unsupported contract version as latest', () => {
+    const [relation] = PRODUCT_SEMANTIC_RELATIONS;
+    expect(validateProductSemanticRelation(relation, { contractVersion: PRODUCT_SEMANTIC_CONTRACT_VERSION })).toEqual([]);
+    expect(validateProductSemanticRelation(relation, { contractVersion: 'ProductSemanticRelations/v0' })).toEqual([
+      expect.objectContaining({ rule: 'unsupported-contract-version', field: 'contractVersion', relationKey: relationKey(relation) }),
+    ]);
+  });
+
+  it('exports only pure functions: the module performs no validation at import time', () => {
+    const source = readFileSync(path.join(ROOT, 'shared/product-semantics.ts'), 'utf8');
+    const topLevelCall = /^(?:export\s+)?(?:const|let|var)\s+\w+\s*=\s*validateProductSemanticRelations?\(|^validateProductSemanticRelations?\(/m;
+    expect(source).not.toMatch(topLevelCall);
+    expect(source).toMatch(/^export const PRODUCT_SEMANTIC_CONTRACT_VERSION = 'ProductSemanticRelations\/v1' as const;$/m);
+    expect(source).toMatch(/^export function relationKey\(/m);
+    expect(source).toMatch(/^export function validateProductSemanticRelation\(/m);
+    expect(source).toMatch(/^export function validateProductSemanticRelations\(/m);
   });
 });

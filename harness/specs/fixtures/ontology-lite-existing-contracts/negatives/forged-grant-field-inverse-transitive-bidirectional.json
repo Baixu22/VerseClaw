@@ -1,0 +1,29 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "forged-grant-field-inverse-transitive-bidirectional",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    6
+  ],
+  "umbrellaRowTitle": [
+    "声明逆边、传递授权或伪造 grant 字段 → 不产生任何 grant；元数据检查拒绝越权含义"
+  ],
+  "candidate": {
+    "from": "task-loop",
+    "kind": "roots-in",
+    "to": "task-ledger",
+    "authorityBoundary": "task-ledger-authority",
+    "evidenceRefs": [
+      "docs/modules/multi-agent-and-tasks.md"
+    ],
+    "inverse": true,
+    "transitive": true,
+    "bidirectional": true
+  },
+  "expect": {
+    "rule": "forged-grant-field",
+    "field": "relation"
+  },
+  "note": "Three forged keys produce three diagnostics; none of them creates an inverse or transitive fact."
+}

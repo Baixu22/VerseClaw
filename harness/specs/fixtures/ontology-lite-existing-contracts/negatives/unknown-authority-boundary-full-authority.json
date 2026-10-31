@@ -1,0 +1,26 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "unknown-authority-boundary-full-authority",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    1
+  ],
+  "umbrellaRowTitle": [
+    "未声明端点 / kind / authorityBoundary → 定位未知词汇，返回 invalid"
+  ],
+  "candidate": {
+    "from": "chat",
+    "kind": "projects",
+    "to": "task-ledger",
+    "authorityBoundary": "full-authority",
+    "evidenceRefs": [
+      "docs/clawx-product-semantics.md"
+    ]
+  },
+  "expect": {
+    "rule": "unknown-authority-boundary",
+    "field": "authorityBoundary"
+  },
+  "note": "Only the five declared boundaries exist; an undeclared boundary word cannot widen authority."
+}

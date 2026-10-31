@@ -1,0 +1,29 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "cross-session-quality-as-same-session-scorecard",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    7
+  ],
+  "umbrellaRowTitle": [
+    "把跨 session / caller 自报 quality 当成同 session scorecard → 不能升级为 active authority"
+  ],
+  "candidate": {
+    "from": "routing-memo",
+    "kind": "quality-gated-by",
+    "to": "task-loop",
+    "authorityBoundary": "same-session-scorecard",
+    "evidenceRefs": [
+      "docs/modules/multi-agent-and-tasks.md"
+    ]
+  },
+  "context": {
+    "sessionScope": "cross-session"
+  },
+  "expect": {
+    "rule": "cross-session-quality",
+    "field": "authorityBoundary"
+  },
+  "note": "The live relation is valid in a same-session context; declared cross-session it cannot carry same-session-scorecard authority."
+}

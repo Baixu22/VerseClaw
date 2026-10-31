@@ -1,0 +1,37 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "duplicate-relation-chat-projects-task-ledger",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "umbrellaRow": [
+    2
+  ],
+  "umbrellaRowTitle": [
+    "重复关系或自环 → 定位关系键与重复/自环规则"
+  ],
+  "candidate": [
+    {
+      "from": "chat",
+      "kind": "projects",
+      "to": "task-ledger",
+      "authorityBoundary": "read-only-projection",
+      "evidenceRefs": [
+        "docs/clawx-product-semantics.md"
+      ]
+    },
+    {
+      "from": "chat",
+      "kind": "projects",
+      "to": "task-ledger",
+      "authorityBoundary": "read-only-projection",
+      "evidenceRefs": [
+        "docs/modules/multi-agent-and-tasks.md"
+      ]
+    }
+  ],
+  "expect": {
+    "rule": "duplicate-relation",
+    "field": "relation"
+  },
+  "note": "Set-level check: the same from--kind--to key twice, even with different evidence, is one relation declared twice."
+}
