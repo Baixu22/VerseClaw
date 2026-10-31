@@ -2813,7 +2813,12 @@ export type MediaThumbnailEntry = {
   mimeType?: string;
 };
 export type MediaThumbnailsPayload = { paths: MediaThumbnailEntry[] };
-export type MediaThumbnailResult = Record<string, { preview: string | null; fileSize: number }>;
+export type MediaThumbnailResult = Record<string, {
+  preview: string | null;
+  fileSize: number;
+  /** Set for `gatewayUrl` entries: the record's file, to be read through `files.readBinary`. */
+  resolvedPath?: string;
+}>;
 export type SaveImagePayload = {
   base64?: string;
   mimeType?: string;

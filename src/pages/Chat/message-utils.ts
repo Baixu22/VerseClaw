@@ -4,6 +4,7 @@
  * message content formats returned by the Gateway.
  */
 import type { RawMessage, ContentBlock } from '@/stores/chat';
+import { isInlineImageUrl } from './conversation-resources';
 
 /**
  * Strip OpenClaw's inbound-image vision envelope from user message text.
@@ -71,7 +72,7 @@ function cleanUserText(text: string): string {
  */
 function stripAssistantMediaTags(text: string): string {
   if (!text) return text;
-  const exts = 'png|jpe?g|gif|webp|bmp|avif|svg|pdf|docx?|xlsx?|pptx?|txt|csv|md|rtf|epub|zip|tar|gz|rar|7z|mp3|wav|ogg|aac|flac|m4a|mp4|mov|avi|mkv|webm|m4v';
+  const exts = 'png|jpe?g|gif|webp|bmp|avif|svg|pdf|docx?|xlsx?|pptx?|txt|csv|md|rtf|epub|zip|tar|gz|rar|7z|mp3|wav|ogg|oga|opus|aac|flac|m4a|mp4|mov|avi|mkv|webm|m4v';
   // Mirror the relaxed character class in `chat/helpers.ts::extractRawFilePaths`
   // so paths with ASCII spaces (e.g. macOS' "截屏 2026-05-06 17.46.51.png")
   // are also stripped from the visible bubble. Without this, the bubble
@@ -84,7 +85,11 @@ function stripAssistantMediaTags(text: string): string {
   return text
     .replace(tagged, (_, lead: string) => lead)
     .replace(bareOpenClawMedia, (_, lead: string) => lead)
-    .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+    // Gateway and local image syntax is surfaced as an attachment card. Remote and
+    // inline images stay so the Markdown renderer can show them or their placeholder.
+    .replace(/!\[[^\]]*\]\(([^)]+)\)/g, (match, target: string) => (
+      /^\s*(?:https?:|data:image\/)/i.test(target) ? match : ''
+    ))
     // Collapse the empty lines / orphan whitespace the strip leaves behind.
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
@@ -230,18 +235,10 @@ export function isInternalProcessNarration(text: string): boolean {
 
 /** True when a renderer `src` cannot be fetched directly (Gateway proxy / local paths). */
 export function isUnresolvableImageUrl(url: string): boolean {
-  const trimmed = url.trim();
-  if (!trimmed) return true;
-  if (trimmed.startsWith('data:')) return false;
-  // Remote images in untrusted transcript content are not auto-loaded. This
-  // also covers reference-style Markdown images, which do not flow through the
-  // inline-media stripper. A trusted component must explicitly opt in later.
-  if (/^https?:\/\//i.test(trimmed)) return true;
-  if (trimmed.startsWith('/api/chat/media/')) return true;
-  if (trimmed.startsWith('file://')) return true;
-  if (trimmed.includes('.openclaw/media/')) return true;
-  if (trimmed.startsWith('/') || trimmed.startsWith('~/')) return true;
-  return false;
+  // Remote images in untrusted transcript content are not auto-loaded, and CSP
+  // `img-src` has no http(s). Gateway and local paths need Main. `ConversationImage`
+  // is the surface for all of these; it never leaves them as a broken <img>.
+  return !isInlineImageUrl(url);
 }
 
 /**
@@ -463,6 +460,16 @@ export function extractImages(
 
   const images: Array<{ mimeType: string; data?: string; url?: string }> = [];
   for (const block of content as ContentBlock[]) {
+    // `input_image` is the Gateway's embedded data-URL form (chat-webchat-media.ts);
+    // `image_url` is its OpenAI spelling. Other locations go through the resolver.
+    if (block.type === 'input_image' || block.type === 'image_url') {
+      const imageUrl = block.image_url;
+      const url = typeof imageUrl === 'string' ? imageUrl : imageUrl?.url;
+      if (url && isInlineImageUrl(url)) {
+        images.push({ mimeType: /^data:([^;,]+)/i.exec(url)?.[1] ?? 'image/png', url });
+      }
+      continue;
+    }
     if (block.type !== 'image') continue;
 
     // Path 1: Anthropic source-wrapped format

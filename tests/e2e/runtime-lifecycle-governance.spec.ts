@@ -103,7 +103,8 @@ test.describe('runtime lifecycle governance', () => {
       const secondRow = page.getByTestId(`sidebar-session-${SECOND_SESSION_KEY}`);
       await expect(secondRow).toBeVisible({ timeout: 30_000 });
       await secondRow.hover();
-      await page.getByTestId(`sidebar-session-delete-${SECOND_SESSION_KEY}`).click();
+      await page.getByTestId(`sidebar-session-more-${SECOND_SESSION_KEY}`).click();
+      await page.getByTestId('sidebar-session-context-delete').click();
       const confirmDialog = page.getByTestId('session-delete-dialog');
       await expect(confirmDialog).toBeVisible();
       await page.getByTestId('session-delete-dialog-permanent').click();

@@ -38,6 +38,8 @@ Chat keeps the final reply visible alongside a collapsible process summary. Long
 
 Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
 
+Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer; remote images and media are never loaded automatically and offer an open action instead. Charts draw their declared type with a data table available, standalone links become link cards, and any other structured resource gets a labelled fallback card.
+
 ## Current maturity boundaries
 
 | Label | Meaning |
@@ -105,7 +107,8 @@ First session:
 4. Send a scoped conversation and inspect the workspace panel.
 5. Resolve approvals in Inbox.
 6. Use Knowledge or Memory only through their review surfaces.
-7. Completion, error, and approval events remain in the sidebar bell. System alerts can be toggled there or in Settings → Session & Recovery.
+7. Manage a conversation from its row: hovering shows Pin and ⋯ (rename, move to a workgroup, mark unread, fork, hand off, copy, archive with Undo, delete); right-click opens the same menu, and long titles scroll while hovered.
+8. The sidebar bell shows activity: a ring while a conversation runs (amber when one needs you), a list of running conversations with elapsed time, and completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
 
 Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
 

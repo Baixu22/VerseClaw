@@ -62,6 +62,9 @@
   --cdx-bg-hover: var(--color-background-button-tertiary-hover);
   /* LIVE CDP 2026-07-25: --token-list-hover-background */
   --cdx-bg-row-hover: var(--color-background-row-hover);
+  /* ClawX: the current row is one step firmer than a hover wash, so hovering a
+   * neighbour never makes two rows look selected. Still a grayscale role. */
+  --cdx-bg-row-selected: color-mix(in oklab, var(--color-text-foreground) 8.5%, transparent);
   /* Section labels are mixed against the ink of the current theme. */
   --cdx-label-mix: var(--color-text-foreground);
 }
@@ -316,8 +319,11 @@
   min-width: 0;
   box-sizing: border-box;
 }
-.codex-sidebar .sidebar-row:hover,
-.codex-sidebar .sidebar-row.selected { background: var(--cdx-bg-row-hover); }
+.codex-sidebar .sidebar-row:hover { background: var(--cdx-bg-row-hover); }
+.codex-sidebar .sidebar-row.selected,
+/* A row whose menu is open keeps a highlight: the menu's target is never in
+ * doubt, even after the pointer has moved into the menu. */
+.codex-sidebar .sidebar-row[data-force-actions='true'] { background: var(--cdx-bg-row-selected); }
 .codex-sidebar .sidebar-row__actions {
   position: absolute;
   right: 4px;
@@ -327,21 +333,27 @@
   align-items: center;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 120ms ease, visibility 0s linear 120ms;
+  /* Slides in from its own trailing edge: a 3px cue that the controls belong
+   * to this row, not a layout shift. */
+  transform: translateX(3px);
+  transition: opacity 120ms ease, transform 160ms var(--ease-out), visibility 0s linear 160ms;
   z-index: 6;
 }
 .codex-sidebar .sidebar-row:hover .sidebar-row__actions,
-.codex-sidebar .sidebar-row:focus-within .sidebar-row__actions,
-/* ClawX's existing e2e tests hover the outer `[data-testid=sidebar-folder-*]`
- * container, not the inner row. Scope this to the folder's own header row —
- * `:hover` stays true on ancestors, so an unscoped descendant selector would
- * reveal action strips on every ancestor folder at once. */
-.codex-sidebar [data-testid^='sidebar-folder-']:hover > div > .sidebar-row:first-child .sidebar-row__actions,
-/* ClawX addition: a row whose move-menu popover is open must keep its controls
- * pinned, otherwise they fade out from under the open menu. */
+/* Keyboard focus reveals the controls; a mouse click no longer leaves them
+ * stuck on the row that was clicked (as :focus-within did). */
+.codex-sidebar .sidebar-row:has(:focus-visible) .sidebar-row__actions,
+/* ClawX addition: a row whose menu is open must keep its controls pinned,
+ * otherwise they fade out from under the open menu.
+ *
+ * Only the hovered row reveals controls. A workgroup header used to reveal its
+ * rename/delete whenever ANY of its member sessions was hovered (a selector
+ * written for tests that hovered the whole group), so one hover showed two
+ * strips of buttons for two different objects. */
 .codex-sidebar .sidebar-row[data-force-actions='true'] .sidebar-row__actions {
   opacity: 1;
   visibility: visible;
+  transform: none;
   transition-delay: 0s;
 }
 
@@ -410,20 +422,10 @@
 }
 .codex-sidebar .project-row:hover svg { color: var(--cdx-text-2); }
 
-/* Unified text truncation: gradient fade where hover buttons appear. Both
-   project and session rows share the same soft-fade strategy so their
-   rendering is identical. Mask only affects pixels with content, so short
-   text is unaffected.
+/* Project names truncate with a 16px soft fade rather than an ellipsis.
    LIVE CDP (2026-08-01, Codex sidebar): mask fades only the last 16px and
-   text-overflow is `clip` (not ellipsis) — the fade itself is the truncation
-   cue. The 16px fade is narrower than the action strip, so the three hover
-   buttons always render on solid (fully opaque) pixels and stay clickable.
-   `.marquee-text` is the fixed clip frame; `.marquee-text__inner` is the
-   panning layer for long-title scroll on hover (see block below). */
-.codex-sidebar .project-row > span,
-.codex-sidebar .task-title-block,
-.codex-sidebar .task-title-block > .marquee-text,
-.codex-sidebar .task-select > span:not(.task-status-slot):not(.task-unread-dot):not(.task-pinned-marker) {
+   text-overflow is clip; the fade itself is the truncation cue. */
+.codex-sidebar .project-row > span {
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
@@ -433,56 +435,71 @@
   mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 16px), transparent 100%);
 }
 
-/* Long-title marquee — on row hover, an overflowing title pans its inner
-   layer left so the full name scrolls into view while the three hover buttons
-   stay pinned on top of the (already reserved) right edge. Distance is set
-   per-row via the `--marquee-distance` CSS variable by Sidebar.tsx; only
-   titles that actually overflow get `.is-marqueeing`, so short names never
-   animate. The outer `.marquee-text` frame keeps a fade mask whose transparent
-   region is widened to the measured action-strip width (`--marquee-actions-
-   width`), so the panning text fades out exactly at the buttons' left edge and
-   never slides under them. The 0%/12% → 88%/100% keyframe stalls hold both
-   ends readable instead of constantly scrolling. */
-.codex-sidebar .task-title-block > .marquee-text > .marquee-text__inner {
+/* Session title: three boxes, one job each.
+ *
+ *   .task-title        layout box. Starts exactly at the row's indent, so the
+ *                      title lines up with its project name (E2E-asserted).
+ *   .task-title__clip  overflow frame. Reaches --task-title-gutter further
+ *                      LEFT than the layout box and fades over that gutter, so
+ *                      a scrolling title dissolves instead of being guillotined.
+ *                      At rest nothing sits in the gutter, so nothing fades.
+ *   .task-title__text  the layer that moves (use-title-marquee.ts).
+ *
+ * The trailing edge keeps the same 16px fade as project names. On hover the
+ * row reserves room for its two controls (--task-actions-w, below), so that
+ * fade lands just before the buttons instead of the title running under them. */
+.codex-sidebar { --task-title-gutter: 8px; }
+.codex-sidebar .task-title {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+.codex-sidebar .task-title__clip {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: calc(-1 * var(--task-title-gutter));
+  padding-left: var(--task-title-gutter);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--task-title-gutter), #000 calc(100% - 16px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 var(--task-title-gutter), #000 calc(100% - 16px), transparent 100%);
+}
+.codex-sidebar .task-title__text {
   display: inline-block;
+  vertical-align: top;
   white-space: nowrap;
 }
-.codex-sidebar .task-title-block {
-  min-width: 0;
-  flex: 1;
-  display: grid;
-  align-content: center;
-  gap: 1px;
-  overflow: hidden;
-}
-.codex-sidebar .task-title-block > .marquee-text {
-  flex: none;
-  width: 100%;
+/* Seamless loop: while a pass runs, the title is followed by its own copy one
+ * gap later (TITLE_MARQUEE_GAP_PX). Generated content with empty alt text, so
+ * the copy is neither DOM text nor announced. */
+.codex-sidebar .task-title__clip[data-marquee='on'] .task-title__text { will-change: transform; }
+.codex-sidebar .task-title__clip[data-marquee='on'] .task-title__text::after {
+  content: attr(data-text) / "";
+  padding-left: 36px;
 }
 .codex-sidebar .task-title--unread { font-weight: 600; color: var(--cdx-text); }
+.codex-sidebar .task-row.selected .task-select { color: var(--cdx-text); }
 .codex-sidebar .task-pinned-marker {
   width: 12px;
   height: 12px;
   flex: none;
   color: var(--cdx-text-3);
   transform: rotate(-35deg);
-  transition: opacity 120ms ease;
 }
 /**
- * Unread mark — LEFT gutter, not the trailing edge.
+ * Unread mark: LEFT gutter, not the trailing edge.
  *
- * It used to be a flex child at the end of the row, sharing that edge with the
- * pinned mark, the runtime status orb AND the absolutely-positioned hover
- * strip — four things competing for the same ~70px, so the dot was drawn under
- * the hover buttons and read as a fifth state next to the orb. The row's own
- * indentation is empty space that means nothing, so the dot lives there: aligned
- * to the title's left edge, it collides with nothing and never moves the title
- * (it is positioned, not laid out). The bold title carries the same fact for
- * anyone who does not parse a 5px dot.
+ * The trailing edge belongs to the runtime status orb and, on hover, to the
+ * row's controls; a 5px dot there read as one more competing state. The row's
+ * indentation is empty space that means nothing, so the dot lives there, between
+ * the selection hook's turn and the title. It is positioned, not laid out, so it
+ * never moves the title. The bold title carries the same fact for anyone who
+ * does not parse a 5px dot.
  */
 .codex-sidebar .task-unread-dot {
   position: absolute;
-  left: calc(var(--task-indent, 8px) - 13px);
+  /* Clear of the title's 8px fade gutter, so a scrolling title never runs
+   * over the dot. */
+  left: calc(var(--task-indent, 8px) - 14px);
   top: 50%;
   width: 5px;
   height: 5px;
@@ -491,79 +508,60 @@
   border-radius: 999px;
   background: var(--cdx-blue-300, #4fa8e0);
 }
-.codex-sidebar .task-row:hover .task-title-block > .marquee-text.is-marqueeing {
-  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - var(--marquee-actions-width, 72px) - 4px), transparent calc(100% - var(--marquee-actions-width, 72px)));
-  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - var(--marquee-actions-width, 72px) - 4px), transparent calc(100% - var(--marquee-actions-width, 72px)));
-}
-.codex-sidebar .task-row:hover .task-title-block > .marquee-text.is-marqueeing > .marquee-text__inner {
-  animation: codex-sidebar-marquee 7s ease-in-out infinite alternate;
-}
-@keyframes codex-sidebar-marquee {
-  0%, 12% { transform: translateX(0); }
-  88%, 100% { transform: translateX(var(--marquee-distance, 0)); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .codex-sidebar .task-row:hover .task-title-block > .marquee-text.is-marqueeing > .marquee-text__inner {
-    animation: none;
-  }
-}
 
-/* Trailing runtime-state slot — occupies the official task-progress-spinner
- * position, so it never shifts the title start. */
+/* Trailing runtime-state slot: occupies the official task-progress-spinner
+ * position, so it never shifts the title start. It stays visible on hover: the
+ * row reserves room for its controls instead of drawing them over the orb, so
+ * "is this running?" is still answered while you aim at the row. */
 .codex-sidebar .task-select > .task-status-slot {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: default;
-  transition: opacity 120ms ease, margin-right 120ms ease;
-}
-/* styles.css:331-333 — passive badges yield to the hover actions that overlay
- * the row's right edge. The pinned mark is one of them: it sits in the same
- * strip, so leaving it visible drew a pin underneath the buttons. */
-.codex-sidebar .task-row:hover .task-status-slot,
-.codex-sidebar .task-row:focus-within .task-status-slot,
-.codex-sidebar .task-row:hover .task-pinned-marker,
-.codex-sidebar .task-row:focus-within .task-pinned-marker {
-  opacity: 0;
 }
 .codex-sidebar .task-select > .task-status-slot--dismissible {
   cursor: pointer;
   border-radius: var(--radius-sm);
   padding: 2px;
+  transition: background-color 120ms ease, color 120ms ease;
 }
-/* ClawX addition: the completed marker is dismissed by clicking it, so unlike
- * the reference's passive badges it must stay visible and hittable on hover —
- * it slides clear of the action strip instead of fading under it.
- *
- * The distance is the strip's own width, so it is declared where the button
- * count is known: three buttons (pin / rename / delete) in the time view, four
- * once the project view adds "migrate". Hard-coding one number is what let the
- * marker sit under the pin icon when the count changed. */
-.codex-sidebar .task-row { --task-actions-clearance: 68px; }
-.codex-sidebar .project-tasks .task-row { --task-actions-clearance: 90px; }
-.codex-sidebar .task-row:hover .task-status-slot--dismissible,
-.codex-sidebar .task-row:focus-within .task-status-slot--dismissible {
-  opacity: 1;
-  margin-right: var(--task-actions-clearance);
-}
+/* The completed marker is dismissed by clicking it. */
 .codex-sidebar .task-select > .task-status-slot--dismissible:hover {
   background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
   color: var(--cdx-text);
 }
 
-.codex-sidebar .project-hover-actions { gap: 1px; }
+/* Hover reserves the controls' width on the title's own box. The controls are
+ * still absolutely positioned (they never reflow the row), but the title and
+ * status orb now end where the controls begin. The pinned mark steps out: the
+ * pin control itself shows the pinned state while the row is hovered. */
+.codex-sidebar .task-row { --task-actions-w: 58px; }
+.codex-sidebar .task-row:hover .task-select,
+.codex-sidebar .task-row:has(:focus-visible) .task-select,
+.codex-sidebar .task-row[data-force-actions='true'] .task-select {
+  padding-right: var(--task-actions-w);
+}
+.codex-sidebar .task-row:hover .task-pinned-marker,
+.codex-sidebar .task-row:has(:focus-visible) .task-pinned-marker,
+.codex-sidebar .task-row[data-force-actions='true'] .task-pinned-marker {
+  display: none;
+}
+
+.codex-sidebar .project-hover-actions { gap: 2px; }
 .codex-sidebar .project-hover-actions button {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
-  border-radius: var(--radius-xs);
-  color: var(--cdx-text-4);
+  border-radius: var(--radius-sm);
+  color: var(--cdx-text-3);
+  transition: background-color 120ms ease, color 120ms ease;
 }
-.codex-sidebar .project-hover-actions button:hover {
-  background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
-  color: var(--cdx-text-2);
+.codex-sidebar .project-hover-actions button:hover,
+.codex-sidebar .project-hover-actions button[aria-expanded='true'] {
+  background: color-mix(in srgb, var(--cdx-text) 9%, transparent);
+  color: var(--cdx-text);
 }
 
 /* styles.css:317-324 — session rows nested under a project.
@@ -589,6 +587,9 @@
   font-weight: 450;
   overflow: hidden;
   box-sizing: border-box;
+  /* The title's end and the status orb slide clear of the controls as they
+   * arrive, instead of jumping (see --task-actions-w). One row, 160ms. */
+  transition: padding-right 160ms var(--ease-out);
 }
 .codex-sidebar .project-tasks .task-select { --task-indent: 35px; }
 /* Time view: rows are direct children of the list with no project column to
@@ -628,29 +629,43 @@
   margin-bottom: 0;
 }
 
-/* styles.css:330-355 — hover actions, unified 22x22 / radius 5px. */
-.codex-sidebar .task-hover-actions { gap: 1px; }
+/* Session row controls: pin + more, 24x24 / radius 7.5px. Two controls with
+ * distinct jobs instead of four equal-weight icons: the strip used to be
+ * pin / move / rename / delete, which cost ~92px of title and put a
+ * destructive action one twitch away from pin. Everything else lives behind
+ * the more button (SessionContextMenu), which is also what right-click opens. */
+.codex-sidebar .task-hover-actions { gap: 2px; }
 .codex-sidebar .task-hover-btn {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   margin: 0;
   border: 0;
   display: grid;
   place-items: center;
-  border-radius: var(--radius-xs);
-  color: var(--cdx-text-4);
+  border-radius: var(--radius-sm);
+  color: var(--cdx-text-3);
   background: transparent;
   position: relative;
   cursor: pointer;
   flex: none;
+  transition: background-color 120ms ease, color 120ms ease;
 }
-.codex-sidebar .task-hover-btn:hover {
-  color: var(--cdx-text-2);
-  background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
+.codex-sidebar .task-hover-btn:hover,
+.codex-sidebar .task-hover-btn[aria-expanded='true'] {
+  color: var(--cdx-text);
+  background: color-mix(in srgb, var(--cdx-text) 9%, transparent);
 }
-.codex-sidebar .task-hover-btn--active { color: var(--cdx-text-2); }
-.codex-sidebar .task-hover-btn svg { width: 16px; height: 16px; display: block; }
+.codex-sidebar .task-hover-btn:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cdx-blue-100) 22%, transparent),
+              0 0 0 2px color-mix(in srgb, var(--cdx-blue-300) 13%, transparent);
+}
+/* Pinned: the pin is drawn filled and tilted, so "on" reads from the glyph. */
+.codex-sidebar .task-hover-btn--active { color: var(--cdx-text); }
+.codex-sidebar .task-hover-btn--active svg { fill: currentColor; transform: rotate(-35deg); }
+.codex-sidebar .task-hover-btn svg { width: 15px; height: 15px; display: block; transition: transform 160ms var(--ease-out); }
+.codex-sidebar .task-hover-btn.sidebar-session-more-trigger svg { width: 16px; height: 16px; }
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Expand/collapse — styles.css:1671-1676. grid-template-rows 0fr→1fr animates
@@ -666,6 +681,12 @@
  * ────────────────────────────────────────────────────────────────────────── */
 .codex-sidebar .project-tasks-outer {
   display: grid;
+  /* One column that can never be wider than the list. An implicit auto column
+   * grows to its items' min-content width, which for a nowrap title is the
+   * whole title: every row then became as wide as the longest title, so long
+   * titles never overflowed their own frame (no fade, no marquee) and their
+   * hover controls were laid out past the sidebar's clipped edge. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 0fr;
   transition: grid-template-rows 190ms cubic-bezier(.2, .82, .25, 1);
 }
@@ -673,6 +694,7 @@
 .codex-sidebar .project-tasks-outer > .project-tasks { min-height: 0; overflow: clip; }
 .codex-sidebar .section-list-outer {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 0fr;
   transition: grid-template-rows 200ms cubic-bezier(.2, .82, .25, 1);
 }
@@ -852,7 +874,10 @@
   max-height: calc(100vh - 16px);
   overflow-y: auto;
   overflow-x: hidden;
+  outline: none;
 }
+/* Opened from the trailing more button, the menu grows out of its corner. */
+.sidebar-session-context-menu[data-align='end'] { transform-origin: top right; }
 .sidebar-session-context-menu__title {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -993,6 +1018,8 @@
 .sidebar-account-menu .codex-dropdown__icon svg { width: 16px; height: 16px; }
 
 @media (prefers-reduced-motion: reduce) {
+  .codex-sidebar .sidebar-row__actions { transform: none; }
+  .codex-sidebar .task-select { transition: none; }
   .codex-sidebar .project-tasks-outer,
   .codex-sidebar .section-list-outer,
   .codex-sidebar .ws-members-outer,
@@ -1085,6 +1112,7 @@
  * group's `.project-tasks-outer`, so streams and projects fold identically. */
 .codex-sidebar .ws-members-outer {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 0fr;
   opacity: 0;
   transition: grid-template-rows 190ms cubic-bezier(.2, .82, .25, 1), opacity 150ms ease;
@@ -1148,10 +1176,10 @@
 }
 .codex-sidebar .ws-time-slice:first-child { margin-top: 2px; }
 
-/* Move menu — stream entries carry their accent swatch; the footer creates
- * a stream AND files the session in one step. (Portalled to <body>, so this
- * block is deliberately NOT scoped under .codex-sidebar.) */
-.sidebar-session-move-menu .ws-menu-dot {
+/* The session menu's move page: each stream carries its accent swatch, the one
+ * place where "which group" is the actual question. (Portalled to <body>, so
+ * this block is deliberately NOT scoped under .codex-sidebar.) */
+.sidebar-session-context-menu .ws-menu-dot {
   width: 6px;
   height: 6px;
   flex: none;
@@ -1176,8 +1204,7 @@
   transition: opacity 120ms ease;
 }
 .codex-sidebar .sidebar-row:hover .ws-trailing,
-.codex-sidebar .sidebar-row:focus-within .ws-trailing,
-.codex-sidebar [data-testid^='sidebar-folder-']:hover > div > .sidebar-row:first-child .ws-trailing,
+.codex-sidebar .sidebar-row:has(:focus-visible) .ws-trailing,
 .codex-sidebar .sidebar-row[data-force-actions='true'] .ws-trailing {
   opacity: 0;
 }
@@ -1229,4 +1256,4 @@
 .codex-sidebar .project-tasks:not([data-flat='true']) .ws-label-select { padding-left: 34px; }
 .codex-sidebar .project-tasks:not([data-flat='true']) .ws-unfiled-label,
 .codex-sidebar .project-tasks:not([data-flat='true']) .ws-time-slice { padding-left: 34px; }
-.codex-sidebar .project-tasks:not([data-flat='true']) .task-select { --task-indent: 50px; }
+.codex-sidebar .project-tasks:not([data-flat='true']) .ws-tree[data-has-groups='true'] .task-select { --task-indent: 50px; }

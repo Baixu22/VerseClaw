@@ -32,6 +32,8 @@ import {
 } from '@/lib/workspace-tree';
 import type { AgentSummary } from '@/types/agent';
 import { FileTree } from '@/components/ai-elements/file-tree';
+import { buildPreviewTarget } from './build-preview-target';
+import { FilePreviewBody } from './FilePreviewBody';
 import { FilePreviewIcon } from './file-card-utils';
 import { formatFileSize } from './format';
 import {
@@ -41,6 +43,7 @@ import {
 import MarkdownPreview from './MarkdownPreview';
 import HtmlPreview from './HtmlPreview';
 import ImageViewer from './ImageViewer';
+import MediaPreview from './MediaPreview';
 import OfficePreview from './OfficePreview';
 
 const MonacoViewerLazy = lazy(() => import('./MonacoViewer'));
@@ -349,6 +352,15 @@ export function WorkspaceBrowserBody({
   };
 
   const renderBody = () => {
+    // Generated media and other session artifacts often live outside the workspace
+    // tree, such as under ~/.openclaw/media. Main's read sandbox still applies.
+    const isOutsideTree = Boolean(selectedRel)
+      && !selectedNode
+      && (state.status === 'ready' || !workspace)
+      && /^(?:[A-Za-z]:[\\/]|\/|~[\\/])/.test(selectedRel ?? '');
+    if (isOutsideTree && selectedRel) {
+      return <FilePreviewBody key={selectedRel} file={buildPreviewTarget(selectedRel)} readOnly compact />;
+    }
     if (selectedRel && state.status === 'ready' && !selectedNode) {
       return (
         <div className="flex h-full items-center justify-center px-6 text-center text-sm text-destructive">
@@ -365,6 +377,16 @@ export function WorkspaceBrowserBody({
     }
     if (selectedNode.contentType === 'snapshot') {
       return <ImageViewer filePath={selectedNode.absPath} fileName={selectedNode.name} />;
+    }
+    if (selectedNode.contentType === 'video' || selectedNode.contentType === 'audio') {
+      return (
+        <MediaPreview
+          filePath={selectedNode.absPath}
+          fileName={selectedNode.name}
+          mimeType={selectedNode.mimeType ?? 'application/octet-stream'}
+          size={selectedNode.size}
+        />
+      );
     }
     if (isOfficePreviewExt(selectedNode.ext)) {
       return <OfficePreview filePath={selectedNode.absPath} fileName={selectedNode.name} />;

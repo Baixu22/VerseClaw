@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import MarkdownPreview, { markdownOutline } from '@/components/file-preview/MarkdownPreview';
@@ -167,5 +167,110 @@ describe('Rare UI production adaptations', () => {
     fireEvent.click(toggle);
     expect(useSettingsStore.getState().desktopNotificationsEnabled).toBe(false);
     expect(screen.getByTestId('chat-completion-desktop-state')).toHaveTextContent('desktopOff');
+  });
+
+  it('groups only consecutive entries of one session, keeping the feed newest-first', async () => {
+    const { groupConsecutiveBySession } = await import('@/components/rareui/completion-activity');
+    const entry = (id: string, sessionKey: string) => ({ id, sessionKey, kind: 'completed' as const, status: '', occurredAt: 1 });
+    const groups = groupConsecutiveBySession([entry('a', 'one'), entry('b', 'one'), entry('c', 'two'), entry('d', 'one')]);
+    expect(groups.map((group) => [group.sessionKey, group.entries.map((item) => item.id)])).toEqual([
+      ['one', ['a', 'b']],
+      ['two', ['c']],
+      ['one', ['d']],
+    ]);
+  });
+
+  it('formats a running clock with tabular minutes and seconds', async () => {
+    const { formatElapsed } = await import('@/components/rareui/completion-activity');
+    expect(formatElapsed(0)).toBe('0:00');
+    expect(formatElapsed(42_400)).toBe('0:42');
+    expect(formatElapsed(12 * 60_000 + 5_000)).toBe('12:05');
+    expect(formatElapsed(3_729_000)).toBe('1:02:09');
+    expect(formatElapsed(-5_000)).toBe('0:00');
+  });
+
+  it('shows running sessions live, rings amber when one waits, and colours the badge by severity', async () => {
+    vi.doMock('react-router-dom', async (importOriginal) => ({
+      ...await importOriginal<typeof import('react-router-dom')>(),
+      useNavigate: () => () => undefined,
+    }));
+    const { CompletionActivityMenu } = await import('@/components/rareui/CompletionActivityMenu');
+    const { useCompletionActivityStore } = await import('@/components/rareui/completion-activity-store');
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({ sessionLabels: { 'agent:main:a': 'Release notes', 'agent:main:b': 'Audit pass' } } as never);
+    useCompletionActivityStore.setState({
+      activities: [],
+      nudges: [
+        { id: 'run:3:error', sessionKey: 'agent:main:b', kind: 'error', status: 'Tool crashed', occurredAt: 300 },
+        { id: 'run:2:completed', sessionKey: 'agent:main:a', kind: 'completed', status: 'completed', occurredAt: 200 },
+        { id: 'run:1:completed', sessionKey: 'agent:main:a', kind: 'completed', status: 'Drafted the changelog', occurredAt: 100 },
+      ],
+      pendingNavigation: null,
+    });
+    const live = [
+      { sessionKey: 'agent:main:a', label: 'Release notes', state: 'running' as const, startedAt: Date.now() - 65_000 },
+    ];
+    const view = render(<TooltipProvider><CompletionActivityMenu liveSessions={live} /></TooltipProvider>);
+    const bell = screen.getByTestId('chat-completion-bell');
+    expect(bell).toHaveAttribute('data-live', 'running');
+    expect(screen.getByTestId('chat-activity-live-ring')).toBeInTheDocument();
+    // Three unread, one of them an error: the badge says so in number and colour.
+    expect(bell).toHaveAttribute('data-tone', 'error');
+    expect(screen.getByTestId('chat-completion-unread-dot')).toHaveTextContent('3');
+    expect(bell).toHaveAttribute('aria-label', 'completionActivity.labelLive');
+
+    fireEvent.click(bell);
+    const liveItems = screen.getAllByTestId('chat-activity-live-item');
+    expect(liveItems).toHaveLength(1);
+    expect(liveItems[0]).toHaveTextContent('Release notes');
+    expect(liveItems[0]).toHaveTextContent(/1:0\d/);
+    // Every finished turn stays its own item, newest first; the session name is
+    // said once per consecutive run of entries instead of on every item.
+    const items = screen.getAllByTestId('chat-completion-item');
+    expect(items.map((item) => item.getAttribute('data-kind'))).toEqual(['error', 'completed', 'completed']);
+    expect(document.querySelectorAll('.rare-activity-group__head')).toHaveLength(2);
+    // Machine words never leak into the preview line.
+    expect(items[1]).not.toHaveTextContent(/^completed/);
+    expect(items[1]).toHaveTextContent('completionActivity.kind.completed');
+    // Opening the panel reads the entries; they stay marked as fresh while it is open.
+    await waitFor(() => expect(screen.queryByTestId('chat-completion-unread-dot')).toBeNull());
+    expect(items.every((item) => item.getAttribute('data-fresh') === 'true')).toBe(true);
+
+    view.rerender(<TooltipProvider><CompletionActivityMenu liveSessions={[{ ...live[0], state: 'waiting' }]} /></TooltipProvider>);
+    expect(screen.getByTestId('chat-completion-bell')).toHaveAttribute('data-live', 'waiting');
+    expect(screen.getByTestId('chat-activity-live-item')).toHaveAttribute('data-state', 'waiting');
+  });
+
+  it('shows an honest empty state when nothing ran and nothing is running', async () => {
+    vi.doMock('react-router-dom', async (importOriginal) => ({
+      ...await importOriginal<typeof import('react-router-dom')>(),
+      useNavigate: () => () => undefined,
+    }));
+    const { CompletionActivityMenu } = await import('@/components/rareui/CompletionActivityMenu');
+    const { useCompletionActivityStore } = await import('@/components/rareui/completion-activity-store');
+    useCompletionActivityStore.setState({ activities: [], nudges: [], pendingNavigation: null });
+    render(<TooltipProvider><CompletionActivityMenu /></TooltipProvider>);
+    const bell = screen.getByTestId('chat-completion-bell');
+    expect(bell).toHaveAttribute('data-live', 'idle');
+    expect(screen.queryByTestId('chat-activity-live-ring')).toBeNull();
+    fireEvent.click(bell);
+    expect(screen.getByTestId('chat-activity-empty')).toHaveTextContent('completionActivity.emptyTitle');
+    expect(screen.queryByTestId('chat-activity-live')).toBeNull();
+  });
+
+  it('plans a title marquee only for titles that overflow, at a constant speed', async () => {
+    const { planTitleMarquee, TITLE_MARQUEE_GAP_PX, TITLE_MARQUEE_SPEED_PX_PER_S } = await import('@/components/layout/use-title-marquee');
+    expect(planTitleMarquee(120, 160)).toBeNull();
+    expect(planTitleMarquee(161, 160)).toBeNull();
+    expect(planTitleMarquee(0, 160)).toBeNull();
+    const short = planTitleMarquee(200, 160)!;
+    const long = planTitleMarquee(400, 160)!;
+    expect(short.travel).toBe(200 + TITLE_MARQUEE_GAP_PX);
+    // Same pace for any length: every extra pixel of travel costs the same time,
+    // and the speed ramps do not stretch with the title.
+    expect((long.moveMs - short.moveMs) / (long.travel - short.travel)).toBeCloseTo(1000 / TITLE_MARQUEE_SPEED_PX_PER_S, 0);
+    expect(long.rampMs).toBe(short.rampMs);
+    expect(long.rampMs).toBeLessThan(800);
+    expect(long.totalMs - long.moveMs).toBe(short.totalMs - short.moveMs);
   });
 });

@@ -534,7 +534,21 @@
       "label": "Details"
     },
     "chart": {
-      "label": "Chart"
+      "label": "Chart",
+      "category": "Category",
+      "seriesFallback": "Series {{index}}",
+      "showData": "Show data table",
+      "hideData": "Hide data table",
+      "summary": "{{type}} with {{series}} series and {{points}} data points",
+      "types": {
+        "bar": "Bar chart",
+        "line": "Line chart",
+        "area": "Area chart",
+        "pie": "Pie chart"
+      },
+      "unsupportedType": "\"{{type}}\" charts are not supported here. Showing the data instead.",
+      "pieInvalid": "A pie chart cannot show negative or all-zero values. Showing the data instead.",
+      "tooMany": "Too much data to chart clearly. Showing the data instead."
     },
     "imageGallery": {
       "label": "Images"
@@ -2261,7 +2275,12 @@
     "searchHintNavigate": "navigate",
     "searchHintSelect": "select",
     "searchHintClose": "close",
-    "longSession": "Long-session main conversation"
+    "longSession": "Long-session main conversation",
+    "moreActions": "More actions",
+    "archiveSession": "Archive",
+    "archivedToast": "Archived “{{label}}”",
+    "undo": "Undo",
+    "archiveFailed": "Couldn't archive this conversation"
   },
   "folders": {
     "create": "New folder",
@@ -2639,8 +2658,8 @@
     "resolveFailed": "The runtime did not accept this decision."
   },
   "completionActivity": {
-    "label": "Attention, {{count}} unread",
-    "title": "Attention",
+    "label": "Activity, {{count}} unread",
+    "title": "Activity",
     "empty": "Completions, failures and requests that need you will appear here.",
     "completed": "Run completed",
     "desktopDescription": "Native alerts for completed runs, failures and approvals.",
@@ -2660,7 +2679,19 @@
       "completed": "Completed",
       "error": "Error",
       "action-required": "Action needed"
-    }
+    },
+    "labelLive": "Activity, {{running}} running, {{count}} unread",
+    "summaryRunning": "{{count}} running",
+    "summaryUnread": "{{count}} new",
+    "liveTitle": "Running",
+    "recentTitle": "Recent",
+    "live": {
+      "running": "Running",
+      "waiting": "Needs you"
+    },
+    "emptyTitle": "All caught up",
+    "fresh": "New",
+    "untitledSession": "Conversation"
   },
   "sessionPolicy": {
     "title": "Session policy",
@@ -2702,6 +2733,49 @@
       "abort": "Abort stops only the current run; session stop clears queued work and drains runtime resources.",
       "retention": "Activity retention affects this UI view only; transcript and resource TTL stay owner-controlled.",
       "fork": "Fork copies transcript context; worktree isolation remains a separate resource boundary."
+    }
+  },
+  "resources": {
+    "media": {
+      "loading": "Loading media…",
+      "largeFile": "This file is {{size}}. Load it to play here.",
+      "load": "Load and play",
+      "retry": "Retry",
+      "voiceNote": "Voice note",
+      "openInPanel": "Open in side panel",
+      "openWithSystem": "Open with system app",
+      "revealInFolder": "Show in file manager",
+      "openFailed": "Could not open this resource",
+      "errors": {
+        "notFound": "File not found. It may have been moved or deleted.",
+        "outsideSandbox": "Verse Claw is not allowed to read this location.",
+        "tooLarge": "This file is {{size}}, over the {{limit}} limit for playing here.",
+        "unsupported": "This format cannot be played here, or the file is damaged.",
+        "failed": "Could not load this media.",
+        "unavailable": "This media is no longer available in the conversation.",
+        "remote": "Remote media is not loaded automatically. Open it in your browser."
+      }
+    },
+    "image": {
+      "untitled": "Image",
+      "loading": "Loading image…",
+      "unavailable": "Image unavailable",
+      "omitted": "Image data is not kept in conversation history",
+      "omittedWithSize": "Image data ({{size}}) is not kept in conversation history",
+      "remote": "Remote image not loaded",
+      "view": "View image: {{name}}"
+    },
+    "link": {
+      "open": "Open in browser",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "preview": "Preview in side panel"
+    },
+    "unknown": {
+      "title": "Unsupported resource",
+      "typeLabel": "Type",
+      "hint": "This resource cannot be displayed here.",
+      "copy": "Copy details"
     }
   }
 }

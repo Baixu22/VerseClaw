@@ -7,10 +7,9 @@ import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdo
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
-import { Copy, Check, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send, GitFork, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
+import { Copy, Check, X, ZoomIn, AlertCircle, Pencil, Send, GitFork, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionBarPrimitive, MessageProvider, type ThreadMessage } from '@assistant-ui/react';
-import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -29,8 +28,13 @@ import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
+import { ConversationImage } from '@/components/assistant-render/resources/ConversationImage';
+import { ConversationMediaCard } from '@/components/assistant-render/resources/ConversationMediaCard';
+import { ConversationResourceList } from '@/components/assistant-render/resources/ResourceCards';
+import { ImageLightbox } from '@/components/assistant-render/resources/ImageLightbox';
 import type { AgentSummary } from '@/types/agent';
 
+import { isProducedThisTurn, mediaKindOf, resolveWorkspaceRelativeFiles } from './conversation-resources';
 import { formatTimestamp } from './message-utils';
 import {
   fileNameFromPath,
@@ -81,6 +85,8 @@ interface ChatMessageProps {
    * the system default editor.
    */
   onOpenFile?: (file: AttachedFileMeta) => void;
+  /** Root for artifacts the reply names by relative path. Without one they stay text. */
+  workspaceRoot?: string | null;
   onSubmitInteractionResponse?: (text: string) => void;
   onDraftInteractionResponse?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
@@ -119,6 +125,12 @@ interface ChatMessageProps {
     estimatedCostUsd?: number;
   } | null;
 }
+
+/**
+ * Bounds a batch run: past this, further media in a message are file cards. The
+ * player reads bytes into memory, so it is not free to mount dozens of them.
+ */
+const MAX_INLINE_PLAYERS_PER_MESSAGE = 6;
 
 function isChatPreviewDocument(file: AttachedFileMeta): boolean {
   const name = file.fileName.toLowerCase();
@@ -161,6 +173,9 @@ function isHtmlOrMarkdownPreview(file: AttachedFileMeta): boolean {
 /** User-facing artifacts that must stay visible when process output is folded into the graph. */
 function isUserFacingAttachmentWhenFolded(file: AttachedFileMeta): boolean {
   if (file.mimeType.startsWith('image/')) return true;
+  // Whether a found path is this turn's output is decided after stat; see
+  // `isAttachmentConfirmed`. An artifact may come from any tool the turn ran.
+  if (mediaKindOf(file)) return true;
   if (isDirectoryAttachment(file)) return true;
   if (isSkillFileAttachment(file)) return true;
   if (isChatPreviewDocument(file)) return true;
@@ -168,6 +183,7 @@ function isUserFacingAttachmentWhenFolded(file: AttachedFileMeta): boolean {
   // intentional user-facing links. Generic tool-result markdown attachments
   // (e.g. CHECKLIST.md emitted mid-run) stay folded into the execution graph.
   if (file.source === 'message-ref' && isHtmlOrMarkdownPreview(file)) return true;
+  if (file.source === 'message-ref' && /\.(?:docx?|pptx?)$/i.test(file.fileName)) return true;
   return false;
 }
 
@@ -177,8 +193,20 @@ function validationKindForAttachment(file: AttachedFileMeta): 'file' | 'dir' | n
   // for immediate display. Regex-derived message refs start at size 0/null and
   // are validated through main-process stat before becoming clickable cards.
   if (file.source !== 'message-ref' && file.source !== 'tool-result') return null;
-  if (file.fileSize > 0 || file.preview) return null;
+  // Found audio and video always need the stat: its mtime says whether this turn wrote them.
+  const needsProductionCheck = file.source === 'tool-result' && mediaKindOf(file) != null;
+  if (!needsProductionCheck && (file.fileSize > 0 || file.preview)) return null;
   return isDirectoryAttachment(file) ? 'dir' : 'file';
+}
+
+type PathValidation = { exists: boolean; mtime?: number };
+
+function isAttachmentConfirmed(file: AttachedFileMeta, validated: Record<string, PathValidation>): boolean {
+  const kind = validationKindForAttachment(file);
+  if (!kind || !file.filePath) return true;
+  const result = validated[file.filePath];
+  if (!result?.exists) return false;
+  return !mediaKindOf(file) || isProducedThisTurn(file, result.mtime);
 }
 
 /** Stable identity so `suppressReasoning` never churns downstream memos. */
@@ -196,6 +224,7 @@ export const ChatMessage = memo(function ChatMessage({
   reasoningOverride,
   streamingTools = [],
   onOpenFile,
+  workspaceRoot,
   onSubmitInteractionResponse,
   onDraftInteractionResponse,
   canSubmitInteractionResponse = true,
@@ -228,9 +257,12 @@ export const ChatMessage = memo(function ChatMessage({
   const resolvableContentImages = projection.contentImages;
   const visibleTools = projection.visibleTools;
   const toolUiInteractions = projection.toolUiInteractions;
-  const [validatedPaths, setValidatedPaths] = useState<Record<string, boolean>>({});
+  const [validatedPaths, setValidatedPaths] = useState<Record<string, PathValidation>>({});
   const knowledgeRefs = projection.knowledgeRefs;
-  const derivedAttachedFiles = projection.candidateAttachments;
+  const derivedAttachedFiles = useMemo(
+    () => resolveWorkspaceRelativeFiles(projection.candidateAttachments, workspaceRoot),
+    [projection.candidateAttachments, workspaceRoot],
+  );
   const validationTargets = useMemo(
     () => derivedAttachedFiles
       .map((file) => {
@@ -261,6 +293,7 @@ export const ChatMessage = memo(function ChatMessage({
             return {
               filePath: target.filePath,
               exists: !!stat.ok && (target.kind === 'dir' ? !!stat.isDir : !!stat.isFile),
+              mtime: stat.mtime,
             };
           } catch {
             return { filePath: target.filePath, exists: false };
@@ -270,7 +303,7 @@ export const ChatMessage = memo(function ChatMessage({
         if (cancelled) return;
         setValidatedPaths((current) => {
           const next = { ...current };
-          for (const result of results) next[result.filePath] = result.exists;
+          for (const { filePath, ...result } of results) next[filePath] = result;
           return next;
         });
       });
@@ -282,11 +315,7 @@ export const ChatMessage = memo(function ChatMessage({
     };
   }, [validationKey, validationTargets, validatedPaths]);
   const existingDerivedAttachedFiles = useMemo(
-    () => derivedAttachedFiles.filter((file) => {
-      const kind = validationKindForAttachment(file);
-      if (!kind || !file.filePath) return true;
-      return validatedPaths[file.filePath] === true;
-    }),
+    () => derivedAttachedFiles.filter((file) => isAttachmentConfirmed(file, validatedPaths)),
     [derivedAttachedFiles, validatedPaths],
   );
   const filteredProcessAttachments = useMemo(
@@ -305,11 +334,7 @@ export const ChatMessage = memo(function ChatMessage({
   // process attachments are generally suppressed for this run segment —
   // otherwise the reply disappears entirely.
   const processVisibleAttachments = useMemo(
-    () => filteredProcessAttachments.filter((file) => {
-      const kind = validationKindForAttachment(file);
-      if (!kind || !file.filePath) return true;
-      return validatedPaths[file.filePath] === true;
-    }),
+    () => filteredProcessAttachments.filter((file) => isAttachmentConfirmed(file, validatedPaths)),
     [filteredProcessAttachments, validatedPaths],
   );
   const attachedFiles = useMemo(
@@ -324,6 +349,14 @@ export const ChatMessage = memo(function ChatMessage({
       suppressProcessAttachments,
       visibleTools.length,
     ],
+  );
+  const storeAttachedPaths = useMemo(
+    () => new Set((message._attachedFiles ?? []).map((file) => file.filePath)),
+    [message._attachedFiles],
+  );
+  const inlinePlayerFiles = useMemo(
+    () => new Set(attachedFiles.filter((file) => mediaKindOf(file)).slice(0, MAX_INLINE_PLAYERS_PER_MESSAGE)),
+    [attachedFiles],
   );
   const imageCopyTarget = useMemo(
     () => resolvePrimaryImageCopyTarget(resolvableContentImages, attachedFiles),
@@ -396,6 +429,7 @@ export const ChatMessage = memo(function ChatMessage({
     || reasoning.length > 0
     || resolvableContentImages.length > 0
     || attachedFiles.length > 0
+    || projection.resources.length > 0
     || visibleTools.length > 0
     || toolUiInteractions.length > 0
     || knowledgeRefs.length > 0;
@@ -470,6 +504,9 @@ export const ChatMessage = memo(function ChatMessage({
           <div className="flex flex-wrap gap-2">
             {attachedFiles.map((file, i) => {
               const isImage = file.mimeType.startsWith('image/');
+              if (inlinePlayerFiles.has(file)) {
+                return <ConversationMediaCard key={`local-${i}`} file={file} onOpen={onOpenFile} />;
+              }
               // Skip image attachments if we already have images from content blocks
               if (isImage && resolvableContentImages.length > 0) return null;
               if (isImage) {
@@ -491,6 +528,8 @@ export const ChatMessage = memo(function ChatMessage({
             })}
           </div>
         )}
+
+        {isUser && <ConversationResourceList resources={projection.resources} />}
 
         {isUser && knowledgeRefs.length > 0 && (
           <div className="flex flex-wrap justify-end gap-1.5" data-testid="chat-message-knowledge-refs">
@@ -518,7 +557,7 @@ export const ChatMessage = memo(function ChatMessage({
               <UserMessageBubble text={text} />
             )
           ) : (
-            <AssistantMarkdown text={text} isStreaming={isStreaming} />
+            <AssistantMarkdown text={text} isStreaming={isStreaming} allowSidePreview />
           )
         )}
 
@@ -558,9 +597,12 @@ export const ChatMessage = memo(function ChatMessage({
 
         {/* File attachments — assistant messages (below text) */}
         {!isUser && attachedFiles.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex w-full flex-wrap gap-2">
             {attachedFiles.map((file, i) => {
               const isImage = file.mimeType.startsWith('image/');
+              if (inlinePlayerFiles.has(file)) {
+                return <ConversationMediaCard key={`local-${i}`} file={file} onOpen={onOpenFile} />;
+              }
               if (isImage && resolvableContentImages.length > 0) return null;
               if (isImage && file.preview) {
                 return (
@@ -575,11 +617,23 @@ export const ChatMessage = memo(function ChatMessage({
                 );
               }
               if (isImage && !file.preview) {
-                return <ImagePreviewPlaceholder key={`local-${i}`} file={file} />;
+                // A relative mention never reached the store's preview loader, so
+                // there is nothing to wait for: resolve it here.
+                return file.filePath && !storeAttachedPaths.has(file.filePath)
+                  ? <ConversationImage key={`local-${i}`} url={file.filePath} alt={file.fileName} mimeType={file.mimeType} />
+                  : <ImagePreviewPlaceholder key={`local-${i}`} file={file} />;
               }
               return <FileCard key={`local-${i}`} file={file} onOpen={onOpenFile} />;
             })}
           </div>
+        )}
+
+        {!isUser && (
+          <ConversationResourceList
+            resources={projection.resources}
+            onOpenFilePath={handleOpenToolUiFilePath}
+            allowSidePreview
+          />
         )}
 
         {/* Token usage is kept in the hover action row so it does not compete with the reply. */}
@@ -621,8 +675,6 @@ export const ChatMessage = memo(function ChatMessage({
           src={lightboxImg.src}
           fileName={lightboxImg.fileName}
           filePath={lightboxImg.filePath}
-          base64={lightboxImg.base64}
-          mimeType={lightboxImg.mimeType}
           onClose={() => setLightboxImg(null)}
         />
       )}
@@ -1301,92 +1353,5 @@ function ImagePreviewCard({
         <ZoomIn className="h-6 w-6 text-white opacity-0 group-hover/img:opacity-100 transition-opacity drop-shadow" />
       </div>
     </AttachmentRoot>
-  );
-}
-
-// ── Image Lightbox ───────────────────────────────────────────────
-
-function ImageLightbox({
-  src,
-  fileName,
-  filePath,
-  base64,
-  mimeType,
-  onClose,
-}: {
-  src: string;
-  fileName: string;
-  filePath?: string;
-  base64?: string;
-  mimeType?: string;
-  onClose: () => void;
-}) {
-  void src; void base64; void mimeType; void fileName;
-  const { t } = useTranslation('chat');
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose]);
-
-  const handleShowInFolder = useCallback(() => {
-    if (filePath) {
-      void hostApi.shell.showItemInFolder(filePath);
-    }
-  }, [filePath]);
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      {/* Image + buttons stacked */}
-      <div
-        className="flex flex-col items-center gap-3"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <img
-          src={src}
-          alt={fileName}
-          className="max-w-[90vw] max-h-[85vh] rounded-lg shadow-2xl object-contain"
-        />
-
-        {/* Action buttons below image */}
-        <div className="flex items-center gap-2">
-          {filePath && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 bg-white/10 hover:bg-white/20 text-white"
-              onClick={handleShowInFolder}
-            >
-              <FolderOpen className="h-4 w-4" />
-            </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">{t('filePreview.actions.openInFinder')}</TooltipContent>
-            </Tooltip>
-          )}
-          <Tooltip>
-            <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 bg-white/10 hover:bg-white/20 text-white"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">{t('filePreview.actions.close')}</TooltipContent>
-          </Tooltip>
-        </div>
-      </div>
-    </div>,
-    document.body,
   );
 }

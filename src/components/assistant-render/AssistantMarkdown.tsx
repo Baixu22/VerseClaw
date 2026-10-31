@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react';
+import { Children, isValidElement, memo, useCallback, useState, type ReactNode } from 'react';
 import { TextMessagePartProvider } from '@assistant-ui/react';
 import { MarkdownTextPrimitive, type CodeHeaderProps } from '@assistant-ui/react-markdown';
 import { Copy, Check } from 'lucide-react';
@@ -10,7 +10,8 @@ import 'katex/dist/katex.min.css';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { GitHubCard, isGitHubUrl } from './GitHubCard';
-import { isUnresolvableImageUrl } from '@/pages/Chat/message-utils';
+import { ConversationImage } from './resources/ConversationImage';
+import { WebsiteLinkCard } from './resources/ResourceCards';
 
 function normalizeLatexDelimiters(input: string): string {
   if (!input || (input.indexOf('\\(') === -1 && input.indexOf('\\[') === -1)) {
@@ -73,6 +74,27 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
   );
 }
 
+function plainTextOf(node: ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(plainTextOf).join('');
+  if (isValidElement(node)) return plainTextOf((node.props as { children?: ReactNode }).children);
+  return '';
+}
+
+/**
+ * A paragraph that is nothing but one website link is a resource, not prose. A
+ * link inside a sentence stays inline, and GitHub keeps its own card.
+ */
+function standaloneWebsiteLink(children: ReactNode): { href: string; title?: string } | null {
+  const nodes = Children.toArray(children).filter((node) => !(typeof node === 'string' && !node.trim()));
+  const only = nodes[0];
+  if (nodes.length !== 1 || !isValidElement(only)) return null;
+  const { href, children: linkChildren } = only.props as { href?: unknown; children?: ReactNode };
+  if (typeof href !== 'string' || !/^https?:\/\//i.test(href) || isGitHubUrl(href)) return null;
+  const text = plainTextOf(linkChildren).trim();
+  return { href, title: text && text !== href ? text : undefined };
+}
+
 /**
  * Memoized so the markdown tree (including `.prose table`) is rebuilt only when
  * `text` / `isStreaming` actually change. `ChatMessage` re-renders on every
@@ -85,9 +107,12 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
 export const AssistantMarkdown = memo(function AssistantMarkdown({
   text,
   isStreaming,
+  allowSidePreview = false,
 }: {
   text: string;
   isStreaming: boolean;
+  /** Where the workspace panel is on screen, link cards may offer it. */
+  allowSidePreview?: boolean;
 }) {
   return (
     <>
@@ -107,6 +132,14 @@ export const AssistantMarkdown = memo(function AssistantMarkdown({
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[[rehypeKatex, { strict: false, throwOnError: false, output: 'html' }]]}
           components={{
+              p({ children, ...props }) {
+                // Mid-stream a lone link may still grow into a sentence; don't flip layout.
+                const link = isStreaming ? null : standaloneWebsiteLink(children);
+                if (link) {
+                  return <WebsiteLinkCard url={link.href} title={link.title} allowSidePreview={allowSidePreview} />;
+                }
+                return <p {...props}>{children}</p>;
+              },
               a({ href, children, ...props }) {
                 if (href && isGitHubUrl(href)) {
                   return <GitHubCard url={href} />;
@@ -149,10 +182,8 @@ export const AssistantMarkdown = memo(function AssistantMarkdown({
               );
             },
             img({ src, alt }) {
-              if (!src || isUnresolvableImageUrl(String(src))) return null;
-              return (
-                <img src={String(src)} alt={typeof alt === 'string' ? alt : 'image'} className="max-w-full rounded-lg" />
-              );
+              if (!src) return null;
+              return <ConversationImage url={String(src)} alt={typeof alt === 'string' ? alt : undefined} />;
             },
             CodeHeader: MarkdownCodeHeader,
             /* Headings, blockquote, hr, th and td are fully described by

@@ -324,6 +324,26 @@ export function workstreamColorIndex(folderId: string): number {
   return hashed % 8;
 }
 
+/**
+ * Workstream accent palette — 8 hues picked to sit quietly on both themes
+ * (mid lightness, restrained chroma). Index comes from workstreamColorIndex,
+ * so a stream keeps its color across sessions and machines.
+ */
+const WS_PALETTE = [
+  '#8B7CF6', // violet
+  '#2FB8A6', // teal
+  '#D9A03F', // amber
+  '#E0688C', // rose
+  '#4FA8E0', // sky
+  '#4CB782', // emerald
+  '#98A1B3', // slate
+  '#E07856', // coral
+] as const;
+
+export function workstreamAccent(folderId: string): string {
+  return WS_PALETTE[workstreamColorIndex(folderId)];
+}
+
 export type LineageRow = {
   entry: SidebarSessionEntry;
   /** 0 = top-level row; 1 = fork/handoff descendant attached under its origin. */

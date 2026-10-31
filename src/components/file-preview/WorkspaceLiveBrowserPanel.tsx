@@ -40,6 +40,11 @@ export function WorkspaceLiveBrowserPanel({
   const [profiles, setProfiles] = useState<AgentBrowserProfileEntry[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(storedSessionId);
   const [url, setUrl] = useState(storedUrl ?? '');
+  // A link card may target this panel while it is already mounted. Filling the
+  // address loads nothing; the page opens only through this panel's own action.
+  useEffect(() => {
+    if (storedUrl) setUrl(storedUrl);
+  }, [storedUrl]);
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [screenshot, setScreenshot] = useState<string | null>(null);

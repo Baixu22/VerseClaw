@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { ChatMessage } from '@/pages/Chat/ChatMessage';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -540,7 +540,8 @@ describe('ChatMessage image copy', () => {
 
     renderMessage(<ChatMessage message={message} />);
 
-    fireEvent.click(screen.getByRole('button'));
+    // The lone URL paragraph is itself a link card, with its own buttons.
+    fireEvent.click(within(screen.getByTestId('chat-assistant-message-actions')).getByRole('button'));
     await vi.waitFor(() => {
       expect(navigator.clipboard.write).toHaveBeenCalledTimes(1);
     });

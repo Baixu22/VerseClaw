@@ -57,7 +57,6 @@ const SESSIONS: SidebarSessionEntry[] = [
 async function renderTree(overrides?: {
   onRenameFolder?: (workspaceId: string, folderId: string, name: string) => Promise<void>;
   onDeleteFolder?: (workspaceId: string, folderId: string) => Promise<void>;
-  onMoveSession?: (workspaceId: string, sessionKey: string, folderId: string | null) => Promise<void>;
   onDropSession?: (workspaceId: string, sourceSessionKey: string, targetSessionKey: string, autoGroupName: string) => Promise<void>;
 }) {
   const { SessionFolderTree } = await import('@/components/layout/SessionFolderTree');
@@ -65,8 +64,6 @@ async function renderTree(overrides?: {
     ?? vi.fn<(workspaceId: string, folderId: string, name: string) => Promise<void>>().mockResolvedValue(undefined);
   const onDeleteFolder = overrides?.onDeleteFolder
     ?? vi.fn<(workspaceId: string, folderId: string) => Promise<void>>().mockResolvedValue(undefined);
-  const onMoveSession = overrides?.onMoveSession
-    ?? vi.fn<(workspaceId: string, sessionKey: string, folderId: string | null) => Promise<void>>().mockResolvedValue(undefined);
   const onDropSession = overrides?.onDropSession
     ?? vi.fn<(workspaceId: string, sourceSessionKey: string, targetSessionKey: string, autoGroupName: string) => Promise<void>>().mockResolvedValue(undefined);
 
@@ -81,21 +78,16 @@ async function renderTree(overrides?: {
       onCreateFolder={vi.fn().mockResolvedValue(undefined)}
       onRenameFolder={onRenameFolder}
       onDeleteFolder={onDeleteFolder}
-      onMoveSession={onMoveSession}
       onDropSession={onDropSession}
-      renderSessionRow={(entry, options) => (
+      renderSessionRow={(entry) => (
         <div key={entry.session.key} data-testid={`session-row-${entry.session.key}`}>
           {entry.session.displayName}
-          {/* Mirrors SessionRowMemo: leading actions live in the row's action
-              strip. Dropping them here would hide the move affordance the F3
-              tests are about. */}
-          {options?.leadingActions}
         </div>
       )}
     />,
   );
 
-  return { ...view, onRenameFolder, onDeleteFolder, onMoveSession, onDropSession };
+  return { ...view, onRenameFolder, onDeleteFolder, onDropSession };
 }
 
 describe('SessionFolderTree folder mutation dispatch', () => {
@@ -150,51 +142,30 @@ describe('SessionFolderTree folder mutation dispatch', () => {
 });
 
 /**
- * Regression guard for the audit's F3: the move menu used to be attached only
- * to `groups.rootSessions`, so a session dragged into a workgroup had no UI
- * left to move it back out — a one-way door.
+ * The audit's F3 (a session filed into a workgroup had no UI left to move it
+ * back out) is now held one level up: every session row carries the same ⋯
+ * menu, whose move page offers "no workgroup" — see
+ * sidebar-session-context-menu.test.tsx. What the tree must guarantee is that
+ * it renders every session, grouped or not, through the shared row renderer
+ * and does not grow a second, competing move control of its own.
  */
-describe('SessionFolderTree session move affordance', () => {
-  it('offers the move menu to a session nested inside a folder', async () => {
+describe('SessionFolderTree session rows', () => {
+  it('renders grouped and ungrouped sessions through the shared row renderer', async () => {
     await renderTree();
-    expect(screen.getByTestId('sidebar-session-move-agent:main:nested')).toBeInTheDocument();
+    expect(screen.getByTestId('session-row-agent:main:nested')).toBeInTheDocument();
+    expect(screen.getByTestId('session-row-agent:main:loose')).toBeInTheDocument();
   });
 
-  it('still offers it to an ungrouped session', async () => {
+  it('adds no move control of its own next to the row', async () => {
     await renderTree();
-    expect(screen.getByTestId('sidebar-session-move-agent:main:loose')).toBeInTheDocument();
+    expect(screen.queryByTestId('sidebar-session-move-agent:main:nested')).toBeNull();
+    expect(screen.queryByTestId('sidebar-session-move-agent:main:loose')).toBeNull();
+    expect(document.querySelector('.sidebar-session-move-menu')).toBeNull();
   });
 
-  it('moves a nested session back out to the workspace root', async () => {
-    const { onMoveSession } = await renderTree();
-
-    fireEvent.click(screen.getByTestId('sidebar-session-move-agent:main:nested'));
-    fireEvent.click(await screen.findByTestId('sidebar-session-move-none'));
-
-    await waitFor(() => expect(onMoveSession).toHaveBeenCalledTimes(1));
-    expect(onMoveSession).toHaveBeenCalledWith('ws-1', 'agent:main:nested', null);
-  });
-
-  it('moves a nested session into a sibling folder', async () => {
-    const { onMoveSession } = await renderTree();
-
-    fireEvent.click(screen.getByTestId('sidebar-session-move-agent:main:nested'));
-    fireEvent.click(await screen.findByTestId('sidebar-session-move-to-root-b'));
-
-    await waitFor(() => expect(onMoveSession).toHaveBeenCalledTimes(1));
-    expect(onMoveSession).toHaveBeenCalledWith('ws-1', 'agent:main:nested', 'root-b');
-  });
-
-  it('portals the menu out of the clipped sidebar scroller', async () => {
-    await renderTree();
-    fireEvent.click(screen.getByTestId('sidebar-session-move-agent:main:nested'));
-
-    const menu = await screen.findByTestId('sidebar-session-move-menu-agent:main:nested');
-    // `.project-tasks` carries `overflow: hidden` for the collapse animation, so
-    // an in-tree menu would be clipped. Portalling to <body> is what keeps a
-    // deeply nested session's menu reachable.
-    expect(menu.parentElement).toBe(document.body);
-    expect(menu).toHaveClass('fixed');
+  it('marks the tree as grouped so filed sessions step in under their group label', async () => {
+    const { container } = await renderTree();
+    expect(container.querySelector('.ws-tree')).toHaveAttribute('data-has-groups', 'true');
   });
 });
 

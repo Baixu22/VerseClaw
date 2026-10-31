@@ -48,6 +48,7 @@ import {
 import MarkdownPreview from './MarkdownPreview';
 import HtmlPreview from './HtmlPreview';
 import ImageViewer from './ImageViewer';
+import MediaPreview from './MediaPreview';
 import OfficePreview from './OfficePreview';
 
 const MonacoViewerLazy = lazy(() => import('./MonacoViewer'));
@@ -570,6 +571,8 @@ export function FilePreviewBody({
             <TabsContent value="preview" className={cn('m-0 h-full', file.contentType === 'document' && !isHtmlPreviewExt(file.ext) ? 'overflow-hidden' : 'overflow-auto')}>
               {file.contentType === 'snapshot' ? (
                 <ImageViewer filePath={file.filePath} fileName={file.fileName} />
+              ) : file.contentType === 'video' || file.contentType === 'audio' ? (
+                <MediaPreview filePath={file.filePath} fileName={file.fileName} mimeType={file.mimeType} size={file.size} />
               ) : isOfficePreviewExt(file.ext) ? (
                 <OfficePreview filePath={file.filePath} fileName={file.fileName} />
               ) : isPdfPreviewExt(file.ext) ? (

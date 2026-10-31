@@ -200,7 +200,8 @@ test.describe('dialog transitions', () => {
       const sessionRow = page.getByTestId(`sidebar-session-${MAIN_SESSION_KEY}`);
       await expect(sessionRow).toBeVisible();
       await sessionRow.hover();
-      await page.getByTestId(`sidebar-session-delete-${MAIN_SESSION_KEY}`).click();
+      await page.getByTestId(`sidebar-session-more-${MAIN_SESSION_KEY}`).click();
+      await page.getByTestId('sidebar-session-context-delete').click();
 
       const confirmDialog = page.getByTestId('session-delete-dialog');
       await expect(confirmDialog).toContainText('Preserved session');
@@ -212,7 +213,8 @@ test.describe('dialog transitions', () => {
 
       await expect(sessionRow).toBeVisible();
       await sessionRow.hover();
-      await page.getByTestId(`sidebar-session-delete-${MAIN_SESSION_KEY}`).click();
+      await page.getByTestId(`sidebar-session-more-${MAIN_SESSION_KEY}`).click();
+      await page.getByTestId('sidebar-session-context-delete').click();
 
       await expect(confirmDialog).toContainText('Preserved session');
 

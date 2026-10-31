@@ -67,6 +67,7 @@ import {
 } from './session-continuity';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
 import { extractText, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
+import { mediaKindOf } from './conversation-resources';
 import { projectMessageRender } from './message-render-projection';
 import { parseSubagentCompletionInfo } from './task-visualization';
 import {
@@ -214,8 +215,8 @@ type SessionLineageOverride = {
 
 const EMPTY_REASONING_ITEMS: AssistantReasoning[] = [];
 
-function hasUserFacingImageAttachments(msg: RawMessage): boolean {
-  return (msg._attachedFiles ?? []).some((file) => file.mimeType.startsWith('image/'));
+function hasUserFacingMediaAttachments(msg: RawMessage): boolean {
+  return (msg._attachedFiles ?? []).some((file) => file.mimeType.startsWith('image/') || mediaKindOf(file));
 }
 
 function buildKnowledgeDraftBody(messages: RawMessage[]): string {
@@ -3057,8 +3058,9 @@ export function Chat() {
     return { byRunKey, adoptedIndices };
   }, [messages, userRunCards]);
 
+  const messageWorkspaceRoot = activeWorkspace?.rootPath || currentAgent?.workspace || null;
   const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => messages.map((msg, idx) => {
-    const hasUserFacingImages = hasUserFacingImageAttachments(msg);
+    const hasUserFacingMedia = hasUserFacingMediaAttachments(msg);
     const suppressAssistantText = foldedNarrationIndices.has(idx);
     const suppressToolCards = runSegmentMessageIndices.has(idx);
     const suppressReasoning = runCardReasoning.adoptedIndices.has(idx);
@@ -3084,7 +3086,7 @@ export function Chat() {
       suppressReasoning,
       textOverride,
     });
-    const hidden = isInternalMessage(msg) && !hasUserFacingImages
+    const hidden = isInternalMessage(msg) && !hasUserFacingMedia
       ? true
       : !projection.hasRenderableContent;
 
@@ -3640,6 +3642,7 @@ export function Chat() {
                         suppressProcessAttachments={row.suppressToolCards}
                         suppressReasoning={row.suppressReasoning}
                         onOpenFile={handleOpenAttachedFile}
+                        workspaceRoot={messageWorkspaceRoot}
                         canSubmitInteractionResponse={isGatewayRunning && !inputRunActive}
                         onSubmitInteractionResponse={handleSubmitInteractionResponse}
                         onDraftInteractionResponse={handleAppendComposerDraft}
@@ -3851,6 +3854,7 @@ export function Chat() {
                       streamingTools={streamingToolsForMessage}
                       liveUsage={liveUsage}
                       onOpenFile={handleOpenAttachedFile}
+                      workspaceRoot={messageWorkspaceRoot}
                       canSubmitInteractionResponse={false}
                       onSubmitInteractionResponse={handleSubmitInteractionResponse}
                       onDraftInteractionResponse={handleAppendComposerDraft}

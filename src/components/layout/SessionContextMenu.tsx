@@ -19,11 +19,16 @@
  *
  * Styling reuses the `.codex-dropdown` recipe (src/styles/codex-sidebar.css) so
  * this menu is indistinguishable from the organize / project / footer menus.
+ *
+ * It opens two ways with one body: right-click (anchored at the pointer) and
+ * the row's visible ⋯ button (anchored under the button, right-aligned). The ⋯
+ * button is what makes the menu discoverable; right-click is the shortcut.
  */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
+  Archive,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -42,6 +47,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import type { SessionFolder } from '@shared/types/workspace';
+import { workstreamAccent } from './session-buckets';
 
 /** Fixed width so the open menu can be flipped inside the viewport. */
 const MENU_WIDTH = 208;
@@ -54,6 +60,10 @@ export type SessionContextMenuTarget = {
   /** Anchor in client coordinates — the pointer for a right-click. */
   x: number;
   y: number;
+  /** `end`: `x` is the menu's right edge (opened from the row's ⋯ button). */
+  align?: 'start' | 'end';
+  /** Bottom edge to use when the menu has to open ABOVE its anchor. */
+  flipY?: number;
   isPinned: boolean;
   isUnread: boolean;
   /** Null when no project claims the session (nothing to migrate or copy). */
@@ -75,6 +85,7 @@ export interface SessionContextMenuProps {
   onHandoff: (sessionKey: string) => void;
   onCopyWorkPath: (sessionKey: string) => void;
   onCopySessionId: (sessionKey: string) => void;
+  onArchive: (sessionKey: string, label: string) => void;
   onDelete: (sessionKey: string, label: string) => void;
 }
 
@@ -90,6 +101,7 @@ export function SessionContextMenu({
   onHandoff,
   onCopyWorkPath,
   onCopySessionId,
+  onArchive,
   onDelete,
 }: SessionContextMenuProps) {
   const { t } = useTranslation(['chat', 'common']);
@@ -99,7 +111,10 @@ export function SessionContextMenu({
   /* Horizontal placement needs no measurement — the width is fixed. */
   const left = Math.max(
     VIEWPORT_MARGIN,
-    Math.min(target.x, window.innerWidth - MENU_WIDTH - VIEWPORT_MARGIN),
+    Math.min(
+      target.align === 'end' ? target.x - MENU_WIDTH : target.x,
+      window.innerWidth - MENU_WIDTH - VIEWPORT_MARGIN,
+    ),
   );
 
   /*
@@ -114,24 +129,35 @@ export function SessionContextMenu({
     if (!element) return;
     const { offsetHeight } = element;
     const maxTop = window.innerHeight - offsetHeight - VIEWPORT_MARGIN;
-    const flippedTop = target.y - offsetHeight;
+    const flippedTop = (target.flipY ?? target.y) - offsetHeight;
     // Prefer opening downward from the pointer; flip above it when that would
     // overflow and the flipped position actually fits.
     const top = target.y <= maxTop
       ? target.y
       : Math.max(VIEWPORT_MARGIN, flippedTop >= VIEWPORT_MARGIN ? flippedTop : maxTop);
     element.style.top = `${top}px`;
-  }, [page, streamDraft, target.y]);
+  }, [page, streamDraft, target.flipY, target.y]);
+
+  /* Keyboard: the menu takes focus when it opens and hands it back on Escape,
+     so ⋯ → arrows → Enter works without the pointer. */
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    menuRef.current?.focus({ preventScroll: true });
+  }, []);
 
   useEffect(() => {
     const closeOnOutside = (event: PointerEvent) => {
-      if ((event.target as Element).closest?.('.sidebar-session-context-menu')) return;
+      // The open row's own ⋯ toggles the menu in its click handler; closing it
+      // here first would make that click re-open it.
+      if ((event.target as Element).closest?.('.sidebar-session-context-menu,.sidebar-session-more-trigger[aria-expanded="true"]')) return;
       onClose();
     };
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       event.stopPropagation();
       onClose();
+      returnFocusRef.current?.focus?.({ preventScroll: true });
     };
     addEventListener('pointerdown', closeOnOutside);
     addEventListener('keydown', closeOnEscape);
@@ -267,6 +293,19 @@ export function SessionContextMenu({
       <button
         type="button"
         role="menuitem"
+        data-testid="sidebar-session-context-archive"
+        className="codex-dropdown__item"
+        onClick={() => {
+          onClose();
+          onArchive(sessionKey, target.label);
+        }}
+      >
+        <span className="codex-dropdown__icon"><Archive className="h-4 w-4" /></span>
+        <span className="codex-dropdown__text">{t('chat:sidebar.archiveSession')}</span>
+      </button>
+      <button
+        type="button"
+        role="menuitem"
         data-testid="sidebar-session-context-delete"
         className="codex-dropdown__item codex-dropdown__item--danger"
         onClick={() => {
@@ -321,7 +360,13 @@ export function SessionContextMenu({
             onMoveToFolder(sessionKey, folder.id);
           }}
         >
-          <span className="codex-dropdown__icon" />
+          <span className="codex-dropdown__icon">
+            <span
+              className="ws-menu-dot"
+              aria-hidden="true"
+              style={{ '--ws-accent': workstreamAccent(folder.id) } as React.CSSProperties}
+            />
+          </span>
           <span className="codex-dropdown__text">{folder.name}</span>
           {target.currentFolderId === folder.id && (
             <Check className="size-3.5 shrink-0 opacity-70" aria-hidden />
@@ -368,14 +413,34 @@ export function SessionContextMenu({
     </>
   );
 
+  const moveFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    if (event.target instanceof HTMLInputElement) return;
+    const items = [...(menuRef.current?.querySelectorAll<HTMLElement>('button') ?? [])];
+    if (items.length === 0) return;
+    event.preventDefault();
+    const index = items.indexOf(document.activeElement as HTMLElement);
+    const next = event.key === 'Home'
+      ? 0
+      : event.key === 'End'
+        ? items.length - 1
+        : event.key === 'ArrowDown'
+          ? (index + 1) % items.length
+          : index <= 0 ? items.length - 1 : index - 1;
+    items[next]?.focus();
+  };
+
   return createPortal(
     <div
       ref={menuRef}
       role="menu"
+      tabIndex={-1}
       aria-label={t('chat:sidebar.sessionActions')}
       data-testid={`sidebar-session-context-menu-${sessionKey}`}
+      data-align={target.align ?? 'start'}
       className="codex-dropdown sidebar-session-context-menu"
       style={{ top: target.y, left, width: MENU_WIDTH }}
+      onKeyDown={moveFocus}
     >
       <div className="codex-dropdown__label sidebar-session-context-menu__title">{target.label}</div>
       {page === 'root' ? renderRootPage() : renderMovePage()}

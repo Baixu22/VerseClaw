@@ -444,19 +444,26 @@ test.describe('Sidebar session workgroups and archive', () => {
     // The workgroup should appear in the sidebar.
     await expect(page.getByText('Research')).toBeVisible({ timeout: 5000 });
 
-    // Move session B into the workgroup via the move menu.
-    await page.getByTestId(`sidebar-session-${SESSION_KEY_B}`).hover();
-    const moveAction = page.getByTestId(`sidebar-session-move-${SESSION_KEY_B}`);
-    const renameAction = page.getByTestId(`sidebar-session-rename-${SESSION_KEY_B}`);
-    const deleteAction = page.getByTestId(`sidebar-session-delete-${SESSION_KEY_B}`);
-    await expect(moveAction).toBeVisible();
-    await expect(renameAction).toBeVisible();
-    await expect(deleteAction).toBeVisible();
-    await expectActionBefore(moveAction, renameAction);
-    await expectActionBefore(renameAction, deleteAction);
-    await page.getByTestId(`sidebar-session-move-${SESSION_KEY_B}`).click();
-    await expect(page.getByTestId(`sidebar-session-move-menu-${SESSION_KEY_B}`)).toBeVisible();
-    await page.getByTestId(`sidebar-session-move-menu-${SESSION_KEY_B}`).getByText('Research').click();
+    // Move session B into the workgroup from its ⋯ menu. The hover strip is
+    // exactly pin then ⋯; every other action lives in that one menu.
+    const pinAction = page.getByTestId(`sidebar-session-pin-${SESSION_KEY_B}`);
+    const moreAction = page.getByTestId(`sidebar-session-more-${SESSION_KEY_B}`);
+    await hoverUntilVisible(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`), moreAction);
+    await expect(pinAction).toBeVisible();
+    await expectActionBefore(pinAction, moreAction);
+    for (const retired of ['move', 'rename', 'delete']) {
+      await expect(page.getByTestId(`sidebar-session-${retired}-${SESSION_KEY_B}`)).toHaveCount(0);
+    }
+    await moreAction.click();
+    const moreMenu = page.getByTestId(`sidebar-session-context-menu-${SESSION_KEY_B}`);
+    await expect(moreMenu).toBeVisible();
+    await expect(moreAction).toHaveAttribute('aria-expanded', 'true');
+    // Anchored under its button: the menu's right edge meets the button's.
+    const [menuBox, moreBox] = await Promise.all([moreMenu.boundingBox(), moreAction.boundingBox()]);
+    expect(Math.abs((menuBox!.x + menuBox!.width) - (moreBox!.x + moreBox!.width))).toBeLessThanOrEqual(2);
+    await page.getByTestId('sidebar-session-context-move').click();
+    await moreMenu.getByText('Research').click();
+    await expect(moreMenu).toBeHidden();
 
     // The session should still be visible (now inside the workgroup), and the
     // workgroup should surface its aggregate running state and session count.
@@ -496,7 +503,11 @@ test.describe('Sidebar session workgroups and archive', () => {
 
     // Delete the workgroup. The delete button's testid uses the dynamic folder ID,
     // so locate the folder row by name and find the delete button within it.
-    await folderContainer.hover();
+    // Only the group's OWN header row reveals its controls.
+    await hoverUntilVisible(
+      folderContainer.locator('[data-testid^="sidebar-folder-toggle-"]'),
+      folderContainer.locator('[data-testid^="sidebar-folder-delete-"]'),
+    );
     await folderContainer.locator('[data-testid^="sidebar-folder-delete-"]').click();
 
     // After deletion, the workgroup name should disappear.
@@ -515,14 +526,15 @@ test.describe('Sidebar session workgroups and archive', () => {
     await expect(page.getByTestId('sidebar-session-project-workspace-folders')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible({ timeout: 15000 });
 
-    // Click the delete button on session B. The row's action buttons are
-    // hover-revealed and the sidebar re-renders as sessions settle, so wait for
-    // the button to actually appear rather than trusting a single hover.
+    // Delete session B from its ⋯ menu. The row's controls are hover-revealed
+    // and the sidebar re-renders as sessions settle, so wait for the button to
+    // actually appear rather than trusting a single hover.
     await hoverUntilVisible(
       page.getByTestId(`sidebar-session-${SESSION_KEY_B}`),
-      page.getByTestId(`sidebar-session-delete-${SESSION_KEY_B}`),
+      page.getByTestId(`sidebar-session-more-${SESSION_KEY_B}`),
     );
-    await page.getByTestId(`sidebar-session-delete-${SESSION_KEY_B}`).click();
+    await page.getByTestId(`sidebar-session-more-${SESSION_KEY_B}`).click();
+    await page.getByTestId('sidebar-session-context-delete').click();
 
     // The delete dialog should show three buttons.
     await expect(page.getByTestId('session-delete-dialog')).toBeVisible();
@@ -607,7 +619,10 @@ test.describe('Sidebar session workgroups and archive', () => {
     const autoGroupTestId = await autoGroup.getAttribute('data-testid');
     expect(autoGroupTestId).toBeTruthy();
     const autoGroupById = page.getByTestId(autoGroupTestId!);
-    await autoGroupById.hover();
+    await hoverUntilVisible(
+      autoGroupById.locator('[data-testid^="sidebar-folder-toggle-"]'),
+      autoGroupById.locator('button[aria-label="Rename workstream"]'),
+    );
     await autoGroupById.locator('button[aria-label="Rename workstream"]').click();
     await autoGroupById.locator('input').fill('Prompt pairing');
     await autoGroupById.locator('input').press('Enter');
@@ -617,7 +632,10 @@ test.describe('Sidebar session workgroups and archive', () => {
 
     // Removing the group keeps the conversations and returns them to the
     // ungrouped area.
-    await renamedGroup.hover();
+    await hoverUntilVisible(
+      renamedGroup.locator('[data-testid^="sidebar-folder-toggle-"]'),
+      renamedGroup.locator('[data-testid^="sidebar-folder-delete-"]'),
+    );
     await renamedGroup.locator('[data-testid^="sidebar-folder-delete-"]').click();
     await expect(groupByName('Prompt pairing')).toBeHidden({ timeout: 5000 });
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_A}`)).toBeVisible();

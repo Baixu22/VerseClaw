@@ -1,24 +1,54 @@
-import { AlertTriangle, Check, ShieldAlert } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle, BellDot, Check, ShieldAlert } from 'lucide-react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { useNavigate } from 'react-router-dom';
-import { NotificationBell } from './NotificationBell';
+import { NotificationBell, type NotificationBellLive, type NotificationBellTone } from './NotificationBell';
 import { useCompletionActivityStore } from './completion-activity-store';
 import type { CompletionActivityNudge } from './completion-activity-store';
+import {
+  formatElapsed,
+  groupConsecutiveBySession,
+  type CompletionActivity,
+  type LiveSessionActivity,
+} from './completion-activity';
+import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { useChatStore } from '@/stores/chat';
 import { useSettingsStore } from '@/stores/settings';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
 
-function NudgeIcon({ kind }: { kind: CompletionActivityNudge['kind'] }) {
-  if (kind === 'action-required') return <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-700 dark:text-amber-400" />;
-  if (kind === 'error') return <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-700 dark:text-red-400" />;
-  return <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-700 dark:text-green-400" />;
+const EMPTY_LIVE: LiveSessionActivity[] = [];
+/** Gap between the bell and the panel it opens. */
+const PANEL_GAP_PX = 6;
+/** Nudge statuses that are machine words, not something to show as a preview. */
+const MACHINE_STATUSES = new Set(['completed', 'error', 'approval']);
+
+function relativeTime(t: TFunction<'chat'>, at: number, now: number): string {
+  const minutes = Math.floor(Math.max(0, now - at) / 60_000);
+  if (minutes < 1) return t('sidebar.searchRelativeNow');
+  if (minutes < 60) return t('sidebar.searchRelativeMinutes', { count: minutes });
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return t('sidebar.searchRelativeHours', { count: hours });
+  return t('sidebar.searchRelativeDays', { count: Math.floor(hours / 24) });
 }
 
-/** Header attention control shared by the persistent sidebar and the chat data owner. */
-export function CompletionActivityMenu() {
+function NudgeIcon({ kind }: { kind: CompletionActivityNudge['kind'] }) {
+  if (kind === 'action-required') return <ShieldAlert className="rare-activity-entry__icon text-amber-700 dark:text-amber-400" />;
+  if (kind === 'error') return <AlertTriangle className="rare-activity-entry__icon text-red-700 dark:text-red-400" />;
+  return <Check className="rare-activity-entry__icon text-green-700 dark:text-green-400" />;
+}
+
+/**
+ * Header activity control shared by the persistent sidebar and the chat data
+ * owner: what is running right now, what just finished, and what needs you.
+ */
+export const CompletionActivityMenu = memo(function CompletionActivityMenu({
+  liveSessions = EMPTY_LIVE,
+}: {
+  liveSessions?: LiveSessionActivity[];
+}) {
   const { t } = useTranslation('chat');
   const activities = useCompletionActivityStore((state) => state.activities);
   const nudges = useCompletionActivityStore((state) => state.nudges);
@@ -34,7 +64,11 @@ export function CompletionActivityMenu() {
   const triggerRef = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ left: 8, top: 52, width: 240 });
+  /** Entries the user has seen: everything listed when the panel last closed. */
   const [readIds, setReadIds] = useState<Set<string>>(() => new Set());
+  /** Entries that were unread when the panel opened — marked inside it. */
+  const [freshIds, setFreshIds] = useState<Set<string>>(() => new Set());
+  const [now, setNow] = useState(() => Date.now());
   const attentionEntries = useMemo<CompletionActivityNudge[]>(() => {
     const live = nudges.map((entry) => ({ ...entry }));
     const known = new Set(live.map((entry) => entry.id));
@@ -51,29 +85,65 @@ export function CompletionActivityMenu() {
     }
     return live.sort((left, right) => right.occurredAt - left.occurredAt).slice(0, 8);
   }, [activities, nudges]);
-  const unreadCount = attentionEntries.filter((entry) => !readIds.has(entry.id)).length;
+  const unreadEntries = useMemo(
+    () => attentionEntries.filter((entry) => !readIds.has(entry.id)),
+    [attentionEntries, readIds],
+  );
+  // While the panel is open its entries are being read, so the badge stands
+  // down; closing the panel records them as read.
+  const unreadCount = open ? 0 : unreadEntries.length;
+  const groups = useMemo(() => groupConsecutiveBySession(attentionEntries), [attentionEntries]);
+  const tone: NotificationBellTone = open
+    ? 'neutral'
+    : unreadEntries.some((entry) => entry.kind === 'error')
+      ? 'error'
+      : unreadEntries.some((entry) => entry.kind === 'action-required') ? 'warning' : 'neutral';
+  const live: NotificationBellLive = liveSessions.some((session) => session.state === 'waiting')
+    ? 'waiting'
+    : liveSessions.length > 0 ? 'running' : 'idle';
+  const runningCount = liveSessions.length;
+  const summary = [
+    runningCount > 0 ? t('completionActivity.summaryRunning', { count: runningCount }) : null,
+    unreadCount > 0 ? t('completionActivity.summaryUnread', { count: unreadCount }) : null,
+  ].filter(Boolean).join(' · ');
+
+  const labelOf = (sessionKey: string) => sessionLabels[sessionKey]
+    || sessions.find((session) => session.key === sessionKey)?.displayName
+    || t('completionActivity.untitledSession');
+
+  const activityFor = (entry: CompletionActivityNudge): CompletionActivity | undefined => (
+    activities.find((item) => item.sessionKey === entry.sessionKey && item.runId != null && entry.id === `run:${item.runId}:${item.kind}`)
+    ?? activities.find((item) => item.id === entry.id)
+    ?? activities.find((item) => item.sessionKey === entry.sessionKey && item.kind === entry.kind)
+  );
 
   const positionMenu = (): Partial<{ left: number; top: number; width: number }> => {
+    const trigger = triggerRef.current?.getBoundingClientRect();
     const sidebar = triggerRef.current?.closest('[data-testid="sidebar"]')?.getBoundingClientRect();
-    if (!sidebar) return {};
-    const width = Math.min(336, Math.max(240, sidebar.width - 16));
+    if (!trigger || !sidebar) return {};
     return {
       left: sidebar.left + 8,
-      top: sidebar.top + 52,
-      width,
+      top: trigger.bottom + PANEL_GAP_PX,
+      width: Math.min(344, Math.max(240, sidebar.width - 16)),
     };
   };
+
+  /** Everything the panel listed has been seen, including entries that arrived while it was open. */
+  const closePanel = useCallback(() => {
+    setReadIds((current) => new Set([...current, ...attentionEntries.map((entry) => entry.id)]));
+    setOpen(false);
+  }, [attentionEntries]);
 
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
       if (panelRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
-      setOpen(false);
+      closePanel();
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setOpen(false);
+        closePanel();
         triggerRef.current?.querySelector('button')?.focus();
       }
     };
@@ -83,14 +153,35 @@ export function CompletionActivityMenu() {
       document.removeEventListener('mousedown', onPointerDown);
       document.removeEventListener('keydown', onKeyDown);
     };
+  }, [closePanel, open]);
+
+  // One clock for elapsed and relative times, ticking only while the panel is
+  // open (it is set to the current time by the click that opens it).
+  useEffect(() => {
+    if (!open) return;
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [open]);
+
+  useEffect(() => {
+    if (open) panelRef.current?.focus({ preventScroll: true });
   }, [open]);
 
   const toggleOpen = () => {
-    if (!open) {
-      flushSync(() => setMenuPosition((current) => ({ ...current, ...positionMenu() })));
+    if (open) {
+      closePanel();
+      return;
     }
-    setOpen(!open);
-    if (!open) setReadIds(new Set([...readIds, ...attentionEntries.map((entry) => entry.id)]));
+    flushSync(() => setMenuPosition((current) => ({ ...current, ...positionMenu() })));
+    setFreshIds(new Set(unreadEntries.map((entry) => entry.id)));
+    setNow(Date.now());
+    setOpen(true);
+  };
+
+  const goToSession = (sessionKey: string) => {
+    if (sessionKey !== currentSessionKey) switchSession(sessionKey);
+    navigate('/');
+    closePanel();
   };
 
   const openNudge = (entry: CompletionActivityNudge) => {
@@ -99,11 +190,23 @@ export function CompletionActivityMenu() {
       || item.kind === (entry.kind === 'action-required' ? undefined : entry.kind)
     ));
     if (activity) requestNavigation(activity);
-    if (entry.sessionKey !== currentSessionKey) {
-      switchSession(entry.sessionKey);
-      navigate('/');
-    }
-    setOpen(false);
+    goToSession(entry.sessionKey);
+  };
+
+  const onPanelKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    const items = [...(panelRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])];
+    if (items.length === 0) return;
+    event.preventDefault();
+    const index = items.indexOf(document.activeElement as HTMLElement);
+    const next = event.key === 'Home'
+      ? 0
+      : event.key === 'End'
+        ? items.length - 1
+        : event.key === 'ArrowDown'
+          ? (index + 1) % items.length
+          : index <= 0 ? items.length - 1 : index - 1;
+    items[next]?.focus();
   };
 
   return (
@@ -112,31 +215,141 @@ export function CompletionActivityMenu() {
         <TooltipTrigger asChild>
           <NotificationBell
             count={unreadCount}
+            tone={tone}
+            live={live}
             data-testid="chat-completion-bell"
-            aria-label={t('completionActivity.label', { count: unreadCount })}
+            aria-label={runningCount > 0
+              ? t('completionActivity.labelLive', { count: unreadCount, running: runningCount })
+              : t('completionActivity.label', { count: unreadCount })}
             aria-haspopup="menu"
             aria-expanded={open}
             onClick={toggleOpen}
           />
         </TooltipTrigger>
-        <TooltipContent side="bottom">{t('completionActivity.title')}</TooltipContent>
+        <TooltipContent side="bottom">{summary || t('completionActivity.title')}</TooltipContent>
       </Tooltip>
       {open && createPortal(
         <div
           ref={panelRef}
           role="menu"
+          tabIndex={-1}
           aria-label={t('completionActivity.title')}
           data-testid="chat-completion-menu"
-          className="rare-completion-menu fixed z-[80] rounded-lg border border-border bg-surface-modal p-2 shadow-lg"
+          className="rare-completion-menu rare-activity-panel fixed z-[80]"
           style={{ left: menuPosition.left, top: menuPosition.top, width: menuPosition.width }}
+          onKeyDown={onPanelKeyDown}
         >
-          <div className="flex items-start justify-between gap-3 border-b border-border/70 px-2 pb-2 pt-1">
-            <div className="min-w-0">
-              <div className="text-xs font-medium text-foreground">{t('completionActivity.title')}</div>
-              <p className="mt-0.5 text-2xs leading-4 text-muted-foreground">
-                {t('completionActivity.desktopDescription')}
-              </p>
-            </div>
+          <div className="rare-activity-panel__head">
+            <span className="rare-activity-panel__title">{t('completionActivity.title')}</span>
+          </div>
+          <div className="rare-activity-panel__body">
+            {liveSessions.length > 0 && (
+              <section
+                role="group"
+                aria-label={t('completionActivity.liveTitle')}
+                data-testid="chat-activity-live"
+                className="rare-activity-section"
+              >
+                <div className="rare-activity-section__label">
+                  <span>{t('completionActivity.liveTitle')}</span>
+                  <span className="rare-activity-section__count">{liveSessions.length}</span>
+                </div>
+                {liveSessions.map((session) => {
+                  const stateLabel = t(`completionActivity.live.${session.state}`);
+                  return (
+                    <button
+                      key={session.sessionKey}
+                      type="button"
+                      role="menuitem"
+                      data-testid="chat-activity-live-item"
+                      data-state={session.state}
+                      className="rare-activity-live"
+                      onClick={() => goToSession(session.sessionKey)}
+                    >
+                      <OrbStatus
+                        state={session.state === 'waiting' ? 'waiting' : 'streaming'}
+                        label={stateLabel}
+                        className="size-4 shrink-0"
+                      />
+                      <span className="rare-activity-live__title">{session.label}</span>
+                      <span className="rare-activity-live__meta">
+                        {session.state === 'running' && session.startedAt != null
+                          ? <time aria-label={stateLabel}>{formatElapsed(now - session.startedAt)}</time>
+                          : stateLabel}
+                      </span>
+                    </button>
+                  );
+                })}
+              </section>
+            )}
+            {groups.length > 0 ? (
+              <section role="group" aria-label={t('completionActivity.recentTitle')} className="rare-activity-section">
+                <div className="rare-activity-section__label">
+                  <span>{t('completionActivity.recentTitle')}</span>
+                </div>
+                {groups.map((group) => (
+                  <div key={group.entries[0].id} className="rare-activity-group">
+                    <div className="rare-activity-group__head">{labelOf(group.sessionKey)}</div>
+                    {group.entries.map((entry) => {
+                      const preview = entry.status && !MACHINE_STATUSES.has(entry.status)
+                        ? entry.status
+                        : activityFor(entry)?.preview || t(`completionActivity.kind.${entry.kind}`);
+                      const fresh = freshIds.has(entry.id) || !readIds.has(entry.id);
+                      return (
+                        <button
+                          type="button"
+                          role="menuitem"
+                          key={entry.id}
+                          data-testid="chat-completion-item"
+                          data-kind={entry.kind}
+                          data-completed-at={entry.occurredAt}
+                          data-fresh={fresh ? 'true' : undefined}
+                          className="rare-completion-menu__item rare-activity-entry"
+                          onClick={() => openNudge(entry)}
+                        >
+                          <NudgeIcon kind={entry.kind} />
+                          <span className="rare-activity-entry__body">
+                            <span className="rare-completion-menu__preview rare-activity-entry__preview">{preview}</span>
+                            <span className="rare-activity-entry__meta">
+                              {entry.kind !== 'completed' && (
+                                <span className="rare-activity-entry__kind" data-kind={entry.kind}>
+                                  {t(`completionActivity.kind.${entry.kind}`)}
+                                </span>
+                              )}
+                              {entry.occurredAt > 0 && (
+                                <time
+                                  dateTime={new Date(entry.occurredAt).toISOString()}
+                                  title={new Date(entry.occurredAt).toLocaleString()}
+                                >
+                                  {relativeTime(t, entry.occurredAt, now)}
+                                </time>
+                              )}
+                            </span>
+                          </span>
+                          {fresh && (
+                            <span className="rare-activity-entry__fresh" role="img" aria-label={t('completionActivity.fresh')} />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </section>
+            ) : liveSessions.length === 0 && (
+              <div className="rare-activity-empty" data-testid="chat-activity-empty">
+                <BellDot className="rare-activity-empty__icon" aria-hidden="true" />
+                <span className="rare-activity-empty__title">{t('completionActivity.emptyTitle')}</span>
+                <span className="rare-activity-empty__desc">{t('completionActivity.empty')}</span>
+              </div>
+            )}
+          </div>
+          <div className="rare-activity-panel__foot">
+            <span className="rare-activity-panel__foot-text">
+              <span className="rare-activity-panel__foot-state" data-testid="chat-completion-desktop-state">
+                {desktopNotificationsEnabled ? t('completionActivity.desktopOn') : t('completionActivity.desktopOff')}
+              </span>
+              <span className="rare-activity-panel__foot-desc">{t('completionActivity.desktopDescription')}</span>
+            </span>
             <Switch
               data-testid="chat-completion-desktop-toggle"
               checked={desktopNotificationsEnabled}
@@ -144,50 +357,9 @@ export function CompletionActivityMenu() {
               aria-label={t('completionActivity.desktopToggle')}
             />
           </div>
-          <div className="mt-0.5 px-2 pb-1 text-2xs text-muted-foreground" data-testid="chat-completion-desktop-state">
-            {desktopNotificationsEnabled ? t('completionActivity.desktopOn') : t('completionActivity.desktopOff')}
-          </div>
-          {attentionEntries.length === 0 ? (
-            <p className="px-2 py-3 text-xs text-muted-foreground">{t('completionActivity.empty')}</p>
-          ) : attentionEntries.map((entry) => {
-            const activity = activities.find((item) => item.sessionKey === entry.sessionKey && item.kind === entry.kind);
-            const label = sessionLabels[entry.sessionKey]
-              || sessions.find((session) => session.key === entry.sessionKey)?.displayName
-              || t('completionActivity.completed');
-            return (
-              <button
-                type="button"
-                role="menuitem"
-                key={entry.id}
-                data-testid="chat-completion-item"
-                data-kind={entry.kind}
-                data-completed-at={entry.occurredAt}
-                className="rare-completion-menu__item w-full cursor-pointer rounded-md text-left outline-none hover:bg-[var(--color-background-row-hover)] focus-visible:bg-[var(--color-background-row-hover)]"
-                onClick={() => openNudge(entry)}
-              >
-                <NudgeIcon kind={entry.kind} />
-                <span className="min-w-0 flex-1 text-xs">
-                  <span className="flex items-center gap-1.5">
-                    <span className="truncate font-medium text-foreground">{label}</span>
-                    <span className="shrink-0 text-2xs text-muted-foreground">
-                      {t(`completionActivity.kind.${entry.kind}`)}
-                    </span>
-                  </span>
-                  <span className="rare-completion-menu__preview mt-1 leading-5 text-muted-foreground">
-                    {entry.status || activity?.preview || t('completionActivity.completed')}
-                  </span>
-                  {entry.occurredAt > 0 && (
-                    <time className="mt-1 block text-2xs text-muted-foreground" dateTime={new Date(entry.occurredAt).toISOString()}>
-                      {new Date(entry.occurredAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-                    </time>
-                  )}
-                </span>
-              </button>
-            );
-          })}
         </div>,
         document.body,
       )}
     </span>
   );
-}
+});
