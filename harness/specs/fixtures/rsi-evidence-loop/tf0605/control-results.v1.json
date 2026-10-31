@@ -1,0 +1,26 @@
+[
+  {
+    "id": "unpaired-success",
+    "passed": true
+  },
+  {
+    "id": "unsafe-payload",
+    "passed": true
+  },
+  {
+    "id": "duplicate-source",
+    "passed": true
+  },
+  {
+    "id": "cross-task",
+    "passed": true
+  },
+  {
+    "id": "candidate-not-promoted",
+    "passed": true
+  },
+  {
+    "id": "benefit-not-claimed",
+    "passed": true
+  }
+]

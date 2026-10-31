@@ -1,0 +1,79 @@
+{
+  "schema": "sekb-delta-playbook.v1",
+  "generatedAt": "2026-10-31T10:30:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0605-delta-playbook",
+  "status": "candidate",
+  "promotionReady": false,
+  "realHuman": false,
+  "pairs": [
+    {
+      "pairId": "pair-f7cd6bf82d623ef1",
+      "taskType": "coding/repair",
+      "successId": "success-1",
+      "failureId": "failure-1",
+      "sharedContext": [
+        "build",
+        "typescript"
+      ],
+      "errorSignature": "TypeError::build_failed::typescript"
+    }
+  ],
+  "candidates": [
+    {
+      "deltaId": "delta-55e4c4576af3fc20ce32",
+      "version": "sekb-delta/v1:20dd8983f6143077",
+      "taskType": "coding/repair",
+      "decision": "add",
+      "action": "create",
+      "targetPrincipleId": null,
+      "sourceTrajectoryIds": [
+        "failure-1",
+        "success-1"
+      ],
+      "evidence": {
+        "successIds": [
+          "success-1"
+        ],
+        "failureIds": [
+          "failure-1"
+        ],
+        "sharedContext": [
+          "build",
+          "typescript"
+        ],
+        "errorSignatures": [
+          "TypeError::build_failed::typescript"
+        ],
+        "counterexamples": [
+          "failure-1"
+        ]
+      },
+      "proposedPrinciple": {
+        "title": "repair failed build",
+        "condition": "When handling coding/repair tasks with build, typescript",
+        "action": "Compare the successful tool outcome with the failed trajectory before choosing the next command",
+        "reason": "Failure failure-1 produced TypeError::build_failed::typescript while success-1 completed with the same task type",
+        "task_types": [
+          "coding/repair"
+        ],
+        "context_tags": [
+          "build",
+          "typescript"
+        ]
+      },
+      "conflicts": [],
+      "confidence": 0.65,
+      "promotionReady": false,
+      "advisoryOnly": true
+    }
+  ],
+  "diagnostics": [],
+  "duplicateSourceCount": 0,
+  "extraction": {
+    "inputTrajectoryCount": 2,
+    "eligibleTrajectoryCount": 2,
+    "pairedTaskTypeCount": 1,
+    "counterexamplesPreserved": true
+  }
+}

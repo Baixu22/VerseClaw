@@ -1,0 +1,23 @@
+{
+  "schema": "sekb-delta-comparison.v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0605-delta-playbook",
+  "status": "measured-structure-only",
+  "promotionReady": false,
+  "minimumPairs": 1,
+  "baseline": {
+    "trajectoryCount": 2,
+    "pairedTaskTypeCount": 1,
+    "injectedTokenCount": 34
+  },
+  "delta": {
+    "trajectoryCount": 2,
+    "pairedTaskTypeCount": 1,
+    "injectedTokenCount": 34
+  },
+  "adoptionSuccess": {
+    "status": "unavailable",
+    "reason": "no-confirmed-adoption-outcomes"
+  },
+  "reasons": []
+}

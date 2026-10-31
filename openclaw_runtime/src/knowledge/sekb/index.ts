@@ -6,6 +6,19 @@ export {
 } from "./error-signature.js";
 export { DistillationTool, type DistillationToolOptions } from "./distillation-tool.js";
 export {
+  buildSekbDeltaComparison,
+  extractSekbDeltaPlaybook,
+  SEKB_DELTA_COMPARISON_SCHEMA,
+  SEKB_DELTA_PLAYBOOK_SCHEMA,
+  type ExtractSekbDeltaPlaybookOptions,
+  type SekbDeltaCandidate,
+  type SekbDeltaComparisonInput,
+  type SekbDeltaComparisonReport,
+  type SekbDeltaDiagnostic,
+  type SekbDeltaPair,
+  type SekbDeltaPlaybookReport,
+} from "./delta-playbook.js";
+export {
   isSekbBatchDistillationAssistantEnabled,
   isSekbEnabled,
   isSekbPhaseCWouldTriggerEnabled,
