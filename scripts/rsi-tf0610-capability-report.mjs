@@ -23,6 +23,7 @@ const SOURCE_PATHS = [
   "harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
   "harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json",
   "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
+  "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
 ];
 const readJson = (p) => JSON.parse(readFileSync(p, "utf8"));
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -71,6 +72,7 @@ export function buildCapabilityEvidence(root = ROOT) {
   const adjudication = values["harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json"];
   const eligibility = values["harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json"];
   const trial = values["harness/specs/fixtures/agent-first-system/trials/acceptance.json"];
+  const systemRun = values["harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json"];
   const residuals = [];
   if (baseline.completeCaseCount < 20) residuals.push({ code: "tf0604-baseline-incomplete", owner: "RSI evaluation owner (agent)", reviewTrigger: "run the frozen corpus with a fixed provider/tool/resource envelope until >=20 complete cases at k=3 are sealed" });
   if (!/^sha256:[a-f0-9]{64}$/u.test(gate.suite?.heldOutDigest ?? "")) residuals.push({ code: "held-out-digest-unsealed", owner: "RSI evaluation owner (agent)", reviewTrigger: "freeze a real 12-case held-out digest and bind it into TF-0599, TF-0606 and TF-0609 coherently" });
@@ -100,6 +102,7 @@ export function buildCapabilityEvidence(root = ROOT) {
     tf0608: tf0608.passed,
     tf0609: tf0609.passed,
     agentFirstTrialSummary: trial.protocol?.completeCaseCount === 24 && trial.claims?.rsiImprovement === false,
+    tf0604SystemRunReadback: systemRun.schemaVersion === "RsiHistoricalTrialAggregate/v1" && systemRun.claims?.realHuman === false && systemRun.claims?.rsiImprovement === false,
     noCompleteRsiClaim: matrix.currentState?.completeRsiImplementation === false,
     allClaimsBounded: [gate.claims, research.claims, contamination.claims, adjudication.claims, eligibility.claims].every((claims) => claims && claims.realHuman === false && claims.promotionReady === false),
   };
@@ -110,14 +113,15 @@ export function buildCapabilityEvidence(root = ROOT) {
     driven_by: "agent",
     actor: TF0610_ACTOR,
     overall: { engineeringClosure: "complete", rsiCapability: "not-complete", evidenceDecision: "insufficient-evidence", codeSelfModification: eligibility.decision },
-    executionSummary: { taskForestBaselineCompleteCases: baseline.completeCaseCount, candidateCompleteCases: gate.aggregate?.completeCaseCount ?? 0, systemTrialSummaryCompleteCases: trial.protocol?.completeCaseCount ?? 0, systemTrialKind: "script-provider-equivalent replay, not RSI-model benefit", heldOutDigest: gate.suite?.heldOutDigest ?? null, codeCandidateGenerated: false, codeCandidateExecuted: false },
+    executionSummary: { taskForestBaselineCompleteCases: baseline.completeCaseCount, candidateCompleteCases: gate.aggregate?.completeCaseCount ?? 0, systemTrialSummaryCompleteCases: trial.protocol?.completeCaseCount ?? 0, systemTrialKind: "script-provider-equivalent replay, not RSI-model benefit", systemRunRecordedTrials: systemRun.recordedTrials, systemRunCompleteCaseCount: systemRun.completeCaseCount, systemRunStatus: systemRun.statistics?.status ?? null, heldOutDigest: gate.suite?.heldOutDigest ?? null, codeCandidateGenerated: false, codeCandidateExecuted: false },
     layers,
     gates,
     checks,
     residuals,
     sourceFiles: SOURCE_PATHS.map((path) => ({ path, digest: sha256(readFileSync(regularFile(root, path))) })),
     claims: { completeRsiImplementation: false, rsiBenefit: false, realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },
-    limitations: ["The 144 script-provider trials are execution/statistics evidence and replay the same candidate in both arms; they do not establish model-quality or RSI benefit.", "No production RSI capability, automatic experience write-back, code self-modification trial or product promotion is claimed.", "The TF-0609 No-Go is a start-eligibility decision, not a measured negative performance result.", "Task Forest validate/export must be checked separately; its local history currently creates a very large HTML/timeline artifact."],
+    limitations: ["The 144 script-provider trials are execution/statistics evidence and replay the same candidate in both arms; they do not establish model-quality or RSI benefit.",
+      "TF-0604 real system-run evidence is retained at harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run and holds fewer than the 20 complete cases required to expose pass^k or a paired interval.", "No production RSI capability, automatic experience write-back, code self-modification trial or product promotion is claimed.", "The TF-0609 No-Go is a start-eligibility decision, not a measured negative performance result.", "Task Forest validate/export must be checked separately; its local history currently creates a very large HTML/timeline artifact."],
   };
 }
 

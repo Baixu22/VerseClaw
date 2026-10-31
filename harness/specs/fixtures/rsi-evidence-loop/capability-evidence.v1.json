@@ -15,6 +15,9 @@
     "candidateCompleteCases": 0,
     "systemTrialSummaryCompleteCases": 24,
     "systemTrialKind": "script-provider-equivalent replay, not RSI-model benefit",
+    "systemRunRecordedTrials": 3,
+    "systemRunCompleteCaseCount": 0,
+    "systemRunStatus": "insufficient-evidence",
     "heldOutDigest": null,
     "codeCandidateGenerated": false,
     "codeCandidateExecuted": false
@@ -221,6 +224,7 @@
     "tf0608": true,
     "tf0609": true,
     "agentFirstTrialSummary": true,
+    "tf0604SystemRunReadback": true,
     "noCompleteRsiClaim": true,
     "allClaimsBounded": true
   },
@@ -300,6 +304,10 @@
     {
       "path": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
       "digest": "1608b8a5fdc3d36b280ec744bef7886914befe75528ea8a40f988cfc214e055b"
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
+      "digest": "f045eb0de523a76188a0c24f2d7e7e85e3069aa324f167da6752c0acf9943b20"
     }
   ],
   "claims": {
@@ -312,6 +320,7 @@
   },
   "limitations": [
     "The 144 script-provider trials are execution/statistics evidence and replay the same candidate in both arms; they do not establish model-quality or RSI benefit.",
+    "TF-0604 real system-run evidence is retained at harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run and holds fewer than the 20 complete cases required to expose pass^k or a paired interval.",
     "No production RSI capability, automatic experience write-back, code self-modification trial or product promotion is claimed.",
     "The TF-0609 No-Go is a start-eligibility decision, not a measured negative performance result.",
     "Task Forest validate/export must be checked separately; its local history currently creates a very large HTML/timeline artifact."
