@@ -4,6 +4,7 @@ import { resolve, join, dirname } from 'node:path';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
 import { buildHistoricalTrialPlan, writeHistoricalManifest, runHistoricalTrial, checkHistoricalRun, retainHistoricalRun } from './lib/agent-first-trials.mjs';
+import { removeScratchTree } from './lib/rsi-trial-scratch.mjs';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
@@ -28,7 +29,7 @@ if (isMainEntrypoint(import.meta.url)) {
         for (const entry of manifest.trials) {
           if (progress.completed.includes(entry.trialId)) continue;
           const dir = join(runDir, 'trials', entry.trialId);
-          if (existsSync(dir)) { rmSync(dir, { recursive: true, force: true }); console.error('[restart] cleared ' + entry.trialId); }
+          if (existsSync(dir)) { removeScratchTree(dir); console.error('[restart] cleared ' + entry.trialId); }
         }
       }
       let executed = 0;

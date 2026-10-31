@@ -9,6 +9,7 @@ import { CORPUS_DIR, checkCorpus, gradeObservation, loadCorpus, sha256, zeroPass
 import { summarizeTf0592Trials } from '../rsi-tf0592-statistical-adjudication.mjs';
 import { buildTaskCorpus } from './rsi-historical-task-corpus.mjs';
 import { gradeTraceEvidence, runTaskOracles } from './agent-first-graders.mjs';
+import { removeScratchTree } from './rsi-trial-scratch.mjs';
 
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const write = (path, value) => {
@@ -513,10 +514,16 @@ export async function runHistoricalTrial(runDir, options = {}) {
     if (verdict !== 'pass' && !failureClass) failureClass = verdict === 'unknown' ? 'grader' : 'agent';
     const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit, startedAt, completedAt: new Date().toISOString(), agent: { exitCode: exit.code, timedOut: exit.timedOut, error: exit.error ?? null }, diff: agentDiff, forbiddenPaths: forbidden, oracleWrites, scrubbedOraclePaths, preexistingOraclePaths, grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory }, failureClass, checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, hiddenTestsHiddenFromAgent: oraclePaths.every((path) => !existsSync(join(agentRoot, path))), noGitMetadataAtStart: !existsSync(join(agentRoot,'.git')) }, claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
     writeHistoricalResult(trialDir,result);
+    // The 212 MB snapshot trees are scratch; only the result, logs and grader receipts are
+    // evidence. Prune them so a 144-trial campaign cannot exhaust the D: volume, which would
+    // otherwise surface as a spurious infrastructure failure.
+    for (const scratch of [graderRoot, agentRoot, baseDir]) removeScratchTree(scratch);
     return result;
   } catch (error) {
     const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, startedAt, completedAt: new Date().toISOString(), stage, error: String(error?.stack ?? error), failureClass: error?.failureClass ?? failureClass ?? 'infrastructure', claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
-    writeHistoricalResult(trialDir,result); return result;
+    writeHistoricalResult(trialDir,result);
+    for (const scratch of [join(trialDir, 'grader'), agentRoot, baseDir]) removeScratchTree(scratch);
+    return result;
   }
 }
 
