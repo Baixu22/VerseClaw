@@ -427,6 +427,8 @@ owner 可定位性：15 条 `owner` 本身是权威组件 id（可定位）；2 
 | R-A authority | 权威矩阵 authority 键唯一、每 dataType 单 owner、权限 owner 恰 1；产品语义 `authorityBoundary` 与可核对组件的 purpose / forbiddenActions 一致 | 冲突 0；3 条关系不可核对 → G-03 |
 | R-G gap | 任何表声明的组件/概念在权威矩阵无身份，或权威矩阵读取的数据类型无 owner，登记为 gap，不猜测、不默认通过 | G-01…G-06 |
 
+> 勘误（2026-10-31 收口决策轮，deviation `TFD-ca7eb218be`）：上表 R-D4 行的"一致 6、豁免 5（risk 无激活语义）+ 1（权威 internal）、冲突 2"与 13 个 `DCS_PROD_FLAGS:*` 来源的总数不符；在 HEAD `2b87c1c44` 上逐组件重测为 **一致 5**（`dcs-fact-view-and-tools`、`runtime-memory-store`、`memory-candidate-queue`、`coding-execution-backend`、`routing-memo-observation`）、豁免 6（risk 无激活语义 5 + `observability-recorder` 权威 internal 1）、冲突 2，合计 13。§10.5 命令末尾期望注释中的"ok ×6"同为笔误，应读作 ok ×5。冲突（C-02、C-03）与豁免（X-04）结论不受影响。复测命令见 `CLOSURE-DECISIONS-20261031.md` §6.3。
+
 **为什么 5 个默认态冲突都判权威矩阵陈旧**：每一处都有至少两个独立来源（flag 目录 / 默认矩阵文档 / 产品面文档 / 处置矩阵 + 已收口的 TF 节点与在盘的验证产物）站在同一边，而权威矩阵是孤例；其中 C-04 / C-05 的权威条目自己引用的 `runtimeAvailabilitySource` 就是写着 retired 的那一行。这是裁定"以哪份表为准"，**不是**修改——本轮不改任何注册表。
 
 ### 6.2 冲突（6 条，全部已裁定；0 条未裁定）

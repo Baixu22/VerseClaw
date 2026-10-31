@@ -148,6 +148,8 @@ Palantir 真正值得借鉴的是「对象—关系—动作—权限—血缘�
 | C | TF-0633 语义合同硬化接入骨架 | proposed |
 | D | 未登记（消费需求未证实） | - |
 
+> 状态更新（2026-10-31 收口决策轮）：A 批 TF-0629 / TF-0630 已 done；B 批 TF-0631 done、TF-0632 ready；C 批 TF-0633 拆为 TF-0634…TF-0637 四个串行子叶（均 proposed，C1 依赖 TF-0632）；D 批仍未登记。表中原始状态保留为规划时读数。决策、最小形状与收口口径见 `docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md`。
+
 ---
 
 ## 5. 四个批次
