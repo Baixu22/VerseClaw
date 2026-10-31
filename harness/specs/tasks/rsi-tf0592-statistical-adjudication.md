@@ -13,6 +13,20 @@ touchedAreas:
   - package.json
   - docs/README.md
   - docs/dev/rsi-capability-and-boundaries.md
+  - harness/specs/tasks/rsi-*.md
+  - harness/specs/fixtures/rsi-evidence-loop/**
+  - harness/specs/fixtures/agent-first-task-corpus/**
+  - scripts/rsi-tf*.mjs
+  - scripts/rsi-tf*.d.mts
+  - scripts/lib/rsi-tf*.mjs
+  - scripts/lib/rsi-tf*.d.mts
+  - scripts/lib/agent-first-graders.mjs
+  - scripts/lib/agent-first-graders.d.mts
+  - scripts/lib/agent-first-trials.mjs
+  - scripts/lib/agent-first-trials.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
+  - tests/unit/rsi-*.test.ts
 ownedPaths:
   - scripts/rsi-tf0592-statistical-adjudication.mjs
   - scripts/rsi-tf0592-statistical-adjudication.d.mts
@@ -89,6 +103,11 @@ residualPaths:
   - tests/unit/agent-first-task-corpus.test.ts
   - tests/unit/rsi-historical-task-corpus.test.ts
   - harness/specs/tasks/rsi-tf0604-baseline-corpus.md
+  - .gitignore
+  - openclaw_runtime/scripts/generate-rsi-tf0605-evidence.ts
+  - openclaw_runtime/src/knowledge/sekb/delta-playbook.test.ts
+  - openclaw_runtime/src/knowledge/sekb/delta-playbook.ts
+  - openclaw_runtime/src/knowledge/sekb/index.ts
 requiredProfiles:
   - fast
 requiredRules:

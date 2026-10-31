@@ -14,11 +14,35 @@ touchedAreas:
   - harness/specs/fixtures/rsi-evidence-loop/tf0605/control-results.v1.json
   - harness/specs/fixtures/rsi-evidence-loop/tf0605/delta-playbook-report.v1.json
   - harness/specs/fixtures/rsi-evidence-loop/tf0605/evidence.v1.json
+  - harness/specs/tasks/rsi-tf*.md
+  - harness/specs/fixtures/rsi-evidence-loop/**
+  - harness/specs/fixtures/agent-first-task-corpus/**
+  - scripts/lib/agent-first-graders.mjs
+  - scripts/lib/agent-first-graders.d.mts
+  - scripts/lib/agent-first-trials.mjs
+  - scripts/lib/agent-first-trials.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
+  - scripts/lib/rsi-tf0604-system-run.mjs
+  - scripts/lib/rsi-tf0604-system-run.d.mts
+  - scripts/rsi-tf0604-historical-runner.mjs
+  - scripts/rsi-tf0604-historical-runner.d.mts
+  - scripts/rsi-tf0604-system-run.mjs
+  - tests/unit/rsi-tf0604-historical-runner.test.ts
+  - tests/unit/rsi-tf0604-system-run.test.ts
+  - harness/specs/tasks/rsi-*.md
+  - scripts/rsi-tf*.mjs
+  - scripts/rsi-tf*.d.mts
+  - scripts/lib/rsi-tf*.mjs
+  - scripts/lib/rsi-tf*.d.mts
+  - tests/unit/rsi-*.test.ts
+  - docs/dev/rsi-capability-and-boundaries.md
 residualPaths:
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json
+  - .gitignore
 ownedPaths:
   - openclaw_runtime/scripts/generate-rsi-tf0605-evidence.ts
   - harness/specs/tasks/rsi-tf0605-delta-playbook.md

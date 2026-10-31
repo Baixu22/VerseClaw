@@ -70,6 +70,7 @@ touchedAreas:
   - docs/README.md
   - scripts/repository-artifacts.json
   - .gitignore
+  - harness/specs/tasks/rsi-evidence-loop-contract.md
 ownedPaths:
   - scripts/rsi-tf0604-baseline.mjs
   - scripts/rsi-tf0604-baseline.d.mts

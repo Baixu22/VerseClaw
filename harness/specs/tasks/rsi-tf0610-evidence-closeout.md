@@ -12,6 +12,28 @@ touchedAreas:
   - harness/specs/fixtures/rsi-evidence-loop/capability-evidence.d.ts
   - tests/unit/rsi-tf0610-capability-report.test.ts
   - docs/dev/rsi-capability-and-boundaries.md
+  - harness/specs/tasks/rsi-tf*.md
+  - harness/specs/fixtures/rsi-evidence-loop/**
+  - harness/specs/fixtures/agent-first-task-corpus/**
+  - scripts/lib/agent-first-graders.mjs
+  - scripts/lib/agent-first-graders.d.mts
+  - scripts/lib/agent-first-trials.mjs
+  - scripts/lib/agent-first-trials.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
+  - scripts/lib/rsi-tf0604-system-run.mjs
+  - scripts/lib/rsi-tf0604-system-run.d.mts
+  - scripts/rsi-tf0604-historical-runner.mjs
+  - scripts/rsi-tf0604-historical-runner.d.mts
+  - scripts/rsi-tf0604-system-run.mjs
+  - tests/unit/rsi-tf0604-historical-runner.test.ts
+  - tests/unit/rsi-tf0604-system-run.test.ts
+  - harness/specs/tasks/rsi-*.md
+  - scripts/rsi-tf*.mjs
+  - scripts/rsi-tf*.d.mts
+  - scripts/lib/rsi-tf*.mjs
+  - scripts/lib/rsi-tf*.d.mts
+  - tests/unit/rsi-*.test.ts
 ownedPaths:
   - harness/specs/tasks/rsi-tf0610-evidence-closeout.md
   - scripts/rsi-tf0610-capability-report.mjs
@@ -20,6 +42,8 @@ ownedPaths:
   - harness/specs/fixtures/rsi-evidence-loop/capability-evidence.d.ts
   - tests/unit/rsi-tf0610-capability-report.test.ts
   - docs/dev/rsi-capability-and-boundaries.md
+residualPaths:
+  - .gitignore
 requiredProfiles:
   - fast
 requiredRules:

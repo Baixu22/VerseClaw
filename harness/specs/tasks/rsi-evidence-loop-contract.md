@@ -19,6 +19,19 @@ touchedAreas:
   - scripts/lib/agent-first-acceptance-contract.d.mts
   - scripts/repository-artifacts.json
   - .gitignore
+  - harness/specs/tasks/rsi-*.md
+  - harness/specs/fixtures/agent-first-task-corpus/**
+  - scripts/rsi-tf*.mjs
+  - scripts/rsi-tf*.d.mts
+  - scripts/lib/rsi-tf*.mjs
+  - scripts/lib/rsi-tf*.d.mts
+  - scripts/lib/agent-first-graders.mjs
+  - scripts/lib/agent-first-graders.d.mts
+  - scripts/lib/agent-first-trials.mjs
+  - scripts/lib/agent-first-trials.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
+  - tests/unit/rsi-*.test.ts
 expectedUserBehavior:
   - A reader can tell, per capability layer and per evidence level, exactly which RSI-related machinery exists today and which does not.
   - No RSI candidate can be promoted against a success criterion it was allowed to edit, because the task set, grader identities, budgets and thresholds are pre-registered in a reviewed fixture.

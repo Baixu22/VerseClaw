@@ -10,6 +10,29 @@ touchedAreas:
   - scripts/rsi-tf0608-adjudication.d.mts
   - tests/unit/rsi-tf0608-adjudication.test.ts
   - harness/specs/fixtures/rsi-evidence-loop/tf0608/**
+  - harness/specs/tasks/rsi-tf*.md
+  - harness/specs/fixtures/rsi-evidence-loop/**
+  - harness/specs/fixtures/agent-first-task-corpus/**
+  - scripts/lib/agent-first-graders.mjs
+  - scripts/lib/agent-first-graders.d.mts
+  - scripts/lib/agent-first-trials.mjs
+  - scripts/lib/agent-first-trials.d.mts
+  - scripts/lib/rsi-historical-task-corpus.mjs
+  - scripts/lib/rsi-historical-task-corpus.d.mts
+  - scripts/lib/rsi-tf0604-system-run.mjs
+  - scripts/lib/rsi-tf0604-system-run.d.mts
+  - scripts/rsi-tf0604-historical-runner.mjs
+  - scripts/rsi-tf0604-historical-runner.d.mts
+  - scripts/rsi-tf0604-system-run.mjs
+  - tests/unit/rsi-tf0604-historical-runner.test.ts
+  - tests/unit/rsi-tf0604-system-run.test.ts
+  - harness/specs/tasks/rsi-*.md
+  - scripts/rsi-tf*.mjs
+  - scripts/rsi-tf*.d.mts
+  - scripts/lib/rsi-tf*.mjs
+  - scripts/lib/rsi-tf*.d.mts
+  - tests/unit/rsi-*.test.ts
+  - docs/dev/rsi-capability-and-boundaries.md
 ownedPaths:
   - harness/specs/tasks/rsi-tf0608-adjudication.md
   - scripts/rsi-tf0608-adjudication.mjs
@@ -18,6 +41,8 @@ ownedPaths:
   - harness/specs/fixtures/rsi-evidence-loop/tf0608/SHA256SUMS
   - harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json
   - harness/specs/fixtures/rsi-evidence-loop/tf0608/control-results.v1.json
+residualPaths:
+  - .gitignore
 requiredProfiles:
   - fast
 requiredRules:
