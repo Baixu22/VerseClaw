@@ -66,6 +66,7 @@ touchedAreas:
   - harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json
   - harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json
   - tests/unit/rsi-tf0604-historical-runner.test.ts
+  - tests/unit/rsi-tf0604-system-run.test.ts
   - docs/README.md
   - scripts/repository-artifacts.json
   - .gitignore
@@ -104,6 +105,7 @@ requiredTests:
   - pnpm rsi:tf0604:check
   - pnpm exec vitest run tests/unit/rsi-tf0604-baseline.test.ts
   - pnpm exec vitest run tests/unit/rsi-tf0604-historical-runner.test.ts
+  - pnpm exec vitest run tests/unit/rsi-tf0604-system-run.test.ts
   - pnpm harness validate --spec harness/specs/tasks/rsi-tf0604-baseline-corpus.md
   - pnpm run typecheck
 acceptance:
