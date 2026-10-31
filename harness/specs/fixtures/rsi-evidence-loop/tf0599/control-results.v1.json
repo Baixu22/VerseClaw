@@ -1,0 +1,82 @@
+[
+  {
+    "id": "count-floor",
+    "expectedCode": "suite-count",
+    "observedCodes": [
+      "suite-count"
+    ],
+    "passed": true
+  },
+  {
+    "id": "k-floor",
+    "expectedCode": "k",
+    "observedCodes": [
+      "k"
+    ],
+    "passed": true
+  },
+  {
+    "id": "raw-reservation-mutation",
+    "expectedCode": "reservation-mutated",
+    "observedCodes": [
+      "reservation-mutated"
+    ],
+    "passed": true
+  },
+  {
+    "id": "self-verifier",
+    "expectedCode": "independent-verifier",
+    "observedCodes": [
+      "independent-verifier"
+    ],
+    "passed": true
+  },
+  {
+    "id": "candidate-digest",
+    "expectedCode": "candidate-digest",
+    "observedCodes": [
+      "candidate-digest"
+    ],
+    "passed": true
+  },
+  {
+    "id": "candidate-producer",
+    "expectedCode": "candidate-producer",
+    "observedCodes": [
+      "candidate-producer"
+    ],
+    "passed": true
+  },
+  {
+    "id": "resource-floor",
+    "expectedCode": "resource-envelope",
+    "observedCodes": [
+      "resource-envelope"
+    ],
+    "passed": true
+  },
+  {
+    "id": "network-envelope",
+    "expectedCode": "network-envelope",
+    "observedCodes": [
+      "network-envelope"
+    ],
+    "passed": true
+  },
+  {
+    "id": "performance-claim",
+    "expectedCode": "raw-performance-claim",
+    "observedCodes": [
+      "raw-performance-claim"
+    ],
+    "passed": true
+  },
+  {
+    "id": "real-human-corpus",
+    "expectedCode": "claim-boundary",
+    "observedCodes": [
+      "claim-boundary"
+    ],
+    "passed": true
+  }
+]

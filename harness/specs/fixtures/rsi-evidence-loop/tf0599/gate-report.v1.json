@@ -1,0 +1,257 @@
+{
+  "schemaVersion": "RsiCandidateGateReport/v1",
+  "taskId": "TF-0599",
+  "generatedAt": "2026-10-31T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0599-candidate-gate",
+  "status": "not-run",
+  "gate": "insufficient-evidence",
+  "reasons": [
+    "no-completed-system-trials",
+    "baseline-reservation-not-run"
+  ],
+  "suite": {
+    "sourceDir": "harness/specs/fixtures/rsi-evidence-loop/tf0604",
+    "caseCount": 24,
+    "publicCaseCount": 12,
+    "heldOutCaseCount": 12,
+    "heldOutDigest": null,
+    "corpusDigest": "c1b464613c2ca39f28722c56b3a75281a222420d7491aafc8a6854434c983432"
+  },
+  "envelope": {
+    "schemaVersion": "RsiCandidateEnvelope/v1",
+    "candidateId": "tf0599-baseline-reservation",
+    "authoredBy": "self-improvement",
+    "candidateDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "suiteId": "TF-0604",
+    "suiteContentDigest": null,
+    "heldOutSplitDigest": null,
+    "k": 3,
+    "minimumCompleteCases": 20,
+    "model": {
+      "status": "not-run",
+      "id": null,
+      "version": null
+    },
+    "tools": {
+      "status": "not-run",
+      "manifestDigest": null
+    },
+    "seed": {
+      "status": "not-run",
+      "value": null
+    },
+    "networkMode": "not-run",
+    "resources": {
+      "cpuFloorCores": 1,
+      "cpuCeilingCores": 1,
+      "memoryFloorBytes": 268435456,
+      "memoryCeilingBytes": 4294967296,
+      "concurrency": 1,
+      "retries": 0
+    },
+    "executorActor": "codex/tf0599-executor",
+    "verifierActor": "codex/tf0599-verifier"
+  },
+  "validation": {
+    "passed": true,
+    "errors": []
+  },
+  "aggregate": {
+    "k": 3,
+    "caseCount": 24,
+    "completeCaseCount": 0,
+    "incompleteCaseCount": 24,
+    "trialCount": 0,
+    "passCount": 0,
+    "failCount": 0,
+    "perTrialSuccessRate": null,
+    "passK": null,
+    "passAtK": null,
+    "flakeRate": null,
+    "flakeCaseIds": [],
+    "skippedCaseIds": [],
+    "incomplete": [
+      {
+        "caseId": "tf-0274-e01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0275-e02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0276-s01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0279-s04",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0281-s06",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0282-s07",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0283-l01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0284-l02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0285-l03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0286-l04",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0287-l05",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0288-l06",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0289-g01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0291-g03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0293-a01",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0294-a02",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0295-a03",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0296-a04",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0297-a05",
+        "trialIndex": 0,
+        "outcome": "missing"
+      },
+      {
+        "caseId": "tf-0298-a06",
+        "trialIndex": 0,
+        "outcome": "missing"
+      }
+    ],
+    "safety": {
+      "requiredCaseCount": 0,
+      "skippedCount": 0,
+      "flakeCount": 0,
+      "violated": false
+    },
+    "anchors": {
+      "positiveCaseCount": 0,
+      "positivePassed": 0,
+      "negativeCaseCount": 0,
+      "negativeRejected": 0,
+      "violated": false
+    },
+    "gate": "insufficient-sample",
+    "reasons": [
+      "complete cases 0 < required 20",
+      "24 incomplete trial(s) preserved"
+    ],
+    "missingCases": [
+      "tf-0274-e01",
+      "tf-0275-e02",
+      "tf-0289-g01",
+      "tf-0290-g02",
+      "tf-0291-g03",
+      "tf-0283-l01",
+      "tf-0284-l02",
+      "tf-0285-l03",
+      "tf-0286-l04",
+      "tf-0287-l05",
+      "tf-0288-l06",
+      "tf-0276-s01",
+      "tf-0277-s02",
+      "tf-0278-s03",
+      "tf-0279-s04",
+      "tf-0280-s05",
+      "tf-0281-s06",
+      "tf-0282-s07",
+      "tf-0293-a01",
+      "tf-0294-a02",
+      "tf-0295-a03",
+      "tf-0296-a04",
+      "tf-0297-a05",
+      "tf-0298-a06"
+    ]
+  },
+  "failureClasses": {
+    "infrastructure": 0,
+    "task": 0,
+    "grader": 0,
+    "agent": 0
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": false,
+    "promotionReady": false,
+    "productLocksChanged": false
+  },
+  "limitations": [
+    "No completed system trial exists; this is an executable gate, not a quality result.",
+    "Deterministic fixtures are contract checks only."
+  ]
+}
