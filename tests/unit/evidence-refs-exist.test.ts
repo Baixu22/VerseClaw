@@ -515,3 +515,99 @@ describe('--verify invalidates tampered or incomplete reports', () => {
     expect(readFileSync(tampered, 'utf8')).toBe(text);
   });
 });
+
+// The umbrella contract's step four names four integration negatives that must fail
+// through the gate CI actually consumes (`pnpm test` -> vitest -> this file), not only
+// through the exported functions: a bad relation, a stale source, an empty report and
+// a skipped check. Each case below spawns the CLI; the fixtures are the C3 ones under
+// report/fixtures/ and no second fixture set exists.
+describe('evidence refs check: real gate entry (node scripts/check-evidence-refs.mjs)', () => {
+  const RELATION_RULE_COUNT = 11;
+  const SOURCE_RULE_COUNT = 8;
+  const CLOSED_RULES: string[] = [...semantics.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES];
+
+  it('binds the closed rule set the gate must evaluate: 11 relation rules + 8 source rules, no overlap', () => {
+    expect(semantics.PRODUCT_SEMANTIC_RELATION_RULES).toHaveLength(RELATION_RULE_COUNT);
+    expect(SOURCE_DIAGNOSTIC_RULES).toHaveLength(SOURCE_RULE_COUNT);
+    expect(new Set(CLOSED_RULES).size).toBe(RELATION_RULE_COUNT + SOURCE_RULE_COUNT);
+  });
+
+  it('a bad relation cannot pass: --fixture bad-relation-self-loop exits 1, the report is invalid and --verify refuses it as candidate evidence', async () => {
+    const result = await report(['--fixture', `${FIXTURES}/bad-relation-self-loop.json`, '--actor', ACTOR]);
+    expect(result.code).toBe(1);
+    expect(result.stderr).toMatch(/\[evidence-refs\] FAIL report invalid: 6 relation\(s\), 8 source ref\(s\), 1 diagnostic\(s\)/);
+    expect(result.stderr).toMatch(/\[self-loop\] chat--suggests-upgrade-to--chat to: "chat" cannot relate to itself\./);
+    const generated = result.report;
+    expect(generated).not.toBeNull();
+    if (!generated) return;
+    expect(generated).toMatchObject({ status: 'invalid', exitCode: 1, fixtures: ['bad-relation-self-loop'] });
+    expect(rulesOf(generated.diagnostics)).toEqual(['self-loop']);
+    for (const diagnostic of generated.diagnostics) expect(CLOSED_RULES).toContain(diagnostic.rule);
+    expect(generated.relations).toHaveLength(semantics.PRODUCT_SEMANTIC_RELATIONS.length);
+
+    const verified = await run(['--verify', result.file]);
+    expect(verified.code).toBe(1);
+    expect(verified.stderr).toMatch(/\[candidate-mismatch\] - fixtures: Report was generated under 1 in-memory fixture mutation\(s\) \(bad-relation-self-loop\)/);
+    expect(verified.stderr).toMatch(/\[report-field-missing\] - status: Report recorded status "invalid" with 1 diagnostic\(s\)/);
+  });
+
+  it('a stale source cannot pass: --verify under stale-source-rewrite exits 1 with source-digest-mismatch and leaves the report untouched', async () => {
+    const fixture = readJson(path.join(ROOT, FIXTURES, 'stale-source-rewrite.json'));
+    const generated = await report(['--actor', ACTOR]);
+    expect(generated.code).toBe(0);
+    const before = readFileSync(generated.file);
+    const verified = await run(['--fixture', `${FIXTURES}/stale-source-rewrite.json`, '--verify', generated.file]);
+    expect(verified.code).toBe(1);
+    expect(verified.stderr).toMatch(/\[evidence-refs\] FAIL verify invalid/);
+    const citing = semantics.PRODUCT_SEMANTIC_RELATIONS.filter((relation) => (relation.evidenceRefs as readonly string[]).includes(fixture.expect.path));
+    const mismatches = verified.stderr.split('\n').filter((line) => line.includes('[source-digest-mismatch]'));
+    expect(mismatches).toHaveLength(citing.length * 2);
+    expect(mismatches.every((line) => line.includes(fixture.expect.path) && line.includes('the source changed after the report was written'))).toBe(true);
+    expect(verified.stderr).not.toMatch(/\[candidate-mismatch\]/);
+    expect(readFileSync(generated.file).equals(before)).toBe(true);
+  });
+
+  it('an empty or hollow report cannot pass: --verify exits 1 naming every missing field, or the missing relation results', async () => {
+    const empty = tmpPath('gate-empty-report.json');
+    writeFileSync(empty, '{}\n');
+    const emptyResult = await run(['--verify', empty]);
+    expect(emptyResult.code).toBe(1);
+    expect(emptyResult.stderr).toMatch(/\[evidence-refs\] FAIL verify invalid: .*\(15 diagnostic\(s\)\)/);
+    for (const field of REPORT_KEYS) expect(emptyResult.stderr).toContain(`[report-field-missing] - ${field}:`);
+    expect(readFileSync(empty, 'utf8')).toBe('{}\n');
+
+    const generated = await report(['--actor', ACTOR]);
+    expect(generated.code).toBe(0);
+    expect(generated.report).not.toBeNull();
+    if (!generated.report) return;
+    const hollow = tmpPath('gate-hollow-report.json');
+    const copy: Json = structuredClone(generated.report);
+    copy.relations = [];
+    const text = `${JSON.stringify(copy, null, 2)}\n`;
+    writeFileSync(hollow, text);
+    const hollowResult = await run(['--verify', hollow]);
+    expect(hollowResult.code).toBe(1);
+    expect(hollowResult.stderr).toMatch(/\[evidence-refs\] FAIL verify invalid: .*\(1 diagnostic\(s\)\)/);
+    expect(hollowResult.stderr).toMatch(/\[report-field-missing\] - relations: relations records no relation check result\./);
+    expect(readFileSync(hollow, 'utf8')).toBe(text);
+  });
+
+  it('a skipped check cannot pass: the positive report records all 6 relations, 8 source refs and exactly the 19 closed rules', async () => {
+    const result = await report(['--actor', ACTOR]);
+    expect(result.code).toBe(0);
+    expect(result.stdout).toMatch(/^\[evidence-refs\] report valid: 6 relation\(s\), 8 source ref\(s\), 0 diagnostic\(s\) -> /);
+    const generated = result.report;
+    expect(generated).not.toBeNull();
+    if (!generated) return;
+    expect(generated).toMatchObject({ status: 'valid', exitCode: 0, diagnostics: [], unverified: [], fixtures: [] });
+    expect(generated.relations).toHaveLength(semantics.PRODUCT_SEMANTIC_RELATIONS.length);
+    expect(generated.relations).toHaveLength(6);
+    expect(generated.relations.map((entry) => entry.relationKey)).toEqual(semantics.PRODUCT_SEMANTIC_RELATIONS.map((relation) => semantics.relationKey(relation)));
+    expect(generated.relations.reduce((sum, entry) => sum + entry.sourceRefs.length, 0)).toBe(8);
+    expect(generated.rulesEvaluated).toEqual(CLOSED_RULES);
+    expect(generated.rulesEvaluated).toHaveLength(RELATION_RULE_COUNT + SOURCE_RULE_COUNT);
+    const verified = await run(['--verify', result.file]);
+    expect(verified.code).toBe(0);
+    expect(verified.stdout).toMatch(/^\[evidence-refs\] verify valid: .* \(6 relation\(s\), 8 source ref\(s\), candidate [0-9a-f]{9}\)\n$/);
+  });
+});
