@@ -2368,3 +2368,6 @@ openclaw_runtime/_tmp_*
 !/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/runtime-unit.log
 !/harness/specs/fixtures/product-acceptance-closeout/a4-coding-final/typecheck.log
 !/harness/specs/fixtures/product-acceptance-closeout/b1-space-bunny/playwright.log
+
+# TF-0604 real system-trial evidence pack: raw agent logs are sealed evidence and must be tracked.
+!/harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/**/*.log
