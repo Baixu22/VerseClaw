@@ -9,13 +9,13 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const write = (path, value) => { mkdirSync(dirname(path), { recursive: true }); const tmp = path + '.' + process.pid + '.tmp'; writeFileSync(tmp, JSON.stringify(value, null, 2) + '\n'); renameSync(tmp, path); };
 if (isMainEntrypoint(import.meta.url)) {
-  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' }, 'retain-dir': { type: 'string' }, restart: { type: 'boolean' } } });
+  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' }, 'retain-dir': { type: 'string' }, restart: { type: 'boolean' }, 'timeout-minutes': { type: 'string' } } });
   try {
     const root = resolve(values.root ?? process.cwd());
     const runDir = resolve(values['run-dir'] ?? 'D:/tmp/rsi-tf0604-system-trials');
     const command = positionals[0];
     let result;
-    if (command === 'plan') result = writeHistoricalManifest(runDir, { root, dependenciesRoot: values['dependencies-root'] ? resolve(values['dependencies-root']) : undefined, model: values.model });
+    if (command === 'plan') result = writeHistoricalManifest(runDir, { root, dependenciesRoot: values['dependencies-root'] ? resolve(values['dependencies-root']) : undefined, model: values.model, timeoutMs: values['timeout-minutes'] ? Number(values['timeout-minutes']) * 60000 : undefined });
     else if (command === 'list') { const plan=buildHistoricalTrialPlan(root); result={caseCount:plan.corpus.tasks.length,heldOutDigest:plan.splitDigest,trials:plan.trials.length}; }
     else if (command === 'run') {
       const manifest = read(join(runDir,'manifest.json'));
