@@ -55,12 +55,15 @@ The original historical reference execution observed 23/24 passing tasks and an
 S04 runtime failure. That dirty-worktree reference replay is preserved separately
 and supplies no complete system baseline cases.
 
-Historical graders now use `tf0590-graders/v2`. Calibration has a separate
+Historical graders now use `tf0590-graders/v3`. Calibration has a separate
 entrypoint and evidence kind; runtime grading rejects caller-created verdicts,
 self-signed receipt hashes, copied attestations and post-execution mutation.
 An independent process reruns the frozen reference oracle to establish ownership.
 The retained model votes calibrate explanation grading only; a production rubric
 result is still unavailable and cannot produce a combined production pass.
+Returned grades and runner-owned evidence are immutable. Verdict and evidence
+kind checks read private issuance metadata, so a custom `toJSON` cannot hide
+mutated fields or convert calibration failure to a production pass.
 
 The capability question is asked at three layers, and the three answers are
 different.

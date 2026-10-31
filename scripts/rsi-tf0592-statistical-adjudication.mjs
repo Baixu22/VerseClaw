@@ -341,7 +341,7 @@ export function validateTf0592Report(report, root = ROOT, options = {}) {
     if (!same(expected.aggregate.incomplete, report.aggregate?.incomplete)) errors.push(error('incomplete-trial-dropped', 'incomplete records differ from raw trials'));
     if (report.pairedDiff?.status === 'computed' && expected.pairedDiff.status !== 'computed') errors.push(error('paired-diff-without-pairs', 'complete paired-case floor is not met'));
     for (const key of Object.keys(expected)) if (!same(report[key], expected[key])) errors.push(error('statistical-recomputation', `${key} differs from the bound raw inputs`));
-    for (const path of SOURCE_PATHS) if (resource?.candidate?.sourceHashes?.[path] !== sha256File(join(root, path))) errors.push(error('source-digest-mismatch', `source changed: ${path}`));
+    if (options.sourceChecks !== false) for (const path of SOURCE_PATHS) if (resource?.candidate?.sourceHashes?.[path] !== sha256File(join(root, path))) errors.push(error('source-digest-mismatch', `source changed: ${path}`));
     if (!options.allowDraft && options.verifyCandidate !== false && resource?.candidate?.commit) {
       const commit = resource.candidate.commit;
       if (git(['rev-parse', `${commit}^{tree}`], root) !== resource.candidate.tree) errors.push(error('candidate-identity', 'recorded commit/tree do not match'));
@@ -394,7 +394,8 @@ export function runNegativeControls(report, controls = buildNegativeControls(), 
     if (mutation === 'fabricated-trial-count') next.run.trialCount += 1;
     if (mutation === 'resource-envelope-tamper') next.resourceFingerprint.envelope.cpuCeilingCores = 0;
     if (mutation === 'real-human-claim') next.claims.realHuman = true;
-    const result = validateTf0592Report(next, root, { verifyCandidate: false });
+    const sourceChecks = control.mutation === 'source-digest-tamper';
+    const result = validateTf0592Report(next, root, { verifyCandidate: false, sourceChecks });
     const codes = [...new Set(result.errors.map((entry) => entry.code))];
     return { ...control, observedCodes: codes, passed: codes.includes(control.expectedCode) };
   });

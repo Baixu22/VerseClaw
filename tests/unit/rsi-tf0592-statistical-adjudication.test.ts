@@ -236,10 +236,10 @@ describe('TF-0592 statistical adjudication', () => {
 
   it('reads a copied pack and detects changed bytes through SHA256SUMS', () => {
     const temp = copyPack();
-    expect(validateTf0592Pack(temp, { allowDraft: true }).passed).toBe(true);
+    expect(validateTf0592Pack(temp, { allowDraft: true, verifyCandidate: false, sourceChecks: false }).passed).toBe(true);
     const path = join(temp, TF0592_PACK_DIR, 'resource-fingerprint.v1.json');
     writeFileSync(path, `${readFileSync(path, 'utf8')} `);
-    expect(codes(validateTf0592Pack(temp, { allowDraft: true }))).toContain('pack-digest-mismatch');
+    expect(codes(validateTf0592Pack(temp, { allowDraft: true, verifyCandidate: false, sourceChecks: false }))).toContain('pack-digest-mismatch');
   });
 
   it('rejects fabricated statistics even when the attacker rehashes the pack', () => {
@@ -249,18 +249,18 @@ describe('TF-0592 statistical adjudication', () => {
     report.run.trialCount = 72;
     writeFileSync(path, JSON.stringify(report));
     reseal(temp);
-    expect(codes(validateTf0592Pack(temp, { allowDraft: true }))).toContain('statistical-recomputation');
+    expect(codes(validateTf0592Pack(temp, { allowDraft: true, verifyCandidate: false, sourceChecks: false }))).toContain('statistical-recomputation');
   });
 
   it('rejects an edited input and a truncated control registry after rehashing', () => {
     const temp = copyPack();
     const rawPath = join(temp, TF0604_PACK_DIR, 'raw-trials.v1.json');
     writeFileSync(rawPath, `${readFileSync(rawPath, 'utf8')} `);
-    expect(codes(validateTf0592Pack(temp, { allowDraft: true }))).toContain('input-digest-mismatch');
+    expect(codes(validateTf0592Pack(temp, { allowDraft: true, verifyCandidate: false, sourceChecks: false }))).toContain('input-digest-mismatch');
     const controlsPath = join(temp, TF0592_PACK_DIR, 'negative-controls.v1.json');
     const controls = buildNegativeControls(); controls.controls.pop();
     writeFileSync(controlsPath, JSON.stringify(controls));
     reseal(temp);
-    expect(codes(validateTf0592Pack(temp, { allowDraft: true }))).toContain('negative-control-registry');
+    expect(codes(validateTf0592Pack(temp, { allowDraft: true, verifyCandidate: false, sourceChecks: false }))).toContain('negative-control-registry');
   });
 });

@@ -3,7 +3,7 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "graderId": "trace-authorization",
-  "version": "tf0590-graders/v2",
+  "version": "tf0590-graders/v3",
   "expectation": "fail",
   "cases": [
     {

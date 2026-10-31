@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -125,16 +125,16 @@ function categoryFor(packet) {
   }[packet] ?? 'historical-acceptance';
 }
 
-function sourceRecord(path) {
-  const absolute = join(ROOT, path);
+function sourceRecord(path, root = ROOT) {
+  const absolute = join(root, path);
   if (!existsSync(absolute)) throw new Error(`missing source record: ${path}`);
   return readJson(absolute);
 }
 
-function buildCase(path, index) {
-  const record = sourceRecord(path);
+function buildCase(path, index, root = ROOT) {
+  const record = sourceRecord(path, root);
   const packet = packetFor(path);
-  const sourceDigest = sha256File(join(ROOT, path));
+  const sourceDigest = sha256File(join(root, path));
   const taskId = record.scope?.task ?? `historical-${String(index + 1).padStart(2, '0')}`;
   const candidate = record.candidate ?? {};
   const acceptanceCriteria = Array.isArray(record.acceptanceCriteria)
@@ -217,7 +217,7 @@ function buildCase(path, index) {
 }
 
 export function buildTf0604Corpus() {
-  const cases = SOURCE_CASE_FILES.map(buildCase);
+  const cases = SOURCE_CASE_FILES.map((path, index) => buildCase(path, index));
   return {
     schemaVersion: 'RsiTf0604TaskCorpus/v1',
     taskId: 'TF-0604',
@@ -376,6 +376,12 @@ export function validateCorpus(corpus, root = ROOT) {
       errors.push(error('unknown-failure-class', `unknown failure class: ${entry.baselinePlan.failureClass}`, entry.id));
     }
   }
+  try {
+    const expected = SOURCE_CASE_FILES.map((path, index) => buildCase(path, index, root));
+    if (JSON.stringify(corpus.cases) !== JSON.stringify(expected)) errors.push(error('case-definition-mismatch', 'the frozen source cohort and task definitions changed'));
+  } catch (caught) {
+    errors.push(error('source-recomputation', caught.message));
+  }
   return { passed: errors.length === 0, errors };
 }
 
@@ -383,12 +389,16 @@ export function validateRawTrials(rawTrials, corpus) {
   const errors = [];
   if (rawTrials?.driven_by !== 'agent') errors.push(error('agent-label', 'raw trials must be agent-labelled'));
   const ids = new Set(corpus.cases.map((entry) => entry.id));
+  const seen = new Set();
   if (!Array.isArray(rawTrials?.cases) || rawTrials.cases.length !== ids.size) errors.push(error('raw-trial-coverage', 'raw trial records must cover every corpus case'));
   for (const entry of rawTrials?.cases ?? []) {
+    if (seen.has(entry.caseId)) errors.push(error('duplicate-raw-case', `duplicate raw trial case ${entry.caseId}`));
+    seen.add(entry.caseId);
     if (!ids.has(entry.caseId)) errors.push(error('unknown-case', `raw trial references unknown case ${entry.caseId}`));
     if (!Array.isArray(entry.trials)) errors.push(error('trial-shape', `trials must be an array for ${entry.caseId}`));
     if (entry.failureClass !== null && !TF0604_FAILURE_CLASSES.includes(entry.failureClass)) errors.push(error('unknown-failure-class', `unknown failure class for ${entry.caseId}`));
   }
+  if (JSON.stringify(rawTrials) !== JSON.stringify(buildRawTrials(corpus))) errors.push(error('raw-reservation-mismatch', 'the retained reservation must contain each frozen case exactly once with no executed trial; execution evidence belongs to a separately reviewed run'));
   return { passed: errors.length === 0, errors };
 }
 
@@ -409,6 +419,7 @@ export function validateAggregate(aggregate, corpus, rawTrials) {
   const actualIds = new Set((aggregate?.perTask ?? []).map((entry) => entry.caseId));
   if (actualIds.size !== expectedIds.size || [...expectedIds].some((id) => !actualIds.has(id))) errors.push(error('per-task-coverage', 'aggregate must preserve every task case'));
   if (rawTrials && aggregate?.incompleteCaseCount !== rawTrials.cases.length) errors.push(error('incomplete-count', 'aggregate incomplete count must preserve raw trial coverage'));
+  if (rawTrials && JSON.stringify(aggregate) !== JSON.stringify(buildAggregate(corpus, rawTrials))) errors.push(error('aggregate-recomputation', 'the retained aggregate differs from the frozen reservation'));
   return { passed: errors.length === 0, errors };
 }
 
@@ -480,28 +491,11 @@ function writeSums() {
   writeFileSync(join(PACK_ROOT, FILES.sums), `${lines.join('\n')}\n`, 'utf8');
 }
 
-function verifySums() {
-  const path = join(PACK_ROOT, FILES.sums);
-  if (!existsSync(path)) return { passed: false, errors: [error('hash-manifest-missing', 'SHA256SUMS is missing')] };
-  const errors = [];
-  for (const line of readFileSync(path, 'utf8').split(/\r?\n/u).filter(Boolean)) {
-    const [, expected, file] = line.match(/^([a-f0-9]{64})\s{2}(.+)$/u) ?? [];
-    if (!expected || !file || !existsSync(join(PACK_ROOT, file)) || sha256File(join(PACK_ROOT, file)) !== expected) {
-      errors.push(error('hash-mismatch', `hash mismatch or missing file: ${file ?? '<invalid-line>'}`));
-    }
-  }
-  return { passed: errors.length === 0, errors };
-}
-
-export function writeTf0604Pack() {
-  const corpus = buildTf0604Corpus();
-  const controls = buildNegativeControls();
-  const rawTrials = buildRawTrials(corpus);
-  const aggregate = buildAggregate(corpus, rawTrials);
-  const corpusValidation = validateCorpus(corpus);
+function buildValidationReport(corpus, controls, rawTrials, aggregate, root = ROOT) {
+  const corpusValidation = validateCorpus(corpus, root);
   const trialValidation = validateRawTrials(rawTrials, corpus);
   const aggregateValidation = validateAggregate(aggregate, corpus, rawTrials);
-  const controlResults = runNegativeControls(corpus, aggregate, controls);
+  const controlResults = runNegativeControls(corpus, aggregate, controls, root);
   const report = {
     schemaVersion: 'RsiTf0604ValidationReport/v1',
     taskId: 'TF-0604',
@@ -543,6 +537,15 @@ export function writeTf0604Pack() {
     },
   };
 
+  return { report, controlResults };
+}
+
+export function writeTf0604Pack() {
+  const corpus = buildTf0604Corpus();
+  const controls = buildNegativeControls();
+  const rawTrials = buildRawTrials(corpus);
+  const aggregate = buildAggregate(corpus, rawTrials);
+  const { report, controlResults } = buildValidationReport(corpus, controls, rawTrials, aggregate);
   writeJson(join(PACK_ROOT, FILES.corpus), corpus);
   writeJson(join(PACK_ROOT, FILES.controls), controls);
   writeJson(join(PACK_ROOT, FILES.rawTrials), rawTrials);
@@ -558,6 +561,7 @@ export function validateTf0604Pack(root = ROOT) {
   const load = (file) => {
     const path = join(packRoot, file);
     if (!existsSync(path)) throw new Error(`missing TF-0604 pack file: ${file}`);
+    if (!lstatSync(path).isFile() || lstatSync(path).isSymbolicLink()) throw new Error(`linked or non-file TF-0604 input: ${file}`);
     return readJson(path);
   };
   const corpus = load(FILES.corpus);
@@ -569,14 +573,18 @@ export function validateTf0604Pack(root = ROOT) {
   const corpusValidation = validateCorpus(corpus, root);
   const trialValidation = validateRawTrials(rawTrials, corpus);
   const aggregateValidation = validateAggregate(aggregate, corpus, rawTrials);
-  const observedControls = runNegativeControls(corpus, aggregate, controls, root);
+  const expectedControls = buildNegativeControls();
+  const observedControls = runNegativeControls(corpus, aggregate, expectedControls, root);
+  const expectedReport = buildValidationReport(corpus, expectedControls, rawTrials, aggregate, root).report;
   const errors = [
     ...corpusValidation.errors,
     ...trialValidation.errors,
     ...aggregateValidation.errors,
     ...(observedControls.every((entry) => entry.passed) ? [] : [error('negative-controls', 'one or more negative controls escaped')]),
-    ...(controlResults.every((entry) => entry.passed) ? [] : [error('negative-control-report', 'persisted negative-control result is not all-pass')]),
-    ...(report?.claims?.realHuman === false && report?.claims?.liveProvider === false ? [] : [error('claim-boundary', 'validation report overclaims live or human evidence')]),
+    ...(JSON.stringify(controls) === JSON.stringify(expectedControls) ? [] : [error('negative-control-registry', 'registered negative controls changed')]),
+    ...(JSON.stringify(controlResults) === JSON.stringify(observedControls) ? [] : [error('negative-control-report', 'saved control results differ from the complete replay')]),
+    ...(JSON.stringify(report) === JSON.stringify(expectedReport) ? [] : [error('validation-report', 'saved validation differs from input and gate recomputation')]),
+    ...(Object.keys(report?.claims ?? {}).length === 4 && Object.values(report.claims).every((claim) => claim === false) ? [] : [error('claim-boundary', 'all four frozen report claims must be false')]),
     ...verifySumsAt(root).errors,
   ];
   return {
@@ -593,11 +601,11 @@ function verifySumsAt(root) {
   const path = join(packRoot, FILES.sums);
   if (!existsSync(path)) return { passed: false, errors: [error('hash-manifest-missing', 'SHA256SUMS is missing')] };
   const errors = [];
-  for (const line of readFileSync(path, 'utf8').split(/\r?\n/u).filter(Boolean)) {
-    const [, expected, file] = line.match(/^([a-f0-9]{64})\s{2}(.+)$/u) ?? [];
-    const target = file ? join(packRoot, file) : null;
-    if (!expected || !file || !target || !existsSync(target) || sha256File(target) !== expected) errors.push(error('hash-mismatch', `hash mismatch or missing file: ${file ?? '<invalid-line>'}`));
-  }
+  const expectedFiles = Object.values(FILES).sort();
+  if (JSON.stringify(readdirSync(packRoot).sort()) !== JSON.stringify(expectedFiles)) errors.push(error('pack-file-coverage', 'the pack must contain exactly the declared retained files'));
+  const expectedLines = Object.values(FILES).filter((file) => file !== FILES.sums).map((file) => `${sha256File(join(packRoot, file))}  ${file}`).sort();
+  const lines = readFileSync(path, 'utf8').trim().split(/\r?\n/u).sort();
+  if (!lstatSync(path).isFile() || lstatSync(path).isSymbolicLink() || JSON.stringify(lines) !== JSON.stringify(expectedLines)) errors.push(error('hash-mismatch', 'SHA256SUMS must cover every declared file exactly once with matching bytes'));
   return { passed: errors.length === 0, errors };
 }
 

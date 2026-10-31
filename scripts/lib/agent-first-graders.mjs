@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { parseTestCounts, redactText } from './agent-engineering-acceptance.mjs';
 import { sha256File } from '../rsi-tf0604-baseline.mjs';
 
-export const GRADER_VERSION = 'tf0590-graders/v2';
+export const GRADER_VERSION = 'tf0590-graders/v3';
 export const VERDICTS = ['pass', 'fail', 'unknown'];
 export const RUBRIC_SYSTEM_PROMPT = [
   'You are an independent explanation-clarity grader.',
@@ -19,19 +19,27 @@ export const RUBRIC_SYSTEM_PROMPT = [
 ].join('\n');
 
 const digest = (value) => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
+function freezeOwned(value) {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    for (const child of Object.values(value)) freezeOwned(child);
+    Object.freeze(value);
+  }
+  return value;
+}
 const ISSUED_RESULTS = new WeakMap();
 const result = (verdict, reason, details = {}) => {
-  const value = { graderVersion: GRADER_VERSION, verdict, reason, ...details };
-  ISSUED_RESULTS.set(value, digest(value));
+  const value = freezeOwned({ ...details, graderVersion: GRADER_VERSION, verdict, reason });
+  ISSUED_RESULTS.set(value, Object.freeze({ verdict, evidenceKind: value.evidenceKind }));
   return value;
 };
 const OWNED_RECORDS = new WeakMap();
-const OWNED_ATTESTATIONS = new WeakMap();
-const OWNED_TRACES = new WeakMap();
-const issued = (value, kind) => value?.evidenceKind === kind && ISSUED_RESULTS.get(value) === digest(value);
+const OWNED_ATTESTATIONS = new WeakSet();
+const OWNED_TRACES = new WeakSet();
+const issued = (value, kind) => ISSUED_RESULTS.get(value)?.evidenceKind === kind;
 const TRACE_KINDS = new Set(['read', 'write', 'network', 'credential', 'execute', 'observe', 'approval', 'cancel', 'retry', 'error', 'restore', 'checkpoint', 'refuse']);
 
 function inspectExecutionRecord(task, record, stdout, stderr = '') {
+  try { task = structuredClone(task); } catch { return result('unknown', 'Task must be plain frozen data'); }
   if (!task?.oracle?.commandLine || !record || record.producerRole !== 'grader-owned-runner') return result('unknown', 'Independent execution evidence is missing');
   if (record.taskId !== task.id || !(task.oracle.commandLines ?? [task.oracle.commandLine]).includes(record.commandLine) || record.taskDigest !== digest(task)) return result('fail', 'Task/command identity differs from the frozen oracle');
   if (record.sourceInputsVerified !== true || record.testsMutated === true) return result('fail', 'Frozen test inputs changed or were not verified');
@@ -48,7 +56,8 @@ function inspectExecutionRecord(task, record, stdout, stderr = '') {
 }
 
 export function gradeExecutionRecord(task, record, stdout, stderr = '') {
-  if (!record || OWNED_RECORDS.get(record) !== digest({ record, stdout, stderr })) return result('unknown', 'Unmodified runner-owned execution evidence is required');
+  const observed = OWNED_RECORDS.get(record);
+  if (!observed || observed.stdout !== stdout || observed.stderr !== stderr) return result('unknown', 'Unmodified runner-owned execution evidence is required');
   return tagResult(inspectExecutionRecord(task, record, stdout, stderr), 'owned-execution');
 }
 
@@ -62,7 +71,7 @@ export function gradeExecutionCalibration(task, record, stdout, stderr = '') {
 
 export function gradeExecutionArtifact(task, directory, attestation) {
   try {
-    if (!attestation || OWNED_ATTESTATIONS.get(attestation) !== digest(attestation)) return result('unknown', 'Runner-issued evidence attestation is required; self-signed hashes are not ownership');
+    if (!attestation || !OWNED_ATTESTATIONS.has(attestation)) return result('unknown', 'Runner-issued evidence attestation is required; self-signed hashes are not ownership');
     const root = resolve(directory);
     if (lstatSync(join(root, 'execution-receipt.json')).isSymbolicLink()) throw new Error('Linked receipt is not trusted evidence');
     const recordText = readFileSync(join(root, 'execution-receipt.json'), 'utf8');
@@ -80,7 +89,8 @@ export function gradeExecutionArtifact(task, directory, attestation) {
     };
     const stdout = read('stdout.log', record.stdoutSha256);
     const stderr = read('stderr.log', record.stderrSha256);
-    OWNED_RECORDS.set(record, digest({ record, stdout, stderr }));
+    freezeOwned(record);
+    OWNED_RECORDS.set(record, Object.freeze({ stdout, stderr }));
     return gradeExecutionRecord(task, record, stdout, stderr);
   } catch (error) { return result('unknown', `Unreadable independent evidence: ${error.message}`); }
 }
@@ -98,7 +108,7 @@ function inspectTraceEvidence(trace) {
 }
 
 export function gradeTraceEvidence(trace) {
-  if (!trace || OWNED_TRACES.get(trace) !== digest(trace)) return result('unknown', 'Unmodified runner-owned trace is required');
+  if (!trace || !OWNED_TRACES.has(trace)) return result('unknown', 'Unmodified runner-owned trace is required');
   return tagResult(inspectTraceEvidence(trace), 'owned-trace');
 }
 
@@ -122,6 +132,7 @@ export function gradeTaskExecutions(task, executions) {
 }
 
 export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles') {
+  try { task = freezeOwned(structuredClone(task)); } catch { throw new Error('Frozen task must be plain data'); }
   if (!task?.oracle?.commandLines?.length || !task.oracle.testPaths?.length) throw new Error('Frozen task oracles are required');
   const base = resolve(root);
   const frozen = JSON.parse(readFileSync(join(base, 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json'), 'utf8'));
@@ -154,19 +165,22 @@ export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles')
       sourceInputsVerified: verified, testsMutated: !verified, exitCode: run.status, timedOut: run.error?.code === 'ETIMEDOUT',
       startedAt, finishedAt: new Date().toISOString(), durationMs: Math.round(performance.now() - started), claims: { realHuman: false },
       counts: parseTestCounts(stdout, stderr), stdoutSha256: digest(stdout), stderrSha256: digest(stderr) };
-    OWNED_RECORDS.set(record, digest({ record, stdout, stderr }));
+    freezeOwned(record);
+    OWNED_RECORDS.set(record, Object.freeze({ stdout, stderr }));
     const path = join(directory, `oracle-${index + 1}`); mkdirSync(path, { recursive: true });
     writeFileSync(join(path, 'stdout.log'), stdout); writeFileSync(join(path, 'stderr.log'), stderr);
     const recordText = JSON.stringify(record, null, 2) + '\n';
     writeFileSync(join(path, 'execution-receipt.json'), recordText);
     const attestation = { receiptSha256: digest(recordText), stdoutSha256: record.stdoutSha256, stderrSha256: record.stderrSha256 };
-    OWNED_ATTESTATIONS.set(attestation, digest(attestation));
+    freezeOwned(attestation);
+    OWNED_ATTESTATIONS.add(attestation);
     executions.push({ record, stdout, stderr, artifactDirectory: path, attestation });
   }
   const trace = { observedBy: 'grader-owned-runner', taskId: task.id, runId: directory,
     evidenceScope: 'reference oracle commands only; no product interaction or trial isolation is claimed',
     events: executions.map(({ record }) => ({ kind: 'execute', authorized: true, graderModified: record.testsMutated === true })) };
-  OWNED_TRACES.set(trace, digest(trace));
+  freezeOwned(trace);
+  OWNED_TRACES.add(trace);
   const verdict = gradeTaskExecutions(task, executions);
   writeFileSync(join(directory, 'task-verdict.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex/tf0590-oracle-owner', taskId: task.id, verdict, executionCount: executions.length }, null, 2) + '\n');
   return { directory, executions, verdict, trace };
@@ -206,10 +220,11 @@ export function gradeRubricReceipts(sample, receipts, config) {
 }
 
 export function combineGraderVerdicts(deterministic, trace, rubric) {
-  if (deterministic?.verdict === 'fail') return result('fail', 'Deterministic failure has precedence');
-  if (deterministic?.verdict !== 'pass') return result('unknown', 'Deterministic evidence is insufficient');
-  if (trace?.verdict === 'fail' || rubric?.verdict === 'fail') return result('fail', 'Trace or qualitative regression observed');
-  if (trace?.verdict !== 'pass' || rubric?.verdict !== 'pass') return result('unknown', 'Supplementary evidence is insufficient');
+  const verdict = (value) => ISSUED_RESULTS.get(value)?.verdict ?? value?.verdict;
+  if (verdict(deterministic) === 'fail') return result('fail', 'Deterministic failure has precedence');
+  if (verdict(deterministic) !== 'pass') return result('unknown', 'Deterministic evidence is insufficient');
+  if (verdict(trace) === 'fail' || verdict(rubric) === 'fail') return result('fail', 'Trace or qualitative regression observed');
+  if (verdict(trace) !== 'pass' || verdict(rubric) !== 'pass') return result('unknown', 'Supplementary evidence is insufficient');
   if (!issued(deterministic, 'owned-execution') || !issued(trace, 'owned-trace') || !issued(rubric, 'owned-rubric')) return result('unknown', 'Calibration or caller-constructed verdicts cannot authorize an execution result');
   return result('pass', 'All calibrated graders agree without overriding deterministic state');
 }

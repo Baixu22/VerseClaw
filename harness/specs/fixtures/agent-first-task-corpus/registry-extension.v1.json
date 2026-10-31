@@ -61,7 +61,7 @@
       },
       "authoredBy": "framework",
       "corpusStatus": "frozen",
-      "contentDigest": "sha256:74ce9a036b89e70084181521141148aa32778c5755c36392a887d03d35fef689",
+      "contentDigest": "sha256:44f15dbcc164811cabee12e7611f3d02b462255a79b46a9dde58dd39bb82b01e",
       "taskIds": [
         "tf-0274-e01",
         "tf-0275-e02",
@@ -93,7 +93,7 @@
   "registeredGraders": [
     {
       "id": "rsi-deterministic-final-state",
-      "version": "tf0590-graders/v2",
+      "version": "tf0590-graders/v3",
       "kind": "deterministic",
       "precedence": 1,
       "authoredBy": "framework",
@@ -112,7 +112,7 @@
     },
     {
       "id": "rsi-trace-authorization",
-      "version": "tf0590-graders/v2",
+      "version": "tf0590-graders/v3",
       "kind": "heuristic",
       "precedence": 2,
       "authoredBy": "framework",
@@ -131,7 +131,7 @@
     },
     {
       "id": "rsi-rubric-clarity",
-      "version": "tf0590-graders/v2",
+      "version": "tf0590-graders/v3",
       "kind": "rubric",
       "precedence": 3,
       "authoredBy": "framework",

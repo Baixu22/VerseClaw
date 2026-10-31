@@ -1,6 +1,6 @@
 {
   "schemaVersion": "AgentFirstGraderCalibration/v1",
-  "version": "tf0590-graders/v2",
+  "version": "tf0590-graders/v3",
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "evidenceKind": "labelled-calibration-fixtures",

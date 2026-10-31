@@ -46,12 +46,34 @@ describe('Agent-first executable graders', () => {
     expect(gradeExecutionArtifact(frozen, execution.artifactDirectory, { ...execution.attestation }).verdict).toBe('unknown');
     expect(gradeTraceEvidence(run.trace).verdict).toBe('pass');
     expect(combineGraderVerdicts(run.verdict, gradeTraceEvidence(run.trace), { verdict: 'pass' }).verdict).toBe('unknown');
-    run.trace.events[0].authorized = false;
-    expect(gradeTraceEvidence(run.trace).verdict).toBe('unknown');
-    execution.record.exitCode = 7;
-    expect(gradeExecutionRecord(frozen, execution.record, execution.stdout, execution.stderr).verdict).toBe('unknown');
+    expect(Reflect.set(run.trace.events[0], 'authorized', false)).toBe(false);
+    expect(gradeTraceEvidence({ ...run.trace }).verdict).toBe('unknown');
+    expect(Reflect.set(execution.record, 'exitCode', 7)).toBe(false);
+    expect(gradeExecutionRecord(frozen, { ...execution.record, exitCode: 7 }, execution.stdout, execution.stderr).verdict).toBe('unknown');
+    expect(gradeExecutionRecord(frozen, execution.record, `${execution.stdout}altered`, execution.stderr).verdict).toBe('unknown');
+    expect(Reflect.defineProperty(execution.attestation, 'toJSON', { value: () => ({}) })).toBe(false);
+    expect(Reflect.defineProperty(run.trace, 'toJSON', { value: () => ({}) })).toBe(false);
     expect(() => runTaskOracles({ ...frozen, id: 'invented-task' }, process.cwd())).toThrow('frozen historical execution corpus');
+    const spoofed = { ...frozen, id: 'invented-task', toJSON: () => frozen };
+    expect(() => runTaskOracles(spoofed, process.cwd())).toThrow('plain data');
   }, 30000);
+  it('cannot retag calibration or turn a deterministic fail into pass with toJSON', () => {
+    const model = JSON.parse(readFileSync('harness/specs/fixtures/agent-first-task-corpus/model-calibration.v1.json', 'utf8'));
+    const qualitative = samples.rubric.find((sample) => sample.expected === 'pass')!;
+    for (const expected of ['pass', 'fail'] as const) {
+      const sample = samples.deterministic.find((entry) => entry.expected === expected)!;
+      const grades = [gradeExecutionCalibration(task, sample.record, sample.stdout, sample.stderr),
+        gradeTraceCalibration(samples.trace[0].trace),
+        gradeRubricReceipts(qualitative, model.receipts.filter((receipt: RubricReceipt) => receipt.sampleId === qualitative.id), RUBRIC_CONFIG)];
+      for (const [index, grade] of grades.entries()) {
+        const snapshot = structuredClone(grade);
+        expect(Reflect.defineProperty(grade, 'toJSON', { value: () => snapshot })).toBe(false);
+        expect(Reflect.set(grade, 'evidenceKind', ['owned-execution', 'owned-trace', 'owned-rubric'][index])).toBe(false);
+        expect(Reflect.set(grade, 'verdict', 'pass')).toBe(false);
+      }
+      expect(combineGraderVerdicts(grades[0], grades[1], grades[2]).verdict).toBe(expected === 'fail' ? 'fail' : 'unknown');
+    }
+  });
   it('rejects fabricated files even when their caller supplies matching hashes', () => {
     mkdirSync('D:/tmp/rsi-grader-ownership-tests', { recursive: true });
     const dir = mkdtempSync('D:/tmp/rsi-grader-ownership-tests/forged-');
