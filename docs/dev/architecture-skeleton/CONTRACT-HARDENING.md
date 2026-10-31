@@ -283,3 +283,22 @@ grep -nE "^\| Workboard \| Runtime/plugin scheduling board|^- \`TaskLedgerRefere
 | 25 | `git diff --check` | 0 | 无输出 |
 
 #3–#13 在 `docs/clawx-product-semantics.md` 改动**之后**运行（§4.1 的 +13 行已在树上），因此 #11 的 6 条 `source-digest-mismatch` 与 #9 / #10 的摘要都是对改动后文档的读数。
+
+### 11.1 候选提交后复核与 `final/` 生成
+
+C4 候选提交 **`6944b059cd5deda27c39e59cc1bb95042712f153`**（tree `582054179acfbdba7dd77fe7cba91074713da2cf`；5 文件 +397 / −1；基于 `819d23439`；显式 pathspec：`tests/unit/evidence-refs-exist.test.ts`、`docs/clawx-product-semantics.md`、本文件、`scripts/repository-artifacts.json`、`.gitignore`）。提交后 `git status --porcelain` 0 行，在该干净候选上运行：
+
+| # | 命令（HEAD `6944b059c`） | exit | 关键输出 |
+|---|---|---|---|
+| 26 | `node scripts/check-evidence-refs.mjs --report harness/specs/fixtures/ontology-lite-existing-contracts/final/evidence-report.json --actor chain-driver` | 0 | `report valid: 6 relation(s), 8 source ref(s), 0 diagnostic(s) -> harness/specs/fixtures/ontology-lite-existing-contracts/final/evidence-report.json`；stderr 0 字节（无 dirty 提示）；报告 `candidate.commit 6944b059c…`、`candidate.tree 582054179…`、**`dirty false`**、`dirtyPaths []`、`actor {driven_by: 'agent', actor: 'chain-driver'}`、`command` 全为相对路径、`exitCode 0`、`status valid`、15 键、`rulesEvaluated` 19、`relations` 6 / `sourceRefs` 8、`diagnostics []`、`unverified []`、`fixtures []` |
+| 27 | `node scripts/check-evidence-refs.mjs --verify harness/specs/fixtures/ontology-lite-existing-contracts/final/evidence-report.json`（同一 HEAD） | 0 | `verify valid: … (6 relation(s), 8 source ref(s), candidate 6944b059c)` |
+| 28 | `pnpm exec vitest run tests/unit/product-semantics.test.ts tests/unit/evidence-refs-exist.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/tf0637-c4/vitest-c4-candidate.json` | 0 | `numTotalTests 92, numFailedTests 0, success true` |
+| 29 | `node scripts/check-evidence-refs.mjs` | 0 | `[evidence-refs] PASS 188 referenced path(s)`，与钉住的 fixture `cmp` 相同 |
+| 30 | `final/limitations.json`、`final/gates.json` 写入（§5；由 #1–#29 的读数转录） | — | `ContractHardeningLimitations/v1`（10 条限制 + not-run 7 项 + not-claimed 4 项）；`ContractHardeningGateIndex/v1`（gates 30 条、realGateEntry、runtimePathProof、documentation、localLogs 索引） |
+| 31 | 凭据扫描（`LC_ALL=C.UTF-8 grep -nP <C1–C3 同一 look-behind 模式>` 对 `final/evidence-report.json`、`final/gates.json`、`final/limitations.json`、`tests/unit/evidence-refs-exist.test.ts`、`docs/clawx-product-semantics.md`、本文件；自测 3 行输入期望 2 命中） | grep **1**（= 无命中） | `final/credential-scan.json`：`status clean`、`filesScanned 6`、`findings []`、自测 2/2 |
+| 32 | `cd harness/specs/fixtures/ontology-lite-existing-contracts/final && sha256sum evidence-report.json gates.json limitations.json credential-scan.json > SHA256SUMS && sha256sum -c SHA256SUMS` | 0 | 4 条 `OK`；SHA256SUMS 覆盖 `final/` 内除自身外的每个文件 |
+| 33 | `node scripts/check-repository-artifacts.mjs`；`node scripts/check-local-paths.mjs`（`final/**` 与本节暂存后） | 0 / 0 | `Repository artifact retention passed (20057 tracked paths).`；`[local-paths] PASS …` |
+| 34 | `pnpm harness validate --spec harness/specs/tasks/ontology-lite-contract-implementation.md --since HEAD`（暂存 `final/**` + 本文件） | 0 | `Spec is valid`（`final/**` 在 `ownedPaths` 的 `harness/specs/fixtures/ontology-lite-existing-contracts/**` 内） |
+| 35 | `git diff --check`；`git diff --cached --check` | 0 / 0 | 无输出 |
+
+本节与 `final/{limitations,gates,credential-scan}.json`、`SHA256SUMS` 由紧随 `6944b059c` 的**仅证据回填提交**落盘（TF-0632 §11.1 同形）；该提交的 hash 不可能写进它自己提交的文件，记入 Task Forest TF-0637 / TF-0633 的 `evidence`。按 §5 的说明，在回填提交及之后任何 HEAD 上对 `final/evidence-report.json` 运行 `--verify` 恰得两条 `candidate-mismatch`（`candidate.commit`、`candidate.tree`）并 exit 1，其余字段与 8 个来源摘要全部匹配；在 `6944b059c` 的分离 worktree 上运行则 exit 0（§7.5）。这两个读数在回填提交后由同一会话运行并记入 Task Forest evidence。

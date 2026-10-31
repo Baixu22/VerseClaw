@@ -1,0 +1,101 @@
+{
+  "schema": "ContractHardeningGateIndex/v1",
+  "node": "TF-0637",
+  "parent": "TF-0633",
+  "leaf": "C4",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "generatedAt": "2026-10-31T21:20:00Z",
+  "candidate": {
+    "commit": "6944b059cd5deda27c39e59cc1bb95042712f153",
+    "tree": "582054179acfbdba7dd77fe7cba91074713da2cf",
+    "dirty": false,
+    "base": {
+      "commit": "819d234397b08793763a33c79b536f0195d1e2ad",
+      "tree": "30fa851fb68b706f720a962615eb9c2c72e63377",
+      "meaning": "C3 candidate; HEAD at the start of C4 with an empty `git status --porcelain`"
+    }
+  },
+  "leaves": [
+    { "leaf": "C1", "node": "TF-0634", "commit": "832aa5ab293cb5bb9d5e2e1e3452fc30c127e445", "tree": "5fcf05dcd50d7568967a346d795bc9f88c875ea6", "base": "b442f5dd53be761f4ad3d11755d8b1e278cccfaa", "files": 3, "insertions": 327, "deletions": 0 },
+    { "leaf": "C2", "node": "TF-0635", "commit": "2b819e342a4d8d9fbf4f48de8a4185d52f94f87d", "tree": "0b10b86d536aa1e2f18ad45c5592396f50b7f42f", "base": "832aa5ab293cb5bb9d5e2e1e3452fc30c127e445", "files": 25, "insertions": 938, "deletions": 0 },
+    { "leaf": "C3", "node": "TF-0636", "commit": "819d234397b08793763a33c79b536f0195d1e2ad", "tree": "30fa851fb68b706f720a962615eb9c2c72e63377", "base": "2b819e342a4d8d9fbf4f48de8a4185d52f94f87d", "files": 16, "insertions": 1325, "deletions": 4 },
+    { "leaf": "C4", "node": "TF-0637", "commit": "6944b059cd5deda27c39e59cc1bb95042712f153", "tree": "582054179acfbdba7dd77fe7cba91074713da2cf", "base": "819d234397b08793763a33c79b536f0195d1e2ad", "files": 5, "insertions": 397, "deletions": 1 }
+  ],
+  "localLogs": {
+    "root": "D:/tmp/tf0637-c4/",
+    "retention": "developer-local only; never committed; this index is the committed pointer",
+    "files": [
+      "gates.log (pre-commit gates #1-#16)",
+      "gates2.log (retention / lifecycle / policy / validate / diff-check #17-#25)",
+      "gates3.log (clean-candidate re-runs #26-#30)",
+      "vitest-c4.json, vitest-c4-candidate.json, vitest-compat.json (vitest JSON reporters)",
+      "typecheck.log (pnpm run typecheck, phase timings and the single pre-existing error)",
+      "eslint.log, write-ignore.log, repo-artifacts.log, repo-artifacts2.log, local-paths.log, lifecycle.log, docs-policy.log, validate-impl-since.log, validate-impl-nosince.log, validate-umbrella-since.log, diff-check.log",
+      "real-entry/ (CLI reports and stderr of the four negatives and the positive, generated on the pre-commit tree)",
+      "default-stdout-pre.txt, default-stdout-post.txt, default-stdout-candidate.txt (byte-identical to report/default-stdout.expected.txt)",
+      "final-report.out/.err, final-verify.out/.err (generation and verification of final/evidence-report.json)"
+    ]
+  },
+  "gates": [
+    { "id": 1, "phase": "pre-commit", "command": "pnpm harness context --spec harness/specs/tasks/ontology-lite-contract-implementation.md", "exitCode": 0, "keyOutput": "minimal reading list; rules context-family-boundary / contract-first-boundary / docs-sync / identity-scope-boundary / repository-artifact-retention / task-forest-autoclose-and-roles; layer harness" },
+    { "id": 2, "phase": "pre-commit", "command": "pnpm harness context --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md", "exitCode": 0, "keyOutput": "minimal reading list" },
+    { "id": 3, "phase": "pre-commit", "command": "pnpm exec vitest run tests/unit/product-semantics.test.ts tests/unit/evidence-refs-exist.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/tf0637-c4/vitest-c4.json", "exitCode": 0, "keyOutput": "numTotalTests 92, numFailedTests 0, success true (product-semantics 40 + evidence-refs-exist 52 = 47 C3 + 5 real gate entry)" },
+    { "id": 4, "phase": "pre-commit", "command": "pnpm exec vitest run tests/unit/identity-scope.test.ts tests/unit/task-ledger-reference.test.ts tests/unit/task-ledger-reference-inheritance.test.ts tests/unit/permission-effect-contract.test.ts --maxWorkers=1", "exitCode": 0, "keyOutput": "numTotalTests 54, numFailedTests 0" },
+    { "id": 5, "phase": "pre-commit", "command": "node scripts/check-evidence-refs.mjs", "exitCode": 0, "keyOutput": "[evidence-refs] PASS 188 referenced path(s); stderr 0 bytes; cmp identical to report/default-stdout.expected.txt" },
+    { "id": 6, "phase": "pre-commit", "command": "pnpm repo:evidence:check", "exitCode": 0, "keyOutput": "same as #5" },
+    { "id": 7, "phase": "pre-commit", "command": "node scripts/check-evidence-refs.mjs --fixture harness/specs/fixtures/ontology-lite-existing-contracts/report/fixtures/bad-relation-self-loop.json --report D:/tmp/tf0637-c4/real-entry/bad-relation.json --actor chain-driver", "exitCode": 1, "keyOutput": "1 diagnostic: [self-loop] chat--suggests-upgrade-to--chat to: \"chat\" cannot relate to itself.; report written with fixtures ['bad-relation-self-loop']" },
+    { "id": 8, "phase": "pre-commit", "command": "node scripts/check-evidence-refs.mjs --verify D:/tmp/tf0637-c4/real-entry/bad-relation.json", "exitCode": 1, "keyOutput": "[candidate-mismatch] - fixtures; [report-field-missing] - status (a fixture-born report is not candidate evidence)" },
+    { "id": 9, "phase": "pre-commit", "command": "node scripts/check-evidence-refs.mjs --report D:/tmp/tf0637-c4/real-entry/positive.json --actor chain-driver", "exitCode": 0, "keyOutput": "report valid: 6 relation(s), 8 source ref(s), 0 diagnostic(s); relations 6, rulesEvaluated 19, candidate.dirty true (pre-commit development tree)" },
+    { "id": 10, "phase": "pre-commit", "command": "node scripts/check-evidence-refs.mjs --verify D:/tmp/tf0637-c4/real-entry/positive.json", "exitCode": 0, "keyOutput": "verify valid: ... (6 relation(s), 8 source ref(s), candidate 819d23439)" },
+    { "id": 11, "phase": "pre-commit", "command": "node scripts/check-evidence-refs.mjs --fixture harness/specs/fixtures/ontology-lite-existing-contracts/report/fixtures/stale-source-rewrite.json --verify D:/tmp/tf0637-c4/real-entry/positive.json", "exitCode": 1, "keyOutput": "6 source-digest-mismatch lines, all on docs/clawx-product-semantics.md (3 citing relations x 2 digest fields); no candidate-mismatch" },
+    { "id": 12, "phase": "pre-commit", "command": "printf '{}\\n' > empty.json; node scripts/check-evidence-refs.mjs --verify empty.json", "exitCode": 1, "keyOutput": "15 diagnostics, all report-field-missing (one per top-level report key)" },
+    { "id": 13, "phase": "pre-commit", "command": "node scripts/check-evidence-refs.mjs --verify <full report with relations: []>", "exitCode": 1, "keyOutput": "1 diagnostic: [report-field-missing] - relations: relations records no relation check result." },
+    { "id": 14, "phase": "pre-commit", "command": "pnpm run typecheck", "exitCode": 1, "keyOutput": "typecheck:node 0 (28.4 s), typecheck:web 0 (9.6 s), typecheck:test 2 (28.0 s): tests/unit/contract-check.test.ts(171,30) TS7006 only (pre-existing, TF-0630); 0 errors in batch-C files" },
+    { "id": 15, "phase": "pre-commit", "command": "pnpm exec eslint tests/unit/evidence-refs-exist.test.ts; node scripts/check-no-bom.mjs", "exitCode": 0, "keyOutput": "0 error 0 warning / clean" },
+    { "id": 16, "phase": "pre-commit", "command": "git diff --stat HEAD -- electron/ src/ openclaw_runtime/ package.json | wc -l; git diff --stat HEAD -- shared/ scripts/check-evidence-refs.mjs scripts/contract-check.mjs scripts/check-semantic-authority.mjs | wc -l", "exitCode": 0, "keyOutput": "0 / 0" },
+    { "id": 17, "phase": "pre-commit", "command": "node scripts/check-repository-artifacts.mjs --write-ignore", "exitCode": 1, "keyOutput": "first run exit 1 'Reviewed input is not tracked: docs/dev/architecture-skeleton/CONTRACT-HARDENING.md' (file not yet staged, expected); .gitignore gained line 1448 '!/docs/dev/architecture-skeleton/CONTRACT-HARDENING.md'; after a normal git add the re-run exits 0 and is idempotent" },
+    { "id": 18, "phase": "pre-commit", "command": "node scripts/check-repository-artifacts.mjs; pnpm repo:artifacts:check (after staging)", "exitCode": 0, "keyOutput": "Repository artifact retention passed (20052 tracked paths)." },
+    { "id": 19, "phase": "pre-commit", "command": "node scripts/check-local-paths.mjs", "exitCode": 0, "keyOutput": "[local-paths] PASS active docs contain no developer-local absolute paths" },
+    { "id": 20, "phase": "pre-commit", "command": "pnpm harness:specs:lifecycle", "exitCode": 0, "keyOutput": "[specs] lifecycle status present for 686 task specs." },
+    { "id": 21, "phase": "pre-commit", "command": "pnpm docs:policy:validate", "exitCode": 0, "keyOutput": "[policy-docs] PASS: 10 checks" },
+    { "id": 22, "phase": "pre-commit", "command": "pnpm harness validate --spec harness/specs/tasks/ontology-lite-contract-implementation.md --since HEAD", "exitCode": 0, "keyOutput": "Spec is valid" },
+    { "id": 23, "phase": "pre-commit", "command": "pnpm harness validate --spec harness/specs/tasks/ontology-lite-contract-implementation.md", "exitCode": 1, "keyOutput": "changed files not covered: only decision-round 1090f0b88 and TF-0632 aebf87169/b442f5dd5 files between origin/main 2b87c1c44 and HEAD; none of the C4 write set (environment: upstream not pushed)" },
+    { "id": 24, "phase": "pre-commit", "command": "pnpm harness validate --spec harness/specs/tasks/ontology-lite-existing-contracts-hardening.md --since HEAD", "exitCode": 1, "keyOutput": "changed files not covered: .gitignore, docs/dev/architecture-skeleton/CONTRACT-HARDENING.md, scripts/repository-artifacts.json (owned by the implementation contract, not listed in the umbrella's touchedAreas; cross-spec structural result)" },
+    { "id": 25, "phase": "pre-commit", "command": "git diff --check; git diff --cached --check", "exitCode": 0, "keyOutput": "no output" },
+    { "id": 26, "phase": "clean-candidate", "command": "node scripts/check-evidence-refs.mjs --report harness/specs/fixtures/ontology-lite-existing-contracts/final/evidence-report.json --actor chain-driver", "exitCode": 0, "keyOutput": "report valid: 6 relation(s), 8 source ref(s), 0 diagnostic(s); candidate 6944b059c... / 582054179..., dirty false, dirtyPaths []; 15 keys; rulesEvaluated 19; command uses relative paths only" },
+    { "id": 27, "phase": "clean-candidate", "command": "node scripts/check-evidence-refs.mjs --verify harness/specs/fixtures/ontology-lite-existing-contracts/final/evidence-report.json (same HEAD)", "exitCode": 0, "keyOutput": "verify valid: ... (6 relation(s), 8 source ref(s), candidate 6944b059c)" },
+    { "id": 28, "phase": "clean-candidate", "command": "pnpm exec vitest run tests/unit/product-semantics.test.ts tests/unit/evidence-refs-exist.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/tf0637-c4/vitest-c4-candidate.json", "exitCode": 0, "keyOutput": "numTotalTests 92, numFailedTests 0, success true" },
+    { "id": 29, "phase": "clean-candidate", "command": "node scripts/check-evidence-refs.mjs", "exitCode": 0, "keyOutput": "[evidence-refs] PASS 188 referenced path(s); cmp identical to the pinned fixture" },
+    { "id": 30, "phase": "clean-candidate", "command": "git status --porcelain | wc -l (before #26)", "exitCode": 0, "keyOutput": "0" }
+  ],
+  "realGateEntry": {
+    "consumer": "pnpm test -> vitest tests/unit/** (vitest.config.ts:145; .github/workflows/check.yml:88)",
+    "group": "evidence refs check: real gate entry (node scripts/check-evidence-refs.mjs)",
+    "file": "tests/unit/evidence-refs-exist.test.ts",
+    "cases": 5,
+    "fixturesReused": ["harness/specs/fixtures/ontology-lite-existing-contracts/report/fixtures/bad-relation-self-loop.json", "harness/specs/fixtures/ontology-lite-existing-contracts/report/fixtures/stale-source-rewrite.json"],
+    "newFixtures": 0,
+    "negatives": [
+      { "name": "bad relation", "entry": "--fixture bad-relation-self-loop.json --report <tmp>", "exitCode": 1, "rule": "self-loop", "relationKey": "chat--suggests-upgrade-to--chat", "followUp": "--verify of the fixture-born report exit 1 (candidate-mismatch on fixtures, report-field-missing on status)" },
+      { "name": "stale source", "entry": "--fixture stale-source-rewrite.json --verify <fresh report>", "exitCode": 1, "rule": "source-digest-mismatch", "count": 6, "path": "docs/clawx-product-semantics.md", "reportFileUnchanged": true },
+      { "name": "empty report", "entry": "--verify {}", "exitCode": 1, "rule": "report-field-missing", "count": 15, "reportFileUnchanged": true },
+      { "name": "hollow report", "entry": "--verify <report with relations: []>", "exitCode": 1, "rule": "report-field-missing", "field": "relations", "count": 1, "reportFileUnchanged": true }
+    ],
+    "positive": { "entry": "--report <tmp> --actor vitest-evidence-refs", "exitCode": 0, "relations": 6, "sourceRefs": 8, "rulesEvaluated": 19, "status": "valid", "diagnostics": 0, "verifyExitCode": 0 },
+    "skippedCheckGuard": "rulesEvaluated must equal the 11 relation rules + 8 source rules exactly; relations.length must equal PRODUCT_SEMANTIC_RELATIONS.length (6) with matching relationKey sequence; --verify rejects relations: []; the bad-relation negative proves the C2 validator is invoked by the entry"
+  },
+  "runtimePathProof": {
+    "gitDiffStat": { "paths": ["electron/", "src/", "openclaw_runtime/", "package.json"], "lines": 0 },
+    "registriesAndSiblingGates": { "paths": ["shared/", "scripts/check-evidence-refs.mjs", "scripts/contract-check.mjs", "scripts/check-semantic-authority.mjs"], "lines": 0 },
+    "defaultInvocation": "stdout byte-identical to report/default-stdout.expected.txt before the change, after the change and on the clean candidate",
+    "compatTests": "identity-scope + task-ledger-reference + task-ledger-reference-inheritance + permission-effect-contract 54/54",
+    "packageScripts": "none added; repo:evidence:check still `node scripts/check-evidence-refs.mjs`"
+  },
+  "documentation": {
+    "productSemantics": { "path": "docs/clawx-product-semantics.md", "section": "Typed product relations", "added": "contract version paragraph + 6-row table (Relation / Definition / Guarded rule (enforcing owner) / Why it exists / Rejected by) + provenance pointer", "lines": "366 -> 379" },
+    "readmes": { "reviewed": ["README.md", "README.zh-CN.md", "README.ja-JP.md"], "conclusion": "no-change", "reason": "pointer lines (64 / 238|236 / 248|246) unchanged; no user-visible behaviour, default, interface, Host API, UI or entry changed (runtime diff 0 lines)", "alsoReviewedOutsideWriteSet": "README.ru-RU.md (same conclusion, not touched)" },
+    "record": "docs/dev/architecture-skeleton/CONTRACT-HARDENING.md (retainedFiles + --write-ignore)"
+  },
+  "notRun": "see limitations.json notRun[]"
+}

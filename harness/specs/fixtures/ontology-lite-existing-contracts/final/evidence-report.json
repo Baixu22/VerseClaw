@@ -1,0 +1,158 @@
+{
+  "schema": "ProductSemanticEvidenceReport/v1",
+  "contractVersion": "ProductSemanticRelations/v1",
+  "generatedAt": "2026-10-31T21:13:49.775Z",
+  "node": "v24.22.1",
+  "actor": {
+    "driven_by": "agent",
+    "actor": "chain-driver"
+  },
+  "command": [
+    "node",
+    "scripts/check-evidence-refs.mjs",
+    "--report",
+    "harness/specs/fixtures/ontology-lite-existing-contracts/final/evidence-report.json",
+    "--actor",
+    "chain-driver"
+  ],
+  "exitCode": 0,
+  "candidate": {
+    "commit": "6944b059cd5deda27c39e59cc1bb95042712f153",
+    "tree": "582054179acfbdba7dd77fe7cba91074713da2cf",
+    "dirty": false,
+    "dirtyPaths": []
+  },
+  "normalization": {
+    "policy": "sha256 over scripts/lib/canonical-evidence-hash.mjs canonicalEvidenceBytes: UTF-8 text with CRLF and CR normalized to LF; bytes containing NUL or invalid UTF-8 are hashed unchanged",
+    "rawDigestPolicy": "sha256 over the raw file bytes as stored, so the original line endings stay recoverable"
+  },
+  "fixtures": [],
+  "rulesEvaluated": [
+    "unknown-endpoint",
+    "unknown-kind",
+    "unknown-authority-boundary",
+    "self-loop",
+    "duplicate-relation",
+    "missing-evidence",
+    "kind-boundary-mismatch",
+    "reverse-task-authority",
+    "forged-grant-field",
+    "cross-session-quality",
+    "unsupported-contract-version",
+    "source-missing",
+    "source-outside-root",
+    "source-untracked",
+    "source-symlink-escape",
+    "source-digest-mismatch",
+    "candidate-mismatch",
+    "version-unsupported",
+    "report-field-missing"
+  ],
+  "relations": [
+    {
+      "relationKey": "chat--suggests-upgrade-to--task-loop",
+      "sourceRefs": [
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "4926c3a028a9f30f052003c0399f40b00853551b0b73f09f6fc5ca73a3cfc495",
+          "rawDigest": "6340d42be30cc7dab4d9f479b722b53287b2bfbe17300fd913f9255cb2cdf4dc"
+        },
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec",
+          "rawDigest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec"
+        }
+      ]
+    },
+    {
+      "relationKey": "chat--projects--task-ledger",
+      "sourceRefs": [
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "4926c3a028a9f30f052003c0399f40b00853551b0b73f09f6fc5ca73a3cfc495",
+          "rawDigest": "6340d42be30cc7dab4d9f479b722b53287b2bfbe17300fd913f9255cb2cdf4dc"
+        }
+      ]
+    },
+    {
+      "relationKey": "chat-plan--projects--task-ledger",
+      "sourceRefs": [
+        {
+          "path": "docs/clawx-product-semantics.md",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "4926c3a028a9f30f052003c0399f40b00853551b0b73f09f6fc5ca73a3cfc495",
+          "rawDigest": "6340d42be30cc7dab4d9f479b722b53287b2bfbe17300fd913f9255cb2cdf4dc"
+        }
+      ]
+    },
+    {
+      "relationKey": "task-loop--roots-in--task-ledger",
+      "sourceRefs": [
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec",
+          "rawDigest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec"
+        }
+      ]
+    },
+    {
+      "relationKey": "workboard--references-one-way--task-ledger",
+      "sourceRefs": [
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec",
+          "rawDigest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec"
+        },
+        {
+          "path": "shared/types/task-ledger-reference.ts",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d",
+          "rawDigest": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d"
+        }
+      ]
+    },
+    {
+      "relationKey": "routing-memo--quality-gated-by--task-loop",
+      "sourceRefs": [
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "exists": true,
+          "insideRoot": true,
+          "tracked": true,
+          "symlinkEscape": false,
+          "digest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec",
+          "rawDigest": "478a938ec6a07f00310421d956bb677684bbf1ad20109c8d36943007dccb0eec"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [],
+  "unverified": [],
+  "status": "valid"
+}

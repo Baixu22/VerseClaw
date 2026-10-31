@@ -1,0 +1,93 @@
+{
+  "schema": "ContractHardeningLimitations/v1",
+  "node": "TF-0637",
+  "parent": "TF-0633",
+  "leaf": "C4",
+  "driven_by": "agent",
+  "actor": "chain-driver",
+  "generatedAt": "2026-10-31T21:20:00Z",
+  "candidate": {
+    "commit": "6944b059cd5deda27c39e59cc1bb95042712f153",
+    "tree": "582054179acfbdba7dd77fe7cba91074713da2cf",
+    "dirty": false,
+    "meaning": "The C4 candidate commit on which final/evidence-report.json was generated with an empty `git status --porcelain`. This limitations file, gates.json, credential-scan.json and SHA256SUMS are added by the evidence-backfill commit that follows the candidate."
+  },
+  "claimBoundary": "Static governance only. Every item below is a metadata check, a document or a test; none is a runtime effect, a product release, a GA claim, a benefit, an adoption or a task-success claim. Passing checks grant nothing; the owners cited in the product-semantics table keep the real authority.",
+  "limitations": [
+    {
+      "id": "L-01",
+      "subject": "final/evidence-report.json candidate binding",
+      "statement": "The report binds the HEAD it was generated on (the candidate above). Committing it necessarily creates a newer HEAD, so on that HEAD and any later one `node scripts/check-evidence-refs.mjs --verify` returns exit 1 with exactly two diagnostics, candidate-mismatch on candidate.commit and candidate.tree; the eight source digests, the contract version and the normalization policy still match because the backfill commit changes no referenced source. To obtain exit 0, run the checker from a detached worktree at the recorded candidate (CONTRACT-HARDENING.md §7.5). A report that verifies on its own commit cannot exist.",
+      "kind": "design-behaviour"
+    },
+    {
+      "id": "L-02",
+      "subject": "pnpm run typecheck",
+      "statement": "Exit 1 = typecheck:node 0 / typecheck:web 0 / typecheck:test 2. The single error is tests/unit/contract-check.test.ts(171,30) TS7006, introduced by TF-0630 fd2d93a41 (batch A write set) and reproduced by C2, C3 and C4 alike. Zero errors in any batch-C file. This is a pre-existing red, not a pass.",
+      "kind": "pre-existing-failure"
+    },
+    {
+      "id": "L-03",
+      "subject": "pnpm harness validate without --since",
+      "statement": "Exit 1 because the default diff base origin/main (2b87c1c44) is six unpushed commits behind HEAD and those commits contain decision-round and TF-0632 files outside this spec. `--since HEAD` (the CLOSURE-DECISIONS §4.3 reading for uncommitted work) passes. Environment state; disappears once the chain-closing run pushes.",
+      "kind": "environment"
+    },
+    {
+      "id": "L-04",
+      "subject": "pnpm harness validate --spec ontology-lite-existing-contracts-hardening.md --since HEAD",
+      "statement": "Exit 1: the umbrella spec's touchedAreas do not list .gitignore, scripts/repository-artifacts.json or docs/dev/architecture-skeleton/CONTRACT-HARDENING.md, which the implementation contract owns. Cross-spec structural result; the implementation contract's validate with --since HEAD passes on the same tree.",
+      "kind": "cross-spec"
+    },
+    {
+      "id": "L-05",
+      "subject": "C1 provenance manifest line anchors",
+      "statement": "docs/clawx-product-semantics.md grew from 366 to 379 lines (+13 after line 13). The C1 manifest's docBasis lines 299 / 317 / 337 for that document now read 312 / 330 / 350 on the C4 candidate; lines 9 and 13 are unchanged. The manifest is bound to its own candidate b442f5dd5 and was left as written (history is not rewritten).",
+      "kind": "recorded-offset"
+    },
+    {
+      "id": "L-06",
+      "subject": "report/default-stdout.expected.txt",
+      "statement": "Pins 188 referenced paths. Any new path literal in the five evidence files (shared/product-semantics.ts, capability-claims.ts, sensitive-content-boundary.ts, reliability-boundaries.ts, dcs/prod-flags-catalog.ts) or in package.json scripts must update that fixture; this is the explicit cost of the byte-identical default-behaviour contract.",
+      "kind": "maintenance-cost"
+    },
+    {
+      "id": "L-07",
+      "subject": "README.ru-RU.md",
+      "statement": "Reviewed with the same no-change conclusion as the three READMEs in the write set (pointer lines 64 / 236 / 246 unchanged), but it is outside the C4 write set of the implementation contract and was not touched.",
+      "kind": "write-set-boundary"
+    },
+    {
+      "id": "L-08",
+      "subject": "scope of the evidence binding",
+      "statement": "The report binds only the six PRODUCT_SEMANTIC_RELATIONS and their evidenceRefs. Other registries, the Task Ledger, Workboard, Runtime, Context Family, Memory, Knowledge, approvals and the write journal are referenced, not bound, and keep their own owners.",
+      "kind": "scope"
+    },
+    {
+      "id": "L-09",
+      "subject": "same-session quality for routing-memo--quality-gated-by--task-loop",
+      "statement": "The static reading proves the owner (resolveRoutingMemoAuthority) requires a server-resolved task_loop_verified_scorecard receipt; it does not prove any live session produced one. A documented same-session claim without such a receipt stays documented-only at runtime.",
+      "kind": "documented-only"
+    },
+    {
+      "id": "L-10",
+      "subject": "credential scan",
+      "statement": "Literal credential-token pattern scan over the selected artefacts only (final/ files and the three source files this leaf changed). It is not a comprehensive secret audit and does not scan the referenced source documents.",
+      "kind": "scope"
+    }
+  ],
+  "notRun": [
+    "pnpm test (full suite)",
+    "Electron E2E, including tests/e2e/chat-task-loop-upgrade.spec.ts",
+    "pnpm run lint (whole repository; only eslint on tests/unit/evidence-refs-exist.test.ts and scripts/check-no-bom.mjs were run)",
+    "pnpm agent-dev:* gates",
+    "pnpm harness run --spec ... --dry-run",
+    "pnpm contract:check (no input of that gate changed in this leaf; last observed exit 0 at TF-0632 closure)",
+    "any live provider, Gateway or real session receipt"
+  ],
+  "notClaimed": [
+    "product GA, release approval, liveReady or productApproved changes",
+    "task benefit, adoption rate, success rate, performance",
+    "SHACL, PROV-O or Cedar compliance; RDF/OWL interoperability",
+    "real-human operation, data or verdict"
+  ]
+}
