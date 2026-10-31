@@ -38,6 +38,8 @@ touchedAreas:
   - tests/unit/rsi-oracle-bindings.test.ts
   - harness/specs/fixtures/agent-first-framework/SHA256SUMS
   - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
+  - scripts/lib/rsi-trial-scratch.mjs
+  - scripts/lib/rsi-trial-scratch.d.mts
 ownedPaths:
   - harness/specs/tasks/rsi-tf0607-contamination-gate.md
   - scripts/rsi-tf0607-contamination-gate.mjs

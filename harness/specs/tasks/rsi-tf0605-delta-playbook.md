@@ -42,6 +42,8 @@ touchedAreas:
   - tests/unit/rsi-oracle-bindings.test.ts
   - harness/specs/fixtures/agent-first-framework/SHA256SUMS
   - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
+  - scripts/lib/rsi-trial-scratch.mjs
+  - scripts/lib/rsi-trial-scratch.d.mts
 residualPaths:
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS
   - harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json

@@ -32,6 +32,8 @@ touchedAreas:
   - tests/unit/rsi-oracle-bindings.test.ts
   - harness/specs/fixtures/agent-first-framework/SHA256SUMS
   - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
+  - scripts/lib/rsi-trial-scratch.mjs
+  - scripts/lib/rsi-trial-scratch.d.mts
 ownedPaths:
   - scripts/rsi-tf0592-statistical-adjudication.mjs
   - scripts/rsi-tf0592-statistical-adjudication.d.mts
