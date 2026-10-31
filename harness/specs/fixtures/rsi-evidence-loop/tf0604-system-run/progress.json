@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "RsiHistoricalTrialProgress/v1",
+  "manifestDigest": "sha256:e2491a5468fbe3f396a93d3ec7b171f5c8a90136fcd93cf46624a611033e758c",
+  "completed": [
+    "tf-0274-e01-baseline-1",
+    "tf-0274-e01-treatment-1",
+    "tf-0274-e01-baseline-2"
+  ],
+  "recordDigests": {
+    "tf-0274-e01-baseline-1": "sha256:16b763a3265759c465575aad1c1e04848a42b6d8a4177c444a88c0d43ffa6702",
+    "tf-0274-e01-treatment-1": "sha256:3f015c223357d00c044b0a64414d75c34d56e2264a05d043198148d2957e5724",
+    "tf-0274-e01-baseline-2": "sha256:b36c5a980f706e568c1b04b69db24f6dc22a181e2c2fa8ca8b0de83f1581bd96"
+  }
+}
