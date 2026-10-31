@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-10-31T18:47:04.245Z",
+  "generatedAt": "2026-10-31T18:49:16.477Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,24 +17,15 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-10-31T18:47:04.245Z",
+    "generatedAt": "2026-10-31T18:49:16.477Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "4669a8893524a508cecce0f578253bda11ea5c71",
-      "tree": "0f3f6339c13d7facd70ce6adf99d6302cc4465d3",
+      "commit": "2b291a5a99139cc95f4a2713f27642182bec404e",
+      "tree": "e494e3b543c1e986b7d0e84e7a227a1cd6401eba",
       "branch": "codex/tf0604-rsi-baseline",
-      "dirty": true,
-      "dirtyPaths": [
-        "M harness/specs/tasks/rsi-tf0592-statistical-adjudication.md",
-        " M harness/specs/tasks/rsi-tf0599-candidate-gate.md",
-        " M harness/specs/tasks/rsi-tf0605-delta-playbook.md",
-        " M harness/specs/tasks/rsi-tf0606-self-harness.md",
-        " M harness/specs/tasks/rsi-tf0607-contamination-gate.md",
-        " M harness/specs/tasks/rsi-tf0608-adjudication.md",
-        " M harness/specs/tasks/rsi-tf0609-code-self-modification.md",
-        " M harness/specs/tasks/rsi-tf0610-evidence-closeout.md"
-      ],
+      "dirty": false,
+      "dirtyPaths": [],
       "sourceHashes": {
         "scripts/rsi-tf0592-statistical-adjudication.mjs": "9b9a144151bef0fac8861331aeaa946ab61f2cb0b2c9ae66d757718e41faeaab",
         "scripts/rsi-tf0592-statistical-adjudication.d.mts": "9f855b84df04f5fafe9fd4c1dacf432e82536bc3c9021b6e9df8f6151939aa48",
@@ -65,9 +56,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 1693765632,
+      "freeMemoryBytes": 5467615232,
       "disk": {
-        "freeBytes": 18310696960,
+        "freeBytes": 18306453504,
         "totalBytes": 322122543104,
         "status": "measured"
       }
