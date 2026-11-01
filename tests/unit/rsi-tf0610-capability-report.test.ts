@@ -39,4 +39,11 @@ describe("TF-0610 final RSI capability evidence", () => {
     expect(result.report.residuals.length).toBeGreaterThanOrEqual(6);
     expect(result.report.residuals.every((entry) => entry.code && entry.owner.includes("agent") && entry.reviewTrigger)).toBe(true);
   });
+  it('TF-0604 gate reads the measured system run and keeps the verdict fail', () => {
+    const gate = report.gates.find((entry: { id: string }) => entry.id === 'TF-0604');
+    expect(gate).toMatchObject({ status: 'fail', verdict: 'fail' });
+    expect(gate?.evidence).toMatchObject({ completeCaseCount: 20, passK: 0.15, passAtK: 0.35 });
+    expect(report.executionSummary.systemRunPairedDiffStatus).toBe('computed');
+    expect(report.executionSummary.systemRunPairedDiff).toBe(0);
+  });
 });

@@ -6,18 +6,18 @@
   "logs": [
     {
       "file": "agent.stdout.log",
-      "bytes": 4074605,
-      "sha256": "28eb764c59180d34680bac979c79a3a0f940a119c20f396c02e4be7b998f4b98",
+      "bytes": 1242196,
+      "sha256": "4d1f955cc8b50bcc9e8b53adc4d2eff705cdace6a1c27182a7d0823196110278",
       "stored": "agent.stdout.log.excerpt",
       "excerptBytes": 65688,
       "truncated": true
     },
     {
       "file": "agent.stderr.log",
-      "bytes": 6772,
-      "sha256": "36df235bacfb1826865df4ce4a1d62cf7d0fc493e859944b579948b68d72ccbe",
+      "bytes": 4084,
+      "sha256": "cb9ecb994b08711f95c5e93c5eb581c1b4329f071cd8f589d847173644505556",
       "stored": "agent.stderr.log",
-      "excerptBytes": 6772,
+      "excerptBytes": 4084,
       "truncated": false
     }
   ]

@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0296-a04",
+  "commandLine": "pnpm exec vitest run tests/unit/decision-quality-auditor.test.ts tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts tests/unit/deep/a4-deep.test.ts tests/unit/trace-truncation.test.ts tests/unit/a04-a4-gate-coverage.test.ts --maxWorkers=1",
+  "taskDigest": "443616de6312c7ecb92074f4ac11e43d2c3326de020cef54ce9bad1579968ee6",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T10:39:33.626Z",
+  "finishedAt": "2026-11-01T10:39:45.628Z",
+  "durationMs": 12002,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 63,
+    "failed": 2,
+    "skipped": 0,
+    "total": 65,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "f64a9e60d0e058e682af7a844475cc7c84c8b4c7d1e1efe04d807e6ed6b1f0ce",
+  "stderrSha256": "b8cdbe9833cda5b2e34540cd294b2812f62a677e6d82194b88e5f7b0743af934"
+}

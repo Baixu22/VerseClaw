@@ -28,11 +28,14 @@ The TF-0604 historical corpus now contains 24 repository-sourced task definition
 and eight integrity controls. TF-0592 adds resource/source fingerprints, separate
 pass^k/pass@k with Wilson case intervals, paired-trial comparison, a labelled
 power-design approximation and twelve fail-closed controls. Its checked-in raw
-input now carries the sealed TF-0604 system run: 143 of 144 planned live-model
-trials at k=3 over 24 cases, 20 complete cases, and a `flake rate 0.15 > threshold
-0.01` verdict, so the run is recorded as `fail` on stability and the paired
-comparison stays `insufficient-evidence`. No model/provider gain, promotion
-readiness or RSI benefit is claimed.
+input now carries the sealed TF-0604 system run: 144 of 144 planned live-model
+trials at k=3 over 24 cases, 20 paired complete cases (baseline 20 complete,
+treatment 21 complete, five infrastructure trial records preserved), baseline
+`pass^3 = 0.15` with Wilson 95% CI [0.052, 0.360] and `pass@3 = 0.35`;
+treatment `pass^3 = 0.143` and `pass@3 = 0.571`. The `flake rate 0.15 >
+threshold 0.01` verdict records the run as `fail` on stability. The paired
+pass^k difference is computed as 0 with 95% CI [-0.246, 0.246], so no benefit is
+demonstrated. No model/provider gain, promotion readiness or RSI benefit is claimed.
 Trial execution, calibrated graders and enforced clean profile isolation remain
 Agent-first prerequisites. `pnpm rsi:tf0592:check` re-reads and recomputes the
 retained pack; `pnpm rsi:tf0592:write` prepares evidence and labels dirty source
@@ -244,24 +247,26 @@ It separates engineering closure from actual RSI capability:
   research loop, contamination gate, independent adjudicator and bounded
   code-self-modification eligibility gate now have executable implementations,
   negative controls, focused tests and source-checkout evidence.
-- The historical TF-0604 baseline now has a sealed real run: 20 complete cases at
-  k=3 (143 of 144 trials sealed, one restarted trial recorded as excluded), baseline
-  `pass^3 = 0.15` with Wilson 95% CI [0.05, 0.36] and `pass@3 = 0.35`; the
-  treatment arm matches at `pass^3 = 0.15` while `pass@3 = 0.60`. Flake sits at
-  0.15 against the frozen 0.01 threshold, so the run fails its stability gate and
-  the paired pass^k difference stays `insufficient-evidence`: the baseline is
-  measured, an RSI benefit is not. TF-0599 therefore remains `insufficient-evidence`.
+- The historical TF-0604 baseline now has a sealed real run: 144 of 144 trials
+  sealed at k=3 over 24 cases, with 20 paired complete cases (baseline 20,
+  treatment 21; five infrastructure records preserved). Baseline `pass^3 = 0.15`
+  with Wilson 95% CI [0.052, 0.360] and `pass@3 = 0.35`; treatment `pass^3 =
+  0.143` and `pass@3 = 0.571`. Flake is 0.15 against the frozen 0.01 threshold,
+  so the run fails its stability gate. The paired pass^k difference is `0` with
+  95% CI [-0.246, 0.246]: the baseline is measured, an RSI benefit is not.
+  TF-0599's candidate reservation remains `insufficient-evidence`; the measured
+  system run is reported separately.
 - The capability report keeps two rows for this: the TF-0604 gate row reads the
-  frozen reservation pack (`tf0604/aggregate.v1.json`, still `insufficient-evidence`),
-  while the measured numbers live in the sealed system run and are reported under
-  `executionSummary.systemRun*`. Neither row promotes or claims a benefit.
+  sealed measured system run (`tf0604-system-run/aggregate.json`, status `fail`,
+  20 complete cases, pass^3 0.15), while TF-0599's candidate reservation remains
+  `insufficient-evidence`. Neither row promotes or claims a benefit.
 - TF-0606's advisory candidate remains unmeasured by an eligible held-out run.
   TF-0608 returns `insufficient-evidence/not-promote`. TF-0607 proves the static
-  pre-commit boundary only; behavioral rollback remains unrun.
+  pre-commit boundary; a separate TF-0609 receipt proves flag/hook off-on-off
+  parity, but adversarial behavioral contamination remains unmeasured.
 - TF-0609 correctly returns `no-go` without generating or executing a code
-  candidate because the required trials, held-out seal, paired cost/safety
-  evidence, behavioral rollback and positive independent bounded-research
-  verdict are absent.
+  candidate because the candidate gate, held-out seal, paired cost/safety
+  evidence and positive independent bounded-research verdict are absent.
 - The accepted Agent-first trial summary has 24 complete script-provider cases
   and 144 trial records, but both arms replay the same candidate. It proves
   execution and aggregation mechanics, not model quality, generalization or RSI

@@ -15,7 +15,7 @@
     "candidateCompleteCases": 0,
     "systemTrialSummaryCompleteCases": 24,
     "systemTrialKind": "script-provider-equivalent replay, not RSI-model benefit",
-    "systemRunRecordedTrials": 143,
+    "systemRunRecordedTrials": 144,
     "systemRunCompleteCaseCount": 20,
     "systemRunStatus": "fail",
     "systemRunPassK": 0.15,
@@ -24,8 +24,8 @@
       0.052369,
       0.360419
     ],
-    "systemRunPairedDiffStatus": "insufficient-evidence",
-    "systemRunPairedDiff": null,
+    "systemRunPairedDiffStatus": "computed",
+    "systemRunPairedDiff": 0,
     "heldOutDigest": null,
     "codeCandidateGenerated": false,
     "codeCandidateExecuted": false
@@ -143,14 +143,21 @@
   "gates": [
     {
       "id": "TF-0604",
-      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604/aggregate.v1.json",
-      "status": "insufficient-evidence",
-      "verdict": "insufficient-evidence",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
+      "status": "fail",
+      "verdict": "fail",
       "evidence": {
-        "completeCaseCount": 0,
-        "caseCount": 24,
-        "passK": null,
-        "passAtK": null
+        "completeCaseCount": 20,
+        "caseCount": 144,
+        "k": 3,
+        "passK": 0.15,
+        "passAtK": 0.35,
+        "confidenceInterval95": [
+          0.052369,
+          0.360419
+        ],
+        "pairedDiffStatus": "computed",
+        "pairedDiff": 0
       },
       "controls": 8
     },
@@ -198,7 +205,7 @@
       "verdict": "static-only",
       "evidence": {
         "staticValidation": true,
-        "behavioralEffects": "not-run"
+        "behavioralEffects": "rollback-parity-measured"
       },
       "controls": 10
     },
@@ -315,7 +322,7 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
-      "digest": "36a6a2f1636db016243468cee3fd3b4d1542aff31715180d456d374cd981a8ac"
+      "digest": "b1ef03eba667a1fe61bca4e1c5b2945bf9c436aa4918ce2027fd95c53014d951"
     }
   ],
   "claims": {

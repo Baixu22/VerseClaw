@@ -3,8 +3,8 @@
   "driven_by": "agent",
   "actor": "codex/tf0604-historical-reader",
   "manifestDigest": "sha256:f07c9b5e4ac34a3e014479a84ff459c223dff053a0f7f2a8799a0acad0529de9",
-  "complete": false,
-  "recordedTrials": 143,
+  "complete": true,
+  "recordedTrials": 144,
   "expectedTrials": 144,
   "completeCaseCount": 20,
   "incompleteCaseCount": 4,
@@ -14,8 +14,8 @@
     "run": {
       "k": 3,
       "minimumCompleteCases": 20,
-      "trialCount": 143,
-      "baselineTrialCount": 71,
+      "trialCount": 144,
+      "baselineTrialCount": 72,
       "treatmentTrialCount": 72,
       "completeCaseCount": 20,
       "incompleteCaseCount": 4,
@@ -1059,7 +1059,7 @@
       {
         "caseId": "tf-0297-a05",
         "taskId": "tf-0297-a05",
-        "trialCount": 2,
+        "trialCount": 3,
         "complete": false,
         "status": "incomplete",
         "passK": null,
@@ -1082,6 +1082,18 @@
             "repeat": 2,
             "outcome": "fail",
             "failureClass": "agent",
+            "wallClockMs": null,
+            "tokens": null,
+            "turns": null,
+            "toolCalls": null,
+            "cost": null,
+            "caseId": "tf-0297-a05"
+          },
+          {
+            "arm": "baseline",
+            "repeat": 3,
+            "outcome": "fail",
+            "failureClass": "infrastructure",
             "wallClockMs": null,
             "tokens": null,
             "turns": null,
@@ -1185,7 +1197,9 @@
         {
           "caseId": "tf-0297-a05",
           "trialIndex": 2,
-          "outcome": "missing"
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
         }
       ],
       "reasons": [
@@ -1195,8 +1209,8 @@
     },
     "failureClasses": {
       "infrastructure": {
-        "trialCount": 4,
-        "caseCount": 3
+        "trialCount": 5,
+        "caseCount": 4
       },
       "task": {
         "trialCount": 0,
@@ -2205,16 +2219,16 @@
           "caseId": "tf-0296-a04",
           "taskId": "tf-0296-a04",
           "trialCount": 3,
-          "complete": false,
-          "status": "incomplete",
-          "passK": null,
-          "passAtK": null,
+          "complete": true,
+          "status": "complete",
+          "passK": false,
+          "passAtK": false,
           "trials": [
             {
               "arm": "treatment",
               "repeat": 1,
-              "outcome": "timeout",
-              "failureClass": "infrastructure",
+              "outcome": "fail",
+              "failureClass": "agent",
               "wallClockMs": null,
               "tokens": null,
               "turns": null,
@@ -2225,8 +2239,8 @@
             {
               "arm": "treatment",
               "repeat": 2,
-              "outcome": "timeout",
-              "failureClass": "infrastructure",
+              "outcome": "fail",
+              "failureClass": "agent",
               "wallClockMs": null,
               "tokens": null,
               "turns": null,
@@ -2345,8 +2359,8 @@
       ],
       "failureClasses": {
         "infrastructure": {
-          "trialCount": 6,
-          "caseCount": 4
+          "trialCount": 4,
+          "caseCount": 3
         },
         "task": {
           "trialCount": 0,
@@ -2357,7 +2371,7 @@
           "caseCount": 0
         },
         "agent": {
-          "trialCount": 44,
+          "trialCount": 46,
           "caseCount": 21
         }
       },
@@ -2391,22 +2405,22 @@
         "wallClockP95Ms": null
       },
       "trialCount": 72,
-      "completeCaseCount": 20,
-      "incompleteCaseCount": 4,
+      "completeCaseCount": 21,
+      "incompleteCaseCount": 3,
       "aggregate": {
-        "passK": 0.15,
-        "passAtK": 0.6,
-        "perTrialSuccessRate": 0.3667,
+        "passK": 0.1429,
+        "passAtK": 0.5714,
+        "perTrialSuccessRate": 0.3492,
         "confidenceInterval95": [
-          0.052369,
-          0.360419
+          0.04981,
+          0.346361
         ],
         "passAtKConfidenceInterval95": [
-          0.386581,
-          0.781193
+          0.365466,
+          0.7553
         ],
         "intervalMethod": "wilson-over-complete-cases",
-        "flakeRate": 0.2,
+        "flakeRate": 0.1905,
         "incomplete": [
           {
             "caseId": "tf-0294-a02",
@@ -2430,34 +2444,24 @@
             "reason": "not-agent-failure"
           },
           {
-            "caseId": "tf-0296-a04",
-            "trialIndex": 0,
-            "outcome": "timeout"
-          },
-          {
-            "caseId": "tf-0296-a04",
-            "trialIndex": 1,
-            "outcome": "timeout"
-          },
-          {
             "caseId": "tf-0297-a05",
             "trialIndex": 2,
             "outcome": "timeout"
           }
         ],
         "reasons": [
-          "flake rate 0.2 > threshold 0.01",
-          "6 incomplete trial(s) preserved"
+          "flake rate 0.1905 > threshold 0.01",
+          "4 incomplete trial(s) preserved"
         ]
       }
     },
     "pairedDiff": {
-      "status": "insufficient-evidence",
+      "status": "computed",
       "metric": "pass^k",
       "pairUnit": "caseId/repeat",
       "inferenceUnit": "caseId",
-      "pairCount": 19,
-      "completePairCaseCount": 19,
+      "pairCount": 20,
+      "completePairCaseCount": 20,
       "unmatched": [
         {
           "caseId": "tf-0279-s04",
@@ -2496,25 +2500,13 @@
           "treatment": "fail"
         },
         {
-          "caseId": "tf-0296-a04",
-          "repeat": 1,
-          "baseline": "fail",
-          "treatment": "timeout"
-        },
-        {
-          "caseId": "tf-0296-a04",
-          "repeat": 2,
-          "baseline": "fail",
-          "treatment": "timeout"
-        },
-        {
           "caseId": "tf-0297-a05",
           "repeat": 3,
-          "baseline": "missing",
+          "baseline": "fail",
           "treatment": "timeout"
         }
       ],
-      "repeatPairCount": 63,
+      "repeatPairCount": 65,
       "excludedPartialPairs": [
         {
           "caseId": "tf-0279-s04",
@@ -2535,12 +2527,6 @@
           "treatment": 0
         },
         {
-          "caseId": "tf-0296-a04",
-          "repeat": 3,
-          "baseline": 0,
-          "treatment": 0
-        },
-        {
           "caseId": "tf-0297-a05",
           "repeat": 1,
           "baseline": 0,
@@ -2555,23 +2541,26 @@
       ],
       "intervalMethod": "normal-approximation over complete case clusters",
       "varianceStatus": "estimated",
-      "meanDiff": null,
-      "ci95": null,
-      "effectSize": null,
-      "passKDelta": null
+      "meanDiff": 0,
+      "ci95": [
+        -0.2463,
+        0.2463
+      ],
+      "effectSize": 0,
+      "passKDelta": 0
     },
     "power": {
-      "status": "insufficient-evidence",
+      "status": "underpowered",
       "method": "normal-approximation paired pass^k over complete case clusters; planning only",
       "inferenceUnit": "caseId",
-      "reason": "paired-case-floor-not-met",
+      "reason": "observed-variance-design",
       "confidenceLevel": 0.95,
       "targetPower": 0.8,
       "minimumDetectableEffect": 0.05,
-      "observedDetectableEffect": null,
-      "requiredCasesApprox": null,
-      "requiredPairsApprox": null,
-      "passKPower": "insufficient-evidence"
+      "observedDetectableEffect": 0.352036,
+      "requiredCasesApprox": 992,
+      "requiredPairsApprox": 2976,
+      "passKPower": "underpowered"
     },
     "budget": {
       "recordedTotals": {
@@ -2594,7 +2583,7 @@
         "toolCallsPerCompletedCase": null,
         "costPerCompletedCase": null
       },
-      "observedTrialCount": 71,
+      "observedTrialCount": 72,
       "tokensPerCompletedCase": null,
       "turnsPerCompletedCase": null,
       "toolCallsPerCompletedCase": null,
@@ -2612,8 +2601,8 @@
   },
   "failureClasses": {
     "infrastructure": {
-      "trialCount": 4,
-      "caseCount": 3
+      "trialCount": 5,
+      "caseCount": 4
     },
     "task": {
       "trialCount": 0,

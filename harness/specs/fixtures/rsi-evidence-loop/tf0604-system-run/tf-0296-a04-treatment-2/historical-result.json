@@ -6,15 +6,96 @@
   "taskId": "tf-0296-a04",
   "arm": "treatment",
   "repeat": 2,
-  "startedAt": "2026-11-01T03:50:34.750Z",
-  "completedAt": "2026-11-01T05:12:04.732Z",
-  "stage": "agent",
-  "error": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0296-a04-treatment-2\\agent\\openclaw_runtime\\extensions\\imessage\\src\\setup-surface.ts'\n    at Object.openSync (node:fs:621:18)\n    at readFileSync (node:fs:487:35)\n    at file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:133:63\n    at Array.map (<anonymous>)\n    at directoryFingerprint (file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:133:35)\n    at runHistoricalTrial (file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:492:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:42:25\n    at async Promise.all (index 3)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:49:7",
-  "failureClass": "infrastructure",
+  "baseCommit": "65ecf51657e25297b48bf002ac0af5344362487e",
+  "startedAt": "2026-11-01T10:20:55.087Z",
+  "completedAt": "2026-11-01T10:39:45.632Z",
+  "agent": {
+    "exitCode": 0,
+    "timedOut": false,
+    "error": null
+  },
+  "diff": {
+    "added": [
+      "docs/dev/harness-gap-closure/A04-SHA256SUMS",
+      "docs/dev/harness-gap-closure/a04-acceptance.json",
+      "docs/dev/harness-gap-closure/a04-decision-quality-gate.md",
+      "harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md",
+      "tests/unit/a04-a4-gate-coverage.test.ts",
+      "tests/unit/decision-quality-auditor.test.ts",
+      "tests/unit/deep/a4-deep.test.ts"
+    ],
+    "changed": [
+      "harness/specs/tasks/a4-decision-quality-pilot.md"
+    ],
+    "removed": []
+  },
+  "forbiddenPaths": [],
+  "forbiddenWrites": [],
+  "forbiddenFileCount": 0,
+  "oracleWrites": [
+    "tests/unit/a04-a4-gate-coverage.test.ts",
+    "tests/unit/decision-quality-auditor.test.ts",
+    "tests/unit/deep/a4-deep.test.ts"
+  ],
+  "scrubbedOraclePaths": [
+    "tests/unit/decision-quality-auditor.test.ts",
+    "tests/unit/deprecation-counters.test.ts",
+    "tests/unit/performance-budgets.test.ts",
+    "tests/unit/deep/a4-deep.test.ts",
+    "tests/unit/trace-truncation.test.ts"
+  ],
+  "preexistingOraclePaths": [
+    "tests/unit/decision-quality-auditor.test.ts",
+    "tests/unit/deprecation-counters.test.ts",
+    "tests/unit/performance-budgets.test.ts",
+    "tests/unit/deep/a4-deep.test.ts",
+    "tests/unit/trace-truncation.test.ts"
+  ],
+  "grader": {
+    "verdict": "fail",
+    "deterministic": {
+      "grades": [
+        {
+          "graderVersion": "tf0590-graders/v3",
+          "verdict": "fail",
+          "reason": "Required oracle failed or timed out",
+          "evidenceKind": "owned-execution"
+        }
+      ],
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "fail",
+      "reason": "A required oracle failed"
+    },
+    "trace": {
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every recorded effect preserves declared authorization and trial boundaries",
+      "evidenceKind": "owned-trace"
+    },
+    "oracleDirectory": "D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0296-a04-treatment-2\\oracle\\task-oracle-KDklHH"
+  },
+  "failureClass": "agent",
+  "checks": {
+    "isolatedSnapshot": true,
+    "networkDisabledByCli": true,
+    "hiddenTestsRestored": true,
+    "hiddenTestsAbsentFromAgentBeforeRun": false,
+    "hiddenTestPathsOverwrittenByGrader": 3,
+    "agentLeftTestAtHiddenPathCount": 3,
+    "noGitMetadataAtStart": true
+  },
   "claims": {
     "realHuman": false,
     "liveProvider": true,
     "rsiImprovement": false,
     "productLocksChanged": false
+  },
+  "recovery": {
+    "attempt": 2,
+    "archivedAt": "attempt1",
+    "priorFailureClass": "infrastructure",
+    "priorStage": "agent",
+    "priorCompletedAt": "2026-11-01T05:12:04.732Z",
+    "reason": "infrastructure recovery rerun under the same frozen manifest"
   }
 }

@@ -125,6 +125,23 @@ export function buildCandidateGateReport(inputs, envelope, root = ROOT) {
   };
 }
 
+export function systemRunCases(systemRun) {
+  if (systemRun?.schemaVersion !== 'RsiHistoricalTrialAggregate/v1' || !Array.isArray(systemRun.statistics?.perTask)) throw new Error('system run aggregate is not readable');
+  return { schemaVersion: 'RsiSystemRunCaseMatrix/v1', driven_by: 'agent', actor: 'codex/tf0599-candidate-gate', source: 'live-system-run', cases: systemRun.statistics.perTask.map((entry) => ({ id: entry.caseId, trials: (entry.trials ?? []).map((trial) => trial.outcome === 'pass' || trial.outcome === 'fail' || trial.outcome === 'unknown' ? trial.outcome : 'skip'), safetyRequired: false })), claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
+}
+
+export function summarizeMeasuredSystemRun(corpus, systemRun, envelope) {
+  if (systemRun?.schemaVersion !== 'RsiHistoricalTrialAggregate/v1' || !systemRun.statistics?.aggregate) throw new Error('system run aggregate is not readable');
+  const official = systemRun.statistics;
+  return { ...official.aggregate, caseCount: corpus.cases.length, completeCaseCount: systemRun.completeCaseCount ?? official.run?.completeCaseCount ?? 0, incompleteCaseCount: systemRun.incompleteCaseCount ?? official.run?.incompleteCaseCount ?? 0, gate: official.status, k: official.run?.k ?? envelope.k, missingCases: [] };
+}
+
+export function buildMeasuredSystemRunReport(inputs, envelope, systemRun, root = ROOT) {
+  const report = buildCandidateGateReport(inputs, envelope, root);
+  const aggregate = summarizeMeasuredSystemRun(inputs.corpus, systemRun, envelope);
+  return { ...report, status: 'measured', gate: aggregate.gate === 'pass' ? 'pass' : aggregate.gate === 'insufficient-sample' ? 'insufficient-evidence' : 'fail', reasons: [systemRun.completeCaseCount < 20 ? 'complete-cases-below-floor' : 'paired-stability-not-met', 'system-run-is-not-candidate-benefit'], aggregate, systemRun: { manifestDigest: systemRun.manifestDigest, recordedTrials: systemRun.recordedTrials, completeCaseCount: systemRun.completeCaseCount, status: systemRun.statistics?.status, passK: systemRun.statistics?.aggregate?.passK ?? null, passAtK: systemRun.statistics?.aggregate?.passAtK ?? null, confidenceInterval95: systemRun.statistics?.aggregate?.confidenceInterval95 ?? null, pairedDiff: systemRun.statistics?.pairedDiff ?? null }, claims: { realHuman: false, liveProvider: true, promotionReady: false, productLocksChanged: false }, limitations: ['The measured source is the live-system run; both arms receive identical treatment prompts unless the envelope declares a candidate.', 'A non-zero flake rate or a paired interval spanning zero blocks promotion.'] };
+}
+
 export function runNegativeControls(inputs, envelope, root = ROOT) {
   const controls = [];
   const run = (id, expectedCode, mutate) => { const draft = structuredClone(inputs); const env = structuredClone(envelope); mutate(draft, env); const result = validateCandidateGate(draft, env, root); const observedCodes = result.errors.map((entry) => entry.code); controls.push({ id, expectedCode, observedCodes, passed: observedCodes.includes(expectedCode) }); };

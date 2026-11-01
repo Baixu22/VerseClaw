@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "RsiHistoricalTrialResult/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "trialId": "tf-0297-a05-baseline-3",
+  "taskId": "tf-0297-a05",
+  "arm": "baseline",
+  "repeat": 3,
+  "startedAt": "2026-11-01T04:46:43.947Z",
+  "completedAt": "2026-11-01T05:14:28.857Z",
+  "stage": "agent",
+  "error": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0297-a05-baseline-3\\agent.stdout.log'\n    at Object.openSync (node:fs:621:18)\n    at writeFileSync (node:fs:2496:35)\n    at runHistoricalTrial (file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:491:5)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:42:25\n    at async Promise.all (index 1)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:49:7",
+  "failureClass": "infrastructure",
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

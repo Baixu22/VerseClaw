@@ -41,4 +41,6 @@ export function validateCandidateGate(inputs: RsiGateInputs, envelope: RsiCandid
 export function summarizeCandidateTrials(corpus: RsiGateInputs['corpus'], raw: RsiGateInputs['raw'], envelope: RsiCandidateEnvelope): RsiCandidateGateReport['aggregate'];
 export function buildCandidateGateReport(inputs: RsiGateInputs, envelope: RsiCandidateEnvelope, root?: string): RsiCandidateGateReport;
 export function runNegativeControls(inputs: RsiGateInputs, envelope: RsiCandidateEnvelope, root?: string): RsiGateControlResult[];
-export function writeCandidateGatePack(root?: string): { report: RsiCandidateGateReport; controls: RsiGateControlResult[] };
+export function writeCandidateGatePack(root?: string): { report: RsiCandidateGateReport; controls: RsiGateControlResult[] };export function systemRunCases(systemRun: any): any;
+export function summarizeMeasuredSystemRun(corpus: any, systemRun: any, envelope: any): any;
+export function buildMeasuredSystemRunReport(inputs: any, envelope: any, systemRun: any, root?: string): any;

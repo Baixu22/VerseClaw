@@ -1,0 +1,13 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0296-a04-treatment-2/grader
+
+ ❯ tests/unit/a04-a4-gate-coverage.test.ts (3 tests | 2 failed) 488ms
+     × keeps every A4 required test path present and wired into the archived pilot spec 10ms
+     × pins A4 as offline-only with the sanctioned dev-tool consumer wired 475ms
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+
+ Test Files  2 failed | 4 passed (6)
+      Tests  2 failed | 63 passed (65)
+   Start at  18:39:35
+   Duration  9.75s (transform 206ms, setup 707ms, import 207ms, tests 527ms, environment 6.15s)
+

@@ -55,7 +55,7 @@ export function preserveTrialEvidence(runDir, outputDir, options = {}) {
   add('manifest.json', readFileSync(join(run, 'manifest.json')));
   add('progress.json', readFileSync(join(run, 'progress.json')));
   add('aggregate.json', Buffer.from(JSON.stringify(report, null, 2) + '\n'));
-  for (const name of ['progress.pre-reconcile.json', 'regrade-reconciliation.json', 'run-exclusions.json']) {
+  for (const name of ['progress.pre-reconcile.json', 'regrade-reconciliation.json', 'run-audit.json', 'run-exclusions.json']) {
     const path = join(run, name);
     if (existsSync(path)) add(name, readFileSync(path));
   }

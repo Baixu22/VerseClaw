@@ -1,0 +1,117 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| ../../src/context-engine/context-orchestrator.test.ts:238:3 > computeContextExtraSystemPrompt > vtoken-only stage no longer injects because VToken is retired
+AssertionError: expected 'base\n\n## Working Context\n\nTask-re…' to be 'base' // Object.is equality
+
+- Expected
++ Received
+
+  base
++
++ ## Working Context
++
++ Task-relevant working context assembled by Verse Token from workspace sources
++ (markdown / tools / memory outputs). Prefer this packed view under budget;
++ source files remain authoritative on disk.
++
++ packed working context
++
++ <!-- vtoken estimated_tokens=12 estimate_method=chars_div_4 allowance=600 included=1 evicted=0 -->
+
+ ❯ ../../src/context-engine/context-orchestrator.test.ts:251:31
+    249|       { stages: ["vtoken"] },
+    250|     );
+    251|     expect(extraSystemPrompt).toBe("base");
+       |                               ^
+    252|     expect(extraSystemPrompt).not.toContain("## Working Context");
+    253|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |unit| ../../src/context-engine/context-orchestrator.test.ts:255:3 > computeContextExtraSystemPrompt > memory still composes while the retired vtoken stage stays silent
+AssertionError: expected 'base\n\n## Memory Context\n\n<!-- pro…' not to contain '## Working Context'
+
+- Expected
++ Received
+
++ base
++
++ ## Memory Context
++
++ <!-- provider: role-memory -->
++ ### role-memory:bucket
++
++ mem A
++
+  ## Working Context
++
++ Task-relevant working context assembled by Verse Token from workspace sources
++ (markdown / tools / memory outputs). Prefer this packed view under budget;
++ source files remain authoritative on disk.
++
++ vt packed
++
++ <!-- vtoken estimated_tokens=12 estimate_method=chars_div_4 allowance=600 included=1 evicted=0 -->
+
+ ❯ ../../src/context-engine/context-orchestrator.test.ts:275:35
+    273|     expect(extraSystemPrompt).toContain("## Memory Context");
+    274|     expect(extraSystemPrompt).toContain("mem A");
+    275|     expect(extraSystemPrompt).not.toContain("## Working Context");
+       |                                   ^
+    276|     expect(extraSystemPrompt).not.toContain("vt packed");
+    277|     expect(lineage.sources.find((s) => s.stage === "memory")?.applied)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |unit| ../../src/context-engine/context-orchestrator.test.ts:333:3 > computeContextExtraSystemPrompt > defers the remaining memory stage and projects it after finalize
+AssertionError: expected { Object (finalized, collected, ...) } to match object { finalized: false, collected: 1 }
+(4 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "collected": 1,
++   "collected": 2,
+    "finalized": false,
+  }
+
+ ❯ ../../src/context-engine/context-orchestrator.test.ts:355:67
+    353|     expect(extraSystemPrompt).toBe("base");
+    354|     // Only the memory stage still collects; VToken is retired.
+    355|     expect(getContextOrchestratorCollection(turnId)?.diagnostics).toMa…
+       |                                                                   ^
+    356|       finalized: false,
+    357|       collected: 1,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |unit| ../../src/context-engine/context-orchestrator.test.ts:547:3 > computeContextExtraSystemPrompt > absent native capability declarations keep the retired VToken stage silent
+AssertionError: expected 'base\n\n## Working Context\n\nTask-re…' to be 'base' // Object.is equality
+
+- Expected
++ Received
+
+  base
++
++ ## Working Context
++
++ Task-relevant working context assembled by Verse Token from workspace sources
++ (markdown / tools / memory outputs). Prefer this packed view under budget;
++ source files remain authoritative on disk.
++
++ packed with no capabilities
++
++ <!-- vtoken estimated_tokens=12 estimate_method=chars_div_4 allowance=600 included=1 evicted=0 -->
+
+ ❯ ../../src/context-engine/context-orchestrator.test.ts:560:31
+    558|       { stages: ["vtoken"] },
+    559|     );
+    560|     expect(extraSystemPrompt).toBe("base");
+       |                               ^
+    561|     expect(lineage.sources[0]?.applied).toBe(false);
+    562|     expect(lineage.nativeContext).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

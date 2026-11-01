@@ -1,9 +1,11 @@
+import { readFileSync } from 'node:fs';
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 
 import {
   baseEnvelope,
   buildCandidateGateReport,
+  buildMeasuredSystemRunReport,
   loadInputs,
   runNegativeControls,
   summarizeCandidateTrials,
@@ -49,5 +51,18 @@ describe("TF-0599 candidate evaluation gate", () => {
     const envelope = baseEnvelope(inputs.corpus);
     envelope.verifierActor = envelope.executorActor;
     expect(validateCandidateGate(inputs, envelope, ROOT).errors.map((entry) => entry.code)).toContain("independent-verifier");
+  });
+  it('reads the measured system run without relabeling it as candidate benefit', () => {
+    const inputs = loadInputs(ROOT);
+    const envelope = baseEnvelope(inputs.corpus);
+    const systemRun = JSON.parse(readFileSync('harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json', 'utf8'));
+    const report = buildMeasuredSystemRunReport(inputs, envelope, systemRun, ROOT);
+    expect(report.status).toBe('measured');
+    expect(report.gate).toBe('fail');
+    expect(report.aggregate.completeCaseCount).toBe(20);
+    expect(report.aggregate.passK).toBe(0.15);
+    expect(report.aggregate.passAtK).toBe(0.35);
+    expect(report.claims.rsiImprovement).toBeUndefined();
+    expect(report.claims.promotionReady).toBe(false);
   });
 });
