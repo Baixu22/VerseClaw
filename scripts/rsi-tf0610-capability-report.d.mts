@@ -6,9 +6,20 @@ export type RsiCapabilityEvidence = {
   driven_by: "agent";
   actor: string;
   overall: { engineeringClosure: string; rsiCapability: string; evidenceDecision: string; codeSelfModification: string };
-  executionSummary: { taskForestBaselineCompleteCases: number; candidateCompleteCases: number; systemTrialSummaryCompleteCases: number; systemTrialKind: string; heldOutDigest: string | null; codeCandidateGenerated: false; codeCandidateExecuted: false };
+  executionSummary: {
+    taskForestBaselineCompleteCases: number; candidateCompleteCases: number;
+    systemTrialSummaryCompleteCases: number; systemTrialKind: string;
+    systemRunRecordedTrials: number; systemRunCompleteCaseCount: number; systemRunStatus: string | null;
+    systemRunPassK: number | null; systemRunPassAtK: number | null;
+    systemRunConfidenceInterval95: [number, number] | null;
+    systemRunPairedDiffStatus: string | null; systemRunPairedDiff: number | null;
+    heldOutDigest: string | null; codeCandidateGenerated: false; codeCandidateExecuted: false;
+  };
   layers: unknown[];
-  gates: unknown[];
+  gates: Array<{
+    id: string; path: string; status: string; verdict: string; controls: number;
+    evidence: Record<string, number | string | null | undefined | [number, number]>;
+  }>;
   checks: Record<string, boolean>;
   residuals: RsiCapabilityResidual[];
   sourceFiles: Array<{ path: string; digest: string }>;

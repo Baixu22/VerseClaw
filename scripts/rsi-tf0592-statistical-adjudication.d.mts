@@ -52,7 +52,7 @@ export type Tf0592Summary = {
 };
 export type Tf0592Report = Tf0592Summary & {
   schemaVersion: string; taskId: string; generatedAt: string; driven_by: string; actor: string;
-  inputs: { corpusPath: string; rawTrialsPath: string; policyPath: string; hashes: Record<string, string>; corpusCaseCount: number };
+  inputs: { corpusPath: string; rawTrialsPath: string; policyPath: string; systemRunPath: string; hashes: Record<string, string>; corpusCaseCount: number };
   resourceFingerprint: Tf0592Resources;
 };
 export type Tf0592Control = { id: string; mutation: string; expectedCode: string };
