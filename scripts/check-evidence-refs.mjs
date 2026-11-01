@@ -16,6 +16,12 @@
  *   --fixture <json>  in-memory rewrite of a file this gate reads (scripts/lib/registry-fixture.mjs); the tree is untouched
  *   --actor <name>    recorded actor; defaults to CLAWX_EVIDENCE_ACTOR, then 'unknown'. Always agent-driven.
  *
+ * Source digests are taken from the candidate blob (`git cat-file blob HEAD:<path>`),
+ * never from working-tree bytes, so the checkout's line-ending conversion and
+ * uncommitted edits cannot enter the report; a dirty working tree is itself a
+ * reason the report is invalid. `rulesEvaluated` records the relation rules the
+ * registry validator actually reported under a closed probe set, not a constant.
+ *
  * Exit 2 is reserved for usage, fixture, load and I/O errors: it is never a judged result.
  */
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
@@ -111,8 +117,8 @@ export const SOURCE_DIAGNOSTIC_RULES = Object.freeze([
   'report-field-missing',
 ]);
 export const EVIDENCE_NORMALIZATION = Object.freeze({
-  policy: 'sha256 over scripts/lib/canonical-evidence-hash.mjs canonicalEvidenceBytes: UTF-8 text with CRLF and CR normalized to LF; bytes containing NUL or invalid UTF-8 are hashed unchanged',
-  rawDigestPolicy: 'sha256 over the raw file bytes as stored, so the original line endings stay recoverable',
+  policy: 'sha256 over scripts/lib/canonical-evidence-hash.mjs canonicalEvidenceBytes of the candidate blob (git cat-file blob HEAD:<path>): UTF-8 text with CRLF and CR normalized to LF; bytes containing NUL or invalid UTF-8 are hashed unchanged',
+  rawDigestPolicy: 'sha256 over the raw bytes of the candidate blob (git cat-file blob HEAD:<path>) as committed; working-tree bytes and core.autocrlf never enter the digest, so the committed line endings stay recoverable',
 });
 const REGISTRY_EXPORTS = ['PRODUCT_SEMANTIC_CONTRACT_VERSION', 'PRODUCT_SEMANTIC_RELATION_RULES', 'PRODUCT_SEMANTIC_RELATIONS', 'relationKey', 'validateProductSemanticRelations'];
 const GIT_OBJECT_ID = /^[0-9a-f]{40}$/;
@@ -142,23 +148,53 @@ export function digestEvidenceBytes(bytes) {
   };
 }
 
-/** Tracked subset of `refs` (repo-relative POSIX paths inside `root`); null when git could not answer. */
-export function collectTrackedPaths(root, refs) {
+/**
+ * Bytes of every `ref` as stored in the candidate tree (HEAD), fetched in one
+ * `git cat-file --batch` round trip so nothing depends on how the working tree
+ * was checked out. A path with no blob at HEAD is absent from the map; the
+ * result is null when git could not answer (never assumed).
+ */
+export function collectCandidateBlobs(root, refs) {
   const unique = [...new Set(refs.map(normalizeRef))];
-  if (unique.length === 0) return new Set();
-  const result = spawnSync('git', ['--literal-pathspecs', 'ls-files', '-z', '--', ...unique], { cwd: root, encoding: 'utf8', windowsHide: true });
+  const blobs = new Map();
+  if (unique.length === 0) return blobs;
+  const result = spawnSync('git', ['cat-file', '--batch'], {
+    cwd: root,
+    input: Buffer.from(unique.map((ref) => `HEAD:${ref}\n`).join(''), 'utf8'),
+    encoding: 'buffer',
+    windowsHide: true,
+    maxBuffer: 256 * 1024 * 1024,
+  });
   if (result.error || result.status !== 0) return null;
-  return new Set(result.stdout.split('\0').filter(Boolean));
+  const out = result.stdout;
+  let offset = 0;
+  for (const ref of unique) {
+    const eol = out.indexOf(0x0a, offset);
+    if (eol === -1) return null;
+    const header = out.subarray(offset, eol).toString('utf8');
+    offset = eol + 1;
+    if (header.endsWith(' missing')) continue;
+    const [, type, sizeText] = header.split(' ');
+    const size = Number.parseInt(sizeText, 10);
+    if (!Number.isInteger(size) || size < 0) return null;
+    const bytes = Buffer.from(out.subarray(offset, offset + size));
+    offset += size + 1;
+    if (type === 'blob') blobs.set(ref, bytes);
+  }
+  return blobs;
 }
 
 /**
- * Facts about one source reference. Nothing outside the repository root is ever
- * read or hashed; `tracked` is null when git could not be asked (never assumed).
- * `rewrites` (normalized repo path -> text) stands in for the file's bytes, which
- * is how a negative fixture simulates a changed source without touching disk;
- * every consulted path is added to `readPaths` so an unapplied rewrite is detectable.
+ * Facts about one source reference. `exists`, `insideRoot` and `symlinkEscape`
+ * are working-tree facts; `tracked` and both digests come from the candidate
+ * blob (`candidateBlobs`, null when git could not be asked — never assumed),
+ * so an edited or re-checked-out working copy never changes a digest.
+ * `rewrites` (normalized repo path -> text) stands in for the candidate bytes,
+ * which is how a negative fixture simulates a changed source without touching
+ * disk; every consulted path is added to `readPaths` so an unapplied rewrite is
+ * detectable. A reference without a candidate blob is recorded unhashed.
  */
-export function describeSourceRef(root, ref, { trackedPaths = null, rewrites = {}, readPaths = new Set() } = {}) {
+export function describeSourceRef(root, ref, { candidateBlobs = null, rewrites = {}, readPaths = new Set() } = {}) {
   const facts = { path: ref, exists: false, insideRoot: false, tracked: null, symlinkEscape: false, digest: null, rawDigest: null };
   if (typeof ref !== 'string' || ref.trim().length === 0) return facts;
   const absolute = resolve(root, ref);
@@ -174,10 +210,11 @@ export function describeSourceRef(root, ref, { trackedPaths = null, rewrites = {
   facts.exists = true;
   facts.symlinkEscape = !isInsideRoot(root, realpathSync(absolute));
   const normalized = normalizeRef(ref);
-  facts.tracked = trackedPaths === null ? null : trackedPaths.has(normalized);
+  facts.tracked = candidateBlobs === null ? null : candidateBlobs.has(normalized);
   if (facts.symlinkEscape) return facts;
   readPaths.add(normalized);
-  const bytes = normalized in rewrites ? Buffer.from(rewrites[normalized], 'utf8') : readFileSync(absolute);
+  const bytes = normalized in rewrites ? Buffer.from(rewrites[normalized], 'utf8') : (candidateBlobs?.get(normalized) ?? null);
+  if (bytes === null) return facts;
   Object.assign(facts, digestEvidenceBytes(bytes));
   return facts;
 }
@@ -197,9 +234,9 @@ export function sourceRefDiagnostics(relationKeyValue, facts) {
     add('source-symlink-escape', `"${facts.path}" is reached through a link whose real path leaves the repository root; its bytes were not hashed.`);
   }
   if (facts.tracked === null) {
-    add('source-untracked', `"${facts.path}" tracking could not be observed (git ls-files failed); an unobserved source is not treated as tracked.`);
+    add('source-untracked', `"${facts.path}" tracking could not be observed (git cat-file failed); an unobserved source is not treated as tracked.`);
   } else if (!facts.tracked) {
-    add('source-untracked', `"${facts.path}" exists but is not tracked by git; a local file cannot stand in for clean-candidate source.`);
+    add('source-untracked', `"${facts.path}" exists but is not part of the candidate commit (HEAD); a local or staged file cannot stand in for clean-candidate source.`);
   }
   return diagnostics;
 }
@@ -225,9 +262,59 @@ export function describeCandidate(root) {
 }
 
 /**
+ * One probe per relation rule the registry declares: metadata a working
+ * `validateProductSemanticRelations` must reject with exactly that rule. The
+ * report's `rulesEvaluated` lists the rules the validator actually reported
+ * under these probes, so a validator stubbed to a no-op cannot still claim the
+ * declared set. Endpoints and kinds are the registry's own vocabulary.
+ */
+const PROBE_RELATION = Object.freeze({ from: 'chat', kind: 'projects', to: 'task-ledger', authorityBoundary: 'read-only-projection', evidenceRefs: ['docs/clawx-product-semantics.md'] });
+export const RELATION_RULE_PROBES = Object.freeze([
+  { rule: 'unknown-endpoint', candidates: [{ ...PROBE_RELATION, from: 'not-a-declared-concept' }] },
+  { rule: 'unknown-kind', candidates: [{ ...PROBE_RELATION, kind: 'not-a-declared-kind' }] },
+  { rule: 'unknown-authority-boundary', candidates: [{ ...PROBE_RELATION, authorityBoundary: 'not-a-declared-boundary' }] },
+  { rule: 'self-loop', candidates: [{ ...PROBE_RELATION, to: 'chat' }] },
+  { rule: 'duplicate-relation', candidates: [{ ...PROBE_RELATION }, { ...PROBE_RELATION }] },
+  { rule: 'missing-evidence', candidates: [{ ...PROBE_RELATION, evidenceRefs: [] }] },
+  { rule: 'kind-boundary-mismatch', candidates: [{ ...PROBE_RELATION, authorityBoundary: 'advisory-only' }] },
+  { rule: 'reverse-task-authority', candidates: [{ ...PROBE_RELATION, from: 'task-ledger', to: 'chat' }] },
+  { rule: 'forged-grant-field', candidates: [{ ...PROBE_RELATION, grants: ['write'] }] },
+  { rule: 'cross-session-quality', candidates: [{ from: 'routing-memo', kind: 'quality-gated-by', to: 'task-loop', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] }], context: { sessionScope: 'cross-session' } },
+  { rule: 'unsupported-contract-version', candidates: [{ ...PROBE_RELATION }], context: { contractVersion: 'ProductSemanticRelations/v0' } },
+].map((probe) => Object.freeze(probe)));
+
+/**
+ * Runs every probe through the registry validator and reports which declared
+ * rules were actually seen (`observed`, in declared order, followed by any rule
+ * the validator reported without declaring), which declared rules never
+ * surfaced (`missing`) and which reported rules are undeclared (`unknown`).
+ * `extraDiagnostics` are diagnostics already produced for the live relations;
+ * a rule reported there counts as evaluated too.
+ */
+export function observeRelationRules(registry, extraDiagnostics = []) {
+  const declared = Array.isArray(registry.PRODUCT_SEMANTIC_RELATION_RULES) ? registry.PRODUCT_SEMANTIC_RELATION_RULES.map(String) : [];
+  const seen = new Set();
+  const note = (diagnostics) => {
+    for (const diagnostic of Array.isArray(diagnostics) ? diagnostics : []) {
+      if (typeof diagnostic?.rule === 'string') seen.add(diagnostic.rule);
+    }
+  };
+  note(extraDiagnostics);
+  for (const probe of RELATION_RULE_PROBES) note(registry.validateProductSemanticRelations(probe.candidates, probe.context)?.diagnostics);
+  const unknown = [...seen].filter((rule) => !declared.includes(rule));
+  return {
+    observed: [...declared.filter((rule) => seen.has(rule)), ...unknown],
+    missing: declared.filter((rule) => !seen.has(rule)),
+    unknown,
+  };
+}
+
+/**
  * Builds the report from an executed registry module. Relation diagnostics come
- * from the registry's own validator (C2); this function only adds the source
- * diagnostics above and the contract-version check.
+ * from the registry's own validator (C2); this function adds the source
+ * diagnostics above, the contract-version check, the dirty-candidate check and
+ * the rule-observation check. A dirty working tree, or a validator that does
+ * not report its declared rules, makes the report invalid.
  */
 export function buildEvidenceReport({ root, registry, candidate, actor, command, fixtures = [], rewrites = {}, readPaths = new Set(), generatedAt = new Date().toISOString() }) {
   const contractVersion = registry.PRODUCT_SEMANTIC_CONTRACT_VERSION;
@@ -241,19 +328,41 @@ export function buildEvidenceReport({ root, registry, candidate, actor, command,
       message: `Registry declares contract version ${JSON.stringify(contractVersion)}; this checker binds ${SUPPORTED_CONTRACT_VERSIONS.join(', ')} and does not read an unknown version as the latest.`,
     });
   }
-  diagnostics.push(...registry.validateProductSemanticRelations(relations).diagnostics);
+  if (candidate.dirty !== false) {
+    const preview = candidate.dirtyPaths.slice(0, 3).join(', ') + (candidate.dirtyPaths.length > 3 ? ', …' : '');
+    diagnostics.push({
+      relationKey: null,
+      field: 'candidate.dirty',
+      rule: 'candidate-mismatch',
+      message: candidate.dirty === null
+        ? `The candidate could not be observed (${candidate.error ?? 'git failed'}); an unobserved working tree binds no clean candidate.`
+        : `The working tree is dirty (${candidate.dirtyPaths.length} path(s): ${preview}); a report generated over uncommitted changes binds no clean candidate and cannot be valid.`,
+    });
+  }
+  const liveDiagnostics = registry.validateProductSemanticRelations(relations).diagnostics;
+  diagnostics.push(...liveDiagnostics);
+  const observation = observeRelationRules(registry, liveDiagnostics);
+  if (observation.missing.length > 0 || observation.unknown.length > 0) {
+    const declaredCount = Array.isArray(registry.PRODUCT_SEMANTIC_RELATION_RULES) ? registry.PRODUCT_SEMANTIC_RELATION_RULES.length : 0;
+    diagnostics.push({
+      relationKey: null,
+      field: 'rulesEvaluated',
+      rule: 'report-field-missing',
+      message: `The registry validator reported ${observation.observed.length - observation.unknown.length} of ${declaredCount} declared relation rule(s) under probing (missing: ${observation.missing.join(', ') || 'none'}; unknown: ${observation.unknown.join(', ') || 'none'}); a validator that does not evaluate its declared rules cannot bind a report.`,
+    });
+  }
 
   const entries = relations.map((relation) => ({
     relationKey: registry.relationKey(relation),
     refs: isPlainObject(relation) && Array.isArray(relation.evidenceRefs) ? relation.evidenceRefs.filter((ref) => typeof ref === 'string') : [],
   }));
   const insideRefs = entries.flatMap(({ refs }) => refs.filter((ref) => isInsideRoot(root, resolve(root, ref))));
-  const trackedPaths = collectTrackedPaths(root, insideRefs);
+  const candidateBlobs = collectCandidateBlobs(root, insideRefs);
   const unverified = [];
   const reportRelations = entries.map(({ relationKey, refs }) => ({
     relationKey,
     sourceRefs: refs.map((ref) => {
-      const facts = describeSourceRef(root, ref, { trackedPaths, rewrites, readPaths });
+      const facts = describeSourceRef(root, ref, { candidateBlobs, rewrites, readPaths });
       const refDiagnostics = sourceRefDiagnostics(relationKey, facts);
       diagnostics.push(...refDiagnostics);
       if (facts.digest === null) unverified.push({ relationKey, path: ref, reason: refDiagnostics[0].rule });
@@ -272,7 +381,7 @@ export function buildEvidenceReport({ root, registry, candidate, actor, command,
     candidate,
     normalization: { ...EVIDENCE_NORMALIZATION },
     fixtures,
-    rulesEvaluated: [...registry.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES],
+    rulesEvaluated: [...observation.observed, ...SOURCE_DIAGNOSTIC_RULES],
     relations: reportRelations,
     diagnostics,
     unverified,
@@ -283,9 +392,10 @@ export function buildEvidenceReport({ root, registry, candidate, actor, command,
 /**
  * Re-judges a stored report against the current tree: every field the contract
  * requires must be present, the contract version and normalization policy must
- * be the ones this checker binds, the candidate must still be HEAD, and every
- * source reference must still exist inside the root, tracked, unescaped and with
- * both digests unchanged. When the live registry is supplied, the report must
+ * be the ones this checker binds, the candidate must still be HEAD and must
+ * have been clean, and every source reference must still exist inside the
+ * root, be part of the candidate commit, unescaped and with both digests equal
+ * to the candidate blob's. When the live registry is supplied, the report must
  * also still describe it: one result per registry relation, the registry's own
  * evidenceRefs as that relation's sources, and the closed rule set — so a report
  * that was trimmed, re-pointed or generated against other sources cannot verify.
@@ -325,6 +435,7 @@ export function verifyEvidenceReport(report, { root, contractVersion, candidate,
     if (!GIT_OBJECT_ID.test(stored.commit ?? '')) missing('candidate.commit', 'must be a 40-hex commit id');
     if (!GIT_OBJECT_ID.test(stored.tree ?? '')) missing('candidate.tree', 'must be a 40-hex tree id');
     if (typeof stored.dirty !== 'boolean') missing('candidate.dirty', 'must be a boolean');
+    else if (stored.dirty === true) add('candidate.dirty', 'candidate-mismatch', `Report records a dirty candidate (${Array.isArray(stored.dirtyPaths) ? stored.dirtyPaths.length : '?'} path(s)); it was generated over uncommitted changes and never bound a clean candidate.`);
     if (!Array.isArray(stored.dirtyPaths)) missing('candidate.dirtyPaths', 'must be an array');
     if (candidate.commit === null) add('candidate', 'candidate-mismatch', `The current candidate could not be observed: ${candidate.error}.`);
     else {
@@ -366,7 +477,7 @@ export function verifyEvidenceReport(report, { root, contractVersion, candidate,
     const storedRefs = report.relations.flatMap((entry) => (isPlainObject(entry) && Array.isArray(entry.sourceRefs) ? entry.sourceRefs : []))
       .map((stored) => (isPlainObject(stored) ? stored.path : null))
       .filter((path) => typeof path === 'string' && isInsideRoot(root, resolve(root, path)));
-    const trackedPaths = collectTrackedPaths(root, storedRefs);
+    const candidateBlobs = collectCandidateBlobs(root, storedRefs);
     report.relations.forEach((entry, index) => {
       if (!isPlainObject(entry) || typeof entry.relationKey !== 'string') {
         missing(`relations[${index}].relationKey`, 'must be a string');
@@ -389,7 +500,7 @@ export function verifyEvidenceReport(report, { root, contractVersion, candidate,
         for (const digestField of ['digest', 'rawDigest']) {
           if (stored[digestField] !== null && !SHA256_HEX.test(stored[digestField] ?? '')) missing(`${field}.${digestField}`, 'must be a sha256 hex string or null');
         }
-        const now = describeSourceRef(root, stored.path, { trackedPaths, rewrites, readPaths });
+        const now = describeSourceRef(root, stored.path, { candidateBlobs, rewrites, readPaths });
         diagnostics.push(...sourceRefDiagnostics(entry.relationKey, now));
         if (now.digest === null) return;
         for (const digestField of ['digest', 'rawDigest']) {
@@ -567,7 +678,6 @@ async function runSemanticMode(argv) {
   const destination = reportTarget === null ? '(not written)' : toPosix(options.report);
   const refCount = report.relations.reduce((sum, entry) => sum + entry.sourceRefs.length, 0);
   if (fixtureIds.length > 0) console.error(`[evidence-refs] NOTE fixtures applied in memory: ${fixtureIds.join(', ')}`);
-  if (candidate.dirty !== false) console.error(`[evidence-refs] NOTE candidate is ${candidate.dirty === null ? 'unobserved' : `dirty (${candidate.dirtyPaths.length} path(s))`}; this report cannot satisfy a clean-candidate closeout`);
   if (report.status !== 'valid') {
     console.error(`[evidence-refs] FAIL report invalid: ${report.relations.length} relation(s), ${refCount} source ref(s), ${report.diagnostics.length} diagnostic(s) -> ${destination}`);
     for (const diagnostic of report.diagnostics) console.error(formatDiagnostic(diagnostic));

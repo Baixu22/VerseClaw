@@ -1,0 +1,24 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "validator-noop",
+  "driven_by": "agent",
+  "actor": "claude-fable-5",
+  "leaf": "C5",
+  "purpose": "The registry's own validator is stubbed to a no-op: the loop body of validateProductSemanticRelations never runs, so every input validates as { ok: true, diagnostics: [] }. Under the closed probe set RELATION_RULE_PROBES none of the 11 declared relation rules is ever reported, so rulesEvaluated can no longer claim them: the gate records only its 8 source rules, rejects the report with report-field-missing on rulesEvaluated and exits 1. This is the negative CONTRACT-HARDENING.md section 12.2 item 1 said the constant rulesEvaluated of C3/C4 could not provide.",
+  "expect": {
+    "mode": "report",
+    "exitCode": 1,
+    "status": "invalid",
+    "rule": "report-field-missing",
+    "field": "rulesEvaluated",
+    "rulesEvaluatedLength": 8,
+    "missingRuleCount": 11
+  },
+  "mutations": [
+    {
+      "file": "shared/product-semantics.ts",
+      "find": "  for (const candidate of candidates) {",
+      "replace": "  for (const candidate of candidates.slice(0, 0)) {"
+    }
+  ]
+}

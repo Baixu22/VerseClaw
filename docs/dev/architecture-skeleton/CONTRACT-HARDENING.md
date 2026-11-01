@@ -318,14 +318,243 @@ C4 候选提交 **`6944b059cd5deda27c39e59cc1bb95042712f153`**（tree `582054179
 
 ### 12.2 已知限制（本次未修，作为后续节点输入）
 
-1. **`rulesEvaluated` 是声明而非观测**：它是常量拼接（`PRODUCT_SEMANTIC_RELATION_RULES ∪ SOURCE_DIAGNOSTIC_RULES`），C2 校验器被替换成空操作时列表不变；§3 (a)"列表会变化"的说法不成立。真正守住"校验器没被调用"的是 `--fixture bad-relation-self-loop` 负例。
-2. **脏候选只是提示**：工作区有未跟踪文件时 `--report` 仍写 `status: valid`、`exitCode: 0`、`dirty: true`，`--verify` 也通过；合同所说"不能满足干净候选收口"没有任何字段或退出码承载，只有 stderr NOTE。
-3. **`rawDigest` 绑定的是工作树字节而非候选 blob**：`core.autocrlf=true` 的检出会对 LF blob 多出 `source-digest-mismatch`；对已跟踪源文件的未提交修改也会被当成候选内容哈希（只靠 `dirty` 标记提示）。改为对 `git cat-file blob HEAD:path` 哈希可消除对检出方式的依赖。
-4. **测试向已跟踪 fixture 树写入**：`withRuntimeFile` / `withEscapeLink` 在 `harness/.../report/runtime/` 下创建未跟踪文件与 junction（未被 gitignore），前后 `git status --porcelain` 断言在 `--maxWorkers=2` 或并行写者下有竞态（审查期间实际观察到）；被中断的运行会留下 junction。spec 的 C3 行说有界 fixture 放 `os.tmpdir()`，根内偏离未记录。
+1. **`rulesEvaluated` 是声明而非观测**：它是常量拼接（`PRODUCT_SEMANTIC_RELATION_RULES ∪ SOURCE_DIAGNOSTIC_RULES`），C2 校验器被替换成空操作时列表不变；§3 (a)"列表会变化"的说法不成立。真正守住"校验器没被调用"的是 `--fixture bad-relation-self-loop` 负例。—— **已落地（TF-0639，§13.2）**：关系规则部分由校验器在封闭探针集 `RELATION_RULE_PROBES` 下实际回报的集合产生；`validator-noop` 负例经真实入口 exit 1、`rulesEvaluated` 只剩 8 条、诊断定位 `rulesEvaluated`。
+2. **脏候选只是提示**：工作区有未跟踪文件时 `--report` 仍写 `status: valid`、`exitCode: 0`、`dirty: true`，`--verify` 也通过；合同所说"不能满足干净候选收口"没有任何字段或退出码承载，只有 stderr NOTE。—— **已落地（TF-0639，§13.3）**：`candidate.dirty !== false` → `[candidate-mismatch] - candidate.dirty`，`status invalid` / exit 1；`--verify` 对 `dirty: true` 的报告同样拒绝；NOTE 行删除。
+3. **`rawDigest` 绑定的是工作树字节而非候选 blob**：`core.autocrlf=true` 的检出会对 LF blob 多出 `source-digest-mismatch`；对已跟踪源文件的未提交修改也会被当成候选内容哈希（只靠 `dirty` 标记提示）。改为对 `git cat-file blob HEAD:path` 哈希可消除对检出方式的依赖。—— **已落地（TF-0639，§13.4 / §13.7）**：两种摘要都对 `git cat-file --batch` 读回的候选 blob 计算，`tracked` 改为"在候选树 HEAD 中有 blob"；策略文本变更使封存的 `final/evidence-report.json` 在 `--verify` 下得到两条 `version-unsupported`（不重签）。
+4. **测试向已跟踪 fixture 树写入**：`withRuntimeFile` / `withEscapeLink` 在 `harness/.../report/runtime/` 下创建未跟踪文件与 junction（未被 gitignore），前后 `git status --porcelain` 断言在 `--maxWorkers=2` 或并行写者下有竞态（审查期间实际观察到）；被中断的运行会留下 junction。spec 的 C3 行说有界 fixture 放 `os.tmpdir()`，根内偏离未记录。—— **已落地（TF-0639，§13.6）**：全部 `--report` / `--verify` 用例在 `os.tmpdir()` 下自建的干净候选沙箱里运行；runtime 文件写在沙箱的 `report/runtime/`（已 gitignore）；真实检出零写入，前后 porcelain 快照删除。
 5. `reverse-task-authority` 比伞合同第 5 行 / 文档"Why it exists"更窄：`{workboard, roots-in, task-ledger, task-ledger-authority}` 等形状零诊断；没有规则限制哪些 `from` 可以主张 `task-ledger-authority`（批次 B 的第二主张者检查可能覆盖）。
 6. 级联诊断：`unknown-endpoint-run-as-task` 同时触发 `reverse-task-authority`；逐 fixture 测试只断言包含而非唯一（fixture 16 / 17 各产生 6 / 3 条）。第 8 行"run success as task completion"的覆盖是名义的（任何未知键都会同样被 `forged-grant-field` 拒绝）。
 7. 两份 `relationKey` 实现并存（`shared/product-semantics.ts` 与 `scripts/check-semantic-authority.mjs`，格式相同）——既有重复，非本批引入。
 8. 文档小错：§5 称 SHA256SUMS 为"text mode, two spaces"，实际条目为二进制模式 ` *name`（校验无碍）；`final/gates.json`（已跟踪）含本机绝对路径 `D:/tmp/tf0637-c4/...`（`check-local-paths` 只扫 docs，且其模式只匹配用户目录）；§2 的行号范围应为 `:179–332`。
 9. 默认行为的逐字不变只对**无参数**调用成立：多余参数原先被忽略，现在 exit 2（唯一调用方 `repo:evidence:check` 不传参数）。
 
-建议归属：第 1–4 条作为一个新的批次 C 叶子（"报告观测化：rulesEvaluated 观测、脏候选 fail-closed、候选 blob 哈希、fixture 出根"）在 TF-0628 下登记后再做；本次审查不扩大 TF-0634…0637 的范围。
+建议归属：第 1–4 条作为一个新的批次 C 叶子（"报告观测化：rulesEvaluated 观测、脏候选 fail-closed、候选 blob 哈希、fixture 出根"）在 TF-0628 下登记后再做；本次审查不扩大 TF-0634…0637 的范围。—— 该叶子即 TF-0639，落地记录见 §13。
+
+---
+
+## 13. C5 报告观测化与候选绑定收紧（TF-0639，2026-11-01）
+
+本节由批次 C 的第五个叶子追加（`driven_by: agent`，`actor: claude-fable-5`）。上文 §1–§12 保持原貌。合同：
+`harness/specs/tasks/ontology-lite-report-observability.md`（本叶专用，TF-0639 `required_spec` 已指向它）；输入是 §12.2 第 1–4 条。
+一句话结论：`--report` 的四个"只靠 vitest 计数钉住"的弱点现在都由检查器自己 fail-closed——校验器不回报规则、工作树不干净、
+工作树字节冒充候选、测试写进已跟踪树，四者都不再能产生或冒充一份 `status: valid` 的报告；默认无参调用逐字不变；
+`shared/product-semantics.ts` 零字节改动；封存的 `final/` 零字节改动且不重签。
+
+### 13.0 基线与写集
+
+| 项 | 值 |
+|---|---|
+| 开工 HEAD / tree | `c9a761cb5fbbc869bcb0a2e96615fa4b0e2d7fcf` / `b5e89b2336b340297c7836a0f32e860b27f08d24`（= `origin/main`）；`git status --porcelain` 恰 1 行 `?? _s07cfg/`（别的会话留下的未跟踪目录，未触碰；它使真实检出在本叶之后对 `--report` 恒为脏候选——见 §13.3 末段） |
+| Task Forest（开工时） | `todo --json` 中 stored-status 为 `ready` 的节点恰为 1 个：`TF-0639`（`TF-0571` 为 `in_progress`）；开工后 `update-node` 把 `required_spec` 指向本叶 spec、状态置 `in_progress` |
+| 执行工具 | Node `v24.22.1`（`process.features.typescript === 'strip'`）；vitest `4.1.1`；git `2.51.0.windows.1`；pnpm `11.2.2`；临时目录 `D:/tmp/tf0639/`（不入库） |
+| pnpm 环境事件 | pnpm 11 的运行前依赖校验在本检出上弹出交互式 "modules purge" 提示并挂起（`pnpm harness …` / `pnpm exec …` 超过 400 s 无输出）。本叶全部 pnpm 包装命令以 `pnpm --config.verify-deps-before-run=false <script>` 运行：只跳过该交互校验，**未执行任何安装或清理**，底层命令与 `package.json` 一致；`node harness/src/cli.mjs validate …` 与 `pnpm harness validate …` 同一入口（`harness/package.json` `start`） |
+| 写集（实际） | `scripts/check-evidence-refs.mjs`（+168/−? 见 §13.10）、`scripts/check-evidence-refs.d.mts`、`tests/unit/evidence-refs-exist.test.ts`、`.gitignore`（+3 行）、新增 `harness/specs/fixtures/ontology-lite-existing-contracts/report/fixtures/validator-noop.json`、`report/SHA256SUMS`（只追加）、新增 `report/credential-scan-c5.json`、新增 `harness/specs/tasks/ontology-lite-report-observability.md`、本文件。**未改**：`shared/**`、`scripts/lib/canonical-evidence-hash.mjs`、`scripts/lib/registry-fixture.mjs`、`scripts/lib/ts-import-hooks.mjs`、`report/` 下既有 8 个 fixture + 2 个来源 + `default-stdout.expected.txt` + `credential-scan.json`、`final/**`、`provenance/**`、`negatives/**`、`package.json`、`scripts/repository-artifacts.json`（新增 ignore 行不涉及任何跟踪文件，`check-repository-artifacts` 通过，无需登记） |
+
+### 13.1 结论摘要
+
+| 收紧 | 规则 / 字段变化 | 新增负例 → 拒绝结果 | 正例读数 |
+|---|---|---|---|
+| 1 `rulesEvaluated` 观测化 | 新导出 `RELATION_RULE_PROBES`（11 条，每条声明规则恰一个探针）与 `observeRelationRules(registry, extraDiagnostics)` → `{ observed, missing, unknown }`；报告 `rulesEvaluated = [...observed, ...SOURCE_DIAGNOSTIC_RULES]`；`missing ∪ unknown ≠ ∅` → `[report-field-missing] - rulesEvaluated`，`invalid` / exit 1。不新增规则名 | `validator-noop.json`（真实入口）→ exit **1**，恰 1 条诊断定位 `rulesEvaluated`，消息 `reported 0 of 11 declared relation rule(s) … missing: <11 条>`，`rulesEvaluated` 恰为 8 条来源规则，`relations` 6 / `sourceRefs` 8 仍被绑定；进程内 no-op / 未声明规则各一例；篡改表 +1（`rulesEvaluated` 裁成 8 条 → `--verify` 拒绝） | 活注册表 `observed` 逐项等于声明的 11 条，`missing` / `unknown` 空；报告 `rulesEvaluated` 仍为 19 条且顺序不变 |
+| 2 脏候选 fail-closed | `buildEvidenceReport`：`candidate.dirty !== false` → `[candidate-mismatch] - candidate.dirty`（`null` 时消息为 could not be observed）；`verifyEvidenceReport`：`dirty === true` → 同一诊断；stderr `NOTE candidate is dirty` 行删除 | 沙箱根放 1 个未跟踪文件 → `--report` exit **1**，`candidate.dirty true`、`dirtyPaths ['tf0639-dirty-probe.txt']`、恰 1 条诊断、`status invalid`，8 个 `rawDigest` 仍等于候选 blob；对该报告 `--verify` → exit **1**（`candidate.dirty` + `status` 两条）；篡改表 +1（`dirty = true`） | 干净沙箱 `--report` stderr 0 字节、`candidate.dirty false`、`dirtyPaths []`（原先只断言 boolean） |
+| 3 候选 blob 摘要 | 新导出 `collectCandidateBlobs(root, refs)`（一次 `git cat-file --batch`，stdin `HEAD:<ref>`）；`describeSourceRef` 选项 `trackedPaths` → `candidateBlobs`，`tracked := HEAD 中有 blob`，摘要对 blob 字节（或内存 rewrite）计算，无候选 blob 则不哈希；`collectTrackedPaths` 删除；`EVIDENCE_NORMALIZATION.policy` / `rawDigestPolicy` 文本改为候选 blob 口径 | 把沙箱里 HEAD 为 LF 的 `docs/modules/multi-agent-and-tasks.md` 工作副本改写为 CRLF → `--report` exit **1**，诊断恰 `[candidate-mismatch] - candidate.dirty`，**0** 条 `source-digest-mismatch`，该路径 `digest` / `rawDigest` 与改写前逐项相同且等于 `git cat-file blob HEAD:` 的摘要；纯函数：工作树为真实文档而 `candidateBlobs` 给 `alpha\nbeta\n` → 摘要是后者的；篡改表 +1（`rawDigestPolicy` 换回旧文本 → `version-unsupported`） | 正例 8 个 `sourceRefs` 的 `digest` / `rawDigest` 均等于 `digestEvidenceBytes(git cat-file blob HEAD:<path>)`；`source-line-endings` 的 LF / lone-CR 读数不变（期望来源改为 blob） |
+| 4 测试出根 | 测试在 `os.tmpdir()` 自建 `git init` 干净候选沙箱（工作树副本，约 800 文件 / 8 MB / 1–2 s）；`.gitignore` +1 行忽略 `report/runtime/`；真实检出零写入；porcelain 前后快照删除 | — （结构性收紧，由"沙箱保持干净 + 真实检出无 `runtime/`"的末尾断言与 `git check-ignore -v` 读数证明） | `--maxWorkers=1` 全文件 69/69；真实检出在整轮测试后 `git status --porcelain` 仍恰为 `?? _s07cfg/` 以外的本叶写集 |
+| 封存 `final/` | 不改、不重签：`sha256sum -c final/SHA256SUMS` exit 0（4 条 OK） | 单测 `the sealed final/ report … verifies as version-unsupported`：`--verify` exit 1，含 `normalization.policy` 与 `normalization.rawDigestPolicy` 两条 `version-unsupported` | 本 HEAD 上 `--verify final/evidence-report.json` → **10** 条诊断 = 2 `candidate-mismatch` + 2 `version-unsupported` + 6 `source-digest-mismatch`（§13.7） |
+
+测试：`tests/unit/evidence-refs-exist.test.ts` 59 → **69**（+10；59 = C3/C4 的 52 + 审查的 7 条篡改表）；`tests/unit/product-semantics.test.ts` **40/40** 不变；因策略变更调整的既有断言 3 处（§13.5）。默认无参调用 `node scripts/check-evidence-refs.mjs` stdout 与 `report/default-stdout.expected.txt` `cmp` 相同、stderr 0 字节、exit 0。
+
+### 13.2 收紧 1：`rulesEvaluated` 由观测产生
+
+探针集（`scripts/check-evidence-refs.mjs` `RELATION_RULE_PROBES`，基准关系 `chat --projects--> task-ledger / read-only-projection / ['docs/clawx-product-semantics.md']`）：
+
+| 声明规则 | 探针输入 |
+|---|---|
+| `unknown-endpoint` | `from: 'not-a-declared-concept'` |
+| `unknown-kind` | `kind: 'not-a-declared-kind'` |
+| `unknown-authority-boundary` | `authorityBoundary: 'not-a-declared-boundary'` |
+| `self-loop` | `to: 'chat'` |
+| `duplicate-relation` | 基准关系两份 |
+| `missing-evidence` | `evidenceRefs: []` |
+| `kind-boundary-mismatch` | `authorityBoundary: 'advisory-only'` |
+| `reverse-task-authority` | `from: 'task-ledger', to: 'chat'` |
+| `forged-grant-field` | 多出 `grants: ['write']` |
+| `cross-session-quality` | `routing-memo --quality-gated-by--> task-loop` + `context.sessionScope: 'cross-session'` |
+| `unsupported-contract-version` | 基准关系 + `context.contractVersion: 'ProductSemanticRelations/v0'` |
+
+`observeRelationRules` 把每个探针送入注册表导出的 `validateProductSemanticRelations(candidates, context)`，并把活关系校验已产生的诊断一并计入
+`seen`；`observed` 按声明顺序列出被看到的声明规则，再附上未声明却被回报的规则。活注册表上 `observed` 恰为 11 条、顺序相同。
+
+为什么不改 `shared/product-semantics.ts`：节点 non_goals 与宪章 §6.2 要求 owner 不动；在 `scripts/` 侧探针能观测到"校验器是否
+真的评估了某条规则"而不要求校验器自述，一个被替换成空操作的校验器无论自述什么都观测不到任何规则。副作用：探针用注册表自己的
+概念 / kind 词表；词表若改名，受影响的探针会以 `unknown-*` 而非目标规则失败，`missing` 非空 → 报告失效（fail-closed，而非静默）。
+
+### 13.3 收紧 2：脏候选 fail-closed
+
+`describeCandidate` 不变（`git status --porcelain` 全部行）。`buildEvidenceReport` 在版本检查之后、关系校验之前追加
+`candidate.dirty` 诊断；`verifyEvidenceReport` 在 `candidate.dirty must be a boolean` 之外对 `true` 追加 `candidate-mismatch`。
+消息列出前 3 个脏路径。
+
+**对真实检出的直接影响（设计后果，必须说清）**：本检出存在他人留下的未跟踪目录 `_s07cfg/`，因此在本叶之后、在该目录仍存在的任何
+时刻，直接在 `D:/ClawX` 运行 `--report` 都得到 exit 1 的 `candidate.dirty` 报告——这正是"脏候选不能冒充干净候选证据"的本意。
+要得到 exit 0 的真实候选读数，用 §13.9 7 的 sparse detached worktree（未跟踪文件不进入 worktree）。单测不受影响（§13.6 的沙箱）。
+
+### 13.4 收紧 3：对候选 blob 哈希
+
+- `collectCandidateBlobs(root, refs)`：`spawnSync('git', ['cat-file', '--batch'])`，stdin 每行 `HEAD:<normalizedRef>`，解析
+  `<oid> <type> <size>\n<bytes>\n` / `<object> missing\n`；只收 `blob`；返回 `Map<ref, Buffer>`，git 失败返回 `null`（永不假定）。
+  8 个引用一次往返。
+- `describeSourceRef(root, ref, { candidateBlobs, rewrites, readPaths })`：`exists` / `insideRoot` / `symlinkEscape` 仍是工作树事实
+  （缺文件、越界、逃逸链接必须能被看见）；`tracked = candidateBlobs === null ? null : candidateBlobs.has(ref)`；被哈希字节
+  = `rewrites[ref]`（内存 fixture 仍表示"候选内容变了"，`stale-source-rewrite` 行为不变）否则候选 blob；没有候选 blob → 两摘要 `null`
+  并进入 `unverified`。`source-untracked` 消息改为 "is not part of the candidate commit (HEAD)"。
+- `core.autocrlf`：`git cat-file blob` 返回对象库字节，不经任何检出转换；因此 `autocrlf=true/false/input` 的检出对同一候选得到逐字相同
+  的 `sourceRefs`。单测以"把 LF 来源的工作副本改写成 CRLF"覆盖这一机制（它同时就是"已跟踪源文件的未提交修改"负例）：摘要不变，
+  报告只因 `candidate.dirty` 失效，0 条 `source-digest-mismatch`。本机 `core.autocrlf=false`，没有另一台 `autocrlf=true` 的机器
+  参与读数；结论来自机制（blob 不经检出）与上述等价负例，如实记为推理 + 等价证明而非双机实测。
+
+### 13.5 因策略变更调整的既有断言（逐条）
+
+| # | 用例 | 原断言 | 现断言 | 理由 |
+|---|---|---|---|---|
+| 1 | `an untracked local file is rejected …` | `digest` / `rawDigest` 记录为工作树字节的两种摘要且互不相同；`unverified` 为空 | `digest: null` / `rawDigest: null`；`unverified` 恰含该引用（reason `source-untracked`）；并新增 `candidate.dirty false`、诊断恰 `['source-untracked']` | 未跟踪文件没有候选 blob；原断言记录的正是 §12.2 第 3 条要去掉的工作树哈希 |
+| 2 | `--report on the live registry …`、`tracked sources with LF and lone-CR …` | 期望摘要 = `readFileSync(<工作树路径>)` | 期望摘要 = `git cat-file blob HEAD:<path>`（沙箱） | 摘要口径变更；在 `autocrlf=false` 的干净检出上两者字节相同 |
+| 3 | `treats an unobserved tracking answer …`（纯函数） | `{ trackedPaths: null }` / `{ trackedPaths: new Set() }` | `{ candidateBlobs: null }` / `{ candidateBlobs: new Map() }` | 选项改名；断言内容不变 |
+
+加严（非放宽）：正例 `--report` 现在断言 stderr 为 0 字节、`candidate` 恰为 `{ commit, tree, dirty: false, dirtyPaths: [] }`；
+`--verify` 篡改表的 `accepts the untampered report` 新增 `base.candidate.dirty === false`。其余 56 个既有用例的断言文本未变，
+只是运行根从真实检出换成沙箱（§13.6）。`source-untracked.json` / `source-symlink-escape.json` 的 `purpose` 文本（"under report/runtime/"）
+仍然准确，fixture 文件零字节改动。
+
+### 13.6 收紧 4：测试出根与干净候选沙箱
+
+模块顶层（`describe` 收集前，因为篡改表在收集期就调用 `buildEvidenceReport`）：
+
+1. `mkdtempSync(os.tmpdir()/tf0639-c5-)/candidate`；
+2. `git ls-files -z -co --exclude-standard -- scripts shared harness/specs/fixtures/ontology-lite-existing-contracts docs/clawx-product-semantics.md docs/modules/multi-agent-and-tasks.md README.md` 枚举真实检出里已跟踪与未跟踪但未被 ignore 的文件，逐个 `copyFileSync`（**工作树就是被测候选**：正在编辑的检查器与本变更集新增的 fixture 都在内；被 ignore 的 `report/runtime/` 不在内）；
+3. 写只含 `/harness/specs/fixtures/ontology-lite-existing-contracts/report/runtime/` 的 `.gitignore`（真实 `.gitignore` 整体忽略 `docs/**`，照搬会把两份被引用文档挡在提交之外）；
+4. `git init -q -b main`；`core.autocrlf=false`、`commit.gpgsign=false`、固定 user；`git add -A`；提交一次。
+
+所有 `--report` / `--verify` 以 `node <sandbox>/scripts/check-evidence-refs.mjs`、`cwd: <sandbox>` spawn；所有 `buildEvidenceReport` /
+`verifyEvidenceReport` 以 `root: <sandbox>`、`candidate: describeCandidate(<sandbox>)`。默认无参调用与 `checkEvidenceRefs(process.cwd())`
+仍以真实检出为根。runtime 探针与越界 junction 写在沙箱的 `report/runtime/`（已 ignore：`tracked false` 且不进入 porcelain）；
+脏候选探针写在沙箱根（未 ignore，才会脏）；CRLF 改写用 `git checkout -- <path>` 复原。文件末尾断言：沙箱 `dirty false` / `dirtyPaths []`、
+沙箱无 `report/runtime/`、真实检出无 `report/runtime/`。`afterAll` 删除整个临时目录。真实检出与其 `.git` 零写入——没有 worktree 登记、
+悬空对象或 `prune`。
+
+为什么不用 `git worktree`：worktree 只能检出 HEAD，提交前的测试会去跑**旧**检查器（本叶开发中实测如此）；且需要在共享 `.git/worktrees/`
+登记并依赖 `prune`。完整 worktree 在本机 >300 s 未完成（285 MB / 20071 文件 + 杀毒），sparse worktree 1–2 s 但仍是 HEAD 的副本。
+`git init` 沙箱两者皆无，并让测试在脏检出上也确定性通过。
+
+### 13.7 封存 `final/` 证据的兼容结论
+
+`final/evidence-report.json`（候选 `6944b059c`）的 `normalization.policy` / `rawDigestPolicy` 记录的是工作树字节口径，与 C5 的
+`EVIDENCE_NORMALIZATION` 文本不同。合同选择**策略文本变更 → 旧报告 `version-unsupported`**，不保留只读的旧策略校验分支：
+一份摘要取自工作树的报告无法不重新推导就对照候选 blob 复核，而重新推导就是重签。后果与读数：
+
+- `final/**` 零字节改动；`sha256sum -c final/SHA256SUMS` exit 0（§13.10 #12）。
+- 本 HEAD（`c9a761cb5` + 未提交写集）上 `node scripts/check-evidence-refs.mjs --verify final/evidence-report.json` → exit **1**，
+  **10** 条诊断：`[candidate-mismatch] - candidate.commit`、`[candidate-mismatch] - candidate.tree`、
+  `[version-unsupported] - normalization.policy`、`[version-unsupported] - normalization.rawDigestPolicy`、
+  以及 `docs/clawx-product-semantics.md` 的 6 条 `source-digest-mismatch`（引用它的 3 条关系 × digest / rawDigest；自 TF-0638 修改该文件起已存在，§12.1 第 2 行）。
+  其余字段与另外 5 个来源引用全部匹配——摘要恰好相同，是因为 `autocrlf=false` 的干净检出上工作树字节等于 blob 字节。
+- 推论：自 C5 起，该封存报告在**任何** HEAD（包括它自己的候选 `6944b059c`）上都不再能 `--verify` 为 exit 0——两条 `version-unsupported`
+  与候选无关。§5 "在其候选上 `--verify` exit 0" 与 §7.5 自此成为历史读数（对 C4 候选 + C4 检查器成立），不再对当前检查器成立。
+  这是接受的、如实记录的代价；它不改变该报告作为 TF-0637 收口证据的历史效力（证据绑定的是它生成时的检查器与候选）。
+- 单测钉住两条 `version-unsupported` 与 `candidate.commit` 一条，并钉住 `final/SHA256SUMS` 全部条目的 SHA-256（证明未改写）；
+  6 条 `source-digest-mismatch` 的数量随后续 HEAD 变化，不钉。
+- 报告 schema 仍为 `ProductSemanticEvidenceReport/v1`：15 个顶层键与 `sourceRefs` 7 键未变；版本语义由 `normalization` 承担
+  （C3 把它设计成"不可比较即 `version-unsupported`"正是为此），无需 v2。
+
+### 13.8 新增用例（10）
+
+| # | 用例（`tests/unit/evidence-refs-exist.test.ts`） | 入口 | 期望 |
+|---|---|---|---|
+| 1 | probes every declared relation rule exactly once and observes all of them on the live validator | 进程内 | `RELATION_RULE_PROBES.map(rule)` = 声明 11 条；每个探针命中其规则；`observed` = 声明、`missing` / `unknown` 空 |
+| 2 | observes nothing from a validator that reports nothing, and names what is missing | 进程内 | no-op 校验器 → `observed []`、`missing` = 11 条；回报 `made-up-rule` → `unknown ['made-up-rule']` |
+| 3 | hashes the candidate blob, never the working-tree bytes, and hashes nothing without a candidate blob | 进程内 | 工作树为真实文档、`candidateBlobs` 给 `alpha\nbeta\n` → 两摘要为后者的 sha256；`candidateBlobs: new Map()` → `tracked false`、摘要 `null`、`source-untracked` |
+| 4 | a validator stubbed to a no-op cannot keep the declared rules | 真实入口 `--fixture validator-noop.json --report` | exit 1；诊断恰 `[report-field-missing] - rulesEvaluated`，消息 `reported 0 of 11 …` 并列出 11 条；`rulesEvaluated` 恰 8 条来源规则；6 关系 / 8 来源仍绑定；`unverified []` |
+| 5 | a dirty candidate cannot pass | 真实入口 `--report` + `--verify` | 未跟踪探针在沙箱根 → exit 1、`dirty true`、`dirtyPaths` 恰该文件、诊断恰 `candidate-mismatch@candidate.dirty`、8 个 `rawDigest` 仍等于候选 blob；探针删除后 `--verify` 该报告 → exit 1，含 `candidate.dirty` 与 `status` 两条 |
+| 6 | working-tree bytes never enter a digest | 真实入口 `--report` ×2 | LF 来源改写为 CRLF → exit 1、诊断恰 `candidate.dirty`、`dirtyPaths` 恰该文件、无 `source-digest-mismatch`；该路径 `sourceRefs` 与改写前逐项相等且 `rawDigest = sha256(blob) ≠ sha256(crlf)`；复原后沙箱干净 |
+| 7 | dirty candidate -> invalid（篡改表） | 进程内 `--verify` | `candidate-mismatch` 定位 `candidate.dirty` |
+| 8 | working-tree raw digest policy -> invalid（篡改表） | 进程内 `--verify` | 把 `rawDigestPolicy` 换回 C3 文本 → `version-unsupported` 定位 `normalization.rawDigestPolicy` |
+| 9 | rules trimmed to the source rules -> invalid（篡改表） | 进程内 `--verify` | `rulesEvaluated` 裁成 8 条来源规则（no-op 校验器会写出的形状）→ `report-field-missing` 定位 `rulesEvaluated` |
+| 10 | the sealed final/ report is unchanged and … verifies as version-unsupported | 真实入口 `--verify <final/evidence-report.json>` | `final/SHA256SUMS` 每条 SHA-256 相符；封存 `normalization` 两字段 ≠ 当前；exit 1；stderr 含两条 `version-unsupported` 与 `candidate.commit` 一条；文件字节不变 |
+
+### 13.9 复现命令（离线，仓库根目录，Git Bash；临时目录 `D:/tmp/tf0639`；pnpm 包装命令前置 `--config.verify-deps-before-run=false`）
+
+```bash
+# 1 单测（沙箱自建，脏检出亦可）与 C2 负例
+export TMPDIR=D:/tmp
+pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/evidence-refs-exist.test.ts tests/unit/product-semantics.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/tf0639/vitest.json
+node -e "const r=require('D:/tmp/tf0639/vitest.json');console.log(r.numTotalTests,r.numFailedTests,r.success)"   # → 109 0 true
+# 2 默认行为逐字不变
+node scripts/check-evidence-refs.mjs > D:/tmp/tf0639/default.txt 2> D:/tmp/tf0639/default.err; cmp D:/tmp/tf0639/default.txt harness/specs/fixtures/ontology-lite-existing-contracts/report/default-stdout.expected.txt && [ ! -s D:/tmp/tf0639/default.err ] && echo identical
+# 3 脏检出上的 --report 失效（本检出因 _s07cfg/ 恒脏）
+node scripts/check-evidence-refs.mjs --report D:/tmp/tf0639/dirty.json --actor claude-fable-5; echo "exit=$?"   # → 1, [candidate-mismatch] - candidate.dirty
+# 4 封存报告在新策略下
+node scripts/check-evidence-refs.mjs --verify harness/specs/fixtures/ontology-lite-existing-contracts/final/evidence-report.json; echo "exit=$?"   # → 1；2 candidate-mismatch + 2 version-unsupported + 6 source-digest-mismatch
+cd harness/specs/fixtures/ontology-lite-existing-contracts/final && sha256sum -c SHA256SUMS && cd -   # → 4 OK
+# 5 门禁
+pnpm --config.verify-deps-before-run=false repo:evidence:check; pnpm --config.verify-deps-before-run=false contract:check; node scripts/check-semantic-authority.mjs
+node scripts/check-repository-artifacts.mjs; node scripts/check-local-paths.mjs; pnpm --config.verify-deps-before-run=false harness:specs:lifecycle
+node harness/src/cli.mjs validate --spec harness/specs/tasks/ontology-lite-report-observability.md --no-diff
+pnpm --config.verify-deps-before-run=false run typecheck
+pnpm --config.verify-deps-before-run=false exec eslint scripts/check-evidence-refs.mjs tests/unit/evidence-refs-exist.test.ts --max-warnings 0; node scripts/check-no-bom.mjs; git diff --check
+git check-ignore -v harness/specs/fixtures/ontology-lite-existing-contracts/report/runtime/x.md   # → .gitignore:144
+# 6 report/ 校验和（只追加）
+cd harness/specs/fixtures/ontology-lite-existing-contracts/report && sha256sum -c SHA256SUMS && cd -
+# 7 真实候选上的干净读数：sparse detached worktree（1–2 s；未跟踪目录不进入 worktree）
+W=D:/tmp/tf0639/wt; git worktree add --no-checkout --detach $W HEAD
+MSYS_NO_PATHCONV=1 git -C $W sparse-checkout set --no-cone '/scripts/' '/shared/' '/docs/' '/harness/specs/fixtures/ontology-lite-existing-contracts/' '/README.md' '/.gitignore' '/package.json'
+git -C $W checkout --detach HEAD; git -C $W status --porcelain | wc -l   # → 0
+node $W/scripts/check-evidence-refs.mjs --report D:/tmp/tf0639/candidate.json --actor claude-fable-5; echo "exit=$?"   # → 0, dirty false
+node $W/scripts/check-evidence-refs.mjs --verify D:/tmp/tf0639/candidate.json; echo "exit=$?"                          # → 0
+node $W/scripts/check-evidence-refs.mjs --fixture harness/specs/fixtures/ontology-lite-existing-contracts/report/fixtures/validator-noop.json --report D:/tmp/tf0639/noop.json --actor claude-fable-5; echo "exit=$?"   # → 1, rulesEvaluated
+git worktree remove --force $W; git worktree prune
+```
+
+### 13.10 证据链（2026-11-01，HEAD `c9a761cb5` + 本叶未提交写集；退出码由 shell 直接捕获，日志在 `D:/tmp/tf0639/`，本地保留不入库）
+
+| # | 命令 | exit | 关键输出 |
+|---|---|---|---|
+| 1 | `node harness/src/cli.mjs validate --spec harness/specs/tasks/ontology-lite-report-observability.md --no-diff` | 0 | `Spec is valid`（`pnpm harness validate …` 同入口；pnpm 包装见 §13.0 环境事件） |
+| 2 | `pnpm … exec vitest run tests/unit/evidence-refs-exist.test.ts --maxWorkers=1 --reporter=json` | 0 | `numTotalTests 69, numFailedTests 0, success true`（文件 29.8 s；沙箱自建于脏检出之上） |
+| 3 | `pnpm … exec vitest run tests/unit/product-semantics.test.ts --maxWorkers=1 --reporter=json` | 0 | `numTotalTests 40, numFailedTests 0` |
+| 4 | `node scripts/check-evidence-refs.mjs` + `cmp` + stderr 大小 | 0 | `[evidence-refs] PASS 188 referenced path(s)`，与钉住 fixture 相同，stderr 0 字节 |
+| 5 | `pnpm … repo:evidence:check` | 0 | 同 #4 |
+| 6 | `pnpm … contract:check` | 0 | `Contract check passed.` |
+| 7 | `node scripts/check-semantic-authority.mjs` | 0 | `… relations=6 … rules=18 diagnostics=0 adjudicated=8 …` |
+| 8 | `node scripts/check-repository-artifacts.mjs` | 0 | `Repository artifact retention passed (20071 tracked paths).` |
+| 9 | `node scripts/check-local-paths.mjs` | 0 | `[local-paths] PASS …` |
+| 10 | `pnpm … harness:specs:lifecycle` | 0 | `[specs] lifecycle status present for 688 task specs.`（686 + TF-0638 + 本叶） |
+| 11 | `node harness/src/cli.mjs validate --spec harness/specs/tasks/ontology-lite-contract-implementation.md --no-diff` | 0 | `Spec is valid`（C3/C4 合同仍有效） |
+| 12 | `cd …/final && sha256sum -c SHA256SUMS` | 0 | 4 条 `OK`（`final/` 未改写） |
+| 13 | `node scripts/check-evidence-refs.mjs --verify …/final/evidence-report.json` | **1** | `(10 diagnostic(s))`：2 `candidate-mismatch` + 2 `version-unsupported`（`normalization.policy` / `normalization.rawDigestPolicy`）+ 6 `source-digest-mismatch`（全部 `docs/clawx-product-semantics.md`）（§13.7） |
+| 14 | `node scripts/check-evidence-refs.mjs --report D:/tmp/tf0639/smoke/dirty.json --actor smoke`（真实检出，脏） | **1** | `FAIL report invalid: 6 relation(s), 8 source ref(s), 1 diagnostic(s)`；`[candidate-mismatch] - candidate.dirty: The working tree is dirty (3 path(s): _s07cfg/, …)`；报告 `rulesEvaluated` 19 |
+| 15 | `pnpm … run typecheck` | 0 | node / web / test `errorCount 0`，67.5 s |
+| 16 | `pnpm … exec eslint scripts/check-evidence-refs.mjs tests/unit/evidence-refs-exist.test.ts --max-warnings 0` | 0 | 0 error 0 warning |
+| 17 | `node scripts/check-no-bom.mjs` | 0 | `check-no-bom: ok` |
+| 18 | `git diff --check` | 0 | 无输出 |
+| 19 | `git check-ignore -v harness/specs/fixtures/ontology-lite-existing-contracts/report/runtime/x.md` | 0 | `.gitignore:144:/harness/specs/fixtures/ontology-lite-existing-contracts/report/runtime/` |
+| 20 | `pnpm … docs:policy:validate` | 0 | `[policy-docs] PASS: 10 checks` |
+| 21 | `cd …/report && sha256sum -c SHA256SUMS`（追加 2 行后） | 0 | 14 条 `OK`（既有 12 条字节不变 + `fixtures/validator-noop.json` + `credential-scan-c5.json`） |
+| 22 | 凭据扫描（`LC_ALL=C.UTF-8 grep -nP <C1–C3 同一 look-behind 模式>` 对 `validator-noop.json`、`scripts/check-evidence-refs.{mjs,d.mts}`、`tests/unit/evidence-refs-exist.test.ts`、本叶 spec、本文件、`.gitignore`；自测 3 行输入期望 2 命中） | grep **1**（= 无命中） | `report/credential-scan-c5.json`：`status clean`、`filesScanned 7`、`findings []`、自测 2/2 |
+| 23 | `git diff --stat`（跟踪文件，提交前） | — | `.gitignore +3`、`scripts/check-evidence-refs.d.mts` 35 行、`scripts/check-evidence-refs.mjs` 168 行、`tests/unit/evidence-refs-exist.test.ts` 310 行、`report/SHA256SUMS +2`、本文件；`git diff --stat HEAD -- shared/ electron/ src/ openclaw_runtime/ package.json` **0** 行；`git status --porcelain -- …/final` 空 |
+| 24 | 新增文件 | — | `harness/specs/tasks/ontology-lite-report-observability.md`、`report/fixtures/validator-noop.json`、`report/credential-scan-c5.json` |
+
+### 13.11 候选提交后复核
+
+由紧随候选提交的**仅证据回填提交**写入（TF-0637 §11.1 / TF-0638 §13.9 同形）：候选 commit / tree、`sparse detached worktree` 上的
+`--report`（期望 exit 0、`dirty false`、`rulesEvaluated` 19）、`--verify`（exit 0）、`validator-noop`（exit 1）、脏探针（exit 1）、
+`final/` 复核（exit 1、10 条）、`report/SHA256SUMS -c`、credential scan 读数与 vitest 在候选上的复跑。
+
+### 13.12 未做与残余风险
+
+| 项 | 性质 | 去向 |
+|---|---|---|
+| `core.autocrlf=true` 检出未实机复跑 | 结论由机制（`git cat-file blob` 不经检出转换）+ 等价负例（工作副本 CRLF 改写摘要不变）给出；无第二台机器参与 | 如需双机读数，另开环境节点；不影响本叶判定 |
+| 真实检出因 `_s07cfg/` 恒为脏候选 | 设计后果；`--report` 的干净读数须在 sparse worktree 上取 | §13.3 / §13.9 7 |
+| 封存 `final/evidence-report.json` 自 C5 起在任何 HEAD 上 `--verify` 均 exit 1 | 接受的兼容代价（§13.7）；历史效力不变 | 无 |
+| 探针绑定注册表当前词表 | 词表改名 → 对应探针以 `unknown-*` 失败 → `missing` 非空 → 报告失效（fail-closed），需同步探针 | 届时同步 |
+| `rulesEvaluated` 的来源规则部分仍是检查器自己的声明 | 这 8 条由本检查器代码路径产出，不存在"被替换的校验器"问题；合同只要求关系规则观测化 | 无 |
+| `pnpm` 运行前依赖校验在本检出弹出 purge 提示 | 环境事件，非代码；以 `--config.verify-deps-before-run=false` 绕过且未安装 | 环境修复不在本叶写集 |
+| **not-run**（如实记录，不得解读为通过） | `pnpm test` 全量、E2E、`pnpm run lint` 全仓（只对两个改动的 .ts/.mjs 跑 eslint）、`pnpm agent-dev:*`、`pnpm harness run … --dry-run`、live provider / Gateway | — |

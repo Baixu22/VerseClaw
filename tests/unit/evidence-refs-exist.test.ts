@@ -1,8 +1,8 @@
 // @vitest-environment node
 
-import { execFile } from 'node:child_process';
+import { execFile, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +12,7 @@ import * as semantics from '../../shared/product-semantics';
 import {
   EVIDENCE_NORMALIZATION,
   EVIDENCE_REPORT_SCHEMA,
+  RELATION_RULE_PROBES,
   SOURCE_DIAGNOSTIC_RULES,
   SUPPORTED_CONTRACT_VERSIONS,
   buildEvidenceReport,
@@ -19,6 +20,7 @@ import {
   describeCandidate,
   describeSourceRef,
   digestEvidenceBytes,
+  observeRelationRules,
   sourceRefDiagnostics,
   verifyEvidenceReport,
 } from '../../scripts/check-evidence-refs.mjs';
@@ -28,11 +30,70 @@ const ROOT = realpathSync(path.resolve(fileURLToPath(new URL('../..', import.met
 const ENTRY = 'scripts/check-evidence-refs.mjs';
 const REPORT_FIXTURE_DIR = 'harness/specs/fixtures/ontology-lite-existing-contracts/report';
 const FIXTURES = `${REPORT_FIXTURE_DIR}/fixtures`;
-const RUNTIME_DIR = path.join(ROOT, REPORT_FIXTURE_DIR, 'runtime');
+const FINAL_DIR = 'harness/specs/fixtures/ontology-lite-existing-contracts/final';
 const RUNTIME_REL = `${REPORT_FIXTURE_DIR}/runtime`;
 const execFileAsync = promisify(execFile);
-const TMP = mkdtempSync(path.join(tmpdir(), 'tf0636-c3-'));
+const TMP = mkdtempSync(path.join(tmpdir(), 'tf0639-c5-'));
 const ACTOR = 'vitest-evidence-refs';
+
+// ---------------------------------------------------------------------------
+// Clean candidate sandbox
+//
+// The gate judges a *clean* candidate: a dirty working tree makes every report
+// invalid (TF-0639). The real checkout is routinely dirty while this file runs
+// (uncommitted edits, other sessions' untracked directories), so every
+// --report / --verify case below runs against a throwaway git repository under
+// os.tmpdir() that holds the working-tree copies of exactly the tracked files
+// the gate needs, committed once. It exercises the checker as edited (not
+// HEAD's copy), never touches the real checkout or its .git, and is deleted
+// in afterAll. The default no-argument invocation and checkEvidenceRefs still
+// run against the real checkout: they need all referenced paths and do not
+// depend on cleanliness.
+// ---------------------------------------------------------------------------
+const SANDBOX_TREES = ['scripts', 'shared', 'harness/specs/fixtures/ontology-lite-existing-contracts'];
+const SANDBOX_FILES = ['docs/clawx-product-semantics.md', 'docs/modules/multi-agent-and-tasks.md', 'README.md'];
+
+function git(args: string[], cwd: string, encoding: 'utf8' | 'buffer' = 'utf8'): string | Buffer {
+  const result = spawnSync('git', args, { cwd, encoding, windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
+  if (result.error || result.status !== 0) {
+    throw new Error(`git ${args.join(' ')} failed in ${cwd}: ${result.stderr?.toString() ?? result.error?.message}`);
+  }
+  return result.stdout;
+}
+
+function buildSandbox(): string {
+  const sandbox = path.join(TMP, 'candidate');
+  mkdirSync(sandbox, { recursive: true });
+  // Tracked and untracked-but-not-ignored files: the working tree is the candidate
+  // under test, so a fixture added in this change set is part of it too.
+  const files = (git(['ls-files', '-z', '-co', '--exclude-standard', '--', ...SANDBOX_TREES, ...SANDBOX_FILES], ROOT) as string).split('\0').filter(Boolean);
+  for (const relative of files) {
+    const source = path.join(ROOT, relative);
+    if (!existsSync(source)) continue;
+    const target = path.join(sandbox, relative);
+    mkdirSync(path.dirname(target), { recursive: true });
+    copyFileSync(source, target);
+  }
+  // Only the rule under test; the real .gitignore ignores docs/** wholesale
+  // and would keep the two cited documents out of the sandbox commit.
+  writeFileSync(path.join(sandbox, '.gitignore'), `/${RUNTIME_REL}/\n`);
+  git(['init', '-q', '-b', 'main'], sandbox);
+  for (const [key, value] of [['core.autocrlf', 'false'], ['commit.gpgsign', 'false'], ['user.name', 'tf0639-sandbox'], ['user.email', 'tf0639@sandbox.invalid']]) {
+    git(['config', key, value], sandbox);
+  }
+  git(['add', '-A'], sandbox);
+  git(['commit', '-q', '-m', 'tf0639 clean candidate sandbox'], sandbox);
+  return realpathSync(sandbox);
+}
+
+const SANDBOX = buildSandbox();
+const SANDBOX_ENTRY = path.join(SANDBOX, ENTRY);
+const SANDBOX_RUNTIME_DIR = path.join(SANDBOX, RUNTIME_REL);
+
+/** Bytes of a path as committed in the sandbox candidate — what the checker must hash. */
+function candidateBlob(relative: string): Buffer {
+  return git(['cat-file', 'blob', `HEAD:${relative}`], SANDBOX, 'buffer') as Buffer;
+}
 
 // The contract's closed source rule set, written once here and once in the
 // checker so a rule cannot be added or dropped silently.
@@ -71,19 +132,23 @@ function rulesOf(diagnostics: EvidenceDiagnostic[]): string[] {
   return diagnostics.map((diagnostic) => diagnostic.rule);
 }
 
-async function run(args: string[], env: Record<string, string | undefined> = {}) {
+async function spawnChecker(entry: string, cwd: string, args: string[], env: Record<string, string | undefined> = {}) {
   const childEnv: Record<string, string> = {};
   for (const [key, value] of Object.entries({ ...process.env, ...env })) {
     if (value !== undefined) childEnv[key] = value;
   }
   try {
-    const { stdout, stderr } = await execFileAsync(process.execPath, [ENTRY, ...args], { cwd: ROOT, encoding: 'utf8', env: childEnv, maxBuffer: 16 * 1024 * 1024 });
+    const { stdout, stderr } = await execFileAsync(process.execPath, [entry, ...args], { cwd, encoding: 'utf8', env: childEnv, maxBuffer: 16 * 1024 * 1024 });
     return { code: 0, stdout, stderr };
   } catch (error) {
     const failure = error as { code?: number | string; stdout?: string; stderr?: string };
     return { code: typeof failure.code === 'number' ? failure.code : -1, stdout: failure.stdout ?? '', stderr: failure.stderr ?? '' };
   }
 }
+/** The checker as copied into the clean candidate sandbox. */
+const run = (args: string[], env: Record<string, string | undefined> = {}) => spawnChecker(SANDBOX_ENTRY, SANDBOX, args, env);
+/** The checker in the real checkout (default invocation only). */
+const runReal = (args: string[]) => spawnChecker(ENTRY, ROOT, args);
 
 async function report(args: string[], env: Record<string, string | undefined> = {}) {
   const file = tmpPath('report.json');
@@ -91,34 +156,52 @@ async function report(args: string[], env: Record<string, string | undefined> = 
   return { ...result, file, report: existsSync(file) ? (readJson(file) as ProductSemanticEvidenceReport) : null };
 }
 
-// Runtime files live under the tracked fixture directory (so they are inside the
-// root) and are removed again whatever the test outcome.
+// Bounded runtime files live under the sandbox's ignored report/runtime/ (inside
+// the sandbox root, untracked, not dirtying it) and are removed whatever the
+// outcome. Nothing is ever written under the real checkout.
 async function withRuntimeFile<T>(name: string, bytes: Buffer, body: (relativePath: string) => Promise<T>): Promise<T> {
-  mkdirSync(RUNTIME_DIR, { recursive: true });
-  const absolute = path.join(RUNTIME_DIR, name);
-  writeFileSync(absolute, bytes);
+  mkdirSync(SANDBOX_RUNTIME_DIR, { recursive: true });
+  writeFileSync(path.join(SANDBOX_RUNTIME_DIR, name), bytes);
   try {
     return await body(`${RUNTIME_REL}/${name}`);
   } finally {
-    rmSync(RUNTIME_DIR, { recursive: true, force: true });
+    rmSync(SANDBOX_RUNTIME_DIR, { recursive: true, force: true });
   }
 }
 async function withEscapeLink<T>(body: (relativePath: string) => Promise<T>): Promise<T> {
   const target = path.join(TMP, 'escape-target');
   mkdirSync(target, { recursive: true });
   writeFileSync(path.join(target, 'escaped.md'), 'escaped bytes that live outside the repository\n');
-  mkdirSync(RUNTIME_DIR, { recursive: true });
+  mkdirSync(SANDBOX_RUNTIME_DIR, { recursive: true });
   // 'junction' needs no privilege on Windows; POSIX ignores the type and creates a symlink.
-  symlinkSync(target, path.join(RUNTIME_DIR, 'escape-link'), 'junction');
+  symlinkSync(target, path.join(SANDBOX_RUNTIME_DIR, 'escape-link'), 'junction');
   try {
     return await body(`${RUNTIME_REL}/escape-link/escaped.md`);
   } finally {
-    rmSync(RUNTIME_DIR, { recursive: true, force: true });
+    rmSync(SANDBOX_RUNTIME_DIR, { recursive: true, force: true });
+  }
+}
+/** An untracked, un-ignored file at the sandbox root: the smallest dirty candidate. */
+async function withDirtySandbox<T>(body: (dirtyPath: string) => Promise<T>): Promise<T> {
+  const name = 'tf0639-dirty-probe.txt';
+  writeFileSync(path.join(SANDBOX, name), 'untracked probe\n');
+  try {
+    return await body(name);
+  } finally {
+    rmSync(path.join(SANDBOX, name), { force: true });
+  }
+}
+/** Overwrites a tracked sandbox file's working copy, restoring it from the candidate afterwards. */
+async function withWorkingCopy<T>(relative: string, bytes: Buffer, body: () => Promise<T>): Promise<T> {
+  writeFileSync(path.join(SANDBOX, relative), bytes);
+  try {
+    return await body();
+  } finally {
+    git(['checkout', '--', relative], SANDBOX);
   }
 }
 
 afterAll(() => {
-  rmSync(RUNTIME_DIR, { recursive: true, force: true });
   rmSync(TMP, { recursive: true, force: true });
 });
 
@@ -134,7 +217,7 @@ describe('check-evidence-refs default invocation is byte-identical to the pre-C3
   it('prints the pinned stdout, nothing on stderr and exits 0', async () => {
     const expected = readFileSync(path.join(ROOT, REPORT_FIXTURE_DIR, 'default-stdout.expected.txt'), 'utf8');
     expect(expected).toMatch(/^\[evidence-refs\] PASS \d+ referenced path\(s\)\n$/);
-    const result = await run([]);
+    const result = await runReal([]);
     expect(result.code).toBe(0);
     expect(result.stdout).toBe(expected);
     expect(result.stderr).toBe('');
@@ -152,6 +235,27 @@ describe('ProductSemanticEvidenceReport/v1 closed vocabularies', () => {
     expect(SUPPORTED_CONTRACT_VERSIONS).toContain(semantics.PRODUCT_SEMANTIC_CONTRACT_VERSION);
     expect(SUPPORTED_CONTRACT_VERSIONS).not.toContain('ProductSemanticRelations/v2');
     expect(EVIDENCE_REPORT_SCHEMA).toBe('ProductSemanticEvidenceReport/v1');
+  });
+
+  it('probes every declared relation rule exactly once and observes all of them on the live validator', () => {
+    expect(RELATION_RULE_PROBES.map((probe) => probe.rule)).toEqual([...semantics.PRODUCT_SEMANTIC_RELATION_RULES]);
+    for (const probe of RELATION_RULE_PROBES) {
+      const { diagnostics } = semantics.validateProductSemanticRelations(probe.candidates, probe.context);
+      expect(rulesOf(diagnostics), probe.rule).toContain(probe.rule);
+    }
+    const observation = observeRelationRules(semantics);
+    expect(observation.observed).toEqual([...semantics.PRODUCT_SEMANTIC_RELATION_RULES]);
+    expect(observation.missing).toEqual([]);
+    expect(observation.unknown).toEqual([]);
+  });
+
+  it('observes nothing from a validator that reports nothing, and names what is missing', () => {
+    const noop = { ...semantics, validateProductSemanticRelations: () => ({ ok: true, diagnostics: [] }) };
+    const observation = observeRelationRules(noop);
+    expect(observation.observed).toEqual([]);
+    expect(observation.missing).toEqual([...semantics.PRODUCT_SEMANTIC_RELATION_RULES]);
+    const undeclared = { ...semantics, validateProductSemanticRelations: () => ({ ok: false, diagnostics: [{ relationKey: 'a--b--c', field: 'x', rule: 'made-up-rule', message: 'x' }] }) };
+    expect(observeRelationRules(undeclared).unknown).toEqual(['made-up-rule']);
   });
 
   it('keeps the canonical and the raw digest apart', () => {
@@ -180,20 +284,33 @@ describe('ProductSemanticEvidenceReport/v1 closed vocabularies', () => {
   });
 
   it('treats an unobserved tracking answer as untracked, never as tracked', () => {
-    const facts = describeSourceRef(ROOT, 'docs/modules/multi-agent-and-tasks.md', { trackedPaths: null });
+    const facts = describeSourceRef(ROOT, 'docs/modules/multi-agent-and-tasks.md', { candidateBlobs: null });
     expect(facts.exists).toBe(true);
     expect(facts.tracked).toBeNull();
     const diagnostics = sourceRefDiagnostics('x--y--z', facts);
     expect(rulesOf(diagnostics)).toEqual(['source-untracked']);
     expect(diagnostics[0].message).toMatch(/could not be observed/);
-    const missing = describeSourceRef(ROOT, 'docs/does-not-exist.md', { trackedPaths: new Set() });
+    const missing = describeSourceRef(ROOT, 'docs/does-not-exist.md', { candidateBlobs: new Map() });
     expect(rulesOf(sourceRefDiagnostics('x--y--z', missing))).toEqual(['source-missing']);
+  });
+
+  it('hashes the candidate blob, never the working-tree bytes, and hashes nothing without a candidate blob', () => {
+    const relative = 'docs/modules/multi-agent-and-tasks.md';
+    const onDisk = readFileSync(path.join(SANDBOX, relative));
+    const committed = Buffer.from('alpha\nbeta\n', 'utf8');
+    expect(onDisk.equals(committed)).toBe(false);
+    const fromBlob = describeSourceRef(SANDBOX, relative, { candidateBlobs: new Map([[relative, committed]]) });
+    expect(fromBlob).toMatchObject({ exists: true, tracked: true, symlinkEscape: false, digest: sha256(committed), rawDigest: sha256(committed) });
+    const notInCandidate = describeSourceRef(SANDBOX, relative, { candidateBlobs: new Map() });
+    expect(notInCandidate).toMatchObject({ exists: true, tracked: false, digest: null, rawDigest: null });
+    expect(rulesOf(sourceRefDiagnostics('x--y--z', notInCandidate))).toEqual(['source-untracked']);
   });
 });
 
-describe('--report on the live registry', () => {
-  it('writes a valid report that binds every relation, its sources and the candidate', async () => {
+describe('--report on the live registry (clean candidate sandbox)', () => {
+  it('writes a valid report that binds every relation, its candidate-blob digests and a clean candidate', async () => {
     const result = await report(['--actor', ACTOR]);
+    expect(result.stderr).toBe('');
     expect(result.code).toBe(0);
     expect(result.stdout).toMatch(/^\[evidence-refs\] report valid: 6 relation\(s\), \d+ source ref\(s\), 0 diagnostic\(s\) -> /);
     const generated = result.report;
@@ -213,15 +330,13 @@ describe('--report on the live registry', () => {
     expect(generated.unverified).toEqual([]);
     expect(generated.fixtures).toEqual([]);
     expect(generated.normalization).toEqual(EVIDENCE_NORMALIZATION);
+    expect(generated.normalization.rawDigestPolicy).toMatch(/candidate blob \(git cat-file blob HEAD:<path>\)/);
     expect(generated.rulesEvaluated).toEqual([...semantics.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES]);
 
-    const candidate = describeCandidate(ROOT);
+    const candidate = describeCandidate(SANDBOX);
+    expect(generated.candidate).toEqual({ commit: candidate.commit, tree: candidate.tree, dirty: false, dirtyPaths: [] });
     expect(generated.candidate.commit).toMatch(/^[0-9a-f]{40}$/);
     expect(generated.candidate.tree).toMatch(/^[0-9a-f]{40}$/);
-    expect(generated.candidate.commit).toBe(candidate.commit);
-    expect(generated.candidate.tree).toBe(candidate.tree);
-    expect(typeof generated.candidate.dirty).toBe('boolean');
-    expect(Array.isArray(generated.candidate.dirtyPaths)).toBe(true);
 
     expect(generated.relations).toHaveLength(semantics.PRODUCT_SEMANTIC_RELATIONS.length);
     generated.relations.forEach((entry, index) => {
@@ -232,7 +347,7 @@ describe('--report on the live registry', () => {
       for (const ref of entry.sourceRefs) {
         expect(Object.keys(ref)).toEqual(SOURCE_REF_KEYS);
         expect(ref).toMatchObject({ exists: true, insideRoot: true, tracked: true, symlinkEscape: false });
-        const expected = digestEvidenceBytes(readFileSync(path.join(ROOT, ref.path)));
+        const expected = digestEvidenceBytes(candidateBlob(ref.path));
         expect(ref.digest).toBe(expected.digest);
         expect(ref.rawDigest).toBe(expected.rawDigest);
       }
@@ -286,8 +401,6 @@ describe('--report on the live registry', () => {
 });
 
 describe('--fixture negatives through the real entry (in-memory rewrites, tree untouched)', () => {
-  const porcelainBefore = describeCandidate(ROOT).dirtyPaths;
-
   async function negative(fixtureId: string, runtimePath?: string) {
     const fixture = readJson(path.join(ROOT, FIXTURES, `${fixtureId}.json`));
     const result = await report(['--fixture', `${FIXTURES}/${fixtureId}.json`, '--actor', ACTOR]);
@@ -317,6 +430,19 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(generated.relations[0].relationKey).toBe('chat--suggests-upgrade-to--chat');
   });
 
+  it('a validator stubbed to a no-op cannot keep the declared rules: rulesEvaluated shrinks and the report is invalid', async () => {
+    const { report: generated, fixture } = await negative('validator-noop');
+    expect(rulesOf(generated.diagnostics)).toEqual(['report-field-missing']);
+    expect(generated.diagnostics[0].field).toBe('rulesEvaluated');
+    expect(generated.diagnostics[0].message).toMatch(new RegExp(`reported 0 of ${fixture.expect.missingRuleCount} declared relation rule\\(s\\)`));
+    for (const rule of semantics.PRODUCT_SEMANTIC_RELATION_RULES) expect(generated.diagnostics[0].message).toContain(rule);
+    expect(generated.rulesEvaluated).toEqual([...SOURCE_DIAGNOSTIC_RULES]);
+    expect(generated.rulesEvaluated).toHaveLength(fixture.expect.rulesEvaluatedLength);
+    // The relations themselves were still enumerated and their sources still bound.
+    expect(generated.relations.reduce((sum, entry) => sum + entry.sourceRefs.length, 0)).toBe(8);
+    expect(generated.unverified).toEqual([]);
+  });
+
   it('a deleted or moved source is recorded as missing and unverified', async () => {
     const { report: generated, fixture } = await negative('source-missing');
     const ref = generated.relations[3].sourceRefs[0];
@@ -331,18 +457,18 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(generated.unverified[0].reason).toBe('source-outside-root');
   });
 
-  it('an untracked local file is rejected while both of its digests are still recorded', async () => {
+  it('an untracked local file is rejected and, having no candidate blob, is not hashed', async () => {
     const bytes = Buffer.from('# untracked probe\r\nsecond line\r\n', 'utf8');
     await withRuntimeFile('untracked-probe.md', bytes, async () => {
-      const { report: generated } = await negative('source-untracked');
+      const { report: generated, fixture } = await negative('source-untracked');
       const ref = generated.relations[3].sourceRefs[0];
-      expect(ref).toMatchObject({ exists: true, insideRoot: true, tracked: false, symlinkEscape: false });
-      expect(ref.digest).toBe(sha256(Buffer.from('# untracked probe\nsecond line\n', 'utf8')));
-      expect(ref.rawDigest).toBe(sha256(bytes));
-      expect(ref.digest).not.toBe(ref.rawDigest);
-      expect(generated.unverified).toEqual([]);
+      expect(ref).toMatchObject({ exists: true, insideRoot: true, tracked: false, symlinkEscape: false, digest: null, rawDigest: null });
+      expect(generated.unverified).toEqual([{ relationKey: fixture.expect.relationKey, path: fixture.expect.path, reason: 'source-untracked' }]);
+      // The ignored runtime probe is untracked without dirtying the candidate.
+      expect(generated.candidate.dirty).toBe(false);
+      expect(rulesOf(generated.diagnostics)).toEqual(['source-untracked']);
     });
-    expect(existsSync(RUNTIME_DIR)).toBe(false);
+    expect(existsSync(SANDBOX_RUNTIME_DIR)).toBe(false);
   });
 
   it('a link whose real path leaves the root is rejected and its bytes are not hashed', async () => {
@@ -351,8 +477,9 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
       const ref = generated.relations[3].sourceRefs[0];
       expect(ref).toMatchObject({ exists: true, insideRoot: true, symlinkEscape: true, digest: null, rawDigest: null });
       expect(generated.unverified[0].reason).toBe('source-symlink-escape');
+      expect(generated.candidate.dirty).toBe(false);
     });
-    expect(existsSync(RUNTIME_DIR)).toBe(false);
+    expect(existsSync(SANDBOX_RUNTIME_DIR)).toBe(false);
   });
 
   it('an unsupported contract version is reported, not read as the latest', async () => {
@@ -361,7 +488,7 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(rulesOf(generated.diagnostics)).toEqual(['version-unsupported']);
   });
 
-  it('tracked sources with LF and lone-CR bytes stay valid and record distinct digests', async () => {
+  it('tracked sources with LF and lone-CR bytes stay valid and record distinct digests of their candidate blobs', async () => {
     const fixture = readJson(path.join(ROOT, FIXTURES, 'source-line-endings.json'));
     const result = await report(['--fixture', `${FIXTURES}/source-line-endings.json`, '--actor', ACTOR]);
     expect(result.stderr).not.toMatch(/FAIL/);
@@ -373,8 +500,8 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     const [lf, cr] = entry?.sourceRefs ?? [];
     expect(lf).toMatchObject({ exists: true, tracked: true, symlinkEscape: false });
     expect(cr).toMatchObject({ exists: true, tracked: true, symlinkEscape: false });
-    const lfBytes = readFileSync(path.join(ROOT, fixture.expect.paths.lf));
-    const crBytes = readFileSync(path.join(ROOT, fixture.expect.paths.cr));
+    const lfBytes = candidateBlob(fixture.expect.paths.lf);
+    const crBytes = candidateBlob(fixture.expect.paths.cr);
     expect(crBytes.includes(0x0d)).toBe(true);
     expect(lf.digest).toBe(sha256(lfBytes));
     expect(lf.rawDigest).toBe(sha256(lfBytes));
@@ -398,6 +525,65 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(readFileSync(generated.file).equals(before)).toBe(true);
   });
 
+  it('a dirty candidate cannot pass: an untracked file makes --report invalid and --verify refuses the report', async () => {
+    const dirty = await withDirtySandbox(async (dirtyPath) => {
+      const result = await report(['--actor', ACTOR]);
+      expect(result.code).toBe(1);
+      expect(result.stderr).toMatch(/\[evidence-refs\] FAIL report invalid: 6 relation\(s\), 8 source ref\(s\), 1 diagnostic\(s\)/);
+      expect(result.stderr).toMatch(/\[candidate-mismatch\] - candidate\.dirty: The working tree is dirty \(1 path\(s\): tf0639-dirty-probe\.txt\)/);
+      const generated = result.report;
+      expect(generated).not.toBeNull();
+      if (!generated) throw new Error('report missing');
+      expect(generated).toMatchObject({ status: 'invalid', exitCode: 1, fixtures: [] });
+      expect(generated.candidate.dirty).toBe(true);
+      expect(generated.candidate.dirtyPaths).toEqual([dirtyPath]);
+      expect(rulesOf(generated.diagnostics)).toEqual(['candidate-mismatch']);
+      expect(generated.diagnostics[0].field).toBe('candidate.dirty');
+      // Digests are still the candidate blobs': the dirty tree changes the verdict, not the bytes bound.
+      for (const entry of generated.relations) {
+        for (const ref of entry.sourceRefs) expect(ref.rawDigest).toBe(digestEvidenceBytes(candidateBlob(ref.path)).rawDigest);
+      }
+      return result;
+    });
+    expect(describeCandidate(SANDBOX).dirty).toBe(false);
+    const verified = await run(['--verify', dirty.file]);
+    expect(verified.code).toBe(1);
+    expect(verified.stderr).toMatch(/\[candidate-mismatch\] - candidate\.dirty: Report records a dirty candidate \(1 path\(s\)\)/);
+    expect(verified.stderr).toMatch(/\[report-field-missing\] - status: Report recorded status "invalid"/);
+  });
+
+  it('working-tree bytes never enter a digest: a CRLF re-checkout or edit of a tracked source leaves its digests equal to the candidate blob and fails only as a dirty candidate', async () => {
+    const relative = 'docs/modules/multi-agent-and-tasks.md';
+    const blob = candidateBlob(relative);
+    expect(blob.includes(0x0d)).toBe(false);
+    const clean = await report(['--actor', ACTOR]);
+    expect(clean.code).toBe(0);
+    const cleanRefs = clean.report?.relations.flatMap((entry) => entry.sourceRefs.filter((ref) => ref.path === relative)) ?? [];
+    expect(cleanRefs.length).toBeGreaterThan(0);
+
+    const crlf = Buffer.from(blob.toString('utf8').replace(/\n/g, '\r\n'), 'utf8');
+    await withWorkingCopy(relative, crlf, async () => {
+      expect(readFileSync(path.join(SANDBOX, relative)).equals(blob)).toBe(false);
+      const edited = await report(['--actor', ACTOR]);
+      expect(edited.code).toBe(1);
+      expect(edited.stderr).not.toMatch(/source-digest-mismatch/);
+      const generated = edited.report;
+      expect(generated).not.toBeNull();
+      if (!generated) throw new Error('report missing');
+      expect(rulesOf(generated.diagnostics)).toEqual(['candidate-mismatch']);
+      expect(generated.diagnostics[0].field).toBe('candidate.dirty');
+      expect(generated.candidate.dirtyPaths).toEqual([relative]);
+      const editedRefs = generated.relations.flatMap((entry) => entry.sourceRefs.filter((ref) => ref.path === relative));
+      expect(editedRefs).toEqual(cleanRefs);
+      for (const ref of editedRefs) {
+        expect(ref.digest).toBe(digestEvidenceBytes(blob).digest);
+        expect(ref.rawDigest).toBe(sha256(blob));
+        expect(ref.rawDigest).not.toBe(sha256(crlf));
+      }
+    });
+    expect(describeCandidate(SANDBOX)).toMatchObject({ dirty: false, dirtyPaths: [] });
+  });
+
   it('a fixture that mutates a file the gate never reads is an error, not a pass', async () => {
     const fixtureFile = tmpPath('unapplied-fixture.json');
     writeFileSync(fixtureFile, JSON.stringify({ schema: 'ContractCheckFixture/v1', id: 'unapplied', mutations: [{ file: 'README.md', append: '\nprobe\n' }] }));
@@ -419,16 +605,17 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(verified.code).toBe(1);
   });
 
-  it('left the working tree as it found it', () => {
-    expect(describeCandidate(ROOT).dirtyPaths).toEqual(porcelainBefore);
-    expect(existsSync(RUNTIME_DIR)).toBe(false);
+  it('left the candidate sandbox clean and never wrote into the real checkout', () => {
+    expect(describeCandidate(SANDBOX)).toMatchObject({ dirty: false, dirtyPaths: [] });
+    expect(existsSync(SANDBOX_RUNTIME_DIR)).toBe(false);
+    expect(existsSync(path.join(ROOT, RUNTIME_REL))).toBe(false);
   });
 });
 
 describe('--verify invalidates tampered or incomplete reports', () => {
-  const candidate = describeCandidate(ROOT);
-  const options = { root: ROOT, contractVersion: semantics.PRODUCT_SEMANTIC_CONTRACT_VERSION, candidate, registry: semantics };
-  const base = buildEvidenceReport({ root: ROOT, registry: semantics, candidate, actor: ACTOR, command: ['node', ENTRY] });
+  const candidate = describeCandidate(SANDBOX);
+  const options = { root: SANDBOX, contractVersion: semantics.PRODUCT_SEMANTIC_CONTRACT_VERSION, candidate, registry: semantics };
+  const base = buildEvidenceReport({ root: SANDBOX, registry: semantics, candidate, actor: ACTOR, command: ['node', ENTRY] });
 
   function verifyTampered(mutate: (copy: Json) => void) {
     const copy: Json = structuredClone(base);
@@ -438,6 +625,7 @@ describe('--verify invalidates tampered or incomplete reports', () => {
 
   it('accepts the untampered report', () => {
     expect(base.status).toBe('valid');
+    expect(base.candidate.dirty).toBe(false);
     const result = verifyEvidenceReport(base, options);
     expect(result).toEqual({ status: 'valid', diagnostics: [], rulesEvaluated: [...SOURCE_DIAGNOSTIC_RULES] });
   });
@@ -447,9 +635,11 @@ describe('--verify invalidates tampered or incomplete reports', () => {
     ['raw digest', (copy) => { copy.relations[0].sourceRefs[0].rawDigest = '0'.repeat(64); }, 'source-digest-mismatch', 'rawDigest'],
     ['candidate commit', (copy) => { copy.candidate.commit = '0'.repeat(40); }, 'candidate-mismatch', 'candidate.commit'],
     ['candidate tree', (copy) => { copy.candidate.tree = '0'.repeat(40); }, 'candidate-mismatch', 'candidate.tree'],
+    ['dirty candidate', (copy) => { copy.candidate.dirty = true; copy.candidate.dirtyPaths = ['probe.txt']; }, 'candidate-mismatch', 'candidate.dirty'],
     ['contract version', (copy) => { copy.contractVersion = 'ProductSemanticRelations/v2'; }, 'version-unsupported', 'contractVersion'],
     ['report schema', (copy) => { copy.schema = 'SomethingElse/v1'; }, 'version-unsupported', 'schema'],
     ['normalization policy', (copy) => { copy.normalization.policy = 'md5 over whatever'; }, 'version-unsupported', 'normalization.policy'],
+    ['working-tree raw digest policy', (copy) => { copy.normalization.rawDigestPolicy = 'sha256 over the raw file bytes as stored, so the original line endings stay recoverable'; }, 'version-unsupported', 'normalization.rawDigestPolicy'],
     ['fixture-born report', (copy) => { copy.fixtures = ['bad-relation-self-loop']; }, 'candidate-mismatch', 'fixtures'],
     ['missing actor', (copy) => { delete copy.actor; }, 'report-field-missing', 'actor'],
     ['human actor', (copy) => { copy.actor.driven_by = 'human'; }, 'report-field-missing', 'actor.driven_by'],
@@ -470,6 +660,7 @@ describe('--verify invalidates tampered or incomplete reports', () => {
     ['source refs emptied', (copy) => { copy.relations[0].sourceRefs = []; }, 'report-field-missing', 'relations[0].sourceRefs'],
     ['source refs re-pointed', (copy) => { copy.relations[0].sourceRefs = copy.relations[1].sourceRefs; }, 'report-field-missing', 'relations[0].sourceRefs'],
     ['rules list replaced', (copy) => { copy.rulesEvaluated = ['x']; }, 'report-field-missing', 'rulesEvaluated'],
+    ['rules trimmed to the source rules (a no-op validator\'s report)', (copy) => { copy.rulesEvaluated = [...SOURCE_DIAGNOSTIC_RULES]; }, 'report-field-missing', 'rulesEvaluated'],
     ['valid status with diagnostics', (copy) => { copy.diagnostics = [{ relationKey: null, field: 'x', rule: 'source-missing', message: 'x' }]; }, 'report-field-missing', 'status'],
   ];
 
@@ -530,7 +721,7 @@ describe('--verify invalidates tampered or incomplete reports', () => {
 // through the gate CI actually consumes (`pnpm test` -> vitest -> this file), not only
 // through the exported functions: a bad relation, a stale source, an empty report and
 // a skipped check. Each case below spawns the CLI; the fixtures are the C3 ones under
-// report/fixtures/ and no second fixture set exists.
+// report/fixtures/ (plus C5's validator-noop) and no second fixture set exists.
 describe('evidence refs check: real gate entry (node scripts/check-evidence-refs.mjs)', () => {
   const RELATION_RULE_COUNT = 11;
   const SOURCE_RULE_COUNT = 8;
@@ -619,5 +810,28 @@ describe('evidence refs check: real gate entry (node scripts/check-evidence-refs
     const verified = await run(['--verify', result.file]);
     expect(verified.code).toBe(0);
     expect(verified.stdout).toMatch(/^\[evidence-refs\] verify valid: .* \(6 relation\(s\), 8 source ref\(s\), candidate [0-9a-f]{9}\)\n$/);
+  });
+
+  // TF-0639 compatibility ruling for the sealed C4 evidence: it was digested from
+  // working-tree bytes under the old normalization text, so under the candidate-blob
+  // policy it is version-unsupported — never silently re-read, never re-signed.
+  it('the sealed final/ report is unchanged and, under the candidate-blob policy, verifies as version-unsupported rather than being silently accepted', async () => {
+    const sums = readFileSync(path.join(ROOT, FINAL_DIR, 'SHA256SUMS'), 'utf8').trim().split(/\r?\n/);
+    expect(sums.length).toBeGreaterThanOrEqual(4);
+    for (const line of sums) {
+      const [digest, name] = line.split(/\s+\*?/);
+      expect(sha256(readFileSync(path.join(ROOT, FINAL_DIR, name))), name).toBe(digest);
+    }
+    const sealedPath = path.join(ROOT, FINAL_DIR, 'evidence-report.json');
+    const sealed = readJson(sealedPath) as ProductSemanticEvidenceReport;
+    expect(sealed.normalization.policy).not.toBe(EVIDENCE_NORMALIZATION.policy);
+    expect(sealed.normalization.rawDigestPolicy).not.toBe(EVIDENCE_NORMALIZATION.rawDigestPolicy);
+    const before = readFileSync(sealedPath);
+    const verified = await run(['--verify', sealedPath]);
+    expect(verified.code).toBe(1);
+    expect(verified.stderr).toMatch(/\[version-unsupported\] - normalization\.policy: Report digests were produced under a different normalization policy/);
+    expect(verified.stderr).toMatch(/\[version-unsupported\] - normalization\.rawDigestPolicy: Report raw digests were produced under a different policy/);
+    expect(verified.stderr).toMatch(/\[candidate-mismatch\] - candidate\.commit/);
+    expect(readFileSync(sealedPath).equals(before)).toBe(true);
   });
 });
