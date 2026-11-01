@@ -2,6 +2,10 @@
 import type { ContextEvent, ExtensionAPI, ExtensionContext } from "../../sessions/index.js";
 import { pruneContextMessages } from "./pruner.js";
 import { getContextPruningRuntime } from "./runtime.js";
+import {
+  buildWouldTrimReport,
+  decideWouldTrimGate,
+} from "./would-trim.js";
 
 // Session extension that prunes context messages before model calls according to
 // the active context-pruning runtime settings.
@@ -13,6 +17,19 @@ export default function contextPruningExtension(api: ExtensionAPI): void {
       return undefined;
     }
 
+    // TF-0646: shadow evidence only. The flag changes whether a report is
+    // recorded, never whether the pruner runs or what it returns.
+    if (runtime.wouldTrimShadow === true) {
+      const report = buildWouldTrimReport({
+        messages: event.messages,
+        settings: runtime.settings,
+        ctx,
+        isToolPrunable: runtime.isToolPrunable,
+        contextWindowTokensOverride: runtime.contextWindowTokens ?? undefined,
+        dropThinkingBlocksForEstimate: runtime.dropThinkingBlocks,
+      });
+      runtime.lastWouldTrim = { ...report, gate: decideWouldTrimGate(report) };
+    }
     if (runtime.settings.mode === "cache-ttl") {
       const ttlMs = runtime.settings.ttlMs;
       const lastTouch = runtime.lastCacheTouchAt ?? null;
@@ -35,10 +52,24 @@ export default function contextPruningExtension(api: ExtensionAPI): void {
       dropThinkingBlocksForEstimate: runtime.dropThinkingBlocks,
     });
 
+
     if (next === event.messages) {
       return undefined;
     }
 
+    // TF-0646: shadow evidence only. The flag changes whether a report is
+    // recorded, never whether the pruner runs or what it returns.
+    if (runtime.wouldTrimShadow === true) {
+      const report = buildWouldTrimReport({
+        messages: event.messages,
+        settings: runtime.settings,
+        ctx,
+        isToolPrunable: runtime.isToolPrunable,
+        contextWindowTokensOverride: runtime.contextWindowTokens ?? undefined,
+        dropThinkingBlocksForEstimate: runtime.dropThinkingBlocks,
+      });
+      runtime.lastWouldTrim = { ...report, gate: decideWouldTrimGate(report) };
+    }
     if (runtime.settings.mode === "cache-ttl") {
       runtime.lastCacheTouchAt = Date.now();
     }

@@ -232,6 +232,22 @@ attempt 结束即删除；唯一形状正确的落盘载体按 `turnId` / `attem
 关闭时**工具根本不注册**（不是执行时再拒绝），所以模型工具清单与 system prompt 字节不变。
 
 非目标：不实现无摘要丢弃、不允许跨会话重置、不改自动 compaction 阈值。
+## 4.4 缓存边界修剪的 shadow would-trim（默认关闭）
+
+cache-TTL pruner 是**真改**：TTL 过期后它会重写旧的 tool result。此前没有"只看不改"的读数，
+所以"是否安全、是否值得"只能靠打开开关去试。
+
+本叶只加测量，不加改动：
+
+- `buildWouldTrimReport` 对副本跑真实 pruner，产出 `WouldTrimReport/v1`：每项 `ownerRef`
+  （`msg:<index>:<tool>:<digest>`）、index、toolName、before/after/saved 字符数、soft-trim/hard-clear，
+  以及总量、估算 token 与投影摘要。**不含任何 message 正文。**
+- GO/NO-GO：无修剪或 0 项 → NO-GO；保存比例 < 1% → NO-GO；否则 GO 并给出实测节省。
+- 开关 `runtime.contextPruning.wouldTrimShadow`（默认 false）只决定是否记录报告。报告放在
+  runtime 状态 `lastWouldTrim`，不发送、不落盘；pruner 的返回值与 cache-TTL 判定不变。
+- 报告在 cache-age 早退**之前**生成，因此刚触发的轮次也能看到"会修剪什么"；但真正是否修剪仍由原逻辑决定。
+
+非目标：不实现服务端 `cache_edits`、不改任何 compaction 阈值、不默认开启。
 ## 5. Context health
 
 `ContextHealthMonitor v1` 是确定性、无 LLM 的四维评分：
