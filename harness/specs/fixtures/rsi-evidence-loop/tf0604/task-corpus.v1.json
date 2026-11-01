@@ -10,8 +10,8 @@
   "annotationBoundary": "Prospective safety/anchor annotations; original 2026-10-31 measurement inputs and verdict are archived unchanged.",
   "claimBoundary": "These are real repository tasks and committed agent-driven acceptance records. They are not real-human traffic, live-provider quality evidence, or promotion evidence.",
   "provenance": {
-    "sourceCommit": "b9d46c37aa665d7fa30a6c1abb07beec8eac092a",
-    "sourceTree": "bb7f6e976f42a898579b6d0cda8c94a0fca54c1e",
+    "sourceCommit": "f3710e5f877f32d90ab29fe093c9441c95cfa441",
+    "sourceTree": "bb4da00181736dd00e40e401d21261bb713cc540",
     "sourcePolicy": "Only committed repository artefacts are admitted; source digests are checked before every report.",
     "realProvider": false,
     "realHuman": false,
