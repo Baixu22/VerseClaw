@@ -388,3 +388,10 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 - `src/components/layout/Sidebar.tsx`
 
 延伸阅读：[产品语义中的生命周期边界](../clawx-product-semantics.md)、[长会话控制面设计](../dev/session-lifecycle-control-plane/DESIGN.zh-CN.md)、[Delegation admission](../../harness/specs/guides/long-session-delegation-admission.md)。
+
+## 会话索引与能力预设（B1 决策）
+
+- 决策记录：`docs/dev/session-lifecycle-control-plane/B1-DECISION.zh-CN.md`（TF-0647）。
+- 当前结论：**可重建会话索引与会话能力预设均为 NO-GO**，原因是缺少实测查询压力与消费需求语料，而不是技术不可行。
+- 本决策不新增索引、store、adapter 或 preset；冻结 `SessionEffectivePolicy` 语义，不建多机 SessionStore 适配器。
+- 重开条件与未来写集/owner 见决策记录第 3、5 节。
