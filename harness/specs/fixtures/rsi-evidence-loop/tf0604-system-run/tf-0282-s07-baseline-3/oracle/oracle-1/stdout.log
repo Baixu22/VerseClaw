@@ -1,0 +1,16 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0282-s07-baseline-3/grader/openclaw_runtime
+
+ ❯ |unit| ../../src/runtime-core/verifier-completion-verdict.test.ts (6 tests | 6 failed) 150ms
+     × approves a completed task with the canonical evidence and produces one node->done transition 146ms
+     × is digest-only and grants no publish / product-lock authority 0ms
+     × returns insufficient-evidence and no transition when evidence is missing 0ms
+     × is bounded: a task outside the granted scope gets no verdict and no transition 0ms
+     × is revocable: revocation restores the recorded prior status 0ms
+     × is deterministic: the same evidence yields the same digest (replay-safe) 0ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  6 failed | 5 passed (11)
+   Start at  08:09:18
+   Duration  932ms (transform 687ms, setup 414ms, import 61ms, tests 154ms, environment 0ms)
+

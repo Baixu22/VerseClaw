@@ -1,0 +1,3 @@
+
+
+[vitest] still running with no output for 30000ms (run --config vitest.config.ts D:/tmp/rsi-tf0604-run5/trials/tf-0278-s03-baseline-3/grader/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts D:/tmp/rsi-tf0604-run5/trials/tf-0278-s03-baseline-3/grader/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts D:/tmp/rsi-tf0604-run5/trials/tf-0278-s03-baseline-3/grader/openclaw_runtime/src/agents/apply-patch-consistency.test.ts D:/tmp/rsi-tf0604-run5/trials/tf-0278-s03-baseline-3/grader/openclaw_runtime/src/agents/sessions/tools/write.test.ts D:/tmp/rsi-tf0604-run5/trials/tf-0278-s03-baseline-3/grader/openclaw_runtime/src/agents/sessions/tools/edit.test.ts --maxWorkers=1 --passWithNoTests=false).

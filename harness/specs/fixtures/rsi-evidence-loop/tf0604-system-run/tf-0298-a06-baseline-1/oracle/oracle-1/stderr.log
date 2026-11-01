@@ -1,0 +1,111 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/performance-budgets.test.ts [ tests/unit/performance-budgets.test.ts ]
+Error: Failed to resolve import "../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js" from "tests/unit/performance-budgets.test.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-1/grader/tests/unit/performance-budgets.test.ts:14:7
+  11 |    FingerprintLeaseCoordinator,
+  12 |    ResumeContractVerifier
+  13 |  } from "../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js";
+     |          ^
+  14 |  const SETTINGS = {
+  15 |    enabled: true,
+ ❯ TransformPluginContext._formatLog ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28999:43
+ ❯ TransformPluginContext.error ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28996:14
+ ❯ normalizeUrl ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27119:18
+ ❯ ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27177:32
+ ❯ TransformPluginContext.transform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27145:4
+ ❯ EnvironmentPluginContainer.transform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28797:14
+ ❯ loadAndTransform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:22670:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/a06-a6-gate-coverage.test.ts > A06 A6 gate coverage > keeps every A6 required test path present and wired into the archived pilot spec
+AssertionError: expected '---\nlifecycleStatus: archived\nid: a…' to contain '- tests/unit/deprecation-counters.tes…'
+
+- Expected
++ Received
+
+- - tests/unit/deprecation-counters.test.ts
++ ---
++ lifecycleStatus: archived
++ id: a6-long-running-persistence-pilot
++ title: A6 Long-Running Persistence — Active Pilot Gate
++ scenario: gateway-backend-communication
++ taskType: runtime-bridge
++ intent: Promote the A6 resume contract verifier from shadow to active pilot, gated by verifier pass rate and zero volatile mislabels.
++ touchedAreas:
++   - openclaw_runtime/src/agents/long-task-control/file-fingerprint.ts
++   - openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts
++   - openclaw_runtime/src/runtime-core/resume-shadow.ts
++   - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts
++   - openclaw_runtime/src/observability/deprecation-counters.ts
++ requiredProfiles:
++   - fast
++   - comms
++ requiredRules:
++   - backend-communication-boundary
++   - comms-regression
++ expectedUserBehavior:
++   - With the A6 pilot gate enabled, resume cycles verify their contract and any volatile mislabel blocks graduation instead of being averaged away.
++   - A resume that followed a rollback is marked `requiresReverification=true` rather than trusted as a clean continuation.
++   - The fingerprint lease is committed before the checkpoint, so a resumed run cannot adopt a stale fingerprint.
++   - When a volatile mislabel appears or the verifier failure rate exceeds 5%, the pilot responds with `degrade_to_full_reverification`.
++   - With the pilot flag off, pause/resume behaviour is unchanged.
++ requiredTests:
++   - tests/unit/cross-area-composition.test.ts
++   - tests/unit/performance-budgets.test.ts
++ acceptance:
++   - A6 deprecation counter `volatileMislabelCount` MUST be 0 (CRITICAL gate)
++   - A6 deprecation counter `verifierFailCount` rate ≤ 5% over resume cycles
++   - A6 p99 ≤ 300ms (criterion 4.9)
++   - `ResumeContractVerifier` marks `requiresReverification=true` when rollback occurred (criterion 3.3)
++   - `FingerprintLeaseCoordinator` commits lease before checkpoint (criterion 3.8, Blocker 4)
++   - Budget violation response `degrade_to_full_reverification` triggers on any volatile mislabel OR fail rate > 5%
++ docs:
++   required: true
++ ---
++
++ ## Graduation gate
++
++ A6 graduates from shadow to active pilot when ALL of the following hold:
++
++ 1. **Zero volatile mislabels**: `volatileMislabelCount === 0` (CRITICAL — any non-zero value blocks graduation permanently until resolved).
++ 2. **Verifier pass rate** ≥ 95%: `verifierPassCount / (pass + fail) ≥ 0.95`.
++ 3. **Performance**: p99 ≤ 300ms for 10 pause/resume cycles (criterion 4.9).
++ 4. **Rollback detection**: `ResumeContractVerifier` marks `requiresReverification=true` when rollback occurred (criterion 3.3).
++ 5. **Blocker 4 (lease/checkpoint ordering)**: `FingerprintLeaseCoordinator` commits lease before checkpoint, no I/O race (criterion 3.8).
++ 6. **Budget violation response**: `degrade_to_full_reverification` triggers on mislabel or high fail rate (criterion 4.14).
++
++ ## Out of scope
++
++ - Targeted re-verification (OQ-006, Stage 5 — full re-verification ships in Stage 4).
++ - Checkpoint migration / compact (Stage 5).
++
+
+ ❯ tests/unit/a06-a6-gate-coverage.test.ts:24:20
+     22|     const spec = readFileSync(path.join(ROOT, SPEC), "utf8");
+     23|     for (const rel of REQUIRED_TESTS) {
+     24|       expect(spec).toContain(`- ${rel}`);
+       |                    ^
+     25|       expect(existsSync(path.join(ROOT, rel))).toBe(true);
+     26|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/a06-a6-gate-coverage.test.ts > A06 A6 gate coverage > pins the restored verifier, lease-ordering, and pause/resume latency gates
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0298-a06-baseline-1\grader\openclaw_runtime\src\agents\cross-area\cross-area-facades.ts'
+ ❯ tests/unit/a06-a6-gate-coverage.test.ts:40:21
+     38|
+     39|   it("pins the restored verifier, lease-ordering, and pause/resume lat…
+     40|     const facades = readFileSync(
+       |                     ^
+     41|       path.join(ROOT, "openclaw_runtime/src/agents/cross-area/cross-ar…
+     42|       "utf8",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

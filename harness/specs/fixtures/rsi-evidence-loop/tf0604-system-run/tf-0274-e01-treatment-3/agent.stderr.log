@@ -1,0 +1,15 @@
+Reading additional input from stdin...
+2026-10-31T15:33:22.399450Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.403123Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-10-31T15:33:22.404625Z  WARN codex_core::agents_md: ignoring project_doc_fallback_filenames entry that is not a filename
+2026-10-31T15:33:22.483092Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.484085Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.484460Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.488295Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.489497Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.489953Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.490408Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.501489Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.503164Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:33:22.505139Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T15:36:54.673858Z ERROR codex_core::tools::router: error=write_stdin failed: stdin is closed for this session; rerun exec_command with tty=true to keep stdin open

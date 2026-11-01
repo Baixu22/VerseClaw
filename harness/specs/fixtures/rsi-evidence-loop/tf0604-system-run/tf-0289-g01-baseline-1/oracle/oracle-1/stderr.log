@@ -1,0 +1,58 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > only self-retry classes are retryable, and they carry exactly the retry action
+TypeError: isRetryableAppErrorCode is not a function
+ ❯ tests/unit/error-recovery-next-action.test.ts:29:14
+     27|     for (const code of APP_ERROR_CODES) {
+     28|       const entry = ERROR_RECOVERY_TABLE[code];
+     29|       expect(isRetryableAppErrorCode(code), code).toBe(entry.retryable…
+       |              ^
+     30|       if (entry.retryable) {
+     31|         expect(entry.scope, code).toBe("self-retry");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > never emits a shell command or raw script as a recovery action
+TypeError: recoveryActionForAppErrorCode is not a function
+ ❯ tests/unit/error-recovery-next-action.test.ts:42:22
+     40|   it("never emits a shell command or raw script as a recovery action",…
+     41|     for (const code of APP_ERROR_CODES) {
+     42|       const action = recoveryActionForAppErrorCode(code);
+       |                      ^
+     43|       if (!action) continue;
+     44|       expect(RECOVERY_KINDS, code).toContain(action.kind);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > carries retryable + nextAction on AppError and leaves UNKNOWN without an action
+AssertionError: expected null to be undefined
+
+- Expected:
+undefined
+
++ Received:
+null
+
+ ❯ tests/unit/error-recovery-next-action.test.ts:66:32
+     64|     const unknown = new AppError("UNKNOWN", "boom");
+     65|     expect(unknown.retryable).toBe(false);
+     66|     expect(unknown.nextAction).toBeUndefined();
+       |                                ^
+     67|   });
+     68|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > is total: any AppErrorCode resolves deterministically
+TypeError: recoveryActionForAppErrorCode is not a function
+ ❯ tests/unit/error-recovery-next-action.test.ts:71:21
+     69|   it("is total: any AppErrorCode resolves deterministically", () => {
+     70|     for (const code of APP_ERROR_CODES as readonly AppErrorCode[]) {
+     71|       const first = recoveryActionForAppErrorCode(code);
+       |                     ^
+     72|       const second = recoveryActionForAppErrorCode(code);
+     73|       expect(first).toEqual(second);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

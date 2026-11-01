@@ -1,0 +1,28 @@
+<repo>\openclaw_runtime\node_modules\.pnpm\picomatch@4.0.4\node_modules\picomatch\lib\picomatch.js:230
+picomatch.scan = (input, options) => scan(input, options);
+                                     ^
+
+TypeError: scan is not a function
+    at picomatch.scan (<repo>\openclaw_runtime\node_modules\.pnpm\picomatch@4.0.4\node_modules\picomatch\lib\picomatch.js:230:38)
+    at isDynamicPattern (file:///<repo>/openclaw_runtime/node_modules/.pnpm/tinyglobby@0.2.17/node_modules/tinyglobby/dist/index.mjs:123:25)
+    at resolveTestProjectConfigs (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10/node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:11259:8)
+    at resolveProjects (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10/node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:11065:70)
+    at Vitest.resolveProjects (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10/node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:13282:36)
+    at Vitest._setServer (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10/node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:13134:31)
+    at BasicMinimalPluginContext.handler (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10/node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:14175:5)
+    at _createServer (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vite@8.0.16_@types+node@25._8fd76b90b7e03be7a7b0f01211aae294/node_modules/vite/dist/node/chunks/node.js:26440:84)
+    at createViteServer (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10/node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:8819:17)
+    at createVitest (file:///<repo>/openclaw_runtime/node_modules/.pnpm/vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10/node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:14205:18)
+
+Node.js v24.22.1
+file:///D:/tmp/rsi-tf0604-run5/trials/tf-0278-s03-treatment-1/grader-regrade/openclaw_runtime/scripts/run-vitest.mjs:1025
+        if (code !== 0 || signal) reject(new Error(`Test selection failed (${signal ?? code})`));
+                                         ^
+
+Error: Test selection failed (1)
+    at ChildProcess.<anonymous> (file:///D:/tmp/rsi-tf0604-run5/trials/tf-0278-s03-treatment-1/grader-regrade/openclaw_runtime/scripts/run-vitest.mjs:1025:42)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:324:12)
+
+Node.js v24.22.1

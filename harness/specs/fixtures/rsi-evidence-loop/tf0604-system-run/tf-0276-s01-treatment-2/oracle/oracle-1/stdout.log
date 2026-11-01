@@ -1,0 +1,12 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0276-s01-treatment-2/grader/openclaw_runtime
+
+ ❯ |agents-core| ../../src/agents/rc02-envelope-reject.test.ts (3 tests | 2 failed) 428ms
+     × resolveEnvelopeRejectEnabled is off by default and opt-in only 128ms
+     × rejects an invalid envelope before any provider bytes are sent (0 fetch calls) 288ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  04:27:15
+   Duration  4.22s (transform 2.49s, setup 571ms, import 2.67s, tests 428ms, environment 0ms)
+

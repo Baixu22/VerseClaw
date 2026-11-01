@@ -1,0 +1,24 @@
+Implementation is complete and verified.
+
+**Implemented**
+- `scripts/lib/trace-to-eval-sample.mjs` — explicit-trigger converter with `traceToEvalSample(trace)` and `traceToEvalSamples(traces)`. A `failure` trace yields `expected = {before-fix: fail, after-fix: pass}`; `success|refusal|cancelled` stay `pass`. Samples carry a bounded `reproducer` (`scenario|route|command-id`, never shell), a `selector` (`runId`+`attempt`), and a deterministic 16-hex `digest`. A redaction gate refuses the whole trace (`trace-not-redacted`) on raw `prompt/messages/body/authorization/apiKey/headers` or `sk-/phc_/ghp_/AKIA/private-key`; the batch records per-trace rejections. Pure function, no scheduler/daemon.
+- `scripts/lib/trace-to-eval-sample.d.mts` — matching type declarations.
+- `tests/unit/trace-to-eval-sample.test.ts` — the 6-case unit test.
+- `harness/specs/tasks/harness-gap-trace-to-eval-sample.md` — frozen task spec.
+- `docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md`, `docs/dev/harness-gap-closure/g03-acceptance.json`, `docs/dev/harness-gap-closure/G03-SHA256SUMS` — evidence, acceptance record, digest manifest.
+
+**Checks Actually Run**
+- `node node_modules/vitest/vitest.mjs run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1` → 1 file, 6 tests passed, 0 failed, 0 skipped.
+- `tsgo --noEmit -p tsconfig.test.json --composite false` → 884 diagnostics, byte-identical count to the pristine `base/` tree; zero diagnostics in my files.
+- `eslint scripts/lib/trace-to-eval-sample.mjs tests/unit/trace-to-eval-sample.test.ts` → exit 0.
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md` → "Spec is valid", exit 0.
+- `node harness/src/cli.mjs run --spec ... --dry-run` → "Harness result: pass", exit 0.
+- Credential scan over the 7 files across the required patterns → 0 hits.
+- `G03-SHA256SUMS` re-read → all 6 entries OK.
+- Workspace diff vs pristine `base/`: exactly the 7 targetScope files added, no other content changed; temporary `node_modules` junction, temp `.git`, and harness run artifact removed.
+
+**Notes**
+- No dependency installs and no network: I reused the pre-existing dependency tree via a temporary junction (now deleted) for the vitest/eslint/tsgo runs.
+- `harness run --dry-run` needs a diff base, so I created a temporary local git repo with `origin/main` at a pristine baseline to exercise the real ownership gate, then removed it; the shipped `base` and `agent` trees have no git metadata.
+- `harness validate --no-diff` also passes (structural check) where the diff base is unavailable.
+- No product defaults/locks/approvals changed; original evidence untouched; no scheduler/daemon added. All artifacts are `driven_by: agent`, `realHuman: false`.

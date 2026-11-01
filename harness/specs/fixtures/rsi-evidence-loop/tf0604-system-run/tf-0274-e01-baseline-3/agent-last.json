@@ -1,0 +1,23 @@
+All deliverables are in place and verified. Final result:
+
+```json
+{
+  "status": "completed",
+  "summary": "Implemented TF-0274/E01: a deterministic, report-only reliability aggregation over the existing Agent Dev benefit report. Added scripts/lib/reliability-aggregation.mjs (+ .d.mts) as a pure reducer, a pre-registered oracle fixture shared/agent-dev/reliability-fixture.json (k=3, minCases=20, flakeThreshold=0.1, 31 cases / 3 trials each), wired a `reliability` block + markdown section into scripts/agent-dev-benefit-eval.mjs, added tests/unit/agent-dev-reliability-aggregation.test.ts, the task spec harness/specs/tasks/harness-gap-reliability-aggregation.md, the rule spec harness/specs/rules/reliability-aggregation-boundary.md, and the closed-loop docs docs/dev/harness-gap-closure/{e01-reliability-aggregation.md,e01-acceptance.json,E01-SHA256SUMS} — exactly the packet targetScope, nothing more. On the shipped fixture it reproduces raw denominator 31, complete cases 27, incomplete 4 (skip/timeout/crash/missing, excluded from the denominator but retained with reasons), pass^k 25/27=0.925926, pass@k 27/27=1.0 (kept separate; flake cases stay pass^k failures so retry success never washes out the first failure), flake 2/27=0.074074 <= 0.1 with first failure preserved, positive anchors 2/2 and negative anchors 2/2, safety 0 skip / 0 flake / 0 fail, gate=pass. Gate precedence is invalid-fixture > anchor/safety violation = fail > complete-cases<minCases = insufficient-sample > flake>threshold = fail > pass; the fixture is explicitly labelled a deterministic agent-driven oracle (realProvider/realHuman/generalization=false), so no live-provider, human or generalization claim is made. No product default, product lock, approval semantic, user-visible interface/config or scheduled automation changed, so all four README locales were reviewed and left unchanged (recorded in the acceptance doc). The dependency-bound fast gate (vitest/typecheck/eslint) and the git-index-based repo:artifacts:check could not run in this isolated checkout (node_modules absent, not installed by policy) and are recorded as deferred/not-measured in e01-acceptance.json rather than claimed.",
+  "testsRun": [
+    "node scripts/agent-dev-benefit-eval.mjs  -> exit 0; artifacts/agent-dev-benefit-eval/report.json now carries reliability.gate=pass, pass^k=0.925926, pass@k=1, flake=0.074074, incomplete=4; report.md renders the 'Reliability Aggregation' section",
+    "node --check scripts/lib/reliability-aggregation.mjs  -> exit 0",
+    "node --check scripts/agent-dev-benefit-eval.mjs  -> exit 0",
+    "node (temporary node mirror of tests/unit/agent-dev-reliability-aggregation.test.ts assertions, .e01-verify.mjs, removed after the run) -> 'ALL MIRROR ASSERTIONS PASSED' (pass^k/pass@k separation, incomplete exclusion+retention, flake/first-failure retention, positive+negative anchors, safety veto, insufficient-sample, flake-threshold, invalid-fixture, determinism, loader) - vitest itself not runnable without installed deps",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --no-diff  -> exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md  (diff-aware, inside a temp git fixture seeded from this harness/, removed after)  -> exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --dry-run  (same temp git fixture)  -> exit 0, 'Harness result: pass'",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-reliability-aggregation.md  -> exit 0, no missing scenarios/rules",
+    "node scripts/check-no-bom.mjs  -> exit 0, 'check-no-bom: ok'",
+    "node scripts/check-spec-lifecycle.mjs  -> exit 1, only for the pre-existing harness/specs/tasks/harness-gap-trace-cost-sampling.md (missing lifecycleStatus); the new spec carries lifecycleStatus: active and is not listed",
+    "node (credential regex scan over the 10 changed paths for phc_/sk-/AKIA/PRIVATE KEY/ghp_/xox.)  -> files=10 hits=0",
+    "node (E01-SHA256SUMS readback: recompute sha256 of every listed path)  -> lines=9 mismatches=0",
+    "node (JSON parse of shared/agent-dev/reliability-fixture.json and docs/dev/harness-gap-closure/e01-acceptance.json)  -> both valid"
+  ]
+}
+```

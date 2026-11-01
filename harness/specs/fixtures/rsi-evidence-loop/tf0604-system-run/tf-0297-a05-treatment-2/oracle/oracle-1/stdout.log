@@ -1,0 +1,16 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0297-a05-treatment-2/grader
+
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts (3 tests | 3 failed) 5ms
+     × keeps every A5 required test path present and wired into the archived pilot spec 3ms
+     × pins A5 counter, budget action, wave immutability, and cumulative smoke evidence 1ms
+     × pins the resume re-planning implementation and its cross-area evidence 0ms
+ ❯ tests/unit/deprecation-counters.test.ts (0 test)
+ ❯ tests/unit/resource-aware-wave-scheduler.test.ts (0 test)
+
+ Test Files  4 failed (4)
+      Tests  3 failed (3)
+   Start at  13:47:08
+   Duration  1.06s (transform 122ms, setup 0ms, import 21ms, tests 5ms, environment 0ms)
+

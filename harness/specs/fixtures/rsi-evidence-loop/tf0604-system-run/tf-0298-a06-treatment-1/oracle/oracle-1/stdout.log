@@ -1,0 +1,13 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-treatment-1/grader
+
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+ ❯ tests/unit/a06-a6-gate-coverage.test.ts (3 tests | 2 failed) 16ms
+     × keeps every A6 required test path present and wired into the archived pilot spec 13ms
+     × pins the restored verifier, lease-ordering, and pause/resume latency gates 1ms
+
+ Test Files  2 failed | 5 passed (7)
+      Tests  2 failed | 67 passed (69)
+   Start at  13:36:20
+   Duration  26.55s (transform 2.55s, setup 1.52s, import 4.19s, tests 207ms, environment 13.93s)
+

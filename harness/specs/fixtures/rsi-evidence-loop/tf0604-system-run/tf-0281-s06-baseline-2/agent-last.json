@@ -1,0 +1,27 @@
+Implementation complete. All target artifacts are in place and verified.
+
+**Changed Files**
+- `openclaw_runtime/src/runtime-core/memory-effect-receipt.ts` — new digest-only effect view builder (RC-04 structural sink, no `agents/` runtime import).
+- `openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts` — wires `recordMemoryEffect` into the write decision points of `memory_update` / `memory_forget` / `memory_strengthen`, with `effectReceiptStore` + `effectIdentity` on the tool context.
+- `harness/specs/tasks/harness-gap-memory-effect-receipt.md` — S06 task spec (frozen boundary).
+- `docs/dev/harness-gap-closure/s06-memory-effect-receipt.md` — ledger.
+- `docs/dev/harness-gap-closure/s06-acceptance.json` — acceptance record.
+- `docs/dev/harness-gap-closure/S06-SHA256SUMS` — checksum manifest.
+
+**Design**
+- Reuses the existing RC-04 `EffectReceiptStore`; no second effect store or migration.
+- Proposal carries identifiers only (`domain/action/factId(/newFactId)`); `stage1Context` carries actor (`sessionKey/runId/attemptIndex/modelCallIndex`) and effect (`toolCallId/toolName/resource/action`). Never memory content.
+- Idempotency key `memory-effect:v1:<sha256(action⋮factId⋮sessionKey⋮runId⋮toolCallId)>` is outcome-independent, so a replayed intent is an identical-content duplicate.
+- Outcome mapping: success→`applied`; pre-effect failure→`not_applied`; partial failure (fact appended, invalidation/relation failed)→`unknown`, never disguised as `applied`.
+- Fail-open: missing or throwing sink never blocks the memory write.
+
+**Checks Actually Run**
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-memory-effect-receipt.md --no-diff` → exit 0, `Spec is valid`.
+- `node harness/src/cli.mjs context --spec ...` → exit 0 (scenario/rules/layers resolved).
+- `node --experimental-strip-types` direct sanity of `memory-effect-receipt.ts` → passed: outcome-independent key, digest-only proposal (no `objectSummary`/`subject`/`predicate`), actor+effect populated, missing sink returns `false`, throwing sink swallowed.
+- Credential scan over the 5 changed text artifacts → 0 hits.
+- `S06-SHA256SUMS` read-back → 0 mismatches.
+
+**Not Run (reporting honestly)**
+- `vitest run …memory-effect-receipt.test.ts apply-patch-effect-receipt.test.ts stage1-effect-receipt.test.ts`, `tsgo:core`, oxlint, and `comms:replay`/`comms:compare` could not run: this is a dependency-free `git-archive` workspace (no `node_modules`, no `.git`), and installing dependencies / fetching a ref is disallowed by the task. The hidden-oracle test `memory-effect-receipt.test.ts` is intentionally absent from this workspace (the grader restores it); I did not author or inspect it.
+- `harness run --dry-run` exits 1 here only because the diff base `origin/main` is unresolvable in a git-archive checkout (no repository), not because of the change set.

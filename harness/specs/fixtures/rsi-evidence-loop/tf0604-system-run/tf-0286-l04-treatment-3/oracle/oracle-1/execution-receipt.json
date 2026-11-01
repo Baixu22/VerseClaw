@@ -1,0 +1,21 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0286-l04",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/checkpoint-attachment-binding.test.ts --maxWorkers=1",
+  "taskDigest": "d7a45211c4a3698b227a13a5cad57f306ba10328bc6a9c3e7dfdbce972b062d2",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-10-31T20:00:54.622Z",
+  "finishedAt": "2026-10-31T20:01:27.039Z",
+  "durationMs": 32416,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": null,
+  "stdoutSha256": "221e5b8e29d0b0f4f040a95f5ec680131bd55d0aa3fe45e641107d931f9a2a00",
+  "stderrSha256": "60724ca43851b07183c903339cb389add1f26b135fda6eb8ce0d13cc8714ede3"
+}

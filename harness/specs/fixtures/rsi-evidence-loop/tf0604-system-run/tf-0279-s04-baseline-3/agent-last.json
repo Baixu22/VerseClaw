@@ -1,0 +1,44 @@
+**Status**
+
+Implemented S04 as a verification packet: it pins the *existing single* browser-effect policy on both axes and records, per action, exactly how far external/unknown provenance is constrained — without adding a third strategy.
+
+**What Changed**
+- `tests/unit/browser-effect-boundary-ledger.test.ts` (new): drives the real policy module through the connection-mode matrix (external / derived-untrusted / missing / invalid × `auto-connect`/`cdp`/`external-profile`/`managed`) and the session-ownership matrix (click/type require `connection.mode=managed`, else fail closed), and reads production sources to pin the per-action partition, the single-policy claim, and the SSRF/private-network/kill-switch anchors.
+- `harness/specs/tasks/harness-gap-browser-effect-boundary.md` (new): task spec, `lifecycleStatus: archived`, `scenario: gateway-backend-communication`.
+- `docs/dev/harness-gap-closure/s04-browser-effect-boundary.md` (new): the ledger — per-action coverage table, the two gates, and the explicit residuals.
+- `docs/dev/harness-gap-closure/s04-acceptance.json` (new) and `S04-SHA256SUMS` (new).
+
+**Results**
+- Mode gate: external/derived/missing/invalid denied all external modes; `managed`/absent allowed; trusted system / direct operator unrestricted.
+- Session gate: click/type require a Main-owned `managed` session; `cdp`/`auto-connect`/`external-profile`/absent/malformed lookups fail closed; trusted/operator skip the preflight.
+- Per-action: `navigate`/`status`/`waitForSelector`/`screenshot`/`getConsoleMessages` are mode-gate only; `click`/`type` add the session gate; `evaluate`/`command`/`close` recorded as residual (not claimed covered).
+- No weakening: SSRF (`fetch-guard.ts`, `ssrf.ts`), private-network default, and the browser control switch anchors verified present; `isExternalConnectionMode` defined once in the single policy module.
+
+**Checks Actually Run**
+- `node harness/src/cli.mjs validate --spec ... --no-diff` → "Spec is valid"
+- `node harness/src/cli.mjs context --spec ...` → no missing scenarios/rules
+- ledger test executed via a minimal vitest shim + resolver → 10/10 pass
+- mirrored policy probe → 244 assertions pass
+- `node scripts/validate-policy-docs.mjs --quiet` → PASS (10 checks)
+- `node scripts/check-spec-lifecycle.mjs` → pre-existing red: 6 `harness-gap-*` specs missing `lifecycleStatus` (new S04 spec is not among them)
+- SHA256SUMS readback → 4/4 OK; credential scan → 0 hits
+
+Not run (no `node_modules` / no git in this snapshot, recorded as `notMeasured`): vitest, `typecheck`, scoped ESLint, `comms:replay`/`compare`, `harness run --dry-run`.
+
+```json
+{
+  "status": "completed",
+  "summary": "S04 browser-effect boundary ledger: pinned the existing single agent-browser policy on both the connection-mode gate (external/derived-untrusted/missing/invalid denied auto-connect/cdp/external-profile; managed + trusted/operator allowed) and the session-ownership gate (click/type require a Main-owned managed session, fail closed otherwise). Recorded navigate/status/waitForSelector/screenshot/getConsoleMessages as mode-gate-only and evaluate/command/close as residual (not claimed covered). Added tests/unit/browser-effect-boundary-ledger.test.ts, harness/specs/tasks/harness-gap-browser-effect-boundary.md, docs/dev/harness-gap-closure/s04-browser-effect-boundary.md, s04-acceptance.json, and S04-SHA256SUMS. Verified SSRF/private-network/kill-switch anchors intact and no third policy. Gates needing dependencies or git (vitest/typecheck/lint/comms/dry-run) were not executable in this snapshot and are recorded as notMeasured.",
+  "testsRun": [
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-browser-effect-boundary.md --no-diff (exit 0, Spec is valid)",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-browser-effect-boundary.md (exit 0, no missing scenarios/rules)",
+    "tests/unit/browser-effect-boundary-ledger.test.ts executed via minimal vitest shim + TS resolver (10/10 pass)",
+    "policy probe (244 assertions) over agent-browser-external-access-policy.ts (exit 0)",
+    "node scripts/validate-policy-docs.mjs --quiet (exit 0, PASS 10 checks)",
+    "node scripts/check-spec-lifecycle.mjs (exit 1, pre-existing baseline: 6 harness-gap-* specs lack lifecycleStatus; S04 spec not included)",
+    "S04-SHA256SUMS readback (4 entries, 0 mismatches)",
+    "credential scan over 4 artifacts (0 hits)",
+    "NOT RUN (no node_modules/no git): vitest, pnpm run typecheck, eslint on touched test, pnpm run comms:replay, pnpm run comms:compare, node harness/src/cli.mjs run --dry-run"
+  ]
+}
+```

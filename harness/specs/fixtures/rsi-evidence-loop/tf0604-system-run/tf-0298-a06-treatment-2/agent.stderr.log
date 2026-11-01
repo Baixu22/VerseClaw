@@ -1,0 +1,17 @@
+Reading additional input from stdin...
+2026-11-01T05:38:04.580882Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:04.767968Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-11-01T05:38:04.783681Z  WARN codex_core::agents_md: ignoring project_doc_fallback_filenames entry that is not a filename
+2026-11-01T05:38:04.956001Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:04.974589Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:04.988385Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:05.021934Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:05.025508Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:05.028722Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:05.032066Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:05.082795Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:05.091240Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:05.118530Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T05:38:14.249672Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 202ms)... turn_id=01a1959d-6e62-7bf2-a25b-7c6b89deb476 retries=1 max_retries=5 sampling_error=unexpected status 401 Unauthorized: CC Switch local proxy failed while handling Codex endpoint /responses. Provider: workbuddy; model: ccs-workbuddy/deepseek-v4.1-flash; upstream_status: HTTP 401; cause: 上游凭证被拒绝（HTTP 401）: API key is disabled, url: http://127.0.0.1:15721/v1/responses
+2026-11-01T05:42:37.578513Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 437ms)... turn_id=01a1959d-6e62-7bf2-a25b-7c6b89deb476 retries=2 max_retries=5 sampling_error=unexpected status 401 Unauthorized: CC Switch local proxy failed while handling Codex endpoint /responses. Provider: workbuddy; model: ccs-workbuddy/deepseek-v4.1-flash; upstream_status: HTTP 401; cause: 上游凭证被拒绝（HTTP 401）: API key is disabled, url: http://127.0.0.1:15721/v1/responses
+2026-11-01T05:59:51.667012Z ERROR codex_core::tools::router: error=write_stdin failed: stdin is closed for this session; rerun exec_command with tty=true to keep stdin open

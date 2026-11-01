@@ -1,0 +1,45 @@
+All deliverables are in place, verified, and the workspace is clean. Final state confirmed:
+
+- 10 targetScope files created/modified; `scripts/agent-dev-benefit-eval.mjs` modified; no other source changes.
+- Temporary scaffolding (git repo, `node_modules` junctions, generated `artifacts/`) removed. Sibling checkout untouched.
+
+**What changed**
+
+- `scripts/lib/reliability-aggregation.mjs` + `.d.mts`: pure, deterministic `aggregateReliability()` — separate `passK`/`passAtK`, `perTrialSuccessRate`, flake definition (first trial failed + later re-run passed), incomplete (missing/timeout/crash/skip) preserved and excluded from denominators, safety-required 0 skip/0 flake, positive/negative anchors, `insufficient-sample` gate.
+- `shared/agent-dev/reliability-fixture.json`: pre-registered thresholds (`k=3`, `minCases=20`, `flakeThreshold=0.01`) and 5 deterministic cases.
+- `scripts/agent-dev-benefit-eval.mjs`: imports the aggregator and adds a `reliability` block (JSON + Markdown) to the existing benefit report — no new metrics platform.
+- `tests/unit/agent-dev-reliability-aggregation.test.ts`: focused unit coverage (the oracle path).
+- Harness spec/rule, plus `docs/dev/harness-gap-closure/e01-*` acceptance record and `E01-SHA256SUMS`.
+- No product defaults, product locks, approval semantics, or scheduled automation touched; README (4 locales) unchanged as the packet only changes an internal eval report.
+
+**Checks actually run** (workspace has no `node_modules`; I reused the sibling checkout's installed deps via a temporary junction — no install, no network — then removed it):
+
+- `vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1` → 6 passed, exit 0.
+- `harness validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md` → valid; `harness run … --dry-run` → pass; `harness context …` → exit 0.
+- `node scripts/agent-dev-benefit-eval.mjs` → emits `report.reliability` (`passK=0.25`, `passAtK=0.75`, `perTrialSuccessRate=0.5`, `flakeRate=0.25`, 1 incomplete preserved, `gate=insufficient-sample`).
+- Scoped `eslint` on touched files → 0 errors (1 no-config warning for the `.d.mts`).
+- `tsgo --noEmit -p tsconfig.test.json` → identical 900 pre-existing errors before and after; 0 new errors from my files.
+- `node scripts/check-no-bom.mjs` → ok.
+- `E01-SHA256SUMS` readback → 7/8 matched; the 1 difference is the inherent pre-G02 vs oracle-bound spec digest (identical in the reference tree, not introduced by me).
+- Credential scan over the 10 files → 0 hits.
+
+Pre-existing, unrelated: `scripts/check-spec-lifecycle.mjs` fails on `harness/specs/tasks/harness-gap-trace-cost-sampling.md` (missing `lifecycleStatus`) in both `base` and `agent`; `repo:evidence:sha256` fails on `artifacts/stepfun-…` (pre-existing drift). I did not fix those.
+
+```json
+{
+  "status": "completed",
+  "summary": "Implemented E01 reliability aggregation into the existing Agent Dev benefit report. Added a deterministic, side-effect-free aggregator (pass^k vs pass@k reported separately; flake = first-trial fail then fixed re-run pass; missing/timeout/crash/skip preserved as incomplete and excluded from denominators; safety-required 0 skip/0 flake; positive-must-pass / negative-must-reject anchors; insufficient-sample gate at k=3, >=20) plus a pre-registered fixture, runner wiring, focused unit test, harness task spec and boundary rule, and the E01 acceptance record and digest manifest. No product defaults, product locks, approval semantics, or scheduled automation changed; README (en/zh/ja/ru) intentionally unchanged because the packet only alters an internal eval report. Verified with the focused vitest oracle (6/6), harness validate/context/dry-run, a runner execution that emits the reliability block, scoped eslint, tsgo test typecheck (0 new errors vs. pristine base), no-BOM, E01-SHA256SUMS readback, and a 0-hit credential scan. Reused sibling installed dependencies via a temporary junction (no install, no network); removed all temporary scaffolding.",
+  "testsRun": [
+    "node node_modules/vitest/vitest.mjs run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1 -> 6 passed, exit 0",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md -> Slot is valid, exit 0",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --dry-run -> pass, exit 0",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-reliability-aggregation.md -> exit 0",
+    "node scripts/agent-dev-benefit-eval.mjs -> exit 0, report.reliability { passK: 0.25, passAtK: 0.75, gate: insufficient-sample }",
+    "eslint scripts/agent-dev-benefit-eval.mjs scripts/lib/reliability-aggregation.mjs scripts/lib/reliability-aggregation.d.mts tests/unit/agent-dev-reliability-aggregation.test.ts -> 0 errors (1 ignored-file warning), exit 0",
+    "tsgo --noEmit -p tsconfig.test.json --composite false -> 900 errors, identical to pristine base (0 new), exit 2 (pre-existing)",
+    "node scripts/check-no-bom.mjs -> ok, exit 0",
+    "E01-SHA256SUMS readback (independent rehash of 8 entries) -> 7 matched / 1 inherent historical-vs-G02 spec digest",
+    "credential regex scan over 10 changed files -> 0 hits"
+  ]
+}
+```

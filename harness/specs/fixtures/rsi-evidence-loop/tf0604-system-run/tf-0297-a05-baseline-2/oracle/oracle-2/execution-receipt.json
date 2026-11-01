@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0297-a05",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/observability/deprecation-counters.test.ts src/agents/agent-hooks/compaction-budget-shadow.test.ts packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts src/agents/agent-hooks/compaction-promotion.test.ts --maxWorkers=1",
+  "taskDigest": "17a3672450c1d644d1006d99a89c4c405bd4449c7471036cdbbb37038409d2a5",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T09:45:29.140Z",
+  "finishedAt": "2026-11-01T09:46:37.278Z",
+  "durationMs": 68139,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 40,
+    "failed": 4,
+    "skipped": 0,
+    "total": 44,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "4ec0773a88a63b8dbb5f9057ec239fbde1d78598a1121601ace92af7ac606f2d",
+  "stderrSha256": "4dee36c25e25580e3a6b31f7348e587d7dddc71a715c71627fd77ba8a1e8975f"
+}

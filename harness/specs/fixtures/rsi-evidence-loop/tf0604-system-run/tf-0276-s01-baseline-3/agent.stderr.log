@@ -1,0 +1,13 @@
+Reading additional input from stdin...
+2026-10-31T20:19:43.789952Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.793413Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-10-31T20:19:43.872598Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.873445Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.873835Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.878907Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.880322Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.880706Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.881199Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.892639Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.894467Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T20:19:43.896666Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.

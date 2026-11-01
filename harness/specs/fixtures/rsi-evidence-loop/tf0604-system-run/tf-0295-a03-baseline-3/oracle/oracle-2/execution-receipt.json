@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0295-a03",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/observability/deprecation-counters.test.ts --maxWorkers=1",
+  "taskDigest": "8540389bca07933c8a51056511085ab785461f80108fed083a206c84cdd98721",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-11-01T03:43:35.327Z",
+  "finishedAt": "2026-11-01T03:44:08.762Z",
+  "durationMs": 33436,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "total": 3,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "b08356de2a3217e71568ec321a7c4618af41084dfc84c71fbc19b6bfc5b24f6e",
+  "stderrSha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+}

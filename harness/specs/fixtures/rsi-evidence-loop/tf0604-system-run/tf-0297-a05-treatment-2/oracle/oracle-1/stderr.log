@@ -1,0 +1,76 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/deprecation-counters.test.ts [ tests/unit/deprecation-counters.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/src/observability/deprecation-counters.js' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0297-a05-treatment-2/grader/tests/unit/deprecation-counters.test.ts
+ ❯ tests/unit/deprecation-counters.test.ts:2:1
+      1| import { afterEach, beforeEach, describe, expect, it } from "vitest";
+      2| import {
+       | ^
+      3|   deprecationCounters,
+      4|   type DeprecationArea,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/performance-budgets.test.ts [ tests/unit/performance-budgets.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.js' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0297-a05-treatment-2/grader/tests/unit/performance-budgets.test.ts
+ ❯ tests/unit/performance-budgets.test.ts:4:1
+      2| import path from "node:path";
+      3| import { afterEach, beforeEach, describe, expect, it } from "vitest";
+      4| import {
+       | ^
+      5|   planCriticalFirstBudget,
+      6|   selectCompressionPlan,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/resource-aware-wave-scheduler.test.ts [ tests/unit/resource-aware-wave-scheduler.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/src/agents/resource-aware-wave-scheduler.js' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0297-a05-treatment-2/grader/tests/unit/resource-aware-wave-scheduler.test.ts
+ ❯ tests/unit/resource-aware-wave-scheduler.test.ts:2:1
+      1| import { describe, expect, it } from "vitest";
+      2| import {
+       | ^
+      3|   ResourceAwareWaveScheduler,
+      4| } from "../../openclaw_runtime/src/agents/resource-aware-wave-schedule…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/a05-a5-gate-coverage.test.ts > A05 A5 gate coverage > keeps every A5 required test path present and wired into the archived pilot spec
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0297-a05-treatment-2\grader\harness\specs\tasks\a5-adaptive-context-budget-pilot.md'
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts:23:18
+     21| describe("A05 A5 gate coverage", () => {
+     22|   it("keeps every A5 required test path present and wired into the arc…
+     23|     const spec = readFileSync(path.join(ROOT, SPEC), "utf8");
+       |                  ^
+     24|     for (const rel of REQUIRED_TESTS) {
+     25|       expect(spec).toContain(`- ${rel}`);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/a05-a5-gate-coverage.test.ts > A05 A5 gate coverage > pins A5 counter, budget action, wave immutability, and cumulative smoke evidence
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0297-a05-treatment-2\grader\openclaw_runtime\src\observability\deprecation-counters.ts'
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts:31:22
+     29|
+     30|   it("pins A5 counter, budget action, wave immutability, and cumulativ…
+     31|     const counters = readFileSync(
+       |                      ^
+     32|       path.join(ROOT, "openclaw_runtime/src/observability/deprecation-…
+     33|       "utf8",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/a05-a5-gate-coverage.test.ts > A05 A5 gate coverage > pins the resume re-planning implementation and its cross-area evidence
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0297-a05-treatment-2\grader\openclaw_runtime\src\agents\cross-area\cross-area-facades.ts'
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts:55:21
+     53|
+     54|   it("pins the resume re-planning implementation and its cross-area ev…
+     55|     const facades = readFileSync(
+       |                     ^
+     56|       path.join(ROOT, "openclaw_runtime/src/agents/cross-area/cross-ar…
+     57|       "utf8",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+

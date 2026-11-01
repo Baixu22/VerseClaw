@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0280-s05",
+  "commandLine": "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+  "taskDigest": "4b6178e2f47a5941782cd2ae617d9ec0631c60b1bd4c0467aea5ea618a02fc98",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T05:01:53.016Z",
+  "finishedAt": "2026-11-01T05:01:59.248Z",
+  "durationMs": 6221,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 3,
+    "failed": 1,
+    "skipped": 0,
+    "total": 4,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "a4937c67ad7ea592d07cf389f32ba3b6a20c6b561b8524e48915769c12f867aa",
+  "stderrSha256": "cd821c3252ecc4eb33bff612770f6d170beaa9a969ea9b59d948540a67734319"
+}

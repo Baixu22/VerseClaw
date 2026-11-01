@@ -1,0 +1,18 @@
+All deliverables are in place, the `node_modules` junction is removed (external store intact with 124 entries), and scratch artifacts are cleaned.
+
+```json
+{
+  "status": "completed",
+  "summary": "Added a pure, dependency-free converter scripts/lib/trace-to-eval-sample.mjs (typed via trace-to-eval-sample.d.mts) that turns a selected redacted failure trace into a re-runnable eval sample. A failure trace maps to expected {before-fix: 'fail', after-fix: 'pass'}; success/refusal/cancelled traces stay 'pass' so a fix cannot regress them. Each sample binds a bounded reproducer (kind in scenario|route|command-id, never shell), a selector (runId+attempt), and a deterministic 16-hex replay digest. A whole-trace redaction gate rejects any trace containing raw prompt/messages/body/authorization/apiKey/headers (at any depth) or secret-like values (sk-/phc_/ghp_/AKIA/private key), emitting trace-not-redacted and writing no sample, so a promoted sample cannot leak. traceToEvalSamples is an explicit-trigger batch over caller-selected traces (e.g. recent 7-day runIds) that records per-trace rejections with codes invalid-trace/missing-field/invalid-outcome/invalid-reproducer; no scheduler or daemon is introduced. Docs/evidence authored under docs/dev/harness-gap-closure (g03-trace-to-eval-sample.md, g03-acceptance.json marked driven_by: agent, G03-SHA256SUMS) plus the task spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md. No product default/lock/approval changed and no original evidence deleted. Focused oracle-style test passes 6/6; all G03-SHA256SUMS entries verify. A temporary node_modules junction used only to resolve existing deps for testing was removed without touching its external target, and all scratch files were cleaned.",
+  "testsRun": [
+    "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1 -> 6 passed (1 file)",
+    "eslint scripts/lib/trace-to-eval-sample.mjs tests/unit/trace-to-eval-sample.test.ts -> exit 0",
+    "tsgo --noEmit -p tsconfig.test.json -> no errors in touched files",
+    "pnpm harness validate --spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md -> Spec is valid",
+    "pnpm harness run --spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md --dry-run -> pass",
+    "vitest run spec-doc-gardening.test.ts harness-specs.test.ts harness-spec-lifecycle.test.ts -> 48 passed",
+    "node scripts/check-no-bom.mjs -> ok",
+    "G03-SHA256SUMS verification -> 6/6 entries match (docs/dev/harness-gap-closure/G03-SHA256SUMS)"
+  ]
+}
+```

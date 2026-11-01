@@ -1,0 +1,32 @@
+All deliverables are in place and verified. Here is the structured result.
+
+**Summary**
+
+G02 turned "spec maintainability" into an executable gate without creating a second source of truth:
+
+- Backfilled `lifecycleStatus: archived` into the 17 delivered harness-gap packet specs (frontmatter-only; bodies, product locks and historical acceptance bytes untouched). `node scripts/check-spec-lifecycle.mjs` now reports **519 task specs** with a valid status, failing closed on missing/illegal values.
+- Added one doc-gardening rule `harness/specs/rules/spec-doc-gardening-boundary.md` (id `spec-doc-gardening-boundary`) naming the executable check `scripts/check-spec-lifecycle.mjs`, with R1 lifecycle vocabulary, R2 archive-not-delete, R3 AGENTS.md ≤400-line router, R4 single-source-of-truth.
+- Added `tests/unit/spec-doc-gardening.test.ts` pinning those boundaries, plus the G02 task spec and evidence (`docs/dev/harness-gap-closure/g02-spec-doc-gardening.md`, `g02-acceptance.json`, `G02-SHA256SUMS`).
+- Left `AGENTS.md` (184 lines) and `scripts/check-spec-lifecycle.mjs` unchanged — no parallel index, no scheduled mutation, no product-default/lock change.
+
+**Files**
+- New: `harness/specs/rules/spec-doc-gardening-boundary.md`, `harness/specs/tasks/harness-gap-spec-doc-gardening.md`, `tests/unit/spec-doc-gardening.test.ts`, `docs/dev/harness-gap-closure/g02-spec-doc-gardening.md`, `docs/dev/harness-gap-closure/g02-acceptance.json`, `docs/dev/harness-gap-closure/G02-SHA256SUMS`
+- Modified (frontmatter only): the 17 `harness/specs/tasks/harness-gap-*.md` packet specs listed in the task scope
+
+**testsRun** (all exit 0, run in this workspace unless noted)
+- `node scripts/check-spec-lifecycle.mjs` — 519 task specs
+- `node scripts/validate-policy-docs.mjs --quiet` — PASS: 10 checks
+- `node scripts/check-error-governance.mjs` — PASS: 16 checks
+- `node scripts/check-no-bom.mjs` — ok
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md --no-diff` — Spec is valid
+- `node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md` — exit 0
+- `node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md --dry-run` — pass (executed in a byte-copy with local git; `run` ignores `--no-diff` and needs a diff base this git-less workspace lacks)
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md` (with diff) — owned-path change passes; uncovered file fails with `changed files are not covered by touchedAreas or ownedPaths`
+- `node --input-type=module -e "<inline mirror of tests/unit/spec-doc-gardening.test.ts>"` — vocab closed, AGENTS.md 184 ≤400, single lifecycle rule, single spec-lifecycle script, no parallel spec source of truth
+- B00 structural baseline via `validateBaseline` — ok, 30 slots / 29 packets
+- Credential scan over the 5 new files (provider-key/github-token/aws/slack/private-key) — 0 hits; `G02-SHA256SUMS` readback — 5 of 5 verified
+
+**Not run / notes**
+- Vitest could not execute `tests/unit/spec-doc-gardening.test.ts`: `node_modules` is absent here and the task forbids installing dependencies; I reproduced its assertions with node and its logic is mirrored by the checks above.
+- The repository-artifact retention gate (`check-repository-artifacts.mjs`) fails because the workspace has no git metadata and the referenced `harness-gap-closure/<packet>` evidence docs are pre-existing unregistered/untracked files (e.g. `g01-*`, `s04-*`); this is not in the acceptance criteria and is unrelated to this change except that G02 follows the same existing precedent.
+- Publication/push is left to the publisher; no product locks or defaults were changed.

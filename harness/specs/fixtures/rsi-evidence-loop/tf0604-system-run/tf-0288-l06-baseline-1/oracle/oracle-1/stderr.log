@@ -1,0 +1,21 @@
+
+
+
+
+
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit-fast| ../../src/agents/hot-file-write-owner.test.ts [ src/agents/hot-file-write-owner.test.ts ]
+Error: Cannot find module './hot-file-write-owner.js' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0288-l06-baseline-1/grader/openclaw_runtime/src/agents/hot-file-write-owner.test.ts
+ ❯ ../../src/agents/hot-file-write-owner.test.ts:5:1
+      3| import { describe, expect, it, afterEach } from "vitest";
+      4|
+      5| import {
+       | ^
+      6|   claimWriteOwner,
+      7|   getActiveWriteOwner,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

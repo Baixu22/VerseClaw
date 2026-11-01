@@ -1,0 +1,22 @@
+Done. Here's a concise summary.
+
+**Result**
+- Re-verified the A1 Layered Execution Isolation controlled pilot gate against the current candidate without redefining any threshold. All four graduation criteria map to executable evidence in `tests/unit/a01-a1-gate-coverage.test.ts` (11/11 assertions passed): fallback rate `<5%` (6% violates, 5% boundary allowed, 4% ok), p99 `≤200ms` over 100 hot-path samples, `declaredPathViolationCount` tracked separately, and `checkBudgetViolation('a1')` → `action=degrade_to_legacy` at rate `>5%`.
+- Covered the tool `writeRiskProfile` declaration (all 6 built-ins: write/edit/bash/apply_patch/exec/process) + registry rejection, and the a1 recorder rejecting `claw.a4.tool.choice`.
+
+**Spec drift fixed**
+- `harness/specs/tasks/a1-layered-isolation-pilot.md` `requiredTests` listed five files absent on this candidate and omitted the existing `openclaw_runtime/src/observability/deprecation-counters.test.ts` (which covers criteria 1/3/4). Added that entry and a coverage guard; the original acceptance list, `< 0.05` formula, `≤ 200ms`, and `requiredProfiles:[fast, comms]` are byte-unchanged.
+
+**Files**
+- `tests/unit/a01-a1-gate-coverage.test.ts` — new coverage guard.
+- `harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md`, `docs/dev/harness-gap-closure/a01-a1-isolation-gate.md`, `docs/dev/harness-gap-closure/a01-acceptance.json`, `docs/dev/harness-gap-closure/A01-SHA256SUMS` — new.
+- `harness/specs/tasks/a1-layered-isolation-pilot.md` — drift fix only.
+
+**Checks run**
+- Passed: A01 gate coverage 11/11 (via Node type-stripping + shim), `harness validate` ×2, `check-spec-lifecycle`, `validate-policy-docs` (10), `check-evidence-refs` (157), `sha256sum -c` (5/5 OK), credential scan 0 hits.
+- Not run: canonical `vitest`/`typecheck`/`lint`/`comms:replay`/`comms:compare` — `node_modules` is absent and installs/network are disallowed. The committed vitest file is the canonical CI gate; I ran its exact code path through a resolve-hook shim.
+- `check-harness-gap-baseline.mjs` exits 1 from the pre-existing frozen B00 baseline (absent `requiredTests` files, historical drift; not wired into CI) — unrelated to this change.
+
+Residuals are recorded in `docs/dev/harness-gap-closure/a01-acceptance.json`: the five legacy non-existent `requiredTests` entries were intentionally not deleted (out of a threshold-preserving re-verification), p99 is in-process sampling not a formal benchmark, and product locks stay `false`.
+
+Structured result written to `.rsi/RESULT.json` (`status: completed`, 10 `testsRun` entries).

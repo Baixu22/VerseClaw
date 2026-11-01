@@ -1,0 +1,15 @@
+Reading additional input from stdin...
+2026-11-01T03:42:54.547574Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.551194Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-11-01T03:42:54.641944Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.642826Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.643199Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.647607Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.648696Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.649120Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.649572Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.662447Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.663893Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:42:54.665896Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T03:51:25.232119Z  WARN codex_app_server_protocol::protocol::thread_history: dropping turn-scoped item for unknown turn id `01a19533-fcb8-7771-8bc9-97e2bdb082d6` item_id="call_f57fa6732b2e4fb096303dbc"
+2026-11-01T03:51:25.232307Z  WARN codex_app_server_protocol::protocol::thread_history: dropping turn-scoped item for unknown turn id `01a19533-fcb8-7771-8bc9-97e2bdb082d6` item_id="call_f57fa6732b2e4fb096303dbc"

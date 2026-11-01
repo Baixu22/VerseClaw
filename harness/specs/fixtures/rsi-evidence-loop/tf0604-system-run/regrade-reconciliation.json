@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "RsiTrialSealReconciliation/v1",
+  "generatedAt": "2026-11-01T06:44:33.347Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "reason": "regrade wrote the authoritative result before the progress seal was recomputed",
+  "reconciledTrials": [
+    {
+      "trialId": "tf-0285-l03-baseline-2",
+      "previousSeal": "sha256:b45794899f3ac0275b73b8aaaaff2afb8a7bd869da56ade3eb638bdb14f384c9",
+      "reconciledSeal": "sha256:ce960ab98692eee5cc61f6465b5cd4fcb2871ac658f19330e061359b28f4720d",
+      "preRegradeDigest": "sha256:b45794899f3ac0275b73b8aaaaff2afb8a7bd869da56ade3eb638bdb14f384c9"
+    },
+    {
+      "trialId": "tf-0287-l05-baseline-1",
+      "previousSeal": "sha256:8b2a2ff98022a7704d957175f28e43e8498b388575d80f235b0e2394ba4819d9",
+      "reconciledSeal": "sha256:937ba6afc38fec5f073ead8e1ba25fa575d347316d8c2638e56eb03ec7dcb232",
+      "preRegradeDigest": "sha256:8b2a2ff98022a7704d957175f28e43e8498b388575d80f235b0e2394ba4819d9"
+    },
+    {
+      "trialId": "tf-0278-s03-baseline-2",
+      "previousSeal": "sha256:ca436ecb9478226470cfb79e2017c3b6742938c0b19e8d02d72524f08587142b",
+      "reconciledSeal": "sha256:9acfd8937f5ea9e0114b36ea0bcdd0dab3258e1fedb215632223601900f2754a",
+      "preRegradeDigest": "sha256:ca436ecb9478226470cfb79e2017c3b6742938c0b19e8d02d72524f08587142b"
+    },
+    {
+      "trialId": "tf-0278-s03-treatment-1",
+      "previousSeal": "sha256:ee1056a28ce9dd7fa93e51677ec96aef1c23e11ee426ed18891b053ae5af51ce",
+      "reconciledSeal": "sha256:cfa299bfb3824b1de54951873719f108c81e8fdc1cbe7b6a498a1479afbbb121",
+      "preRegradeDigest": "sha256:ee1056a28ce9dd7fa93e51677ec96aef1c23e11ee426ed18891b053ae5af51ce"
+    },
+    {
+      "trialId": "tf-0280-s05-baseline-1",
+      "previousSeal": "sha256:a128d790493e378b40707eabcba57e6ad9e8d444773fcb88a829764ebe75cd03",
+      "reconciledSeal": "sha256:d840e80ecae22058dfeb8ef7b24e281360bedf3d2a268c15798ed30c58ae1538",
+      "preRegradeDigest": "sha256:a128d790493e378b40707eabcba57e6ad9e8d444773fcb88a829764ebe75cd03"
+    },
+    {
+      "trialId": "tf-0281-s06-treatment-1",
+      "previousSeal": "sha256:ed35eabc26c202a2dfe1a61976543411fc3c99470fafc4824c673e2b0d98d390",
+      "reconciledSeal": "sha256:f6a46354cf51dd763748dea88f4e0f7569d69781ceebccce4fe0e89dde76fc8f",
+      "preRegradeDigest": "sha256:ed35eabc26c202a2dfe1a61976543411fc3c99470fafc4824c673e2b0d98d390"
+    }
+  ],
+  "completedCount": 144,
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

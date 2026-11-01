@@ -1,0 +1,15 @@
+Reading additional input from stdin...
+2026-11-01T06:48:03.512702Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.517188Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-11-01T06:48:03.520977Z  WARN codex_core::agents_md: ignoring project_doc_fallback_filenames entry that is not a filename
+2026-11-01T06:48:03.629130Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.631964Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.632323Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.647204Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.650096Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.652931Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.655486Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.680964Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.686027Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T06:48:03.703092Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-11-01T07:00:07.531173Z ERROR codex_core::tools::router: error=exec_command failed: CreateProcess { message: "Rejected(\"`\\\"C:\\\\\\\\WINDOWS\\\\\\\\system32\\\\\\\\bash.exe\\\" -lc \\\"rm -f /mnt/d/tmp/rsi-tf0604-run5/trials/tf-0293-a01-treatment-3/agent/node_modules; \\\\\\\"/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe\\\\\\\" -NoProfile -Command \\\\\\\"cmd /c mklink /J 'D:\\\\\\\\tmp\\\\\\\\rsi-tf0604-run5\\\\\\\\trials\\\\\\\\tf-0293-a01-treatment-3\\\\\\\\agent\\\\\\\\node_modules' 'D:\\\\\\\\ClawX\\\\\\\\node_modules'\\\\\\\" 2>&1 | tail -3\\\"` rejected: rm -f style commands are not permitted. Use a safer approach\")" }

@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0279-s04",
+  "commandLine": "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+  "taskDigest": "62964a9d77433e31c5a305cf95b9687129b717663f0bf113fcfd3e0e390badfa",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T22:27:54.943Z",
+  "finishedAt": "2026-10-31T22:27:58.361Z",
+  "durationMs": 3418,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "total": 5,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "89859ad00f9c2ea711d852177448197505df2437cf9216d5031cda2cb9e20fef",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

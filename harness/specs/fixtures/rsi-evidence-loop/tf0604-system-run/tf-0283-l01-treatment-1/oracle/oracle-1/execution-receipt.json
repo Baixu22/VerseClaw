@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0283-l01",
+  "commandLine": "pnpm exec vitest run tests/unit/task-ledger-working-context-single-source.test.ts tests/unit/context-control-plane-stage3-contracts.test.ts --maxWorkers=1",
+  "taskDigest": "94ac1d856118f74edac2d0adb87a3e5ba95e38e50d0b26fd79468d1dd205cde3",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T19:09:13.690Z",
+  "finishedAt": "2026-10-31T19:09:18.719Z",
+  "durationMs": 5029,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "total": 14,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "6e877d9398d403b32f5ad4c3bc405a219431ef33c0e49d0bf4b0325d968eda1b",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

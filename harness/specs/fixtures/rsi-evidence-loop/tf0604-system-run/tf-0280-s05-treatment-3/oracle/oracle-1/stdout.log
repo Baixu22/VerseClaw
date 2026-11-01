@@ -1,0 +1,11 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0280-s05-treatment-3/grader
+
+ ❯ tests/unit/provider-credential-use-boundary-ledger.test.ts (4 tests | 1 failed) 11ms
+     × pins the single call site and records the residual credential users 6ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  06:55:08
+   Duration  776ms (transform 155ms, setup 448ms, import 48ms, tests 11ms, environment 0ms)
+

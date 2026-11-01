@@ -1,0 +1,426 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/a05-a5-gate-coverage.test.ts > A05 A5 gate coverage > keeps every A5 required test path present and wired into the archived pilot spec
+AssertionError: expected '---\nlifecycleStatus: archived\nid: a…' to contain '- tests/unit/resource-aware-wave-sche…'
+
+- Expected
++ Received
+
+- - tests/unit/resource-aware-wave-scheduler.test.ts
++ ---
++ lifecycleStatus: archived
++ id: a5-adaptive-context-budget-pilot
++ title: A5 Adaptive Context Budget — Active Pilot Gate
++ scenario: gateway-backend-communication
++ taskType: runtime-bridge
++ intent: Promote the A5 context budget planner from shadow to active pilot, gated by plan adoption rate and budget compliance.
++ touchedAreas:
++   - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts
++   - openclaw_runtime/src/agents/cross-area/context-budget-plan.ts
++   - tests/unit/cross-area-composition.test.ts
++   - tests/unit/deep/a5-deep.test.ts
++   - tests/unit/a05-a5-gate-coverage.test.ts
++   - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts
++   - openclaw_runtime/src/agents/task-loop-controller.ts
++   - openclaw_runtime/src/observability/deprecation-counters.ts
++   - openclaw_runtime/src/observability/deprecation-counters.test.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-p6.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-runtime.ts
++   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
++   - openclaw_runtime/src/config/types.agent-defaults.ts
++   - reports/context-compression/P6-DEVELOPMENT-PROMPT-2026-08-18.md
++   - reports/context-compression/P6-EVIDENCE-2026-08-18.md
++   - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
++   - openclaw_runtime/src/context-engine/context-orchestrator.ts
++   - openclaw_runtime/src/context-engine/context-orchestrator.test.ts
++   - tests/unit/deprecation-counters.test.ts
++   - tests/unit/performance-budgets.test.ts
++   - reports/context-compression/P5-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P6-DATA-PREP-STATUS-2026-08-18.md
++   - reports/context-compression/production-compaction-entries-11.json
++   - reports/context-compression/production-compaction-manifest-9.json
++   - reports/context-compression/production-summaries-9.jsonl
++   - reports/context-compression/production-summaries-9.meta.json
++   - reports/context-compression/production-paired-trajectories-9.jsonl
++   - reports/context-compression/failure-guidelines-p6-9.json
++   - reports/context-compression/production-summaries-30-generated.jsonl
++   - reports/context-compression/production-summaries-30-generated.meta.json
++   - reports/context-compression/production-summaries-30-v5.jsonl
++   - reports/context-compression/production-summaries-30-v5.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v9.jsonl
++   - reports/context-compression/production-summaries-30-v9.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v10.jsonl
++   - reports/context-compression/production-summaries-30-v10.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v11.jsonl
++   - reports/context-compression/production-summaries-30-v11.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v14.jsonl
++   - reports/context-compression/production-summaries-30-v14.jsonl.meta.json
++   - scripts/context-compression-production-summary-regenerator.ts
++   - scripts/context-compression-recovery-ledger.mjs
++   - scripts/context-compression-would-retry-canary.ts
++   - reports/context-compression/production-paired-trajectories-30.jsonl
++   - reports/context-compression/failure-guidelines-p6-30.json
++   - reports/context-compression/failure-guidelines-p6-a-phase2-reasoner.json
++   - reports/context-compression/failure-guidelines-p6-a-v5-iteration.json
++   - reports/context-compression/failure-guidelines-p6-a-reasoner.json
++   - reports/context-compression/production-paired-trajectories-30-reasoner.jsonl
++   - reports/context-compression/P6-A-AUTOMATED-ACCEPTANCE-EVIDENCE-2026-08-18.md
++   - reports/context-compression/P6-WOULD-RETRY-CANARY-2026-08-19.md
++   - artifacts/context-compression-p5/**
++   - harness/specs/tasks/a5-adaptive-context-budget-pilot.md
++   - harness/specs/tasks/token-dense-recovery-compression-v1.md
++ residualPaths:
++   - docs/clawx-design-overview.md
++   - electron/services/sessions-api.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts
++   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.recall.test.ts
++   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.ts
++   - reports/CONTEXT-COMPRESSION-DEVELOPMENT-PLAN-2026-08-17.md
++   - reports/context-compression/P0-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P1-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P1-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P2-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P2-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P3-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P3-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P4-ACCEPTANCE-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P4-ACCEPTANCE-PROMPT-2026-08-17.md
++   - reports/context-compression/P4-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P4-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P5-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P5-EXECUTION-PROMPT-2026-08-17.md
++   - reports/context-compression/production-manifest-30.json
++   - scripts/context-compression-eval-runner.mjs
++   - shared/host-api/contract.ts
++   - src/lib/host-api.ts
++   - tests/unit/compression-artifact.test.ts
++   - tests/unit/context-compression-eval.test.ts
++   - tests/unit/context-runtime-kit-recovery-context.test.ts
++   - tests/unit/helpers/context-compression-eval.ts
++ expectedUserBehavior:
++   - P5 compaction budget shadow records plan adoption, ignored plans, and budget exceeded through the existing A5 deprecation counters without changing returned summaries or artifacts.
++   - A5 budget violation diagnosis degrades to default budget through the existing registry when ignored plans exceed 20%.
++ requiredProfiles:
++   - fast
++   - comms
++ requiredRules:
++   - backend-communication-boundary
++   - comms-regression
++ requiredTests:
++   - tests/unit/cross-area-composition.test.ts
++   - tests/unit/deep/a5-deep.test.ts
++   - tests/unit/a05-a5-gate-coverage.test.ts
++   - tests/unit/deep/a2-deep.test.ts
++ acceptance:
++   - A5 deprecation counter `planIgnoredCount` rate ≤ 20% over 100-turn session
++   - A5 p99 ≤ 30ms (criterion 4.8)
++   - `ContextBudgetPlanner.replanOnResume` re-executes on resume, not stale (criterion 3.6)
++   - Wave immutability: started waves not re-planned (criterion 3.9)
++   - Budget violation response `degrade_to_default_budget` triggers when ignored rate > 20%
++   - P5 real compaction call sites increment planAdoptedCount/planIgnoredCount/budgetExceededCount deterministically
++   - P5 planner threshold overrides are clamped earlier than the production ladder and default behavior is byte-identical without a schedule
++   - P5 budgetShadow remains diagnostics-only and never enters CompressionArtifact
++   - P5 nativeMemory/nativeContextGating negotiation is additive and keeps provenance receipts
++ docs:
++   required: true
++ ---
++ ## Graduation gate
++
++ A5 graduates from shadow to active pilot when ALL of the following hold:
++
++ 1. **Plan adoption rate** ≥ 80%: `planAdoptedCount / (adopted + ignored) ≥ 0.80`.
++ 2. **Performance**: p99 ≤ 30ms for 100-turn session (criterion 4.8).
++ 3. **Resume re-execution**: planner re-executes on resume, not stale (criterion 3.6).
++ 4. **Wave immutability**: started waves not re-planned (criterion 3.9).
++ 5. **Budget violation response**: `degrade_to_default_budget` triggers when ignored > 20% (criterion 4.14).
++ 6. **Per-turn cumulative budget**: p99 ≤ 300ms with A1+A5+A3 active (criterion 4.10).
++
++ ## Out of scope
++
++ - Dynamic degradation order shifting (OQ-012, Stage 5).
++ - Per-area memory budget allocation (OQ-011, Stage 5).
++
++
+
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts:25:20
+     23|     const spec = readFileSync(path.join(ROOT, SPEC), "utf8");
+     24|     for (const rel of REQUIRED_TESTS) {
+     25|       expect(spec).toContain(`- ${rel}`);
+       |                    ^
+     26|       expect(existsSync(path.join(ROOT, rel))).toBe(true);
+     27|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/a05-a5-gate-coverage.test.ts > A05 A5 gate coverage > pins the resume re-planning implementation and its cross-area evidence
+AssertionError: expected '// ----------------------------------…' to contain 'hasReexecuted'
+
+- Expected
++ Received
+
+- hasReexecuted
++ // ---------------------------------------------------------------------------
++ // A5 cross-area composition facades (area-composition-spec §2, development manual
++ // §1.2 A5; Stage 3 criteria 3.4 / 3.6 / 3.9).
++ //
++ // The composition spec requires, for A5: a `ContextBudgetPlanner` that emits the
++ // `appliesToWave` field the A2 wave scheduler consumes (3.4), a resume boundary that
++ // re-executes the planner instead of reusing a stale checkpoint budget (3.6), and a
++ // wave hand-off that never re-plans a started wave (3.9).
++ //
++ // Plan construction and its frozen boundaries live in ./context-budget-plan.ts.
++ // ---------------------------------------------------------------------------
++
++ import {
++   buildContextBudgetPlan,
++   expectedTierForPlan,
++   type ContextBudgetPlan,
++   type ContextBudgetPlannerInput,
++   type ContextBudgetMode,
++ } from "./context-budget-plan.js";
++ import type {
++   CompressionTier,
++ } from "../../../packages/agent-core/src/harness/compaction/compression-planner.js";
++ import {
++   deprecationCounters,
++   type A5DeprecationCounters,
++ } from "../../observability/deprecation-counters.js";
++ import type { ResourceAwareWaveScheduler } from "../resource-aware-wave-scheduler.js";
++
++ // Re-exported so A5 consumers keep a single import surface.
++ export {
++   buildContextBudgetPlan,
++   DEFAULT_CONTEXT_WINDOW_TOKENS,
++   estimateTaskKind,
++   expectedTierForPlan,
++ } from "./context-budget-plan.js";
++ export type {
++   BuildContextBudgetPlanOptions,
++   ContextBudgetEvidenceRef,
++   ContextBudgetMode,
++   ContextBudgetPlan,
++   ContextBudgetPlannerInput,
++   ContextBudgetPressureSchedule,
++   ContextBudgetProviderManifest,
++   ContextBudgetReserved,
++   ContextBudgetTaskKind,
++ } from "./context-budget-plan.js";
++
++ export type A5PlanOutcome = {
++   adopted: boolean;
++   ignored: boolean;
++   budgetExceeded: boolean;
++   expectedTier: CompressionTier;
++   actualTier: CompressionTier;
++ };
++
++ export type ContextBudgetPlannerOptions = {
++   mode?: ContextBudgetMode;
++   now?: () => number;
++ };
++
++ /**
++  * Turn-scoped A5 planner facade. It keeps only in-memory diagnostics (rolling
++  * plan history) and owns no durable task truth.
++  */
++ export class ContextBudgetPlanner {
++   private readonly mode: ContextBudgetMode;
++   private readonly now: () => number;
++   private sequence = 0;
++   private resumeReplanCount = 0;
++   private lastPlan: ContextBudgetPlan | undefined;
++   private readonly history: ContextBudgetPlan[] = [];
++
++   constructor(options: ContextBudgetPlannerOptions = {}) {
++     this.mode = options.mode ?? "shadow";
++     this.now = options.now ?? Date.now;
++   }
++
++   /** Plan the current turn. */
++   plan(input: ContextBudgetPlannerInput): ContextBudgetPlan {
++     const plan = this.build(input, {});
++     this.remember(plan);
++     return plan;
++   }
++
++   /**
++    * Criterion 3.6: after a pause/resume boundary the planner must re-execute
++    * instead of reusing the budget frozen in the checkpoint. The returned plan is
++    * rebuilt from the fresh input and records the plan it supersedes.
++    */
++   replanOnResume(input: ContextBudgetPlannerInput): ContextBudgetPlan {
++     const supersedesPlanId = this.lastPlan?.planId;
++     this.resumeReplanCount += 1;
++     const plan = this.build(input, {
++       replannedOnResume: true,
++       ...(supersedesPlanId ? { supersedesPlanId } : {}),
++     });
++     this.remember(plan);
++     return plan;
++   }
++
++   /** Record a real compaction call-site outcome against the A5 counters. */
++   recordCompressionOutcome(params: {
++     plan: ContextBudgetPlan;
++     tokensBefore: number;
++     actualTier?: CompressionTier;
++   }): A5PlanOutcome {
++     const expectedTier = expectedTierForPlan(params.plan, params.tokensBefore);
++     const actualTier = params.actualTier ?? expectedTier;
++     const adopted = actualTier === expectedTier;
++     const budgetExceeded = params.tokensBefore > params.plan.totalBudgetTokens;
++     if (adopted) {
++       deprecationCounters.incrementA5PlanAdopted(1);
++     } else {
++       deprecationCounters.incrementA5PlanIgnored(1);
++     }
++     if (budgetExceeded) {
++       deprecationCounters.incrementA5BudgetExceeded(1);
++     }
++     return { adopted, ignored: !adopted, budgetExceeded, expectedTier, actualTier };
++   }
++
++   getLastPlan(): ContextBudgetPlan | undefined {
++     return this.lastPlan;
++   }
++
++   getPlanHistory(): ContextBudgetPlan[] {
++     return [...this.history];
++   }
++
++   getResumeReplanCount(): number {
++     return this.resumeReplanCount;
++   }
++
++   private build(
++     input: ContextBudgetPlannerInput,
++     flags: { replannedOnResume?: boolean; supersedesPlanId?: string },
++   ): ContextBudgetPlan {
++     this.sequence += 1;
++     const violation = deprecationCounters.checkBudgetViolation("a5");
++     return buildContextBudgetPlan(input, {
++       planId: `cbp-${this.mode}-${this.sequence}`,
++       generatedAt: new Date(this.now()).toISOString(),
++       mode: this.mode,
++       degradedToDefaultBudget: violation.violated,
++       replannedOnResume: flags.replannedOnResume === true,
++       ...(flags.supersedesPlanId ? { supersedesPlanId: flags.supersedesPlanId } : {}),
++     });
++   }
++
++   private remember(plan: ContextBudgetPlan): void {
++     this.lastPlan = plan;
++     this.history.push(plan);
++     if (this.history.length > 200) this.history.shift();
++   }
++ }
++
++ export type WaveQueueResult =
++   | { accepted: true; appliesToWave: number; proposedMaxWorkers: number }
++   | {
++       accepted: false;
++       appliesToWave: number;
++       reason: "wave_started" | "wave_not_found" | "no_change";
++     };
++
++ /**
++  * Hand an A5 plan to the A2 scheduler. Started waves stay immutable: the
++  * scheduler rejects a re-plan of a wave whose workers were already spawned, so
++  * the plan applies to the next plannable wave only (criterion 3.9).
++  */
++ export function queuePlanToWave(
++   plan: ContextBudgetPlan,
++   scheduler: Pick<ResourceAwareWaveScheduler, "rePlan">,
++ ): WaveQueueResult {
++   const result = scheduler.rePlan({
++     appliesToWave: plan.appliesToWave,
++     maxWorkers: plan.proposedMaxWorkers,
++   });
++   if (result.accepted) {
++     return {
++       accepted: true,
++       appliesToWave: plan.appliesToWave,
++       proposedMaxWorkers: plan.proposedMaxWorkers,
++     };
++   }
++   return { accepted: false, appliesToWave: plan.appliesToWave, reason: result.reason };
++ }
++
++ /** First wave at or after `fromWave` that has not started yet. */
++ export function nextPlannableWave(
++   waves: ReadonlyArray<{ wave: number; status: string }>,
++   fromWave: number,
++ ): number | undefined {
++   const candidate = waves
++     .filter((wave) => wave.wave >= fromWave && wave.status === "planned")
++     .sort((a, b) => a.wave - b.wave)[0];
++   return candidate?.wave;
++ }
++
++ export type A5AdoptionSummary = {
++   adopted: number;
++   ignored: number;
++   total: number;
++   adoptionRate: number;
++   ignoredRate: number;
++   violated: boolean;
++   action?: string;
++ };
++
++ /** Adoption-rate summary over the A5 deprecation counters (criterion 4.14). */
++ export function summarizeA5Adoption(): A5AdoptionSummary {
++   const a5 = deprecationCounters.getArea("a5") as A5DeprecationCounters;
++   const total = a5.planAdoptedCount + a5.planIgnoredCount;
++   const violation = deprecationCounters.checkBudgetViolation("a5");
++   return {
++     adopted: a5.planAdoptedCount,
++     ignored: a5.planIgnoredCount,
++     total,
++     // No telemetry is not evidence of a problem, so an empty sample reads 1.0.
++     adoptionRate: total > 0 ? a5.planAdoptedCount / total : 1,
++     ignoredRate: total > 0 ? a5.planIgnoredCount / total : 0,
++     violated: violation.violated,
++     ...(violation.violated ? { action: violation.action } : {}),
++   };
++ }
++
+
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts:61:21
+     59|     expect(facades).toContain("class ContextBudgetPlanner");
+     60|     expect(facades).toContain("replanOnResume");
+     61|     expect(facades).toContain("hasReexecuted");
+       |                     ^
+     62|
+     63|     const crossArea = readFileSync(path.join(ROOT, "tests/unit/cross-a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/performance-budgets.test.ts > A6 performance budgets > 10 pause/resume cycles p99 stays <= 300ms and writes bounded evidence
+TypeError: Cannot read properties of undefined (reading 'modelContextWindow')
+ ❯ resolveWindowTokens openclaw_runtime/src/agents/cross-area/context-budget-plan.ts:223:34
+    221|   estimated: boolean;
+    222| } {
+    223|   for (const candidate of [input.modelContextWindow, input.tokenBudget…
+       |                                  ^
+    224|     if (typeof candidate === "number" && Number.isFinite(candidate) &&…
+    225|       return { tokens: Math.round(candidate), estimated: false };
+ ❯ buildContextBudgetPlan openclaw_runtime/src/agents/cross-area/context-budget-plan.ts:273:24
+ ❯ ContextBudgetPlanner.build openclaw_runtime/src/agents/cross-area/cross-area-facades.ts:140:12
+ ❯ ContextBudgetPlanner.plan openclaw_runtime/src/agents/cross-area/cross-area-facades.ts:80:23
+ ❯ tests/unit/performance-budgets.test.ts:122:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

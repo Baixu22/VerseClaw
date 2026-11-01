@@ -1,0 +1,39 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/performance-budgets.test.ts [ tests/unit/performance-budgets.test.ts ]
+Error: Failed to resolve import "../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js" from "tests/unit/performance-budgets.test.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: D:/tmp/rsi-tf0604-run5/trials/tf-0294-a02-baseline-1/grader/tests/unit/performance-budgets.test.ts:14:7
+  11 |    FingerprintLeaseCoordinator,
+  12 |    ResumeContractVerifier
+  13 |  } from "../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js";
+     |          ^
+  14 |  const SETTINGS = {
+  15 |    enabled: true,
+ ❯ TransformPluginContext._formatLog ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28999:43
+ ❯ TransformPluginContext.error ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28996:14
+ ❯ normalizeUrl ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27119:18
+ ❯ ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27177:32
+ ❯ TransformPluginContext.transform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27145:4
+ ❯ EnvironmentPluginContainer.transform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28797:14
+ ❯ loadAndTransform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:22670:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/a02-a2-gate-coverage.test.ts > A02 A2 orchestration pilot gate coverage > points criterion 4 (multi-worker resume) at the restored cross-area test
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0294-a02-baseline-1\grader\tests\unit\cross-area-composition.test.ts'
+ ❯ read tests/unit/a02-a2-gate-coverage.test.ts:12:10
+     10|
+     11| function read(p: string) {
+     12|   return readFileSync(join(ROOT, p), "utf8");
+       |          ^
+     13| }
+     14| function requiredTests(spec: string): string[] {
+ ❯ tests/unit/a02-a2-gate-coverage.test.ts:46:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

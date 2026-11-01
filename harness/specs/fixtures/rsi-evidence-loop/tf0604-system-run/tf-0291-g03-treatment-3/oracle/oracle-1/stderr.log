@@ -1,0 +1,75 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > turns a failure trace into a sample expected to fail before the fix and pass after
+TypeError: traceToEvalSample is not a function
+ ❯ tests/unit/trace-to-eval-sample.test.ts:24:20
+     22| describe("G03 trace-to-eval sample", () => {
+     23|   it("turns a failure trace into a sample expected to fail before the …
+     24|     const result = traceToEvalSample(trace());
+       |                    ^
+     25|     expect(result.ok).toBe(true);
+     26|     if (!result.ok) return;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)
+TypeError: traceToEvalSample is not a function
+ ❯ tests/unit/trace-to-eval-sample.test.ts:37:22
+     35|   it("keeps success/refusal/cancelled traces as passing samples (a fix…
+     36|     for (const outcome of ["success", "refusal", "cancelled"] as const…
+     37|       const result = traceToEvalSample(trace({ outcome }));
+       |                      ^
+     38|       expect(result.ok, outcome).toBe(true);
+     39|       if (result.ok) expect(result.sample.expected["before-fix"]).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > refuses a trace that is not redacted (raw prompt or secret-like value)
+TypeError: traceToEvalSample is not a function
+ ❯ tests/unit/trace-to-eval-sample.test.ts:44:24
+     42|
+     43|   it("refuses a trace that is not redacted (raw prompt or secret-like …
+     44|     const withPrompt = traceToEvalSample({ ...trace(), prompt: "secret…
+       |                        ^
+     45|     expect(withPrompt.ok).toBe(false);
+     46|     if (!withPrompt.ok) expect(withPrompt.diagnostics[0].code).toBe("t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > rejects a reproducer that is not a bounded kind (no shell command)
+TypeError: traceToEvalSample is not a function
+ ❯ tests/unit/trace-to-eval-sample.test.ts:55:19
+     53|
+     54|   it("rejects a reproducer that is not a bounded kind (no shell comman…
+     55|     const shell = traceToEvalSample({ ...trace(), reproducer: { kind: …
+       |                   ^
+     56|     expect(shell.ok).toBe(false);
+     57|     if (!shell.ok) expect(shell.diagnostics[0].code).toBe("invalid-rep…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > is an explicit-trigger batch: selected traces only, with per-trace rejections
+TypeError: traceToEvalSamples is not a function
+ ❯ tests/unit/trace-to-eval-sample.test.ts:64:19
+     62|
+     63|   it("is an explicit-trigger batch: selected traces only, with per-tra…
+     64|     const batch = traceToEvalSamples([
+       |                   ^
+     65|       trace({ runId: "run-a" }),
+     66|       trace({ runId: "run-b", outcome: "success" }),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > rejects a trace with a missing required field
+TypeError: traceToEvalSample is not a function
+ ❯ tests/unit/trace-to-eval-sample.test.ts:75:21
+     73|
+     74|   it("rejects a trace with a missing required field", () => {
+     75|     const missing = traceToEvalSample({ runId: "run-x" });
+       |                     ^
+     76|     expect(missing.ok).toBe(false);
+     77|     if (!missing.ok) expect(missing.diagnostics[0].code).toBe("missing…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+

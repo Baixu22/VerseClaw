@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0282-s07",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1",
+  "taskDigest": "75317de1469ba42c403064895f282f4411ac3b529f273537c53941ca143633c1",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-10-31T23:36:15.540Z",
+  "finishedAt": "2026-10-31T23:36:43.833Z",
+  "durationMs": 28294,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 5,
+    "failed": 6,
+    "skipped": 0,
+    "total": 11,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "ba78670cda537540aadf4d439f7f8ae8f877bd083c49ca3d96d846e7e624c594",
+  "stderrSha256": "b1c3284bd75a1465f1e03ed5159f211fff1a99b8c327f3eea3921e161c51e568"
+}

@@ -1,0 +1,75 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| ../../src/runtime-core/verifier-completion-verdict.test.ts:16:3 > S07 verifier completion verdict > approves a completed task with the canonical evidence and produces one node->done transition
+TypeError: resolveVerifierCompletionVerdict is not a function
+ ❯ ../../src/runtime-core/verifier-completion-verdict.test.ts:17:20
+     15| describe("S07 verifier completion verdict", () => {
+     16|   it("approves a completed task with the canonical evidence and produc…
+     17|     const record = resolveVerifierCompletionVerdict({
+       |                    ^
+     18|       input: buildEvidenceVerifierInputFixture(),
+     19|       scope,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  |unit| ../../src/runtime-core/verifier-completion-verdict.test.ts:28:3 > S07 verifier completion verdict > is digest-only and grants no publish / product-lock authority
+TypeError: resolveVerifierCompletionVerdict is not a function
+ ❯ ../../src/runtime-core/verifier-completion-verdict.test.ts:29:20
+     27|
+     28|   it("is digest-only and grants no publish / product-lock authority", …
+     29|     const record = resolveVerifierCompletionVerdict({ input: buildEvid…
+       |                    ^
+     30|     expect(record.grantsPublish).toBe(false);
+     31|     expect(record.grantsProductLock).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  |unit| ../../src/runtime-core/verifier-completion-verdict.test.ts:41:3 > S07 verifier completion verdict > returns insufficient-evidence and no transition when evidence is missing
+TypeError: resolveVerifierCompletionVerdict is not a function
+ ❯ ../../src/runtime-core/verifier-completion-verdict.test.ts:42:20
+     40|
+     41|   it("returns insufficient-evidence and no transition when evidence is…
+     42|     const record = resolveVerifierCompletionVerdict({
+       |                    ^
+     43|       input: buildEvidenceVerifierInputFixture({ evidenceRefs: [], too…
+     44|       scope,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  |unit| ../../src/runtime-core/verifier-completion-verdict.test.ts:52:3 > S07 verifier completion verdict > is bounded: a task outside the granted scope gets no verdict and no transition
+TypeError: resolveVerifierCompletionVerdict is not a function
+ ❯ ../../src/runtime-core/verifier-completion-verdict.test.ts:53:20
+     51|
+     52|   it("is bounded: a task outside the granted scope gets no verdict and…
+     53|     const record = resolveVerifierCompletionVerdict({
+       |                    ^
+     54|       input: buildEvidenceVerifierInputFixture({ taskId: "task_not_gra…
+     55|       scope,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  |unit| ../../src/runtime-core/verifier-completion-verdict.test.ts:63:3 > S07 verifier completion verdict > is revocable: revocation restores the recorded prior status
+TypeError: resolveVerifierCompletionVerdict is not a function
+ ❯ ../../src/runtime-core/verifier-completion-verdict.test.ts:64:20
+     62|
+     63|   it("is revocable: revocation restores the recorded prior status", ()…
+     64|     const record = resolveVerifierCompletionVerdict({ input: buildEvid…
+       |                    ^
+     65|     expect(revokeVerifierCompletionVerdict(record)).toEqual({ nodeId: …
+     66|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  |unit| ../../src/runtime-core/verifier-completion-verdict.test.ts:68:3 > S07 verifier completion verdict > is deterministic: the same evidence yields the same digest (replay-safe)
+TypeError: resolveVerifierCompletionVerdict is not a function
+ ❯ ../../src/runtime-core/verifier-completion-verdict.test.ts:69:15
+     67|
+     68|   it("is deterministic: the same evidence yields the same digest (repl…
+     69|     const a = resolveVerifierCompletionVerdict({ input: buildEvidenceV…
+       |               ^
+     70|     const b = resolveVerifierCompletionVerdict({ input: buildEvidenceV…
+     71|     expect(a.evidenceDigest).toBe(b.evidenceDigest);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+

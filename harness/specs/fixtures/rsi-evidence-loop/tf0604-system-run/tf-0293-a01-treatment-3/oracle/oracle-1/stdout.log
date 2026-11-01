@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0293-a01-treatment-3/grader
+
+
+ Test Files  7 passed (7)
+      Tests  91 passed (91)
+   Start at  15:22:16
+   Duration  8.77s (transform 352ms, setup 623ms, import 344ms, tests 2.39s, environment 3.86s)
+

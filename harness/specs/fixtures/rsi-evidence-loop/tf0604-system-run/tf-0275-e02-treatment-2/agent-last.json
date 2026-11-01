@@ -1,0 +1,35 @@
+Implementation complete. Here is the structured result.
+
+```json
+{
+  "status": "completed",
+  "summary": "E02: implemented the first effective single-component paired ablation (Phase-4 type-aware eviction as treatment vs pre-Phase-4 FIFO as leave-one-out baseline) driving the REAL RuntimeMemoryStore. Added a pure aggregator scripts/lib/paired-ablation.mjs (+ .d.mts) that reuses E01's aggregateReliability for pass^k, computes paired Cohen's d (d_z), a deterministic bootstrap 95% CI, p50/p95 latency, token proxy, bounded false-block rate, safety violations, and a pre-registered degradation budget; it fails closed when the component leaves no trace. Added the pre-registered fixture shared/agent-dev/paired-ablation-fixture.json (24 cases x 3 repeats x 2 conditions, paired seed, isolated store per trial, fixed insertion order) and two focused tests. real-store result: baseline success 0.3333 vs treatment 1.0, pass^k 0.3333 vs 1.0, delta 0.6667, d=1.3844 (large), CI [0.5, 0.8333] excludes zero, 0 safety violations, within degradation budget, decision=pass; pre-registered profile-B/C zero-effect controls recorded honestly. No product default/lock/approval change. Added harness spec + rule, the e02 report and acceptance JSON, and E02-SHA256SUMS. Because dependencies are not installed (no installs/network allowed), the vitest/tsgo/eslint CLIs could not run; both real test files were instead executed against the real code via Node type-stripping (23/23 it-blocks passed) and that substitution is recorded truthfully.",
+  "testsRun": [
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-paired-ablation.md  (exit 0, 'Spec is valid'; ran against a temporary local git base so the changed-path ownership gate executed)",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-paired-ablation.md --dry-run  (exit 0, 'Harness result: pass')",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-paired-ablation.md  (exit 0, resolves scenario + paired-ablation-boundary + reliability-aggregation-boundary)",
+    "node harness/src/cli.mjs validate --spec harness/specs/rules/paired-ablation-boundary.md --no-diff  (exit 0, 'Spec is valid')",
+    "node scripts/check-no-bom.mjs  (exit 0, 'check-no-bom: ok')",
+    "tests/unit/agent-dev-paired-ablation.test.ts  (executed via Node --experimental-strip-types + minimal vitest shim; 15/15 it-blocks passed)",
+    "tests/unit/runtime-memory-paired-ablation.test.ts  (executed via Node --experimental-strip-types + minimal vitest shim, driving the real RuntimeMemoryStore; 8/8 it-blocks passed)",
+    "SHA256SUMS round-trip over docs/dev/harness-gap-closure/E02-SHA256SUMS  (9/9 files verified)",
+    "credential scan over the 10 E02 files  (0 hits)",
+    "node scripts/check-repository-artifacts.mjs  (exit 1; 2 pre-existing issues for e01/o02 specs + 2 same-class issues for the new E02 docs — recorded as a residual, not fixed, since .gitignore/repository-artifacts.json are outside this packet's targetScope)",
+    "NOT run (binaries absent in this isolated workspace, no installs/network): pnpm exec vitest run …, pnpm run typecheck:test (tsgo), scoped eslint"
+  ]
+}
+```
+
+**What changed**
+
+- `scripts/lib/paired-ablation.mjs`, `scripts/lib/paired-ablation.d.mts` — pure, deterministic paired-ablation aggregator + `runPairedAblation` driver (owns no runtime imports).
+- `shared/agent-dev/paired-ablation-fixture.json` — pre-registered corpus (24 cases × 3 × 2) with k/minCases/repeats/seed/primaryMetric/degradationBudget.
+- `tests/unit/agent-dev-paired-ablation.test.ts`, `tests/unit/runtime-memory-paired-ablation.test.ts` — pure aggregator tests and the real-store integration test.
+- `harness/specs/tasks/harness-gap-paired-ablation.md`, `harness/specs/rules/paired-ablation-boundary.md` — task/rule contracts (tracked source).
+- `docs/dev/harness-gap-closure/e02-paired-ablation.md`, `e02-acceptance.json`, `E02-SHA256SUMS` — curated evidence (local-only, matching the sibling E01 packet).
+
+**Notes**
+
+- The component effect is real and attributable: `changed=true`, first divergence shows FIFO keeping fillers and evicting criticals while type-aware does the reverse. The two zero-effect control profiles (B/C) are preserved, so the positive result is not an always-on harness artifact.
+- I recorded one honest residual: `check-repository-artifacts.mjs` already fails on the base tree for E01/O02 specs that declare local-only docs; the E02 spec adds the same known class. Promoting it would require editing `.gitignore`/`repository-artifacts.json`, which are outside this packet's declared ownership and would fail the spec's own ownership gate.
+- I created a temporary local `.git` only to make the harness changed-path ownership/dry-run executable, then removed it; no shim or scratch files remain in the workspace.

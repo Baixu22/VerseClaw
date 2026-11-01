@@ -1,0 +1,14 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0289-g01-baseline-1/grader
+
+ ❯ tests/unit/error-recovery-next-action.test.ts (5 tests | 4 failed) 11ms
+     × only self-retry classes are retryable, and they carry exactly the retry action 4ms
+     × never emits a shell command or raw script as a recovery action 1ms
+     × carries retryable + nextAction on AppError and leaves UNKNOWN without an action 2ms
+     × is total: any AppErrorCode resolves deterministically 0ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 40 passed (44)
+   Start at  01:00:07
+   Duration  5.76s (transform 241ms, setup 451ms, import 181ms, tests 1.36s, environment 3.19s)
+

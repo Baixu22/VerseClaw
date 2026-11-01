@@ -1,0 +1,15 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0296-a04-baseline-2/grader
+
+ ❯ tests/unit/deprecation-counters.test.ts (0 test)
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+ ❯ tests/unit/a04-a4-gate-coverage.test.ts (0 test)
+ ❯ tests/unit/decision-quality-auditor.test.ts (0 test)
+ ❯ tests/unit/trace-truncation.test.ts (0 test)
+ ❯ tests/unit/deep/a4-deep.test.ts (0 test)
+
+ Test Files  6 failed (6)
+      Tests  no tests
+   Start at  11:55:45
+   Duration  6.76s (transform 0ms, setup 0ms, import 0ms, tests 0ms, environment 4.51s)
+

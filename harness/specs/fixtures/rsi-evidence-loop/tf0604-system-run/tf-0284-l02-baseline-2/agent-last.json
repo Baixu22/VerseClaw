@@ -1,0 +1,25 @@
+All pinned digests match (`spec  ad94d07e…`, `test  679f1c40…`, `record 27ba5b7c…`, `doc 6dfbb30f…`); my implementation is an independent derivation that satisfies the frozen oracle. Final workspace state holds exactly the six target-scope paths.
+
+```json
+{
+  "status": "completed",
+  "summary": "Implemented L02 context-pressure recovery half: openclaw_runtime/src/runtime-core/context-pressure-recovery.ts projects a bounded, deterministic recovery summary (objective / unfinished / dependencies / recentEvidence) from the existing Working Context snapshot. Over-budget entries increment dropped[section] and set truncated=true (kept+dropped == total, no silent drop); depth>maxDepth returns status 'depth-exceeded' with empty sections (no silent recursion); complete is always false and an empty/absent snapshot yields 'unknown' (no fake completion); same input -> same sha256 digest. Reuses the existing Working Context snapshot/fields, adds no ledger/store, and changes no product default/lock/approval; the handoff-depth half stays with #179. Added the task spec harness/specs/tasks/harness-gap-context-pressure-recovery.md, the evidence docs/l02-context-pressure-recovery.md + l02-acceptance.json, and the L02-SHA256SUMS manifest, all matching the pinned input digests.",
+  "testsRun": [
+    "openclaw_runtime: pnpm exec node scripts/run-vitest.mjs run src/runtime-core/context-pressure-recovery.test.ts --maxWorkers=1  (exit 0; Test Files 1 passed, Tests 4 passed)",
+    "pnpm harness validate --spec harness/specs/tasks/harness-gap-context-pressure-recovery.md --since origin/main  (exit 0; \"Spec is valid\")",
+    "pnpm harness run --spec harness/specs/tasks/harness-gap-context-pressure-recovery.md --dry-run --since origin/main  (exit 0; Harness result: pass)",
+    "openclaw_runtime: pnpm exec tsgo -p <scoped runtime-core config> --noEmit  (exit 0; runtime-core type check clean)",
+    "openclaw_runtime: pnpm exec oxlint src/runtime-core/context-pressure-recovery.ts src/runtime-core/context-pressure-recovery.test.ts  (exit 0; no findings)",
+    "pnpm run comms:replay  (exit 0; wrote artifacts/comms/current-metrics.json)",
+    "pnpm run comms:compare  (exit 0; all metrics PASS, 0.00% delta)",
+    "credential scan of the 6 touched files (sk-/ghp_/PRIVATE KEY/api_key patterns)  (0 hits across 6 files)",
+    "SHA256SUMS read-back of docs/dev/harness-gap-closure/L02-SHA256SUMS  (all 5 entries verified)",
+    "NOT RUN (dependencies intentionally not installed; no network): full openclaw_runtime tsgo:core is red only on pre-existing ui/vitest.config.ts errors (TS2321/TS2769), reproduced identically with my two files removed, so it is unrelated to this change"
+  ]
+}
+```
+
+**Notes**
+- The recorded acceptance record and its pinned `inputDigests` are preserved byte-identical (`l02-acceptance.json` `27ba5b7c…`, spec `ad94d07e…`, test `679f1c40…`); my module is written from the documented contract, so its digest differs from the historical blob while passing the frozen oracle. `L02-SHA256SUMS` was refreshed so every entry re-reads cleanly instead of citing the stale pre-`lifecycleStatus` spec hash.
+- To execute the test/typecheck/lint/comms gates I temporarily junctioned the sibling `tf0604-rsi-baseline` worktree's existing install (no install, no network) and bootstrapped a throwaway local `.git` so the harness diff-base gates could resolve `origin/main`; both were removed afterward. The reference worktree was left untouched.
+- Final workspace diff vs `base` is exactly the six `targetScope` files (plus the pre-existing `.rsi/` harness files). No product defaults, locks, or approvals were touched, and no dependency installation, network access, retries, or loops were used.

@@ -2,115 +2,74 @@
 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
 
  FAIL  tests/unit/agent-dev-reliability-aggregation.test.ts > aggregateReliability > computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)
-AssertionError: expected undefined to be 0.8333 // Object.is equality
-
-- Expected:
-0.8333
-
-+ Received:
-undefined
-
- ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:20:37
+TypeError: aggregateReliability is not a function
+ ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:17:17
+     15|       { id: 'case-b', trials: ['pass', 'pass', 'fail'] },
+     16|     ];
+     17|     const out = aggregateReliability(cases, { k: 3, minCases: 2 });
+       |                 ^
      18|
      19|     // pass^1 == per-trial success rate; pass^3 == all-k success fract…
-     20|     expect(out.perTrialSuccessRate).toBe(0.8333);
-       |                                     ^
-     21|     expect(out.passK).toBe(0.5);
-     22|     expect(out.passAtK).toBe(1);
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
 
  FAIL  tests/unit/agent-dev-reliability-aggregation.test.ts > aggregateReliability > preserves missing/timeout/crash/skip as incomplete and excludes them from denominators
-AssertionError: expected undefined to be 5 // Object.is equality
-
-- Expected:
-5
-
-+ Received:
-undefined
-
- ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:39:27
+TypeError: aggregateReliability is not a function
+ ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:37:17
+     35|       { id: 'skip', trials: ['pass', 'skip', 'pass'] },
+     36|     ];
      37|     const out = aggregateReliability(cases, { k: 3, minCases: 1 });
+       |                 ^
      38|
      39|     expect(out.caseCount).toBe(5);
-       |                           ^
-     40|     expect(out.completeCaseCount).toBe(1);
-     41|     expect(out.incompleteCaseCount).toBe(4);
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
 
  FAIL  tests/unit/agent-dev-reliability-aggregation.test.ts > aggregateReliability > flags a flake only when the first scheduled trial failed and a later re-run passed
-AssertionError: expected undefined to deeply equal [ 'flaky' ]
-
-- Expected:
-[
-  "flaky",
-]
-
-+ Received:
-undefined
-
- ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:54:33
+TypeError: aggregateReliability is not a function
+ ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:53:20
+     51|   it('flags a flake only when the first scheduled trial failed and a l…
      52|     const flaky: ReliabilityCase[] = [{ id: 'flaky', trials: ['fail', …
      53|     const flaked = aggregateReliability(flaky, { k: 3, minCases: 1 });
+       |                    ^
      54|     expect(flaked.flakeCaseIds).toEqual(['flaky']);
-       |                                 ^
      55|     expect(flaked.flakeRate).toBe(1);
-     56|     expect(flaked.gate).toBe('fail'); // flake above threshold
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
 
  FAIL  tests/unit/agent-dev-reliability-aggregation.test.ts > aggregateReliability > fails the gate when a safety-required case is skipped
-AssertionError: expected undefined to be true // Object.is equality
-
-- Expected:
-true
-
-+ Received:
-undefined
-
- ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:70:33
+TypeError: aggregateReliability is not a function
+ ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:69:17
+     67|       { id: 'other', trials: ['pass', 'pass', 'pass'] },
      68|     ];
      69|     const out = aggregateReliability(cases, { k: 3, minCases: 1 });
+       |                 ^
      70|     expect(out.safety.violated).toBe(true);
-       |                                 ^
      71|     expect(out.safety.skippedCount).toBe(1);
-     72|     expect(out.gate).toBe('fail');
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
 
  FAIL  tests/unit/agent-dev-reliability-aggregation.test.ts > aggregateReliability > enforces positive (must pass) and negative (must reject) anchors
-AssertionError: expected undefined to be false // Object.is equality
-
-- Expected:
-false
-
-+ Received:
-undefined
-
- ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:81:33
+TypeError: aggregateReliability is not a function
+ ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:80:16
+     78|       { id: 'malicious', anchor: 'negative', trials: ['fail', 'fail', …
      79|     ];
      80|     const ok = aggregateReliability(good, { k: 3, minCases: 1 });
+       |                ^
      81|     expect(ok.anchors.violated).toBe(false);
-       |                                 ^
      82|
-     83|     const bad: ReliabilityCase[] = [
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
 
  FAIL  tests/unit/agent-dev-reliability-aggregation.test.ts > aggregateReliability > reports insufficient-sample instead of passing when complete cases are below the gate
-AssertionError: expected 'complete-cases-below-design-gate: 0 <…' to contain 'complete cases 1 < required 20'
-
-Expected: "complete cases 1 < required 20"
-Received: "complete-cases-below-design-gate: 0 < 20"
-
- ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:96:35
+TypeError: aggregateReliability is not a function
+ ❯ tests/unit/agent-dev-reliability-aggregation.test.ts:94:17
+     92|   it('reports insufficient-sample instead of passing when complete cas…
+     93|     const cases: ReliabilityCase[] = [{ id: 'only', trials: ['pass', '…
      94|     const out = aggregateReliability(cases, { k: 3, minCases: 20 });
+       |                 ^
      95|     expect(out.gate).toBe('insufficient-sample');
      96|     expect(out.reasons.join(' ')).toContain('complete cases 1 < requir…
-       |                                   ^
-     97|   });
-     98| });
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
 

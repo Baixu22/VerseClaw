@@ -1,0 +1,32 @@
+All six deliverables are in place and verified. Here's the structured result.
+
+**Summary**
+
+Re-verified the A4 Decision Quality controlled pilot gate without redefining any threshold, mirroring the established A01–A03 re-verification pattern in this repo.
+
+- **Criteria 1 & 3 (PASS)** — low-quality rate ≤ 10% budget and `degrade_to_audit_only` on >10% are asserted in `tests/unit/deprecation-counters.test.ts`, `tests/unit/deep/a4-deep.test.ts` (strict `>` at the 10% boundary), and `tests/unit/decision-quality-auditor.test.ts`.
+- **Criterion 2 (NO-GO, production)** — `auditBatch` records audited decisions 1:1 at module level, but A4 is a documented *offline/dev-tool-only* module (`docs/runtime-design/development-manual.md`: "A4 — Decision Quality (offline pure functions only)", automatic invocation forbidden). No production audit caller exists, so the production coverage gate stays NO-GO.
+- **Criterion 4 (NO-GO, numeric)** — `tests/unit/trace-truncation.test.ts` asserts the degradation order (a4/a3/a5 dropped before a1), but the per-turn cumulative latency smoke covers A5+A1+A3 only; A4 is not on the production turn path, so the numeric latency gate is NOT-MEASURED.
+- **Spec drift fixed** — `requiredTests` in `harness/specs/tasks/a4-decision-quality-pilot.md` only listed counters + performance; added `decision-quality-auditor`, `deep/a4-deep`, and `trace-truncation`, plus a coverage guard `tests/unit/a04-a4-gate-coverage.test.ts`.
+
+**Deliverables**
+- `harness/specs/tasks/a4-decision-quality-pilot.md` (requiredTests drift fix)
+- `tests/unit/a04-a4-gate-coverage.test.ts` (guard)
+- `harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md`
+- `docs/dev/harness-gap-closure/a04-decision-quality-gate.md`
+- `docs/dev/harness-gap-closure/a04-acceptance.json`
+- `docs/dev/harness-gap-closure/A04-SHA256SUMS`
+
+**Checks actually run**
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md --no-diff` → exit 0, "Spec is valid"
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/a4-decision-quality-pilot.md --no-diff` → exit 0, "Spec is valid"
+- `node harness/src/cli.mjs context --spec harness/specs/tasks/a4-decision-quality-pilot.md` → exit 0, 0 missing scenarios/rules
+- `A04-SHA256SUMS` read back via Node: 5/5 matched, 0 drift/missing/malformed
+- Credential scan over the 5 new/edited text files: 0 hits; all files LF (matching repo convention)
+
+**Not run (disclosed, not skipped silently)**
+- The vitest A4 evidence gates (`deprecation-counters`, `performance-budgets`, `decision-quality-auditor`, `deep/a4-deep`, `trace-truncation`) and the new guard could not execute: this isolated projection has no `node_modules` and network is disabled, so dependencies cannot be installed. Those 5 evidence files were also absent from the projection (restored by the evaluation environment, per the sibling A01–A03 guards that reference the same files). I verified every asserted symbol string against the pristine reference copy instead.
+- `pnpm run comms:replay` / `comms:compare`, typecheck, and lint — likewise blocked by the missing dependencies; the re-verify spec's required profiles remain declared for the evaluator to run.
+- Pre-existing baseline drift (`scripts/check-harness-gap-baseline.mjs` reports unrelated source digest drift present in the pristine base checkout too) was left untouched.
+
+Final result: `status: completed`.

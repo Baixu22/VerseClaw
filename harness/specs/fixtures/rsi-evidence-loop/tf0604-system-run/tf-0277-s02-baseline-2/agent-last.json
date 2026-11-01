@@ -1,0 +1,23 @@
+Final verification confirms the workspace is clean (`node_modules` removed, no temp files). Here is the required structured result.
+
+```json
+{
+  "status": "completed",
+  "summary": "S02 sensitive-sink coverage ledger with residual egress guard implemented. Added a per-sink enforcement ledger (docs/dev/harness-gap-closure/s02-sink-ledger.md) recording narrow/source-dependent/classification-only plus policyFile/exported symbol/call site/denial shape for all six sinks, and explicitly naming the six network-send egress surfaces not wired to the cross-context provenance gate (outbound-send-service, message-action-dispatch, cli-runtime outbound, sessions send-policy, auto-reply send-policy, server-broadcast) as residual, stating plainly it is NOT whole-network enforcement. Pinned it with tests/unit/sensitive-sink-residual-ledger.test.ts (forward enforcement-point resolution, residual not-wired assertion, reverse sweep requiring every provenance-gate consumer to be registered, constrain-not-a-rejection guard, ledger disclaimer). Added harness task spec harness-gap-sink-ledger.md (active) and rule sensitive-sink-ledger-boundary.md, plus agent-driven s02-acceptance.json and a readable S02-SHA256SUMS. No second provenance engine, no product default/lock/approval change; content-provenance.ts was read as authority and left unmodified. Cleanup: temporary local vitest stub in node_modules was removed; workspace left clean. Limitation: no node_modules in this isolated workspace, so the real pnpm vitest/typecheck/eslint gates could not run; the test file was executed via a minimal local stub and mutation-checked instead.",
+  "testsRun": [
+    "node -e \"import('./shared/security/content-provenance.ts')...\" — authoritative module load, keys [secret-read, network-send, external-write, command-exec, browser-effect, credential-use], exit 0",
+    "adhoc node reconciliation script mirroring the test's resolution logic — enforced drift: none; residual drift: none; unregistered gate consumers: none",
+    "execution of tests/unit/sensitive-sink-residual-ledger.test.ts body (extension-patched copy) via a minimal local vitest stub — 7 tests, 0 failures",
+    "mutation check of the same test (bogus exportedSymbol + renamed residual surface) — 4 failures, proving the guard is non-vacuous",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-sink-ledger.md --no-diff — 'Spec is valid', exit 0",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-sink-ledger.md --dry-run in a temp git fixture — 'Harness result: pass', exit 0",
+    "node scripts/validate-policy-docs.mjs — '[policy-docs] PASS: 10 checks', exit 0",
+    "node scripts/check-spec-lifecycle.mjs — exit 1: pre-existing baseline (the four sibling harness-gap-*.md specs predate the lifecycleStatus requirement); this packet's new spec carries lifecycleStatus: active",
+    "credential scan of the five new/changed files using the repo's own secret key shapes — 0 hits",
+    "SHA256SUMS read-back of docs/dev/harness-gap-closure/S02-SHA256SUMS — checked 5, matched 5",
+    "node scripts/check-repository-artifacts.mjs — not runnable: 'fatal: not a git repository' (isolated workspace has no .git)"
+  ]
+}
+```
+
+Notes: the harness `run` step needed a git checkout, which this workspace lacks, so I exercised it in a throwaway git fixture (its own report artifacts were the only unowned paths flagged there). Full `vitest`/`typecheck`/`eslint` were not runnable without a dependency install, which the task forbids.

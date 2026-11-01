@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "RsiHistoricalTrialResult/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "trialId": "tf-0278-s03-treatment-1",
+  "taskId": "tf-0278-s03",
+  "arm": "treatment",
+  "repeat": 1,
+  "startedAt": "2026-10-31T21:15:18.415Z",
+  "completedAt": "2026-10-31T21:55:35.869Z",
+  "stage": "grade",
+  "error": "Error: EEXIST: file already exists, symlink 'C:\\Users\\27933\\.codex\\worktrees\\tf0604-rsi-baseline\\ClawX\\openclaw_runtime\\node_modules' -> 'D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0278-s03-treatment-1\\grader\\openclaw_runtime\\node_modules'\n    at symlinkSync (node:fs:1937:11)\n    at runTaskOracles (file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-graders.mjs:159:5)\n    at runHistoricalTrial (file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:510:20)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:42:25\n    at async Promise.all (index 3)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:49:7",
+  "failureClass": "agent",
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

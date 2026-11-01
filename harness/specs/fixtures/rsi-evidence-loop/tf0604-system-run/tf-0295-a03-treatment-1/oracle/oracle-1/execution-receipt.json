@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0295-a03",
+  "commandLine": "pnpm exec vitest run tests/unit/performance-budgets.test.ts tests/unit/anomaly-classifier.test.ts tests/unit/deprecation-counters.test.ts tests/unit/a03-a3-gate-coverage.test.ts --maxWorkers=1",
+  "taskDigest": "8540389bca07933c8a51056511085ab785461f80108fed083a206c84cdd98721",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T03:45:47.862Z",
+  "finishedAt": "2026-11-01T03:46:02.460Z",
+  "durationMs": 14597,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 49,
+    "failed": 1,
+    "skipped": 0,
+    "total": 50,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "33226f0b27347bbce220f1571b6e1e384a60b7acf16018c2628ad74332bdea2b",
+  "stderrSha256": "6fb6276e8c950499c59a417cde700e0b3ad71c0098feadd8c6db3d28508ba4fb"
+}

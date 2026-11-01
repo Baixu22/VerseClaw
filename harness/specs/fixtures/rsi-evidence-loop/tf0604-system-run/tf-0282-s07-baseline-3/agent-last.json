@@ -1,0 +1,39 @@
+All deliverables are in place, checksums verify, and the workspace is clean of scratch files. Here's the structured result.
+
+**Status: completed**
+
+Implemented the S07 bounded, revocable verifier completion-verdict entry in `openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts` (`evaluateVerifierCompletionVerdict`, `revokeVerifierCompletionVerdict`, plus the record/scope types and guards).
+
+**Behavior**
+- Reuses the existing `evaluateEvidenceVerifier`: `completed → approved`, `insufficient_evidence → insufficient-evidence`, everything else (`failed`/`blocked`/`cancelled`) → `rejected`. No second verifier authority layer.
+- Bounded: only task ids inside `scope.taskIds` are adjudicated; anything else is `out-of-scope` with `verifierDecision: null` and no transition.
+- Single transition: only `approved` yields `{ from: priorStatus, to: "done" }`; all other verdicts transition nothing.
+- Digest-only row: `taskId/verdict/evidenceDigest/findingCodes/priorStatus` (+ `grantsPublish: false`, `grantsProductLock: false`); no raw evidence content. Digest is a stable-keyed SHA-256, so identical evidence replays identically.
+- Revocable: `approved` records `priorStatus`; revocation returns `from: done, to: priorStatus`. Non-approved rows have nothing to revoke. Approved without a recorded prior status fails closed (`missing_prior_status`) rather than taking an unrevocable transition.
+
+**Deliverables**
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts`
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts`
+- `harness/specs/tasks/harness-gap-verifier-completion-verdict.md`
+- `docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md`
+- `docs/dev/harness-gap-closure/s07-acceptance.json`
+- `docs/dev/harness-gap-closure/S07-SHA256SUMS`
+
+**Checks actually run**
+- `directedTests`: 8/8 pass. `pnpm`/`vitest` are not installed and cannot be fetched offline here, so the committed test body was executed verbatim against the real sources via a dependency-free Node harness (TypeScript type-stripping + a resolve hook + a minimal vitest-compatible shim). The shim/runner were scratch files; both were removed afterward. The test body was not rewritten.
+- `typecheckCore`: exit 0 — `strict` + `noUnusedLocals`/`noUnusedParameters`/`verbatimModuleSyntax` over the module and its real deps (`evidence-verifier.ts`, `evidence.ts`, `types.ts`) using bundled TypeScript 5.9.3 + `@types/node`.
+- `harnessValidate` (`--no-diff`) → Spec is valid; `context` → no missing scenarios/rules. Because this workspace is not a git checkout, the diff gate + dry-run were reproduced in an isolated temp git fixture: valid with the S07 change set, and a negative check correctly failed on an unowned path; dry-run → `pass`.
+- `comms:replay` exit 0 and `comms:compare` → `PASS`, 0.00% delta (run in the isolated git fixture with the repo's own datasets/baseline; no comms path is touched).
+- Credential scan: 0 hits over the 5 retained files; `S07-SHA256SUMS` re-read from disk verifies (5/5).
+- No regression to offline repo gates: `check-evidence-refs`, `validate-policy-docs`, `check-runtime-source-policy` pass. The `check-spec-lifecycle` failures are pre-existing (S01–S06 specs lack `lifecycleStatus`); the new S07 spec includes it.
+
+**Not measured (recorded as such, not PASS)**: production wiring of the entry into the task-loop terminal path (this packet adds the entry and its digest-only record only), real provider/model calls, a separate second-agent verifier role, and a git candidate commit/tree (workspace is not a git checkout). No product default, lock, or approval value was changed, and no network or dependency install was used.
+
+**Tests run**
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts` (8 tests, verbatim, dependency-free Node harness since vitest is unavailable offline)
+- runtime-core strict typecheck of `verifier-completion-verdict.ts` (+ `evidence-verifier.ts`, `evidence.ts`, `types.ts`)
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md --no-diff` and diff/dry-run in an isolated git fixture
+- `node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md`
+- `node scripts/comms/replay.mjs` and `node scripts/comms/compare.mjs` (isolated git fixture)
+- `node scripts/check-evidence-refs.mjs`, `node scripts/validate-policy-docs.mjs --quiet`, `node scripts/check-runtime-source-policy.mjs`, `node scripts/check-spec-lifecycle.mjs` (last one fails only on pre-existing S01–S06 specs)
+- SHA256SUMS readback + credential scan scripts

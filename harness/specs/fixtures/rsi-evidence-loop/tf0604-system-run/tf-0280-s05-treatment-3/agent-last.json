@@ -1,0 +1,39 @@
+All deliverables are complete and consistent. Let me provide the final structured result.
+
+**Status: completed**
+
+**Summary**
+
+Implemented the S05 credential-use boundary ledger for the `image_generate` provider override, following the established S03/S04 "narrow-boundary ledger" pattern. This is a verification + ledger packet — no production policy change and no second credential strategy.
+
+Deliverables (all in `targetScope`):
+- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md` — ledger: source→policy→effect chain, coverage/allow matrix, and explicit residual list.
+- `tests/unit/provider-credential-use-boundary-ledger.test.ts` — executable guard (11 assertions) over the real `resolveProviderCredentialUsePolicy` policy, plus wiring pin and residual pin.
+- `harness/specs/tasks/harness-gap-credential-use-boundary.md` — gateway-backend-communication task spec.
+- `docs/dev/harness-gap-closure/s05-acceptance.json` — acceptance evidence.
+- `docs/dev/harness-gap-closure/S05-SHA256SUMS` — sha256 manifest for the four files above.
+
+Key facts pinned (matches acceptance criteria):
+- `resolveProviderCredentialUsePolicy` is the single existing gate; `shared/security/content-provenance.ts` still defines the only source/trust enum, with `SENSITIVE_SINK_CLASSIFICATION['credential-use'] = narrow`.
+- Its **only** production call site is the `if (model !== undefined)` explicit-override branch of `image-generate-tool.ts`, positioned before credential-bearing config resolution, provider selection, and `executeImageGenerationJob`/`generateImage` — so denial precedes any credential read. Provider ids are normalized; the fixed denial reason and policy inputs carry no credential values.
+- trusted system / direct operator overrides preserved; no-override default/fallback path is not gated.
+- Nine other credential-use paths are recorded as **residual** (not claimed covered) and pinned so wiring one into the gate fails the test and forces a ledger update.
+
+**Checks actually run** (offline; dependencies are not installed in this isolated checkout and no install was permitted):
+- `node harness/src/cli.mjs context --spec .../harness-gap-credential-use-boundary.md` → exit 0.
+- `node harness/src/cli.mjs validate --spec .../harness-gap-credential-use-boundary.md --no-diff` → `Spec is valid` (exit 0).
+- Offline replica of the ledger-guard assertions against the real provenance helpers + real source text → `ALL CHECKS PASS`.
+- Repo credential patterns (`scripts/verify-verseconf-clawx-integration.mjs`) over the changed files → 0 hits.
+- `S05-SHA256SUMS` readback via `Get-FileHash` → ok; `s05-acceptance.json` parses.
+- `node scripts/check-spec-lifecycle.mjs` → fails for all `harness-gap-*` specs including mine, **pre-existing** (sibling specs s01–s04 also lack `lifecycleStatus`); noted, not fixed.
+
+**testsRun**
+- `node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-credential-use-boundary.md`
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-credential-use-boundary.md --no-diff`
+- `node --experimental-strip-types <offline replica of tests/unit/provider-credential-use-boundary-ledger.test.ts assertions>`
+- `node --experimental-strip-types <repo credential-pattern scan over changed files>`
+- `node scripts/check-harness-gap-baseline.mjs docs/dev/harness-gap-closure/source-inventory.json .` (structure ok; pre-existing source-digest drift in unrelated files)
+- `node scripts/check-spec-lifecycle.mjs` (pre-existing failures)
+- SHA256SUMS readback + JSON parse of `s05-acceptance.json`
+
+Not run (disclosed): `vitest`, `pnpm run typecheck`, scoped `eslint`, `comms:replay`/`comms:compare`, and `harness run --dry-run` — the first four need installed dependencies (install not permitted), the last needs a git diff base (no `.git` in this trial checkout).

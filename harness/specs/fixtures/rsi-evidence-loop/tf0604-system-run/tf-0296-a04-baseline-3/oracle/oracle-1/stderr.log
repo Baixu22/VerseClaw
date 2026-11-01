@@ -1,0 +1,121 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/performance-budgets.test.ts [ tests/unit/performance-budgets.test.ts ]
+Error: Failed to resolve import "../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js" from "tests/unit/performance-budgets.test.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: D:/tmp/rsi-tf0604-run5/trials/tf-0296-a04-baseline-3/grader/tests/unit/performance-budgets.test.ts:14:7
+  11 |    FingerprintLeaseCoordinator,
+  12 |    ResumeContractVerifier
+  13 |  } from "../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js";
+     |          ^
+  14 |  const SETTINGS = {
+  15 |    enabled: true,
+ ❯ TransformPluginContext._formatLog ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28999:43
+ ❯ TransformPluginContext.error ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28996:14
+ ❯ normalizeUrl ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27119:18
+ ❯ ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27177:32
+ ❯ TransformPluginContext.transform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:27145:4
+ ❯ EnvironmentPluginContainer.transform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:28797:14
+ ❯ loadAndTransform ../../../../../ClawX/node_modules/.pnpm/vite@7.3.1_@types+node@25.5_cf479222abc6ab24b4878cacd25ec080/node_modules/vite/dist/node/chunks/config.js:22670:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/a04-a4-gate-coverage.test.ts > A04 A4 gate coverage > keeps every A4 required test path present and wired into the archived pilot spec
+AssertionError: expected '---\nlifecycleStatus: archived\nid: a…' to contain '- tests/unit/a04-a4-gate-coverage.tes…'
+
+- Expected
++ Received
+
+- - tests/unit/a04-a4-gate-coverage.test.ts
++ ---
++ lifecycleStatus: archived
++ id: a4-decision-quality-pilot
++ title: A4 Decision Quality — Active Pilot Gate
++ scenario: gateway-backend-communication
++ taskType: runtime-bridge
++ intent: Promote the A4 decision quality audit from shadow to active pilot, gated by audit coverage and budget compliance.
++ touchedAreas:
++   - openclaw_runtime/src/observability/deprecation-counters.ts
++   - openclaw_runtime/src/observability/decision-quality-auditor.ts
++ requiredProfiles:
++   - fast
++   - comms
++ requiredRules:
++   - backend-communication-boundary
++   - comms-regression
++ expectedUserBehavior:
++   - With the A4 pilot gate enabled, decisions are audited and the low-quality counter stays at or under the 10% graduation budget.
++   - Every audited decision is covered in shadow mode (sampling rate 1.0) before the audit is treated as a gate.
++   - When the low-quality rate exceeds 10%, the pilot responds with `degrade_to_audit_only` instead of spending the rest of the turn budget.
++   - A4 degrades first in the documented order (A4→A3→A5→A1), so the per-turn cumulative latency budget is respected.
++   - With the pilot flag off, decision outcomes and the audit surface are unchanged.
++ requiredTests:
++   - tests/unit/decision-quality-auditor.test.ts
++   - tests/unit/deprecation-counters.test.ts
++   - tests/unit/performance-budgets.test.ts
++   - tests/unit/deep/a4-deep.test.ts
++   - tests/unit/trace-truncation.test.ts
++ acceptance:
++   - A4 deprecation counter `lowQualityDecisions` rate ≤ 10% over audited decisions
++   - A4 budget violation response `degrade_to_audit_only` triggers when low-quality rate > 10%
++   - Per-turn cumulative latency budget respected (A4 is part of degradation order: A4→A3→A5→A1)
++ docs:
++   required: true
++ ---
++
++ ## Graduation gate
++
++ A4 graduates from shadow to active pilot when ALL of the following hold:
++
++ 1. **Low-quality decision rate** ≤ 10%: `lowQualityDecisions / auditedDecisions ≤ 0.10`.
++ 2. **Audit coverage**: every decision is audited in shadow mode (sampling rate = 1.0).
++ 3. **Budget violation response**: `degrade_to_audit_only` triggers when rate > 10% (criterion 4.14).
++ 4. **Per-turn cumulative budget**: A4 is the first to degrade (degradation order A4→A3→A5→A1).
++
++ ## Out of scope
++
++ - Post-promotion sampling (OQ-004, Stage 5).
++ - Decision quality scoring model (Stage 5 enhancement).
++
++ ## Re-verification note (A04, 2026-11-01)
++
++ - **A4 is offline / dev-tool-only.** `docs/runtime-design/development-manual.md` documents A4 under "Decision Quality (offline pure functions only)": `DecisionPointExtractor`/`DecisionQualityEvaluator`/`DecisionQualityReport` MUST NOT run on any production turn path, and A4 is called ONLY via explicit dev-tool invocation (CLI, test fixture, debug panel). There is therefore **no production audit caller** in this tree, and the Active Pilot production coverage gate stays **NO-GO (residual)**.
++ - **Criterion 1 (low-quality rate ≤ 10% + `degrade_to_audit_only`)**: `lowQualityDecisions / auditedDecisions ≤ 0.10`; a rate > 10% returns `degrade_to_audit_only`, asserted by `tests/unit/decision-quality-auditor.test.ts`, `tests/unit/deprecation-counters.test.ts` and `tests/unit/deep/a4-deep.test.ts` at the ORIGINAL threshold (strict `> 0.10`; exactly 10% does not trip). **PASS** — the numbers were not redefined.
++ - **Criterion 2 (audit coverage)**: `DecisionQualityAuditor.auditBatch()` records `auditedDecisions` 1:1 with the audited records (shadow sampling rate = 1.0) inside the module, but because no production caller exists the original Active Pilot *production* coverage gate is **NO-GO (residual)**.
++ - **Criterion 3 (budget violation response)**: `degrade_to_audit_only` triggers when the low-quality rate > 10% (criterion 4.14). **PASS**.
++ - **Criterion 4 (per-turn cumulative budget, degradation order A4→A3→A5→A1)**: `tests/unit/trace-truncation.test.ts` asserts A4 spans are dropped first (a4→a3→a5 before a1). A4 is not on the production turn path, so the per-turn cumulative `p99 ≤ 300ms` latency smoke does not exercise A4; that numeric latency budget remains **NOT-MEASURED / NO-GO (residual)**.
++
+
+ ❯ tests/unit/a04-a4-gate-coverage.test.ts:29:20
+     27|     const spec = readFileSync(path.join(ROOT, SPEC), "utf8");
+     28|     for (const rel of REQUIRED_TESTS) {
+     29|       expect(spec).toContain(`- ${rel}`);
+       |                    ^
+     30|       expect(existsSync(path.join(ROOT, rel))).toBe(true);
+     31|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/a04-a4-gate-coverage.test.ts > A04 A4 gate coverage > pins A4 as offline-only with the sanctioned dev-tool consumer wired
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/a04-a4-gate-coverage.test.ts:64:82
+     62|     expect(offenders).toEqual([]);
+     63|
+     64|     expect(existsSync(path.join(ROOT, "scripts/a4-decision-quality-aud…
+       |                                                                                  ^
+     65|     const pkg = JSON.parse(readFileSync(path.join(ROOT, "package.json"…
+     66|     expect(pkg.scripts["a4:decision-quality-audit"]).toContain("a4-dec…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

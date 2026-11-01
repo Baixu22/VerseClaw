@@ -1,0 +1,68 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/provider-credential-use-boundary-ledger.test.ts > S05 provider credential-use boundary ledger > pins the single call site and records the residual credential users
+AssertionError: expected '# S05：image 生成的 provider override 凭据使…' to match /其它|other/
+
+- Expected:
+/其它|other/
+
++ Received:
+"# S05：image 生成的 provider override 凭据使用边界（台账）
+
+日期：2026-11-01（Asia/Shanghai）。包码：S05（TF-0280）。真实 provider 调用：无。
+
+本台账对既有 `openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts` 的凭据使用窄闸门做**执行化核对**：逐项记录它到底接在哪一条分支、来源如何决定、拒绝发生在哪一步，并列出**未覆盖的残余出口**。它证明的是“image_generate 的显式 override 分支有窄闸门”，**不是**“所有凭据使用路径已强制”。
+
+## 链路（source → policy → effect）
+
+- 策略：`openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts`（`resolveProviderCredentialUsePolicy`，纯函数）。
+- 接线：`openclaw_runtime/src/agents/tools/image-generate-tool.ts` 的 `execute`，**仅**在显式 override 分支 `if (model !== undefined)` 内调用；拒绝时抛 `ToolAuthorizationError`。
+- 决策输入：`{ provenanceContext, hasExplicitModelOverride, requestedProvider, boundProviderIds }`——**不含**凭据值。
+- 判定：仅当 `hasExplicitModelOverride === true` 且 `isExternalOrUnknownProvenance(status)` 为真时才生效；`requestedProvider`（经 `normalizeProviderId`）必须落在 host 绑定的 provider 集合内，否则 `allowed: false / restricted: true`。
+- host 绑定范围（`boundProviderIds`，来自 `resolveBoundImageGenerationProviderIds`）：显式配置 `agents.defaults.imageGenerationModel` 时为 `[primary, ...fallbacks]`；否则为解析后的 `primary`。即 operator 在主机侧配置的 provider 集合。
+
+## 逐项覆盖
+
+| 项 | 来源 | 结果 | 断言证据 |
+|---|---|---|---|
+| 显式 override → 落在绑定 provider | external / derived-untrusted / missing / invalid | 放行 | `allowed:true`（bound 命中） |
+| 显式 override → 跨出绑定 provider | external / derived-untrusted / missing / invalid | **拒绝** | `allowed:false / restricted:true` + reason |
+| 显式 override → 任意 provider | trusted system / direct operator | 放行 | `allowed:true / restricted:false`（既有语义保留） |
+| 无显式 override（默认 / fallback） | 任意来源 | 不经此闸门 | `hasExplicitModelOverride:false` 时短路径直接放行 |
+| provider 大小写 / 空白 | external + `\" OPENAI \"` | 归一后命中即放行 | `normalizeProviderId` 归一 |
+
+## 拒绝发生在读取凭据之前
+
+- 闸门位于 `if (model !== undefined)` 分支，在 `generateImage(...)`（provider 请求）与 provider 侧 `resolveApiKeyForProvider` 凭据读取**之前**；`image-generate-tool.ts` 内 `apiKey` 出现次数为 0。
+- 策略模块内 `apiKey` / `process.env` / `Authorization` / `Bearer` / `secret` / `credentialValue` 全部 0 命中——策略输入与 `reason` 字符串均不含凭据值。
+- 说明（如实）：更早的 host 侧可用性发现（`hasGenerationToolAvailability` / `resolveImageGenerationModelConfigForTool` / `listRuntimeImageGenerationProviders`）会做**只读**的已配置状态检查（profile/自定义 key 的*存在性*），用于保留解析出的默认 provider；这些检查不进入本决策，也不上报或记录凭据值。
+
+## 残余 residual（显式记录，不冒充已覆盖）
+
+下列凭据使用出口**未**接入本闸门（对工作树逐文件核对 `isExternalOrUnknownProvenance|resolveProviderCredentialUsePolicy` 均 0 命中），记为 residual：
+
+- `openclaw_runtime/src/agents/tools/web-search-provider-credentials.ts`（web-search 凭据解析）
+- `openclaw_runtime/src/image-generation/openai-compatible-image-provider.ts`（provider 请求时凭据读取）
+- `openclaw_runtime/src/media-understanding/image.ts`、`openclaw_runtime/src/media-understanding/runner.entries.ts`
+- `openclaw_runtime/src/agents/model-auth.ts`（通用模型认证）
+- `openclaw_runtime/src/plugin-sdk/provider-auth-runtime.ts`、`openclaw_runtime/src/plugin-sdk/image-generation-core.auth.runtime.ts`
+
+另：本闸门**只**接在 image_generate 的显式 override 分支；`list` / `status` action、无 override 的默认路径、自动 provider fallback、非 image 的模型认证、MCP、browser 凭据等均不在覆盖范围。
+
+## 边界与不做项
+
+- 只核验单一既有策略，不新建第二套凭据策略；不改默认 provider、fallback 或凭据存储。
+- 不改产品默认值/锁/approval；非真人证据。
+"
+
+ ❯ tests/unit/provider-credential-use-boundary-ledger.test.ts:82:17
+     80|     expect(doc.toLowerCase()).toContain('residual');
+     81|     expect(doc).toMatch(/image-generate/);
+     82|     expect(doc).toMatch(/其它|other/);
+       |                 ^
+     83|   });
+     84| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

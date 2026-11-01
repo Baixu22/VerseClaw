@@ -1,0 +1,21 @@
+The work is complete and verified. 
+
+**Summary**
+
+The workspace at `D:\tmp\rsi-tf0604-run5\trials\tf-0298-a06-baseline-2\agent` was an empty directory; the harness had not materialized the trial snapshot. I reconstructed exactly what the harness prepares: the `git archive` of base commit `4317f7954a638af1dd3afba4f77fa9dfcfa94209`, with the sealed oracle test paths scrubbed, plus `.rsi/{TASK.json,RESULT_SCHEMA.json}`. Then I implemented the A06 re-verification package.
+
+**Change set (matches target scope)**
+- `openclaw_runtime/src/agents/cross-area/cross-area-facades.ts` — restored `ResumeContractVerifier` (A3 rollback → `requiresReverification`), `FingerprintLeaseCoordinator` (lease-before-checkpoint with race guard) and `ContextBudgetPlanner`, composing existing A1/A3/A5/A6 primitives.
+- `tests/unit/cross-area-composition.test.ts` — cross-area matrix incl. 3.3 (rollback before resume `requires_reverification`) and 3.8 (mid-turn pause).
+- `tests/unit/deep/a6-deep.test.ts` — A6 deep coverage including `FingerprintLeaseCoordinator`.
+- `harness/specs/tasks/a6-long-running-persistence-pilot.md` — removed the stale `cross-area` touchedArea, wired the 10 required tests (thresholds unchanged).
+- `harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md`, `docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md`, `docs/dev/harness-gap-closure/a06-acceptance.json`, `docs/dev/harness-gap-closure/A06-SHA256SUMS`.
+
+**Checks I actually ran**
+- Frozen oracle #1 (`pnpm exec vitest run` over the 7 root tests) in a grader-equivalent tree: **7 files / 72 tests passed, 0 failed**.
+- Frozen oracle #2 (`pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/observability/deprecation-counters.test.ts`): **1 file / 3 tests passed** against a healthy dependency store. In the shared `tf0604-rsi-baseline` worktree it fails before loading any test — `openclaw_runtime/node_modules/.pnpm/picomatch@4.0.4/.../lib/scan.js` is a pre-existing 0-byte file, unrelated to this change.
+- ESLint on all six touched/added TS files: **clean**.
+- Scoped `tsc --noEmit` over the facade + the three tests: **0 errors** (the full project typecheck OOMs in this environment).
+- `A06-SHA256SUMS`: re-readable; the four spec/doc hashes match the recorded reference manifest, and the fifth line hashes the frozen coverage guard.
+
+**Boundaries honored**: no dependency install, no network, sealed oracle tests left absent (grader-restored), no product-lock/default changes; A6 stays a controlled pilot. The `a06-acceptance.json` records `driven_by: agent`, `realHuman: false`, `default_on: false`.

@@ -1,0 +1,21 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0280-s05",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1",
+  "taskDigest": "4b6178e2f47a5941782cd2ae617d9ec0631c60b1bd4c0467aea5ea618a02fc98",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T05:01:59.253Z",
+  "finishedAt": "2026-11-01T05:02:02.178Z",
+  "durationMs": 2925,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": null,
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "1bc615b1a2c723864c0ac0063be8e4acb278aa6d2ba840defb4719f3e9a15d22"
+}

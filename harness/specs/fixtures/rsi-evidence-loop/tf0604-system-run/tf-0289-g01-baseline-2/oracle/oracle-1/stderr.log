@@ -1,0 +1,73 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > classifies every error code with a bounded recovery entry
+TypeError: Cannot read properties of undefined (reading 'AUTH_INVALID')
+ ❯ tests/unit/error-recovery-next-action.test.ts:19:21
+     17|   it("classifies every error code with a bounded recovery entry", () =…
+     18|     for (const code of APP_ERROR_CODES) {
+     19|       const entry = ERROR_RECOVERY_TABLE[code];
+       |                     ^
+     20|       expect(entry, code).toBeDefined();
+     21|       expect(typeof entry.retryable, code).toBe("boolean");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > only self-retry classes are retryable, and they carry exactly the retry action
+TypeError: Cannot read properties of undefined (reading 'AUTH_INVALID')
+ ❯ tests/unit/error-recovery-next-action.test.ts:28:21
+     26|   it("only self-retry classes are retryable, and they carry exactly th…
+     27|     for (const code of APP_ERROR_CODES) {
+     28|       const entry = ERROR_RECOVERY_TABLE[code];
+       |                     ^
+     29|       expect(isRetryableAppErrorCode(code), code).toBe(entry.retryable…
+     30|       if (entry.retryable) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > never emits a shell command or raw script as a recovery action
+TypeError: recoveryActionForAppErrorCode is not a function
+ ❯ tests/unit/error-recovery-next-action.test.ts:42:22
+     40|   it("never emits a shell command or raw script as a recovery action",…
+     41|     for (const code of APP_ERROR_CODES) {
+     42|       const action = recoveryActionForAppErrorCode(code);
+       |                      ^
+     43|       if (!action) continue;
+     44|       expect(RECOVERY_KINDS, code).toContain(action.kind);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > carries retryable + nextAction on AppError and leaves UNKNOWN without an action
+AssertionError: expected { kind: 'open-settings', …(1) } to deeply equal { kind: 'open-settings', …(1) }
+
+- Expected
++ Received
+
+  {
+    "kind": "open-settings",
+-   "target": "permissions",
++   "target": "settings.permissions",
+  }
+
+ ❯ tests/unit/error-recovery-next-action.test.ts:62:35
+     60|     const permission = new AppError("PERMISSION", "denied");
+     61|     expect(permission.retryable).toBe(false);
+     62|     expect(permission.nextAction).toEqual({ kind: "open-settings", tar…
+       |                                   ^
+     63|
+     64|     const unknown = new AppError("UNKNOWN", "boom");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/unit/error-recovery-next-action.test.ts > G01 error recovery next-action > is total: any AppErrorCode resolves deterministically
+TypeError: recoveryActionForAppErrorCode is not a function
+ ❯ tests/unit/error-recovery-next-action.test.ts:71:21
+     69|   it("is total: any AppErrorCode resolves deterministically", () => {
+     70|     for (const code of APP_ERROR_CODES as readonly AppErrorCode[]) {
+     71|       const first = recoveryActionForAppErrorCode(code);
+       |                     ^
+     72|       const second = recoveryActionForAppErrorCode(code);
+     73|       expect(first).toEqual(second);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

@@ -1,0 +1,10 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0288-l06-treatment-3/grader/openclaw_runtime
+
+ ❯ |unit-fast| ../../src/agents/hot-file-write-owner.test.ts (0 test)
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  04:22:07
+   Duration  396ms (transform 38ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+

@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0290-g02",
+  "verdict": {
+    "grades": [
+      {
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "total": 3,
+          "source": "parsed",
+          "segments": 1
+        },
+        "graderVersion": "tf0590-graders/v3",
+        "verdict": "pass",
+        "reason": "Locked oracle completed with matching raw test evidence",
+        "evidenceKind": "owned-execution"
+      },
+      {
+        "graderVersion": "tf0590-graders/v3",
+        "verdict": "pass",
+        "reason": "Non-test oracle completed successfully",
+        "evidenceKind": "owned-execution"
+      }
+    ],
+    "evidenceKind": "owned-execution",
+    "graderVersion": "tf0590-graders/v3",
+    "verdict": "pass",
+    "reason": "Every frozen oracle completed with independent evidence"
+  },
+  "executionCount": 2
+}

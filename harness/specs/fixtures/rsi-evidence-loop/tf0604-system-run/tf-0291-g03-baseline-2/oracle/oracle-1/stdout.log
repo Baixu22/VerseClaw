@@ -1,0 +1,16 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0291-g03-baseline-2/grader
+
+ ❯ tests/unit/trace-to-eval-sample.test.ts (6 tests | 6 failed) 10ms
+     × turns a failure trace into a sample expected to fail before the fix and pass after 4ms
+     × keeps success/refusal/cancelled traces as passing samples (a fix must not regress them) 1ms
+     × refuses a trace that is not redacted (raw prompt or secret-like value) 0ms
+     × rejects a reproducer that is not a bounded kind (no shell command) 0ms
+     × is an explicit-trigger batch: selected traces only, with per-trace rejections 4ms
+     × rejects a trace with a missing required field 0ms
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  02:18:39
+   Duration  474ms (transform 63ms, setup 171ms, import 33ms, tests 10ms, environment 0ms)
+

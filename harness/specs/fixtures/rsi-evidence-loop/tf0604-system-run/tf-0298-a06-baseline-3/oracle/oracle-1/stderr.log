@@ -1,0 +1,111 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/deprecation-counters.test.ts [ tests/unit/deprecation-counters.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/src/observability/deprecation-counters.js' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-3/grader/tests/unit/deprecation-counters.test.ts
+ ❯ tests/unit/deprecation-counters.test.ts:2:1
+      1| import { afterEach, beforeEach, describe, expect, it } from "vitest";
+      2| import {
+       | ^
+      3|   deprecationCounters,
+      4|   type DeprecationArea,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tests/unit/file-fingerprint.test.ts [ tests/unit/file-fingerprint.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/src/agents/long-task-control/file-fingerprint' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-3/grader/tests/unit/file-fingerprint.test.ts
+ ❯ tests/unit/file-fingerprint.test.ts:7:1
+      5| import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+      6|
+      7| import {
+       | ^
+      8|   type DirectoryFingerprint,
+      9|   type FileFingerprint,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tests/unit/long-task-checkpoint-builder.test.ts [ tests/unit/long-task-checkpoint-builder.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/src/agents/long-task-control/store' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-3/grader/tests/unit/long-task-checkpoint-builder.test.ts
+ ❯ tests/unit/long-task-checkpoint-builder.test.ts:2:1
+      1| import { describe, expect, it } from "vitest";
+      2| import {
+       | ^
+      3|   buildRuntimeCoreCheckpointFromResumeCheckpoint,
+      4|   type RuntimeResumeCheckpoint,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  tests/unit/long-task-control.test.ts [ tests/unit/long-task-control.test.ts ]
+Error: Cannot find module '../../shared/types/long-task-control' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-3/grader/tests/unit/long-task-control.test.ts
+ ❯ tests/unit/long-task-control.test.ts:3:1
+      1| import { describe, expect, it } from 'vitest';
+      2|
+      3| import {
+       | ^
+      4|   buildResumeCheckpoint,
+      5|   interventionPolicyForInputMode,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  tests/unit/performance-budgets.test.ts [ tests/unit/performance-budgets.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.js' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-3/grader/tests/unit/performance-budgets.test.ts
+ ❯ tests/unit/performance-budgets.test.ts:4:1
+      2| import path from "node:path";
+      3| import { afterEach, beforeEach, describe, expect, it } from "vitest";
+      4| import {
+       | ^
+      5|   planCriticalFirstBudget,
+      6|   selectCompressionPlan,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  tests/unit/runtime-resume-shadow.test.ts [ tests/unit/runtime-resume-shadow.test.ts ]
+Error: Cannot find module '../../openclaw_runtime/src/runtime-core' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-3/grader/tests/unit/runtime-resume-shadow.test.ts
+ ❯ tests/unit/runtime-resume-shadow.test.ts:2:1
+      1| import { describe, expect, it, vi } from "vitest";
+      2| import {
+       | ^
+      3|   RuntimeTaskEventLogStore,
+      4|   buildCheckpointFixture,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/a06-a6-gate-coverage.test.ts > A06 A6 gate coverage > keeps every A6 required test path present and wired into the archived pilot spec
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0298-a06-baseline-3\grader\harness\specs\tasks\a6-long-running-persistence-pilot.md'
+ ❯ tests/unit/a06-a6-gate-coverage.test.ts:22:18
+     20| describe("A06 A6 gate coverage", () => {
+     21|   it("keeps every A6 required test path present and wired into the arc…
+     22|     const spec = readFileSync(path.join(ROOT, SPEC), "utf8");
+       |                  ^
+     23|     for (const rel of REQUIRED_TESTS) {
+     24|       expect(spec).toContain(`- ${rel}`);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  tests/unit/a06-a6-gate-coverage.test.ts > A06 A6 gate coverage > pins A6 critical counter and budget-response evidence
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0298-a06-baseline-3\grader\openclaw_runtime\src\observability\deprecation-counters.ts'
+ ❯ tests/unit/a06-a6-gate-coverage.test.ts:30:22
+     28|
+     29|   it("pins A6 critical counter and budget-response evidence", () => {
+     30|     const counters = readFileSync(
+       |                      ^
+     31|       path.join(ROOT, "openclaw_runtime/src/observability/deprecation-…
+     32|       "utf8",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  tests/unit/a06-a6-gate-coverage.test.ts > A06 A6 gate coverage > pins the restored verifier, lease-ordering, and pause/resume latency gates
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0298-a06-baseline-3\grader\openclaw_runtime\src\agents\cross-area\cross-area-facades.ts'
+ ❯ tests/unit/a06-a6-gate-coverage.test.ts:40:21
+     38|
+     39|   it("pins the restored verifier, lease-ordering, and pause/resume lat…
+     40|     const facades = readFileSync(
+       |                     ^
+     41|       path.join(ROOT, "openclaw_runtime/src/agents/cross-area/cross-ar…
+     42|       "utf8",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+

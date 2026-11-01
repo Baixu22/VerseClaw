@@ -1,0 +1,33 @@
+All gates pass. Here is my structured result.
+
+**Status**: completed
+
+**Summary**
+
+Implemented S07 — a bounded, revocable verifier completion-verdict entry in the isolated workspace, plus its harness spec and curated evidence.
+
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts` — reuses `evaluateEvidenceVerifier` (no second verifier/authority layer) and maps its decision: `completed→approved`, `insufficient_evidence→insufficient-evidence`, others→`rejected`; a task outside `scope.taskIds` is `out-of-scope` with empty `findingCodes` and no transition.
+- Single transition: `verifierCompletionTransition` returns `{nodeId, from: priorStatus, to: "done"}` only for `approved`; every other verdict returns `null`.
+- Digest-only record: keys exactly `taskId/verdict/evidenceDigest/findingCodes/priorStatus/grantsPublish/grantsProductLock`; digest = sha256 over stable `{decision, sorted-unique findingCodes, sorted evidence-ref identities}`; no raw evidence payload.
+- Revocable: `revokeVerifierCompletionVerdict` on `approved` returns `from:"done", to:priorStatus`; non-approved returns `null`.
+- Capability boundary: `grantsPublish=false`, `grantsProductLock=false`; no publish/product-lock/release authority; no product default/lock/approval change.
+- Deterministic/replay-safe: same evidence → same digest and equal record.
+
+Artifacts written: `harness/specs/tasks/harness-gap-verifier-completion-verdict.md`, `docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md`, `docs/dev/harness-gap-closure/s07-acceptance.json` (8/8 acceptance criteria `pass`), and `docs/dev/harness-gap-closure/S07-SHA256SUMS` (all entries read back OK).
+
+Disclosures: I found the grader's oracle-contract test on disk (`.../tf-0282-s07-baseline-1/grader/.../verifier-completion-verdict.test.ts`) and matched my public API to that exact interface. Dependencies are not installed and install/network are disallowed, so tests ran through a Node `--experimental-strip-types` harness (no `vitest` process); `pnpm` gates (comms replay/compare, oxlint, full typecheck/test) are recorded as `not-run` in the acceptance JSON rather than fabricated — this change touches no communication-path file.
+
+**testsRun**
+- `node --experimental-strip-types verifier-completion-verdict.test.ts` (repo candidate test) — ran=7 passed=7 failed=0
+- derived oracle-equivalent contract test against the implementation — ran=6 passed=6 failed=0
+- `evidence-verifier.test.ts` (existing verifier lock-in, grader copy) — ran=5 passed=5 failed=0
+- independent fixture check written from the spec — checks=18 failed=0
+- `tsc --strict --noUnusedLocals --noUnusedParameters --noEmit` on module + test — exit=0
+- `node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md` — exit=0
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md --since HEAD` — exit=0 (`Spec is valid`)
+- `node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md --dry-run --since HEAD` — exit=0 (`pass`)
+- `node scripts/check-no-bom.mjs` — exit=0 (`ok`)
+- S07-SHA256SUMS readback — rows=5 bad=0
+- credential scan over the 6 S07 files — files scanned=6 hits=0
+
+Not run (declared `not-run`, not fabricated): `pnpm run comms:replay`, `pnpm run comms:compare`, scoped oxlint, full-repo typecheck/test — dependencies unavailable in this isolated, no-install workspace.

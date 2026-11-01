@@ -1,0 +1,21 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0290-g02",
+  "commandLine": "node scripts/check-spec-lifecycle.mjs",
+  "taskDigest": "8435115fbf93e86d68adbed151ffd42f3ec49c1be540b0a199f34166b26d7b3f",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T18:23:03.100Z",
+  "finishedAt": "2026-10-31T18:23:03.375Z",
+  "durationMs": 275,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": null,
+  "stdoutSha256": "2b45d3c05f3f2e7e1faa590f4e25a379a8885954a3a8473fa7f7cd8357a6358c",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

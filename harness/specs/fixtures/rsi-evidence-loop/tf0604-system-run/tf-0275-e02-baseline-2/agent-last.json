@@ -1,0 +1,22 @@
+E02 is implemented and verified. Final structured result:
+
+```json
+{
+  "status": "completed",
+  "summary": "E02 paired ablation: Phase-4 type-aware eviction (treatment) vs pre-Phase-4 FIFO (baseline/leave-one-out) driven through the real RuntimeMemoryStore.appendFact -> trimFacts consumer. Added scripts/lib/paired-ablation.mjs (+ .d.mts) as a pure analysis layer that reuses E01 aggregateReliability for pass^k/pass@k, plus a deterministic 20-case x 3-rep x 2-condition fixture with paired seed, isolated store per trial and fixed insertion order. Component activation proven (16/20 cases retain different sets; identical retention would yield status=invalid). Honest measured result: success 0.5 -> 0.7 (pass^k 0.5 -> 0.7), paired delta +0.20 with 95% bootstrap CI [-0.15, 0.5] which includes zero, so decision.status=no-effect, with a real 4-case loss stratum (episodic-required) reported per stratum. p50/p95 latency, token proxy (12780 -> 11712), false-block trial rate (0.5 -> 0.3), safety violations 0, Cohen dz 0.2605 / Hedges g 0.2501 all reported; latency is observation-only and never gates. No product default, product lock or approval changed (FIFO still the store default, asserted by test). Added task spec, boundary rule, docs report, acceptance JSON, and E02-SHA256SUMS (9/9 re-verified, credential scan 0 hits). README x4 reviewed: internal evaluation only, no user-visible change.",
+  "testsRun": [
+    "vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --reporter=verbose -> 2 files, 26 tests passed (19 analysis + 7 real-store)",
+    "tsgo --noEmit -p tsconfig.test.json --composite false -> exit 0",
+    "tsgo --noEmit -p tsconfig.node.json --composite false -> exit 0 (first run failed on pre-existing missing gitignored electron/extensions/_ext-bridge.generated.ts; ran node scripts/generate-ext-bridge.mjs then re-ran -> exit 0)",
+    "tsgo --noEmit -p tsconfig.web.json --composite false -> exit 0",
+    "eslint scripts/lib/paired-ablation.mjs tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts -> exit 0 (0 warnings)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-paired-ablation.md --since HEAD~1 -> 'Spec is valid' (run in an isolated git copy of the change set because this workspace has no .git)",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-paired-ablation.md --dry-run --since HEAD~1 -> 'Harness result: pass'",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-paired-ablation.md --no-diff -> 'Spec is valid'",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-paired-ablation.md -> exit 0, no missing scenarios or rules",
+    "SHA256SUMS re-read verification over 9 files -> 9 ok, 0 mismatch; credential regex scan over 10 packet files -> 0 hits"
+  ]
+}
+```
+
+Two notes worth flagging: dependencies were never installed or fetched — I reused the pre-existing local `node_modules` through a temporary directory junction, then removed both junctions and all `.tmp` scratch dirs. Also, `harness run`/`validate` cannot resolve a diff base without `.git`, so the changed-path ownership gate was exercised in an isolated git copy rather than `--no-diff` only; that limitation is recorded in `docs/dev/harness-gap-closure/e02-acceptance.json`.

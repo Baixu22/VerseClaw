@@ -1,0 +1,35 @@
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |agents-core| ../../src/agents/rc02-envelope-reject.test.ts:66:3 > S01 provider envelope reject boundary > resolveEnvelopeRejectEnabled is off by default and opt-in only
+TypeError: resolveEnvelopeRejectEnabled is not a function
+ ❯ ../../src/agents/rc02-envelope-reject.test.ts:70:14
+     68|     delete process.env.OPENCLAW_RC02_REJECT_INVALID_ENVELOPE;
+     69|     try {
+     70|       expect(resolveEnvelopeRejectEnabled({})).toBe(false);
+       |              ^
+     71|       expect(resolveEnvelopeRejectEnabled({ rejectInvalidEnvelope: tru…
+     72|       expect(resolveEnvelopeRejectEnabled({ rejectInvalidEnvelope: fal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |agents-core| ../../src/agents/rc02-envelope-reject.test.ts:81:3 > S01 provider envelope reject boundary > rejects an invalid envelope before any provider bytes are sent (0 fetch calls)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ ../../src/agents/rc02-envelope-reject.test.ts:87:22
+     85|     );
+     86|     const { rejected, fetchCalls } = await drive(options);
+     87|     expect(rejected).toBe(true);
+       |                      ^
+     88|     expect(fetchCalls).toBe(0);
+     89|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

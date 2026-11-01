@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0277-s02",
+  "commandLine": "pnpm exec vitest run tests/unit/sensitive-sink-enforcement-drift.test.ts tests/unit/sensitive-sink-residual-ledger.test.ts --maxWorkers=1",
+  "taskDigest": "5dc49be048b69380f7484eab6910151b3fff9c7562fb4c05c9a83e816bfbfdd8",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-10-31T21:15:14.785Z",
+  "finishedAt": "2026-10-31T21:15:18.397Z",
+  "durationMs": 3612,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 8,
+    "failed": 1,
+    "skipped": 0,
+    "total": 9,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "5a5a4be0ba27ae261e1d8d06c6fd1cb4c5b87bdf62b68171e5c4a7f9119fcb76",
+  "stderrSha256": "7875b873893f6bafd4b7a75b94659aa034b1b31fd0d8e0d2d6006f071ebea457"
+}

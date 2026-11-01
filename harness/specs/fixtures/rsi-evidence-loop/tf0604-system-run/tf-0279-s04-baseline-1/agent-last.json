@@ -1,0 +1,41 @@
+Temp probe cleanup was blocked by policy; it lives outside the workspace at `D:\tmp\s04probe` and does not affect the repo.
+
+**What I did**
+
+This is a verification/ledger packet (S04 / TF-0279) whose scope is a fixed 5-file deliverable set — no product code change. It pins which `agent_browser` actions actually reach which existing gate, and records the residual set instead of over-claiming.
+
+- `docs/dev/harness-gap-closure/s04-browser-effect-boundary.md` — two-gate ledger (connection-mode gate vs session-ownership gate) + per-action coverage matrix + explicit residuals.
+- `tests/unit/browser-effect-boundary-ledger.test.ts` — pins the real policy functions (deny/allow matrix over external/derived-untrusted/missing/invalid vs trusted system / direct operator) and statically asserts action coverage (`click`/`type` gated; `evaluate`/`command`/`close` residual).
+- `harness/specs/tasks/harness-gap-browser-effect-boundary.md` — task spec (validates clean).
+- `docs/dev/harness-gap-closure/s04-acceptance.json` — acceptance evidence.
+- `docs/dev/harness-gap-closure/S04-SHA256SUMS` — manifest for the four files.
+
+**Key findings (verified against real code)**
+
+- Connection-mode gate: external/unknown provenance is denied for `auto-connect`/`cdp`/`external-profile`, allowed for `managed`; trusted/operator unrestricted.
+- Session-ownership gate: `click`/`type` only; requires Main-reported `connection.mode === 'managed'` for external/unknown.
+- Residual (not claimed covered): `evaluate`, `command`, `close`, and reuse of pre-existing external sessions by non-click/type actions.
+- No weakening: SSRF/private-network config, browser kill-switch flags, and Main's `allowExternalBrowser` acknowledgement unchanged. Single existing policy reused.
+- Only the 5 target files were created; nothing else in the tree changed.
+
+**Honest caveat:** this isolated workspace has no `node_modules` and no `.git`, so vitest / typecheck / scoped lint / comms replay+compare could not be executed and are recorded as `not-measured`, not passed. I did run the checks that work dependency-free: real policy logic (via Node type-stripping), static coverage scans, harness validate (`--no-diff`), spec portability/lifecycle, `check-no-bom`, credential scan (0 hits), and SHA256SUMS readback.
+
+```json
+{
+  "status": "completed",
+  "summary": "Implemented the S04 browser-effect boundary ledger packet (5 files, no product code change). The single existing agent_browser policy is pinned: external/derived-untrusted/missing/invalid provenance is denied auto-connect/cdp/external-profile (managed allowed; trusted/operator unrestricted) via the connection-mode gate, and click/type additionally require a Main-reported managed session via the session-ownership gate. Per-action coverage is recorded and evaluate/command/close plus external-session reuse are explicitly logged as residual, not covered. SSRF/private-network/browser kill-switch and Main's allowExternalBrowser acknowledgement are unchanged. Ran all dependency-free checks (harness validate --no-diff, spec portability/lifecycle, check-no-bom, credential scan 0 hits, SHA256SUMS readback, real-policy behavior probe, static coverage scan).",
+  "testsRun": [
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-browser-effect-boundary.md --no-diff (exit 0, 'Spec is valid')",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-browser-effect-boundary.md (exit 0, no missing rules/scenarios)",
+    "node scripts/check-spec-lifecycle.mjs (new spec present with lifecycleStatus; only the 6 pre-existing harness-gap specs lack it)",
+    "node scripts/check-no-bom.mjs (ok)",
+    "node scripts/scan-pattern.mjs / inline secret-shape scan over the 4 S04 files (0 hits)",
+    "node <SHA256SUMS readback> (4/4 OK, allOk true)",
+    "node --experimental-strip-types <probe importing real content-provenance + agent-browser-external-access-policy> (matrix matches acceptance)",
+    "node <static scan of agent-browser-tool.ts> (session-ownership gate actions === ['click','type']; connection-mode gate precedes dispatch; only open/command expose connectionMode)",
+    "node <validateSpecPortability on the new spec> (no failures)"
+  ]
+}
+```
+
+Not run (environment lacks deps and a git repo): `vitest`, `typecheck`, scoped `eslint`, `comms:replay`, `comms:compare` — recorded as `not-measured` in `docs/dev/harness-gap-closure/s04-acceptance.json`.

@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0290-g02",
+  "commandLine": "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
+  "taskDigest": "8435115fbf93e86d68adbed151ffd42f3ec49c1be540b0a199f34166b26d7b3f",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T17:51:13.128Z",
+  "finishedAt": "2026-10-31T17:51:16.404Z",
+  "durationMs": 3276,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "total": 3,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "870638ed55f309c3cac204bf35025c53d89b31e184f9659feb735c2f11c687b4",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

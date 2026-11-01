@@ -1,0 +1,10 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0287-l05-treatment-1/grader/openclaw_runtime
+
+ ❯ |unit-fast| ../../src/agents/rate-circuit-breaker.test.ts (0 test)
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  31 passed (31)
+   Start at  04:07:00
+   Duration  5.18s (transform 2.56s, setup 626ms, import 3.58s, tests 190ms, environment 0ms)
+

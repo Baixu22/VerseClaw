@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0276-s01",
+  "verdict": {
+    "grades": [
+      {
+        "graderVersion": "tf0590-graders/v3",
+        "verdict": "fail",
+        "reason": "Required oracle failed or timed out",
+        "evidenceKind": "owned-execution"
+      }
+    ],
+    "graderVersion": "tf0590-graders/v3",
+    "verdict": "fail",
+    "reason": "A required oracle failed"
+  },
+  "executionCount": 1
+}

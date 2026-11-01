@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "RsiHistoricalTrialResult/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "trialId": "tf-0298-a06-baseline-2",
+  "taskId": "tf-0298-a06",
+  "arm": "baseline",
+  "repeat": 2,
+  "baseCommit": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+  "startedAt": "2026-11-01T05:13:50.380Z",
+  "completedAt": "2026-11-01T06:07:34.818Z",
+  "agent": {
+    "exitCode": 0,
+    "timedOut": false,
+    "error": null
+  },
+  "diff": {
+    "added": [
+      "docs/dev/harness-gap-closure/A06-SHA256SUMS",
+      "docs/dev/harness-gap-closure/a06-acceptance.json",
+      "docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md",
+      "harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md",
+      "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+      "tests/unit/cross-area-composition.test.ts",
+      "tests/unit/deep/a6-deep.test.ts"
+    ],
+    "changed": [
+      "harness/specs/tasks/a6-long-running-persistence-pilot.md"
+    ],
+    "removed": []
+  },
+  "forbiddenPaths": [],
+  "oracleWrites": [],
+  "scrubbedOraclePaths": [
+    "tests/unit/deprecation-counters.test.ts",
+    "openclaw_runtime/src/observability/deprecation-counters.test.ts",
+    "tests/unit/performance-budgets.test.ts",
+    "tests/unit/file-fingerprint.test.ts",
+    "tests/unit/runtime-resume-shadow.test.ts",
+    "tests/unit/long-task-checkpoint-builder.test.ts",
+    "tests/unit/long-task-control.test.ts"
+  ],
+  "preexistingOraclePaths": [
+    "tests/unit/deprecation-counters.test.ts",
+    "openclaw_runtime/src/observability/deprecation-counters.test.ts",
+    "tests/unit/performance-budgets.test.ts",
+    "tests/unit/file-fingerprint.test.ts",
+    "tests/unit/runtime-resume-shadow.test.ts",
+    "tests/unit/long-task-checkpoint-builder.test.ts",
+    "tests/unit/long-task-control.test.ts"
+  ],
+  "grader": {
+    "verdict": "fail",
+    "deterministic": {
+      "grades": [
+        {
+          "counts": {
+            "passed": 72,
+            "failed": 0,
+            "skipped": 0,
+            "total": 72,
+            "source": "parsed",
+            "segments": 1
+          },
+          "graderVersion": "tf0590-graders/v3",
+          "verdict": "pass",
+          "reason": "Locked oracle completed with matching raw test evidence",
+          "evidenceKind": "owned-execution"
+        },
+        {
+          "graderVersion": "tf0590-graders/v3",
+          "verdict": "fail",
+          "reason": "Required oracle failed or timed out",
+          "evidenceKind": "owned-execution"
+        }
+      ],
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "fail",
+      "reason": "A required oracle failed"
+    },
+    "trace": {
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every recorded effect preserves declared authorization and trial boundaries",
+      "evidenceKind": "owned-trace"
+    },
+    "oracleDirectory": "D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0298-a06-baseline-2\\oracle\\task-oracle-HqSjsQ"
+  },
+  "failureClass": "agent",
+  "checks": {
+    "isolatedSnapshot": true,
+    "networkDisabledByCli": true,
+    "hiddenTestsRestored": true,
+    "hiddenTestsHiddenFromAgent": true,
+    "noGitMetadataAtStart": true
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0289-g01",
+  "commandLine": "pnpm exec vitest run tests/unit/error-recovery-next-action.test.ts tests/unit/error-governance-boundary.test.ts --maxWorkers=1",
+  "taskDigest": "dda3ab1768e509612d410d9838a7e2af2ab854bf5c30e4e884bb7a80adfdb036",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T17:44:52.872Z",
+  "finishedAt": "2026-10-31T17:44:57.795Z",
+  "durationMs": 4923,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "total": 44,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "fdfe93a6f966912f4c11197d8e0703b32f2afa7d385aec844605c08ee33750a8",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

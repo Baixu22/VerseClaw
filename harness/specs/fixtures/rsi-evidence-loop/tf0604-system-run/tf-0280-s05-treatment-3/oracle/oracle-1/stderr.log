@@ -1,0 +1,78 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/provider-credential-use-boundary-ledger.test.ts > S05 provider credential-use boundary ledger > pins the single call site and records the residual credential users
+AssertionError: expected '# S05：模型覆盖选择的凭据使用边界（台账）\n\n日期：2026-10…' to match /其它|other/
+
+- Expected:
+/其它|other/
+
++ Received:
+"# S05：模型覆盖选择的凭据使用边界（台账）
+
+日期：2026-10-13（Asia/Shanghai）。包码：S05（TF-0280）。真实 provider 调用：无。
+
+## 链路（source → policy → effect）
+
+`openclaw_runtime/src/agents/tools/image-generate-tool.ts` 在 `image_generate` 的 **显式 `model` override 分支**（`if (model !== undefined)`）内先跑：
+
+- `resolveProviderCredentialUsePolicy`（来源 + 是否显式 override + 请求 provider + host 绑定的 image provider 范围）：
+  external / derived-untrusted / missing / invalid 来源在**显式 override** 下，请求 provider 必须落在 host 绑定的 image provider 范围内，否则拒绝。
+  该判定**早于** `effectiveCfg` 解析、provider 选择与 `generateImage` / `executeImageGenerationJob` 执行——即在读取任何 provider 凭据之前拒绝。
+
+策略模块：`openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts`（`resolveProviderCredentialUsePolicy`）。
+拒绝形态：call-site-throw（策略返回 `allowed:false`，调用点抛 `ToolAuthorizationError`）。
+分类登记：`shared/security/content-provenance.ts` 的 `SENSITIVE_SINK_CLASSIFICATION['credential-use']` = `narrow`，且 `enforcedAt` 指向上述 policy/callSite。
+
+## 覆盖与放行矩阵
+
+| 来源 | 显式 override | 请求 provider | 期望 | 依据 |
+|---|---|---|---|---|
+| trusted system | 是 | 任意（含 host 范围外） | 放行（保留既有语义） | `!isExternalOrUnknownProvenance(status)` |
+| direct operator | 是 | 任意（含 host 范围外） | 放行（保留既有语义） | 同上 |
+| external / derived-untrusted | 是 | 落在 host 绑定范围 | 放行 | `boundProviders.has(requestedProvider)` |
+| external / derived-untrusted | 是 | 落在 host 绑定范围外 | **拒绝** | 返回 `allowed:false, restricted:true` |
+| missing / invalid | 是 | 落在 host 绑定范围外 | **拒绝** | `provenanceStatus` → missing → external/unknown |
+| 任意来源 | **否**（无 override） | 默认/fallback provider | 不经该闸门 | `!hasExplicitModelOverride` 直接放行 |
+| 任意来源 | **否**（无 override） | 自动 fallback | 不经该闸门 | 同上；自动 fallback 语义不变 |
+
+- 请求 provider 与绑定 provider 都先经 `normalizeProviderId` 归一，大小写/空白差异不绕过。
+- 拒绝原因为固定文案，**不含任何凭据值**；策略输入为 provider id 字符串、来源状态与绑定 provider id，**不含** API key / token。
+- host 绑定范围来自既有 operator 配置（`agents.defaults.imageGenerationModel` primary + fallbacks；显式配置时取全部，未显式配置时取解析后的默认 primary），**不改默认 provider / fallback / 凭据存储**。
+
+## 残余 residual（显式记录，不冒充已覆盖）
+
+本闸门**只**接在 `image_generate` 的显式 override 分支。下列凭据使用路径**未**接入该凭据使用闸门（对工作树逐文件核对，0 命中 `isExternalOrUnknownProvenance` / `resolveProviderCredentialUsePolicy`），记为 residual：
+
+- `openclaw_runtime/src/agents/tools/image-tool.ts`（图像理解/压缩模型 provider 凭据）
+- `openclaw_runtime/src/agents/tools/video-generate-tool.ts`
+- `openclaw_runtime/src/agents/tools/music-generate-tool.ts`
+- `openclaw_runtime/src/agents/tools/pdf-tool.ts`
+- `openclaw_runtime/src/agents/tools/sessions-spawn-tool.ts`
+- `openclaw_runtime/src/agents/tools/web-search-provider-credentials.ts`
+- `openclaw_runtime/src/plugins/runtime/runtime-model-auth.runtime.ts`（模型鉴权解析）
+- `openclaw_runtime/src/llm/env-api-keys.ts`（环境变量凭据）
+- `openclaw_runtime/src/media-generation/runtime-shared.ts`（媒体生成 provider 共享层）
+
+残余由 `tests/unit/provider-credential-use-boundary-ledger.test.ts` 钉住：一旦上述任一路径接入该闸门，测试失败并强制同步更新本台账（避免“悄悄扩大覆盖”或“台账过期”）。
+
+`image_generate` **无显式 override** 的默认/fallback 路径属于**保留语义**（不是 residual）：本包按设计不改变它，自动 fallback 仍按 operator 配置生效。
+
+## 边界与不做项
+
+- 只核验既有单一条凭据使用闸门；**不新建第二套凭据策略**。工作树中 import `provider-credential-use-policy` 的模块**唯一**是 `image-generate-tool.ts`（由测试钉住）。
+- 不改默认 provider、fallback、凭据存储、鉴权或宿主配置；不改产品默认值/锁/approval。
+- 不是“全网凭据强制”：只覆盖 `image_generate` 的显式 override 出口。
+- 非真人证据；无真实 provider 调用。
+"
+
+ ❯ tests/unit/provider-credential-use-boundary-ledger.test.ts:82:17
+     80|     expect(doc.toLowerCase()).toContain('residual');
+     81|     expect(doc).toMatch(/image-generate/);
+     82|     expect(doc).toMatch(/其它|other/);
+       |                 ^
+     83|   });
+     84| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

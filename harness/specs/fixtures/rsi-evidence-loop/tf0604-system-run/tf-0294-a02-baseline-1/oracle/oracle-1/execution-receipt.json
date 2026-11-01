@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0294-a02",
+  "commandLine": "pnpm exec vitest run tests/unit/resource-aware-wave-scheduler.test.ts tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts tests/unit/a02-a2-gate-coverage.test.ts --maxWorkers=1",
+  "taskDigest": "3be1c330a6866087b7fd7d2fd14d4befb0efa0b3150413cdddf7aee02fee3bdb",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T01:14:34.288Z",
+  "finishedAt": "2026-11-01T01:14:40.517Z",
+  "durationMs": 6229,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 33,
+    "failed": 1,
+    "skipped": 0,
+    "total": 34,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "ea801a043ba390440a78358e7896688903c6be8840cc989da93435d6331168e6",
+  "stderrSha256": "f5e77745593d9f6d2a93f107ad9d008a4776516c1000685e19594bcf8a77ec76"
+}

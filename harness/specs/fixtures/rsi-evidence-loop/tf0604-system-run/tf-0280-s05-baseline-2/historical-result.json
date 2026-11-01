@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "RsiHistoricalTrialResult/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "trialId": "tf-0280-s05-baseline-2",
+  "taskId": "tf-0280-s05",
+  "arm": "baseline",
+  "repeat": 2,
+  "baseCommit": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+  "startedAt": "2026-10-31T22:09:51.866Z",
+  "completedAt": "2026-10-31T22:39:23.101Z",
+  "agent": {
+    "exitCode": 1,
+    "timedOut": false,
+    "error": null
+  },
+  "diff": {
+    "added": [
+      "docs/dev/harness-gap-closure/s05-acceptance.json",
+      "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+      "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+      "tests/unit/provider-credential-use-boundary-ledger.test.ts"
+    ],
+    "changed": [],
+    "removed": []
+  },
+  "forbiddenPaths": [],
+  "oracleWrites": [
+    "tests/unit/provider-credential-use-boundary-ledger.test.ts"
+  ],
+  "scrubbedOraclePaths": [
+    "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts",
+    "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts"
+  ],
+  "preexistingOraclePaths": [
+    "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts",
+    "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts"
+  ],
+  "grader": {
+    "verdict": "fail",
+    "deterministic": {
+      "grades": [
+        {
+          "counts": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "total": 4,
+            "source": "parsed",
+            "segments": 1
+          },
+          "graderVersion": "tf0590-graders/v3",
+          "verdict": "pass",
+          "reason": "Locked oracle completed with matching raw test evidence",
+          "evidenceKind": "owned-execution"
+        },
+        {
+          "counts": {
+            "passed": 15,
+            "failed": 0,
+            "skipped": 0,
+            "total": 15,
+            "source": "parsed",
+            "segments": 1
+          },
+          "graderVersion": "tf0590-graders/v3",
+          "verdict": "pass",
+          "reason": "Locked oracle completed with matching raw test evidence",
+          "evidenceKind": "owned-execution"
+        }
+      ],
+      "evidenceKind": "owned-execution",
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every frozen oracle completed with independent evidence"
+    },
+    "trace": {
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every recorded effect preserves declared authorization and trial boundaries",
+      "evidenceKind": "owned-trace"
+    },
+    "oracleDirectory": "D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0280-s05-baseline-2\\oracle\\task-oracle-LrEl9T"
+  },
+  "failureClass": "agent",
+  "checks": {
+    "isolatedSnapshot": true,
+    "networkDisabledByCli": true,
+    "hiddenTestsRestored": true,
+    "hiddenTestsHiddenFromAgent": false,
+    "noGitMetadataAtStart": true
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

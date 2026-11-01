@@ -1,0 +1,22 @@
+```json
+{
+  "status": "completed",
+  "summary": "E02 paired ablation delivered: baseline (pre-Phase-4 FIFO) vs treatment (Phase-4 type-aware eviction) on the real RuntimeMemoryStore, 24 cases x 3 repetitions x 2 conditions = 144 paired trials from a deterministic local fixture (no provider, no network). Component activation proven (retained sets differ in 24/24 cases, 72/72 paired trials). Success 0.125 -> 0.625, pass^k 0.125 -> 0.625, paired delta +0.50 with 95% bootstrap CI [0.25, 0.75], misblocks 66 -> 27, tokens proxy 139.17 -> 126.79; verdict 'benefit' with no regression budget breached. Null controls (same policy both arms) return exactly zero effect and runs are reproducible. No product default, product lock or approval changed; FIFO remains the documented default (asserted directly in tests). Two caveats recorded honestly rather than glossed: (1) typecheck, scoped lint, harness run --dry-run and check-duplicate-assets could NOT be executed because node_modules is absent (installation prohibited) and the workspace has no .git directory - recorded as not-run, never as passes; focused tests ran via a disclosed local vitest-compatible shim. (2) Both arms silently evict sensitivity=secret facts without the compliance hook firing (baseline 69, treatment 9) - a pre-existing defect recorded as a residual finding and deliberately not fixed here. Pre-existing repo failures (E01/O02 specs missing lifecycleStatus; reliability-aggregation-boundary.md missing a type field) were left untouched because fixing them would break their published hash manifests; E01's file was restored byte-exactly and all 8 of its hashes plus all 10 E02 hashes verify.",
+  "testsRun": [
+    "vitest run tests/unit/agent-dev-paired-ablation.test.ts (via local vitest-compatible shim; node_modules absent) - 18 passed, 0 failed",
+    "vitest run tests/unit/runtime-memory-paired-ablation.test.ts (via local vitest-compatible shim; real RuntimeMemoryStore) - 8 passed, 0 failed",
+    "node scripts/paired-ablation-run.mjs --out artifacts/paired-ablation/report.json - exit 0",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-paired-ablation.md --no-diff - exit 0 (Spec is valid)",
+    "harness structural checks via harness/src/rules.mjs (portability, changed-path ownership, backend-communication boundary scan, profile selection, required-rule resolution) - 0 failures",
+    "node scripts/check-no-bom.mjs - exit 0",
+    "node scripts/check-evidence-refs.mjs - exit 0 (PASS 157 referenced paths)",
+    "node scripts/check-spec-lifecycle.mjs - exit 1 due to 2 PRE-EXISTING specs (harness-gap-reliability-aggregation.md, harness-gap-trace-cost-sampling.md); E02 spec not among failures",
+    "credential scan over 9 touched files (sk-*, ghp_*, AKIA*, PRIVATE KEY, password/secret/token assignments) - 0 hits",
+    "E01-SHA256SUMS readback (8 files) and E02-SHA256SUMS readback (10 files) - all match",
+    "NOT RUN: pnpm run typecheck:test (tsgo/tsc not installed, node_modules absent, installation prohibited)",
+    "NOT RUN: eslint on touched files (not installed, node_modules absent, installation prohibited)",
+    "NOT RUN: harness run --dry-run (diff base origin/main unresolvable: workspace has no .git)",
+    "NOT RUN: node scripts/check-duplicate-assets.mjs (requires git ls-files; no .git)"
+  ]
+}
+```

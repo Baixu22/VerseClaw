@@ -5,15 +5,24 @@
   "verdict": {
     "grades": [
       {
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "total": 6,
+          "source": "parsed",
+          "segments": 1
+        },
         "graderVersion": "tf0590-graders/v3",
-        "verdict": "fail",
-        "reason": "Required oracle failed or timed out",
+        "verdict": "pass",
+        "reason": "Locked oracle completed with matching raw test evidence",
         "evidenceKind": "owned-execution"
       }
     ],
+    "evidenceKind": "owned-execution",
     "graderVersion": "tf0590-graders/v3",
-    "verdict": "fail",
-    "reason": "A required oracle failed"
+    "verdict": "pass",
+    "reason": "Every frozen oracle completed with independent evidence"
   },
   "executionCount": 1
 }

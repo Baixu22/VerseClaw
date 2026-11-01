@@ -1,0 +1,18 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0293-a01-treatment-1/grader
+
+ ❯ tests/unit/a01-a1-gate-coverage.test.ts (3 tests | 1 failed) 11ms
+     × keeps the A1 spec's requiredTests wired to the criterion-1/3/4 counter tests 9ms
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+ ❯ tests/unit/tool-registration.test.ts (26 tests | 5 failed) 16ms
+       × passes with a durable_state profile 5ms
+       × requiresApproval covers dynamic_writes and durable_state 2ms
+       × a readonly risk level still validates a declared durable_state profile 1ms
+       × validateWriteRiskProfile returns null for valid profiles 0ms
+       × validateWriteRiskProfile returns error message for invalid profiles 2ms
+
+ Test Files  3 failed | 4 passed (7)
+      Tests  6 failed | 82 passed (88)
+   Start at  08:15:41
+   Duration  9.40s (transform 270ms, setup 1.00s, import 182ms, tests 2.31s, environment 4.30s)
+

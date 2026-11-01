@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0278-s03",
+  "commandLine": "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+  "taskDigest": "9c03727aa68baa501127ae0ea3df84424d72da41267acb1c5748f30b393b38d2",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-11-01T04:58:31.469Z",
+  "finishedAt": "2026-11-01T04:58:42.813Z",
+  "durationMs": 11334,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "total": 8,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "90b72ad3243935bc4a36cafdc6b98d4828d1e6e405ebc2cf9b7b6f01102e3fff",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

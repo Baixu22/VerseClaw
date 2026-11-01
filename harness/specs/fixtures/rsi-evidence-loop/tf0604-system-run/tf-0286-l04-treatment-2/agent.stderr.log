@@ -1,0 +1,17 @@
+Reading additional input from stdin...
+2026-10-31T19:45:29.839810Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.843512Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-10-31T19:45:29.844804Z  WARN codex_core::agents_md: ignoring project_doc_fallback_filenames entry that is not a filename
+2026-10-31T19:45:29.929946Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.930850Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.931206Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.936672Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.937853Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.938257Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.938746Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.961856Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.963623Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:45:29.966377Z  WARN codex_models_manager::model_info: Unknown model ccs-workbuddy/deepseek-v4.1-flash is used. This will use fallback model metadata.
+2026-10-31T19:51:45.530260Z ERROR codex_core::tools::router: error=write_stdin failed: stdin is closed for this session; rerun exec_command with tty=true to keep stdin open
+2026-10-31T20:04:52.614688Z ERROR codex_core::tools::router: error=exec_command failed: CreateProcess { message: "Rejected(\"`\\\"D:\\\\\\\\software\\\\\\\\PowerShell\\\\\\\\pwsh-7.6.6\\\\\\\\pwsh.exe\\\" -Command '$tmp = \\\"D:'\\\"\\\\\\\\tmp\\\\\\\\rsi-tf0604-run5\\\\\\\\trials\\\\\\\\tf-0286-l04-treatment-2\\\\\\\\_oraclecheck\\\\\\\"\\nRemove-Item \\\\\\\"\\\"'$tmp'\\\"\\\\\\\\checkpoint-attachment-binding.test.ts\\\\\\\" -Force\\nGet-ChildItem \\\"'$tmp | Select-Object Name'` rejected: blocked by policy\")" }
+2026-10-31T20:04:56.091438Z ERROR codex_core::tools::router: error=exec_command failed: CreateProcess { message: "Rejected(\"`\\\"D:\\\\\\\\software\\\\\\\\PowerShell\\\\\\\\pwsh-7.6.6\\\\\\\\pwsh.exe\\\" -Command \\\"Remove-Item -LiteralPath \\\\\\\"D:\\\\\\\\tmp\\\\\\\\rsi-tf0604-run5\\\\\\\\trials\\\\\\\\tf-0286-l04-treatment-2\\\\\\\\_oraclecheck\\\\\\\\checkpoint-attachment-binding.test.ts\\\\\\\" -Force; Get-ChildItem \\\\\\\"D:\\\\\\\\tmp\\\\\\\\rsi-tf0604-run5\\\\\\\\trials\\\\\\\\tf-0286-l04-treatment-2\\\\\\\\_oraclecheck\\\\\\\" | Select-Object Name\\\"` rejected: blocked by policy\")" }

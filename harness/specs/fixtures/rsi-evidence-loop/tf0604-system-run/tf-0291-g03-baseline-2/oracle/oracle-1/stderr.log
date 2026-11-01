@@ -1,0 +1,86 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > turns a failure trace into a sample expected to fail before the fix and pass after
+TypeError: Cannot read properties of null (reading 'ok')
+ ❯ tests/unit/trace-to-eval-sample.test.ts:25:19
+     23|   it("turns a failure trace into a sample expected to fail before the …
+     24|     const result = traceToEvalSample(trace());
+     25|     expect(result.ok).toBe(true);
+       |                   ^
+     26|     if (!result.ok) return;
+     27|     expect(result.sample.expected).toEqual({ "before-fix": "fail", "af…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)
+TypeError: Cannot read properties of null (reading 'ok')
+ ❯ tests/unit/trace-to-eval-sample.test.ts:38:21
+     36|     for (const outcome of ["success", "refusal", "cancelled"] as const…
+     37|       const result = traceToEvalSample(trace({ outcome }));
+     38|       expect(result.ok, outcome).toBe(true);
+       |                     ^
+     39|       if (result.ok) expect(result.sample.expected["before-fix"]).toBe…
+     40|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > refuses a trace that is not redacted (raw prompt or secret-like value)
+TypeError: Cannot read properties of null (reading 'ok')
+ ❯ tests/unit/trace-to-eval-sample.test.ts:45:23
+     43|   it("refuses a trace that is not redacted (raw prompt or secret-like …
+     44|     const withPrompt = traceToEvalSample({ ...trace(), prompt: "secret…
+     45|     expect(withPrompt.ok).toBe(false);
+       |                       ^
+     46|     if (!withPrompt.ok) expect(withPrompt.diagnostics[0].code).toBe("t…
+     47|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > rejects a reproducer that is not a bounded kind (no shell command)
+TypeError: Cannot read properties of null (reading 'ok')
+ ❯ tests/unit/trace-to-eval-sample.test.ts:56:18
+     54|   it("rejects a reproducer that is not a bounded kind (no shell comman…
+     55|     const shell = traceToEvalSample({ ...trace(), reproducer: { kind: …
+     56|     expect(shell.ok).toBe(false);
+       |                  ^
+     57|     if (!shell.ok) expect(shell.diagnostics[0].code).toBe("invalid-rep…
+     58|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > is an explicit-trigger batch: selected traces only, with per-trace rejections
+AssertionError: expected [] to deeply equal [ 'run-a', 'run-b', 'run-d' ]
+
+- Expected
++ Received
+
+- [
+-   "run-a",
+-   "run-b",
+-   "run-d",
+- ]
++ []
+
+ ❯ tests/unit/trace-to-eval-sample.test.ts:70:63
+     68|       trace({ runId: "run-d", signature: "second-failure" }),
+     69|     ]);
+     70|     expect(batch.samples.map((sample) => sample.sourceRunId)).toEqual(…
+       |                                                               ^
+     71|     expect(batch.rejected.map((entry) => entry.runId)).toEqual(["run-c…
+     72|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/trace-to-eval-sample.test.ts > G03 trace-to-eval sample > rejects a trace with a missing required field
+TypeError: Cannot read properties of null (reading 'ok')
+ ❯ tests/unit/trace-to-eval-sample.test.ts:76:20
+     74|   it("rejects a trace with a missing required field", () => {
+     75|     const missing = traceToEvalSample({ runId: "run-x" });
+     76|     expect(missing.ok).toBe(false);
+       |                    ^
+     77|     if (!missing.ok) expect(missing.diagnostics[0].code).toBe("missing…
+     78|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+

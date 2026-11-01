@@ -1,0 +1,19 @@
+Task complete. Final state of the S05 packet:
+
+**Changed files**
+- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md` (2205 B)
+- `tests/unit/provider-credential-use-boundary-ledger.test.ts` (4330 B)
+- `harness/specs/tasks/harness-gap-credential-use-boundary.md` (3150 B)
+- `docs/dev/harness-gap-closure/s05-acceptance.json` (6088 B, `driven_by: agent`, product locks unchanged)
+- `docs/dev/harness-gap-closure/S05-SHA256SUMS` (491 B, 4/4 digests verified)
+
+**Substance**
+The ledger verifies the pre-existing `resolveProviderCredentialUsePolicy` gate rather than adding a new one. It is consulted only from `image-generate-tool.ts`'s explicit model-override branch: trusted operator/system overrides keep existing semantics, the no-override default/fallback path skips the gate, and external/derived-untrusted/missing/invalid provenance with an explicit override may only use a host-bound image provider. Denial precedes any credential read, and neither the policy input type nor the denial reason contains a credential value. Other credential consumers are written down as residual, not claimed covered.
+
+**Verified**
+- Harness `validate` passes for the task spec and the gateway scenario (exit 0).
+- `harness run --dry-run` path reproduced offline: 0 failures, all changed paths owned, no residual/uncovered.
+- Guard test: 4/4 pass; policy matrix: 18/18 assertions pass against this tree's real source.
+- Credential scan: 0 hits; SHA256SUMS read back clean; `check-no-bom` ok.
+
+**Environment-limited** (no `node_modules`, no git repo — same at the pristine `base` checkout): `pnpm test`, `typecheck:test`, `eslint`, `comms:replay`/`comms:compare`, `repo:test-coverage:check`, `check-repository-artifacts`. I did not install anything or use the network. The two runtime tests the spec lists under `requiredTests` are absent from this workspace (present at `baseCommit`); per instructions I did not add or modify them, and the policy/call-site they exercise are untouched.

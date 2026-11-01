@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0276-s01",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts --maxWorkers=1",
+  "taskDigest": "5e2baf92556723351d954258813928f76b63ba05b31a425f28a2378a215bcb0e",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T21:02:06.479Z",
+  "finishedAt": "2026-10-31T21:02:37.292Z",
+  "durationMs": 30813,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "total": 3,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "a1de453ab2a98076066036136f260fcfe3e81c9dbead4be9993328fa5f28e1da",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

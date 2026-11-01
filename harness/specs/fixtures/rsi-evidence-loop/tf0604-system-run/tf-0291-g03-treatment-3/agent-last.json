@@ -1,0 +1,26 @@
+All checks pass and the change set is exactly the 7 scoped files.
+
+```json
+{
+  "status": "completed",
+  "summary": "Implemented G03 (TF-0291 / HG11): a pure, explicitly triggered converter that turns selected redacted failure traces into re-runnable eval samples. scripts/lib/trace-to-eval-sample.mjs (+ .d.mts type surface) exports buildEvalSample/convertTraces/expectationForKind/redactionFindings/isTraceRedacted/digestSample/verifySampleDigest/TraceConversionError. Behavior: kind='fail' -> {beforeFix:'fail', afterFix:'pass'}; success/refusal/cancel -> pass/pass (no regression); unknown kind throws unknown-trace-kind. Samples bind a bounded non-shell reproducer (kind in scenario|route|command-id; shell/bash/command/script/exec/argv rejected) plus a runId+attempt selector, and carry a deterministic SHA256 digest over stableStringify({schemaVersion,selector,reproducer,expectation}) with convertedAt excluded so replays compare equal. Any unredacted trace is rejected whole ('unredacted-trace' + finding raw-field|secret-value, one diagnostic each, no sample) on raw prompt/messages/body/authorization/apiKey/headers (normalized variants incl. api_key/API-KEY/x-api-key) or sk-/phc_/ghp_/github_pat_/AKIA/private-key/Bearer|Basic value shapes; [redacted] markers stay safe. convertTraces is caller-driven only (selectedRunIds and/or windowDays window by run startedAt; others reported as skipped) with no timer, scheduler, daemon, fs or child_process, so it cannot delete or rewrite original evidence; results are labelled driven_by:'agent'. Deliverables are exactly the 7 task targetScope files (converter, .d.mts, vitest unit test, task spec, evidence doc, acceptance JSON, SHA256SUMS), with no product lock/default/approval change and no extra scaffolding left behind. Honest limits: vitest/typecheck/eslint could not run (no node_modules, network disabled) and harness dry-run/artifact lint cannot run in this non-git isolated copy; those are recorded as not-measured, never as passes. I corrected two inaccurate claims carried over from earlier work (the evidence doc listed the harness dry-run as 'pass' and cited a since-deleted .rsi-smoke.mjs replay) and replaced them with the commands actually executed this session, then regenerated G03-SHA256SUMS.",
+  "testsRun": [
+    "node .rsi-vitest/prep.mjs && node --experimental-strip-types .rsi-vitest/trace-to-eval-sample.run.ts — executes the REAL tests/unit/trace-to-eval-sample.test.ts (describe/it/it.each/expect shimmed over node:assert by temporary in-session scaffolding, deleted afterwards) → exit 0, 'TEST FILE EXECUTED: all cases passed'",
+    "node .rsi-vitest/neg.mjs && node --experimental-strip-types .rsi-vitest/neg.run.ts — negative control, same runner with one expectation flipped to pass/pass → exit 1, AssertionError (proves the replay is not vacuous)",
+    "node --input-type=module -e \"import('./scripts/lib/trace-to-eval-sample.mjs').then(m=>console.log(Object.keys(m).sort().join(', ')))\" → exit 0, 14 exports matching the .d.mts surface",
+    "node scripts/check-spec-lifecycle.mjs → exit 0, 'lifecycle status present for 520 task specs'",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md --no-diff → exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-trace-to-eval-sample.md --dry-run → exit 1, blocked: 'invalid or missing diff base ref: origin/main' (non-git isolated workspace; same failure on the untouched base copy) — reported as not passed",
+    "node scripts/check-no-bom.mjs → exit 0, 'check-no-bom: ok'",
+    "node scripts/validate-policy-docs.mjs → exit 0, PASS 10 checks (its artifacts/policy-doc-truthfulness/report.json byproduct was deleted so the change set stays exactly on the G03 target scope)",
+    "node scripts/check-error-governance.mjs → exit 0, PASS 16 checks",
+    "node scripts/lint-artifact-completion-class.mjs → exit 1, blocked: needs git HEAD ('Could not access HEAD') — reported as not passed",
+    "node scripts/check-harness-gap-baseline.mjs → exit 1, but identical failure on the untouched base copy (B00 a5/a6 pilot spec source digest+anchor drift) — pre-existing, unrelated to G03",
+    "node scripts/scan-pattern.mjs --pattern '<realistic provider key shapes: sk-+32hex, sk-proj/sk-ant 20+, ghp_ 36, github_pat_ 40+, phc_ 40+, AKIA+16, Bearer/Basic 32+, PEM header with 40+ body; full regex recorded in g03-acceptance.json>' --fail-on-match <the 6 retained files> → exit 0, 0 matches",
+    "node -e '<per-file sha256 comparison against docs/dev/harness-gap-closure/G03-SHA256SUMS>' → 6/6 files match",
+    "node <temp>/probe.mjs (behavioral probe of the module: fail→fail/pass, success→pass/pass, [redacted] safe, raw prompt and nested raw auth header rejected, shell reproducer kind rejected as 'reproducer-kind-not-allowed', explicit batch selection counts/skips, digest self-verify, driven_by:'agent') → exit 0, all expectations met",
+    "node -e '<recursive agent vs base file comparison>' → change set is exactly the 7 targetScope files; no other additions, deletions, or size changes",
+    "NOT RUN (blocked, not passed): `pnpm test` (vitest), `pnpm run typecheck`, scoped `eslint` — node_modules is absent and network is disabled, so these cannot be measured in this environment"
+  ]
+}
+```

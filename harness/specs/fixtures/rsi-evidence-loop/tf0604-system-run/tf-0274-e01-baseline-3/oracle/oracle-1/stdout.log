@@ -1,0 +1,16 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0274-e01-baseline-3/grader
+
+ ❯ tests/unit/agent-dev-reliability-aggregation.test.ts (6 tests | 6 failed) 10ms
+     × computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF) 5ms
+     × preserves missing/timeout/crash/skip as incomplete and excludes them from denominators 1ms
+     × flags a flake only when the first scheduled trial failed and a later re-run passed 1ms
+     × fails the gate when a safety-required case is skipped 0ms
+     × enforces positive (must pass) and negative (must reject) anchors 0ms
+     × reports insufficient-sample instead of passing when complete cases are below the gate 1ms
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  23:42:53
+   Duration  541ms (transform 70ms, setup 189ms, import 23ms, tests 10ms, environment 0ms)
+

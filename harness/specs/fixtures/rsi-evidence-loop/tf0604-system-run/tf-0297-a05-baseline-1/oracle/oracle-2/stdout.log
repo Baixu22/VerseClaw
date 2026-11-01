@@ -1,0 +1,14 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0297-a05-baseline-1/grader/openclaw_runtime
+
+ ❯ |unit| ../../src/context-engine/context-orchestrator.test.ts (16 tests | 4 failed) 34ms
+     × vtoken-only stage no longer injects because VToken is retired 3ms
+     × memory still composes while the retired vtoken stage stays silent 2ms
+     × defers the remaining memory stage and projects it after finalize 4ms
+     × absent native capability declarations keep the retired VToken stage silent 1ms
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  4 failed | 40 passed (44)
+   Start at  16:19:22
+   Duration  26.83s (transform 20.78s, setup 407ms, import 25.75s, tests 174ms, environment 0ms)
+

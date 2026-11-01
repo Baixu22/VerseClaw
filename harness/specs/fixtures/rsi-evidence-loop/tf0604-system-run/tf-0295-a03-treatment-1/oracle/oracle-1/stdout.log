@@ -1,0 +1,12 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0295-a03-treatment-1/grader
+
+ ❯ tests/unit/a03-a3-gate-coverage.test.ts (3 tests | 1 failed) 13ms
+     × points every requiredTests entry at a real file and wires the classifier + counter tests 10ms
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  1 failed | 49 passed (50)
+   Start at  11:45:54
+   Duration  7.36s (transform 767ms, setup 1.00s, import 590ms, tests 31ms, environment 4.41s)
+

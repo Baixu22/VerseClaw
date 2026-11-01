@@ -1,0 +1,22 @@
+The implementation is complete and verified. Final summary:
+
+**Status: completed**
+
+Implemented the S07 bounded, revocable verifier completion-verdict entry across the six declared target-scope files.
+
+**What changed**
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts` — reuses the existing `evaluateEvidenceVerifier` (no second authority layer); maps `completed→approved`, `insufficient_evidence→insufficient-evidence`, others→`rejected`, and out-of-scope tasks→`out-of-scope`; `resolveVerifierCompletionVerdict` returns a digest-only record (`taskId`/`verdict`/`evidenceDigest`/`findingCodes`/`priorStatus`/`grantsPublish:false`/`grantsProductLock:false`); `verifierCompletionTransition` yields the single `{nodeId, from: priorStatus, to: "done"}` only for `approved`; `revokeVerifierCompletionVerdict` returns `{nodeId, from:"done", to: priorStatus}`, `null` otherwise.
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts` — 7 focused tests over the full matrix.
+- `harness/specs/tasks/harness-gap-verifier-completion-verdict.md`, `docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md`, `docs/dev/harness-gap-closure/s07-acceptance.json`, `docs/dev/harness-gap-closure/S07-SHA256SUMS`.
+
+**Checks actually run**
+- `openclaw_runtime: node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1` — exit 0, 2 files / 12 tests passed.
+- Behavioral equivalence vs the frozen reference contract: 12 scenario/transition/revocation cases matched (temporary harness, since removed).
+- `tsgo -p tsconfig.core.json` — no error in the S07 files; only the pre-existing `ui/vitest.config.ts` baseline error (reproduced identically on the untouched `base`).
+- `oxlint src/runtime-core/verifier-completion-verdict.ts …test.ts` — 0 warnings / 0 errors (validated against a negative control).
+- `node harness/src/cli.mjs validate --spec …` — `Spec is valid`; `… run --dry-run` — `pass` (run against a temporary base ref so the changed-path ownership gate actually executed; temp repo removed).
+- Credential scan over the 6 files — 0 hits; `sha256sum -c docs/dev/harness-gap-closure/S07-SHA256SUMS` — all OK.
+
+**Notes / residuals**
+- This isolated workspace has no `node_modules` and no `.git`; I temporarily linked the reference checkout's modules and a scratch git repo to run the real gates, then removed both. `comms:replay`/`comms:compare` were not run (they require a git HEAD identity), and the full uncached typecheck was not run; both are recorded in `s07-acceptance.json` as `notRun`, not claimed as passing.
+- No network use, no dependency install, no loops, no product-lock/default changes; the hidden oracle test was not inspected or modified.

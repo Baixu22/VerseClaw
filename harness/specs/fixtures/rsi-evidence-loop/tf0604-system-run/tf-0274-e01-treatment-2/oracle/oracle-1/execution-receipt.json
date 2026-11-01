@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0274-e01",
+  "commandLine": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
+  "taskDigest": "f18a678531521fb226ae49be4bb4ab0e49bb05572cede55ef661b5dc798fcdfe",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T16:14:34.984Z",
+  "finishedAt": "2026-10-31T16:14:37.358Z",
+  "durationMs": 2373,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "total": 6,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "41e289bce5b06b8ea09283adbe2e2fd9056031f6b8ffc391ec7b6604a78c0dfe",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

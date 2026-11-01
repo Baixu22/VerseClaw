@@ -1,0 +1,16 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/sensitive-sink-residual-ledger.test.ts > S02 sensitive-sink residual ledger > records the residual ledger doc with every sink kind
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0277-s02-treatment-3\grader\docs\dev\harness-gap-closure\s02-sink-ledger.md'
+ ❯ read tests/unit/sensitive-sink-residual-ledger.test.ts:39:10
+     37|
+     38| function read(repoPath: string): string {
+     39|   return readFileSync(join(ROOT, repoPath), 'utf8');
+       |          ^
+     40| }
+     41|
+ ❯ tests/unit/sensitive-sink-residual-ledger.test.ts:79:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

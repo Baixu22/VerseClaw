@@ -1,0 +1,28 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit-fast| ../../src/agents/rate-circuit-breaker.test.ts [ src/agents/rate-circuit-breaker.test.ts ]
+Error: Cannot find module './rate-circuit-breaker.js' imported from D:/tmp/rsi-tf0604-run5/trials/tf-0287-l05-baseline-3/grader/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts
+ ❯ ../../src/agents/rate-circuit-breaker.test.ts:5:1
+      3| import { describe, expect, it } from "vitest";
+      4|
+      5| import { RateCircuitBreaker } from "./rate-circuit-breaker.js";
+       | ^
+      6|
+      7| function clock(start = 0) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

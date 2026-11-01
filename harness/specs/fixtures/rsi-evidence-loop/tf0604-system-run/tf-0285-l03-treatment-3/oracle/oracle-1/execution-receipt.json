@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0285-l03",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-steering-queue.l03.test.ts --maxWorkers=1",
+  "taskDigest": "d269ca6075023058f193b957c454e484c7041e2662c0f9ac3def8105f867a1e5",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T19:54:11.554Z",
+  "finishedAt": "2026-10-31T19:54:48.257Z",
+  "durationMs": 36703,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "total": 6,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "5af5104781d9840bce2bf7fa5f3bcfe877b2c33fc1f45e02b2720993ac7f44d1",
+  "stderrSha256": "94f59a48294d99f8d9b7632cd5a1742670c7735fe37ec7c555aab939b635fdde"
+}

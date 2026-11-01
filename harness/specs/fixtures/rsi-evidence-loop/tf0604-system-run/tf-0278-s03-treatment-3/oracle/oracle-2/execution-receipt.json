@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0278-s03",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1",
+  "taskDigest": "9c03727aa68baa501127ae0ea3df84424d72da41267acb1c5748f30b393b38d2",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T21:27:23.167Z",
+  "finishedAt": "2026-10-31T21:28:10.461Z",
+  "durationMs": 47294,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 56,
+    "failed": 0,
+    "skipped": 0,
+    "total": 56,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "9f3ce4d09a7bc5d761d1af3a2a9d81acc9e0de302ba57d39283eb29c5426ca74",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,22 @@
+All checks pass and the workspace is clean (junctions removed, drift guard restored byte-identically, no stray artifacts).
+
+**Findings**
+- This arm's `agent/` snapshot was missing the pre-existing, base-sealed regression guard `tests/unit/sensitive-sink-enforcement-drift.test.ts` (present in `base/` and in `origin/main` at the base commit) and had none of the six S02 target artifacts.
+- A prior success/failure pair was available: `tf-0277-s02-baseline-1/agent` is a clean, self-consistent S02 solution; `baseline-2` was contaminated (fake `node_modules` stub, stray `.tmp-s02-test.ts`, unrelated `policy-doc-truthfulness` artifacts, guard deleted); `baseline-3` produced nothing. I took the clean path and preserved the counterexamples: no fabricated `node_modules`, no stray probes, no unrelated surface changes.
+
+**Result**
+- Restored the drifted guard byte-identically (`sha256 c5f1fb3b…`, matching `oracle.inputDigests`) so its frozen content is unchanged.
+- Authored the six target artifacts: the sink ledger, the residual egress guard test, the task spec, the boundary rule, the acceptance record, and a self-consistent `S02-SHA256SUMS`.
+- The ledger records all six sinks from authoritative code (policy file/exports/call site/denial form), explicitly states `enforced ≠ 全网强制`, and pins the six un-wired network-send egress entry points with an executable test. Reverse-scan confirms exactly the declared gate modules.
+
+**Checks actually run**
+- Graded oracle `vitest run sensitive-sink-enforcement-drift.test.ts sensitive-sink-residual-ledger.test.ts --maxWorkers=1` → 9/9 passed, exit 0.
+- Root provenance (added `external-content-provenance.test.ts`) → 17/17 passed, exit 0.
+- Runtime provenance (`outbound-policy.provenance`, `message-secret-read-policy`, `network-send-provenance-wiring`) → 23/23 passed, exit 0.
+- `harness validate --spec … --no-diff` → "Spec is valid", exit 0; `harness context` exit 0.
+- `harness run --dry-run` → not runnable: the isolated snapshot has no `.git`, so no diff base (`origin/main`) resolves; this is a harness-invocation limit, not a change failure.
+- `eslint` on both sink tests → exit 0; `tsc -p tsconfig.test.json --noEmit` → exit 0 (needed `--max-old-space-size=8192`).
+- Credential scan 0 hits over 5 files; `S02-SHA256SUMS` round-trips (5/5 match).
+
+**Boundaries**
+- No second provenance engine; no product default/lock/approval change; no real-human or live-provider claim. The ledger is `driven_by: agent`. README four locales reviewed: no user-visible interface change, so unchanged.

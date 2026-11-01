@@ -1,0 +1,17 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0275-e02-baseline-2/grader
+
+ ❯ tests/unit/runtime-memory-paired-ablation.test.ts (1 test | 1 failed) 92ms
+     × runs 20 cases x 3 repeats x 2 conditions and reports effect + 95% CI (never fabricating a win) 91ms
+ ❯ tests/unit/agent-dev-paired-ablation.test.ts (5 tests | 5 failed) 7ms
+     × summarizes pass^k, p50/p95 latency, tokens, false blocks and safety violations 4ms
+     × computes a paired mean difference and 95% CI 1ms
+     × reports component-helps only when the 95% CI excludes zero on the positive side 0ms
+     × returns no-effect when the CI contains zero and never invents a win 0ms
+     × returns hurts on a significant negative effect and safety-regression on violations 0ms
+
+ Test Files  2 failed (2)
+      Tests  6 failed (6)
+   Start at  00:45:28
+   Duration  4.03s (transform 1.68s, setup 251ms, import 2.79s, tests 99ms, environment 0ms)
+

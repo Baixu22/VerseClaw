@@ -1,0 +1,19 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0298-a06-baseline-3/grader
+
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+ ❯ tests/unit/deprecation-counters.test.ts (0 test)
+ ❯ tests/unit/a06-a6-gate-coverage.test.ts (3 tests | 3 failed) 12ms
+     × keeps every A6 required test path present and wired into the archived pilot spec 7ms
+     × pins A6 critical counter and budget-response evidence 1ms
+     × pins the restored verifier, lease-ordering, and pause/resume latency gates 2ms
+ ❯ tests/unit/file-fingerprint.test.ts (0 test)
+ ❯ tests/unit/long-task-checkpoint-builder.test.ts (0 test)
+ ❯ tests/unit/long-task-control.test.ts (0 test)
+ ❯ tests/unit/runtime-resume-shadow.test.ts (0 test)
+
+ Test Files  7 failed (7)
+      Tests  3 failed (3)
+   Start at  13:19:59
+   Duration  3.07s (transform 404ms, setup 0ms, import 30ms, tests 12ms, environment 1ms)
+

@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0275-e02",
+  "commandLine": "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1",
+  "taskDigest": "5af62c58ac1da447fcad54b1fc71aeca37f2ccc3053e7a34b4e9ee928693b22f",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-10-31T16:51:30.922Z",
+  "finishedAt": "2026-10-31T16:51:35.841Z",
+  "durationMs": 4920,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 0,
+    "failed": 6,
+    "skipped": 0,
+    "total": 6,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "5c278081b6442590726d518eb95143d31d75b91c69d18790b1fed4a78ef9df9f",
+  "stderrSha256": "423fb1de7661af46472c5376f51e58b9a951da74c83bcfd4b44024caf61f8aec"
+}

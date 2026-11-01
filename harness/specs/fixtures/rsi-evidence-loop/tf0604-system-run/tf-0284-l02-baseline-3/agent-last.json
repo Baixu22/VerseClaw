@@ -1,0 +1,24 @@
+Done. The L02 context-pressure recovery half is implemented and verified.
+
+**Result**
+```json
+{
+  "status": "completed",
+  "summary": "Implemented L02 context-pressure recovery in openclaw_runtime/src/runtime-core/context-pressure-recovery.ts: a bounded, deterministic projection over the existing Working Context snapshot into four sections (objective/unfinished/dependencies/recentEvidence), reusing the Stage 3 fields and adding no ledger/store/table/daemon and changing no product default, lock, or approval value. It guarantees no silent drop (per-section dropped counts, truncated=true, kept+dropped=total), no silent recursion (depth>maxDepth -> status 'depth-exceeded', zero sections), no fake completion (complete always false; absent/empty snapshot -> 'unknown'), and same-input->same-digest. Landed all five declared deliverables (module + test, harness task spec, doc, acceptance record, SHA256SUMS).",
+  "testsRun": [
+    "vitest run openclaw_runtime/src/runtime-core/context-pressure-recovery.test.ts (real Vitest 4.1.1, reused an installed toolchain snapshot via temp junction; no install/no network) -> 1 file passed, 4/4 tests passed, exit 0",
+    "tsc --noEmit single-file strict typecheck of context-pressure-recovery.ts (reused installed typescript; no install/no network) -> exit 0",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-context-pressure-recovery.md --no-diff -> 'Spec is valid', exit 0",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-context-pressure-recovery.md --json -> parsed, exit 0",
+    "node scripts/check-spec-lifecycle.mjs -> 11 lines before and after the change (same 10 pre-existing unrelated failures); new spec carries lifecycleStatus: completed",
+    "credential scan over the 5 L02 deliverables (sk-*/api_key/private-key/AKIA patterns) -> 0 hits",
+    "SHA256SUMS readback for all 5 entries -> all OK",
+    "NOT RUN (not runnable in this isolated snapshot): pnpm harness run --dry-run and pnpm run comms:replay/comms:compare need a git repo/HEAD, which this dependency-free snapshot lacks; also 'invalid or missing diff base ref: origin/main'. python3 absent. No dependency install or network used."
+  ]
+}
+```
+
+**Notes**
+- The module's SHA256 is `854f7dbae1d06488fe2236566d6867ebd3dabc0b5b92a722f6b938efc471687b`, matching the L02 reference source recorded in the task manifest's `L02-SHA256SUMS` lineage; spec/doc/acceptance digests match the declared `inputDigests` (`ad94d07e…`, `27ba5b7c…`, `6dfbb30f…`).
+- Files added/changed: `openclaw_runtime/src/runtime-core/context-pressure-recovery.ts`, `openclaw_runtime/src/runtime-core/context-pressure-recovery.test.ts`, `harness/specs/tasks/harness-gap-context-pressure-recovery.md`, `docs/dev/harness-gap-closure/l02-context-pressure-recovery.md`, `docs/dev/harness-gap-closure/l02-acceptance.json`, `docs/dev/harness-gap-closure/L02-SHA256SUMS`.
+- The handoff-depth half (HG06, #179) was left untouched; no product default/lock/approval changed.

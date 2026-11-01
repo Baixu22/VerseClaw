@@ -1,0 +1,14 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0289-g01-baseline-3/grader
+
+ ❯ tests/unit/error-recovery-next-action.test.ts (5 tests | 4 failed) 11ms
+     × classifies every error code with a bounded recovery entry 8ms
+     × only self-retry classes are retryable, and they carry exactly the retry action 0ms
+     × never emits a shell command or raw script as a recovery action 0ms
+     × is total: any AppErrorCode resolves deterministically 0ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 40 passed (44)
+   Start at  01:40:17
+   Duration  3.03s (transform 149ms, setup 288ms, import 103ms, tests 1.08s, environment 1.09s)
+

@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0287-l05",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rate-circuit-breaker.test.ts src/agents/tool-loop-detection.progress.test.ts --maxWorkers=1",
+  "taskDigest": "d3af14928e49c8704adfab26875f6acabf813aacaaefd1553838e826d68a8ed3",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-10-31T19:56:32.909Z",
+  "finishedAt": "2026-10-31T19:57:41.288Z",
+  "durationMs": 68381,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0,
+    "total": 31,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "75c48bfddabe3b5601669d23c7d3bb1b971c6d72f24c622a9309a03132498ac4",
+  "stderrSha256": "d31b604376e7d14d7a3f817634ba5984b324e844009e1cbd1aa07af1623c1b88"
+}

@@ -1,0 +1,36 @@
+All seven target files are present and the workspace is clean (no stray artifacts written into the agent tree). Implementation complete.
+
+**Status: completed**
+
+**Summary**
+
+Implemented S06: runtime memory self-edit writes now reuse the existing RC-04 `EffectReceiptStore` model instead of inventing a second effect store.
+
+- `openclaw_runtime/src/runtime-core/memory-effect-receipt.ts` — new digest-only correlator. Builds a `MemoryEffectReceiptView` (proposal carries only `domain`/`action`/`factId`/`newFactId?`, never memory content) and hands it to an injected structural sink, so `runtime-core` never imports `agents/` at runtime. `memoryEffectIdempotencyKey` = `memory-effect:v1:<sha256(action⋮factId⋮sessionKey⋮runId⋮toolCallId)>` — deliberately outcome-independent, so replaying the same intent hits the same key. `recordMemoryEffect` is fail-open (absent/ throwing sink never blocks the write).
+- `openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts` — wired `memory_update` / `memory_forget` / `memory_strengthen` at each write decision point: success → `applied`, pre-effect failure → `not_applied`, partial failure after the new fact is appended (invalidation/relation fails) → `unknown` (never disguised as `applied`). `stage1Context` carries actor (sessionKey/runId/attemptIndex/modelCallIndex) and effect (toolCallId/toolName/resource/action). Added optional `effectReceiptStore` / `effectIdentity` context fields.
+- Spec `harness/specs/tasks/harness-gap-memory-effect-receipt.md`, ledger `docs/dev/harness-gap-closure/s06-memory-effect-receipt.md`, acceptance `docs/dev/harness-gap-closure/s06-acceptance.json`, digest manifest `docs/dev/harness-gap-closure/S06-SHA256SUMS` (6 rows, all readback OK).
+
+**Verification** (offline; dependencies not installed, so I ran against the pre-existing `node_modules` via junctions in an out-of-workspace sandbox — no install, no network):
+
+- Hidden-oracle command (`openclaw_runtime`, cwd-correct): `run-vitest src/runtime-core/memory-effect-receipt.test.ts src/agents/apply-patch-effect-receipt.test.ts src/agents/stage1-effect-receipt.test.ts --maxWorkers=1` → **3 files, 24 tests, 0 failed** (5 new + 19 pre-existing guard tests restored from the base commit).
+- New test alone: 5/5 pass. Regression: `src/memory` + memory runtime-core + `apply-patch-effect-receipt.store.test.ts` → **6 files, 77 tests, 0 failed**.
+- `tsgo -p tsconfig.core.json`: only 3 pre-existing `ui/vitest.config.ts` errors — **identical in the untouched base tree**, zero errors from my files.
+- Scoped oxlint (3 touched files) → 0; root eslint on the same files → 0.
+- `harness validate` (both `--no-diff` and diff-aware) → `Spec is valid`; `harness run --dry-run` → `pass`; `harness context` → exit 0.
+- `comms:replay` → exit 0; `comms:compare` → all PASS, 0.00% delta.
+- Credential-pattern scan (repo's 7 patterns) over the 7 delivered files → **0 hits**; `S06-SHA256SUMS` readback → 6/6 OK; acceptance JSON parses.
+
+**Disclosed / not run**: `pnpm`-wrapped aggregate scripts (`typecheck:cached`, `test:e2e`, `harness:ci`) weren't invoked as-is; I ran their underlying tools directly. The diff-aware harness run needed a git base, which the trial checkout lacks (no `.git`), so I reproduced it in a sandbox repo. `check-spec-lifecycle.mjs` and `verify-evidence-sha256sums.mjs` report pre-existing failures that are byte-identical between base and modified trees (unrelated files); my spec and my manifest are clean. Scratch files I created under `D:\tmp\rsi-tf0604-run5\` (outside the workspace) couldn't be deleted — the sandbox blocks recursive/file deletes there — but they are not part of the delivered repo.
+
+**testsRun**
+
+- `node openclaw_runtime/scripts/run-vitest.mjs run src/runtime-core/memory-effect-receipt.test.ts src/agents/apply-patch-effect-receipt.test.ts src/agents/stage1-effect-receipt.test.ts --maxWorkers=1`
+- `node openclaw_runtime/scripts/run-vitest.mjs run src/runtime-core/memory-effect-receipt.test.ts --maxWorkers=1 --reporter=verbose`
+- `node openclaw_runtime/scripts/run-vitest.mjs run src/memory src/runtime-core/memory-hybrid-retrieval.cjk.test.ts src/runtime-core/memory-pre-reply-injection.top5-lines.test.ts src/runtime-core/memory-runtime-config.test.ts src/agents/apply-patch-effect-receipt.store.test.ts --maxWorkers=2`
+- `node openclaw_runtime/scripts/run-tsgo.mjs -p tsconfig.core.json --incremental --tsBuildInfoFile .artifacts/tsgo-cache/core.tsbuildinfo` (plus same on base tree)
+- `oxlint src/runtime-core/memory-effect-receipt.ts src/runtime-core/memory-self-edit-tools.ts src/runtime-core/memory-effect-receipt.test.ts`
+- `eslint` on the same three files
+- `node harness/src/cli.mjs context|validate|validate --since HEAD|run --dry-run --since HEAD --spec harness/specs/tasks/harness-gap-memory-effect-receipt.md`
+- `node scripts/comms/replay.mjs` and `node scripts/comms/compare.mjs`
+- `node scripts/check-spec-lifecycle.mjs`, `node scripts/verify-evidence-sha256sums.mjs` (both: pre-existing, identical base-vs-modified)
+- SHA256SUMS readback + `s06-acceptance.json` parse + repo credential-pattern scan

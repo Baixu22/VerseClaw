@@ -1,0 +1,19 @@
+Task complete. Summary of the work:
+
+**Status: completed**
+
+**What changed**
+- `tests/unit/a01-a1-gate-coverage.test.ts` (new) — 13 assertions driving the real runtime modules, mapping the A1 pilot gate's four graduation criteria one by one without redefining any threshold.
+- `harness/specs/tasks/a1-layered-isolation-pilot.md` — appended the missing counter test to `requiredTests` (spec drift fix; `acceptance:` threshold bytes untouched).
+- `harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md` (new task spec), `docs/dev/harness-gap-closure/a01-a1-isolation-gate.md`, `.../a01-acceptance.json`, `.../A01-SHA256SUMS` (new evidence).
+
+**Criterion mapping (each verified executably)**
+- Criterion 1 — `checkBudgetViolation('a1')`: 4% → not violated, exact 5% → allowed (strict `>`), 6% → violated.
+- Criterion 2 — isolation hot-path p99 ≈ 0.017 ms across a 200-turn loop vs the frozen 200 ms budget.
+- Criterion 3 — `declaredPathViolationCount` counted independently and readable as a cross-snapshot trend.
+- Criterion 4 — `rate > 5%` returns `{violated:true, degrade:'a1_legacy_fallback_rate', action:'degrade_to_legacy'}`.
+- Plus: `writeRiskProfile` gate (undeclared write rejected; all six built-ins declare `risk`+`writeRiskProfile`; plugin registry enforces it) and namespace rejection (`claw.a4.tool.choice` on an a1 recorder → `claw.core.trace.namespace_rejected`).
+
+**Checks actually run** — offline gate test 13/13, harness `validate` (both specs) + `context`, spec lifecycle, no-BOM, evidence-refs, policy-docs, credential scan (0 hits), B00 baseline structure, and SHA256SUMS readback 5/5.
+
+**Honest limits reported** — `tsgo`/`eslint`/`vitest` were unavailable (no installed deps, network disabled), so the gate test ran its exact assertions via Node type-stripping against the real modules rather than vitest; the git-diff-based `harness run --dry-run` and comms replay/compare could not run because the offline checkout is not a git repo (no communication path changed). Criterion-2 p99 is in-process over the isolation kernels; the full production-chain benchmark remains integration-layer work. Result written to `.rsi/RESULT.json`.

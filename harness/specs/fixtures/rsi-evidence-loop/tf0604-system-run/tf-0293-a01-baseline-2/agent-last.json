@@ -1,0 +1,48 @@
+All checks pass. Everything is implemented and verified. Let me produce the structured result.
+
+**Implemented (all 6 target-scope files)**
+- `harness/specs/tasks/a1-layered-isolation-pilot.md` — additive spec-drift fix: appended `tests/unit/a01-a1-gate-coverage.test.ts` to `requiredTests`; all 4 gate thresholds, 7 acceptance lines, and `requiredProfiles` byte-unchanged.
+- `tests/unit/a01-a1-gate-coverage.test.ts` — new: maps criteria 1–4 to executable assertions plus a coverage guard.
+- `harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md` — new A01 task spec.
+- `docs/dev/harness-gap-closure/a01-a1-isolation-gate.md` — new closure doc.
+- `docs/dev/harness-gap-closure/a01-acceptance.json` — new acceptance record (`driven_by: agent`, `realHuman: false`).
+- `docs/dev/harness-gap-closure/A01-SHA256SUMS` — new manifest.
+
+**Gate mapping (thresholds unchanged)**
+- Criterion 1 `<5%`: `deprecationCounters` 6/100 → violated, 5/100 → not violated, 4/100 → not violated.
+- Criterion 2 `≤200ms`: bounded local hot-path p99 proxy (`collectDeclaredWritePaths` + `detectUndeclaredWrites`); live-session residual recorded.
+- Criterion 3: `declaredPathViolationCount` counters independently, isolated from `legacyFallbackCount`/`shadowSuccessCount`, no effect on the rate budget.
+- Criterion 4: `checkBudgetViolation('a1')` → `{degrade:'a1_legacy_fallback_rate', action:'degrade_to_legacy'}`; 5% boundary has no `action`.
+- Plus `writeRiskProfile`/`risk` on all six built-in write tools, registry rejection of undeclared + `no_writes`, and `a1` recorder rejecting `claw.a4.tool.choice`.
+
+**Checks actually run (no deps, no network)**
+- 27/27 logic assertions PASS against the real modules under `node --experimental-strip-types` (throwaway harness, since `node_modules`/vitest is absent — this is the residual, not a vitest run).
+- `node harness/src/cli.mjs validate --spec <a1 spec> --no-diff` → valid (exit 0).
+- `node harness/src/cli.mjs validate --spec <A01 spec> --no-diff` → valid (exit 0).
+- `node scripts/check-spec-lifecycle.mjs` → 522 specs (exit 0).
+- `node scripts/check-evidence-refs.mjs` → PASS 157 (exit 0).
+- `node scripts/validate-policy-docs.mjs` → PASS 10 (exit 0).
+- B00 `validateBaseline` structure level → `ok:true` (30 slots/29 packets).
+- `verifyManifest(A01-SHA256SUMS)` → 5/5 matched.
+- Credential scan over all 5 changed text files → 0 hits.
+
+**Not runnable here / residual** — `vitest`, `pnpm run typecheck`, scoped `eslint`, `harness run --dry-run`, and `comms:replay`/`comms:compare` all require `node_modules` or a `.git` history (workspace has neither); recorded as partial in the acceptance JSON rather than claimed as pass. B00's current-source check already fails on this tree for pre-existing historical drift, unrelated to and not refreshed by this packet.
+
+```json
+{
+  "status": "completed",
+  "summary": "A01 re-verified the A1 Layered Execution Isolation controlled pilot gate against the original spec thresholds without redefining them, and fixed the spec drift additively (a1 requiredTests was missing the counter test). Added tests/unit/a01-a1-gate-coverage.test.ts mapping criteria 1-4 to executable evidence plus a coverage guard; added the A01 task spec, closure doc, acceptance JSON (driven_by: agent, realHuman: false) and A01-SHA256SUMS. Criterion 1 (<5% fallback rate, 5% boundary allowed), criterion 3 (separate declaredPathViolationCount) and criterion 4 (degrade_to_legacy above 5%) are asserted against the deprecationCounters singleton; criterion 2 (p99 <= 200ms) is asserted with a bounded local hot-path proxy and the live-session gap is recorded as residual; writeRiskProfile/risk on all six built-in write tools and the claw.a4.tool.choice-on-a1 namespace rejection were re-checked. The a1 spec change is additive only: 4 thresholds, 7 acceptance lines and requiredProfiles are byte-unchanged, and the new coverage test guards both the added and original requiredTests. Runnable gates passed: harness validate (a1 + A01 specs), check-spec-lifecycle (522), check-evidence-refs (157), validate-policy-docs (10), B00 structure baseline ok, A01-SHA256SUMS 5/5 readback, credential scan 0 hits, and 27/27 logic assertions executed under Node type-stripping. vitest, typecheck, lint, harness dry-run and comms replay/compare could not run because node_modules is absent and no install/network is permitted in this isolated workspace; these are reported as partial/residual, not claimed as passing.",
+  "testsRun": [
+    "node --experimental-strip-types --import <loader> <smoke.mjs> -> 27/27 assertions PASS (ephemeral Node harness against openclaw_runtime modules: deprecation-counters, tool-registration, policy-light-snapshotter, shadow-write-event-recorder, namespace-governance, trace-recorder)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/a1-layered-isolation-pilot.md --no-diff -> exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md --no-diff -> exit 0, 'Spec is valid'",
+    "node scripts/check-spec-lifecycle.mjs -> exit 0, lifecycle status present for 522 task specs",
+    "node scripts/check-evidence-refs.mjs -> exit 0, PASS 157 referenced path(s)",
+    "node scripts/validate-policy-docs.mjs -> exit 0, PASS: 10 checks",
+    "validateBaseline(docs/dev/harness-gap-closure/source-inventory.json) structure level -> ok:true, slots 30, packets 29",
+    "verifyManifest(docs/dev/harness-gap-closure/A01-SHA256SUMS) -> checked 5, matched 5, missing/drifted/malformed 0",
+    "credential scan over the 5 changed files -> 0 hits",
+    "NOT RUN (unavailable): pnpm exec vitest run tests/unit/a01-a1-gate-coverage.test.ts; pnpm run typecheck; eslint tests/unit/a01-a1-gate-coverage.test.ts; pnpm harness run --spec <a1 spec> --dry-run; pnpm run comms:replay / comms:compare -- all require node_modules or a git history absent from this workspace"
+  ]
+}
+```

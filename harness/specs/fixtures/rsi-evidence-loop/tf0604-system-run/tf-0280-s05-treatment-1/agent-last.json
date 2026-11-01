@@ -1,0 +1,39 @@
+Implemented the S05 packet. All five target-scope artifacts are in place; no production file was modified (S05 verifies and pins the existing single credential-use gate).
+
+**Deliverables**
+- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md` — execution-checked ledger: source→policy→effect chain, per-item coverage table, why denial precedes credential resolution, and the seven residual credential surfaces recorded explicitly.
+- `tests/unit/provider-credential-use-boundary-ledger.test.ts` — guard resolving the real `resolveProviderCredentialUsePolicy` across provenance × override × bound-scope, asserting no credential value enters the input/reason, pinning gate-before-provider-execution wiring, and pinning each residual surface so wiring one forces a ledger update.
+- `harness/specs/tasks/harness-gap-credential-use-boundary.md` — task spec (`lifecycleStatus: archived`, scenario `gateway-backend-communication`, `requiredTests`/`acceptance`).
+- `docs/dev/harness-gap-closure/s05-acceptance.json` — agent-driven acceptance record.
+- `docs/dev/harness-gap-closure/S05-SHA256SUMS` — digest manifest (4/4 re-verified).
+
+**Key findings**
+- Gate is narrow and correct: trusted system / direct operator overrides unchanged; default/fallback path (no explicit override) bypasses the gate; external/derived-untrusted/missing/invalid may keep an override only inside the host-bound provider scope, else `allowed:false / restricted:true`.
+- Gate sits on the `if (model !== undefined)` branch before `executeImageGenerationJob`/`generateImage`, and the policy + call-site modules contain 0 credential-value tokens — denial happens before any provider credential read.
+- Residuals (web-search, provider request, media-understanding, model-auth, plugin-sdk) are pinned as residual, not over-claimed.
+
+**Verification (exact commands / results)**
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-credential-use-boundary.md --no-diff` → exit 0, "Spec is valid"
+- `node harness/src/cli.mjs context --spec ...` → exit 0
+- Offline guard run (`node --experimental-strip-types` + a temporary alias loader, since vitest isn't installed) against the real policy module and source tree → all checks pass (loader removed after use)
+- `node scripts/scan-pattern.mjs --pattern '...\|credentialValue' --include .ts <policy + call site>` → 0 matches
+- `node --input-type=module` `verifyManifest` on `S05-SHA256SUMS` → checked 4, matched 4, no drift/missing/malformed
+
+**Not run (out of scope here)**
+- `vitest`/`typecheck`/`comms:replay`/`comms:compare` — dependencies are not installed in this isolated checkout, and installing them was disallowed.
+- Diff-based `harness validate` / `harness run` — no `.git`/`origin/main` base exists here (fails closed, as designed); `--no-diff` structural validation passes.
+
+```json
+{
+  "status": "completed",
+  "summary": "S05 image provider-override credential-use boundary ledger added: doc ledger, executable guard pinning the existing single policy (external/unknown overrides scoped to host-bound image providers, denial before credential read, no credential value in policy input/reason), harness task spec, acceptance JSON, and SHA256SUMS. No production file changed; seven residual credential surfaces recorded as residual. Verified via harness --no-diff validate/context, an offline guard run against real modules, a 0-hit credential scan, and a 4/4 SHA256SUMS re-verify; vitest/typecheck/comms and diff-based harness runs could not execute because dependencies and a git base are absent in this isolated checkout.",
+  "testsRun": [
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-credential-use-boundary.md --no-diff (exit 0, Spec is valid)",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-credential-use-boundary.md (exit 0)",
+    "node --experimental-strip-types <S05 guard assertions over the real provider-credential-use policy + source tree> (exit 0, all checks pass)",
+    "node scripts/scan-pattern.mjs --pattern 'apiKey|process\\.env|\\bAuthorization\\b|\\bBearer\\b|secret|credentialValue' --include .ts openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts openclaw_runtime/src/agents/tools/image-generate-tool.ts (exit 0, 0 matches)",
+    "node --input-type=module verifyManifest(docs/dev/harness-gap-closure/S05-SHA256SUMS) (checked 4, matched 4)",
+    "node scripts/check-spec-lifecycle.mjs (pre-existing red; new S05 spec not among the failures)"
+  ]
+}
+```

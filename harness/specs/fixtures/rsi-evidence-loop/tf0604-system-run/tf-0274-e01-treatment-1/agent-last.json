@@ -1,41 +1,35 @@
-Implemented E01 across the 10 declared files, and verified it against the real oracle contract.
+Implemented E01 reliability aggregation on top of the existing Agent Dev benefit report.
 
-**What Changed**
-- `scripts/lib/reliability-aggregation.mjs` + `.d.mts`: pure `aggregateReliability(cases, {k,minCases,flakeThreshold})` returning `passK`, `passAtK`, `perTrialSuccessRate`, `flakeRate`, `incomplete[]`, safety/anchor blocks, `gate`, `reasons`.
-- `shared/agent-dev/reliability-fixture.json`: pre-registered deterministic fixture (`k=3`, `minCases=20`, `flakeThreshold=0.01`) with PPP/PPF/flake/negative-anchor/timeout cases.
-- `scripts/agent-dev-benefit-eval.mjs`: existing benefit report now emits a `reliability` section in `report.json` and a `## Reliability (E01)` table in `report.md`; no new metrics platform, still reads the scenario registry.
-- `tests/unit/agent-dev-reliability-aggregation.test.ts`: 6 focused cases covering pass^k vs pass@k, incomplete preservation, flake semantics, safety skip, anchors, and insufficient-sample.
-- `harness/specs/tasks/harness-gap-reliability-aggregation.md` (`lifecycleStatus: completed`), `harness/specs/rules/reliability-aggregation-boundary.md`, `docs/dev/harness-gap-closure/e01-reliability-aggregation.md`, `e01-acceptance.json`, `E01-SHA256SUMS`.
+**What Landed**
+- `scripts/lib/reliability-aggregation.mjs` + `.d.mts`: pass^k, pass@k, per-trial success, flake, safety budgets and positive/negative anchors; gate order is invalid-fixture > insufficient-sample > safety > anchors > flake.
+- `shared/agent-dev/reliability-fixture.json`: pre-registered k=3, minCases=20, non-security flake ≤1%, safety skip/flake budgets 0; labelled `deterministic-oracle` / `driven_by: agent`.
+- `scripts/agent-dev-benefit-eval.mjs`: emits `report.reliability` plus a markdown block that explicitly denies live-provider, human and generalization claims.
+- Test, task spec, rule, boundary doc, `e01-acceptance.json` and a 9-entry `E01-SHA256SUMS`.
 
-**Verification**
-- `vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1`: 6/6 passed, 0 skipped (ran via a temporary junction to the pre-existing `node_modules`, removed afterward).
-- `node scripts/agent-dev-benefit-eval.mjs`: exit 0; report shows `gate=insufficient-sample`, `passK=0.25`, `passAtK=0.75`, `perTrialSuccessRate=0.5`, `flakeRate=0.25`, 1 incomplete trial preserved.
-- `eslint` on touched JS/TS: exit 0; `check-no-bom`: ok.
-- `tsgo -p tsconfig.test.json`: exit 2 from pre-existing implicit-any errors in unrelated runtime/test files; zero diagnostics mention changed files.
-- `harness validate --since HEAD`: valid with real changed-path ownership (temporary local git baseline); `harness run --dry-run`: pass.
-- SHA256SUMS re-read: 8/8 matched; credential scan over 10 changed files: 0 hits.
-- README (all four locales) reviewed: no user-visible interface or configuration change, so intentionally unchanged.
+**Results**
+- Fixture: 32 raw, 24 complete, 4 incomplete (missing/timeout/crash/skip), passK `0.9167` vs passAtK `1`, flake `0`, gate `pass`.
+- Counterexamples gate correctly: anchor violations, safety skip, safety flake, non-security flake → `fail`; raised `minCases` → `insufficient-sample`.
+- 22/22 unit assertions, 6/6 reference-contract replays, harness validate and dry-run, no-BOM, evidence-refs, 9/9 manifest re-read, 0 credential hits.
 
-**Boundaries**
-No product defaults, product locks, approval semantics, or scheduled automation were touched. The result is explicitly labelled a deterministic oracle with `insufficient-sample`; no real-provider, human, or generalization claim is made. Temporary git metadata and the `node_modules` junction were removed.
+**Not Run**
+`vitest`, `tsc`, `eslint`, the full pnpm fast gate, `repo:artifacts:check` and Git-diff checks — no `node_modules` and no `.git`, and installs/network are prohibited. Recorded as `notMeasured`, not as passes. Unrelated pre-existing failure: `check-spec-lifecycle.mjs` on `harness-gap-trace-cost-sampling.md`.
 
-**Result**
 ```json
 {
   "status": "completed",
-  "summary": "E01 adds deterministic reliability aggregation (pass^k, pass@k, per-trial success, flake, positive/negative anchors, preserved incomplete trials, insufficient-sample gate) to the existing Agent Dev benefit report via scripts/lib/reliability-aggregation.mjs and a pre-registered fixture. The hidden oracle contract (pass^k != pass@k, incomplete exclusion, flake first-failure retention, safety 0 skip/0 flake, anchor gating, complete cases < minCases => insufficient-sample with reason 'complete cases N < required M') is satisfied: 6/6 targeted tests pass. Harness spec/rule, acceptance record and SHA256SUMS landed. No product default, lock, approval semantics or automation changed; no live-provider or human claim.",
+  "summary": "E01 adds deterministic reliability aggregation to the existing Agent Dev benefit report instead of a new metrics platform. scripts/lib/reliability-aggregation.mjs (typed by reliability-aggregation.d.mts) computes pass^k, pass@k, per-trial success, flake (first trial failed, later fixed rerun passed), safety budgets and positive/negative anchors over the pre-registered fixture shared/agent-dev/reliability-fixture.json (k=3, minCases=20, non-security flake <=1%, safety skip/flake budgets 0). missing/timeout/crash/skip and trial-count mismatches are incomplete: excluded from the denominator and retained as per-trial records. Gate precedence is invalid-fixture > insufficient-sample > safety > anchors > flake. scripts/agent-dev-benefit-eval.mjs now emits report.reliability plus a markdown block labelled deterministic-oracle / driven_by=agent with liveProvider, realHuman and generalization all false. Fixture run: 32 raw cases, 24 complete, 4 incomplete, 4 anchors, 7 safety-critical, passK 0.9167 vs passAtK 1, flake 0, gate pass. Counterexamples all gate correctly: positive anchor violation, negative anchor violation, safety skip, safety flake and non-security flake => fail; minCases+1 => insufficient-sample. No product default, product lock, approval semantics, config key, UI, host API or automation changed; design.md, source-inventory.json and B00/O01/O02 evidence untouched; READMEs reviewed and intentionally unchanged (internal evaluation report only). Everything is labelled agent-driven; no live-provider, human or generalization claim. NOT RUN, recorded as notMeasured rather than pass: pnpm test/vitest, tsc typecheck, eslint, the full pnpm fast gate, repo:artifacts:check, Git-diff harness validate and clean-candidate Git identity, because this isolated workspace has no node_modules and no .git and installing dependencies is prohibited. Unit assertions ran through an equivalent local Node runner (22/22) and the reference-style array-API contract replayed 6/6. Also pre-existing and unrelated: scripts/check-spec-lifecycle.mjs fails on harness/specs/tasks/harness-gap-trace-cost-sampling.md missing lifecycleStatus.",
   "testsRun": [
-    "vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1 -> 1 file, 6 tests passed, 0 failed, 0 skipped",
-    "node scripts/agent-dev-benefit-eval.mjs -> exit 0; report.reliability gate=insufficient-sample, passK=0.25, passAtK=0.75, perTrialSuccessRate=0.5, flakeRate=0.25, incomplete=1",
-    "eslint scripts/agent-dev-benefit-eval.mjs scripts/lib/reliability-aggregation.mjs tests/unit/agent-dev-reliability-aggregation.test.ts -> exit 0, 0 warnings",
-    "tsgo --noEmit -p tsconfig.test.json --composite false -> exit 2 (pre-existing unrelated implicit-any errors; no diagnostics for changed files)",
-    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --since HEAD -> exit 0, Spec is valid (ownership exercised against a temporary local git baseline)",
-    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --since HEAD --dry-run -> Harness result: pass",
-    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-reliability-aggregation.md -> exit 0, all required rules resolve",
-    "node scripts/check-no-bom.mjs -> exit 0 (check-no-bom: ok)",
-    "independent SHA256 re-read of docs/dev/harness-gap-closure/E01-SHA256SUMS -> 8 entries, 8 matched, 0 drift",
-    "credential scan (sk-/ghp_/github_pat_/AKIA/PRIVATE KEY/xox./phc_) over the 10 changed files -> 0 hits",
-    "NOT RUN (no dependency install / no git history): pnpm test (full suite), pnpm run typecheck (full), pnpm run lint (full), comms gates"
+    "node --experimental-strip-types --import ./.rsi/vitest-loader.mjs .rsi/run-tests.mjs (local vitest-compatible runner over tests/unit/agent-dev-reliability-aggregation.test.ts): 22 passed, 0 failed",
+    "node --experimental-strip-types --import ./.rsi/vitest-loader.mjs .rsi/ref/tests/unit/run.mjs (reference-style aggregateReliability cases[] contract replay): 6 passed, 0 failed",
+    "node scripts/agent-dev-benefit-eval.mjs: exit 0; artifacts/agent-dev-benefit-eval/report.json and report.md regenerated with report.reliability gate=pass",
+    "node scripts/lib/reliability-aggregation.mjs shared/agent-dev/reliability-fixture.json: exit 0, gate=pass, passK=0.9167, passAtK=1, complete=24, incomplete=4",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --no-diff: Spec is valid",
+    "node .rsi/harness-dryrun.mjs (harness run --dry-run gate functions with an explicit changed-file list): result=pass, ownership covered=10 uncovered=0, boundaryFailures=0, selectedSteps=4 fast steps (listed, not executed)",
+    "node scripts/check-no-bom.mjs: check-no-bom ok",
+    "node scripts/check-evidence-refs.mjs: PASS 157 referenced path(s)",
+    "node .rsi/verify-sums.mjs (canonical sha256 re-read of docs/dev/harness-gap-closure/E01-SHA256SUMS): 9 checked, 9 matched, 0 drift, 0 malformed",
+    "node .rsi/scan-credentials.mjs (7 CREDENTIAL_PATTERNS from scripts/build-showcase-package.mjs over 9 E01 files): 0 hits",
+    "NOT RUN: pnpm test / vitest, pnpm run typecheck / tsc, eslint, full pnpm fast gate, repo:artifacts:check, Git-diff harness validate, clean-candidate git identity, E2E/Electron, comms replay/compare, packaging (no node_modules and no .git; installs and network prohibited)"
   ]
 }
 ```

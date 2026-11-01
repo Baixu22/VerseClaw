@@ -1,0 +1,821 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/a05-a5-gate-coverage.test.ts > A05 A5 gate coverage > keeps every A5 required test path present and wired into the archived pilot spec
+AssertionError: expected '---\nlifecycleStatus: archived\nid: a…' to contain '- tests/unit/a05-a5-gate-coverage.tes…'
+
+- Expected
++ Received
+
+- - tests/unit/a05-a5-gate-coverage.test.ts
++ ---
++ lifecycleStatus: archived
++ id: a5-adaptive-context-budget-pilot
++ title: A5 Adaptive Context Budget — Active Pilot Gate
++ scenario: gateway-backend-communication
++ taskType: runtime-bridge
++ intent: Promote the A5 context budget planner from shadow to active pilot, gated by plan adoption rate and budget compliance.
++ touchedAreas:
++   - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts
++   - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts
++   - openclaw_runtime/src/agents/task-loop-controller.ts
++   - openclaw_runtime/src/observability/deprecation-counters.ts
++   - openclaw_runtime/src/observability/deprecation-counters.test.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-p6.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-runtime.ts
++   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
++   - openclaw_runtime/src/config/types.agent-defaults.ts
++   - reports/context-compression/P6-DEVELOPMENT-PROMPT-2026-08-18.md
++   - reports/context-compression/P6-EVIDENCE-2026-08-18.md
++   - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
++   - openclaw_runtime/src/context-engine/context-orchestrator.ts
++   - openclaw_runtime/src/context-engine/context-orchestrator.test.ts
++   - tests/unit/deprecation-counters.test.ts
++   - tests/unit/performance-budgets.test.ts
++   - reports/context-compression/P5-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P6-DATA-PREP-STATUS-2026-08-18.md
++   - reports/context-compression/production-compaction-entries-11.json
++   - reports/context-compression/production-compaction-manifest-9.json
++   - reports/context-compression/production-summaries-9.jsonl
++   - reports/context-compression/production-summaries-9.meta.json
++   - reports/context-compression/production-paired-trajectories-9.jsonl
++   - reports/context-compression/failure-guidelines-p6-9.json
++   - reports/context-compression/production-summaries-30-generated.jsonl
++   - reports/context-compression/production-summaries-30-generated.meta.json
++   - reports/context-compression/production-summaries-30-v5.jsonl
++   - reports/context-compression/production-summaries-30-v5.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v9.jsonl
++   - reports/context-compression/production-summaries-30-v9.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v10.jsonl
++   - reports/context-compression/production-summaries-30-v10.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v11.jsonl
++   - reports/context-compression/production-summaries-30-v11.jsonl.meta.json
++   - reports/context-compression/production-summaries-30-v14.jsonl
++   - reports/context-compression/production-summaries-30-v14.jsonl.meta.json
++   - scripts/context-compression-production-summary-regenerator.ts
++   - scripts/context-compression-recovery-ledger.mjs
++   - scripts/context-compression-would-retry-canary.ts
++   - reports/context-compression/production-paired-trajectories-30.jsonl
++   - reports/context-compression/failure-guidelines-p6-30.json
++   - reports/context-compression/failure-guidelines-p6-a-phase2-reasoner.json
++   - reports/context-compression/failure-guidelines-p6-a-v5-iteration.json
++   - reports/context-compression/failure-guidelines-p6-a-reasoner.json
++   - reports/context-compression/production-paired-trajectories-30-reasoner.jsonl
++   - reports/context-compression/P6-A-AUTOMATED-ACCEPTANCE-EVIDENCE-2026-08-18.md
++   - reports/context-compression/P6-WOULD-RETRY-CANARY-2026-08-19.md
++   - artifacts/context-compression-p5/**
++   - harness/specs/tasks/a5-adaptive-context-budget-pilot.md
++   - harness/specs/tasks/token-dense-recovery-compression-v1.md
++ residualPaths:
++   - docs/clawx-design-overview.md
++   - electron/services/sessions-api.ts
++   - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts
++   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.recall.test.ts
++   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.test.ts
++   - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.ts
++   - reports/CONTEXT-COMPRESSION-DEVELOPMENT-PLAN-2026-08-17.md
++   - reports/context-compression/P0-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P1-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P1-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P2-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P2-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P3-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P3-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P4-ACCEPTANCE-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P4-ACCEPTANCE-PROMPT-2026-08-17.md
++   - reports/context-compression/P4-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P4-EVIDENCE-2026-08-17.md
++   - reports/context-compression/P5-DEVELOPMENT-PROMPT-2026-08-17.md
++   - reports/context-compression/P5-EXECUTION-PROMPT-2026-08-17.md
++   - reports/context-compression/production-manifest-30.json
++   - scripts/context-compression-eval-runner.mjs
++   - shared/host-api/contract.ts
++   - src/lib/host-api.ts
++   - tests/unit/compression-artifact.test.ts
++   - tests/unit/context-compression-eval.test.ts
++   - tests/unit/context-runtime-kit-recovery-context.test.ts
++   - tests/unit/helpers/context-compression-eval.ts
++ expectedUserBehavior:
++   - P5 compaction budget shadow records plan adoption, ignored plans, and budget exceeded through the existing A5 deprecation counters without changing returned summaries or artifacts.
++   - A5 budget violation diagnosis degrades to default budget through the existing registry when ignored plans exceed 20%.
++ requiredProfiles:
++   - fast
++   - comms
++ requiredRules:
++   - backend-communication-boundary
++   - comms-regression
++ requiredTests:
++   - tests/unit/cross-area-composition.test.ts
++   - tests/unit/resource-aware-wave-scheduler.test.ts
++   - tests/unit/performance-budgets.test.ts
++   - pnpm --dir openclaw_runtime exec vitest run packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts --reporter=dot
++   - pnpm exec vitest run tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts --reporter=dot
++ acceptance:
++   - A5 deprecation counter `planIgnoredCount` rate ≤ 20% over 100-turn session
++   - A5 p99 ≤ 30ms (criterion 4.8)
++   - `ContextBudgetPlanner.replanOnResume` re-executes on resume, not stale (criterion 3.6)
++   - Wave immutability: started waves not re-planned (criterion 3.9)
++   - Budget violation response `degrade_to_default_budget` triggers when ignored rate > 20%
++   - P5 real compaction call sites increment planAdoptedCount/planIgnoredCount/budgetExceededCount deterministically
++   - P5 planner threshold overrides are clamped earlier than the production ladder and default behavior is byte-identical without a schedule
++   - P5 budgetShadow remains diagnostics-only and never enters CompressionArtifact
++   - P5 nativeMemory/nativeContextGating negotiation is additive and keeps provenance receipts
++ docs:
++   required: true
++ ---
++ ## Graduation gate
++
++ A5 graduates from shadow to active pilot when ALL of the following hold:
++
++ 1. **Plan adoption rate** ≥ 80%: `planAdoptedCount / (adopted + ignored) ≥ 0.80`.
++ 2. **Performance**: p99 ≤ 30ms for 100-turn session (criterion 4.8).
++ 3. **Resume re-execution**: planner re-executes on resume, not stale (criterion 3.6).
++ 4. **Wave immutability**: started waves not re-planned (criterion 3.9).
++ 5. **Budget violation response**: `degrade_to_default_budget` triggers when ignored > 20% (criterion 4.14).
++ 6. **Per-turn cumulative budget**: p99 ≤ 300ms with A1+A5+A3 active (criterion 4.10).
++
++ ## Out of scope
++
++ - Dynamic degradation order shifting (OQ-012, Stage 5).
++ - Per-area memory budget allocation (OQ-011, Stage 5).
++
++ ## Re-verification note (A05, 2026-11-01)
++
++ - Criteria 1-6 above are re-verified **at the thresholds already written here**; no
++   threshold, acceptance line, `requiredTests` entry or `requiredProfiles` value was
++   relaxed, added or removed by A05.
++ - The archived spec referenced `tests/unit/cross-area-composition.test.ts` and
++   `openclaw_runtime/src/agents/cross-area/cross-area-facades.ts`, which were absent from the
++   tree. A05 **restored** the composition facade specified by
++   `docs/runtime-design/area-composition-spec.md` (Pair 3 = A5 + A2, Pair 5 = A5 + A6) —
++   `ContextBudgetPlanner` with `replanOnResume` — plus the criterion 3.6 test, instead of
++   deleting the references (the A02 packet had chosen deletion for its own spec).
++ - The P5 evidence files that the criteria rely on
++   (`tests/unit/deprecation-counters.test.ts`, `tests/unit/performance-budgets.test.ts`,
++   `tests/unit/resource-aware-wave-scheduler.test.ts`,
++   `.../compaction/compression-planner.test.ts`,
++   `.../agent-hooks/compaction-budget-shadow.test.ts`,
++   `.../context-engine/context-orchestrator.test.ts`) were restored in the same packet, so every
++   `requiredTests` entry now resolves to a real file.
++ - Evidence roll-up: `docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md` and
++   `docs/dev/harness-gap-closure/a05-acceptance.json`. Coverage guard:
++   `tests/unit/a05-a5-gate-coverage.test.ts`. Deep criterion coverage:
++   `tests/unit/deep/a5-deep.test.ts`.
++ - A5 stays a controlled/shadow pilot: no default-on, no GA, no product-lock change, and the
++   `ContextBudgetPlanner` remains read-only towards the production compression ladder.
+
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts:25:20
+     23|     const spec = readFileSync(path.join(ROOT, SPEC), "utf8");
+     24|     for (const rel of REQUIRED_TESTS) {
+     25|       expect(spec).toContain(`- ${rel}`);
+       |                    ^
+     26|       expect(existsSync(path.join(ROOT, rel))).toBe(true);
+     27|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/a05-a5-gate-coverage.test.ts > A05 A5 gate coverage > pins the resume re-planning implementation and its cross-area evidence
+AssertionError: expected '// ----------------------------------…' to contain 'hasReexecuted'
+
+- Expected
++ Received
+
+- hasReexecuted
++ // ---------------------------------------------------------------------------
++ // Cross-area composition facades (A5 x A2 x A6)
++ //
++ // `docs/runtime-design/area-composition-spec.md` assigns A5 three composition
++ // duties that no single area module owns on its own:
++ //
++ //   - Pair 3 (A5 + A2): the A5 budget plan is injected before the wave
++ //     scheduler starts; a started wave is immutable, so a plan can only change
++ //     the *next* wave (`appliesToWave`).
++ //   - Pair 5 (A5 + A6): after a resume, A5 re-runs `ContextBudgetPlanner`.
++ //     A budget read back from the checkpoint is stale and must never be reused.
++ //   - Stage 3 criterion 3.6: pause -> resume -> planner re-executes, not stale.
++ //
++ // This module is the composition facade for those duties. It is deliberately
++ // thin and read-only towards the production ladder:
++ //   - `ContextBudgetPlanner` only READS `compression-planner.ts` thresholds via
++ //     `resolveTierThresholds` (earlier-only clamp, production defaults as the
++ //     backstop). It never replaces the five-tier ladder, never mutates
++ //     `CompressionArtifact`, and never blocks a turn on estimation failure.
++ //   - Wave changes always go through `ResourceAwareWaveScheduler.rePlan`, which
++ //     already rejects started/completed waves (criterion 3.9).
++ //   - A5 budget breaches are read from the existing deprecation registry
++ //     (`degrade_to_default_budget`), not re-implemented here.
++ //
++ // See: docs/runtime-design/area-composition-spec.md (Pair 3 / Pair 5)
++ // See: docs/runtime-design/development-manual.md (criterion 3.6, A5 module CAN/MUST NOT)
++ // See: docs/runtime-design/area-5-adaptive-context-budget.md (ContextBudgetPlanner)
++ // ---------------------------------------------------------------------------
++
++ import {
++   resolveTierThresholds,
++   type TierSchedule,
++ } from "../../../packages/agent-core/src/harness/compaction/compression-planner.js";
++ import {
++   deprecationCounters,
++   type BudgetViolationResult,
++ } from "../../observability/deprecation-counters.js";
++ import type {
++   RePlanResult,
++   ResourceAwareWaveScheduler,
++ } from "../resource-aware-wave-scheduler.js";
++
++ /** Plan posture. `shadow` records the plan without changing prompt assembly. */
++ export type ContextBudgetMode = "shadow" | "advisory" | "active";
++
++ export type ContextTaskKind =
++   | "locate"
++   | "explain"
++   | "edit"
++   | "refactor"
++   | "test"
++   | "review"
++   | "long_task"
++   | "unknown";
++
++ /** Reserved token slices of the model window (sums to `totalBudgetTokens`). */
++ export type ContextBudgetReserved = {
++   systemAndRules: number;
++   recentConversation: number;
++   providerContext: number;
++   toolOutput: number;
++   verification: number;
++   recoveryProjection: number;
++   emergencyHeadroom: number;
++ };
++
++ /** Token positions of the reactive pressure ladder, derived (read-only) from
++  * `compression-planner.ts` thresholds. */
++ export type ContextPressureSchedule = {
++   microCompactAt: number;
++   tokenPruneAt: number;
++   semanticHandoffAt: number;
++   emergencyCollapseAt: number;
++ };
++
++ export type ContextBudgetEvidenceRef = { type: string; ref: string; label?: string };
++
++ export type ContextBudgetPlan = {
++   version: 1;
++   mode: ContextBudgetMode;
++   taskKind: ContextTaskKind;
++   totalBudgetTokens: number;
++   reserved: ContextBudgetReserved;
++   pressureSchedule: ContextPressureSchedule;
++   providerBudgets: Record<string, number>;
++   evidenceRefs: ContextBudgetEvidenceRef[];
++   /** A2 pairing: the plan takes effect from this wave onward. Absent when the
++    * planner has no wave to address. */
++   appliesToWave?: number;
++   /** Worker cap this plan asks A2 to use for the next wave. */
++   suggestedMaxWorkers: number;
++   /** Monotonic planner generation. A resume always advances it. */
++   generation: number;
++   /** True only for a plan produced by `replanOnResume`. */
++   resumedFromCheckpoint: boolean;
++   /** True when the A5 registry asked for `degrade_to_default_budget`. */
++   degraded: boolean;
++ };
++
++ export type TaskComplexityEstimate = {
++   taskKind: ContextTaskKind;
++   complexity: "small" | "medium" | "large" | "uncertain";
++   risk: "low" | "medium" | "high";
++   expectedToolOutputTokens: number;
++   requiresVerificationBudget: boolean;
++   reasons: string[];
++ };
++
++ export type ContextBudgetPlanInput = {
++   sessionId?: string;
++   roleId?: string;
++   prompt: string;
++   modelContextWindow?: number;
++   tokenBudget?: number;
++   currentTokenCount?: number;
++   availableProviders?: ReadonlyArray<{ id: string; priority: number; shadowOnly?: boolean }>;
++   compressionArtifactQuality?: { score: number; level: "good" | "warn" | "bad" };
++   /** Explicit worker cap for the next wave. Defaults to the task-kind table. */
++   workerCap?: number;
++   /** Explicit target wave. Defaults to the scheduler's next planned wave. */
++   appliesToWave?: number;
++ };
++
++ export type ContextBudgetPlannerOptions = {
++   mode?: ContextBudgetMode;
++   /** Default model window when the caller supplies no `tokenBudget`/window. */
++   totalBudgetTokens?: number;
++   /** Default worker cap for `unknown` task kinds. */
++   defaultMaxWorkers?: number;
++   /** P5 earlier-only threshold schedule (same shape the shadow recorder uses). */
++   schedule?: TierSchedule;
++ };
++
++ export type ContextBudgetResumeResult = {
++   replanned: true;
++   reason: "resume_replan";
++   previousGeneration: number;
++   generation: number;
++   /** True when a paused/checkpoint plan existed and was discarded. */
++   stalePlanDiscarded: boolean;
++   plan: ContextBudgetPlan;
++ };
++
++ /** Default model window used when the caller gives no budget information. */
++ const DEFAULT_TOTAL_BUDGET_TOKENS = 128_000;
++
++ /** Reserved-slice ratios. `emergencyHeadroom` absorbs the rounding remainder so
++  * the slices always add up to exactly `totalBudgetTokens`. */
++ const RESERVE_RATIOS = {
++   systemAndRules: 0.2,
++   recentConversation: 0.3,
++   providerContext: 0.2,
++   toolOutput: 0.15,
++   verification: 0.08,
++   recoveryProjection: 0.04,
++ } as const;
++
++ const WORKER_CAP_BY_TASK_KIND: Record<ContextTaskKind, number> = {
++   locate: 1,
++   explain: 1,
++   review: 1,
++   edit: 2,
++   test: 2,
++   refactor: 3,
++   long_task: 3,
++   unknown: 2,
++ };
++
++ const EXPECTED_TOOL_OUTPUT_TOKENS = {
++   small: 2_000,
++   medium: 8_000,
++   large: 24_000,
++   uncertain: 8_000,
++ } as const;
++
++ // Deterministic keyword heuristics, first match wins. No model call: the design
++ // review note explicitly rejects an LLM pre-classifier on the per-turn path.
++ const TASK_KIND_RULES: ReadonlyArray<{
++   taskKind: ContextTaskKind;
++   complexity: TaskComplexityEstimate["complexity"];
++   risk: TaskComplexityEstimate["risk"];
++   pattern: RegExp;
++   reason: string;
++ }> = [
++   {
++     taskKind: "refactor",
++     complexity: "large",
++     risk: "high",
++     pattern: /\brefactor|\brename across|\bmigrat|重构|迁移/iu,
++     reason: "prompt asks for a cross-cutting refactor/migration",
++   },
++   {
++     taskKind: "test",
++     complexity: "medium",
++     risk: "medium",
++     pattern: /\btests?\b|\bspecs?\b|\bcoverage\b|\bvitest\b|\bplaywright\b|测试|覆盖率/iu,
++     reason: "prompt is about test/verification work",
++   },
++   {
++     taskKind: "review",
++     complexity: "medium",
++     risk: "medium",
++     pattern: /\breview\b|\baudit\b|评审|审计/iu,
++     reason: "prompt asks for review/audit work",
++   },
++   {
++     taskKind: "long_task",
++     complexity: "large",
++     risk: "medium",
++     pattern: /\blong[- ]?(?:running|task)\b|\/loop\b|长任务/iu,
++     reason: "prompt is a long-running / loop task",
++   },
++   {
++     taskKind: "edit",
++     complexity: "medium",
++     risk: "medium",
++     pattern: /\bfix\b|\bbug\b|\bimplement\b|\bpatch\b|\badd\b|\bupdate\b|\bchange\b|修复|实现/iu,
++     reason: "prompt asks for a code edit",
++   },
++   {
++     taskKind: "locate",
++     complexity: "small",
++     risk: "low",
++     pattern: /\bfind\b|\blocate\b|\bwhere\b|\bgrep\b|\bsearch\b|查找|定位/iu,
++     reason: "prompt asks to locate code",
++   },
++   {
++     taskKind: "explain",
++     complexity: "small",
++     risk: "low",
++     pattern: /\bexplain\b|\bwhy\b|\bhow does\b|解释|为什么/iu,
++     reason: "prompt asks for an explanation",
++   },
++ ];
++
++ function round(value: number): number {
++   return Math.round(value * 10_000) / 10_000;
++ }
++
++ function positiveBudget(value: unknown, fallback: number): number {
++   return typeof value === "number" && Number.isFinite(value) && value > 0
++     ? Math.floor(value)
++     : fallback;
++ }
++
++ /** Deterministic task classification (no model call, no task-state write). */
++ export function estimateTaskComplexity(input: { prompt: string }): TaskComplexityEstimate {
++   const prompt = typeof input?.prompt === "string" ? input.prompt : "";
++   for (const rule of TASK_KIND_RULES) {
++     if (rule.pattern.test(prompt)) {
++       return {
++         taskKind: rule.taskKind,
++         complexity: rule.complexity,
++         risk: rule.risk,
++         expectedToolOutputTokens: EXPECTED_TOOL_OUTPUT_TOKENS[rule.complexity],
++         requiresVerificationBudget: rule.complexity !== "small",
++         reasons: [rule.reason],
++       };
++     }
++   }
++   return {
++     taskKind: "unknown",
++     complexity: "uncertain",
++     risk: "medium",
++     expectedToolOutputTokens: EXPECTED_TOOL_OUTPUT_TOKENS.uncertain,
++     requiresVerificationBudget: true,
++     reasons: ["no heuristic matched; conservative unknown plan"],
++   };
++ }
++
++ /**
++  * A5 budget breach check on the existing deprecation registry.
++  *
++  * `ignored > 20%` -> `degrade_to_default_budget`; the planner then stops using
++  * the P5 earlier-only schedule and falls back to the production ladder.
++  */
++ type BudgetViolationAction = Extract<BudgetViolationResult, { violated: true }>["action"];
++
++ export function resolveA5BudgetDegradation(fallbackMode: ContextBudgetMode = "shadow"): {
++   mode: ContextBudgetMode;
++   degraded: boolean;
++   action?: BudgetViolationAction;
++ } {
++   const violation = deprecationCounters.checkBudgetViolation("a5");
++   if (violation.violated) {
++     return { mode: "shadow", degraded: true, action: violation.action };
++   }
++   return { mode: fallbackMode, degraded: false };
++ }
++
++ function reserveSlices(totalBudgetTokens: number): ContextBudgetReserved {
++   const systemAndRules = Math.floor(totalBudgetTokens * RESERVE_RATIOS.systemAndRules);
++   const recentConversation = Math.floor(totalBudgetTokens * RESERVE_RATIOS.recentConversation);
++   const providerContext = Math.floor(totalBudgetTokens * RESERVE_RATIOS.providerContext);
++   const toolOutput = Math.floor(totalBudgetTokens * RESERVE_RATIOS.toolOutput);
++   const verification = Math.floor(totalBudgetTokens * RESERVE_RATIOS.verification);
++   const recoveryProjection = Math.floor(totalBudgetTokens * RESERVE_RATIOS.recoveryProjection);
++   const emergencyHeadroom =
++     totalBudgetTokens -
++     systemAndRules -
++     recentConversation -
++     providerContext -
++     toolOutput -
++     verification -
++     recoveryProjection;
++   return {
++     systemAndRules,
++     recentConversation,
++     providerContext,
++     toolOutput,
++     verification,
++     recoveryProjection,
++     emergencyHeadroom: Math.max(0, emergencyHeadroom),
++   };
++ }
++
++ /** Reads (never replaces) the production ladder; earlier-only clamp applies. */
++ function buildPressureSchedule(
++   totalBudgetTokens: number,
++   schedule: TierSchedule | undefined,
++ ): ContextPressureSchedule {
++   const thresholds = resolveTierThresholds(schedule?.thresholds);
++   return {
++     microCompactAt: Math.round(totalBudgetTokens * round(thresholds.tier1)),
++     tokenPruneAt: Math.round(totalBudgetTokens * round(thresholds.tier2)),
++     semanticHandoffAt: Math.round(totalBudgetTokens * round(thresholds.tier3)),
++     emergencyCollapseAt: Math.round(totalBudgetTokens * round(thresholds.tier4)),
++   };
++ }
++
++ /** Deterministic provider slice allocation over the `providerContext` reserve. */
++ function allocateProviderBudgets(
++   providers: ContextBudgetPlanInput["availableProviders"],
++   providerContextTokens: number,
++ ): Record<string, number> {
++   const budgets: Record<string, number> = {};
++   if (!providers || providers.length === 0) return budgets;
++   // Validate the manifests we are about to rank; a malformed manifest is an
++   // estimation failure, which the planner degrades instead of blocking a turn.
++   const entries = providers.map((provider) => {
++     const id = provider?.id;
++     const priority = provider?.priority;
++     if (typeof id !== "string" || id.length === 0 || !Number.isFinite(priority)) {
++       throw new TypeError("invalid provider manifest for A5 budget allocation");
++     }
++     return { id, priority, shadowOnly: provider.shadowOnly === true };
++   });
++   entries.sort((left, right) => left.priority - right.priority || left.id.localeCompare(right.id));
++   const eligible = entries.filter((entry) => !entry.shadowOnly);
++   const share = eligible.length > 0 ? Math.floor(providerContextTokens / eligible.length) : 0;
++   eligible.forEach((entry, index) => {
++     // The first eligible provider absorbs the integer remainder so the slices
++     // always add up to exactly the provider-context reserve.
++     budgets[entry.id] =
++       index === 0 ? providerContextTokens - share * (eligible.length - 1) : share;
++   });
++   for (const entry of entries) {
++     if (entry.shadowOnly) budgets[entry.id] = 0;
++   }
++   return budgets;
++ }
++ function buildEvidenceRefs(input: ContextBudgetPlanInput): ContextBudgetEvidenceRef[] {
++   const refs: ContextBudgetEvidenceRef[] = [];
++   if (input.sessionId) refs.push({ type: "session", ref: input.sessionId });
++   if (input.roleId) refs.push({ type: "role", ref: input.roleId });
++   if (input.compressionArtifactQuality) {
++     refs.push({
++       type: "compression_artifact_quality",
++       ref: input.compressionArtifactQuality.level,
++       label: `score:${round(input.compressionArtifactQuality.score)}`,
++     });
++   }
++   return refs;
++ }
++
++ type PlanMeta = { generation: number; resumedFromCheckpoint: boolean };
++
++ function conservativePlan(
++   input: ContextBudgetPlanInput,
++   options: ContextBudgetPlannerOptions,
++   meta: PlanMeta,
++ ): ContextBudgetPlan {
++   const totalBudgetTokens = positiveBudget(
++     input?.tokenBudget ?? input?.modelContextWindow ?? options.totalBudgetTokens,
++     DEFAULT_TOTAL_BUDGET_TOKENS,
++   );
++   return {
++     version: 1,
++     mode: "shadow",
++     taskKind: "unknown",
++     totalBudgetTokens,
++     reserved: reserveSlices(totalBudgetTokens),
++     pressureSchedule: buildPressureSchedule(totalBudgetTokens, undefined),
++     providerBudgets: {},
++     evidenceRefs: [{ type: "fallback", ref: "estimation_failure" }],
++     suggestedMaxWorkers: options.defaultMaxWorkers ?? WORKER_CAP_BY_TASK_KIND.unknown,
++     generation: meta.generation,
++     resumedFromCheckpoint: meta.resumedFromCheckpoint,
++     degraded: true,
++   };
++ }
++
++ function buildPlan(
++   input: ContextBudgetPlanInput,
++   options: ContextBudgetPlannerOptions,
++   meta: PlanMeta,
++ ): ContextBudgetPlan {
++   const estimate = estimateTaskComplexity(input);
++   const degradation = resolveA5BudgetDegradation(options.mode ?? "shadow");
++   const totalBudgetTokens = positiveBudget(
++     input.tokenBudget ?? input.modelContextWindow ?? options.totalBudgetTokens,
++     DEFAULT_TOTAL_BUDGET_TOKENS,
++   );
++   const reserved = reserveSlices(totalBudgetTokens);
++   // A degraded plan ignores the P5 earlier-only schedule and uses the
++   // production ladder (`degrade_to_default_budget`).
++   const effectiveSchedule = degradation.degraded ? undefined : options.schedule;
++   return {
++     version: 1,
++     mode: degradation.mode,
++     taskKind: estimate.taskKind,
++     totalBudgetTokens,
++     reserved,
++     pressureSchedule: buildPressureSchedule(totalBudgetTokens, effectiveSchedule),
++     providerBudgets: allocateProviderBudgets(input.availableProviders, reserved.providerContext),
++     evidenceRefs: buildEvidenceRefs(input),
++     ...(typeof input.appliesToWave === "number" ? { appliesToWave: input.appliesToWave } : {}),
++     suggestedMaxWorkers: Math.max(
++       1,
++       Math.floor(
++         input.workerCap ?? options.defaultMaxWorkers ?? WORKER_CAP_BY_TASK_KIND[estimate.taskKind],
++       ),
++     ),
++     generation: meta.generation,
++     resumedFromCheckpoint: meta.resumedFromCheckpoint,
++     degraded: degradation.degraded,
++   };
++ }
++
++ /**
++  * A5 context budget planner facade.
++  *
++  * Holds no durable task truth: it keeps only the last plan (for diagnostics) and
++  * the paused plan that a resume must discard.
++  */
++ export class ContextBudgetPlanner {
++   private readonly options: ContextBudgetPlannerOptions;
++   private generation = 0;
++   private lastPlan: ContextBudgetPlan | undefined;
++   private pausedPlan: ContextBudgetPlan | undefined;
++
++   constructor(options: ContextBudgetPlannerOptions = {}) {
++     this.options = options;
++   }
++
++   /** Build a fresh plan. Never throws: estimation failure degrades to the
++    * conservative `unknown` plan instead of blocking the turn. */
++   plan(input: ContextBudgetPlanInput): ContextBudgetPlan {
++     const plan = this.buildSafePlan(input, {
++       generation: this.generation,
++       resumedFromCheckpoint: false,
++     });
++     this.lastPlan = plan;
++     return plan;
++   }
++
++   /** Snapshot the current plan as the one A6 would persist. The snapshot is
++    * only kept so a resume can prove it was discarded. */
++   pause(): ContextBudgetPlan | undefined {
++     this.pausedPlan = this.lastPlan;
++     return this.pausedPlan;
++   }
++
++   /**
++    * Pair 5 / criterion 3.6: re-execute the planner after resume.
++    *
++    * The checkpoint plan is never returned and never merged: the resumed plan is
++    * built from the live resume inputs, gets a new generation, and is flagged
++    * `resumedFromCheckpoint` so diagnostics can tell staged and live plans apart.
++    */
++   replanOnResume(input: ContextBudgetPlanInput): ContextBudgetResumeResult {
++     const stale = this.pausedPlan ?? this.lastPlan;
++     const previousGeneration = stale?.generation ?? 0;
++     this.generation = previousGeneration + 1;
++     const plan = this.buildSafePlan(input, {
++       generation: this.generation,
++       resumedFromCheckpoint: true,
++     });
++     this.lastPlan = plan;
++     this.pausedPlan = undefined;
++     return {
++       replanned: true,
++       reason: "resume_replan",
++       previousGeneration,
++       generation: plan.generation,
++       stalePlanDiscarded: stale !== undefined,
++       plan,
++     };
++   }
++
++   /** Current generation (0 before the first plan). */
++   currentGeneration(): number {
++     return this.generation;
++   }
++
++   private buildSafePlan(input: ContextBudgetPlanInput, meta: PlanMeta): ContextBudgetPlan {
++     try {
++       return buildPlan(input, this.options, meta);
++     } catch {
++       // Estimation/provider diagnostics must never block a turn.
++       return conservativePlan(input, this.options, meta);
++     }
++   }
++ }
++
++ export type WaveBudgetApplication =
++   | { applied: true; waveNumber: number; maxWorkers: number; replannedWaves: number[] }
++   | {
++       applied: false;
++       reason: "no_planned_wave" | "wave_started" | "wave_not_found" | "no_change";
++       waveNumber?: number;
++     };
++
++ export type CrossAreaCompositionOptions = {
++   scheduler: ResourceAwareWaveScheduler;
++   planner?: ContextBudgetPlanner;
++ };
++
++ /**
++  * A5 + A2 + A6 composition facade.
++  *
++  * Every A5 -> A2 propagation goes through `ResourceAwareWaveScheduler.rePlan`,
++  * so a started wave can never be re-planned by a budget change (Pair 3 /
++  * criterion 3.9), while a resume re-plans only the still-planned waves.
++  */
++ export class CrossAreaCompositionFacade {
++   readonly planner: ContextBudgetPlanner;
++   private readonly scheduler: ResourceAwareWaveScheduler;
++
++   constructor(options: CrossAreaCompositionOptions) {
++     this.scheduler = options.scheduler;
++     this.planner = options.planner ?? new ContextBudgetPlanner();
++   }
++
++   /** Plan the next turn and apply the plan to the next planned wave. */
++   planNextWave(input: ContextBudgetPlanInput): {
++     plan: ContextBudgetPlan;
++     wave: WaveBudgetApplication;
++   } {
++     const target = input.appliesToWave ?? this.nextPlannedWave();
++     const plan = this.planner.plan({
++       ...input,
++       ...(target === undefined ? {} : { appliesToWave: target }),
++     });
++     return { plan, wave: this.applyPlan(plan) };
++   }
++
++   /** A6 pause boundary: remember the plan that must not be reused. */
++   pauseSession(): ContextBudgetPlan | undefined {
++     return this.planner.pause();
++   }
++
++   /** A6 resume boundary: re-run the planner, then re-plan the next wave only. */
++   resumeSession(input: ContextBudgetPlanInput): {
++     plan: ContextBudgetPlan;
++     resume: ContextBudgetResumeResult;
++     wave: WaveBudgetApplication;
++   } {
++     const target = input.appliesToWave ?? this.nextPlannedWave();
++     const resume = this.planner.replanOnResume({
++       ...input,
++       ...(target === undefined ? {} : { appliesToWave: target }),
++     });
++     return { plan: resume.plan, resume, wave: this.applyPlan(resume.plan) };
++   }
++
++   /** Apply an existing plan to its target wave. */
++   applyPlan(plan: ContextBudgetPlan): WaveBudgetApplication {
++     const waveNumber = plan.appliesToWave ?? this.nextPlannedWave();
++     if (waveNumber === undefined) return { applied: false, reason: "no_planned_wave" };
++     const result: RePlanResult = this.scheduler.rePlan({
++       appliesToWave: waveNumber,
++       maxWorkers: plan.suggestedMaxWorkers,
++     });
++     if (result.accepted) {
++       return {
++         applied: true,
++         waveNumber,
++         maxWorkers: plan.suggestedMaxWorkers,
++         replannedWaves: result.replannedWaves,
++       };
++     }
++     return { applied: false, reason: result.reason, waveNumber: result.waveNumber };
++   }
++
++   private nextPlannedWave(): number | undefined {
++     const planned = this.scheduler
++       .getWaves()
++       .filter((wave) => wave.status === "planned")
++       .map((wave) => wave.wave)
++       .sort((left, right) => left - right);
++     return planned[0];
++   }
++ }
+
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts:61:21
+     59|     expect(facades).toContain("class ContextBudgetPlanner");
+     60|     expect(facades).toContain("replanOnResume");
+     61|     expect(facades).toContain("hasReexecuted");
+       |                     ^
+     62|
+     63|     const crossArea = readFileSync(path.join(ROOT, "tests/unit/cross-a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/performance-budgets.test.ts > A6 performance budgets > 10 pause/resume cycles p99 stays <= 300ms and writes bounded evidence
+TypeError: ResumeContractVerifier is not a constructor
+ ❯ tests/unit/performance-budgets.test.ts:123:22
+    121|     const planner = new ContextBudgetPlanner(makeGraph(8), 4);
+    122|     planner.plan();
+    123|     const verifier = new ResumeContractVerifier();
+       |                      ^
+    124|     const coordinator = new FingerprintLeaseCoordinator();
+    125|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

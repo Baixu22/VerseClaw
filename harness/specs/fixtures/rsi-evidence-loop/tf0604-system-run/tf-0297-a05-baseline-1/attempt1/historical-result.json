@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "RsiHistoricalTrialResult/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "trialId": "tf-0297-a05-baseline-1",
+  "taskId": "tf-0297-a05",
+  "arm": "baseline",
+  "repeat": 1,
+  "startedAt": "2026-11-01T03:55:52.376Z",
+  "completedAt": "2026-11-01T05:12:50.620Z",
+  "stage": "agent",
+  "error": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0297-a05-baseline-1\\agent\\openclaw_runtime\\src\\auto-reply\\reply-payload.ts'\n    at Object.openSync (node:fs:621:18)\n    at readFileSync (node:fs:487:35)\n    at file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:133:63\n    at Array.map (<anonymous>)\n    at directoryFingerprint (file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:133:35)\n    at runHistoricalTrial (file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/lib/agent-first-trials.mjs:492:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:42:25\n    at async Promise.all (index 2)\n    at async file:///C:/Users/27933/.codex/worktrees/tf0604-rsi-baseline/ClawX/scripts/rsi-tf0604-historical-runner.mjs:49:7",
+  "failureClass": "infrastructure",
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

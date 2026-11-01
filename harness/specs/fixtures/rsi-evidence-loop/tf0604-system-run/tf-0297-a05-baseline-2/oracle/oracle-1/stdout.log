@@ -1,0 +1,14 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0297-a05-baseline-2/grader
+
+ ❯ tests/unit/a05-a5-gate-coverage.test.ts (3 tests | 2 failed) 24ms
+     × keeps every A5 required test path present and wired into the archived pilot spec 17ms
+     × pins the resume re-planning implementation and its cross-area evidence 4ms
+ ❯ tests/unit/performance-budgets.test.ts (3 tests | 1 failed) 14ms
+     × 10 pause/resume cycles p99 stays <= 300ms and writes bounded evidence 4ms
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  3 failed | 34 passed (37)
+   Start at  17:45:23
+   Duration  5.96s (transform 231ms, setup 568ms, import 190ms, tests 56ms, environment 3.74s)
+

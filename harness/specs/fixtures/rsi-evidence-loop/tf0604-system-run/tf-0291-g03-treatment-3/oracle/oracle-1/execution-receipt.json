@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0291-g03",
+  "commandLine": "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1",
+  "taskDigest": "d9c20cf9328103ae18e98b2cade29b08a4d05573c5a984d2a5ccc4c68588ce5e",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-10-31T18:48:39.276Z",
+  "finishedAt": "2026-10-31T18:48:43.668Z",
+  "durationMs": 4380,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 0,
+    "failed": 6,
+    "skipped": 0,
+    "total": 6,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "1ee55a17a496e1ee8aebc9856ffff7fc6df7bbbb07d6968dd526c0229a3fd2f8",
+  "stderrSha256": "4e0d3f1a32c9620d6d611dde737da23ae1a2b8e42de92cdb53e115b199867282"
+}

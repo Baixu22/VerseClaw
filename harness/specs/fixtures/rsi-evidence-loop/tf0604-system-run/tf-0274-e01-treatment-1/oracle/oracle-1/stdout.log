@@ -1,9 +1,9 @@
 
- RUN  v4.1.1 D:/tmp/rsi-tf0604-single/trials/tf-0274-e01-treatment-1/grader
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0274-e01-treatment-1/grader
 
 
  Test Files  1 passed (1)
       Tests  6 passed (6)
-   Start at  18:43:43
-   Duration  472ms (transform 59ms, setup 188ms, import 17ms, tests 4ms, environment 0ms)
+   Start at  00:58:37
+   Duration  590ms (transform 78ms, setup 259ms, import 32ms, tests 5ms, environment 0ms)
 

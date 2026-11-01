@@ -1,0 +1,33 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0294-a02",
+  "verdict": {
+    "grades": [
+      {
+        "graderVersion": "tf0590-graders/v3",
+        "verdict": "fail",
+        "reason": "Required oracle failed or timed out",
+        "evidenceKind": "owned-execution"
+      },
+      {
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "total": 3,
+          "source": "parsed",
+          "segments": 1
+        },
+        "graderVersion": "tf0590-graders/v3",
+        "verdict": "pass",
+        "reason": "Locked oracle completed with matching raw test evidence",
+        "evidenceKind": "owned-execution"
+      }
+    ],
+    "graderVersion": "tf0590-graders/v3",
+    "verdict": "fail",
+    "reason": "A required oracle failed"
+  },
+  "executionCount": 2
+}

@@ -1,0 +1,31 @@
+Implementation is complete and verified. Here's the summary.
+
+**What I built**
+
+A paired ablation of Phase-4 type-aware eviction against the pre-Phase-4 FIFO default, replayed on the real `RuntimeMemoryStore` — no mocks, no stand-in store.
+
+- `scripts/lib/paired-ablation.mjs` — pure statistics (percentile, Wilson, paired t-interval, exact sign test, pass^k) plus an injected-store driver that builds a fresh isolated store per case × repeat × condition.
+- `scripts/run-paired-ablation.mjs` — runner (`pnpm agent-dev:paired-ablation`); refuses to substitute a fake store if the runtime can't load.
+- `shared/agent-dev/paired-ablation-fixture.json` — 24 cases × 3 repeats × 2 conditions, pre-registered budget, stored insertion order per case.
+- Two test files, a task spec, a boundary rule, and the closure docs + `E02-SHA256SUMS`.
+
+**Result (honest, not flattering)**
+
+Retention sets diverge on 24/24 cases, so the component is genuinely in effect. Point estimate is **+5.29pp** (0.6829 → 0.7358), but the 95% interval is **[-0.0367, +0.1425] — it spans zero**, so `benefit.established = false`. Verdict is `within-budget` with 0 of 5 budget checks violated. The one strong signal is safety-side: FIFO dropped the human-approved constraint fact 30 times, Phase-4 zero times. Per-case deltas include negatives, and the docs say plainly that 24 cases cannot resolve a 5pp effect.
+
+I deliberately rejected an absolute retention floor as the gate — it would have measured fixture pressure, not the component. The budget is a paired comparison plus a rule that a benefit claim requires the interval above zero.
+
+**Checks actually run**
+
+- Focused tests: 35/35 pass (23 pure-stats, 12 real-store). Also re-ran `runtime-memory-type-aware-eviction` (9/9).
+- Scoped ESLint on the three source/test files: exit 0, no findings.
+- Typecheck: `tsc -p tsconfig.test.json` reports zero diagnostics for my files, but the full project run fails on pre-existing `TS2307` errors for uninstalled runtime deps. Recorded as a **partial** gate, not a pass.
+- Harness validate + dry-run: both pass with a real non-empty diff, run in a throwaway git copy because this workspace has no `.git`.
+- Credential scan 0 hits; SHA256SUMS verifies 10/10 with the repo's own canonical hasher.
+- Two pre-existing failures I did not fix: `harness-gap-reliability-aggregation.md` and `harness-gap-trace-cost-sampling.md` are missing `lifecycleStatus` (breaks `check-spec-lifecycle` and one harness unit test). Also `runtime-memory-store.test.ts` and `runtime-memory-phase4-ablation-benefit.test.ts` can't run here — missing `kysely` and other modules.
+
+**Environment notes**
+
+No dependencies were installed and no network was used. To run vitest I temporarily junctioned `D:\ClawX\node_modules` into the workspace, then removed it; the source tree is untouched. Scratch files are gone and `node_modules` is absent again. `artifacts/paired-ablation/report.json` is the raw local run output and stays untracked per the repo's artifact-retention policy — the curated copies in `docs/dev/harness-gap-closure/` are the tracked record.
+
+One thing worth flagging: I added `scripts/repository-artifacts.json` and `.gitignore` entries so the three evidence files are trackable. That is the repo's own `--write-ignore` output, scoped to my files only, but it does touch shared policy files — worth a glance in review.

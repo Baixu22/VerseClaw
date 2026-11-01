@@ -1,0 +1,11 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0279-s04-treatment-1/grader
+
+ ❯ tests/unit/browser-effect-boundary-ledger.test.ts (5 tests | 1 failed) 9ms
+     × records every action and the residual session-gate gap in the ledger doc 3ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  06:03:30
+   Duration  782ms (transform 143ms, setup 472ms, import 34ms, tests 9ms, environment 0ms)
+

@@ -1,0 +1,22 @@
+Workspace is clean. Here is the result.
+
+**Status: completed**
+
+Implemented the S07 bounded, revocable verifier completion-verdict entry across the six declared target-scope files:
+
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts` — reuses `evaluateEvidenceVerifier`; maps `completed→approved`, `insufficient_evidence→insufficient-evidence`, others→`rejected`; out-of-scope for tasks outside `scope.taskIds`; only `approved` yields the single `node→done` transition; digest-only record; revocable via recorded `priorStatus`; `grantsPublish`/`grantsProductLock` always `false`.
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts` — 9 focused tests mirroring the module contract.
+- `harness/specs/tasks/harness-gap-verifier-completion-verdict.md`, `docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md`, `docs/dev/harness-gap-closure/s07-acceptance.json`, `docs/dev/harness-gap-closure/S07-SHA256SUMS`.
+
+**Checks actually run**
+
+Key constraint: this workspace has **no `node_modules`** and installation/network are forbidden, so vitest/tsgo/oxlint and the git-diff-based gates could not run.
+
+- `node --import <ts .js→.ts resolver>` module driver — `ALL ASSERTIONS PASSED` (decision mapping; approved→done; insufficient→no transition; failed/blocked/cancelled→rejected; out-of-scope→no transition; digest-only serialization; deterministic digest/verdict; approved revoke→`priorStatus`; non-approved nothing to revoke).
+- Same resolver over the committed test file's assertions — `TEST-FILE ASSERTIONS PASSED`.
+- 9-test suite executed through a vitest shim (`describe`/`it`/`expect` stub) — `RAN 9 tests`.
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md --no-diff` — `Spec is valid`. (`--no-diff` only because the workspace has no `.git`, so the changed-path ownership gate has nothing to compare.)
+- `sha256sum -c docs/dev/harness-gap-closure/S07-SHA256SUMS` — all 5 files `OK`.
+- Credential scan over the 5 generated files — 0 hits.
+
+**Not run** (recorded as residual in the acceptance JSON, not claimed as passing): vitest, `tsgo:core`, scoped oxlint, `harness run --dry-run`, `comms:replay`/`comms:compare` — all blocked by the missing toolchain/git repo. No tests in the hidden oracle were inspected; no dependencies installed; no network used; no product locks/defaults/approvals touched.

@@ -1,0 +1,29 @@
+Implementation complete. Final structured result:
+
+```json
+{
+  "status": "completed",
+  "summary": "E01 reliability aggregation landed in the existing Agent Dev benefit report (no new metrics platform). Added scripts/lib/reliability-aggregation.mjs (pure, deterministic pass^k / pass@k / per-trial success / flake / anchor / safety aggregation), its .d.mts typing surface, the pre-registered fixture shared/agent-dev/reliability-fixture.json (k=3, minCases=20, flakeThreshold=0.01), and wired report.reliability plus a markdown block into scripts/agent-dev-benefit-eval.mjs. pass^k (0.25) and pass@k (0.75) are separate fields and never mixed; the timeout case is preserved as incomplete and excluded from denominators; flake is first-trial-fail-then-pass with the first failure kept; positive/negative anchor and safety-required violations force gate=fail; 4 complete cases < 20 yields gate=insufficient-sample, never PASS. Added the task spec, boundary rule, closure doc, e01-acceptance.json (agent-driven, explicitly deterministic-oracle, liveProvider=false, realHuman=false, productLocks.changed=false) and E01-SHA256SUMS (8/8 re-read OK). READMEs reviewed in all four locales and intentionally left byte-unchanged since this packet only adds an internal evaluation report block. No product default, product lock, approval semantics or scheduled automation changed. Note: the sealed oracle test path was never created or read; typecheck:test, the repo-wide manifest verifier and spec-lifecycle checks fail identically on the untouched base tree due to missing installed dependencies and pre-existing drift, so they are recorded as pre-existing rather than as passes.",
+  "testsRun": [
+    "node --check scripts/agent-dev-benefit-eval.mjs -> exit 0",
+    "node --check scripts/lib/reliability-aggregation.mjs -> exit 0",
+    "node -e fixture load of shared/agent-dev/reliability-fixture.json -> k=3 minCases=20 flakeThreshold=0.01 cases=5 source=deterministic-fixture",
+    "node scripts/agent-dev-benefit-eval.mjs -> exit 0, report.reliability gate=insufficient-sample passK=0.25 passAtK=0.75 perTrial=0.5 flake=0.25 complete=4/5 incomplete=1",
+    "vitest run --config vitest.agent-dev.node.config.ts tests/unit/e01-independent-verify.test.ts --maxWorkers=1 -> exit 0, 1 file / 9 tests passed, 0 failed, 0 skipped (locally authored scratch test, run twice then deleted; not the sealed oracle)",
+    "same 9-assertion verification re-run inside a temporary detached git worktree at base 874befaaa with the change set overlaid -> exit 0, 9/9 passed",
+    "eslint scripts/agent-dev-benefit-eval.mjs scripts/lib/reliability-aggregation.mjs -> exit 0, 0 warnings",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md (real diff base in temporary git worktree) -> exit 0, Spec is valid",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --no-diff (plain archive workspace) -> exit 0, Spec is valid",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --dry-run -> exit 0, Harness result: pass, rules scan pass, only fast profile selected",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-reliability-aggregation.md -> exit 0, expected read order resolved",
+    "node scripts/check-no-bom.mjs -> exit 0, check-no-bom: ok",
+    "node scripts/check-evidence-refs.mjs -> exit 0, PASS 157 referenced path(s)",
+    "SHA256 re-read of all 8 entries in docs/dev/harness-gap-closure/E01-SHA256SUMS -> checked=8 mismatched=0",
+    "regex credential scan over the 8 E01 deliverables (phc_/sk-/AKIA/PRIVATE KEY/ghp_/xox.) -> files=8 hits=0",
+    "node scripts/verify-evidence-sha256sums.mjs -> exit 1 (pre-existing: only artifacts/stepfun-basic-live-evidence-20261008 drifts; untouched base tree fails identically)",
+    "tsgo --noEmit -p tsconfig.test.json --composite false -> unresolved modules/type entries (typebox, @opentelemetry/*, @types/*) because no dependencies are installed; untouched base tree reports the same class of errors",
+    "node scripts/check-spec-lifecycle.mjs -> exit 1 (pre-existing: harness-gap-trace-cost-sampling.md missing lifecycleStatus; untouched base tree fails identically)",
+    "not run: pnpm test / pnpm run typecheck / runtime-core typecheck / comms gates / Electron E2E - require installed dependencies or git history not present in this isolated archive workspace, and the change touches no runtime or comms path"
+  ]
+}
+```

@@ -1,0 +1,22 @@
+All deliverables are in place and verified. Here's the summary.
+
+**Outcome**
+
+A02 re-verified the A2 multi-agent orchestration controlled pilot gate against the **original** spec thresholds (no redefinition). The honest verdict is **NO-GO**, not pass.
+
+- **Criteria 1-3 PASS** — mapped to current executable evidence at unchanged thresholds: (1) `checkBudgetViolation('a2')` → `degrade_to_live_only` when deferral disagreement > 10%, (2) `ResourceAwareWaveScheduler` rejects re-plan of a started wave (`wave_started`), (3) p99 ≤ 80ms partition.
+- **Criterion 4 NO-GO residual** — multi-worker resume creating new sessions (criterion 3.7) has *no dedicated test* in the current tree; recorded as a residual, not claimed as passing.
+
+**Spec drift fixed** in `harness/specs/tasks/a2-multi-agent-orchestration-pilot.md`
+- Removed two references to paths that don't exist in the tree: `tests/unit/cross-area-composition.test.ts` and `openclaw_runtime/src/agents/cross-area/cross-area-facades.ts` (the `cross-area/` directory is absent).
+- Wired the counter tests that cover criteria 1/5 into `requiredTests`; threshold text byte-unchanged.
+
+**Files created**
+- `tests/unit/a02-a2-gate-coverage.test.ts` — guard driving the real runtime modules (criteria 1/2/5) and pinning the spec wiring + drift removal.
+- `harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md`
+- `docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md`, `a02-acceptance.json` (`decision.status: NO-GO`), `A02-SHA256SUMS`
+- `.rsi/RESULT.json`
+
+**Checks actually run** (offline, all exit 0): harness `validate` on both specs, spec lifecycle, evidence-refs, no-BOM, policy-docs, B00 baseline structure, credential scan (0 hits), `sha256sum -c A02-SHA256SUMS` (5/5), and a Node type-strip replay of the guard assertions against the real modules (`a2` 8/3 → `degrade_to_live_only`; 10/1 → not violated; started-wave rePlan → `wave_started`).
+
+**Not run (reported honestly):** `vitest`, `typecheck`, `lint`, `comms:replay/compare` — blocked offline (no `node_modules`, network disabled) and the checkout has no git metadata; no renderer/Main/comms path was touched. `harness run --dry-run` fails on the missing `origin/main` ref for the same reason.

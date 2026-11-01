@@ -1,0 +1,13 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0294-a02-treatment-1/grader
+
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+ ❯ tests/unit/a02-a2-gate-coverage.test.ts (3 tests | 2 failed) 16ms
+     × points every requiredTests entry at a real file (no stale reference) 11ms
+     × points criterion 4 (multi-worker resume) at the restored cross-area test 1ms
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  2 failed | 32 passed (34)
+   Start at  11:38:57
+   Duration  3.89s (transform 257ms, setup 691ms, import 124ms, tests 30ms, environment 1.89s)
+

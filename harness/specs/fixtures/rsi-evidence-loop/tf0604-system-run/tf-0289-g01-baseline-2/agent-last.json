@@ -1,0 +1,32 @@
+Implemented the G01 recovery contract in `src/lib/error-model.ts`:
+
+- Added `ERROR_RECOVERY` with a complete row for all 14 `AppErrorCode` values.
+- `retryable` is derived from `scope`; only self-retry classes are retryable and use exactly `{ kind: 'retry' }`.
+- `nextAction` is restricted to the five fixed verbs with only `kind` and optional bounded `target`.
+- `AppError` instances now expose `retryable` and `nextAction`; `UNKNOWN` has no action.
+- Reused the existing `AppError` / `HostResponse` governance boundary; no second envelope or error type.
+- Added focused tests, harness task spec, G01 evidence, acceptance JSON, and checksums.
+
+**Checks Run**
+- `node --experimental-strip-types` runtime assertions against `src/lib/error-model.ts`: PASS (14 classes).
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md --no-diff`: PASS.
+- `node harness/src/cli.mjs context --spec ... --json`: PASS.
+- `node scripts/check-error-governance.mjs`: 14 checks PASS; one pre-existing failure because `tests/unit/error-governance-boundary.test.ts` is absent.
+- Credential-pattern scan of changed files: 0 findings.
+- `sha256sum -c docs/dev/harness-gap-closure/G01-SHA256SUMS`: all OK.
+
+Vitest, typecheck, ESLint, comms replay/compare, and diff-aware harness dry-run were not run because `node_modules` and git metadata are absent, and dependency installation was prohibited.
+
+```json
+{
+  "status": "completed",
+  "summary": "Implemented the G01 error recovery contract with a complete 14-code recovery table, scoped retryability, bounded non-executable next actions, AppError metadata, focused tests, harness spec, and acceptance evidence. Runtime and harness validation passed; dependency-backed gates were not runnable without installing dependencies.",
+  "testsRun": [
+    "node --experimental-strip-types runtime recovery assertions against src/lib/error-model.ts",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md --no-diff",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md --json",
+    "node scripts/check-error-governance.mjs",
+    "sha256sum -c docs/dev/harness-gap-closure/G01-SHA256SUMS"
+  ]
+}
+```

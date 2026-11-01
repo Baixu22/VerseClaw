@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "RsiAgentLogManifest/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-system-runner",
+  "truncated": true,
+  "logs": [
+    {
+      "file": "agent.stdout.log",
+      "bytes": 1256007,
+      "sha256": "b55a21bcd49bd615cfb17f49feba3e250990e9d00eef1dd6b7d92a016434f0af",
+      "stored": "agent.stdout.log.excerpt",
+      "excerptBytes": 65688,
+      "truncated": true
+    },
+    {
+      "file": "agent.stderr.log",
+      "bytes": 3206,
+      "sha256": "12b7bdd7ccef14c4435ac29f55aadef5ed70db2abf8edf8bd0def810eee46320",
+      "stored": "agent.stderr.log",
+      "excerptBytes": 3206,
+      "truncated": false
+    }
+  ]
+}

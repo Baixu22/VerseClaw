@@ -1,0 +1,16 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/browser-effect-boundary-ledger.test.ts > S04 browser effect boundary ledger > records every action and the residual session-gate gap in the ledger doc
+Error: ENOENT: no such file or directory, open 'D:\tmp\rsi-tf0604-run5\trials\tf-0279-s04-treatment-1\grader\docs\dev\harness-gap-closure\s04-browser-effect-boundary.md'
+ ❯ read tests/unit/browser-effect-boundary-ledger.test.ts:36:10
+     34|
+     35| function read(repoPath: string): string {
+     36|   return readFileSync(join(ROOT, repoPath), 'utf8');
+       |          ^
+     37| }
+     38|
+ ❯ tests/unit/browser-effect-boundary-ledger.test.ts:77:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

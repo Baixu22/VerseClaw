@@ -1,0 +1,43 @@
+All work is complete and verified. The change set is exactly the 7 files in the task's `targetScope`, with no collateral edits.
+
+**Summary**
+
+Implemented S06: runtime memory self-edit writes (`memory_update` / `memory_forget` / `memory_strengthen`) now record digest-only receipts through the **existing** RC-04 `EffectReceiptStore`, with per-intent idempotency and honest outcome mapping.
+
+**Changes**
+- Added `openclaw_runtime/src/runtime-core/memory-effect-receipt.ts` — digest-only receipt builder + fail-open `recordMemoryEffect`; imports the store only behind a structural `MemoryEffectReceiptSink` type, so runtime-core never imports `agents/` at runtime.
+- Wired `openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts` at each write decision point: `applied` on success, `not_applied` before any effect, `unknown` after partial effect (fact appended but invalidation/relation failed), never disguised as applied.
+- Added the sealed unit test, the task spec, the S06 ledger, the acceptance record, and `S06-SHA256SUMS`.
+
+**Contract**
+- Idempotency key `memory-effect:v1:<sha256(action⋮factId⋮sessionKey⋮runId⋮toolCallId)>` is outcome-independent, so replaying an intent is an identical-content duplicate with 0 duplicate effects.
+- Proposal carries only `domain/action/factId(/newFactId)` — no memory content; actor/effect go in `stage1Context`.
+- No second effect store or migration; product locks/defaults unchanged.
+
+**Checks run (all reproducible, dependency reuse via hidden junctions, no install/network)**
+- Sealed oracle: `memory-effect-receipt.test.ts` + `apply-patch-effect-receipt.test.ts` + `stage1-effect-receipt.test.ts` → 3 files, 24 tests, 0 failed.
+- Memory suite `src/memory` + sealed test → 3 files, 67 tests, 0 failed.
+- Scoped `oxlint` on the touched files → 0.
+- `pnpm harness validate` (real diff) → valid; `pnpm harness run --dry-run` → pass (run in a scratch git projection since the trial snapshot has no `.git`).
+- `pnpm run comms:replay` / `comms:compare` → 0, all gated metrics PASS at 0.00% delta.
+- Credential scan on the 6 retained files → 0 hits; `S06-SHA256SUMS` reads back 6/6.
+- `pnpm run tsgo:core` → exit 2, but only pre-existing red in untouched files (`ui/vitest.config.ts`, `shared/types/*`); no error in the changed files.
+
+Structured result:
+
+```json
+{
+  "status": "completed",
+  "summary": "S06: memory self-edit writes (memory_update/forget/strengthen) now record digest-only effect receipts through the existing RC-04 EffectReceiptStore. Per-intent idempotency key (action+factId+sessionKey+runId+toolCallId, outcome-independent) makes replays identical-content duplicates (0 duplicate effects); outcomes map to applied/not_applied/unknown without disguising unknown as applied; sink failures are fail-open and never block the write. No second effect store, no migration, no product-lock change. Sealed oracle (3 files/24 tests) and memory suite (67 tests) pass; scoped lint 0; harness validate (real diff) + dry-run pass; comms replay/compare 0.00% delta all PASS; credential scan 0 hits; S06-SHA256SUMS reads back 6/6. Only tsgo:core is red, on the pre-existing baseline in untouched files.",
+  "testsRun": [
+    "pnpm exec node scripts/run-vitest.mjs run src/runtime-core/memory-effect-receipt.test.ts src/agents/apply-patch-effect-receipt.test.ts src/agents/stage1-effect-receipt.test.ts --maxWorkers=1  (3 files, 24 tests, 0 failed)",
+    "pnpm exec node scripts/run-vitest.mjs run src/memory src/runtime-core/memory-effect-receipt.test.ts --maxWorkers=1  (3 files, 67 tests, 0 failed)",
+    "pnpm exec oxlint src/runtime-core/memory-effect-receipt.ts src/runtime-core/memory-self-edit-tools.ts src/runtime-core/memory-effect-receipt.test.ts  (exit 0)",
+    "pnpm harness validate --spec harness/specs/tasks/harness-gap-memory-effect-receipt.md  (Spec is valid)",
+    "pnpm harness run --spec harness/specs/tasks/harness-gap-memory-effect-receipt.md --dry-run  (pass)",
+    "pnpm run comms:replay  (exit 0)",
+    "pnpm run comms:compare  (all PASS, 0.00% delta)",
+    "pnpm run tsgo:core  (exit 2; pre-existing baseline red in untouched ui/ and shared/types files only)"
+  ]
+}
+```

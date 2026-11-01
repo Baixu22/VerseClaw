@@ -1,0 +1,124 @@
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |agents-tools| ../../src/agents/tools/agent-browser-tool.provenance.test.ts:87:3 > agent_browser external-access provenance boundary > preserves direct operator external browser selection
+AssertionError: expected "vi.fn()" to be called with arguments: [ 'open', …(2) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -3,10 +3,6 @@
+    {
+      "allowExternalBrowser": true,
+      "cdpEndpoint": "9222",
+      "connectionMode": "cdp",
+    },
+-   {
+-     "gatewayRequestId": undefined,
+-     "toolCallId": "call-1",
+-   },
+  ]
+
+
+Number of calls: 1
+
+ ❯ ../../src/agents/tools/agent-browser-tool.provenance.test.ts:107:20
+    105|     });
+    106|
+    107|     expect(invoke).toHaveBeenCalledWith(
+       |                    ^
+    108|       "open",
+    109|       { connectionMode: "cdp", cdpEndpoint: "9222", allowExternalBrows…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |agents-tools| ../../src/agents/tools/agent-browser-tool.provenance.test.ts:116:3 > agent_browser existing-session effect provenance boundary > allows external content to click a Main-verified managed session
+AssertionError: expected [ [ 'status', {} ], [ 'click', …(1) ] ] to deeply equal [ [ 'status', {} ], [ 'click', …(2) ] ]
+
+- Expected
++ Received
+
+@@ -7,11 +7,7 @@
+      "click",
+      {
+        "selector": "#next",
+        "sessionId": "s1",
+      },
+-     {
+-       "gatewayRequestId": undefined,
+-       "toolCallId": "call-1",
+-     },
+    ],
+  ]
+
+ ❯ ../../src/agents/tools/agent-browser-tool.provenance.test.ts:133:31
+    131|     });
+    132|
+    133|     expect(invoke.mock.calls).toEqual([
+       |                               ^
+    134|       ["status", {}],
+    135|       ["click", { sessionId: "s1", selector: "#next" }, { gatewayReque…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |agents-tools| ../../src/agents/tools/agent-browser-tool.provenance.test.ts:205:3 > agent_browser existing-session effect provenance boundary > keeps direct operator clicks on the existing path without a preflight
+AssertionError: expected [ [ 'click', …(1) ] ] to deeply equal [ [ 'click', …(2) ] ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,7 @@
+      "click",
+      {
+        "selector": "#publish",
+        "sessionId": "s1",
+      },
+-     {
+-       "gatewayRequestId": undefined,
+-       "toolCallId": "call-1",
+-     },
+    ],
+  ]
+
+ ❯ ../../src/agents/tools/agent-browser-tool.provenance.test.ts:224:31
+    222|     });
+    223|
+    224|     expect(invoke.mock.calls).toEqual([
+       |                               ^
+    225|       ["click", { sessionId: "s1", selector: "#publish" }, { gatewayRe…
+    226|     ]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |agents-tools| ../../src/agents/tools/agent-browser-tool.provenance.test.ts:229:3 > agent_browser existing-session effect provenance boundary > allows external content to type into a Main-verified managed session without exposing text to status
+AssertionError: expected [ [ 'status', {} ], …(1) ] to deeply equal [ [ 'status', {} ], …(1) ]
+
+- Expected
++ Received
+
+@@ -9,11 +9,7 @@
+        "clear": true,
+        "selector": "#search",
+        "sessionId": "s-type",
+        "text": "secret-looking text",
+      },
+-     {
+-       "gatewayRequestId": undefined,
+-       "toolCallId": "call-1",
+-     },
+    ],
+  ]
+
+ ❯ ../../src/agents/tools/agent-browser-tool.provenance.test.ts:248:31
+    246|     });
+    247|
+    248|     expect(invoke.mock.calls).toEqual([
+       |                               ^
+    249|       ["status", {}],
+    250|       [
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

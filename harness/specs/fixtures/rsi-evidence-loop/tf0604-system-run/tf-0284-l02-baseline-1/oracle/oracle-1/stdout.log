@@ -1,0 +1,10 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0284-l02-baseline-1/grader/openclaw_runtime
+
+ ❯ |unit| ../../src/runtime-core/context-pressure-recovery.test.ts (0 test)
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  03:00:31
+   Duration  988ms (transform 394ms, setup 531ms, import 0ms, tests 0ms, environment 0ms)
+

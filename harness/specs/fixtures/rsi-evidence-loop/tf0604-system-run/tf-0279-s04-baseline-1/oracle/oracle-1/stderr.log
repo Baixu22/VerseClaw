@@ -1,0 +1,76 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/browser-effect-boundary-ledger.test.ts > S04 browser effect boundary ledger > records every action and the residual session-gate gap in the ledger doc
+AssertionError: expected '# s04：agent_browser 的来源、会话归属与副作用边界（核验…' to contain 'residual'
+
+- Expected
++ Received
+
+- residual
++ # s04：agent_browser 的来源、会话归属与副作用边界（核验）
++
++ 日期：2026-10-13（asia/shanghai）。包码：s04（tf-0279）。真实 provider 调用：无。真实浏览器点击/输入副作用：无（策略层核验，不驱动真实会话）。
++
++ 本台账核验**既有** `agent_browser` 的单一边界：`openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts` 由 `openclaw_runtime/src/agents/tools/agent-browser-tool.ts` 接线。它证明的是“某些动作的某些选择会被拒绝”，**不是**“浏览器副作用已被全网强制”。
++
++ ## 两段式闸门（权威来源：代码）
++
++ agent_browser 的执行路径在 `createagentbrowsertool(...).execute` 里按固定顺序过两道闸门，再调用 main 拥有的 gateway bridge：
++
++ 1. **连接模式闸门**（`resolveagentbrowserexternalaccesspolicy`）——在 action 分发之前无条件求值一次。它只读取 `payload.connectionmode`：external/unknown 来源不得选择 `auto-connect` / `cdp` / `external-profile`；`managed` 放行；trusted system / direct operator 完全不受该闸门限制。
++ 2. **会话归属闸门**（`resolveagentbrowsersessioneffectpolicy`，经 `assertsessioneffectallowed` + `shouldpreflightagentbrowsersessioneffect`）——**只在** `action === "click" || action === "type"` 时求值。它先用一次只读 `status` 查询拿到 main 报告的 `connection.mode`，external/unknown 来源只有落在 `managed` 才放行，否则在 bridge 调用前拒绝。
++
++ 判断只依赖来源状态、请求的连接模式、action 身份，以及 main 报告的会话 `connection.mode`。**typed text / selector / clear 不作为策略输入**。
++
++ ## 逐 action 覆盖矩阵
++
++ | action | 是否携带 connectionmode | 连接模式闸门 | 会话归属闸门 | 结论 |
++ |---|---|---|---|---|
++ | open | 是 | 生效（可拒绝外部模式） | 未接入 | 仅连接模式闸门 |
++ | command | 是 | 生效（可拒绝外部模式） | 未接入 | 仅连接模式闸门；**side-effect 残余** |
++ | navigate | 否 | 通过（payload 无连接模式，闸门不触发） | 未接入 | 仅连接模式闸门 |
++ | status | 否 | 通过 | 未接入 | 仅连接模式闸门（只读查询） |
++ | waitforselector | 否 | 通过 | 未接入 | 仅连接模式闸门 |
++ | screenshot | 否 | 通过 | 未接入 | 仅连接模式闸门 |
++ | getconsolemessages | 否 | 通过 | 未接入 | 仅连接模式闸门 |
++ | click | 否 | 通过 | **生效**（要求 managed 会话） | 连接模式闸门 + 会话归属闸门 |
++ | type | 否 | 通过 | **生效**（要求 managed 会话） | 连接模式闸门 + 会话归属闸门 |
++ | evaluate | 否 | 通过 | **未接入** | 仅连接模式闸门；**side-effect 残余** |
++ | close | 否 | 通过 | **未接入** | 仅连接模式闸门；**side-effect 残余** |
++
++ 说明：`buildpayload` 只为 `open` / `command` 透出 `connectionmode`，因此连接模式闸门对这两者是可拒绝的，对其余 action 是“结构在位但 payload 未请求连接模式”的通过态。`click` / `type` 是当前**仅有的**接入会话归属闸门的动作。
++
++ ## 残余（显式记录，不冒充已覆盖）
++
++ - **evaluate**（任意 js 执行，副作用型）：**未**接入会话归属闸门。external/unknown 来源在既有外部会话上仍可 evaluate —— 本包**不**声称覆盖。
++ - **command**（agent-browser cli 任意子命令，含 record / trace / auth / storage / cookies 等副作用）：**未**接入会话归属闸门。同理**不**声称覆盖。
++ - **close**（关闭会话，副作用型）：**未**接入会话归属闸门。同理**不**声称覆盖。
++ - **已创建会话的复用**：若调用方直接传一个既有的外部 `sessionid` 且不请求连接模式，连接模式闸门不触发；只有 `click` / `type` 会去做 main 报告的会话归属核验。其余动作对既有外部会话的复用仍属残余。
++ - **failure-diagnostic 子调用**：失败诊断会额外 invoke `screenshot` / `command`，这些走的是内部路径，不是 agent 直接发起的副作用动作，不在本包断言范围。
++ - 不新增 effectreceipt 断言；沿用既有 journal/recovery 与 main 校验语义。
++
++ ## 不弱化的既有护栏
++
++ - **ssrf / private-network**：`browserssrfpolicyconfig`（`dangerouslyallowprivatenetwork` / `allowedhostnames` / `hostnameallowlist`）与 `browser.enabled` 保持原样，本包不读取、不修改、不放开。
++ - **kill switch**：`browser.enabled` / `evaluateenabled` 等开关未改。
++ - **main-owned 校验**：`electron/services/agent-browser-service.ts` 仍要求非 managed 模式必须 `allowexternalbrowser === true`，并继续校验 cdp endpoint / external profile / executable path / 受控 cli flags；本包不触碰。
++
++ ## 边界与不做项
++
++ - **只有一套策略**：复用既有 `agent-browser-external-access-policy.ts`；不新建第二套 provenance / taint 引擎，不新增浏览器会话权威。
++ - 不改产品默认值/锁/approval；不新增 host route、协议字段、config 字段或依赖。
++ - 不碰真实账户表单，不驱动真实点击/输入副作用；非真人证据。
++ - 本台账**不**声称任何 action 已被全面强制；`narrow` 只表示某条生产路径会拒绝。
++
+
+ ❯ tests/unit/browser-effect-boundary-ledger.test.ts:80:31
+     78|     for (const action of EXTERNAL_TOOL_ACTIONS) expect(doc).toContain(…
+     79|     for (const action of RESIDUAL_SESSION_GATE) expect(doc).toContain(…
+     80|     expect(doc.toLowerCase()).toContain('residual');
+       |                               ^
+     81|   });
+     82| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

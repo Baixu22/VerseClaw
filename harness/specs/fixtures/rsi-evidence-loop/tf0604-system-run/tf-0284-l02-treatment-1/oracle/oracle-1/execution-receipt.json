@@ -1,0 +1,21 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0284-l02",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/context-pressure-recovery.test.ts --maxWorkers=1",
+  "taskDigest": "ee4cd8ecd0204352aec0abc108345e8f3ffcf18e777c79871aedf5a4dba36f88",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-10-31T19:12:04.780Z",
+  "finishedAt": "2026-10-31T19:12:42.746Z",
+  "durationMs": 37963,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": null,
+  "stdoutSha256": "2d29b70bfd3477fcdd59e16373053fc5649e6f6f68294e69adfd50fecf7a2e89",
+  "stderrSha256": "450d0190e47de1ccbb8a2b0c8de0ec517a4483645dac64439edd6b520982e1ec"
+}

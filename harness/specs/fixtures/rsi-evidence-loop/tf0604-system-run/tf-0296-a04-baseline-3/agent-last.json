@@ -1,0 +1,38 @@
+Deliverables are complete and verified. Here is a summary of what I did and what I actually ran.
+
+**Implemented (all 6 targetScope paths)**
+- `harness/specs/tasks/a4-decision-quality-pilot.md` — fixed the `requiredTests` drift: added `tests/unit/decision-quality-auditor.test.ts`, `tests/unit/deep/a4-deep.test.ts`, and `tests/unit/trace-truncation.test.ts`; added `decision-quality-auditor.ts` to `touchedAreas`; appended an A04 re-verification note. Thresholds untouched (`≤ 0.10`, `degrade_to_audit_only`, order A4→A3→A5→A1).
+- `tests/unit/a04-a4-gate-coverage.test.ts` — new coverage guard (mirrors the visible A01–A03 guards): requiredTests entries exist and wire the auditor/a4-deep/truncation tests, criterion 1/3 assertions at the original 10% threshold, criterion 4 degradation-order coverage, and A4 recorded as offline/dev-tool-only with production-caller + latency gates as NO-GO.
+- `harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md` — new A04 task spec (frontmatter + frozen boundary).
+- `docs/dev/harness-gap-closure/a04-decision-quality-gate.md` — criterion→evidence mapping, drift fix, NO-GO residuals.
+- `docs/dev/harness-gap-closure/a04-acceptance.json` — agent-driven record, `decision.status: NO-GO`, criteria 1/3 PASS, 2/4 NO-GO, product locks unchanged.
+- `docs/dev/harness-gap-closure/A04-SHA256SUMS` — 5-row manifest.
+
+**Verdict**: A4 criteria 1 and 3 PASS at the original thresholds; criteria 2 (production audit coverage) and 4 (A4 per-turn cumulative latency) are NO-GO residuals — A4 is the documented offline/dev-tool-only module with no production turn-path caller, so no production caller was wired and no synthetic "coverage" test was fabricated.
+
+**Checks actually run in this workspace** (no `node_modules`, no install, no network):
+- `node scripts/check-spec-lifecycle.mjs` → exit 0 (525 specs).
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md --no-diff` → "Spec is valid".
+- Credential scan (7 secret patterns) over the 4 new/changed text artifacts → 0 hits.
+- `A04-SHA256SUMS` recomputed from file bytes → 5/5 match.
+- Deterministic replay of the A04 guard's assertions against the on-disk test/spec files → 23/23 true.
+- Change-set diff vs the pristine tree → exactly the targetScope additions plus the one spec edit.
+
+Not run here (fails closed without a git checkout / dependencies, and not part of this task's scope): the vitest oracle suites and `harness run --dry-run`; those are executed by the grading harness with the full checkout.
+
+```json
+{
+  "status": "completed",
+  "summary": "A04 re-verified the A4 Decision Quality controlled pilot gate against the original thresholds without redefining them. Fixed the a4 spec's requiredTests drift (added auditor, a4-deep and trace-truncation tests, and the coverage guard) and recorded the honest outcome: criteria 1 (low-quality rate <=10% + degrade_to_audit_only) and 3 (budget-violation response) PASS at the unchanged 10% threshold, while criterion 2 (production audit coverage) and criterion 4 (A4 per-turn cumulative latency) remain NO-GO because A4 is the development-manual-documented offline/dev-tool-only module with no production turn-path caller. Landed six artifacts (spec, guard test, reverify task spec, closure doc, acceptance JSON, SHA256SUMS); product locks unchanged. Executed here: spec-lifecycle check, harness validate --no-diff, credential scan (0 hits), SHA256SUMS recompute (5/5), and a deterministic replay of the guard assertions (23/23). The vitest oracle suites and harness run --dry-run were not executable in this isolated workspace (no node_modules, not a git checkout) and were not fabricated.",
+  "testsRun": [
+    "node scripts/check-spec-lifecycle.mjs (exit 0; 525 task specs carry lifecycleStatus)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md --no-diff (Spec is valid)",
+    "credential scan of the 4 new/changed text artifacts with 7 secret patterns (0 hits)",
+    "A04-SHA256SUMS recompute from on-disk bytes (5/5 rows match)",
+    "deterministic replay of tests/unit/a04-a4-gate-coverage.test.ts assertions against on-disk test/spec files (23/23 resolve true)",
+    "content diff vs pristine tree confirming the change set equals targetScope",
+    "not run: pnpm exec vitest run <A04 oracle suites> (node_modules absent; dependency install/network out of scope)",
+    "not run: node harness/src/cli.mjs run --spec ... --dry-run (fails closed: no git diff base in this non-checkout workspace)"
+  ]
+}
+```

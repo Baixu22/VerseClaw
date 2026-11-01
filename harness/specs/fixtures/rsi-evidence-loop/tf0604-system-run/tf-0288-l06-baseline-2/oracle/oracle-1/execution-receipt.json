@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0288-l06",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/hot-file-write-owner.test.ts --maxWorkers=1",
+  "taskDigest": "9cd85c4ef431451e8621d9676e66401da779a37fe58c347a85a57334a7ddd1f6",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 0,
+  "timedOut": false,
+  "startedAt": "2026-10-31T20:18:49.609Z",
+  "finishedAt": "2026-10-31T20:19:13.485Z",
+  "durationMs": 23876,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "total": 5,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "7e5944af83f67dda69542f2ff3abacf8178bccc4b99bb9087ce469dde3856743",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

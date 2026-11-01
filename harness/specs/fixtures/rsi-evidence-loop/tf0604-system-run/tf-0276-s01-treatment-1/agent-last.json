@@ -1,0 +1,38 @@
+All checks complete. The workspace diff is exactly the 8 in-scope files; no locks/defaults touched, and no stray artifacts remain.
+
+**Result**
+
+```json
+{
+  "status": "completed",
+  "summary": "Implemented S01: upgraded the provider request-envelope guard from shadow-only observation to an opt-in rejectable pre-wire boundary. Added ShadowReceiptOptions.rejectInvalidEnvelope + resolveEnvelopeRejectEnabled() + typed ProviderEnvelopeRejectedError in openclaw_runtime/src/agents/shadow-census.ts, and wired the refusal in buildGuardedModelFetch after the existing digest-only emitShadowWireReceipt and before fetchWithSsrFGuard, so an invalid/unknown envelope under RC-02 is refused with 0 provider fetch calls; default/flag-off stays observational and byte-identical. Reused the RC-02 boundary and receipt store (no new store/registry/router) and left SSRF/timeout/proxy/outbound-budget rules untouched. Delivered the task spec, rule spec, closure doc, acceptance record and SHA256SUMS. Verified with the targeted test (3/3), guard regression (shadow-census + stage1-request-envelope, 15/15), scoped oxlint (exit 0, one pre-existing warning), harness validate + dry-run (pass), comms replay/compare (PASS, 0.00% deltas), credential scan (0 hits) and SHA256SUMS readback (all OK). No product default/lock/approval change. One caveat: openclaw_runtime tsconfig.core.json typecheck reports 3 errors in the unrelated ui/vitest.config.ts; this reproduces identically on the pristine base snapshot (toolchain drift from the pre-existing installed deps), so it is not introduced by this packet.",
+  "testsRun": [
+    "openclaw_runtime: node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts --maxWorkers=1 -> 3 passed / 0 failed (exit 0)",
+    "openclaw_runtime: node scripts/run-vitest.mjs run src/agents/shadow-census.test.ts src/agents/stage1-request-envelope.test.ts --maxWorkers=1 -> 15 passed / 0 failed (exit 0)",
+    "openclaw_runtime: node scripts/run-tsgo.mjs -p tsconfig.core.json --incremental (tsgo:core) -> exit 2; 3 errors in unrelated ui/vitest.config.ts, reproduced identically on the pristine base snapshot",
+    "openclaw_runtime: node_modules/.bin/oxlint src/agents/shadow-census.ts src/agents/provider-transport-fetch.ts src/agents/rc02-envelope-reject.test.ts -> exit 0 (1 pre-existing warning on untouched line)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-envelope-reject.md (with changed-path ownership over a synthetic base diff) -> Spec is valid (exit 0)",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-envelope-reject.md --dry-run -> Harness result: pass (exit 0)",
+    "node scripts/comms/replay.mjs -> wrote current-metrics.json (exit 0)",
+    "node scripts/comms/compare.mjs -> all PASS, 0.00% deltas (exit 0)",
+    "node scripts/check-spec-lifecycle.mjs -> harness-gap-envelope-reject.md now has lifecycleStatus (remaining failures are the other pre-existing HG specs)",
+    "node scripts/check-evidence-refs.mjs -> PASS 157 referenced paths (exit 0)",
+    "credential regex scan over the 8 changed files (sk-/sk-proj-/AKIA/ghp_/xox/phc_/PRIVATE KEY) -> 0 hits",
+    "sha256sum -c docs/dev/harness-gap-closure/S01-SHA256SUMS -> 7/7 OK (exit 0)"
+  ]
+}
+```
+
+Notes on execution: dependencies were never installed; the check commands above ran against the pre-existing installed `node_modules` via temporary junctions that were removed afterward (no network). `git`-dependent harness gates (validate/dry-run, comms replay/compare) required git metadata that this isolated workspace intentionally lacks, so I exercised them in a throwaway scratch repo built from the base snapshot plus this change set — same files, same scripts. `pnpm` dev commands from AGENTS.md could not be run as-is because `node_modules` is absent from the sealed checkout, so I invoked the equivalent underlying scripts directly.
+
+Files changed (all within the task's `targetScope`):
+- `openclaw_runtime/src/agents/shadow-census.ts`
+- `openclaw_runtime/src/agents/provider-transport-fetch.ts`
+- `openclaw_runtime/src/agents/rc02-envelope-reject.test.ts` (new)
+- `harness/specs/tasks/harness-gap-envelope-reject.md` (new)
+- `harness/specs/rules/provider-envelope-reject-boundary.md` (new)
+- `docs/dev/harness-gap-closure/s01-envelope-reject.md` (new)
+- `docs/dev/harness-gap-closure/s01-acceptance.json` (new)
+- `docs/dev/harness-gap-closure/S01-SHA256SUMS` (new)
+
+README four-locale review: no user-visible interface/config change (internal guard wiring), so no README edits — recorded in the acceptance file.

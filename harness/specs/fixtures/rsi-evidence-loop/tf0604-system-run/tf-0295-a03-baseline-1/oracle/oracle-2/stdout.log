@@ -1,0 +1,9 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0295-a03-baseline-1/grader/openclaw_runtime
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  11:42:19
+   Duration  845ms (transform 590ms, setup 410ms, import 15ms, tests 125ms, environment 0ms)
+

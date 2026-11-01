@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0290-g02-baseline-1/grader
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  01:50:00
+   Duration  771ms (transform 57ms, setup 190ms, import 13ms, tests 287ms, environment 0ms)
+

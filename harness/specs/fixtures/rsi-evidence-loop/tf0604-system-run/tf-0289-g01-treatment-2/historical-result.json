@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "RsiHistoricalTrialResult/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "trialId": "tf-0289-g01-treatment-2",
+  "taskId": "tf-0289-g01",
+  "arm": "treatment",
+  "repeat": 2,
+  "baseCommit": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+  "startedAt": "2026-10-31T16:52:36.109Z",
+  "completedAt": "2026-10-31T17:36:24.524Z",
+  "agent": {
+    "exitCode": 0,
+    "timedOut": false,
+    "error": null
+  },
+  "diff": {
+    "added": [
+      "apply.patch",
+      "artifacts/policy-doc-truthfulness/report.json",
+      "docs/dev/harness-gap-closure/G01-SHA256SUMS",
+      "docs/dev/harness-gap-closure/g01-acceptance.json",
+      "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md",
+      "electron/extensions/_ext-bridge.generated.ts",
+      "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+      "src/extensions/_ext-bridge.generated.ts",
+      "tests/unit/error-governance-boundary.test.ts",
+      "tests/unit/error-recovery-next-action.test.ts"
+    ],
+    "changed": [
+      "src/lib/error-model.ts"
+    ],
+    "removed": []
+  },
+  "forbiddenPaths": [],
+  "oracleWrites": [
+    "tests/unit/error-governance-boundary.test.ts",
+    "tests/unit/error-recovery-next-action.test.ts"
+  ],
+  "scrubbedOraclePaths": [
+    "tests/unit/error-governance-boundary.test.ts"
+  ],
+  "preexistingOraclePaths": [
+    "tests/unit/error-governance-boundary.test.ts"
+  ],
+  "grader": {
+    "verdict": "pass",
+    "deterministic": {
+      "grades": [
+        {
+          "counts": {
+            "passed": 44,
+            "failed": 0,
+            "skipped": 0,
+            "total": 44,
+            "source": "parsed",
+            "segments": 1
+          },
+          "graderVersion": "tf0590-graders/v3",
+          "verdict": "pass",
+          "reason": "Locked oracle completed with matching raw test evidence",
+          "evidenceKind": "owned-execution"
+        }
+      ],
+      "evidenceKind": "owned-execution",
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every frozen oracle completed with independent evidence"
+    },
+    "trace": {
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every recorded effect preserves declared authorization and trial boundaries",
+      "evidenceKind": "owned-trace"
+    },
+    "oracleDirectory": "D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0289-g01-treatment-2\\oracle\\task-oracle-oMrRLW"
+  },
+  "failureClass": null,
+  "checks": {
+    "isolatedSnapshot": true,
+    "networkDisabledByCli": true,
+    "hiddenTestsRestored": true,
+    "hiddenTestsHiddenFromAgent": false,
+    "noGitMetadataAtStart": true
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

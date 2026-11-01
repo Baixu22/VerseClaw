@@ -1,0 +1,26 @@
+```json
+{
+  "status": "completed",
+  "summary": "G01 implemented in src/lib/error-model.ts: added a pre-registered ERROR_RECOVERY_TABLE over all 14 AppErrorCode values (retryable + scope + optional action), the fixed-verb vocabulary ERROR_RECOVERY_ACTION_KINDS (retry/reauthenticate/reconfigure/open-settings/contact-support), the helpers isRetryableAppErrorCode/recoveryActionForAppErrorCode, and AppError instance fields retryable + nextAction derived from that table. Only the six self-retry classes (TIMEOUT, RATE_LIMIT, NETWORK, GATEWAY, OVERLOADED, CHANNEL_UNAVAILABLE) are retryable and their action is exactly { kind: 'retry' }; every other class is user-action-required (AUTH_INVALID->reauthenticate, AUTH_PERMANENT->contact-support, PERMISSION->open-settings:permissions, CONVERSATION_STATE->open-settings:conversation, CONFIG->reconfigure, MODEL_NOT_FOUND->reconfigure:model, BILLING->open-settings:billing), and UNKNOWN carries no action so the caller must surface the raw error. Actions are limited to kind(+target) with target bounded to /^[a-z][a-z0-9-]*$/; no command/script/shell/exec/argv field is possible; the existing single envelope (HostResponse/AppError) is reused and the error-governance check still PASSes. Deliverables written: harness/specs/tasks/harness-gap-error-recovery-next-action.md (sha256 a6784362..., identical to the task input digest and with lifecycleStatus: completed), tests/unit/error-recovery-next-action.test.ts (9 tests authored independently - the hidden oracle was never read, copied, or modified), docs/dev/harness-gap-closure/g01-error-recovery-next-action.md, docs/dev/harness-gap-closure/g01-acceptance.json, and docs/dev/harness-gap-closure/G01-SHA256SUMS (5 entries, all re-read and matched). Environment reported honestly: the workspace is a git archive with no .git and no node_modules, so a node_modules junction to the manifest's nodeModulesPath supplied dependencies, and the diff-dependent gates were executed in a scratch git repo seeded from the base tree plus only this packet's changes (base commit 1d05f19) - harness validate 'Spec is valid', harness run --dry-run 'pass', comms replay exit 0, comms compare all PASS at 0.00% delta. tsgo -p tsconfig.web.json requires the gitignored src/extensions/_ext-bridge.generated.ts, which a fresh archive lacks, so node scripts/generate-ext-bridge.mjs was run first (offline no-op stubs) and then typecheck:web exited 0 with zero errors. The pre-existing guard tests/unit/error-governance-boundary.test.ts (sha256 a12da838..., byte-identical to the manifest input digest) was restored so the regression could actually be exercised. Pre-existing failures left untouched: scripts/check-spec-lifecycle.mjs reports 16 unrelated task specs missing lifecycleStatus on this baseline (this packet's spec is compliant), and scripts/verify-evidence-sha256sums.mjs fails identically with and without my change on unrelated stepfun/windows-closeout manifests.",
+  "testsRun": [
+    "node node_modules/vitest/vitest.mjs run tests/unit/error-recovery-next-action.test.ts --maxWorkers=1 (1 file, 9 tests passed, exit 0)",
+    "node node_modules/vitest/vitest.mjs run tests/unit/error-governance-boundary.test.ts --maxWorkers=1 (1 file, 39 tests passed, exit 0)",
+    "node node_modules/vitest/vitest.mjs run tests/unit/error-recovery-next-action.test.ts tests/unit/error-governance-boundary.test.ts --maxWorkers=1 (equivalent of the manifest oracle command; 2 files, 48 tests passed, exit 0)",
+    "node node_modules/vitest/vitest.mjs run tests/unit/error-model.test.ts tests/unit/error-message.test.ts tests/unit/user-error.test.ts --maxWorkers=1 (3 files, 25 tests passed, exit 0)",
+    "node scripts/check-error-governance.mjs (PASS: 16 checks, exit 0)",
+    "node node_modules/eslint/bin/eslint.js src/lib/error-model.ts tests/unit/error-recovery-next-action.test.ts (exit 0)",
+    "node scripts/check-no-bom.mjs (ok, exit 0)",
+    "node scripts/generate-ext-bridge.mjs then tsgo --noEmit -p tsconfig.web.json --composite false (web typecheck, exit 0)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md --no-diff (Spec is valid, exit 0)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md (with real diff base in the scratch git repo, so changed-path ownership ran; Spec is valid, exit 0)",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-error-recovery-next-action.md --dry-run (scratch git repo; Harness result: pass, exit 0)",
+    "node scripts/comms/replay.mjs (scratch git repo; exit 0)",
+    "node scripts/comms/compare.mjs (scratch git repo; all metrics PASS, 0.00% delta, exit 0)",
+    "credential scan with findCredentialShapes from scripts/validate-policy-docs.mjs over the 6 changed files (0 hits)",
+    "docs/dev/harness-gap-closure/G01-SHA256SUMS re-read and recomputed (5/5 entries matched, re-readable=true)",
+    "node scripts/validate-policy-docs.mjs (PASS: 10 checks, exit 0)",
+    "node scripts/check-evidence-refs.mjs (PASS: 157 referenced paths, exit 0)",
+    "node scripts/check-spec-lifecycle.mjs (exit 1: 16 pre-existing unrelated task specs miss lifecycleStatus; this packet's spec is compliant)"
+  ]
+}
+```

@@ -4,14 +4,14 @@
   "actor": "codex/tf0590-oracle-owner",
   "taskId": "tf-0274-e01",
   "commandLine": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
-  "taskDigest": "80742f7fcdaa2aef69d206415b62857b1ba3d5244020307b91d9228ee971f626",
+  "taskDigest": "f18a678531521fb226ae49be4bb4ab0e49bb05572cede55ef661b5dc798fcdfe",
   "sourceInputsVerified": true,
   "testsMutated": false,
   "exitCode": 1,
   "timedOut": false,
-  "startedAt": "2026-10-31T10:15:45.616Z",
-  "finishedAt": "2026-10-31T10:15:48.590Z",
-  "durationMs": 2967,
+  "startedAt": "2026-10-31T16:44:15.735Z",
+  "finishedAt": "2026-10-31T16:44:19.169Z",
+  "durationMs": 3433,
   "claims": {
     "realHuman": false
   },
@@ -23,6 +23,6 @@
     "source": "parsed",
     "segments": 1
   },
-  "stdoutSha256": "09a019aa556394b6997c5adf7a8430e2bc06509c96cd0b218b0385f5ed6d82e4",
-  "stderrSha256": "bd75b56b9f62bc6ed67629da489695799785ddf243831ae67a22de7c940febea"
+  "stdoutSha256": "38232a4eac14ba5c777a59c66eb42e509fe22b1b7c3afe2cc92abb3eae884ec4",
+  "stderrSha256": "f04cfb9f07893ae248242e32b50e0bccffda71851acfd7581ca862b7cd0052dc"
 }

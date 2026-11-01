@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "RsiHistoricalTrialResult/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "trialId": "tf-0288-l06-treatment-2",
+  "taskId": "tf-0288-l06",
+  "arm": "treatment",
+  "repeat": 2,
+  "baseCommit": "4afa1e94a73f200a29713566b5759b92a115f70a",
+  "startedAt": "2026-10-31T20:11:55.233Z",
+  "completedAt": "2026-10-31T20:53:46.674Z",
+  "agent": {
+    "exitCode": 0,
+    "timedOut": false,
+    "error": null
+  },
+  "diff": {
+    "added": [
+      "docs/dev/harness-gap-closure/L06-SHA256SUMS",
+      "docs/dev/harness-gap-closure/l06-acceptance.json",
+      "docs/dev/harness-gap-closure/l06-hot-file-write-owner.md",
+      "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+      "openclaw_runtime/src/agents/hot-file-write-owner.test.ts",
+      "openclaw_runtime/src/agents/hot-file-write-owner.ts"
+    ],
+    "changed": [],
+    "removed": []
+  },
+  "forbiddenPaths": [],
+  "oracleWrites": [
+    "openclaw_runtime/src/agents/hot-file-write-owner.test.ts"
+  ],
+  "scrubbedOraclePaths": [],
+  "preexistingOraclePaths": [],
+  "grader": {
+    "verdict": "pass",
+    "deterministic": {
+      "grades": [
+        {
+          "counts": {
+            "passed": 5,
+            "failed": 0,
+            "skipped": 0,
+            "total": 5,
+            "source": "parsed",
+            "segments": 1
+          },
+          "graderVersion": "tf0590-graders/v3",
+          "verdict": "pass",
+          "reason": "Locked oracle completed with matching raw test evidence",
+          "evidenceKind": "owned-execution"
+        }
+      ],
+      "evidenceKind": "owned-execution",
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every frozen oracle completed with independent evidence"
+    },
+    "trace": {
+      "graderVersion": "tf0590-graders/v3",
+      "verdict": "pass",
+      "reason": "Every recorded effect preserves declared authorization and trial boundaries",
+      "evidenceKind": "owned-trace"
+    },
+    "oracleDirectory": "D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0288-l06-treatment-2\\oracle\\task-oracle-7AeSGr"
+  },
+  "failureClass": null,
+  "checks": {
+    "isolatedSnapshot": true,
+    "networkDisabledByCli": true,
+    "hiddenTestsRestored": true,
+    "hiddenTestsHiddenFromAgent": false,
+    "noGitMetadataAtStart": true
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

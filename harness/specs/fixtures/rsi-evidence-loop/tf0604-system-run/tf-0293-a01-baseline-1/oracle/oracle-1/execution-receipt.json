@@ -1,0 +1,28 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0293-a01",
+  "commandLine": "pnpm exec vitest run tests/unit/tool-registration.test.ts tests/unit/policy-light-snapshotter.test.ts tests/unit/shadow-write-event-recorder.test.ts tests/unit/trace-namespace-enforcement.test.ts tests/unit/performance-budgets.test.ts tests/unit/deprecation-counters.test.ts tests/unit/a01-a1-gate-coverage.test.ts --maxWorkers=1",
+  "taskDigest": "22d5b56fa946e02f3a26e369df916c05d4ecf8187a633bb083ba78536c150425",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T00:16:49.540Z",
+  "finishedAt": "2026-11-01T00:16:59.843Z",
+  "durationMs": 10303,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": {
+    "passed": 82,
+    "failed": 6,
+    "skipped": 0,
+    "total": 88,
+    "source": "parsed",
+    "segments": 1
+  },
+  "stdoutSha256": "278f5b0ad873cc729a14f663273333481a39168e022b60f9f99a6068acd47bbe",
+  "stderrSha256": "11a4410609ea03ce2561ab28650fea8f1022122db3119788b587f1bcc90ede78"
+}

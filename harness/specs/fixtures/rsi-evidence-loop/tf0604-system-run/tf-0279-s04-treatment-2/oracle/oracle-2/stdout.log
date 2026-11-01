@@ -1,0 +1,14 @@
+
+ RUN  v4.1.7 D:/tmp/rsi-tf0604-run5/trials/tf-0279-s04-treatment-2/grader/openclaw_runtime
+
+ ❯ |agents-tools| ../../src/agents/tools/agent-browser-tool.provenance.test.ts (24 tests | 4 failed) 174ms
+     × preserves direct operator external browser selection 5ms
+     × allows external content to click a Main-verified managed session 2ms
+     × keeps direct operator clicks on the existing path without a preflight 1ms
+     × allows external content to type into a Main-verified managed session without exposing text to status 1ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  4 failed | 38 passed (42)
+   Start at  06:13:50
+   Duration  29.09s (transform 21.58s, setup 979ms, import 26.14s, tests 1.13s, environment 0ms)
+

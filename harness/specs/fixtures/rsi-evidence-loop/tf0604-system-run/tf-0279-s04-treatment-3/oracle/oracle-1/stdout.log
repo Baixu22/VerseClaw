@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0279-s04-treatment-3/grader
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  06:27:57
+   Duration  762ms (transform 140ms, setup 456ms, import 34ms, tests 6ms, environment 0ms)
+

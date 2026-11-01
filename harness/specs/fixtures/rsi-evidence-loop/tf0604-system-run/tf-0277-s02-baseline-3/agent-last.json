@@ -1,0 +1,49 @@
+Everything is complete and verified. Final state:
+
+**Deliverables (6 files, all in `targetScope`)**
+- `docs/dev/harness-gap-closure/s02-sink-ledger.md` — per-sink enforcement ledger (narrow / source-dependent / classification-only) with policyFile/exportedSymbol/callSite/rejectsWith, the explicit "不是全网强制" claim, the six residual `network-send` exits, and a machine-readable JSON ledger block.
+- `tests/unit/sensitive-sink-residual-ledger.test.ts` — executable guard: forward-resolves every enforcement point against the working tree, pins the six residual exits as existing-and-ungated, reverse-scans `openclaw_runtime/src` so a newly wired provenance gate must be registered, parses the JSON ledger block, and asserts the not-global claim.
+- `harness/specs/tasks/harness-gap-sink-ledger.md` — task spec (gateway-backend-communication, lifecycleStatus: active).
+- `harness/specs/rules/sensitive-sink-ledger-boundary.md` — rule spec.
+- `docs/dev/harness-gap-closure/s02-acceptance.json` — acceptance record.
+- `docs/dev/harness-gap-closure/S02-SHA256SUMS` — digests (5/5 readable).
+
+**Checks actually run (all exit 0 unless noted)**
+- `node node_modules/vitest/vitest.mjs run tests/unit/sensitive-sink-residual-ledger.test.ts` → 1 file, 6 passed
+- `... tests/unit/sensitive-sink-residual-ledger.test.ts tests/unit/external-content-provenance.test.ts` → 2 files, 14 passed
+- `... + tests/unit/harness-specs.test.ts` → 3 files, 57 passed
+- `tsgo --noEmit -p tsconfig.test.json --composite false` → 0
+- `eslint tests/unit/sensitive-sink-residual-ledger.test.ts` → 0
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-sink-ledger.md` (both `--no-diff` and diff-aware in a throwaway git fixture) → "Spec is valid"; `run --dry-run` → pass
+- `node scripts/check-no-bom.mjs` → ok
+- `node scripts/scan-pattern.mjs` credential scan over the new files → 0 hits
+- `scripts/check-spec-lifecycle.mjs` → still fails only on 4 pre-existing harness-gap specs; the new S02 spec reports 0 errors
+
+**Notes / residuals**
+- Dependencies were absent, so I temporarily junctioned a populated sibling install to run the tooling, then removed the links; the workspace has no `node_modules` and no scratch files.
+- Pre-existing, unrelated red/known: `tsgo:core:test` baseline and `check-harness-gap-baseline.mjs` (6 pilot-spec digest/anchor drift). Neither was widened or touched.
+- `command-exec` remains `source-dependent`/`constrain` — deliberately not upgraded to a rejection, and the ledger says so.
+- No product default/lock/approval change; no second provenance engine. README four locales reviewed, no user-visible change, so not modified.
+
+One thing I could not do: confirm there isn't an existing `tests/unit/sensitive-sink-enforcement-drift.test.ts` I should have extended — comments reference it but the file is absent from this checkout, so I covered both forward-resolution and reverse-sweep in the new ledger test.
+
+```json
+{
+  "status": "completed",
+  "summary": "S02 (TF-0277) implemented: added docs/dev/harness-gap-closure/s02-sink-ledger.md (per-sink enforcement ledger with the explicit '不是全网强制' claim, six residual network-send exits, and a machine-readable JSON ledger block), tests/unit/sensitive-sink-residual-ledger.test.ts (forward-resolves every declared enforcement point against the working tree, pins the six residual exits as existing-and-ungated, reverse-scans openclaw_runtime/src so any newly wired provenance gate must be registered, and parses the ledger block), harness/specs/tasks/harness-gap-sink-ledger.md, harness/specs/rules/sensitive-sink-ledger-boundary.md, docs/dev/harness-gap-closure/s02-acceptance.json, and docs/dev/harness-gap-closure/S02-SHA256SUMS (5/5 verifiable). No second provenance engine, no product default/lock/approval change; command-exec stays source-dependent/constrain. Dependencies were absent, so a populated sibling install was junctioned temporarily to run tooling and then removed. Pre-existing unrelated reds (tsgo:core:test baseline, check-harness-gap-baseline digest/anchor drift, four harness-gap specs lacking lifecycleStatus) were left untouched.",
+  "testsRun": [
+    "node node_modules/vitest/vitest.mjs run tests/unit/sensitive-sink-residual-ledger.test.ts (1 file, 6 passed)",
+    "node node_modules/vitest/vitest.mjs run tests/unit/sensitive-sink-residual-ledger.test.ts tests/unit/external-content-provenance.test.ts (2 files, 14 passed)",
+    "node node_modules/vitest/vitest.mjs run tests/unit/sensitive-sink-residual-ledger.test.ts tests/unit/external-content-provenance.test.ts tests/unit/harness-specs.test.ts (3 files, 57 passed)",
+    "node node_modules/@typescript/native-preview/bin/tsgo.js --noEmit -p tsconfig.test.json --composite false (exit 0)",
+    "node node_modules/eslint/bin/eslint.js tests/unit/sensitive-sink-residual-ledger.test.ts (exit 0)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-sink-ledger.md --no-diff (Spec is valid)",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-sink-ledger.md (diff-aware in throwaway git fixture; Spec is valid)",
+    "node harness/src/cli.mjs run --spec harness/specs/tasks/harness-gap-sink-ledger.md --dry-run (pass)",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-sink-ledger.md (exit 0)",
+    "node scripts/check-no-bom.mjs (ok)",
+    "node scripts/scan-pattern.mjs credential scan over the six new files (0 hits)",
+    "node scripts/check-spec-lifecycle.mjs (exit 1 on 4 pre-existing harness-gap specs only; 0 errors for harness-gap-sink-ledger)"
+  ]
+}
+```

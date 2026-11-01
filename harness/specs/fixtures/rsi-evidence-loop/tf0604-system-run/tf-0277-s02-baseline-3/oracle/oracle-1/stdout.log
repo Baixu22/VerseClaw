@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0277-s02-baseline-3/grader
+
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  05:16:27
+   Duration  1.58s (transform 152ms, setup 461ms, import 41ms, tests 582ms, environment 0ms)
+

@@ -1,0 +1,21 @@
+{
+  "producerRole": "grader-owned-runner",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-oracle-owner",
+  "taskId": "tf-0281-s06",
+  "commandLine": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/memory-effect-receipt.test.ts src/agents/apply-patch-effect-receipt.test.ts src/agents/stage1-effect-receipt.test.ts --maxWorkers=1",
+  "taskDigest": "1a75585c4cd82689456bcff68e96758ad428f3fc8737d9764dcd47925bdd1903",
+  "sourceInputsVerified": true,
+  "testsMutated": false,
+  "exitCode": 1,
+  "timedOut": false,
+  "startedAt": "2026-11-01T05:03:39.033Z",
+  "finishedAt": "2026-11-01T05:03:43.298Z",
+  "durationMs": 4259,
+  "claims": {
+    "realHuman": false
+  },
+  "counts": null,
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "0c312c95914b1a73431c85980687f0e5a38cb718fbe3e8269f0733aad34ca0be"
+}

@@ -1,0 +1,32 @@
+Done. Here's the outcome.
+
+**Result**
+```json
+{
+  "status": "completed",
+  "summary": "G02 landed as a working-tree change set (23 files: 17 modified, 6 added; no deletions). (1) All 519 specs under harness/specs/tasks/** now declare lifecycleStatus in active|completed|archived — the 17 sealed harness-gap packets that were missing it were archived in place, not deleted. (2) Added one doc-gardening rule harness/specs/rules/spec-doc-gardening-boundary.md bound to exactly one executable check, scripts/check-spec-lifecycle.mjs (already wired as pnpm harness:specs:lifecycle); no parallel spec index or allowlist exists. (3) Added tests/unit/spec-doc-gardening.test.ts pinning the lifecycle vocabulary, archive-in-place, the AGENTS.md <=400-line router budget, and the single-rule/no-second-source-of-truth invariant. (4) AGENTS.md was already a 185-line router into harness/specs and needed no edit. (5) Recorded agent-driven evidence at docs/dev/harness-gap-closure/g02-spec-doc-gardening.md, g02-acceptance.json and G02-SHA256SUMS (README doc-sync: no user-visible or interface change, so no copy update was required). No product default, product lock, rule semantics or source-retention policy changed. Environment limits, reported rather than papered over: this isolated checkout has no .git directory and no installed dependencies, so vitest and any diff-based harness run/dry-run could not execute; the test's assertions were instead exercised against the tree with the repository's own parser, and harness validation ran with --no-diff.",
+  "testsRun": [
+    "node scripts/check-spec-lifecycle.mjs -> exit 0, '[specs] lifecycle status present for 519 task specs.'",
+    "node scripts/validate-policy-docs.mjs --quiet -> exit 0, PASS: 10 checks",
+    "node scripts/check-error-governance.mjs --quiet -> exit 0, PASS: 16 checks",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md --no-diff -> exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-rate-circuit-breaker.md --no-diff -> exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-sink-ledger.md --no-diff -> exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs validate --spec harness/specs/rules/spec-doc-gardening-boundary.md --no-diff -> exit 0, 'Spec is valid'",
+    "node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md -> exit 0, no missing scenarios/rules",
+    "node <tmp>/g02_probe.mjs <root> -> exit 0, {vocabulary:[active,completed,archived], lifecycleErrors:0, sealed:17, sealedProblems:0, agentsLines:185, routes:true, claiming:['harness/specs/rules/spec-doc-gardening-boundary.md'], allowlist:false} (same assertions as tests/unit/spec-doc-gardening.test.ts, run via the repo parser because vitest is unavailable offline)",
+    "G02-SHA256SUMS re-read -> exit 0, checked=5 matched=5",
+    "credential scan over the 4 new text artifacts via scripts/validate-policy-docs.mjs#findCredentialShapes -> exit 0, 0 hits",
+    "NOT RUN: node node_modules/vitest/vitest.mjs run tests/unit/spec-doc-gardening.test.ts (dependencies not installed; installing is out of scope)",
+    "NOT RUN: node harness/src/cli.mjs run --spec ... --dry-run / diff-based validate (no .git in this checkout; fails closed with 'invalid or missing diff base ref: origin/main')"
+  ]
+}
+```
+
+**Changed Files**
+- `harness/specs/rules/spec-doc-gardening-boundary.md`, `harness/specs/tasks/harness-gap-spec-doc-gardening.md`, `tests/unit/spec-doc-gardening.test.ts`
+- `docs/dev/harness-gap-closure/g02-spec-doc-gardening.md`, `g02-acceptance.json`, `G02-SHA256SUMS`
+- The 17 `harness/specs/tasks/harness-gap-*.md` packets: added `lifecycleStatus: archived`
+
+**Pre-existing, untouched**
+- The `harness-gap-closure` docs hash manifests (e.g. `G01-SHA256SUMS`) now show drift on the 17 edited specs. Per `repository-artifact-retention` that manifest continues to identify its original candidate, so I deliberately did not re-sign it. The same-class `check-harness-gap-baseline.mjs` source-digest drift is identical in the pristine `base` snapshot (72 errors in both), confirming it predates this change.

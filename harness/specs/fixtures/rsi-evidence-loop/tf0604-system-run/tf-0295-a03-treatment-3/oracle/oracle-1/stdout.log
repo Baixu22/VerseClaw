@@ -1,0 +1,13 @@
+
+ RUN  v4.1.1 D:/tmp/rsi-tf0604-run5/trials/tf-0295-a03-treatment-3/grader
+
+ ❯ tests/unit/a03-a3-gate-coverage.test.ts (0 test)
+ ❯ tests/unit/performance-budgets.test.ts (0 test)
+ ❯ tests/unit/anomaly-classifier.test.ts (0 test)
+ ❯ tests/unit/deprecation-counters.test.ts (0 test)
+
+ Test Files  4 failed (4)
+      Tests  no tests
+   Start at  11:53:37
+   Duration  10.21s (transform 2.19s, setup 0ms, import 0ms, tests 0ms, environment 4.41s)
+

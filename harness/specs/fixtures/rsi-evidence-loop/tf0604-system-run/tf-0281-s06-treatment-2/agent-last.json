@@ -1,0 +1,24 @@
+All work is complete and verified.
+
+**Status**: completed
+
+**Summary**
+
+Implemented S06 so runtime memory self-edit writes (`memory_update` / `memory_forget` / `memory_strengthen`) correlate with the existing RC-04 effect-receipt recovery loop — no second effect store.
+
+- Added `openclaw_runtime/src/runtime-core/memory-effect-receipt.ts`: a digest-only receipt builder plus fail-open `recordMemoryEffect`. It hands a structural `MemoryEffectReceiptSink` view to RC-04, so `runtime-core` never imports `agents/` at runtime (same pattern as `apply-patch-effect-receipt.ts`).
+- Wired `openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts` at each write decision point: `applied` on success, `not_applied` before any effect (e.g. `persistFact` rejected), `unknown` after a partial effect (fact appended but invalidation / supersedes relation failed) — never disguised as applied. The change is strictly additive (750 → 775 lines, no base line altered).
+- Idempotency key `memory-effect:v1:<sha256(action⋮factId⋮sessionKey⋮runId⋮toolCallId)>` is outcome-independent, so replaying an intent is an identical-content duplicate (0 duplicate effects), and the `proposal` carries only `domain/action/factId(/newFactId)` with actor/effect in `stage1Context`.
+- Authored the deliverables: the task spec, the S06 ledger doc, the acceptance record, and `S06-SHA256SUMS`.
+
+Two honesty notes: I did not author `openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts` (the grader injects the sealed oracle there), and no git metadata exists in this offline trial copy, so the diff-based `harness validate/run` (which require `origin/main`) and `comms:*` could not run here — those are recorded as residual, not claimed green.
+
+**Tests Run**
+- `openclaw_runtime: run-vitest src/agents/apply-patch-effect-receipt.test.ts src/agents/stage1-effect-receipt.test.ts --maxWorkers=1` → 2 files, 19 tests, 0 failed (the preexisting guard regression, digests verified against the manifest).
+- `vitest run tests/unit/runtime-memory-self-edit.test.ts tests/unit/runtime-memory-self-edit-persistence.test.ts tests/unit/memory-self-edit-adapter.test.ts --maxWorkers=1` → 3 files, 34 tests, 0 failed.
+- Local behavioral probe (temporary, removed after run): key outcome-independence, digest-only proposal, fail-open on missing/throwing sink, real `EffectReceiptStore` replay → `duplicate:true` same id, and `memory_update` writing an `applied` receipt → 5 tests, 0 failed.
+- `openclaw_runtime: node scripts/run-tsgo.mjs` scoped over the two touched source files → exit 0.
+- `openclaw_runtime: node scripts/run-oxlint.mjs src/runtime-core/memory-effect-receipt.ts src/runtime-core/memory-self-edit-tools.ts` → exit 0.
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-memory-effect-receipt.md --no-diff` → "Spec is valid".
+- `harness/src/rules.mjs scanBackendCommunicationBoundary` on touched files → 0 failures.
+- `S06-SHA256SUMS` re-read and cross-checked → all consistent.

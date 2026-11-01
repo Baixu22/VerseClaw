@@ -1,0 +1,41 @@
+Implemented the S07 bounded, revocable verifier completion-verdict entry and verified it.
+
+## What Changed
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts` — reuses `evaluateEvidenceVerifier` (no second authority layer). Maps `completed→approved`, `insufficient_evidence→insufficient-evidence`, everything else→`rejected`, tasks outside `scope.taskIds`→`out-of-scope`. Only `approved` yields the single `node→done` transition via `verifierCompletionTransition`; `revokeVerifierCompletionVerdict` returns `{from:"done", to:priorStatus}` (and `null` for non-approved). Record is digest-only (`taskId/verdict/evidenceDigest/findingCodes/priorStatus`, sha256 over decision + sorted evidence ids + finding codes) with explicit `grantsPublish:false`/`grantsProductLock:false`.
+- `openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts` — 7 tests over approved / insufficient / out-of-scope / rejected / revoke / digest-only / determinism.
+- `harness/specs/tasks/harness-gap-verifier-completion-verdict.md` — task spec (byte-identical to the contextRef digest `aa86ff9a…`).
+- `docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md`, `s07-acceptance.json`, `S07-SHA256SUMS`.
+
+Change set matches `targetScope` exactly (6 added files; nothing else modified). The pre-existing `evidence-verifier.test.ts` is absent in this snapshot (hidden-oracle scrub) — I did not touch it and did not inspect any oracle test.
+
+## Checks Actually Run
+- `vitest 4.1.7 run` over my test file (real toolchain borrowed from an existing local `node_modules`, no install/network): **1 file, 7 tests passed, exit 0**.
+- Differential driver vs the published reference module over 5 decision cases: **5/5 identical** verdict/digest/findingCodes/transition/revocation.
+- Isolated `tsgo` typecheck over the module + `evidence-verifier/evidence/types`: **exit 0** (negative control assigning the fn to `number` fails, so the check is real).
+- `oxlint 1.67.0` on both touched TS files: **exit 0**.
+- `node harness/src/cli.mjs validate --spec … --no-diff`: **Spec is valid, exit 0**.
+- `node scripts/check-no-bom.mjs`: **ok**.
+- SHA256SUMS recompute: **5 rows, 0 mismatches**; credential scan over 5 files: **0 hits**.
+
+## Not Run (recorded as residual, not claimed)
+- `comms:replay`/`comms:compare` and `harness run --dry-run` — both require a git repository (this workspace has none); I confirmed the git error directly.
+- `pnpm run typecheck`/`pnpm test` full-project gates — require the workspace dependency install, forbidden by the task.
+
+No dependencies installed, no network used, no product defaults/locks/approvals changed, no loops/retries.
+
+```json
+{
+  "status": "completed",
+  "summary": "Added the S07 bounded, revocable verifier completion-verdict entry (verifier-completion-verdict.ts + test) reusing evaluateEvidenceVerifier, plus the task spec and S07 evidence docs/SHA256SUMS. Only approved produces the single node->done transition, out-of-scope tasks get no verdict/transition, revocation restores priorStatus, and the digest-only record grants no publish/product-lock authority. Checks that could run without installing dependencies or using the network pass; comms and harness run --dry-run are blocked by the absent git repository and are recorded as residual.",
+  "testsRun": [
+    "vitest 4.1.7 run --root <workspace>/openclaw_runtime (verifier-completion-verdict.test.ts): 1 file, 7 tests passed, exit 0",
+    "node differential driver: verifier-completion-verdict.ts vs published reference module, 5/5 cases identical, exit 0",
+    "tsgo -p <isolated tsconfig> over verifier-completion-verdict.ts + evidence-verifier/evidence/types: exit 0",
+    "oxlint 1.67.0 verifier-completion-verdict.ts verifier-completion-verdict.test.ts: exit 0",
+    "node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-verifier-completion-verdict.md --no-diff: \"Spec is valid\", exit 0",
+    "node scripts/check-no-bom.mjs: ok, exit 0",
+    "sha256 recompute vs docs/dev/harness-gap-closure/S07-SHA256SUMS: 5 rows, 0 mismatches",
+    "credential regex scan over 5 authored files: 0 hits"
+  ]
+}
+```

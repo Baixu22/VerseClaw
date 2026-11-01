@@ -1,0 +1,32 @@
+All deliverables are in place and verified. Here's the structured result.
+
+**Status: completed**
+
+**Summary**
+
+S02 (`tf-0277-s02`, slot HG16) implements an executable sensitive-sink coverage ledger with a residual network-send egress guard. I did **not** build a second provenance engine: the ledger is an accounting/verification layer over the existing `shared/security/content-provenance.ts`, which is left unchanged.
+
+Delivered artifacts:
+- `tests/unit/sensitive-sink-residual-ledger.test.ts` — the executable half. Resolves every declared enforcement point (policyFile, exported symbol, production call site, denial style) against the working tree; pins the `network-send` gate to exactly the cross-context outbound policy; pins six residual egress surfaces as *outside* the gate; reverse-sweeps the runtime so any new provenance import must be registered; re-reads `S02-SHA256SUMS`; and scans for credential shapes.
+- `docs/dev/harness-gap-closure/s02-sink-ledger.md` — per-sink ledger (narrow / source-dependent) with authoritative code refs, the six residual exits, and an explicit `NOT-WHOLE-NETWORK-ENFORCEMENT` statement ("不是全网强制").
+- `docs/dev/harness-gap-closure/s02-acceptance.json` — `wholeNetworkEnforcement: false`, seven sink rows, six residual surfaces with `provenanceReferences: 0`, and honest gate status.
+- `harness/specs/tasks/harness-gap-sink-ledger.md` + `harness/specs/rules/sensitive-sink-ledger-boundary.md` — spec and rule.
+- `docs/dev/harness-gap-closure/S02-SHA256SUMS` — verifies clean.
+
+Verified facts from code (not self-report): sinks `secret-read`, `network-send`, `external-write`, `browser-effect`(×2), `credential-use` reject (policy-throw / call-site-throw); `command-exec` only constrains; the sole `network-send` gate is `enforceCrossContextPolicy` in `outbound-policy.ts` called from `message-action-runner.ts`. The six residuals (`outbound-send-service`, `message-action-dispatch`, cli-runtime `channel-outbound-send`, `sessions/send-policy`, `auto-reply/send-policy`, `server-broadcast`) each contain **zero** provenance references.
+
+**Tests run** (exact commands and outcomes):
+- `node harness/src/cli.mjs validate --spec harness/specs/tasks/harness-gap-sink-ledger.md --no-diff` → exit 0, "Spec is valid"
+- `node harness/src/cli.mjs context --spec harness/specs/tasks/harness-gap-sink-ledger.md` → exit 0, no missing scenarios/rules
+- `sha256sum -c docs/dev/harness-gap-closure/S02-SHA256SUMS` → exit 0, all 5 files OK
+- `node scripts/check-no-bom.mjs` → exit 0, `ok`
+- `node scripts/check-evidence-refs.mjs` → exit 0, `PASS 157 referenced path(s)`
+- Equivalent offline probe (`node --experimental-strip-types`, dependency-free replay of the vitest assertions: kind set, per-sink point resolution, reverse sweep, residual pinning, manifest re-read) → `ALL PASS`
+- Credential scan over the six artifacts (sk-/AKIA/ghp_/xox/bearer/private-key patterns) → 0 hits
+
+Not run (recorded honestly, not claimed as passed):
+- `vitest run tests/unit/sensitive-sink-residual-ledger.test.ts`, `pnpm run typecheck`, `eslint` — this isolated workspace has no `node_modules`, and dependencies were not to be installed. The test file itself parses cleanly under Node (only `ERR_MODULE_NOT_FOUND: vitest`).
+- `harness run --dry-run` — the workspace has no `.git`, so the default diff base `origin/main` doesn't resolve.
+- Pre-existing: `pnpm harness:specs:lifecycle` reports 4 unrelated specs missing `lifecycleStatus` (`harness-gap-envelope-reject`, `-paired-ablation`, `-reliability-aggregation`, `-trace-cost-sampling`); not introduced by S02.
+
+No product defaults/locks/approvals changed; README four-locale review found no user-visible interface change, so READMEs are unchanged. Evidence is labeled `driven_by: agent`.
