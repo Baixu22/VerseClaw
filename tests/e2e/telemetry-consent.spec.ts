@@ -3,8 +3,14 @@ import { completeSetup, expect, test } from './fixtures/electron';
 
 async function readTelemetryEnabled(page: Page): Promise<boolean> {
   return await page.evaluate(async () => {
-    const settings = await window.electron.ipcRenderer.invoke('settings:getAll');
-    return Boolean((settings as { telemetryEnabled?: boolean } | undefined)?.telemetryEnabled);
+    if (!window.verseClaw) throw new Error('verseClaw.hostInvoke unavailable');
+    const response = await window.verseClaw.hostInvoke<{ telemetryEnabled?: boolean }>({
+      id: crypto.randomUUID(),
+      module: 'settings',
+      action: 'getAll',
+    });
+    if (!response.ok) throw new Error(response.error?.message || 'settings.getAll failed');
+    return Boolean(response.data?.telemetryEnabled);
   });
 }
 

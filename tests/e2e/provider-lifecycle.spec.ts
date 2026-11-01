@@ -7,17 +7,27 @@ const TEST_PROVIDER_LABEL = 'Moonshot E2E';
 
 async function seedTestProvider(page: Parameters<typeof completeSetup>[0]): Promise<void> {
   await page.evaluate(async ({ providerId, providerLabel }) => {
+    if (!window.verseClaw) throw new Error('verseClaw.hostInvoke unavailable');
     const now = new Date().toISOString();
-    await window.electron.ipcRenderer.invoke('provider:save', {
-      id: providerId,
-      name: providerLabel,
-      type: 'moonshot',
-      baseUrl: 'https://api.moonshot.cn/v1',
-      model: 'kimi-k2.6',
-      enabled: true,
-      createdAt: now,
-      updatedAt: now,
+    const response = await window.verseClaw.hostInvoke<{ success: boolean; error?: string }>({
+      id: crypto.randomUUID(),
+      module: 'providers',
+      action: 'save',
+      payload: {
+        config: {
+          id: providerId,
+          name: providerLabel,
+          type: 'moonshot',
+          baseUrl: 'https://api.moonshot.cn/v1',
+          model: 'kimi-k2.6',
+          enabled: true,
+          createdAt: now,
+          updatedAt: now,
+        },
+      },
     });
+    if (!response.ok) throw new Error(response.error?.message || 'providers.save failed');
+    if (!response.data?.success) throw new Error(response.data?.error || 'providers.save returned success=false');
   }, { providerId: TEST_PROVIDER_ID, providerLabel: TEST_PROVIDER_LABEL });
 }
 

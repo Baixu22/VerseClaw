@@ -38,8 +38,14 @@ async function ensureSwitchState(toggle: Locator, checked: boolean): Promise<voi
 
 async function readAppSettingFlag(page: Page, key: string): Promise<boolean> {
   return page.evaluate(async (settingKey) => {
-    const settings = await window.electron.ipcRenderer.invoke('settings:getAll');
-    return Boolean((settings as Record<string, unknown> | undefined)?.[settingKey]);
+    if (!window.verseClaw) throw new Error('verseClaw.hostInvoke unavailable');
+    const response = await window.verseClaw.hostInvoke<Record<string, unknown>>({
+      id: crypto.randomUUID(),
+      module: 'settings',
+      action: 'getAll',
+    });
+    if (!response.ok) throw new Error(response.error?.message || 'settings.getAll failed');
+    return Boolean(response.data?.[settingKey]);
   }, key);
 }
 

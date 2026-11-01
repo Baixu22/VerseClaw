@@ -2286,13 +2286,13 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                 title={t('about.basedOn')}
                 control={(
                   <div className="sp-row-links">
-                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://claw-x.com')}>
+                    <SettingsInlineLink onClick={() => void hostApi.shell.openExternal('https://claw-x.com')}>
                       {t('about.docs')}
                     </SettingsInlineLink>
-                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/Verse-Claw')}>
+                    <SettingsInlineLink onClick={() => void hostApi.shell.openExternal('https://github.com/ValueCell-ai/Verse-Claw')}>
                       {t('about.github')}
                     </SettingsInlineLink>
-                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://docs.openclaw.ai/')}>
+                    <SettingsInlineLink onClick={() => void hostApi.shell.openExternal('https://docs.openclaw.ai/')}>
                       {t('about.faq')}
                     </SettingsInlineLink>
                   </div>

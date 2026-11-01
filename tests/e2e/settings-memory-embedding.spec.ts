@@ -11,8 +11,14 @@ async function ensureSwitchState(toggle: Locator, checked: boolean): Promise<voi
 
 async function readMemoryEmbeddingEnabled(page: Page): Promise<boolean> {
   return await page.evaluate(async () => {
-    const settings = await window.electron.ipcRenderer.invoke('settings:getAll');
-    return Boolean((settings as { memoryEmbeddingEnabled?: boolean } | undefined)?.memoryEmbeddingEnabled);
+    if (!window.verseClaw) throw new Error('verseClaw.hostInvoke unavailable');
+    const response = await window.verseClaw.hostInvoke<{ memoryEmbeddingEnabled?: boolean }>({
+      id: crypto.randomUUID(),
+      module: 'settings',
+      action: 'getAll',
+    });
+    if (!response.ok) throw new Error(response.error?.message || 'settings.getAll failed');
+    return Boolean(response.data?.memoryEmbeddingEnabled);
   });
 }
 

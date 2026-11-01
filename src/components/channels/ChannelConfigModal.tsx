@@ -419,15 +419,9 @@ export function ChannelConfigModal({
   const openDocs = () => {
     if (!meta?.docsUrl) return;
     const url = t(meta.docsUrl);
-    try {
-      if (window.electron?.openExternal) {
-        window.electron.openExternal(url);
-      } else {
-        window.open(url, '_blank');
-      }
-    } catch {
+    hostApi.shell.openExternal(url).catch(() => {
       window.open(url, '_blank');
-    }
+    });
   };
 
   const isFormValid = () => {

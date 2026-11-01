@@ -99,14 +99,28 @@ async function seedTokenUsageTranscripts(homeDir: string): Promise<void> {
   );
 }
 
+type UsageHistoryRow = { sessionId?: string; totalTokens?: number; agentId?: string; provider?: string };
+
+async function readUsageHistory(page: Page): Promise<UsageHistoryRow[]> {
+  return page.evaluate(async () => {
+    if (!window.verseClaw) throw new Error('verseClaw.hostInvoke unavailable');
+    const response = await window.verseClaw.hostInvoke<Array<{ sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }>>({
+      id: crypto.randomUUID(),
+      module: 'usage',
+      action: 'recentTokenHistory',
+      payload: { limit: 20 },
+    });
+    if (!response.ok) throw new Error(response.error?.message || 'usage.recentTokenHistory failed');
+    return response.data;
+  });
+}
+
 test.describe('Verse Claw token usage history', () => {
 
   async function validateUsageHistory(page: Page): Promise<void> {
-    const usageHistory = await page.evaluate(async () => {
-      return window.electron.ipcRenderer.invoke('usage:recentTokenHistory', 20) as Promise<Array<{ sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }>>;
-    });
+    const usageHistory = await readUsageHistory(page);
     if (!Array.isArray(usageHistory) || usageHistory.length === 0) {
-      throw new Error('No usage history found in IPC usage:recentTokenHistory');
+      throw new Error('No usage history found in host:invoke usage.recentTokenHistory');
     }
 
     const hasSeededEntries = usageHistory.some((entry) =>
@@ -116,7 +130,7 @@ test.describe('Verse Claw token usage history', () => {
       ),
     );
     if (!hasSeededEntries) {
-      throw new Error('Seeded transcript session IDs were not found in IPC usage history');
+      throw new Error('Seeded transcript session IDs were not found in host:invoke usage history');
     }
   }
 
@@ -125,12 +139,10 @@ test.describe('Verse Claw token usage history', () => {
     await completeSetup(page);
     await validateUsageHistory(page);
 
-    const usageHistory = await page.evaluate(async () => {
-      return window.electron.ipcRenderer.invoke('usage:recentTokenHistory', 20) as Promise<Array<{ sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }>>;
-    });
+    const usageHistory = await readUsageHistory(page);
 
-    const zeroEntry = usageHistory.find((entry: { sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }) => entry?.sessionId === ZERO_TOKEN_SESSION_ID);
-    const nonzeroEntry = usageHistory.find((entry: { sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }) => entry?.sessionId === NONZERO_TOKEN_SESSION_ID);
+    const zeroEntry = usageHistory.find((entry: UsageHistoryRow) => entry?.sessionId === ZERO_TOKEN_SESSION_ID);
+    const nonzeroEntry = usageHistory.find((entry: UsageHistoryRow) => entry?.sessionId === NONZERO_TOKEN_SESSION_ID);
     expect(zeroEntry).toBeTruthy();
     expect(nonzeroEntry).toBeTruthy();
     expect(nonzeroEntry?.totalTokens).toBe(27);

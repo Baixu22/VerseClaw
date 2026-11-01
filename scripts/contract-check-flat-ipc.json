@@ -83,8 +83,15 @@
       "typedAction": "save",
       "preload": "allowlisted",
       "disposition": "migrate",
-      "reason": "No renderer consumer. One E2E spec seeds provider state through a direct ipcRenderer.invoke of this channel.",
-      "removalPlan": "Move the seeding in tests/e2e/provider-lifecycle.spec.ts to host:invoke providers.save, then retire handler + allowlist entry."
+      "reason": "No renderer consumer. One E2E spec seeded provider state through a direct ipcRenderer.invoke of this channel; that consumer was migrated in A3 (TF-0649).",
+      "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): tests/e2e/provider-lifecycle.spec.ts seeds through host:invoke providers.save. Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0649",
+        "migratedOn": "2026-11-02",
+        "consumersBefore": ["tests/e2e/provider-lifecycle.spec.ts:11"],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "provider:delete",
@@ -164,8 +171,20 @@
       "typedAction": "openExternal",
       "preload": "allowlisted",
       "disposition": "migrate",
-      "reason": "The only flat channel with live renderer consumers: 4 call sites in 2 files go through the preload wrapper window.electron.openExternal while the typed hostApi.shell.openExternal already serves 25 sites.",
-      "removalPlan": "Switch src/components/channels/ChannelConfigModal.tsx and src/pages/Settings/index.tsx to hostApi.shell.openExternal, then retire the preload wrapper electronAPI.openExternal, the allowlist entry and the handler."
+      "reason": "Was the only flat channel with live renderer consumers: 4 call sites in 2 files went through the preload wrapper window.electron.openExternal; migrated in A3 (TF-0649) to the typed hostApi.shell.openExternal that already served 25 sites.",
+      "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): src/components/channels/ChannelConfigModal.tsx and src/pages/Settings/index.tsx call hostApi.shell.openExternal; window.electron.openExternal has 0 renderer call sites. Remaining step (A5 / TF-0651): retire the preload wrapper electronAPI.openExternal, the allowlist entry and the handler.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0649",
+        "migratedOn": "2026-11-02",
+        "consumersBefore": [
+          "src/components/channels/ChannelConfigModal.tsx:423-424",
+          "src/pages/Settings/index.tsx:2289",
+          "src/pages/Settings/index.tsx:2292",
+          "src/pages/Settings/index.tsx:2295"
+        ],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "shell:showItemInFolder",
@@ -237,8 +256,20 @@
       "typedAction": "getAll",
       "preload": "allowlisted",
       "disposition": "migrate",
-      "reason": "No renderer consumer. Four E2E specs read settings through a direct ipcRenderer.invoke of this channel.",
-      "removalPlan": "Move tests/e2e/dcs-prod-p0-settings.spec.ts, settings-memory-embedding.spec.ts, settings-proxy.spec.ts and telemetry-consent.spec.ts to window.verseClaw.hostInvoke settings.getAll (or read the UI), then retire handler + allowlist entry."
+      "reason": "No renderer consumer. Four E2E specs read settings through a direct ipcRenderer.invoke of this channel; those consumers were migrated in A3 (TF-0649).",
+      "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): tests/e2e/dcs-prod-p0-settings.spec.ts, settings-memory-embedding.spec.ts, settings-proxy.spec.ts and telemetry-consent.spec.ts read through window.verseClaw.hostInvoke settings.getAll. Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0649",
+        "migratedOn": "2026-11-02",
+        "consumersBefore": [
+          "tests/e2e/dcs-prod-p0-settings.spec.ts:41",
+          "tests/e2e/settings-memory-embedding.spec.ts:14",
+          "tests/e2e/settings-proxy.spec.ts:14",
+          "tests/e2e/telemetry-consent.spec.ts:6"
+        ],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "settings:set",
@@ -270,8 +301,15 @@
       "typedAction": "recentTokenHistory",
       "preload": "allowlisted",
       "disposition": "migrate",
-      "reason": "No renderer consumer. One E2E spec reads token history through a direct ipcRenderer.invoke of this channel.",
-      "removalPlan": "Move tests/e2e/token-usage.spec.ts to host:invoke usage.recentTokenHistory, then retire handler + allowlist entry."
+      "reason": "No renderer consumer. One E2E spec read token history through a direct ipcRenderer.invoke of this channel; that consumer was migrated in A3 (TF-0649).",
+      "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): tests/e2e/token-usage.spec.ts reads through host:invoke usage.recentTokenHistory. Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0649",
+        "migratedOn": "2026-11-02",
+        "consumersBefore": ["tests/e2e/token-usage.spec.ts:106", "tests/e2e/token-usage.spec.ts:129"],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "window:syncTrafficLightPosition",

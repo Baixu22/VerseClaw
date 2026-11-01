@@ -448,3 +448,119 @@ grep -cE "assertAuthorizedHostSender|event\.sender\b" electron/main/ipc-handlers
 | 对每个双入口领域给出唯一入口与另一入口处置，或记 gap | 达成 | §6（10 领域、43 channel 全部有处置；gap = 0） |
 | 不改变运行时路径 / 默认值 / 权限 / UI，不新增 Host API 模块 | 达成 | `git status` 本轮仅新增本文件；`contract:check` 仍为 58 模块；§9 |
 | 文档标注只产出盘点与裁定、不产出实现，且计数可离线复现 | 达成 | 文件头、§9、§10（所有命令已在本基线上逐条执行并与期望值一致） |
+
+---
+
+## 12. A3 迁移记录（TF-0649，2026-11-02）
+
+> 节点：`TF-0649`（批次 A / A3，父 `TF-0628`）；合同：`harness/specs/tasks/architecture-skeleton-admission-migration.md`
+> 产出者：agent（`driven_by: agent`，`actor: claude-fable-5`）；本节不含任何真人操作或真人数据
+> 范围：只改**消费者**。handler / preload 白名单 / `electronAPI.openExternal` 包装的退役属 A5（`TF-0651`）；`gateway:*` / `file:*` 的 E2E mock 缝属 A4（`TF-0650`）
+
+### 12.1 基线与候选
+
+| 项 | 值 |
+|---|---|
+| 开工 HEAD | `b9d46c37aa665d7fa30a6c1abb07beec8eac092a`（tree `bb7f6e976f42a898579b6d0cda8c94a0fca54c1e`），`git status --porcelain` 0 行 |
+| 会话期间主检出被其他主线推进 | `80ba67bb7`（RSI）→ `06bb4b0b1` / `f3710e5f8`（session-lifecycle 合并）→ `97cda35de`（RSI）。本叶改动集与这些提交无交集；候选落在提交时的 HEAD 之上 |
+| 候选 commit | 见 12.7（提交后回填） |
+| 禁改路径 diff | `electron/`、`shared/`、`docs/dev/default-config-matrix.md`、`src/lib/host-api.ts`、`src/lib/host-api-client.ts`、`tests/e2e/fixtures/**`、`package.json`：候选相对其父提交 **0 行** |
+
+### 12.2 迁移位点（逐处）
+
+| # | channel | 文件:行（改前） | 改前 | 改后 |
+|---|---|---|---|---|
+| 1 | `shell:openExternal` | `src/components/channels/ChannelConfigModal.tsx:422-430` | `try { if (window.electron?.openExternal) { window.electron.openExternal(url); } else { window.open(url, '_blank'); } } catch { window.open(url, '_blank'); }` | `hostApi.shell.openExternal(url).catch(() => { window.open(url, '_blank'); });`（`invokeHost` 为 async，bridge 缺失与 Main 侧失败都以 rejection 进入同一回退，保留原"无桥接则 `window.open`"语义） |
+| 2 | `shell:openExternal` | `src/pages/Settings/index.tsx:2289` | `onClick={() => window.electron.openExternal('https://claw-x.com')}` | `onClick={() => void hostApi.shell.openExternal('https://claw-x.com')}`（与仓库既有 25 处 `hostApi.shell.openExternal` 的 `void …` 习惯一致） |
+| 3 | `shell:openExternal` | `src/pages/Settings/index.tsx:2292` | `window.electron.openExternal('https://github.com/ValueCell-ai/Verse-Claw')` | `void hostApi.shell.openExternal('https://github.com/ValueCell-ai/Verse-Claw')` |
+| 4 | `shell:openExternal` | `src/pages/Settings/index.tsx:2295` | `window.electron.openExternal('https://docs.openclaw.ai/')` | `void hostApi.shell.openExternal('https://docs.openclaw.ai/')` |
+| 5 | `settings:getAll` | `tests/e2e/dcs-prod-p0-settings.spec.ts:41` | `window.electron.ipcRenderer.invoke('settings:getAll')` | `window.verseClaw.hostInvoke<Record<string, unknown>>({ id: crypto.randomUUID(), module: 'settings', action: 'getAll' })`，`ok !== true` 抛错 |
+| 6 | `settings:getAll` | `tests/e2e/settings-memory-embedding.spec.ts:14` | 同上 | 同上（`T = { memoryEmbeddingEnabled?: boolean }`） |
+| 7 | `settings:getAll` | `tests/e2e/settings-proxy.spec.ts:14` | 同上 | 同上（`T = { proxyEnabled?: boolean }`） |
+| 8 | `settings:getAll` | `tests/e2e/telemetry-consent.spec.ts:6` | 同上 | 同上（`T = { telemetryEnabled?: boolean }`） |
+| 9 | `usage:recentTokenHistory` | `tests/e2e/token-usage.spec.ts:106` | `window.electron.ipcRenderer.invoke('usage:recentTokenHistory', 20)` | 提取为 `readUsageHistory(page)`：`hostInvoke({ id, module: 'usage', action: 'recentTokenHistory', payload: { limit: 20 } })`，`ok !== true` 抛错；两处错误文案由 "IPC usage:recentTokenHistory" 改为 "host:invoke usage.recentTokenHistory" |
+| 10 | `usage:recentTokenHistory` | `tests/e2e/token-usage.spec.ts:129` | 同上 | 复用 `readUsageHistory(page)` |
+| 11 | `provider:save` | `tests/e2e/provider-lifecycle.spec.ts:11` | `window.electron.ipcRenderer.invoke('provider:save', { id, name, type, baseUrl, model, enabled, createdAt, updatedAt })` | `hostInvoke<{ success: boolean; error?: string }>({ id, module: 'providers', action: 'save', payload: { config: { …同字段… } } })`；`ok !== true` 或 `data.success !== true` 抛错（原调用忽略返回值） |
+
+行为等价依据（只读源码，未改 Main 侧）：类型化 `providers.save`（`electron/services/providers-api.ts:250-266`）与扁平 `provider:save`（`electron/main/ipc-handlers.ts:857-889`）同走 `_saveProviderInternal` + `syncSavedProviderToRuntime`，`saveLegacyProvider` 只是加弃用日志的委托（`provider-service.ts:502-505`）；`usage.recentTokenHistory` 的 `{ limit }` 由 `getSafeLimit`（`usage-api.ts:23-35`）解析，与扁平侧 `Math.max(Math.floor(limit), 1)` 等价；`settings.getAll` 两侧都是 `getAllSettings()`；`shell.openExternal` 两侧都是 `openExternalSafe(url)`（`shell-api.ts:30-32` / `ipc-handlers.ts:1115-1117`）。`tests/e2e/fixtures/electron.ts` 的 `host:invoke` 拦截器只在 spec 登记了 `/api/settings` / `/api/usage/recent-token-history` 时短路这两个 action（`:709,:730,:816-822`）；受影响 6 个 spec 均未登记，调用到达真实服务。
+
+静态口径（候选工作树）：
+
+```bash
+grep -rnE "window\.electron(\?)?\.openExternal" src/ --include=*.ts --include=*.tsx     # → 无命中，exit 1
+grep -rhoE "window\.electron\.ipcRenderer\.invoke\('[^']+'" tests/e2e/                   # → 无命中，exit 1
+grep -lE "electron(\?)?\.openExternal" dist/assets/*.js | wc -l                           # → 0（E2E 所用 dist，2026-11-02 00:49 构建）
+```
+
+### 12.3 清单更新（`scripts/contract-check-flat-ipc.json`）
+
+4 条 `migrate` 条目各追加 `migration` 对象（`status: consumers-migrated`、`node: TF-0649`、`migratedOn: 2026-11-02`、`consumersBefore`（§4 原位点）、`consumersAfter: []`、`commit`（12.7 回填）），`reason` 改为过去式并指明已迁移，`removalPlan` 改为"消费者已迁移（TF-0649）；剩余步骤 A5 / TF-0651 退役 handler + 白名单"。`disposition` 仍为 `migrate`，`typedModule` / `typedAction` / `preload` 不变；`danglingAllowlistEntries` 不变。`scripts/contract-check.mjs` 不读取 `migration` 字段（它只校验 `channel` / `typedModule` / `typedAction` / `preload` / `disposition` / `reason` / `removalPlan`），`pnpm contract:check` 仍 `Contract check passed.`；`tests/fixtures/contract-check/*.json` 没有 fixture 锚定被改写的文本（`grep` 无命中），`tests/unit/contract-check.test.ts` 30/30 不变。
+
+### 12.4 受影响 6 个 E2E spec 的真实运行
+
+环境（`docs/dev/electron-test-process-lifecycle.md`）：`D:\ClawX` 为 Low-integrity 目录，`TEMP`/`TMP` = `<repo>/.local/tmp`，`CLAWX_E2E_RUN_ROOT` = `<repo>/.local/e2e-run-base`，`unset ELECTRON_RUN_AS_NODE`；`pnpm run build:vite` 于候选工作树（含本叶 renderer 改动）执行，`playwright.config.ts` `workers: 1`，逐 spec `node node_modules/@playwright/test/cli.js test tests/e2e/<spec>.ts --reporter=line`，exit code 由 shell 捕获写入 `D:/tmp/tf0649/e2e-exit-codes.txt`，逐 spec 日志 `D:/tmp/tf0649/e2e-<spec>.log`（本地保留）。
+
+本会话期间共享检出被其他主线持续推进（12.1），前四次尝试全部或部分因环境而非被测代码失败，逐次如实记录：
+
+| 尝试 | 时间（UTC） | 结果 | 原因（环境） | 处置 |
+|---|---|---|---|---|
+| 1 | 16:22–16:23 | 6 × exit 1，`No tests found` | `node_modules/.pnpm/electron@40.8.4/node_modules/electron/` 缺 `dist/` 与 `path.txt`（`import electronBinaryPath from 'electron'` 抛 "Electron failed to install correctly"）：他会话 12:44 的 pnpm 重装未跑 Electron postinstall | 在该包目录运行其自带 `install.js`（命中本地缓存 `electron-v40.8.4-win32-x64.zip`，离线、只写该包目录，不 purge、不重装），exit 0 |
+| 2 | 16:28–16:29 | 6 × exit 1 | fixture `assertRuntimeDistFresh`：`openclaw_runtime/dist/entry.js` 旧于 2 个已提交的 runtime 源（`80ba67bb7`） | `pnpm run build:runtime`（构建已提交代码），exit 0 |
+| 3 | 16:35–16:40 | dcs 4/4 passed exit 0；memory-embedding 1/1 passed 但 exit 1（`source-mutation-guard`：运行期间跟踪源变化）；其余 4 个 exit 1（`dist/entry.js` 旧于 31 个源） | session-lifecycle 合并 `06bb4b0b1` 在运行期间落地（31 个 `openclaw_runtime/src` 文件） | 重新 `build:vite` + `build:runtime`（`f3710e5f8`），均 exit 0 |
+| 4 | 16:48–16:51 | 6 × exit 1，`No tests found` | 00:43 本地又一次 pnpm install 再次抹掉 Electron `dist/` + `path.txt` | 再次运行 `install.js`，exit 0；确认 `06bb4b0b1..f3710e5f8` 未触碰构建输入，无需重建 |
+| 5 | 17:01–17:06 | **5 × exit 0**（memory-embedding 1/1、proxy 1/1、telemetry 1/1、token-usage 2/2、provider-lifecycle 8/8）；dcs 4/4 passed 但 exit 1（`source-mutation-guard: trackedFilesSha256`） | RSI 提交 `97cda35de` 于 17:00:54Z 落地，dcs 于 17:01:01Z 启动 | 单独重跑 dcs |
+| 5′ | 17:10–17:11 | dcs **4/4 passed，exit 0**（HEAD 前后均 `97cda35de`） | — | — |
+
+最终读数（每个 spec 取其最后一次完整运行；exit code 来自 shell）：
+
+| spec | 测试数 | 结果 | exit | 日志 |
+|---|---|---|---|---|
+| `tests/e2e/dcs-prod-p0-settings.spec.ts` | 4 | 4 passed（尝试 5′） | **0** | `D:/tmp/tf0649/e2e-dcs-prod-p0-settings-rerun.log` |
+| `tests/e2e/settings-memory-embedding.spec.ts` | 1 | 1 passed | **0** | `D:/tmp/tf0649/e2e-settings-memory-embedding.log` |
+| `tests/e2e/settings-proxy.spec.ts` | 1 | 1 passed | **0** | `D:/tmp/tf0649/e2e-settings-proxy.log` |
+| `tests/e2e/telemetry-consent.spec.ts` | 1 | 1 passed | **0** | `D:/tmp/tf0649/e2e-telemetry-consent.log` |
+| `tests/e2e/token-usage.spec.ts` | 2 | 2 passed | **0** | `D:/tmp/tf0649/e2e-token-usage.log` |
+| `tests/e2e/provider-lifecycle.spec.ts` | 8 | 8 passed | **0** | `D:/tmp/tf0649/e2e-provider-lifecycle.log` |
+
+合计 17 / 17 通过，6 / 6 spec exit 0。尝试 3 与 5 中 "passed 但 exit 1" 的两次是 fixture 的源变更守卫在共享检出上被他会话提交触发，**未计为通过**，均以后续 exit 0 的完整重跑为准。所有 E2E 运行均在 Electron 二进制（`electron@40.8.4`，`dist/electron.exe` 213,919,232 B）下真实启动窗口；`CLAWX_E2E_RUN_ROOT` 下的运行目录由 fixture 创建与清理。
+
+### 12.5 门禁（候选工作树，全部用 `pnpm --config.verify-deps-before-run=false` 前缀以绕过 pnpm 11 交互式 modules-purge 提示；未安装任何东西）
+
+| # | 命令 | exit | 关键输出 / 日志 |
+|---|---|---|---|
+| 1 | `pnpm harness validate --spec harness/specs/tasks/architecture-skeleton-admission-migration.md --no-diff` | 0 | `Spec is valid`（`D:/tmp/tf0649/harness-validate-spec-initial.log`，spec 落盘后再次运行见 12.7） |
+| 2 | `pnpm contract:check` | 0 | `Contract check passed.`（`D:/tmp/tf0649/contract-check-1.log`） |
+| 3 | `pnpm run typecheck`（全量：generate-ext-bridge → typecheck:node / typecheck:web / typecheck:test） | 0 | 四段 `exitCode: 0`，`typecheck:test` `errorCount: 0`（`D:/tmp/tf0649/typecheck.log`） |
+| 4 | `pnpm exec eslint <2 个 renderer 文件 + 6 个 spec> --max-warnings 0` | 0 | 无输出（`D:/tmp/tf0649/eslint.log`） |
+| 5 | `pnpm exec vitest run tests/unit/host-api-facade.test.ts tests/unit/contract-check.test.ts --maxWorkers=1` | 0 | JSON：`numTotalTests 77, numFailedTests 0`（`D:/tmp/tf0649/vitest.json`） |
+| 6 | `node scripts/check-no-bom.mjs` | 0 | `check-no-bom: ok` |
+| 7 | `node scripts/check-repository-artifacts.mjs` | 0 | `Repository artifact retention passed` |
+| 8 | `node scripts/check-local-paths.mjs` | 0 | `[local-paths] PASS` |
+| 9 | `pnpm harness:specs:lifecycle` | 0 | `lifecycle status present for 690 task specs` |
+| 10 | `pnpm run build:vite` | 0 | `D:/tmp/tf0649/build-vite-2.log` |
+| 11 | `pnpm run build:runtime` | 0 | `D:/tmp/tf0649/build-runtime-2.log`（含 `[runtime-build-smoke] gateway ready`） |
+| 12 | 6 × E2E spec | 6 × 0 | 12.4 |
+| 13 | `git diff --check` | 0 | 无输出 |
+
+**明确未运行**（不在合同 `requiredTests` 内）：全量 `pnpm test`、全量 `pnpm run test:e2e`、`pnpm run lint`（全仓）、`pnpm agent-dev:*`、`harness run --dry-run`、任何 live provider / Gateway 运行。这些项记为 `not-run`，不得被解读为已通过。
+
+### 12.6 验收逐条对照（合同 frontmatter `acceptance`）
+
+| 验收条 | 状态 | 证据位置 |
+|---|---|---|
+| `src/` 中 `window.electron.openExternal` 为 0，4 处改为 `hostApi.shell.openExternal`；相关单测 / E2E 通过 | 达成（有限制） | 12.2 #1–4、grep exit 1；`host-api-facade` 单测 0 失败（facade 的 `shell.openExternal` → `invokeHost('shell','openExternal',{url})` 对账）；`src/pages/Settings/index.tsx` 由 dcs / proxy / telemetry 三个 spec 在 Electron 下加载并通过（12.4）。**限制**：没有任何 E2E 点击 Settings About 区的三条链接或 Channel 模态框的 docs 链接（`grep -rln "ChannelConfigModal\|openDocs" tests/e2e/` 无命中），这两处的运行时效果只由 typecheck / eslint / facade 单测与"与既有 25 处同形"覆盖，未有点击级证据 |
+| `tests/e2e` 中 3 个 channel 的直接 invoke 为 0，改经 `hostInvoke` 类型化 action | 达成 | 12.2 #5–11、grep exit 1；payload 形状与 `contract.ts` 签名对照见 12.2 说明 |
+| 6 个 spec 在 Electron 下真实运行并逐条记录 exit code | 达成（6 × exit 0；4 次环境失败逐次写明，未解读为通过） | 12.4 |
+| `contract:check` 仍通过；清单 4 条状态已更新且与本节一致 | 达成 | 12.3；12.5 #2 |
+| `typecheck` 全量绿；改动文件 eslint 0 warning；`git diff --check` 0 | 达成 | 12.5 #3 / #4 / #13 |
+| 禁改路径 diff = 0；无新增 Host API action；preload 白名单不变 | 达成 | 12.1 末行；`contract:check` 仍 58 模块 / 43 channel / 44 白名单 |
+| 本节迁移记录 | 达成 | 本节 |
+
+### 12.7 候选与回填
+
+本节与 12.3 的 `commit` 字段在实现提交之后由仅文档回填提交补齐；两次提交均不推送，由编排会话核实后推送。
+
+| 项 | 值 |
+|---|---|
+| 实现提交 | `PENDING_IMPL_COMMIT` |
+| 回填提交 | `PENDING_BACKFILL_COMMIT` |
