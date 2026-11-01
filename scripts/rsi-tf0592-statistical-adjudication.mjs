@@ -45,8 +45,6 @@ const SOURCE_PATHS = [
   'harness/src/profiles.mjs',
   'package.json',
   'pnpm-lock.yaml',
-  'docs/README.md',
-  'docs/dev/rsi-capability-and-boundaries.md',
 ];
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const round = (value) => value === null ? null : Number(value.toFixed(6));
@@ -217,6 +215,9 @@ function armSummary(corpus, arm) {
       confidenceInterval95: sufficient ? wilsonCi95(complete.filter((task) => task.passK).length, complete.length) : null,
       passAtKConfidenceInterval95: sufficient ? wilsonCi95(complete.filter((task) => task.passAtK).length, complete.length) : null,
       intervalMethod: 'wilson-over-complete-cases', flakeRate: reliability.flakeRate,
+      flakeThreshold: reliability.flakeThreshold, minimumNonZeroFlakeRate: reliability.minimumNonZeroFlakeRate,
+      flakeThresholdReachable: reliability.flakeThresholdReachable,
+      safety: reliability.safety, anchors: reliability.anchors,
       incomplete: reliability.incomplete.map((entry) => {
         const trial = (arm.get(entry.caseId) ?? []).find((item) => item.repeat === entry.trialIndex + 1);
         return trial?.outcome === 'fail' && trial.failureClass !== 'agent'
@@ -262,9 +263,21 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
   const varianceUsable = enoughPairs && sd !== null && sd > 0;
   const detectableEffect = varianceUsable ? (1.959964 + 0.841621) * sd / Math.sqrt(diffs.length) : null;
   const powerStatus = !varianceUsable ? 'insufficient-evidence' : detectableEffect > mde ? 'underpowered' : 'design-computed';
+  // The headline status must reflect both arms. A candidate arm that is unstable
+  // or unsafe is not a passing run merely because the baseline arm was clean.
+  const armStatuses = [['baseline', baseline.status], ['treatment', treatment.status]];
+  const failingArms = armStatuses.filter(([, armStatus]) => armStatus === 'fail').map(([name]) => name);
+  const unresolvedArms = armStatuses.filter(([, armStatus]) => armStatus !== 'pass' && armStatus !== 'fail').map(([name]) => name);
+  const status = failingArms.length > 0 ? 'fail' : unresolvedArms.length > 0 ? 'insufficient-evidence' : 'pass';
+  const statusReason = status === 'fail'
+    ? `unstable or unsafe arm(s): ${failingArms.join(', ')}`
+    : status === 'insufficient-evidence'
+      ? `complete cases ${baseline.completeCaseCount} < required ${MIN_CASES}`
+      : null;
+
   return {
-    status: baseline.status,
-    reason: baseline.completeCaseCount < MIN_CASES ? `complete cases ${baseline.completeCaseCount} < required ${MIN_CASES}` : null,
+    status,
+    reason: statusReason,
     run: { k: K, minimumCompleteCases: MIN_CASES, trialCount: baseline.trialCount + treatment.trialCount, baselineTrialCount: baseline.trialCount, treatmentTrialCount: treatment.trialCount, completeCaseCount: baseline.completeCaseCount, incompleteCaseCount: baseline.incompleteCaseCount, cleanStateRequired: true },
     perTask: baseline.perTask, aggregate: baseline.aggregate, failureClasses: baseline.failureClasses, treatment,
     pairedDiff: {

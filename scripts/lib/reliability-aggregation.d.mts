@@ -32,7 +32,9 @@ export type ReliabilityAggregation = {
   passAtK: number | null;
   flakeRate: number | null;
   flakeCaseIds: string[];
-  skippedCaseIds: string[];
+  flakeThreshold: number;
+  minimumNonZeroFlakeRate: number | null;
+  flakeThresholdReachable: boolean | null;
   incomplete: ReliabilityIncompleteEntry[];
   safety: { requiredCaseCount: number; skippedCount: number; flakeCount: number; violated: boolean };
   anchors: { positiveCaseCount: number; positivePassed: number; negativeCaseCount: number; negativeRejected: number; violated: boolean };

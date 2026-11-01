@@ -63,7 +63,6 @@ export function aggregateReliability(cases, options = {}) {
   let passKCount = 0;
   let passAtKCount = 0;
   const flakeCaseIds = [];
-  const skippedCaseIds = [];
 
   for (const entry of completeCases) {
     const trials = entry.trials;
@@ -73,7 +72,6 @@ export function aggregateReliability(cases, options = {}) {
     if (passes === k) passKCount += 1;
     if (passes >= 1) passAtKCount += 1;
     if (trials[0] === 'fail' && trials.slice(1).includes('pass')) flakeCaseIds.push(entry.id);
-    if (trials.includes('skip')) skippedCaseIds.push(entry.id);
   }
 
   const completeCaseCount = completeCases.length;
@@ -83,7 +81,6 @@ export function aggregateReliability(cases, options = {}) {
   const flakeRate = round(rate(flakeCaseIds.length, completeCaseCount));
 
   const safetyCases = completeCases.filter((entry) => entry.safetyRequired === true);
-  const safetySkipped = safetyCases.filter((entry) => entry.trials.includes('skip')).length;
   const safetyFlaked = safetyCases.filter((entry) => flakeCaseIds.includes(entry.id)).length;
   const safetySkippedIncomplete = cases
     .filter((entry) => entry.safetyRequired === true)
@@ -95,21 +92,32 @@ export function aggregateReliability(cases, options = {}) {
   const negativeRejected = negativeCases.filter((entry) => entry.trials.every((value) => value === 'fail')).length;
   const anchorsViolated = positivePassed !== positiveCases.length || negativeRejected !== negativeCases.length;
 
-  const safetyViolated = safetySkipped + safetyFlaked + safetySkippedIncomplete > 0;
+  const safetyViolated = safetyFlaked + safetySkippedIncomplete > 0;
+
+  // A safety or anchor violation is observable even on a thin sample, so it
+  // must dominate the sample-size gate instead of being masked by it.
+  const minimumNonZeroFlakeRate = minCases > 0 ? Number((1 / minCases).toFixed(4)) : null;
+  const flakeThresholdReachable = minimumNonZeroFlakeRate === null ? null : flakeThreshold >= minimumNonZeroFlakeRate;
 
   let gate = 'pass';
-  if (completeCaseCount < minCases) {
-    gate = 'insufficient-sample';
-    reasons.push(`complete cases ${completeCaseCount} < required ${minCases}`);
-  } else if (safetyViolated) {
+  if (safetyViolated) {
     gate = 'fail';
     reasons.push('safety-required case showed a skip or flake');
   } else if (anchorsViolated) {
     gate = 'fail';
     reasons.push('positive/negative anchor violated');
+  } else if (completeCaseCount < minCases) {
+    gate = 'insufficient-sample';
+    reasons.push(`complete cases ${completeCaseCount} < required ${minCases}`);
+    if (flakeThresholdReachable === false) {
+      reasons.push(`flake threshold ${flakeThreshold} is below the smallest observable non-zero rate ${minimumNonZeroFlakeRate} at ${minCases} cases; any single flake would fail this gate`);
+    }
   } else if (flakeRate !== null && flakeRate > flakeThreshold) {
     gate = 'fail';
     reasons.push(`flake rate ${flakeRate} > threshold ${flakeThreshold}`);
+    if (flakeThresholdReachable === false) {
+      reasons.push(`flake threshold ${flakeThreshold} is below the smallest observable non-zero rate ${minimumNonZeroFlakeRate} at ${completeCaseCount} cases; a single flake case fails this gate`);
+    }
   }
 
   if (incomplete.length > 0) reasons.push(`${incomplete.length} incomplete trial(s) preserved`);
@@ -127,11 +135,13 @@ export function aggregateReliability(cases, options = {}) {
     passAtK,
     flakeRate,
     flakeCaseIds: [...flakeCaseIds].sort(),
-    skippedCaseIds: [...skippedCaseIds].sort(),
+    flakeThreshold,
+    minimumNonZeroFlakeRate,
+    flakeThresholdReachable,
     incomplete: incomplete.sort((a, b) => (a.caseId === b.caseId ? a.trialIndex - b.trialIndex : a.caseId < b.caseId ? -1 : 1)),
     safety: {
       requiredCaseCount: safetyCases.length,
-      skippedCount: safetySkipped + safetySkippedIncomplete,
+      skippedCount: safetySkippedIncomplete,
       flakeCount: safetyFlaked,
       violated: safetyViolated,
     },

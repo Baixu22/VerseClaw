@@ -6,6 +6,8 @@ export type AblationRun = {
   tokens?: number;
   falseBlock?: boolean;
   safetyViolation?: boolean;
+  safetyRequired?: boolean;
+  anchor?: 'positive' | 'negative';
   [metric: string]: unknown;
 };
 
@@ -19,12 +21,32 @@ export type ConditionSummary = {
   meanTokens: number | null;
   falseBlocks: number;
   safetyViolations: number;
+  completeCaseCount: number;
   incompleteCaseCount: number;
+  flakeRate: number | null;
+  flakeCaseIds: string[];
+  safety: {
+    requiredCaseCount: number;
+    skippedCount: number;
+    flakeCount: number;
+    violated: boolean;
+  };
+  anchors: {
+    positiveCaseCount: number;
+    positivePassed: number;
+    negativeCaseCount: number;
+    negativeRejected: number;
+    violated: boolean;
+  };
+  gate: 'pass' | 'insufficient-sample' | 'fail';
+  gateReasons: string[];
 };
 
 export type PairedEffect = {
   metric: string;
   pairCount: number;
+  droppedPairCount: number;
+  droppedPairs: Array<{ key: string; reason: string }>;
   meanDiff: number | null;
   sd: number | null;
   standardError: number | null;

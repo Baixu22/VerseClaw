@@ -35,6 +35,9 @@ export type Tf0592Arm = {
     passK: number | null; passAtK: number | null; perTrialSuccessRate: number | null;
     confidenceInterval95: [number, number] | null; passAtKConfidenceInterval95: [number, number] | null;
     intervalMethod: string; flakeRate: number | null;
+    flakeThreshold: number; minimumNonZeroFlakeRate: number | null; flakeThresholdReachable: boolean | null;
+    safety: { requiredCaseCount: number; skippedCount: number; flakeCount: number; violated: boolean };
+    anchors: { positiveCaseCount: number; positivePassed: number; negativeCaseCount: number; negativeRejected: number; violated: boolean };
     incomplete: Array<{ caseId: string; trialIndex: number; outcome: string }>; reasons: string[];
   };
   failureClasses: Record<FailureClass, { trialCount: number; caseCount: number }>;
