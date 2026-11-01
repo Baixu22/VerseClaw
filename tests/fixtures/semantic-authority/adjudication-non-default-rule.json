@@ -9,6 +9,7 @@
   "mutations": [
     {
       "file": "scripts/check-semantic-authority-adjudication.json",
+      "anchor": "\"id\": \"C-02/R-D1\"",
       "find": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-02/R-D1\",",
       "replace": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-01/probe\",\n      \"rule\": \"owner-namespace\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"working-memory-context-source\",\n      \"observed\": {\n        \"owner\": \"probe\"\n      },\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-01\",\n      \"reason\": \"probe: attempt to register an owner conflict as pending-fix\",\n      \"reviewCondition\": \"probe\"\n    },\n    {\n      \"id\": \"C-02/R-D1\","
     }

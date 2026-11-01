@@ -9,8 +9,9 @@
   "mutations": [
     {
       "file": "shared/component-authority-manifest.ts",
-      "find": "runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'opt-in',",
-      "replace": "runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'baseline',"
+      "anchor": "id: 'working-memory-context-source'",
+      "find": "    id: 'working-memory-context-source',\n    label: 'Working-memory context source',\n    domains: ['context'],\n    purpose: 'Produces task-scoped working-memory candidate fragments from the task context ledger.',\n    ownedDataTypes: [],\n    scopes: ['turn', 'task'],\n    allowedReads: ['task.working-context', 'task.fact'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'write-task-ledger-facts'],\n    runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'opt-in',",
+      "replace": "    id: 'working-memory-context-source',\n    label: 'Working-memory context source',\n    domains: ['context'],\n    purpose: 'Produces task-scoped working-memory candidate fragments from the task context ledger.',\n    ownedDataTypes: [],\n    scopes: ['turn', 'task'],\n    allowedReads: ['task.working-context', 'task.fact'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'write-task-ledger-facts'],\n    runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'baseline',"
     }
   ]
 }

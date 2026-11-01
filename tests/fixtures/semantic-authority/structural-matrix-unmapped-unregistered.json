@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "structural-matrix-unmapped-unregistered",
+  "class": "structural-reconciliation",
+  "rule": "exemption-registration",
+  "expect": "[semantic-authority/exemption-registration] structural-unregistered: matrix-unmapped doc-row 'working-memory' is observed in the registries but no structural exemption (X-05) registers it",
+  "expectIssueCount": 1,
+  "description": "The default-config-matrix row 'working-memory' (linked by the authority manifest) changes its bold product default from true to auto, a value R-D3 cannot map. The row joins the matrix-unmapped set; X-05 does not list it, so the previously report-only list fails closed (TF-0638 reconciliation 2).",
+  "mutations": [
+    {
+      "file": "docs/dev/default-config-matrix.md",
+      "anchor": "**working-memory**",
+      "find": "| **working-memory** | runtime.contextBlock.working_memory.enabled | **true** | internal component of Workspace Context | Workspace Context off or kill switch |",
+      "replace": "| **working-memory** | runtime.contextBlock.working_memory.enabled | **auto** | internal component of Workspace Context | Workspace Context off or kill switch |"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "structural-not-comparable-unregistered",
+  "class": "structural-reconciliation",
+  "rule": "exemption-registration",
+  "expect": "[semantic-authority/exemption-registration] structural-unregistered: not-comparable component 'dcs-context-authority' is observed in the registries but no structural exemption (X-04) registers it",
+  "expectIssueCount": 1,
+  "description": "component.dcs-context-authority moves to currentMode 'mixed' while the manifest stays baseline. R-D1 has no verdict for the pair, so it joins the not-comparable set; X-04 does not list it, and the previously report-only list now fails closed (TF-0638 reconciliation 2).",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "anchor": "id: 'component.dcs-context-authority'",
+      "find": "    id: 'component.dcs-context-authority', label: 'DCS context authority', disposition: 'internal', owner: 'dcs-context-authority', implementationNodeId: 'TF-0493', currentMode: 'baseline', targetDefaultMode: 'internal',",
+      "replace": "    id: 'component.dcs-context-authority', label: 'DCS context authority', disposition: 'internal', owner: 'dcs-context-authority', implementationNodeId: 'TF-0493', currentMode: 'mixed', targetDefaultMode: 'internal',"
+    }
+  ]
+}

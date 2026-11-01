@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "structural-exemption-missing",
+  "class": "structural-reconciliation",
+  "rule": "exemption-registration",
+  "expect": "[semantic-authority/exemption-registration] structural-unregistered: not-comparable component 'context-runtime-kit' is observed in the registries but no structural exemption (X-04) registers it",
+  "expectIssueCount": 1,
+  "description": "One X-04 structural exemption (context-runtime-kit, manifest internal vs disposition baseline) is removed from the registry. The pair is still observed as not-comparable, so the exemptions list no longer covers the observation: structural-unregistered, exit 1 (TF-0638 reconciliation 1 / 2).",
+  "mutations": [
+    {
+      "file": "scripts/check-semantic-authority-adjudication.json",
+      "anchor": "\"id\": \"X-04\"",
+      "find": "    {\n      \"id\": \"X-04\",\n      \"rule\": \"default-activation\",\n      \"disposition\": \"structural\",\n      \"class\": \"not-comparable\",\n      \"targetKind\": \"component\",\n      \"target\": \"context-runtime-kit\",\n      \"observed\": {\n        \"defaultMode\": \"internal\",\n        \"dispositionId\": \"component.context-runtime-kit\",\n        \"currentMode\": \"baseline\"\n      },\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-04\",\n      \"reason\": \"Disposition currentMode `mixed` has no manifest counterpart and manifest internal / read-only do not express an activation default, so R-D1 yields no verdict for this pair; it is listed rather than silently passed (R-D4 applies where the component has a flag source).\",\n      \"reviewCondition\": \"Re-evaluate if either side becomes an activation-axis value; the entry then goes stale and must be re-adjudicated.\"\n    },\n",
+      "replace": ""
+    }
+  ]
+}

@@ -9,8 +9,9 @@
   "mutations": [
     {
       "file": "shared/dcs/component-disposition-catalog.ts",
-      "find": "coverage: { authorityComponentIds: ['task-ledger'],",
-      "replace": "coverage: { authorityComponentIds: ['ghost-component'],"
+      "anchor": "id: 'component.task-ledger'",
+      "find": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'task-ledger', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',\n    ...user('/task-ledger'),\n    currentConsumers: ['Task Ledger page', 'working-context candidates', 'session handoff', 'mission/goal state'], evidenceRefs: [...EXECUTION_EVIDENCE, APP],\n    coverage: { authorityComponentIds: ['task-ledger'], runtimeLeafPatterns: ['handoff.*', 'mission.*', 'orchestration.handoffArtifacts'], settingsSectionIds: ['recovery'], routePaths: ['/task-ledger'] },",
+      "replace": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'task-ledger', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',\n    ...user('/task-ledger'),\n    currentConsumers: ['Task Ledger page', 'working-context candidates', 'session handoff', 'mission/goal state'], evidenceRefs: [...EXECUTION_EVIDENCE, APP],\n    coverage: { authorityComponentIds: ['ghost-component'], runtimeLeafPatterns: ['handoff.*', 'mission.*', 'orchestration.handoffArtifacts'], settingsSectionIds: ['recovery'], routePaths: ['/task-ledger'] },"
     }
   ]
 }

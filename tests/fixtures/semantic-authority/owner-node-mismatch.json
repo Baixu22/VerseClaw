@@ -9,8 +9,9 @@
   "mutations": [
     {
       "file": "shared/dcs/component-disposition-catalog.ts",
-      "find": "disposition: 'retired', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'retired'",
-      "replace": "disposition: 'retired', owner: 'TF-0001', implementationNodeId: 'TF-0496', currentMode: 'retired'"
+      "anchor": "id: 'component.vtoken-context'",
+      "find": "    id: 'component.vtoken-context', label: 'VToken context source', disposition: 'retired', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'retired', targetDefaultMode: 'retired',",
+      "replace": "    id: 'component.vtoken-context', label: 'VToken context source', disposition: 'retired', owner: 'TF-0001', implementationNodeId: 'TF-0496', currentMode: 'retired', targetDefaultMode: 'retired',"
     }
   ]
 }

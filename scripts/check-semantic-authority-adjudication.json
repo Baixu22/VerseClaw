@@ -8,6 +8,7 @@
       "id": "X-01",
       "rule": "flag-binding",
       "disposition": "structural",
+      "class": "flag-granularity",
       "targetKind": "flag",
       "target": "isolation-request",
       "observed": {
@@ -24,6 +25,7 @@
       "id": "X-01",
       "rule": "flag-binding",
       "disposition": "structural",
+      "class": "flag-granularity",
       "targetKind": "flag",
       "target": "patch-flow",
       "observed": {
@@ -40,6 +42,7 @@
       "id": "X-01",
       "rule": "flag-binding",
       "disposition": "structural",
+      "class": "flag-granularity",
       "targetKind": "flag",
       "target": "stale-write-guard",
       "observed": {
@@ -56,6 +59,7 @@
       "id": "X-01",
       "rule": "flag-binding",
       "disposition": "structural",
+      "class": "flag-granularity",
       "targetKind": "flag",
       "target": "symbol-lease",
       "observed": {
@@ -72,6 +76,7 @@
       "id": "X-01",
       "rule": "flag-binding",
       "disposition": "structural",
+      "class": "flag-granularity",
       "targetKind": "flag",
       "target": "symbol-lease-mode",
       "observed": {
@@ -88,6 +93,7 @@
       "id": "X-01",
       "rule": "flag-binding",
       "disposition": "structural",
+      "class": "flag-granularity",
       "targetKind": "flag",
       "target": "worktree-backend",
       "observed": {
@@ -104,6 +110,7 @@
       "id": "X-01",
       "rule": "flag-binding",
       "disposition": "structural",
+      "class": "flag-granularity",
       "targetKind": "flag",
       "target": "write-journal",
       "observed": {
@@ -120,6 +127,7 @@
       "id": "X-02",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "internal-vocabulary",
       "targetKind": "component",
       "target": "knowledge-review-authority",
       "observed": {
@@ -136,6 +144,7 @@
       "id": "X-02",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "internal-vocabulary",
       "targetKind": "component",
       "target": "skills-mcp-source-registry",
       "observed": {
@@ -152,6 +161,7 @@
       "id": "X-02",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "internal-vocabulary",
       "targetKind": "component",
       "target": "tool-search-schema-expander",
       "observed": {
@@ -168,6 +178,7 @@
       "id": "X-02",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "internal-vocabulary",
       "targetKind": "component",
       "target": "task-ledger",
       "observed": {
@@ -184,6 +195,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "dcs-context-authority",
       "observed": {
@@ -200,6 +212,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "context-enhancement-gate",
       "observed": {
@@ -216,6 +229,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "compass-context-source",
       "observed": {
@@ -232,6 +246,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "dcs-fact-view-and-tools",
       "observed": {
@@ -248,6 +263,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "role-memory-card-governance",
       "observed": {
@@ -264,6 +280,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "runtime-memory-store",
       "observed": {
@@ -280,6 +297,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "memory-candidate-queue",
       "observed": {
@@ -296,6 +314,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "memory-embedding-provider",
       "observed": {
@@ -312,6 +331,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "knowledge-review-authority",
       "observed": {
@@ -328,6 +348,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "knowledge-retrieval-source",
       "observed": {
@@ -344,6 +365,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "sekb-candidate-provider",
       "observed": {
@@ -360,6 +382,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "skills-mcp-source-registry",
       "observed": {
@@ -376,6 +399,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "tool-search-schema-expander",
       "observed": {
@@ -392,6 +416,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "coding-execution-backend",
       "observed": {
@@ -408,6 +433,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "verseshell-execution-adapter",
       "observed": {
@@ -424,6 +450,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "task-ledger",
       "observed": {
@@ -440,6 +467,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "routing-memo-observation",
       "observed": {
@@ -456,6 +484,7 @@
       "id": "X-03",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "target-divergence",
       "targetKind": "component",
       "target": "host-api-transport-owner",
       "observed": {
@@ -472,6 +501,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "context-runtime-kit",
       "observed": {
@@ -488,6 +518,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "dcs-assembler-compat-adapter",
       "observed": {
@@ -504,6 +535,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "provider-request-guard",
       "observed": {
@@ -520,6 +552,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "c6-context-ladder-source",
       "observed": {
@@ -536,6 +569,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "native-file-memory-retrieval",
       "observed": {
@@ -552,6 +586,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "dreaming-derived-cache",
       "observed": {
@@ -568,6 +603,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "knowledge-review-authority",
       "observed": {
@@ -584,6 +620,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "knowledge-retrieval-source",
       "observed": {
@@ -600,6 +637,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "sekb-candidate-provider",
       "observed": {
@@ -616,6 +654,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "v3-capability-catalog",
       "observed": {
@@ -632,6 +671,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "skills-mcp-source-registry",
       "observed": {
@@ -648,6 +688,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "tool-search-schema-expander",
       "observed": {
@@ -664,6 +705,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "coding-execution-backend",
       "observed": {
@@ -680,6 +722,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "permission-approval-authority",
       "observed": {
@@ -696,6 +739,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "task-ledger",
       "observed": {
@@ -712,6 +756,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "browser-session-owner",
       "observed": {
@@ -728,6 +773,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "browser-task-projection-owner",
       "observed": {
@@ -744,6 +790,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "observability-recorder",
       "observed": {
@@ -760,6 +807,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "routing-memo-observation",
       "observed": {
@@ -776,6 +824,7 @@
       "id": "X-04",
       "rule": "default-activation",
       "disposition": "structural",
+      "class": "not-comparable",
       "targetKind": "component",
       "target": "renderer-ui-surface",
       "observed": {
@@ -792,6 +841,7 @@
       "id": "X-05",
       "rule": "default-matrix-row",
       "disposition": "structural",
+      "class": "matrix-unmapped",
       "targetKind": "doc-row",
       "target": "DCS Fact view tools",
       "observed": {
@@ -806,6 +856,7 @@
       "id": "X-05",
       "rule": "default-matrix-row",
       "disposition": "structural",
+      "class": "matrix-unmapped",
       "targetKind": "doc-row",
       "target": "Coding auto verify",
       "observed": {
@@ -820,6 +871,7 @@
       "id": "X-05",
       "rule": "default-matrix-row",
       "disposition": "structural",
+      "class": "matrix-unmapped",
       "targetKind": "doc-row",
       "target": "SEKB automatic writeback",
       "observed": {
@@ -834,6 +886,7 @@
       "id": "X-05",
       "rule": "default-matrix-row",
       "disposition": "structural",
+      "class": "matrix-unmapped",
       "targetKind": "doc-row",
       "target": "C7 knowledge/routing cutover",
       "observed": {
@@ -848,6 +901,7 @@
       "id": "X-05",
       "rule": "default-matrix-row",
       "disposition": "structural",
+      "class": "matrix-unmapped",
       "targetKind": "doc-row",
       "target": "Runtime Memory injection",
       "observed": {

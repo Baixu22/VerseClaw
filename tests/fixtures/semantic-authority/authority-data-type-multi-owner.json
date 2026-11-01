@@ -9,16 +9,13 @@
   "mutations": [
     {
       "file": "shared/component-authority-manifest.ts",
-      "find": "ownedDataTypes: ['browser.task-projection'],",
-      "replace": "ownedDataTypes: ['browser.task-projection', 'task.fact'],"
+      "anchor": "id: 'browser-task-projection-owner'",
+      "find": "    id: 'browser-task-projection-owner',\n    label: 'Browser task projection owner',\n    domains: ['browser', 'task'],\n    purpose: 'Owns the browser-facing task projection while referencing Task Ledger facts one way.',\n    ownedDataTypes: ['browser.task-projection'],\n    scopes: ['task', 'session'],\n    allowedReads: ['task.fact', 'browser.session'],\n    allowedWrites: ['browser.task-projection'],",
+      "replace": "    id: 'browser-task-projection-owner',\n    label: 'Browser task projection owner',\n    domains: ['browser', 'task'],\n    purpose: 'Owns the browser-facing task projection while referencing Task Ledger facts one way.',\n    ownedDataTypes: ['browser.task-projection', 'task.fact'],\n    scopes: ['task', 'session'],\n    allowedReads: ['task.fact', 'browser.session'],\n    allowedWrites: ['browser.task-projection', 'task.fact'],"
     },
     {
       "file": "shared/component-authority-manifest.ts",
-      "find": "allowedWrites: ['browser.task-projection'],",
-      "replace": "allowedWrites: ['browser.task-projection', 'task.fact'],"
-    },
-    {
-      "file": "shared/component-authority-manifest.ts",
+      "anchor": "dataType: 'vtoken.bridge-runtime'",
       "find": "      dataType: 'vtoken.bridge-runtime', scope: 'global', operation: 'update', authorityComponentId: 'vtoken-bridge',",
       "replace": "      dataType: 'task.fact', scope: 'task', operation: 'update', authorityComponentId: 'browser-task-projection-owner',\n      notes: 'fixture: second owner for task.fact',\n    }),\n    authority({\n      dataType: 'vtoken.bridge-runtime', scope: 'global', operation: 'update', authorityComponentId: 'vtoken-bridge',"
     }

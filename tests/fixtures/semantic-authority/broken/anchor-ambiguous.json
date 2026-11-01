@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "broken-anchor-ambiguous",
+  "description": "The find text occurs 18 times in the adjudication registry (one per X-03 entry). A mutation that would silently edit the first match is rejected (exit 2); the find must be unique.",
+  "mutations": [
+    {
+      "file": "scripts/check-semantic-authority-adjudication.json",
+      "anchor": "\"id\": \"X-03\"",
+      "find": "      \"id\": \"X-03\",\n      \"rule\": \"default-activation\",",
+      "replace": "      \"id\": \"X-03\",\n      \"rule\": \"default-activation\","
+    }
+  ]
+}

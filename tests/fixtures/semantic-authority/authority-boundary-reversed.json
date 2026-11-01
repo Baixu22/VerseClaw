@@ -9,8 +9,9 @@
   "mutations": [
     {
       "file": "shared/product-semantics.ts",
-      "find": "{ from: 'workboard', kind: 'references-one-way', to: 'task-ledger', authorityBoundary: 'one-way-reference',",
-      "replace": "{ from: 'workboard', kind: 'references-one-way', to: 'task-ledger', authorityBoundary: 'task-ledger-authority',"
+      "anchor": "from: 'workboard', kind: 'references-one-way', to: 'task-ledger'",
+      "find": "  { from: 'workboard', kind: 'references-one-way', to: 'task-ledger', authorityBoundary: 'one-way-reference', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md', 'shared/types/task-ledger-reference.ts'] },",
+      "replace": "  { from: 'workboard', kind: 'references-one-way', to: 'task-ledger', authorityBoundary: 'task-ledger-authority', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md', 'shared/types/task-ledger-reference.ts'] },"
     }
   ]
 }

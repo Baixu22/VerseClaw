@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "authority-duplicate-row",
+  "class": "conflicting-authority",
+  "rule": "registry-self-validation",
+  "expect": "[semantic-authority/registry-self-validation] duplicate_authority: Duplicate authority for vtoken.bridge-runtime::global::update: vtoken-bridge / vtoken-bridge",
+  "expectIssueCount": 1,
+  "description": "The authority manifest declares the vtoken.bridge-runtime::global::update row twice. The manifest's own validator rejects it (duplicate_authority); because the gate defers the module-level import assertion, the rejection arrives as a located registry-self-validation diagnostic (exit 1) instead of a registry-load-failed exit 2 (TF-0638 reconciliation 4). Same owner on both rows, so authority-boundary stays silent.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "anchor": "dataType: 'vtoken.bridge-runtime'",
+      "find": "      dataType: 'vtoken.bridge-runtime', scope: 'global', operation: 'update', authorityComponentId: 'vtoken-bridge',",
+      "replace": "      dataType: 'vtoken.bridge-runtime', scope: 'global', operation: 'update', authorityComponentId: 'vtoken-bridge',\n      notes: 'fixture: duplicate authority row',\n    }),\n    authority({\n      dataType: 'vtoken.bridge-runtime', scope: 'global', operation: 'update', authorityComponentId: 'vtoken-bridge',"
+    }
+  ]
+}

@@ -5,6 +5,7 @@
   "mutations": [
     {
       "file": "shared/dcs/component-disposition-catalog.ts",
+      "anchor": "owner: 'no-such-owner-anchor'",
       "find": "owner: 'no-such-owner-anchor'",
       "replace": "owner: 'x'"
     }

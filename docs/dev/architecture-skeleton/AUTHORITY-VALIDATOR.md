@@ -298,12 +298,169 @@ git diff --stat 1090f0b88..HEAD -- shared/ electron/ src/ openclaw_runtime/ pack
 
 ### 12.3 已知限制（本次未修，作为后续节点输入）
 
-1. **54 条 structural exemptions 在 CLI 判定中不承重**：抑制表只由 `adjudicatedConflicts` 构成，`exemptions: []` 时仍 exit 0；它们目前只被 vitest 的 `structural: 54` / `exemptionsApplied` 钉住。
-2. **`notComparable` / `flagGranularity` / `matrixUnmapped` 是只报告列表**，未像 `gaps` 那样与 X-04 / X-01 / X-05 双向对账；一个未登记的新 not-comparable 对（例如把某组件 `currentMode` 改成 `mixed`）会默认通过且不触发 stale。这与 X-04 的复核条件"保持列出，不默认通过"不符，是本节点验收里最实质的缺口。
-3. 登记表路径的诊断 `line` 恒为 `null`，以共享 id 定位（X-03 有 18 条同 id 条目），不满足 spec 的 componentId / 表 / 字段 / 规则逐项定位要求；`authority-boundary` 的数据类型诊断同样无行号。
-4. fixture 锚点纪律未强制：12 个 `find` 中 11 个不含条目 id 字面量，`registry-fixture.mjs` 只替换首次出现且不检查唯一性（当前全部唯一是巧合）。
-5. 加载钩子在同名 `.js` 存在时优先读 `.js`（当前不存在；若有原地 emit 将读到陈旧产物）。
-6. I-5（capability claims 的精确锚点连接）未实现，`identity-key` 只校验 claim id 形态与唯一性。
-7. 同一 `rule::target` 的两条登记项（不同 id）都"合法"，抑制表只保留后者，前者不做 stale 检查。
+1. **54 条 structural exemptions 在 CLI 判定中不承重**：抑制表只由 `adjudicatedConflicts` 构成，`exemptions: []` 时仍 exit 0；它们目前只被 vitest 的 `structural: 54` / `exemptionsApplied` 钉住。—— **已落地（TF-0638，§13.2）**：`exemption-registration` 规则与登记表 `exemptions` 双向对账，`exemptions: []` → 54 条 `structural-unregistered`，exit 1。
+2. **`notComparable` / `flagGranularity` / `matrixUnmapped` 是只报告列表**，未像 `gaps` 那样与 X-04 / X-01 / X-05 双向对账；一个未登记的新 not-comparable 对（例如把某组件 `currentMode` 改成 `mixed`）会默认通过且不触发 stale。这与 X-04 的复核条件"保持列出，不默认通过"不符，是本节点验收里最实质的缺口。—— **已落地（TF-0638，§13.2 / §13.6）**：三个列表就是 X-04 / X-01 / X-05 的 observed 集合；三类各一个负例经真实入口 exit 1。
+3. 登记表路径的诊断 `line` 恒为 `null`，以共享 id 定位（X-03 有 18 条同 id 条目），不满足 spec 的 componentId / 表 / 字段 / 规则逐项定位要求；`authority-boundary` 的数据类型诊断同样无行号。—— **已落地（TF-0638，§13.3）**：登记表诊断按 id（+ target）/ 区段键 / schema 头定位；数据类型诊断定位到权威表第二个声明行。
+4. fixture 锚点纪律未强制：12 个 `find` 中 11 个不含条目 id 字面量，`registry-fixture.mjs` 只替换首次出现且不检查唯一性（当前全部唯一是巧合）。—— **已落地（TF-0638，§13.5）**：加载器 `anchors: 'required'` 模式强制 `anchor` 存在、`find ⊇ anchor`、`find` 唯一；12 个 fixture 全部补齐。
+5. 加载钩子在同名 `.js` 存在时优先读 `.js`（当前不存在；若有原地 emit 将读到陈旧产物）。（TF-0638 非目标，保留）
+6. I-5（capability claims 的精确锚点连接）未实现，`identity-key` 只校验 claim id 形态与唯一性。（TF-0638 非目标，保留）
+7. 同一 `rule::target` 的两条登记项（不同 id）都"合法"，抑制表只保留后者，前者不做 stale 检查。（TF-0638 未处理，保留）
 
-建议归属：一个新的批次 B 叶子（"对账承重化：structural / not-comparable / matrix-unmapped 双向对账 + 登记表行号定位"），在 TF-0628 下登记后再做；本次审查不扩大 TF-0632 的范围。
+§12.1 的勘误 "`duplicate_authority` 不可达（exit 2）" —— **已落地（TF-0638，§13.4）**：加载层推迟权威表的导入期断言，重复行经真实入口以 `[semantic-authority/registry-self-validation]` exit 1 结束。
+
+建议归属：一个新的批次 B 叶子（"对账承重化：structural / not-comparable / matrix-unmapped 双向对账 + 登记表行号定位"），在 TF-0628 下登记后再做；本次审查不扩大 TF-0632 的范围。→ 已登记为 **TF-0638**（B2），实现记录见 §13。
+
+---
+
+## 13. B2 对账承重化与登记表定位（TF-0638，2026-11-01）
+
+> 状态：`implemented + gated`；合同：`harness/specs/tasks/architecture-skeleton-authority-reconciliation-hardening.md`；输入：§12.1 勘误第 2 条、§12.3 第 1–4 条、`REVIEW-20261101.md` §5 "B-后续"。
+> 产出者：agent（`driven_by: agent`，`actor: claude-fable-5`）；无真人操作、真人数据或真人 verdict。
+> 六份注册表、flag 目录、两份文档矩阵、`package.json`、`scripts/contract-check*`、`scripts/check-evidence-refs.mjs`、`scripts/lib/ts-import-hooks.mjs`、`electron/**`、`src/**`、`openclaw_runtime/**` **零字节改动**（§13.8 #16）。
+
+### 13.0 基线与写集
+
+| 项 | 值 |
+|---|---|
+| 开工 HEAD | `a7d836dca18d498117ee10200c166a9d08afc7f7`（`git status --porcelain` 仅 `?? _s07cfg/`，他会话遗留，未动） |
+| Task Forest | 开工时 `todo --json` 中 stored-status `ready` 恰为 TF-0638；TF-0639 `proposed`（depends_on TF-0638） |
+| 写集 | 改 4：`scripts/check-semantic-authority.mjs`（973 → 1171 行）、`scripts/check-semantic-authority.d.mts`、`scripts/check-semantic-authority-adjudication.json`（+54 行，每条 structural 条目一个 `class` 字段，无新增条目）、`scripts/lib/registry-fixture.mjs`（97 → 144）；改 12 fixture + 2 坏例（补锚点）；新 6 fixture + 3 坏例；`tests/unit/semantic-authority-consistency.test.ts`（520 → 794，38 → 63 用例）；新 spec；本文件 §12.3 标注 + 本节 |
+| 执行工具 | Node `v24.22.1`（`process.features.typescript === 'strip'`）；vitest `4.1.1` |
+
+### 13.1 结论摘要
+
+| 项 | 实测 |
+|---|---|
+| 封闭规则 | **18**（+1：`exemption-registration`） |
+| 正例 | **exit 0，诊断 0**：`summary … rules=18 diagnostics=0 adjudicated=8 structural=54/54 gaps=35/35 aliases=1 bindings=3 not-comparable=20 matrix-unmapped=5`（`adjudicated=8 / gaps=35/35` 与 TF-0632 读数一致；`structural` 由 `54` 改为 `observed/registered` 形式） |
+| 五类 structural 对账 observed / registered | X-01 flag-granularity **7/7**、X-02 internal-vocabulary **4/4**、X-03 target-divergence **18/18**、X-04 not-comparable **20/20**、X-05 matrix-unmapped **5/5**；合计 54/54；**登记表未新增任何条目**（对账在现有 54 条上恰好闭合，因此不需要新的 not-comparable / matrix-unmapped 登记） |
+| 登记表为空时的原始诊断 | **102** = 默认态冲突 8 + gap 36（§12.1）+ structural-unregistered 58（54 条 + 4 条 `target-divergence`：空登记表也丢失了 C-02…C-05 的 adjudicatedConflicts，这四个组件的 target≠default 分歧于是回到 X-03 的 observed 集合） |
+| 负例 fixture | **18**（12 既有 + 6 新增）全部 exit 1，诊断数与 `expectIssueCount` 逐一相等且含 `expect` 字面量；12 个既有 fixture 的 exit code / 诊断数**不变** |
+| 坏例 | **5**（2 既有 + 3 锚点坏例）全部 exit 2 |
+| vitest | **63 / 63**（`numFailedTests 0`） |
+| 登记表路径诊断行号 | 18 个 fixture 产出的全部登记表路径诊断均带 `:<line>`（§13.8 #4 日志 `grep` 为 0 条无行号） |
+
+### 13.2 对账 1 / 2：`exemption-registration`（新规则）与五类 observed 集合
+
+登记表 `exemptions` 条目新增必填 `class`；五类的 observed 集合全部由执行后的注册表计算（`report.structural[class].observed`），与登记 `registered` 双向对账，形态同 `gaps`：
+
+| `class` | 裁定 | `targetKind` | observed 集合定义（"列出不判定"，不是冲突规则） | 当前树 |
+|---|---|---|---|---|
+| `flag-granularity` | X-01 | `flag` | `flagGranularity`：flag 经 `dcsFlagIds` 绑定到的处置项不覆盖其 manifest 绑定组件（R-F 已按 flag 粒度比较过 owner 与激活态） | 7 |
+| `internal-vocabulary` | X-02 | `component` | 权威 `defaultMode === 'internal'` 且其处置项 `disposition === 'default'` | 4 |
+| `target-divergence` | X-03 | `component` | 处置 `targetDefaultMode !== defaultMode`，且该组件不是任何合法 `adjudicatedConflicts` 条目的目标（C-02…C-05 的四条分歧已作为真冲突登记） | 18（= 22 分歧 − 4） |
+| `not-comparable` | X-04 | `component` | `notComparable`：R-D1 一侧不在激活轴，两侧都非 retired | 20 |
+| `matrix-unmapped` | X-05 | `doc-row` | `matrixUnmapped`：权威链接表指向的文档行值不在枚举中 | 5 |
+
+诊断：observed ∖ registered → `structural-unregistered: <class> <kind> '<target>' is observed … but no structural exemption (<ruling>) registers it`；registered ∖ observed → `structural-stale: <id> registers … but it is no longer observed`。两者都是 `[semantic-authority/exemption-registration]`，exit 1。
+
+去重与例外（避免同一条目重复报告、避免级联）：
+
+- 条目已被 `exemption-stale`（记录的 `observed` 值变化）报告，或因字段校验失败（`exemption-reason-missing` / `exemption-unknown-rule` / `exemption-unknown-target`）不被应用时，**不再**追加 `structural-stale`；它仍计入 `registered`（存在已被定位并诊断，缺的是有效性而非登记）。这保持了 `exemption-reason-missing.json` 等既有 fixture 的诊断数。
+- 目标组件 `identity-key` 已失败时既不计入 observed 也不要求登记（与 `exemption-stale` 既有口径一致；`coverage-unknown-component.json` 仍为 4 条）。
+- `class` 缺失 / 不在五类 / 与 `targetKind` 不匹配 → `exemption-unknown-rule`，条目不应用（其目标随即以 `structural-unregistered` 报出）。
+
+**不是冲突规则的声明**：`target-divergence` 与 `internal-vocabulary` 的 observed 集合用到 `targetDefaultMode !== defaultMode` 与跨表 `internal` 的成员谓词，只用于对账 X-03 / X-02 登记是否完整，不产生任何 `default-*` 诊断；§3 "不得实现的比较"原文不变，vitest 继续断言这些比较不是规则 id、在真实注册表上无诊断。
+
+### 13.3 对账 3：行号定位
+
+- CLI 把登记表**文本**传入 `evaluateSemanticAuthority(…, { adjudicationText })`；所有 `file === 登记表` 的诊断按序定位：(a) 条目 `"id": "<id>"` 行，同 id 多条时取其后（下一条 `"id":` 之前）出现 `"target"` / `"conceptId"` / `"relation"` == 目标的那一条；(b) 无条目可指（`gap-unregistered`、`structural-unregistered`、区段不是数组）→ 区段键 `"<section>":` 行；(c) 区段键也不存在 → `"schema"` 行。进程内调用不传文本时行号为 `null`，字符串形态与 TF-0632 完全相同（既有进程内断言未改）。
+- `authority-boundary` 数据类型诊断：`has N authority owners` 定位到第 2 个 owner 的 authority 行（同一行含 `dataType: '<X>'` 与 `authorityComponentId: '<owner>'`；该 owner 在文本中无行时依次回退到其余 owner 的行）；`is listed in ownedDataTypes of N components` 定位到第 2 个组件块内含 `ownedDataTypes` 与 `'<X>'` 的行，回退到该组件 `id:` 行。
+- `registry-self-validation` 透传 `duplicate_authority` 时定位到**最后一次**出现 `dataType / scope / operation` 三元组的行（即重复行）；其余自带校验错误优先按 `id: '<path>'` 定位。
+- 实测（§13.8 #4）：`exemption-stale.json` 的两条诊断分别落在 `:918`（`"id": "C-02/R-D1"`）与 `:934`（`"id": "C-02/R-D4"`）；`structural-exemption-missing.json` 落在改写后文本的 `:6`（`"exemptions": [`）；`gap-unregistered-concept.json` 落在 `:1046`（`"gaps": [`）；`authority-duplicate-row.json` 落在改写后权威表的重复行；vitest 用例逐行回读文本核对。
+
+### 13.4 对账 4：`duplicate_authority` 以规则诊断结束
+
+`loadRegistries()` 读取权威表文本后，把**顶层**（列首）那一行 `assertComponentAuthorityManifest();` 在内存中替换为同一行的 `void 0; // …`（`deferAuthorityImportAssertion()`，行数不变，函数体内缩进的同名调用不受影响），再交给导入钩子。门禁自己已经经 `assembleRegistries()` 调用 `validateComponentAuthorityManifest()` 并透传全部错误，因此重复行以 `shared/component-authority-manifest.ts:<重复行>: [semantic-authority/registry-self-validation] duplicate_authority: Duplicate authority for vtoken.bridge-runtime::global::update: vtoken-bridge / vtoken-bridge` 结束，exit 1。文件在磁盘上零字节改动，`AUTHORITY_IMPORT_ASSERTION` 在真实文件上仍命中（vitest 断言）。替换模式未命中时不做改写，行为回到 `registry-load-failed` exit 2（fail-closed）。
+
+### 13.5 对账 5：fixture 锚点纪律
+
+`loadRegistryFixtures(paths, { root, anchors: 'required' })`（本门禁开启；默认 `'optional'`，`scripts/check-evidence-refs.mjs` 不受影响）：每条 `find` 变异必须有非空 `anchor`（被变异条目的 id 字面量，如 `id: 'component.task-ledger'`、`id: 'working-memory-context-source'`、`"id": "X-03"`、`**working-memory**`、`dataType: 'vtoken.bridge-runtime'`），`find` 必须包含 `anchor`，且 `find` 在（逐步变异中的）目标文本中恰好命中 1 次；否则 `RegistryFixtureError` → exit 2。12 个既有 fixture 的 `find` 全部扩到含条目 id 字面量（权威表组件块 / 处置表同一行 / 登记表条目块），由 `D:\tmp\tf0638\gen-fixtures.mjs`（临时，不入库）从源码文本逐字切出；vitest 对每个 fixture 断言 `anchor ⊆ find` 且 `find` 在磁盘文本中唯一。
+
+### 13.6 新增负例与坏例
+
+| fixture | 最小变异 | 期望规则 | exit / 诊断数 |
+|---|---|---|---|
+| `structural-exemption-missing.json` | 删除 X-04 `context-runtime-kit` 条目（17 行） | `exemption-registration`（`structural-unregistered: not-comparable component 'context-runtime-kit'`，定位 `:6`） | 1 / 1 |
+| `structural-exemptions-absent.json` | `"exemptions"` 区段键改名 → 区段缺失 | `exemption-registration` ×54（定位 `:2` schema 头） | 1 / 54 |
+| `structural-not-comparable-unregistered.json` | 处置 `component.dcs-context-authority` `currentMode` baseline → `mixed` | `exemption-registration`（`not-comparable 'dcs-context-authority'`） | 1 / 1 |
+| `structural-flag-granularity-unregistered.json` | flag `working-memory` 的 `dcsFlagIds` 从 `component.working-memory-context` 移到 `feature.patch-flow`（owner TF-0510，owner 一致；coverage 不含 `working-memory-context-source`；`currentMode: 'retired'` 无激活语义故 R-F 不另报） | `exemption-registration`（`flag-granularity flag 'working-memory'`） | 1 / 1 |
+| `structural-matrix-unmapped-unregistered.json` | `docs/dev/default-config-matrix.md` 行 `**working-memory**` 的 `**true**` → `**auto**` | `exemption-registration`（`matrix-unmapped doc-row 'working-memory'`） | 1 / 1 |
+| `authority-duplicate-row.json` | 复制 `vtoken.bridge-runtime::global::update` authority 行 | `registry-self-validation`（`duplicate_authority`，带重复行行号；owner 相同故 `authority-boundary` 不触发） | 1 / 1 |
+| `broken/anchor-missing.json` | `find` 变异无 `anchor` | `Semantic authority fixture error: … declares no anchor` | 2 |
+| `broken/anchor-not-in-find.json` | `anchor` 不在 `find` 中 | `… does not contain its anchor` | 2 |
+| `broken/anchor-ambiguous.json` | `find` = `"id": "X-03",\n "rule": …`，命中 18 次 | `… is ambiguous in scripts/check-semantic-authority-adjudication.json (18 occurrences …)` | 2 |
+
+stale 方向由进程内用例覆盖：登记一条当前可比的组件（`dcs-context-authority`）为 X-04 → 恰 1 条 `structural-stale`；记录值变化（`context-runtime-kit` defaultMode internal → baseline，target 同步）→ 恰 1 条 `exemption-stale`，不重复报 `structural-stale`。
+
+### 13.7 复现命令（离线，仓库根目录，Git Bash；临时目录 `D:/tmp/tf0638`）
+
+```bash
+# 正例 + 报告（期望 exit 0；summary 见 §13.1）
+node scripts/check-semantic-authority.mjs --report D:/tmp/tf0638/report.json --actor claude-fable-5
+node -e "const r=require('D:/tmp/tf0638/report.json');for(const [k,v] of Object.entries(r.structural))console.log(k,v.ruling,v.observed.length,v.registered.length)"
+```
+
+```bash
+# 18 个负例（每个 exit 1，诊断数 == expectIssueCount，含 expect 字面量）；5 个坏例（exit 2）
+for f in tests/fixtures/semantic-authority/*.json; do node scripts/check-semantic-authority.mjs --fixture "$f"; echo "exit=$?"; done > D:/tmp/tf0638/fixtures.log 2>&1
+for f in tests/fixtures/semantic-authority/broken/*.json; do node scripts/check-semantic-authority.mjs --fixture "$f"; echo "exit=$?"; done >> D:/tmp/tf0638/fixtures.log 2>&1
+grep -c '^exit=1' D:/tmp/tf0638/fixtures.log   # → 18 ；grep -c '^exit=2' → 5
+grep '^- scripts/check-semantic-authority-adjudication.json' D:/tmp/tf0638/fixtures.log | grep -vc ':[0-9]'   # → 0（登记表诊断全部带行号）
+```
+
+```bash
+# 登记表为空时的原始诊断（期望 102 = 8 + 36 + 58；exit 1）
+printf '{"schema":"SemanticAuthorityAdjudication/v1"}' > D:/tmp/tf0638/empty.json
+node scripts/check-semantic-authority.mjs --adjudication D:/tmp/tf0638/empty.json 2>&1 | grep -c '^- '
+```
+
+```bash
+# 单测与门禁
+export TMPDIR=D:/tmp TEMP=D:/tmp TMP=D:/tmp
+pnpm exec vitest run tests/unit/semantic-authority-consistency.test.ts --maxWorkers=1 --reporter=json --outputFile=D:/tmp/tf0638/vitest.json
+node -e "const r=require('D:/tmp/tf0638/vitest.json');console.log(r.numTotalTests,r.numFailedTests,r.success)"   # → 63 0 true
+pnpm harness validate --spec harness/specs/tasks/architecture-skeleton-authority-reconciliation-hardening.md --no-diff
+pnpm contract:check; pnpm repo:evidence:check; node scripts/check-repository-artifacts.mjs; node scripts/check-local-paths.mjs; pnpm harness:specs:lifecycle; pnpm run typecheck
+pnpm exec eslint scripts/check-semantic-authority.mjs scripts/lib/registry-fixture.mjs tests/unit/semantic-authority-consistency.test.ts --max-warnings 0; node scripts/check-no-bom.mjs; git diff --check
+git diff --stat HEAD -- shared/ electron/ src/ openclaw_runtime/ package.json docs/dev/default-config-matrix.md docs/clawx-product-semantics.md scripts/contract-check.mjs scripts/contract-check-flat-ipc.json scripts/check-evidence-refs.mjs scripts/lib/ts-import-hooks.mjs | wc -l   # → 0
+```
+
+### 13.8 证据链（2026-11-01，HEAD `a7d836dca` + 本轮未提交写集；退出码由 shell 直接捕获，日志在 `D:/tmp/tf0638/`，本地保留不入库）
+
+| # | 命令 | exit | 关键输出 |
+|---|---|---|---|
+| 1 | `pnpm harness validate --spec harness/specs/tasks/architecture-skeleton-authority-reconciliation-hardening.md --no-diff` | 0 | `Spec is valid` |
+| 2 | `node scripts/check-semantic-authority.mjs --report D:/tmp/tf0638/report-positive.json --actor claude-fable-5` | 0 | `Semantic authority check passed.` + `summary … rules=18 diagnostics=0 adjudicated=8 structural=54/54 gaps=35/35 aliases=1 bindings=3 not-comparable=20 matrix-unmapped=5`；报告 `structural` 五类 observed == registered（7/4/18/20/5） |
+| 3 | 18 个 fixture 逐个 `--fixture`（§13.7） | 18 × **1** | 每个诊断数 == `expectIssueCount` 且含 `expect`（`fixtures.log`）；12 个既有 fixture 读数与 §5 表相同（1,2,4,2,4,2,2,1,2,1,1,1） |
+| 4 | `grep '^- scripts/check-semantic-authority-adjudication.json' fixtures.log \| grep -vc ':[0-9]'` | — | **0**（登记表诊断无一缺行号） |
+| 5 | 5 个 `broken/*.json` | 5 × **2** | 三个锚点坏例分别 `declares no anchor` / `does not contain its anchor` / `is ambiguous … (18 occurrences` |
+| 6 | `--adjudication tests/fixtures/semantic-authority/does-not-exist.json` | 1 | `adjudication-missing` |
+| 7 | 空登记表（§13.7） | 1 | 102 条 |
+| 8 | `pnpm exec vitest run tests/unit/semantic-authority-consistency.test.ts --maxWorkers=1 --reporter=json` | 0 | `numTotalTests 63, numFailedTests 0, success true` |
+| 9 | 六表自带单测 6 文件 `--maxWorkers=1` | 0 | `Test Files 6 passed (6)`，`Tests 82 passed (82)` |
+| 10 | `pnpm exec vitest run tests/unit/evidence-refs-exist.test.ts --maxWorkers=1`（`registry-fixture.mjs` 的另一消费者，默认 anchors 模式） | 0 | `Test Files 1 passed (1)` |
+| 11 | `pnpm contract:check` | 0 | `Contract check passed.` |
+| 12 | `pnpm repo:evidence:check` | 0 | `[evidence-refs] PASS 188 referenced path(s)` |
+| 13 | `node scripts/check-repository-artifacts.mjs` | 0 | `Repository artifact retention passed (20061 tracked paths).` |
+| 14 | `node scripts/check-local-paths.mjs` | 0 | `[local-paths] PASS` |
+| 15 | `pnpm harness:specs:lifecycle` | 0 | `lifecycle status present for 687 task specs` |
+| 16 | `git diff --stat HEAD -- shared/ electron/ src/ openclaw_runtime/ package.json docs/dev/default-config-matrix.md docs/clawx-product-semantics.md scripts/contract-check.mjs scripts/contract-check-flat-ipc.json scripts/check-evidence-refs.mjs scripts/lib/ts-import-hooks.mjs \| wc -l` | 0 | `0` |
+| 17 | `pnpm run typecheck`（全量） | 0 | `errorCount: 0` |
+| 18 | `pnpm exec eslint <3 改动文件> --max-warnings 0`；`node scripts/check-no-bom.mjs`；`git diff --check` | 0 / 0 / 0 | 无输出 |
+
+候选提交后的复核见 §13.9（由紧随其后的仅文档提交回填）。
+
+### 13.9 候选提交后复核
+
+（待回填）
+
+### 13.10 未做与残余风险
+
+| 项 | 性质 | 去向 |
+|---|---|---|
+| not-run | 全量 `pnpm test`、E2E、`pnpm run lint` 全仓（只对 3 个改动文件跑 eslint）、agent-dev 门禁、live provider / Gateway | 不得解读为已通过 |
+| §12.3 第 5–7 条 | 本叶非目标（`.js` 优先、I-5、同 `rule::target` 双登记） | 后续节点 |
+| `target-divergence` 的 observed 定义依赖 `adjudicatedConflicts` 的目标集合 | 删除 C-02…C-05 登记而不修正权威表时，对应组件回到 X-03 observed 并以 `structural-unregistered` 报出（与真冲突诊断并列）；修正权威表后分歧消失、登记 stale——两条路径都 fail-closed，无默认通过 | 设计如此，记录于 §13.2 |
+| 锚点纪律只对本门禁开启 | `scripts/check-evidence-refs.mjs` 的 fixture 仍是默认模式（在其写集之外） | TF-0636 系列如需，自行开启 `anchors: 'required'` |
+| 行号定位依赖登记表为 2 空格缩进的 JSON（区段键 `^  "<key>":`）与权威表 `id: '…'` / 单行 authority 行形状 | 格式变化会使行号回退到区段键 / schema 头或省略，不会误定位到错误条目 | 届时更新定位器 |

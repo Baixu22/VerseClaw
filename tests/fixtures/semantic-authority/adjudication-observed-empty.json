@@ -9,6 +9,7 @@
   "mutations": [
     {
       "file": "scripts/check-semantic-authority-adjudication.json",
+      "anchor": "\"id\": \"C-05/R-D3\"",
       "find": "      \"id\": \"C-05/R-D3\",\n      \"rule\": \"default-matrix-row\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"vtoken-bridge\",\n      \"observed\": {\n        \"defaultMode\": \"opt-in\",\n        \"matrixRow\": \"VToken bridge\",\n        \"matrixValue\": \"retired\"\n      },",
       "replace": "      \"id\": \"C-05/R-D3\",\n      \"rule\": \"default-matrix-row\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"vtoken-bridge\",\n      \"observed\": {},"
     }

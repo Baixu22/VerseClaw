@@ -9,8 +9,9 @@
   "mutations": [
     {
       "file": "shared/component-authority-manifest.ts",
-      "find": "runtimeAvailabilitySource: 'static:dcs-context-orchestrator',\n    defaultMode: 'baseline',",
-      "replace": "runtimeAvailabilitySource: 'static:dcs-context-orchestrator',\n    defaultMode: 'retired',"
+      "anchor": "id: 'dcs-context-authority'",
+      "find": "    id: 'dcs-context-authority',\n    label: 'DCS context authority',\n    domains: ['context'],\n    purpose: 'Single candidate adjudication, ordering, deduplication, budgeting and PromptPlan authority for a model turn.',\n    ownedDataTypes: ['context.candidate-set', 'context.prompt-plan'],\n    scopes: ['turn', 'run'],\n    allowedReads: ['context.resource-revision', 'context.candidate-fragment', 'context.enhancement-policy', 'memory.role-card', 'memory.candidate', 'memory.runtime-fact', 'memory.runtime-episode', 'knowledge.applied', 'knowledge.retrieval-view', 'capability.descriptor'],\n    allowedWrites: ['context.candidate-set', 'context.prompt-plan'],\n    effects: ['accept', 'project'],\n    forbiddenActions: ['own-source-payload', 'write-durable-memory', 'serialize-provider-request'],\n    runtimeAvailabilitySource: 'static:dcs-context-orchestrator',\n    defaultMode: 'baseline',",
+      "replace": "    id: 'dcs-context-authority',\n    label: 'DCS context authority',\n    domains: ['context'],\n    purpose: 'Single candidate adjudication, ordering, deduplication, budgeting and PromptPlan authority for a model turn.',\n    ownedDataTypes: ['context.candidate-set', 'context.prompt-plan'],\n    scopes: ['turn', 'run'],\n    allowedReads: ['context.resource-revision', 'context.candidate-fragment', 'context.enhancement-policy', 'memory.role-card', 'memory.candidate', 'memory.runtime-fact', 'memory.runtime-episode', 'knowledge.applied', 'knowledge.retrieval-view', 'capability.descriptor'],\n    allowedWrites: ['context.candidate-set', 'context.prompt-plan'],\n    effects: ['accept', 'project'],\n    forbiddenActions: ['own-source-payload', 'write-durable-memory', 'serialize-provider-request'],\n    runtimeAvailabilitySource: 'static:dcs-context-orchestrator',\n    defaultMode: 'retired',"
     }
   ]
 }

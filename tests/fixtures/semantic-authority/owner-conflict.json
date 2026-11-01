@@ -9,8 +9,9 @@
   "mutations": [
     {
       "file": "shared/dcs/component-disposition-catalog.ts",
-      "find": "owner: 'task-ledger', implementationNodeId:",
-      "replace": "owner: 'permission-approval-authority', implementationNodeId:"
+      "anchor": "id: 'component.task-ledger'",
+      "find": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'task-ledger', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',",
+      "replace": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'permission-approval-authority', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',"
     }
   ]
 }

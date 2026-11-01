@@ -1,0 +1,12 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "broken-anchor-missing",
+  "description": "A find mutation without an anchor. This gate requires the id literal of the mutated entry on every find mutation, so the fixture is rejected (exit 2) before anything is evaluated.",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "find": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'task-ledger', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',",
+      "replace": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'x', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',"
+    }
+  ]
+}

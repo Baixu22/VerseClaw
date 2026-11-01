@@ -5,6 +5,7 @@
   "mutations": [
     {
       "file": "package.json",
+      "anchor": "\"name\"",
       "find": "\"name\"",
       "replace": "\"name\""
     }

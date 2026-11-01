@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "broken-anchor-not-in-find",
+  "description": "The anchor names an entry id that the find text does not contain, so the mutation cannot be proven to edit that entry: rejected (exit 2).",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "anchor": "id: 'component.vtoken-context'",
+      "find": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'task-ledger', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',",
+      "replace": "    id: 'component.task-ledger', label: 'Task Ledger', disposition: 'default', owner: 'x', implementationNodeId: 'TF-0508', currentMode: 'mixed', targetDefaultMode: 'baseline',"
+    }
+  ]
+}

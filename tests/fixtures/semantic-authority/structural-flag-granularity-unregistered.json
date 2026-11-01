@@ -1,0 +1,23 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "structural-flag-granularity-unregistered",
+  "class": "structural-reconciliation",
+  "rule": "exemption-registration",
+  "expect": "[semantic-authority/exemption-registration] structural-unregistered: flag-granularity flag 'working-memory' is observed in the registries but no structural exemption (X-01) registers it",
+  "expectIssueCount": 1,
+  "description": "The working-memory flag is re-bound from component.working-memory-context to feature.patch-flow (owner TF-0510, so owner agreement holds) whose coverage does not include working-memory-context-source. The flag becomes a feature-granularity binding; X-01 does not list it, so the previously report-only flagGranularity list fails closed (TF-0638 reconciliation 2).",
+  "mutations": [
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "anchor": "id: 'component.working-memory-context'",
+      "find": "    id: 'component.working-memory-context', label: 'Working-memory Workspace Context', disposition: 'default', owner: 'working-memory-context-source', implementationNodeId: 'TF-0494', currentMode: 'baseline', targetDefaultMode: 'baseline',\n    ...user('model context in ordinary Chat / task workspaces'),\n    currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'Task Ledger working context', 'Settings > General Workspace Context'], evidenceRefs: CONTEXT_EVIDENCE,\n    coverage: { authorityComponentIds: ['working-memory-context-source'], dcsFlagIds: ['working-memory'], runtimeLeafPatterns: ['contextBlock.working-memory.*'], settingsPanelIds: ['WorkspaceContextPanel'] },",
+      "replace": "    id: 'component.working-memory-context', label: 'Working-memory Workspace Context', disposition: 'default', owner: 'working-memory-context-source', implementationNodeId: 'TF-0494', currentMode: 'baseline', targetDefaultMode: 'baseline',\n    ...user('model context in ordinary Chat / task workspaces'),\n    currentConsumers: ['DCS Assembler', 'Context Orchestrator', 'Task Ledger working context', 'Settings > General Workspace Context'], evidenceRefs: CONTEXT_EVIDENCE,\n    coverage: { authorityComponentIds: ['working-memory-context-source'], runtimeLeafPatterns: ['contextBlock.working-memory.*'], settingsPanelIds: ['WorkspaceContextPanel'] },"
+    },
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "anchor": "id: 'feature.patch-flow'",
+      "find": "    id: 'feature.patch-flow', label: 'Patch flow', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',\n    ...retired('Retired by TF-0510: no evidence shows serial fenced patch application improves coding outcomes over ordinary tool writes, and the concurrency case it targeted is covered by worktree isolation plus the merge queue. The gate could only ever recommend, never demonstrate a benefit. Code is retained and unreachable; the write journal remains the mutation authority.'),\n    currentConsumers: ['retired patch-flow orchestration', 'write journal recovery path'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],\n    coverage: { dcsFlagIds: ['patch-flow'], runtimeLeafPatterns: ['coding.patchFlow.*'] },",
+      "replace": "    id: 'feature.patch-flow', label: 'Patch flow', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',\n    ...retired('Retired by TF-0510: no evidence shows serial fenced patch application improves coding outcomes over ordinary tool writes, and the concurrency case it targeted is covered by worktree isolation plus the merge queue. The gate could only ever recommend, never demonstrate a benefit. Code is retained and unreachable; the write journal remains the mutation authority.'),\n    currentConsumers: ['retired patch-flow orchestration', 'write journal recovery path'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],\n    coverage: { dcsFlagIds: ['patch-flow', 'working-memory'], runtimeLeafPatterns: ['coding.patchFlow.*'] },"
+    }
+  ]
+}

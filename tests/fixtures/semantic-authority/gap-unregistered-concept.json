@@ -9,6 +9,7 @@
   "mutations": [
     {
       "file": "scripts/check-semantic-authority-adjudication.json",
+      "anchor": "\"id\": \"G-03\"",
       "find": "    {\n      \"id\": \"G-03\",\n      \"rule\": \"gap-registration\",\n      \"disposition\": \"registered\",\n      \"class\": \"concept-without-component\",\n      \"target\": \"chat\",\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.4-G-03\",\n      \"reason\": \"The authority manifest has no session, orchestration or scheduling domain, so this product concept resolves to no component; relations touching it can only be checked for reference integrity, not authority consistency.\",\n      \"reviewCondition\": \"Resolve by declaring a component (or an explicit external-owner table) in the authority manifest; gap-stale then rejects this entry.\"\n    },\n",
       "replace": ""
     }

@@ -1,6 +1,7 @@
 /* Auto-generated test typing surface for check-semantic-authority.mjs */
 export const ADJUDICATION_PATH: string;
 export const ADJUDICATION_SCHEMA: string;
+export const AUTHORITY_IMPORT_ASSERTION: RegExp;
 export const DIAGNOSTIC_FAMILY: string;
 export const DISPOSITION_VALIDATION_NOW: string;
 export const GAP_CLASSES: Readonly<Record<string, string>>;
@@ -8,8 +9,11 @@ export const INPUT_PATHS: Readonly<Record<string, string>>;
 export const REGISTRY_PATHS: Readonly<Record<string, string>>;
 export const REPORT_SCHEMA: string;
 export const RULES: readonly string[];
+export const STRUCTURAL_CLASSES: Readonly<Record<string, { ruling: string; targetKind: string }>>;
 export const assembleRegistries: any;
+export const buildAdjudicationLocator: any;
 export const buildDispositionValidationInputs: any;
+export const deferAuthorityImportAssertion: any;
 export const evaluateSemanticAuthority: any;
 export const expectedModesForMatrixValue: any;
 export const formatSummary: any;

@@ -22,6 +22,7 @@ const RULES = Object.freeze([
   'default-flag-risk',
   'authority-boundary',
   'gap-registration',
+  'exemption-registration',
   'exemption-reason-missing',
   'exemption-stale',
   'exemption-unknown-rule',
@@ -95,6 +96,24 @@ const ADJUDICATION_SECTIONS = Object.freeze({
   authorityBindings: null,
 });
 const TARGET_KINDS = new Set(['component', 'disposition', 'flag', 'concept', 'data-type', 'subsystem', 'surface', 'doc-row', 'relation']);
+// Structural exemptions (AUTHORITY-RECONCILIATION §6.3 X-01…X-05) are
+// reconciled against observed sets exactly like gaps: every entry names its
+// class, every class has an observed set computed from the registries, and
+// both directions (unregistered / stale) are diagnostics. The observed sets are
+// "listed, not judged" sets, never conflict rules.
+const STRUCTURAL_CLASSES = Object.freeze({
+  'flag-granularity': { ruling: 'X-01', targetKind: 'flag' },
+  'internal-vocabulary': { ruling: 'X-02', targetKind: 'component' },
+  'target-divergence': { ruling: 'X-03', targetKind: 'component' },
+  'not-comparable': { ruling: 'X-04', targetKind: 'component' },
+  'matrix-unmapped': { ruling: 'X-05', targetKind: 'doc-row' },
+});
+// The authority manifest asserts its own validity at import time. The gate
+// defers that assertion so a duplicate authority row reaches
+// registry-self-validation as a located rule diagnostic instead of ending the
+// run as a load failure; only the module-level (column 0) call is deferred.
+const AUTHORITY_IMPORT_ASSERTION = /^assertComponentAuthorityManifest\(\);/m;
+const AUTHORITY_IMPORT_ASSERTION_DEFERRED = 'void 0; // assertComponentAuthorityManifest() is evaluated by scripts/check-semantic-authority.mjs (registry-self-validation)';
 
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
@@ -108,6 +127,75 @@ function lineOf(text, needle) {
   if (typeof text !== 'string' || !needle) return null;
   const index = text.indexOf(needle);
   return index === -1 ? null : text.slice(0, index).split('\n').length;
+}
+
+// First (or last) line that contains every needle; null when none does.
+function lineWithAll(text, needles, { last = false, from = 0, until = Infinity } = {}) {
+  if (typeof text !== 'string' || needles.some((needle) => !needle)) return null;
+  const lines = text.split('\n');
+  let found = null;
+  for (let index = Math.max(0, from); index < Math.min(lines.length, until); index += 1) {
+    if (needles.every((needle) => lines[index].includes(needle))) {
+      found = index + 1;
+      if (!last) break;
+    }
+  }
+  return found;
+}
+
+// Line of a field inside the block of an entry (from its id line to the next
+// `id:` line); null when the entry or the field is not in the text.
+function lineInEntryBlock(text, idNeedle, fieldNeedles) {
+  const idLine = lineOf(text, idNeedle);
+  if (!idLine) return null;
+  const lines = text.split('\n');
+  let end = lines.length;
+  for (let index = idLine; index < lines.length; index += 1) {
+    if (/^\s*id: '/.test(lines[index])) {
+      end = index;
+      break;
+    }
+  }
+  return lineWithAll(text, fieldNeedles, { from: idLine, until: end });
+}
+
+// Locates adjudication-registry diagnostics in the registry text: the entry's
+// `"id"` line (disambiguated by target / conceptId / relation when several
+// entries share an id), else the section key, else the schema header. Every
+// diagnostic that points at the registry therefore carries a line.
+function buildAdjudicationLocator(text) {
+  if (typeof text !== 'string') return () => null;
+  const lines = text.split(/\r?\n/);
+  const idLines = [];
+  const linesById = new Map();
+  const sectionLines = new Map();
+  lines.forEach((line, index) => {
+    const id = /^\s*"id":\s*("(?:[^"\\]|\\.)*")/.exec(line);
+    if (id) {
+      const value = JSON.parse(id[1]);
+      idLines.push(index);
+      if (!linesById.has(value)) linesById.set(value, []);
+      linesById.get(value).push(index);
+    }
+    const section = /^ {2}"([A-Za-z]+)":/.exec(line);
+    if (section && !sectionLines.has(section[1])) sectionLines.set(section[1], index + 1);
+  });
+  return ({ id, target, section } = {}) => {
+    const candidates = id ? linesById.get(id) : undefined;
+    if (candidates && candidates.length > 0) {
+      if (candidates.length === 1 || target === undefined || target === null) return candidates[0] + 1;
+      const literal = JSON.stringify(String(target));
+      for (const start of candidates) {
+        const next = idLines.find((index) => index > start) ?? lines.length;
+        for (let index = start; index < next; index += 1) {
+          if (/^\s*"(target|conceptId|relation)":\s*/.test(lines[index]) && lines[index].includes(literal)) return start + 1;
+        }
+      }
+      return candidates[0] + 1;
+    }
+    if (section && sectionLines.has(section)) return sectionLines.get(section);
+    return sectionLines.get('schema') ?? 1;
+  };
 }
 
 function relationKey(relation) {
@@ -165,10 +253,15 @@ function deepEqual(left, right) {
 function evaluateSemanticAuthority(registries, adjudication, options = {}) {
   const sourceTexts = options.sourceTexts ?? {};
   const adjudicationPath = options.adjudicationPath ?? ADJUDICATION_PATH;
+  const locateAdjudication = buildAdjudicationLocator(options.adjudicationText);
   const diagnostics = [];
   const push = (rule, target, file, message, line = null) => {
     diagnostics.push({ rule, target, file: file === ADJUDICATION_PATH ? adjudicationPath : file, line, message });
   };
+  // Registry-path diagnostics are located by entry id (+ target), section key
+  // or schema header, so a registry finding is never line-less when the text
+  // is available (the CLI always passes it).
+  const pushAdjudication = (rule, target, message, where) => push(rule, target, ADJUDICATION_PATH, message, locateAdjudication(where));
   const locate = (table, needle) => ({ file: REGISTRY_PATHS[table], line: lineOf(sourceTexts[table], needle) });
   const pushAt = (rule, target, location, message) => push(rule, target, location.file, message, location.line);
   const report = {
@@ -178,6 +271,7 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
     notComparable: [],
     matrixUnmapped: [],
     gaps: {},
+    structural: {},
     exemptions: { structural: 0, registeredPendingFix: 0, gaps: 0, conceptAliases: 0, authorityBindings: 0, invalid: 0 },
   };
   const finish = () => ({
@@ -187,11 +281,11 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
   });
 
   if (!adjudication || typeof adjudication !== 'object') {
-    push('adjudication-missing', adjudicationPath, ADJUDICATION_PATH, `adjudication registry ${adjudicationPath} is missing or unparsable; nothing can be exempted, aliased or registered as a gap without it`);
+    pushAdjudication('adjudication-missing', adjudicationPath, `adjudication registry ${adjudicationPath} is missing or unparsable; nothing can be exempted, aliased or registered as a gap without it`, {});
     return finish();
   }
   if (adjudication.schema !== ADJUDICATION_SCHEMA) {
-    push('adjudication-missing', ADJUDICATION_PATH, ADJUDICATION_PATH, `adjudication registry declares schema ${JSON.stringify(adjudication.schema)}, expected ${ADJUDICATION_SCHEMA}`);
+    pushAdjudication('adjudication-missing', ADJUDICATION_PATH, `adjudication registry declares schema ${JSON.stringify(adjudication.schema)}, expected ${ADJUDICATION_SCHEMA}`, { section: 'schema' });
     return finish();
   }
 
@@ -225,12 +319,23 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
 
   // registry-self-validation: both matrices' own validators, passed through
   // verbatim (unknown_coverage, duplicate_authority, … are theirs, not ours).
+  // An authority row is located by its dataType/scope/operation triple (the
+  // last such row is the duplicate); other issues by the entry id literal.
+  const locateValidationIssue = (table, issue) => {
+    if (!issue.path) return { file: REGISTRY_PATHS[table], line: null };
+    const key = String(issue.path).split('::');
+    if (key.length === 3) {
+      const line = lineWithAll(sourceTexts[table], [`dataType: '${key[0]}'`, `scope: '${key[1]}'`, `operation: '${key[2]}'`], { last: issue.code === 'duplicate_authority' });
+      if (line) return { file: REGISTRY_PATHS[table], line };
+    }
+    return { file: REGISTRY_PATHS[table], line: lineOf(sourceTexts[table], `id: '${issue.path}'`) ?? lineOf(sourceTexts[table], `'${issue.path}'`) };
+  };
   const manifestValidation = registries.authority.validation;
   if (!manifestValidation || typeof manifestValidation.ok !== 'boolean') {
     push('registry-self-validation', 'authority', REGISTRY_PATHS.authority, 'validateComponentAuthorityManifest() produced no result');
   } else {
     for (const issue of manifestValidation.issues ?? []) {
-      pushAt('registry-self-validation', issue.path ?? issue.code, locate('authority', issue.path ? `'${issue.path}'` : null), `${issue.code}: ${issue.message}`);
+      pushAt('registry-self-validation', issue.path ?? issue.code, locateValidationIssue('authority', issue), `${issue.code}: ${issue.message}`);
     }
   }
   const dispositionValidation = registries.dispositionValidation;
@@ -238,7 +343,7 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
     push('registry-self-validation', 'disposition', REGISTRY_PATHS.disposition, 'validateComponentDispositionManifest() produced no result; its coverage inputs could not be assembled');
   } else {
     for (const issue of dispositionValidation.issues ?? []) {
-      pushAt('registry-self-validation', issue.path ?? issue.code, locate('disposition', issue.path ? `'${issue.path}'` : null), `${issue.code}: ${issue.message}`);
+      pushAt('registry-self-validation', issue.path ?? issue.code, locateValidationIssue('disposition', issue), `${issue.code}: ${issue.message}`);
     }
   }
 
@@ -259,22 +364,30 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
     }
   };
   const entries = { exemptions: [], adjudicatedConflicts: [], gaps: [], conceptAliases: [], authorityBindings: [] };
+  // Structural entries by class and target, valid or not: an entry that fails
+  // its own field checks is already located and diagnosed, so it still counts
+  // as "registered" for reconciliation (what it lacks is validity, not
+  // presence) but is never re-reported as stale.
+  const structuralRegistered = new Map(Object.keys(STRUCTURAL_CLASSES).map((structuralClass) => [structuralClass, new Map()]));
+  const invalidEntries = new Set();
   const seenEntryKeys = new Set();
   for (const [section, expectedDisposition] of Object.entries(ADJUDICATION_SECTIONS)) {
     const list = adjudication[section];
     if (list === undefined) continue;
     if (!Array.isArray(list)) {
-      push('exemption-unknown-rule', section, ADJUDICATION_PATH, `section '${section}' must be an array`);
+      pushAdjudication('exemption-unknown-rule', section, `section '${section}' must be an array`, { section });
       continue;
     }
     for (const entry of list) {
       const id = hasText(entry?.id) ? entry.id : `${section}[?]`;
+      const record = { ...entry, id };
+      const where = { id: hasText(entry?.id) ? entry.id : null, target: entry?.target ?? entry?.conceptId ?? entry?.relation, section };
       let valid = true;
       const fail = (rule, message) => {
-        push(rule, id, ADJUDICATION_PATH, message);
+        pushAdjudication(rule, id, message, where);
         valid = false;
       };
-      if (!RULE_SET.has(entry?.rule) || ['adjudication-missing', 'registry-load-failed', 'exemption-reason-missing', 'exemption-stale', 'exemption-unknown-rule', 'exemption-unknown-target'].includes(entry?.rule)) {
+      if (!RULE_SET.has(entry?.rule) || ['adjudication-missing', 'registry-load-failed', 'exemption-registration', 'exemption-reason-missing', 'exemption-stale', 'exemption-unknown-rule', 'exemption-unknown-target'].includes(entry?.rule)) {
         fail('exemption-unknown-rule', `${section} entry '${id}' names rule ${JSON.stringify(entry?.rule)}, which is not an adjudicable rule of this checker`);
       } else if (section === 'adjudicatedConflicts' && !ADJUDICABLE_CONFLICT_RULES.has(entry?.rule)) {
         fail('exemption-unknown-rule', `${section} entry '${id}' names rule ${JSON.stringify(entry?.rule)}, which is not a default-conflict rule; owner, authority and identity conflicts cannot be registered as pending-fix`);
@@ -290,6 +403,16 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
       }
       if (expectedDisposition && entry?.disposition !== expectedDisposition) {
         fail('exemption-unknown-rule', `${section} entry '${id}' must declare disposition '${expectedDisposition}' (got ${JSON.stringify(entry?.disposition)})`);
+      }
+      if (section === 'exemptions') {
+        const structural = STRUCTURAL_CLASSES[entry?.class];
+        if (!structural) {
+          fail('exemption-unknown-rule', `exemptions entry '${id}' names class ${JSON.stringify(entry?.class)}, which is not a structural exemption class of this checker (${Object.keys(STRUCTURAL_CLASSES).join(', ')})`);
+        } else if (entry?.targetKind !== structural.targetKind) {
+          fail('exemption-unknown-rule', `exemptions entry '${id}' of class '${entry.class}' must target a ${structural.targetKind} (got targetKind ${JSON.stringify(entry?.targetKind)})`);
+        } else if (hasText(entry?.target)) {
+          structuralRegistered.get(entry.class).set(entry.target, record);
+        }
       }
       if (section === 'conceptAliases') {
         if (!conceptIds.has(entry?.conceptId)) fail('exemption-unknown-target', `alias '${id}' names concept ${JSON.stringify(entry?.conceptId)}, which does not exist in ${REGISTRY_PATHS.semantics}`);
@@ -310,8 +433,11 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
       const key = `${section}::${id}::${entry?.rule}::${entry?.target ?? entry?.conceptId ?? entry?.relation}`;
       if (seenEntryKeys.has(key)) fail('exemption-unknown-target', `${section} entry '${id}' is declared more than once for the same rule and target`);
       seenEntryKeys.add(key);
-      if (valid) entries[section].push({ ...entry, id });
-      else report.exemptions.invalid += 1;
+      if (valid) entries[section].push(record);
+      else {
+        report.exemptions.invalid += 1;
+        invalidEntries.add(record);
+      }
     }
   }
   report.exemptions.structural = entries.exemptions.length;
@@ -329,12 +455,13 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
   // concept-alias (I-4): concept → component only by exact id or registered alias.
   const aliases = new Map();
   for (const alias of entries.conceptAliases) {
+    const where = { id: alias.id, target: alias.conceptId, section: 'conceptAliases' };
     if (aliases.has(alias.conceptId)) {
-      push('concept-alias', alias.id, ADJUDICATION_PATH, `concept '${alias.conceptId}' is aliased more than once`);
+      pushAdjudication('concept-alias', alias.id, `concept '${alias.conceptId}' is aliased more than once`, where);
       continue;
     }
     if (componentIds.has(alias.conceptId)) {
-      push('concept-alias', alias.id, ADJUDICATION_PATH, `concept '${alias.conceptId}' already matches a component id exactly; alias '${alias.id}' is redundant`);
+      pushAdjudication('concept-alias', alias.id, `concept '${alias.conceptId}' already matches a component id exactly; alias '${alias.id}' is redundant`, where);
       continue;
     }
     aliases.set(alias.conceptId, alias.componentId);
@@ -514,13 +641,19 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
   // authority-boundary (R-A): one owner per data type beyond the key-level
   // uniqueness the manifest validator already enforces; registered relation
   // bindings must still hold; no second authority-class claim on one target.
+  // Data-type diagnostics point at the second declaration (the authority row,
+  // or the ownedDataTypes line inside the second component's block).
   const ownersByDataType = new Map();
   for (const assignment of manifest.authorities) {
     if (!ownersByDataType.has(assignment.dataType)) ownersByDataType.set(assignment.dataType, new Set());
     ownersByDataType.get(assignment.dataType).add(assignment.authorityComponentId);
   }
   for (const [dataType, owners] of ownersByDataType) {
-    if (owners.size > 1) push('authority-boundary', dataType, REGISTRY_PATHS.authority, `data type '${dataType}' has ${owners.size} authority owners: ${[...owners].join(', ')}`);
+    if (owners.size > 1) {
+      const ordered = [...owners];
+      const line = [...ordered.slice(1), ordered[0]].map((owner) => lineWithAll(sourceTexts.authority, [`dataType: '${dataType}'`, `authorityComponentId: '${owner}'`])).find(Boolean) ?? null;
+      pushAt('authority-boundary', dataType, { file: REGISTRY_PATHS.authority, line }, `data type '${dataType}' has ${owners.size} authority owners: ${ordered.join(', ')}`);
+    }
   }
   const declaredOwners = new Map();
   for (const component of components) {
@@ -530,7 +663,12 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
     }
   }
   for (const [dataType, owners] of declaredOwners) {
-    if (owners.length > 1) push('authority-boundary', dataType, REGISTRY_PATHS.authority, `data type '${dataType}' is listed in ownedDataTypes of ${owners.length} components: ${owners.join(', ')}`);
+    if (owners.length > 1) {
+      const ordered = [...owners.slice(1), owners[0]];
+      const line = ordered.map((owner) => lineInEntryBlock(sourceTexts.authority, `id: '${owner}'`, ['ownedDataTypes', `'${dataType}'`])).find(Boolean)
+        ?? lineOf(sourceTexts.authority, `id: '${owners[1]}'`);
+      pushAt('authority-boundary', dataType, { file: REGISTRY_PATHS.authority, line }, `data type '${dataType}' is listed in ownedDataTypes of ${owners.length} components: ${owners.join(', ')}`);
+    }
   }
   if (components.filter((component) => component.authorizationRole === 'owner').length !== 1) {
     push('authority-boundary', 'authorizationRole', REGISTRY_PATHS.authority, 'exactly one component must carry authorizationRole owner');
@@ -600,10 +738,10 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
     const registered = registeredGaps.get(gapClass);
     report.gaps[gapClass] = { observed: [...computed].sort(), registered: [...registered.keys()].sort() };
     for (const target of computed) {
-      if (!registered.has(target)) push('gap-registration', `${gapClass}:${target}`, ADJUDICATION_PATH, `gap-unregistered: ${gapClass} '${target}' is observed in the registries but not registered as a gap`);
+      if (!registered.has(target)) pushAdjudication('gap-registration', `${gapClass}:${target}`, `gap-unregistered: ${gapClass} '${target}' is observed in the registries but not registered as a gap`, { section: 'gaps' });
     }
     for (const [target, gapId] of registered) {
-      if (!computed.has(target)) push('gap-registration', `${gapClass}:${target}`, ADJUDICATION_PATH, `gap-stale: ${gapId} registers ${gapClass} '${target}' but the gap is no longer observed; remove or re-adjudicate it`);
+      if (!computed.has(target)) pushAdjudication('gap-registration', `${gapClass}:${target}`, `gap-stale: ${gapId} registers ${gapClass} '${target}' but the gap is no longer observed; remove or re-adjudicate it`, { id: gapId, target, section: 'gaps' });
     }
   }
 
@@ -632,17 +770,53 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
   };
   for (const entry of [...entries.exemptions, ...entries.adjudicatedConflicts]) {
     if (entry.targetKind === 'component' && identityBroken.has(entry.target)) continue;
+    const section = entries.exemptions.includes(entry) ? 'exemptions' : 'adjudicatedConflicts';
+    const where = { id: entry.id, target: entry.target, section };
     if (!entry.observed || typeof entry.observed !== 'object' || Object.keys(entry.observed).length === 0) {
       staleEntries.add(entry);
-      push('exemption-stale', entry.id, ADJUDICATION_PATH, `${entry.id} (${entry.rule}, ${entry.target}) records no observed values, so staleness cannot be checked`);
+      pushAdjudication('exemption-stale', entry.id, `${entry.id} (${entry.rule}, ${entry.target}) records no observed values, so staleness cannot be checked`, where);
       continue;
     }
     const current = observe(entry);
     for (const [field, recorded] of Object.entries(entry.observed)) {
       if (!deepEqual(recorded, current[field])) {
         staleEntries.add(entry);
-        push('exemption-stale', entry.id, ADJUDICATION_PATH, `${entry.id} (${entry.rule}, ${entry.target}) recorded ${field}=${JSON.stringify(recorded)} but the registries now say ${JSON.stringify(current[field])}; remove or re-adjudicate the entry`);
+        pushAdjudication('exemption-stale', entry.id, `${entry.id} (${entry.rule}, ${entry.target}) recorded ${field}=${JSON.stringify(recorded)} but the registries now say ${JSON.stringify(current[field])}; remove or re-adjudicate the entry`, where);
       }
+    }
+  }
+
+  // exemption-registration (X-01…X-05): structural exemptions carry weight.
+  // Each class has an observed set computed from the registries — the same
+  // "listed, not judged" sets the report already exposes — and is reconciled
+  // with the registered entries in both directions, like gaps. An entry that is
+  // already stale or invalid is not re-reported; a component whose identity
+  // link failed is neither observed nor required (identity-key owns it).
+  const adjudicatedTargets = new Set(entries.adjudicatedConflicts.map((entry) => entry.target));
+  const structuralObserved = {
+    'flag-granularity': new Set(flagGranularity),
+    'internal-vocabulary': new Set(),
+    'target-divergence': new Set(),
+    'not-comparable': new Set(report.notComparable),
+    'matrix-unmapped': new Set(report.matrixUnmapped.map((row) => row.label)),
+  };
+  for (const component of components) {
+    const entry = linkedEntry.get(component.id);
+    if (!entry) continue;
+    if (component.defaultMode === 'internal' && entry.disposition === 'default') structuralObserved['internal-vocabulary'].add(component.id);
+    if (entry.targetDefaultMode !== component.defaultMode && !adjudicatedTargets.has(component.id)) structuralObserved['target-divergence'].add(component.id);
+  }
+  for (const [structuralClass, { ruling, targetKind }] of Object.entries(STRUCTURAL_CLASSES)) {
+    const observed = structuralObserved[structuralClass];
+    const registered = structuralRegistered.get(structuralClass);
+    report.structural[structuralClass] = { ruling, observed: [...observed].sort(), registered: [...registered.keys()].sort() };
+    for (const target of observed) {
+      if (!registered.has(target)) pushAdjudication('exemption-registration', `${structuralClass}:${target}`, `structural-unregistered: ${structuralClass} ${targetKind} '${target}' is observed in the registries but no structural exemption (${ruling}) registers it; register it with a reason or resolve it`, { section: 'exemptions' });
+    }
+    for (const [target, entry] of registered) {
+      if (observed.has(target) || staleEntries.has(entry) || invalidEntries.has(entry)) continue;
+      if (targetKind === 'component' && identityBroken.has(target)) continue;
+      pushAdjudication('exemption-registration', `${structuralClass}:${target}`, `structural-stale: ${entry.id} registers ${structuralClass} ${targetKind} '${target}' but it is no longer observed; remove or re-adjudicate the entry`, { id: entry.id, target, section: 'exemptions' });
     }
   }
 
@@ -669,7 +843,7 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
   for (const [key, entry] of suppression) {
     if (fired.has(key) || staleEntries.has(entry) || identityBroken.has(entry.target)) continue;
     const [rule, target] = key.split('::');
-    push('exemption-stale', entry.id, ADJUDICATION_PATH, `${entry.id} registers a pending-fix conflict for ${rule} on '${target}' but no such diagnostic fires; remove or re-adjudicate the entry`);
+    pushAdjudication('exemption-stale', entry.id, `${entry.id} registers a pending-fix conflict for ${rule} on '${target}' but no such diagnostic fires; remove or re-adjudicate the entry`, { id: entry.id, target: entry.target, section: 'adjudicatedConflicts' });
   }
   report.flagGranularity = flagGranularity.sort();
   return finish();
@@ -679,12 +853,15 @@ function formatSummary(report) {
   const counts = report.counts;
   const gapsObserved = Object.values(report.gaps).reduce((sum, gap) => sum + gap.observed.length, 0);
   const gapsRegistered = Object.values(report.gaps).reduce((sum, gap) => sum + gap.registered.length, 0);
-  return `summary components=${counts.components} authorities=${counts.authorities} dispositions=${counts.dispositions} claims=${counts.claims} reliability=${counts.reliability} sensitive=${counts.sensitive} concepts=${counts.concepts} relations=${counts.relations} flags=${counts.flags} | rules=${report.rulesEvaluated.length} diagnostics=${report.diagnostics?.length ?? 0} adjudicated=${report.adjudicated.length} structural=${report.exemptions.structural} gaps=${gapsObserved}/${gapsRegistered} aliases=${report.exemptions.conceptAliases} bindings=${report.exemptions.authorityBindings} not-comparable=${report.notComparable.length} matrix-unmapped=${report.matrixUnmapped.length}`;
+  const structuralObserved = Object.values(report.structural ?? {}).reduce((sum, entry) => sum + entry.observed.length, 0);
+  const structuralRegistered = Object.values(report.structural ?? {}).reduce((sum, entry) => sum + entry.registered.length, 0);
+  return `summary components=${counts.components} authorities=${counts.authorities} dispositions=${counts.dispositions} claims=${counts.claims} reliability=${counts.reliability} sensitive=${counts.sensitive} concepts=${counts.concepts} relations=${counts.relations} flags=${counts.flags} | rules=${report.rulesEvaluated.length} diagnostics=${report.diagnostics?.length ?? 0} adjudicated=${report.adjudicated.length} structural=${structuralObserved}/${structuralRegistered} gaps=${gapsObserved}/${gapsRegistered} aliases=${report.exemptions.conceptAliases} bindings=${report.exemptions.authorityBindings} not-comparable=${report.notComparable.length} matrix-unmapped=${report.matrixUnmapped.length}`;
 }
 
 export {
   ADJUDICATION_PATH,
   ADJUDICATION_SCHEMA,
+  AUTHORITY_IMPORT_ASSERTION,
   DIAGNOSTIC_FAMILY,
   DISPOSITION_VALIDATION_NOW,
   GAP_CLASSES,
@@ -692,8 +869,11 @@ export {
   REGISTRY_PATHS,
   REPORT_SCHEMA,
   RULES,
+  STRUCTURAL_CLASSES,
   assembleRegistries,
+  buildAdjudicationLocator,
   buildDispositionValidationInputs,
+  deferAuthorityImportAssertion,
   evaluateSemanticAuthority,
   expectedModesForMatrixValue,
   formatSummary,
@@ -706,6 +886,15 @@ export {
 };
 
 class RegistryLoadError extends Error {}
+
+// Serves the authority manifest with its module-level self-assertion replaced
+// on the same line (line numbers unchanged), so an invalid manifest is still
+// executable and its validator result reaches registry-self-validation. The
+// file on disk is never touched; an unmatched pattern leaves the text as is.
+function deferAuthorityImportAssertion(text) {
+  if (typeof text !== 'string' || !AUTHORITY_IMPORT_ASSERTION.test(text)) return { text, deferred: false };
+  return { text: text.replace(AUTHORITY_IMPORT_ASSERTION, AUTHORITY_IMPORT_ASSERTION_DEFERRED), deferred: true };
+}
 
 function buildDispositionValidationInputs({ authorityComponentIds, dcsFlagIds, runtimeLeafPaths, settingsSectionIds, settingsPanelIds, routePaths, knownNodeIds }) {
   return {
@@ -723,7 +912,9 @@ function buildDispositionValidationInputs({ authorityComponentIds, dcsFlagIds, r
 // Executes the registries through scripts/lib/ts-import-hooks.mjs. `rewrites`
 // maps repository-relative posix paths to replacement text (negative fixtures);
 // the same text is served to `import()` and to every direct read, so a mutated
-// registry and its line numbers agree.
+// registry and its line numbers agree. The authority manifest is served with
+// its import-time assertion deferred (see deferAuthorityImportAssertion); the
+// line numbers reported against it come from the unmodified text.
 async function loadRegistries({ root, rewrites = {} }) {
   const [{ register }, { readFile, readdir }, { pathToFileURL }, { resolve }] = await Promise.all([
     import('node:module'),
@@ -732,12 +923,18 @@ async function loadRegistries({ root, rewrites = {} }) {
     import('node:path'),
   ]);
   const hrefOf = (relativePath) => pathToFileURL(resolve(root, relativePath)).href;
-  const rewritesByHref = Object.fromEntries(Object.entries(rewrites).map(([relativePath, text]) => [hrefOf(relativePath), text]));
-  register('./lib/ts-import-hooks.mjs', import.meta.url, { data: { rewrites: rewritesByHref } });
-
   const readText = async (relativePath) => (
     relativePath in rewrites ? rewrites[relativePath] : readFile(resolve(root, relativePath), 'utf8')
   );
+  const sourceTexts = {};
+  for (const [table, relativePath] of Object.entries(REGISTRY_PATHS)) {
+    sourceTexts[table] = await readText(relativePath);
+  }
+  const rewritesByHref = Object.fromEntries(Object.entries(rewrites).map(([relativePath, text]) => [hrefOf(relativePath), text]));
+  const deferred = deferAuthorityImportAssertion(sourceTexts.authority);
+  if (deferred.deferred) rewritesByHref[hrefOf(REGISTRY_PATHS.authority)] = deferred.text;
+  register('./lib/ts-import-hooks.mjs', import.meta.url, { data: { rewrites: rewritesByHref } });
+
   const importModule = async (relativePath) => {
     try {
       return await import(hrefOf(relativePath));
@@ -746,9 +943,7 @@ async function loadRegistries({ root, rewrites = {} }) {
     }
   };
   const modules = {};
-  const sourceTexts = {};
   for (const [table, relativePath] of Object.entries(REGISTRY_PATHS)) {
-    sourceTexts[table] = await readText(relativePath);
     modules[table] = await importModule(relativePath);
   }
   const runtimeLeaves = await importModule(INPUT_PATHS.runtimeLeaves);
@@ -903,7 +1098,10 @@ async function main() {
   const readable = readableProjectFiles(options.adjudication);
   let fixtures;
   try {
-    fixtures = await loadRegistryFixtures(options.fixtures, { root });
+    // Anchor discipline: every find mutation names the id literal of the entry
+    // it edits and hits exactly once, so a negative can never edit a
+    // neighbouring entry by coincidence.
+    fixtures = await loadRegistryFixtures(options.fixtures, { root, anchors: 'required' });
     const outside = Object.keys(fixtures.files).filter((file) => !readable.has(file));
     if (outside.length > 0) {
       throw new RegistryFixtureError(`fixture mutation never applied (file is not read by this gate): ${outside.join(', ')}`);
@@ -930,18 +1128,19 @@ async function main() {
   }
 
   let adjudication = null;
+  let adjudicationText = null;
   let adjudicationError = null;
   try {
-    const text = options.adjudication in rewrites
+    adjudicationText = options.adjudication in rewrites
       ? rewrites[options.adjudication]
       : await (await import('node:fs/promises')).readFile(resolve(root, options.adjudication), 'utf8');
-    adjudication = JSON.parse(text);
+    adjudication = JSON.parse(adjudicationText);
   } catch (error) {
     adjudicationError = error?.message ?? String(error);
   }
 
   if (fixtureIds.length > 0) console.error(`Semantic authority fixtures applied: ${fixtureIds.join(', ')}`);
-  const result = evaluateSemanticAuthority(loaded.registries, adjudication, { sourceTexts: loaded.sourceTexts, adjudicationPath: options.adjudication });
+  const result = evaluateSemanticAuthority(loaded.registries, adjudication, { sourceTexts: loaded.sourceTexts, adjudicationPath: options.adjudication, adjudicationText });
   if (adjudicationError && result.diagnostics.some((diagnostic) => diagnostic.rule === 'adjudication-missing')) {
     result.diagnostics[0].message += ` (${adjudicationError})`;
     result.issues[0] += ` (${adjudicationError})`;

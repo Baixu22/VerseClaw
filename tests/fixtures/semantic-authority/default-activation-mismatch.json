@@ -9,8 +9,9 @@
   "mutations": [
     {
       "file": "shared/dcs/component-disposition-catalog.ts",
-      "find": "owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'opt-in', targetDefaultMode: 'baseline'",
-      "replace": "owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'shadow', targetDefaultMode: 'baseline'"
+      "anchor": "id: 'component.dcs-context-tools'",
+      "find": "    id: 'component.dcs-context-tools', label: 'DCS fact views and context tools', disposition: 'default', owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'opt-in', targetDefaultMode: 'baseline',",
+      "replace": "    id: 'component.dcs-context-tools', label: 'DCS fact views and context tools', disposition: 'default', owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'shadow', targetDefaultMode: 'baseline',"
     }
   ]
 }
