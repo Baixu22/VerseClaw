@@ -3,11 +3,11 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "0b142e3934f9deebfa9a8aeb15c7ddc04f9ab684",
-    "tree": "78416194e9f551f7f24843a9ea8d1aaadc5d4cf4",
+    "commit": "93988b86d02471713d853352b720c10dc33dafef",
+    "tree": "2bb92688c1228a8b0af028ced39c27946cca6867",
     "dirty": false,
     "sourceHashes": {
-      "scripts/rsi-historical-task-corpus.mjs": "310e55279ff82ee0bb813d625e6241c4486cfe3ecb0370d99f77434d7c739e7f",
+      "scripts/rsi-historical-task-corpus.mjs": "746e9e9329943972c3d88aa70787c6cd4861ed5d3a75f5a5024cabcc97811a5b",
       "scripts/rsi-historical-task-corpus.d.mts": "faa5e44195022ddf7ef7949bdca45cdc2918f6923c829a54656b8a4c19aa1508",
       "scripts/lib/rsi-historical-task-corpus.mjs": "8d9a4673b19b667af15be7f53bfe3ea65eb6b7b5d4c00a04094444f202d68981",
       "scripts/lib/rsi-historical-task-corpus.d.mts": "c849cf7ffc8bba8da69886e2583b8c1f58d3c7ed49f95d6036ad3189a6b8afc2",
