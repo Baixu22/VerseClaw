@@ -317,6 +317,33 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 
 源码：`shared/types/session-stage.ts`（纯函数 `deriveSessionStage`）、`openclaw_runtime/src/gateway/server-methods/session-stage-projection.ts`（只读适配器）。
 
+## 11.2 衍生血缘（SessionDerivation）只读投影
+
+`session.activitySnapshot` 的 `derivation` 回答“这个会话从哪来、每一跳能不能证明”。它不新建血缘表，只读 `fork` / `handoff` / `spawn` 已经持久化的字段。
+
+| hop.kind | 证明它的字段 |
+|---|---|
+| `fork` | `forkedFromParent`，或 `forkedFromLeafId` + `parentSessionKey` |
+| `handoff` | `parentSessionKey` 且无 fork 事实 |
+| `spawn` | `spawnedBy` |
+| `unknown` | 该 entry 没有声明任何父会话（这是根，不是缺口） |
+
+| hop.status | 含义 |
+|---|---|
+| `resolved` | 父 entry 在 store 中读到 |
+| `parent-missing` | 指明了父 key，但父 entry 读不到——**不是**“没有父” |
+| `cycle` | 链上重复出现同一 key，停止并如实标注 |
+| `bound-exceeded` | 超过深度上限（默认 8），`truncated: true` |
+
+边界：
+
+- 只读；不建 `session_derivations` 表、不写 receipt、不改变 fork/handoff/restore/reset 行为。
+- 血缘不是任务或 goal 权威；Task Ledger 与 goal truth 不变。
+- 血缘读取失败不得让整个 snapshot 失败；缺失时 `derivation` 缺省。
+- 继承策略默认仍是 transcript-only，本投影不改变继承内容。
+
+源码：`shared/types/session-derivation.ts`（纯函数 `deriveSessionLineage` / `classifyDerivation`）、`openclaw_runtime/src/gateway/server-methods/session-derivation-projection.ts`（只读适配器）。
+
 ## 12. 隐私与存储
 
 - transcript、label、archive index 和 trajectory 都是本地数据。
@@ -334,6 +361,7 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 - ACP/native/CLI backend 对 compaction 和参数支持不一致，必须看 effective policy。
 - activity snapshot 是只读投影，不是 task completion authority。
 - session stage 同样是只读投影：它解释会话处于哪一阶段，但不能改变提示词、预算或压缩时机。
+- derivation 只报告可证明的父链；parent-missing 与 cycle 必须如实呈现，不能补成一条看起来完整的链。
 - 任何 run/session 终态声明都必须来自 owner 事实和可回读 transcript/event，不接受 UI 假想状态。
 
 ## 14. 源码索引
@@ -350,6 +378,8 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 - `electron/services/session-delegation-store.ts`
 - `shared/types/session-activity.ts`
 - `shared/types/session-stage.ts`
+- `shared/types/session-derivation.ts`
+- `openclaw_runtime/src/gateway/server-methods/session-derivation-projection.ts`
 - `openclaw_runtime/src/gateway/server-methods/session-stage-projection.ts`
 - `shared/types/session-effective-policy.ts`
 - `shared/types/session-delegation.ts`

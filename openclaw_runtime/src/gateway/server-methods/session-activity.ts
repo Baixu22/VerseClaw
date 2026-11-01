@@ -17,6 +17,7 @@ import { parseAgentSessionKey } from "../../routing/session-key.js";
 import { collectSessionActivityReadProjection } from "./session-activity-projection.js";
 import { readRuntimeSessionResourceInventory } from "../session-resource-inventory.js";
 import { projectSessionStage } from "./session-stage-projection.js";
+import { readSessionDerivation } from "./session-derivation-projection.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 function readSessionKey(params: Record<string, unknown>): string | null {
@@ -196,6 +197,16 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
           : null,
     });
 
+    // Read-only derivation lineage (TF-0643). Only the store the gateway
+    // already loaded is consulted; there is no receipt table and no write path.
+    // A read failure must not fail the snapshot.
+    let derivation;
+    try {
+      derivation = readSessionDerivation({ cfg, sessionKey });
+    } catch {
+      derivation = undefined;
+    }
+
     respond(true, {
       snapshot: {
         session: {
@@ -216,6 +227,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         processes: readProjection.processes,
         lineage: readProjection.lineage,
         stage,
+        derivation,
         policy,
         resources,
         // The goal-wake owner read can fail and degrade to empty arrays; the
