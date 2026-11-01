@@ -11,6 +11,17 @@ const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const err = (code, message) => ({ code, message });
 const rel = (path) => path.split('\\').join('/');
 
+const INLINE_LOG_FILES = ['agent.stdout.log', 'agent.stderr.log'];
+const MAX_INLINE_LOG_BYTES = 64 * 1024;
+const EXCERPT_BYTES = 32 * 1024;
+
+export function excerptLog(bytes) {
+  const head = bytes.subarray(0, EXCERPT_BYTES);
+  const tail = bytes.subarray(bytes.length - EXCERPT_BYTES);
+  const marker = `\n... [truncated: ${bytes.length} bytes total, head+tail ${EXCERPT_BYTES} bytes retained; full sha256 ${sha256(bytes)}] ...\n`;
+  return Buffer.concat([head, Buffer.from(marker, 'utf8'), tail]);
+}
+
 function walk(path) {
   return readdirSync(path, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? walk(join(path, entry.name)) : entry.isFile() ? [join(path, entry.name)] : []);
 }
@@ -44,17 +55,45 @@ export function preserveTrialEvidence(runDir, outputDir, options = {}) {
   add('manifest.json', readFileSync(join(run, 'manifest.json')));
   add('progress.json', readFileSync(join(run, 'progress.json')));
   add('aggregate.json', Buffer.from(JSON.stringify(report, null, 2) + '\n'));
+  for (const name of ['progress.pre-reconcile.json', 'regrade-reconciliation.json', 'run-exclusions.json']) {
+    const path = join(run, name);
+    if (existsSync(path)) add(name, readFileSync(path));
+  }
   for (const trialId of progress.completed) {
     const dir = join(run, 'trials', trialId);
     add(join(trialId, 'historical-result.json'), readFileSync(join(dir, 'historical-result.json')));
-    for (const name of ['agent-last.json', 'agent.stdout.log', 'agent.stderr.log']) {
+    for (const name of ['historical-result.pre-regrade.json', 'agent-last.json']) {
       const path = join(dir, name);
       if (existsSync(path)) add(join(trialId, name), readFileSync(path));
+    }
+    const logEntries = [];
+    for (const name of INLINE_LOG_FILES) {
+      const path = join(dir, name);
+      if (!existsSync(path)) continue;
+      const bytes = readFileSync(path);
+      if (bytes.length > MAX_INLINE_LOG_BYTES) {
+        const excerpt = excerptLog(bytes);
+        add(join(trialId, name + '.excerpt'), excerpt);
+        logEntries.push({ file: name, bytes: bytes.length, sha256: sha256(bytes), stored: name + '.excerpt', excerptBytes: excerpt.length, truncated: true });
+      } else {
+        add(join(trialId, name), bytes);
+        logEntries.push({ file: name, bytes: bytes.length, sha256: sha256(bytes), stored: name, excerptBytes: bytes.length, truncated: false });
+      }
+    }
+    if (logEntries.length) {
+      add(join(trialId, 'agent-log-manifest.json'), Buffer.from(JSON.stringify({
+        schemaVersion: 'RsiAgentLogManifest/v1', driven_by: 'agent', actor: TF0604_SYSTEM_RUN_ACTOR,
+        truncated: logEntries.some((entry) => entry.truncated), logs: logEntries,
+      }, null, 2) + '\n'));
     }
     const result = read(join(dir, 'historical-result.json'));
     const oracleDirectory = result.grader?.oracleDirectory;
     if (oracleDirectory && existsSync(oracleDirectory)) {
       for (const path of walk(oracleDirectory)) add(join(trialId, 'oracle', relative(oracleDirectory, path)), readFileSync(path));
+    }
+    const attemptDir = join(dir, 'attempt1');
+    if (existsSync(attemptDir)) {
+      for (const path of walk(attemptDir)) add(join(trialId, 'attempt1', relative(attemptDir, path)), readFileSync(path));
     }
   }
   const sums = [...files.keys()].sort().map((name) => sha256(files.get(name)).concat('  ', name));
@@ -118,17 +157,37 @@ export function validateTrialPack(packDir, options = {}) {
     if (result.trialId !== trialId) errors.push(err('result-identity', trialId));
     if (!['baseline', 'treatment'].includes(result.arm)) errors.push(err('result-arm', trialId));
     const verdict = result.grader?.verdict;
-    if (!['pass', 'fail', 'unknown'].includes(verdict)) errors.push(err('result-verdict', trialId));
-    if (verdict === 'pass' && result.failureClass) errors.push(err('failure-class-on-pass', trialId));
-    if (verdict !== 'pass' && !['infrastructure', 'task', 'grader', 'agent'].includes(result.failureClass ?? '')) errors.push(err('unclassified-failure', trialId));
+    // A trial that died before grading produced a verdict has no receipts to seal. Re-running it
+    // until the flake threshold appears to pass is not evidence, so an unscored failure is sealed
+    // with its recorded stage and error text and its case is reported incomplete instead.
+    const unscoredFailure = !['pass', 'fail', 'unknown'].includes(verdict ?? '')
+      && typeof result.stage === 'string' && result.stage.length > 0
+      && typeof result.error === 'string' && result.error.trim().length > 0;
+    if (!unscoredFailure && !['pass', 'fail', 'unknown'].includes(verdict)) errors.push(err('result-verdict', trialId));
+    if (!unscoredFailure && verdict === 'pass' && result.failureClass) errors.push(err('failure-class-on-pass', trialId));
+    if (!unscoredFailure && verdict !== 'pass' && !['infrastructure', 'task', 'grader', 'agent'].includes(result.failureClass ?? '')) errors.push(err('unclassified-failure', trialId));
+    if (unscoredFailure && !['infrastructure', 'task', 'grader', 'agent'].includes(result.failureClass ?? '')) errors.push(err('unclassified-failure', trialId));
     if (result.claims?.realHuman !== false) errors.push(err('claim-boundary', trialId));
     const oracleDir = join(dir, trialId, 'oracle');
     const receipts = existsSync(oracleDir) ? walk(oracleDir).filter((path) => path.endsWith('execution-receipt.json')) : [];
-    if (!receipts.length) errors.push(err('missing-receipt', trialId));
+    if (!receipts.length && !unscoredFailure) errors.push(err('missing-receipt', trialId));
     for (const receiptPath of receipts) {
       const receipt = read(receiptPath);
       if (receipt.producerRole !== 'grader-owned-runner' || receipt.driven_by !== 'agent') errors.push(err('receipt-producer', trialId));
       if (receipt.sourceInputsVerified !== true || receipt.testsMutated === true) errors.push(err('receipt-inputs', trialId));
+    }
+    const logManifestPath = join(dir, trialId, 'agent-log-manifest.json');
+    if (existsSync(logManifestPath)) {
+      const logManifest = read(logManifestPath);
+      if (logManifest.schemaVersion !== 'RsiAgentLogManifest/v1' || logManifest.driven_by !== 'agent') errors.push(err('log-manifest', trialId));
+      for (const entry of logManifest.logs ?? []) {
+        const storedPath = entry.stored ? join(dir, trialId, entry.stored) : null;
+        if (!storedPath || !existsSync(storedPath)) { errors.push(err('log-missing', trialId + ':' + (entry.stored ?? '?'))); continue; }
+        const storedBytes = readFileSync(storedPath);
+        if (entry.truncated === true) {
+          if (!(Number(entry.bytes) > Number(entry.excerptBytes)) || storedBytes.length !== Number(entry.excerptBytes)) errors.push(err('log-excerpt', trialId + ':' + entry.stored));
+        } else if (sha256(storedBytes) !== entry.sha256) errors.push(err('log-digest', trialId + ':' + entry.stored));
+      }
     }
   }
 

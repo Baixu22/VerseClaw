@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { buildHistoricalTrialPlan, consolidateForbiddenWrites } from '../../scripts/lib/agent-first-trials.mjs';
+import { buildHistoricalTrialPlan, classifyHistoricalStageFailure, consolidateForbiddenWrites } from '../../scripts/lib/agent-first-trials.mjs';
 
 describe('TF-0604 historical system trial plan', () => {
   it('binds 24 tasks, k=3, both arms and a sealed held-out digest', () => {
@@ -28,6 +28,13 @@ describe('TF-0604 historical system trial plan', () => {
     const plan = buildHistoricalTrialPlan(process.cwd());
     expect(new Set(plan.trials.map((trial) => trial.trialId)).size).toBe(plan.trials.length);
     expect(plan.trials.every((trial) => Number.isInteger(trial.repeat) && [1,2,3].includes(trial.repeat))).toBe(true);
+  });
+
+  it('keeps grade-stage infrastructure separate from agent and task failures', () => {
+    expect(classifyHistoricalStageFailure('grade')).toBe('infrastructure');
+    expect(classifyHistoricalStageFailure('setup')).toBe('infrastructure');
+    expect(classifyHistoricalStageFailure('agent')).toBe('agent');
+    expect(classifyHistoricalStageFailure('grade', 'task')).toBe('task');
   });
 
   it('consolidates forbidden writes without losing the file count or samples', () => {

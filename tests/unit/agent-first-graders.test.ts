@@ -1,9 +1,9 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { buildTaskCorpus, buildCalibrationSamples, RUBRIC_CONFIG } from '../../scripts/lib/rsi-historical-task-corpus.mjs';
-import { gradeExecutionRecord, gradeExecutionCalibration, gradeExecutionArtifact, gradeTaskExecutions, gradeTraceEvidence, gradeTraceCalibration, gradeRubricReceipts, buildRubricRequest, graderDigest, combineGraderVerdicts, classifyZeroPassTrials, runTaskOracles, type RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
+import { gradeExecutionRecord, gradeExecutionCalibration, gradeExecutionArtifact, gradeTaskExecutions, gradeTraceEvidence, gradeTraceCalibration, gradeRubricReceipts, buildRubricRequest, graderDigest, combineGraderVerdicts, classifyZeroPassTrials, runTaskOracles, replaceLinkTarget, type RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
 
 const corpus = buildTaskCorpus();
 const samples = buildCalibrationSamples(corpus);
@@ -115,5 +115,18 @@ describe('Agent-first executable graders', () => {
     expect(classifyZeroPassTrials(trials, true, true).classification).toBe('agent');
     expect(classifyZeroPassTrials([{ verdict: 'fail', failureClass: 'task' }], true, true).classification).toBe('task-defect-investigation');
     expect(classifyZeroPassTrials([{ verdict: 'fail', failureClass: 'grader' }], true, true).classification).toBe('grader-defect-investigation');
+  });
+  it('idempotently prepares dependency links inside an existing grader clone', () => {
+    const root = mkdtempSync('D:/tmp/rsi-grader-link-');
+    const deps = mkdtempSync('D:/tmp/rsi-grader-deps-');
+    mkdirSync(join(deps, 'node_modules'), { recursive: true });
+    mkdirSync(join(deps, 'openclaw_runtime', 'node_modules'), { recursive: true });
+    mkdirSync(join(root, 'node_modules'), { recursive: true });
+    mkdirSync(join(root, 'openclaw_runtime', 'node_modules'), { recursive: true });
+    replaceLinkTarget(join(root, 'node_modules'), join(deps, 'node_modules'));
+    replaceLinkTarget(join(root, 'openclaw_runtime', 'node_modules'), join(deps, 'openclaw_runtime', 'node_modules'));
+    replaceLinkTarget(join(root, 'openclaw_runtime', 'node_modules'), join(deps, 'openclaw_runtime', 'node_modules'));
+    expect(existsSync(join(root, 'node_modules'))).toBe(true);
+    expect(existsSync(join(root, 'openclaw_runtime', 'node_modules'))).toBe(true);
   });
 });

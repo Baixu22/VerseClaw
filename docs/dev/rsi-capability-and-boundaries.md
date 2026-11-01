@@ -28,8 +28,11 @@ The TF-0604 historical corpus now contains 24 repository-sourced task definition
 and eight integrity controls. TF-0592 adds resource/source fingerprints, separate
 pass^k/pass@k with Wilson case intervals, paired-trial comparison, a labelled
 power-design approximation and twelve fail-closed controls. Its checked-in raw
-input still reserves zero completed model trials: the resulting report is
-`insufficient-evidence`, with no model/provider gain or promotion readiness.
+input now carries the sealed TF-0604 system run: 143 of 144 planned live-model
+trials at k=3 over 24 cases, 20 complete cases, and a `flake rate 0.15 > threshold
+0.01` verdict, so the run is recorded as `fail` on stability and the paired
+comparison stays `insufficient-evidence`. No model/provider gain, promotion
+readiness or RSI benefit is claimed.
 Trial execution, calibrated graders and enforced clean profile isolation remain
 Agent-first prerequisites. `pnpm rsi:tf0592:check` re-reads and recomputes the
 retained pack; `pnpm rsi:tf0592:write` prepares evidence and labels dirty source
@@ -41,9 +44,9 @@ three graders. Its calibration has 16 good/bad/unknown samples; qualitative
 calibration uses three actual provider votes per sample at temperature 0.3 with
 the dated `claude-haiku-4-5-20251001` model. The first prompt's missing-evidence
 failure remains in the pack alongside v2. Historical A04 `NO-GO` and nonzero
-gates remain visible. Task/grader calibration does not provide system baseline
-trials; the acceptance profile and RSI baseline still report not-run or
-insufficient-evidence until their actual execution is performed.
+gates remain visible. Task/grader calibration is not itself a system baseline; the
+separate TF-0604 system run supplies the sealed baseline trials, and only the
+paired RSI benefit question stays `insufficient-evidence`.
 
 The accepted TF-0590 system corpus is separately retained under
 `harness/specs/fixtures/agent-first-system`: 24 maintained QA and failure-boundary
@@ -241,9 +244,13 @@ It separates engineering closure from actual RSI capability:
   research loop, contamination gate, independent adjudicator and bounded
   code-self-modification eligibility gate now have executable implementations,
   negative controls, focused tests and source-checkout evidence.
-- The historical TF-0604 baseline still has zero complete system cases. TF-0599
-  therefore remains `insufficient-evidence`; it has no sealed held-out digest
-  and exposes neither `pass^k` nor `pass@k`.
+- The historical TF-0604 baseline now has a sealed real run: 20 complete cases at
+  k=3 (143 of 144 trials sealed, one restarted trial recorded as excluded), baseline
+  `pass^3 = 0.15` with Wilson 95% CI [0.05, 0.36] and `pass@3 = 0.35`; the
+  treatment arm matches at `pass^3 = 0.15` while `pass@3 = 0.60`. Flake sits at
+  0.15 against the frozen 0.01 threshold, so the run fails its stability gate and
+  the paired pass^k difference stays `insufficient-evidence`: the baseline is
+  measured, an RSI benefit is not. TF-0599 therefore remains `insufficient-evidence`.
 - TF-0606's advisory candidate remains unmeasured by an eligible held-out run.
   TF-0608 returns `insufficient-evidence/not-promote`. TF-0607 proves the static
   pre-commit boundary only; behavioral rollback remains unrun.

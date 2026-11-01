@@ -3,14 +3,14 @@ import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync 
 import { resolve, join, dirname } from 'node:path';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
-import { buildHistoricalTrialPlan, writeHistoricalManifest, runHistoricalTrial, checkHistoricalRun, retainHistoricalRun } from './lib/agent-first-trials.mjs';
+import { buildHistoricalTrialPlan, writeHistoricalManifest, runHistoricalTrial, regradeHistoricalTrial, recoverHistoricalTrial, checkHistoricalRun, retainHistoricalRun } from './lib/agent-first-trials.mjs';
 import { removeScratchTree } from './lib/rsi-trial-scratch.mjs';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const write = (path, value) => { mkdirSync(dirname(path), { recursive: true }); const tmp = path + '.' + process.pid + '.tmp'; writeFileSync(tmp, JSON.stringify(value, null, 2) + '\n'); renameSync(tmp, path); };
 if (isMainEntrypoint(import.meta.url)) {
-  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' }, 'retain-dir': { type: 'string' }, restart: { type: 'boolean' }, 'timeout-minutes': { type: 'string' }, concurrency: { type: 'string' } } });
+  const { values, positionals } = parseArgs({ allowPositionals: true, options: { 'run-dir': { type: 'string' }, root: { type: 'string' }, 'dependencies-root': { type: 'string' }, 'trial-id': { type: 'string' }, 'trial-ids': { type: 'string' }, limit: { type: 'string' }, model: { type: 'string' }, 'retain-dir': { type: 'string' }, restart: { type: 'boolean' }, 'timeout-minutes': { type: 'string' }, concurrency: { type: 'string' } } });
   try {
     const root = resolve(values.root ?? process.cwd());
     const runDir = resolve(values['run-dir'] ?? 'D:/tmp/rsi-tf0604-system-trials');
@@ -18,6 +18,46 @@ if (isMainEntrypoint(import.meta.url)) {
     let result;
     if (command === 'plan') result = writeHistoricalManifest(runDir, { root, dependenciesRoot: values['dependencies-root'] ? resolve(values['dependencies-root']) : undefined, model: values.model, timeoutMs: values['timeout-minutes'] ? Number(values['timeout-minutes']) * 60000 : undefined, concurrency: values.concurrency ? Number(values.concurrency) : undefined });
     else if (command === 'list') { const plan=buildHistoricalTrialPlan(root); result={caseCount:plan.corpus.tasks.length,heldOutDigest:plan.splitDigest,trials:plan.trials.length}; }
+    else if (command === 'regrade') {
+      if (!values['trial-id']) throw new Error('regrade requires --trial-id');
+      const trialId = values['trial-id'];
+      const manifest = read(join(runDir,'manifest.json'));
+      const manifestDigest = 'sha256:' + createHash('sha256').update(readFileSync(join(runDir,'manifest.json'))).digest('hex');
+      const progress = read(join(runDir,'progress.json'));
+      if (progress.manifestDigest !== manifestDigest) throw new Error('historical manifest changed');
+      const resultPath = join(runDir,'trials',trialId,'historical-result.json');
+      const priorDigest = progress.recordDigests[trialId];
+      const actualPrior = 'sha256:' + createHash('sha256').update(readFileSync(resultPath)).digest('hex');
+      if (priorDigest !== actualPrior) throw new Error('sealed historical result changed before regrade');
+      result = await regradeHistoricalTrial(runDir, { root, trialId, dependenciesRoot: values['dependencies-root'] ? resolve(values['dependencies-root']) : undefined });
+      const digest = 'sha256:' + createHash('sha256').update(readFileSync(resultPath)).digest('hex');
+      progress.recordDigests[trialId] = digest;
+      write(join(runDir,'progress.json'), progress);
+    }
+    else if (command === 'recover') {
+      const rawIds = values['trial-ids'] ?? values['trial-id'];
+      if (!rawIds) throw new Error('recover requires --trial-id or --trial-ids');
+      const ids = String(rawIds).split(',').map((id) => id.trim()).filter(Boolean);
+      if (!ids.length || new Set(ids).size !== ids.length) throw new Error('recover trial ids must be unique');
+      const progress = read(join(runDir,'progress.json'));
+      const manifestDigest = 'sha256:' + createHash('sha256').update(readFileSync(join(runDir,'manifest.json'))).digest('hex');
+      if (progress.manifestDigest !== manifestDigest) throw new Error('historical manifest changed');
+      for (const trialId of ids) {
+        const resultPath = join(runDir,'trials',trialId,'historical-result.json');
+        const archivePath = join(runDir,'trials',trialId,'attempt1','historical-result.json');
+        const sealSource = existsSync(resultPath) ? resultPath : archivePath;
+        const actualPrior = 'sha256:' + createHash('sha256').update(readFileSync(sealSource)).digest('hex');
+        if (progress.recordDigests[trialId] !== actualPrior) throw new Error('sealed historical result changed before recover: ' + trialId);
+      }
+      const recovered = await Promise.all(ids.map((trialId) => recoverHistoricalTrial(runDir, { root, trialId, dependenciesRoot: values['dependencies-root'] ? resolve(values['dependencies-root']) : undefined })));
+      const latest = read(join(runDir,'progress.json'));
+      for (const trialId of ids) {
+        const resultPath = join(runDir,'trials',trialId,'historical-result.json');
+        latest.recordDigests[trialId] = 'sha256:' + createHash('sha256').update(readFileSync(resultPath)).digest('hex');
+      }
+      write(join(runDir,'progress.json'), latest);
+      result = recovered;
+    }
     else if (command === 'run') {
       const manifest = read(join(runDir,'manifest.json'));
       const progress = read(join(runDir,'progress.json'));

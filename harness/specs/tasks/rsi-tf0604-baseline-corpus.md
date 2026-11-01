@@ -170,5 +170,17 @@ rejected. Failure classes stay separated: `infrastructure` for envelope timeouts
 errors, `agent` for subject-level failures, `task` for infeasible snapshots, `grader` for
 insufficient grader evidence.
 
+Large agent transcripts are sealed as a digest plus a 32 KiB head/tail excerpt
+(`agent.stdout.log.excerpt` / `agent.stderr.log.excerpt`, with `agent-log-manifest.json` recording the
+full byte length and sha256) so the tracked pack stays reviewable in Git without dropping provenance.
+A trial whose workspace disappeared before grading has no grader receipts and therefore cannot be
+sealed; it is recorded in `run-exclusions.json` with the archived `attempt1` digest and its case is
+reported incomplete instead of being retried until the flake threshold appears to pass.
+
+A sealed trial that died before grading produced a verdict is stored with its recorded `stage` and
+error text and carries no grader receipt. That is the only receipt-exempt shape: any trial that did
+reach grading must keep its execution receipts, and its case is reported incomplete rather than being
+re-run until the flake rate looks acceptable.
+
 As long as fewer than 20 cases complete at k=3, the aggregate and capability report stay
 `insufficient-evidence` and expose no `pass^k`, `pass@k` or paired interval.

@@ -27,3 +27,8 @@ export function retainHistoricalRun(runDir: string, outputDir: string, options?:
 export function historicalTaskDefect(task: any, hiddenSignalPaths?: string[]): string | null;
 
 export function consolidateForbiddenWrites(paths: string[]): Array<{ topLevelPath: string; fileCount: number; samplePaths: string[] }>;
+export function classifyHistoricalStageFailure(stage: string, failureClass?: string | null): string;
+export async function regradeHistoricalTrial(runDir: string, options?: { root?: string; trialId: string; dependenciesRoot?: string }): Promise<any>;
+export function directoryFingerprint(directory: string, excluded?: Set<string>): Record<string,string>;
+export function diffFingerprint(before: Record<string,string>, after: Record<string,string>): { added: string[]; changed: string[]; removed: string[] };
+export async function recoverHistoricalTrial(runDir: string, options?: { root?: string; trialId: string; dependenciesRoot?: string }): Promise<any>;

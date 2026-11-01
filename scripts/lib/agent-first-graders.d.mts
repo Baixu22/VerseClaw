@@ -21,3 +21,4 @@ export function buildRubricRequest(sample: RubricSample, config: RubricConfig): 
 export function gradeRubricReceipts(sample: RubricSample, receipts: RubricReceipt[], config: RubricConfig): GraderResult;
 export function combineGraderVerdicts(deterministic: Pick<GraderResult, 'verdict'>, trace: Pick<GraderResult, 'verdict'>, rubric: Pick<GraderResult, 'verdict'>): GraderResult;
 export function classifyZeroPassTrials(trials: Array<{ verdict: GraderVerdict; failureClass?: string }>, referenceVerified: boolean, gradersCalibrated: boolean): { classification: string; investigate: boolean };
+export function replaceLinkTarget(path: string, target: string, kind?: string): void;

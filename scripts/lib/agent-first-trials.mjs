@@ -129,7 +129,7 @@ function findInstalledRoot(root) {
   const candidates = [join(root, 'node_modules', 'vitest', 'vitest.mjs'), join(root, 'node_modules', '.bin', 'vitest.CMD'), join(root, 'node_modules', '.bin', 'vitest')];
   return candidates.find((path) => existsSync(path)) ?? null;
 }
-function directoryFingerprint(directory, excluded = new Set(['node_modules', 'agent-node_modules'])) {
+export function directoryFingerprint(directory, excluded = new Set(['node_modules', 'agent-node_modules'])) {
   const files = walk(directory).map((path) => relative(directory, path).replaceAll('\\', '/')).filter((path) => !path.split('/').some((part) => excluded.has(part))).sort();
   return Object.fromEntries(files.map((path) => [path, sha256(readFileSync(join(directory, path)))]));
 }
@@ -144,7 +144,7 @@ export function consolidateForbiddenWrites(paths) {
   }
   return [...groups.values()].sort((a, b) => a.topLevelPath.localeCompare(b.topLevelPath));
 }
-function diffFingerprint(before, after) {
+export function diffFingerprint(before, after) {
   const added = Object.keys(after).filter((path) => !Object.hasOwn(before, path)).sort();
   const changed = Object.keys(after).filter((path) => Object.hasOwn(before, path) && before[path] !== after[path]).sort();
   const removed = Object.keys(before).filter((path) => !Object.hasOwn(after, path)).sort();
@@ -260,6 +260,11 @@ function verifyCandidateBlobs(root, commit, bindings) {
     offset += size + 1;
   }
   assert.equal(offset, blobs.length, 'candidate object count differs');
+}
+
+export function classifyHistoricalStageFailure(stage, failureClass = null) {
+  if (failureClass) return failureClass;
+  return stage === 'setup' || stage === 'grade' ? 'infrastructure' : 'agent';
 }
 
 export function classifyTrial(worker, grades, observation, execution) {
@@ -445,6 +450,102 @@ function writeHistoricalResult(trialDir, value) {
   write(join(trialDir, 'historical-result.json'), { schemaVersion: 'RsiHistoricalTrialResult/v1', driven_by: 'agent', actor: 'codex/tf0604-historical-runner', ...value });
 }
 
+export async function recoverHistoricalTrial(runDir, options = {}) {
+  const root = resolve(options.root ?? process.cwd());
+  const trialId = options.trialId;
+  const manifest = read(join(runDir, 'manifest.json'));
+  const entry = manifest.trials.find((value) => value.trialId === trialId);
+  assert(entry, 'unknown historical trial');
+  const trialDir = artifactPath(runDir, 'trials/' + trialId);
+  const resultPath = join(trialDir, 'historical-result.json');
+  const attemptDir = join(trialDir, 'attempt1');
+  const archivedResult = join(attemptDir, 'historical-result.json');
+  const resuming = !existsSync(resultPath) && existsSync(archivedResult);
+  const previous = read(resuming ? archivedResult : resultPath);
+  assert(previous.failureClass === 'infrastructure', 'recover only accepts infrastructure failures');
+  if (resuming) {
+    assert(!existsSync(resultPath), 'resume cannot overwrite an existing result');
+  } else {
+    assert(!existsSync(attemptDir), 'trial already has an archived attempt');
+    mkdirSync(attemptDir, { recursive: true });
+    for (const name of ['historical-result.json', 'agent-last.json', 'agent.stdout.log', 'agent.stderr.log']) {
+      const source = join(trialDir, name);
+      if (existsSync(source)) renameSync(source, join(attemptDir, name));
+    }
+    if (existsSync(join(trialDir, 'oracle'))) renameSync(join(trialDir, 'oracle'), join(attemptDir, 'oracle'));
+  }
+  for (const scratch of ['grader', 'agent', 'base', '_check']) {
+    if (existsSync(join(trialDir, scratch))) removeScratchTree(join(trialDir, scratch));
+  }
+  const result = await runHistoricalTrial(runDir, { root, trialId, dependenciesRoot: options.dependenciesRoot });
+  const withRecovery = { ...result, recovery: { attempt: 2, archivedAt: 'attempt1', priorFailureClass: previous.failureClass, priorStage: previous.stage ?? null, priorCompletedAt: previous.completedAt ?? null, reason: 'infrastructure recovery rerun under the same frozen manifest' } };
+  write(resultPath, { schemaVersion: 'RsiHistoricalTrialResult/v1', driven_by: 'agent', actor: 'codex/tf0604-historical-runner', ...withRecovery });
+  return withRecovery;
+}
+
+export async function regradeHistoricalTrial(runDir, options = {}) {
+  const root = resolve(options.root ?? process.cwd());
+  const trialId = options.trialId;
+  const manifest = read(join(runDir, 'manifest.json'));
+  const entry = manifest.trials.find((value) => value.trialId === trialId);
+  assert(entry, 'unknown historical trial');
+  const task = manifest.tasks.find((value) => value.id === entry.taskId);
+  assert(task, 'missing frozen task');
+  const trialDir = artifactPath(runDir, 'trials/' + trialId);
+  const baseDir = join(trialDir, 'base');
+  const agentRoot = join(trialDir, 'agent');
+  assert(existsSync(baseDir) && existsSync(agentRoot), 'regrade requires retained base and agent snapshots');
+  const resultPath = join(trialDir, 'historical-result.json');
+  const previous = existsSync(resultPath) ? read(resultPath) : null;
+  assert(previous?.stage === 'grade' || /EEXIST: file already exists, symlink/iu.test(String(previous?.error ?? '')), 'regrade only accepts a failed grade-stage trial');
+  assert(!existsSync(join(trialDir, 'historical-result.pre-regrade.json')), 'trial was already regraded');
+  const oraclePaths = task.oracle.testPaths ?? [];
+  const hiddenSignalPaths = task.oracle.hiddenSignalPaths ?? oraclePaths;
+  const taskDefect = historicalTaskDefect(task, hiddenSignalPaths);
+  assert(!taskDefect, taskDefect ?? 'invalid task');
+  const before = directoryFingerprint(baseDir);
+  const after = directoryFingerprint(agentRoot);
+  const rawDiff = diffFingerprint(before, after);
+  const agentDiff = { ...rawDiff,
+    added: rawDiff.added.filter((path) => !path.startsWith('.rsi/')),
+    changed: rawDiff.changed.filter((path) => !path.startsWith('.rsi/')),
+    removed: rawDiff.removed.filter((path) => !path.startsWith('.rsi/')),
+  };
+  const touched = [...agentDiff.added, ...agentDiff.changed];
+  const forbidden = touched.filter((path) => path.startsWith('.git/'));
+  const oracleWrites = touched.filter((path) => oraclePaths.includes(path));
+  const graderRoot = join(trialDir, 'grader-regrade');
+  assert(!existsSync(graderRoot), 'grader-regrade directory already exists');
+  cpSync(agentRoot, graderRoot, { recursive: true, filter: (path) => !path.includes(join(agentRoot, 'node_modules')) && !path.includes(join(agentRoot, '.rsi')) });
+  for (const taskTest of oraclePaths) {
+    const source = readFileSync(join(root, taskTest));
+    mkdirSync(dirname(join(graderRoot, taskTest)), { recursive: true });
+    writeFileSync(join(graderRoot, taskTest), source);
+  }
+  const dependenciesRoot = options.dependenciesRoot ? resolve(options.dependenciesRoot) : manifest.source.root;
+  const oracle = runTaskOracles(task, root, join(trialDir, 'oracle-regrade'), { authorityRoot: graderRoot, dependenciesRoot });
+  const traceGrade = gradeTraceEvidence(oracle.trace);
+  let failureClass = forbidden.length ? 'agent' : null;
+  const verdict = oracle.verdict.verdict === 'pass' && traceGrade.verdict === 'pass' && !forbidden.length && !failureClass
+    ? 'pass'
+    : oracle.verdict.verdict === 'unknown' || traceGrade.verdict === 'unknown' ? 'unknown' : 'fail';
+  if (verdict !== 'pass' && !failureClass) failureClass = verdict === 'unknown' ? 'grader' : 'agent';
+  const result = {
+    trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, baseCommit: task.referenceSolution.baseCommit,
+    startedAt: previous.startedAt ?? previous.completedAt, completedAt: new Date().toISOString(),
+    agent: previous.agent ?? { exitCode: 0, timedOut: false, error: null },
+    diff: agentDiff, forbiddenPaths: forbidden, forbiddenWrites: consolidateForbiddenWrites(forbidden), forbiddenFileCount: forbidden.length,
+    oracleWrites, scrubbedOraclePaths: oraclePaths.filter((path) => existsSync(join(baseDir, path))), preexistingOraclePaths: oraclePaths.filter((path) => existsSync(join(baseDir, path))),
+    grader: { verdict, deterministic: oracle.verdict, trace: traceGrade, oracleDirectory: oracle.directory },
+    failureClass,
+    checks: { isolatedSnapshot: true, networkDisabledByCli: true, hiddenTestsRestored: true, hiddenTestsAbsentFromAgentBeforeRun: true, hiddenTestPathsOverwrittenByGrader: oracleWrites.length, agentLeftTestAtHiddenPathCount: oraclePaths.filter((path) => existsSync(join(agentRoot, path))).length, noGitMetadataAtStart: !existsSync(join(agentRoot, '.git')) },
+    claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false },
+    regradedFromFailedGrade: { previousResult: 'historical-result.pre-regrade.json', previousCompletedAt: previous.completedAt ?? null, reason: 'grade-stage dependency-link collision' },
+  };
+  write(join(trialDir, 'historical-result.pre-regrade.json'), previous);
+  write(resultPath, { schemaVersion: 'RsiHistoricalTrialResult/v1', driven_by: 'agent', actor: 'codex/tf0604-historical-runner', ...result });
+  return result;
+}
 export async function runHistoricalTrial(runDir, options = {}) {
   const root = resolve(options.root ?? process.cwd());
   const trialId = options.trialId;
@@ -533,7 +634,7 @@ export async function runHistoricalTrial(runDir, options = {}) {
     for (const scratch of [graderRoot, agentRoot, baseDir]) removeScratchTree(scratch);
     return result;
   } catch (error) {
-    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, startedAt, completedAt: new Date().toISOString(), stage, error: String(error?.stack ?? error), failureClass: error?.failureClass ?? failureClass ?? 'infrastructure', claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
+    const result = { trialId, taskId: task.id, arm: entry.arm, repeat: entry.repeat, startedAt, completedAt: new Date().toISOString(), stage, error: String(error?.stack ?? error), failureClass: classifyHistoricalStageFailure(stage, error?.failureClass ?? failureClass), claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
     writeHistoricalResult(trialDir,result);
     for (const scratch of [join(trialDir, 'grader'), agentRoot, baseDir]) removeScratchTree(scratch);
     return result;
@@ -553,10 +654,14 @@ export function retainHistoricalRun(runDir, outputDir, options = {}) {
   add('manifest.json', readFileSync(join(run, 'manifest.json')));
   add('progress.json', readFileSync(join(run, 'progress.json')));
   add('aggregate.json', Buffer.from(JSON.stringify(report, null, 2) + '\n'));
+  for (const name of ['progress.pre-reconcile.json', 'regrade-reconciliation.json']) {
+    const path = join(run, name);
+    if (existsSync(path)) add(name, readFileSync(path));
+  }
   for (const trialId of progress.completed) {
     const dir = join(run, 'trials', trialId);
     add(join(trialId, 'historical-result.json'), readFileSync(join(dir, 'historical-result.json')));
-    for (const name of ['agent-last.json', 'agent.stdout.log', 'agent.stderr.log']) {
+    for (const name of ['historical-result.pre-regrade.json', 'agent-last.json', 'agent.stdout.log', 'agent.stderr.log']) {
       const path = join(dir, name);
       if (existsSync(path)) add(join(trialId, name), readFileSync(path));
     }
@@ -564,6 +669,10 @@ export function retainHistoricalRun(runDir, outputDir, options = {}) {
     const oracleDirectory = result.grader?.oracleDirectory;
     if (oracleDirectory && existsSync(oracleDirectory)) {
       for (const path of walk(oracleDirectory)) add(join(trialId, 'oracle', relative(oracleDirectory, path)), readFileSync(path));
+    }
+    const attemptDir = join(dir, 'attempt1');
+    if (existsSync(attemptDir)) {
+      for (const path of walk(attemptDir)) add(join(trialId, 'attempt1', relative(attemptDir, path)), readFileSync(path));
     }
   }
   const sums = [...files.keys()].sort().map((name) => sha256(files.get(name)).concat('  ', name));

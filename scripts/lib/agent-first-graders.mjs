@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, realpathSync, lstatSync, mkdirSync, mkdtempSync, writeFileSync, symlinkSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, lstatSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, symlinkSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve, relative, isAbsolute, sep } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -131,6 +131,16 @@ export function gradeTaskExecutions(task, executions) {
   return result('pass', 'Every frozen oracle completed with independent evidence', { grades, evidenceKind: 'owned-execution' });
 }
 
+export function replaceLinkTarget(path, target, kind = process.platform === 'win32' ? 'junction' : 'dir') {
+  if (existsSync(path)) {
+    const stat = lstatSync(path);
+    if (!stat.isSymbolicLink() && !stat.isDirectory()) throw new Error('dependency target is neither a directory nor a link: ' + path);
+    rmSync(path, { recursive: stat.isDirectory() && !stat.isSymbolicLink(), force: true });
+  }
+  mkdirSync(dirname(path), { recursive: true });
+  symlinkSync(target, path, kind);
+}
+
 export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles', options = {}) {
   try { task = freezeOwned(structuredClone(task)); } catch { throw new Error('Frozen task must be plain data'); }
   if (!task?.oracle?.commandLines?.length || !task.oracle.testPaths?.length) throw new Error('Frozen task oracles are required');
@@ -153,10 +163,9 @@ export function runTaskOracles(task, root, outputRoot = 'D:/tmp/tf0590-oracles',
   const authorityRoot = options.authorityRoot ? resolve(options.authorityRoot) : base;
   if (options.dependenciesRoot) {
     const deps = resolve(options.dependenciesRoot);
-    symlinkSync(join(deps, 'node_modules'), join(authorityRoot, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
+    replaceLinkTarget(join(authorityRoot, 'node_modules'), join(deps, 'node_modules'));
     const runtimeTarget = join(authorityRoot, 'openclaw_runtime', 'node_modules');
-    mkdirSync(dirname(runtimeTarget), { recursive: true });
-    symlinkSync(join(deps, 'openclaw_runtime', 'node_modules'), runtimeTarget, process.platform === 'win32' ? 'junction' : 'dir');
+    replaceLinkTarget(runtimeTarget, join(deps, 'openclaw_runtime', 'node_modules'));
     for (const manifest of ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml']) {
       const source = join(deps, manifest);
       if (existsSync(source)) writeFileSync(join(authorityRoot, manifest), readFileSync(source));
