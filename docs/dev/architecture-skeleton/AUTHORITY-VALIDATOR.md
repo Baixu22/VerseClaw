@@ -453,7 +453,30 @@ git diff --stat HEAD -- shared/ electron/ src/ openclaw_runtime/ package.json do
 
 ### 13.9 候选提交后复核
 
-（待回填）
+实现候选 **`695cd6da046bf2f868727c3f0291f19e70de5b54`**（tree `db00e25c4c5a002d99292b06c92a421642823982`，30 文件 +1147/−71，基于 `a7d836dca`；本节由紧随其后的仅文档提交回填）。主检出在候选上仍有他会话遗留的未跟踪目录 `_s07cfg/`（不在本叶写集，未动），因此干净候选的读数取自以 `git worktree add --detach` 在候选提交上建立、用完即删的临时工作树：
+
+| # | 命令 | exit | 关键输出 |
+|---|---|---|---|
+| 19 | （临时工作树，`git status --porcelain` 0 行）`node scripts/check-semantic-authority.mjs --report D:/tmp/tf0638/report-candidate.json --actor claude-fable-5` | 0 | 报告 `candidate.commit 695cd6da0…`、`candidate.tree db00e25c4…`、**`candidate.dirty false`**、`changedPaths []`、`exitCode 0`、`diagnostics []`、`rulesEvaluated` 18、`structural` X-01 7/7 · X-02 4/4 · X-03 18/18 · X-04 20/20 · X-05 5/5；summary 与 #2 逐字相同 |
+| 20 | （临时工作树）18 个 fixture 逐个 `--fixture` | 18 × 1 | 诊断数 == `expectIssueCount` 18/18 |
+| 21 | （临时工作树）5 个 `broken/*.json` | 5 × 2 | — |
+| 22 | （临时工作树）`git diff --check` | 0 | 无输出 |
+| 23 | （主检出，HEAD `695cd6da0`）`pnpm exec vitest run tests/unit/semantic-authority-consistency.test.ts --maxWorkers=1 --reporter=json` | 0 | `numTotalTests 63, numFailedTests 0, success true` |
+| 24 | `pnpm harness validate --spec harness/specs/tasks/architecture-skeleton-authority-reconciliation-hardening.md --no-diff` | 0 | `Spec is valid` |
+| 25 | 同上，`--since a7d836dca`（信息性） | 1 | 仅因 `_s07cfg/*` 6 个他会话未跟踪文件不在 `ownedPaths`；本叶 30 个文件全部被覆盖；环境态，非写集问题 |
+| 26 | `node scripts/check-repository-artifacts.mjs` | 0 | `Repository artifact retention passed (20071 tracked paths).` |
+
+**验收逐条对照**（合同 frontmatter `acceptance`）：
+
+| 验收条 | 状态 | 证据 |
+|---|---|---|
+| 1 structural exemptions 承重（五类双向对账，形态同 gaps） | 达成 | §13.2；`structural-exemption-missing.json`（1 条）、`structural-exemptions-absent.json`（54 条）exit 1；进程内 `exemptions: []` → 54 条；#2 / #19 报告 `structural` 五类 observed == registered |
+| 2 三个列表即 X-04 / X-01 / X-05 的 observed 集合，双向对账，三类各一负例 | 达成 | `structural-not-comparable-unregistered.json`、`structural-flag-granularity-unregistered.json`、`structural-matrix-unmapped-unregistered.json` 各 exit 1 / 1 条（#3 / #20）；stale 方向进程内用例 |
+| 3 登记表诊断带行号（id + target 定位）；数据类型诊断带来源行号 | 达成 | §13.3；#4 为 0 条无行号；vitest 回读行文本（`"id": "C-02/R-D1"` :918 等；`authority-data-type-multi-owner.json` 两条分别落在第 2 个 owner 的 authority 行与 `ownedDataTypes` 行） |
+| 4 `duplicate_authority` 经真实入口以规则诊断 exit 1 结束；注册表零改动 | 达成 | `authority-duplicate-row.json` exit 1 / 1 条 `registry-self-validation`，stderr 无 `load error`；#16 禁改路径 diff 0 行；真实文件仍含导入期断言（vitest 断言） |
+| 5 锚点纪律由加载器强制；现有 fixture 补齐 | 达成 | §13.5；3 个锚点坏例 exit 2（#5）；12 个既有 fixture 带 `anchor` 且 `find` 唯一（vitest 逐个断言） |
+| 6 新增负例经真实 spawn 断言；12 个既有 fixture 读数不变；正例 exit 0、`adjudicated=8 / gaps=35/35` 不变 | 达成 | #8 / #23 63/63；#3 既有 12 个读数与 §5 相同；#2 / #19 summary |
+| 7 §13 记录规则 / 复现命令 / exit code；§12.3 标注已落地 | 达成 | 本节；§12.3 第 1–4 条与 §12.1 勘误第 2 条已标注 |
 
 ### 13.10 未做与残余风险
 
