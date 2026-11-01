@@ -1,20 +1,20 @@
 {
   "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-  "generatedAt": "2026-10-30T13:24:52.520Z",
+  "generatedAt": "2026-11-01T15:13:10.438Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "candidate": {
-    "commit": "da531317eed01cbc1b1dac5147847c03497d0411",
-    "tree": "4bae69bfad72eb8ac724cebeae92d023eb15624c",
-    "branch": "codex/tf0604-rsi-baseline",
+    "commit": "0aa7686c897cd86c0ebc0f7c77bf39505d1e1127",
+    "tree": "8e76a8fa0c2c809a4614329bda9373a1c0466621",
+    "branch": "main",
     "dirty": false,
     "dirtyPaths": [],
     "sourceHashes": {
-      "scripts/rsi-tf0592-statistical-adjudication.mjs": "a55605a077958ff1a663a89c6a1602c8262581e26f74951c88b9cf2ea19c79a7",
-      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "ed8f70486fcea6a78271e8112c2c366b22a7f7f23aea5ab89a2c01aafacb45ed",
+      "scripts/rsi-tf0592-statistical-adjudication.mjs": "d0618b2751b7f7ffd0163825be1560d40d266881c392a2510c238c6667d9cf5a",
+      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "dae5895591bb8cfb51c87705fef87a4d989c28e6c7fb6baf32cb8c50126881c9",
       "scripts/rsi-tf0604-baseline.mjs": "16bdf38533c9f97f81780f86ac62abd407b9e7ec99fca281614cd8c754d7ce60",
-      "scripts/lib/reliability-aggregation.mjs": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
-      "scripts/lib/paired-ablation.mjs": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
+      "scripts/lib/reliability-aggregation.mjs": "7d7c5d1cf103fa5c63502f85e17855357ce344f30a2466badd54da17b15c31e6",
+      "scripts/lib/paired-ablation.mjs": "cd68ec4325b11e19dcc7923cae10a6a87aec9139bcb97394c259705e1c601f92",
       "scripts/lib/entrypoint.mjs": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b",
       "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "3a3637119c4c8fdcd14fe9d4987b8b01bf57f0268973c8f74b0d644915ebab18",
       "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "a7038706dde2ef90a923ce5e37e494389696b4da52a3a5816670d8ce059c6092",
@@ -24,9 +24,7 @@
       "harness/specs/rules/task-forest-autoclose-and-roles.md": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
       "harness/src/profiles.mjs": "b8b2992c58362fa16c4f0f3b40886fe96ab6d1dea690537cec81df3634899622",
       "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
-      "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
-      "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
-      "docs/dev/rsi-capability-and-boundaries.md": "eec5c14def4b61210e0c0e94198e4757b4ef6628f6d8a8838313bed634e3df2b"
+      "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
     }
   },
   "runtime": {
@@ -39,10 +37,10 @@
   "observedResources": {
     "cpuCount": 16,
     "totalMemoryBytes": 16295432192,
-    "freeMemoryBytes": 2262433792,
+    "freeMemoryBytes": 945631232,
     "disk": {
-      "freeBytes": 16726675456,
-      "totalBytes": 322122543104,
+      "freeBytes": 144798773248,
+      "totalBytes": 701020237824,
       "status": "measured"
     }
   },
