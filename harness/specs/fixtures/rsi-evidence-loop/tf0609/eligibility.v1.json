@@ -62,7 +62,7 @@
     "gate": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
       "present": true,
-      "digest": "7fff7ca22d2eecd46f460b0c093438e3c67efd9486e90c7c5cb8739f79778b8f",
+      "digest": "33e525a8ea5f2ec48282c6b9f3aa8b9df877f97f7c42fbae051861a7be05b84b",
       "valueSummary": {
         "status": "not-run",
         "gate": "insufficient-evidence",
@@ -86,7 +86,7 @@
     "research": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
       "present": true,
-      "digest": "84c5a3f00508f29be5500477682af0ebca236bcacd6e608165516f9bb571ea6c",
+      "digest": "e8ac51e95b7589c096a947be204c6fe003c0c6e520770a834ce21fb2d16334c8",
       "valueSummary": {
         "status": "insufficient-evidence",
         "promotionReady": false,
@@ -110,7 +110,7 @@
     "adjudication": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
       "present": true,
-      "digest": "77f7f186690a8f0b5b2b627b06aa6dd3e58e2b8be98815ae1b93c01183a482d1",
+      "digest": "aace9262373f090bbe1a489d7c2c4110d85c5fc0cc9c3588527d0b0ee00648dc",
       "valueSummary": {
         "verdict": "insufficient-evidence",
         "disposition": "not-promote",

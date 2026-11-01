@@ -3,18 +3,18 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "14faf9db54e9db88ea6c447d14502df858f772c3",
-    "tree": "246c22837d9319b70c558bbbadb5a45f86254a0b",
-    "dirty": false,
+    "commit": "7bddf559df9171797c4efb11939e348f4a8a5e27",
+    "tree": "9fbc78178c1c53d2c6f15904f5acbdd3c9344941",
+    "dirty": true,
     "sourceHashes": {
-      "scripts/rsi-historical-task-corpus.mjs": "8945419f9f7916aee91915b561c1191760be14de8b15365ee7ae9ce1c991da53",
+      "scripts/rsi-historical-task-corpus.mjs": "8e44dc179f60de1f2ba211384fe691a53a91e21b218b55ad33d5f0717ef5b996",
       "scripts/rsi-historical-task-corpus.d.mts": "faa5e44195022ddf7ef7949bdca45cdc2918f6923c829a54656b8a4c19aa1508",
       "scripts/lib/rsi-historical-task-corpus.mjs": "8d9a4673b19b667af15be7f53bfe3ea65eb6b7b5d4c00a04094444f202d68981",
       "scripts/lib/rsi-historical-task-corpus.d.mts": "c849cf7ffc8bba8da69886e2583b8c1f58d3c7ed49f95d6036ad3189a6b8afc2",
-      "scripts/lib/agent-first-graders.mjs": "f44cd4d0c96ed77e85450cbaacbd8308330e472e78d8b53bf681d261baa597e3",
-      "scripts/lib/agent-first-graders.d.mts": "6f17a2bd6842e8dc4ab226144a6cd072cee01c1f3a1034dfda141795bc2c4305",
+      "scripts/lib/agent-first-graders.mjs": "addd705f73e721e26730b9e295bab8b06071c28d4ca4fef7588f26fd279abc92",
+      "scripts/lib/agent-first-graders.d.mts": "062a407284e18cc701bd2ef72dc6a37d0e6ea3c4584e08a7d200ac8c8907af9f",
       "tests/unit/rsi-historical-task-corpus.test.ts": "dbac77d77c78d0540147e98bea12e1b56295dd2695dec8b2bd1fcb99d999b3cd",
-      "tests/unit/agent-first-graders.test.ts": "45559705b724975ea53a85a8df643105befa0ff28fbb36ba3eec07a6a76d3be1",
+      "tests/unit/agent-first-graders.test.ts": "86f2601649f3c1fa6f10d9613379b3b5b80e2d704e6cf32586f5e804935793f2",
       "tests/unit/agent-first-evaluation-framework.test.ts": "3d01944ec3d056105d2fd4ae5e6c13538deee95f07b21d3fd96ee7c8f2f0ce40",
       "tests/unit/agent-first-evaluation-loop.test.ts": "aafa24981f08f1cfd43278c17e0507aee9d854ad3bd6b322f4fb3a1a4fce2059",
       "harness/specs/tasks/agent-first-task-corpus-calibration.md": "d94636c2097d824de8e7f68ddd140a8a0424121e8355548e4a1bc3f9798d7e4d",
@@ -23,7 +23,7 @@
       "scripts/lib/agent-first-evaluation-loop.mjs": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
       "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
       "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
-      "docs/dev/rsi-capability-and-boundaries.md": "73e16ebe4e720cb8605017fcac0bbaef39082178ae3b8491f51672c23bd7d029"
+      "docs/dev/rsi-capability-and-boundaries.md": "641f6a50afd981dfcd2061cfd23d25e2ce36e50412aeb0777879f88b7391e971"
     }
   },
   "corpus": {

@@ -251,6 +251,10 @@ It separates engineering closure from actual RSI capability:
   0.15 against the frozen 0.01 threshold, so the run fails its stability gate and
   the paired pass^k difference stays `insufficient-evidence`: the baseline is
   measured, an RSI benefit is not. TF-0599 therefore remains `insufficient-evidence`.
+- The capability report keeps two rows for this: the TF-0604 gate row reads the
+  frozen reservation pack (`tf0604/aggregate.v1.json`, still `insufficient-evidence`),
+  while the measured numbers live in the sealed system run and are reported under
+  `executionSummary.systemRun*`. Neither row promotes or claims a benefit.
 - TF-0606's advisory candidate remains unmeasured by an eligible held-out run.
   TF-0608 returns `insufficient-evidence/not-promote`. TF-0607 proves the static
   pre-commit boundary only; behavioral rollback remains unrun.

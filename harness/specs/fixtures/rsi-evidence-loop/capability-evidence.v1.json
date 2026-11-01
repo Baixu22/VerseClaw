@@ -15,12 +15,15 @@
     "candidateCompleteCases": 0,
     "systemTrialSummaryCompleteCases": 24,
     "systemTrialKind": "script-provider-equivalent replay, not RSI-model benefit",
-    "systemRunRecordedTrials": 3,
-    "systemRunCompleteCaseCount": 0,
-    "systemRunStatus": "insufficient-evidence",
-    "systemRunPassK": null,
-    "systemRunPassAtK": null,
-    "systemRunConfidenceInterval95": null,
+    "systemRunRecordedTrials": 143,
+    "systemRunCompleteCaseCount": 20,
+    "systemRunStatus": "fail",
+    "systemRunPassK": 0.15,
+    "systemRunPassAtK": 0.35,
+    "systemRunConfidenceInterval95": [
+      0.052369,
+      0.360419
+    ],
     "systemRunPairedDiffStatus": "insufficient-evidence",
     "systemRunPairedDiff": null,
     "heldOutDigest": null,
@@ -219,7 +222,7 @@
       "evidence": {
         "codeCandidateGenerated": false,
         "codeCandidateExecuted": false,
-        "residualCount": 11
+        "residualCount": 9
       },
       "controls": 8
     }
@@ -235,9 +238,9 @@
   },
   "residuals": [
     {
-      "code": "tf0604-baseline-incomplete",
+      "code": "system-run-stability-unmet",
       "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "run the frozen corpus with a fixed provider/tool/resource envelope until >=20 complete cases at k=3 are sealed"
+      "reviewTrigger": "the sealed system run completes 20 cases at k=3 but its own gate reads \"fail\": reduce instability or re-design the corpus so the frozen flake threshold is reachable, instead of re-running trials until the number looks clean"
     },
     {
       "code": "held-out-digest-unsealed",
@@ -250,9 +253,9 @@
       "reviewTrigger": "re-adjudicate from complete, sealed system evidence before any bounded code trial"
     },
     {
-      "code": "stage3-behavioral-rollback-unproven",
+      "code": "stage3-behavioral-evidence-partial",
       "owner": "stage-3 owner (agent)",
-      "reviewTrigger": "execute a real agent-driven rollback and parity drill against the frozen candidate and baseline"
+      "reviewTrigger": "the TF-0607 gate is a finite static precommit scan: behaviour under contamination is still unmeasured, and the TF-0609 rollback receipt covers only flag/hook on-off parity for that candidate"
     },
     {
       "code": "tf0609-no-go",
@@ -280,7 +283,7 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
-      "digest": "7fff7ca22d2eecd46f460b0c093438e3c67efd9486e90c7c5cb8739f79778b8f"
+      "digest": "33e525a8ea5f2ec48282c6b9f3aa8b9df877f97f7c42fbae051861a7be05b84b"
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0605/delta-playbook-report.v1.json",
@@ -292,19 +295,19 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
-      "digest": "84c5a3f00508f29be5500477682af0ebca236bcacd6e608165516f9bb571ea6c"
+      "digest": "e8ac51e95b7589c096a947be204c6fe003c0c6e520770a834ce21fb2d16334c8"
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
-      "digest": "5ae09ecd4ab596e68a97c945d8141852165a453c33485ea7240850c69523f246"
+      "digest": "eca284c4b06222d4d8da303a0c30336588bcb6959ca5a6d7e5ce7ac127a396c3"
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
-      "digest": "77f7f186690a8f0b5b2b627b06aa6dd3e58e2b8be98815ae1b93c01183a482d1"
+      "digest": "aace9262373f090bbe1a489d7c2c4110d85c5fc0cc9c3588527d0b0ee00648dc"
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json",
-      "digest": "f872b72691287b7cc5b1483830a7765932e8b37f59dec5c4f0ab61153332c6c8"
+      "digest": "f9d828091444682a553de7b1b34857184442f9fbc7c38a46ee8a0fcabb791eca"
     },
     {
       "path": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
@@ -312,7 +315,7 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
-      "digest": "f045eb0de523a76188a0c24f2d7e7e85e3069aa324f167da6752c0acf9943b20"
+      "digest": "36a6a2f1636db016243468cee3fd3b4d1542aff31715180d456d374cd981a8ac"
     }
   ],
   "claims": {
@@ -325,7 +328,7 @@
   },
   "limitations": [
     "The 144 script-provider trials are execution/statistics evidence and replay the same candidate in both arms; they do not establish model-quality or RSI benefit.",
-    "TF-0604 real system-run evidence is retained at harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run and holds fewer than the 20 complete cases required to expose pass^k or a paired interval.",
+    "TF-0604 real system-run evidence is retained at harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run and has reached the 20-complete-case floor; benefit still requires paired statistics and a promotable candidate.",
     "No production RSI capability, automatic experience write-back, code self-modification trial or product promotion is claimed.",
     "The TF-0609 No-Go is a start-eligibility decision, not a measured negative performance result.",
     "Task Forest validate/export must be checked separately; its local history currently creates a very large HTML/timeline artifact."

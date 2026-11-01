@@ -4,9 +4,9 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "14faf9db54e9db88ea6c447d14502df858f772c3",
+  "sourceCommit": "7bddf559df9171797c4efb11939e348f4a8a5e27",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
-  "sourceCorpusSha256": "c1b464613c2ca39f28722c56b3a75281a222420d7491aafc8a6854434c983432",
+  "sourceCorpusSha256": "e6f5e4aba7b4016cfca848943f6493aa35443c367d9bac35e99765b7612c895b",
   "tasks": [
     {
       "schemaVersion": "AgentFirstTask/v1",

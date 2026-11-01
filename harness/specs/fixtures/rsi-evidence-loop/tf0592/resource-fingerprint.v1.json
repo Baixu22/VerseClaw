@@ -1,14 +1,36 @@
 {
   "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-  "generatedAt": "2026-10-31T19:01:12.541Z",
+  "generatedAt": "2026-11-01T10:19:59.982Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "candidate": {
-    "commit": "78efb136bf8f529675a866873d7cdec1e9e78dc8",
-    "tree": "6bd66c2bff45d06334d18eb3f69a90914fb4cab5",
+    "commit": "7bddf559df9171797c4efb11939e348f4a8a5e27",
+    "tree": "9fbc78178c1c53d2c6f15904f5acbdd3c9344941",
     "branch": "codex/tf0604-rsi-baseline",
-    "dirty": false,
-    "dirtyPaths": [],
+    "dirty": true,
+    "dirtyPaths": [
+      "M docs/dev/rsi-capability-and-boundaries.md",
+      " M harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS",
+      " M harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json",
+      " M harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json",
+      " M harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/capability-evidence.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0599/SHA256SUMS",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0604/SHA256SUMS",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0604/validation-report.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0606/SHA256SUMS",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0608/SHA256SUMS",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0609/SHA256SUMS",
+      " M harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json"
+    ],
     "sourceHashes": {
       "scripts/rsi-tf0592-statistical-adjudication.mjs": "9b9a144151bef0fac8861331aeaa946ab61f2cb0b2c9ae66d757718e41faeaab",
       "scripts/rsi-tf0592-statistical-adjudication.d.mts": "9f855b84df04f5fafe9fd4c1dacf432e82536bc3c9021b6e9df8f6151939aa48",
@@ -26,7 +48,7 @@
       "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
       "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
       "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
-      "docs/dev/rsi-capability-and-boundaries.md": "73e16ebe4e720cb8605017fcac0bbaef39082178ae3b8491f51672c23bd7d029"
+      "docs/dev/rsi-capability-and-boundaries.md": "641f6a50afd981dfcd2061cfd23d25e2ce36e50412aeb0777879f88b7391e971"
     }
   },
   "runtime": {
@@ -39,9 +61,9 @@
   "observedResources": {
     "cpuCount": 16,
     "totalMemoryBytes": 16295432192,
-    "freeMemoryBytes": 2717061120,
+    "freeMemoryBytes": 1840058368,
     "disk": {
-      "freeBytes": 18338869248,
+      "freeBytes": 14568636416,
       "totalBytes": 322122543104,
       "status": "measured"
     }
