@@ -443,7 +443,7 @@ export function checkHistoricalRun(runDir, options = {}) {
   const complete = results.length===manifest.trials.length;
   const raw={cases:manifest.tasks.map((task)=>({caseId:task.id,trials:results.filter((result)=>result.taskId===task.id).map((result)=>({arm:result.arm,repeat:result.repeat,outcome:result.grader?.verdict ?? (result.failureClass==='infrastructure'?'timeout':'fail'),failureClass:result.failureClass,wallClockMs:null,tokens:null,turns:null,toolCalls:null,cost:null}))}))};
   const statistics=summarizeTf0592Trials({cases:manifest.tasks.map((task)=>({id:task.id,taskId:task.id}))},raw,read(join(manifest.source.root,'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json')));
-  const report={schemaVersion:'RsiHistoricalTrialAggregate/v1',driven_by:'agent',actor:'codex/tf0604-historical-reader',manifestDigest:progress.manifestDigest,complete,recordedTrials:results.length,expectedTrials:manifest.trials.length,completeCaseCount:statistics.run.completeCaseCount,incompleteCaseCount:statistics.run.incompleteCaseCount,statistics,failureClasses:statistics.failureClasses,claims:manifest.claims};
+  const report={schemaVersion:'RsiHistoricalTrialAggregate/v1',driven_by:'agent',actor:'codex/tf0604-historical-reader',manifestDigest:progress.manifestDigest,runId:manifest.runId,suite:manifest.suite,complete,recordedTrials:results.length,expectedTrials:manifest.trials.length,completeCaseCount:statistics.run.completeCaseCount,incompleteCaseCount:statistics.run.incompleteCaseCount,statistics,failureClasses:statistics.failureClasses,claims:manifest.claims};
   if(options.write!==false) write(join(runDir,'aggregate.json'),report); return report;
 }
 function writeHistoricalResult(trialDir, value) {

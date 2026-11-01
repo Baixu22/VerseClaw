@@ -3,6 +3,14 @@
   "driven_by": "agent",
   "actor": "codex/tf0604-historical-reader",
   "manifestDigest": "sha256:f07c9b5e4ac34a3e014479a84ff459c223dff053a0f7f2a8799a0acad0529de9",
+  "runId": "09f40233-fd2d-4fa9-bdba-00a1e59b2a27",
+  "suite": {
+    "id": "rsi-historical-core",
+    "caseCount": 24,
+    "publicCaseCount": 12,
+    "heldOutCaseCount": 12,
+    "heldOutDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3"
+  },
   "complete": true,
   "recordedTrials": 144,
   "expectedTrials": 144,

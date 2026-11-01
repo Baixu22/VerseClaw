@@ -23,11 +23,11 @@ describe("TF-0606 Self-Harness research loop", () => {
     expect(candidate.digest).toMatch(/^sha256:[a-f0-9]{64}$/);
   });
 
-  it("reports No-Go without a held-out trial run", () => {
+  it("reports insufficient-evidence after the measured system run", () => {
     const { report, validation, controls } = writeSelfHarnessPack(process.cwd());
     expect(report.status).toBe("insufficient-evidence");
-    expect(report.evaluation.completeCaseCount).toBe(0);
-    expect(report.evaluation.passK).toBeNull();
+    expect(report.evaluation.completeCaseCount).toBe(20);
+    expect(report.evaluation.passK).toBe(0.15);
     expect(report.claims.promotionReady).toBe(false);
     expect(validation.passed).toBe(true);
     expect(controls).toHaveLength(7);

@@ -12,7 +12,7 @@
   },
   "executionSummary": {
     "taskForestBaselineCompleteCases": 0,
-    "candidateCompleteCases": 0,
+    "candidateCompleteCases": 20,
     "systemTrialSummaryCompleteCases": 24,
     "systemTrialKind": "script-provider-equivalent replay, not RSI-model benefit",
     "systemRunRecordedTrials": 144,
@@ -26,7 +26,7 @@
     ],
     "systemRunPairedDiffStatus": "computed",
     "systemRunPairedDiff": 0,
-    "heldOutDigest": null,
+    "heldOutDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3",
     "codeCandidateGenerated": false,
     "codeCandidateExecuted": false
   },
@@ -164,13 +164,13 @@
     {
       "id": "TF-0599",
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
-      "status": "not-run",
-      "verdict": "insufficient-evidence",
+      "status": "measured",
+      "verdict": "fail",
       "evidence": {
         "caseCount": 24,
-        "completeCaseCount": 0,
+        "completeCaseCount": 20,
         "k": 3,
-        "heldOutDigest": null
+        "heldOutDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3"
       },
       "controls": 10
     },
@@ -193,8 +193,8 @@
       "verdict": "insufficient-evidence",
       "evidence": {
         "weakenedTaskCount": 24,
-        "completeCaseCount": 0,
-        "passK": null
+        "completeCaseCount": 20,
+        "passK": 0.15
       },
       "controls": 7
     },
@@ -215,9 +215,9 @@
       "status": "insufficient-evidence",
       "verdict": "not-promote",
       "evidence": {
-        "completeCaseCount": 0,
-        "passK": null,
-        "heldOutDigest": null
+        "completeCaseCount": 20,
+        "passK": 0.15,
+        "heldOutDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3"
       },
       "controls": 12
     },
@@ -229,7 +229,7 @@
       "evidence": {
         "codeCandidateGenerated": false,
         "codeCandidateExecuted": false,
-        "residualCount": 9
+        "residualCount": 5
       },
       "controls": 8
     }
@@ -248,11 +248,6 @@
       "code": "system-run-stability-unmet",
       "owner": "RSI evaluation owner (agent)",
       "reviewTrigger": "the sealed system run completes 20 cases at k=3 but its own gate reads \"fail\": reduce instability or re-design the corpus so the frozen flake threshold is reachable, instead of re-running trials until the number looks clean"
-    },
-    {
-      "code": "held-out-digest-unsealed",
-      "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "freeze a real 12-case held-out digest and bind it into TF-0599, TF-0606 and TF-0609 coherently"
     },
     {
       "code": "independent-verdict-not-promote",
@@ -290,7 +285,7 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
-      "digest": "74545abaef4c5fbcdd819afe36226a2b559f39c7d1a3905bdf3d17dbade460a8"
+      "digest": "466af83815a4e9834fe445c725cf259161c95a4afc57aa9c93d0b40bad2cf25c"
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0605/delta-playbook-report.v1.json",
@@ -302,7 +297,7 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
-      "digest": "f4591f3217988465bee96aac2db0d8c0b66215d4783540e69fb54695f0391975"
+      "digest": "af034aac99fb6b9af96320b64b86233cefdfa7300108fbd469f14d661fbbd85a"
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
@@ -310,11 +305,11 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
-      "digest": "9efb7642bbec4f012a32112843dde386c1ab04e115aa62d22bb015cc76f62def"
+      "digest": "ade4d65e0ab096d0d6c3fa2f0b82e85b83742049f269f4cc769203f0c1764dfa"
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json",
-      "digest": "3c79de2d84098602cec5c9adb606c8d9049e009e6d5d6e5b07d43db3be31b6b9"
+      "digest": "26c78dfb65bc757df1dce6a1bd857081fecb30af200360688b62e528d3d9b14a"
     },
     {
       "path": "harness/specs/fixtures/agent-first-system/trials/acceptance.json",
@@ -322,7 +317,7 @@
     },
     {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
-      "digest": "b1ef03eba667a1fe61bca4e1c5b2945bf9c436aa4918ce2027fd95c53014d951"
+      "digest": "da690c50e1c9ea5e54076b5f96e8608c068f9784304de882b22f8aaa8119adf9"
     }
   ],
   "claims": {

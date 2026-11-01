@@ -44,3 +44,4 @@ export function runNegativeControls(inputs: RsiGateInputs, envelope: RsiCandidat
 export function writeCandidateGatePack(root?: string): { report: RsiCandidateGateReport; controls: RsiGateControlResult[] };export function systemRunCases(systemRun: any): any;
 export function summarizeMeasuredSystemRun(corpus: any, systemRun: any, envelope: any): any;
 export function buildMeasuredSystemRunReport(inputs: any, envelope: any, systemRun: any, root?: string): any;
+export function writeMeasuredSystemRunPack(root?: string, outDir?: string): any;

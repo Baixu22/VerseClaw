@@ -12,24 +12,24 @@
   "reasons": [
     {
       "code": "insufficient-evidence",
-      "message": "zero complete held-out system trials; no quality benefit can be inferred"
+      "message": "20 complete paired cases at k=3; the gate is fail and no quality benefit can be inferred"
     }
   ],
   "recomputed": {
     "corpusCaseCount": 24,
     "publicCaseCount": 12,
     "heldOutCaseCount": 12,
-    "completeCaseCount": 0,
-    "incompleteCaseCount": 24,
-    "trialCount": 0,
+    "completeCaseCount": 20,
+    "incompleteCaseCount": 4,
+    "trialCount": null,
     "k": 3,
     "minimumCompleteCases": 20,
-    "passK": null,
-    "passAtK": null,
+    "passK": 0.15,
+    "passAtK": 0.35,
     "confidenceInterval95": null,
     "costStatus": "not-run",
-    "heldOutDigest": null,
-    "heldOutBindingStatus": "unavailable",
+    "heldOutDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3",
+    "heldOutBindingStatus": "reported-unverified",
     "researchControlCount": 7,
     "contaminationControlCount": 10,
     "upstreamDigestsVerified": true
@@ -37,7 +37,7 @@
   "evidence": {
     "gate": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
-      "digest": "74545abaef4c5fbcdd819afe36226a2b559f39c7d1a3905bdf3d17dbade460a8"
+      "digest": "466af83815a4e9834fe445c725cf259161c95a4afc57aa9c93d0b40bad2cf25c"
     },
     "candidate": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/candidate.v1.json",
@@ -45,7 +45,7 @@
     },
     "research": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
-      "digest": "f4591f3217988465bee96aac2db0d8c0b66215d4783540e69fb54695f0391975"
+      "digest": "af034aac99fb6b9af96320b64b86233cefdfa7300108fbd469f14d661fbbd85a"
     },
     "contamination": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
@@ -60,9 +60,9 @@
     "productLocksChanged": false
   },
   "limitations": [
-    "The sealed corpus contains task definitions, not completed RSI system trials; completeCaseCount is zero.",
+    "The measured system run contains 20 paired complete cases; its own stability/fail status is preserved.",
     "No confidence interval, cost comparison, quality gain or promotion decision is available.",
-    "The held-out digest is not present in TF-0599; the TF-0606 all-ones value is a placeholder, not a sealed split digest.",
+    "The held-out digest is bound from the sealed manifest (sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3); it is not a benefit estimate.",
     "The contamination scan is finite and static; behavioral rollback and live effects remain untested.",
     "Adjudication does not merge, publish, enable defaults or change product locks."
   ]

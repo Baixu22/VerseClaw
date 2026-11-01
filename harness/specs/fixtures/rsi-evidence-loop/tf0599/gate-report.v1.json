@@ -4,28 +4,28 @@
   "generatedAt": "2026-10-31T00:00:00.000Z",
   "driven_by": "agent",
   "actor": "codex/tf0599-candidate-gate",
-  "status": "not-run",
-  "gate": "insufficient-evidence",
+  "status": "measured",
+  "gate": "fail",
   "reasons": [
-    "no-completed-system-trials",
-    "baseline-reservation-not-run"
+    "paired-stability-not-met",
+    "system-run-is-not-candidate-benefit"
   ],
   "suite": {
     "sourceDir": "harness/specs/fixtures/rsi-evidence-loop/tf0604",
     "caseCount": 24,
     "publicCaseCount": 12,
     "heldOutCaseCount": 12,
-    "heldOutDigest": null,
+    "heldOutDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3",
     "corpusDigest": "edcef9fe1ce935c01ceb88bcebd8861858fa63a8ba5a54d05832f27bd2a86d67"
   },
   "envelope": {
     "schemaVersion": "RsiCandidateEnvelope/v1",
-    "candidateId": "tf0599-baseline-reservation",
+    "candidateId": "tf0599-measured-system-run",
     "authoredBy": "self-improvement",
-    "candidateDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "candidateDigest": "sha256:748a178ec1a70126147eabd744213a3ae874adb09fbc0b554342583f04df1cf2",
     "suiteId": "TF-0604",
     "suiteContentDigest": null,
-    "heldOutSplitDigest": null,
+    "heldOutSplitDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3",
     "k": 3,
     "minimumCompleteCases": 20,
     "model": {
@@ -58,185 +58,66 @@
     "errors": []
   },
   "aggregate": {
-    "k": 3,
-    "caseCount": 24,
-    "completeCaseCount": 0,
-    "incompleteCaseCount": 24,
-    "trialCount": 0,
-    "passCount": 0,
-    "failCount": 0,
-    "perTrialSuccessRate": null,
-    "passK": null,
-    "passAtK": null,
-    "flakeRate": null,
-    "flakeCaseIds": [],
-    "skippedCaseIds": [],
+    "passK": 0.15,
+    "passAtK": 0.35,
+    "perTrialSuccessRate": 0.2333,
+    "confidenceInterval95": [
+      0.052369,
+      0.360419
+    ],
+    "passAtKConfidenceInterval95": [
+      0.181192,
+      0.567146
+    ],
+    "intervalMethod": "wilson-over-complete-cases",
+    "flakeRate": 0.15,
     "incomplete": [
       {
-        "caseId": "tf-0274-e01",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0275-e02",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0276-s01",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0277-s02",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0278-s03",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
         "caseId": "tf-0279-s04",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0280-s05",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0281-s06",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0282-s07",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0283-l01",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0284-l02",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0285-l03",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0286-l04",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0287-l05",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0288-l06",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0289-g01",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0290-g02",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0291-g03",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0293-a01",
-        "trialIndex": 0,
-        "outcome": "missing"
+        "trialIndex": 1,
+        "outcome": "fail",
+        "failureClass": "infrastructure",
+        "reason": "not-agent-failure"
       },
       {
         "caseId": "tf-0294-a02",
-        "trialIndex": 0,
-        "outcome": "missing"
+        "trialIndex": 2,
+        "outcome": "fail",
+        "failureClass": "infrastructure",
+        "reason": "not-agent-failure"
       },
       {
         "caseId": "tf-0295-a03",
         "trialIndex": 0,
-        "outcome": "missing"
+        "outcome": "fail",
+        "failureClass": "infrastructure",
+        "reason": "not-agent-failure"
       },
       {
-        "caseId": "tf-0296-a04",
-        "trialIndex": 0,
-        "outcome": "missing"
+        "caseId": "tf-0295-a03",
+        "trialIndex": 2,
+        "outcome": "fail",
+        "failureClass": "infrastructure",
+        "reason": "not-agent-failure"
       },
       {
         "caseId": "tf-0297-a05",
-        "trialIndex": 0,
-        "outcome": "missing"
-      },
-      {
-        "caseId": "tf-0298-a06",
-        "trialIndex": 0,
-        "outcome": "missing"
+        "trialIndex": 2,
+        "outcome": "fail",
+        "failureClass": "infrastructure",
+        "reason": "not-agent-failure"
       }
     ],
-    "safety": {
-      "requiredCaseCount": 0,
-      "skippedCount": 0,
-      "flakeCount": 0,
-      "violated": false
-    },
-    "anchors": {
-      "positiveCaseCount": 0,
-      "positivePassed": 0,
-      "negativeCaseCount": 0,
-      "negativeRejected": 0,
-      "violated": false
-    },
-    "gate": "insufficient-sample",
     "reasons": [
-      "complete cases 0 < required 20",
-      "24 incomplete trial(s) preserved"
+      "flake rate 0.15 > threshold 0.01",
+      "5 incomplete trial(s) preserved"
     ],
-    "missingCases": [
-      "tf-0274-e01",
-      "tf-0275-e02",
-      "tf-0289-g01",
-      "tf-0290-g02",
-      "tf-0291-g03",
-      "tf-0283-l01",
-      "tf-0284-l02",
-      "tf-0285-l03",
-      "tf-0286-l04",
-      "tf-0287-l05",
-      "tf-0288-l06",
-      "tf-0276-s01",
-      "tf-0277-s02",
-      "tf-0278-s03",
-      "tf-0279-s04",
-      "tf-0280-s05",
-      "tf-0281-s06",
-      "tf-0282-s07",
-      "tf-0293-a01",
-      "tf-0294-a02",
-      "tf-0295-a03",
-      "tf-0296-a04",
-      "tf-0297-a05",
-      "tf-0298-a06"
-    ]
+    "caseCount": 24,
+    "completeCaseCount": 20,
+    "incompleteCaseCount": 4,
+    "gate": "fail",
+    "k": 3,
+    "missingCases": []
   },
   "failureClasses": {
     "infrastructure": 0,
@@ -246,12 +127,118 @@
   },
   "claims": {
     "realHuman": false,
-    "liveProvider": false,
+    "liveProvider": true,
     "promotionReady": false,
     "productLocksChanged": false
   },
   "limitations": [
-    "No completed system trial exists; this is an executable gate, not a quality result.",
-    "Deterministic fixtures are contract checks only."
-  ]
+    "The measured source is the live-system run; both arms receive identical treatment prompts unless the envelope declares a candidate.",
+    "A non-zero flake rate or a paired interval spanning zero blocks promotion."
+  ],
+  "systemRun": {
+    "manifestDigest": "sha256:f07c9b5e4ac34a3e014479a84ff459c223dff053a0f7f2a8799a0acad0529de9",
+    "recordedTrials": 144,
+    "completeCaseCount": 20,
+    "status": "fail",
+    "passK": 0.15,
+    "passAtK": 0.35,
+    "confidenceInterval95": [
+      0.052369,
+      0.360419
+    ],
+    "pairedDiff": {
+      "status": "computed",
+      "metric": "pass^k",
+      "pairUnit": "caseId/repeat",
+      "inferenceUnit": "caseId",
+      "pairCount": 20,
+      "completePairCaseCount": 20,
+      "unmatched": [
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 2,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 1,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 2,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 1,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "timeout"
+        }
+      ],
+      "repeatPairCount": 65,
+      "excludedPartialPairs": [
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 1,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 3,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 2,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 1,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 2,
+          "baseline": 0,
+          "treatment": 0
+        }
+      ],
+      "intervalMethod": "normal-approximation over complete case clusters",
+      "varianceStatus": "estimated",
+      "meanDiff": 0,
+      "ci95": [
+        -0.2463,
+        0.2463
+      ],
+      "effectSize": 0,
+      "passKDelta": 0
+    }
+  }
 }

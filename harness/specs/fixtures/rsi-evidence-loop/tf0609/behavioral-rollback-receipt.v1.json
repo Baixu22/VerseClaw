@@ -1,11 +1,11 @@
 {
   "schemaVersion": "RsiBehavioralRollbackReceipt/v1",
-  "generatedAt": "2026-10-31T19:12:33.635Z",
+  "generatedAt": "2026-11-01T11:50:29.953Z",
   "driven_by": "agent",
   "actor": "codex/tf0601-rollback-probe",
   "adjudicatorActor": "codex/tf0601-independent-verifier",
   "candidateDigest": "sha256:525b735f3a259ef62748d58f645fbc8f6a9cbf093b645344da9c869ca69fa412",
-  "baselineDigest": "sha256:cd4c6a9c5ed5cde957d510265a3c778e06f06d5771c99f0f58570d0232c758f3",
+  "baselineDigest": "sha256:da690c50e1c9ea5e54076b5f96e8608c068f9784304de882b22f8aaa8119adf9",
   "status": "pass",
   "behavioralParity": true,
   "phases": {
@@ -32,8 +32,31 @@
     "reverseMigrationApplied": false
   },
   "commands": [
-    "openclaw_runtime: node --import tsx -e \"import('./src/knowledge/sekb/feature-flags.ts')\"",
-    "openclaw_runtime: node --import tsx -e \"import('./src/knowledge/sekb/harness-integration.ts')\""
+    {
+      "id": "feature-flag-resolution",
+      "command": "node --import tsx -e import(./src/knowledge/sekb/feature-flags.ts)",
+      "exitCode": 0,
+      "observed": {
+        "baselineOff": true,
+        "candidateOn": true,
+        "rollbackOff": true
+      }
+    },
+    {
+      "id": "harness-hook-lifecycle",
+      "command": "node --import tsx -e import(./src/knowledge/sekb/harness-integration.ts)",
+      "exitCode": 0,
+      "observed": {
+        "enabledHook": {
+          "subscribed": true,
+          "afterUninstall": 0
+        },
+        "disabledHook": {
+          "subscribed": false,
+          "afterUninstall": 0
+        }
+      }
+    }
   ],
   "artifacts": [
     {

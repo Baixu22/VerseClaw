@@ -20,11 +20,11 @@ describe("TF-0609 code self-modification Go/No-Go gate", () => {
     expect(report.claims.realHuman).toBe(false);
     expect(report.claims.promotionReady).toBe(false);
     expect(report.reasons.map((reason) => reason.code)).toEqual(expect.arrayContaining([
-      "baseline-floor",
-      "candidate-trials-incomplete",
-      "held-out-unsealed",
-      "independent-verdict-not-ready",
+      "baseline-stability",
+      "paired-benefit-unproven",
+      "cost-ceiling",
       "cost-safety-evidence-missing",
+      "independent-verdict-not-ready",
     ]));
   });
 

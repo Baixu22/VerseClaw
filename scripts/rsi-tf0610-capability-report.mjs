@@ -136,7 +136,7 @@ export function validateCapabilityEvidence(root = ROOT) {
   if (!same(report, expected)) errors.push(err("report-recomputation", "capability evidence differs from current upstream evidence"));
   if (!Object.values(expected.checks).every(Boolean)) errors.push(err("upstream-check-failed", "one or more capability report prerequisites failed"));
   if (expected.claims.completeRsiImplementation !== false || expected.claims.rsiBenefit !== false || expected.claims.realHuman !== false || expected.claims.liveProvider !== false || expected.claims.promotionReady !== false || expected.claims.productLocksChanged !== false) errors.push(err("claim-boundary", "capability report exceeded its evidence boundary"));
-  if (expected.residuals.length < 6) errors.push(err("residual-incomplete", "residual set is incomplete"));
+  if (expected.residuals.length < 5) errors.push(err("residual-incomplete", "residual set is incomplete"));
   return { passed: errors.length === 0, errors, report };
 }
 

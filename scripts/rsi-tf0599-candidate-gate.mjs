@@ -158,6 +158,21 @@ export function runNegativeControls(inputs, envelope, root = ROOT) {
   return controls;
 }
 
+export function writeMeasuredSystemRunPack(root = ROOT, outDir = TF0599_PACK_DIR) {
+  const inputs = loadInputs(root);
+  const systemRun = readJson(join(root, 'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json'));
+  const envelope = { ...baseEnvelope(inputs.corpus), heldOutSplitDigest: systemRun?.suite?.heldOutDigest ?? null, candidateId: 'tf0599-measured-system-run', authoredBy: 'self-improvement', candidateDigest: 'sha256:' + createHash('sha256').update('tf0599-measured-system-run').digest('hex') };
+  const report = buildMeasuredSystemRunReport(inputs, envelope, systemRun, root);
+  const controls = runNegativeControls(inputs, baseEnvelope(inputs.corpus), root);
+  const pack = join(root, outDir);
+  mkdirSync(pack, { recursive: true });
+  writeFileSync(join(pack, 'gate-report.v1.json'), JSON.stringify(report, null, 2) + '\n');
+  writeFileSync(join(pack, 'control-results.v1.json'), JSON.stringify(controls, null, 2) + '\n');
+  const lines = ['gate-report.v1.json', 'control-results.v1.json'].map((file) => createHash('sha256').update(readFileSync(join(pack, file))).digest('hex') + '  ' + file);
+  writeFileSync(join(pack, 'SHA256SUMS'), lines.join('\n') + '\n');
+  return { report, controls };
+}
+
 export function writeCandidateGatePack(root = ROOT) {
   const inputs = loadInputs(root);
   const envelope = baseEnvelope(inputs.corpus);

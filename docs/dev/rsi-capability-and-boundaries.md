@@ -254,12 +254,13 @@ It separates engineering closure from actual RSI capability:
   0.143` and `pass@3 = 0.571`. Flake is 0.15 against the frozen 0.01 threshold,
   so the run fails its stability gate. The paired pass^k difference is `0` with
   95% CI [-0.246, 0.246]: the baseline is measured, an RSI benefit is not.
-  TF-0599's candidate reservation remains `insufficient-evidence`; the measured
-  system run is reported separately.
+  TF-0599's derived gate reads the measured run and is `fail`; its sealed raw
+  reservation remains untouched.
 - The capability report keeps two rows for this: the TF-0604 gate row reads the
   sealed measured system run (`tf0604-system-run/aggregate.json`, status `fail`,
-  20 complete cases, pass^3 0.15), while TF-0599's candidate reservation remains
-  `insufficient-evidence`. Neither row promotes or claims a benefit.
+  20 complete cases, pass^3 0.15), while TF-0599's gate row reads the same measured
+  run and is `fail`. The raw reservation remains frozen and unmutated. Neither row
+  promotes or claims a benefit.
 - TF-0606's advisory candidate remains unmeasured by an eligible held-out run.
   TF-0608 returns `insufficient-evidence/not-promote`. TF-0607 proves the static
   pre-commit boundary; a separate TF-0609 receipt proves flag/hook off-on-off

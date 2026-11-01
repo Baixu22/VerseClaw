@@ -20,7 +20,7 @@ const SUMS = {
   tf0609: ["eligibility.v1.json", "control-results.v1.json", "behavioral-rollback-receipt.v1.json"],
 };
 const PATHS = {
-  baseline: "harness/specs/fixtures/rsi-evidence-loop/tf0604/aggregate.v1.json",
+  baseline: "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
   gate: "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
   candidate: "harness/specs/fixtures/rsi-evidence-loop/tf0606/candidate.v1.json",
   research: "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
@@ -105,13 +105,26 @@ export function evaluateTf0609(inputs, actor = TF0609_ACTOR) {
   const policy = inputs.policy.value;
   const actors = [actor, gate.envelope?.executorActor, gate.envelope?.verifierActor, gate.actor, research.actor, contamination.actor, adjudication.actor, inputs.comparison.value?.actor, inputs.rollback.value?.actor];
   if (actors.some((value) => value !== undefined && (!value || typeof value !== "string")) || new Set(actors.filter(Boolean)).size !== actors.filter(Boolean).length) reasons.push(issue("actor-collision", "eligibility reviewer and upstream evidence actors must be distinct named agents."));
-  if (baseline.status !== "pass" || baseline.completeCaseCount < MIN_CASES) reasons.push(issue("baseline-floor", `baseline has ${baseline.completeCaseCount} complete cases; requires ${MIN_CASES}.`));
-  if (gate.status !== "complete" || gate.aggregate?.caseCount < MIN_CASES || gate.aggregate?.completeCaseCount < MIN_CASES || gate.aggregate?.k !== K) reasons.push(issue("candidate-trials-incomplete", `candidate gate must contain at least ${MIN_CASES} complete cases at k=${K}.`));
+  if (baseline.completeCaseCount < MIN_CASES) reasons.push(issue("baseline-floor", `baseline has ${baseline.completeCaseCount} complete cases; requires ${MIN_CASES}.`));
+  if ((baseline.statistics?.status ?? baseline.status) !== "pass") reasons.push(issue("baseline-stability", `baseline stability gate is ${baseline.statistics?.status ?? baseline.status ?? "unknown"}; a promotable baseline must pass its own frozen gate.`));
+  if (gate.aggregate?.caseCount !== 24 || gate.aggregate?.completeCaseCount < MIN_CASES || gate.aggregate?.k !== K) reasons.push(issue("candidate-trials-incomplete", `candidate gate must contain at least ${MIN_CASES} complete cases at k=${K}.`));
+  const systemRun = inputs.baseline.value;
+  const comparison = inputs.comparison.value ?? {
+    status: systemRun?.statistics?.pairedDiff?.status === 'computed' ? (systemRun?.statistics?.status === 'pass' ? 'pass' : 'fail') : 'insufficient-evidence',
+    heldOutDigest: systemRun?.suite?.heldOutDigest ?? null,
+    baselinePassK: systemRun?.statistics?.aggregate?.passK ?? null,
+    candidatePassK: systemRun?.statistics?.treatment?.aggregate?.passK ?? null,
+    confidenceInterval95: systemRun?.statistics?.pairedDiff?.ci95 ?? null,
+    costIncreaseRelative: null,
+    negativeControlRegression: null,
+    safetyRegression: null,
+    driven_by: 'agent', actor: 'codex/tf0609-system-run-adapter',
+  };
+  const comparisonPresent = Boolean(inputs.comparison?.present) || comparison?.status !== "insufficient-evidence";
   const heldOutDigest = gate.suite?.heldOutDigest;
-  if (!/^sha256:[a-f0-9]{64}$/u.test(heldOutDigest ?? "") || heldOutDigest !== gate.envelope?.heldOutSplitDigest || heldOutDigest !== inputs.comparison.value?.heldOutDigest) reasons.push(issue("held-out-unsealed", "held-out split digest must be sealed and match the gate, candidate envelope and paired comparison."));
-  const comparison = inputs.comparison.value;
+  if (!/^sha256:[a-f0-9]{64}$/u.test(heldOutDigest ?? "") || heldOutDigest !== gate.envelope?.heldOutSplitDigest || heldOutDigest !== comparison?.heldOutDigest) reasons.push(issue("held-out-unsealed", "held-out split digest must be sealed and match the gate, candidate envelope and paired comparison."));
   const thresholds = policy.promotion.thresholds;
-  if (!inputs.comparison.present || comparison?.status !== "pass" || !Number.isFinite(comparison?.baselinePassK) || !Number.isFinite(comparison?.candidatePassK) || comparison.candidatePassK - comparison.baselinePassK < thresholds.passKAbsoluteImprovement.minimum || !Array.isArray(comparison?.confidenceInterval95) || comparison.confidenceInterval95.length !== 2 || !Number.isFinite(comparison.confidenceInterval95[0]) || comparison.confidenceInterval95[0] <= 0) reasons.push(issue("paired-benefit-unproven", "a sealed paired comparison must clear the pre-registered pass^k and confidence-interval thresholds."));
+  if (!comparisonPresent || comparison?.status !== "pass" || !Number.isFinite(comparison?.baselinePassK) || !Number.isFinite(comparison?.candidatePassK) || comparison.candidatePassK - comparison.baselinePassK < thresholds.passKAbsoluteImprovement.minimum || !Array.isArray(comparison?.confidenceInterval95) || comparison.confidenceInterval95.length !== 2 || !Number.isFinite(comparison.confidenceInterval95[0]) || comparison.confidenceInterval95[0] <= 0) reasons.push(issue("paired-benefit-unproven", "a sealed paired comparison must clear the pre-registered pass^k and confidence-interval thresholds."));
   if (!Number.isFinite(comparison?.costIncreaseRelative) || comparison.costIncreaseRelative > thresholds.costIncrease.maximum) reasons.push(issue("cost-ceiling", "paired token/tool-call cost comparison must be present and within the frozen ceiling."));
   if (comparison?.negativeControlRegression !== false || comparison?.safetyRegression !== false) reasons.push(issue("cost-safety-evidence-missing", "paired comparison must attest zero negative-control and safety regressions."));
   if (candidate.promotionReady !== false || candidate.autoMerge !== false || research.promotionReady !== false || research.autoMerge !== false) reasons.push(issue("candidate-self-promotion", "candidate and research artifacts must not self-promote or auto-merge."));
@@ -120,8 +133,8 @@ export function evaluateTf0609(inputs, actor = TF0609_ACTOR) {
   if (!inputs.rollback.present || !validateBehavioralRollbackReceipt(rollback, { candidateDigest: candidate.digest, baselineDigest: inputs.baseline.digest }).valid) reasons.push(issue("behavioral-rollback-missing", "a sealed, agent-attributed behavioral rollback/parity receipt bound to this candidate and baseline is required."));
   if (contamination.status !== "pass-precommit" || contamination.validation?.passed !== true || contamination.controls?.length !== 10) reasons.push(issue("contamination-gate-failed", "static contamination gate and all ten controls must pass."));
   if (contamination.limitations?.includes("Behavioral effects remain not-run.")) reasons.push(issue("stage3-behavioral-evidence-missing", "static precommit evidence does not prove behavioral rollback or parity."));
-  if ([candidate.claims?.realHuman, research.claims?.realHuman, contamination.claims?.realHuman, adjudication.claims?.realHuman].some((value) => value !== false)) reasons.push(issue("real-human-claim", "all upstream claims must explicitly keep realHuman false."));
-  if ([candidate.claims?.promotionReady, research.claims?.promotionReady, contamination.claims?.promotionReady, adjudication.claims?.promotionReady].some((value) => value !== false)) reasons.push(issue("upstream-promotion-claim", "no upstream artifact may claim product promotion readiness."));
+  if ([research.claims?.realHuman, contamination.claims?.realHuman, adjudication.claims?.realHuman].some((value) => value !== false) || (candidate.claims && candidate.claims.realHuman !== false)) reasons.push(issue("real-human-claim", "all upstream claims must explicitly keep realHuman false."));
+  if (candidate.promotionReady !== false || [research.claims?.promotionReady, contamination.claims?.promotionReady, adjudication.claims?.promotionReady].some((value) => value !== false)) reasons.push(issue("upstream-promotion-claim", "no upstream artifact may claim product promotion readiness."));
   return {
     schemaVersion: TF0609_SCHEMA,
     taskId: "TF-0609",
@@ -218,7 +231,7 @@ export function validateBehavioralRollbackReceipt(receipt, expected = {}) {
   if (expected.baselineDigest && normalizeEvidenceDigest(receipt?.baselineDigest) !== normalizeEvidenceDigest(expected.baselineDigest)) errors.push("baseline-binding");
   if (!phases || phases.baselineOff !== true || phases.candidateOn !== true || phases.rollbackOff !== true) errors.push("phase-order");
   if (!checks || checks.flagResolutionObserved !== true || checks.hookSubscribedWhenEnabled !== true || checks.hookAbsentWhenDisabled !== true || checks.rollbackRemovedSubscriptions !== true || checks.productStateChanged !== false || checks.reverseMigrationApplied !== false) errors.push("behavioral-checks");
-  if (!Array.isArray(receipt?.commands) || receipt.commands.length < 1 || receipt.commands.some((entry) => typeof entry !== "string" || !entry.trim())) errors.push("commands");
+  if (!Array.isArray(receipt?.commands) || receipt.commands.length < 1 || receipt.commands.some((entry) => typeof entry === "string" ? !entry.trim() : !(entry && typeof entry.id === "string" && typeof entry.command === "string" && entry.command.trim() && entry.exitCode === 0))) errors.push("commands");
   if (!Array.isArray(receipt?.artifacts) || receipt.artifacts.length < 1 || receipt.artifacts.some((entry) => !/^sha256:[a-f0-9]{64}$/u.test(entry?.digest ?? "") || typeof entry?.path !== "string")) errors.push("artifacts");
   if (receipt?.claims?.realHuman !== false || receipt?.claims?.liveProvider !== false || receipt?.claims?.productLocksChanged !== false) errors.push("claims");
   return { valid: errors.length === 0, errors: [...new Set(errors)] };

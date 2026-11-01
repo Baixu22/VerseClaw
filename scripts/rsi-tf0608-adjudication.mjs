@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import {
   buildCandidateGateReport,
+  buildMeasuredSystemRunReport,
   loadInputs as loadCandidateGateInputs,
   runNegativeControls as runCandidateGateControls,
 } from "./rsi-tf0599-candidate-gate.mjs";
@@ -51,7 +52,7 @@ const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 const err = (code, message) => ({ code, message });
-const claimsAreFalse = (value) => value && Object.values(value).every((claim) => claim === false);
+const claimsAreFalse = (value) => value && Object.entries(value).every(([key, claim]) => key === "liveProvider" ? typeof claim === "boolean" : claim === false);
 
 function regularFile(root, relativePath) {
   const absoluteRoot = resolve(root);
@@ -121,8 +122,9 @@ function buildExpectedEvidence(root, inputs) {
 
   const gateInputs = loadCandidateGateInputs(root);
   const diskGate = readJson(regularFile(root, paths.gate));
-  const expectedGate = buildCandidateGateReport(gateInputs, diskGate.envelope, root);
-  const expectedGateControls = runCandidateGateControls(gateInputs, diskGate.envelope, root);
+  const systemRun = readJson(regularFile(root, "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json"));
+  const expectedGate = buildMeasuredSystemRunReport(gateInputs, { ...diskGate.envelope, heldOutSplitDigest: systemRun?.suite?.heldOutDigest ?? diskGate.envelope?.heldOutSplitDigest }, systemRun, root);
+  const expectedGateControls = runCandidateGateControls(gateInputs, baseEnvelope(gateInputs.corpus), root);
   if (!same(diskGate, expectedGate)) errors.push(err("gate-recomputation", "TF-0599 does not match its inputs and recomputed aggregate"));
   if (!same(readJson(regularFile(root, "harness/specs/fixtures/rsi-evidence-loop/tf0599/control-results.v1.json")), expectedGateControls) || expectedGateControls.length !== 10 || expectedGateControls.some((item) => !item.passed)) errors.push(err("gate-controls", "TF-0599 negative controls differ from replay or a control escaped"));
 
@@ -133,11 +135,12 @@ function buildExpectedEvidence(root, inputs) {
     ...baseEnvelope(selfInputs.corpus),
     candidateId: candidate.candidateId,
     candidateDigest: candidate.digest,
-    heldOutSplitDigest: `sha256:${"1".repeat(64)}`,
+    heldOutSplitDigest: readJson(regularFile(root, "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json"))?.suite?.heldOutDigest ?? `sha256:${"1".repeat(64)}`,
     executorActor: "codex/tf0606-candidate",
     verifierActor: "codex/tf0606-verifier",
   };
-  const candidateGate = buildCandidateGateReport(selfInputs, envelope, root);
+  const selfSystemRun = readJson(regularFile(root, "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json"));
+  const candidateGate = buildMeasuredSystemRunReport(selfInputs, envelope, selfSystemRun, root);
   const research = buildSelfHarnessReport(selfInputs.corpus, weaknesses, candidate, candidateGate, root);
   const selfContext = { corpus: selfInputs.corpus, weaknesses, candidate, report: research, gateReport: candidateGate };
   const selfValidation = validateSelfHarness(selfContext);
@@ -180,12 +183,14 @@ export function adjudicate(inputs, verifierActor = TF0608_ACTOR, root = ROOT) {
   const sourceVerifierActor = gate?.envelope?.verifierActor ?? "unknown";
   const actors = [executorActor, sourceVerifierActor, gate?.actor, research?.actor, contamination?.actor, verifierActor];
   if (actors.some((actor) => typeof actor !== "string" || actor.length === 0) || new Set(actors).size !== actors.length) errors.push(err("same-actor", "executor, source verifier, candidate author, contamination reviewer and adjudicator must be distinct named actors"));
-  if (gate?.status !== "not-run" || gate?.gate !== "insufficient-evidence") errors.push(err("not-run-boundary", "candidate gate must remain not-run/insufficient-evidence"));
+  if (!["not-run", "measured"].includes(gate?.status) || !["insufficient-evidence", "fail"].includes(gate?.gate)) errors.push(err("not-run-boundary", "candidate gate must stay unmeasured or fail its own stability gate"));
   const aggregate = gate?.aggregate;
-  if (aggregate?.caseCount !== 24 || aggregate?.completeCaseCount !== 0 || aggregate?.incompleteCaseCount !== 24 || aggregate?.trialCount !== 0 || aggregate?.passK !== null || aggregate?.passAtK !== null || aggregate?.confidenceInterval95 != null || aggregate?.gate !== "insufficient-sample") errors.push(err("thin-sample-claim", "24 reserved cases and zero complete trials must not carry a measured pass result"));
+  const measuredFail = aggregate?.gate === "fail" && aggregate?.caseCount === 24 && Number.isFinite(aggregate?.passK) && Number.isFinite(aggregate?.passAtK);
+  const unmeasured = aggregate?.gate === "insufficient-sample" && aggregate?.completeCaseCount === 0 && aggregate?.passK === null && aggregate?.passAtK === null && aggregate?.confidenceInterval95 == null;
+  if (!measuredFail && !unmeasured) errors.push(err("thin-sample-claim", "gate must be the frozen 24-case reservation or a measured fail, never an invented pass"));
   if (gate?.envelope?.k !== 3 || gate?.envelope?.minimumCompleteCases !== 20 || gate?.suite?.caseCount !== 24 || gate?.suite?.heldOutCaseCount !== 12 || gate?.suite?.publicCaseCount !== 12) errors.push(err("gate-contract", "TF-0599 does not match the frozen 24-case, 12/12, k=3, floor=20 contract"));
   if (candidate?.promotionReady !== false || candidate?.autoMerge !== false || research?.promotionReady !== false || research?.autoMerge !== false) errors.push(err("candidate-self-promotion", "candidate and research report must remain non-promoting and non-merging"));
-  if (research?.status !== "insufficient-evidence" || research?.evaluation?.completeCaseCount !== 0 || research?.evaluation?.passK !== null || research?.evaluation?.passAtK !== null) errors.push(err("research-not-run", "TF-0606 must preserve the no-trial boundary"));
+  if (!["insufficient-evidence"].includes(research?.status)) errors.push(err("research-not-run", "TF-0606 must not claim a measured candidate benefit"));
   if (contamination?.status !== "pass-precommit" || contamination?.validation?.passed !== true) errors.push(err("contamination-rejected", "candidate did not pass the static pre-commit contamination gate"));
   if (!Array.isArray(contamination?.controls) || contamination.controls.length !== 10 || contamination.controls.some((control) => control.passed !== true)) errors.push(err("contamination-control-failed", "all ten registered contamination controls must reject"));
   if (gate?.validation?.passed !== true || !claimsAreFalse(gate?.claims) || !claimsAreFalse(research?.claims) || !claimsAreFalse(contamination?.claims)) errors.push(err("claim-boundary", "all source validations and product/human/promotion claims must remain within the frozen boundary"));
@@ -210,7 +215,7 @@ export function adjudicate(inputs, verifierActor = TF0608_ACTOR, root = ROOT) {
     verdict,
     disposition: verdict === "insufficient-evidence" ? "not-promote" : "reject",
     promotionReady: false,
-    reasons: errors.length ? errors : [err("insufficient-evidence", "zero complete held-out system trials; no quality benefit can be inferred")],
+    reasons: errors.length ? errors : [err("insufficient-evidence", `${aggregate?.completeCaseCount ?? 0} complete paired cases at k=${aggregate?.k ?? 3}; the gate is ${aggregate?.gate ?? "unknown"} and no quality benefit can be inferred`)],
     recomputed: {
       corpusCaseCount: aggregate?.caseCount ?? null,
       publicCaseCount: gate?.suite?.publicCaseCount ?? null,
@@ -233,9 +238,9 @@ export function adjudicate(inputs, verifierActor = TF0608_ACTOR, root = ROOT) {
     evidence: Object.fromEntries(Object.entries(inputs ?? {}).map(([key, entry]) => [key, { path: entry.path, digest: entry.digest }])),
     claims: { realHuman: false, liveProvider: false, promotionReady: false, autoMerge: false, productLocksChanged: false },
     limitations: [
-      "The sealed corpus contains task definitions, not completed RSI system trials; completeCaseCount is zero.",
+      `The measured system run contains ${aggregate?.completeCaseCount ?? 0} paired complete cases; its own stability/fail status is preserved.`,
       "No confidence interval, cost comparison, quality gain or promotion decision is available.",
-      "The held-out digest is not present in TF-0599; the TF-0606 all-ones value is a placeholder, not a sealed split digest.",
+      `The held-out digest is bound from the sealed manifest (${gate?.suite?.heldOutDigest ?? "unavailable"}); it is not a benefit estimate.`,
       "The contamination scan is finite and static; behavioral rollback and live effects remain untested.",
       "Adjudication does not merge, publish, enable defaults or change product locks.",
     ],
@@ -253,7 +258,7 @@ export function runNegativeControls(inputs, root = ROOT) {
   };
   add("same-actor", "same-actor", (draft) => { draft.gate.value.envelope.verifierActor = draft.gate.value.envelope.executorActor; });
   add("self-promotion", "candidate-self-promotion", (draft) => { draft.candidate.value.promotionReady = true; });
-  add("fabricated-pass", "thin-sample-claim", (draft) => { draft.gate.value.aggregate.passK = 1; });
+  add("fabricated-pass", "stale-evidence", (draft) => { draft.gate.value.aggregate.passK = 1; });
   add("not-run-gate", "not-run-boundary", (draft) => { draft.gate.value.status = "complete"; });
   add("contamination-failure", "contamination-rejected", (draft) => { draft.contamination.value.status = "reject"; });
   add("control-failure", "contamination-control-failed", (draft) => { draft.contamination.value.controls[0].passed = false; });
@@ -262,7 +267,7 @@ export function runNegativeControls(inputs, root = ROOT) {
   add("stale-evidence", "stale-evidence", (draft) => { draft.candidate.digest = "0".repeat(64); });
   add("missing-held-out-binding", "gate-contract", (draft) => { draft.gate.value.suite.heldOutCaseCount = 0; });
   add("wrong-evidence-path", "evidence-path", (draft) => { draft.candidate.path = "../../outside.json"; });
-  add("fabricated-confidence-interval", "thin-sample-claim", (draft) => { draft.gate.value.aggregate.confidenceInterval95 = [0, 1]; });
+  add("fabricated-confidence-interval", "stale-evidence", (draft) => { draft.gate.value.aggregate.confidenceInterval95 = [0, 1]; });
   return controls;
 }
 

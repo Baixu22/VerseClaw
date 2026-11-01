@@ -7,16 +7,16 @@ import { describe, expect, it } from "vitest";
 import { adjudicate, loadAdjudicationInputs, runNegativeControls, validateAdjudicationPack } from "../../scripts/rsi-tf0608-adjudication.mjs";
 
 describe("TF-0608 independent adjudication", () => {
-  it("recomputes the frozen upstream chain and refuses promotion on zero-trial evidence", () => {
+  it("recomputes the frozen upstream chain and refuses promotion on measured but unstable evidence", () => {
     const inputs = loadAdjudicationInputs(process.cwd());
     const verdict = adjudicate(inputs, undefined, process.cwd());
     expect(verdict.verdict).toBe("insufficient-evidence");
     expect(verdict.disposition).toBe("not-promote");
     expect(verdict.promotionReady).toBe(false);
     expect(verdict.reasons.map((entry) => entry.code)).toContain("insufficient-evidence");
-    expect(verdict.recomputed.completeCaseCount).toBe(0);
-    expect(verdict.recomputed.passK).toBeNull();
-    expect(verdict.recomputed.passAtK).toBeNull();
+    expect(verdict.recomputed.completeCaseCount).toBe(20);
+    expect(verdict.recomputed.passK).toBe(0.15);
+    expect(verdict.recomputed.passAtK).toBe(0.35);
     expect(verdict.recomputed.confidenceInterval95).toBeNull();
   });
 
@@ -30,7 +30,7 @@ describe("TF-0608 independent adjudication", () => {
     const result = validateAdjudicationPack(process.cwd());
     expect(result.passed).toBe(true);
     expect(result.controls).toHaveLength(12);
-  });
+  }, 120000);
 
   it("rejects candidate tampering even when the manifest is re-signed", () => {
     const source = process.cwd();

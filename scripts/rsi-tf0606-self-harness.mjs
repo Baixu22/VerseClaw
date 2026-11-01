@@ -1,11 +1,11 @@
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { aggregateReliability } from "./lib/reliability-aggregation.mjs";
 import { validateTf0604Pack } from "./rsi-tf0604-baseline.mjs";
-import { buildCandidateGateReport, loadInputs as loadGateInputs } from "./rsi-tf0599-candidate-gate.mjs";
+import { buildCandidateGateReport, buildMeasuredSystemRunReport, loadInputs as loadGateInputs } from "./rsi-tf0599-candidate-gate.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const TF0606_PACK_DIR = "harness/specs/fixtures/rsi-evidence-loop/tf0606";
@@ -142,7 +142,7 @@ export function validateSelfHarness(context) {
   if (!/^sha256:[a-f0-9]{64}$/u.test(candidate.digest)) errors.push(error("candidate-digest", "candidate digest is required"));
   if (candidate.change.sourceTrajectoryIds.length < 2) errors.push(error("contrastive-lineage", "candidate requires success and failure lineage"));
   if (!candidate.change.rollback || candidate.change.budget.maxTokens <= 0) errors.push(error("candidate-envelope", "rollback and positive budgets are required"));
-  if (gateReport.status !== "not-run" || gateReport.gate !== "insufficient-evidence") errors.push(error("gate-boundary", "current reservation must remain not-run"));
+  if (!["not-run", "measured"].includes(gateReport.status) || !["insufficient-evidence", "fail"].includes(gateReport.gate)) errors.push(error("gate-boundary", "delegated gate must be unmeasured or fail its own stability gate"));
   if (report.promotionReady !== false || report.autoMerge !== false) errors.push(error("report-promotion", "report cannot promote or merge"));
   return { passed: errors.length === 0, errors };
 }
@@ -159,7 +159,7 @@ export function buildSelfHarnessReport(corpus, weaknesses, candidate, gateReport
     weakenedTaskCount: weaknesses.length,
     candidate,
     evaluation: { delegatedGate: "TF-0599", suite: corpus.taskId, caseCount: corpus.cases.length, completeCaseCount: gateReport.aggregate.completeCaseCount, k: gateReport.envelope.k, passK: gateReport.aggregate.passK, passAtK: gateReport.aggregate.passAtK, costCeilingRelativeIncrease: 0.1, heldOutSplitDigest: gateReport.envelope.heldOutSplitDigest, failureClassCounts: gateReport.failureClasses },
-    reasons: ["no-completed-system-trials", "candidate-not-run-on-held-out"],
+    reasons: gateReport.aggregate?.completeCaseCount >= 20 ? ["measured-system-run-not-a-candidate-benefit", "candidate-not-run-on-held-out"] : ["no-completed-system-trials", "candidate-not-run-on-held-out"],
     claims: { realHuman: false, liveProvider: false, promotionReady: false, autoMerge: false, productLocksChanged: false },
     sourceDigests: { corpus: createHash("sha256").update(readFileSync(join(root, TF0604_DIR, "task-corpus.v1.json"))).digest("hex"), gate: createHash("sha256").update(readFileSync(join(root, "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json"))).digest("hex") },
   };
@@ -182,8 +182,9 @@ export function writeSelfHarnessPack(root = ROOT) {
   const inputs = loadGateInputs(root);
   const weaknesses = mineWeaknesses(inputs.corpus);
   const candidate = buildCandidate(inputs.corpus, weaknesses);
-  const envelope = { ...baseEnvelope(inputs.corpus), candidateId: candidate.candidateId, candidateDigest: candidate.digest, heldOutSplitDigest: "sha256:".concat("1".repeat(64)), executorActor: "codex/tf0606-candidate", verifierActor: "codex/tf0606-verifier" };
-  const gateReport = buildCandidateGateReport(inputs, envelope, root);
+  const systemRun = existsSync(join(root, "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json")) ? JSON.parse(readFileSync(join(root, "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json"), "utf8")) : null;
+  const envelope = { ...baseEnvelope(inputs.corpus), candidateId: candidate.candidateId, candidateDigest: candidate.digest, heldOutSplitDigest: systemRun?.suite?.heldOutDigest ?? "sha256:".concat("1".repeat(64)), executorActor: "codex/tf0606-candidate", verifierActor: "codex/tf0606-verifier" };
+  const gateReport = systemRun ? buildMeasuredSystemRunReport(inputs, envelope, systemRun, root) : buildCandidateGateReport(inputs, envelope, root);
   const report = buildSelfHarnessReport(inputs.corpus, weaknesses, candidate, gateReport, root);
   const context = { corpus: inputs.corpus, weaknesses, candidate, report, gateReport };
   const controls = runSelfHarnessNegativeControls(context);

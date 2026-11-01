@@ -114,12 +114,12 @@
     "delegatedGate": "TF-0599",
     "suite": "TF-0604",
     "caseCount": 24,
-    "completeCaseCount": 0,
+    "completeCaseCount": 20,
     "k": 3,
-    "passK": null,
-    "passAtK": null,
+    "passK": 0.15,
+    "passAtK": 0.35,
     "costCeilingRelativeIncrease": 0.1,
-    "heldOutSplitDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "heldOutSplitDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3",
     "failureClassCounts": {
       "infrastructure": 0,
       "task": 0,
@@ -128,7 +128,7 @@
     }
   },
   "reasons": [
-    "no-completed-system-trials",
+    "measured-system-run-not-a-candidate-benefit",
     "candidate-not-run-on-held-out"
   ],
   "claims": {
@@ -140,6 +140,6 @@
   },
   "sourceDigests": {
     "corpus": "edcef9fe1ce935c01ceb88bcebd8861858fa63a8ba5a54d05832f27bd2a86d67",
-    "gate": "74545abaef4c5fbcdd819afe36226a2b559f39c7d1a3905bdf3d17dbade460a8"
+    "gate": "466af83815a4e9834fe445c725cf259161c95a4afc57aa9c93d0b40bad2cf25c"
   }
 }

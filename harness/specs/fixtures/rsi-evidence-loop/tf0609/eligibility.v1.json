@@ -11,16 +11,8 @@
   "promotionReady": false,
   "reasons": [
     {
-      "code": "baseline-floor",
-      "message": "baseline has 0 complete cases; requires 20."
-    },
-    {
-      "code": "candidate-trials-incomplete",
-      "message": "candidate gate must contain at least 20 complete cases at k=3."
-    },
-    {
-      "code": "held-out-unsealed",
-      "message": "held-out split digest must be sealed and match the gate, candidate envelope and paired comparison."
+      "code": "baseline-stability",
+      "message": "baseline stability gate is fail; a promotable baseline must pass its own frozen gate."
     },
     {
       "code": "paired-benefit-unproven",
@@ -37,39 +29,28 @@
     {
       "code": "independent-verdict-not-ready",
       "message": "independent TF-0608 reviewer has not authorized this bounded research; product promotion remains false."
-    },
-    {
-      "code": "real-human-claim",
-      "message": "all upstream claims must explicitly keep realHuman false."
-    },
-    {
-      "code": "upstream-promotion-claim",
-      "message": "no upstream artifact may claim product promotion readiness."
     }
   ],
   "upstream": {
     "baseline": {
-      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604/aggregate.v1.json",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
       "present": true,
-      "digest": "cd4c6a9c5ed5cde957d510265a3c778e06f06d5771c99f0f58570d0232c758f3",
+      "digest": "da690c50e1c9ea5e54076b5f96e8608c068f9784304de882b22f8aaa8119adf9",
       "valueSummary": {
-        "status": "insufficient-evidence",
-        "caseCount": 24,
-        "completeCaseCount": 0,
-        "passK": null
+        "completeCaseCount": 20
       }
     },
     "gate": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
       "present": true,
-      "digest": "74545abaef4c5fbcdd819afe36226a2b559f39c7d1a3905bdf3d17dbade460a8",
+      "digest": "466af83815a4e9834fe445c725cf259161c95a4afc57aa9c93d0b40bad2cf25c",
       "valueSummary": {
-        "status": "not-run",
-        "gate": "insufficient-evidence",
+        "status": "measured",
+        "gate": "fail",
         "caseCount": 24,
-        "completeCaseCount": 0,
+        "completeCaseCount": 20,
         "k": 3,
-        "heldOutDigest": null
+        "heldOutDigest": "sha256:87601192caf333f5074915db18cbd287b2de32f38bc8374fd5613efe20064fa3"
       }
     },
     "candidate": {
@@ -86,11 +67,11 @@
     "research": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
       "present": true,
-      "digest": "f4591f3217988465bee96aac2db0d8c0b66215d4783540e69fb54695f0391975",
+      "digest": "af034aac99fb6b9af96320b64b86233cefdfa7300108fbd469f14d661fbbd85a",
       "valueSummary": {
         "status": "insufficient-evidence",
         "promotionReady": false,
-        "completeCaseCount": 0
+        "completeCaseCount": 20
       }
     },
     "contamination": {
@@ -110,7 +91,7 @@
     "adjudication": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
       "present": true,
-      "digest": "9efb7642bbec4f012a32112843dde386c1ab04e115aa62d22bb015cc76f62def",
+      "digest": "ade4d65e0ab096d0d6c3fa2f0b82e85b83742049f269f4cc769203f0c1764dfa",
       "valueSummary": {
         "verdict": "insufficient-evidence",
         "disposition": "not-promote",
@@ -178,15 +159,15 @@
     "rollback": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0609/behavioral-rollback-receipt.v1.json",
       "present": true,
-      "digest": "98d7a9f08c764c3c3f693415e2b333fd5e559dd98e1eb3bacf11f54ddb2b1483",
+      "digest": "0ea12f30b3edaa00c39df6b0110f848eaf3adf9002d3ee95f3c98fa6e69b4223",
       "valueSummary": {
         "schemaVersion": "RsiBehavioralRollbackReceipt/v1",
-        "generatedAt": "2026-10-31T19:12:33.635Z",
+        "generatedAt": "2026-11-01T11:50:29.953Z",
         "driven_by": "agent",
         "actor": "codex/tf0601-rollback-probe",
         "adjudicatorActor": "codex/tf0601-independent-verifier",
         "candidateDigest": "sha256:525b735f3a259ef62748d58f645fbc8f6a9cbf093b645344da9c869ca69fa412",
-        "baselineDigest": "sha256:cd4c6a9c5ed5cde957d510265a3c778e06f06d5771c99f0f58570d0232c758f3",
+        "baselineDigest": "sha256:da690c50e1c9ea5e54076b5f96e8608c068f9784304de882b22f8aaa8119adf9",
         "status": "pass",
         "behavioralParity": true,
         "phases": {
@@ -213,8 +194,31 @@
           "reverseMigrationApplied": false
         },
         "commands": [
-          "openclaw_runtime: node --import tsx -e \"import('./src/knowledge/sekb/feature-flags.ts')\"",
-          "openclaw_runtime: node --import tsx -e \"import('./src/knowledge/sekb/harness-integration.ts')\""
+          {
+            "id": "feature-flag-resolution",
+            "command": "node --import tsx -e import(./src/knowledge/sekb/feature-flags.ts)",
+            "exitCode": 0,
+            "observed": {
+              "baselineOff": true,
+              "candidateOn": true,
+              "rollbackOff": true
+            }
+          },
+          {
+            "id": "harness-hook-lifecycle",
+            "command": "node --import tsx -e import(./src/knowledge/sekb/harness-integration.ts)",
+            "exitCode": 0,
+            "observed": {
+              "enabledHook": {
+                "subscribed": true,
+                "afterUninstall": 0
+              },
+              "disabledHook": {
+                "subscribed": false,
+                "afterUninstall": 0
+              }
+            }
+          }
         ],
         "artifacts": [
           {
@@ -236,17 +240,7 @@
   },
   "residuals": [
     {
-      "code": "baseline-floor",
-      "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
-    },
-    {
-      "code": "candidate-trials-incomplete",
-      "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
-    },
-    {
-      "code": "held-out-unsealed",
+      "code": "baseline-stability",
       "owner": "RSI evaluation owner (agent)",
       "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
     },
@@ -267,16 +261,6 @@
     },
     {
       "code": "independent-verdict-not-ready",
-      "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
-    },
-    {
-      "code": "real-human-claim",
-      "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
-    },
-    {
-      "code": "upstream-promotion-claim",
       "owner": "RSI evaluation owner (agent)",
       "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
     }

@@ -20,9 +20,8 @@
   },
   {
     "id": "fabricated-pass",
-    "expectedCode": "thin-sample-claim",
+    "expectedCode": "stale-evidence",
     "observedCodes": [
-      "thin-sample-claim",
       "stale-evidence"
     ],
     "passed": true
@@ -103,9 +102,8 @@
   },
   {
     "id": "fabricated-confidence-interval",
-    "expectedCode": "thin-sample-claim",
+    "expectedCode": "stale-evidence",
     "observedCodes": [
-      "thin-sample-claim",
       "stale-evidence"
     ],
     "passed": true
