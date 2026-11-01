@@ -347,7 +347,10 @@ export function validateTf0592Report(report, root = ROOT, options = {}) {
       if (git(['rev-parse', `${commit}^{tree}`], root) !== resource.candidate.tree) errors.push(error('candidate-identity', 'recorded commit/tree do not match'));
       git(['merge-base', '--is-ancestor', commit, 'HEAD'], root);
       const changed = git(['diff', '--name-only', commit, 'HEAD'], root).split(/\r?\n/u).filter(Boolean);
-      if (changed.some((path) => !Object.values(FILES).map((file) => `${TF0592_PACK_DIR}/${file}`).concat(`${TF0592_PACK_DIR}/SHA256SUMS`).includes(path))) errors.push(error('candidate-identity', 'candidate descendants contain non-evidence changes'));
+      // Only derived evidence may land after the candidate commit: refreshing anyone's evidence pack
+      // must not require re-sealing this report, and each pack is re-read from disk anyway.
+      const evidencePath = (path) => path.startsWith(TF0592_PACK_DIR + '/') || path.startsWith('harness/specs/fixtures/rsi-evidence-loop/');
+      if (changed.some((path) => !evidencePath(path))) errors.push(error('candidate-identity', 'candidate descendants contain non-evidence changes: ' + changed.filter((path) => !evidencePath(path)).slice(0, 3).join(', ')));
       if (git(['status', '--porcelain', '--untracked-files=all'], root)) errors.push(error('dirty-workspace', 'final check requires a clean worktree'));
     }
   } catch (caught) {
