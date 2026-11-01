@@ -1,6 +1,6 @@
 # 架构骨架收敛宪章（Architecture Skeleton Convergence）
 
-> 状态：`proposal`（规划件，不授权实现）
+> 状态：`proposal`（规划件，不授权实现；**2026-11-01 修订**：所有者授权批次 A 的实际收敛，见 §2.1 第 4 条、§5 批次 A 与 §9）
 > 录入日期：2026-10-31，Asia/Shanghai
 > 父目标：`TF-0001`（记忆-上下文-工具-经验联合系统受控可运营，非全量 GA）
 > 关联研究：`harness/specs/guides/ontology-agent-systems-research.md`
@@ -95,6 +95,7 @@ long-session-paired-evaluation.ts      配对评估
 2. **单一语义权威**：同一件事（owner / 默认态 / 可信边界）只有一份可读、可校验、可失效的声明。
 3. **可拒绝的语义**：错误组合、陈旧来源、越界引用必须被确定性检查拒绝，而不是靠人工复核。
 4. **零行为破坏**：以上全部以「只读投影 + 静态校验」实现，不改变运行时路径、默认值、权限与 UI 行为。
+   **2026-11-01 修订（所有者授权）**：批次 A 的实际收敛——A3 迁移活体消费者、A4 改写 E2E mock 缝、A5 退役扁平通道——允许改动 `electron/main/ipc-handlers.ts` 与 `electron/preload/index.ts` 的运行时路径，但仅限删除 `ADMISSION-INVENTORY.md` §6 已裁定为 retire 的通道与迁移已登记的消费者；默认值、权限路径（`host:invoke` 的 senderAuth 与 `HostApiRegistry`）与 UI 行为仍不得改变，并须由 A6 兼容回归在干净候选上证明。
 5. **可收口**：每个节点有唯一验收口径，证据从磁盘回读，完成后按仓库既有 override 自动收口。
 
 ### 2.2 非目标（硬边界）
@@ -143,9 +144,11 @@ Palantir 真正值得借鉴的是「对象—关系—动作—权限—血缘�
 | 批次 | 节点 | 状态 |
 |---|---|---|
 | 根 | TF-0628 架构骨架收敛 | proposed |
-| A | TF-0629 接入层盘点与唯一入口裁定；TF-0630 contract:check 覆盖扁平 IPC | ready / proposed |
-| B | TF-0631 语义权威矩阵逐条对齐；TF-0632 唯一 owner 校验 | proposed |
-| C | TF-0633 语义合同硬化接入骨架 | proposed |
+| A | TF-0629 接入层盘点与唯一入口裁定；TF-0630 contract:check 覆盖扁平 IPC | done / done |
+| B | TF-0631 语义权威矩阵逐条对齐；TF-0632 唯一 owner 校验 | done / done |
+| C | TF-0633 语义合同硬化接入骨架（父）；TF-0634…TF-0637 C1–C4 四叶 | done |
+| 审查后续 | TF-0638 B2 对账承重化；TF-0639 C5 报告观测化（`REVIEW-20261101.md` §5） | done / done |
+| A（2026-11-01 修订） | TF-0649 A3 迁移活体消费者；TF-0650 A4 改写 E2E mock 缝；TF-0651 A5 退役扁平通道与 preload 第二入口；TF-0652 A6 兼容回归与收口 | proposed（串行，未启动） |
 | D | 未登记（消费需求未证实） | - |
 
 > 状态更新（2026-10-31 收口决策轮）：A 批 TF-0629 / TF-0630 已 done；B 批 TF-0631 done、TF-0632 ready；C 批 TF-0633 拆为 TF-0634…TF-0637 四个串行子叶（均 proposed，C1 依赖 TF-0632）；D 批仍未登记。表中原始状态保留为规划时读数。决策、最小形状与收口口径见 `docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md`。
@@ -161,8 +164,9 @@ Palantir 真正值得借鉴的是「对象—关系—动作—权限—血缘�
 - **A0 裁定**：枚举当前所有 renderer↔Main 接入通道（类型化 Host API / 扁平 IPC / extension contributions），为每个指定唯一入口、owner 与迁移位点；无法判定的记 gap。
 - **A1 覆盖**：让 `pnpm contract:check` 对 B 通道（扁平 IPC）也 fail-closed；复用现有入口，不新增 package script。
 - **A2 兼容回归**：证明收敛后既有消费者行为不变，无新增权限路径与默认值变化。
+- **2026-11-01 修订（所有者授权）**：A0/A1 已落地（TF-0629 / TF-0630）。实际收敛拆为四个串行叶子：**A3**（TF-0649）迁移 4 个活体消费者——`shell:openExternal` 的 4 处 renderer 包装调用、`settings:getAll` / `usage:recentTokenHistory` / `provider:save` 的 E2E 直接 invoke；**A4**（TF-0650）改写 4 个 E2E mock 缝——`gateway:status` / `gateway:rpc` / `file:stat` / `file:readText` 由 `tests/e2e/fixtures/electron.ts` 的 host:invoke 拦截器直接供给，去除 legacy-override 桥接；**A5**（TF-0651）退役 43 条扁平通道与 preload 的 invoke 白名单 / `openExternal` 包装 / 3 条悬空 `env:*`（优先 `provider:getApiKey`），门禁改为断言扁平 handler = 0；**A6**（TF-0652）= A2 的实现：干净候选上全量 E2E / 单测 / typecheck / lint / contract:check，默认值与权限路径 diff = 0，更新 §8 读数。输入为 `ADMISSION-INVENTORY.md` §6 的 43 条裁定（35 retire / 4 migrate / 4 freeze）与 `ADMISSION-GATE.md` 的冻结清单。
 
-**验收口径**：接入通道可从磁盘枚举；未分类通道为 0；坏例（未登记通道 / 双入口同域 / 绕过 registry）被门禁拒绝。
+**验收口径**：接入通道可从磁盘枚举；未分类通道为 0；坏例（未登记通道 / 双入口同域 / 绕过 registry）被门禁拒绝；（修订后）A5 完成时扁平 `ipcMain.handle` = 0 且 preload 无字面 invoke 通道，A6 证明既有消费者行为不变。
 
 ### 批次 B：语义权威单一化（L3）
 
@@ -212,6 +216,7 @@ D 不是骨架完备的必要条件；若 B/C 已完成而消费需求未被证�
 
 ```text
 A0 -> A1 -> A2 --> B0 -> B1 -> C1 -> C2 -> C3 -> C4 --> (D?, 可选)
+（2026-11-01 修订）A3 -> A4 -> A5 -> A6   # 批次 A 实际收敛，串行；A6 即 A2 的实现
 
 A1 依赖 A0 的裁定；B1 依赖 B0 的映射；
 C 批四步串行，每次只推进一个 ready 叶子。
@@ -243,3 +248,4 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 - 批次 C 前置研究已完成，实施未开始；未运行项不得当作已通过；
 - 批次 D 尚未证实消费需求，保持未启动；
 - 本轮会话期间工作区曾被其他进程改动（HEAD 从 `b2a98f265` 迁到 `1bae32407`，并出现一次大面积瞬时脏化后恢复）。后续实现必须**重新基线**，不得沿用本轮读数作为验收候选。
+- **2026-11-01 修订**：批次 A/B/C 与审查后续 TF-0638 / TF-0639 已全部落地并推送（HEAD `12c17c935`），收尾审查见 `REVIEW-20261101.md`；所有者授权批次 A 的实际收敛（A3–A6，TF-0649…TF-0652，`proposed` 未启动）。这是本主线首次允许改动运行时路径，边界见 §2.1 第 4 条修订；批次 D 仍未启动。
