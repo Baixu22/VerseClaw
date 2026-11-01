@@ -302,3 +302,30 @@ C4 候选提交 **`6944b059cd5deda27c39e59cc1bb95042712f153`**（tree `582054179
 | 35 | `git diff --check`；`git diff --cached --check` | 0 / 0 | 无输出 |
 
 本节与 `final/{limitations,gates,credential-scan}.json`、`SHA256SUMS` 由紧随 `6944b059c` 的**仅证据回填提交**落盘（TF-0632 §11.1 同形）；该提交的 hash 不可能写进它自己提交的文件，记入 Task Forest TF-0637 / TF-0633 的 `evidence`。按 §5 的说明，在回填提交及之后任何 HEAD 上对 `final/evidence-report.json` 运行 `--verify` 恰得两条 `candidate-mismatch`（`candidate.commit`、`candidate.tree`）并 exit 1，其余字段与 8 个来源摘要全部匹配；在 `6944b059c` 的分离 worktree 上运行则 exit 0（§7.5）。这两个读数在回填提交后由同一会话运行并记入 Task Forest evidence。
+
+---
+
+## 12. 审查勘误与已知限制（2026-11-01，独立审查后落地）
+
+本节由 TF-0629…TF-0637 收尾审查追加（`driven_by: agent`，`actor: claude-fable-5`）。上文 §1–§11 保持四叶收口时的原貌。
+
+### 12.1 本次修补（审查提交）
+
+| 修补 | 原缺陷（审查探针） | 改动 | 验证 |
+|---|---|---|---|
+| `--verify` 现在对照**活注册表**复核报告 | `verifyEvidenceReport` 只校验字段形态、候选、版本与来源摘要，从不对照 `PRODUCT_SEMANTIC_RELATIONS`：把 `relations` 裁到 1 条、把所有 `sourceRefs` 清空、改 `relationKey`、把 `rulesEvaluated` 换成 `['x']`、`status: valid` 却带非空 `diagnostics`、同一关系重复六次——全部 `verify valid` exit 0。最尖锐的输入：用 `source-line-endings` fixture 生成报告后把 `fixtures` 清空，报告引用两个测试源文件而非注册表的 `docs/clawx-product-semantics.md`，仍通过。因此 §8.1 #4"空报告 / 漏调用不能产生有效 pass"只对 `relations: []` 和 vitest 自己生成的报告成立 | `verifyEvidenceReport` 新增可选 `registry`，`runSemanticMode` 的 `--verify` 路径传入：每条注册表关系必须恰有一条结果（缺失 / 未知键 / 重复均报）；每条结果的 `sourceRefs` 路径集合必须等于注册表该关系的 `evidenceRefs`；`rulesEvaluated` 必须等于封闭规则集；`status: valid` 时 `diagnostics` 必须为空。全部以既有规则 `report-field-missing` 报告（不新增规则名，避免改变已封存报告的 `rulesEvaluated`） | 默认调用仍逐字 `PASS 188 referenced path(s)`；新鲜 `--report` 仍 `verify valid`；上述探针现在 exit 1 并定位到 `relations[2].sourceRefs`；`final/evidence-report.json` 在本 HEAD 上仍恰为两条 `candidate-mismatch`、无其它诊断；`tests/unit/evidence-refs-exist.test.ts` 篡改表新增 7 行（裁剪 / 改键 / 重复 / 清空来源 / 改指来源 / 换规则表 / 带诊断的 valid） |
+| `docs/clawx-product-semantics.md` Workboard 行"Rejected by"单元格 | 原文称把边界抬到 `task-ledger-authority` 由 `reverse-task-authority` 拒绝；校验器实际只发 `kind-boundary-mismatch@authorityBoundary`，与 C2 自己的 fixture `kind-boundary-mismatch-references-one-way-task-ledger-authority.json` 一致 | 单元格改为与校验器一致的表述 | 该文件是 `final/evidence-report.json` 绑定的来源之一；自本修补起，该封存报告在后续 HEAD 上的 `--verify` 除两条 `candidate-mismatch` 外还会多出该文件的 `source-digest-mismatch`（§10 第 3 行的"必为两条"自此失效，这正是 C3"陈旧来源使报告失效"的设计行为）。封存证据本身未改、未重签 |
+
+### 12.2 已知限制（本次未修，作为后续节点输入）
+
+1. **`rulesEvaluated` 是声明而非观测**：它是常量拼接（`PRODUCT_SEMANTIC_RELATION_RULES ∪ SOURCE_DIAGNOSTIC_RULES`），C2 校验器被替换成空操作时列表不变；§3 (a)"列表会变化"的说法不成立。真正守住"校验器没被调用"的是 `--fixture bad-relation-self-loop` 负例。
+2. **脏候选只是提示**：工作区有未跟踪文件时 `--report` 仍写 `status: valid`、`exitCode: 0`、`dirty: true`，`--verify` 也通过；合同所说"不能满足干净候选收口"没有任何字段或退出码承载，只有 stderr NOTE。
+3. **`rawDigest` 绑定的是工作树字节而非候选 blob**：`core.autocrlf=true` 的检出会对 LF blob 多出 `source-digest-mismatch`；对已跟踪源文件的未提交修改也会被当成候选内容哈希（只靠 `dirty` 标记提示）。改为对 `git cat-file blob HEAD:path` 哈希可消除对检出方式的依赖。
+4. **测试向已跟踪 fixture 树写入**：`withRuntimeFile` / `withEscapeLink` 在 `harness/.../report/runtime/` 下创建未跟踪文件与 junction（未被 gitignore），前后 `git status --porcelain` 断言在 `--maxWorkers=2` 或并行写者下有竞态（审查期间实际观察到）；被中断的运行会留下 junction。spec 的 C3 行说有界 fixture 放 `os.tmpdir()`，根内偏离未记录。
+5. `reverse-task-authority` 比伞合同第 5 行 / 文档"Why it exists"更窄：`{workboard, roots-in, task-ledger, task-ledger-authority}` 等形状零诊断；没有规则限制哪些 `from` 可以主张 `task-ledger-authority`（批次 B 的第二主张者检查可能覆盖）。
+6. 级联诊断：`unknown-endpoint-run-as-task` 同时触发 `reverse-task-authority`；逐 fixture 测试只断言包含而非唯一（fixture 16 / 17 各产生 6 / 3 条）。第 8 行"run success as task completion"的覆盖是名义的（任何未知键都会同样被 `forged-grant-field` 拒绝）。
+7. 两份 `relationKey` 实现并存（`shared/product-semantics.ts` 与 `scripts/check-semantic-authority.mjs`，格式相同）——既有重复，非本批引入。
+8. 文档小错：§5 称 SHA256SUMS 为"text mode, two spaces"，实际条目为二进制模式 ` *name`（校验无碍）；`final/gates.json`（已跟踪）含本机绝对路径 `D:/tmp/tf0637-c4/...`（`check-local-paths` 只扫 docs，且其模式只匹配用户目录）；§2 的行号范围应为 `:179–332`。
+9. 默认行为的逐字不变只对**无参数**调用成立：多余参数原先被忽略，现在 exit 2（唯一调用方 `repo:evidence:check` 不传参数）。
+
+建议归属：第 1–4 条作为一个新的批次 C 叶子（"报告观测化：rulesEvaluated 观测、脏候选 fail-closed、候选 blob 哈希、fixture 出根"）在 TF-0628 下登记后再做；本次审查不扩大 TF-0634…0637 的范围。

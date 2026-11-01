@@ -285,9 +285,13 @@ export function buildEvidenceReport({ root, registry, candidate, actor, command,
  * requires must be present, the contract version and normalization policy must
  * be the ones this checker binds, the candidate must still be HEAD, and every
  * source reference must still exist inside the root, tracked, unescaped and with
- * both digests unchanged. The report file itself is never modified.
+ * both digests unchanged. When the live registry is supplied, the report must
+ * also still describe it: one result per registry relation, the registry's own
+ * evidenceRefs as that relation's sources, and the closed rule set — so a report
+ * that was trimmed, re-pointed or generated against other sources cannot verify.
+ * The report file itself is never modified.
  */
-export function verifyEvidenceReport(report, { root, contractVersion, candidate, rewrites = {}, readPaths = new Set() }) {
+export function verifyEvidenceReport(report, { root, contractVersion, candidate, rewrites = {}, readPaths = new Set(), registry = null }) {
   const diagnostics = [];
   const add = (field, rule, message, extra = {}) => diagnostics.push({ relationKey: null, field, rule, message, ...extra });
   const missing = (field, expectation) => add(field, 'report-field-missing', `${field} ${expectation}.`);
@@ -338,7 +342,17 @@ export function verifyEvidenceReport(report, { root, contractVersion, candidate,
   if (!Array.isArray(report.fixtures)) missing('fixtures', 'must list applied fixture ids (empty for a real run)');
   else if (report.fixtures.length > 0) add('fixtures', 'candidate-mismatch', `Report was generated under ${report.fixtures.length} in-memory fixture mutation(s) (${report.fixtures.join(', ')}); it describes a negative test, not the candidate.`);
   if (!Array.isArray(report.rulesEvaluated) || report.rulesEvaluated.length === 0) missing('rulesEvaluated', 'must list the rules that were evaluated');
+  else if (registry) {
+    const expectedRules = [...registry.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES];
+    const storedRules = new Set(report.rulesEvaluated);
+    const missingRules = expectedRules.filter((rule) => !storedRules.has(rule));
+    const unknownRules = report.rulesEvaluated.filter((rule) => !expectedRules.includes(rule));
+    if (missingRules.length > 0 || unknownRules.length > 0) {
+      missing('rulesEvaluated', `does not match the closed rule set this checker binds (missing: ${missingRules.join(', ') || 'none'}; unknown: ${unknownRules.join(', ') || 'none'})`);
+    }
+  }
   if (!Array.isArray(report.diagnostics)) missing('diagnostics', 'must be an array');
+  else if (report.status === 'valid' && report.diagnostics.length > 0) missing('status', `is "valid" but the report carries ${report.diagnostics.length} diagnostic(s); a valid report records none`);
   if (!Array.isArray(report.unverified)) missing('unverified', 'must be an array');
   if (report.status !== 'valid' && report.status !== 'invalid') missing('status', 'must be "valid" or "invalid"');
   else if (report.status === 'invalid') add('status', 'report-field-missing', `Report recorded status "invalid" with ${Array.isArray(report.diagnostics) ? report.diagnostics.length : '?'} diagnostic(s); it holds no passing check result.`);
@@ -385,6 +399,34 @@ export function verifyEvidenceReport(report, { root, contractVersion, candidate,
         }
       });
     });
+    if (registry) {
+      const expectedByKey = new Map(registry.PRODUCT_SEMANTIC_RELATIONS.map((relation) => [
+        registry.relationKey(relation),
+        (Array.isArray(relation.evidenceRefs) ? relation.evidenceRefs : []).filter((ref) => typeof ref === 'string').map((ref) => normalizeRef(ref)),
+      ]));
+      const seen = new Set();
+      report.relations.forEach((entry, index) => {
+        if (!isPlainObject(entry) || typeof entry.relationKey !== 'string' || !Array.isArray(entry.sourceRefs)) return;
+        if (seen.has(entry.relationKey)) missing(`relations[${index}].relationKey`, `duplicates "${entry.relationKey}"`);
+        seen.add(entry.relationKey);
+        const expectedRefs = expectedByKey.get(entry.relationKey);
+        if (!expectedRefs) {
+          missing(`relations[${index}].relationKey`, `"${entry.relationKey}" is not a relation of the registry`);
+          return;
+        }
+        const storedPaths = entry.sourceRefs
+          .map((stored) => (isPlainObject(stored) && typeof stored.path === 'string' ? normalizeRef(stored.path) : null))
+          .filter((storedPath) => storedPath !== null);
+        const missingRefs = expectedRefs.filter((ref) => !storedPaths.includes(ref));
+        const extraRefs = storedPaths.filter((ref) => !expectedRefs.includes(ref));
+        if (missingRefs.length > 0 || extraRefs.length > 0) {
+          missing(`relations[${index}].sourceRefs`, `do not match the registry's evidenceRefs for "${entry.relationKey}" (missing: ${missingRefs.join(', ') || 'none'}; extra: ${extraRefs.join(', ') || 'none'})`);
+        }
+      });
+      for (const key of expectedByKey.keys()) {
+        if (!seen.has(key)) missing('relations', `records no result for registry relation "${key}"`);
+      }
+    }
   }
   return finish();
 }
@@ -503,7 +545,7 @@ async function runSemanticMode(argv) {
     } catch (error) {
       throw new UsageError(`report ${options.verify} could not be read as JSON: ${error.message}`);
     }
-    const result = verifyEvidenceReport(stored, { root, contractVersion: registry.PRODUCT_SEMANTIC_CONTRACT_VERSION, candidate, rewrites, readPaths });
+    const result = verifyEvidenceReport(stored, { root, contractVersion: registry.PRODUCT_SEMANTIC_CONTRACT_VERSION, candidate, rewrites, readPaths, registry });
     const unapplied = unappliedRewrites(rewrites, readPaths);
     if (unapplied.length > 0) throw new UsageError(`fixture mutation never applied (file is not read while verifying this report): ${unapplied.join(', ')}`);
     const relationCount = Array.isArray(stored?.relations) ? stored.relations.length : 0;

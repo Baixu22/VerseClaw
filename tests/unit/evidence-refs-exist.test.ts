@@ -427,7 +427,7 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
 
 describe('--verify invalidates tampered or incomplete reports', () => {
   const candidate = describeCandidate(ROOT);
-  const options = { root: ROOT, contractVersion: semantics.PRODUCT_SEMANTIC_CONTRACT_VERSION, candidate };
+  const options = { root: ROOT, contractVersion: semantics.PRODUCT_SEMANTIC_CONTRACT_VERSION, candidate, registry: semantics };
   const base = buildEvidenceReport({ root: ROOT, registry: semantics, candidate, actor: ACTOR, command: ['node', ENTRY] });
 
   function verifyTampered(mutate: (copy: Json) => void) {
@@ -463,6 +463,14 @@ describe('--verify invalidates tampered or incomplete reports', () => {
     ['moved source', (copy) => { copy.relations[0].sourceRefs[0].path = 'docs/moved-away.md'; }, 'source-missing', 'evidenceRefs'],
     ['source outside root', (copy) => { copy.relations[0].sourceRefs[0].path = '../outside.md'; }, 'source-outside-root', 'evidenceRefs'],
     ['malformed source digest', (copy) => { copy.relations[0].sourceRefs[0].digest = 'not-hex'; }, 'report-field-missing', 'relations[0].sourceRefs[0].digest'],
+    // Registry reconciliation: a stored report must still describe the live registry.
+    ['relations trimmed to one', (copy) => { copy.relations = copy.relations.slice(0, 1); }, 'report-field-missing', 'relations'],
+    ['relation key not in the registry', (copy) => { copy.relations[0].relationKey = 'task-ledger--projects--workboard'; }, 'report-field-missing', 'relations[0].relationKey'],
+    ['duplicated relation result', (copy) => { copy.relations.push(structuredClone(copy.relations[0])); }, 'report-field-missing', 'relations[6].relationKey'],
+    ['source refs emptied', (copy) => { copy.relations[0].sourceRefs = []; }, 'report-field-missing', 'relations[0].sourceRefs'],
+    ['source refs re-pointed', (copy) => { copy.relations[0].sourceRefs = copy.relations[1].sourceRefs; }, 'report-field-missing', 'relations[0].sourceRefs'],
+    ['rules list replaced', (copy) => { copy.rulesEvaluated = ['x']; }, 'report-field-missing', 'rulesEvaluated'],
+    ['valid status with diagnostics', (copy) => { copy.diagnostics = [{ relationKey: null, field: 'x', rule: 'source-missing', message: 'x' }]; }, 'report-field-missing', 'status'],
   ];
 
   it.each(TAMPER_CASES)('%s -> invalid', (_label, mutate, rule, field) => {
@@ -491,7 +499,9 @@ describe('--verify invalidates tampered or incomplete reports', () => {
         Object.assign(copy.relations[0].sourceRefs[0], digestEvidenceBytes(Buffer.from('local only\n')), { tracked: true });
       });
       expect(result.status).toBe('invalid');
-      expect(rulesOf(result.diagnostics)).toEqual(['source-untracked']);
+      // Re-pointing a source ref is also a registry mismatch: the report no
+      // longer cites the registry's evidenceRefs for that relation.
+      expect(rulesOf(result.diagnostics)).toEqual(['source-untracked', 'report-field-missing']);
     });
   });
 
