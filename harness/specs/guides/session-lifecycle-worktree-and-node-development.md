@@ -1,0 +1,117 @@
+---
+id: session-lifecycle-worktree-and-node-development
+title: Worktree and task-forest node development guide
+type: guide
+appliesTo:
+  - gateway-backend-communication
+---
+
+# Worktree and task-forest node development
+
+Reusable operating procedure for turning a governance plan into Task Forest nodes,
+developing them one leaf at a time in a dedicated worktree, and closing them on
+evidence read back from disk. Written from the session-lifecycle governance run
+(TF-0640..TF-0647) so the next agent does not repeat its dead ends.
+
+> 用途：在 ClawX 仓库里为一条治理规划开工作树、登记 Task Forest 节点、逐叶实现并收口。
+> 全部产出为 agent 驱动（`driven_by: agent`）；禁止声称真人证据。
+
+## 0. 先决条件（先读，再动手）
+
+1. 读 `AGENTS.md` 全文，特别是 Human-in-the-loop policy、Task Forest closure policy、Disk & temp policy、Shell Strategy。
+2. 读 `docs/dev/Sustained-Development-Playbook.md`；如存在，读 `docs/dev/handoffs/LATEST.md`。
+3. 确认临时目录已指向 D 盘：
+
+```powershell
+$env:TEMP='D:\tmp'; $env:TMP='D:\tmp'; New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+```
+
+4. 不要在 `C:` 上跑 install / build / e2e / vitest / typecheck。临时产物一律 `D:	mp`。
+
+## 1. 建工作树（不要在主检出上开发）
+
+```powershell
+cd D:\ClawX
+git status --porcelain          # 必须干净；有他人脏文件就不要动
+git rev-parse --short HEAD      # 记下基点，写进每个 spec 的 diffBase
+git worktree add -b codex/<topic> D:\ClawX-work\<topic> <base-sha>
+cd D:\ClawX-work\<topic>
+pnpm install --offline --prefer-offline
+```
+
+规则：
+
+- 一个工作树只做一条规划线；不要在主检出里并行改同一批文件。
+- 分支名 `codex/<topic>`，目录 `D:\ClawX-work\<topic>`。
+- 依赖装好之前不要跑门禁；装好后先跑一次基线（见 §3）确认环境本身是绿的。
+
+## 2. 登记节点（Task Forest）
+
+脚本：`python C:\Users\27933\.codex\skills\task-forest\scripts\task_forest.py`（`--workspace D:\ClawX`，路径是**仓库根**，不是 forest 目录）。
+
+先设 UTF-8，否则中文会炸：
+
+```powershell
+$env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'; $env:COMPASS_AGENT_NAME='<你的归属名>'
+```
+
+流程：`list --json` → `todo --json` → 写 proposal → `proposal-save` → `proposal-apply <id> --yes` → `validate` → `export`。
+
+节点规范：
+
+- 一个 `global_task` 伞 + N 个叶子；叶子用 `child_of` 挂到伞下，用 `depends_on` 表达串行。
+- 每个节点必须有：`purpose`（为什么存在）、`acceptance_criteria`（可机械核对的判据）、`non_goals`、`estimated_total_minutes`。
+- 标题写自然语言，不要写内部代号；但 spec 文件名用 kebab-case 且唯一。
+- 状态默认 `proposed`；只有真正开始实现的那一叶才 `in_progress`。
+
+三个易踩的坑（实测）：
+
+1. **`display_order` 是全组要么都有、要么都没有。** 根节点组里已有 49 个未设置的，所以新根节点不能单独设；建议整条线都不设，靠节点编号排序。
+2. **`update_node` / `set_status` 的字段名是 `id`，不是 `node_id`**；`set_status` 还需要显式 `status`。
+3. **列表字段是整体替换**（`evidence`、`acceptance_criteria`、`execution_hints`…）。追加证据必须先读全量再整组写回，否则会静默丢掉其余条目。
+
+## 3. 每个叶子的开发节奏
+
+1. **先写 spec**：`harness/specs/tasks/<slug>.md`，frontmatter 必填 `lifecycleStatus`、`id`、`title`、`scenario`、`taskType`、`diffBase`、`touchedAreas`、`requiredProfiles`、`requiredRules`、`requiredTests`、`acceptance`、`docs`。
+   - 触及 renderer/Main/host-api/Gateway 时必须 `scenario: gateway-backend-communication` 且 `taskType: runtime-bridge`，并且 `requiredProfiles` 要含 `comms`。
+   - `diffBase` 写**这一叶开始前的 HEAD**（多叶串行时逐叶前进），否则 validate 会把上一叶的改动算进本叶。
+   - `docs.readmeTranslations` 显式写 `not-required` 或 `required`，这是 docs-sync 规则的硬要求。
+2. **跑上下文**：`pnpm harness context --spec <spec>`，按返回的规则清单自查。
+3. **写实现**：优先纯函数 + 只读适配器，再接线；不要一上来就改决策路径。
+4. **写测试**：正向 + 负例。**负例必须真的会失败**，不能只断言 happy path。
+5. **跑门禁**：
+   ```powershell
+   npx vitest run tests/unit/<your>.test.ts --maxWorkers=1
+   pnpm harness validate --spec harness/specs/tasks/<slug>.md
+   node scripts/typecheck-agent-dev.mjs    # 看 exitCode / errorCount，三段都要 0
+   ```
+   openclaw_runtime 内部的测试要在 `openclaw_runtime/` 下跑 `npx vitest run src/...`（根目录 vitest 只收 `tests/**`）。
+6. **提交**：一个叶子一个 commit，消息写 `type(scope): TF-xxxx 一句话`，正文列出改动文件与 spec 路径。
+
+## 4. 收口（Auto-close）
+
+前置：每个 acceptance 都能**读磁盘产物**核对（文件存在 + 测试真的跑过 + validate 真的通过），而不是只信命令打印。
+
+1. 回读证据：`Test-Path` 关键文件 + 重跑关键测试 + 确认接线行号（`Select-String` 定位）。
+2. 写 closeout proposal：`update_node` 设 `status: done`、`progress: 100`、`evidence: [...]`（整组写入）、`next_action`。
+3. `proposal-apply --yes` → `validate` → `export`。
+4. 若证据不全、陈旧或自相矛盾：**保持节点 open 并把缺口写进 `next_action`**，不要为了收口放宽判据。
+
+仍然需要停下来问仓库所有者的只有：发布/公开、凭据轮换或首次暴露、不可逆操作、改冻结默认值或产品锁、声称真人证据、改项目范围。
+
+## 5. 本线（会话生命周期治理）现状
+
+| 节点 | 状态 | 内容 |
+|---|---|---|
+| TF-0640 | in_progress 25% | 伞：注入单一装配 + 衍生可回读 |
+| TF-0641 | done | A1 只读 SessionStage 投影 |
+| TF-0642 | proposed | A2 统一起始注入装配 |
+| TF-0643 | done | A3 只读衍生血缘投影 |
+| TF-0644 | proposed | A4 丢弃归因落盘 + 轮次身份 |
+| TF-0645 | proposed | A5 checkpoint-first 新上下文（默认关） |
+| TF-0646 | proposed | A6 缓存边界修剪（先 shadow） |
+| TF-0647 | proposed | B1 立项决策（未授权实施） |
+
+分支：`codex/session-lifecycle-derivation`，工作树 `D:\ClawX-work\session-lifecycle-derivation`。
+
+下一叶建议 A2：先做 flag-off parity 基线（每轮最终 prompt 的字节快照），再接线；任何字节差异即为失败。
