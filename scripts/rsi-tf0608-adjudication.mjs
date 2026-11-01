@@ -19,9 +19,7 @@ import {
   validateSelfHarness,
 } from "./rsi-tf0606-self-harness.mjs";
 import {
-  runControls as runContaminationControls,
-  validateGate as validateContaminationGate,
-  TF0607_ACTOR,
+  buildGateReport as buildContaminationGateReport,
 } from "./rsi-tf0607-contamination-gate.mjs";
 import { validateTf0604Pack } from "./rsi-tf0604-baseline.mjs";
 
@@ -113,23 +111,7 @@ function buildContaminationExpectation(root, candidate) {
     changed,
     diffDigest: `sha256:${sha256(JSON.stringify(changed))}`,
   };
-  const context = { candidate: contaminationCandidate, content: changed, trials: [], options: {} };
-  const validation = validateContaminationGate(context.candidate, context.content, context.trials, context.options);
-  const controls = runContaminationControls(context);
-  return {
-    schemaVersion: "RsiContaminationGateReport/v1",
-    taskId: "TF-0607",
-    generatedAt: "2026-10-31T00:00:00.000Z",
-    driven_by: "agent",
-    actor: TF0607_ACTOR,
-    status: validation.passed ? "pass-precommit" : "reject",
-    gate: "contamination-precommit",
-    candidate: contaminationCandidate,
-    validation,
-    controls,
-    claims: { realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },
-    limitations: ["Finite scan; not a general security proof.", "Behavioral effects remain not-run."],
-  };
+  return buildContaminationGateReport({ candidate: contaminationCandidate, content: changed, trials: [], options: {} });
 }
 
 function buildExpectedEvidence(root, inputs) {

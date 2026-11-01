@@ -13,4 +13,5 @@ export function validateTrials(trials: RsiGateTrial[]): RsiContaminationError[];
 export function validateGate(candidate: RsiCandidateManifest, content: RsiCandidateChange[], trials: RsiGateTrial[], options?: { externalGateStatus?: string }): RsiContaminationValidation;
 export function buildSampleContext(): { candidate: RsiCandidateManifest; content: RsiCandidateChange[]; trials: RsiGateTrial[]; options: { externalGateStatus?: string } };
 export function runControls(context: ReturnType<typeof buildSampleContext>): RsiContaminationControl[];
+export function buildGateReport(context: { candidate: any; content: any; trials: any[]; options?: any }): any;
 export function writeGatePack(): { report: { status: string; validation: RsiContaminationValidation }; controls: RsiContaminationControl[] };

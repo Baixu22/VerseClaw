@@ -95,11 +95,10 @@ export function runControls(context) {
   return results;
 }
 
-export function writeGatePack() {
-  const context = buildSampleContext();
+export function buildGateReport(context) {
   const validation = validateGate(context.candidate, context.content, context.trials, context.options);
   const controls = runControls(context);
-  const report = {
+  return {
     schemaVersion: TF0607_SCHEMA,
     taskId: "TF-0607",
     generatedAt: "2026-10-31T00:00:00.000Z",
@@ -111,8 +110,14 @@ export function writeGatePack() {
     validation,
     controls,
     claims: { realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },
-    limitations: ["Finite scan; not a general security proof.", "Behavioral rollback/parity drill is recorded in the TF-0609 receipt; the static scan remains finite and is not a general safety proof."]
+    limitations: ["Finite scan; not a general security proof.", "Behavioral rollback/parity drill is recorded in the TF-0609 receipt; the static scan remains finite and is not a general safety proof."],
   };
+}
+
+export function writeGatePack() {
+  const context = buildSampleContext();
+  const report = buildGateReport(context);
+  const controls = report.controls;
   const pack = join(ROOT, TF0607_PACK_DIR);
   writeFileSync(join(pack, "gate-report.v1.json"), JSON.stringify(report, null, 2) + String.fromCharCode(10));
   writeFileSync(join(pack, "control-results.v1.json"), JSON.stringify(controls, null, 2) + String.fromCharCode(10));
