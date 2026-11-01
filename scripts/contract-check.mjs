@@ -30,6 +30,9 @@ const IPC_MAIN_SCAN_ROOT = 'electron';
 // Fixture mutations are applied to file text after it is read, so a negative
 // case runs through exactly the same entry point and rules as the real gate.
 const fileMutations = new Map();
+// Files whose fixture mutations were actually read by the gate. A fixture that
+// only mutates files the gate never reads would otherwise print a valid pass.
+const consumedMutationFiles = new Set();
 
 async function readProjectFile(path) {
   const [{ readFile }, { resolve }] = await Promise.all([
@@ -43,6 +46,7 @@ async function readProjectFile(path) {
 function applyFileMutations(path, text) {
   const mutations = fileMutations.get(path);
   if (!mutations) return text;
+  consumedMutationFiles.add(path);
   // Fixtures are written with \n; checkouts may be CRLF, so match on the
   // file's own line ending rather than the fixture author's.
   const eol = text.includes('\r\n') ? '\r\n' : '\n';
@@ -217,6 +221,16 @@ function parsePreloadAllowlist(preloadText) {
   return [...preloadText.slice(start, end).matchAll(/'([^']+)'/g)].map((entry) => entry[1]);
 }
 
+// A direct `ipcRenderer.invoke('<literal>', …)` wrapper in the preload reaches a
+// channel without consulting validChannels, so the allowlist only describes
+// renderer reachability if every such literal is also allowlisted.
+function parsePreloadDirectInvokes(preloadText) {
+  return [...preloadText.matchAll(/ipcRenderer\.invoke\(\s*'([^']+)'/g)].map((match) => ({
+    channel: match[1],
+    line: preloadText.slice(0, match.index).split('\n').length,
+  }));
+}
+
 function resolveTypedDomain(prefix, contract) {
   if (contract.has(prefix)) return prefix;
   if (contract.has(prefix + 's')) return prefix + 's';
@@ -344,6 +358,10 @@ function collectFlatIpcIssues({ contract, flatIpcRegistry, ipcMainHandleSites, p
   const allowSet = new Set(allowlist);
   if (allowSet.size !== allowlist.length) {
     issues.push(`${allowlistFile}: ${tag('allowlist-duplicate')} validChannels contains duplicate entries`);
+  }
+  for (const { channel, line } of parsePreloadDirectInvokes(typeof preloadText === 'string' ? preloadText : '')) {
+    if (channel === hostInvoke.channel || allowSet.has(channel)) continue;
+    issues.push(`${allowlistFile}:${line}: ${tag('preload-direct-invoke')} '${channel}' is invoked directly by a preload wrapper but is not in validChannels; a flat channel the renderer can reach must be allowlisted`);
   }
   for (const [channel, entry] of registryByChannel) {
     const actual = allowSet.has(channel) ? 'allowlisted' : 'unreachable';
@@ -615,6 +633,12 @@ async function main() {
     throw error;
   }
 
+  const unconsumedMutations = [...fileMutations.keys()].filter((path) => !consumedMutationFiles.has(path));
+  if (unconsumedMutations.length > 0) {
+    console.error(`Contract check fixture error: fixture mutations target files the gate never reads: ${unconsumedMutations.join(', ')}`);
+    process.exitCode = 2;
+    return;
+  }
   if (fixtureIds.length > 0) {
     console.error(`Contract check fixtures applied: ${fixtureIds.join(', ')}`);
   }

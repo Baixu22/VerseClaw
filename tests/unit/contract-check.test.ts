@@ -168,7 +168,7 @@ function baseInput(overrides = {}) {
   };
 }
 
-function registryWithChannel(mutate) {
+function registryWithChannel(mutate: Record<string, unknown>) {
   const registry = flatIpcRegistry();
   registry.channels = registry.channels.map((entry) => (entry.channel === 'agentDev:ping' ? { ...entry, ...mutate } : entry));
   return registry;
@@ -401,6 +401,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
       'flat-ipc/bypass-registry',
       'flat-ipc/allowlist-dangling',
       'flat-ipc/preload-mismatch',
+      'flat-ipc/preload-direct-invoke',
       'host-api/unresolved-alias-member',
       'host-api/facade-missing-action',
     ]));

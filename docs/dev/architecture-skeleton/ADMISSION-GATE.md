@@ -204,3 +204,28 @@ pnpm exec vitest run tests/unit/contract-check.test.ts --maxWorkers=1
 | 独立负例：未登记 channel、双入口同域冲突、绕过 HostApiRegistry 各自被拒绝，诊断可定位到 channel 名与规则 | 达成 | §4 表前三行（`unregistered-channel` / `dual-entry-unacknowledged` / `bypass-registry`），每条含 channel 名与 `[flat-ipc/<rule>]` |
 | 负例通过真实门禁入口执行，而非只单测 checker；错误输入不能产生有效 pass | 达成 | §4：`node scripts/contract-check.mjs --fixture` 即 `pnpm contract:check` 的入口；8/8 exit 1；坏 fixture exit 2；缺输入 fail-closed（§3.4） |
 | 现有 43 个扁平 channel 与 58 个类型化模块的行为、顺序与命名保持不变 | 达成 | §5；六个运行时文件 `git diff` 为空 |
+
+---
+
+## 审查勘误与已知限制（2026-11-01，独立审查后落地）
+
+本节由 TF-0629…TF-0637 收尾审查追加（`driven_by: agent`，`actor: claude-fable-5`）。上文保持 TF-0630 收口时的原貌。
+
+### 本次修补（审查提交）
+
+| 修补 | 原缺陷（审查探针） | 改动 | 负例 / 验证 |
+|---|---|---|---|
+| `tests/unit/contract-check.test.ts:171` TS7006 | `function registryWithChannel(mutate)` 无类型注解，在 `tsconfig.test.json`（strict）下是隐式 any；`git blame` 归 `fd2d93a41`，即**由 TF-0630 引入**，不是"既有红"。§7 虽如实记 `pnpm run typecheck` 为 not-run，但该节点让仓库级 typecheck 变红而未说明 | `mutate: Record<string, unknown>` | `pnpm run typecheck:test` 不再报该行（本次审查中该子门禁另有环境项，见审查报告） |
+| 未被门禁读取的 fixture 变更现在 exit 2 | `--fixture` 若只改写门禁从不读取的文件（如 `src/pages/Chat/index.tsx`），原实现仍打印 `Contract check passed.`、exit 0，违反"错误输入不能产生有效 pass" | 记录被读取过的变更文件集合；存在未消费的变更文件时以 `Contract check fixture error: fixture mutations target files the gate never reads` 退出 2 | 探针 `D:/tmp/probe-unread.json` → exit 2 |
+| 新规则 `flat-ipc/preload-direct-invoke` | "44/44 双向对账"只覆盖 `validChannels` 数组成员；preload 里一个直连包装 `ipcRenderer.invoke('provider:getApiKey', id)` 可以让清单标为 `unreachable` 的 handler 对 renderer 可达而门禁仍通过 | preload 中每个 `ipcRenderer.invoke('<literal>'` 若既不是 `host:invoke` 也不在 `validChannels`，即失败；可达性仍由白名单单独定义，因为任何绕过白名单的直连包装现在都会失败 | `tests/fixtures/contract-check/flat-ipc-preload-direct-invoke.json`（exit 1，1 条，定位 `electron/preload/index.ts:<line>`）；测试的规则清单已加入该规则 |
+
+正例在修补后仍 `Contract check passed.`、exit 0；9 个 fixture 各 exit 1 且恰 1 条诊断。
+
+### 已知限制（本次未修，记录而非扩大 TF-0630）
+
+这些是正则门禁的表达力边界；上文把门禁描述为"任何出现即 bypass-registry"等处应按本节收窄理解。
+
+1. `ipcMain.handle(` 只识别精确拼写：`ipcMain.handle (` 带空格、`const { handle } = ipcMain; handle(...)` 解构、以及 `.mts/.cts/.js` 主进程文件都不在扫描内（扫描只覆盖 `electron/**/*.ts`）。
+2. 别名成员只识别 `name: Ident;` 一种形态；`name: Partial<T>;`、`name: T | null;`、行内对象字面量成员会被所有三类对账静默跳过（当前 58 个成员都在可识别形态内，所以现在的通过是真实的）。
+3. 注释里的 `ipcMain.handle('…')` 会产生 `bypass-registry` 误报（fail-closed 噪音）；别名类型若以非相对路径（`@shared/...`）import 会误报 `unresolved-alias-member`。
+4. `danglingAllowlistEntries` 的重复条目被 `Map.set` 静默覆盖（`channels` 有 `duplicate-registry-entry`，这里没有）；`host-invoke.ts` 内第二个 `ipcMain.handle('host:invoke')` 不报（Electron 运行时会抛错，影响低）。
