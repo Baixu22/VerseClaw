@@ -187,7 +187,12 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
         // disk by its own validator, and the corpus itself is rebuilt from source above. Counting them as
         // drift would force a full corpus re-seal after every evidence refresh, so the allowlist stays at
         // the pack directories that hold sealed evidence rather than at 'any file outside scripts/'.
-        const evidenceAllowlist = ['harness/specs/fixtures/rsi-evidence-loop/'];
+        const evidenceAllowlist = [
+          'harness/specs/fixtures/rsi-evidence-loop/',
+          // The capability-and-boundaries page is a derived description of these packs, not a corpus
+          // source: it is regenerated from the same evidence and cannot change what the corpus seals.
+          'docs/dev/rsi-capability-and-boundaries.md',
+        ];
         const driftedPath = changed.find((path) => !path.startsWith(`${TF0590_PACK_DIR}/`) && !evidenceAllowlist.some((prefix) => path.startsWith(prefix)) && !['harness/specs/fixtures/agent-first-framework/registry.json', 'harness/specs/fixtures/agent-first-framework/loop-record.json', 'harness/specs/fixtures/agent-first-framework/validation-report.json', 'harness/specs/fixtures/agent-first-framework/loop-validation-report.json', 'harness/specs/fixtures/agent-first-framework/SHA256SUMS'].includes(path));
         if (driftedPath) errors.push('candidate-source-drift:' + driftedPath);
       }
