@@ -3,8 +3,8 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "7d687f0b4435039a82103e6b0b8ecc25eb612d84",
-    "tree": "7e2da73d121d98b1b22a74e820ae43f15b9a730e",
+    "commit": "43cf71556b3d3ca5bccb58b8ab818a7934cb052f",
+    "tree": "38a7e5972c27462a9c490d645e99183df4678120",
     "dirty": false,
     "sourceHashes": {
       "scripts/rsi-historical-task-corpus.mjs": "ff347ca30b06fb173a12497606167c0ea045e164ffe98f4ad6f6f8830b0d25d8",
@@ -18,11 +18,11 @@
       "tests/unit/agent-first-evaluation-framework.test.ts": "3d01944ec3d056105d2fd4ae5e6c13538deee95f07b21d3fd96ee7c8f2f0ce40",
       "tests/unit/agent-first-evaluation-loop.test.ts": "aafa24981f08f1cfd43278c17e0507aee9d854ad3bd6b322f4fb3a1a4fce2059",
       "harness/specs/tasks/agent-first-task-corpus-calibration.md": "45777f95e66881651d3ed699d2c2af2e9d32617b420d7d3dc0626e67f183ee56",
-      "harness/specs/guides/agent-first-acceptance.md": "1abc9853449b230dfce43135dc71cfbfee701134781369008cdba8cce4df4fd9",
+      "harness/specs/guides/agent-first-acceptance.md": "b62bf239dc25e251869a872ca0f771ac683de3e2dbe0024f7a9b560bee4509c7",
       "scripts/lib/agent-first-evaluation-framework.mjs": "3fab68930689b379c50296e58dbe30a55e86f7adc01f6f4dd7f72d127ed750f2",
       "scripts/lib/agent-first-evaluation-loop.mjs": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
       "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
-      "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
+      "docs/README.md": "308b217c9a977cc6ae45eed0e1932f2f498f343fd62bd0ed0a05509a995b85e9",
       "docs/dev/rsi-capability-and-boundaries.md": "eec5c14def4b61210e0c0e94198e4757b4ef6628f6d8a8838313bed634e3df2b"
     }
   },
