@@ -1,5 +1,6 @@
 import type { GitRepositoryStatus } from './git';
 import type { SessionEffectivePolicy } from './session-effective-policy';
+import type { SessionStageProjection } from './session-stage';
 import type { LongSessionResourceInventory } from '../long-session-resource-reclamation';
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
@@ -273,6 +274,11 @@ export type SessionActivitySnapshot = {
   goals: SessionActivityGoal[];
   processes: SessionActivityProcess[];
   lineage: SessionActivityLineage[];
+  /**
+   * Read-only session stage projection. Diagnostics only: no prompt, budget,
+   * compaction, or storage decision may read it.
+   */
+  stage?: SessionStageProjection;
   /** Secret-free projection from TF-0512 facts and the current session policy. */
   policy?: SessionEffectivePolicy;
   /** Owner-consolidated resource read model; absent snapshots are not a zero reading. */

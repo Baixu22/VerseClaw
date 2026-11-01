@@ -16,6 +16,7 @@ import { resolveAgentWorkspaceDir } from "../../agents/agent-scope.js";
 import { parseAgentSessionKey } from "../../routing/session-key.js";
 import { collectSessionActivityReadProjection } from "./session-activity-projection.js";
 import { readRuntimeSessionResourceInventory } from "../session-resource-inventory.js";
+import { projectSessionStage } from "./session-stage-projection.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 function readSessionKey(params: Record<string, unknown>): string | null {
@@ -161,6 +162,40 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       agentWorkspaceDir,
     });
 
+    // Read-only stage projection (TF-0641). Every input below is a fact the
+    // gateway already loaded; this adds no read path, no write path, and no
+    // decision. Transcript activity is taken from the entry's own counters so
+    // the projection does not open the transcript.
+    const stageHasActivity =
+      typeof loaded.entry?.totalTokens === "number" && loaded.entry.totalTokens > 0
+        ? true
+        : typeof loaded.entry?.lastInteractionAt === "number" && loaded.entry.lastInteractionAt > 0
+          ? true
+          : false;
+    const stage = projectSessionStage({
+      sessionKey,
+      entry: loaded.entry
+        ? {
+            sessionId: loaded.entry.sessionId ?? null,
+            forkedFromParent: loaded.entry.forkedFromParent ?? null,
+            forkedFromLeafId: loaded.entry.forkedFromLeafId ?? null,
+            forkedFromTimestamp: loaded.entry.forkedFromTimestamp ?? null,
+            parentSessionKey: loaded.entry.parentSessionKey ?? null,
+            spawnedBy: loaded.entry.spawnedBy ?? null,
+            usageFamilyKey: loaded.entry.usageFamilyKey ?? null,
+            usageFamilySessionIds: loaded.entry.usageFamilySessionIds ?? null,
+            compactionCount: loaded.entry.compactionCount ?? null,
+            compactionCheckpoints: loaded.entry.compactionCheckpoints ?? null,
+            sessionStartedAt: loaded.entry.sessionStartedAt ?? null,
+          }
+        : null,
+      hasTranscriptActivity: stageHasActivity,
+      lastTranscriptActivityAt:
+        typeof loaded.entry?.lastInteractionAt === "number" && loaded.entry.lastInteractionAt > 0
+          ? loaded.entry.lastInteractionAt
+          : null,
+    });
+
     respond(true, {
       snapshot: {
         session: {
@@ -180,6 +215,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         goals: readProjection.goals,
         processes: readProjection.processes,
         lineage: readProjection.lineage,
+        stage,
         policy,
         resources,
         // The goal-wake owner read can fail and degrade to empty arrays; the
