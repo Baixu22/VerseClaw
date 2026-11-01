@@ -140,6 +140,43 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 
 用户入口在 `Settings → General`。Developer DCS 面板是诊断面，不是正常用户开关。
 
+## 4.1 会话起始注入计划（shadow，未接线）
+
+一次会话起始最多有四个来源：startup memory 文件、长会话 continuity pack、handoff 稿件、fork 继承上下文。今天它们各自带预算、各自出诊断，"这个会话为什么以这段文字开场"没有单一答案。
+
+`shared/types/session-start-injection.ts` 的 `buildSessionStartInjectionPlan` 给出这个答案：一份 `SessionStartInjectionPlan/v1`。
+
+| 字段 | 含义 |
+|---|---|
+| `stage` | 计划服务的会话阶段（来自只读 stage 投影） |
+| `budgetChars` / `charsApplied` / `charsRemaining` | 单一字符预算与实际占用 |
+| `items[]` | 每个来源的 `included`、`charsRequested`、`charsApplied`、`reason`、`detail` |
+| `stageExcluded` | 该阶段根本不咨询的来源（显式记录，避免"看不见的省略"） |
+
+优先级（先计费者先得，后者先被降级）：`continuity-pack` → `handoff-draft` → `startup-memory` → `fork-inheritance`。
+
+阶段选择：
+
+| stage | 咨询的来源 |
+|---|---|
+| fresh / compacted / restored | continuity pack + startup memory |
+| forked | continuity pack + fork 继承 |
+| handedOff | continuity pack + handoff 稿件 |
+| resumed | continuity pack |
+| continued | 无（会话已有历史） |
+| unknown | 无（fail-closed） |
+
+预算行为：`budget-drop`（完全丢弃，记请求量）、`budget-partial`（部分保留，detail 写明被截掉的字符数）。**不存在静默截断。**
+
+边界：
+
+- **未接线**：没有任何 prompt 装配路径引用本模块，`tests/unit/session-start-injection-shadow.test.ts` 以源码扫描守住。这是显式的"已落地未接线"契约，接线与 flag-off parity 门禁属 A2b（TF-0642）。
+- 计划不携带正文（无 `text`/`prompt`/`content` 字段），只描述意图与尺寸。
+- 不新建来源；每个 `sourceId` 都对应已存在的 owner。
+- 不改变 compaction 时机与 turn injection 记账。
+
+事实映射：`openclaw_runtime/src/context-engine/session-start-injection-facts.ts` 只把已有 owner 的输出转成事实，自身不做 I/O；"owner 说没有" 与 "没问过 owner" 分别记为 `empty` 与 `not-available`。
+
 ## 5. Context health
 
 `ContextHealthMonitor v1` 是确定性、无 LLM 的四维评分：
