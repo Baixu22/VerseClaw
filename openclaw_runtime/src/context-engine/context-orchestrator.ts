@@ -45,6 +45,15 @@ import {
 } from "./context-candidate.js";
 import { recordContextFinalSnapshot } from "./context-final-snapshot.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
+import { applySessionStartInjection } from "./session-start-injection.js";
+import {
+  appendDiscardAttributionRecords,
+  buildCandidateDiscardRecords,
+} from "./discard-attribution.js";
+import type {
+  SessionStartInjectionPlan,
+  SessionStartInjectionRequest,
+} from "../../../shared/types/session-start-injection.js";
 import {
   runRc03SealHook,
   resolveRc03SealState,
@@ -135,6 +144,13 @@ export type ContextOrchestratorLineage = {
   error?: string;
   /** Present only when a native capability declaration was received. */
   nativeContext?: NativeContextNegotiation;
+  /**
+   * A2b: the start-of-session plan this turn was decided on, with per-source
+   * requested/applied/dropped and reasons. Absent when no request was made.
+   */
+  sessionStart?: SessionStartInjectionPlan;
+  /** A2b: why the session_start channel produced nothing (absent = it applied). */
+  sessionStartSkipReason?: "flag-off" | "kill-switch" | "empty";
 };
 
 export type ContextOrchestratorInput = {
@@ -189,6 +205,12 @@ export type ContextOrchestratorInput = {
    * provider-boundary Orchestrator pass.
    */
   deferProjection?: boolean;
+  /**
+   * A2b: start-of-session context to route through the candidate protocol.
+   * Honoured only in the deferred (candidate) mode, where the turn ledger and
+   * the orchestrator projection exist; other callers keep their exact behaviour.
+   */
+  sessionStart?: SessionStartInjectionRequest;
 };
 
 export type ContextOrchestratorOptions = {
@@ -435,6 +457,25 @@ export function finalizeContextOrchestratorTurn(params: {
     }
     lastLineage = turnLineage;
   }
+  // TF-0644: the candidate table dies with the attempt, so write the rows that
+  // carry the turn identity before this collection is replaced or ended. This is
+  // attribution only: every decision above already happened.
+  if (!wasFinalized) {
+    appendDiscardAttributionRecords({
+      records: buildCandidateDiscardRecords({
+        lineage: projected.projection.lineage,
+        identity: {
+          turnId: params.turnId,
+          ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+          ...(turnLineage?.sessionId ? { sessionId: turnLineage.sessionId } : {}),
+          ...(params.attemptIndex !== undefined ? { attemptIndex: params.attemptIndex } : {}),
+          ...(params.modelCallIndex !== undefined ? { modelCallIndex: params.modelCallIndex } : {}),
+        },
+        at: new Date().toISOString(),
+      }),
+    });
+  }
+
   return { messages: projected.messages, projection: projected.projection };
 }
 
@@ -703,9 +744,43 @@ export async function computeContextExtraSystemPrompt(
           charsAdded: 0,
         });
       }
+      if (input.sessionStart) {
+        lineage.sessionStartSkipReason = "kill-switch";
+        if (deferProjection) {
+          recordContextOrchestratorSourceDecision(input.turnId!, {
+            sourceId: "session-start",
+            channel: "session_start",
+            target: "system_prompt",
+            reason: "kill-switch",
+          });
+        }
+      }
       lineage.durationMs = Date.now() - started;
       rememberLineage(lineage);
       return { extraSystemPrompt: result, lineage };
+    }
+
+    // A2b: start-of-session context enters the same candidate collection as every
+    // other source, so it is deduplicated, charged, budgeted, and projected in
+    // one place. Flag off records a skip decision and stays byte-identical.
+    if (input.sessionStart && deferProjection) {
+      const sessionStart = applySessionStartInjection({
+        turnId: input.turnId!,
+        request: input.sessionStart,
+        cfg,
+      });
+      if (sessionStart.plan) {
+        lineage.sessionStart = sessionStart.plan;
+      }
+      if (sessionStart.applied) {
+        delete lineage.sessionStartSkipReason;
+      } else if (sessionStart.reason !== "applied") {
+        lineage.sessionStartSkipReason = sessionStart.reason;
+      }
+    } else if (input.sessionStart) {
+      // Without a turn id there is no ledger to charge and no collection to
+      // deduplicate against, so the request is refused rather than spliced.
+      lineage.sessionStartSkipReason = "flag-off";
     }
 
     if (stagesRequested.includes("memory")) {

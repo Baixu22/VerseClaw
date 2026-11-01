@@ -27,6 +27,8 @@ export type ContextPruningConfig = {
     enabled?: boolean;
     placeholder?: string;
   };
+  /** TF-0646: record what would be trimmed; the pruner still runs unchanged. */
+  wouldTrimShadow?: boolean;
 };
 
 /** Fully normalized context-pruning settings used at runtime. */
@@ -47,6 +49,8 @@ export type EffectiveContextPruningSettings = {
     enabled: boolean;
     placeholder: string;
   };
+  /** TF-0646: shadow would-trim reporting (default false). */
+  wouldTrimShadow: boolean;
 };
 
 export const DEFAULT_CONTEXT_PRUNING_SETTINGS: EffectiveContextPruningSettings = {
@@ -66,6 +70,7 @@ export const DEFAULT_CONTEXT_PRUNING_SETTINGS: EffectiveContextPruningSettings =
     enabled: true,
     placeholder: "[Old tool result content cleared]",
   },
+  wouldTrimShadow: false,
 };
 
 /** Computes effective pruning settings, returning null when pruning is disabled or invalid. */
@@ -114,6 +119,9 @@ export function computeEffectiveSettings(raw: unknown): EffectiveContextPruningS
     if (typeof cfg.softTrim.tailChars === "number" && Number.isFinite(cfg.softTrim.tailChars)) {
       s.softTrim.tailChars = Math.max(0, Math.floor(cfg.softTrim.tailChars));
     }
+  }
+  if (typeof cfg.wouldTrimShadow === "boolean") {
+    s.wouldTrimShadow = cfg.wouldTrimShadow;
   }
   if (cfg.hardClear) {
     if (typeof cfg.hardClear.enabled === "boolean") {

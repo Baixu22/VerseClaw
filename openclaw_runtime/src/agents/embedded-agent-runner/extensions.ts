@@ -676,6 +676,7 @@ function buildContextPruningFactory(params: {
     contextWindowTokens: resolveContextWindowTokens(params),
     isToolPrunable: makeToolPrunablePredicate(settings.tools),
     dropThinkingBlocks: transcriptPolicy.dropThinkingBlocks,
+    wouldTrimShadow: settings.wouldTrimShadow === true,
     lastCacheTouchAt: readLastCacheTtlTimestamp(params.sessionManager, {
       provider: params.provider,
       modelId: params.modelId,

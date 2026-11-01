@@ -1,4 +1,5 @@
 import type { PreparedCompassContext } from "../../../context-engine/compass-context.js";
+import type { SessionStartInjectionRequest } from "../../../../../shared/types/session-start-injection.js";
 /**
  * Shared parameter types for embedded-agent run orchestration.
  */
@@ -245,6 +246,8 @@ export type RunEmbeddedAgentParams = {
   enqueue?: CommandQueueEnqueueFn;
   extraSystemPrompt?: string;
   compassContext?: PreparedCompassContext;
+  /** A2b: start-of-session context for the Context Orchestrator candidate pass. */
+  sessionStartInjection?: SessionStartInjectionRequest;
   sourceReplyDeliveryMode?: SourceReplyDeliveryMode;
   silentReplyPromptMode?: SilentReplyPromptMode;
   internalEvents?: AgentInternalEvent[];

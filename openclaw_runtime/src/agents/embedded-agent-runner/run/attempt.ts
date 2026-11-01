@@ -3,6 +3,7 @@
  */
 import { isDiagnosticFlagEnabled } from "../../../infra/diagnostic-flags.js";
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import os from "node:os";
 import { MAX_IMAGE_BYTES } from "@openclaw/media-core/constants";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
@@ -274,6 +275,10 @@ import {
 import { resolveMemoryInjectPilotConfig } from "../../../context-engine/chat-turn-memory-injection.js";
 import { dcsObservability } from "../../../context-engine/dcs-observability.js";
 import { computeVtokenPromptOverlap } from "../../../context-engine/vtoken-prompt-overlap.js";
+import {
+  appendDiscardAttributionRecords,
+  buildHistoryLimitDiscardRecord,
+} from "../../../context-engine/discard-attribution.js";
 import { isSpawnedByParentKey } from "../../subagent-depth.js";
 import { createRuntimeMemoryContextProvider } from "../../../context-engine/memory-context-provider.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../../runtime-core/memory-runtime-integration.js";
@@ -1461,6 +1466,13 @@ export async function runEmbeddedAttempt(
               const registered = registerManualCompactionRequest(manualCompactionRequest, request);
               manualCompactionRequest = registered.pending;
               return registered.status;
+            },            // TF-0645: the tool archives what the session file holds right now.
+            readCheckpointTranscript: () => {
+              try {
+                return fsSync.readFileSync(params.sessionFile, "utf8");
+              } catch {
+                return undefined;
+              }
             },
           });
           corePluginToolStages.mark("attempt:create-openclaw-coding-tools");
@@ -2106,6 +2118,7 @@ export async function runEmbeddedAttempt(
       {
         turnId: injectionTurnId,
         compassContext: params.compassContext,
+        sessionStart: params.sessionStartInjection,
         sessionKey: params.sessionKey,
         sessionId: params.sessionId,
         runId: params.runId,
@@ -3458,10 +3471,22 @@ export async function runEmbeddedAttempt(
             heartbeatSummary?.ackMaxChars,
             heartbeatSummary?.prompt,
           );
-          const truncated = limitHistoryTurns(
-            heartbeatFiltered,
-            getHistoryLimitFromSessionKey(params.sessionKey, params.config),
-          );
+          const historyLimit = getHistoryLimitFromSessionKey(params.sessionKey, params.config);
+          const truncated = limitHistoryTurns(heartbeatFiltered, historyLimit);
+          // TF-0644: attribute the history cut with the turn identity this attempt
+          // already owns. Counts only; no message text leaves this line.
+          const historyDiscard = buildHistoryLimitDiscardRecord({
+            identity: {
+              turnId: injectionTurnId,
+              ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+              ...(params.sessionId ? { sessionId: params.sessionId } : {}),
+            },
+            limit: historyLimit,
+            messagesBefore: heartbeatFiltered.length,
+            messagesAfter: truncated.length,
+            at: new Date().toISOString(),
+          });
+          if (historyDiscard) appendDiscardAttributionRecords({ records: [historyDiscard] });
           // Re-run tool_use/tool_result pairing repair after truncation, since
           // limitHistoryTurns can orphan tool_result blocks by removing the
           // assistant message that contained the matching tool_use.

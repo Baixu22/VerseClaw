@@ -116,7 +116,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.dcs-context-authority', label: 'DCS context authority', disposition: 'internal', owner: 'dcs-context-authority', implementationNodeId: 'TF-0493', currentMode: 'baseline', targetDefaultMode: 'internal',
     ...internal('Single internal admission/compile authority; users consume its assembled turn, not the engine itself.'),
     currentConsumers: ['ordinary Chat turns', 'Context Orchestrator', 'PromptPlan'], evidenceRefs: CONTEXT_EVIDENCE,
-    coverage: { authorityComponentIds: ['dcs-context-authority'], runtimeLeafPatterns: ['contextBlock.injectionBudget.*', 'contextFamily.*'] },
+    coverage: { authorityComponentIds: ['dcs-context-authority'], runtimeLeafPatterns: ['contextBlock.injectionBudget.*', 'contextBlock.sessionStartInjection.*', 'contextBlock.checkpointedContextReset.*', 'contextFamily.*'] },
   }),
   entry({
     id: 'component.dcs-assembler-adapter', label: 'DCS Assembler compatibility adapter', disposition: 'internal', owner: 'dcs-assembler-compat-adapter', implementationNodeId: 'TF-0493', currentMode: 'baseline', targetDefaultMode: 'internal',

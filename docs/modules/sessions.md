@@ -293,6 +293,57 @@ Chat 发送前会检查：
 
 Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的观察标为 effective。旧观察不会覆盖当前选择。
 
+## 11.1 会话阶段（SessionStage）只读投影
+
+`session.activitySnapshot` 现在附带一个 `stage` 投影，回答“这属于哪种会话”。它是诊断，不是执行输入。
+
+| stage | 证明它的既有事实（任一即可） |
+|---|---|
+| `forked` | `forkedFromParent`，或 `forkedFromLeafId` + `parentSessionKey` |
+| `handedOff` | 只有 `parentSessionKey` 或 `spawnedBy`，无 fork 三元组 |
+| `restored` | `usageFamilySessionIds` 里存在非当前 `sessionId` 的旧代 |
+| `compacted` | `compactionCount > 0`，或存在压缩 checkpoint |
+| `resumed` | 会话起始时间与最新 transcript 活动相隔超过 6 小时 |
+| `continued` | 有 transcript 活动，但无轮换证明 |
+| `fresh` | 有身份、无轮换、无活动 |
+| `unknown` | entry 缺失、事实矛盾（例如只有 leafId 没有父 key）、或缺少身份 |
+
+边界：
+
+- 身份只用 `sessionKey` + `sessionId`（generation），不使用 `scopeKey`。
+- 事实矛盾时返回 `unknown` 并在 `stageEvidence.reasons` 写明原因，禁止从标题、label、模型名猜测。
+- **任何提示词装配、注入预算、压缩时机或存储写入都不得读取 stage**；`tests/unit/session-stage-no-execution-coupling.test.ts` 以源码扫描方式守住这条边界。
+- entry 找不到是“没读到”，不是“空会话”，因此是 `unknown` 而不是 `fresh`。
+
+源码：`shared/types/session-stage.ts`（纯函数 `deriveSessionStage`）、`openclaw_runtime/src/gateway/server-methods/session-stage-projection.ts`（只读适配器）。
+
+## 11.2 衍生血缘（SessionDerivation）只读投影
+
+`session.activitySnapshot` 的 `derivation` 回答“这个会话从哪来、每一跳能不能证明”。它不新建血缘表，只读 `fork` / `handoff` / `spawn` 已经持久化的字段。
+
+| hop.kind | 证明它的字段 |
+|---|---|
+| `fork` | `forkedFromParent`，或 `forkedFromLeafId` + `parentSessionKey` |
+| `handoff` | `parentSessionKey` 且无 fork 事实 |
+| `spawn` | `spawnedBy` |
+| `unknown` | 该 entry 没有声明任何父会话（这是根，不是缺口） |
+
+| hop.status | 含义 |
+|---|---|
+| `resolved` | 父 entry 在 store 中读到 |
+| `parent-missing` | 指明了父 key，但父 entry 读不到——**不是**“没有父” |
+| `cycle` | 链上重复出现同一 key，停止并如实标注 |
+| `bound-exceeded` | 超过深度上限（默认 8），`truncated: true` |
+
+边界：
+
+- 只读；不建 `session_derivations` 表、不写 receipt、不改变 fork/handoff/restore/reset 行为。
+- 血缘不是任务或 goal 权威；Task Ledger 与 goal truth 不变。
+- 血缘读取失败不得让整个 snapshot 失败；缺失时 `derivation` 缺省。
+- 继承策略默认仍是 transcript-only，本投影不改变继承内容。
+
+源码：`shared/types/session-derivation.ts`（纯函数 `deriveSessionLineage` / `classifyDerivation`）、`openclaw_runtime/src/gateway/server-methods/session-derivation-projection.ts`（只读适配器）。
+
 ## 12. 隐私与存储
 
 - transcript、label、archive index 和 trajectory 都是本地数据。
@@ -309,6 +360,8 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 - long-session continuity 默认保持 baseline，不自动启用连续压缩/剪枝。
 - ACP/native/CLI backend 对 compaction 和参数支持不一致，必须看 effective policy。
 - activity snapshot 是只读投影，不是 task completion authority。
+- session stage 同样是只读投影：它解释会话处于哪一阶段，但不能改变提示词、预算或压缩时机。
+- derivation 只报告可证明的父链；parent-missing 与 cycle 必须如实呈现，不能补成一条看起来完整的链。
 - 任何 run/session 终态声明都必须来自 owner 事实和可回读 transcript/event，不接受 UI 假想状态。
 
 ## 14. 源码索引
@@ -324,6 +377,10 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 - `electron/services/session-delegation-admission.ts`
 - `electron/services/session-delegation-store.ts`
 - `shared/types/session-activity.ts`
+- `shared/types/session-stage.ts`
+- `shared/types/session-derivation.ts`
+- `openclaw_runtime/src/gateway/server-methods/session-derivation-projection.ts`
+- `openclaw_runtime/src/gateway/server-methods/session-stage-projection.ts`
 - `shared/types/session-effective-policy.ts`
 - `shared/types/session-delegation.ts`
 - `shared/types/delegation-admission.ts`
@@ -331,3 +388,10 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 - `src/components/layout/Sidebar.tsx`
 
 延伸阅读：[产品语义中的生命周期边界](../clawx-product-semantics.md)、[长会话控制面设计](../dev/session-lifecycle-control-plane/DESIGN.zh-CN.md)、[Delegation admission](../../harness/specs/guides/long-session-delegation-admission.md)。
+
+## 会话索引与能力预设（B1 决策）
+
+- 决策记录：`docs/dev/session-lifecycle-control-plane/B1-DECISION.zh-CN.md`（TF-0647）。
+- 当前结论：**可重建会话索引与会话能力预设均为 NO-GO**，原因是缺少实测查询压力与消费需求语料，而不是技术不可行。
+- 本决策不新增索引、store、adapter 或 preset；冻结 `SessionEffectivePolicy` 语义，不建多机 SessionStore 适配器。
+- 重开条件与未来写集/owner 见决策记录第 3、5 节。

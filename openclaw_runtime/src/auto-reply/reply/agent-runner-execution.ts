@@ -2317,6 +2317,7 @@ export async function runAgentTurnWithFallback(params: {
                     currentInboundContext: params.followupRun.currentInboundContext,
                     extraSystemPrompt: params.followupRun.run.extraSystemPrompt,
                     compassContext: params.followupRun.run.compassContext,
+                    sessionStartInjection: params.followupRun.run.sessionStartInjection,
                     sourceReplyDeliveryMode: params.followupRun.run.sourceReplyDeliveryMode,
                     forceMessageTool:
                       params.followupRun.run.sourceReplyDeliveryMode === "message_tool_only",

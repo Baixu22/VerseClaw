@@ -140,6 +140,114 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 
 用户入口在 `Settings → General`。Developer DCS 面板是诊断面，不是正常用户开关。
 
+## 4.1 会话起始注入（`session_start` 通道）
+
+一次会话起始最多有四个来源：startup memory 文件、长会话 continuity pack、handoff 稿件、fork 继承上下文。今天它们各自带预算、各自出诊断，"这个会话为什么以这段文字开场"没有单一答案。
+
+`shared/types/session-start-injection.ts` 的 `buildSessionStartInjectionPlan` 给出这个答案：一份 `SessionStartInjectionPlan/v1`。
+
+| 字段 | 含义 |
+|---|---|
+| `stage` | 计划服务的会话阶段（来自只读 stage 投影） |
+| `budgetChars` / `charsApplied` / `charsRemaining` | 单一字符预算与实际占用 |
+| `items[]` | 每个来源的 `included`、`charsRequested`、`charsApplied`、`reason`、`detail` |
+| `stageExcluded` | 该阶段根本不咨询的来源（显式记录，避免"看不见的省略"） |
+
+优先级（先计费者先得，后者先被降级）：`continuity-pack` → `handoff-draft` → `startup-memory` → `fork-inheritance`。
+
+阶段选择：
+
+| stage | 咨询的来源 |
+|---|---|
+| fresh / compacted / restored | continuity pack + startup memory |
+| forked | continuity pack + fork 继承 |
+| handedOff | continuity pack + handoff 稿件 |
+| resumed | continuity pack |
+| continued | 无（会话已有历史） |
+| unknown | 无（fail-closed） |
+
+预算行为：`budget-drop`（完全丢弃，记请求量）、`budget-partial`（部分保留，detail 写明被截掉的字符数）。**不存在静默截断。**
+
+接线与开关（A2b / TF-0642）：
+
+`session_start` 是 turn injection 的正式通道，排在 `knowledge` 之后、`working_memory` 之前（priority 95，不按轮次衰减）。开关默认关闭：`runtime.contextBlock.sessionStartInjection.enabled`，可用 `VERSE_SESSION_START_INJECTION` 覆盖（env 的 off 优先于配置的 on）。
+
+| 条件 | 行为 |
+|---|---|
+| 开关关闭（默认） | startup prelude 仍按原样拼进本轮 user body；编排器只记一条 `flag-off` 来源决策，prompt 字节不变 |
+| 开关打开 | 同一段 owner 文本改由 `ContextCandidate/v1` 承载（channel `session_start`、target `system_prompt`），经去重、同一 turn ledger 计费、按计划 `charsApplied` 截断后进入 system prompt |
+| kill switch（`runtime.contextEnhancement.killSwitch`） | 与其余增强通道一起切断，lineage 记 `kill-switch` |
+| stage 为 `unknown` / `continued` | 不注入（fail-closed / 该阶段不咨询任何来源） |
+
+边界（仍然成立）：
+
+- **只有一份装配**：计划与 candidate 由 `openclaw_runtime/src/context-engine/session-start-injection.ts` 一处产出；`startup-context.ts`、`context-candidate.ts`、`turn-injection-budget.ts` 都不认识这个计划，`tests/unit/session-start-injection-shadow.test.ts` 以源码扫描守住。
+- `LoopContextPack` 与 startup-context 是**投影来源**，不是第二权威。
+- 计划本身不带正文（正文在 `SessionStartInjectionRequest.texts` 与 candidate 里）；它只描述意图与尺寸，且不新建来源——每个 `sourceId` 都对应已存在的 owner。
+- 不新建写入面：计划是 lineage，不是 state。
+- 不改变 compaction 时机与 turn injection 总量上限。
+- CLI runner 路径未接线，其行为字节不变。
+
+事实映射：`openclaw_runtime/src/context-engine/session-start-injection-facts.ts` 只把已有 owner 的输出转成事实，自身不做 I/O；"owner 说没有" 与 "没问过 owner" 分别记为 `empty` 与 `not-available`。
+
+## 4.2 上下文丢弃归因（`DiscardAttribution/v1`）
+
+TF-0138 的结论是：丢弃决策本身已经实现，缺的是**活过一次 attempt**。候选表存在内存 Map 里，
+attempt 结束即删除；唯一形状正确的落盘载体按 `turnId` / `attemptIndex` / `modelCallIndex` 键控，
+而会话 JSONL 里没有这三个字段，所以两源无法 join。
+
+本叶只写归因行，不改变任何决策：
+
+| `discardClass` | 生产触发点 | 行里写什么 |
+|---|---|---|
+| `budget-drop` | turn injection 账本的 drop / truncate | channel、reason、requested/applied 字符数 |
+| `skipChannels` | candidate 的 skip / duplicate | channel、reason（`flag-off` / `kill-switch` / `empty` …） |
+| `limitHistoryTurns` | embedded attempt 的历史截断 | 前后消息数、`limit` |
+| `compaction` | compaction safeguard 的 chunk 丢弃 | chunk/消息/token 数、预算与 `firstKeptEntryId` 边界 |
+| `archived` | 无生产实例（spike 实测为零） | 仅 builder 支持；不伪造生产者 |
+
+规则：
+
+- **只归因**：先有决策，再从决策已产的数写一行；不改预算、不改阈值、不改 prompt 字节。
+- **轮次身份**：`turnId` + `attemptIndex` + `modelCallIndex`（有则写），否则行不可 join、没有价值。
+- **零 payload**：只写计数、枚举 reason、id 与 candidate 自带的 digest；`reason`/`unitRef` 还会被截断到 160 字符并抹掉
+  `sk-…`、`Bearer …`、`api_key=…` 一类凭据形状。
+- **失败不致命**：写失败吞掉（诊断不得打断一轮），每轮上限 128 行，文件超过 16 MiB 停止追加。
+- **开关**：测试运行器之外默认开启（避免测试写进真实状态目录）；`VERSE_CONTEXT_DISCARD_ATTRIBUTION=0` 关闭、`=1` 强制开启。落盘位置 `<stateDir>/context-discards.jsonl`。
+
+非目标：不自动再注入被丢内容、不改 compaction 触发点、不复活 TF-0129。
+## 4.3 checkpoint-first 新上下文（`sessions_new_context`，默认关闭）
+
+普通 reset 会把当前窗口直接丢掉，既无摘要也无恢复点。本原语把顺序倒过来：**先归档、证明归档可读、再重置**。
+
+1. 惰性读取当前会话 transcript（不用工具就不读）。
+2. 写 `ContextArchive/v1`（sha256 + payload，文件权限 0600）。
+3. 重新读文件，比对 archiveId / 长度 / digest，并用库内 payload 重算 digest。
+4. 只有前三步全部通过，才把 reset 排到本轮结束之后。
+
+任一步失败都返回 `refused` 与原因，reset 回调根本不会执行——最坏情况是"什么都没发生"。
+工具返回的只有 archiveId / 字符数 / digest / 时间戳，绝不返回 transcript 正文。
+
+开关：`runtime.contextBlock.checkpointedContextReset.enabled` 或 `VERSE_CHECKPOINTED_CONTEXT_RESET=1`，默认关闭。
+关闭时**工具根本不注册**（不是执行时再拒绝），所以模型工具清单与 system prompt 字节不变。
+
+非目标：不实现无摘要丢弃、不允许跨会话重置、不改自动 compaction 阈值。
+## 4.4 缓存边界修剪的 shadow would-trim（默认关闭）
+
+cache-TTL pruner 是**真改**：TTL 过期后它会重写旧的 tool result。此前没有"只看不改"的读数，
+所以"是否安全、是否值得"只能靠打开开关去试。
+
+本叶只加测量，不加改动：
+
+- `buildWouldTrimReport` 对副本跑真实 pruner，产出 `WouldTrimReport/v1`：每项 `ownerRef`
+  （`msg:<index>:<tool>:<digest>`）、index、toolName、before/after/saved 字符数、soft-trim/hard-clear，
+  以及总量、估算 token 与投影摘要。**不含任何 message 正文。**
+- GO/NO-GO：无修剪或 0 项 → NO-GO；保存比例 < 1% → NO-GO；否则 GO 并给出实测节省。
+- 开关 `runtime.contextPruning.wouldTrimShadow`（默认 false）只决定是否记录报告。报告放在
+  runtime 状态 `lastWouldTrim`，不发送、不落盘；pruner 的返回值与 cache-TTL 判定不变。
+- 报告在 cache-age 早退**之前**生成，因此刚触发的轮次也能看到"会修剪什么"；但真正是否修剪仍由原逻辑决定。
+
+非目标：不实现服务端 `cache_edits`、不改任何 compaction 阈值、不默认开启。
 ## 5. Context health
 
 `ContextHealthMonitor v1` 是确定性、无 LLM 的四维评分：

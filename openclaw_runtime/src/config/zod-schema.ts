@@ -168,6 +168,19 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        sessionStartInjection: z
+          .object({
+            enabled: z.boolean().optional(),
+            budgetChars: z.number().int().min(1).max(1_000_000).optional(),
+          })
+          .strict()
+          .optional(),
+        checkpointedContextReset: z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
         "context-write": z
           .object({
             role: z.string().min(1).max(100).optional(),

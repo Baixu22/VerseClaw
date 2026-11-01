@@ -1021,6 +1021,7 @@ export function createFollowupRunner(params: {
                 currentInboundContext: queued.currentInboundContext,
                 extraSystemPrompt: run.extraSystemPrompt,
                 compassContext: run.compassContext,
+                sessionStartInjection: run.sessionStartInjection,
                 silentReplyPromptMode: run.silentReplyPromptMode,
                 sourceReplyDeliveryMode: run.sourceReplyDeliveryMode,
                 forceMessageTool: run.sourceReplyDeliveryMode === "message_tool_only",

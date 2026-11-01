@@ -1,4 +1,5 @@
 import type { PreparedCompassContext } from "../../../context-engine/compass-context.js";
+import type { SessionStartInjectionRequest } from "../../../../../shared/types/session-start-injection.js";
 // Shared queue type contracts for admission, drain, and fallback handling.
 import type { AutoFallbackPrimaryProbe } from "../../../agents/agent-scope.js";
 import type { ExecToolDefaults } from "../../../agents/bash-tools.js";
@@ -151,6 +152,8 @@ export type FollowupRun = {
     inputProvenance?: InputProvenance;
     extraSystemPrompt?: string;
     compassContext?: PreparedCompassContext;
+    /** A2b: start-of-session context routed through the candidate protocol. */
+    sessionStartInjection?: SessionStartInjectionRequest;
     sourceReplyDeliveryMode?: SourceReplyDeliveryMode;
     silentReplyPromptMode?: SilentReplyPromptMode;
     extraSystemPromptStatic?: string;
