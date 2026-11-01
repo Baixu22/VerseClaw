@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-01T12:10:40.987Z",
+  "generatedAt": "2026-11-01T12:16:49.660Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -19,42 +19,15 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-11-01T12:10:40.987Z",
+    "generatedAt": "2026-11-01T12:16:49.660Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "271ca12129346ca5eb062b281937c25f39c853c9",
-      "tree": "f53e9ce56ef85d4951a102ed264f8c8fe806eb1c",
+      "commit": "8e8a50c7c46f0a9f29e2c67a7a451548fd57b884",
+      "tree": "16cb4d2761678de53b2931bfad0a205ca1e65eeb",
       "branch": "codex/tf0604-rsi-baseline",
-      "dirty": true,
-      "dirtyPaths": [
-        "M docs/dev/rsi-capability-and-boundaries.md",
-        " M harness/specs/fixtures/rsi-evidence-loop/capability-evidence.v1.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0599/SHA256SUMS",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/SHA256SUMS",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0606/SHA256SUMS",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0608/SHA256SUMS",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0608/control-results.v1.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0608/verdict.v1.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0609/SHA256SUMS",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0609/behavioral-rollback-receipt.v1.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0609/control-results.v1.json",
-        " M harness/specs/fixtures/rsi-evidence-loop/tf0609/eligibility.v1.json",
-        " M scripts/lib/agent-first-trials.mjs",
-        " M scripts/rsi-tf0599-candidate-gate.d.mts",
-        " M scripts/rsi-tf0599-candidate-gate.mjs",
-        " M scripts/rsi-tf0606-self-harness.mjs",
-        " M scripts/rsi-tf0608-adjudication.mjs",
-        " M scripts/rsi-tf0609-code-self-modification.mjs",
-        " M scripts/rsi-tf0610-capability-report.mjs",
-        " M tests/unit/rsi-tf0606-self-harness.test.ts",
-        " M tests/unit/rsi-tf0608-adjudication.test.ts",
-        " M tests/unit/rsi-tf0609-code-self-modification.test.ts",
-        " M tests/unit/rsi-tf0610-capability-report.test.ts"
-      ],
+      "dirty": false,
+      "dirtyPaths": [],
       "sourceHashes": {
         "scripts/rsi-tf0592-statistical-adjudication.mjs": "d3efec867f473be9ca79af8e60722b6319e7fb6f194df9cedad4eb12b172e89d",
         "scripts/rsi-tf0592-statistical-adjudication.d.mts": "59f6c4add232b5cf74c6a8f05490cf14e5d5a2979761936f90fa68d1c08253c0",
@@ -85,9 +58,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 3558440960,
+      "freeMemoryBytes": 3974324224,
       "disk": {
-        "freeBytes": 14627917824,
+        "freeBytes": 14612762624,
         "totalBytes": 322122543104,
         "status": "measured"
       }
