@@ -1,0 +1,1 @@
+export function changedPathsBetween(root: string, fromCommit: string, toRef?: string, paths?: string[]): string[];

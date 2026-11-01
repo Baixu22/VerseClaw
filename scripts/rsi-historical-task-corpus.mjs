@@ -5,6 +5,7 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { changedPathsBetween } from './lib/evidence-binding.mjs';
 import { buildTaskCorpus, validateTaskCorpus, buildCalibrationSamples, replayCalibration, TF0590_PACK_DIR, CORPUS_ACTOR } from './lib/rsi-historical-task-corpus.mjs';
 import { buildRubricRequest, graderDigest, GRADER_VERSION } from './lib/agent-first-graders.mjs';
 import { sha256File } from './rsi-tf0604-baseline.mjs';
@@ -14,7 +15,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CALIBRATION_GROUPS = { 'deterministic-final-state': 'deterministic', 'trace-authorization': 'trace', 'rubric-clarity': 'rubric' };
 const CALIBRATION_FILES = Object.values(CALIBRATION_GROUPS).flatMap((group) => ['known-good', 'known-bad', 'unknown'].map((kind) => `calibration/${group}/${kind}.json`));
 const FILES = ['task-corpus.v1.json', 'calibration-samples.v1.json', 'model-calibration.v1.json', 'calibration-results.v1.json', 'validation-report.v1.json', ...CALIBRATION_FILES, 'model-calibration-attempt1.v1.json', 'registry-extension.v1.json', 'credential-scan.json'];
-const SOURCE_FILES = ['scripts/rsi-historical-task-corpus.mjs', 'scripts/rsi-historical-task-corpus.d.mts', 'scripts/lib/rsi-historical-task-corpus.mjs', 'scripts/lib/rsi-historical-task-corpus.d.mts', 'scripts/lib/agent-first-graders.mjs', 'scripts/lib/agent-first-graders.d.mts', 'tests/unit/rsi-historical-task-corpus.test.ts', 'tests/unit/agent-first-graders.test.ts', 'tests/unit/agent-first-evaluation-framework.test.ts', 'tests/unit/agent-first-evaluation-loop.test.ts', 'harness/specs/tasks/agent-first-task-corpus-calibration.md', 'harness/specs/guides/agent-first-acceptance.md', 'scripts/lib/agent-first-evaluation-framework.mjs', 'scripts/lib/agent-first-evaluation-loop.mjs', 'package.json', 'docs/README.md', 'docs/dev/rsi-capability-and-boundaries.md'];
+const SOURCE_FILES = ['scripts/rsi-historical-task-corpus.mjs', 'scripts/rsi-historical-task-corpus.d.mts', 'scripts/lib/rsi-historical-task-corpus.mjs', 'scripts/lib/rsi-historical-task-corpus.d.mts', 'scripts/lib/agent-first-graders.mjs', 'scripts/lib/agent-first-graders.d.mts', 'scripts/lib/evidence-binding.mjs', 'scripts/lib/evidence-binding.d.mts', 'tests/unit/rsi-historical-task-corpus.test.ts', 'tests/unit/agent-first-graders.test.ts', 'tests/unit/agent-first-evaluation-framework.test.ts', 'tests/unit/agent-first-evaluation-loop.test.ts', 'harness/specs/tasks/agent-first-task-corpus-calibration.md', 'harness/specs/guides/agent-first-acceptance.md', 'scripts/lib/agent-first-evaluation-framework.mjs', 'scripts/lib/agent-first-evaluation-loop.mjs', 'package.json', 'docs/README.md', 'docs/dev/rsi-capability-and-boundaries.md'];
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const writeJson = (path, value) => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, JSON.stringify(value, null, 2) + '\n'); };
 const CREDENTIAL_PATTERNS = [
@@ -169,8 +170,9 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
         const git = (args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
         if (git(['rev-parse', `${candidate}^{tree}`]) !== validation.candidate.tree) errors.push('candidate-tree');
         git(['merge-base', '--is-ancestor', candidate, 'HEAD']);
-        const changed = git(['diff', '--name-only', candidate, 'HEAD']).split(/\r?\n/u).filter(Boolean);
-        if (changed.some((path) => !path.startsWith(`${TF0590_PACK_DIR}/`) && !path.startsWith('harness/specs/fixtures/rsi-evidence-loop/tf0592/') && !['harness/specs/fixtures/agent-first-framework/registry.json', 'harness/specs/fixtures/agent-first-framework/loop-record.json', 'harness/specs/fixtures/agent-first-framework/validation-report.json', 'harness/specs/fixtures/agent-first-framework/loop-validation-report.json', 'harness/specs/fixtures/agent-first-framework/SHA256SUMS'].includes(path))) errors.push('candidate-source-drift');
+        // Only the corpus' own judged inputs can invalidate this seal.
+        const drift = changedPathsBetween(root, candidate, 'HEAD', SOURCE_FILES);
+        if (drift.length > 0) errors.push(`candidate-source-drift:${drift.join(',')}`);
       }
     }
     if (model.status !== 'calibrated' || model.receipts.length !== samples.rubric.length * samples.rubricConfig.votes) errors.push('provider-calibration-incomplete');

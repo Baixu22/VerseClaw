@@ -10,6 +10,7 @@ import { aggregateReliability, RELIABILITY_TRIAL_OUTCOMES } from './lib/reliabil
 import { pairedEffect } from './lib/paired-ablation.mjs';
 import { sha256File, TF0604_PACK_DIR } from './rsi-tf0604-baseline.mjs';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { changedPathsBetween } from './lib/evidence-binding.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const TF0592_PACK_DIR = 'harness/specs/fixtures/rsi-evidence-loop/tf0592';
@@ -36,6 +37,8 @@ const SOURCE_PATHS = [
   'scripts/lib/reliability-aggregation.mjs',
   'scripts/lib/paired-ablation.mjs',
   'scripts/lib/entrypoint.mjs',
+  'scripts/lib/evidence-binding.mjs',
+  'scripts/lib/evidence-binding.d.mts',
   'tests/unit/rsi-tf0592-statistical-adjudication.test.ts',
   'harness/specs/tasks/rsi-tf0592-statistical-adjudication.md',
   'harness/specs/rules/reliability-aggregation-boundary.md',
@@ -359,8 +362,11 @@ export function validateTf0592Report(report, root = ROOT, options = {}) {
       const commit = resource.candidate.commit;
       if (git(['rev-parse', `${commit}^{tree}`], root) !== resource.candidate.tree) errors.push(error('candidate-identity', 'recorded commit/tree do not match'));
       git(['merge-base', '--is-ancestor', commit, 'HEAD'], root);
-      const changed = git(['diff', '--name-only', commit, 'HEAD'], root).split(/\r?\n/u).filter(Boolean);
-      if (changed.some((path) => !Object.values(FILES).map((file) => `${TF0592_PACK_DIR}/${file}`).concat(`${TF0592_PACK_DIR}/SHA256SUMS`).includes(path))) errors.push(error('candidate-identity', 'candidate descendants contain non-evidence changes'));
+      // Only the judged inputs can invalidate this seal. A later commit that
+      // touches documentation, unrelated product code or a neighbouring evidence
+      // pack must not; otherwise every seal turns into a reseal obligation.
+      const drift = changedPathsBetween(root, commit, 'HEAD', [...SOURCE_PATHS, INPUT_PATHS.corpus, INPUT_PATHS.rawTrials, INPUT_PATHS.policy]);
+      if (drift.length > 0) errors.push(error('candidate-identity', `bound inputs changed since the candidate commit: ${drift.join(', ')}`));
       if (git(['status', '--porcelain', '--untracked-files=all'], root)) errors.push(error('dirty-workspace', 'final check requires a clean worktree'));
     }
   } catch (caught) {
