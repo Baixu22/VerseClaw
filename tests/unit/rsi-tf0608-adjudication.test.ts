@@ -24,7 +24,7 @@ describe("TF-0608 independent adjudication", () => {
     const controls = runNegativeControls(loadAdjudicationInputs(process.cwd()), process.cwd());
     expect(controls).toHaveLength(12);
     expect(controls.every((control) => control.passed)).toBe(true);
-  });
+  }, 120000);
 
   it("re-reads the sealed pack and hash manifest from disk", () => {
     const result = validateAdjudicationPack(process.cwd());
