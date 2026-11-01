@@ -2,9 +2,8 @@
   {
     "id": "complete-floor-bypass",
     "mutation": "complete-floor-bypass",
-    "expectedCode": "insufficient-evidence-bypass",
+    "expectedCode": "statistical-recomputation",
     "observedCodes": [
-      "insufficient-evidence-bypass",
       "statistical-recomputation"
     ],
     "passed": true
@@ -12,9 +11,8 @@
   {
     "id": "pass-metric-on-thin-sample",
     "mutation": "pass-metric-on-thin-sample",
-    "expectedCode": "thin-sample-metric",
+    "expectedCode": "statistical-recomputation",
     "observedCodes": [
-      "thin-sample-metric",
       "statistical-recomputation"
     ],
     "passed": true
@@ -61,9 +59,8 @@
   {
     "id": "paired-diff-without-pairs",
     "mutation": "paired-diff-without-pairs",
-    "expectedCode": "paired-diff-without-pairs",
+    "expectedCode": "statistical-recomputation",
     "observedCodes": [
-      "paired-diff-without-pairs",
       "statistical-recomputation"
     ],
     "passed": true

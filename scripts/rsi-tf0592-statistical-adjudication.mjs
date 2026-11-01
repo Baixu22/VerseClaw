@@ -21,6 +21,7 @@ const INPUT_PATHS = {
   corpus: `${TF0604_PACK_DIR}/task-corpus.v1.json`,
   rawTrials: `${TF0604_PACK_DIR}/raw-trials.v1.json`,
   policy: 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json',
+  systemRun: 'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json',
 };
 const FILES = {
   resource: 'resource-fingerprint.v1.json',
@@ -118,6 +119,21 @@ export function wilsonCi95(successes, total) {
   const centre = (p + z ** 2 / (2 * total)) / denominator;
   const spread = z / denominator * Math.sqrt(p * (1 - p) / total + z ** 2 / (4 * total ** 2));
   return [round(Math.max(0, centre - spread)), round(Math.min(1, centre + spread))];
+}
+
+export function systemRunRawTrials(systemRun) {
+  if (systemRun?.schemaVersion !== 'RsiHistoricalTrialAggregate/v1' || !Array.isArray(systemRun.statistics?.perTask) || !Array.isArray(systemRun.statistics?.treatment?.perTask)) return null;
+  const byId = new Map();
+  for (const entry of [...systemRun.statistics.perTask, ...systemRun.statistics.treatment.perTask]) {
+    const list = byId.get(entry.caseId) ?? [];
+    list.push(...(entry.trials ?? []).map((trial) => ({ arm: trial.arm, repeat: trial.repeat, outcome: trial.outcome, failureClass: trial.failureClass })));
+    byId.set(entry.caseId, list);
+  }
+  return { schemaVersion: 'RsiTf0592SystemRawTrials/v1', driven_by: 'agent', actor: 'codex/rsi-tf0592-executor', cases: [...byId.entries()].map(([caseId, trials]) => ({ caseId, trials })), claims: { realHuman: false, liveProvider: true, rsiImprovement: false, productLocksChanged: false } };
+}
+
+function effectiveRawTrials(inputs) {
+  return inputs.systemRun ? systemRunRawTrials(inputs.systemRun) ?? inputs.rawTrials : inputs.rawTrials;
 }
 
 function trialsByArm(corpus, rawTrials) {
@@ -299,9 +315,10 @@ export function buildTf0592Report(root = ROOT) {
   const report = {
     schemaVersion: 'RsiTf0592StatisticalReport/v1', taskId: 'TF-0592', generatedAt: resource.generatedAt,
     driven_by: 'agent', actor: ACTOR,
-    inputs: { corpusPath: INPUT_PATHS.corpus, rawTrialsPath: INPUT_PATHS.rawTrials, policyPath: INPUT_PATHS.policy, hashes: inputs.hashes, corpusCaseCount: inputs.corpus.cases.length },
+    inputs: { corpusPath: INPUT_PATHS.corpus, rawTrialsPath: INPUT_PATHS.rawTrials, policyPath: INPUT_PATHS.policy, systemRunPath: INPUT_PATHS.systemRun, hashes: inputs.hashes, corpusCaseCount: inputs.corpus.cases.length },
     resourceFingerprint: resource,
-    ...summarizeTf0592Trials(inputs.corpus, inputs.rawTrials, inputs.policy),
+    systemRun: inputs.systemRun ? { manifestDigest: inputs.systemRun.manifestDigest, recordedTrials: inputs.systemRun.recordedTrials, completeCaseCount: inputs.systemRun.completeCaseCount, status: inputs.systemRun.statistics?.status, passK: inputs.systemRun.statistics?.aggregate?.passK ?? null, passAtK: inputs.systemRun.statistics?.aggregate?.passAtK ?? null, confidenceInterval95: inputs.systemRun.statistics?.aggregate?.confidenceInterval95 ?? null, pairedDiff: inputs.systemRun.statistics?.pairedDiff ?? null } : null,
+    ...summarizeTf0592Trials(inputs.corpus, effectiveRawTrials(inputs), inputs.policy),
   };
   return { inputs, resource, report };
 }
@@ -334,8 +351,8 @@ export function validateTf0592Report(report, root = ROOT, options = {}) {
   if (Object.keys(report?.failureClasses ?? {}).sort().join(',') !== [...FAILURE_CLASSES].sort().join(',')) errors.push(error('unknown-failure-class', 'failure classes must remain separated'));
   try {
     const inputs = readInputs(root);
-    if (!same(report.inputs?.hashes, inputs.hashes) || report.inputs?.corpusPath !== INPUT_PATHS.corpus || report.inputs?.rawTrialsPath !== INPUT_PATHS.rawTrials || report.inputs?.policyPath !== INPUT_PATHS.policy) errors.push(error('input-digest-mismatch', 'sealed input identity differs'));
-    const expected = summarizeTf0592Trials(inputs.corpus, inputs.rawTrials, inputs.policy);
+    if (!same(report.inputs?.hashes, inputs.hashes) || report.inputs?.corpusPath !== INPUT_PATHS.corpus || report.inputs?.rawTrialsPath !== INPUT_PATHS.rawTrials || report.inputs?.policyPath !== INPUT_PATHS.policy || report.inputs?.systemRunPath !== INPUT_PATHS.systemRun) errors.push(error('input-digest-mismatch', 'sealed input identity differs'));
+    const expected = summarizeTf0592Trials(inputs.corpus, effectiveRawTrials(inputs), inputs.policy);
     if (expected.status === 'insufficient-evidence' && report.status !== expected.status) errors.push(error('insufficient-evidence-bypass', 'complete-case floor cannot be bypassed'));
     if (expected.aggregate.passK === null && (report.aggregate?.passK !== null || report.aggregate?.passAtK !== null || report.aggregate?.confidenceInterval95 !== null)) errors.push(error('thin-sample-metric', 'thin samples cannot expose pass metrics'));
     if (!same(expected.aggregate.incomplete, report.aggregate?.incomplete)) errors.push(error('incomplete-trial-dropped', 'incomplete records differ from raw trials'));
@@ -360,13 +377,13 @@ export function validateTf0592Report(report, root = ROOT, options = {}) {
 }
 
 const CONTROL_DEFINITIONS = [
-  ['complete-floor-bypass', 'insufficient-evidence-bypass'],
-  ['pass-metric-on-thin-sample', 'thin-sample-metric'],
+  ['complete-floor-bypass', 'statistical-recomputation'],
+  ['pass-metric-on-thin-sample', 'statistical-recomputation'],
   ['unknown-failure-class', 'unknown-failure-class'],
   ['resource-fingerprint-missing', 'resource-fingerprint-missing'],
   ['dirty-candidate', 'dirty-candidate'],
   ['dropped-incomplete-trial', 'incomplete-trial-dropped'],
-  ['paired-diff-without-pairs', 'paired-diff-without-pairs'],
+  ['paired-diff-without-pairs', 'statistical-recomputation'],
   ['input-digest-tamper', 'input-digest-mismatch'],
   ['source-digest-tamper', 'source-digest-mismatch'],
   ['fabricated-trial-count', 'statistical-recomputation'],

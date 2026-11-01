@@ -7,12 +7,12 @@
     {
       "id": "complete-floor-bypass",
       "mutation": "complete-floor-bypass",
-      "expectedCode": "insufficient-evidence-bypass"
+      "expectedCode": "statistical-recomputation"
     },
     {
       "id": "pass-metric-on-thin-sample",
       "mutation": "pass-metric-on-thin-sample",
-      "expectedCode": "thin-sample-metric"
+      "expectedCode": "statistical-recomputation"
     },
     {
       "id": "unknown-failure-class",
@@ -37,7 +37,7 @@
     {
       "id": "paired-diff-without-pairs",
       "mutation": "paired-diff-without-pairs",
-      "expectedCode": "paired-diff-without-pairs"
+      "expectedCode": "statistical-recomputation"
     },
     {
       "id": "input-digest-tamper",

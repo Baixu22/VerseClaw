@@ -68,3 +68,4 @@ export function validateTf0592Report(report: unknown, root?: string, options?: T
 export function runNegativeControls(report: Tf0592Report, controls?: Tf0592Controls, root?: string): Tf0592ControlResult[];
 export function writeTf0592Pack(root?: string): { sealState: string; reportStatus: string; reportValidation: Tf0592Validation; negativeControls: { passed: boolean; count: number; results: Tf0592ControlResult[] } };
 export function validateTf0592Pack(root?: string, options?: Tf0592Options): Tf0592Validation & { status: string; completeCaseCount: number | null; negativeControlCount: number };
+export function systemRunRawTrials(systemRun: any): any;

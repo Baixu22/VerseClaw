@@ -36,7 +36,7 @@ function copyPack(): string {
   const temp = mkdtempSync(join(TEMP_ROOT, 'rsi-tf0592-test-'));
   temporaryRoots.push(temp);
   const report: Tf0592Report = JSON.parse(readFileSync(join(ROOT, TF0592_PACK_DIR, 'statistical-report.v1.json'), 'utf8'));
-  const paths = [...Object.keys(report.resourceFingerprint.candidate.sourceHashes), report.inputs.corpusPath, report.inputs.rawTrialsPath, report.inputs.policyPath,
+  const paths = [...Object.keys(report.resourceFingerprint.candidate.sourceHashes), report.inputs.corpusPath, report.inputs.rawTrialsPath, report.inputs.policyPath, report.inputs.systemRunPath,
     ...['resource-fingerprint.v1.json', 'statistical-report.v1.json', 'negative-controls.v1.json', 'negative-control-results.v1.json', 'validation-report.v1.json', 'SHA256SUMS'].map((file) => `${TF0592_PACK_DIR}/${file}`)];
   for (const path of paths) {
     mkdirSync(dirname(join(temp, path)), { recursive: true });
@@ -59,17 +59,17 @@ afterAll(() => {
 });
 
 describe('TF-0592 statistical adjudication', () => {
-  it('preserves the sealed not-run reservation and publishes no pass metric', () => {
+  it('reads the sealed measured system run and publishes its actual statistics', () => {
     const { report } = buildTf0592Report(ROOT);
-    expect(report.status).toBe('insufficient-evidence');
-    expect(report.run.completeCaseCount).toBe(0);
-    expect(report.run.trialCount).toBe(0);
+    expect(report.status).toBe('fail');
+    expect(report.run.completeCaseCount).toBe(20);
+    expect(report.run.trialCount).toBe(144);
     expect(report.perTask).toHaveLength(24);
-    expect(report.aggregate.passK).toBeNull();
-    expect(report.aggregate.passAtK).toBeNull();
-    expect(report.aggregate.confidenceInterval95).toBeNull();
-    expect(report.pairedDiff.status).toBe('insufficient-evidence');
-    expect(report.power.status).toBe('insufficient-evidence');
+    expect(report.aggregate.passK).toBe(0.15);
+    expect(report.aggregate.passAtK).toBe(0.35);
+    expect(report.aggregate.confidenceInterval95).toEqual([0.052369, 0.360419]);
+    expect(report.pairedDiff.status).toBe('computed');
+    expect(report.power.status).toBe('underpowered');
     expect(Object.values(report.claims)).toEqual([false, false, false, false]);
     expect(validateTf0592Report(report, ROOT, { allowDraft: true }).passed).toBe(true);
   });

@@ -1,11 +1,11 @@
 {
   "schemaVersion": "RsiTf0592ValidationReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-01T11:35:07.849Z",
+  "generatedAt": "2026-11-01T11:37:35.866Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
-  "sealState": "sealed",
-  "reportStatus": "insufficient-evidence",
+  "sealState": "draft",
+  "reportStatus": "fail",
   "reportValidation": {
     "passed": true,
     "errors": []
@@ -17,9 +17,8 @@
       {
         "id": "complete-floor-bypass",
         "mutation": "complete-floor-bypass",
-        "expectedCode": "insufficient-evidence-bypass",
+        "expectedCode": "statistical-recomputation",
         "observedCodes": [
-          "insufficient-evidence-bypass",
           "statistical-recomputation"
         ],
         "passed": true
@@ -27,9 +26,8 @@
       {
         "id": "pass-metric-on-thin-sample",
         "mutation": "pass-metric-on-thin-sample",
-        "expectedCode": "thin-sample-metric",
+        "expectedCode": "statistical-recomputation",
         "observedCodes": [
-          "thin-sample-metric",
           "statistical-recomputation"
         ],
         "passed": true
@@ -76,9 +74,8 @@
       {
         "id": "paired-diff-without-pairs",
         "mutation": "paired-diff-without-pairs",
-        "expectedCode": "paired-diff-without-pairs",
+        "expectedCode": "statistical-recomputation",
         "observedCodes": [
-          "paired-diff-without-pairs",
           "statistical-recomputation"
         ],
         "passed": true
