@@ -2106,6 +2106,7 @@ export async function runEmbeddedAttempt(
       {
         turnId: injectionTurnId,
         compassContext: params.compassContext,
+        sessionStart: params.sessionStartInjection,
         sessionKey: params.sessionKey,
         sessionId: params.sessionId,
         runId: params.runId,

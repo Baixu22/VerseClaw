@@ -267,3 +267,35 @@ export function buildSessionStartInjectionPlan(
     stageExcluded,
   };
 }
+
+/**
+ * A2b: one start-of-session request, produced by the reply path.
+ *
+ * The requester states the stage the stage projection reported, the facts each
+ * owner already produced, and the text each owner already rendered. It carries
+ * no decisions: the plan, the turn ledger, and the orchestrator own those.
+ * `texts` is keyed by source so a source with no text cannot be applied by
+ * accident.
+ */
+export const SESSION_START_INJECTION_REQUEST_SCHEMA = 'SessionStartInjectionRequest/v1' as const;
+
+export type SessionStartInjectionRequest = {
+  schema: typeof SESSION_START_INJECTION_REQUEST_SCHEMA;
+  sessionKey?: string;
+  /** Stage from the read-only stage projection; never inferred here. */
+  stage: string;
+  facts: SessionStartSourceFact[];
+  /** Owner-rendered text per source; a missing entry means "no text to apply". */
+  texts: Partial<Record<SessionStartSourceId, string>>;
+  /** Character budget for the plan; defaults to DEFAULT_SESSION_START_BUDGET_CHARS. */
+  budgetChars?: number;
+};
+
+/**
+ * Source id recorded when the whole `session_start` channel is skipped.
+ *
+ * Per-source outcomes live in the plan; this id names the channel itself, so a
+ * flag-off or kill-switch skip is visible in the same lineage a real candidate
+ * would have appeared in.
+ */
+export const SESSION_START_CHANNEL_SOURCE_ID = 'session-start' as const;

@@ -50,6 +50,7 @@ import {
  */
 export const TURN_INJECTION_PRECEDENCE = [
   "knowledge",
+  "session_start",
   "working_memory",
   "tool_registry",
   "cvk_addition",
@@ -84,6 +85,7 @@ export const TURN_INJECTION_CHANNEL_POLICY: Record<
   { priority: number; decayHalfLifeTurns: number }
 > = {
   knowledge: { priority: 100, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+  session_start: { priority: 95, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
   working_memory: { priority: 90, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
   tool_registry: { priority: 80, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
   cvk_addition: { priority: 70, decayHalfLifeTurns: Number.POSITIVE_INFINITY },

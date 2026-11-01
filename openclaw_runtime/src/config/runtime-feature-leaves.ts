@@ -65,6 +65,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
       },
     },
     injectionBudget: { totalChars: 6000, dropAlertRatio: 0.1, channelDecay: {} },
+    sessionStartInjection: { enabled: true, budgetChars: 2800 },
     "context-write": { role: "implementer" },
     "context-understand": { budgetChars: 12000 },
   },

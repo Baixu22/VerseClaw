@@ -174,6 +174,16 @@ export type RuntimeFeatureConfig = {
        */
       channelDecay?: Record<string, number>;
     };
+    /**
+     * A2b: route start-of-session context through the Context Orchestrator as
+     * `session_start` candidates instead of splicing it into the user body.
+     * Default off: flag-off turns stay byte-identical to not having this leaf.
+     */
+    sessionStartInjection?: {
+      enabled?: boolean;
+      /** Plan character budget; defaults to DEFAULT_SESSION_START_BUDGET_CHARS (2800). */
+      budgetChars?: number;
+    };
     /** DCS Stage 5 context_write agency role override. Default "implementer". */
     "context-write"?: {
       role?: string;

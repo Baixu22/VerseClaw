@@ -140,7 +140,7 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 
 用户入口在 `Settings → General`。Developer DCS 面板是诊断面，不是正常用户开关。
 
-## 4.1 会话起始注入计划（shadow，未接线）
+## 4.1 会话起始注入（`session_start` 通道）
 
 一次会话起始最多有四个来源：startup memory 文件、长会话 continuity pack、handoff 稿件、fork 继承上下文。今天它们各自带预算、各自出诊断，"这个会话为什么以这段文字开场"没有单一答案。
 
@@ -168,12 +168,25 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 
 预算行为：`budget-drop`（完全丢弃，记请求量）、`budget-partial`（部分保留，detail 写明被截掉的字符数）。**不存在静默截断。**
 
-边界：
+接线与开关（A2b / TF-0642）：
 
-- **未接线**：没有任何 prompt 装配路径引用本模块，`tests/unit/session-start-injection-shadow.test.ts` 以源码扫描守住。这是显式的"已落地未接线"契约，接线与 flag-off parity 门禁属 A2b（TF-0642）。
-- 计划不携带正文（无 `text`/`prompt`/`content` 字段），只描述意图与尺寸。
-- 不新建来源；每个 `sourceId` 都对应已存在的 owner。
-- 不改变 compaction 时机与 turn injection 记账。
+`session_start` 是 turn injection 的正式通道，排在 `knowledge` 之后、`working_memory` 之前（priority 95，不按轮次衰减）。开关默认关闭：`runtime.contextBlock.sessionStartInjection.enabled`，可用 `VERSE_SESSION_START_INJECTION` 覆盖（env 的 off 优先于配置的 on）。
+
+| 条件 | 行为 |
+|---|---|
+| 开关关闭（默认） | startup prelude 仍按原样拼进本轮 user body；编排器只记一条 `flag-off` 来源决策，prompt 字节不变 |
+| 开关打开 | 同一段 owner 文本改由 `ContextCandidate/v1` 承载（channel `session_start`、target `system_prompt`），经去重、同一 turn ledger 计费、按计划 `charsApplied` 截断后进入 system prompt |
+| kill switch（`runtime.contextEnhancement.killSwitch`） | 与其余增强通道一起切断，lineage 记 `kill-switch` |
+| stage 为 `unknown` / `continued` | 不注入（fail-closed / 该阶段不咨询任何来源） |
+
+边界（仍然成立）：
+
+- **只有一份装配**：计划与 candidate 由 `openclaw_runtime/src/context-engine/session-start-injection.ts` 一处产出；`startup-context.ts`、`context-candidate.ts`、`turn-injection-budget.ts` 都不认识这个计划，`tests/unit/session-start-injection-shadow.test.ts` 以源码扫描守住。
+- `LoopContextPack` 与 startup-context 是**投影来源**，不是第二权威。
+- 计划本身不带正文（正文在 `SessionStartInjectionRequest.texts` 与 candidate 里）；它只描述意图与尺寸，且不新建来源——每个 `sourceId` 都对应已存在的 owner。
+- 不新建写入面：计划是 lineage，不是 state。
+- 不改变 compaction 时机与 turn injection 总量上限。
+- CLI runner 路径未接线，其行为字节不变。
 
 事实映射：`openclaw_runtime/src/context-engine/session-start-injection-facts.ts` 只把已有 owner 的输出转成事实，自身不做 I/O；"owner 说没有" 与 "没问过 owner" 分别记为 `empty` 与 `not-available`。
 

@@ -1,6 +1,16 @@
 /** Prepares and runs auto-reply agent turns, including prompt context and session policy. */
 import crypto from "node:crypto";
 import { prepareCompassContext } from "../../context-engine/compass-context.js";
+import { collectSessionStartFacts } from "../../context-engine/session-start-injection-facts.js";
+import {
+  buildSessionStartInjectionPlanFromRequest,
+  resolveSessionStartInjectionConfig,
+} from "../../context-engine/session-start-injection.js";
+import { deriveSessionStage } from "../../../../shared/types/session-stage.js";
+import {
+  SESSION_START_INJECTION_REQUEST_SCHEMA,
+  type SessionStartInjectionRequest,
+} from "../../../../shared/types/session-start-injection.js";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import { asDateTimestampMs } from "@openclaw/normalization-core/number-coercion";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
@@ -724,6 +734,48 @@ export async function runPreparedReply(
           cfg,
         })
       : null;
+  // A2b: one decision, two channels. Off (the default) keeps the prelude spliced
+  // into the user body exactly as before. On routes the same owner-rendered text
+  // through the Context Orchestrator candidate protocol, where the one turn
+  // ledger charges it and the plan explains what was kept and what was cut - but
+  // only when the plan really applies it, so a stage that excludes startup memory
+  // still gets today's bytes rather than losing the text.
+  // The fast reply runtime never reaches the orchestrator candidate pass, so it
+  // is excluded here rather than being handed a request it would drop.
+  const sessionStartConfig = resolveSessionStartInjectionConfig(cfg);
+  const sessionStartInjectionActive = sessionStartConfig.enabled && !useFastReplyRuntime;
+  const sessionStartRequest: SessionStartInjectionRequest | undefined = startupContextPrelude
+    ? {
+        schema: SESSION_START_INJECTION_REQUEST_SCHEMA,
+        ...(normalizeOptionalString(sessionKey) ? { sessionKey } : {}),
+        stage: deriveSessionStage({
+          sessionKey: sessionKey ?? null,
+          sessionId: sessionEntry?.sessionId ?? null,
+          sessionStartedAt: sessionEntry?.sessionStartedAt ?? null,
+          hasTranscriptActivity: !isNewSession,
+        }).stage,
+        facts: collectSessionStartFacts({
+          startupMemory: { applies: true, chars: startupContextPrelude.length },
+        }).map((fact) =>
+          fact.sourceId === "startup-memory"
+            ? fact
+            : { ...fact, detail: "not consulted by the reply start path (A2b)" },
+        ),
+        texts: { "startup-memory": startupContextPrelude },
+      }
+    : undefined;
+  const sessionStartPlan =
+    sessionStartInjectionActive && sessionStartRequest
+      ? buildSessionStartInjectionPlanFromRequest(
+          sessionStartRequest,
+          sessionStartConfig.budgetChars,
+        )
+      : null;
+  const sessionStartTakesPrelude =
+    sessionStartPlan?.items.some(
+      (item) => item.sourceId === "startup-memory" && item.included && item.charsApplied > 0,
+    ) === true;
+  const bodyStartupContextPrelude = sessionStartTakesPrelude ? null : startupContextPrelude;
   const baseBodyFinal = isBareSessionReset
     ? (bareResetPromptState?.prompt ?? "")
     : stripPromptThinkingDirectives(baseBody);
@@ -769,7 +821,7 @@ export async function runPreparedReply(
     inboundUserContextPromptJoiner,
     isBareSessionReset,
     startupAction,
-    startupContextPrelude,
+    startupContextPrelude: bodyStartupContextPrelude,
     softResetTail,
     isHeartbeat,
     inboundEventKind,
@@ -1379,6 +1431,7 @@ export async function runPreparedReply(
       inputProvenance,
       extraSystemPrompt: extraSystemPromptParts.join("\n\n") || undefined,
       compassContext,
+      sessionStartInjection: sessionStartInjectionActive ? sessionStartRequest : undefined,
       sourceReplyDeliveryMode,
       silentReplyPromptMode,
       extraSystemPromptStatic: extraSystemPromptStaticParts.join("\n\n"),

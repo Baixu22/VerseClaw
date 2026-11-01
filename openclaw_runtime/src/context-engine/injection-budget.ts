@@ -16,6 +16,7 @@ export type InjectionChannel =
   | "working_memory"
   | "tool_registry"
   | "knowledge"
+  | "session_start"
   | "cvk_addition"
   | "vtoken"
   | "memory_pilot"
