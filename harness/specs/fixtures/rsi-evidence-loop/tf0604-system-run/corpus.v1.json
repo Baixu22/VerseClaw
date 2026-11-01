@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "RsiHistoricalCorpusProjection/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-decision-curator",
+  "cases": [
+    {
+      "id": "tf-0274-e01",
+      "taskId": "tf-0274-e01"
+    },
+    {
+      "id": "tf-0275-e02",
+      "taskId": "tf-0275-e02"
+    },
+    {
+      "id": "tf-0289-g01",
+      "taskId": "tf-0289-g01"
+    },
+    {
+      "id": "tf-0290-g02",
+      "taskId": "tf-0290-g02"
+    },
+    {
+      "id": "tf-0291-g03",
+      "taskId": "tf-0291-g03"
+    },
+    {
+      "id": "tf-0283-l01",
+      "taskId": "tf-0283-l01"
+    },
+    {
+      "id": "tf-0284-l02",
+      "taskId": "tf-0284-l02"
+    },
+    {
+      "id": "tf-0285-l03",
+      "taskId": "tf-0285-l03"
+    },
+    {
+      "id": "tf-0286-l04",
+      "taskId": "tf-0286-l04"
+    },
+    {
+      "id": "tf-0287-l05",
+      "taskId": "tf-0287-l05"
+    },
+    {
+      "id": "tf-0288-l06",
+      "taskId": "tf-0288-l06"
+    },
+    {
+      "id": "tf-0276-s01",
+      "taskId": "tf-0276-s01"
+    },
+    {
+      "id": "tf-0277-s02",
+      "taskId": "tf-0277-s02"
+    },
+    {
+      "id": "tf-0278-s03",
+      "taskId": "tf-0278-s03"
+    },
+    {
+      "id": "tf-0279-s04",
+      "taskId": "tf-0279-s04"
+    },
+    {
+      "id": "tf-0280-s05",
+      "taskId": "tf-0280-s05"
+    },
+    {
+      "id": "tf-0281-s06",
+      "taskId": "tf-0281-s06"
+    },
+    {
+      "id": "tf-0282-s07",
+      "taskId": "tf-0282-s07"
+    },
+    {
+      "id": "tf-0293-a01",
+      "taskId": "tf-0293-a01"
+    },
+    {
+      "id": "tf-0294-a02",
+      "taskId": "tf-0294-a02"
+    },
+    {
+      "id": "tf-0295-a03",
+      "taskId": "tf-0295-a03"
+    },
+    {
+      "id": "tf-0296-a04",
+      "taskId": "tf-0296-a04"
+    },
+    {
+      "id": "tf-0297-a05",
+      "taskId": "tf-0297-a05"
+    },
+    {
+      "id": "tf-0298-a06",
+      "taskId": "tf-0298-a06"
+    }
+  ]
+}

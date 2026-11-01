@@ -264,14 +264,15 @@ export function gatherWorkspaceSymbols(params: {
 
 /**
  * B-3 v2: externally gather distilled decisions from the SEKB knowledge store —
- * active principles ordered by adoption (most-adopted first), bounded. Returns
+ * active principles in store order, bounded. Adoption is diagnostic-only and
+ * has no production writer; it must not rank handoff context. Returns
  * an empty list when no store is available. Callers must wrap in try/catch.
  */
 export function gatherSekbDecisions(params: {
   store?: {
     query_principles(filters: {
       status: "active";
-    }): Array<{ condition: string; action: string; adoption_count: number }>;
+    }): Array<{ condition: string; action: string }>;
   };
 }): EntitySnapshot["decisions"] {
   if (!params.store) {
@@ -280,7 +281,6 @@ export function gatherSekbDecisions(params: {
   try {
     const principles = params.store.query_principles({ status: "active" }) ?? [];
     return principles
-      .sort((a, b) => (b.adoption_count ?? 0) - (a.adoption_count ?? 0))
       .slice(0, ENTITY_SNAPSHOT_CAP)
       .filter(
         (principle) =>
@@ -302,7 +302,7 @@ export function gatherSekbDecisions(params: {
  *
  * B-3 v2: when `workspaceDir` and a `bridgeFactory` are supplied, symbols for
  * the write-set files are pulled from the FactStore and merged into the entity
- * snapshot; when a `sekbStore` is supplied, the most-adopted active principles
+ * snapshot; when a `sekbStore` is supplied, active principles in store order
  * are merged as decisions. Both are best-effort and failure-safe.
  */
 export async function buildChildHandoffFromParent(params: {
@@ -322,7 +322,7 @@ export async function buildChildHandoffFromParent(params: {
   sekbStore?: {
     query_principles(filters: {
       status: "active";
-    }): Array<{ condition: string; action: string; adoption_count: number }>;
+    }): Array<{ condition: string; action: string }>;
   };
 }): Promise<HandoffPack> {
   const recentActions = await gatherRecentActions(

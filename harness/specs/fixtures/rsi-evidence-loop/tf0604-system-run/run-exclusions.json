@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "RsiHistoricalTrialExclusions/v1",
+  "generatedAt": "2026-11-01T09:48:08.573Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "policy": "Frozen by operator decision 2026-11-01: no further trial retries. A trial with no sealed result cannot be retried into existence without invalidating every other seal, so it is recorded here and its case is reported incomplete.",
+  "expectedTrials": 144,
+  "sealedTrials": 143,
+  "exclusions": [
+    {
+      "trialId": "tf-0297-a05-baseline-3",
+      "excludedFromSeal": true,
+      "leftoverAttemptDirectory": "trials/tf-0297-a05-baseline-3",
+      "reason": "restarted trial never produced a new result: the worker recreated the workspace and stopped (no agent transcript, no grader receipts), so attempt 2 holds nothing sealable; attempt 1 is preserved in place",
+      "failureClass": "infrastructure",
+      "stage": "agent",
+      "error": "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-tf0604-run5\\trials\\tf-0297-a05-baseline-3\\agent.stdout.log'",
+      "startedAt": "2026-11-01T04:46:43.947Z",
+      "completedAt": "2026-11-01T05:14:28.857Z",
+      "attempt1Digest": "sha256:6da012a245288174fe913dd4bb9c22134bd6c87b5658c2090aa35e7f3ab0553d"
+    }
+  ],
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

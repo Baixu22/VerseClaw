@@ -50,7 +50,7 @@ describe('aggregateReliability', () => {
 
   it('flags a flake only when the first scheduled trial failed and a later re-run passed', () => {
     const flaky: ReliabilityCase[] = [{ id: 'flaky', trials: ['fail', 'fail', 'pass'] }];
-    const flaked = aggregateReliability(flaky, { k: 3, minCases: 1 });
+    const flaked = aggregateReliability(flaky, { k: 3, minCases: 1, flakeThreshold: 0.01 });
     expect(flaked.flakeCaseIds).toEqual(['flaky']);
     expect(flaked.flakeRate).toBe(1);
     expect(flaked.gate).toBe('fail'); // flake above threshold

@@ -21,7 +21,7 @@ const FAILURE_CLASSES = ['infrastructure', 'task', 'grader', 'agent'];
 const INPUT_PATHS = {
   corpus: `${TF0604_PACK_DIR}/task-corpus.v1.json`,
   rawTrials: `${TF0604_PACK_DIR}/raw-trials.v1.json`,
-  policy: 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json',
+  policy: 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json',
 };
 const FILES = {
   resource: 'resource-fingerprint.v1.json',
@@ -158,7 +158,7 @@ function trialsByArm(corpus, rawTrials) {
   return arms;
 }
 
-function armSummary(corpus, arm) {
+function armSummary(corpus, arm, policy) {
   const eligible = (trial) => trial.outcome === 'pass' || (trial.outcome === 'fail' && trial.failureClass === 'agent');
   const perTask = corpus.cases.map((task) => {
     const trials = arm.get(task.id) ?? [];
@@ -173,11 +173,17 @@ function armSummary(corpus, arm) {
   });
   const reliability = aggregateReliability(corpus.cases.map((task) => ({
     id: task.id, safetyRequired: task.safetyRequired === true, anchor: task.anchor,
+    negativeExpectedOutcome: task.negativeExpectedOutcome,
     trials: Array.from({ length: K }, (_, index) => {
       const trial = (arm.get(task.id) ?? []).find((entry) => entry.repeat === index + 1);
       return !trial ? 'missing' : eligible(trial) ? trial.outcome : ['pass', 'fail'].includes(trial.outcome) ? 'missing' : trial.outcome;
     }),
-  })), { k: K, minCases: MIN_CASES });
+  })), {
+    k: K, minCases: MIN_CASES,
+    ...(policy.taskSet.maxFlakeCases === undefined
+      ? { flakeThreshold: policy.taskSet.flakeThreshold }
+      : { maxFlakeCases: policy.taskSet.maxFlakeCases }),
+  });
   const complete = perTask.filter((task) => task.complete);
   const sufficient = complete.length >= MIN_CASES;
   const completeTrials = complete.flatMap((task) => task.trials);
@@ -208,7 +214,7 @@ function armSummary(corpus, arm) {
   budget.wallClockP50Ms = quantile(0.5);
   budget.wallClockP95Ms = quantile(0.95);
   return {
-    status: sufficient ? reliability.gate : 'insufficient-evidence', perTask, failureClasses, budget,
+    status: reliability.gate === 'fail' ? 'fail' : sufficient && reliability.gate === 'pass' ? 'pass' : 'insufficient-evidence', perTask, failureClasses, budget,
     trialCount: perTask.reduce((sum, task) => sum + task.trialCount, 0),
     completeCaseCount: complete.length, incompleteCaseCount: perTask.length - complete.length,
     aggregate: {
@@ -219,6 +225,7 @@ function armSummary(corpus, arm) {
       passAtKConfidenceInterval95: sufficient ? wilsonCi95(complete.filter((task) => task.passAtK).length, complete.length) : null,
       intervalMethod: 'wilson-over-complete-cases', flakeRate: reliability.flakeRate,
       flakeThreshold: reliability.flakeThreshold, minimumNonZeroFlakeRate: reliability.minimumNonZeroFlakeRate,
+      flakeMode: reliability.flakeMode, maxFlakeCases: reliability.maxFlakeCases, ordinaryFlakeCaseIds: reliability.ordinaryFlakeCaseIds,
       flakeThresholdReachable: reliability.flakeThresholdReachable,
       safety: reliability.safety, anchors: reliability.anchors,
       incomplete: reliability.incomplete.map((entry) => {
@@ -233,8 +240,8 @@ function armSummary(corpus, arm) {
 export function summarizeTf0592Trials(corpus, rawTrials, policy) {
   if (policy?.taskSet?.k !== K || policy.taskSet.minimumCompleteCases !== MIN_CASES) throw new Error('policy-drift');
   const arms = trialsByArm(corpus, rawTrials);
-  const baseline = armSummary(corpus, arms.baseline);
-  const treatment = armSummary(corpus, arms.treatment);
+  const baseline = armSummary(corpus, arms.baseline, policy);
+  const treatment = armSummary(corpus, arms.treatment, policy);
   const baselineRuns = [], treatmentRuns = [], unmatched = [];
   for (const task of corpus.cases) {
     for (let repeat = 1; repeat <= K; repeat += 1) {
@@ -247,63 +254,50 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
       } else if (base || treat) unmatched.push({ caseId: task.id, repeat, baseline: base?.outcome ?? 'missing', treatment: treat?.outcome ?? 'missing' });
     }
   }
-  const pairedCaseIds = new Set(corpus.cases.filter((task) => baselineRuns.filter((trial) => trial.caseId === task.id).length === K).map((task) => task.id));
-  const completePairCases = pairedCaseIds.size;
-  const enoughPairs = completePairCases >= MIN_CASES;
-  const baseCases = baseline.perTask.filter((task) => pairedCaseIds.has(task.caseId));
-  const treatCases = treatment.perTask.filter((task) => pairedCaseIds.has(task.caseId));
-  // Repeat keys establish matching; inference uses independent case clusters, not k correlated observations.
-  const effect = pairedEffect(
-    baseCases.map((task) => ({ caseId: task.caseId, repeat: 0, success: task.passK ? 1 : 0 })),
-    treatCases.map((task) => ({ caseId: task.caseId, repeat: 0, success: task.passK ? 1 : 0 })),
-    { metric: 'success' },
-  );
-  const diffs = baseCases.map((task, index) => Number(treatCases[index].passK) - Number(task.passK));
-  const average = mean(diffs);
-  const sd = diffs.length > 1 ? Math.sqrt(diffs.reduce((sum, diff) => sum + (diff - average) ** 2, 0) / (diffs.length - 1)) : null;
   const mde = policy.promotion?.thresholds?.passKAbsoluteImprovement?.minimum;
   if (mde !== 0.05) throw new Error('policy-drift');
-  const varianceUsable = enoughPairs && sd !== null && sd > 0;
-  const detectableEffect = varianceUsable ? (1.959964 + 0.841621) * sd / Math.sqrt(diffs.length) : null;
-  const powerStatus = !varianceUsable ? 'insufficient-evidence' : detectableEffect > mde ? 'underpowered' : 'design-computed';
+  const effect = pairedEffect(baselineRuns, treatmentRuns, { metric: 'success', k: K, minCases: MIN_CASES, minimumEffect: mde });
+  const completePairCases = effect.pairCount;
+  const enoughPairs = completePairCases >= MIN_CASES;
+  const varianceUsable = enoughPairs && effect.varianceStatus === 'estimated';
+  const policyCoverage = {
+    safetyRequiredCaseCount: corpus.cases.filter((task) => task.safetyRequired === true).length,
+    positiveAnchorCount: corpus.cases.filter((task) => task.anchor === 'positive').length,
+    negativeAnchorCount: corpus.cases.filter((task) => task.anchor === 'negative').length,
+  };
+  const covered = policyCoverage.safetyRequiredCaseCount >= (policy.taskSet.minimumSafetyCases ?? 0)
+    && policyCoverage.positiveAnchorCount >= (policy.taskSet.minimumPositiveAnchors ?? 0)
+    && policyCoverage.negativeAnchorCount >= (policy.taskSet.minimumNegativeAnchors ?? 0);
   // The headline status must reflect both arms. A candidate arm that is unstable
   // or unsafe is not a passing run merely because the baseline arm was clean.
   const armStatuses = [['baseline', baseline.status], ['treatment', treatment.status]];
   const failingArms = armStatuses.filter(([, armStatus]) => armStatus === 'fail').map(([name]) => name);
   const unresolvedArms = armStatuses.filter(([, armStatus]) => armStatus !== 'pass' && armStatus !== 'fail').map(([name]) => name);
-  const status = failingArms.length > 0 ? 'fail' : unresolvedArms.length > 0 ? 'insufficient-evidence' : 'pass';
+  const status = failingArms.length > 0 ? 'fail' : unresolvedArms.length > 0 || !covered ? 'insufficient-evidence' : 'pass';
   const statusReason = status === 'fail'
     ? `unstable or unsafe arm(s): ${failingArms.join(', ')}`
     : status === 'insufficient-evidence'
-      ? `complete cases ${baseline.completeCaseCount} < required ${MIN_CASES}`
+      ? !covered ? 'required safety/anchor annotations are unavailable for this policy' : 'one or more arms lack complete required cases'
       : null;
 
   return {
     status,
     reason: statusReason,
+    policyCoverage: { ...policyCoverage, satisfied: covered },
     run: { k: K, minimumCompleteCases: MIN_CASES, trialCount: baseline.trialCount + treatment.trialCount, baselineTrialCount: baseline.trialCount, treatmentTrialCount: treatment.trialCount, completeCaseCount: baseline.completeCaseCount, incompleteCaseCount: baseline.incompleteCaseCount, cleanStateRequired: true },
     perTask: baseline.perTask, aggregate: baseline.aggregate, failureClasses: baseline.failureClasses, treatment,
     pairedDiff: {
       status: enoughPairs ? 'computed' : 'insufficient-evidence', metric: 'pass^k', pairUnit: 'caseId/repeat', inferenceUnit: 'caseId',
-      pairCount: diffs.length, completePairCaseCount: completePairCases, unmatched,
-      repeatPairCount: baselineRuns.length,
-      excludedPartialPairs: baselineRuns.flatMap((trial, index) => pairedCaseIds.has(trial.caseId) ? [] : [{ caseId: trial.caseId, repeat: trial.repeat, baseline: trial.success, treatment: treatmentRuns[index].success }]),
+      pairCount: effect.pairCount, completePairCaseCount: completePairCases, unmatched,
+      repeatPairCount: effect.repeatPairCount,
+      excludedPartialPairs: effect.excludedPartialPairs,
       intervalMethod: 'normal-approximation over complete case clusters',
-      varianceStatus: sd === null ? 'not-estimable' : sd === 0 ? 'degenerate' : 'estimated',
+      varianceStatus: effect.varianceStatus,
       meanDiff: enoughPairs ? effect.meanDiff : null, ci95: varianceUsable ? effect.ci95 : null,
       effectSize: varianceUsable ? effect.cohensDz : null,
-      passKDelta: enoughPairs ? round(average) : null,
+      passKDelta: enoughPairs ? effect.meanDiff : null,
     },
-    power: {
-      status: powerStatus,
-      method: 'normal-approximation paired pass^k over complete case clusters; planning only',
-      inferenceUnit: 'caseId', reason: !enoughPairs ? 'paired-case-floor-not-met' : !varianceUsable ? 'degenerate-variance' : 'observed-variance-design',
-      confidenceLevel: 0.95, targetPower: 0.8, minimumDetectableEffect: mde,
-      observedDetectableEffect: round(detectableEffect),
-      requiredCasesApprox: varianceUsable ? Math.ceil(((1.959964 + 0.841621) * sd / mde) ** 2) : null,
-      requiredPairsApprox: varianceUsable ? K * Math.ceil(((1.959964 + 0.841621) * sd / mde) ** 2) : null,
-      passKPower: powerStatus,
-    },
+    power: effect.power,
     budget: { ...baseline.budget, costCeilingRelativeIncrease: policy.budgets.costCeiling.maxRelativeIncrease },
     claims: { realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },
   };

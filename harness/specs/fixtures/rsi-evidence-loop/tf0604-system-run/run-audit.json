@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "RsiTf0604RunAudit/v1",
+  "generatedAt": "2026-11-01T11:31:10.783Z",
+  "driven_by": "agent",
+  "actor": "codex/tf0604-historical-runner",
+  "runId": "09f40233-fd2d-4fa9-bdba-00a1e59b2a27",
+  "manifestDigest": "sha256:f07c9b5e4ac34a3e014479a84ff459c223dff053a0f7f2a8799a0acad0529de9",
+  "runnerRepairs": [
+    {
+      "code": "grader-dependency-link-collision",
+      "detail": "grader re-linked pre-existing openclaw_runtime/node_modules; fixed with an idempotent replace-link helper",
+      "disposition": "regraded the six affected trials from retained snapshots"
+    },
+    {
+      "code": "concurrent-progress-writers",
+      "detail": "recovery batches wrote progress while another trial sealed; repaired by rebuilding completed/recordDigests from the manifest-ordered on-disk result set"
+    },
+    {
+      "code": "dependency-tree-purge",
+      "detail": "a pnpm install during recovery reset node_modules and interrupted two recovery attempts; attempts were archived under attempt1 and re-run after dependency repair"
+    }
+  ],
+  "regradedTrials": [
+    "tf-0285-l03-baseline-2",
+    "tf-0287-l05-baseline-1",
+    "tf-0278-s03-baseline-2",
+    "tf-0278-s03-treatment-1",
+    "tf-0280-s05-baseline-1",
+    "tf-0281-s06-treatment-1"
+  ],
+  "recoveredTrials": [
+    "tf-0293-a01-treatment-3",
+    "tf-0296-a04-treatment-1",
+    "tf-0296-a04-treatment-2",
+    "tf-0297-a05-baseline-1",
+    "tf-0297-a05-baseline-2"
+  ],
+  "infrastructureTrialsRemaining": [
+    "tf-0279-s04-baseline-2",
+    "tf-0294-a02-baseline-3",
+    "tf-0295-a03-baseline-1",
+    "tf-0295-a03-baseline-3",
+    "tf-0297-a05-baseline-3"
+  ],
+  "finalStatistics": {
+    "recordedTrials": 144,
+    "completeCaseCount": 20,
+    "incompleteCaseCount": 4,
+    "status": "fail"
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": true,
+    "rsiImprovement": false,
+    "productLocksChanged": false
+  }
+}

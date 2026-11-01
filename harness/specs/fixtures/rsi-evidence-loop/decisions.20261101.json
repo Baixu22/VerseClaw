@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "RsiDecisions/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-decision-implementation",
+  "decided_by": "codex, acting on the owner request to implement the named report",
+  "decided_at": "2026-11-01",
+  "baseline_commit": "b9d46c37aa665d7fa30a6c1abb07beec8eac092a",
+  "decisions": [
+    {
+      "id": "D1",
+      "choice": "C",
+      "rationale": "Use an observable count: one ordinary flake case and zero safety flakes.",
+      "conditions": [
+        "Policy v2, prospective scope, rate-v1 archive and negative controls."
+      ],
+      "reversal": "Select the preserved v1 protocol in a new evaluator-owned change; never rewrite archived results.",
+      "evidence_required": [
+        "v2 policy",
+        "count/safety controls",
+        "recomputed retained packs"
+      ],
+      "follow_up_nodes": []
+    },
+    {
+      "id": "D2",
+      "choice": "B",
+      "rationale": "Keep 0.05 as a product improvement floor; observed power and confidence intervals determine evidential sufficiency.",
+      "conditions": [
+        "Case-cluster CI and separate observed detectable effect / required cases."
+      ],
+      "reversal": "Revert explanatory policy and reporting together; retain both protocol versions.",
+      "evidence_required": [
+        "shared interval/power comparison",
+        "degenerate-variance control",
+        "policy rationale"
+      ],
+      "follow_up_nodes": []
+    },
+    {
+      "id": "D3",
+      "choice": "A",
+      "rationale": "Annotate three existing guard tasks and a positive task without changing identities, count or historical verdicts.",
+      "conditions": [
+        "Explicit task-success-is-rejection semantics for negative guard anchors.",
+        "Safety and anchor evidence may not pass vacuously when incomplete."
+      ],
+      "reversal": "Use the frozen unannotated corpus only with its original historical protocol; a new protocol change is required.",
+      "evidence_required": [
+        "24-case corpus",
+        "safety/anchor counts",
+        "accepted-negative safety-regression control"
+      ],
+      "follow_up_nodes": []
+    },
+    {
+      "id": "D4",
+      "choice": "A",
+      "rationale": "Land a curated reproducible historic measurement and give the deterministic 144-trial replay an explicit distinct identity.",
+      "conditions": [
+        "Preserve original manifest/aggregate bytes and verdict.",
+        "No wholesale merge of the unrelated candidate branch.",
+        "A clone can recompute from retained trials."
+      ],
+      "reversal": "Remove only the new curated view in a reviewed change; preserve historic commits and local raw archives.",
+      "evidence_required": [
+        "historic measurement pack",
+        "offline check",
+        "evidence identities",
+        "Task Forest evidence links"
+      ],
+      "follow_up_nodes": []
+    },
+    {
+      "id": "D5",
+      "choice": "A",
+      "rationale": "Share complete-case pairing, interval, variance and power; repeats only establish matching.",
+      "conditions": [
+        "E02 and TF-0592 agree on the same input; incomplete and duplicate pairs fail closed."
+      ],
+      "reversal": "Revert consumers and shared instrument together with an explicit protocol revision.",
+      "evidence_required": [
+        "shared-inference parity check",
+        "partial-pair control",
+        "preserved historic failure"
+      ],
+      "follow_up_nodes": []
+    },
+    {
+      "id": "D6",
+      "choice": "B",
+      "rationale": "Declare feedback diagnostic-only and remove an unwired adoption counter from handoff ranking; study weighting separately.",
+      "conditions": [
+        "Four-locale UI explanation, Electron E2E, no feedback weight/flag/default changes."
+      ],
+      "reversal": "Restore presentation/ranking with a reviewed change; stored feedback remains retained.",
+      "evidence_required": [
+        "UI diagnostic labels",
+        "handoff-order test",
+        "separate proposed feedback research node"
+      ],
+      "follow_up_nodes": [
+        "独立研究反馈权重、样本预算和单 flag 回滚"
+      ]
+    }
+  ],
+  "not_authorized": [
+    "Complete product RSI loop, new defaults, product-lock changes, public release, credential exposure, real-human claims, retrospectively promoting the historical run."
+  ],
+  "notes": "The request delegates the report recommended minimal evaluator repairs. D1/D2 change the evaluation protocol only; no product flag or default changes."
+}

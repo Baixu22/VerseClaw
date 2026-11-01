@@ -7,9 +7,9 @@
  * pre-registered verdict. It never invents a positive effect: a zero or
  * negative effect is a valid, reported result.
  *
- * Pairs are keyed by (caseId, repeat). The 95% CI uses the normal
- * approximation (z=1.96); with the design gate (>=20 cases x 3 repeats = 60
- * pairs) that is a close approximation to the paired t interval.
+ * Repeats establish matching; complete case clusters are the sole inference
+ * unit. Boolean success is reduced to pass^k, other metrics to a case mean.
+ * CI, variance and the labelled power approximation share this implementation.
  *
  * Guard rails added after the 2026-11-01 wiring audit:
  * - The E01 complete-case floor (`minCases`) and the E01 safety/anchor/flake
@@ -55,6 +55,7 @@ function numericMetric(value) {
 export function summarizeCondition(runs, options = {}) {
   const k = options.k ?? 3;
   const minCases = options.minCases ?? 20;
+  if (!Number.isInteger(k) || k < 1 || !Number.isInteger(minCases) || minCases < 1) throw new Error('invalid-paired-design');
   const byCase = new Map();
   for (const run of runs) {
     if (!byCase.has(run.caseId)) byCase.set(run.caseId, []);
@@ -69,14 +70,15 @@ export function summarizeCondition(runs, options = {}) {
         id: caseId,
         safetyRequired: caseRuns.some((run) => run.safetyRequired === true),
         ...(anchor ? { anchor } : {}),
+        negativeExpectedOutcome: caseRuns.find((run) => run.negativeExpectedOutcome)?.negativeExpectedOutcome,
         trials: caseRuns
           .slice()
           .sort((a, b) => a.repeat - b.repeat)
-          .map((run) => (run.success ? 'pass' : 'fail')),
+          .map((run) => run.outcome ?? (run.success ? 'pass' : 'fail')),
       };
     });
 
-  const reliability = aggregateReliability(reliabilityCases, { k, minCases });
+  const reliability = aggregateReliability(reliabilityCases, { ...options, k, minCases });
   const latencies = runs.map((run) => run.latencyMs).filter((value) => typeof value === 'number').sort((a, b) => a - b);
   const tokens = runs.map((run) => run.tokens).filter((value) => typeof value === 'number');
 
@@ -94,6 +96,8 @@ export function summarizeCondition(runs, options = {}) {
     incompleteCaseCount: reliability.incompleteCaseCount,
     flakeRate: reliability.flakeRate,
     flakeCaseIds: reliability.flakeCaseIds,
+    flakeMode: reliability.flakeMode,
+    maxFlakeCases: reliability.maxFlakeCases,
     safety: reliability.safety,
     anchors: reliability.anchors,
     // The E01 gate is the single source of truth for "sample too thin" and
@@ -105,20 +109,27 @@ export function summarizeCondition(runs, options = {}) {
 
 function pairByKey(runs) {
   const map = new Map();
-  for (const run of runs) map.set(`${run.caseId}::${run.repeat}`, run);
+  for (const run of runs) {
+    const key = `${run.caseId}::${run.repeat}`;
+    if (map.has(key)) throw new Error('duplicate-pair-key');
+    map.set(key, run);
+  }
   return map;
 }
 
 export function pairedEffect(baselineRuns, treatmentRuns, options = {}) {
   const metric = options.metric ?? 'success';
+  const k = options.k ?? 3;
+  const minCases = options.minCases ?? 20;
+  if (!Number.isInteger(k) || k < 1 || !Number.isInteger(minCases) || minCases < 1) throw new Error('invalid-paired-design');
   const baseline = pairByKey(baselineRuns);
   const treatment = pairByKey(treatmentRuns);
-
-  const diffs = [];
+  const byCase = new Map();
   const dropped = [];
-  for (const [key, baseRun] of baseline) {
+  for (const key of new Set([...baseline.keys(), ...treatment.keys()])) {
+    const baseRun = baseline.get(key);
     const treatRun = treatment.get(key);
-    if (!treatRun) {
+    if (!baseRun || !treatRun) {
       dropped.push({ key, reason: 'unmatched' });
       continue;
     }
@@ -128,32 +139,63 @@ export function pairedEffect(baselineRuns, treatmentRuns, options = {}) {
       dropped.push({ key, reason: 'non-numeric-metric' });
       continue;
     }
-    diffs.push(treatValue - baseValue);
+    const pairs = byCase.get(baseRun.caseId) ?? [];
+    pairs.push({ caseId: baseRun.caseId, repeat: baseRun.repeat, baseline: baseValue, treatment: treatValue });
+    byCase.set(baseRun.caseId, pairs);
   }
-
+  const diffs = [], caseIds = [], excludedPartialPairs = [];
+  for (const [caseId, pairs] of [...byCase.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+    const repeats = pairs.map((pair) => pair.repeat).sort((a, b) => a - b);
+    const complete = pairs.length === k && repeats.every((repeat, index) => repeat === index + repeats[0])
+      && (repeats[0] === 0 || repeats[0] === 1);
+    if (!complete) {
+      excludedPartialPairs.push(...pairs);
+      continue;
+    }
+    const value = (arm) => metric === 'success'
+      ? Number(pairs.every((pair) => pair[arm] === 1))
+      : mean(pairs.map((pair) => pair[arm]));
+    diffs.push(value('treatment') - value('baseline'));
+    caseIds.push(caseId);
+  }
   const pairCount = diffs.length;
   const meanDiff = mean(diffs);
-  const droppedPairs = dropped.slice(0, 20);
-  if (pairCount < 2 || meanDiff === null) {
-    return {
-      metric, pairCount, droppedPairCount: dropped.length, droppedPairs,
-      meanDiff: round(meanDiff), sd: null, standardError: null, ci95: null, cohensDz: null,
-    };
-  }
-  const variance = diffs.reduce((total, diff) => total + (diff - meanDiff) ** 2, 0) / (pairCount - 1);
-  const sd = Math.sqrt(variance);
-  const standardError = sd / Math.sqrt(pairCount);
-  const margin = Z_95 * standardError;
+  const sd = pairCount > 1 ? Math.sqrt(diffs.reduce((total, diff) => total + (diff - meanDiff) ** 2, 0) / (pairCount - 1)) : null;
+  const varianceUsable = sd !== null && sd > 0;
+  const standardError = varianceUsable ? sd / Math.sqrt(pairCount) : null;
+  const margin = varianceUsable ? Z_95 * standardError : null;
+  const precise = (value) => value === null ? null : Number(value.toFixed(6));
+  const minimumEffect = options.minimumEffect ?? 0.05;
+  if (!Number.isFinite(minimumEffect) || minimumEffect <= 0) throw new Error('invalid-minimum-effect');
+  const enoughCases = pairCount >= minCases;
+  const detectable = enoughCases && varianceUsable ? (Z_95 + 0.841621) * sd / Math.sqrt(pairCount) : null;
+  const powerStatus = detectable === null ? 'insufficient-evidence' : detectable > minimumEffect ? 'underpowered' : 'design-computed';
+  const requiredCases = detectable === null ? null : Math.ceil(((Z_95 + 0.841621) * sd / minimumEffect) ** 2);
   return {
     metric,
     pairCount,
+    repeatPairCount: [...byCase.values()].reduce((count, pairs) => count + pairs.length, 0),
+    pairUnit: 'caseId/repeat', inferenceUnit: 'caseId',
+    aggregation: metric === 'success' ? 'pass^k' : 'case-mean',
+    caseIds,
+    excludedPartialPairs,
     droppedPairCount: dropped.length,
-    droppedPairs,
-    meanDiff: round(meanDiff),
-    sd: round(sd),
-    standardError: round(standardError),
-    ci95: [round(meanDiff - margin), round(meanDiff + margin)],
-    cohensDz: sd === 0 ? 0 : round(meanDiff / sd),
+    droppedPairs: dropped.slice(0, 20),
+    meanDiff: precise(meanDiff),
+    sd: precise(sd),
+    standardError: precise(standardError),
+    ci95: varianceUsable && enoughCases ? [precise(meanDiff - margin), precise(meanDiff + margin)] : null,
+    cohensDz: varianceUsable && enoughCases ? precise(meanDiff / sd) : null,
+    varianceStatus: sd === null ? 'not-estimable' : sd === 0 ? 'degenerate' : 'estimated',
+    power: {
+      status: powerStatus,
+      method: `normal-approximation paired ${metric === 'success' ? 'pass^k' : metric} over complete case clusters; planning only`,
+      inferenceUnit: 'caseId', reason: !enoughCases ? 'paired-case-floor-not-met' : !varianceUsable ? 'degenerate-variance' : 'observed-variance-design',
+      confidenceLevel: 0.95, targetPower: 0.8, minimumDetectableEffect: minimumEffect,
+      observedDetectableEffect: precise(detectable), requiredCasesApprox: requiredCases,
+      requiredPairsApprox: requiredCases === null ? null : k * requiredCases,
+      passKPower: powerStatus,
+    },
   };
 }
 
@@ -170,9 +212,9 @@ export function evaluateAblation(input) {
   const k = preRegistered.k ?? 3;
   const minCases = preRegistered.minCases ?? 20;
   const budget = preRegistered.degradationBudget ?? 0;
-  const baseline = summarizeCondition(baselineRuns, { k, minCases });
-  const treatment = summarizeCondition(treatmentRuns, { k, minCases });
-  const effect = pairedEffect(baselineRuns, treatmentRuns, { metric: preRegistered.primaryMetric });
+  const baseline = summarizeCondition(baselineRuns, { ...preRegistered, k, minCases });
+  const treatment = summarizeCondition(treatmentRuns, { ...preRegistered, k, minCases });
+  const effect = pairedEffect(baselineRuns, treatmentRuns, { ...preRegistered, metric: preRegistered.primaryMetric, k, minCases });
 
   const reasons = [];
   let verdict = 'no-effect';
@@ -207,6 +249,11 @@ export function evaluateAblation(input) {
   } else if (unstable) {
     verdict = 'insufficient-sample';
     reasons.push('flake rate above the frozen threshold; the sample is not stable');
+  } else if (effect.pairCount < minCases || effect.droppedPairCount > 0 || effect.excludedPartialPairs.length > 0) {
+    verdict = 'insufficient-sample';
+    reasons.push('complete paired-case floor not met or incomplete metric pairs preserved');
+  } else if (effect.ci95 === null && effect.meanDiff === 0) {
+    reasons.push('zero observed effect; degenerate variance does not establish equivalence or promotion');
   } else if (effect.ci95 === null) {
     verdict = 'insufficient-sample';
     reasons.push('not enough pairs for an interval');

@@ -7,10 +7,10 @@ export type Tf0592Trial = {
   arm?: 'baseline' | 'treatment'; repeat?: number; failureClass?: FailureClass | null;
   tokens?: number; turns?: number; toolCalls?: number; wallClockMs?: number; cost?: number;
 };
-export type Tf0592Corpus = { cases: Array<{ id: string; taskId: string; safetyRequired?: boolean; anchor?: 'positive' | 'negative' }> };
+export type Tf0592Corpus = { cases: Array<{ id: string; taskId: string; safetyRequired?: boolean; anchor?: 'positive' | 'negative'; negativeExpectedOutcome?: 'pass' | 'fail' }> };
 export type Tf0592RawTrials = { cases: Array<{ caseId: string; failureClass?: FailureClass | null; trials: Array<Tf0592Trial | string> }> };
 export type Tf0592Policy = {
-  taskSet: { k: number; minimumCompleteCases: number };
+  taskSet: { k: number; minimumCompleteCases: number; maxFlakeCases?: number; flakeThreshold?: number; minimumSafetyCases?: number; minimumPositiveAnchors?: number; minimumNegativeAnchors?: number };
   promotion: { thresholds: { passKAbsoluteImprovement: { minimum: number } } };
   budgets: { costCeiling: { maxRelativeIncrease: number } };
 };
@@ -35,7 +35,7 @@ export type Tf0592Arm = {
     passK: number | null; passAtK: number | null; perTrialSuccessRate: number | null;
     confidenceInterval95: [number, number] | null; passAtKConfidenceInterval95: [number, number] | null;
     intervalMethod: string; flakeRate: number | null;
-    flakeThreshold: number; minimumNonZeroFlakeRate: number | null; flakeThresholdReachable: boolean | null;
+    flakeThreshold: number | null; flakeMode: 'rate' | 'case-count'; maxFlakeCases: number | null; ordinaryFlakeCaseIds: string[]; minimumNonZeroFlakeRate: number | null; flakeThresholdReachable: boolean | null;
     safety: { requiredCaseCount: number; skippedCount: number; flakeCount: number; violated: boolean };
     anchors: { positiveCaseCount: number; positivePassed: number; negativeCaseCount: number; negativeRejected: number; violated: boolean };
     incomplete: Array<{ caseId: string; trialIndex: number; outcome: string }>; reasons: string[];

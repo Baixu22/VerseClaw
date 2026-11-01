@@ -56,6 +56,7 @@ Important current defaults:
 
 - Workspace Context and read-only DCS context tools are on under their declared health and permission gates.
 - Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
+- Memory feedback and SEKB adoption counts are diagnostic-only; feedback does not affect retrieval ranking or retention decisions. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md) distinguish historical measurement from deterministic replay.
 - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
 - VerseGit is default-off and landed-unwired. VerseShell is a default-off controlled foundation. VerseBrowser advertises actions from a live driver snapshot, not from its full contract.
 - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.

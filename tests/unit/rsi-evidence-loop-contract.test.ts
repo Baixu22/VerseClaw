@@ -110,6 +110,15 @@ function citedRepoPaths(value: unknown, found = new Set<string>()): Set<string> 
 }
 
 describe('RSI evidence loop contract', () => {
+  it('versions the prospective count protocol without changing the archived product threshold', () => {
+    const current = readJson<{ schemaVersion: string; taskSet: { maxFlakeCases: number; maxSafetyFlakeCases: number; minimumSafetyCases: number }; metrics: { minimumDetectableEffect: { meaning: string; requiredReporting: string[] } } }>(join(ROOT, 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json'));
+    expect(current.schemaVersion).toBe('RsiPromotionPolicy/v2');
+    expect(current.taskSet).toMatchObject({ maxFlakeCases: 1, maxSafetyFlakeCases: 0, minimumSafetyCases: 3 });
+    expect(current.metrics.minimumDetectableEffect.meaning).toBe('product-improvement-floor');
+    expect(current.metrics.minimumDetectableEffect.requiredReporting).toEqual(expect.arrayContaining(['observedDetectableEffect', 'requiredCasesApprox']));
+    expect(readJson<{ taskSet: { flakeThreshold: number } }>(POLICY_PATH).taskSet.flakeThreshold).toBe(0.01);
+  });
+
   it('separates the three capability layers and refuses to claim the two that do not exist', () => {
     const matrix = readJson<CapabilityMatrix>(MATRIX_PATH);
 
@@ -180,7 +189,7 @@ describe('RSI evidence loop contract', () => {
     expect(matrix.measurementSubstrate.items.length).toBeGreaterThanOrEqual(5);
     const substrateIds = matrix.measurementSubstrate.items.map((item) => item.id);
     expect(substrateIds).toContain('baseline-aggregation-run');
-    expect(matrix.measurementSubstrate.items.find((item) => item.id === 'baseline-aggregation-run')?.status).toBe('not-run');
+    expect(matrix.measurementSubstrate.items.find((item) => item.id === 'baseline-aggregation-run')?.status).toBe('historical-measurement-fail');
     expect(matrix.measurementSubstrate.items.find((item) => item.id === 'production-grader')?.status).toBe('absent');
     // An instrument marked not-run or absent may not cite paths or claim a level.
     for (const layer of matrix.layers) {

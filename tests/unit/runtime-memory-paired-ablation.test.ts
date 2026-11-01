@@ -135,7 +135,9 @@ describe('E02 paired ablation: type-aware eviction vs FIFO (real RuntimeMemorySt
     expect(effectTraces.some(Boolean)).toBe(true);
 
     // Reported fields exist; verdict is one of the allowed honest outcomes.
-    expect(result.effect.pairCount).toBe(CASE_COUNT * K);
+    expect(result.effect.pairCount).toBe(CASE_COUNT);
+    expect(result.effect.repeatPairCount).toBe(CASE_COUNT * K);
+    expect(result.effect.inferenceUnit).toBe('caseId');
     expect(result.effect.ci95).not.toBeNull();
     expect(['component-helps', 'no-effect', 'hurts', 'insufficient-sample']).toContain(result.verdict);
 

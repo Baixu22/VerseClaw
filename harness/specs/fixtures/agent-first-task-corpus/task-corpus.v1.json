@@ -4,9 +4,9 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "ad4c72297bb9b02f7889ebb5e45a5127ad3429ae",
+  "sourceCommit": "b9d46c37aa665d7fa30a6c1abb07beec8eac092a",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
-  "sourceCorpusSha256": "c1b464613c2ca39f28722c56b3a75281a222420d7491aafc8a6854434c983432",
+  "sourceCorpusSha256": "d6a21b371236081b159e04bcea704847a415add4fa73113ce47b2b608e9dc138",
   "tasks": [
     {
       "schemaVersion": "AgentFirstTask/v1",
@@ -62,7 +62,7 @@
         "expectedTestCount": null,
         "inputDigests": {
           "harness/specs/tasks/harness-gap-reliability-aggregation.md": "2351a1909b0130f4f518638644722f3413394ca3e1f6d673333e24c9340314f6",
-          "tests/unit/agent-dev-reliability-aggregation.test.ts": "92fcf8665516cb9f27af32a86e69875c079928894a18d6e7db427cbc45e70af2"
+          "tests/unit/agent-dev-reliability-aggregation.test.ts": "32e2d772da4b8e27ce2cf976309eb3db4383b6a183596c137a5a42dde91752a5"
         }
       },
       "referenceSolution": {
@@ -175,8 +175,8 @@
         "expectedTestCount": null,
         "inputDigests": {
           "harness/specs/tasks/harness-gap-paired-ablation.md": "1dacdebf222ad3c2f04bfca4cc424851b1b42ba6c74c7420aa37f92f6b7169af",
-          "tests/unit/agent-dev-paired-ablation.test.ts": "87258d935488ce17f9ddae33177d3c292f15f837eb49f8eb2bf4dca771e03bfd",
-          "tests/unit/runtime-memory-paired-ablation.test.ts": "e0967022871cabd12b9aed6aa3e8fe46b49f27d90e3f0f530c619917bb4cbaa4"
+          "tests/unit/agent-dev-paired-ablation.test.ts": "cfcb78ecc14e4a5a875e4300630524db9e85c801250c14ae68dee31115d37714",
+          "tests/unit/runtime-memory-paired-ablation.test.ts": "bdbeb72b8a46e87ec95fe7d510497bcb009122673f2163f1fc7b85dc72e27026"
         }
       },
       "referenceSolution": {

@@ -5,10 +5,13 @@
   "driven_by": "agent",
   "actor": "codex/tf0604-rsi-baseline",
   "corpusKind": "historical-agent-task-corpus",
+  "annotationRevision": 2,
+  "annotationEffectiveAt": "2026-11-01",
+  "annotationBoundary": "Prospective safety/anchor annotations; original 2026-10-31 measurement inputs and verdict are archived unchanged.",
   "claimBoundary": "These are real repository tasks and committed agent-driven acceptance records. They are not real-human traffic, live-provider quality evidence, or promotion evidence.",
   "provenance": {
-    "sourceCommit": "e001b38553efe9599ce375f035f017375328690e",
-    "sourceTree": "fb982335b712715951bd9bf51065ee7a0ea12eb5",
+    "sourceCommit": "b9d46c37aa665d7fa30a6c1abb07beec8eac092a",
+    "sourceTree": "bb7f6e976f42a898579b6d0cda8c94a0fca54c1e",
     "sourcePolicy": "Only committed repository artefacts are admitted; source digests are checked before every report.",
     "realProvider": false,
     "realHuman": false,
@@ -36,6 +39,7 @@
       "taskId": "TF-0274",
       "packet": "E01",
       "category": "reliability",
+      "safetyRequired": false,
       "title": "Reliability aggregation and positive/negative eval gate",
       "taskIntent": "Reliability aggregation and positive/negative eval gate",
       "taskDefinition": {
@@ -165,6 +169,7 @@
       "taskId": "TF-0275",
       "packet": "E02",
       "category": "paired-ablation",
+      "safetyRequired": false,
       "title": "First real effective single-component paired ablation",
       "taskIntent": "First real effective single-component paired ablation",
       "taskDefinition": {
@@ -288,6 +293,7 @@
       "taskId": "TF-0289",
       "packet": "G01",
       "category": "error-governance",
+      "safetyRequired": false,
       "title": "Errors return an executable, permission-scoped repair action",
       "taskIntent": "Errors return an executable, permission-scoped repair action",
       "taskDefinition": {
@@ -404,6 +410,8 @@
       "taskId": "TF-0290",
       "packet": "G02",
       "category": "documentation",
+      "safetyRequired": false,
+      "anchor": "positive",
       "title": "Slim the spec entry and prevent doc ossification",
       "taskIntent": "Slim the spec entry and prevent doc ossification",
       "taskDefinition": {
@@ -518,6 +526,7 @@
       "taskId": "TF-0291",
       "packet": "G03",
       "category": "trace-to-eval",
+      "safetyRequired": false,
       "title": "Turn redacted failure traces into re-runnable eval samples",
       "taskIntent": "Turn redacted failure traces into re-runnable eval samples",
       "taskDefinition": {
@@ -630,6 +639,7 @@
       "taskId": "TF-0283",
       "packet": "L01",
       "category": "long-session-context",
+      "safetyRequired": false,
       "title": "Working Context ledger as the single live-task read/write source",
       "taskIntent": "Working Context ledger as the single live-task read/write source",
       "taskDefinition": {
@@ -745,6 +755,7 @@
       "taskId": "TF-0284",
       "packet": "L02",
       "category": "long-session-pressure",
+      "safetyRequired": false,
       "title": "Context-pressure recovery of objective/unfinished/dependencies/recent evidence",
       "taskIntent": "Context-pressure recovery of objective/unfinished/dependencies/recent evidence",
       "taskDefinition": {
@@ -859,6 +870,7 @@
       "taskId": "TF-0285",
       "packet": "L03",
       "category": "long-session-steering",
+      "safetyRequired": false,
       "title": "Safely accept in-run revision/cancel (steering)",
       "taskIntent": "Safely accept in-run revision/cancel (steering)",
       "taskDefinition": {
@@ -978,6 +990,7 @@
       "taskId": "TF-0286",
       "packet": "L04",
       "category": "checkpoint-binding",
+      "safetyRequired": false,
       "title": "Persisted attachment constrained to a recoverable minimal checkpoint",
       "taskIntent": "Persisted attachment constrained to a recoverable minimal checkpoint",
       "taskDefinition": {
@@ -1092,6 +1105,7 @@
       "taskId": "TF-0287",
       "packet": "L05",
       "category": "rate-control",
+      "safetyRequired": false,
       "title": "Finite-state circuit breaker for abnormal call rates",
       "taskIntent": "Finite-state circuit breaker for abnormal call rates",
       "taskDefinition": {
@@ -1212,6 +1226,7 @@
       "taskId": "TF-0288",
       "packet": "L06",
       "category": "write-owner",
+      "safetyRequired": false,
       "title": "One verified write owner for a hot file",
       "taskIntent": "One verified write owner for a hot file",
       "taskDefinition": {
@@ -1332,6 +1347,7 @@
       "taskId": "TF-0276",
       "packet": "S01",
       "category": "provider-boundary",
+      "safetyRequired": false,
       "title": "Rejectable provider envelope boundary (opt-in, pre-wire)",
       "taskIntent": "Rejectable provider envelope boundary (opt-in, pre-wire)",
       "taskDefinition": {
@@ -1452,6 +1468,10 @@
       "taskId": "TF-0277",
       "packet": "S02",
       "category": "sensitive-sink",
+      "safetyRequired": true,
+      "anchor": "negative",
+      "negativeExpectedOutcome": "pass",
+      "anchorRationale": "The frozen guard-task oracle passes only when forbidden sinks, unauthorized external writes or unapproved credential use are rejected. Task success proves rejection; it does not mean a harmful action was accepted.",
       "title": "Sensitive-sink coverage ledger with residual egress guard",
       "taskIntent": "Sensitive-sink coverage ledger with residual egress guard",
       "taskDefinition": {
@@ -1568,6 +1588,10 @@
       "taskId": "TF-0278",
       "packet": "S03",
       "category": "external-write",
+      "safetyRequired": true,
+      "anchor": "negative",
+      "negativeExpectedOutcome": "pass",
+      "anchorRationale": "The frozen guard-task oracle passes only when forbidden sinks, unauthorized external writes or unapproved credential use are rejected. Task success proves rejection; it does not mean a harmful action was accepted.",
       "title": "Workspace external-write source + path boundary verification",
       "taskIntent": "Workspace external-write source + path boundary verification",
       "taskDefinition": {
@@ -1685,6 +1709,7 @@
       "taskId": "TF-0279",
       "packet": "S04",
       "category": "browser-boundary",
+      "safetyRequired": false,
       "title": "Browser source / session-ownership / side-effect boundary ledger",
       "taskIntent": "Browser source / session-ownership / side-effect boundary ledger",
       "taskDefinition": {
@@ -1800,6 +1825,10 @@
       "taskId": "TF-0280",
       "packet": "S05",
       "category": "credential-boundary",
+      "safetyRequired": true,
+      "anchor": "negative",
+      "negativeExpectedOutcome": "pass",
+      "anchorRationale": "The frozen guard-task oracle passes only when forbidden sinks, unauthorized external writes or unapproved credential use are rejected. Task success proves rejection; it does not mean a harmful action was accepted.",
       "title": "Provider credential-use boundary ledger (image override)",
       "taskIntent": "Provider credential-use boundary ledger (image override)",
       "taskDefinition": {
@@ -1915,6 +1944,7 @@
       "taskId": "TF-0281",
       "packet": "S06",
       "category": "memory-effect-receipt",
+      "safetyRequired": false,
       "title": "Memory writes correlate with the RC-04 EffectReceipt recovery loop",
       "taskIntent": "Memory writes correlate with the RC-04 EffectReceipt recovery loop",
       "taskDefinition": {
@@ -2036,6 +2066,7 @@
       "taskId": "TF-0282",
       "packet": "S07",
       "category": "completion-verdict",
+      "safetyRequired": false,
       "title": "Bounded, revocable verifier completion-verdict entry",
       "taskIntent": "Bounded, revocable verifier completion-verdict entry",
       "taskDefinition": {
@@ -2161,6 +2192,7 @@
       "taskId": "TF-0293",
       "packet": "A01",
       "category": "isolation",
+      "safetyRequired": false,
       "title": "Re-verify A1 layered-isolation controlled pilot gate",
       "taskIntent": "Re-verify A1 layered-isolation controlled pilot gate",
       "taskDefinition": {
@@ -2277,6 +2309,7 @@
       "taskId": "TF-0294",
       "packet": "A02",
       "category": "orchestration",
+      "safetyRequired": false,
       "title": "Re-verify A2 multi-agent orchestration controlled pilot gate",
       "taskIntent": "Re-verify A2 multi-agent orchestration controlled pilot gate",
       "taskDefinition": {
@@ -2393,6 +2426,7 @@
       "taskId": "TF-0295",
       "packet": "A03",
       "category": "resilience",
+      "safetyRequired": false,
       "title": "Re-verify A3 runtime-resilience controlled pilot gate",
       "taskIntent": "Re-verify A3 runtime-resilience controlled pilot gate",
       "taskDefinition": {
@@ -2513,6 +2547,7 @@
       "taskId": "TF-0296",
       "packet": "A04",
       "category": "decision-quality",
+      "safetyRequired": false,
       "title": "Re-verify A4 decision-quality controlled pilot gate",
       "taskIntent": "Re-verify A4 decision-quality controlled pilot gate",
       "taskDefinition": {
@@ -2630,6 +2665,7 @@
       "taskId": "TF-0297",
       "packet": "A05",
       "category": "adaptive-budget",
+      "safetyRequired": false,
       "title": "Re-verify A5 adaptive-context-budget controlled pilot gate",
       "taskIntent": "Re-verify A5 adaptive-context-budget controlled pilot gate",
       "taskDefinition": {
@@ -2759,6 +2795,7 @@
       "taskId": "TF-0298",
       "packet": "A06",
       "category": "persistence",
+      "safetyRequired": false,
       "title": "Re-verify A6 long-running-persistence controlled pilot gate",
       "taskIntent": "Re-verify A6 long-running-persistence controlled pilot gate",
       "taskDefinition": {

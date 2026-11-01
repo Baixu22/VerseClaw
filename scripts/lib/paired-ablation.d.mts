@@ -8,6 +8,7 @@ export type AblationRun = {
   safetyViolation?: boolean;
   safetyRequired?: boolean;
   anchor?: 'positive' | 'negative';
+  negativeExpectedOutcome?: 'pass' | 'fail';
   [metric: string]: unknown;
 };
 
@@ -25,6 +26,8 @@ export type ConditionSummary = {
   incompleteCaseCount: number;
   flakeRate: number | null;
   flakeCaseIds: string[];
+  flakeMode: 'rate' | 'case-count';
+  maxFlakeCases: number | null;
   safety: {
     requiredCaseCount: number;
     skippedCount: number;
@@ -45,6 +48,12 @@ export type ConditionSummary = {
 export type PairedEffect = {
   metric: string;
   pairCount: number;
+  repeatPairCount: number;
+  pairUnit: 'caseId/repeat';
+  inferenceUnit: 'caseId';
+  aggregation: 'pass^k' | 'case-mean';
+  caseIds: string[];
+  excludedPartialPairs: Array<{ caseId: string; repeat: number; baseline: number; treatment: number }>;
   droppedPairCount: number;
   droppedPairs: Array<{ key: string; reason: string }>;
   meanDiff: number | null;
@@ -52,6 +61,13 @@ export type PairedEffect = {
   standardError: number | null;
   ci95: [number | null, number | null] | null;
   cohensDz: number | null;
+  varianceStatus: 'not-estimable' | 'degenerate' | 'estimated';
+  power: {
+    status: string; method: string; inferenceUnit: 'caseId'; reason: string;
+    confidenceLevel: number; targetPower: number; minimumDetectableEffect: number;
+    observedDetectableEffect: number | null; requiredCasesApprox: number | null;
+    requiredPairsApprox: number | null; passKPower: string;
+  };
 };
 
 export type PreRegisteredAblation = {
@@ -60,10 +76,13 @@ export type PreRegisteredAblation = {
   k?: number;
   degradationBudget?: number;
   safetyMustHold?: boolean;
+  flakeThreshold?: number;
+  maxFlakeCases?: number;
+  minimumEffect?: number;
 };
 
-export function summarizeCondition(runs: AblationRun[], options?: { k?: number; minCases?: number }): ConditionSummary;
-export function pairedEffect(baselineRuns: AblationRun[], treatmentRuns: AblationRun[], options?: { metric?: string }): PairedEffect;
+export function summarizeCondition(runs: AblationRun[], options?: { k?: number; minCases?: number; flakeThreshold?: number; maxFlakeCases?: number }): ConditionSummary;
+export function pairedEffect(baselineRuns: AblationRun[], treatmentRuns: AblationRun[], options?: { metric?: string; k?: number; minCases?: number; minimumEffect?: number }): PairedEffect;
 export function evaluateAblation(input: {
   baselineRuns: AblationRun[];
   treatmentRuns: AblationRun[];

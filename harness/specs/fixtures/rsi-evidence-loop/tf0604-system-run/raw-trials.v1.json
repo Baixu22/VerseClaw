@@ -1,0 +1,1711 @@
+{
+  "schemaVersion": "RsiHistoricalTrialProjection/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-decision-curator",
+  "cases": [
+    {
+      "caseId": "tf-0274-e01",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0275-e02",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0289-g01",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0290-g02",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0291-g03",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0283-l01",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0284-l02",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0285-l03",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0286-l04",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0287-l05",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0288-l06",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0276-s01",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0277-s02",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0278-s03",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0279-s04",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0280-s05",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0281-s06",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0282-s07",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0293-a01",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "pass",
+          "failureClass": null,
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0294-a02",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0295-a03",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0296-a04",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0297-a05",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "timeout",
+          "failureClass": "infrastructure",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "caseId": "tf-0298-a06",
+      "trials": [
+        {
+          "arm": "baseline",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "baseline",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 1,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 2,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        },
+        {
+          "arm": "treatment",
+          "repeat": 3,
+          "outcome": "fail",
+          "failureClass": "agent",
+          "tokens": null,
+          "turns": null,
+          "toolCalls": null,
+          "wallClockMs": null,
+          "cost": null
+        }
+      ]
+    }
+  ]
+}

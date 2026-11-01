@@ -152,3 +152,7 @@ The acceptance of this spec is read from disk, not from a command transcript:
 
 Every one of these artefacts is `driven_by: agent` with a concrete actor. No
 real-human evidence is claimed or required anywhere in this change set.
+
+## 2026-11-01 evaluator decision repair
+
+The original v1 freeze is historical provenance. The evaluator-owned rsi-decision-implementation task selects promotion-policy.v2.json prospectively, adds annotation revision 2 without changing the 24 task identities, and shares complete-case inference with E02. The old measurement and its v1 policy remain in the curated system-run archive; no retrospective promotion, candidate-authored gate change or product default change is authorized. Five pp is a product improvement floor, separate from observed detectability.

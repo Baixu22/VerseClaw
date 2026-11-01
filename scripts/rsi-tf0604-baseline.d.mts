@@ -13,6 +13,9 @@ export type Tf0604Case = {
   id: string;
   taskId: string;
   sourceDigest: string;
+  safetyRequired: boolean;
+  anchor?: 'positive' | 'negative';
+  negativeExpectedOutcome?: 'pass' | 'fail';
   taskDefinition: {
     input: { taskId: string };
     referenceOutcome: { decision: string };
@@ -20,6 +23,7 @@ export type Tf0604Case = {
 };
 
 export type Tf0604Corpus = {
+  annotationRevision: number;
   cases: Tf0604Case[];
   driven_by: string;
   provenance: {

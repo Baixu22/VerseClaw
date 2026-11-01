@@ -432,7 +432,7 @@ describe("B-3 entity snapshot", () => {
     ).toEqual([]);
   });
 
-  it("gatherSekbDecisions returns adopted principles ordered by adoption", () => {
+  it("gatherSekbDecisions preserves store order regardless of diagnostic adoption counts", () => {
     const store = {
       query_principles: () => [
         { condition: "low adoption", action: "a", adoption_count: 1 },
@@ -440,8 +440,8 @@ describe("B-3 entity snapshot", () => {
       ],
     };
     const decisions = gatherSekbDecisions({ store: store as never });
-    expect(decisions[0]?.condition).toBe("high adoption");
-    expect(decisions[1]?.condition).toBe("low adoption");
+    expect(decisions[0]?.condition).toBe("low adoption");
+    expect(decisions[1]?.condition).toBe("high adoption");
   });
 
   it("gatherSekbDecisions degrades gracefully without a store", () => {

@@ -42,8 +42,10 @@ describe('paired-ablation aggregation', () => {
   it('computes a paired mean difference and 95% CI', () => {
     const baseline = [...makeRuns('a', [0, 0, 0], 1), ...makeRuns('b', [0, 0, 0], 1)];
     const treatment = [...makeRuns('a', [1, 1, 1], 1), ...makeRuns('b', [0.5, 0.5, 0.5], 1)];
-    const effect = pairedEffect(baseline, treatment, { metric: 'proceduralRetention' });
-    expect(effect.pairCount).toBe(6);
+    const effect = pairedEffect(baseline, treatment, { metric: 'proceduralRetention', minCases: 2 });
+    expect(effect.pairCount).toBe(2);
+    expect(effect.repeatPairCount).toBe(6);
+    expect(effect.inferenceUnit).toBe('caseId');
     expect(effect.meanDiff).toBeCloseTo(0.75, 4);
     expect(effect.ci95?.[0]).toBeLessThanOrEqual(effect.meanDiff as number);
     expect(effect.ci95?.[1]).toBeGreaterThanOrEqual(effect.meanDiff as number);
@@ -51,7 +53,7 @@ describe('paired-ablation aggregation', () => {
 
   it('reports component-helps only when the 95% CI excludes zero on the positive side', () => {
     const baseline = [...makeRuns('a', [0, 0, 0], 1), ...makeRuns('b', [0, 0, 0], 1), ...makeRuns('c', [0, 0, 0], 1)];
-    const treatment = [...makeRuns('a', [1, 1, 1], 1), ...makeRuns('b', [1, 1, 1], 1), ...makeRuns('c', [1, 1, 1], 1)];
+    const treatment = [...makeRuns('a', [1, 1, 1], 1), ...makeRuns('b', [1, 1, 1], 1), ...makeRuns('c', [0.5, 0.5, 0.5], 1)];
     const result = evaluateAblation({ baselineRuns: baseline, treatmentRuns: treatment, preRegistered: { primaryMetric: 'proceduralRetention', k: 3, minCases: 3, degradationBudget: 0 } });
     expect(result.verdict).toBe('component-helps');
   });
@@ -65,7 +67,7 @@ describe('paired-ablation aggregation', () => {
 
   it('returns hurts on a significant negative effect and safety-regression on violations', () => {
     const base = [...makeRuns('a', [1, 1, 1], 1), ...makeRuns('b', [1, 1, 1], 1), ...makeRuns('c', [1, 1, 1], 1)];
-    const worse = [...makeRuns('a', [0, 0, 0], 1), ...makeRuns('b', [0, 0, 0], 1), ...makeRuns('c', [0, 0, 0], 1)];
+    const worse = [...makeRuns('a', [0, 0, 0], 1), ...makeRuns('b', [0, 0, 0], 1), ...makeRuns('c', [0.5, 0.5, 0.5], 1)];
     expect(evaluateAblation({ baselineRuns: base, treatmentRuns: worse, preRegistered: { primaryMetric: 'proceduralRetention', k: 3, minCases: 3 } }).verdict).toBe('hurts');
 
     const unsafe = [...makeRuns('a', [1, 1, 1], 1, { safetyViolation: true })];

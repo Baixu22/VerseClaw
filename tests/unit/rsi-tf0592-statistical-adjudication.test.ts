@@ -59,6 +59,17 @@ afterAll(() => {
 });
 
 describe('TF-0592 statistical adjudication', () => {
+  it('consumes the v2 count allowance and the prospective nonempty safety anchors', () => {
+    const current: Tf0592Policy = JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json'), 'utf8'));
+    const raw = trials();
+    Object.assign(raw.cases[0].trials[0], { outcome: 'fail', failureClass: 'agent' });
+    const one = summarizeTf0592Trials(corpus, raw, current);
+    expect(one.aggregate).toMatchObject({ maxFlakeCases: 1, flakeMode: 'case-count', safety: { requiredCaseCount: 3 }, anchors: { negativeCaseCount: 3, positiveCaseCount: 1 } });
+    expect(one.aggregate.reasons.some((reason) => reason.includes('allowance'))).toBe(false);
+    Object.assign(raw.cases[1].trials[0], { outcome: 'fail', failureClass: 'agent' });
+    expect(summarizeTf0592Trials(corpus, raw, current).status).toBe('fail');
+  });
+
   it('preserves the sealed not-run reservation and publishes no pass metric', () => {
     const { report } = buildTf0592Report(ROOT);
     expect(report.status).toBe('insufficient-evidence');

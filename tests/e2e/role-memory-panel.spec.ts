@@ -160,7 +160,7 @@ test.describe('Role memory panel', () => {
     expect(calls).toEqual({ reviewBatchCount: 1 });
   });
 
-  test('creates and archives role memory through gateway RPC', async ({ electronApp, page }) => {
+  test('creates and archives role memory through gateway RPC', async ({ electronApp, page }, testInfo) => {
     await electronApp.evaluate(({ ipcMain }) => {
       const state = {
         proposeCount: 0,
@@ -606,6 +606,8 @@ test.describe('Role memory panel', () => {
 
     await page.getByRole('tab', { name: /Quality/ }).click();
     await expect(page.getByTestId('role-memory-quality')).toContainText('partial');
+    await expect(page.getByTestId('role-memory-feedback-diagnostic')).toContainText('does not affect retrieval ranking or retention decisions');
+    await page.screenshot({ path: testInfo.outputPath('feedback-diagnostic.png') });
     await expect(page.getByTestId('role-memory-quality')).toContainText('100%');
 
     await page.getByRole('tab', { name: /Active/ }).click();

@@ -68,3 +68,7 @@ The pack contains:
 The later baseline runner may replace only the raw trial and aggregate evidence through a separately reviewed change. It may not change the frozen task definitions, source digests, negative controls, k=3, minimum complete-case floor of 20, or the agent-driven evidence boundary.
 
 No human step is required. Any later human-shaped review is represented by an automated agent-driven path and labelled accordingly.
+
+## 2026-11-01 evaluator decision repair
+
+The original v1 freeze is historical provenance. The evaluator-owned rsi-decision-implementation task selects promotion-policy.v2.json prospectively, adds annotation revision 2 without changing the 24 task identities, and shares complete-case inference with E02. The old measurement and its v1 policy remain in the curated system-run archive; no retrospective promotion, candidate-authored gate change or product default change is authorized. Five pp is a product improvement floor, separate from observed detectability.

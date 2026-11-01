@@ -1,8 +1,8 @@
 {
   "schemaVersion": "RsiCapabilityMatrix/v1",
-  "generatedAt": "2026-10-30",
+  "generatedAt": "2026-11-01",
   "driven_by": "agent",
-  "actor": "claude/tf0603-contract",
+  "actor": "codex/rsi-decision-implementation",
   "status": "frozen",
   "scope": "What ClawX can and cannot do towards recursive self-improvement, recorded per capability layer and per evidence level. A planning artefact is not counted as a capability at any level.",
   "claimBoundary": "This matrix records the current state of the system. It does not claim that any capability here produces a benefit, and it does not authorize enabling anything.",
@@ -279,10 +279,26 @@
           "label": "Generate a candidate harness change",
           "status": "absent",
           "evidence": {
-            "source": { "status": "absent", "paths": [], "note": "No code generates a candidate harness, prompt, spec or rule change." },
-            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
-            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
-            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+            "source": {
+              "status": "absent",
+              "paths": [],
+              "note": "No code generates a candidate harness, prompt, spec or rule change."
+            },
+            "engineering": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to test."
+            },
+            "runtime": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to run."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to observe."
+            }
           },
           "verdict": "not-run",
           "limitations": [
@@ -294,10 +310,26 @@
           "label": "Evaluate a harness candidate against a frozen gate",
           "status": "absent",
           "evidence": {
-            "source": { "status": "absent", "paths": [], "note": "No harness-candidate evaluation exists." },
-            "engineering": { "status": "not-run", "paths": [], "note": "No test covers a capability that does not exist." },
-            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
-            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+            "source": {
+              "status": "absent",
+              "paths": [],
+              "note": "No harness-candidate evaluation exists."
+            },
+            "engineering": {
+              "status": "not-run",
+              "paths": [],
+              "note": "No test covers a capability that does not exist."
+            },
+            "runtime": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to run."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to observe."
+            }
           },
           "verdict": "not-run",
           "limitations": [
@@ -309,10 +341,26 @@
           "label": "Land or roll back a harness candidate automatically",
           "status": "absent",
           "evidence": {
-            "source": { "status": "absent", "paths": [], "note": "No automatic merge, apply or rollback path for a self-generated harness change." },
-            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
-            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
-            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+            "source": {
+              "status": "absent",
+              "paths": [],
+              "note": "No automatic merge, apply or rollback path for a self-generated harness change."
+            },
+            "engineering": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to test."
+            },
+            "runtime": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to run."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to observe."
+            }
           },
           "verdict": "not-run",
           "limitations": [
@@ -341,10 +389,26 @@
           "label": "Generate a candidate code change",
           "status": "absent",
           "evidence": {
-            "source": { "status": "absent", "paths": [], "note": "No self-patch, candidate-diff or patch-generation loop exists." },
-            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
-            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
-            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+            "source": {
+              "status": "absent",
+              "paths": [],
+              "note": "No self-patch, candidate-diff or patch-generation loop exists."
+            },
+            "engineering": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to test."
+            },
+            "runtime": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to run."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to observe."
+            }
           },
           "verdict": "not-run",
           "limitations": [
@@ -356,10 +420,26 @@
           "label": "Evaluate a code candidate against the frozen gate",
           "status": "absent",
           "evidence": {
-            "source": { "status": "absent", "paths": [], "note": "No code-candidate evaluation loop exists." },
-            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
-            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
-            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+            "source": {
+              "status": "absent",
+              "paths": [],
+              "note": "No code-candidate evaluation loop exists."
+            },
+            "engineering": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to test."
+            },
+            "runtime": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to run."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to observe."
+            }
           },
           "verdict": "not-run",
           "limitations": []
@@ -369,10 +449,26 @@
           "label": "Merge a self-generated code change",
           "status": "absent",
           "evidence": {
-            "source": { "status": "absent", "paths": [], "note": "No automatic merge path for self-generated product code." },
-            "engineering": { "status": "not-run", "paths": [], "note": "Nothing to test." },
-            "runtime": { "status": "not-run", "paths": [], "note": "Nothing to run." },
-            "effect": { "status": "not-run", "paths": [], "note": "Nothing to observe." }
+            "source": {
+              "status": "absent",
+              "paths": [],
+              "note": "No automatic merge path for self-generated product code."
+            },
+            "engineering": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to test."
+            },
+            "runtime": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to run."
+            },
+            "effect": {
+              "status": "not-run",
+              "paths": [],
+              "note": "Nothing to observe."
+            }
           },
           "verdict": "not-run",
           "limitations": [
@@ -420,9 +516,12 @@
       },
       {
         "id": "baseline-aggregation-run",
-        "status": "not-run",
-        "paths": [],
-        "note": "The pass^k aggregation output directory artifacts/agent-dev-benefit-eval/ does not exist in this checkout, so no baseline aggregation has been run and recorded."
+        "status": "historical-measurement-fail",
+        "paths": [
+          "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
+          "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/verification.v1.json"
+        ],
+        "note": "Historical real-provider measurement: 144 recorded slots, 20 complete baseline cases, pass^3=0.15, paired delta=0, flake failure and missing cost/safety evidence. Current v2 reservation remains insufficient-evidence; no gain is claimed."
       },
       {
         "id": "production-grader",
@@ -434,9 +533,20 @@
         "id": "confidence-interval-and-agreement-math",
         "status": "partial",
         "paths": [
-          "openclaw_runtime/src/knowledge/sekb/shadow-evaluation-offline.ts"
+          "openclaw_runtime/src/knowledge/sekb/shadow-evaluation-offline.ts",
+          "scripts/lib/paired-ablation.mjs",
+          "scripts/rsi-tf0592-statistical-adjudication.mjs"
         ],
-        "note": "A Wilson interval at 0.95 and Cohen's kappa with frozen thresholds exist in the SEKB offline path. There is no bootstrap and no minimum-detectable-effect computation anywhere in the repository."
+        "note": "Wilson case intervals, shared case-cluster paired inference and observed-variance power planning exist. Five pp is a product improvement floor, not a guarantee of detectable effect at 20 cases."
+      },
+      {
+        "id": "deterministic-replay",
+        "status": "pipeline-self-check",
+        "paths": [
+          "harness/specs/fixtures/agent-first-system/trials/aggregate.json",
+          "harness/specs/fixtures/rsi-evidence-loop/evidence-identities.v1.json"
+        ],
+        "note": "The 144-trial Agent-first mock replay uses the same candidate in both arms. pass^k=1.0 is a pipeline self-check, not RSI gain or live-provider quality."
       }
     ]
   },
@@ -444,16 +554,18 @@
     "completeRsiImplementation": false,
     "statement": "ClawX has no complete recursive-self-improvement implementation.",
     "whatExistsInstead": [
-      "One flag-gated, human-confirmed experience loop (SEKB), default off.",
-      "Statistical aggregation and paired-ablation code with fixture-grade inputs only.",
-      "Planning and boundary documents for stages that have not been built."
+      "One flag-gated explicitly confirmed experience loop, default off; adoption and role-memory feedback are diagnostic-only.",
+      "Statistical instruments and calibrated task collections, plus a historical provider measurement that failed.",
+      "Controlled branch research and prospective evaluator contracts; no complete product self-modification loop."
     ],
     "basis": [
       "harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json",
       "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v1.json",
       "docs/dev/rsi-capability-and-boundaries.md",
       "harness/specs/rules/sekb-hermes-default-off-boundary.md",
-      "harness/specs/rules/sekb-assisted-review-boundary.md"
+      "harness/specs/rules/sekb-assisted-review-boundary.md",
+      "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json",
+      "harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json"
     ]
   },
   "lockedBoundaries": {
@@ -467,10 +579,19 @@
     "capabilityClaimed": false
   },
   "prerequisites": {
-    "TF-0604": ["TF-0590", "TF-0592"],
-    "TF-0605": ["stage 1 (TF-0599)"],
-    "TF-0606": ["stage 1 (TF-0599)"],
-    "TF-0609": ["stage 3 (TF-0601)"],
+    "TF-0604": [
+      "TF-0590",
+      "TF-0592"
+    ],
+    "TF-0605": [
+      "stage 1 (TF-0599)"
+    ],
+    "TF-0606": [
+      "stage 1 (TF-0599)"
+    ],
+    "TF-0609": [
+      "stage 3 (TF-0601)"
+    ],
     "rule": "No candidate generation, harness self-modification or code self-modification may be implemented before the stage gate it depends on has landed with evidence."
   },
   "limitations": [

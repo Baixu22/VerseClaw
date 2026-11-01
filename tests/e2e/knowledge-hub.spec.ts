@@ -170,7 +170,7 @@ async function installKnowledgeGovernanceRecorder(app: ElectronApplication): Pro
 }
 
 test.describe('Knowledge Hub MVP', () => {
-  test('initializes, imports, searches, inspects, and applies an editable draft', async ({ electronApp, page }) => {
+  test('initializes, imports, searches, inspects, and applies an editable draft', async ({ electronApp, page }, testInfo) => {
     const runtimeSuggestionToConfirm = {
       cluster_summary: 'Keep knowledge changes reviewable.',
       source_trajectory_ids: ['traj-e2e-1'],
@@ -580,6 +580,8 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByTestId('knowledge-more-actions').click();
     await page.getByTestId('knowledge-tab-runtime').click();
     await expect(page.getByTestId('knowledge-runtime-lessons')).toBeVisible();
+    await expect(page.getByTestId('knowledge-adoption-diagnostic')).toContainText('diagnostic only');
+    await page.screenshot({ path: testInfo.outputPath('adoption-diagnostic.png') });
     await expect(page.getByText('Manual trajectories are audit-only and are not distillation candidates.')).toBeVisible();
     await page.getByTestId('knowledge-runtime-suggest').click();
     await expect(page.getByTestId('knowledge-runtime-suggestion-list')).toContainText('Review before durable knowledge writes');

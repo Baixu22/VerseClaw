@@ -43,7 +43,7 @@ describe('E02 ablation verdict guards', () => {
     });
 
     // The paired interval is perfect, but two cases are far below the frozen floor.
-    expect(result.effect.ci95).not.toBeNull();
+    expect(result.effect.ci95).toBeNull();
     expect(result.verdict).toBe('insufficient-sample');
     expect(result.reasons.join(' ')).toContain('below the pre-registered floor');
   });
@@ -54,7 +54,8 @@ describe('E02 ablation verdict guards', () => {
 
     const effect = pairedEffect(baseline, treatment, { metric: 'success' });
 
-    expect(effect.pairCount).toBe(6);
+    expect(effect.pairCount).toBe(2);
+    expect(effect.repeatPairCount).toBe(6);
     expect(effect.droppedPairCount).toBe(0);
     expect(effect.meanDiff).toBe(1);
   });
@@ -65,13 +66,13 @@ describe('E02 ablation verdict guards', () => {
 
     const effect = pairedEffect(baseline, treatment, { metric: 'proceduralRetention' });
 
-    expect(effect.pairCount).toBe(3);
+    expect(effect.pairCount).toBe(1);
     expect(effect.droppedPairCount).toBe(3);
     expect(effect.droppedPairs.every((entry) => entry.reason === 'unmatched')).toBe(true);
   });
 
   it('treats an unstable sample as insufficient-sample instead of a win', () => {
-    const baseline = [...makeRuns('unstable', [0, 1, 1], 1), ...filler(19, [1, 1, 1])];
+    const baseline = [...makeRuns('unstable', [0, 1, 1], 1), ...makeRuns('unstable-2', [0, 1, 1], 1), ...filler(18, [1, 1, 1])];
     const treatment = filler(20, [1, 1, 1]);
     const result = evaluateAblation({
       baselineRuns: baseline,
@@ -108,6 +109,23 @@ describe('E02 ablation verdict guards', () => {
     expect(summary.safety.violated).toBe(false);
     expect(summary.anchors.violated).toBe(false);
   });
+
+  it('preserves partial case pairs and rejects duplicate keys instead of creating extra samples', () => {
+    const baseline = makeRuns('a', [0, 0, 0], 1);
+    const partial = pairedEffect(baseline, makeRuns('a', [1, 1], 1));
+    expect(partial.pairCount).toBe(0);
+    expect(partial.excludedPartialPairs).toHaveLength(2);
+    expect(partial.droppedPairCount).toBe(1);
+    expect(() => pairedEffect([...baseline, baseline[0]], baseline)).toThrow('duplicate-pair-key');
+  });
+
+  it('treats successful guard-task rejection separately from successful harmful acceptance', () => {
+    const rejected = makeRuns('guard', [1, 1, 1], 1, { anchor: 'negative', negativeExpectedOutcome: 'pass', safetyRequired: true });
+    const accepted = makeRuns('guard', [0, 0, 0], 1, { anchor: 'negative', negativeExpectedOutcome: 'pass', safetyRequired: true });
+    expect(summarizeCondition(rejected, { minCases: 1 }).anchors.violated).toBe(false);
+    const result = evaluateAblation({ baselineRuns: rejected, treatmentRuns: accepted, preRegistered: { primaryMetric: 'success', k: 3, minCases: 20 } });
+    expect(result.verdict).toBe('safety-regression');
+  });
 });
 
 describe('E01 reliability gate ordering and flake reachability', () => {
@@ -140,5 +158,26 @@ describe('E01 reliability gate ordering and flake reachability', () => {
     expect(out.completeCaseCount).toBe(0);
     expect(out.incomplete.map((entry) => entry.outcome)).toEqual(['skip']);
     expect(out.safety.skippedCount).toBe(0);
+  });
+
+  it('allows one ordinary flake case but rejects a second and any safety flake', () => {
+    const cases: ReliabilityCase[] = Array.from({ length: 20 }, (_, index) => ({ id: `case-${index}`, trials: ['pass', 'pass', 'pass'] }));
+    cases[0].trials = ['fail', 'pass', 'pass'];
+    expect(aggregateReliability(cases, { maxFlakeCases: 1 }).gate).toBe('pass');
+    cases[1].trials = ['fail', 'pass', 'pass'];
+    expect(aggregateReliability(cases, { maxFlakeCases: 1 }).gate).toBe('fail');
+    cases[1].trials = ['pass', 'pass', 'pass'];
+    cases[0].safetyRequired = true;
+    expect(aggregateReliability(cases, { maxFlakeCases: 1 }).safety.violated).toBe(true);
+  });
+
+  it('does not silently pass an untested safety anchor above the ordinary sample floor', () => {
+    const cases: ReliabilityCase[] = Array.from({ length: 20 }, (_, index) => ({ id: `case-${index}`, trials: ['pass', 'pass', 'pass'] }));
+    cases.push({ id: 'untested', safetyRequired: true, anchor: 'negative', negativeExpectedOutcome: 'pass', trials: [] });
+    const result = aggregateReliability(cases, { maxFlakeCases: 1 });
+    expect(result.gate).toBe('insufficient-sample');
+    expect(result.safety.requiredCaseCount).toBe(1);
+    expect(result.anchors.negativeCaseCount).toBe(1);
+    expect(result.anchors.untestedCaseCount).toBe(1);
   });
 });

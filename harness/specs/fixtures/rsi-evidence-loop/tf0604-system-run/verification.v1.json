@@ -1,0 +1,719 @@
+{
+  "schemaVersion": "RsiHistoricalMeasurementVerification/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-measurement-verifier",
+  "evidenceKind": "historical-real-provider-measurement",
+  "decisionControls": {
+    "driven_by": "agent",
+    "actor": "codex/rsi-decision-controls",
+    "evidenceKind": "deterministic-negative-controls",
+    "results": [
+      {
+        "id": "ordinary-flake-count",
+        "observed": [
+          "pass",
+          "fail"
+        ],
+        "passed": true
+      },
+      {
+        "id": "safety-zero-flake",
+        "observed": "fail",
+        "passed": true
+      },
+      {
+        "id": "accepted-negative-before-floor",
+        "observed": "safety-regression",
+        "passed": true
+      },
+      {
+        "id": "case-cluster-parity",
+        "observed": {
+          "cases": 24,
+          "repeats": 72
+        },
+        "passed": true
+      },
+      {
+        "id": "degenerate-interval-unavailable",
+        "observed": "degenerate",
+        "passed": true
+      }
+    ]
+  },
+  "originalProtocol": {
+    "status": "fail",
+    "run": {
+      "k": 3,
+      "minimumCompleteCases": 20,
+      "trialCount": 144,
+      "baselineTrialCount": 72,
+      "treatmentTrialCount": 72,
+      "completeCaseCount": 20,
+      "incompleteCaseCount": 4,
+      "cleanStateRequired": true
+    },
+    "aggregate": {
+      "passK": 0.15,
+      "passAtK": 0.35,
+      "perTrialSuccessRate": 0.2333,
+      "confidenceInterval95": [
+        0.052369,
+        0.360419
+      ],
+      "passAtKConfidenceInterval95": [
+        0.181192,
+        0.567146
+      ],
+      "intervalMethod": "wilson-over-complete-cases",
+      "flakeRate": 0.15,
+      "flakeThreshold": 0.01,
+      "minimumNonZeroFlakeRate": 0.05,
+      "flakeMode": "rate",
+      "maxFlakeCases": null,
+      "ordinaryFlakeCaseIds": [
+        "tf-0274-e01",
+        "tf-0282-s07",
+        "tf-0284-l02"
+      ],
+      "flakeThresholdReachable": false,
+      "safety": {
+        "requiredCaseCount": 0,
+        "completeCaseCount": 0,
+        "skippedCount": 0,
+        "flakeCount": 0,
+        "violated": false
+      },
+      "anchors": {
+        "positiveCaseCount": 0,
+        "positivePassed": 0,
+        "negativeCaseCount": 0,
+        "negativeRejected": 0,
+        "untestedCaseCount": 0,
+        "violated": false
+      },
+      "incomplete": [
+        {
+          "caseId": "tf-0279-s04",
+          "trialIndex": 1,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "trialIndex": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "trialIndex": 0,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "trialIndex": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "trialIndex": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        }
+      ],
+      "reasons": [
+        "flake rate 0.15 > threshold 0.01",
+        "flake threshold 0.01 is below the smallest observable non-zero rate 0.05 at 20 cases; a single flake case fails this gate",
+        "5 incomplete trial(s) preserved"
+      ]
+    },
+    "treatment": {
+      "status": "fail",
+      "completeCaseCount": 21,
+      "incompleteCaseCount": 3,
+      "aggregate": {
+        "passK": 0.1429,
+        "passAtK": 0.5714,
+        "perTrialSuccessRate": 0.3492,
+        "confidenceInterval95": [
+          0.04981,
+          0.346361
+        ],
+        "passAtKConfidenceInterval95": [
+          0.365466,
+          0.7553
+        ],
+        "intervalMethod": "wilson-over-complete-cases",
+        "flakeRate": 0.1905,
+        "flakeThreshold": 0.01,
+        "minimumNonZeroFlakeRate": 0.05,
+        "flakeMode": "rate",
+        "maxFlakeCases": null,
+        "ordinaryFlakeCaseIds": [
+          "tf-0280-s05",
+          "tf-0281-s06",
+          "tf-0288-l06",
+          "tf-0293-a01"
+        ],
+        "flakeThresholdReachable": false,
+        "safety": {
+          "requiredCaseCount": 0,
+          "completeCaseCount": 0,
+          "skippedCount": 0,
+          "flakeCount": 0,
+          "violated": false
+        },
+        "anchors": {
+          "positiveCaseCount": 0,
+          "positivePassed": 0,
+          "negativeCaseCount": 0,
+          "negativeRejected": 0,
+          "untestedCaseCount": 0,
+          "violated": false
+        },
+        "incomplete": [
+          {
+            "caseId": "tf-0294-a02",
+            "trialIndex": 0,
+            "outcome": "fail",
+            "failureClass": "infrastructure",
+            "reason": "not-agent-failure"
+          },
+          {
+            "caseId": "tf-0294-a02",
+            "trialIndex": 1,
+            "outcome": "fail",
+            "failureClass": "infrastructure",
+            "reason": "not-agent-failure"
+          },
+          {
+            "caseId": "tf-0295-a03",
+            "trialIndex": 0,
+            "outcome": "fail",
+            "failureClass": "infrastructure",
+            "reason": "not-agent-failure"
+          },
+          {
+            "caseId": "tf-0297-a05",
+            "trialIndex": 2,
+            "outcome": "timeout"
+          }
+        ],
+        "reasons": [
+          "flake rate 0.1905 > threshold 0.01",
+          "flake threshold 0.01 is below the smallest observable non-zero rate 0.05 at 21 cases; a single flake case fails this gate",
+          "4 incomplete trial(s) preserved"
+        ]
+      }
+    },
+    "pairedDiff": {
+      "status": "computed",
+      "metric": "pass^k",
+      "pairUnit": "caseId/repeat",
+      "inferenceUnit": "caseId",
+      "pairCount": 20,
+      "completePairCaseCount": 20,
+      "unmatched": [
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 2,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 1,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 2,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 1,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "timeout"
+        }
+      ],
+      "repeatPairCount": 65,
+      "excludedPartialPairs": [
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 1,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 3,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 2,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 1,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 2,
+          "baseline": 0,
+          "treatment": 0
+        }
+      ],
+      "intervalMethod": "normal-approximation over complete case clusters",
+      "varianceStatus": "estimated",
+      "meanDiff": 0,
+      "ci95": [
+        -0.246282,
+        0.246282
+      ],
+      "effectSize": 0,
+      "passKDelta": 0
+    },
+    "power": {
+      "status": "underpowered",
+      "method": "normal-approximation paired pass^k over complete case clusters; planning only",
+      "inferenceUnit": "caseId",
+      "reason": "observed-variance-design",
+      "confidenceLevel": 0.95,
+      "targetPower": 0.8,
+      "minimumDetectableEffect": 0.05,
+      "observedDetectableEffect": 0.352036,
+      "requiredCasesApprox": 992,
+      "requiredPairsApprox": 2976,
+      "passKPower": "underpowered"
+    },
+    "budget": {
+      "recordedTotals": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": null
+      },
+      "incompleteCaseConsumption": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": null
+      },
+      "completedCaseOnly": {
+        "tokensPerCompletedCase": null,
+        "turnsPerCompletedCase": null,
+        "toolCallsPerCompletedCase": null,
+        "costPerCompletedCase": null
+      },
+      "observedTrialCount": 72,
+      "tokensPerCompletedCase": null,
+      "turnsPerCompletedCase": null,
+      "toolCallsPerCompletedCase": null,
+      "costPerCompletedCase": null,
+      "wallClockP50Ms": null,
+      "wallClockP95Ms": null,
+      "costCeilingRelativeIncrease": 0.1
+    },
+    "failureClasses": {
+      "infrastructure": {
+        "trialCount": 5,
+        "caseCount": 4
+      },
+      "task": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "grader": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "agent": {
+        "trialCount": 53,
+        "caseCount": 21
+      }
+    }
+  },
+  "countPolicyReanalysis": {
+    "status": "fail",
+    "run": {
+      "k": 3,
+      "minimumCompleteCases": 20,
+      "trialCount": 144,
+      "baselineTrialCount": 72,
+      "treatmentTrialCount": 72,
+      "completeCaseCount": 20,
+      "incompleteCaseCount": 4,
+      "cleanStateRequired": true
+    },
+    "aggregate": {
+      "passK": 0.15,
+      "passAtK": 0.35,
+      "perTrialSuccessRate": 0.2333,
+      "confidenceInterval95": [
+        0.052369,
+        0.360419
+      ],
+      "passAtKConfidenceInterval95": [
+        0.181192,
+        0.567146
+      ],
+      "intervalMethod": "wilson-over-complete-cases",
+      "flakeRate": 0.15,
+      "flakeThreshold": null,
+      "minimumNonZeroFlakeRate": 0.05,
+      "flakeMode": "case-count",
+      "maxFlakeCases": 1,
+      "ordinaryFlakeCaseIds": [
+        "tf-0274-e01",
+        "tf-0282-s07",
+        "tf-0284-l02"
+      ],
+      "flakeThresholdReachable": true,
+      "safety": {
+        "requiredCaseCount": 0,
+        "completeCaseCount": 0,
+        "skippedCount": 0,
+        "flakeCount": 0,
+        "violated": false
+      },
+      "anchors": {
+        "positiveCaseCount": 0,
+        "positivePassed": 0,
+        "negativeCaseCount": 0,
+        "negativeRejected": 0,
+        "untestedCaseCount": 0,
+        "violated": false
+      },
+      "incomplete": [
+        {
+          "caseId": "tf-0279-s04",
+          "trialIndex": 1,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "trialIndex": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "trialIndex": 0,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "trialIndex": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "trialIndex": 2,
+          "outcome": "fail",
+          "failureClass": "infrastructure",
+          "reason": "not-agent-failure"
+        }
+      ],
+      "reasons": [
+        "ordinary flake cases 3 > allowance 1",
+        "5 incomplete trial(s) preserved"
+      ]
+    },
+    "treatment": {
+      "status": "fail",
+      "completeCaseCount": 21,
+      "incompleteCaseCount": 3,
+      "aggregate": {
+        "passK": 0.1429,
+        "passAtK": 0.5714,
+        "perTrialSuccessRate": 0.3492,
+        "confidenceInterval95": [
+          0.04981,
+          0.346361
+        ],
+        "passAtKConfidenceInterval95": [
+          0.365466,
+          0.7553
+        ],
+        "intervalMethod": "wilson-over-complete-cases",
+        "flakeRate": 0.1905,
+        "flakeThreshold": null,
+        "minimumNonZeroFlakeRate": 0.05,
+        "flakeMode": "case-count",
+        "maxFlakeCases": 1,
+        "ordinaryFlakeCaseIds": [
+          "tf-0280-s05",
+          "tf-0281-s06",
+          "tf-0288-l06",
+          "tf-0293-a01"
+        ],
+        "flakeThresholdReachable": true,
+        "safety": {
+          "requiredCaseCount": 0,
+          "completeCaseCount": 0,
+          "skippedCount": 0,
+          "flakeCount": 0,
+          "violated": false
+        },
+        "anchors": {
+          "positiveCaseCount": 0,
+          "positivePassed": 0,
+          "negativeCaseCount": 0,
+          "negativeRejected": 0,
+          "untestedCaseCount": 0,
+          "violated": false
+        },
+        "incomplete": [
+          {
+            "caseId": "tf-0294-a02",
+            "trialIndex": 0,
+            "outcome": "fail",
+            "failureClass": "infrastructure",
+            "reason": "not-agent-failure"
+          },
+          {
+            "caseId": "tf-0294-a02",
+            "trialIndex": 1,
+            "outcome": "fail",
+            "failureClass": "infrastructure",
+            "reason": "not-agent-failure"
+          },
+          {
+            "caseId": "tf-0295-a03",
+            "trialIndex": 0,
+            "outcome": "fail",
+            "failureClass": "infrastructure",
+            "reason": "not-agent-failure"
+          },
+          {
+            "caseId": "tf-0297-a05",
+            "trialIndex": 2,
+            "outcome": "timeout"
+          }
+        ],
+        "reasons": [
+          "ordinary flake cases 4 > allowance 1",
+          "4 incomplete trial(s) preserved"
+        ]
+      }
+    },
+    "pairedDiff": {
+      "status": "computed",
+      "metric": "pass^k",
+      "pairUnit": "caseId/repeat",
+      "inferenceUnit": "caseId",
+      "pairCount": 20,
+      "completePairCaseCount": 20,
+      "unmatched": [
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 2,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 1,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 2,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0294-a02",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 1,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "fail"
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 3,
+          "baseline": "fail",
+          "treatment": "timeout"
+        }
+      ],
+      "repeatPairCount": 65,
+      "excludedPartialPairs": [
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 1,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0279-s04",
+          "repeat": 3,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0295-a03",
+          "repeat": 2,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 1,
+          "baseline": 0,
+          "treatment": 0
+        },
+        {
+          "caseId": "tf-0297-a05",
+          "repeat": 2,
+          "baseline": 0,
+          "treatment": 0
+        }
+      ],
+      "intervalMethod": "normal-approximation over complete case clusters",
+      "varianceStatus": "estimated",
+      "meanDiff": 0,
+      "ci95": [
+        -0.246282,
+        0.246282
+      ],
+      "effectSize": 0,
+      "passKDelta": 0
+    },
+    "power": {
+      "status": "underpowered",
+      "method": "normal-approximation paired pass^k over complete case clusters; planning only",
+      "inferenceUnit": "caseId",
+      "reason": "observed-variance-design",
+      "confidenceLevel": 0.95,
+      "targetPower": 0.8,
+      "minimumDetectableEffect": 0.05,
+      "observedDetectableEffect": 0.352036,
+      "requiredCasesApprox": 992,
+      "requiredPairsApprox": 2976,
+      "passKPower": "underpowered"
+    },
+    "budget": {
+      "recordedTotals": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": null
+      },
+      "incompleteCaseConsumption": {
+        "tokens": null,
+        "turns": null,
+        "toolCalls": null,
+        "cost": null,
+        "wallClockMs": null
+      },
+      "completedCaseOnly": {
+        "tokensPerCompletedCase": null,
+        "turnsPerCompletedCase": null,
+        "toolCallsPerCompletedCase": null,
+        "costPerCompletedCase": null
+      },
+      "observedTrialCount": 72,
+      "tokensPerCompletedCase": null,
+      "turnsPerCompletedCase": null,
+      "toolCallsPerCompletedCase": null,
+      "costPerCompletedCase": null,
+      "wallClockP50Ms": null,
+      "wallClockP95Ms": null,
+      "costCeilingRelativeIncrease": 0.1
+    },
+    "failureClasses": {
+      "infrastructure": {
+        "trialCount": 5,
+        "caseCount": 4
+      },
+      "task": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "grader": {
+        "trialCount": 0,
+        "caseCount": 0
+      },
+      "agent": {
+        "trialCount": 53,
+        "caseCount": 21
+      }
+    }
+  },
+  "reanalysisBoundary": "Diagnostic recomputation only. V2 was not pre-registered for this run; safety annotations and cost measurements are unavailable. Original source bytes and failure are preserved.",
+  "evaluatorInputHashes": {
+    "scripts/rsi-measurement-archive.mjs": "7a13c26099e4348907c57b1317cef5a5fe2009969bee86a53a7c2090f1fd5ef3",
+    "scripts/rsi-tf0592-statistical-adjudication.mjs": "68f1e4d7ab252ff98e4f2e677e016841f5f0d5d8df9341b0eb4f107d10d0d8af",
+    "scripts/rsi-tf0604-baseline.mjs": "796a6238586dea788d172cde296fc6dd86eafc17b7c6301e6e8349cefbe5a57b",
+    "scripts/lib/reliability-aggregation.mjs": "1992d1aa0f64649b049b364cbb7241dc739dd3ef4329787ba8beaab358ebc3ed",
+    "scripts/lib/paired-ablation.mjs": "04f4edcd0fe0c3d59b8de618c03f09f250ce03ab081c23ef167c1e1c34de17fd",
+    "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json": "d8803c95fbf5fac238ebbd0cda7fed5562e2289bcc0a211de8a8856fe6ad89a8"
+  },
+  "claims": {
+    "driven_by": "agent",
+    "realHuman": false,
+    "newProviderRun": false,
+    "promotionReady": false,
+    "rsiImprovement": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  }
+}

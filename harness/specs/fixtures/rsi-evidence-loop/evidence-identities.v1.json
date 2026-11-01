@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "RsiEvidenceIdentities/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-decision-implementation",
+  "identities": [
+    {
+      "id": "agent-first-replay-20261031",
+      "name": "replay",
+      "evidenceKind": "deterministic-pipeline-self-check",
+      "path": "harness/specs/fixtures/agent-first-system/trials",
+      "liveProvider": false,
+      "distinctTreatment": false,
+      "rsiImprovement": false,
+      "boundary": "Stable original paths and sealed bytes are retained; this is the canonical collection identity, not a retrospective change to its verdict."
+    },
+    {
+      "id": "historical-real-provider-measurement-20261031",
+      "name": "historical-measurement",
+      "evidenceKind": "historical-real-provider-measurement",
+      "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run",
+      "sourceCommit": "4645efc486ab5053171807ce0f0cd1caf0c27e3b",
+      "liveProvider": true,
+      "rsiImprovement": false,
+      "promotionReady": false,
+      "boundary": "Historical v1 failure, null cost/safety evidence and source inconsistencies are preserved; current v2 recomputation is diagnostic-only."
+    }
+  ]
+}

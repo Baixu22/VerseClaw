@@ -56,6 +56,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 
 - Workspace Context と read-only DCS context tools は宣言された health / permission gate 下で有効です。
 - Runtime Memory injection、SEKB automatic writeback、Browser private network は default-on ではありません。
+- メモリのフィードバックと SEKB 採用回数は診断専用です。フィードバックは検索順位や保持判断に影響しません。[RSI の証拠と境界](docs/dev/rsi-capability-and-boundaries.md) では過去の測定と決定的なリプレイを区別します。
 - VToken は retired。旧 env/config では production assembly / sidecar を再有効化できません。
 - VerseGit は default-off / landed-unwired。VerseShell は default-off controlled foundation。VerseBrowser は live driver snapshot の action のみ advertise します。
 - Dreams は retired。Image Generation は developer/test gate で、通常の製品 navigation ではありません。

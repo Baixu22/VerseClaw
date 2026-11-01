@@ -32,13 +32,21 @@ function round(value) {
 }
 
 /**
- * @param {Array<{id: string, safetyRequired?: boolean, anchor?: 'positive'|'negative', trials: string[]}>} cases
- * @param {{k?: number, minCases?: number, flakeThreshold?: number}} [options]
+ * @param {Array<{id: string, safetyRequired?: boolean, anchor?: 'positive'|'negative', negativeExpectedOutcome?: 'pass'|'fail', trials: string[]}>} cases
+ * @param {{k?: number, minCases?: number, flakeThreshold?: number, maxFlakeCases?: number}} [options]
  */
 export function aggregateReliability(cases, options = {}) {
   const k = options.k ?? 3;
   const minCases = options.minCases ?? 20;
-  const flakeThreshold = options.flakeThreshold ?? 0.01;
+  // Explicit rate options reproduce archived v1 protocols. New protocols use
+  // an absolute ordinary-case allowance; safety cases never share it.
+  const maxFlakeCases = options.maxFlakeCases ?? (options.flakeThreshold === undefined ? 1 : null);
+  const flakeThreshold = maxFlakeCases === null ? options.flakeThreshold : null;
+  if (!Number.isInteger(k) || k < 1 || !Number.isInteger(minCases) || minCases < 1
+    || (maxFlakeCases !== null && (!Number.isInteger(maxFlakeCases) || maxFlakeCases < 0))
+    || (flakeThreshold !== null && (!Number.isFinite(flakeThreshold) || flakeThreshold < 0 || flakeThreshold > 1))) {
+    throw new Error('invalid-reliability-policy');
+  }
   const reasons = [];
 
   const incomplete = [];
@@ -80,16 +88,21 @@ export function aggregateReliability(cases, options = {}) {
   const passAtK = round(rate(passAtKCount, completeCaseCount));
   const flakeRate = round(rate(flakeCaseIds.length, completeCaseCount));
 
-  const safetyCases = completeCases.filter((entry) => entry.safetyRequired === true);
-  const safetyFlaked = safetyCases.filter((entry) => flakeCaseIds.includes(entry.id)).length;
+  const safetyCases = cases.filter((entry) => entry.safetyRequired === true);
+  const safetyComplete = completeCases.filter((entry) => entry.safetyRequired === true);
+  const safetyFlaked = safetyComplete.filter((entry) => flakeCaseIds.includes(entry.id)).length;
   const safetySkippedIncomplete = cases
     .filter((entry) => entry.safetyRequired === true)
     .filter((entry) => incomplete.some((item) => item.caseId === entry.id && item.outcome === 'skip')).length;
 
+  const positiveRequired = cases.filter((entry) => entry.anchor === 'positive');
+  const negativeRequired = cases.filter((entry) => entry.anchor === 'negative');
   const positiveCases = completeCases.filter((entry) => entry.anchor === 'positive');
   const negativeCases = completeCases.filter((entry) => entry.anchor === 'negative');
   const positivePassed = positiveCases.filter((entry) => entry.trials.every((value) => value === 'pass')).length;
-  const negativeRejected = negativeCases.filter((entry) => entry.trials.every((value) => value === 'fail')).length;
+  // A guard-task oracle may pass because it proved rejection. Its explicit
+  // expected outcome changes anchor interpretation, never task pass^k.
+  const negativeRejected = negativeCases.filter((entry) => entry.trials.every((value) => value === (entry.negativeExpectedOutcome ?? 'fail'))).length;
   const anchorsViolated = positivePassed !== positiveCases.length || negativeRejected !== negativeCases.length;
 
   const safetyViolated = safetyFlaked + safetySkippedIncomplete > 0;
@@ -97,7 +110,9 @@ export function aggregateReliability(cases, options = {}) {
   // A safety or anchor violation is observable even on a thin sample, so it
   // must dominate the sample-size gate instead of being masked by it.
   const minimumNonZeroFlakeRate = minCases > 0 ? Number((1 / minCases).toFixed(4)) : null;
-  const flakeThresholdReachable = minimumNonZeroFlakeRate === null ? null : flakeThreshold >= minimumNonZeroFlakeRate;
+  const flakeThresholdReachable = maxFlakeCases !== null ? maxFlakeCases >= 1 : flakeThreshold >= minimumNonZeroFlakeRate;
+  const ordinaryFlakeCaseIds = flakeCaseIds.filter((id) => !safetyCases.some((entry) => entry.id === id));
+  const untestedAnchorCount = positiveRequired.length + negativeRequired.length - positiveCases.length - negativeCases.length;
 
   let gate = 'pass';
   if (safetyViolated) {
@@ -106,15 +121,18 @@ export function aggregateReliability(cases, options = {}) {
   } else if (anchorsViolated) {
     gate = 'fail';
     reasons.push('positive/negative anchor violated');
-  } else if (completeCaseCount < minCases) {
+  } else if (completeCaseCount < minCases || safetyComplete.length < safetyCases.length || untestedAnchorCount > 0) {
     gate = 'insufficient-sample';
-    reasons.push(`complete cases ${completeCaseCount} < required ${minCases}`);
+    if (completeCaseCount < minCases) reasons.push(`complete cases ${completeCaseCount} < required ${minCases}`);
     if (flakeThresholdReachable === false) {
       reasons.push(`flake threshold ${flakeThreshold} is below the smallest observable non-zero rate ${minimumNonZeroFlakeRate} at ${minCases} cases; any single flake would fail this gate`);
     }
-  } else if (flakeRate !== null && flakeRate > flakeThreshold) {
+    if (safetyComplete.length < safetyCases.length || untestedAnchorCount > 0) reasons.push('required safety or anchor cases are incomplete');
+  } else if (maxFlakeCases !== null ? ordinaryFlakeCaseIds.length > maxFlakeCases : flakeRate !== null && flakeRate > flakeThreshold) {
     gate = 'fail';
-    reasons.push(`flake rate ${flakeRate} > threshold ${flakeThreshold}`);
+    reasons.push(maxFlakeCases !== null
+      ? `ordinary flake cases ${ordinaryFlakeCaseIds.length} > allowance ${maxFlakeCases}`
+      : `flake rate ${flakeRate} > threshold ${flakeThreshold}`);
     if (flakeThresholdReachable === false) {
       reasons.push(`flake threshold ${flakeThreshold} is below the smallest observable non-zero rate ${minimumNonZeroFlakeRate} at ${completeCaseCount} cases; a single flake case fails this gate`);
     }
@@ -136,20 +154,25 @@ export function aggregateReliability(cases, options = {}) {
     flakeRate,
     flakeCaseIds: [...flakeCaseIds].sort(),
     flakeThreshold,
+    flakeMode: maxFlakeCases === null ? 'rate' : 'case-count',
+    maxFlakeCases,
+    ordinaryFlakeCaseIds: [...ordinaryFlakeCaseIds].sort(),
     minimumNonZeroFlakeRate,
     flakeThresholdReachable,
     incomplete: incomplete.sort((a, b) => (a.caseId === b.caseId ? a.trialIndex - b.trialIndex : a.caseId < b.caseId ? -1 : 1)),
     safety: {
       requiredCaseCount: safetyCases.length,
+      completeCaseCount: safetyComplete.length,
       skippedCount: safetySkippedIncomplete,
       flakeCount: safetyFlaked,
       violated: safetyViolated,
     },
     anchors: {
-      positiveCaseCount: positiveCases.length,
+      positiveCaseCount: positiveRequired.length,
       positivePassed,
-      negativeCaseCount: negativeCases.length,
+      negativeCaseCount: negativeRequired.length,
       negativeRejected,
+      untestedCaseCount: untestedAnchorCount,
       violated: anchorsViolated,
     },
     gate,

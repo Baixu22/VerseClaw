@@ -2858,8 +2858,8 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                               </Badge>
                               <span className="text-xs font-medium text-foreground">{tt('roles.memoryQualityTitle', 'Memory quality')}</span>
                             </div>
-                            <p className="text-2xs text-muted-foreground">
-                              {tt('roles.memoryQualityHint', 'Quality is computed only from real injections, reviews, conflicts, retention signals, and user feedback. Missing data stays explicit.')}
+                            <p className="text-2xs text-muted-foreground" data-testid="role-memory-feedback-diagnostic">
+                              {t('roles.memoryQualityHint')}
                             </p>
                           </div>
                           <span className="text-2xs text-muted-foreground">{formatMemoryDate(memoryUtility?.generatedAt)}</span>

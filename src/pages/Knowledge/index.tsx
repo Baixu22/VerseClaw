@@ -2444,6 +2444,7 @@ export function Knowledge() {
 
                       <section className="space-y-3" aria-labelledby="runtime-principles-title">
                         <h4 id="runtime-principles-title" className="text-sm font-semibold">{t('runtime.principlesTitle')}</h4>
+                        <p className="text-xs leading-5 text-muted-foreground" data-testid="knowledge-adoption-diagnostic">{t('runtime.adoptionDiagnostic')}</p>
                         <div className="space-y-2">
                           {runtimeLessons.activePrinciples.map((principle) => (
                             <div key={principle.principle_id} className="rounded-xl bg-surface-input p-3">
