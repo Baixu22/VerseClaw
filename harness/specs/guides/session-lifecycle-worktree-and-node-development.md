@@ -115,3 +115,29 @@ $env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'; $env:COMPASS_AGENT_NAME='<�
 分支：`codex/session-lifecycle-derivation`，工作树 `D:\ClawX-work\session-lifecycle-derivation`。
 
 下一叶建议 A2：先做 flag-off parity 基线（每轮最终 prompt 的字节快照），再接线；任何字节差异即为失败。
+
+
+## 6. 从这一轮学到的（2026-11-01 补充）
+
+**6.1 会改 prompt 的叶子必须先拆。**
+A2 原本写成一个节点，实际要动 `get-reply-run` 的装配路径。正确拆法是
+A2a = 计划（纯函数，不接线）+ A2b = 接线与 flag-off parity 门禁，A2a 的产物就是 A2b 的字节基线。
+判断标准：**这一叶会不会改变任何一轮真实发送的内容？** 会，就拆。
+
+**6.2 "已落地未接线"必须显式声明。**
+仓库有 `landed-unwired-closeout` 纪律：未接线的产物可以收口，但必须写进 spec 的
+wiring status 与节点证据，不能让它看起来像已生效。配套要求是一条**会真的失败**的负例
+（源码扫描 prompt owner 是否引用了该模块）。收口前请临时注入一行验证它会红，再撤回——
+空断言比没有断言更糟。
+
+**6.3 测试失败先修实现，别改断言。**
+本轮两个失败都是真实缺陷：`applied` 分支丢了 owner detail；pack 字符数应当优先用
+owner 自报的 `budget.usedChars` 而不是自行累加 item。两个都改了实现。
+
+**6.4 flat 分支上 diffBase 要逐叶前进。**
+每叶 spec 的 `diffBase` = 该叶开始前的 HEAD。整分支跑 validate 必然报"未覆盖的改动"，
+这是设计而非缺陷；按叶用 `--since <该叶 diffBase>` 复验。
+
+**6.5 累计提交要能干净重排。**
+若发现某叶的 spec 改动落进了后一叶的区间，用 tag 保住两个提交再 reset + cherry-pick 重排，
+比 amend 到一半更安全。本轮就是靠 `git tag tmp-a3/tmp-docs` 重排成功的。
