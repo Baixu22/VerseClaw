@@ -463,7 +463,7 @@ grep -cE "assertAuthorizedHostSender|event\.sender\b" electron/main/ipc-handlers
 |---|---|
 | 开工 HEAD | `b9d46c37aa665d7fa30a6c1abb07beec8eac092a`（tree `bb7f6e976f42a898579b6d0cda8c94a0fca54c1e`），`git status --porcelain` 0 行 |
 | 会话期间主检出被其他主线推进 | `80ba67bb7`（RSI）→ `06bb4b0b1` / `f3710e5f8`（session-lifecycle 合并）→ `97cda35de`（RSI）。本叶改动集与这些提交无交集；候选落在提交时的 HEAD 之上 |
-| 候选 commit | 见 12.7（提交后回填） |
+| 候选 commit | `512dc31a44b98ae8a25e3bc47bd6822353963d65`（tree `40e9c7e0267e3d1e0918ef3556bf71f676551165`，父 `97cda35de`，11 文件 +399/−46） |
 | 禁改路径 diff | `electron/`、`shared/`、`docs/dev/default-config-matrix.md`、`src/lib/host-api.ts`、`src/lib/host-api-client.ts`、`tests/e2e/fixtures/**`、`package.json`：候选相对其父提交 **0 行** |
 
 ### 12.2 迁移位点（逐处）
@@ -562,5 +562,5 @@ grep -lE "electron(\?)?\.openExternal" dist/assets/*.js | wc -l                 
 
 | 项 | 值 |
 |---|---|
-| 实现提交 | `PENDING_IMPL_COMMIT` |
-| 回填提交 | `PENDING_BACKFILL_COMMIT` |
+| 实现提交 | `512dc31a44b98ae8a25e3bc47bd6822353963d65` |
+| 回填提交 | 本节所在提交（`512dc31a4` 之后的仅文档 + 清单 `commit` 字段提交；SHA 见 `git log --oneline -2`） |

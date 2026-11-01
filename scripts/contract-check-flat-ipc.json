@@ -89,6 +89,7 @@
         "status": "consumers-migrated",
         "node": "TF-0649",
         "migratedOn": "2026-11-02",
+        "commit": "512dc31a44b98ae8a25e3bc47bd6822353963d65",
         "consumersBefore": ["tests/e2e/provider-lifecycle.spec.ts:11"],
         "consumersAfter": []
       }
@@ -177,6 +178,7 @@
         "status": "consumers-migrated",
         "node": "TF-0649",
         "migratedOn": "2026-11-02",
+        "commit": "512dc31a44b98ae8a25e3bc47bd6822353963d65",
         "consumersBefore": [
           "src/components/channels/ChannelConfigModal.tsx:423-424",
           "src/pages/Settings/index.tsx:2289",
@@ -262,6 +264,7 @@
         "status": "consumers-migrated",
         "node": "TF-0649",
         "migratedOn": "2026-11-02",
+        "commit": "512dc31a44b98ae8a25e3bc47bd6822353963d65",
         "consumersBefore": [
           "tests/e2e/dcs-prod-p0-settings.spec.ts:41",
           "tests/e2e/settings-memory-embedding.spec.ts:14",
@@ -307,6 +310,7 @@
         "status": "consumers-migrated",
         "node": "TF-0649",
         "migratedOn": "2026-11-02",
+        "commit": "512dc31a44b98ae8a25e3bc47bd6822353963d65",
         "consumersBefore": ["tests/e2e/token-usage.spec.ts:106", "tests/e2e/token-usage.spec.ts:129"],
         "consumersAfter": []
       }
