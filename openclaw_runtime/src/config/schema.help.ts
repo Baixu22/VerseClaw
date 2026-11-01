@@ -2000,6 +2000,10 @@ export const FIELD_HELP: Record<string, string> = {
     "Stage 4 role-memory knowledge context block controls for subagent-session knowledge Block production from buildContextPack.",
   "runtime.contextBlock.role-memory.enabled":
     "Enable DCS Stage 4 role-memory knowledge Block production and ## Knowledge prompt injection for subagent sessions (default: false).",
+  "runtime.contextBlock.checkpointedContextReset":
+    "TF-0645 checkpoint-first new-context controls. When enabled, the sessions_new_context tool archives the current transcript, verifies the archive, and only then schedules a reset after the active turn. Default: false (tool not registered; prompt and tool list unchanged).",
+  "runtime.contextBlock.checkpointedContextReset.enabled":
+    "Enable the checkpoint-first reset tool (default: false). Also enabled by VERSE_CHECKPOINTED_CONTEXT_RESET.",
   "runtime.contextBlock.sessionStartInjection":
     "A2b start-of-session injection controls. When enabled, runtime-loaded startup context is delivered as bounded ## Session Start system-prompt candidates charged to the shared turn injection budget, instead of being spliced into the user message. Default: false (byte-identical turn prompts).",
   "runtime.contextBlock.sessionStartInjection.enabled":

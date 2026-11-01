@@ -778,6 +778,8 @@ export const FIELD_LABELS: Record<string, string> = {
   "runtime.memory.provider": "Runtime Memory Provider",
   "runtime.memory.proposeFacts": "Runtime Memory Fact Proposals",
   "runtime.memory.persist": "Runtime Memory Persist Gate",
+  "runtime.contextBlock.checkpointedContextReset": "Checkpointed Context Reset",
+  "runtime.contextBlock.checkpointedContextReset.enabled": "Checkpointed Context Reset Enabled",
   "runtime.contextBlock.sessionStartInjection": "Session Start Injection",
   "runtime.contextBlock.sessionStartInjection.enabled": "Session Start Injection Enabled",
   "runtime.contextBlock.sessionStartInjection.budgetChars": "Session Start Injection Budget (chars)",

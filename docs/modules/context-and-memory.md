@@ -216,6 +216,22 @@ attempt 结束即删除；唯一形状正确的落盘载体按 `turnId` / `attem
 - **开关**：测试运行器之外默认开启（避免测试写进真实状态目录）；`VERSE_CONTEXT_DISCARD_ATTRIBUTION=0` 关闭、`=1` 强制开启。落盘位置 `<stateDir>/context-discards.jsonl`。
 
 非目标：不自动再注入被丢内容、不改 compaction 触发点、不复活 TF-0129。
+## 4.3 checkpoint-first 新上下文（`sessions_new_context`，默认关闭）
+
+普通 reset 会把当前窗口直接丢掉，既无摘要也无恢复点。本原语把顺序倒过来：**先归档、证明归档可读、再重置**。
+
+1. 惰性读取当前会话 transcript（不用工具就不读）。
+2. 写 `ContextArchive/v1`（sha256 + payload，文件权限 0600）。
+3. 重新读文件，比对 archiveId / 长度 / digest，并用库内 payload 重算 digest。
+4. 只有前三步全部通过，才把 reset 排到本轮结束之后。
+
+任一步失败都返回 `refused` 与原因，reset 回调根本不会执行——最坏情况是"什么都没发生"。
+工具返回的只有 archiveId / 字符数 / digest / 时间戳，绝不返回 transcript 正文。
+
+开关：`runtime.contextBlock.checkpointedContextReset.enabled` 或 `VERSE_CHECKPOINTED_CONTEXT_RESET=1`，默认关闭。
+关闭时**工具根本不注册**（不是执行时再拒绝），所以模型工具清单与 system prompt 字节不变。
+
+非目标：不实现无摘要丢弃、不允许跨会话重置、不改自动 compaction 阈值。
 ## 5. Context health
 
 `ContextHealthMonitor v1` 是确定性、无 LLM 的四维评分：

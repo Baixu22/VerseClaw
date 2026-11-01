@@ -184,6 +184,13 @@ export type RuntimeFeatureConfig = {
       /** Plan character budget; defaults to DEFAULT_SESSION_START_BUDGET_CHARS (2800). */
       budgetChars?: number;
     };
+    /**
+     * TF-0645: checkpoint-first new-context tool. Default off; when off the tool
+     * is not registered, so the tool list and prompt stay byte-identical.
+     */
+    checkpointedContextReset?: {
+      enabled?: boolean;
+    };
     /** DCS Stage 5 context_write agency role override. Default "implementer". */
     "context-write"?: {
       role?: string;

@@ -3,6 +3,7 @@
  */
 import { isDiagnosticFlagEnabled } from "../../../infra/diagnostic-flags.js";
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import os from "node:os";
 import { MAX_IMAGE_BYTES } from "@openclaw/media-core/constants";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
@@ -1465,6 +1466,13 @@ export async function runEmbeddedAttempt(
               const registered = registerManualCompactionRequest(manualCompactionRequest, request);
               manualCompactionRequest = registered.pending;
               return registered.status;
+            },            // TF-0645: the tool archives what the session file holds right now.
+            readCheckpointTranscript: () => {
+              try {
+                return fsSync.readFileSync(params.sessionFile, "utf8");
+              } catch {
+                return undefined;
+              }
             },
           });
           corePluginToolStages.mark("attempt:create-openclaw-coding-tools");

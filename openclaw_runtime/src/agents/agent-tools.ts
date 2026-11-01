@@ -580,6 +580,8 @@ export function createOpenClawCodingTools(options?: {
   onYield?: (message: string) => Promise<void> | void;
   /** Records a current-session compaction request for post-attempt execution. */
   onManualCompactionRequest?: (request: ManualCompactionRequest) => ManualCompactionRequestStatus;
+  /** TF-0645: lazy transcript read for the checkpoint-first reset tool. */
+  readCheckpointTranscript?: () => string | undefined;
   /** Optional instrumentation callback for tool preparation stage timing. */
   recordToolPrepStage?: (name: string) => void;
   /** Lower routine policy-removal audits for diagnostic-only tool probes. */
@@ -1410,6 +1412,7 @@ export function createOpenClawCodingTools(options?: {
           inheritedToolDenylist,
           onYield: options?.onYield,
           onManualCompactionRequest: options?.onManualCompactionRequest,
+          readCheckpointTranscript: options?.readCheckpointTranscript,
           allowGatewaySubagentBinding: options?.allowGatewaySubagentBinding,
           recordToolPrepStage: options?.recordToolPrepStage,
         })
