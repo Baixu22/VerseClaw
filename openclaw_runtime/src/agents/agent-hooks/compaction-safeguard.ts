@@ -4,6 +4,10 @@ import path from "node:path";
 import { extractSections } from "../../auto-reply/reply/post-compaction-context.js";
 import { openRootFile } from "../../infra/boundary-file-read.js";
 import { formatErrorMessage } from "../../infra/errors.js";
+import {
+  appendDiscardAttributionRecords,
+  buildCompactionDiscardRecord,
+} from "../../context-engine/discard-attribution.js";
 import { isAbortError } from "../../infra/unhandled-rejections.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import {
@@ -1367,6 +1371,19 @@ ${feedback}`,
                 `(${pruned.droppedMessages} messages) to fit history budget.`,
             );
             messagesToSummarize = pruned.messages;
+            // TF-0644: compaction already had a persisted carrier; this row adds
+            // the counts and boundary in the same shape as the other four classes.
+            const compactionDiscard = buildCompactionDiscardRecord({
+              identity: {},
+              droppedChunks: pruned.droppedChunks,
+              droppedMessages: pruned.droppedMessages,
+              droppedTokens: pruned.droppedTokens,
+              budgetTokens: pruned.budgetTokens,
+              keptTokens: pruned.keptTokens,
+              firstKeptEntryId: preparation.firstKeptEntryId,
+              at: new Date().toISOString(),
+            });
+            if (compactionDiscard) appendDiscardAttributionRecords({ records: [compactionDiscard] });
 
             // Summarize dropped messages so context isn't lost
             if (pruned.droppedMessagesList.length > 0) {

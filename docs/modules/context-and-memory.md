@@ -190,6 +190,32 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 
 事实映射：`openclaw_runtime/src/context-engine/session-start-injection-facts.ts` 只把已有 owner 的输出转成事实，自身不做 I/O；"owner 说没有" 与 "没问过 owner" 分别记为 `empty` 与 `not-available`。
 
+## 4.2 上下文丢弃归因（`DiscardAttribution/v1`）
+
+TF-0138 的结论是：丢弃决策本身已经实现，缺的是**活过一次 attempt**。候选表存在内存 Map 里，
+attempt 结束即删除；唯一形状正确的落盘载体按 `turnId` / `attemptIndex` / `modelCallIndex` 键控，
+而会话 JSONL 里没有这三个字段，所以两源无法 join。
+
+本叶只写归因行，不改变任何决策：
+
+| `discardClass` | 生产触发点 | 行里写什么 |
+|---|---|---|
+| `budget-drop` | turn injection 账本的 drop / truncate | channel、reason、requested/applied 字符数 |
+| `skipChannels` | candidate 的 skip / duplicate | channel、reason（`flag-off` / `kill-switch` / `empty` …） |
+| `limitHistoryTurns` | embedded attempt 的历史截断 | 前后消息数、`limit` |
+| `compaction` | compaction safeguard 的 chunk 丢弃 | chunk/消息/token 数、预算与 `firstKeptEntryId` 边界 |
+| `archived` | 无生产实例（spike 实测为零） | 仅 builder 支持；不伪造生产者 |
+
+规则：
+
+- **只归因**：先有决策，再从决策已产的数写一行；不改预算、不改阈值、不改 prompt 字节。
+- **轮次身份**：`turnId` + `attemptIndex` + `modelCallIndex`（有则写），否则行不可 join、没有价值。
+- **零 payload**：只写计数、枚举 reason、id 与 candidate 自带的 digest；`reason`/`unitRef` 还会被截断到 160 字符并抹掉
+  `sk-…`、`Bearer …`、`api_key=…` 一类凭据形状。
+- **失败不致命**：写失败吞掉（诊断不得打断一轮），每轮上限 128 行，文件超过 16 MiB 停止追加。
+- **开关**：测试运行器之外默认开启（避免测试写进真实状态目录）；`VERSE_CONTEXT_DISCARD_ATTRIBUTION=0` 关闭、`=1` 强制开启。落盘位置 `<stateDir>/context-discards.jsonl`。
+
+非目标：不自动再注入被丢内容、不改 compaction 触发点、不复活 TF-0129。
 ## 5. Context health
 
 `ContextHealthMonitor v1` 是确定性、无 LLM 的四维评分：

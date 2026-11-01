@@ -46,6 +46,10 @@ import {
 import { recordContextFinalSnapshot } from "./context-final-snapshot.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { applySessionStartInjection } from "./session-start-injection.js";
+import {
+  appendDiscardAttributionRecords,
+  buildCandidateDiscardRecords,
+} from "./discard-attribution.js";
 import type {
   SessionStartInjectionPlan,
   SessionStartInjectionRequest,
@@ -453,6 +457,25 @@ export function finalizeContextOrchestratorTurn(params: {
     }
     lastLineage = turnLineage;
   }
+  // TF-0644: the candidate table dies with the attempt, so write the rows that
+  // carry the turn identity before this collection is replaced or ended. This is
+  // attribution only: every decision above already happened.
+  if (!wasFinalized) {
+    appendDiscardAttributionRecords({
+      records: buildCandidateDiscardRecords({
+        lineage: projected.projection.lineage,
+        identity: {
+          turnId: params.turnId,
+          ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+          ...(turnLineage?.sessionId ? { sessionId: turnLineage.sessionId } : {}),
+          ...(params.attemptIndex !== undefined ? { attemptIndex: params.attemptIndex } : {}),
+          ...(params.modelCallIndex !== undefined ? { modelCallIndex: params.modelCallIndex } : {}),
+        },
+        at: new Date().toISOString(),
+      }),
+    });
+  }
+
   return { messages: projected.messages, projection: projected.projection };
 }
 
