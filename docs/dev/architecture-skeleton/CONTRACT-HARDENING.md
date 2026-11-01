@@ -543,9 +543,29 @@ git worktree remove --force $W; git worktree prune
 
 ### 13.11 候选提交后复核
 
-由紧随候选提交的**仅证据回填提交**写入（TF-0637 §11.1 / TF-0638 §13.9 同形）：候选 commit / tree、`sparse detached worktree` 上的
-`--report`（期望 exit 0、`dirty false`、`rulesEvaluated` 19）、`--verify`（exit 0）、`validator-noop`（exit 1）、脏探针（exit 1）、
-`final/` 复核（exit 1、10 条）、`report/SHA256SUMS -c`、credential scan 读数与 vitest 在候选上的复跑。
+C5 候选提交 **`698d59d6a381d81a65bd5a649a900831984376e3`**（tree `f8de380c3dbd6e6172d03bc44437f28db0d6469f`；9 文件 +969 / −89；
+基于 `c9a761cb5`；显式 pathspec：`.gitignore`、本文件、`report/SHA256SUMS`、`report/credential-scan-c5.json`、
+`report/fixtures/validator-noop.json`、本叶 spec、`scripts/check-evidence-refs.{mjs,d.mts}`、`tests/unit/evidence-refs-exist.test.ts`）。
+提交后真实检出 `git status --porcelain` 恰为 `?? _s07cfg/`。按 §13.3 的说明，真实候选上的干净读数取自该提交的 sparse detached worktree
+（§13.9 7：`git worktree add --no-checkout --detach` → `sparse-checkout set --no-cone` → `checkout --detach HEAD`，`status --porcelain` 0 行，
+HEAD `698d59d6a`）；worktree 用后 `remove --force` + `prune`，日志在 `D:/tmp/tf0639/post/`（本地保留不入库）。
+
+| # | 命令（worktree HEAD `698d59d6a`，除注明者外） | exit | 关键输出 |
+|---|---|---|---|
+| 25 | `node <wt>/scripts/check-evidence-refs.mjs --report D:/tmp/tf0639/post/candidate.json --actor claude-fable-5` | 0 | `report valid: 6 relation(s), 8 source ref(s), 0 diagnostic(s)`；报告 `status valid`、`exitCode 0`、`candidate {commit 698d59d6a…, tree f8de380c3…, dirty false, dirtyPaths []}`、`rulesEvaluated` **19**、`relations` 6 / `sourceRefs` 8、`diagnostics []`、`unverified []`、`fixtures []`、`rawDigestPolicy` 含 `candidate blob` |
+| 26 | `… --verify D:/tmp/tf0639/post/candidate.json` | 0 | `verify valid: … (6 relation(s), 8 source ref(s), candidate 698d59d6a)` |
+| 27 | `… --fixture …/report/fixtures/validator-noop.json --report D:/tmp/tf0639/post/noop.json --actor claude-fable-5` | **1** | 诊断恰 `[report-field-missing] - rulesEvaluated: The registry validator reported 0 of 11 declared relation rule(s) under probing (missing: unknown-endpoint, unknown-kind, …)`；报告 `rulesEvaluated` 恰为 8 条来源规则、`relations` 6、`status invalid`、`exitCode 1` |
+| 28 | worktree 根写 `tf0639-dirty-probe.txt` 后 `… --report D:/tmp/tf0639/post/dirty.json`，随后删除探针 | **1** | 诊断恰 `[candidate-mismatch] - candidate.dirty: The working tree is dirty (1 path(s): tf0639-dirty-probe.txt) …`；报告 `dirty true`、`dirtyPaths ['tf0639-dirty-probe.txt']`、`status invalid` |
+| 29 | `… --verify D:/tmp/tf0639/post/dirty.json`（探针已删除，worktree 干净） | **1** | `[candidate-mismatch] - candidate.dirty: Report records a dirty candidate (1 path(s)) …` + `[report-field-missing] - status: Report recorded status "invalid" with 1 diagnostic(s)` |
+| 30 | worktree 里把 `docs/modules/multi-agent-and-tasks.md`（HEAD 为 LF）工作副本改写为 CRLF 后 `… --report D:/tmp/tf0639/post/crlf.json`，随后 `git checkout -- <path>` | **1** | 诊断恰 `[candidate-mismatch] - candidate.dirty`（`dirtyPaths` 恰该文件）；`source-digest-mismatch` **0** 条；该路径 4 个 `sourceRefs` 的 `rawDigest` 与 #25 逐项相同（工作树字节未进入摘要） |
+| 31 | `… --verify <wt>/…/final/evidence-report.json` | **1** | `(10 diagnostic(s))` = `candidate.commit`（6944b059c ≠ 698d59d6a）+ `candidate.tree` 两条 `candidate-mismatch` + `normalization.policy` / `normalization.rawDigestPolicy` 两条 `version-unsupported` + `docs/clawx-product-semantics.md` 6 条 `source-digest-mismatch`（§13.7） |
+| 32 | `cd <wt>/…/final && sha256sum -c SHA256SUMS`；`cd <wt>/…/report && sha256sum -c SHA256SUMS` | 0 / 0 | 4 条 `OK` / 14 条 `OK` |
+| 33 | worktree `git status --porcelain`（全部读数之后） | 0 | 0 行（探针与 CRLF 改写均已复原） |
+| 34 | `node scripts/check-evidence-refs.mjs`（**真实检出**，HEAD `698d59d6a`；sparse worktree 缺少默认路径要检查的 188 个引用文件，默认调用在那里必然 `FAIL missing referenced paths`，不是读数） | 0 | `[evidence-refs] PASS 188 referenced path(s)`，与钉住 fixture `cmp` 相同，stderr 0 字节 |
+| 35 | `pnpm … exec vitest run tests/unit/evidence-refs-exist.test.ts tests/unit/product-semantics.test.ts --maxWorkers=1 --reporter=json`（真实检出，HEAD `698d59d6a`；沙箱副本此时等于候选） | 0 | `numTotalTests 109, numFailedTests 0, success true`（69 + 40）；运行后 `os.tmpdir()` 下无 `tf0639-c5-*` 残留，真实检出 porcelain 仍恰为 `?? _s07cfg/` |
+
+本节由紧随 `698d59d6a` 的**仅证据回填提交**落盘（TF-0637 §11.1 / TF-0638 §13.9 同形）；回填提交的 hash 不可能写进它自己提交的文件，
+记入 Task Forest TF-0639 的 `evidence`。本叶没有新的封存报告入库：`final/evidence-report.json` 仍是 TF-0637 的那一份（§13.7）。
 
 ### 13.12 未做与残余风险
 
