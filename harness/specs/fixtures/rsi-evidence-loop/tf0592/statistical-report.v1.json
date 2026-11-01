@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-01T12:16:49.660Z",
+  "generatedAt": "2026-11-01T13:08:14.876Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -19,18 +19,18 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-11-01T12:16:49.660Z",
+    "generatedAt": "2026-11-01T13:08:14.876Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "8e8a50c7c46f0a9f29e2c67a7a451548fd57b884",
-      "tree": "16cb4d2761678de53b2931bfad0a205ca1e65eeb",
+      "commit": "b3467c8617fa0fedc49e24a3d97ae6ce5d17b188",
+      "tree": "370217ce9937865fbddd29081f397ae79dbf1bea",
       "branch": "codex/tf0604-rsi-baseline",
       "dirty": false,
       "dirtyPaths": [],
       "sourceHashes": {
         "scripts/rsi-tf0592-statistical-adjudication.mjs": "d3efec867f473be9ca79af8e60722b6319e7fb6f194df9cedad4eb12b172e89d",
-        "scripts/rsi-tf0592-statistical-adjudication.d.mts": "59f6c4add232b5cf74c6a8f05490cf14e5d5a2979761936f90fa68d1c08253c0",
+        "scripts/rsi-tf0592-statistical-adjudication.d.mts": "9ca7479961835d17b09b0b900dae583b22f3ef1730db34db2100a44d20e73b18",
         "scripts/rsi-tf0604-baseline.mjs": "2d81e9b337a99b767c9fdeb5057815c44cbdec1f5700ab056d9da97b871a6329",
         "scripts/lib/reliability-aggregation.mjs": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
         "scripts/lib/paired-ablation.mjs": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
@@ -58,9 +58,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 3974324224,
+      "freeMemoryBytes": 2249228288,
       "disk": {
-        "freeBytes": 14612762624,
+        "freeBytes": 14548201472,
         "totalBytes": 322122543104,
         "status": "measured"
       }
