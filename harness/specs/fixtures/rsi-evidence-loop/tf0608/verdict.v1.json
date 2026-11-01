@@ -37,7 +37,7 @@
   "evidence": {
     "gate": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0599/gate-report.v1.json",
-      "digest": "33e525a8ea5f2ec48282c6b9f3aa8b9df877f97f7c42fbae051861a7be05b84b"
+      "digest": "74545abaef4c5fbcdd819afe36226a2b559f39c7d1a3905bdf3d17dbade460a8"
     },
     "candidate": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/candidate.v1.json",
@@ -45,7 +45,7 @@
     },
     "research": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0606/report.v1.json",
-      "digest": "e8ac51e95b7589c096a947be204c6fe003c0c6e520770a834ce21fb2d16334c8"
+      "digest": "f4591f3217988465bee96aac2db0d8c0b66215d4783540e69fb54695f0391975"
     },
     "contamination": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
