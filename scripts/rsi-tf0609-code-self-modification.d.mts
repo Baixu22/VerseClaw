@@ -10,4 +10,5 @@ export function loadTf0609Inputs(root?: string): Tf0609Inputs;
 export function evaluateTf0609(inputs: Tf0609Inputs, actor?: string): Tf0609Decision;
 export function runTf0609Controls(inputs: Tf0609Inputs): Tf0609Control[];
 export function checkTf0609Evidence(root?: string): Tf0609Check;
-export function writeTf0609Evidence(root?: string): Tf0609Check;
+export function writeTf0609Evidence(root?: string): Tf0609Check;export function validateBehavioralRollbackReceipt(receipt: any, expected?: { candidateDigest?: string; baselineDigest?: string }): { valid: boolean; errors: string[] };
+export function normalizeEvidenceDigest(value: unknown): string | null;

@@ -5,6 +5,8 @@ import {
   evaluateTf0609,
   loadTf0609Inputs,
   runTf0609Controls,
+  normalizeEvidenceDigest,
+  validateBehavioralRollbackReceipt,
 } from "../../scripts/rsi-tf0609-code-self-modification.mjs";
 
 describe("TF-0609 code self-modification Go/No-Go gate", () => {
@@ -22,7 +24,6 @@ describe("TF-0609 code self-modification Go/No-Go gate", () => {
       "candidate-trials-incomplete",
       "held-out-unsealed",
       "independent-verdict-not-ready",
-      "behavioral-rollback-missing",
       "cost-safety-evidence-missing",
     ]));
   });
@@ -40,5 +41,33 @@ describe("TF-0609 code self-modification Go/No-Go gate", () => {
     if (!result.report) throw new Error("expected saved eligibility report");
     expect(result.report.decision).toBe("no-go");
     expect(result.controls).toHaveLength(8);
+  });
+
+  it('normalizes raw hex digest bindings', () => {
+    expect(normalizeEvidenceDigest('a'.repeat(64))).toBe('sha256:' + 'a'.repeat(64));
+    expect(normalizeEvidenceDigest('sha256:' + 'a'.repeat(64))).toBe('sha256:' + 'a'.repeat(64));
+    expect(normalizeEvidenceDigest('nope')).toBeNull();
+  });
+
+  it('rejects an incomplete behavioral rollback receipt', () => {
+    const valid = {
+      schemaVersion: 'RsiBehavioralRollbackReceipt/v1',
+      status: 'pass',
+      behavioralParity: true,
+      driven_by: 'agent',
+      actor: 'codex/probe',
+      adjudicatorActor: 'codex/verifier',
+      candidateDigest: 'sha256:' + 'a'.repeat(64),
+      baselineDigest: 'sha256:' + 'b'.repeat(64),
+      phases: { baselineOff: true, candidateOn: true, rollbackOff: true },
+      checks: { flagResolutionObserved: true, hookSubscribedWhenEnabled: true, hookAbsentWhenDisabled: true, rollbackRemovedSubscriptions: true, productStateChanged: false, reverseMigrationApplied: false },
+      commands: ['probe'],
+      artifacts: [{ path: 'probe.ts', digest: 'sha256:' + 'c'.repeat(64) }],
+      claims: { realHuman: false, liveProvider: false, productLocksChanged: false },
+    };
+    expect(validateBehavioralRollbackReceipt(valid, { candidateDigest: valid.candidateDigest, baselineDigest: valid.baselineDigest })).toEqual({ valid: true, errors: [] });
+    expect(validateBehavioralRollbackReceipt({ ...valid, phases: { ...valid.phases, rollbackOff: false } }).errors).toContain('phase-order');
+    expect(validateBehavioralRollbackReceipt({ ...valid, adjudicatorActor: 'codex/probe' }).errors).toContain('independent-adjudicator');
+    expect(validateBehavioralRollbackReceipt({ ...valid, checks: { ...valid.checks, reverseMigrationApplied: true } }).errors).toContain('behavioral-checks');
   });
 });

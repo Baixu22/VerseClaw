@@ -116,6 +116,6 @@
   },
   "limitations": [
     "Finite scan; not a general security proof.",
-    "Behavioral effects remain not-run."
+    "Behavioral rollback/parity drill is recorded in the TF-0609 receipt; the static scan remains finite and is not a general safety proof."
   ]
 }

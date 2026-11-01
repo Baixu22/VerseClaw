@@ -4,6 +4,7 @@
     "expectedCode": "baseline-floor",
     "observedCodes": [
       "baseline-floor",
+      "behavioral-rollback-missing",
       "real-human-claim",
       "upstream-promotion-claim"
     ],
@@ -14,6 +15,7 @@
     "expectedCode": "held-out-unsealed",
     "observedCodes": [
       "held-out-unsealed",
+      "behavioral-rollback-missing",
       "real-human-claim",
       "upstream-promotion-claim"
     ],
@@ -24,6 +26,7 @@
     "expectedCode": "independent-verdict-not-ready",
     "observedCodes": [
       "independent-verdict-not-ready",
+      "behavioral-rollback-missing",
       "real-human-claim",
       "upstream-promotion-claim"
     ],
@@ -43,6 +46,7 @@
     "id": "unsafe-contamination",
     "expectedCode": "contamination-gate-failed",
     "observedCodes": [
+      "behavioral-rollback-missing",
       "contamination-gate-failed",
       "real-human-claim",
       "upstream-promotion-claim"
@@ -53,6 +57,7 @@
     "id": "real-human-claim",
     "expectedCode": "real-human-claim",
     "observedCodes": [
+      "behavioral-rollback-missing",
       "real-human-claim",
       "upstream-promotion-claim"
     ],
@@ -63,6 +68,7 @@
     "expectedCode": "actor-collision",
     "observedCodes": [
       "actor-collision",
+      "behavioral-rollback-missing",
       "real-human-claim",
       "upstream-promotion-claim"
     ],
@@ -73,6 +79,7 @@
     "expectedCode": "cost-ceiling",
     "observedCodes": [
       "cost-ceiling",
+      "behavioral-rollback-missing",
       "real-human-claim",
       "upstream-promotion-claim"
     ],

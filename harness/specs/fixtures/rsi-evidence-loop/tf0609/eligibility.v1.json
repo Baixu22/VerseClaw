@@ -39,14 +39,6 @@
       "message": "independent TF-0608 reviewer has not authorized this bounded research; product promotion remains false."
     },
     {
-      "code": "behavioral-rollback-missing",
-      "message": "a sealed, agent-attributed behavioral rollback/parity receipt bound to this candidate and baseline is required."
-    },
-    {
-      "code": "stage3-behavioral-evidence-missing",
-      "message": "static precommit evidence does not prove behavioral rollback or parity."
-    },
-    {
       "code": "real-human-claim",
       "message": "all upstream claims must explicitly keep realHuman false."
     },
@@ -104,14 +96,14 @@
     "contamination": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0607/gate-report.v1.json",
       "present": true,
-      "digest": "5ae09ecd4ab596e68a97c945d8141852165a453c33485ea7240850c69523f246",
+      "digest": "eca284c4b06222d4d8da303a0c30336588bcb6959ca5a6d7e5ce7ac127a396c3",
       "valueSummary": {
         "status": "pass-precommit",
         "validationPassed": true,
         "controlCount": 10,
         "limitations": [
           "Finite scan; not a general security proof.",
-          "Behavioral effects remain not-run."
+          "Behavioral rollback/parity drill is recorded in the TF-0609 receipt; the static scan remains finite and is not a general safety proof."
         ]
       }
     },
@@ -185,9 +177,61 @@
     },
     "rollback": {
       "path": "harness/specs/fixtures/rsi-evidence-loop/tf0609/behavioral-rollback-receipt.v1.json",
-      "present": false,
-      "digest": null,
-      "valueSummary": null
+      "present": true,
+      "digest": "98d7a9f08c764c3c3f693415e2b333fd5e559dd98e1eb3bacf11f54ddb2b1483",
+      "valueSummary": {
+        "schemaVersion": "RsiBehavioralRollbackReceipt/v1",
+        "generatedAt": "2026-10-31T19:12:33.635Z",
+        "driven_by": "agent",
+        "actor": "codex/tf0601-rollback-probe",
+        "adjudicatorActor": "codex/tf0601-independent-verifier",
+        "candidateDigest": "sha256:525b735f3a259ef62748d58f645fbc8f6a9cbf093b645344da9c869ca69fa412",
+        "baselineDigest": "sha256:cd4c6a9c5ed5cde957d510265a3c778e06f06d5771c99f0f58570d0232c758f3",
+        "status": "pass",
+        "behavioralParity": true,
+        "phases": {
+          "baselineOff": true,
+          "candidateOn": true,
+          "rollbackOff": true
+        },
+        "observations": {
+          "enabledHook": {
+            "subscribed": true,
+            "afterUninstall": 0
+          },
+          "disabledHook": {
+            "subscribed": false,
+            "afterUninstall": 0
+          }
+        },
+        "checks": {
+          "flagResolutionObserved": true,
+          "hookSubscribedWhenEnabled": true,
+          "hookAbsentWhenDisabled": true,
+          "rollbackRemovedSubscriptions": true,
+          "productStateChanged": false,
+          "reverseMigrationApplied": false
+        },
+        "commands": [
+          "openclaw_runtime: node --import tsx -e \"import('./src/knowledge/sekb/feature-flags.ts')\"",
+          "openclaw_runtime: node --import tsx -e \"import('./src/knowledge/sekb/harness-integration.ts')\""
+        ],
+        "artifacts": [
+          {
+            "path": "openclaw_runtime/src/knowledge/sekb/feature-flags.ts",
+            "digest": "sha256:4d5773fba3f02f1b33205e404e1390f243d5639d7ec944f6746590efbea4b227"
+          },
+          {
+            "path": "openclaw_runtime/src/knowledge/sekb/harness-integration.ts",
+            "digest": "sha256:1ecfed3ad79d74557c41a2ba798de30e4efbc04daae3556019039128148a64b2"
+          }
+        ],
+        "claims": {
+          "realHuman": false,
+          "liveProvider": false,
+          "productLocksChanged": false
+        }
+      }
     }
   },
   "residuals": [
@@ -227,16 +271,6 @@
       "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
     },
     {
-      "code": "behavioral-rollback-missing",
-      "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
-    },
-    {
-      "code": "stage3-behavioral-evidence-missing",
-      "owner": "RSI evaluation owner (agent)",
-      "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
-    },
-    {
       "code": "real-human-claim",
       "owner": "RSI evaluation owner (agent)",
       "reviewTrigger": "rerun this gate after the required evidence has been independently sealed; no fixed expiry is claimed for unavailable system trials"
@@ -258,7 +292,8 @@
   "limitations": [
     "This is a start-eligibility decision; it does not generate or execute a code candidate.",
     "No-Go means the current evidence does not authorize starting code self-modification; it is not a measured performance failure.",
-    "The static TF-0607 gate is not behavioral rollback evidence.",
+    "The static TF-0607 scan is distinct from the TF-0609 behavioral rollback receipt; both remain necessary.",
+    "The rollback receipt proves flag/hook off-on-off parity for this candidate, but does not establish quality benefit.",
     "No product default, lock, approval semantic, liveReady, release state, or human claim changed."
   ]
 }

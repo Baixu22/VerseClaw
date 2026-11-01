@@ -111,7 +111,7 @@ export function writeGatePack() {
     validation,
     controls,
     claims: { realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },
-    limitations: ["Finite scan; not a general security proof.", "Behavioral effects remain not-run."]
+    limitations: ["Finite scan; not a general security proof.", "Behavioral rollback/parity drill is recorded in the TF-0609 receipt; the static scan remains finite and is not a general safety proof."]
   };
   const pack = join(ROOT, TF0607_PACK_DIR);
   writeFileSync(join(pack, "gate-report.v1.json"), JSON.stringify(report, null, 2) + String.fromCharCode(10));

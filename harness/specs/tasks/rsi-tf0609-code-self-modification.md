@@ -42,6 +42,9 @@ touchedAreas:
   - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
   - scripts/lib/rsi-trial-scratch.mjs
   - scripts/lib/rsi-trial-scratch.d.mts
+  - scripts/rsi-tf0601-behavioral-rollback.mjs
+  - scripts/rsi-tf0601-behavioral-rollback.d.mts
+  - tests/unit/rsi-tf0601-behavioral-rollback.test.ts
 ownedPaths:
   - harness/specs/tasks/rsi-tf0609-code-self-modification.md
   - scripts/rsi-tf0609-code-self-modification.mjs
@@ -60,6 +63,7 @@ requiredRules:
 humanEvidence: not-required
 requiredTests:
   - node scripts/rsi-tf0609-code-self-modification.mjs --check
+  - pnpm exec vitest run tests/unit/rsi-tf0601-behavioral-rollback.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/rsi-tf0609-code-self-modification.test.ts --maxWorkers=1
   - pnpm harness validate --spec harness/specs/tasks/rsi-tf0609-code-self-modification.md
   - pnpm run typecheck
