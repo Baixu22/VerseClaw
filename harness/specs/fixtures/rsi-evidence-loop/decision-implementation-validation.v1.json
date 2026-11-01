@@ -1,0 +1,338 @@
+{
+  "schemaVersion": "RsiDecisionImplementationAcceptance/v1",
+  "generatedAt": "2026-11-01T17:00:53.603Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-decision-implementation",
+  "status": "passed-with-global-ci-residual",
+  "taskForestNode": "TF-0653",
+  "decisions": [
+    {
+      "id": "D1",
+      "choice": "C",
+      "implemented": true
+    },
+    {
+      "id": "D2",
+      "choice": "B",
+      "implemented": true
+    },
+    {
+      "id": "D3",
+      "choice": "A",
+      "implemented": true
+    },
+    {
+      "id": "D4",
+      "choice": "A",
+      "implemented": true
+    },
+    {
+      "id": "D5",
+      "choice": "A",
+      "implemented": true
+    },
+    {
+      "id": "D6",
+      "choice": "B",
+      "implemented": true
+    }
+  ],
+  "source": {
+    "implementationCommit": "80ba67bb7d2d89855eb8c2066639ed9eaf2d3a0c",
+    "currentEvidenceCommit": "90098744c02847e1154ef4b984114219643e6118",
+    "frozenVerificationCommit": "fbefc43fc5ad6fb0170645c8c30696a0d9f5ec26",
+    "currentSourceMatchesFrozenVerification": true,
+    "gitBlobHashes": {
+      ".gitignore": "bb6994ab0dca515a832d911e1f45391f8533fc98",
+      "README.ja-JP.md": "f0fefa3c3a3c8411fb820ad93b144eaf88ce23a7",
+      "README.md": "ae738bf177f911169cce1fd68cc1a54c2d80900a",
+      "README.zh-CN.md": "f0ab83dd208bfbd4902f96c0d7034bd8248afaed",
+      "docs/dev/rsi-capability-and-boundaries.md": "e313192f60ad5874a2f27d27f18ba511a64b39cd",
+      "docs/dev/rsi-decision-implementation.md": "54c000af9e1b1fbb76052235c3918ec566c5b02f",
+      "harness/specs/fixtures/agent-first-framework/loop-validation-report.json": "a368708d02860efa95da56af21112592b8fc5357",
+      "harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json": "47db72ba4f84b901283954e53383123e3acf8ded",
+      "harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json": "9a67661799ef62d56faa0fc9e8f759f62ae9f95b",
+      "harness/specs/fixtures/rsi-evidence-loop/evidence-identities.v1.json": "7277b870e7563091e8c0d4bfcc1b622dd677f067",
+      "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json": "eb3383a653054eaf1eacddeb4afddbcf46787d22",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/SHA256SUMS": "0bfdba3debee69c77b92ca77411a09da7869797a",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json": "e803855d85f233a16e330c73693969f52122af7b",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/corpus.v1.json": "ed671677d1e6007b2018f18709b2b0bd31a4cc33",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/manifest.json": "a1ce59d56bdd250123051c4c77f9bfbbb626fed9",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/progress.json": "a3850d71a60e7525ccbfd11cc73f8fd20d5809bf",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/promotion-policy.v1.json": "d602700d0ebc47870a3ba2db14f5fba20bb37d1e",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/provenance.v1.json": "0f9a9784872e554369497b39cfdfef4dbfdf19a9",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/raw-trials.v1.json": "5f9f3c1bcabbac6f5936efdefd8224777c50a429",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-audit.json": "b14375658165bfab30b5ba08e4ee9fa191c4b30c",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-exclusions.json": "8e80ee5f008a7f84dcc92f5ff1be341e9df40907",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/verification.v1.json": "be3b3af8d3befd4e13ae994f5246dfd66b0de6ce",
+      "harness/specs/rules/paired-ablation-boundary.md": "8655dd44cb006a6811708d5293e279583976c5cf",
+      "harness/specs/rules/reliability-aggregation-boundary.md": "c9ba3d09623afa72150b01b447c700e2175b2675",
+      "harness/specs/tasks/rsi-decision-implementation.md": "9c838315c7f8a07344399cd297300ab05faa35b2",
+      "harness/specs/tasks/rsi-evidence-loop-contract.md": "27b29ddc81e4c57dc6e554e1340b78f24b5bd76b",
+      "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "1dc7598bd27fedf4699637569388029913c298ec",
+      "harness/specs/tasks/rsi-tf0604-baseline-corpus.md": "88b2dd6a1180d4198771500bc5c0985ba311fa1f",
+      "openclaw_runtime/src/context-engine/handlers/task-loop-handler.test.ts": "b6926fa7e1acad924599be09966de0fda65c3a8f",
+      "openclaw_runtime/src/context-engine/handlers/task-loop-handler.ts": "353dd9ba75fdfd249d2be6c1c6eced0783d7c061",
+      "scripts/lib/paired-ablation.d.mts": "eced1b2ddbe6b9910436f3be0fcd14d4ee9c6eac",
+      "scripts/lib/paired-ablation.mjs": "19a3c2ff7356d51837def0468daa8369d0d32261",
+      "scripts/lib/reliability-aggregation.d.mts": "3f9fcb01ff248289528d23e80b5c9d982f189c48",
+      "scripts/lib/reliability-aggregation.mjs": "40abee46a36c7fac2d2d9e6d6334ac6c31a49aa3",
+      "scripts/repository-artifacts.json": "a34bffda249e9d07bdb392734a802d4edd1ca5a6",
+      "scripts/rsi-measurement-archive.d.mts": "78d244ff99d4e992c2616ade50d10272d933dc7e",
+      "scripts/rsi-measurement-archive.mjs": "684de7726f564282c49d5cc2a9b33fc2180c8416",
+      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "961ebcd2ef52c23d563c71c4d2d1407cc7298cec",
+      "scripts/rsi-tf0592-statistical-adjudication.mjs": "333cd71c3ecb7ef845377321649038b253186bbe",
+      "scripts/rsi-tf0604-baseline.d.mts": "11c94178f9deeb91dd932487e73cdf7153dfa77d",
+      "scripts/rsi-tf0604-baseline.mjs": "537e06b97736eee1350ae08241a17d26e4c9740a",
+      "shared/i18n/locales/en/agents.json": "c94f6213e043251d71ad7e06f14a33ac727287a9",
+      "shared/i18n/locales/en/knowledge.json": "f2d8010762488df7b80257ff87bc7ceb7061ec6b",
+      "shared/i18n/locales/ja/agents.json": "a3e2f37aa7f1ccef420dc7d2e6ec7ee4474d2c66",
+      "shared/i18n/locales/ja/knowledge.json": "450aa883916ee2eee9ba484bb81f171d61770912",
+      "shared/i18n/locales/ru/agents.json": "536e42ec161ecdda55c84f984a5dd68beb9aac12",
+      "shared/i18n/locales/ru/knowledge.json": "b2d86733ed002e6ef350b5a8210b96d1f4912d72",
+      "shared/i18n/locales/zh/agents.json": "b1d864069df7477a207b3df690689e343550e891",
+      "shared/i18n/locales/zh/knowledge.json": "f5117d6dc307ba549a6b25b40e0c030abc10ef32",
+      "src/components/agents/RolesOrchestrationPanel.tsx": "9a9827a672f8917427a1c4679f204a470e6518b8",
+      "src/pages/Knowledge/index.tsx": "b425f875dd8e2ba0f69c44c7b0adbb8a019001b7",
+      "tests/e2e/knowledge-hub.spec.ts": "c4ab133e92c1b99ab30f8784b15957449bc4b92f",
+      "tests/e2e/role-memory-panel.spec.ts": "80d9e7ced23a7161d1d96e85f93d23977253d06c",
+      "tests/unit/agent-dev-ablation-verdict-guards.test.ts": "c9e5ceee81732bc654a5ed8052379a2f9ed5ec05",
+      "tests/unit/agent-dev-paired-ablation.test.ts": "12f2853c9514e32f2657b75ef2cc0b4ddf198266",
+      "tests/unit/agent-dev-reliability-aggregation.test.ts": "91319c8e023f352217bb371b1e466417fc845187",
+      "tests/unit/rsi-evidence-loop-contract.test.ts": "3a26c2feb9c4217012c141216d91ef68c4362eb7",
+      "tests/unit/rsi-measurement-archive.test.ts": "af93bbfcbe5de39f59792fcddc3c0082162c4b7d",
+      "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "c0c0066dc143b0843bb902d2dda9480cc3c85c26",
+      "tests/unit/runtime-memory-paired-ablation.test.ts": "f12501cb4bd0a15caacf780f1d2f53f1298d6ec0"
+    },
+    "verificationActor": "same agent, replayed in a clean local checkout",
+    "independentHumanEvidence": false
+  },
+  "verification": {
+    "unit": {
+      "passed": 93,
+      "total": 93,
+      "skipped": 0,
+      "exitCode": 0,
+      "reportSha256": "ac4d46bf9efc6a7a387e739246b16a4cc10dc9570d54a6e596fdc896c63659f8"
+    },
+    "runtimeUnit": {
+      "passed": 28,
+      "total": 28,
+      "skipped": 0,
+      "exitCode": 0,
+      "reportSha256": "0e7cc9b9e6437ffe2ce1df969215adce40771ee5723e112d6d6cbbf2e2515752"
+    },
+    "typecheck": {
+      "success": true,
+      "cached": false,
+      "results": [
+        {
+          "command": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm run typecheck:node",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm run typecheck:web",
+          "exitCode": 0
+        },
+        {
+          "command": "pnpm run typecheck:test",
+          "exitCode": 0
+        }
+      ],
+      "reportSha256": "11763aef0fa220dad8c44e5f07363c525018dc8f3ba302759407a58af3700951"
+    },
+    "electron": {
+      "passed": 6,
+      "total": 6,
+      "skipped": 0,
+      "retries": 0,
+      "exitCode": 0,
+      "reportSha256": "7e2bdadffff5baed6f22d18953924a451735f0869c340eefe5cf38f6d284e2df",
+      "screenshotReview": "both diagnostic explanations are visible and legible; fixture-driven source Electron scope",
+      "screenshots": [
+        {
+          "localPath": "D:/tmp/rsi-decisions/clean-e2e-results/role-memory-panel-Role-mem-73aec--memory-through-gateway-RPC/feedback-diagnostic.png",
+          "sha256": "7017349cd70a94d9b64a541481ad85062dbd68394cc219d500f349442d44dec8"
+        },
+        {
+          "localPath": "D:/tmp/rsi-decisions/clean-e2e-results/knowledge-hub-Knowledge-Hu-440bd-d-applies-an-editable-draft/adoption-diagnostic.png",
+          "sha256": "0a64a8c9f19583104cd6a9b1d0796e8da9dc8922fda4aa76949d70a71511215c"
+        }
+      ]
+    },
+    "harness": {
+      "validate": "pass",
+      "dryRun": "pass",
+      "changedPathOwnershipChecked": true,
+      "coveredPathCount": 75,
+      "uncovered": [],
+      "frozenCommit": "fbefc43fc5ad6fb0170645c8c30696a0d9f5ec26",
+      "reportSha256": "ce976ba07a6ffc6e5e9dc504091748f5ed8cd76d93cfce83a2974ec0b0a31fb7"
+    },
+    "artifactReadback": {
+      "corpus": {
+        "passed": true,
+        "errors": [],
+        "corpusCaseCount": 24,
+        "baselineStatus": "insufficient-evidence",
+        "negativeControlCount": 8
+      },
+      "historical": {
+        "passed": true,
+        "errors": [],
+        "taskCount": 24,
+        "calibratedRows": 16
+      },
+      "statistical": {
+        "passed": true,
+        "errors": [],
+        "status": "insufficient-evidence",
+        "completeCaseCount": 0,
+        "negativeControlCount": 12
+      },
+      "archive": {
+        "passed": true,
+        "errors": [],
+        "evidenceKind": "historical-real-provider-measurement",
+        "recordedTrialSlots": 144,
+        "originalStatus": "fail",
+        "reproducedStatus": "fail",
+        "reanalysisStatus": "fail",
+        "promotionReady": false
+      }
+    },
+    "negativeControls": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-decision-controls",
+      "evidenceKind": "deterministic-negative-controls",
+      "results": [
+        {
+          "id": "ordinary-flake-count",
+          "observed": [
+            "pass",
+            "fail"
+          ],
+          "passed": true
+        },
+        {
+          "id": "safety-zero-flake",
+          "observed": "fail",
+          "passed": true
+        },
+        {
+          "id": "accepted-negative-before-floor",
+          "observed": "safety-regression",
+          "passed": true
+        },
+        {
+          "id": "case-cluster-parity",
+          "observed": {
+            "cases": 24,
+            "repeats": 72
+          },
+          "passed": true
+        },
+        {
+          "id": "degenerate-interval-unavailable",
+          "observed": "degenerate",
+          "passed": true
+        }
+      ]
+    },
+    "comms": {
+      "replay": "pass",
+      "compare": "pass",
+      "claim": "deterministic replay regression evidence"
+    },
+    "i18n": {
+      "languages": [
+        "en",
+        "zh",
+        "ja",
+        "ru"
+      ],
+      "lint": "pass"
+    },
+    "contractCheck": "pass",
+    "credentialScan": {
+      "passed": true,
+      "hits": 0,
+      "scopeCount": 75
+    }
+  },
+  "prospectiveCorpus": {
+    "cases": 24,
+    "safetyRequired": 3,
+    "positiveAnchors": 1,
+    "negativeAnchors": 3,
+    "completedModelCases": 0,
+    "reportStatus": "insufficient-evidence"
+  },
+  "historicalMeasurement": {
+    "recordedSlots": 144,
+    "status": "fail",
+    "baselinePassK": 0.15,
+    "treatmentPassK": 0.1429,
+    "pairedDifference": 0,
+    "benefitProven": false,
+    "promotionReady": false,
+    "costEvidence": "unavailable",
+    "safetyEvidence": "not-registered-for-v1"
+  },
+  "environment": {
+    "runtimeBuild": "pass, fresh source build and gateway readiness smoke",
+    "frontendBuild": "pass",
+    "tempRoot": "D:/tmp/rsi-decisions",
+    "esbuildWorkaround": {
+      "temporary": true,
+      "version": "0.27.4",
+      "method": "built-in stdin fallback for large transforms",
+      "originalFailure": "Windows tempfile removal Access is denied",
+      "compilerOrFlagsChanged": false,
+      "preloadSha256": "1b313637a0aff1170936ca6aa595122e4897165ea08bb2db5096c27c56f92db3"
+    },
+    "electronVersion": "40.8.4",
+    "dependencyReuse": "matching lockfile, approved Playwright patch digest and TypeScript 5.9.3; no dependency versions or lockfiles changed"
+  },
+  "globalCi": {
+    "exitCode": 1,
+    "stage": "repo:duplicates:check",
+    "selectedUnitTestsPassed": 59,
+    "duplicateGroups": 2,
+    "outsideRsiChange": true,
+    "logSha256": "e8152f5f7effa658fa78552da34af91a6361a03c6f3dd80f9f30899aacdee22f",
+    "paths": [
+      [
+        "harness/specs/fixtures/agent-first-system/product-effect/profile-1-profile-before-restart.png",
+        "harness/specs/fixtures/agent-first-system/product-effect/profile-2-profile-before-restart.png",
+        "harness/specs/fixtures/agent-first-system/product-effect/profile-3-profile-before-restart.png"
+      ],
+      [
+        "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/profile.json",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json"
+      ]
+    ]
+  },
+  "residuals": [
+    {
+      "id": "global-ci-existing-duplicates",
+      "owner": "repository-maintainer",
+      "reviewDate": "2026-12-01",
+      "detail": "Two pre-existing duplicate groups stop broad CI; no duplicate approval list was changed."
+    }
+  ],
+  "boundaries": {
+    "driven_by": "agent",
+    "realHuman": false,
+    "additionalProviderCalls": 0,
+    "completeRsiImplementation": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "releaseApproved": false
+  }
+}
