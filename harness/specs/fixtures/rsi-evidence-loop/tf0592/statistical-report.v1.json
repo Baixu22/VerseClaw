@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-01T10:32:17.177Z",
+  "generatedAt": "2026-11-01T11:35:07.849Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,12 +17,12 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-11-01T10:32:17.177Z",
+    "generatedAt": "2026-11-01T11:35:07.849Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "999033c2335d16b5e1444e57e3b5f74c4813b473",
-      "tree": "31553e800f0e38a95f953950a20a3d763c8b30a5",
+      "commit": "a608144bdaccae926d31adec541babe9f38b3a56",
+      "tree": "c3ebe5118e8eb9f887aa4cdb27c4a08dec35ce2f",
       "branch": "codex/tf0604-rsi-baseline",
       "dirty": false,
       "dirtyPaths": [],
@@ -43,7 +43,7 @@
         "package.json": "96bb9e3609f06ad7fd0737daa07fefbe62f5728aca49cd1397c2361a811796df",
         "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
         "docs/README.md": "a850e638d4b53bc18800989c6c3736de51d824869e88f20173e0601bf1d874fc",
-        "docs/dev/rsi-capability-and-boundaries.md": "641f6a50afd981dfcd2061cfd23d25e2ce36e50412aeb0777879f88b7391e971"
+        "docs/dev/rsi-capability-and-boundaries.md": "270fe0142d0626121ffaa3c01750eeafa27ea0172875c3fc131710694310a451"
       }
     },
     "runtime": {
@@ -56,9 +56,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 2288619520,
+      "freeMemoryBytes": 2151141376,
       "disk": {
-        "freeBytes": 14536134656,
+        "freeBytes": 14689980416,
         "totalBytes": 322122543104,
         "status": "measured"
       }
