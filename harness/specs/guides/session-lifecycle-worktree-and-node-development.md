@@ -103,18 +103,18 @@ $env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'; $env:COMPASS_AGENT_NAME='<�
 
 | 节点 | 状态 | 内容 |
 |---|---|---|
-| TF-0640 | in_progress 50% | 伞：注入单一装配 + 衍生可回读 |
+| TF-0640 | done | 伞：注入单一装配 + 衍生可回读 |
 | TF-0641 | done | A1 只读 SessionStage 投影 |
 | TF-0642 | done | A2b 起始注入接线 + flag-off parity（A2a 见 TF-0648） |
 | TF-0643 | done | A3 只读衍生血缘投影 |
-| TF-0644 | proposed | A4 丢弃归因落盘 + 轮次身份 |
-| TF-0645 | proposed | A5 checkpoint-first 新上下文（默认关） |
-| TF-0646 | proposed | A6 缓存边界修剪（先 shadow） |
-| TF-0647 | proposed | B1 立项决策（未授权实施） |
+| TF-0644 | done | A4 丢弃归因落盘 + 轮次身份 |
+| TF-0645 | done | A5 checkpoint-first 新上下文（默认关） |
+| TF-0646 | done | A6 缓存边界修剪 shadow + GO/NO-GO |
+| TF-0647 | done | B1 立项决策：两项均 NO-GO |
 
 分支：`codex/session-lifecycle-derivation`，工作树 `D:\ClawX-work\session-lifecycle-derivation`。
 
-下一叶建议 A4（TF-0644）：丢弃归因落盘 + 轮次身份。A5/A6 仍是"先 shadow 出证据再决定"的原语，B1 仍只产出立项判据。
+本线（TF-0640..TF-0648）已全部收口。后续若继续，只能从 B1 决策的重开条件或新的独立规划线开始。
 
 
 ## 6. 从这一轮学到的（2026-11-01 补充）
