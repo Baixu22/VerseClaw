@@ -30,6 +30,16 @@ const RULES = Object.freeze([
   'registry-load-failed',
 ]);
 const RULE_SET = new Set(RULES);
+// Only default-state conflicts (AUTHORITY-RECONCILIATION §6.2 C-02…C-06) may be
+// registered as pending-fix. Owner, authority and identity conflicts (C-01 and
+// the rules behind it) are never exemptable, so an adjudicatedConflicts entry
+// naming any other rule is rejected instead of suppressing a diagnostic.
+const ADJUDICABLE_CONFLICT_RULES = new Set([
+  'default-activation',
+  'default-retirement',
+  'default-matrix-row',
+  'default-flag-risk',
+]);
 
 const REGISTRY_PATHS = Object.freeze({
   authority: 'shared/component-authority-manifest.ts',
@@ -266,6 +276,8 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
       };
       if (!RULE_SET.has(entry?.rule) || ['adjudication-missing', 'registry-load-failed', 'exemption-reason-missing', 'exemption-stale', 'exemption-unknown-rule', 'exemption-unknown-target'].includes(entry?.rule)) {
         fail('exemption-unknown-rule', `${section} entry '${id}' names rule ${JSON.stringify(entry?.rule)}, which is not an adjudicable rule of this checker`);
+      } else if (section === 'adjudicatedConflicts' && !ADJUDICABLE_CONFLICT_RULES.has(entry?.rule)) {
+        fail('exemption-unknown-rule', `${section} entry '${id}' names rule ${JSON.stringify(entry?.rule)}, which is not a default-conflict rule; owner, authority and identity conflicts cannot be registered as pending-fix`);
       }
       for (const field of ['reason', 'reviewCondition', 'source', 'basis']) {
         if (!hasText(entry?.[field])) fail('exemption-reason-missing', `${section} entry '${id}' has no ${field}; an entry without reason, review condition, source and basis is itself a failure`);
@@ -620,7 +632,7 @@ function evaluateSemanticAuthority(registries, adjudication, options = {}) {
   };
   for (const entry of [...entries.exemptions, ...entries.adjudicatedConflicts]) {
     if (entry.targetKind === 'component' && identityBroken.has(entry.target)) continue;
-    if (!entry.observed || typeof entry.observed !== 'object') {
+    if (!entry.observed || typeof entry.observed !== 'object' || Object.keys(entry.observed).length === 0) {
       staleEntries.add(entry);
       push('exemption-stale', entry.id, ADJUDICATION_PATH, `${entry.id} (${entry.rule}, ${entry.target}) records no observed values, so staleness cannot be checked`);
       continue;

@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "adjudication-non-default-rule",
+  "class": "non-adjudicable-conflict",
+  "rule": "exemption-unknown-rule",
+  "expect": "[semantic-authority/exemption-unknown-rule] adjudicatedConflicts entry 'C-01/probe' names rule \"owner-namespace\", which is not a default-conflict rule; owner, authority and identity conflicts cannot be registered as pending-fix",
+  "expectIssueCount": 1,
+  "description": "An adjudicatedConflicts entry tries to register an owner-namespace (C-01 class) conflict as pending-fix with every other field valid. Only default-state conflicts (C-02…C-06) are adjudicable, so the entry is rejected and suppresses nothing.",
+  "mutations": [
+    {
+      "file": "scripts/check-semantic-authority-adjudication.json",
+      "find": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-02/R-D1\",",
+      "replace": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-01/probe\",\n      \"rule\": \"owner-namespace\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"working-memory-context-source\",\n      \"observed\": {\n        \"owner\": \"probe\"\n      },\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-01\",\n      \"reason\": \"probe: attempt to register an owner conflict as pending-fix\",\n      \"reviewCondition\": \"probe\"\n    },\n    {\n      \"id\": \"C-02/R-D1\","
+    }
+  ]
+}

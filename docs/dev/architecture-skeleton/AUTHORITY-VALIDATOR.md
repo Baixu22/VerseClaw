@@ -31,7 +31,7 @@
 |---|---|---|
 | 封闭规则 | **17** | §3；测试与校验器各写一份并逐项对账 |
 | 正例（当前注册表 + 登记表） | **exit 0，诊断 0** | `summary … rules=17 diagnostics=0 adjudicated=8 structural=54 gaps=35/35 aliases=1 bindings=3 not-comparable=20 matrix-unmapped=5` |
-| 登记表为空时的原始诊断 | **43** = 默认态冲突 8 条（5 组件：C-02×2、C-03×2、C-04×2、C-05、C-06）+ gap 35 | 与 AUTHORITY-RECONCILIATION §7.3 / CLOSURE-DECISIONS §2.9 一致；owner 规则对 10 条 TF 节点 owner 全部通过；authority 冲突 0 |
+| 登记表为空时的原始诊断 | **44** = 默认态冲突 8 条（5 组件：C-02×2、C-03×2、C-04×2、C-05、C-06）+ gap 36（35 + 空登记表同时丢失 I-4 别名产生的 `concept-without-component 'routing-memo'`；审查勘误见 §12） | 与 AUTHORITY-RECONCILIATION §7.3 / CLOSURE-DECISIONS §2.9 一致；owner 规则对 10 条 TF 节点 owner 全部通过；authority 冲突 0 |
 | 已裁定冲突（`registered-pending-fix`） | **5 项 / 8 条目** | C-02…C-06；每条记两侧原值，权威矩阵修正后由 `exemption-stale` 自动失效（§4） |
 | 结构性豁免（`structural`） | **54 条目** = X-01 7 flag / X-02 4 / X-03 18 / X-04 20 / X-05 5 | 每条含原值，变化即 stale |
 | gap（`registered`） | **35** = G-01 1 / G-02 1 / G-03 5 / G-04 16 / G-05 5 / G-06 7 | 双向对账：观察到未登记 → `gap-unregistered`；登记却不再观察到 → `gap-stale` |
@@ -273,3 +273,37 @@ git diff --stat 1090f0b88..HEAD -- shared/ electron/ src/ openclaw_runtime/ pack
 | 五类负例分别被拒绝且诊断可定位 | 达成 | §5 十个 fixture（五类各 ≥ 1）全部 exit 1，#7；每行 `file[:line]` + 规则，测试逐行断言 |
 | 校验接入既有门禁入口；空报告 / 漏调用不能产生有效 pass | 达成 | `pnpm test` 路径的 vitest（CI 消费）spawn 真实入口；#6 报告回读断言；缺登记表 exit 1（#9）、坏 fixture exit 2（#8）；合同 `requiredTests` 直接调用 CLI；未新增 package script |
 | 现有注册表条目、运行时行为、默认值与消费点保持不变；不新增第二真源 | 达成 | §6；#10、#11、#18 |
+
+---
+
+## 12. 审查勘误与已知限制（2026-11-01，独立审查后落地）
+
+本节由 TF-0629…TF-0637 收尾审查追加（`driven_by: agent`，`actor: claude-fable-5`）。上文 §1–§11 保持 TF-0632 收口时的原貌；本节记录审查发现、本次修补与明确未修的限制。
+
+### 12.1 勘误
+
+| 项 | 原文 | 实测 | 处置 |
+|---|---|---|---|
+| 空登记表的原始诊断数 | §1 "43"、§7.4 配方 | **44**：8 条默认态冲突 + 36 条 gap；第 36 条是 `concept-without-component 'routing-memo'`，因为空登记表同时丢掉了 I-4 概念别名 | §1 已改为 44 |
+| `duplicate_authority` 经 `registry-self-validation` 透传 | §3 规则表 | 不可达：`shared/component-authority-manifest.ts` 末尾的 `assertComponentAuthorityManifest()` 在 import 时就抛错，经 `registry-load-failed` 以 **exit 2** 结束，没有规则名与行号；单测只通过进程内注入 `registries.authority.validation` 触达该分支 | 记为限制；真实的权威表重复行目前被归入"输入损坏"退出码 |
+
+### 12.2 本次修补（候选见本仓库 git 记录，审查提交）
+
+| 修补 | 原缺陷（审查探针） | 改动 | 负例 |
+|---|---|---|---|
+| `adjudicatedConflicts` 只接受四条默认态规则 | 任意合法登记项都能按 `rule::target` 压掉诊断：一条 `owner-namespace` 登记可把 C-01 类 owner 冲突压成 exit 0；一条 `authority-boundary` 登记可同时吞掉两条数据类型多 owner 诊断。"C-01 不可豁免"只靠 vitest 钉死的计数维持 | `ADJUDICABLE_CONFLICT_RULES = {default-activation, default-retirement, default-matrix-row, default-flag-risk}`；其它规则的登记项以 `exemption-unknown-rule` 拒绝且不进入抑制表 | `tests/fixtures/semantic-authority/adjudication-non-default-rule.json`（exit 1，1 条） |
+| `observed: {}` 视为无观测值 | 空对象迭代零字段，永不过期，与 §4 "记录裁定时的观测值"矛盾 | 空 `observed` 走 `exemption-stale`，登记项不被应用 | `tests/fixtures/semantic-authority/adjudication-observed-empty.json`（exit 1，2 条：stale + 被重新放出的 `default-matrix-row`） |
+
+正例在修补后读数不变：`diagnostics=0 adjudicated=8 structural=54 gaps=35/35 aliases=1 bindings=3 not-comparable=20 matrix-unmapped=5`，exit 0。
+
+### 12.3 已知限制（本次未修，作为后续节点输入）
+
+1. **54 条 structural exemptions 在 CLI 判定中不承重**：抑制表只由 `adjudicatedConflicts` 构成，`exemptions: []` 时仍 exit 0；它们目前只被 vitest 的 `structural: 54` / `exemptionsApplied` 钉住。
+2. **`notComparable` / `flagGranularity` / `matrixUnmapped` 是只报告列表**，未像 `gaps` 那样与 X-04 / X-01 / X-05 双向对账；一个未登记的新 not-comparable 对（例如把某组件 `currentMode` 改成 `mixed`）会默认通过且不触发 stale。这与 X-04 的复核条件"保持列出，不默认通过"不符，是本节点验收里最实质的缺口。
+3. 登记表路径的诊断 `line` 恒为 `null`，以共享 id 定位（X-03 有 18 条同 id 条目），不满足 spec 的 componentId / 表 / 字段 / 规则逐项定位要求；`authority-boundary` 的数据类型诊断同样无行号。
+4. fixture 锚点纪律未强制：12 个 `find` 中 11 个不含条目 id 字面量，`registry-fixture.mjs` 只替换首次出现且不检查唯一性（当前全部唯一是巧合）。
+5. 加载钩子在同名 `.js` 存在时优先读 `.js`（当前不存在；若有原地 emit 将读到陈旧产物）。
+6. I-5（capability claims 的精确锚点连接）未实现，`identity-key` 只校验 claim id 形态与唯一性。
+7. 同一 `rule::target` 的两条登记项（不同 id）都"合法"，抑制表只保留后者，前者不做 stale 检查。
+
+建议归属：一个新的批次 B 叶子（"对账承重化：structural / not-comparable / matrix-unmapped 双向对账 + 登记表行号定位"），在 TF-0628 下登记后再做；本次审查不扩大 TF-0632 的范围。

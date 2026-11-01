@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "adjudication-observed-empty",
+  "class": "exemption-hygiene",
+  "rule": "exemption-stale",
+  "expect": "[semantic-authority/exemption-stale] C-05/R-D3 (default-matrix-row, vtoken-bridge) records no observed values, so staleness cannot be checked",
+  "expectIssueCount": 2,
+  "description": "The C-05 pending-fix entry keeps an observed block that is an empty object. An entry whose observed values cannot be compared is stale, so it is rejected and the default-matrix-row conflict it would have suppressed fires again.",
+  "mutations": [
+    {
+      "file": "scripts/check-semantic-authority-adjudication.json",
+      "find": "      \"id\": \"C-05/R-D3\",\n      \"rule\": \"default-matrix-row\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"vtoken-bridge\",\n      \"observed\": {\n        \"defaultMode\": \"opt-in\",\n        \"matrixRow\": \"VToken bridge\",\n        \"matrixValue\": \"retired\"\n      },",
+      "replace": "      \"id\": \"C-05/R-D3\",\n      \"rule\": \"default-matrix-row\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"vtoken-bridge\",\n      \"observed\": {},"
+    }
+  ]
+}
