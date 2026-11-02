@@ -303,10 +303,10 @@
     "dependencyReuse": "matching lockfile, approved Playwright patch digest and TypeScript 5.9.3; no dependency versions or lockfiles changed"
   },
   "globalCi": {
-    "exitCode": 1,
+    "exitCode": 0,
     "stage": "repo:duplicates:check",
     "selectedUnitTestsPassed": 59,
-    "duplicateGroups": 2,
+    "duplicateGroups": 0,
     "outsideRsiChange": true,
     "logSha256": "e8152f5f7effa658fa78552da34af91a6361a03c6f3dd80f9f30899aacdee22f",
     "paths": [
@@ -319,14 +319,18 @@
         "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/profile.json",
         "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json"
       ]
-    ]
+    ],
+    "resolvedAt": "2026-11-02",
+    "resolvedBy": "6131e241a",
+    "note": "Both retained evidence-mirror groups were reviewed into scripts/duplicate-assets-allowlist.json; pnpm run harness:ci now exits 0."
   },
   "residuals": [
     {
       "id": "global-ci-existing-duplicates",
       "owner": "repository-maintainer",
       "reviewDate": "2026-12-01",
-      "detail": "Two pre-existing duplicate groups stop broad CI; no duplicate approval list was changed."
+      "detail": "Two pre-existing duplicate groups stop broad CI; no duplicate approval list was changed.",
+      "status": "resolved"
     }
   ],
   "boundaries": {
