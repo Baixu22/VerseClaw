@@ -191,6 +191,15 @@ export type RuntimeFeatureConfig = {
     checkpointedContextReset?: {
       enabled?: boolean;
     };
+    /**
+     * context-folding-rlm: ContextHandle / bounded context_expand / single-level
+     * context_fold. Default off; when off no tool is registered and prompt,
+     * tool list, compaction and subagent behavior stay byte-identical.
+     * Env override: VERSE_CONTEXT_FOLDING. Rollback is disable-only.
+     */
+    contextFolding?: {
+      enabled?: boolean;
+    };
     /** DCS Stage 5 context_write agency role override. Default "implementer". */
     "context-write"?: {
       role?: string;

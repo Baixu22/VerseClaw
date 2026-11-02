@@ -25,6 +25,25 @@ touchedAreas:
   - tests/unit/context-folding-*.test.ts
   - tests/integration/context-folding-*.test.ts
   - tests/e2e/context-folding-real-task.spec.ts
+  - tests/unit/fixtures/context-folding/**
+  - openclaw_runtime/src/config/types.openclaw.ts
+  - openclaw_runtime/src/config/zod-schema.ts
+  - openclaw_runtime/src/config/runtime-feature-leaves.ts
+  - openclaw_runtime/src/config/schema.labels.ts
+  - openclaw_runtime/src/config/schema.help.ts
+  - openclaw_runtime/src/agents/agent-tools.ts
+  - openclaw_runtime/src/agents/openclaw-tools.ts
+  - openclaw_runtime/src/agents/tools/context-fold-tool.ts
+  - shared/dcs/component-disposition-catalog.ts
+  - docs/modules/context-and-memory.md
+residualPaths:
+  - harness/specs/guides/autonomous-project-system-plan.md
+  - harness/specs/guides/session-derivation-ui-design.md
+  - harness/specs/rules/session-derivation-ui-contract.md
+  - harness/specs/scenarios/autonomous-project-system.md
+  - harness/specs/scenarios/session-derivation-ui.md
+  - harness/specs/tasks/autonomous-project-system.md
+  - harness/specs/tasks/session-derivation-ui.md
 expectedUserBehavior:
   - 代理能识别大材料并使用可验证 handle，而不是把完整原文或完整子任务轨迹塞入父上下文。
   - 代理能按需读取 bounded excerpt，并在 stale、missing、cross-scope 时得到明确诊断。
@@ -112,6 +131,7 @@ docs:
 - expected root：`<worktree-root>/context-folding-rlm/ClawX`
 - 该支线只允许一个 ready leaf；其他叶子按依赖保持 proposed。
 - 只提交本 worktree 的规范、实现和最终证据；不覆盖其他 worktree 或并行改动。
+- `residualPaths` 列出的七个文件来自本分支首个 spec 提交（f9b067cb5）同时落下的其他支线规范（autonomous-project-system、session-derivation-ui）。它们不是本支线的实现面，但会出现在 `origin/main...HEAD` 的 ownership diff 里；按 harness 的 residualPaths 语义显式记录为工具边界，完整 ownership 门以 `PASS WITH RESIDUAL` 通过，而不是用 `--since` 或 `--no-diff` 窄化。
 
 ## 分阶段交付
 

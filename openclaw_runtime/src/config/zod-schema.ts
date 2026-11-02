@@ -181,6 +181,12 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        contextFolding: z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
         "context-write": z
           .object({
             role: z.string().min(1).max(100).optional(),
