@@ -1,0 +1,8 @@
+{
+  "command": "pnpm run repo:artifacts:check",
+  "schema": "AdmissionGate/v1",
+  "stdout": "logs/formal-repo-artifacts.log",
+  "classification": "missing-retained-doc",
+  "note": "A6 spec requires ADMISSION-CONVERGENCE.md but the candidate does not contain it yet.",
+  "exitCode": 1
+}

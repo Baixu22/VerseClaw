@@ -1,0 +1,13 @@
+{
+  "schema": "AdmissionConvergenceCandidate/v1",
+  "generatedAt": "2026-11-02T17:03:34.033953+08:00",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "candidateCommit": "6b7f8eb496a43418ffaf880dc3590ed1042c6fc9",
+  "candidateTree": "55ee24451391bf67e23214915deaceb55d6704d9",
+  "baselinePreA3": "97cda35de",
+  "baselineA5": "179a9b0f8",
+  "candidateDescription": "A6 regression spec commit; runtime source identical to pushed A5 closeout. Baseline is the direct parent of A3.",
+  "worktree": "D:\\tmp\\ClawX-a6-regression-20261102-v2",
+  "testRoot": "D:\\tmp\\ClawX-a6-final-results"
+}

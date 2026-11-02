@@ -1,0 +1,17 @@
+{
+  "schema": "AdmissionE2EAttempt/v1",
+  "command": "pnpm run test:e2e:run",
+  "status": "aborted-after-partial-serial-progress",
+  "classification": "superseded-by-official-sharded-run",
+  "reason": "The serial suite passed 119/418 before the run was intentionally replaced with four Playwright shards, as allowed by playwright.config.ts for speed while retaining one worker per shard.",
+  "observed": {
+    "ok": 112,
+    "x": 5,
+    "-": 2
+  },
+  "evidence": [
+    "logs/e2e-run3.stdout.log",
+    "logs/e2e-run3.stderr.log"
+  ],
+  "note": "The sharded run is the authoritative full-suite matrix; this log is retained as intermediate execution evidence."
+}

@@ -1,0 +1,8 @@
+{
+  "command": "pnpm run typecheck",
+  "schema": "AdmissionGate/v1",
+  "stdout": "logs/formal-typecheck.log",
+  "classification": "pass",
+  "note": "node/web/test all exit 0; test-typecheck errorCount=0",
+  "exitCode": 0
+}

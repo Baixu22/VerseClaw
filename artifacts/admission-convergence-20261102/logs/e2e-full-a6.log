@@ -1,0 +1,1231 @@
+$ pnpm run build:vite && playwright test "--workers=2"
+$ pnpm run versebrowser:build && node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs
+$ pnpm --filter @verse-claw/versebrowser build
+$ node scripts/patch-upstream.mjs && tsc -p tsconfig.build.json
+{"patch":"versebrowser-log-pointer-focus-files-downloads-v1","owner":"@playwright/mcp","upstream":"1.64.0-alpha-1790635538000","sha256":"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13"}
+{"patch":"versebrowser-log-pointer-focus-files-downloads-v1","owner":"playwright","upstream":"1.64.0-alpha-1790635538000","sha256":"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13"}
+[ext-bridge] No external extensions configured — empty stubs generated.
+[lobe-icons] 910 icons from @lobehub/assets-fileicon@1.0.0 (MIT) -> public\lobe-icons (copied=910 unchanged=0 removed=0)
+$ node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build
+vite v7.3.1 building client environment for production...
+<script src="./boot-theme.js"> in "/index.html" can't be bundled without type="module" attribute
+transforming...
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+warn - The class `duration-[280ms]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `duration-&lsqb;280ms&rsqb;` to silence this warning.
+
+warn - The class `ease-[cubic-bezier(0.22,1,0.36,1)]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;` to silence this warning.
+✓ 7955 modules transformed.
+Circular chunk: index -> react-vendor -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "react-vendor" to be bundled into the chunk "index".
+Circular chunk: App -> settings-overview -> App. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "settings-overview" to be bundled into the chunk "App".
+Circular chunk: GeneratedFilesPanel -> AssistantMarkdown -> assistant-ui-runtime -> GeneratedFilesPanel. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "assistant-ui-runtime" to be bundled into the chunk "GeneratedFilesPanel".
+Circular chunk: AssistantMarkdown -> assistant-ui-runtime -> AssistantMarkdown. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "assistant-ui-runtime" to be bundled into the chunk "AssistantMarkdown".
+Circular chunk: markdown-rendering -> index -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "index" to be bundled into the chunk "markdown-rendering".
+Circular chunk: markdown-rendering -> attachment -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "attachment" to be bundled into the chunk "markdown-rendering".
+Circular chunk: GeneratedFilesPanel -> AssistantMarkdown -> assistant-ui-runtime -> markdown-rendering -> GeneratedFilesPanel. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "markdown-rendering" to be bundled into the chunk "GeneratedFilesPanel".
+Circular chunk: markdown-rendering -> FilePreviewBody -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "FilePreviewBody" to be bundled into the chunk "markdown-rendering".
+rendering chunks...
+[plugin vite:reporter]
+(!) D:/ClawX-work/admission-a6-clean/src/stores/chat.ts is dynamically imported by D:/ClawX-work/admission-a6-clean/src/stores/gateway.ts, D:/ClawX-work/admission-a6-clean/src/stores/gateway.ts, D:/ClawX-work/admission-a6-clean/src/stores/gateway.ts, D:/ClawX-work/admission-a6-clean/src/stores/gateway.ts but also statically imported by D:/ClawX-work/admission-a6-clean/src/components/chat/ResourceChip.tsx, D:/ClawX-work/admission-a6-clean/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/ClawX-work/admission-a6-clean/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/ClawX-work/admission-a6-clean/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/ClawX-work/admission-a6-clean/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/ClawX-work/admission-a6-clean/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/ClawX-work/admission-a6-clean/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/ClawX-work/admission-a6-clean/src/components/layout/Sidebar.tsx, D:/ClawX-work/admission-a6-clean/src/components/rareui/CompletionActivityMenu.tsx, D:/ClawX-work/admission-a6-clean/src/components/task-ledger/TaskNodeSelector.tsx, D:/ClawX-work/admission-a6-clean/src/lib/workspace-session.ts, D:/ClawX-work/admission-a6-clean/src/pages/Chat/ChatInput.tsx, D:/ClawX-work/admission-a6-clean/src/pages/Chat/ChatToolbar.tsx, D:/ClawX-work/admission-a6-clean/src/pages/Chat/TeamOrchestrationCard.tsx, D:/ClawX-work/admission-a6-clean/src/pages/Chat/index.tsx, D:/ClawX-work/admission-a6-clean/src/pages/ClawGraph/index.tsx, D:/ClawX-work/admission-a6-clean/src/pages/Cron/index.tsx, D:/ClawX-work/admission-a6-clean/src/pages/Settings/sections/ArchivedSection.tsx, D:/ClawX-work/admission-a6-clean/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/ClawX-work/admission-a6-clean/src/pages/TaskLedger/index.tsx, D:/ClawX-work/admission-a6-clean/src/stores/cron.ts, dynamic import will not move module into another chunk.
+
+dist/assets/feishu-9xPbmmGr.svg                                   4.10 kB
+dist/assets/KaTeX_Size3-Regular-CTq5MqoE.woff                     4.42 kB
+dist/assets/ollama-CTAH8FBw.svg                                   4.78 kB
+dist/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2                    4.93 kB
+dist/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2                    5.21 kB
+dist/assets/deepseek-CSSocskI.svg                                 5.26 kB
+dist/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2                    5.47 kB
+dist/assets/KaTeX_Size4-Regular-BF-4gkZK.woff                     5.98 kB
+dist/assets/KaTeX_Size2-Regular-oD1tc_U0.woff                     6.19 kB
+dist/assets/KaTeX_Size1-Regular-C195tn64.woff                     6.50 kB
+dist/assets/KaTeX_Caligraphic-Regular-Di6jR-x-.woff2              6.91 kB
+dist/assets/KaTeX_Caligraphic-Bold-Dq_IR9rO.woff2                 6.91 kB
+dist/assets/KaTeX_Size3-Regular-DgpXs0kz.ttf                      7.59 kB
+dist/assets/KaTeX_Caligraphic-Regular-CTRA-rTL.woff               7.66 kB
+dist/assets/KaTeX_Caligraphic-Bold-BEiXGLvX.woff                  7.72 kB
+dist/assets/qq-CADZtiVr.svg                                       8.13 kB
+dist/assets/KaTeX_Script-Regular-D3wIWfF6.woff2                   9.64 kB
+dist/assets/KaTeX_SansSerif-Regular-DDBCnlJ7.woff2               10.34 kB
+dist/assets/KaTeX_Size4-Regular-DWFBv043.ttf                     10.36 kB
+dist/assets/KaTeX_Script-Regular-D5yQViql.woff                   10.59 kB
+dist/assets/KaTeX_Fraktur-Regular-CTYiF6lA.woff2                 11.32 kB
+dist/assets/KaTeX_Fraktur-Bold-CL6g_b3V.woff2                    11.35 kB
+dist/assets/KaTeX_Size2-Regular-B7gKUWhC.ttf                     11.51 kB
+dist/index.html                                                  11.77 kB
+dist/assets/KaTeX_SansSerif-Italic-C3H0VqGB.woff2                12.03 kB
+dist/assets/KaTeX_SansSerif-Bold-D1sUS0GD.woff2                  12.22 kB
+dist/assets/KaTeX_Size1-Regular-Dbsnue_I.ttf                     12.23 kB
+dist/assets/KaTeX_SansSerif-Regular-CS6fqUqJ.woff                12.32 kB
+dist/assets/KaTeX_Caligraphic-Regular-wX97UBjC.ttf               12.34 kB
+dist/assets/KaTeX_Caligraphic-Bold-ATXxdsX0.ttf                  12.37 kB
+dist/assets/KaTeX_Fraktur-Regular-Dxdc4cR9.woff                  13.21 kB
+dist/assets/KaTeX_Fraktur-Bold-BsDP51OF.woff                     13.30 kB
+dist/assets/KaTeX_Typewriter-Regular-CO6r4hn1.woff2              13.57 kB
+dist/assets/KaTeX_SansSerif-Italic-DN2j7dab.woff                 14.11 kB
+dist/assets/KaTeX_SansSerif-Bold-DbIhKOiC.woff                   14.41 kB
+dist/assets/KaTeX_Typewriter-Regular-C0xS9mPB.woff               16.03 kB
+dist/assets/KaTeX_Math-BoldItalic-CZnvNsCZ.woff2                 16.40 kB
+dist/assets/KaTeX_Math-Italic-t53AETM-.woff2                     16.44 kB
+dist/assets/KaTeX_Script-Regular-C5JkGWo-.ttf                    16.65 kB
+dist/assets/KaTeX_Main-BoldItalic-DxDJ3AOS.woff2                 16.78 kB
+dist/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2                     16.99 kB
+dist/assets/KaTeX_Math-BoldItalic-iY-2wyZ7.woff                  18.67 kB
+dist/assets/KaTeX_Math-Italic-DA0__PXp.woff                      18.75 kB
+dist/assets/KaTeX_Main-BoldItalic-SpSLRI95.woff                  19.41 kB
+dist/assets/KaTeX_SansSerif-Regular-BNo7hRIc.ttf                 19.44 kB
+dist/assets/KaTeX_Fraktur-Regular-CB_wures.ttf                   19.57 kB
+dist/assets/KaTeX_Fraktur-Bold-BdnERNNW.ttf                      19.58 kB
+dist/assets/KaTeX_Main-Italic-BMLOBm91.woff                      19.68 kB
+dist/assets/KaTeX_SansSerif-Italic-YYjJ1zSn.ttf                  22.36 kB
+dist/assets/KaTeX_SansSerif-Bold-CFMepnvq.ttf                    24.50 kB
+dist/assets/KaTeX_Main-Bold-Cx986IdX.woff2                       25.32 kB
+dist/assets/KaTeX_Main-Regular-B22Nviop.woff2                    26.27 kB
+dist/assets/KaTeX_Typewriter-Regular-D3Ib7_Hf.ttf                27.56 kB
+dist/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2                     28.08 kB
+dist/assets/KaTeX_Main-Bold-Jm3AIy58.woff                        29.91 kB
+dist/assets/KaTeX_Main-Regular-Dr94JaBh.woff                     30.77 kB
+dist/assets/KaTeX_Math-BoldItalic-B3XSjfu4.ttf                   31.20 kB
+dist/assets/KaTeX_Math-Italic-flOr_0UB.ttf                       31.31 kB
+dist/assets/KaTeX_Main-BoldItalic-DzxPMmG6.ttf                   32.97 kB
+dist/assets/KaTeX_AMS-Regular-DMm9YOAa.woff                      33.52 kB
+dist/assets/KaTeX_Main-Italic-3WenGoN9.ttf                       33.58 kB
+dist/assets/KaTeX_Main-Bold-waoOVXN0.ttf                         51.34 kB
+dist/assets/KaTeX_Main-Regular-ypZvNtVU.ttf                      53.58 kB
+dist/assets/logo-D4iwvlOw.png                                    55.33 kB
+dist/assets/KaTeX_AMS-Regular-DRggAlZN.ttf                       63.63 kB
+dist/assets/codicon-ngg6Pgfi.ttf                                121.97 kB
+dist/assets/grok-recipes-9JOgD8T4.json                          127.69 kB
+dist/.vite/manifest.json                                        220.83 kB
+dist/assets/editor.worker-CdQrwHl8.js                           251.81 kB
+dist/assets/logo_character-DQwddV-Y.png                         374.60 kB
+dist/assets/index-DmaSAMpS.css                                    0.49 kB
+dist/assets/ArtifactPanel-Dv47L9lv.css                            4.13 kB
+dist/assets/knowledge-view-utils-D7EB7HF4.css                     4.67 kB
+dist/assets/math-rendering-CS4LK5N6.css                          28.89 kB
+dist/assets/editor-DvjKNqdW.css                                 146.81 kB
+dist/assets/index-BeAx1fsr.css                                  293.76 kB
+dist/assets/index-OzvJSCiD.js                                     0.18 kB
+dist/assets/use-reduced-motion-Dr47C2Km.js                        0.19 kB
+dist/assets/format-D3BLFWmk.js                                    0.21 kB
+dist/assets/LoadingSpinner-37IP4Pt2.js                            0.38 kB
+dist/assets/codeowners-Bp6g37R7.js                                0.55 kB
+dist/assets/telemetry-DFsLlqcG.js                                 0.59 kB
+dist/assets/textarea-lAAyt0Ik.js                                  0.64 kB
+dist/assets/resource-shed-DEcE9m0O.js                             0.65 kB
+dist/assets/file-card-utils-Cl4OR6hG.js                           0.66 kB
+dist/assets/shellsession-BADoaaVG.js                              0.71 kB
+dist/assets/tsv-B_m7g4N7.js                                       0.74 kB
+dist/assets/separator-BWIBtjCC.js                                 0.74 kB
+dist/assets/html-derivative-DlHx6ybY.js                           0.90 kB
+dist/assets/user-error-CeRiSn4k.js                                0.95 kB
+dist/assets/label-Gayxq1Bn.js                                     0.96 kB
+dist/assets/git-rebase-r7XF79zn.js                                0.98 kB
+dist/assets/qmldir-C8lEn-DE.js                                    1.00 kB
+dist/assets/card-Dmg7gjaH.js                                      1.07 kB
+dist/assets/csv-fuZLfV_i.js                                       1.14 kB
+dist/assets/git-commit-F4YmCXRG.js                                1.23 kB
+dist/assets/MonacoViewer-H70ZLT54.js                              1.25 kB
+dist/assets/index-BN6EIAxA.js                                     1.31 kB
+dist/assets/xsl-CtQFsRM5.js                                       1.39 kB
+dist/assets/dotenv-Da5cRb03.js                                    1.42 kB
+dist/assets/error-message-DqGmdcdt.js                             1.45 kB
+dist/assets/cron-BylNm1LA.js                                      1.47 kB
+dist/assets/sparql-rVzFXLq3.js                                    1.48 kB
+dist/assets/FilePreviewOverlay-CncB2Glx.js                        1.50 kB
+dist/assets/ini-BEwlwnbL.js                                       1.53 kB
+dist/assets/confirm-dialog-B5S5U_1g.js                            1.55 kB
+dist/assets/fortran-fixed-form-CkoXwp7k.js                        1.67 kB
+dist/assets/docker-BcOcwvcX.js                                    1.74 kB
+dist/assets/hxml-Bvhsp5Yf.js                                      1.74 kB
+dist/assets/usePopover-BgyJNlks.js                                1.75 kB
+dist/assets/MonacoDiffViewer-WlB9MM6L.js                          1.82 kB
+dist/assets/desktop-BmXAJ9_W.js                                   1.83 kB
+dist/assets/usage-history-DGuvsmAU.js                             1.92 kB
+dist/assets/vite-runtime-DMGCcr4D.js                              1.94 kB
+dist/assets/page-shell-BfgNf7HJ.js                                2.05 kB
+dist/assets/wenyan-BV7otONQ.js                                    2.16 kB
+dist/assets/usage-BgW8_Tn6.js                                     2.19 kB
+dist/assets/jssm-C2t-YnRu.js                                      2.24 kB
+dist/assets/sheet-DcdQ-C60.js                                     2.31 kB
+dist/assets/reg-C-SQnVFl.js                                       2.35 kB
+dist/assets/edge-FbVlp4U3.js                                      2.36 kB
+dist/assets/diff-D97Zzqfu.js                                      2.57 kB
+dist/assets/gleam-BspZqrRM.js                                     2.58 kB
+dist/assets/erb-Dm6A9KJ5.js                                       2.61 kB
+dist/assets/hy-DFXneXwc.js                                        2.65 kB
+dist/assets/PanelResizeDivider-DAGKYnZD.js                        2.72 kB
+dist/assets/json-Cp-IABpG.js                                      2.82 kB
+dist/assets/openscad-C4EeE6gA.js                                  2.82 kB
+dist/assets/log-2UxHyX5q.js                                       2.85 kB
+dist/assets/PdfViewer-CObxD_SS.js                                 2.92 kB
+dist/assets/cairo-KRGpt6FW.js                                     2.94 kB
+dist/assets/berry-uYugtg8r.js                                     3.01 kB
+dist/assets/jsonl-DcaNXYhu.js                                     3.01 kB
+dist/assets/jsonc-Des-eS-w.js                                     3.11 kB
+dist/assets/logo-BtOb2qkB.js                                      3.13 kB
+dist/assets/index-CRhtDJ9M.js                                     3.18 kB
+dist/assets/po-BTJTHyun.js                                        3.24 kB
+dist/assets/json5-C9tS-k6U.js                                     3.25 kB
+dist/assets/mipsasm-CKIfxQSi.js                                   3.26 kB
+dist/assets/tasl-QIJgUcNo.js                                      3.29 kB
+dist/assets/genie-D0YGMca9.js                                     3.36 kB
+dist/assets/rel-C3B-1QV4.js                                       3.37 kB
+dist/assets/vala-CsfeWuGM.js                                      3.37 kB
+dist/assets/splunk-BtCnVYZw.js                                    3.44 kB
+dist/assets/tabs-BcLhKz6j.js                                      3.49 kB
+dist/assets/index-BkrO8Qgp.js                                     3.53 kB
+dist/assets/fluent-C4IJs8-o.js                                    3.61 kB
+dist/assets/ssh-config-_ykCGR6B.js                                3.62 kB
+dist/assets/jsonnet-DFQXde-d.js                                   3.62 kB
+dist/assets/kdl-DV7GczEv.js                                       3.63 kB
+dist/assets/glsl-DplSGwfg.js                                      3.63 kB
+dist/assets/hurl-irOxFIW8.js                                      3.65 kB
+dist/assets/narrat-DRg8JJMk.js                                    3.67 kB
+dist/assets/turtle-BsS91CYL.js                                    3.70 kB
+dist/assets/EfficiencySamplingPanel-B5swmtsQ.js                   3.70 kB
+dist/assets/zenscript-DVFEvuxE.js                                 3.91 kB
+dist/assets/ron-D8l8udqQ.js                                       3.91 kB
+dist/assets/gn-n2N0HUVH.js                                        4.00 kB
+dist/assets/pascal-D93ZcfNL.js                                    4.15 kB
+dist/assets/channels-95hknpwP.js                                  4.20 kB
+dist/assets/task-ledger-plan-projection-DZCuVHC6.js               4.27 kB
+dist/assets/tcl-dwOrl1Do.js                                       4.43 kB
+dist/assets/nextflow-C-mBbutL.js                                  4.51 kB
+dist/assets/rosmsg-BJDFO7_C.js                                    4.52 kB
+dist/assets/http-jrhK8wxY.js                                      4.55 kB
+dist/assets/RemoteTaskDeveloperPanel-D4r3PmBK.js                  4.66 kB
+dist/assets/polar-C0HS_06l.js                                     4.67 kB
+dist/assets/sdbl-DVxCFoDh.js                                      4.70 kB
+dist/assets/attachment-CjkQvaCl.js                                4.75 kB
+dist/assets/fennel-BYunw83y.js                                    4.77 kB
+dist/assets/SettingsControls-qxAsjJNN.js                          4.77 kB
+dist/assets/bibtex-CHM0blh-.js                                    4.80 kB
+dist/assets/DataListFrames-K3DyVYcK.js                            4.82 kB
+dist/assets/ArchivedSection-CKgxruu3.js                           5.01 kB
+dist/assets/PageLoadingSkeletons-7Y_fHlco.js                      5.01 kB
+dist/assets/llvm-DjAJT7YJ.js                                      5.05 kB
+dist/assets/wgsl-Dx-B1_4e.js                                      5.14 kB
+dist/assets/StructuralLoadingOverlay-BdoWJSI4.js                  5.23 kB
+dist/assets/gdresource-BOOCDP_w.js                                5.29 kB
+dist/assets/qml-3beO22l8.js                                       5.34 kB
+dist/assets/zig-VOosw3JB.js                                       5.34 kB
+dist/assets/dax-CEL-wOlO.js                                       5.37 kB
+dist/assets/bicep-Bmn6On1c.js                                     5.38 kB
+dist/assets/xml-sdJ4AIDG.js                                       5.38 kB
+dist/assets/awk-DMzUqQB5.js                                       5.46 kB
+dist/assets/CheckpointsDialog-C4-CvxYT.js                         5.52 kB
+dist/assets/coq-DkFqJrB1.js                                       5.53 kB
+dist/assets/jinja-f2NsQr07.js                                     5.69 kB
+dist/assets/lean-BZvkOJ9d.js                                      5.78 kB
+dist/assets/moonbit-_H4v1dQx.js                                   5.90 kB
+dist/assets/powerquery-CEu0bR-o.js                                5.90 kB
+dist/assets/shaderlab-Dg9Lc6iA.js                                 5.92 kB
+dist/assets/verilog-BQ8w6xss.js                                   5.93 kB
+dist/assets/cypher-COkxafJQ.js                                    5.96 kB
+dist/assets/settings-overview-CJv2v9XX.js                         6.06 kB
+dist/assets/vb-D17OF-Vu.js                                        6.09 kB
+dist/assets/SheetViewer-D7ysEzjE.js                               6.13 kB
+dist/assets/red-bN70gL4F.js                                       6.26 kB
+dist/assets/min-dark-CafNBF8u.js                                  6.29 kB
+dist/assets/CompactionArtifactViewer-CAJ6ANDh.js                  6.30 kB
+dist/assets/gdshader-DkwncUOv.js                                  6.33 kB
+dist/assets/prisma-Dd19v3D-.js                                    6.33 kB
+dist/assets/ara-BRHolxvo.js                                       6.36 kB
+dist/assets/clojure-P80f7IUj.js                                   6.41 kB
+dist/assets/postcss-CXtECtnM.js                                   6.42 kB
+dist/assets/toml-vGWfd6FD.js                                      6.43 kB
+dist/assets/solarized-light-L9t79GZl.js                           6.48 kB
+dist/assets/r-Dspwwk_N.js                                         6.54 kB
+dist/assets/proto-C7zT0LnQ.js                                     6.55 kB
+dist/assets/smalltalk-BERRCDM3.js                                 6.59 kB
+dist/assets/talonscript-CkByrt1z.js                               6.76 kB
+dist/assets/solarized-dark-DXbdFlpD.js                            6.85 kB
+dist/assets/riscv-BM1_JUlF.js                                     6.91 kB
+dist/assets/min-light-CTRr51gU.js                                 6.97 kB
+dist/assets/soy-8wufbnw4.js                                       6.98 kB
+dist/assets/scheme-C98Dy4si.js                                    7.17 kB
+dist/assets/hlsl-D3lLCCz7.js                                      7.26 kB
+dist/assets/qss-IeuSbFQv.js                                       7.47 kB
+dist/assets/BrowserSettingsPanel-BGWCWzF0.js                      7.69 kB
+dist/assets/MeasuredLoadingList-CWv_N3fv.js                       7.75 kB
+dist/assets/systemd-4A_iFExJ.js                                   7.87 kB
+dist/assets/monokai-D4h5O-jR.js                                   7.88 kB
+dist/assets/regexp-CDVJQ6XC.js                                    7.99 kB
+dist/assets/haml-D5jkg6IW.js                                      8.26 kB
+dist/assets/ConversationMediaCard-D_mU4vUg.js                     8.27 kB
+dist/assets/ProjectRulesCenter-BkylISEZ.js                        8.28 kB
+dist/assets/index-w6PwaWGP.js                                     8.32 kB
+dist/assets/index-CDF00ahZ.js                                     8.33 kB
+dist/assets/typst-DHCkPAjA.js                                     8.39 kB
+dist/assets/vue-html-AaS7Mt5G.js                                  8.47 kB
+dist/assets/plsql-ChMvpjG-.js                                     8.51 kB
+dist/assets/dart-bE4Kk8sk.js                                      8.62 kB
+dist/assets/AgentDevWorkbenchPanel-BJCcXB7s.js                    8.65 kB
+dist/assets/horizon-BUw7H-hv.js                                   8.78 kB
+dist/assets/kotlin-BdnUsdx6.js                                    8.79 kB
+dist/assets/horizon-bright-CUuTKBJd.js                            8.79 kB
+dist/assets/make-CHLpvVh8.js                                      8.96 kB
+dist/assets/andromeeda-C4gqWexZ.js                                9.02 kB
+dist/assets/sas-DEy46yEz.js                                       9.06 kB
+dist/assets/dark-plus-C3mMm8J8.js                                 9.10 kB
+dist/assets/slack-dark-BthQWCQV.js                                9.12 kB
+dist/assets/sass-Cj5Yp3dK.js                                      9.29 kB
+dist/assets/plastic-3e1v2bzS.js                                   9.30 kB
+dist/assets/slack-ochin-DqwNpetd.js                               9.43 kB
+dist/assets/HooksTrustPanel-DOfbShJp.js                           9.47 kB
+dist/assets/tex-idrVyKtj.js                                       9.67 kB
+dist/assets/jison-wvAkD_A8.js                                     9.69 kB
+dist/assets/cmake-D1j8_8rp.js                                     9.86 kB
+dist/assets/light-plus-B7mTdjB0.js                                9.94 kB
+dist/assets/hcl-BWvSN4gD.js                                      10.05 kB
+dist/assets/channel-DaA4X8v-.js                                  10.27 kB
+dist/assets/pkl-u5AG7uiY.js                                      10.37 kB
+dist/assets/beancount-k_qm7-4y.js                                10.37 kB
+dist/assets/nextflow-groovy-vE_lwT2v.js                          10.44 kB
+dist/assets/dream-maker-BtqSS_iP.js                              10.47 kB
+dist/assets/raku-DXvB9xmW.js                                     10.47 kB
+dist/assets/yaml-Buea-lGh.js                                     10.51 kB
+dist/assets/rst-CpCqk9r5.js                                      10.67 kB
+dist/assets/elm-DbKCFpqz.js                                      10.97 kB
+dist/assets/index-C_1aZj36.js                                    11.08 kB
+dist/assets/github-light-DAi9KRSo.js                             11.18 kB
+dist/assets/just-CUsbIsdP.js                                     11.21 kB
+dist/assets/prolog-CbFg5uaA.js                                   11.36 kB
+dist/assets/terraform-BETggiCN.js                                11.39 kB
+dist/assets/github-dark-DHJKELXO.js                              11.41 kB
+dist/assets/puppet-BMWR74SV.js                                   11.44 kB
+dist/assets/laserwave-DUszq2jm.js                                11.50 kB
+dist/assets/index-CR3jIBgH.js                                    11.78 kB
+dist/assets/gherkin-DyxjwDmM.js                                  11.95 kB
+dist/assets/wasm-MzD3tlZU.js                                     12.01 kB
+dist/assets/hjson-D5-asLiD.js                                    12.05 kB
+dist/assets/qq-CnhAhC2b.js                                       12.12 kB
+dist/assets/handlebars-BpdQsYii.js                               12.15 kB
+dist/assets/apache-Pmp26Uib.js                                   12.46 kB
+dist/assets/index-B8PbEKFc.js                                    12.62 kB
+dist/assets/index-DjQfaxjo.js                                    12.63 kB
+dist/assets/RecoverySettingsSection-DEootJIW.js                  12.64 kB
+dist/assets/vesper-DRje8inN.js                                   12.73 kB
+dist/assets/bat-BkioyH1T.js                                      12.89 kB
+dist/assets/fish-BvzEVeQv.js                                     13.04 kB
+dist/assets/v-BcVCzyr7.js                                        13.21 kB
+dist/assets/vitesse-light-CVO1_9PV.js                            13.62 kB
+dist/assets/aurora-x-D-2ljcwZ.js                                 13.66 kB
+dist/assets/vitesse-black-Bkuqu6BP.js                            13.68 kB
+dist/assets/vitesse-dark-D0r3Knsf.js                             13.76 kB
+dist/assets/pug-DKIMFp6K.js                                      13.84 kB
+dist/assets/synthwave-84-CbfX1IO0.js                             14.04 kB
+dist/assets/github-light-default-D7oLnXFd.js                     14.16 kB
+dist/assets/clarity-D53aC0YG.js                                  14.28 kB
+dist/assets/github-light-high-contrast-BfjtVDDH.js               14.28 kB
+dist/assets/github-dark-dimmed-DH5Ifo-i.js                       14.43 kB
+dist/assets/github-dark-default-Cuk6v7N8.js                      14.44 kB
+dist/assets/github-dark-high-contrast-E3gJ1_iC.js                14.60 kB
+dist/assets/gnuplot-DdkO51Og.js                                  14.78 kB
+dist/assets/rust-B1yitclQ.js                                     15.07 kB
+dist/assets/ContextControlPlanePanel-Cv30wVwM.js                 15.16 kB
+dist/assets/kusto-wEQ09or8.js                                    15.17 kB
+dist/assets/actionscript-3-CoDkCxhg.js                           15.21 kB
+dist/assets/nix-CwoSXNpI.js                                      15.51 kB
+dist/assets/lua-BaeVxFsk.js                                      15.54 kB
+dist/assets/luau-KW6xsasC.js                                     15.63 kB
+dist/assets/abap-BdImnpbu.js                                     15.85 kB
+dist/assets/solidity-rGO070M0.js                                 16.07 kB
+dist/assets/matlab-D7o27uSR.js                                   16.09 kB
+dist/assets/cue-D82EKSYY.js                                      16.20 kB
+dist/assets/elixir-CkH2-t6x.js                                   16.32 kB
+dist/assets/odin-BBf5iR-q.js                                     16.51 kB
+dist/assets/ts-tags-D351s5mN.js                                  16.57 kB
+dist/assets/index-BhYcLsqT.js                                    16.78 kB
+dist/assets/index-5LzzszQ3.js                                    17.03 kB
+dist/assets/kanagawa-wave-DWedfzmr.js                            17.12 kB
+dist/assets/kanagawa-lotus-CfQXZHmo.js                           17.13 kB
+dist/assets/kanagawa-dragon-CkXjmgJE.js                          17.13 kB
+dist/assets/move-IF9eRakj.js                                     17.51 kB
+dist/assets/graphql-ChdNCCLP.js                                  18.00 kB
+dist/assets/liquid-C0sCDyMI.js                                   18.09 kB
+dist/assets/svelte-Cy7k_4gC.js                                   18.24 kB
+dist/assets/material-theme-D5KoaKCx.js                           18.62 kB
+dist/assets/material-theme-darker-BfHTSMKl.js                    18.63 kB
+dist/assets/material-theme-ocean-CyktbL80.js                     18.63 kB
+dist/assets/material-theme-lighter-B0m2ddpp.js                   18.63 kB
+dist/assets/material-theme-palenight-Csfq5Kiy.js                 18.64 kB
+dist/assets/gdscript-C5YyOfLZ.js                                 18.99 kB
+dist/assets/groovy-gcz8RCvz.js                                   19.18 kB
+dist/assets/mdc-DTYItulj.js                                      19.63 kB
+dist/assets/glimmer-js-ByusRIyA.js                               20.07 kB
+dist/assets/glimmer-ts-BfAWNZQY.js                               20.07 kB
+dist/assets/ayu-dark-DYE7WIF3.js                                 20.08 kB
+dist/assets/ayu-mirage-32ctXXKs.js                               20.09 kB
+dist/assets/powershell-Dpen1YoG.js                               20.15 kB
+dist/assets/ayu-light-BA47KaF1.js                                20.15 kB
+dist/assets/viml-CJc9bBzg.js                                     20.37 kB
+dist/assets/nushell-Cz2AlsmD.js                                  20.41 kB
+dist/assets/snazzy-light-Bw305WKR.js                             20.77 kB
+dist/assets/select-BPnMtVT-.js                                   21.03 kB
+dist/assets/dracula-BzJJZx-M.js                                  21.07 kB
+dist/assets/dracula-soft-BXkSAIEj.js                             21.08 kB
+dist/assets/twig-CW1WmMYd.js                                     21.36 kB
+dist/assets/wit-5i3qLPDT.js                                      21.47 kB
+dist/assets/model-options-QFqtRZGi.js                            21.50 kB
+dist/assets/rose-pine-qdsjHGoJ.js                                21.74 kB
+dist/assets/rose-pine-moon-D4_iv3hh.js                           21.75 kB
+dist/assets/rose-pine-dawn-DHQR4-dF.js                           21.75 kB
+dist/assets/nim-BIad80T-.js                                      22.46 kB
+dist/assets/common-lisp-Cg-RD9OK.js                              22.58 kB
+dist/assets/surrealql-Bq5Q-fJD.js                                22.58 kB
+dist/assets/gruvbox-dark-hard-CFHQjOhq.js                        22.63 kB
+dist/assets/gruvbox-dark-soft-CVdnzihN.js                        22.63 kB
+dist/assets/gruvbox-light-hard-CH1njM8p.js                       22.64 kB
+dist/assets/gruvbox-light-soft-hJgmCMqR.js                       22.64 kB
+dist/assets/gruvbox-dark-medium-GsRaNv29.js                      22.64 kB
+dist/assets/gruvbox-light-medium-DRw_LuNl.js                     22.64 kB
+dist/assets/bird2-BIv1doCn.js                                    22.94 kB
+dist/assets/sql-CRqJ_cUM.js                                      23.43 kB
+dist/assets/cadence-Bv_4Rxtq.js                                  23.67 kB
+dist/assets/astro-HNnZUWAn.js                                    24.01 kB
+dist/assets/apl-CORt7UWP.js                                      24.04 kB
+dist/assets/templ-DhtptRzy.js                                    24.06 kB
+dist/assets/vhdl-CeAyd5Ju.js                                     24.26 kB
+dist/assets/angular-html-3GT3A_0Q.js                             24.27 kB
+dist/assets/vue-D2xRrEX4.js                                      24.48 kB
+dist/assets/purescript-CklMAg4u.js                               24.69 kB
+dist/assets/typespec-CAFt9gP4.js                                 25.05 kB
+dist/assets/one-light-C3Wv6jpd.js                                25.30 kB
+dist/assets/fsharp-CXgrBDvD.js                                   25.31 kB
+dist/assets/marko-DjSrsDqO.js                                    25.48 kB
+dist/assets/night-owl-light-CMTm3GFP.js                          25.90 kB
+dist/assets/system-verilog-CnnmHF94.js                           26.20 kB
+dist/assets/nord-Ddv68eIx.js                                     26.72 kB
+dist/assets/codeql-DsOJ9woJ.js                                   26.88 kB
+dist/assets/c3-MRO5bC_T.js                                       26.98 kB
+dist/assets/scss-D5BDwBP9.js                                     27.20 kB
+dist/assets/java-CylS5w8V.js                                     27.22 kB
+dist/assets/coffee-Ch7k5sss.js                                   27.42 kB
+dist/assets/razor-BjBPvh-w.js                                    27.51 kB
+dist/assets/scala-C151Ov-r.js                                    28.88 kB
+dist/assets/night-owl-C39BiMTA.js                                28.91 kB
+dist/assets/KnowledgeChat-CboULJEs.js                            29.36 kB
+dist/assets/crystal-DGywbUpC.js                                  29.39 kB
+dist/assets/mermaid-mWjccvbQ.js                                  29.51 kB
+dist/assets/applescript-Co6uUVPk.js                              29.57 kB
+dist/assets/FilePreviewBody-Bo0mCXV5.js                          29.90 kB
+dist/assets/pierre-dark-CyvmCCZW.js                              30.55 kB
+dist/assets/pierre-light-480U9XYS.js                             30.55 kB
+dist/assets/pierre-dark-soft-BHGpRqa4.js                         30.56 kB
+dist/assets/pierre-light-soft-CVdyfjmI.js                        30.56 kB
+dist/assets/pierre-dark-tritanopia-Beq2gCRQ.js                   30.57 kB
+dist/assets/pierre-light-tritanopia-B4_gpKOM.js                  30.57 kB
+dist/assets/pierre-dark-protanopia-deuteranopia-Rgc0TwpF.js      30.60 kB
+dist/assets/pierre-light-protanopia-deuteranopia-CaVOBURG.js     30.60 kB
+dist/assets/stylus-BEDo0Tqx.js                                   31.07 kB
+dist/assets/julia-D7OTSIA_.js                                    31.08 kB
+dist/assets/index-CyRIgNpU.js                                    31.30 kB
+dist/assets/poimandres-CS3Unz2-.js                               33.49 kB
+dist/assets/one-dark-pro-DVMEJ2y_.js                             33.79 kB
+dist/assets/bsl-BO_Y6i37.js                                      33.87 kB
+dist/assets/index--Y9SFafi.js                                    34.45 kB
+dist/assets/haxe-CzTSHFRz.js                                     35.16 kB
+dist/assets/nginx-BpAMiNFr.js                                    35.37 kB
+dist/assets/houston-DnULxvSX.js                                  35.42 kB
+dist/assets/tokyo-night-hegEt444.js                              35.67 kB
+dist/assets/DcsProdFlagsPanel-D0jIxyAU.js                        36.14 kB
+dist/assets/erlang-DsQrWhSR.js                                   37.48 kB
+dist/assets/cobol-nBiQ_Alo.js                                    39.13 kB
+dist/assets/asm-D_Q5rh1f.js                                      40.72 kB
+dist/assets/index-CJCRTsJd.js                                    41.08 kB
+dist/assets/shellscript-Yzrsuije.js                              41.48 kB
+dist/assets/haskell-Df6bDoY_.js                                  41.49 kB
+dist/assets/perl-B9cMNwum.js                                     43.16 kB
+dist/assets/d-85-TOEBH.js                                        43.80 kB
+dist/assets/pierre-dark-vibrant-BWBVywrn.js                      44.76 kB
+dist/assets/pierre-light-vibrant-DdTDNdfJ.js                     44.76 kB
+dist/assets/ruby-DyJCeAvU.js                                     46.72 kB
+dist/assets/go-C27-OAKa.js                                       46.82 kB
+dist/assets/catppuccin-mocha-D87Tk5Gz.js                         47.26 kB
+dist/assets/catppuccin-latte-C9dUb6Cb.js                         47.26 kB
+dist/assets/catppuccin-frappe-DFWUc33u.js                        47.26 kB
+dist/assets/catppuccin-macchiato-DQyhUUbL.js                     47.26 kB
+dist/assets/apex-Dqspr-GT.js                                     47.77 kB
+dist/assets/ada-bCR0ucgS.js                                      48.08 kB
+dist/assets/apple-drawer-D-1QmMnC.js                             48.82 kB
+dist/assets/css-CLj8gQPS.js                                      49.04 kB
+dist/assets/AssistantMarkdown-CWVkQEGW.js                        49.14 kB
+dist/assets/imba-DGztddWO.js                                     49.93 kB
+dist/assets/everforest-dark-BgDCqdQA.js                          53.75 kB
+dist/assets/everforest-light-C8M2exoo.js                         53.75 kB
+dist/assets/wikitext-BhOHFoWU.js                                 55.89 kB
+dist/assets/index-D_2lxuYp.js                                    56.55 kB
+dist/assets/stata-DI20mbqo.js                                    56.99 kB
+dist/assets/html-pp8916En.js                                     57.25 kB
+dist/assets/settings-detail-OMQINnKk.js                          58.52 kB
+dist/assets/ballerina-BFfxhgS-.js                                58.69 kB
+dist/assets/markdown-Cvjx9yec.js                                 59.34 kB
+dist/assets/ocaml-C0hk2d4L.js                                    62.45 kB
+dist/assets/index-BOPkaKdr.js                                    65.24 kB
+dist/assets/mojo-rZm6bMo-.js                                     69.80 kB
+dist/assets/python-B6aJPvgy.js                                   69.95 kB
+dist/assets/c-BIGW1oBm.js                                        72.11 kB
+dist/assets/latex-CaSxy8MP.js                                    72.90 kB
+dist/assets/index-CyKV7s0f.js                                    73.76 kB
+dist/assets/vyper-CDx5xZoG.js                                    74.65 kB
+dist/assets/chat-core-cT7YQIrz.js                                79.66 kB
+dist/assets/index-GwSViGAl.js                                    80.77 kB
+dist/assets/hack-DbPARsA_.js                                     81.11 kB
+dist/assets/swift-D82vCrfD.js                                    86.69 kB
+dist/assets/fortran-free-form-BxgE0vQu.js                        88.97 kB
+dist/assets/csharp-DSvCPggb.js                                   90.19 kB
+dist/assets/racket-BqYA7rlc.js                                   92.39 kB
+dist/assets/less-B1dDrJ26.js                                     97.63 kB
+dist/assets/blade-2xfisSek.js                                   104.98 kB
+dist/assets/objective-c-DXmwc3jG.js                             105.41 kB
+dist/assets/php-Csjmro_R.js                                     113.09 kB
+dist/assets/index-D83lQvEj.js                                   124.43 kB
+dist/assets/asciidoc-Ve4PFQV2.js                                131.53 kB
+dist/assets/mdx-Cmh6b_Ma.js                                     136.11 kB
+dist/assets/knowledge-view-utils-DGj5msUG.js                    139.59 kB
+dist/assets/markdown-rendering-D9gZ7aMz.js                      150.10 kB
+dist/assets/objective-cpp-CLxacb5B.js                           171.97 kB
+dist/assets/javascript-wDzz0qaB.js                              174.83 kB
+dist/assets/tsx-COt5Ahok.js                                     175.54 kB
+dist/assets/jsx-g9-lgVsj.js                                     177.79 kB
+dist/assets/typescript-BPQ3VLAy.js                              181.08 kB
+dist/assets/angular-ts-CT0n3M0e.js                              183.82 kB
+dist/assets/assistant-ui-runtime-CiPFJG7d.js                    184.60 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+dist/assets/vue-vine-BoDAl6tE.js                                190.05 kB
+dist/assets/react-vendor-CpWYoCBT.js                            192.88 kB
+dist/assets/html2canvas.esm-DXEQVQnt.js                         201.04 kB
+dist/assets/index-CmZkYyi6.js                                   221.02 kB
+dist/assets/zh-t0S6gl9x.js                                      246.45 kB
+dist/assets/math-rendering-BtIipC_D.js                          258.80 kB
+dist/assets/wolfram-lXgVvXCa.js                                 262.39 kB
+dist/assets/AgentAvatar-Dw-LJVG6.js                             307.53 kB
+dist/assets/ja-BN3B7BS-.js                                      317.68 kB
+dist/assets/ru-CHRtVYcg.js                                      388.36 kB
+dist/assets/document-viewers-CNerDvZX.js                        429.19 kB
+dist/assets/index-DNm4dmDC.js                                   443.26 kB
+dist/assets/lucide-icons-DTzoZDi6.js                            488.00 kB
+dist/assets/ArtifactPanel-Dpc_KWjU.js                           549.39 kB
+dist/assets/index-vE0wGnsC.js                                   549.90 kB
+dist/assets/wasm-CG6Dc4jp.js                                    622.34 kB
+dist/assets/cpp-UfJy6YNI.js                                     626.08 kB
+dist/assets/App-MxBKhc-6.js                                     666.98 kB
+dist/assets/emacs-lisp-CXvaQtF9.js                              779.88 kB
+dist/assets/GeneratedFilesPanel-Cvkwpod1.js                   1,542.05 kB
+dist/assets/editor-Bn5EehCI.js                                3,750.05 kB
+✓ built in 1m 1s
+vite v7.3.1 building client environment for production...
+transforming...
+"default" is imported from external module "@shikijs/engine-oniguruma/wasm-inlined" but never used in "node_modules/.pnpm/shiki@4.3.1/node_modules/shiki/dist/wasm.mjs".
+✓ 881 modules transformed.
+rendering chunks...
+[plugin vite:reporter]
+(!) D:/ClawX-work/admission-a6-clean/electron/utils/store.ts is dynamically imported by D:/ClawX-work/admission-a6-clean/electron/gateway/manager.ts but also statically imported by D:/ClawX-work/admission-a6-clean/electron/gateway/config-sync.ts, D:/ClawX-work/admission-a6-clean/electron/gateway/manager.ts, D:/ClawX-work/admission-a6-clean/electron/main/index.ts, D:/ClawX-work/admission-a6-clean/electron/main/launch-at-startup.ts, D:/ClawX-work/admission-a6-clean/electron/main/menu.ts, D:/ClawX-work/admission-a6-clean/electron/main/proxy.ts, D:/ClawX-work/admission-a6-clean/electron/services/agent-dev-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/chat-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/efficiency-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/gateway-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/remote-control-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/remote-tasks-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/sensitive-capture-gate.ts, D:/ClawX-work/admission-a6-clean/electron/services/session-delegation-store.ts, D:/ClawX-work/admission-a6-clean/electron/services/settings-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/support-bundle.ts, D:/ClawX-work/admission-a6-clean/electron/services/system-notifications-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/usage-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/work-providers-api.ts, D:/ClawX-work/admission-a6-clean/electron/utils/app-version-rollback.ts, D:/ClawX-work/admission-a6-clean/electron/utils/control-ui-device-pairing.ts, D:/ClawX-work/admission-a6-clean/electron/utils/openclaw-auth.ts, D:/ClawX-work/admission-a6-clean/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter]
+(!) D:/ClawX-work/admission-a6-clean/electron/utils/channel-config.ts is dynamically imported by D:/ClawX-work/admission-a6-clean/electron/services/cron-api.ts but also statically imported by D:/ClawX-work/admission-a6-clean/electron/gateway/config-sync.ts, D:/ClawX-work/admission-a6-clean/electron/gateway/supervisor.ts, D:/ClawX-work/admission-a6-clean/electron/services/agents-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/channels-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/dcs-prod-flags-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/hooks-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/mcp-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/roles-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/workspace-runtime-sync.ts, D:/ClawX-work/admission-a6-clean/electron/utils/agent-config.ts, D:/ClawX-work/admission-a6-clean/electron/utils/app-version-rollback.ts, D:/ClawX-work/admission-a6-clean/electron/utils/openclaw-image-generation.ts, D:/ClawX-work/admission-a6-clean/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter]
+(!) D:/ClawX-work/admission-a6-clean/electron/services/long-session-resource-reclamation.ts is dynamically imported by D:/ClawX-work/admission-a6-clean/electron/services/workspaces-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/workspaces-api.ts but also statically imported by D:/ClawX-work/admission-a6-clean/electron/main/index.ts, D:/ClawX-work/admission-a6-clean/electron/services/session-activity-api.ts, D:/ClawX-work/admission-a6-clean/electron/services/sessions-api.ts, dynamic import will not move module into another chunk.
+
+dist-electron/main/index.js                                         1.31 kB
+dist-electron/main/active-sandbox-high-risk-policy-CUrgRmYs.js      2.26 kB
+dist-electron/main/session-cascade-delete-Cj77ZNBM.js               3.77 kB
+dist-electron/main/journaled-git-apply-qiuoF7aX.js                 14.64 kB
+dist-electron/main/index-CyCPSweR.js                            1,986.85 kB
+✓ built in 4.96s
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 2 modules transformed.
+rendering chunks...
+dist-electron/preload/index.js  2.40 kB
+✓ built in 21ms
+
+Running 418 tests using 2 workers
+
+(node:41404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 tests\e2e\agency-role-promotion.spec.ts:103:7 › Agency role promotion › reviews, approves, refreshes, and retires a separate config role (30.6s)
+  ok   2 tests\e2e\agent-avatar-orchestration.spec.ts:11:7 › local Agent avatar identity › persists a locally generated avatar across restart and restores the deterministic default (53.2s)
+  ok   3 tests\e2e\agent-browser-workbench.spec.ts:13:7 › Agent Browser workbench › shows Host API session, task, profile, and Vault metadata at their workspace destinations (27.0s)
+  ok   4 tests\e2e\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario (20.8s)
+  ok   5 tests\e2e\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling (21.3s)
+  ok   6 tests\e2e\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario (22.1s)
+  ok   7 tests\e2e\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (22.0s)
+  x    8 tests\e2e\agent-first-operational.spec.ts:156:7 › Agent First operational acceptance › runs source OAT and, when a frozen package is provided, packaged parity (4.6m)
+(node:27500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x    9 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 1 (4.6m)
+(node:37592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  10 tests\e2e\agent-reach-readers.spec.ts:18:7 › Reach Readers packaged plugin › ships enabled with readonly tool contracts and a credential-safe handoff skill (20.0s)
+  ok  12 tests\e2e\agents-capability-workbench.spec.ts:13:7 › Agent capability workbench › adds a candidate capability through the renderer workbench (27.3s)
+  ok  13 tests\e2e\agents-propose-facts-confirm.spec.ts:70:7 › R3-2.4 proposeFacts confirm queue › lists a pending candidate and confirms it (30.4s)
+  ok  14 tests\e2e\agents-propose-facts-confirm.spec.ts:98:7 › R3-2.4 proposeFacts confirm queue › shows the empty state when enabled with no candidates (32.2s)
+  ok  15 tests\e2e\agents-propose-facts-confirm.spec.ts:118:7 › R3-2.4 proposeFacts confirm queue › shows the disabled notice when proposeFacts flags are off (default) (23.4s)
+  ok  16 tests\e2e\ai-elements-rendering.spec.ts:137:7 › AI Elements local adapted rendering › renders migrated assistant output cards with screenshot coverage (29.9s)
+  ok  17 tests\e2e\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile (41.8s)
+  ok  18 tests\e2e\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page (36.2s)
+  x   11 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 2 (4.6m)
+(node:5184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   19 tests\e2e\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile (1.6m)
+(node:39040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  21 tests\e2e\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › invokes the real typed host bridge for app version (54.5s)
+  ok  22 tests\e2e\app-smoke.spec.ts:54:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes (34.4s)
+  ok  23 tests\e2e\basic-advanced-mode.spec.ts:15:7 › Basic and advanced UI depth mode › toggles diagnostic depth without changing chat dispatch payload shape (37.3s)
+BEAM_VERIFY_REPORT: {
+  "idle": {
+    "beam": true,
+    "shell": true,
+    "active": false,
+    "fading": false,
+    "overflow": "hidden",
+    "borderRadius": "25px",
+    "beamInsideShell": true,
+    "beamMatchesShellSize": true
+  },
+  "sendBtnState": {
+    "disabled": true,
+    "aria": "Send",
+    "title": null
+  },
+  "sendBtnAfterFill": {
+    "disabled": false,
+    "aria": "Send"
+  },
+  "sendingInstant": {
+    "beamActive": true,
+    "intervention": false,
+    "capabilityDialog": false,
+    "error": null,
+    "optimisticUserMsg": true
+  },
+  "sending": {
+    "active": true,
+    "fading": false,
+    "afterBackground": "conic-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 54%, rgba(0, 0, 0, 0.08) 57%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0,",
+    "strengthVar": "0.3"
+  },
+  "slashPalette": {
+    "found": true,
+    "paletteTop": 351,
+    "beamTop": 679,
+    "paletteAboveBeam": true,
+    "hitIsPalette": true
+  },
+  "lightTheme": {
+    "afterBackground": "conic-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 54%, rgba(0, 0, 0, 0.08) 57%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0,",
+    "active": true
+  },
+  "consoleErrors": []
+}
+  ok  24 tests\e2e\beam-composer-verify.spec.ts:92:5 › sunset beam wraps composer, lights on sending, menus unclipped (32.9s)
+  ok  25 tests\e2e\billing-page.spec.ts:223:5 › shows no-data guidance when billing history is empty (41.9s)
+  x   20 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 3 (4.7m)
+(node:35432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  26 tests\e2e\billing-page.spec.ts:253:7 › Billing page › renders a dedicated token billing page with complete charts (27.7s)
+  ok  27 tests\e2e\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to sidebar and reload in light (39.4s)
+  ok  28 tests\e2e\billing-page.spec.ts:333:7 › Billing page › keeps transcript-backed billing history visible when gateway is offline (43.9s)
+  ok  29 tests\e2e\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to setup and reload in light (36.6s)
+  ok  30 tests\e2e\browser-security-recovery.spec.ts:99:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path) (39.3s)
+  ok  31 tests\e2e\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to sidebar and reload in dark (58.7s)
+  ok  32 tests\e2e\browser-supervised-task-tf0503.spec.ts:69:7 › Browser supervised task capability (TF-0503) › real Main path: supervised self-description and private-network default deny (48.6s)
+  ok  33 tests\e2e\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to setup and reload in dark (35.4s)
+  ok  34 tests\e2e\change-context-review-loop.spec.ts:18:5 › opt-in context comparisons and visible comment freshness never move an anchor (43.6s)
+
+  ok  35 tests\e2e\channels-account-id-persistence.spec.ts:13:7 › Channels account editor behavior › keeps Feishu credentials when account ID is changed (36.4s)
+  ok  37 tests\e2e\channels-account-id-validation.spec.ts:38:7 › Channels account ID validation › rejects non-canonical custom account ID before save (46.9s)
+HEAD is now at 4524d5d base
+  ok  36 tests\e2e\change-context-review-loop.spec.ts:84:5 › real Main owners bind comments, verdicts and approved journaled apply (VG off) (1.2m)
+
+  x   38 tests\e2e\channels-binding-regression.spec.ts:4:7 › Channels binding regression › keeps newly added non-default Feishu accounts unassigned until the user binds an agent (38.4s)
+(node:43876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  40 tests\e2e\channels-health-diagnostics.spec.ts:4:7 › Channels health diagnostics › does not flash a stale gateway-not-running banner while status is running (44.9s)
+HEAD is now at 4524d5d base
+  x   39 tests\e2e\change-context-review-loop.spec.ts:84:5 › real Main owners bind comments, verdicts and approved journaled apply (VG opt-in) (1.6m)
+(node:24748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  41 tests\e2e\channels-health-diagnostics.spec.ts:62:7 › Channels health diagnostics › shows degraded banner, restarts gateway, and copies diagnostics (36.5s)
+  ok  42 tests\e2e\chat-agent-effort.spec.ts:26:7 › Verse Claw combined model and reasoning settings › opens the reasoning section in the shared menu, slides to max, and commits max (56.1s)
+  ok  43 tests\e2e\chat-artifact-panel.spec.ts:80:7 › Chat artifact panel › shows artifact tab button in the artifact panel (58.1s)
+  ok  44 tests\e2e\chat-agent-effort.spec.ts:201:7 › Verse Claw combined model and reasoning settings › keeps the reasoning slider inside the shared dropdown surface (27.9s)
+  ok  45 tests\e2e\chat-artifact-panel.spec.ts:119:7 › Chat artifact panel › shows managed structured artifacts through the host gateway seam (25.1s)
+  ok  46 tests\e2e\chat-agent-effort.spec.ts:352:7 › Verse Claw combined model and reasoning settings › does not commit when slider stays at the current value (27.0s)
+  ok  47 tests\e2e\chat-artifact-panel.spec.ts:169:7 › Chat artifact panel › shows empty state when no artifacts exist (30.1s)
+  ok  48 tests\e2e\chat-assistant-markdown-plain.spec.ts:54:7 › Verse Claw assistant reply Markdown styling › renders assistant text as plain Markdown while keeping user prompts bubbled (29.0s)
+  ok  49 tests\e2e\chat-artifact-panel.spec.ts:212:7 › Chat artifact panel › shows the artifact view with title (30.7s)
+  ok  50 tests\e2e\chat-assistant-rendering-visual.spec.ts:220:7 › Verse Claw assistant-style rendering layer › renders rich assistant cards and validates quote, token, and heatgraph interactions (26.8s)
+  -   52 tests\e2e\chat-cache-deepseek-cache-first.spec.ts:388:7 › DeepSeek prompt cache-first live E2E › keeps a stable provider prefix warm across real DeepSeek turns
+  ok  51 tests\e2e\chat-artifact-panel.spec.ts:254:5 › keeps the conversation column in place until the workspace panel expands (26.5s)
+  -   54 tests\e2e\chat-cache-live-model.spec.ts:400:7 › Verse Claw prompt cache live model E2E › performs real model calls and exports prompt-cache metrics
+  ok  55 tests\e2e\chat-checkpoints.spec.ts:134:5 › checkpoints dialog lists and restores a session checkpoint (42.9s)
+  ok  53 tests\e2e\chat-cache-guard.spec.ts:8:7 › Verse Claw chat prompt cache guard › shows cache health and requires confirmation before switching models (52.0s)
+  ok  56 tests\e2e\chat-code-block-wrap.spec.ts:47:7 › Verse Claw chat code block wrapping › soft-wraps long lines inside fenced code blocks instead of overflowing (44.1s)
+  ok  57 tests\e2e\chat-composer-git-strip.spec.ts:182:7 › Chat composer Git strip › renders runtime approval inline with the composer and Git strip (57.8s)
+  ok  58 tests\e2e\chat-composer-packs.spec.ts:104:7 › Chat composer feature plugins › shows Superpowers skills and inserts enabled Office CLI actions (34.1s)
+  ok  59 tests\e2e\chat-composer-git-strip.spec.ts:258:7 › Chat composer Git strip › shows repository context and routes branch/worktree actions through host APIs (1.1m)
+  ok  60 tests\e2e\chat-composer-packs.spec.ts:135:7 › Chat composer feature plugins › keeps Office actions visible and routes to setup when Office CLI skills are not enabled (46.0s)
+  ok  61 tests\e2e\chat-context-pressure.spec.ts:21:7 › Verse Claw chat context pressure › shows session context, cache-served tokens and warm hit rate in the composer (57.5s)
+  x   63 tests\e2e\chat-context-pressure.spec.ts:161:7 › Verse Claw chat context pressure › shows the session row but omits optional metrics the runtime did not report (1.3m)
+(node:13768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  64 tests\e2e\chat-draft-preservation.spec.ts:159:7 › Verse Claw chat draft preservation across session switches › preserves composer drafts when switching between sessions and back (1.1m)
+  ok  62 tests\e2e\chat-conversation-resources.spec.ts:124:7 › Conversation resources › renders every resource type, degrades explicitly, and survives history reload (4.1m)
+  ok  65 tests\e2e\chat-file-changes.spec.ts:125:7 › Verse Claw chat file changes › shows line stats on generated file cards (53.7s)
+  ok  66 tests\e2e\chat-history-startup-retry.spec.ts:13:7 › Verse Claw startup chat history recovery › retries an initial chat.history timeout and eventually renders history (37.0s)
+  ok  67 tests\e2e\chat-file-changes.spec.ts:219:7 › Verse Claw chat file changes › opens html files from chat as rendered previews (43.4s)
+  ok  68 tests\e2e\chat-history-startup-retry.spec.ts:74:7 › Verse Claw startup chat history recovery › renders local transcript while initial chat.history is still pending (35.0s)
+  ok  69 tests\e2e\chat-file-changes.spec.ts:328:7 › Verse Claw chat file changes › keeps an attached file selected after switching through workspace (29.4s)
+  ok  70 tests\e2e\chat-latex-rendering.spec.ts:43:7 › Verse Claw chat LaTeX rendering › renders KaTeX markup for $...$, $$...$$, \(...\) and \[...\] delimiters (24.7s)
+  x   71 tests\e2e\chat-layout-cdp.spec.ts:156:7 › Chat page layout CDP checks › keeps chat content, session search modal, and window controls aligned (1.0m)
+(node:17248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   72 tests\e2e\chat-long-task-control.spec.ts:16:7 › Verse Claw chat long-task recovery controls › shows recovery status and drains queued follow-up through Host API (1.5m)
+(node:38096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  73 tests\e2e\chat-manual-compaction.spec.ts:15:7 › Verse Claw chat manual compaction › opens confirmation dialog and calls the session compaction Host API (51.9s)
+  ok  74 tests\e2e\chat-memory-injection-panel.spec.ts:103:7 › R3-2.2 memory-injection panel › injected: shows the source group with selected refs and budget (30.6s)
+  ok  75 tests\e2e\chat-model-picker-tiers.spec.ts:12:7 › Verse Claw chat model picker tiers (Area 2) › turn scope: sets chip and forwards modelRef in send payload (47.0s)
+  ok  76 tests\e2e\chat-memory-injection-panel.spec.ts:120:7 › R3-2.2 memory-injection panel › none: a successful empty read shows the empty state (42.0s)
+  ok  77 tests\e2e\chat-model-picker-tiers.spec.ts:192:7 › Verse Claw chat model picker tiers (Area 2) › session scope: calls sessions.patchRuntimeModel with modelRef (58.2s)
+  ok  78 tests\e2e\chat-memory-injection-panel.spec.ts:134:7 › R3-2.2 memory-injection panel › timeout: a failed read shows a retryable error (49.5s)
+  ok  79 tests\e2e\chat-model-picker.spec.ts:7:7 › Verse Claw chat model picker › switches the current agent model without requesting a gateway refresh (1.0m)
+  ok  81 tests\e2e\chat-new-session-date.spec.ts:20:7 › Verse Claw chat session date grouping › lists every conversation newest-first, with no collapsible date buckets (54.4s)
+  ok  82 tests\e2e\chat-new-session-date.spec.ts:132:7 › Verse Claw chat session date grouping › new chat appears in Today only after the first message and lands without overshoot (1.3m)
+  ok  83 tests\e2e\chat-plan-mode-write-challenge.spec.ts:56:7 › Plan mode real write challenge › blocks terminal, file write, and mutating Gateway RPC without side effects (53.8s)
+  x   80 tests\e2e\chat-model-scope-runtime.spec.ts:8:5 › turn model wins for one real Gateway request without changing the session choice (4.1m)
+(node:48056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  84 tests\e2e\chat-plan-mode-write-challenge.spec.ts:116:7 › Plan mode real write challenge › read-only mode blocks git --output without touching the target file (31.2s)
+  ok  85 tests\e2e\chat-question-directory.spec.ts:52:7 › Verse Claw chat side panels › keeps assistive panels hidden on a fresh empty chat (32.6s)
+  ok  86 tests\e2e\chat-recovery-assist.spec.ts:16:7 › Chat recovery assist › shows evidence-backed recovery suggestions through existing handoff, queue, and compaction actions (31.8s)
+  ok  87 tests\e2e\chat-question-directory.spec.ts:118:7 › Verse Claw chat side panels › keeps the transcript usable and the removed question directory absent on a long conversation (33.4s)
+  ok  88 tests\e2e\chat-renderer-pipeline.spec.ts:116:7 › Chat renderer pipeline — assistant-ui + tool-ui coexistence › renders Markdown prose and tool-ui cards in the same assistant message (56.0s)
+  ok  89 tests\e2e\chat-question-directory.spec.ts:196:7 › Verse Claw chat side panels › hides chat assistive panels when the workspace panel opens (53.9s)
+  ok  90 tests\e2e\chat-run-activity-settings.spec.ts:4:7 › Chat run activity settings › keeps completed run activity expanded by default and allows changing the preference (53.1s)
+  ok  91 tests\e2e\chat-run-state-events.spec.ts:60:9 › Verse Claw chat run state events › preserves foreground exec output and releases the composer after error (49.2s)
+[pin-fail] step=tool-round sendLabel=Stop {"scrollTop":3261,"scrollHeight":3825,"clientHeight":564,"gap":0,"contentHeight":3825}
+  x   92 tests\e2e\chat-scroll-pin-bottom.spec.ts:29:7 › Verse Claw chat scroll pin-to-bottom during runs › keeps the scrollbar pinned to the bottom through oscillating tool-heavy streaming, and yields to manual scroll-up (52.0s)
+(node:48296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  93 tests\e2e\chat-run-state-events.spec.ts:60:9 › Verse Claw chat run state events › preserves foreground exec output and releases the composer after aborted (46.8s)
+(node:48296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  95 tests\e2e\chat-scroll-to-latest.spec.ts:21:7 › Verse Claw chat scroll-to-latest affordance › shows a jump button when reading older messages and returns to the latest message (53.5s)
+  ok  94 tests\e2e\chat-run-state-events.spec.ts:143:7 › Verse Claw chat run state events › anchors the live thinking matrix to the latest assistant output and clears it after completion (54.6s)
+  ok  96 tests\e2e\chat-session-compact-range.spec.ts:155:7 › Verse Claw located (range) compaction › summarizes from a chosen message through the host-api, keeping the newer side (42.1s)
+  ok  97 tests\e2e\chat-run-state-events.spec.ts:325:7 › Verse Claw chat run state events › keeps stop control active across non-terminal runtime events and clears it on run.ended (45.9s)
+  ok  98 tests\e2e\chat-session-compact-range.spec.ts:198:7 › Verse Claw located (range) compaction › summarizes up to a chosen message, folding it into the summary (51.3s)
+  ok  99 tests\e2e\chat-run-state-events.spec.ts:482:7 › Verse Claw chat run state events › accepts the five-state composer contract and separates guide, queue, interrupt, pause, and resume (56.8s)
+  ok 101 tests\e2e\chat-run-state-events.spec.ts:609:7 › Verse Claw chat run state events › renders historical execution graph with tool results and final assistant reply (34.1s)
+  ok 100 tests\e2e\chat-session-derived.spec.ts:206:7 › Verse Claw derived-session listing › lists the sessions derived from the current one and switches to the child (45.5s)
+  ok 102 tests\e2e\chat-run-state-events.spec.ts:746:7 › Verse Claw chat run state events › shows clear image preview states for generated media while hydration retries (46.2s)
+  ok 103 tests\e2e\chat-session-fork.spec.ts:275:7 › Verse Claw chat session fork › creates and selects a forked session with inherited history and copied draft without auto-send (52.6s)
+  ok 104 tests\e2e\chat-run-state-events.spec.ts:821:7 › Verse Claw chat run state events › hydrates Windows MEDIA SVG artifacts without leaking the marker text (30.1s)
+  ok 105 tests\e2e\chat-session-fork.spec.ts:512:7 › Verse Claw chat session fork › offers handoff preparation when fork fails because the parent is too large (25.8s)
+  ok 106 tests\e2e\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late (28.0s)
+  ok 107 tests\e2e\chat-session-fork.spec.ts:606:7 › Verse Claw chat session fork › disables fork entry points while a run is active (29.7s)
+  ok 108 tests\e2e\chat-session-handoff.spec.ts:291:7 › Verse Claw chat session handoff › previews, edits, and creates a new session with the draft prefilled without auto-send (35.5s)
+  ok 109 tests\e2e\chat-skill-trigger-i18n.spec.ts:67:7 › Verse Claw chat skill trigger › renders localized skill access inside the slash palette (31.7s)
+  ok 110 tests\e2e\chat-session-handoff.spec.ts:450:7 › Verse Claw chat session handoff › disables handoff entry points while a run is active (24.3s)
+  ok 111 tests\e2e\chat-skill-trigger-i18n.spec.ts:215:7 › Verse Claw chat skill trigger › clicking the composer skill token opens the preview sidebar (24.3s)
+  ok 112 tests\e2e\chat-session-handoff.spec.ts:519:7 › Verse Claw chat session handoff › refuses a relay once the handoff depth limit is reached (#179) (23.7s)
+  ok 113 tests\e2e\chat-skill-trigger-i18n.spec.ts:316:7 › Verse Claw chat skill trigger › shows a confirmation dialog for chat-driven skill enable and cancels cleanly (24.4s)
+  ok 114 tests\e2e\chat-session-handoff.spec.ts:564:7 › Verse Claw chat session handoff › keeps the editable draft and session when creation rejects changed ancestry (23.2s)
+  ok 115 tests\e2e\chat-skill-trigger-i18n.spec.ts:426:7 › Verse Claw chat skill trigger › blocks high-risk MCP JSON in the chat confirmation dialog (23.8s)
+  ok 116 tests\e2e\chat-slash-commands.spec.ts:125:7 › Verse Claw chat slash commands › discovers and dispatches quick actions from the composer (24.4s)
+  ok 117 tests\e2e\chat-slash-session-lifecycle.spec.ts:95:5 › slash /rename renames the current session through the host API (22.4s)
+  ok 118 tests\e2e\chat-slash-commands.spec.ts:371:7 › Verse Claw chat slash commands › runs the existing fork flow from /fork (20.6s)
+  ok 119 tests\e2e\chat-slash-session-lifecycle.spec.ts:125:5 › slash /clear resets the local message view (23.4s)
+  ok 120 tests\e2e\chat-slash-commands.spec.ts:460:7 › Verse Claw chat slash commands › keeps the slash menu above the composer on a narrow viewport (22.0s)
+  ok 121 tests\e2e\chat-table-header-light.spec.ts:60:7 › Verse Claw chat table header styling › renders markdown table headers with transparent background and bold text in light theme (23.1s)
+team-orchestration-host-calls [
+  { module: [32m'window'[39m, action: [32m'isMaximized'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'permissions'[39m,
+    action: [32m'approvals'[39m,
+    payload: { includeExpired: [33mtrue[39m, limit: [33m200[39m }
+  },
+  { module: [32m'remoteTasks'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'agentBrowser'[39m, action: [32m'tasks'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'gateway'[39m,
+    action: [32m'rpc'[39m,
+    payload: {
+      method: [32m'inbox.operator.list'[39m,
+      params: {},
+      timeoutMs: [90mundefined[39m,
+      approvalId: [90mundefined[39m
+    }
+  },
+  { module: [32m'agents'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  { module: [32m'resourceTracker'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'runtimeApprovals'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accounts'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accountKeyInfo'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'vendors'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'getDefaultAccount'[39m, payload: [1mnull[22m },
+  { module: [32m'gateway'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'sessionActivity'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [1mnull[22m, sessionKey: [32m'agent:main:main'[39m }
+  },
+  { module: [32m'agents'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'workspaces'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'settings'[39m, action: [32m'getAll'[39m, payload: [1mnull[22m },
+  { module: [32m'gateway'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accounts'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accountKeyInfo'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'vendors'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'getDefaultAccount'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accounts'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accountKeyInfo'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'vendors'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'getDefaultAccount'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'branches'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'worktrees'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'taskLedger'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m }
+  },
+  {
+    module: [32m'sessionActivity'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m }
+  },
+  {
+    module: [32m'gateway'[39m,
+    action: [32m'rpc'[39m,
+    payload: {
+      method: [32m'chat.history'[39m,
+      params: [36m[Object][39m,
+      timeoutMs: [33m35000[39m,
+      approvalId: [90mundefined[39m
+    }
+  },
+  {
+    module: [32m'taskLedger'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m }
+  },
+  {
+    module: [32m'permissions'[39m,
+    action: [32m'approvals'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      sessionKey: [32m'agent:main:main'[39m,
+      status: [32m'pending'[39m,
+      limit: [33m50[39m
+    }
+  },
+  { module: [32m'gateway'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'gateway'[39m,
+    action: [32m'rpc'[39m,
+    payload: {
+      method: [32m'sessions.list'[39m,
+      params: [36m[Object][39m,
+      timeoutMs: [90mundefined[39m,
+      approvalId: [90mundefined[39m
+    }
+  },
+  {
+    module: [32m'sessionActivity'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m }
+  },
+  { module: [32m'providers'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'taskLedger'[39m,
+    action: [32m'appendEvents'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      events: [36m[Array][39m,
+      idempotencyKey: [32m'turn:agent:main:main:1793619320355'[39m
+    }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'live'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, runId: [1mnull[22m, streaming: [33mfalse[39m }
+  },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'promptCacheStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, modelRef: [1mnull[22m, usedTokens: [1mnull[22m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'contextRange'[39m,
+    payload: {
+      sessionKey: [32m'agent:main:main'[39m,
+      modelRef: [1mnull[22m,
+      messageCount: [33m3[39m,
+      usedTokens: [1mnull[22m
+    }
+  },
+  {
+    module: [32m'sessions'[39m,
+    action: [32m'compactionStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, agentId: [32m'main'[39m }
+  },
+  {
+    module: [32m'sessions'[39m,
+    action: [32m'longTaskControlStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, agentId: [32m'main'[39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'promptCacheStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, modelRef: [1mnull[22m, usedTokens: [33m0[39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m }
+]
+  ok 122 tests\e2e\chat-task-loop-upgrade.spec.ts:46:7 › Chat Task Loop upgrade › suggests but only starts task_loop.run after explicit confirmation (37.1s)
+  ok 123 tests\e2e\chat-task-visualizer.spec.ts:288:7 › Verse Claw chat execution graph › renders team orchestration task graph details from mocked history (31.5s)
+  ok 124 tests\e2e\chat-task-visualizer.spec.ts:420:7 › Verse Claw chat execution graph › renders internal yield status and linked subagent branch from mocked IPC (45.9s)
+  ok 125 tests\e2e\chat-tool-ui-execution-surfaces.spec.ts:108:7 › Tool UI execution surfaces › renders official execution surfaces in light, dark, and narrow layouts (45.9s)
+  ok 127 tests\e2e\chat-tool-ui-interaction-flow.spec.ts:88:7 › Verse Claw Tool UI interaction flow — option-list and question-flow send response › option-list: select option, send response, verify user message and mock assistant reply (27.1s)
+  ok 126 tests\e2e\chat-task-visualizer.spec.ts:572:7 › Verse Claw chat execution graph › preserves long execution history counts and strips the full folded reply prefix (27.1s)
+  ok 129 tests\e2e\chat-task-visualizer.spec.ts:673:7 › Verse Claw chat execution graph › surfaces terminal model errors and stops the stale thinking state (31.9s)
+  ok 128 tests\e2e\chat-tool-ui-interaction-flow.spec.ts:214:7 › Verse Claw Tool UI interaction flow — option-list and question-flow send response › question-flow: navigate steps, send response, verify user message and mock assistant reply (32.2s)
+  ok 130 tests\e2e\chat-tool-ui-interactions.spec.ts:111:7 › Verse Claw Tool UI interaction rendering › renders plan, options, question flow, and preferences cards from assistant payloads (23.3s)
+  ok 131 tests\e2e\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand (23.3s)
+  ok 133 tests\e2e\chat-turn-summary-collapse.spec.ts:212:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped (24.2s)
+  ok 132 tests\e2e\chat-user-message-actions.spec.ts:234:7 › Verse Claw user message hover actions › shows copy and edit controls, opens the inline editor, and resends through chat send (25.7s)
+  ok 134 tests\e2e\chat-welcome-hero-fakecoding.spec.ts:44:7 › FakeCoding chat welcome hero alignment › names the workspace as a context-row token and opens the shared picker upward (26.0s)
+  ok 135 tests\e2e\chat-welcome-hero-verse-shot.spec.ts:140:7 › verse welcome hero screenshot — dark (33.2s)
+  ok 136 tests\e2e\chat-work-mode.spec.ts:151:7 › Verse Claw chat without Work Mode › hides Work Mode UI and sends payload without workMode (25.4s)
+  ok 137 tests\e2e\chat-welcome-hero-verse-shot.spec.ts:140:7 › verse welcome hero screenshot — light (34.3s)
+  ok 138 tests\e2e\chat-workspace-header.spec.ts:71:7 › Verse Claw chat workspace header › shows workspace and conversation without the legacy topic selector (27.2s)
+  ok 139 tests\e2e\chat-welcome-hero-verse-shot.spec.ts:190:5 › chips retract while the composer holds a draft and return when it is cleared (36.0s)
+  ok 140 tests\e2e\chat-workspace-header.spec.ts:226:7 › Verse Claw chat workspace header › keeps sidebar new chat scoped to the active workspace (26.3s)
+  ok 141 tests\e2e\clawgraph.spec.ts:110:7 › ClawGraph › lists workflows, runs one, and shows DAG/events/review (31.5s)
+
+  ok 142 tests\e2e\code-review-center.spec.ts:98:7 › Code Review Center › opens review center, reviews two targets, displays findings, and preserves read-only behavior (32.7s)
+  ok 144 tests\e2e\compaction-artifact-viewer.spec.ts:15:7 › Compaction artifact viewer › opens compression evidence and prepares recovery context without lossless wording (36.7s)
+[fp-p1-04-gateway-log]
+[fp-p1-04-gateway-err]
+  x  145 tests\e2e\config-schema-parity-fp-p0-06.spec.ts:99:7 › FP-P0-06 schema parity (real gateway child) › gateway starts with formerly schema-rejected runtime leaves present in config (3.8m)
+(node:43692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  143 tests\e2e\coding-loop-fp-p1-04.spec.ts:711:7 › FP-P1-04 coding loop (real agent turn, scripted local LLM) › read → edit/write rich diffs → verify → undo, plus explicit failure paths (4.7m)
+(node:46444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 146 tests\e2e\context-control-plane-stage6.spec.ts:81:7 › context control plane stage 6 panel › renders read-only diff/why/simulation/replay through host-api (40.8s)
+  ok 148 tests\e2e\context-view-tool-surface.spec.ts:4:7 › TF-0495 context view tool surface › keeps automatic discovery distinct from the explicit rollback control (58.9s)
+  ok 149 tests\e2e\cron-browser-automation.spec.ts:13:7 › Cron browser automation › creates a browser automation scheduled task from the cron dialog (1.6m)
+  ok 150 tests\e2e\cron-card-long-title.spec.ts:55:7 › Scheduled task workbench › keeps long task rows contained and supports detail, status, and search views (55.1s)
+  x  147 tests\e2e\coding-loop-fp-p1-04.spec.ts:1073:7 › FP-P1-04 coding loop (real agent turn, scripted local LLM) › terminal provider disconnect fails visibly and the next turn succeeds (4.9m)
+(node:37628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  151 tests\e2e\dcs-flag-ack-tuning-fp-p1-09.spec.ts:92:7 › FP-P1-09 ack tuning (real gateway children) › five real restart→ack cycles reach applied under the tuned defaults, then requery works (4.0m)
+(node:34404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  152 tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 › FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) › prereq gating → applied via child ack → baseline parity on off → kill shows killed (3.4m)
+(node:19940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 153 tests\e2e\dcs-prod-p0-settings.spec.ts:83:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer (28.6s)
+  ok 155 tests\e2e\dcs-prod-p0-settings.spec.ts:118:7 › DCS production P0 packaging surface › renders the DCS control surface in Japanese and Russian (56.8s)
+  x  154 tests\e2e\dcs-production-wiring-w5.spec.ts:411:7 › DCS W5 production wiring via real Windows Electron Gateway › default-off exposes on-demand context tools without leaking always-on DCS blocks (1.1m)
+(node:14560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 156 tests\e2e\dcs-prod-p0-settings.spec.ts:145:7 › DCS production P0 packaging surface › toggles writable flags, persists store, and restores baseline (48.4s)
+  x  157 tests\e2e\dcs-production-wiring-w5.spec.ts:457:7 › DCS W5 production wiring via real Windows Electron Gateway › enabled flags persist real tool/notes blocks and context_read is non-destructive (1.1m)
+(node:31312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 158 tests\e2e\dcs-prod-p0-settings.spec.ts:217:7 › DCS production P0 packaging surface › shows discoverability banner for hidden view tools and one-click enable (34.0s)
+  ok 160 tests\e2e\developer-mode.spec.ts:5:7 › Verse Claw developer-mode gated UI › keeps raw diagnostics hidden until the local dev switch is enabled (1.2m)
+  x  159 tests\e2e\dcs-production-wiring-w5.spec.ts:524:7 › DCS W5 production wiring via real Windows Electron Gateway › config-sync copies user runtime.contextBlock flags into openclaw-source-state (1.6m)
+(node:27544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 161 tests\e2e\dialog-transitions.spec.ts:60:7 › dialog transitions › uses the shared subtle transition for core modal dialogs (56.1s)
+  ok 162 tests\e2e\effort-intensity-smoke.spec.ts:31:7 › Verse Claw effort & intensity smoke › effort button is visible and opens a popover with a slider (51.1s)
+  ok 164 tests\e2e\effort-intensity-smoke.spec.ts:148:7 › Verse Claw effort & intensity smoke › intensity toggle is visible in the work mode summary panel after sending a message (1.1m)
+  ok 163 tests\e2e\dialog-transitions.spec.ts:146:7 › dialog transitions › keeps confirm dialog copy stable while closing (1.4m)
+  ok 166 tests\e2e\error-i18n.spec.ts:182:7 › unified error exit i18n › switches language and renders auth/rate-limit/balance/timeout failures without English fallback (1.1m)
+  x  165 tests\e2e\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile (1.6m)
+(node:2604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  167 tests\e2e\error-i18n.spec.ts:207:7 › unified error exit i18n › shows the class message, responsibility, next step and error reference after switching language (1.7m)
+(node:47200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 168 tests\e2e\fakecoding-inbox-navigation.spec.ts:155:7 › FakeCoding Inbox navigation › keeps four top-level entries and redirects the legacy Remote Tasks route (1.2m)
+(node:47200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  169 tests\e2e\fakecoding-inbox-navigation.spec.ts:181:7 › FakeCoding Inbox navigation › aggregates all sources, runs real decisions, and refreshes the pending count (1.1m)
+(node:24336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  170 tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:177:7 › FakeCoding Scheduled and Browser settings › projects Cron and Browser runs, preserves actions, and manages Browser settings (1.3m)
+(node:33352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 172 tests\e2e\gateway-lifecycle.spec.ts:26:7 › Verse Claw gateway lifecycle resilience › app remains fully navigable while gateway is disconnected (28.3s)
+  ok 173 tests\e2e\gateway-lifecycle.spec.ts:54:7 › Verse Claw gateway lifecycle resilience › gateway status indicator updates when status transitions occur (31.6s)
+  ok 174 tests\e2e\gateway-lifecycle.spec.ts:140:7 › Verse Claw gateway lifecycle resilience › shows gateway restart progress in the sidebar instead of page-level warnings (36.6s)
+  ok 175 tests\e2e\gateway-lifecycle.spec.ts:237:7 › Verse Claw gateway lifecycle resilience › chat sidebar history reloads when gateway becomes ready after restart (23.8s)
+  ok 176 tests\e2e\image-generation-settings.spec.ts:19:7 › Image generation settings page › shows image generation only as a developer-mode page after skipping setup (24.2s)
+  ok 177 tests\e2e\image-generation-settings.spec.ts:48:7 › Image generation settings page › configures an independent OpenAI-compatible image endpoint (29.0s)
+  ok 178 tests\e2e\image-generation-settings.spec.ts:66:7 › Image generation settings page › shows configured image API key like custom language model keys (25.3s)
+  ok 179 tests\e2e\image-generation-settings.spec.ts:117:7 › Image generation settings page › clears configured image generation settings after confirmation (28.7s)
+  ok 180 tests\e2e\knowledge-bot.spec.ts:15:5 › approved solid follows drag, real host requests, retries and shared conversation rendering (31.8s)
+  x  171 tests\e2e\first-product-journey-fp-p1-07.spec.ts:334:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › clean setup through coding, undo, restart recovery, and support bundle (4.5m)
+(node:33024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 181 tests\e2e\knowledge-hub.spec.ts:173:7 › Knowledge Hub MVP › initializes, imports, searches, inspects, and applies an editable draft (53.3s)
+  ok 183 tests\e2e\knowledge-hub.spec.ts:704:7 › Knowledge Hub MVP › creates a Source Set from search results and generates a review-only Studio draft (50.8s)
+  ok 184 tests\e2e\knowledge-hub.spec.ts:845:7 › Knowledge Hub MVP › enables wiki knowledge from the chat composer scope picker (1.0m)
+  x  182 tests\e2e\first-product-journey-fp-p1-07.spec.ts:444:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › gateway-not-ready and no-provider failures both give an operator action (3.7m)
+  ok 185 tests\e2e\knowledge-hub.spec.ts:876:7 › Knowledge Hub MVP › attaches wiki context through slash palette before sending (59.3s)
+(node:2548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 186 tests\e2e\knowledge-ks04-chat-dcs.spec.ts:70:7 › KS-04 Chat/DCS single consumption path › shows a visible reason toast when a selected knowledge reference is denied (47.8s)
+  ok 188 tests\e2e\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle update goes through Main wiki RPC and shows EffectReceipt (39.3s)
+  ok 189 tests\e2e\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle merge goes through Main wiki RPC and shows EffectReceipt (44.1s)
+  ok 190 tests\e2e\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle archive goes through Main wiki RPC and shows EffectReceipt (38.7s)
+  ok 191 tests\e2e\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle revoke goes through Main wiki RPC and shows EffectReceipt (39.2s)
+  ok 192 tests\e2e\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle delete goes through Main wiki RPC and shows EffectReceipt (41.9s)
+  x  187 tests\e2e\first-product-journey-fp-p1-07.spec.ts:483:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › invalid credentials and unavailable model stay blocked with retry guidance (4.4m)
+(node:46600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 193 tests\e2e\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle restore goes through Main wiki RPC and shows EffectReceipt (33.6s)
+  ok 195 tests\e2e\knowledge-review-queue.spec.ts:71:7 › KE-P1-3 Review Queue › confirm promotes a candidate and shows KE fields (34.0s)
+  ok 196 tests\e2e\knowledge-review-queue.spec.ts:103:7 › KE-P1-3 Review Queue › reject dismisses a candidate without persisting (49.0s)
+  ok 197 tests\e2e\knowledge-review-queue.spec.ts:132:7 › KE-P1-3 Review Queue › shows an empty state when there are no candidates (56.4s)
+  ok 198 tests\e2e\knowledge-review-queue.spec.ts:152:7 › KE-P1-3 Review Queue › flag off shows unavailable state and hides KE fields (42.2s)
+  ok 199 tests\e2e\knowledge-review-queue.spec.ts:202:5 › review selection prepares and approves only the corresponding proposal (32.1s)
+  x  200 tests\e2e\knowledge-review-queue.spec.ts:267:7 › Knowledge editing and Chat round trip fit supported widths in light (57.1s)
+  x  194 tests\e2e\first-product-journey-fp-p1-07.spec.ts:523:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › workspace denial and kill refusal fail closed without silent fallback (4.8m)
+(node:44336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 201 tests\e2e\knowledge-steward-config.spec.ts:4:7 › Knowledge steward config (Area 5 §3.5) › review tab shows steward section and Configure modal switches active variant (49.1s)
+  x  202 tests\e2e\knowledge-review-queue.spec.ts:267:7 › Knowledge editing and Chat round trip fit supported widths in dark (1.1m)
+(node:45592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 203 tests\e2e\knowledge-ux-cdp.spec.ts:239:7 › Knowledge Hub UX › workspace-first Library opens without dashboard clutter (26.9s)
+  ok 204 tests\e2e\language-russian.spec.ts:4:7 › Russian language localization › shows Russian language option in setup wizard (26.6s)
+  ok 205 tests\e2e\knowledge-ux-cdp.spec.ts:253:7 › Knowledge Hub UX › Library stays first-viewport visible at supported window widths (26.9s)
+  ok 206 tests\e2e\language-russian.spec.ts:21:7 › Russian language localization › can switch to Russian language in setup wizard (34.9s)
+  ok 207 tests\e2e\knowledge-ux-cdp.spec.ts:339:7 › Knowledge Hub UX › workbench tabs render with icons for each tab (38.1s)
+  ok 208 tests\e2e\language-russian.spec.ts:41:7 › Russian language localization › Russian language persists after skipping setup (40.8s)
+  ok 209 tests\e2e\knowledge-ux-cdp.spec.ts:353:7 › Knowledge Hub UX › clicking a tab selects it with distinct visual state (39.4s)
+  ok 210 tests\e2e\language-russian.spec.ts:74:7 › Russian language localization › can switch to Russian in Settings page (29.9s)
+  ok 211 tests\e2e\knowledge-ux-cdp.spec.ts:367:7 › Knowledge Hub UX › Library type browsing is disclosed in one menu (30.1s)
+  ok 212 tests\e2e\lightweight-subagent-runner.spec.ts:4:7 › Lightweight Subagent Runner › starts Explorer preset and renders lifecycle, summary, and trace link (30.8s)
+  ok 213 tests\e2e\knowledge-ux-cdp.spec.ts:379:7 › Knowledge Hub UX › markdown workspace supports explicit editing, preview, and a compact knowledge conversation (31.3s)
+  ok 214 tests\e2e\lightweight-subagent-runner.spec.ts:107:7 › Lightweight Subagent Runner › starts Reviewer preset with current diff (32.4s)
+  ok 215 tests\e2e\knowledge-ux-cdp.spec.ts:424:7 › Knowledge Hub UX › inbox panel shows pending items with source and warning info (32.2s)
+  ok 216 tests\e2e\lightweight-subagent-runner.spec.ts:204:7 › Lightweight Subagent Runner › shows failure when Reviewer has no current diff (31.7s)
+  ok 217 tests\e2e\knowledge-ux-cdp.spec.ts:447:7 › Knowledge Hub UX › review queue filters drafts and retains their status information (30.3s)
+  ok 219 tests\e2e\knowledge-ux-cdp.spec.ts:463:7 › Knowledge Hub UX › Governance remains available from the More menu (39.5s)
+  x  218 tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart (47.5s)
+(node:26664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 220 tests\e2e\knowledge-ux-cdp.spec.ts:478:7 › Knowledge Hub UX › search input is rendered and accepts text (46.1s)
+  x  221 tests\e2e\long-session-continuity-context.spec.ts:85:5 › real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (49.1s)
+(node:48020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 222 tests\e2e\knowledge-ux-cdp.spec.ts:588:7 › Chat Knowledge Attachment UX › knowledge scope picker replaces the standalone quick wiki icon (59.9s)
+  ok 224 tests\e2e\knowledge-ux-cdp.spec.ts:607:7 › Chat Knowledge Attachment UX › knowledge scope picker can switch wiki off again (52.6s)
+  ok 225 tests\e2e\knowledge-ux-cdp.spec.ts:620:7 › Chat Knowledge Attachment UX › knowledge preflight can inspect, dismiss, and attach suggestions (55.6s)
+  x  223 tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (2.7m)
+(node:40548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 226 tests\e2e\knowledge-ux-cdp.spec.ts:643:7 › Chat Knowledge Attachment UX › advisory error guard can be used and dismissed without blocking chat (1.0m)
+  x  227 tests\e2e\long-session-coordinator-binding.spec.ts:74:5 › coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries (1.1m)
+(node:46300) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46300) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 228 tests\e2e\knowledge-ux-cdp.spec.ts:687:7 › Chat Knowledge Attachment UX › knowledge scope picker opens and shows all scope options (49.6s)
+  x  229 tests\e2e\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (1.0m)
+(node:42596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 230 tests\e2e\knowledge-ux-cdp.spec.ts:702:7 › Chat Knowledge Attachment UX › runtime lessons source toggle is opt-in (55.1s)
+  x  231 tests\e2e\long-session-effective-policy.spec.ts:84:5 › real Host and Gateway expose a secret-free configured policy without inventing effective facts (50.6s)
+(node:33992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 232 tests\e2e\knowledge-ux-cdp.spec.ts:717:7 › Chat Knowledge Attachment UX › scope picker shows search input for knowledge attachment (32.6s)
+  x  233 tests\e2e\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (53.6s)
+(node:10004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 234 tests\e2e\knowledge-ux-cdp.spec.ts:732:7 › Chat Knowledge Attachment UX › selecting a scope closes the menu and updates the button (45.1s)

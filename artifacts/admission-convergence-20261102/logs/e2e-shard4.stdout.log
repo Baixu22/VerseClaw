@@ -1,0 +1,8 @@
+
+Running 102 tests using 1 worker, shard 4 of 4
+
+  ok   1 tests\e2e\sekb-golden-path.spec.ts:106:7 › SEKB golden path (TF-0004) › semi-auto write → human confirm → recall → behavior delta with lineage (1.1m)
+  ok   2 tests\e2e\session-activity-background-read.spec.ts:175:7 › Session activity background read state › shows the unknown state and its retry when the background read failed (54.9s)
+  ok   3 tests\e2e\session-activity-background-read.spec.ts:210:7 › Session activity background read state › does not report a successful empty read as a failure (1.6m)
+  ok   4 tests\e2e\settings-controls-fakecoding.spec.ts:34:9 › FakeCoding settings content alignment › renders reference card, row and control geometry in dark mode (56.0s)
+  ok   5 tests\e2e\settings-controls-fakecoding.spec.ts:34:9 › FakeCoding settings content alignment › renders reference card, row and control geometry in light mode (1.0m)

@@ -1,0 +1,15 @@
+
+Running 418 tests using 1 worker
+
+  ok   1 tests\e2e\agency-role-promotion.spec.ts:103:7 › Agency role promotion › reviews, approves, refreshes, and retires a separate config role (32.1s)
+  ok   2 tests\e2e\agent-avatar-orchestration.spec.ts:11:7 › local Agent avatar identity › persists a locally generated avatar across restart and restores the deterministic default (47.1s)
+  ok   3 tests\e2e\agent-browser-workbench.spec.ts:13:7 › Agent Browser workbench › shows Host API session, task, profile, and Vault metadata at their workspace destinations (25.8s)
+  ok   4 tests\e2e\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario (19.3s)
+  ok   5 tests\e2e\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling (20.0s)
+  ok   6 tests\e2e\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario (19.2s)
+  ok   7 tests\e2e\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (20.4s)
+  x    8 tests\e2e\agent-first-operational.spec.ts:156:7 › Agent First operational acceptance › runs source OAT and, when a frozen package is provided, packaged parity (4.5m)
+  x    9 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 1 (4.5m)
+  x   10 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 2 (4.4m)
+  x   11 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 3 (4.5m)
+  ok  12 tests\e2e\agent-reach-readers.spec.ts:18:7 › Reach Readers packaged plugin › ships enabled with readonly tool contracts and a credential-safe handoff skill (29.8s)

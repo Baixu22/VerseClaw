@@ -1,0 +1,13 @@
+{
+  "schema": "AdmissionE2EAttempt/v1",
+  "command": "pnpm run test:e2e:run",
+  "status": "aborted-before-app-launch",
+  "classification": "environment",
+  "reason": "The copied runtime bundle content was current, but its mtimes predated the clean worktree checkout; the E2E freshness guard rejected every test before app launch.",
+  "evidence": [
+    "logs/e2e-run2.stdout.log",
+    "logs/e2e-run2.stderr.log",
+    "e2e/agency-role-stale-runtime.error-context.md"
+  ],
+  "note": "Source relation: openclaw_runtime source is unchanged between candidate 6b7f8eb49 and the build source in D:\\ClawX. Following action refreshes copied artifact timestamps only, then starts a fresh full-suite run."
+}

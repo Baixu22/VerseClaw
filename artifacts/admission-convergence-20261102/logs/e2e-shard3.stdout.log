@@ -1,0 +1,8 @@
+
+Running 92 tests using 1 worker, shard 3 of 4
+
+  ok  1 tests\e2e\language-russian.spec.ts:4:7 › Russian language localization › shows Russian language option in setup wizard (1.1m)
+  ok  2 tests\e2e\language-russian.spec.ts:21:7 › Russian language localization › can switch to Russian language in setup wizard (47.9s)
+  ok  3 tests\e2e\language-russian.spec.ts:41:7 › Russian language localization › Russian language persists after skipping setup (1.2m)
+  ok  4 tests\e2e\language-russian.spec.ts:74:7 › Russian language localization › can switch to Russian in Settings page (1.3m)
+  ok  5 tests\e2e\lightweight-subagent-runner.spec.ts:4:7 › Lightweight Subagent Runner › starts Explorer preset and renders lifecycle, summary, and trace link (1.0m)

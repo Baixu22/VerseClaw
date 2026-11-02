@@ -1,0 +1,8 @@
+{
+  "command": "pnpm harness run --spec harness/specs/tasks/architecture-skeleton-admission-regression.md --dry-run",
+  "schema": "AdmissionGate/v1",
+  "stdout": "logs/formal-harness.log",
+  "classification": "pass",
+  "note": "Harness result: pass after restoring three test-generated tracked files in the clean candidate.",
+  "exitCode": 0
+}

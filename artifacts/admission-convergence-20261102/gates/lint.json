@@ -1,0 +1,10 @@
+{
+  "command": "pnpm run lint:check",
+  "exitCode": 1,
+  "startedAt": "2026-11-02T13:40:02.6266671Z",
+  "finishedAt": "2026-11-02T13:44:22.7259614Z",
+  "durationMs": 260099,
+  "stdout": "logs/lint.stderr.log",
+  "stderr": "logs/lint.outer-stderr.log",
+  "classification": "unclassified"
+}

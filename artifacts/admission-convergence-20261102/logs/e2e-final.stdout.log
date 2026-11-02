@@ -1,0 +1,74 @@
+
+Running 418 tests using 1 worker
+
+  ok   1 tests\e2e\agency-role-promotion.spec.ts:103:7 › Agency role promotion › reviews, approves, refreshes, and retires a separate config role (32.4s)
+  ok   2 tests\e2e\agent-avatar-orchestration.spec.ts:11:7 › local Agent avatar identity › persists a locally generated avatar across restart and restores the deterministic default (56.9s)
+  ok   3 tests\e2e\agent-browser-workbench.spec.ts:13:7 › Agent Browser workbench › shows Host API session, task, profile, and Vault metadata at their workspace destinations (29.1s)
+  ok   4 tests\e2e\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario (25.1s)
+  ok   5 tests\e2e\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling (27.7s)
+  ok   6 tests\e2e\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario (25.5s)
+  ok   7 tests\e2e\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (24.4s)
+
+  ok   8 tests\e2e\agent-first-operational.spec.ts:156:7 › Agent First operational acceptance › runs source OAT and, when a frozen package is provided, packaged parity (8.1m)
+  ok   9 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 1 (4.1m)
+  ok  10 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 2 (2.2m)
+  ok  11 tests\e2e\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 3 (2.3m)
+  ok  12 tests\e2e\agent-reach-readers.spec.ts:18:7 › Reach Readers packaged plugin › ships enabled with readonly tool contracts and a credential-safe handoff skill (30.7s)
+  ok  13 tests\e2e\agents-capability-workbench.spec.ts:13:7 › Agent capability workbench › adds a candidate capability through the renderer workbench (32.2s)
+  ok  14 tests\e2e\agents-propose-facts-confirm.spec.ts:70:7 › R3-2.4 proposeFacts confirm queue › lists a pending candidate and confirms it (28.3s)
+  ok  15 tests\e2e\agents-propose-facts-confirm.spec.ts:98:7 › R3-2.4 proposeFacts confirm queue › shows the empty state when enabled with no candidates (34.1s)
+  ok  16 tests\e2e\agents-propose-facts-confirm.spec.ts:118:7 › R3-2.4 proposeFacts confirm queue › shows the disabled notice when proposeFacts flags are off (default) (47.3s)
+  ok  17 tests\e2e\ai-elements-rendering.spec.ts:137:7 › AI Elements local adapted rendering › renders migrated assistant output cards with screenshot coverage (55.6s)
+  ok  18 tests\e2e\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile (44.8s)
+  ok  19 tests\e2e\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page (47.2s)
+  ok  20 tests\e2e\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile (1.4m)
+  ok  21 tests\e2e\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › invokes the real typed host bridge for app version (43.1s)
+  ok  22 tests\e2e\app-smoke.spec.ts:54:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes (48.9s)
+  ok  23 tests\e2e\basic-advanced-mode.spec.ts:15:7 › Basic and advanced UI depth mode › toggles diagnostic depth without changing chat dispatch payload shape (34.1s)
+BEAM_VERIFY_REPORT: {
+  "idle": {
+    "beam": true,
+    "shell": true,
+    "active": false,
+    "fading": false,
+    "overflow": "hidden",
+    "borderRadius": "25px",
+    "beamInsideShell": true,
+    "beamMatchesShellSize": true
+  },
+  "sendBtnState": {
+    "disabled": true,
+    "aria": "Send",
+    "title": null
+  },
+  "sendBtnAfterFill": {
+    "disabled": false,
+    "aria": "Send"
+  },
+  "sendingInstant": {
+    "beamActive": true,
+    "intervention": false,
+    "capabilityDialog": false,
+    "error": null,
+    "optimisticUserMsg": true
+  },
+  "sending": {
+    "active": true,
+    "fading": false,
+    "afterBackground": "conic-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 54%, rgba(0, 0, 0, 0.08) 57%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0,",
+    "strengthVar": "0.3"
+  },
+  "slashPalette": {
+    "found": true,
+    "paletteTop": 351,
+    "beamTop": 679,
+    "paletteAboveBeam": true,
+    "hitIsPalette": true
+  },
+  "lightTheme": {
+    "afterBackground": "conic-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 54%, rgba(0, 0, 0, 0.08) 57%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0,",
+    "active": true
+  },
+  "consoleErrors": []
+}
+  ok  24 tests\e2e\beam-composer-verify.spec.ts:92:5 › sunset beam wraps composer, lights on sending, menus unclipped (53.5s)

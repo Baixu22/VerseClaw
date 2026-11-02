@@ -1,0 +1,15 @@
+{
+  "schema": "AdmissionE2EAttempt/v1",
+  "command": "pnpm run test:e2e:run",
+  "status": "aborted-before-matrix-complete",
+  "classification": "environment",
+  "reason": "The clean worktree had not built openclaw_runtime/dist; real-gateway tests timed out at startGateway() before exercising candidate behavior.",
+  "evidence": [
+    "logs/e2e.stdout.log",
+    "logs/e2e.stderr.log",
+    "e2e/agent-first-preflight-gateway-missing.error-context.md"
+  ],
+  "observedPasses": 7,
+  "observedFailures": 3,
+  "note": "This attempt is setup-preflight evidence only. It is excluded from the final regression verdict and followed by an openclaw_runtime build plus a fresh full-suite run."
+}

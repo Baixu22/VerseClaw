@@ -1,0 +1,21 @@
+{
+  "schema": "AdmissionUnitSummary/v1",
+  "command": "pnpm test",
+  "exitCode": 1,
+  "files": {
+    "failed": 66,
+    "passed": 1056,
+    "skipped": 5,
+    "total": 1127
+  },
+  "tests": {
+    "failed": 187,
+    "passed": 9697,
+    "skipped": 92,
+    "total": 9976
+  },
+  "stdout": "logs/unit.stdout.log",
+  "stderr": "logs/unit.stderr.log",
+  "knownEnvironmentGap": "resources/bin/win32-x64/ae.exe missing (7 verseshell-manifest cases)",
+  "classification": "not-pass"
+}

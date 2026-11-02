@@ -1,0 +1,6 @@
+
+Running 118 tests using 1 worker, shard 2 of 4
+
+  ok   1 tests\e2e\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late (1.1m)
+  ok   2 tests\e2e\chat-session-handoff.spec.ts:291:7 › Verse Claw chat session handoff › previews, edits, and creates a new session with the draft prefilled without auto-send (59.3s)
+  x    3 tests\e2e\chat-session-handoff.spec.ts:450:7 › Verse Claw chat session handoff › disables handoff entry points while a run is active (1.7m)

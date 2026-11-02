@@ -1,0 +1,41 @@
+$ node scripts/build-all.mjs
+[build-all] plugins:assets:build
+$ node scripts/bundled-plugin-assets.mjs --phase build
+[build-all] plugins:assets:build done in 8.45s
+[build-all] tsdown
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 60s
+[tsdown-build] still running pid=35936; no output for 30s
+[tsdown-build] still running pid=35936; no output for 30s
+
+<--- Last few GCs --->
+
+[43716:000001B8BFD13000]   812051 ms: Mark-Compact 8141.4 (8210.9) -> 8138.2 (8254.4) MB, pooled: 0 MB, 9293.76 / 0.00 ms  (average mu = 0.439, current mu = 0.107) allocation failure; scavenge might not succeed
+[43716:000001B8BFD13000]   815026 ms: Mark-Compact (reduce) 8156.0 (8254.4) -> 8154.5 (8207.7) MB, pooled: 0 MB, 712.15 / 0.00 ms  (+ 1421.9 ms in 284 steps since start of marking, biggest step 5.1 ms, walltime since start of marking 2291 ms) (average mu
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF629336536 node::SetAbortHandler+54
+ 2: 00007FF629336A74 node::OnFatalError+1284
+ 3: 00007FF627F22387 v8::Function::NewInstance+423
+ 4: 00007FF627D22BC7 v8::HeapStatistics::used_global_handles_size+54423
+ 5: 00007FF627D20866 v8::HeapStatistics::used_global_handles_size+45366
+ 6: 00007FF627DA4479 v8::Unlocker::~Unlocker+9273
+ 7: 00007FF627918F18 v8::CodeEvent::GetFunctionName+131144
+ 8: 000001B8F84B75FA
+[build-all] tsdown failed after 851.8s
+[build-all] phase timings: total 860.2s; slowest tsdown (failed) 851.8s; plugins:assets:build 8.45s

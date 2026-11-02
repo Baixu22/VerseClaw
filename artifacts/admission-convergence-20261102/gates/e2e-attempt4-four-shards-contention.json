@@ -1,0 +1,39 @@
+{
+  "schema": "AdmissionE2EAttempt/v1",
+  "command": "four concurrent pnpm run test:e2e:run shards",
+  "status": "aborted",
+  "classification": "environment-resource-contention",
+  "reason": "Four concurrent shards caused Electron/Gateway contention; durations inflated and unrelated UI tests failed. Replaced with a two-shard run.",
+  "observed": {
+    "shard1": {
+      "ok": 1,
+      "x": 2,
+      "-": 0
+    },
+    "shard2": {
+      "ok": 2,
+      "x": 1,
+      "-": 0
+    },
+    "shard3": {
+      "ok": 5,
+      "x": 0,
+      "-": 0
+    },
+    "shard4": {
+      "ok": 5,
+      "x": 0,
+      "-": 0
+    }
+  },
+  "evidence": [
+    "logs/e2e-shard1.stdout.log",
+    "logs/e2e-shard2.stdout.log",
+    "logs/e2e-shard3.stdout.log",
+    "logs/e2e-shard4.stdout.log",
+    "logs/e2e-shard1.stderr.log",
+    "logs/e2e-shard2.stderr.log",
+    "logs/e2e-shard3.stderr.log",
+    "logs/e2e-shard4.stderr.log"
+  ]
+}

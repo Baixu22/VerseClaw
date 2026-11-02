@@ -1,0 +1,267 @@
+
+ RUN  v4.1.1 D:/tmp/ClawX-a6-regression-20261102-v2
+
+ ❯ tests/unit/openclaw-auth.test.ts (73 tests | 1 failed) 2566ms
+     × preserves user config (memory, agents, channels) when enforcing tools settings 33ms
+ ❯ tests/unit/host-services.test.ts (40 tests | 1 failed) 4043ms
+     × sends staged media through the typed chat service with gateway attachments 234ms
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts (2 tests | 2 failed) 16ms
+     × enforces baseline, naive, and guarded thresholds across controlled replay DBs 13ms
+     × preserves zero budget, zero result limit, and empty no-op replay behavior 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts (3 tests | 2 failed) 28ms
+     × accepts Phase 33 readiness gates while keeping the Phase 32 controlled corpus path readonly and non-authoritative 10ms
+     × keeps accepted readiness with an empty controlled corpus as a safe no-op 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts (4 tests | 2 failed) 40ms
+     × allows accepted operator gates only on the explicit diagnostics-only shadow path 12ms
+     × keeps accepted limited production opt-in with an empty corpus as a safe no-op 2ms
+ ❯ tests/unit/runtime-grounding-shadow-consumers.test.ts (7 tests | 1 failed) 34ms
+     × keeps diagnostics metadata invariants aligned across Registry, Trace, Symbol, AgentMap, and Runtime Memory 10ms
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts (2 tests | 2 failed) 13ms
+     × keeps baseline and naive negative while Phase 28 guarded consumer is positive on sanitized DB projections 10ms
+     × preserves explicit zero budget, zero limit, and empty no-op behavior on real DB projections 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts (3 tests | 2 failed) 28ms
+     × runs the explicit controlled pilot without changing TaskLoop authority surfaces 9ms
+     × keeps explicit empty pilot corpus hydration as a safe no-op 2ms
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts (11 tests | 8 failed | 3 skipped) 349ms
+     × retention_at_checkpoints_100_500_1000_turns 56ms
+     × noise_accumulation_rate_at_1000_turns 57ms
+     × fifo_eviction_at_512_boundary_1000_turns 46ms
+     × retention_degradation_monotonic 29ms
+     × fifo_preserves_recent_512_at_1000_turns 40ms
+     × no_active_gc_at_1000_turns 52ms
+     × useful_vs_noise_eviction_ratio_at_1000_turns 37ms
+     × domain_distribution_at_1000_turns 27ms
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts (10 tests | 7 failed | 3 skipped) 64ms
+     × write_read_consistency_immediate_query 9ms
+     × invalidation_effective_removes_from_accepted 3ms
+     × recall_degradation_over_1000_turns 16ms
+     × fifo_preserves_recent_512_interleaved 25ms
+     × interleaved_invalidation_accumulation 5ms
+     × write_read_query_during_interleaved_run 3ms
+     × consumer_conflict_resolution_during_interleaved_run 1ms
+ ❯ tests/unit/runtime-memory-persistence.test.ts (6 tests | 4 failed) 18ms
+     × migrates the SQLite schema idempotently and persists only sanitized bounded records 6ms
+     × trims persisted episodes, facts, and invalidations with the same bounded-store policy 2ms
+     × returns bounded diagnostics without creating a missing database or table 2ms
+     × lists sanitized episode summaries through a readonly no-mutation inspection helper 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts (3 tests | 2 failed) 28ms
+     × runs explicit readonly diagnostics without changing TaskLoop decisions or prompts 10ms
+     × keeps explicit empty DB no-op diagnostics safe 2ms
+ ❯ tests/unit/runtime-memory-useless-content-judge.test.ts (8 tests | 2 failed | 6 skipped) 44ms
+     × stratified_sample_balanced_from_surviving_facts 27ms
+     × useless_content_ratio_after_1000_turns 15ms
+ ❯ tests/unit/runtime-memory-eval-aggregate-report-real.test.ts (15 tests | 15 skipped) 12ms
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts (7 tests | 5 failed) 25ms
+     × delegates enabled writes and loads a store snapshot through explicit memory records 9ms
+     × inspects persisted sanitized episode summaries without raw rows or fact authority 2ms
+     × rejects raw retention markers at the adapter write boundary 2ms
+     × keeps adapter candidates non-durable without promotion fields 1ms
+     × hydrates provider context only through explicit extra-provider injection from a loaded store 3ms
+ ❯ tests/unit/error-governance-boundary.test.ts (39 tests | 3 failed) 1018ms
+     × passes with no findings 23ms
+     × declares every gap with an executable probe and existing evidence 2ms
+     × exits zero on the current tree 167ms
+ ❯ tests/unit/runtime-memory-context-provider.test.ts (9 tests | 5 failed) 21ms
+     × emits explicit grounding diagnostics metadata without memory context cutover 7ms
+     × ranks verified current facts with task, file, symbol, and evidence matches first 1ms
+     × labels historical facts with their time fields 2ms
+     × includes candidate facts only when the caller explicitly requests them 1ms
+     × uses the readonly query callback without exposing runtime authority 1ms
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts (8 tests | 4 failed) 3527ms
+     × does not open or create sqlite unless persist, read-shadow, and database are explicit 587ms
+     × does not create runtime memory tables in unrelated existing databases 323ms
+     × prints sanitized bounded JSON and text for explicit existing runtime memory databases 3ms
+     × keeps package script invocation no-open and no-create until all explicit flags are provided 1597ms
+ ❯ tests/unit/runtime-memory-compass-completion.test.ts (21 tests | 1 failed) 31ms
+     × rolls back to a previous version and truncates history 4ms
+ ❯ tests/unit/runtime-memory-locomo-benchmark.test.ts (4 tests | 1 failed | 1 skipped) 15ms
+     × seeds conversation facts and verifies retrieval works 5ms
+ ❯ tests/unit/runtime-memory-relations.test.ts (14 tests | 6 failed) 18ms
+       × migrate is idempotent and relation table is created 4ms
+       × persistRelation writes and loadStore reads relations back 1ms
+       × AUDN UPDATE disabled — refinement candidate is skipped, no relation generated (project_memory.md constraint) 1ms
+       × AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations 1ms
+       × expands matched facts with 1-hop related facts 1ms
+       × zero regression: no queryRelations callback → behaves as before 1ms
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts (12 tests | 12 failed) 18ms
+     × useful_fact_persists_through_4_layers 4ms
+     × raw_chat_log_rejected_at_persistence 1ms
+     × secret_rejected_at_persistence 1ms
+     × prompt_dump_rejected_at_persistence 1ms
+     × field_truncation_preserves_semantic_core 1ms
+     × duplicate_fact_id_not_merged 0ms
+     × episode_dedupe_merges_evidence 1ms
+     × semantic_noise_fact_NOT_rejected 0ms
+     × semantic_noise_travel_fact_NOT_rejected 1ms
+     × invalidation_marks_not_deletes 1ms
+     × fifo_eviction_at_maxFacts_boundary 1ms
+     × fifo_eviction_preserves_invalidated_facts_equally 1ms
+ ❯ tests/unit/runtime-memory-retention-llm-judge.test.ts (5 tests | 1 failed | 4 skipped) 10ms
+     × probes_physically_retained_after_mixed_write 9ms
+ ❯ tests/unit/rsi-tf0592-statistical-adjudication.test.ts (21 tests | 1 failed) 3426ms
+     × reads a copied pack and detects changed bytes through SHA256SUMS 113ms
+ ❯ tests/unit/runtime-memory-write-path-llm-judge.test.ts (4 tests | 1 failed | 3 skipped) 15ms
+     × eval_set_l1_classification_matches_expected 13ms
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts (8 tests | 4 failed) 17ms
+     × memory_update persists supersede + invalidation across calls 9ms
+     × memory_update writes rows into SQLite (fact, invalidation, relation) 2ms
+     × memory_forget persists invalidation across calls 1ms
+     × memory_strengthen persists usage across restart (SQLite row assertion) 1ms
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts (10 tests | 10 failed) 62ms
+     × retention_after_100_turns_programming 10ms
+     × retention_after_300_turns_mixed_domains 8ms
+     × noise_accumulation_rate_100_turns 3ms
+     × noise_accumulation_rate_300_turns 6ms
+     × fifo_eviction_critical_point 6ms
+     × fifo_eviction_does_not_prioritize_useful 16ms
+     × topic_drift_recall_decay 2ms
+     × invalidation_accumulation 2ms
+     × episode_retention_vs_fact_retention 6ms
+     × long_term_no_active_gc 2ms
+ ❯ tests/unit/dcs-preview-switch.test.ts (15 tests | 4 failed) 17ms
+     × is exactly the declared first-product set — exclusions stay excluded 6ms
+     × enable writes all four combo flags (store + config + env) and nothing else 1ms
+     × applied only via a complete current-generation child ack covering the combo 1ms
+     × off / partial / on are derived from the combo store keys 1ms
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts (1 test | 1 failed) 13ms
+     × shows positive memory effect only with explicit consumer guards 11ms
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts (6 tests | 6 failed) 83ms
+     × persists and reloads a fact with memoryType: procedural 10ms
+     × persists and reloads a fact with memoryType: episodic 2ms
+     × defaults memoryType to semantic in record_json when omitted 3ms
+     × writes the memory_type column for all three types 2ms
+     × migrates a pre-Phase-4.1 database by adding memory_type column 64ms
+     × is idempotent: migrating twice does not error or duplicate columns 1ms
+ ❯ tests/unit/runtime-memory-read-hydration-shadow.test.ts (5 tests | 5 failed) 30ms
+     × stays default-off without opening, reading, creating, or writing sqlite 9ms
+     × requires an explicit database path before opening sqlite 2ms
+     × does not create a missing explicit database file 2ms
+     × does not create runtime memory tables in an unrelated existing database 13ms
+     × returns bounded sanitized episode summaries and fact projections only 3ms
+ ❯ tests/unit/harness-codex-active-verification.test.ts (9 tests | 1 failed) 927ms
+     × checks the tracked matrix receipt and every retained evidence path 38ms
+stdout | tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete
+[2026-11-02T13:19:11.818Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-02T13:19:11.818Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-SY8UBs\agents\main\sessions\sessions.json
+
+ ❯ tests/unit/r0-2-sessions-delete-fail.test.ts (8 tests | 1 failed) 1088ms
+     × succeeds without a legacy sessions.json instead of failing the committed delete 9ms
+ ❯ tests/unit/versegit-product-acceptance.test.ts (7 tests | 2 failed) 8159ms
+     × recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence 4110ms
+     × requires all three README languages, the controlled-preview lock and explicit M4 boundaries 5ms
+ ❯ tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts (7 tests | 1 failed) 132ms
+     × keeps temp SQLite hydration plus consumer latency p95 under 50ms 6ms
+ ❯ tests/unit/gateway-ready-fallback.test.ts (8 tests | 1 failed) 756ms
+     × marks gatewayReady after handshake advertises the Verse Claw required runtime surface 20ms
+ ❯ tests/unit/versegit-wp9-global-acceptance.test.ts (7 tests | 2 failed) 488ms
+     × aggregates seven criteria, seventeen done children and one explicit retirement 34ms
+     × replays the retained report and reports exact historical drift without re-sealing it 408ms
+ ❯ tests/unit/runtime-memory-eval-enhanced-integration.test.ts (7 tests | 7 skipped) 8ms
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts (5 tests | 3 failed) 23ms
+     × loads without breakthroughInjection when breakthrough not enabled 11ms
+     × records breakthroughInjection summary when breakthrough is enabled 2ms
+     × marks truncatedByTokenBudget when tokens exceed the cap 2ms
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts (9 tests | 3 failed) 20ms
+     × persists and retrieves embeddings through the persistence store 5ms
+     × context provider uses embedding path when enabled 1ms
+     × context provider falls back to 3-gram when embedding enabled but provider unavailable 1ms
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts (7 tests | 6 failed) 18ms
+     × recall = 1 at the highest budget level (256) 4ms
+     × recall at extreme budget (8) is less than recall at ample budget (256) 2ms
+     × recall is monotonically non-decreasing as budget increases 1ms
+     × rejectedByBudgetCount > 0 at the most constrained budget level 2ms
+     × tokenUtilization is higher at lower budgets than at higher budgets 1ms
+     × kneePoint is either 0 (never dropped below 0.5) or within tested budget range 1ms
+ ❯ tests/unit/runtime-memory-proposal-shadow.test.ts (7 tests | 3 failed) 14ms
+     × creates sanitized candidate facts only when both shadow and proposeFacts are enabled 4ms
+     × rejects unsupported sources, accepted fact inputs, invalid shapes, and raw summaries 2ms
+     × builds invalidation proposals for conflicting accepted facts without mutating them 1ms
+ ❯ tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts (9 tests | 9 skipped) 6ms
+ ❯ tests/unit/memory-query-tool.test.ts (8 tests | 7 failed) 433ms
+     × createMemoryQueryTool 在 persist=true 时返回有效 tool 3ms
+     × tool.execute 在 facts 为空时返回 { ok: false } 0ms
+     × tool.execute 在有 facts 时返回 { ok: true, count, facts } 0ms
+     × tool.execute 的 subject 过滤生效 0ms
+     × tool.execute 的 topK 参数生效 0ms
+     × tool.execute 在 query 为空时返回 { ok: false } 0ms
+     × tool 参数 schema 包含 query (required), topK 和 subject (optional) 0ms
+ ❯ tests/unit/runtime-memory-eval-conflict-resolution.test.ts (6 tests | 5 failed) 14ms
+     × each group accepts exactly 1 fact (conflict resolution) 3ms
+     × highest confidence wins (pattern 0 groups) 1ms
+     × latest valid_at wins when confidence is tied (pattern 1 groups) 1ms
+     × wrongConflictWinnerRate = 0 when all winners are correct 1ms
+     × conflictSuppressionRate = 1 (all non-winners rejected) 1ms
+ ❯ tests/unit/runtime-memory-eval-chain-eval.test.ts (6 tests | 5 failed) 14ms
+     × baseline (empty DB) yields aggregateChainRecall=0 3ms
+     × treatment (all facts seeded) yields aggregateChainRecall=1 and maxDepth=3 1ms
+     × partial missing (only even turns seeded) yields aggregateChainRecall≈0.5 1ms
+     × chainDepth is monotonically non-decreasing when all facts are seeded 1ms
+     × growthRate stays within [0, 1] for all turns 1ms
+ ❯ tests/unit/runtime-deep-refs.test.ts (7 tests | 1 failed) 1875ms
+     × passes on the real tree and ships a reasoned exemption ledger 771ms
+ ❯ tests/unit/runtime-memory-eval-topic-drift.test.ts (6 tests | 5 failed) 13ms
+     × perTopicRecall = 1 for all topics when all facts are seeded 3ms
+     × crossTopicInterference = 0 when subjects are distinct 1ms
+     × topic B recall = 0 when topic B fact is not seeded 1ms
+     × driftRecoveryTime = 1 when second segment recovers immediately 1ms
+     × totalTurns equals sum of all segment turns 1ms
+ ❯ tests/unit/versegit-wp6-closeout.test.ts (4 tests | 1 failed) 243ms
+     × preserves exact historical stale inputs while retaining the non-GA and MC6 sidecar-only boundary 88ms
+ ❯ tests/unit/ke-integration-full-chain.test.ts (4 tests | 1 failed) 12ms
+     × ① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt 5ms
+ ❯ tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts (6 tests | 6 skipped) 7ms
+ ❯ tests/unit/cron-api-browser-automation.test.ts (4 tests | 1 failed) 224ms
+     × creates browser automation cron jobs as isolated agent turns with agent_browser allowlist 217ms
+ ❯ tests/unit/versegit-sidecar-delivery.test.ts (5 tests | 4 failed) 19ms
+     × resolves the development package without provider checkout or target/debug fallback 8ms
+     × loads host diagnostic identity from the package and fails closed when it is absent 2ms
+     × rejects missing, schema, profile, platform and artifact identity mismatches 4ms
+     × rejects a binary whose observed version or capabilities differ from the manifest 3ms
+ ❯ tests/unit/sandbox-api.test.ts (6 tests | 1 failed) 22ms
+     × reports lightweight default sandbox status without requiring Docker 16ms
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts (7 tests | 7 failed) 20ms
+     × recallBeforeWrite=0 when no initial facts exist 9ms
+     × writeEffect > 0 after fact is written 2ms
+     × invalidateEffect < 0 after clock advances past invalid_at boundary 2ms
+     × referenceTime increases monotonically across turns 2ms
+     × writeAtTurn=2 takes effect immediately at turn 2 2ms
+     × expireAtTurn=4 takes effect immediately at turn 4 1ms
+     × recall stays 0 throughout when no write and no expiry occur 1ms
+ ❯ tests/unit/verseshell-manifest.test.ts (7 tests | 7 failed) 136ms
+     × accepts the qualified ordered patch-stack bundle in development and packaging modes 20ms
+     × rejects a tampered corresponding-source patch 25ms
+     × rejects source-input manifest digest drift 17ms
+     × rejects a silently reintroduced recovered-source inventory at the pinned upstream 16ms
+     × verifies the existing artifact size and SHA-256 values 16ms
+     × rejects missing source-input provenance payload 20ms
+     × rejects facade operation order drift 21ms
+ ❯ tests/unit/first-product-claims.test.ts (5 tests | 1 failed) 32ms
+     × keeps forbidden graduation terms out of every current product surface 25ms
+ ❯ tests/unit/harness-spec-portability.test.ts (6 tests | 1 failed) 670ms
+     × finds no machine-specific user path in any checked-in spec 110ms
+ ❯ tests/unit/cross-layer-closed-loop.v01.test.ts (2 tests | 1 failed) 11ms
+     × re-runs the controlled paired ablation with the verdict unchanged (no regression) 6ms
+ ❯ tests/unit/versegit-host-api.test.ts (0 test)
+ ❯ tests/unit/r3-1-runtime-memory-legal-surface.test.ts (2 tests | 1 failed) 12ms
+     × loadStore reads real persisted facts for the inject-pilot runtime-memory provider 7ms
+ ❯ tests/unit/uas-05-verseshell-process-lifecycle.test.ts (4 tests | 1 failed) 9ms
+     × pins the lifecycle binary, frozen source commit, and 32-operation catalog 5ms
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts (5 tests | 3 failed) 11ms
+     × flag on => fact evidence flows through the proposeFacts shadow as proposalOnly/readonly candidates 5ms
+     × never auto-persists: acceptedFacts empty for every enabled run (zero-write guard) 1ms
+     × rejects an unsupported fact source (fail-closed, not silent) 1ms
+ ❯ tests/unit/memory-self-edit-adapter.test.ts (6 tests | 3 failed) 11ms
+     × registers four tools when persist is enabled 7ms
+     × memory_recall executes against the runtime store 1ms
+     × memory_update reports failure for an unknown fact id 1ms
+ ❯ tests/unit/versegit-wp2-profile.test.ts (3 tests | 1 failed) 86ms
+     × keeps single-worktree calls at zero and records observed/partial/unavailable facts 40ms
+ ❯ tests/unit/app-version-rollback.test.ts (2 tests | 1 failed) 8ms
+     × forces every writable DCS config flag off without dropping ordinary data 4ms
+
+ Test Files  66 failed | 1056 passed | 5 skipped (1127)
+      Tests  187 failed | 9697 passed | 92 skipped (9976)
+   Start at  21:11:03
+   Duration  1139.35s (transform 77.66s, setup 97.13s, import 518.80s, tests 866.15s, environment 532.25s)
+
+[ELIFECYCLE] Test failed. See above for more details.

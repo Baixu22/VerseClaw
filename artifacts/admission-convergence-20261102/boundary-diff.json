@@ -1,0 +1,55 @@
+{
+  "schema": "AdmissionBoundaryDiff/v1",
+  "baseline": "97cda35de",
+  "baselineRole": "direct parent of A3 commit 512dc31a4",
+  "candidate": "6b7f8eb496a43418ffaf880dc3590ed1042c6fc9",
+  "paths": [
+    "docs/dev/default-config-matrix.md",
+    "shared/dcs",
+    "electron/main/ipc/host-invoke.ts",
+    "electron/services/permissions-api.ts"
+  ],
+  "gitDiffExitCode": 0,
+  "changedFiles": [],
+  "gitDiffStdout": "",
+  "gitDiffStderr": "",
+  "protectedFileCount": 7,
+  "allBlobIdsEqual": true,
+  "blobs": {
+    "docs/dev/default-config-matrix.md": {
+      "baseline": "2659e9f80cded95e5705f0819f5e96b78936c777",
+      "candidate": "2659e9f80cded95e5705f0819f5e96b78936c777",
+      "equal": true
+    },
+    "electron/main/ipc/host-invoke.ts": {
+      "baseline": "2a2d3719ed808fc604c3ffb2b96fcf4eb77344f5",
+      "candidate": "2a2d3719ed808fc604c3ffb2b96fcf4eb77344f5",
+      "equal": true
+    },
+    "electron/services/permissions-api.ts": {
+      "baseline": "69d2c06231d4301643f912edfd0fb672adbff10f",
+      "candidate": "69d2c06231d4301643f912edfd0fb672adbff10f",
+      "equal": true
+    },
+    "shared/dcs/component-disposition-catalog.ts": {
+      "baseline": "c798545d9a47d634f764643ccbfb61bf118a1090",
+      "candidate": "c798545d9a47d634f764643ccbfb61bf118a1090",
+      "equal": true
+    },
+    "shared/dcs/prod-flags-catalog.ts": {
+      "baseline": "a4deaba707b36d7807affa3e6e832630a3252f2e",
+      "candidate": "a4deaba707b36d7807affa3e6e832630a3252f2e",
+      "equal": true
+    },
+    "shared/dcs/prod-flags-control.ts": {
+      "baseline": "4b9c334635b7448473bf2ed767571f06a6621419",
+      "candidate": "4b9c334635b7448473bf2ed767571f06a6621419",
+      "equal": true
+    },
+    "shared/dcs/workspace-context-profile.ts": {
+      "baseline": "aa7d9ca00cd2be8714f3a91666b7e2746deb2d8f",
+      "candidate": "aa7d9ca00cd2be8714f3a91666b7e2746deb2d8f",
+      "equal": true
+    }
+  }
+}

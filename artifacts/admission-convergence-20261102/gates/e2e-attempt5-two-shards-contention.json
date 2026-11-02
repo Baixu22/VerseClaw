@@ -1,0 +1,25 @@
+{
+  "schema": "AdmissionE2EAttempt/v1",
+  "command": "two concurrent pnpm run test:e2e:run shards",
+  "status": "aborted",
+  "classification": "environment-resource-contention",
+  "reason": "Two concurrent shards still inflated real Gateway test durations and caused failures absent from the serial run. Reverted to the config-required single-process serial matrix.",
+  "observed": {
+    "half1": {
+      "ok": 7,
+      "x": 1,
+      "-": 0
+    },
+    "half2": {
+      "ok": 7,
+      "x": 3,
+      "-": 0
+    }
+  },
+  "evidence": [
+    "logs/e2e-half1.stdout.log",
+    "logs/e2e-half1.stderr.log",
+    "logs/e2e-half2.stdout.log",
+    "logs/e2e-half2.stderr.log"
+  ]
+}

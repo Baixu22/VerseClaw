@@ -1,0 +1,3 @@
+$ node scripts/check-repository-artifacts.mjs
+Spec requires local or missing documentation: harness/specs/tasks/architecture-skeleton-admission-regression.md: docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md
+[ELIFECYCLE] Command failed with exit code 1.

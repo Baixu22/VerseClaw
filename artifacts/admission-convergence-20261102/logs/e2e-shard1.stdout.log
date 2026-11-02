@@ -1,0 +1,6 @@
+
+Running 106 tests using 1 worker, shard 1 of 4
+
+  ok   1 tests\e2e\agency-role-promotion.spec.ts:103:7 › Agency role promotion › reviews, approves, refreshes, and retires a separate config role (1.1m)
+  x    2 tests\e2e\agent-avatar-orchestration.spec.ts:11:7 › local Agent avatar identity › persists a locally generated avatar across restart and restores the deterministic default (1.8m)
+  x    3 tests\e2e\agent-browser-workbench.spec.ts:13:7 › Agent Browser workbench › shows Host API session, task, profile, and Vault metadata at their workspace destinations (1.5m)

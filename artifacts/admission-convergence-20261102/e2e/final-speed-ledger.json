@@ -1,0 +1,1418 @@
+{
+  "schema": "AdmissionE2EObserved/v1",
+  "status": "aborted-under-watch",
+  "classification": "desktop-command-session-closed",
+  "totalDeclared": 418,
+  "observed": 234,
+  "passed": 195,
+  "failed": 37,
+  "skipped": 2,
+  "didNotRun": 184,
+  "note": "The 418-test serial suite was still running when the desktop command session closed; this is not a final Playwright aggregate and cannot be treated as a pass.",
+  "records": [
+    {
+      "status": "passed",
+      "index": 1,
+      "title": "tests\\e2e\\agency-role-promotion.spec.ts:103:7 › Agency role promotion › reviews, approves, refreshes, and retires a separate config role",
+      "duration": "30.6s"
+    },
+    {
+      "status": "passed",
+      "index": 2,
+      "title": "tests\\e2e\\agent-avatar-orchestration.spec.ts:11:7 › local Agent avatar identity › persists a locally generated avatar across restart and restores the deterministic default",
+      "duration": "53.2s"
+    },
+    {
+      "status": "passed",
+      "index": 3,
+      "title": "tests\\e2e\\agent-browser-workbench.spec.ts:13:7 › Agent Browser workbench › shows Host API session, task, profile, and Vault metadata at their workspace destinations",
+      "duration": "27.0s"
+    },
+    {
+      "status": "passed",
+      "index": 4,
+      "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+      "duration": "20.8s"
+    },
+    {
+      "status": "passed",
+      "index": 5,
+      "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+      "duration": "21.3s"
+    },
+    {
+      "status": "passed",
+      "index": 6,
+      "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+      "duration": "22.1s"
+    },
+    {
+      "status": "passed",
+      "index": 7,
+      "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+      "duration": "22.0s"
+    },
+    {
+      "status": "failed",
+      "index": 8,
+      "title": "tests\\e2e\\agent-first-operational.spec.ts:156:7 › Agent First operational acceptance › runs source OAT and, when a frozen package is provided, packaged parity",
+      "duration": "4.6m"
+    },
+    {
+      "status": "failed",
+      "index": 9,
+      "title": "tests\\e2e\\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 1",
+      "duration": "4.6m"
+    },
+    {
+      "status": "passed",
+      "index": 10,
+      "title": "tests\\e2e\\agent-reach-readers.spec.ts:18:7 › Reach Readers packaged plugin › ships enabled with readonly tool contracts and a credential-safe handoff skill",
+      "duration": "20.0s"
+    },
+    {
+      "status": "passed",
+      "index": 12,
+      "title": "tests\\e2e\\agents-capability-workbench.spec.ts:13:7 › Agent capability workbench › adds a candidate capability through the renderer workbench",
+      "duration": "27.3s"
+    },
+    {
+      "status": "passed",
+      "index": 13,
+      "title": "tests\\e2e\\agents-propose-facts-confirm.spec.ts:70:7 › R3-2.4 proposeFacts confirm queue › lists a pending candidate and confirms it",
+      "duration": "30.4s"
+    },
+    {
+      "status": "passed",
+      "index": 14,
+      "title": "tests\\e2e\\agents-propose-facts-confirm.spec.ts:98:7 › R3-2.4 proposeFacts confirm queue › shows the empty state when enabled with no candidates",
+      "duration": "32.2s"
+    },
+    {
+      "status": "passed",
+      "index": 15,
+      "title": "tests\\e2e\\agents-propose-facts-confirm.spec.ts:118:7 › R3-2.4 proposeFacts confirm queue › shows the disabled notice when proposeFacts flags are off (default)",
+      "duration": "23.4s"
+    },
+    {
+      "status": "passed",
+      "index": 16,
+      "title": "tests\\e2e\\ai-elements-rendering.spec.ts:137:7 › AI Elements local adapted rendering › renders migrated assistant output cards with screenshot coverage",
+      "duration": "29.9s"
+    },
+    {
+      "status": "passed",
+      "index": 17,
+      "title": "tests\\e2e\\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile",
+      "duration": "41.8s"
+    },
+    {
+      "status": "passed",
+      "index": 18,
+      "title": "tests\\e2e\\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page",
+      "duration": "36.2s"
+    },
+    {
+      "status": "failed",
+      "index": 11,
+      "title": "tests\\e2e\\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 2",
+      "duration": "4.6m"
+    },
+    {
+      "status": "failed",
+      "index": 19,
+      "title": "tests\\e2e\\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile",
+      "duration": "1.6m"
+    },
+    {
+      "status": "passed",
+      "index": 21,
+      "title": "tests\\e2e\\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › invokes the real typed host bridge for app version",
+      "duration": "54.5s"
+    },
+    {
+      "status": "passed",
+      "index": 22,
+      "title": "tests\\e2e\\app-smoke.spec.ts:54:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes",
+      "duration": "34.4s"
+    },
+    {
+      "status": "passed",
+      "index": 23,
+      "title": "tests\\e2e\\basic-advanced-mode.spec.ts:15:7 › Basic and advanced UI depth mode › toggles diagnostic depth without changing chat dispatch payload shape",
+      "duration": "37.3s"
+    },
+    {
+      "status": "passed",
+      "index": 24,
+      "title": "tests\\e2e\\beam-composer-verify.spec.ts:92:5 › sunset beam wraps composer, lights on sending, menus unclipped",
+      "duration": "32.9s"
+    },
+    {
+      "status": "passed",
+      "index": 25,
+      "title": "tests\\e2e\\billing-page.spec.ts:223:5 › shows no-data guidance when billing history is empty",
+      "duration": "41.9s"
+    },
+    {
+      "status": "failed",
+      "index": 20,
+      "title": "tests\\e2e\\agent-first-product-effect.spec.ts:22:7 › agent-driven real product effects in isolated profile 3",
+      "duration": "4.7m"
+    },
+    {
+      "status": "passed",
+      "index": 26,
+      "title": "tests\\e2e\\billing-page.spec.ts:253:7 › Billing page › renders a dedicated token billing page with complete charts",
+      "duration": "27.7s"
+    },
+    {
+      "status": "passed",
+      "index": 27,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to sidebar and reload in light",
+      "duration": "39.4s"
+    },
+    {
+      "status": "passed",
+      "index": 28,
+      "title": "tests\\e2e\\billing-page.spec.ts:333:7 › Billing page › keeps transcript-backed billing history visible when gateway is offline",
+      "duration": "43.9s"
+    },
+    {
+      "status": "passed",
+      "index": 29,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to setup and reload in light",
+      "duration": "36.6s"
+    },
+    {
+      "status": "passed",
+      "index": 30,
+      "title": "tests\\e2e\\browser-security-recovery.spec.ts:99:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path)",
+      "duration": "39.3s"
+    },
+    {
+      "status": "passed",
+      "index": 31,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to sidebar and reload in dark",
+      "duration": "58.7s"
+    },
+    {
+      "status": "passed",
+      "index": 32,
+      "title": "tests\\e2e\\browser-supervised-task-tf0503.spec.ts:69:7 › Browser supervised task capability (TF-0503) › real Main path: supervised self-description and private-network default deny",
+      "duration": "48.6s"
+    },
+    {
+      "status": "passed",
+      "index": 33,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 › B2 brand stays consistent from boot to setup and reload in dark",
+      "duration": "35.4s"
+    },
+    {
+      "status": "passed",
+      "index": 34,
+      "title": "tests\\e2e\\change-context-review-loop.spec.ts:18:5 › opt-in context comparisons and visible comment freshness never move an anchor",
+      "duration": "43.6s"
+    },
+    {
+      "status": "passed",
+      "index": 35,
+      "title": "tests\\e2e\\channels-account-id-persistence.spec.ts:13:7 › Channels account editor behavior › keeps Feishu credentials when account ID is changed",
+      "duration": "36.4s"
+    },
+    {
+      "status": "passed",
+      "index": 37,
+      "title": "tests\\e2e\\channels-account-id-validation.spec.ts:38:7 › Channels account ID validation › rejects non-canonical custom account ID before save",
+      "duration": "46.9s"
+    },
+    {
+      "status": "passed",
+      "index": 36,
+      "title": "tests\\e2e\\change-context-review-loop.spec.ts:84:5 › real Main owners bind comments, verdicts and approved journaled apply (VG off)",
+      "duration": "1.2m"
+    },
+    {
+      "status": "failed",
+      "index": 38,
+      "title": "tests\\e2e\\channels-binding-regression.spec.ts:4:7 › Channels binding regression › keeps newly added non-default Feishu accounts unassigned until the user binds an agent",
+      "duration": "38.4s"
+    },
+    {
+      "status": "passed",
+      "index": 40,
+      "title": "tests\\e2e\\channels-health-diagnostics.spec.ts:4:7 › Channels health diagnostics › does not flash a stale gateway-not-running banner while status is running",
+      "duration": "44.9s"
+    },
+    {
+      "status": "failed",
+      "index": 39,
+      "title": "tests\\e2e\\change-context-review-loop.spec.ts:84:5 › real Main owners bind comments, verdicts and approved journaled apply (VG opt-in)",
+      "duration": "1.6m"
+    },
+    {
+      "status": "passed",
+      "index": 41,
+      "title": "tests\\e2e\\channels-health-diagnostics.spec.ts:62:7 › Channels health diagnostics › shows degraded banner, restarts gateway, and copies diagnostics",
+      "duration": "36.5s"
+    },
+    {
+      "status": "passed",
+      "index": 42,
+      "title": "tests\\e2e\\chat-agent-effort.spec.ts:26:7 › Verse Claw combined model and reasoning settings › opens the reasoning section in the shared menu, slides to max, and commits max",
+      "duration": "56.1s"
+    },
+    {
+      "status": "passed",
+      "index": 43,
+      "title": "tests\\e2e\\chat-artifact-panel.spec.ts:80:7 › Chat artifact panel › shows artifact tab button in the artifact panel",
+      "duration": "58.1s"
+    },
+    {
+      "status": "passed",
+      "index": 44,
+      "title": "tests\\e2e\\chat-agent-effort.spec.ts:201:7 › Verse Claw combined model and reasoning settings › keeps the reasoning slider inside the shared dropdown surface",
+      "duration": "27.9s"
+    },
+    {
+      "status": "passed",
+      "index": 45,
+      "title": "tests\\e2e\\chat-artifact-panel.spec.ts:119:7 › Chat artifact panel › shows managed structured artifacts through the host gateway seam",
+      "duration": "25.1s"
+    },
+    {
+      "status": "passed",
+      "index": 46,
+      "title": "tests\\e2e\\chat-agent-effort.spec.ts:352:7 › Verse Claw combined model and reasoning settings › does not commit when slider stays at the current value",
+      "duration": "27.0s"
+    },
+    {
+      "status": "passed",
+      "index": 47,
+      "title": "tests\\e2e\\chat-artifact-panel.spec.ts:169:7 › Chat artifact panel › shows empty state when no artifacts exist",
+      "duration": "30.1s"
+    },
+    {
+      "status": "passed",
+      "index": 48,
+      "title": "tests\\e2e\\chat-assistant-markdown-plain.spec.ts:54:7 › Verse Claw assistant reply Markdown styling › renders assistant text as plain Markdown while keeping user prompts bubbled",
+      "duration": "29.0s"
+    },
+    {
+      "status": "passed",
+      "index": 49,
+      "title": "tests\\e2e\\chat-artifact-panel.spec.ts:212:7 › Chat artifact panel › shows the artifact view with title",
+      "duration": "30.7s"
+    },
+    {
+      "status": "passed",
+      "index": 50,
+      "title": "tests\\e2e\\chat-assistant-rendering-visual.spec.ts:220:7 › Verse Claw assistant-style rendering layer › renders rich assistant cards and validates quote, token, and heatgraph interactions",
+      "duration": "26.8s"
+    },
+    {
+      "status": "skipped",
+      "index": 52,
+      "title": "tests\\e2e\\chat-cache-deepseek-cache-first.spec.ts:388:7 › DeepSeek prompt cache-first live E2E › keeps a stable provider prefix warm across real DeepSeek turns",
+      "duration": null
+    },
+    {
+      "status": "passed",
+      "index": 51,
+      "title": "tests\\e2e\\chat-artifact-panel.spec.ts:254:5 › keeps the conversation column in place until the workspace panel expands",
+      "duration": "26.5s"
+    },
+    {
+      "status": "skipped",
+      "index": 54,
+      "title": "tests\\e2e\\chat-cache-live-model.spec.ts:400:7 › Verse Claw prompt cache live model E2E › performs real model calls and exports prompt-cache metrics",
+      "duration": null
+    },
+    {
+      "status": "passed",
+      "index": 55,
+      "title": "tests\\e2e\\chat-checkpoints.spec.ts:134:5 › checkpoints dialog lists and restores a session checkpoint",
+      "duration": "42.9s"
+    },
+    {
+      "status": "passed",
+      "index": 53,
+      "title": "tests\\e2e\\chat-cache-guard.spec.ts:8:7 › Verse Claw chat prompt cache guard › shows cache health and requires confirmation before switching models",
+      "duration": "52.0s"
+    },
+    {
+      "status": "passed",
+      "index": 56,
+      "title": "tests\\e2e\\chat-code-block-wrap.spec.ts:47:7 › Verse Claw chat code block wrapping › soft-wraps long lines inside fenced code blocks instead of overflowing",
+      "duration": "44.1s"
+    },
+    {
+      "status": "passed",
+      "index": 57,
+      "title": "tests\\e2e\\chat-composer-git-strip.spec.ts:182:7 › Chat composer Git strip › renders runtime approval inline with the composer and Git strip",
+      "duration": "57.8s"
+    },
+    {
+      "status": "passed",
+      "index": 58,
+      "title": "tests\\e2e\\chat-composer-packs.spec.ts:104:7 › Chat composer feature plugins › shows Superpowers skills and inserts enabled Office CLI actions",
+      "duration": "34.1s"
+    },
+    {
+      "status": "passed",
+      "index": 59,
+      "title": "tests\\e2e\\chat-composer-git-strip.spec.ts:258:7 › Chat composer Git strip › shows repository context and routes branch/worktree actions through host APIs",
+      "duration": "1.1m"
+    },
+    {
+      "status": "passed",
+      "index": 60,
+      "title": "tests\\e2e\\chat-composer-packs.spec.ts:135:7 › Chat composer feature plugins › keeps Office actions visible and routes to setup when Office CLI skills are not enabled",
+      "duration": "46.0s"
+    },
+    {
+      "status": "passed",
+      "index": 61,
+      "title": "tests\\e2e\\chat-context-pressure.spec.ts:21:7 › Verse Claw chat context pressure › shows session context, cache-served tokens and warm hit rate in the composer",
+      "duration": "57.5s"
+    },
+    {
+      "status": "failed",
+      "index": 63,
+      "title": "tests\\e2e\\chat-context-pressure.spec.ts:161:7 › Verse Claw chat context pressure › shows the session row but omits optional metrics the runtime did not report",
+      "duration": "1.3m"
+    },
+    {
+      "status": "passed",
+      "index": 64,
+      "title": "tests\\e2e\\chat-draft-preservation.spec.ts:159:7 › Verse Claw chat draft preservation across session switches › preserves composer drafts when switching between sessions and back",
+      "duration": "1.1m"
+    },
+    {
+      "status": "passed",
+      "index": 62,
+      "title": "tests\\e2e\\chat-conversation-resources.spec.ts:124:7 › Conversation resources › renders every resource type, degrades explicitly, and survives history reload",
+      "duration": "4.1m"
+    },
+    {
+      "status": "passed",
+      "index": 65,
+      "title": "tests\\e2e\\chat-file-changes.spec.ts:125:7 › Verse Claw chat file changes › shows line stats on generated file cards",
+      "duration": "53.7s"
+    },
+    {
+      "status": "passed",
+      "index": 66,
+      "title": "tests\\e2e\\chat-history-startup-retry.spec.ts:13:7 › Verse Claw startup chat history recovery › retries an initial chat.history timeout and eventually renders history",
+      "duration": "37.0s"
+    },
+    {
+      "status": "passed",
+      "index": 67,
+      "title": "tests\\e2e\\chat-file-changes.spec.ts:219:7 › Verse Claw chat file changes › opens html files from chat as rendered previews",
+      "duration": "43.4s"
+    },
+    {
+      "status": "passed",
+      "index": 68,
+      "title": "tests\\e2e\\chat-history-startup-retry.spec.ts:74:7 › Verse Claw startup chat history recovery › renders local transcript while initial chat.history is still pending",
+      "duration": "35.0s"
+    },
+    {
+      "status": "passed",
+      "index": 69,
+      "title": "tests\\e2e\\chat-file-changes.spec.ts:328:7 › Verse Claw chat file changes › keeps an attached file selected after switching through workspace",
+      "duration": "29.4s"
+    },
+    {
+      "status": "passed",
+      "index": 70,
+      "title": "tests\\e2e\\chat-latex-rendering.spec.ts:43:7 › Verse Claw chat LaTeX rendering › renders KaTeX markup for $...$, $$...$$, \\(...\\) and \\[...\\] delimiters",
+      "duration": "24.7s"
+    },
+    {
+      "status": "failed",
+      "index": 71,
+      "title": "tests\\e2e\\chat-layout-cdp.spec.ts:156:7 › Chat page layout CDP checks › keeps chat content, session search modal, and window controls aligned",
+      "duration": "1.0m"
+    },
+    {
+      "status": "failed",
+      "index": 72,
+      "title": "tests\\e2e\\chat-long-task-control.spec.ts:16:7 › Verse Claw chat long-task recovery controls › shows recovery status and drains queued follow-up through Host API",
+      "duration": "1.5m"
+    },
+    {
+      "status": "passed",
+      "index": 73,
+      "title": "tests\\e2e\\chat-manual-compaction.spec.ts:15:7 › Verse Claw chat manual compaction › opens confirmation dialog and calls the session compaction Host API",
+      "duration": "51.9s"
+    },
+    {
+      "status": "passed",
+      "index": 74,
+      "title": "tests\\e2e\\chat-memory-injection-panel.spec.ts:103:7 › R3-2.2 memory-injection panel › injected: shows the source group with selected refs and budget",
+      "duration": "30.6s"
+    },
+    {
+      "status": "passed",
+      "index": 75,
+      "title": "tests\\e2e\\chat-model-picker-tiers.spec.ts:12:7 › Verse Claw chat model picker tiers (Area 2) › turn scope: sets chip and forwards modelRef in send payload",
+      "duration": "47.0s"
+    },
+    {
+      "status": "passed",
+      "index": 76,
+      "title": "tests\\e2e\\chat-memory-injection-panel.spec.ts:120:7 › R3-2.2 memory-injection panel › none: a successful empty read shows the empty state",
+      "duration": "42.0s"
+    },
+    {
+      "status": "passed",
+      "index": 77,
+      "title": "tests\\e2e\\chat-model-picker-tiers.spec.ts:192:7 › Verse Claw chat model picker tiers (Area 2) › session scope: calls sessions.patchRuntimeModel with modelRef",
+      "duration": "58.2s"
+    },
+    {
+      "status": "passed",
+      "index": 78,
+      "title": "tests\\e2e\\chat-memory-injection-panel.spec.ts:134:7 › R3-2.2 memory-injection panel › timeout: a failed read shows a retryable error",
+      "duration": "49.5s"
+    },
+    {
+      "status": "passed",
+      "index": 79,
+      "title": "tests\\e2e\\chat-model-picker.spec.ts:7:7 › Verse Claw chat model picker › switches the current agent model without requesting a gateway refresh",
+      "duration": "1.0m"
+    },
+    {
+      "status": "passed",
+      "index": 81,
+      "title": "tests\\e2e\\chat-new-session-date.spec.ts:20:7 › Verse Claw chat session date grouping › lists every conversation newest-first, with no collapsible date buckets",
+      "duration": "54.4s"
+    },
+    {
+      "status": "passed",
+      "index": 82,
+      "title": "tests\\e2e\\chat-new-session-date.spec.ts:132:7 › Verse Claw chat session date grouping › new chat appears in Today only after the first message and lands without overshoot",
+      "duration": "1.3m"
+    },
+    {
+      "status": "passed",
+      "index": 83,
+      "title": "tests\\e2e\\chat-plan-mode-write-challenge.spec.ts:56:7 › Plan mode real write challenge › blocks terminal, file write, and mutating Gateway RPC without side effects",
+      "duration": "53.8s"
+    },
+    {
+      "status": "failed",
+      "index": 80,
+      "title": "tests\\e2e\\chat-model-scope-runtime.spec.ts:8:5 › turn model wins for one real Gateway request without changing the session choice",
+      "duration": "4.1m"
+    },
+    {
+      "status": "passed",
+      "index": 84,
+      "title": "tests\\e2e\\chat-plan-mode-write-challenge.spec.ts:116:7 › Plan mode real write challenge › read-only mode blocks git --output without touching the target file",
+      "duration": "31.2s"
+    },
+    {
+      "status": "passed",
+      "index": 85,
+      "title": "tests\\e2e\\chat-question-directory.spec.ts:52:7 › Verse Claw chat side panels › keeps assistive panels hidden on a fresh empty chat",
+      "duration": "32.6s"
+    },
+    {
+      "status": "passed",
+      "index": 86,
+      "title": "tests\\e2e\\chat-recovery-assist.spec.ts:16:7 › Chat recovery assist › shows evidence-backed recovery suggestions through existing handoff, queue, and compaction actions",
+      "duration": "31.8s"
+    },
+    {
+      "status": "passed",
+      "index": 87,
+      "title": "tests\\e2e\\chat-question-directory.spec.ts:118:7 › Verse Claw chat side panels › keeps the transcript usable and the removed question directory absent on a long conversation",
+      "duration": "33.4s"
+    },
+    {
+      "status": "passed",
+      "index": 88,
+      "title": "tests\\e2e\\chat-renderer-pipeline.spec.ts:116:7 › Chat renderer pipeline — assistant-ui + tool-ui coexistence › renders Markdown prose and tool-ui cards in the same assistant message",
+      "duration": "56.0s"
+    },
+    {
+      "status": "passed",
+      "index": 89,
+      "title": "tests\\e2e\\chat-question-directory.spec.ts:196:7 › Verse Claw chat side panels › hides chat assistive panels when the workspace panel opens",
+      "duration": "53.9s"
+    },
+    {
+      "status": "passed",
+      "index": 90,
+      "title": "tests\\e2e\\chat-run-activity-settings.spec.ts:4:7 › Chat run activity settings › keeps completed run activity expanded by default and allows changing the preference",
+      "duration": "53.1s"
+    },
+    {
+      "status": "passed",
+      "index": 91,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:60:9 › Verse Claw chat run state events › preserves foreground exec output and releases the composer after error",
+      "duration": "49.2s"
+    },
+    {
+      "status": "failed",
+      "index": 92,
+      "title": "tests\\e2e\\chat-scroll-pin-bottom.spec.ts:29:7 › Verse Claw chat scroll pin-to-bottom during runs › keeps the scrollbar pinned to the bottom through oscillating tool-heavy streaming, and yields to manual scroll-up",
+      "duration": "52.0s"
+    },
+    {
+      "status": "passed",
+      "index": 93,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:60:9 › Verse Claw chat run state events › preserves foreground exec output and releases the composer after aborted",
+      "duration": "46.8s"
+    },
+    {
+      "status": "passed",
+      "index": 95,
+      "title": "tests\\e2e\\chat-scroll-to-latest.spec.ts:21:7 › Verse Claw chat scroll-to-latest affordance › shows a jump button when reading older messages and returns to the latest message",
+      "duration": "53.5s"
+    },
+    {
+      "status": "passed",
+      "index": 94,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:143:7 › Verse Claw chat run state events › anchors the live thinking matrix to the latest assistant output and clears it after completion",
+      "duration": "54.6s"
+    },
+    {
+      "status": "passed",
+      "index": 96,
+      "title": "tests\\e2e\\chat-session-compact-range.spec.ts:155:7 › Verse Claw located (range) compaction › summarizes from a chosen message through the host-api, keeping the newer side",
+      "duration": "42.1s"
+    },
+    {
+      "status": "passed",
+      "index": 97,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:325:7 › Verse Claw chat run state events › keeps stop control active across non-terminal runtime events and clears it on run.ended",
+      "duration": "45.9s"
+    },
+    {
+      "status": "passed",
+      "index": 98,
+      "title": "tests\\e2e\\chat-session-compact-range.spec.ts:198:7 › Verse Claw located (range) compaction › summarizes up to a chosen message, folding it into the summary",
+      "duration": "51.3s"
+    },
+    {
+      "status": "passed",
+      "index": 99,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:482:7 › Verse Claw chat run state events › accepts the five-state composer contract and separates guide, queue, interrupt, pause, and resume",
+      "duration": "56.8s"
+    },
+    {
+      "status": "passed",
+      "index": 101,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:609:7 › Verse Claw chat run state events › renders historical execution graph with tool results and final assistant reply",
+      "duration": "34.1s"
+    },
+    {
+      "status": "passed",
+      "index": 100,
+      "title": "tests\\e2e\\chat-session-derived.spec.ts:206:7 › Verse Claw derived-session listing › lists the sessions derived from the current one and switches to the child",
+      "duration": "45.5s"
+    },
+    {
+      "status": "passed",
+      "index": 102,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:746:7 › Verse Claw chat run state events › shows clear image preview states for generated media while hydration retries",
+      "duration": "46.2s"
+    },
+    {
+      "status": "passed",
+      "index": 103,
+      "title": "tests\\e2e\\chat-session-fork.spec.ts:275:7 › Verse Claw chat session fork › creates and selects a forked session with inherited history and copied draft without auto-send",
+      "duration": "52.6s"
+    },
+    {
+      "status": "passed",
+      "index": 104,
+      "title": "tests\\e2e\\chat-run-state-events.spec.ts:821:7 › Verse Claw chat run state events › hydrates Windows MEDIA SVG artifacts without leaking the marker text",
+      "duration": "30.1s"
+    },
+    {
+      "status": "passed",
+      "index": 105,
+      "title": "tests\\e2e\\chat-session-fork.spec.ts:512:7 › Verse Claw chat session fork › offers handoff preparation when fork fails because the parent is too large",
+      "duration": "25.8s"
+    },
+    {
+      "status": "passed",
+      "index": 106,
+      "title": "tests\\e2e\\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late",
+      "duration": "28.0s"
+    },
+    {
+      "status": "passed",
+      "index": 107,
+      "title": "tests\\e2e\\chat-session-fork.spec.ts:606:7 › Verse Claw chat session fork › disables fork entry points while a run is active",
+      "duration": "29.7s"
+    },
+    {
+      "status": "passed",
+      "index": 108,
+      "title": "tests\\e2e\\chat-session-handoff.spec.ts:291:7 › Verse Claw chat session handoff › previews, edits, and creates a new session with the draft prefilled without auto-send",
+      "duration": "35.5s"
+    },
+    {
+      "status": "passed",
+      "index": 109,
+      "title": "tests\\e2e\\chat-skill-trigger-i18n.spec.ts:67:7 › Verse Claw chat skill trigger › renders localized skill access inside the slash palette",
+      "duration": "31.7s"
+    },
+    {
+      "status": "passed",
+      "index": 110,
+      "title": "tests\\e2e\\chat-session-handoff.spec.ts:450:7 › Verse Claw chat session handoff › disables handoff entry points while a run is active",
+      "duration": "24.3s"
+    },
+    {
+      "status": "passed",
+      "index": 111,
+      "title": "tests\\e2e\\chat-skill-trigger-i18n.spec.ts:215:7 › Verse Claw chat skill trigger › clicking the composer skill token opens the preview sidebar",
+      "duration": "24.3s"
+    },
+    {
+      "status": "passed",
+      "index": 112,
+      "title": "tests\\e2e\\chat-session-handoff.spec.ts:519:7 › Verse Claw chat session handoff › refuses a relay once the handoff depth limit is reached (#179)",
+      "duration": "23.7s"
+    },
+    {
+      "status": "passed",
+      "index": 113,
+      "title": "tests\\e2e\\chat-skill-trigger-i18n.spec.ts:316:7 › Verse Claw chat skill trigger › shows a confirmation dialog for chat-driven skill enable and cancels cleanly",
+      "duration": "24.4s"
+    },
+    {
+      "status": "passed",
+      "index": 114,
+      "title": "tests\\e2e\\chat-session-handoff.spec.ts:564:7 › Verse Claw chat session handoff › keeps the editable draft and session when creation rejects changed ancestry",
+      "duration": "23.2s"
+    },
+    {
+      "status": "passed",
+      "index": 115,
+      "title": "tests\\e2e\\chat-skill-trigger-i18n.spec.ts:426:7 › Verse Claw chat skill trigger › blocks high-risk MCP JSON in the chat confirmation dialog",
+      "duration": "23.8s"
+    },
+    {
+      "status": "passed",
+      "index": 116,
+      "title": "tests\\e2e\\chat-slash-commands.spec.ts:125:7 › Verse Claw chat slash commands › discovers and dispatches quick actions from the composer",
+      "duration": "24.4s"
+    },
+    {
+      "status": "passed",
+      "index": 117,
+      "title": "tests\\e2e\\chat-slash-session-lifecycle.spec.ts:95:5 › slash /rename renames the current session through the host API",
+      "duration": "22.4s"
+    },
+    {
+      "status": "passed",
+      "index": 118,
+      "title": "tests\\e2e\\chat-slash-commands.spec.ts:371:7 › Verse Claw chat slash commands › runs the existing fork flow from /fork",
+      "duration": "20.6s"
+    },
+    {
+      "status": "passed",
+      "index": 119,
+      "title": "tests\\e2e\\chat-slash-session-lifecycle.spec.ts:125:5 › slash /clear resets the local message view",
+      "duration": "23.4s"
+    },
+    {
+      "status": "passed",
+      "index": 120,
+      "title": "tests\\e2e\\chat-slash-commands.spec.ts:460:7 › Verse Claw chat slash commands › keeps the slash menu above the composer on a narrow viewport",
+      "duration": "22.0s"
+    },
+    {
+      "status": "passed",
+      "index": 121,
+      "title": "tests\\e2e\\chat-table-header-light.spec.ts:60:7 › Verse Claw chat table header styling › renders markdown table headers with transparent background and bold text in light theme",
+      "duration": "23.1s"
+    },
+    {
+      "status": "passed",
+      "index": 122,
+      "title": "tests\\e2e\\chat-task-loop-upgrade.spec.ts:46:7 › Chat Task Loop upgrade › suggests but only starts task_loop.run after explicit confirmation",
+      "duration": "37.1s"
+    },
+    {
+      "status": "passed",
+      "index": 123,
+      "title": "tests\\e2e\\chat-task-visualizer.spec.ts:288:7 › Verse Claw chat execution graph › renders team orchestration task graph details from mocked history",
+      "duration": "31.5s"
+    },
+    {
+      "status": "passed",
+      "index": 124,
+      "title": "tests\\e2e\\chat-task-visualizer.spec.ts:420:7 › Verse Claw chat execution graph › renders internal yield status and linked subagent branch from mocked IPC",
+      "duration": "45.9s"
+    },
+    {
+      "status": "passed",
+      "index": 125,
+      "title": "tests\\e2e\\chat-tool-ui-execution-surfaces.spec.ts:108:7 › Tool UI execution surfaces › renders official execution surfaces in light, dark, and narrow layouts",
+      "duration": "45.9s"
+    },
+    {
+      "status": "passed",
+      "index": 127,
+      "title": "tests\\e2e\\chat-tool-ui-interaction-flow.spec.ts:88:7 › Verse Claw Tool UI interaction flow — option-list and question-flow send response › option-list: select option, send response, verify user message and mock assistant reply",
+      "duration": "27.1s"
+    },
+    {
+      "status": "passed",
+      "index": 126,
+      "title": "tests\\e2e\\chat-task-visualizer.spec.ts:572:7 › Verse Claw chat execution graph › preserves long execution history counts and strips the full folded reply prefix",
+      "duration": "27.1s"
+    },
+    {
+      "status": "passed",
+      "index": 129,
+      "title": "tests\\e2e\\chat-task-visualizer.spec.ts:673:7 › Verse Claw chat execution graph › surfaces terminal model errors and stops the stale thinking state",
+      "duration": "31.9s"
+    },
+    {
+      "status": "passed",
+      "index": 128,
+      "title": "tests\\e2e\\chat-tool-ui-interaction-flow.spec.ts:214:7 › Verse Claw Tool UI interaction flow — option-list and question-flow send response › question-flow: navigate steps, send response, verify user message and mock assistant reply",
+      "duration": "32.2s"
+    },
+    {
+      "status": "passed",
+      "index": 130,
+      "title": "tests\\e2e\\chat-tool-ui-interactions.spec.ts:111:7 › Verse Claw Tool UI interaction rendering › renders plan, options, question flow, and preferences cards from assistant payloads",
+      "duration": "23.3s"
+    },
+    {
+      "status": "passed",
+      "index": 131,
+      "title": "tests\\e2e\\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand",
+      "duration": "23.3s"
+    },
+    {
+      "status": "passed",
+      "index": 133,
+      "title": "tests\\e2e\\chat-turn-summary-collapse.spec.ts:212:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped",
+      "duration": "24.2s"
+    },
+    {
+      "status": "passed",
+      "index": 132,
+      "title": "tests\\e2e\\chat-user-message-actions.spec.ts:234:7 › Verse Claw user message hover actions › shows copy and edit controls, opens the inline editor, and resends through chat send",
+      "duration": "25.7s"
+    },
+    {
+      "status": "passed",
+      "index": 134,
+      "title": "tests\\e2e\\chat-welcome-hero-fakecoding.spec.ts:44:7 › FakeCoding chat welcome hero alignment › names the workspace as a context-row token and opens the shared picker upward",
+      "duration": "26.0s"
+    },
+    {
+      "status": "passed",
+      "index": 135,
+      "title": "tests\\e2e\\chat-welcome-hero-verse-shot.spec.ts:140:7 › verse welcome hero screenshot — dark",
+      "duration": "33.2s"
+    },
+    {
+      "status": "passed",
+      "index": 136,
+      "title": "tests\\e2e\\chat-work-mode.spec.ts:151:7 › Verse Claw chat without Work Mode › hides Work Mode UI and sends payload without workMode",
+      "duration": "25.4s"
+    },
+    {
+      "status": "passed",
+      "index": 137,
+      "title": "tests\\e2e\\chat-welcome-hero-verse-shot.spec.ts:140:7 › verse welcome hero screenshot — light",
+      "duration": "34.3s"
+    },
+    {
+      "status": "passed",
+      "index": 138,
+      "title": "tests\\e2e\\chat-workspace-header.spec.ts:71:7 › Verse Claw chat workspace header › shows workspace and conversation without the legacy topic selector",
+      "duration": "27.2s"
+    },
+    {
+      "status": "passed",
+      "index": 139,
+      "title": "tests\\e2e\\chat-welcome-hero-verse-shot.spec.ts:190:5 › chips retract while the composer holds a draft and return when it is cleared",
+      "duration": "36.0s"
+    },
+    {
+      "status": "passed",
+      "index": 140,
+      "title": "tests\\e2e\\chat-workspace-header.spec.ts:226:7 › Verse Claw chat workspace header › keeps sidebar new chat scoped to the active workspace",
+      "duration": "26.3s"
+    },
+    {
+      "status": "passed",
+      "index": 141,
+      "title": "tests\\e2e\\clawgraph.spec.ts:110:7 › ClawGraph › lists workflows, runs one, and shows DAG/events/review",
+      "duration": "31.5s"
+    },
+    {
+      "status": "passed",
+      "index": 142,
+      "title": "tests\\e2e\\code-review-center.spec.ts:98:7 › Code Review Center › opens review center, reviews two targets, displays findings, and preserves read-only behavior",
+      "duration": "32.7s"
+    },
+    {
+      "status": "passed",
+      "index": 144,
+      "title": "tests\\e2e\\compaction-artifact-viewer.spec.ts:15:7 › Compaction artifact viewer › opens compression evidence and prepares recovery context without lossless wording",
+      "duration": "36.7s"
+    },
+    {
+      "status": "failed",
+      "index": 145,
+      "title": "tests\\e2e\\config-schema-parity-fp-p0-06.spec.ts:99:7 › FP-P0-06 schema parity (real gateway child) › gateway starts with formerly schema-rejected runtime leaves present in config",
+      "duration": "3.8m"
+    },
+    {
+      "status": "failed",
+      "index": 143,
+      "title": "tests\\e2e\\coding-loop-fp-p1-04.spec.ts:711:7 › FP-P1-04 coding loop (real agent turn, scripted local LLM) › read → edit/write rich diffs → verify → undo, plus explicit failure paths",
+      "duration": "4.7m"
+    },
+    {
+      "status": "passed",
+      "index": 146,
+      "title": "tests\\e2e\\context-control-plane-stage6.spec.ts:81:7 › context control plane stage 6 panel › renders read-only diff/why/simulation/replay through host-api",
+      "duration": "40.8s"
+    },
+    {
+      "status": "passed",
+      "index": 148,
+      "title": "tests\\e2e\\context-view-tool-surface.spec.ts:4:7 › TF-0495 context view tool surface › keeps automatic discovery distinct from the explicit rollback control",
+      "duration": "58.9s"
+    },
+    {
+      "status": "passed",
+      "index": 149,
+      "title": "tests\\e2e\\cron-browser-automation.spec.ts:13:7 › Cron browser automation › creates a browser automation scheduled task from the cron dialog",
+      "duration": "1.6m"
+    },
+    {
+      "status": "passed",
+      "index": 150,
+      "title": "tests\\e2e\\cron-card-long-title.spec.ts:55:7 › Scheduled task workbench › keeps long task rows contained and supports detail, status, and search views",
+      "duration": "55.1s"
+    },
+    {
+      "status": "failed",
+      "index": 147,
+      "title": "tests\\e2e\\coding-loop-fp-p1-04.spec.ts:1073:7 › FP-P1-04 coding loop (real agent turn, scripted local LLM) › terminal provider disconnect fails visibly and the next turn succeeds",
+      "duration": "4.9m"
+    },
+    {
+      "status": "failed",
+      "index": 151,
+      "title": "tests\\e2e\\dcs-flag-ack-tuning-fp-p1-09.spec.ts:92:7 › FP-P1-09 ack tuning (real gateway children) › five real restart→ack cycles reach applied under the tuned defaults, then requery works",
+      "duration": "4.0m"
+    },
+    {
+      "status": "failed",
+      "index": 152,
+      "title": "tests\\e2e\\dcs-preview-optin-fp-p1-03.spec.ts:96:7 › FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) › prereq gating → applied via child ack → baseline parity on off → kill shows killed",
+      "duration": "3.4m"
+    },
+    {
+      "status": "passed",
+      "index": 153,
+      "title": "tests\\e2e\\dcs-prod-p0-settings.spec.ts:83:7 › DCS production P0 packaging surface › shows opt-in DCS production flags panel in Settings > Developer",
+      "duration": "28.6s"
+    },
+    {
+      "status": "passed",
+      "index": 155,
+      "title": "tests\\e2e\\dcs-prod-p0-settings.spec.ts:118:7 › DCS production P0 packaging surface › renders the DCS control surface in Japanese and Russian",
+      "duration": "56.8s"
+    },
+    {
+      "status": "failed",
+      "index": 154,
+      "title": "tests\\e2e\\dcs-production-wiring-w5.spec.ts:411:7 › DCS W5 production wiring via real Windows Electron Gateway › default-off exposes on-demand context tools without leaking always-on DCS blocks",
+      "duration": "1.1m"
+    },
+    {
+      "status": "passed",
+      "index": 156,
+      "title": "tests\\e2e\\dcs-prod-p0-settings.spec.ts:145:7 › DCS production P0 packaging surface › toggles writable flags, persists store, and restores baseline",
+      "duration": "48.4s"
+    },
+    {
+      "status": "failed",
+      "index": 157,
+      "title": "tests\\e2e\\dcs-production-wiring-w5.spec.ts:457:7 › DCS W5 production wiring via real Windows Electron Gateway › enabled flags persist real tool/notes blocks and context_read is non-destructive",
+      "duration": "1.1m"
+    },
+    {
+      "status": "passed",
+      "index": 158,
+      "title": "tests\\e2e\\dcs-prod-p0-settings.spec.ts:217:7 › DCS production P0 packaging surface › shows discoverability banner for hidden view tools and one-click enable",
+      "duration": "34.0s"
+    },
+    {
+      "status": "passed",
+      "index": 160,
+      "title": "tests\\e2e\\developer-mode.spec.ts:5:7 › Verse Claw developer-mode gated UI › keeps raw diagnostics hidden until the local dev switch is enabled",
+      "duration": "1.2m"
+    },
+    {
+      "status": "failed",
+      "index": 159,
+      "title": "tests\\e2e\\dcs-production-wiring-w5.spec.ts:524:7 › DCS W5 production wiring via real Windows Electron Gateway › config-sync copies user runtime.contextBlock flags into openclaw-source-state",
+      "duration": "1.6m"
+    },
+    {
+      "status": "passed",
+      "index": 161,
+      "title": "tests\\e2e\\dialog-transitions.spec.ts:60:7 › dialog transitions › uses the shared subtle transition for core modal dialogs",
+      "duration": "56.1s"
+    },
+    {
+      "status": "passed",
+      "index": 162,
+      "title": "tests\\e2e\\effort-intensity-smoke.spec.ts:31:7 › Verse Claw effort & intensity smoke › effort button is visible and opens a popover with a slider",
+      "duration": "51.1s"
+    },
+    {
+      "status": "passed",
+      "index": 164,
+      "title": "tests\\e2e\\effort-intensity-smoke.spec.ts:148:7 › Verse Claw effort & intensity smoke › intensity toggle is visible in the work mode summary panel after sending a message",
+      "duration": "1.1m"
+    },
+    {
+      "status": "passed",
+      "index": 163,
+      "title": "tests\\e2e\\dialog-transitions.spec.ts:146:7 › dialog transitions › keeps confirm dialog copy stable while closing",
+      "duration": "1.4m"
+    },
+    {
+      "status": "passed",
+      "index": 166,
+      "title": "tests\\e2e\\error-i18n.spec.ts:182:7 › unified error exit i18n › switches language and renders auth/rate-limit/balance/timeout failures without English fallback",
+      "duration": "1.1m"
+    },
+    {
+      "status": "failed",
+      "index": 165,
+      "title": "tests\\e2e\\electron-worker-cleanup.spec.ts:7:5 › reclaims an aborted worker app without closing another run profile",
+      "duration": "1.6m"
+    },
+    {
+      "status": "failed",
+      "index": 167,
+      "title": "tests\\e2e\\error-i18n.spec.ts:207:7 › unified error exit i18n › shows the class message, responsibility, next step and error reference after switching language",
+      "duration": "1.7m"
+    },
+    {
+      "status": "passed",
+      "index": 168,
+      "title": "tests\\e2e\\fakecoding-inbox-navigation.spec.ts:155:7 › FakeCoding Inbox navigation › keeps four top-level entries and redirects the legacy Remote Tasks route",
+      "duration": "1.2m"
+    },
+    {
+      "status": "failed",
+      "index": 169,
+      "title": "tests\\e2e\\fakecoding-inbox-navigation.spec.ts:181:7 › FakeCoding Inbox navigation › aggregates all sources, runs real decisions, and refreshes the pending count",
+      "duration": "1.1m"
+    },
+    {
+      "status": "failed",
+      "index": 170,
+      "title": "tests\\e2e\\fakecoding-scheduled-browser-runs.spec.ts:177:7 › FakeCoding Scheduled and Browser settings › projects Cron and Browser runs, preserves actions, and manages Browser settings",
+      "duration": "1.3m"
+    },
+    {
+      "status": "passed",
+      "index": 172,
+      "title": "tests\\e2e\\gateway-lifecycle.spec.ts:26:7 › Verse Claw gateway lifecycle resilience › app remains fully navigable while gateway is disconnected",
+      "duration": "28.3s"
+    },
+    {
+      "status": "passed",
+      "index": 173,
+      "title": "tests\\e2e\\gateway-lifecycle.spec.ts:54:7 › Verse Claw gateway lifecycle resilience › gateway status indicator updates when status transitions occur",
+      "duration": "31.6s"
+    },
+    {
+      "status": "passed",
+      "index": 174,
+      "title": "tests\\e2e\\gateway-lifecycle.spec.ts:140:7 › Verse Claw gateway lifecycle resilience › shows gateway restart progress in the sidebar instead of page-level warnings",
+      "duration": "36.6s"
+    },
+    {
+      "status": "passed",
+      "index": 175,
+      "title": "tests\\e2e\\gateway-lifecycle.spec.ts:237:7 › Verse Claw gateway lifecycle resilience › chat sidebar history reloads when gateway becomes ready after restart",
+      "duration": "23.8s"
+    },
+    {
+      "status": "passed",
+      "index": 176,
+      "title": "tests\\e2e\\image-generation-settings.spec.ts:19:7 › Image generation settings page › shows image generation only as a developer-mode page after skipping setup",
+      "duration": "24.2s"
+    },
+    {
+      "status": "passed",
+      "index": 177,
+      "title": "tests\\e2e\\image-generation-settings.spec.ts:48:7 › Image generation settings page › configures an independent OpenAI-compatible image endpoint",
+      "duration": "29.0s"
+    },
+    {
+      "status": "passed",
+      "index": 178,
+      "title": "tests\\e2e\\image-generation-settings.spec.ts:66:7 › Image generation settings page › shows configured image API key like custom language model keys",
+      "duration": "25.3s"
+    },
+    {
+      "status": "passed",
+      "index": 179,
+      "title": "tests\\e2e\\image-generation-settings.spec.ts:117:7 › Image generation settings page › clears configured image generation settings after confirmation",
+      "duration": "28.7s"
+    },
+    {
+      "status": "passed",
+      "index": 180,
+      "title": "tests\\e2e\\knowledge-bot.spec.ts:15:5 › approved solid follows drag, real host requests, retries and shared conversation rendering",
+      "duration": "31.8s"
+    },
+    {
+      "status": "failed",
+      "index": 171,
+      "title": "tests\\e2e\\first-product-journey-fp-p1-07.spec.ts:334:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › clean setup through coding, undo, restart recovery, and support bundle",
+      "duration": "4.5m"
+    },
+    {
+      "status": "passed",
+      "index": 181,
+      "title": "tests\\e2e\\knowledge-hub.spec.ts:173:7 › Knowledge Hub MVP › initializes, imports, searches, inspects, and applies an editable draft",
+      "duration": "53.3s"
+    },
+    {
+      "status": "passed",
+      "index": 183,
+      "title": "tests\\e2e\\knowledge-hub.spec.ts:704:7 › Knowledge Hub MVP › creates a Source Set from search results and generates a review-only Studio draft",
+      "duration": "50.8s"
+    },
+    {
+      "status": "passed",
+      "index": 184,
+      "title": "tests\\e2e\\knowledge-hub.spec.ts:845:7 › Knowledge Hub MVP › enables wiki knowledge from the chat composer scope picker",
+      "duration": "1.0m"
+    },
+    {
+      "status": "failed",
+      "index": 182,
+      "title": "tests\\e2e\\first-product-journey-fp-p1-07.spec.ts:444:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › gateway-not-ready and no-provider failures both give an operator action",
+      "duration": "3.7m"
+    },
+    {
+      "status": "passed",
+      "index": 185,
+      "title": "tests\\e2e\\knowledge-hub.spec.ts:876:7 › Knowledge Hub MVP › attaches wiki context through slash palette before sending",
+      "duration": "59.3s"
+    },
+    {
+      "status": "passed",
+      "index": 186,
+      "title": "tests\\e2e\\knowledge-ks04-chat-dcs.spec.ts:70:7 › KS-04 Chat/DCS single consumption path › shows a visible reason toast when a selected knowledge reference is denied",
+      "duration": "47.8s"
+    },
+    {
+      "status": "passed",
+      "index": 188,
+      "title": "tests\\e2e\\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle update goes through Main wiki RPC and shows EffectReceipt",
+      "duration": "39.3s"
+    },
+    {
+      "status": "passed",
+      "index": 189,
+      "title": "tests\\e2e\\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle merge goes through Main wiki RPC and shows EffectReceipt",
+      "duration": "44.1s"
+    },
+    {
+      "status": "passed",
+      "index": 190,
+      "title": "tests\\e2e\\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle archive goes through Main wiki RPC and shows EffectReceipt",
+      "duration": "38.7s"
+    },
+    {
+      "status": "passed",
+      "index": 191,
+      "title": "tests\\e2e\\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle revoke goes through Main wiki RPC and shows EffectReceipt",
+      "duration": "39.2s"
+    },
+    {
+      "status": "passed",
+      "index": 192,
+      "title": "tests\\e2e\\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle delete goes through Main wiki RPC and shows EffectReceipt",
+      "duration": "41.9s"
+    },
+    {
+      "status": "failed",
+      "index": 187,
+      "title": "tests\\e2e\\first-product-journey-fp-p1-07.spec.ts:483:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › invalid credentials and unavailable model stay blocked with retry guidance",
+      "duration": "4.4m"
+    },
+    {
+      "status": "passed",
+      "index": 193,
+      "title": "tests\\e2e\\knowledge-lifecycle.spec.ts:55:7 › Knowledge lifecycle restore goes through Main wiki RPC and shows EffectReceipt",
+      "duration": "33.6s"
+    },
+    {
+      "status": "passed",
+      "index": 195,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:71:7 › KE-P1-3 Review Queue › confirm promotes a candidate and shows KE fields",
+      "duration": "34.0s"
+    },
+    {
+      "status": "passed",
+      "index": 196,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:103:7 › KE-P1-3 Review Queue › reject dismisses a candidate without persisting",
+      "duration": "49.0s"
+    },
+    {
+      "status": "passed",
+      "index": 197,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:132:7 › KE-P1-3 Review Queue › shows an empty state when there are no candidates",
+      "duration": "56.4s"
+    },
+    {
+      "status": "passed",
+      "index": 198,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:152:7 › KE-P1-3 Review Queue › flag off shows unavailable state and hides KE fields",
+      "duration": "42.2s"
+    },
+    {
+      "status": "passed",
+      "index": 199,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:202:5 › review selection prepares and approves only the corresponding proposal",
+      "duration": "32.1s"
+    },
+    {
+      "status": "failed",
+      "index": 200,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:267:7 › Knowledge editing and Chat round trip fit supported widths in light",
+      "duration": "57.1s"
+    },
+    {
+      "status": "failed",
+      "index": 194,
+      "title": "tests\\e2e\\first-product-journey-fp-p1-07.spec.ts:523:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › workspace denial and kill refusal fail closed without silent fallback",
+      "duration": "4.8m"
+    },
+    {
+      "status": "passed",
+      "index": 201,
+      "title": "tests\\e2e\\knowledge-steward-config.spec.ts:4:7 › Knowledge steward config (Area 5 §3.5) › review tab shows steward section and Configure modal switches active variant",
+      "duration": "49.1s"
+    },
+    {
+      "status": "failed",
+      "index": 202,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:267:7 › Knowledge editing and Chat round trip fit supported widths in dark",
+      "duration": "1.1m"
+    },
+    {
+      "status": "passed",
+      "index": 203,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:239:7 › Knowledge Hub UX › workspace-first Library opens without dashboard clutter",
+      "duration": "26.9s"
+    },
+    {
+      "status": "passed",
+      "index": 204,
+      "title": "tests\\e2e\\language-russian.spec.ts:4:7 › Russian language localization › shows Russian language option in setup wizard",
+      "duration": "26.6s"
+    },
+    {
+      "status": "passed",
+      "index": 205,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:253:7 › Knowledge Hub UX › Library stays first-viewport visible at supported window widths",
+      "duration": "26.9s"
+    },
+    {
+      "status": "passed",
+      "index": 206,
+      "title": "tests\\e2e\\language-russian.spec.ts:21:7 › Russian language localization › can switch to Russian language in setup wizard",
+      "duration": "34.9s"
+    },
+    {
+      "status": "passed",
+      "index": 207,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:339:7 › Knowledge Hub UX › workbench tabs render with icons for each tab",
+      "duration": "38.1s"
+    },
+    {
+      "status": "passed",
+      "index": 208,
+      "title": "tests\\e2e\\language-russian.spec.ts:41:7 › Russian language localization › Russian language persists after skipping setup",
+      "duration": "40.8s"
+    },
+    {
+      "status": "passed",
+      "index": 209,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:353:7 › Knowledge Hub UX › clicking a tab selects it with distinct visual state",
+      "duration": "39.4s"
+    },
+    {
+      "status": "passed",
+      "index": 210,
+      "title": "tests\\e2e\\language-russian.spec.ts:74:7 › Russian language localization › can switch to Russian in Settings page",
+      "duration": "29.9s"
+    },
+    {
+      "status": "passed",
+      "index": 211,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:367:7 › Knowledge Hub UX › Library type browsing is disclosed in one menu",
+      "duration": "30.1s"
+    },
+    {
+      "status": "passed",
+      "index": 212,
+      "title": "tests\\e2e\\lightweight-subagent-runner.spec.ts:4:7 › Lightweight Subagent Runner › starts Explorer preset and renders lifecycle, summary, and trace link",
+      "duration": "30.8s"
+    },
+    {
+      "status": "passed",
+      "index": 213,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:379:7 › Knowledge Hub UX › markdown workspace supports explicit editing, preview, and a compact knowledge conversation",
+      "duration": "31.3s"
+    },
+    {
+      "status": "passed",
+      "index": 214,
+      "title": "tests\\e2e\\lightweight-subagent-runner.spec.ts:107:7 › Lightweight Subagent Runner › starts Reviewer preset with current diff",
+      "duration": "32.4s"
+    },
+    {
+      "status": "passed",
+      "index": 215,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:424:7 › Knowledge Hub UX › inbox panel shows pending items with source and warning info",
+      "duration": "32.2s"
+    },
+    {
+      "status": "passed",
+      "index": 216,
+      "title": "tests\\e2e\\lightweight-subagent-runner.spec.ts:204:7 › Lightweight Subagent Runner › shows failure when Reviewer has no current diff",
+      "duration": "31.7s"
+    },
+    {
+      "status": "passed",
+      "index": 217,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:447:7 › Knowledge Hub UX › review queue filters drafts and retains their status information",
+      "duration": "30.3s"
+    },
+    {
+      "status": "passed",
+      "index": 219,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:463:7 › Knowledge Hub UX › Governance remains available from the More menu",
+      "duration": "39.5s"
+    },
+    {
+      "status": "failed",
+      "index": 218,
+      "title": "tests\\e2e\\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart",
+      "duration": "47.5s"
+    },
+    {
+      "status": "passed",
+      "index": 220,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:478:7 › Knowledge Hub UX › search input is rendered and accepts text",
+      "duration": "46.1s"
+    },
+    {
+      "status": "failed",
+      "index": 221,
+      "title": "tests\\e2e\\long-session-continuity-context.spec.ts:85:5 › real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback",
+      "duration": "49.1s"
+    },
+    {
+      "status": "passed",
+      "index": 222,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:588:7 › Chat Knowledge Attachment UX › knowledge scope picker replaces the standalone quick wiki icon",
+      "duration": "59.9s"
+    },
+    {
+      "status": "passed",
+      "index": 224,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:607:7 › Chat Knowledge Attachment UX › knowledge scope picker can switch wiki off again",
+      "duration": "52.6s"
+    },
+    {
+      "status": "passed",
+      "index": 225,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:620:7 › Chat Knowledge Attachment UX › knowledge preflight can inspect, dismiss, and attach suggestions",
+      "duration": "55.6s"
+    },
+    {
+      "status": "failed",
+      "index": 223,
+      "title": "tests\\e2e\\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots",
+      "duration": "2.7m"
+    },
+    {
+      "status": "passed",
+      "index": 226,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:643:7 › Chat Knowledge Attachment UX › advisory error guard can be used and dismissed without blocking chat",
+      "duration": "1.0m"
+    },
+    {
+      "status": "failed",
+      "index": 227,
+      "title": "tests\\e2e\\long-session-coordinator-binding.spec.ts:74:5 › coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries",
+      "duration": "1.1m"
+    },
+    {
+      "status": "passed",
+      "index": 228,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:687:7 › Chat Knowledge Attachment UX › knowledge scope picker opens and shows all scope options",
+      "duration": "49.6s"
+    },
+    {
+      "status": "failed",
+      "index": 229,
+      "title": "tests\\e2e\\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts",
+      "duration": "1.0m"
+    },
+    {
+      "status": "passed",
+      "index": 230,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:702:7 › Chat Knowledge Attachment UX › runtime lessons source toggle is opt-in",
+      "duration": "55.1s"
+    },
+    {
+      "status": "failed",
+      "index": 231,
+      "title": "tests\\e2e\\long-session-effective-policy.spec.ts:84:5 › real Host and Gateway expose a secret-free configured policy without inventing effective facts",
+      "duration": "50.6s"
+    },
+    {
+      "status": "passed",
+      "index": 232,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:717:7 › Chat Knowledge Attachment UX › scope picker shows search input for knowledge attachment",
+      "duration": "32.6s"
+    },
+    {
+      "status": "failed",
+      "index": 233,
+      "title": "tests\\e2e\\long-session-followup-scheduling.spec.ts:113:5 › real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated",
+      "duration": "53.6s"
+    },
+    {
+      "status": "passed",
+      "index": 234,
+      "title": "tests\\e2e\\knowledge-ux-cdp.spec.ts:732:7 › Chat Knowledge Attachment UX › selecting a scope closes the menu and updates the button",
+      "duration": "45.1s"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/architecture-skeleton-admission-regression.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/architecture-skeleton-admission-regression.md" "--dry-run"
+Harness report: D:\tmp\ClawX-a6-regression-20261102-v2\artifacts\harness\latest.md
+Harness result: pass

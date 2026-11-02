@@ -1,0 +1,18 @@
+{
+  "schema": "AdmissionE2ESummary/v1",
+  "command": "pnpm run test:e2e:run",
+  "status": "not-complete",
+  "declared": 418,
+  "observed": 234,
+  "passed": 195,
+  "failed": 37,
+  "skipped": 2,
+  "didNotRun": 184,
+  "classification": "aborted-before-final-aggregate",
+  "observedLedger": "e2e/final-speed-ledger.json",
+  "logs": [
+    "logs/e2e-final.stdout.log",
+    "logs/e2e-full-a6.log"
+  ],
+  "note": "Both the formal serial attempt and the follow-up attempt were interrupted; neither is a full-suite pass."
+}

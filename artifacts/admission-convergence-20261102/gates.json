@@ -1,0 +1,69 @@
+{
+  "schema": "AdmissionGateMatrix/v1",
+  "candidate": "6b7f8eb496a43418ffaf880dc3590ed1042c6fc9",
+  "boundary": "boundary-diff.json",
+  "verdict": "not-pass",
+  "gates": [
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/build-vite.stdout.log",
+      "stderr": "logs/build-vite.stderr.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/formal-typecheck.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/formal-contract.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm harness run --spec harness/specs/tasks/architecture-skeleton-admission-regression.md --dry-run",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/formal-harness.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm test",
+      "exitCode": 1,
+      "classification": "not-pass",
+      "stdout": "logs/unit.stdout.log",
+      "stderr": "logs/unit.stderr.log",
+      "summary": "unit/final-summary.json"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm run test:e2e:run",
+      "exitCode": null,
+      "classification": "not-complete",
+      "stdout": "logs/e2e-final.stdout.log",
+      "stderr": "logs/e2e-final.stderr.log",
+      "summary": "e2e/final-summary.json"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm run lint:check",
+      "exitCode": 1,
+      "classification": "not-pass",
+      "stdout": "logs/lint.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": null,
+      "classification": "pending-final-rerun",
+      "note": "Must be rerun after ADMISSION-CONVERGENCE.md and retained-files registration land."
+    }
+  ]
+}

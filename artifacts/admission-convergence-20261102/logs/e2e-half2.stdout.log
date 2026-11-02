@@ -1,0 +1,13 @@
+
+Running 194 tests using 1 worker, shard 2 of 2
+
+  ok   1 tests\e2e\language-russian.spec.ts:4:7 › Russian language localization › shows Russian language option in setup wizard (1.0m)
+  ok   2 tests\e2e\language-russian.spec.ts:21:7 › Russian language localization › can switch to Russian language in setup wizard (52.1s)
+  ok   3 tests\e2e\language-russian.spec.ts:41:7 › Russian language localization › Russian language persists after skipping setup (33.9s)
+  ok   4 tests\e2e\language-russian.spec.ts:74:7 › Russian language localization › can switch to Russian in Settings page (41.9s)
+  ok   5 tests\e2e\lightweight-subagent-runner.spec.ts:4:7 › Lightweight Subagent Runner › starts Explorer preset and renders lifecycle, summary, and trace link (37.7s)
+  ok   6 tests\e2e\lightweight-subagent-runner.spec.ts:107:7 › Lightweight Subagent Runner › starts Reviewer preset with current diff (59.0s)
+  ok   7 tests\e2e\lightweight-subagent-runner.spec.ts:204:7 › Lightweight Subagent Runner › shows failure when Reviewer has no current diff (39.4s)
+  x    8 tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart (1.8m)
+  x    9 tests\e2e\long-session-continuity-context.spec.ts:85:5 › real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (1.5m)
+  x   10 tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (3.5m)
