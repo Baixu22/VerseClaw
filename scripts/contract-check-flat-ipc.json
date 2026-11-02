@@ -24,18 +24,36 @@
       "typedModule": "gateway",
       "typedAction": "status",
       "preload": "allowlisted",
-      "disposition": "freeze",
-      "reason": "No renderer consumer. Only live use is the E2E mock seam: specs replace this handler with ipcMain.handle and the fixture bridges typed gateway.status onto it.",
-      "removalPlan": "Rewrite the E2E seam to answer gateway.status from the host:invoke interceptor in tests/e2e/fixtures/electron.ts, update the per-spec overrides and tests/unit/gateway-events.test.ts, then retire handler + allowlist entry."
+      "disposition": "migrate",
+      "reason": "No renderer consumer. Only live use is the E2E mock seam: specs replace this handler with ipcMain.handle and the fixture bridges typed gateway.status onto it. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
+      "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0650",
+        "migratedOn": "2026-11-02",
+        "commit": "9c9ab5e007d6889176157dcbaf20eef00a41edb9",
+        "consumersBefore": [
+          "tests/e2e/chat-cache-guard.spec.ts"
+        ],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "gateway:rpc",
       "typedModule": "gateway",
       "typedAction": "rpc",
       "preload": "unreachable",
-      "disposition": "freeze",
-      "reason": "Not in the preload allowlist, so unreachable from the renderer. Only live use is the E2E mock seam (fixture bridges typed gateway.rpc to this override). Return envelope {success,result} differs from the typed payload shape.",
-      "removalPlan": "Remove the legacy-override branch in tests/e2e/fixtures/electron.ts so gateway.rpc responses are supplied to the host:invoke interceptor directly, migrate the per-spec overrides, then retire the handler."
+      "disposition": "migrate",
+      "reason": "Not in the preload allowlist, so unreachable from the renderer. Only live use is the E2E mock seam (fixture bridges typed gateway.rpc to this override). Return envelope {success,result} differs from the typed payload shape. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
+      "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0650",
+        "migratedOn": "2026-11-02",
+        "commit": "9c9ab5e007d6889176157dcbaf20eef00a41edb9",
+        "consumersBefore": [],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "openclaw:status",
@@ -90,7 +108,9 @@
         "node": "TF-0649",
         "migratedOn": "2026-11-02",
         "commit": "512dc31a44b98ae8a25e3bc47bd6822353963d65",
-        "consumersBefore": ["tests/e2e/provider-lifecycle.spec.ts:11"],
+        "consumersBefore": [
+          "tests/e2e/provider-lifecycle.spec.ts:11"
+        ],
         "consumersAfter": []
       }
     },
@@ -311,7 +331,10 @@
         "node": "TF-0649",
         "migratedOn": "2026-11-02",
         "commit": "512dc31a44b98ae8a25e3bc47bd6822353963d65",
-        "consumersBefore": ["tests/e2e/token-usage.spec.ts:106", "tests/e2e/token-usage.spec.ts:129"],
+        "consumersBefore": [
+          "tests/e2e/token-usage.spec.ts:106",
+          "tests/e2e/token-usage.spec.ts:129"
+        ],
         "consumersAfter": []
       }
     },
@@ -360,9 +383,19 @@
       "typedModule": "files",
       "typedAction": "readText",
       "preload": "allowlisted",
-      "disposition": "freeze",
-      "reason": "No renderer consumer (src/lib/file-preview-client.ts is fully typed). Only live use is the E2E mock seam in chat-file-changes.spec.ts, bridged by the fixture onto typed files.readText.",
-      "removalPlan": "Supply files.readText responses to the host:invoke interceptor in tests/e2e/fixtures/electron.ts directly and drop the legacy-override branch, then retire handler + allowlist entry."
+      "disposition": "migrate",
+      "reason": "No renderer consumer (src/lib/file-preview-client.ts is fully typed). Only live use is the E2E mock seam in chat-file-changes.spec.ts, bridged by the fixture onto typed files.readText. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
+      "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0650",
+        "migratedOn": "2026-11-02",
+        "commit": "9c9ab5e007d6889176157dcbaf20eef00a41edb9",
+        "consumersBefore": [
+          "tests/e2e/chat-file-changes.spec.ts"
+        ],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "file:readBinary",
@@ -385,9 +418,19 @@
       "typedModule": "files",
       "typedAction": "stat",
       "preload": "allowlisted",
-      "disposition": "freeze",
-      "reason": "No renderer consumer. Only live use is the E2E mock seam in chat-file-changes.spec.ts, bridged by the fixture onto typed files.stat.",
-      "removalPlan": "Supply files.stat responses to the host:invoke interceptor in tests/e2e/fixtures/electron.ts directly and drop the legacy-override branch, then retire handler + allowlist entry."
+      "disposition": "migrate",
+      "reason": "No renderer consumer. Only live use is the E2E mock seam in chat-file-changes.spec.ts, bridged by the fixture onto typed files.stat. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
+      "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
+      "migration": {
+        "status": "consumers-migrated",
+        "node": "TF-0650",
+        "migratedOn": "2026-11-02",
+        "commit": "9c9ab5e007d6889176157dcbaf20eef00a41edb9",
+        "consumersBefore": [
+          "tests/e2e/chat-file-changes.spec.ts"
+        ],
+        "consumersAfter": []
+      }
     },
     {
       "channel": "file:listDir",
