@@ -1,0 +1,61 @@
+{
+  "schema": "AutonomyA5DevelopmentReport/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-02T11:13:09.138Z",
+  "candidate": {
+    "dirty": false,
+    "tree": "4f46b4dbe314eea6479e64868e07305fae631445",
+    "commit": "9f0c5b07ecbe7f982b5ac111edf772e96158d46e"
+  },
+  "task": "TF-0674",
+  "verdict": "incomplete",
+  "nodeClosureAllowed": false,
+  "sourceImplementation": "landed on isolated local branch codex/autonomy-host-readiness",
+  "sourceCommit": "9f0c5b07ecbe7f982b5ac111edf772e96158d46e",
+  "scope": [
+    "Main sessionActivity uses actual runtime generation and cron owner probes",
+    "Runtime tool exposure is separate from adapter health and authorization",
+    "Connection replacement resets old capability probes and fences late RPC/health replies",
+    "No new scheduler, writer, permission owner, service installer, or frozen default"
+  ],
+  "unit": {
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "skipped": 0,
+    "failedAssertions": []
+  },
+  "gates": {
+    "total": 12,
+    "passed": 11,
+    "failed": [
+      {
+        "id": "artifact-retention",
+        "exitCode": 1
+      }
+    ]
+  },
+  "e2e": {
+    "stats": {
+      "startTime": "2026-11-02T11:02:52.340Z",
+      "duration": 133400.147,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 2,
+      "flaky": 0
+    },
+    "exitCode": 1
+  },
+  "limitations": [
+    "TF-0674 remains in_progress. Native production-window continuation and app restart are not accepted.",
+    "Current native Electron filesystem probe fails mkdir with EPERM in three agent-owned locations; production startup fails before the run journey.",
+    "The independent Node Gateway journey has its actual outcome in restart-smoke.json; it is not a substitute for native Electron acceptance.",
+    "A runtime-exposed tool menu is not live adapter health; host.tools stays unknown without that probe.",
+    "Budget and installed-service observations are unknown; no measured zero cost or background-service support is claimed.",
+    "No configuration migration or rollback was applied. No invalid user configuration was edited or deleted.",
+    "Repository artifact retention has an inherited failure: the A6 spec references absent ADMISSION-CONVERGENCE.md. It is outside this leaf write set.",
+    "Installed dependencies are reused from D:/ClawX. No fresh install, packaged distribution, real provider quality, product approval or publication is claimed."
+  ],
+  "nextAction": "Resolve the recorded native filesystem precondition through the authorized execution environment, inspect the isolated Gateway log for the runtime failure, then rerun the same two explicit journeys on a fresh clean candidate. Do not close or advance dependent nodes from these partial results."
+}
