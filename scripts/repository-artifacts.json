@@ -1958,6 +1958,7 @@
     "docs/dev/send-button-states-design.md",
     "docs/dev/session-handoff-depth-20261013/SHA256SUMS",
     "docs/dev/session-handoff-depth-20261013/acceptance.json",
+    "docs/dev/session-lifecycle-control-plane/B1-DECISION.zh-CN.md",
     "docs/dev/session-lifecycle-control-plane/DESIGN.zh-CN.md",
     "docs/dev/session-lifecycle-control-plane/EVIDENCE-CHAIN.zh-CN.md",
     "docs/dev/session-lifecycle-control-plane/RESEARCH.zh-CN.md",
