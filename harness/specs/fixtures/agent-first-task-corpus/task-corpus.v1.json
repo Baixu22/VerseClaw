@@ -4,7 +4,7 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "ccd4855bf1936fe8319f2d955424c42e293d42d4",
+  "sourceCommit": "cae358822fb87a2c8cfeee689b7e49a8e3b6ba81",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
   "sourceCorpusSha256": "a4f9b3017288164d51126732f6dd588eff1917e649f6054669ac1060b4775261",
   "tasks": [
@@ -286,7 +286,7 @@
         "inputDigests": {
           "harness/specs/tasks/harness-gap-error-recovery-next-action.md": "a6784362a5425d594e5bbf893093bbb24cc4d6793541fa05ebf6a1c4f4c94435",
           "tests/unit/error-recovery-next-action.test.ts": "0a2c79941e0037c48327ae04c0ca632209a7dd2f13b9394c1a1ae0fea5091ec7",
-          "tests/unit/error-governance-boundary.test.ts": "a12da838c995f6f6626c83e179e15e4988d5328bf6071b597c471b89afdd6c08"
+          "tests/unit/error-governance-boundary.test.ts": "3a639eb6cc1917f9f156de36be2509a6d091e956cf19f2ca5e92ea2844e3886f"
         }
       },
       "referenceSolution": {

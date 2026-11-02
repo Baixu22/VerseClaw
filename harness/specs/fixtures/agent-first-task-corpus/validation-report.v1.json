@@ -3,8 +3,8 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "ccd4855bf1936fe8319f2d955424c42e293d42d4",
-    "tree": "6d90cbe8f0c9242aa8689e6fa12ddf42196e2e67",
+    "commit": "cae358822fb87a2c8cfeee689b7e49a8e3b6ba81",
+    "tree": "f1017d2e3e10664d8b331973e12a48e8bbd42b07",
     "dirty": false,
     "sourceHashes": {
       "scripts/rsi-historical-task-corpus.mjs": "5df8a7c4ac6505628aed9087eabdc1e4d722e1f3b36d536663be0a6f54df7b19",
@@ -25,7 +25,7 @@
       "scripts/lib/agent-first-evaluation-loop.mjs": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
       "package.json": "6991c3f19e9935af89f1508276e32e4ab7b3fb84a1533aa3d22a93262aa8fd42",
       "docs/README.md": "308b217c9a977cc6ae45eed0e1932f2f498f343fd62bd0ed0a05509a995b85e9",
-      "docs/dev/rsi-capability-and-boundaries.md": "f105ce194112c9e15d089f007cff373b9d6659b7d73d9d3f8810bb14d1d87444"
+      "docs/dev/rsi-capability-and-boundaries.md": "520b2a5621308b392d0c2d54ddf17ebdb5e8760ccba6a09f6fa02e2b429813fc"
     }
   },
   "corpus": {
