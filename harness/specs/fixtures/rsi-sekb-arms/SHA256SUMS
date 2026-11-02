@@ -1,0 +1,7 @@
+acb9936aefd6bd43a760654e04ab1a16d6e2563548c10b389884c9cdc405a490  harness/specs/fixtures/rsi-sekb-arms/protocol.v1.json
+e38cebf7c38e889f706d9e718fd38ec575e239806796e98b34702059809a3f7f  harness/specs/fixtures/rsi-sekb-arms/runs.v1.json
+c966e779337d50010520f62cde1fbda8937dde2e2b0ba86934b1b14376d1fb85  harness/specs/fixtures/rsi-sekb-arms/report.v1.json
+63d44493b0d82b6e5d4ebef5bd3031286deac7bbabc3120611b26da3b32edf9e  harness/specs/fixtures/rsi-sekb-arms/decision.v1.json
+ddef7bb1bdff7f3ad019ab05bb48dc1bb77550c365de59ae91bcd860ba3273a8  scripts/rsi-sekb-arms.mjs
+ad3b84184eb9496d04054a61a39885e8f29c79e512fb4bb08d9dfa6fb832644d  tests/unit/rsi-sekb-arms-decision.test.ts
+f105ce194112c9e15d089f007cff373b9d6659b7d73d9d3f8810bb14d1d87444  docs/dev/rsi-capability-and-boundaries.md

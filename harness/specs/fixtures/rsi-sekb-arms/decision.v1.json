@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "RsiSekbArmsDecision/v1",
+  "generatedAt": "2026-11-02",
+  "driven_by": "agent",
+  "actor": "codex/rsi-sekb-arms",
+  "taskForestNode": "TF-0598",
+  "status": "insufficient-evidence",
+  "reason": "No live provider endpoint, credential envelope, or whole-run budget was supplied. The 180-trial SEKB off/shadow/confirmed plan was not executed, and the checked-in deterministic fixture is wiring evidence only.",
+  "providerEnvelope": {
+    "status": "not-provided",
+    "endpointDeclared": false,
+    "credentialDeclared": false,
+    "wholeRunBudgetDeclared": false,
+    "providerCallsAuthorized": 0
+  },
+  "execution": {
+    "plannedCases": 20,
+    "k": 3,
+    "arms": 3,
+    "plannedTrials": 180,
+    "executedModelTrials": 0,
+    "planStatus": "awaiting-provider-envelope"
+  },
+  "verdict": {
+    "status": "insufficient-evidence",
+    "observedBenefit": false,
+    "promotionReady": false,
+    "syntheticFixtureMayPromote": false,
+    "productLocksChanged": false,
+    "realHuman": false
+  },
+  "reopenCondition": "Provide a live provider envelope and a whole-run token/cost ceiling, execute the sealed 180-trial plan, capture token/turn/tool-call/cost per trial, and recompute with rsi-sekb-arms."
+}
