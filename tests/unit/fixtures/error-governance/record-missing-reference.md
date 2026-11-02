@@ -5,7 +5,7 @@
 - Error type: AppError, declared in src/lib/error-model.ts.
 - Sources: shared/host-api/types.ts and electron/main/ipc/host-contract.ts.
 - Item states: existing, gap, proposal.
-- Declared gaps: renderer-drops-host-error-code, duplicate-host-response-copies, duplicate-app-error-code-unions.
+- Declared gaps: renderer-drops-host-error-code, duplicate-host-response-copies.
 - Identifiers: the local requestId stays separate from the provider request id.
 - Stable per layer: HostErrorCode in Main, APP_ERROR_CODES in the renderer.
 - Situations kept apart: recoverability, replay, profile or model switch, post-fix retry, cooldown probing.

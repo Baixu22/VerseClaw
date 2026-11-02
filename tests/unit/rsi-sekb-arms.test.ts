@@ -1,4 +1,5 @@
 // @vitest-environment node
+/* eslint-disable @typescript-eslint/no-explicit-any -- Protocol and run mutations intentionally traverse JSON whose schema is validated by the scripts under test. */
 // TF-0598: the three-arm readout must keep shadow distinguishable from
 // confirmed, reuse the single case-cluster instrument, and never promote from a
 // synthetic wiring fixture.
@@ -17,7 +18,6 @@ import {
 
 const ROOT = process.cwd();
 const readProtocol = () => JSON.parse(readFileSync(join(ROOT, ARMS_PROTOCOL_PATH), 'utf8'));
-const codes = (result: { errors: Array<{ code: string }> }) => result.errors.map((entry) => entry.code);
 const TEMP_ROOT = 'D:/tmp';
 const created: string[] = [];
 function tempRootWith(mutate: (runs: any) => void): string {

@@ -46,7 +46,10 @@ describe('WP6 merged closeout', () => {
         },
         {
           path: 'harness/specs/fixtures/versegit-planning-correction/wp2-evidence/SHA256SUMS',
-          mismatches: ['electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f'],
+          mismatches: [
+            'electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f',
+            'harness/src/profiles.mjs: expected b8b2992c5836 actual 6f52c8ea3176',
+          ],
         },
         {
           path: 'harness/specs/fixtures/versegit-planning-correction/wp3-evidence/SHA256SUMS',

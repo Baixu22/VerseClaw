@@ -240,13 +240,6 @@ the prose without editing this block changes nothing that the check can see.
       "probe": "duplicate-host-response-copies",
       "evidence": "shared/host-api/types.ts",
       "summary": "HostResponse is declared twice, once renderer-facing and once Main-facing, with different optionality for id, error, code and message."
-    },
-    {
-      "id": "duplicate-app-error-code-unions",
-      "state": "gap",
-      "probe": "duplicate-app-error-code-unions",
-      "evidence": "electron/main/ipc/request-helpers.ts",
-      "summary": "AppErrorCode is declared twice with different members: the closed renderer set in src/lib/error-model.ts and the Main-process request-helper union in electron/main/ipc/request-helpers.ts."
     }
   ],
   "waitingTypes": {

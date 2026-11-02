@@ -151,7 +151,6 @@ describe('error governance surface on the current tree', () => {
     const surface = loadDeclaredSurface();
 
     expect(surface.declaredGaps.map((gap) => gap.id).sort()).toEqual([
-      'duplicate-app-error-code-unions',
       'duplicate-host-response-copies',
     ]);
     for (const gap of surface.declaredGaps) {

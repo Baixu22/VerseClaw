@@ -128,12 +128,6 @@ function mocks() {
   };
 }
 
-async function seedEmptyHistory(app: Parameters<typeof installIpcMocks>[0]) {
-  await app.evaluate(async () => {
-    const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-  });
-}
-
 const OUT_DIR = resolve(evidencePath('.design-staging/verse-hero'));
 
 for (const theme of ['dark', 'light'] as const) {
@@ -142,7 +136,6 @@ for (const theme of ['dark', 'light'] as const) {
 
     try {
       await installIpcMocks(app, mocks());
-      await seedEmptyHistory(app);
 
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
@@ -192,7 +185,6 @@ test('chips retract while the composer holds a draft and return when it is clear
 
   try {
     await installIpcMocks(app, mocks());
-    await seedEmptyHistory(app);
 
     const page = await getStableWindow(app);
     await page.reload();

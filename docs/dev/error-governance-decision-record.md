@@ -47,13 +47,14 @@ another envelope and another error table.
 | Main answers with the same envelope and echoes the request id on every branch | existing | `electron/main/ipc/host-invoke.ts` (`dispatchHostRequest`) returns `{ id, ok: false, error: { code, message } }` for sender/auth, format, dangerous-key, payload, unsupported, timeout and internal failures, and `{ id, ok: true, data }` on success; `electron/preload/index.ts` exposes `hostInvoke` over `host:invoke` |
 | The envelope type is declared twice and can drift | gap (duplicate-host-response-copies) | `shared/host-api/types.ts` makes `id`, `error`, `code` and `message` optional; `electron/main/ipc/host-contract.ts` makes `error.code` and `error.message` required. Both are named `HostResponse` |
 | The renderer surfaces the Main error code and details | existing | `src/lib/host-api-client.ts` (`invokeHost`) maps `response.error.code` through `mapBackendErrorCode`, preserves `response.id` as `AppError.requestId`, and carries structured `details` into `src/lib/error-model.ts`; bridge rejection and renderer timeout are recorded on the same request id |
-| The error type is declared twice with different members | gap (duplicate-app-error-code-unions) | the closed renderer union `AppErrorCode` in `src/lib/error-model.ts` and the Main-process `AppErrorCode` in `electron/main/ipc/request-helpers.ts` |
+| The Main-process duplicate `AppErrorCode` union is gone | existing | the former request-helper copy was removed with the flat IPC surface; the renderer keeps its closed `AppErrorCode` in `src/lib/error-model.ts`, and Main answers with `HostErrorCode` from `electron/main/ipc/host-contract.ts` |
 | One declared surface block, one envelope symbol, one allowed error-type list | proposal | `node scripts/check-error-governance.mjs` checks `error-envelope-reused`: a declared envelope that is not `HostResponse`, a symbol that no owner file declares, or an `allowedErrorTypes` list other than `AppError` plus `HostErrorCode` fails with `error-governance.parallel-envelope` / `error-governance.parallel-error-type` |
 
-Consequence for future work: unifying the two `HostResponse` declarations or the
-two `AppErrorCode` declarations is allowed, but it must be done **in place** — the
-renderer keeps consuming the same envelope, and `AppError` stays the renderer
-taxonomy. Adding a third name is the failure this record exists to prevent.
+Consequence for future work: unifying the two `HostResponse` declarations is
+allowed, but it must be done **in place** — the renderer keeps consuming the same
+envelope, and `AppError` stays the renderer taxonomy. The former Main-process
+`AppErrorCode` copy has already been removed with the flat IPC surface. Adding a
+third name is the failure this record exists to prevent.
 
 A domain-specific internal carrier is different from a third renderer taxonomy.
 `shared/sandbox/errors.ts` adds `SandboxDenialError` so a real sandbox/gate
@@ -224,8 +225,9 @@ negation is compliant; a line that makes it a requirement fails.
 - The renderer correlation gap (`renderer-drops-host-error-code`) is closed by
   the P1 host error-boundary change set: `invokeHost` preserves the Main error
   code, structured details and request id, and the governance surface no longer
-  declares that defect. The remaining code-level gap is
-  `duplicate-app-error-code-unions`, which is declared and probed here.
+  declares that defect. The former duplicate Main-process `AppErrorCode` union
+  was removed with the flat IPC surface, so the only remaining code-level gap is
+  `duplicate-host-response-copies`, which is declared and probed here.
 - No third host envelope and no second machine-readable surface list is created.
   A domain-specific internal carrier such as `SandboxDenialError` must map into
   the existing `AppError` taxonomy; the surface block in the rule remains a

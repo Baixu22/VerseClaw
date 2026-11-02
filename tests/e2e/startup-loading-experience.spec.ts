@@ -126,11 +126,6 @@ test.describe('startup and route loading experience', () => {
         },
       });
 
-      await app.evaluate(async ({ app: _app }) => {
-        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-
-      });
-
       const page = await getStableWindow(app);
       await page.reload();
 
@@ -230,10 +225,6 @@ test('keeps the loading skeleton centered when an active workspace has no rail c
           activeWorkspace: workspace,
         },
       },
-    });
-
-    await app.evaluate(async () => {
-      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
     });
 
     const page = await getStableWindow(app);

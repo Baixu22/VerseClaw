@@ -131,7 +131,7 @@ async function runTarget(
   const gatewayBeforeCrash = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
   expect(gatewayBeforeCrash.pid).toBeTruthy();
   try { execFileSync('taskkill.exe', ['/F', '/T', '/PID', String(gatewayBeforeCrash.pid)], { windowsHide: true }); }
-  catch (error) { throw new Error(`gateway crash injection failed: ${String(error)}`); }
+  catch (error) { throw new Error(`gateway crash injection failed: ${String(error)}`, { cause: error }); }
   await expect.poll(async () => {
     const status: GatewayStatus = await hostInvoke<GatewayStatus>(app, 'gateway', 'status').catch(() => ({ state: 'unavailable' }));
     return status.gatewayReady === true || ['running', 'healthy'].includes(status.state);

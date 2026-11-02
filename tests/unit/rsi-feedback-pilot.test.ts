@@ -1,4 +1,5 @@
 // @vitest-environment node
+/* eslint-disable @typescript-eslint/no-explicit-any -- Protocol mutations intentionally traverse JSON whose schema is validated by the scripts under test. */
 // TF-0654: the feedback-weighting pilot may never promote on a thin or empty
 // feedback store. These tests keep the protocol honest and the report offline.
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -15,8 +16,6 @@ const ROOT = process.cwd();
 const TEMP_ROOT = 'D:/tmp';
 const created: string[] = [];
 const readProtocol = () => JSON.parse(readFileSync(join(ROOT, PROTOCOL_PATH), 'utf8'));
-const codes = (result: { errors: Array<{ code: string }> }) => result.errors.map((entry) => entry.code);
-
 function tempExport(records: unknown[]): string {
   mkdirSync(TEMP_ROOT, { recursive: true });
   const dir = mkdtempSync(join(TEMP_ROOT, 'rsi-feedback-pilot-'));

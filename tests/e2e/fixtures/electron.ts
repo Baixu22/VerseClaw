@@ -657,13 +657,6 @@ export async function installIpcMocks(
       const originalHostInvoke = (ipcMain as unknown as {
         _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
       })._invokeHandlers?.get('host:invoke');
-      type IpcInvokeHandler = (event: unknown, ...args: unknown[]) => Promise<unknown>;
-      const getInvokeHandler = (channel: string): IpcInvokeHandler | undefined => {
-        return (ipcMain as unknown as {
-          _invokeHandlers?: Map<string, IpcInvokeHandler>;
-        })._invokeHandlers?.get(channel);
-      };
-
       const respond = (id: unknown, data: unknown) => ({
         id: typeof id === 'string' ? id : undefined,
         ok: true,

@@ -15,11 +15,29 @@ requiredRules:
   - agent-engineering-acceptance-boundary
   - task-forest-autoclose-and-roles
 ownedPaths:
+  - .gitignore
   - harness/specs/tasks/architecture-skeleton-admission-regression.md
   - docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md
   - docs/dev/architecture-skeleton/CHARTER.md
   - scripts/repository-artifacts.json
   - artifacts/admission-convergence-20261102/**
+  - docs/dev/error-governance-decision-record.md
+  - harness/specs/rules/error-governance-boundary.md
+  - scripts/check-error-governance.mjs
+  - tests/unit/error-governance-boundary.test.ts
+  - tests/unit/fixtures/error-governance/**
+  - tests/e2e/agent-first-operational.spec.ts
+  - tests/e2e/chat-welcome-hero-fakecoding.spec.ts
+  - tests/e2e/chat-welcome-hero-verse-shot.spec.ts
+  - tests/e2e/fixtures/electron.ts
+  - tests/e2e/long-session-restart-journeys.spec.ts
+  - tests/e2e/startup-loading-experience.spec.ts
+  - tests/e2e/versegit-feedback-paired.spec.ts
+  - tests/unit/agent-first-mainline.test.ts
+  - tests/unit/rsi-feedback-pilot.test.ts
+  - tests/unit/rsi-sekb-arms.test.ts
+  - tests/unit/versegit-wp6-closeout.test.ts
+  - tests/unit/versegit-wp9-global-acceptance.test.ts
 requiredTests:
   - pnpm run build:vite
   - pnpm run test:e2e:run
@@ -60,6 +78,13 @@ behaves as before and whether the architecture claims now have measured evidence
 A6 is a read-and-prove node. It does not change runtime behavior.
 
 ## Candidate and baseline
+
+A5 left one documentation/check residue: it deleted
+`electron/main/ipc/request-helpers.ts` but the error-governance surface still
+declared the removed duplicate `AppErrorCode` union and named that file as
+evidence. A6 closes that stale declaration and the test-only lint/type residuals
+in the same change set. These repairs do not add or change runtime behavior; the
+A6 non-goal remains “no runtime source changes”.
 
 - Pre-A3 baseline: `97cda35de` (the direct parent of A3 commit `512dc31a4`).
 - Candidate: the A6 spec commit created from current `main`, recorded as commit and tree in

@@ -120,10 +120,6 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       });
 
       // Empty history is what puts Chat into the welcome state.
-      await app.evaluate(async ({ app: _app }) => {
-        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-      });
-
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
         gatewayRpcByMethod: {

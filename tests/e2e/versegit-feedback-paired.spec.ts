@@ -86,12 +86,12 @@ test.describe("VerseGit paired agent evaluation", () => {
           boundaries: { supported_language_only: "typescript", cjs_claim: false, transcript_presence_is_behavior_shift: false, cost_measured: false, external_model_quality_measured: false },
         });
         expect(report.trials).toHaveLength(5);
-        for (const trial of report.trials.filter((entry: Record<string, any>) => entry.kind === "positive")) {
+        for (const trial of report.trials.filter((entry: { kind: string }) => entry.kind === "positive")) {
           expect(trial.off).toMatchObject({ feedback_delivered: false, reread_count: 0, rework_count: 0, validation_status: "failed" });
           expect(trial.on).toMatchObject({ feedback_delivered: true, reread_count: 1, rework_count: 1, validation_status: "passed" });
           expect(trial.on.feedback_evidence_id).toBeTruthy();
         }
-        for (const trial of report.trials.filter((entry: Record<string, any>) => entry.kind === "negative")) {
+        for (const trial of report.trials.filter((entry: { kind: string }) => entry.kind === "negative")) {
           expect(trial.off).toMatchObject({ feedback_delivered: false, reread_count: 0, rework_count: 0, validation_status: "passed" });
           expect(trial.on).toMatchObject({ feedback_delivered: false, reread_count: 0, rework_count: 0, validation_status: "passed" });
         }

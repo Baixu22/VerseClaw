@@ -100,14 +100,7 @@ export const GAP_PROBES = {
       return declaresSymbol(readTextIfFile(root, 'shared/host-api/types.ts') ?? '', 'HostResponse')
         && declaresSymbol(readTextIfFile(root, 'electron/main/ipc/host-contract.ts') ?? '', 'HostResponse');
     },
-  },
-  'duplicate-app-error-code-unions': {
-    evidence: 'electron/main/ipc/request-helpers.ts',
-    isOpen(root) {
-      return declaresSymbol(readTextIfFile(root, 'src/lib/error-model.ts') ?? '', 'AppErrorCode')
-        && declaresSymbol(readTextIfFile(root, 'electron/main/ipc/request-helpers.ts') ?? '', 'AppErrorCode');
-    },
-  },
+  }
 };
 
 /** Prose anchors the decision record and the rule must keep. */

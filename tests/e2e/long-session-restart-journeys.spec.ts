@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
-import type { ElectronApplication } from '@playwright/test';
+import type { ElectronApplication, TestInfo } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import {
   buildMockProviderConfig,
@@ -107,7 +107,7 @@ async function createLedgerNode(app: ElectronApplication, workspaceId: string, t
   return node.id;
 }
 
-async function writeReceipt(testInfo: Parameters<typeof test>[1] extends never ? never : any, receipt: unknown): Promise<void> {
+async function writeReceipt(testInfo: TestInfo, receipt: unknown): Promise<void> {
   const output = testInfo.outputPath('restart-journey-results.json');
   await writeFile(output, `${JSON.stringify(receipt, null, 2)}
 `, 'utf8');
