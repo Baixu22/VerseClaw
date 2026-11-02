@@ -65,18 +65,6 @@ const electronAPI = {
         'env:getConfig',
         'env:setApiKey',
         'env:deleteApiKey',
-        // Provider
-        'provider:list',
-        'provider:get',
-        'provider:save',
-        'provider:delete',
-        'provider:setApiKey',
-        'provider:updateWithKey',
-        'provider:deleteApiKey',
-        'provider:hasApiKey',
-        'provider:setDefault',
-        'provider:getDefault',
-        'provider:validateKey',
         // File preview (sandboxed read/write/list/tree)
         'file:readText',
         'file:readBinary',
