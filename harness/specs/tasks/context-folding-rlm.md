@@ -49,7 +49,7 @@ requiredProfiles:
   - e2e
 requiredTests:
   - pnpm harness context --spec harness/specs/tasks/context-folding-rlm.md
-  - pnpm harness validate --spec harness/specs/tasks/context-folding-rlm.md
+  - pnpm harness validate --spec harness/specs/tasks/context-folding-rlm.md --since HEAD
   - pnpm exec vitest run tests/unit/context-folding-contract.test.ts tests/unit/context-folding-result.test.ts
   - pnpm exec vitest run tests/integration/context-folding-real-task.test.ts
   - pnpm run typecheck
@@ -103,6 +103,8 @@ docs:
 | TF-0695 | 执行真实任务与 baseline/expand/fold paired eval |
 
 除 TF-0691 外，其余实施叶子保持 proposed，按 depends_on 链推进。
+
+未产生本轮实现 diff 时，worktree 入口用 `--since HEAD` 做结构校验；一旦产生实现 diff，必须运行不带窄化参数的完整 ownership diff 门，`--since HEAD` 不能代替最终验收。
 
 ## 工作树
 
