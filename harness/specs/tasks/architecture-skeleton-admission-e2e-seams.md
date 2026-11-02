@@ -116,6 +116,12 @@ spec 只提供数据（`mockConfig`），不再注册/移除任何扁平 channel
   messages.length === 0 && !sending`. The failing case never reaches that
   combination with the current typed mock, so the next pass must inspect which
   of `startupPhase` / `messageAreaLoading` stays unresolved.
+  Deeper lead: `src/stores/chat.ts` (startup hydration) returns early without
+  setting `startupPhase = 'ready'` when `isGatewayReadyForChat()` is false or the
+  runtime key changed, leaving the Chat skeleton up forever. The next pass must
+  verify the renderer's gateway-readiness source under the typed seam (the
+  fixture installs the flat `gateway:status` handler when `mockConfig.gatewayStatus`
+  is present, so readiness wiring is the suspect, not the rpc mock).
 - `chat-history-startup-retry.spec.ts` needs *stateful* rpc responses (first
   `chat.history` call fails, the retry succeeds) plus a 5s delay in the second
   test. A static `gatewayRpc` map cannot express that; a sequence seam was tried
