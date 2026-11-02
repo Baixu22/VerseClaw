@@ -106,6 +106,11 @@ spec 只提供数据（`mockConfig`），不再注册/移除任何扁平 channel
   `installIpcMocks` call replaces the first one's mock surface; the migration must
   merge the rpc map into the existing install call and keep the delay, not add a
   parallel install.
+- `chat-history-startup-retry.spec.ts` needs *stateful* rpc responses (first
+  `chat.history` call fails, the retry succeeds) plus a 5s delay in the second
+  test. A static `gatewayRpc` map cannot express that; a sequence seam was tried
+  and the spec still failed, so it needs a dedicated pass rather than a mechanical
+  rewrite.
 - `chat-history-startup-retry.spec.ts` matches rpc responses by
   `stableStringify([method, params])`; the fixture's `gatewayRpc` map already uses
   that key shape, so it can migrate without a new seam.
