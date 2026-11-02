@@ -618,6 +618,16 @@ export async function getAgentDevHostCalls(page: Page): Promise<unknown[]> {
   return page.evaluate(() => (window as AgentDevTestWindow).__CLAWX_TEST__?.hostApiCalls ?? []);
 }
 
+/** Push a gateway status event into every open window (the gateway store subscribes to it). */
+export async function publishGatewayStatus(
+  app: ElectronApplication,
+  status: Record<string, unknown>,
+): Promise<void> {
+  await app.evaluate(({ BrowserWindow }, payload) => {
+    for (const win of BrowserWindow.getAllWindows()) win.webContents.send('gateway:status-changed', payload);
+  }, status);
+}
+
 export async function installIpcMocks(
   app: ElectronApplication,
   config: IpcMockConfig,
