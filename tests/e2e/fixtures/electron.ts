@@ -685,6 +685,15 @@ export async function installIpcMocks(
         }
         return value;
       };
+      const unwrapLegacyResponse = (response: unknown): unknown => {
+        if (!response || typeof response !== 'object') return response;
+        const record = response as Record<string, unknown>;
+        const data = record.data;
+        if (data && typeof data === 'object' && 'json' in (data as Record<string, unknown>)) {
+          return (data as Record<string, unknown>).json;
+        }
+        return data ?? response;
+      };
       const respondGatewayRpc = (id: unknown, response: unknown) => {
         if (response && typeof response === 'object') {
           const record = response as Record<string, unknown>;
@@ -699,6 +708,64 @@ export async function installIpcMocks(
       };
       (globalThis as unknown as { __verseClawE2eHostCalls?: unknown[] }).__verseClawE2eHostCalls = [];
 
+      const legacyPathForHostRequest = (request: {
+        module?: string;
+        action?: string;
+        payload?: Record<string, unknown>;
+      }): [string, string] | null => {
+        const payload = request.payload ?? {};
+        if (request.module === 'gateway') {
+          if (request.action === 'status') return ['/api/gateway/status', 'GET'];
+          if (request.action === 'start') return ['/api/gateway/start', 'POST'];
+          if (request.action === 'restart') return ['/api/gateway/restart', 'POST'];
+        }
+        if (request.module === 'agents' && request.action === 'list') return ['/api/agents', 'GET'];
+        if (request.module === 'settings' && request.action === 'getAll') return ['/api/settings', 'GET'];
+        if (request.module === 'channels') {
+          if (request.action === 'accounts') return ['/api/channels/accounts', 'GET'];
+          if (request.action === 'validateCredentials') return ['/api/channels/credentials/validate', 'POST'];
+          if (request.action === 'saveConfig') return ['/api/channels/config', 'POST'];
+          if (request.action === 'bindingSave') return ['/api/channels/binding', 'PUT'];
+          if (request.action === 'bindingDelete') return ['/api/channels/binding', 'DELETE'];
+          if (request.action === 'formValues') {
+            const channelType = encodeURIComponent(String(payload.channelType ?? ''));
+            return [`/api/channels/config/${channelType}`, 'GET'];
+          }
+        }
+        if (request.module === 'diagnostics' && request.action === 'gatewaySnapshot') {
+          return ['/api/diagnostics/gateway-snapshot', 'GET'];
+        }
+        if (request.module === 'workspaces') {
+          if (request.action === 'list') return ['/api/workspaces', 'GET'];
+          if (request.action === 'getActive') return ['/api/workspaces/active', 'GET'];
+          if (request.action === 'saveState') return ['/api/workspaces/state', 'PUT'];
+        }
+        if (request.module === 'usage') {
+          if (request.action === 'recentTokenHistory') return ['/api/usage/recent-token-history', 'GET'];
+          if (request.action === 'live') return ['/api/usage/live', 'GET'];
+          if (request.action === 'contextRange') return ['/api/usage/context-range', 'GET'];
+        }
+        if (request.module === 'cron' && request.action === 'list') return ['/api/cron/jobs', 'GET'];
+        if (request.module === 'skills' && request.action === 'quickAccess') return ['/api/skills/quick-access', 'POST'];
+        if (request.module === 'files' && request.action === 'thumbnails') return ['/api/files/thumbnails', 'POST'];
+        if (request.module === 'media') {
+          if (request.action === 'thumbnails') return ['/api/files/thumbnails', 'POST'];
+          if (request.action === 'imageGenerationSettings') return ['/api/media/image-generation', 'GET'];
+          if (request.action === 'saveImageGenerationSettings') return ['/api/media/image-generation', 'PUT'];
+        }
+        if (request.module === 'sessions') {
+          if (request.action === 'history') {
+            const params = new URLSearchParams();
+            if (typeof payload.sessionKey === 'string') params.set('sessionKey', payload.sessionKey);
+            if (typeof payload.agentId === 'string') params.set('agentId', payload.agentId);
+            if (typeof payload.sessionId === 'string') params.set('sessionId', payload.sessionId);
+            if (typeof payload.limit === 'number') params.set('limit', String(payload.limit));
+            return [`/api/sessions/transcript?${params.toString()}`, 'GET'];
+          }
+          if (request.action === 'summaries') return ['/api/sessions/summaries', 'POST'];
+        }
+        return null;
+      };
 
       if (mockConfig.gatewayRpc || mockConfig.gatewayRpcByMethod || mockConfig.gatewayRpcDelays || mockConfig.hostApi || mockConfig.gatewayStatus || mockConfig.fileStat || mockConfig.fileReadText) {
         ipcMain.removeHandler('host:invoke');
@@ -761,7 +828,7 @@ export async function installIpcMocks(
               request?.payload ?? null,
             ]);
             if (typedKey in mockConfig.hostApi) {
-              return respond(request.id, (await resolveHostApiMock(mockConfig.hostApi[typedKey])));
+              return respond(request.id, unwrapLegacyResponse(await resolveHostApiMock(mockConfig.hostApi[typedKey])));
             }
             const typedFallbackKey = stableStringify([
               request?.module ?? null,
@@ -769,9 +836,16 @@ export async function installIpcMocks(
               null,
             ]);
             if (typedFallbackKey in mockConfig.hostApi) {
-              return respond(request.id, (await resolveHostApiMock(mockConfig.hostApi[typedFallbackKey])));
+              return respond(request.id, unwrapLegacyResponse(await resolveHostApiMock(mockConfig.hostApi[typedFallbackKey])));
             }
 
+            const legacyPath = legacyPathForHostRequest(request ?? {});
+            if (legacyPath) {
+              const key = stableStringify(legacyPath);
+              if (key in mockConfig.hostApi) {
+                return respond(request.id, unwrapLegacyResponse(await resolveHostApiMock(mockConfig.hostApi[key])));
+              }
+            }
           }
 
           // Mocked UI scenarios must not depend on the developer machine's free
@@ -805,11 +879,6 @@ export async function installIpcMocks(
 
           return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
         });
-      }
-
-      if (mockConfig.gatewayStatus) {
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => mockConfig.gatewayStatus);
       }
     },
     config,
