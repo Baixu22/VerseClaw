@@ -3,7 +3,7 @@ import { _electron as electron, expect, test } from '@playwright/test';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { getStableWindow } from './fixtures/electron';
+import { getStableWindow, installIpcMocks } from './fixtures/electron';
 import { evidencePath } from './fixtures/evidence-root';
 
 const OUT = evidencePath('reports/visual-tune');
@@ -47,18 +47,6 @@ test.describe('visual tuning screenshots', () => {
     try {
       await app.evaluate(async () => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => ({ state: 'running', port: 18789, pid: 12345 }));
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string) => {
-          if (method === 'sessions.list') {
-            return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } };
-          }
-          if (method === 'chat.history') return { success: true, result: { messages: [] } };
-          return { success: true, result: {} };
-        });
 
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (_event: unknown, request: {
@@ -175,6 +163,14 @@ test.describe('visual tuning screenshots', () => {
         });
       });
 
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+      });
       const page = await getStableWindow(app);
       page.on('console', (msg) => {
         if (msg.text().includes('[fire]')) console.log('RENDERER:', msg.text());
