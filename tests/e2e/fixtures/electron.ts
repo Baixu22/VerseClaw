@@ -29,6 +29,8 @@ type IpcMockConfig = {
   gatewayRpc?: Record<string, unknown>;
   /** Plain method-name seam; `*` is the fallback for unlisted methods. */
   gatewayRpcByMethod?: Record<string, unknown>;
+  /** Optional per-method delay in milliseconds for gatewayRpcByMethod. */
+  gatewayRpcDelays?: Record<string, number>;
   hostApi?: Record<string, unknown>;
   /** Typed seam for the former `file:stat` flat handler. */
   fileStat?: Record<string, unknown>;
@@ -759,7 +761,7 @@ export async function installIpcMocks(
         return null;
       };
 
-      if (mockConfig.gatewayRpc || mockConfig.gatewayRpcByMethod || mockConfig.hostApi || mockConfig.gatewayStatus || mockConfig.fileStat || mockConfig.fileReadText) {
+      if (mockConfig.gatewayRpc || mockConfig.gatewayRpcByMethod || mockConfig.gatewayRpcDelays || mockConfig.hostApi || mockConfig.gatewayStatus || mockConfig.fileStat || mockConfig.fileReadText) {
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (event: unknown, request: {
           id?: string;
@@ -783,6 +785,8 @@ export async function installIpcMocks(
             const params = 'params' in payload ? payload.params : null;
             const byMethod = mockConfig.gatewayRpcByMethod;
             if (byMethod) {
+              const delay = mockConfig.gatewayRpcDelays?.[method];
+              if (typeof delay === 'number' && delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
               if (method in byMethod) return respondGatewayRpc(request.id, byMethod[method]);
               if ('*' in byMethod) return respondGatewayRpc(request.id, byMethod['*']);
             }
