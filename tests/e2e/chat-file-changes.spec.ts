@@ -282,27 +282,21 @@ test.describe('Verse Claw chat file changes', () => {
         },
       });
 
-      await app.evaluate(async () => {
-        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-        ipcMain.removeHandler('file:stat');
-        ipcMain.handle('file:stat', async (_event: unknown, inputPath: string) => ({
-          ok: inputPath === '/workspace/demo.html',
-          size: 154,
-          isFile: inputPath === '/workspace/demo.html',
-          isDir: false,
-          readOnly: true,
-        }));
-        ipcMain.removeHandler('file:readText');
-        ipcMain.handle('file:readText', async (_event: unknown, inputPath: string) => {
-          if (inputPath !== '/workspace/demo.html') return { ok: false, error: 'notFound' };
-          return {
+      await installIpcMocks(app, {
+        fileStat: {
+          '/workspace/demo.html': { ok: true, size: 154, isFile: true, isDir: false, readOnly: true },
+          '*': { ok: false, size: 0, isFile: false, isDir: false, readOnly: true },
+        },
+        fileReadText: {
+          '/workspace/demo.html': {
             ok: true,
             content: '<!doctype html><html><body><h1 id="title">HTML Rendered Preview</h1><script>document.body.dataset.htmlPreview = "ok";</script></body></html>',
             size: 154,
             mimeType: 'text/html',
             readOnly: true,
-          };
-        });
+          },
+          '*': { ok: false, error: 'notFound' },
+        },
       });
 
       const page = await getStableWindow(app);
@@ -406,22 +400,15 @@ test.describe('Verse Claw chat file changes', () => {
       // The markdown preview renders the file content; a leading `# SKILL.md`
       // heading gives the panel a real <h1> to assert on (the file name itself
       // is only shown as a path label, not a heading).
-      await app.evaluate(async () => {
-        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-        const skillPath = '/workspace/skills/open-xueqiu/SKILL.md';
-        ipcMain.removeHandler('file:stat');
-        ipcMain.handle('file:stat', async (_event: unknown, inputPath: string) => ({
-          ok: inputPath === skillPath,
-          size: 128,
-          isFile: inputPath === skillPath,
-          isDir: false,
-          readOnly: true,
-        }));
-        ipcMain.removeHandler('file:readText');
-        ipcMain.handle('file:readText', async (_event: unknown, inputPath: string) => {
-          if (inputPath !== skillPath) return { ok: false, error: 'notFound' };
-          return { ok: true, content: '# SKILL.md\n\nSkill file body.', size: 128, mimeType: 'text/markdown', readOnly: true };
-        });
+      await installIpcMocks(app, {
+        fileStat: {
+          '/workspace/skills/open-xueqiu/SKILL.md': { ok: true, size: 128, isFile: true, isDir: false, readOnly: true },
+          '*': { ok: false, size: 0, isFile: false, isDir: false, readOnly: true },
+        },
+        fileReadText: {
+          '/workspace/skills/open-xueqiu/SKILL.md': { ok: true, content: '# SKILL.md\n\nSkill file body.', size: 128, mimeType: 'text/markdown', readOnly: true },
+          '*': { ok: false, error: 'notFound' },
+        },
       });
 
       const page = await getStableWindow(app);

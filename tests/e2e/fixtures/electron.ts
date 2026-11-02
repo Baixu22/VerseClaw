@@ -29,9 +29,9 @@ type IpcMockConfig = {
   gatewayRpc?: Record<string, unknown>;
   hostApi?: Record<string, unknown>;
   /** Typed seam for the former `file:stat` flat handler. */
-  fileStat?: Record<string, unknown> | ((path: string) => unknown);
+  fileStat?: Record<string, unknown>;
   /** Typed seam for the former `file:readText` flat handler. */
-  fileReadText?: Record<string, unknown> | ((path: string) => unknown);
+  fileReadText?: Record<string, unknown>;
 };
 
 type ElectronFixtures = {
@@ -757,7 +757,7 @@ export async function installIpcMocks(
         return null;
       };
 
-      if (mockConfig.gatewayRpc || mockConfig.hostApi || mockConfig.gatewayStatus) {
+      if (mockConfig.gatewayRpc || mockConfig.hostApi || mockConfig.gatewayStatus || mockConfig.fileStat || mockConfig.fileReadText) {
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (event: unknown, request: {
           id?: string;
@@ -842,8 +842,8 @@ export async function installIpcMocks(
           if (request?.module === 'files') {
             const payload = request.payload ?? {};
             const path = typeof payload.path === 'string' ? payload.path : '';
-            const typedFilePath = (seam: Record<string, unknown> | ((p: string) => unknown) | undefined) => (
-              typeof seam === 'function' ? seam(path) : seam && path in seam ? seam[path] : undefined
+            const typedFilePath = (seam: Record<string, unknown> | undefined) => (
+              seam ? (path in seam ? seam[path] : seam['*']) : undefined
             );
             if (request.action === 'stat') {
               const typedStat = typedFilePath(mockConfig.fileStat);
