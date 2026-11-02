@@ -1,6 +1,6 @@
 # 扁平 IPC 接入面门禁（ADMISSION-GATE）
 
-> 状态：`implemented`（批次 A / A1；只加静态门禁，**不迁移、不删除、不改名**任何 channel / action / handler / facade）
+> 状态：A1 门禁为 `implemented`；A5 已于 2026-11-02 完成 43 条扁平通道与 preload invoke 门的退役（见文末）。
 > 节点：`TF-0630`（父 `TF-0628` 架构骨架收敛；依赖 `TF-0629`）
 > 合同：`harness/specs/tasks/architecture-skeleton-admission-gate.md`
 > 输入：`docs/dev/architecture-skeleton/ADMISSION-INVENTORY.md` §4 / §6 / §7
@@ -229,3 +229,72 @@ pnpm exec vitest run tests/unit/contract-check.test.ts --maxWorkers=1
 2. 别名成员只识别 `name: Ident;` 一种形态；`name: Partial<T>;`、`name: T | null;`、行内对象字面量成员会被所有三类对账静默跳过（当前 58 个成员都在可识别形态内，所以现在的通过是真实的）。
 3. 注释里的 `ipcMain.handle('…')` 会产生 `bypass-registry` 误报（fail-closed 噪音）；别名类型若以非相对路径（`@shared/...`）import 会误报 `unresolved-alias-member`。
 4. `danglingAllowlistEntries` 的重复条目被 `Map.set` 静默覆盖（`channels` 有 `duplicate-registry-entry`，这里没有）；`host-invoke.ts` 内第二个 `ipcMain.handle('host:invoke')` 不报（Electron 运行时会抛错，影响低）。
+
+---
+
+## A5 扁平 IPC 全面退役（2026-11-02）
+
+> `driven_by: agent`，`actor: codex`；本节记录的是当前实现状态，不声称真人验收。
+
+### 最终状态
+
+| 项 | 结果 |
+|---|---|
+| `electron/main/ipc-handlers.ts` 中的 `ipcMain.handle` | **0** |
+| 仓库内剩余 `ipcMain.handle` | **1**：`electron/main/ipc/host-invoke.ts` 的 `host:invoke` |
+| preload 中的 `ipcRenderer.invoke` 字面通道 | **1**：仅 `verseClaw.hostInvoke('host:invoke')` |
+| preload `validChannels` | **0**（整个扁平 invoke allowlist 已删除） |
+| `on` / `once` / `off` 事件桥 | 保留，行为未改 |
+| 43 条裁定记录 | 全部为 `retired`，每条带 `retirement.commit` |
+| `danglingAllowlistEntries` | **0**（3 条死 `env:*` 条目随扁平 allowlist 一并删除） |
+| `shared/host-api/contract.ts`、`src/lib/host-api.ts`、`electron/main/ipc/host-invoke.ts` | 相对 A5 前基线 **0 diff** |
+
+### 退役批次
+
+| 批次 | commit | 通道 |
+|---|---|---|
+| 1 | `58fb87713` | `gateway:status`、`gateway:rpc` |
+| 2 | `675a32739` | 12 条 provider 通道 |
+| 3 | `0bc382486` | 6 条 settings/usage 通道 |
+| 4 | `78309d07a` | 6 条 file preview 通道 |
+| 5 | `4cd6f0f58` | 3 条 OpenClaw 通道 |
+| 6 | `7fcde1fcf` | 3 条 shell 通道 + preload `openExternal` 直连门 |
+| 7 | `fabb5c89c` | 2 条 dialog 通道 |
+| 8 | `981384d83` | `app:request` 统一 dispatcher + 3 条静态 app 通道 |
+| 9 | `28e26f98c` | 5 条 window 通道；移除 preload `ipcRenderer.invoke` 门 |
+
+### 退役时发现并修复的接线错误
+
+`Sidebar.tsx` 已调用 typed `hostApi.window.syncTrafficLightPosition`，但注册的
+`createSystemNotificationsApi()` 中该 action 是空实现，真实逻辑只存在于旧扁平 handler。
+A5 删 handler 前将该 action 接到 `syncMacTrafficLightPosition`，并由
+`tests/unit/system-notifications-api.test.ts` 覆盖；未改变 Host API contract。
+同时删除未被注册、只重复同一 window 表面的 `electron/services/window-api.ts`，
+以及 `app:request` dispatcher 删除后已无引用的 `request-helpers.ts`。
+
+### 门禁变化与负例
+
+- `flat-ipc/retired-channel-live`：已退役 channel 重新注册 `ipcMain.handle` 即失败。
+- `flat-ipc/preload-direct-invoke`：preload 中除 `host:invoke` 外的任何字面
+  `ipcRenderer.invoke` 即失败。
+- `flat-ipc/retirement-provenance-missing`：`retired` 条目缺少 `retirement.commit` 即失败。
+- 旧 active 条目仍保留 `allowlist-missing` / `preload-mismatch` / `allowlist-dangling`
+  的 fail-closed 语义；最终状态没有 allowlist 时，仅在全部条目均已退役且无 dangling
+  条目时才允许通过。
+- 负例通过真实入口 `node scripts/contract-check.mjs --fixture ...` 执行，覆盖新增 handler、
+  已退役 channel 复活、preload 直连包装和 provenance 缺失等路径。
+
+### 验收记录
+
+| 命令 | 结果 |
+|---|---|
+| `pnpm contract:check` | exit 0；33/33 unit cases pass |
+| `pnpm run typecheck` | node / web / test 全绿，exit 0 |
+| `pnpm exec vitest run tests/unit/host-api-facade.test.ts tests/unit/system-notifications-api.test.ts tests/unit/contract-check.test.ts` | 84/84 passed |
+| `pnpm run test:e2e tests/e2e/startup-loading-experience.spec.ts` | 6/6 passed，exit 0，2.2m |
+| `pnpm run test:e2e tests/e2e/settings-drawer.spec.ts` | 3/3 passed，exit 0，1.2m |
+| `pnpm run test:e2e tests/e2e/chat-file-changes.spec.ts` | 3/3 passed，exit 0，1.1m |
+| changed-file `eslint --max-warnings 0` | exit 0 |
+| `git diff --check` | exit 0 |
+
+上述 E2E 均在真实 Electron 进程下由 agent 执行；构建警告未升级为通过证据，也未声称真人操作。

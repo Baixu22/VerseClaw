@@ -16,15 +16,21 @@
       "typedModule": "app",
       "typedAction": null,
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "Legacy unified dispatcher nesting app/provider/usage/settings modules; superseded wholesale by host:invoke. No renderer or test consumer (tests/unit/host-api-facade.test.ts records it as residual)."
+      "disposition": "retired",
+      "reason": "Legacy unified dispatcher nesting app/provider/usage/settings modules; superseded wholesale by host:invoke. No renderer or test consumer (tests/unit/host-api-facade.test.ts records it as residual).",
+      "retirement": {
+        "status": "retired",
+        "commit": "981384d833e36a76b9c5c6b8e77b83da0d30fe75",
+        "batch": 8,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "gateway:status",
       "typedModule": "gateway",
       "typedAction": "status",
       "preload": "allowlisted",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "No renderer consumer. Only live use is the E2E mock seam: specs replace this handler with ipcMain.handle and the fixture bridges typed gateway.status onto it. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
       "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
       "migration": {
@@ -36,6 +42,12 @@
           "tests/e2e/chat-cache-guard.spec.ts"
         ],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "58fb87713e897462bdf26344cbfbd7656b4b80a0",
+        "batch": 1,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -43,7 +55,7 @@
       "typedModule": "gateway",
       "typedAction": "rpc",
       "preload": "unreachable",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "Not in the preload allowlist, so unreachable from the renderer. Only live use is the E2E mock seam (fixture bridges typed gateway.rpc to this override). Return envelope {success,result} differs from the typed payload shape. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
       "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
       "migration": {
@@ -53,6 +65,12 @@
         "commit": "9c9ab5e007d6889176157dcbaf20eef00a41edb9",
         "consumersBefore": [],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "58fb87713e897462bdf26344cbfbd7656b4b80a0",
+        "batch": 1,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -60,47 +78,77 @@
       "typedModule": "openclaw",
       "typedAction": "status",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.openclaw.status is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.openclaw.status is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "4cd6f0f586d5301c44a7f501e913730dbd7ddf4d",
+        "batch": 5,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "openclaw:getSkillsDir",
       "typedModule": "openclaw",
       "typedAction": "getSkillsDir",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.openclaw.getSkillsDir is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.openclaw.getSkillsDir is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "4cd6f0f586d5301c44a7f501e913730dbd7ddf4d",
+        "batch": 5,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "openclaw:getCliCommand",
       "typedModule": "openclaw",
       "typedAction": "getCliCommand",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.openclaw.getCliCommand is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.openclaw.getCliCommand is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "4cd6f0f586d5301c44a7f501e913730dbd7ddf4d",
+        "batch": 5,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:list",
       "typedModule": "providers",
       "typedAction": "list",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.list is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.list is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:get",
       "typedModule": "providers",
       "typedAction": "get",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.get is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.get is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:save",
       "typedModule": "providers",
       "typedAction": "save",
       "preload": "allowlisted",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "No renderer consumer. One E2E spec seeded provider state through a direct ipcRenderer.invoke of this channel; that consumer was migrated in A3 (TF-0649).",
       "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): tests/e2e/provider-lifecycle.spec.ts seeds through host:invoke providers.save. Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
       "migration": {
@@ -112,6 +160,12 @@
           "tests/e2e/provider-lifecycle.spec.ts:11"
         ],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -119,79 +173,133 @@
       "typedModule": "providers",
       "typedAction": "delete",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.delete is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.delete is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:setApiKey",
       "typedModule": "providers",
       "typedAction": "setApiKey",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.setApiKey is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.setApiKey is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:updateWithKey",
       "typedModule": "providers",
       "typedAction": "updateWithKey",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.updateWithKey is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.updateWithKey is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:deleteApiKey",
       "typedModule": "providers",
       "typedAction": "deleteApiKey",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.deleteApiKey is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.deleteApiKey is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:hasApiKey",
       "typedModule": "providers",
       "typedAction": "hasApiKey",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.hasApiKey is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.hasApiKey is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:getApiKey",
       "typedModule": "providers",
       "typedAction": null,
       "preload": "unreachable",
-      "disposition": "retire",
-      "reason": "Security hygiene: the typed side deliberately retired plaintext key retrieval (host-side error in ipc-handlers.ts app:request 'provider' case). This flat handler is a dead path that can still return a plaintext key; no consumer and not in the preload allowlist. First-batch retirement candidate."
+      "disposition": "retired",
+      "reason": "Security hygiene: the typed side deliberately retired plaintext key retrieval (host-side error in ipc-handlers.ts app:request 'provider' case). This flat handler is a dead path that can still return a plaintext key; no consumer and not in the preload allowlist. First-batch retirement candidate.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:setDefault",
       "typedModule": "providers",
       "typedAction": "setDefault",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.setDefault is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.setDefault is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:getDefault",
       "typedModule": "providers",
       "typedAction": "getDefault",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.getDefault is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.getDefault is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "provider:validateKey",
       "typedModule": "providers",
       "typedAction": "validateKey",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.providers.validateKey is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.providers.validateKey is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "675a327398082dd8597069e664bb2bfeba8b7832",
+        "batch": 2,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "shell:openExternal",
       "typedModule": "shell",
       "typedAction": "openExternal",
       "preload": "allowlisted",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "Was the only flat channel with live renderer consumers: 4 call sites in 2 files went through the preload wrapper window.electron.openExternal; migrated in A3 (TF-0649) to the typed hostApi.shell.openExternal that already served 25 sites.",
       "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): src/components/channels/ChannelConfigModal.tsx and src/pages/Settings/index.tsx call hostApi.shell.openExternal; window.electron.openExternal has 0 renderer call sites. Remaining step (A5 / TF-0651): retire the preload wrapper electronAPI.openExternal, the allowlist entry and the handler.",
       "migration": {
@@ -206,6 +314,12 @@
           "src/pages/Settings/index.tsx:2295"
         ],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "7fcde1fcffcae772980414be77d7ab522090b43b",
+        "batch": 6,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -213,71 +327,119 @@
       "typedModule": "shell",
       "typedAction": "showItemInFolder",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.shell.showItemInFolder is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.shell.showItemInFolder is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "7fcde1fcffcae772980414be77d7ab522090b43b",
+        "batch": 6,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "shell:openPath",
       "typedModule": "shell",
       "typedAction": "openPath",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.shell.openPath is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.shell.openPath is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "7fcde1fcffcae772980414be77d7ab522090b43b",
+        "batch": 6,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "dialog:open",
       "typedModule": "dialog",
       "typedAction": "open",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.dialog.open is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.dialog.open is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "fabb5c89c1b92b8e5a4bca9a5b8532949f00aad1",
+        "batch": 7,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "dialog:message",
       "typedModule": "dialog",
       "typedAction": "message",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.dialog.message is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.dialog.message is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "fabb5c89c1b92b8e5a4bca9a5b8532949f00aad1",
+        "batch": 7,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "app:version",
       "typedModule": "app",
       "typedAction": "version",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.app.version is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.app.version is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "981384d833e36a76b9c5c6b8e77b83da0d30fe75",
+        "batch": 8,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "app:name",
       "typedModule": "app",
       "typedAction": null,
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer and no typed counterpart. If the value is ever needed it is added as a typed app action, not by keeping this channel."
+      "disposition": "retired",
+      "reason": "No consumer and no typed counterpart. If the value is ever needed it is added as a typed app action, not by keeping this channel.",
+      "retirement": {
+        "status": "retired",
+        "commit": "981384d833e36a76b9c5c6b8e77b83da0d30fe75",
+        "batch": 8,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "app:platform",
       "typedModule": "app",
       "typedAction": null,
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer. The fact is already owned by the preload static property window.electron.platform, so no IPC round trip is needed."
+      "disposition": "retired",
+      "reason": "No consumer. The fact is already owned by the preload static property window.electron.platform, so no IPC round trip is needed.",
+      "retirement": {
+        "status": "retired",
+        "commit": "981384d833e36a76b9c5c6b8e77b83da0d30fe75",
+        "batch": 8,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "settings:get",
       "typedModule": "settings",
       "typedAction": "get",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.settings.get is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.settings.get is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "0bc38248613b1d2d681ca7cf6ae37c21d2362ef2",
+        "batch": 3,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "settings:getAll",
       "typedModule": "settings",
       "typedAction": "getAll",
       "preload": "allowlisted",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "No renderer consumer. Four E2E specs read settings through a direct ipcRenderer.invoke of this channel; those consumers were migrated in A3 (TF-0649).",
       "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): tests/e2e/dcs-prod-p0-settings.spec.ts, settings-memory-embedding.spec.ts, settings-proxy.spec.ts and telemetry-consent.spec.ts read through window.verseClaw.hostInvoke settings.getAll. Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
       "migration": {
@@ -292,6 +454,12 @@
           "tests/e2e/telemetry-consent.spec.ts:6"
         ],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "0bc38248613b1d2d681ca7cf6ae37c21d2362ef2",
+        "batch": 3,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -299,31 +467,49 @@
       "typedModule": "settings",
       "typedAction": "set",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer. Side effects (launch-at-startup sync, menu rebuild, proxy) are duplicated against electron/services/settings-api.ts, which is the superset; retiring the flat side removes a semantic drift source."
+      "disposition": "retired",
+      "reason": "No consumer. Side effects (launch-at-startup sync, menu rebuild, proxy) are duplicated against electron/services/settings-api.ts, which is the superset; retiring the flat side removes a semantic drift source.",
+      "retirement": {
+        "status": "retired",
+        "commit": "0bc38248613b1d2d681ca7cf6ae37c21d2362ef2",
+        "batch": 3,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "settings:setMany",
       "typedModule": "settings",
       "typedAction": "setMany",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer. Side effects are duplicated against electron/services/settings-api.ts, which is the superset; retiring the flat side removes a semantic drift source."
+      "disposition": "retired",
+      "reason": "No consumer. Side effects are duplicated against electron/services/settings-api.ts, which is the superset; retiring the flat side removes a semantic drift source.",
+      "retirement": {
+        "status": "retired",
+        "commit": "0bc38248613b1d2d681ca7cf6ae37c21d2362ef2",
+        "batch": 3,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "settings:reset",
       "typedModule": "settings",
       "typedAction": "reset",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer. Side effects are duplicated against electron/services/settings-api.ts, which is the superset; retiring the flat side removes a semantic drift source."
+      "disposition": "retired",
+      "reason": "No consumer. Side effects are duplicated against electron/services/settings-api.ts, which is the superset; retiring the flat side removes a semantic drift source.",
+      "retirement": {
+        "status": "retired",
+        "commit": "0bc38248613b1d2d681ca7cf6ae37c21d2362ef2",
+        "batch": 3,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "usage:recentTokenHistory",
       "typedModule": "usage",
       "typedAction": "recentTokenHistory",
       "preload": "allowlisted",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "No renderer consumer. One E2E spec read token history through a direct ipcRenderer.invoke of this channel; that consumer was migrated in A3 (TF-0649).",
       "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): tests/e2e/token-usage.spec.ts reads through host:invoke usage.recentTokenHistory. Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
       "migration": {
@@ -336,6 +522,12 @@
           "tests/e2e/token-usage.spec.ts:129"
         ],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "0bc38248613b1d2d681ca7cf6ae37c21d2362ef2",
+        "batch": 3,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -343,47 +535,77 @@
       "typedModule": "window",
       "typedAction": "syncTrafficLightPosition",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.syncTrafficLightPosition is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.window.syncTrafficLightPosition is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "28e26f98c0f70373ba7d381603f6e5b4df525632",
+        "batch": 9,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "window:minimize",
       "typedModule": "window",
       "typedAction": "minimize",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.minimize is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.window.minimize is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "28e26f98c0f70373ba7d381603f6e5b4df525632",
+        "batch": 9,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "window:maximize",
       "typedModule": "window",
       "typedAction": "maximize",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.maximize is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.window.maximize is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "28e26f98c0f70373ba7d381603f6e5b4df525632",
+        "batch": 9,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "window:close",
       "typedModule": "window",
       "typedAction": "close",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.close is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.window.close is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "28e26f98c0f70373ba7d381603f6e5b4df525632",
+        "batch": 9,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "window:isMaximized",
       "typedModule": "window",
       "typedAction": "isMaximized",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.isMaximized is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.window.isMaximized is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "28e26f98c0f70373ba7d381603f6e5b4df525632",
+        "batch": 9,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "file:readText",
       "typedModule": "files",
       "typedAction": "readText",
       "preload": "allowlisted",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "No renderer consumer (src/lib/file-preview-client.ts is fully typed). Only live use is the E2E mock seam in chat-file-changes.spec.ts, bridged by the fixture onto typed files.readText. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
       "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
       "migration": {
@@ -395,6 +617,12 @@
           "tests/e2e/chat-file-changes.spec.ts"
         ],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "78309d07a837875770589df9a43547a328342c7a",
+        "batch": 4,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -402,23 +630,35 @@
       "typedModule": "files",
       "typedAction": "readBinary",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer; the two mentions in src/components/file-preview are stale comments while the code calls hostApi.files.readBinary."
+      "disposition": "retired",
+      "reason": "No consumer; the two mentions in src/components/file-preview are stale comments while the code calls hostApi.files.readBinary.",
+      "retirement": {
+        "status": "retired",
+        "commit": "78309d07a837875770589df9a43547a328342c7a",
+        "batch": 4,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "file:writeText",
       "typedModule": "files",
       "typedAction": "writeText",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.files.writeText is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.files.writeText is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "78309d07a837875770589df9a43547a328342c7a",
+        "batch": 4,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "file:stat",
       "typedModule": "files",
       "typedAction": "stat",
       "preload": "allowlisted",
-      "disposition": "migrate",
+      "disposition": "retired",
       "reason": "No renderer consumer. Only live use is the E2E mock seam in chat-file-changes.spec.ts, bridged by the fixture onto typed files.stat. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
       "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
       "migration": {
@@ -430,6 +670,12 @@
           "tests/e2e/chat-file-changes.spec.ts"
         ],
         "consumersAfter": []
+      },
+      "retirement": {
+        "status": "retired",
+        "commit": "78309d07a837875770589df9a43547a328342c7a",
+        "batch": 4,
+        "retiredOn": "2026-11-02"
       }
     },
     {
@@ -437,33 +683,29 @@
       "typedModule": "files",
       "typedAction": "listDir",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.files.listDir is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.files.listDir is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "78309d07a837875770589df9a43547a328342c7a",
+        "batch": 4,
+        "retiredOn": "2026-11-02"
+      }
     },
     {
       "channel": "file:listTree",
       "typedModule": "files",
       "typedAction": "listTree",
       "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.files.listTree is the sole entry."
+      "disposition": "retired",
+      "reason": "No renderer or test consumer; hostApi.files.listTree is the sole entry.",
+      "retirement": {
+        "status": "retired",
+        "commit": "78309d07a837875770589df9a43547a328342c7a",
+        "batch": 4,
+        "retiredOn": "2026-11-02"
+      }
     }
   ],
-  "danglingAllowlistEntries": [
-    {
-      "channel": "env:getConfig",
-      "disposition": "retire",
-      "reason": "Allowlisted in preload but no ipcMain.handle exists anywhere under electron/, src/ or shared/; a dead allowlist entry."
-    },
-    {
-      "channel": "env:setApiKey",
-      "disposition": "retire",
-      "reason": "Allowlisted in preload but no ipcMain.handle exists anywhere under electron/, src/ or shared/; a dead allowlist entry."
-    },
-    {
-      "channel": "env:deleteApiKey",
-      "disposition": "retire",
-      "reason": "Allowlisted in preload but no ipcMain.handle exists anywhere under electron/, src/ or shared/; a dead allowlist entry."
-    }
-  ]
+  "danglingAllowlistEntries": []
 }

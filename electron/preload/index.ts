@@ -28,76 +28,7 @@ function isValidEventChannel(channel: string): boolean {
  * IPC renderer methods exposed to the renderer process
  */
 const electronAPI = {
-  /**
-   * IPC invoke (request-response pattern)
-   */
   ipcRenderer: {
-    invoke: (channel: string, ...args: unknown[]) => {
-      const validChannels = [
-        // Gateway
-        'gateway:status',
-        // OpenClaw
-        'openclaw:status',
-        // Shell
-        'shell:openExternal',
-        'shell:showItemInFolder',
-        'shell:openPath',
-        // Dialog
-        'dialog:open',
-        'dialog:message',
-        // App
-        'app:version',
-        'app:name',
-        'app:platform',
-        'app:request',
-        // Window controls
-        'window:minimize',
-        'window:maximize',
-        'window:close',
-        'window:isMaximized',
-        'window:syncTrafficLightPosition',
-        // Settings
-        'settings:get',
-        'settings:set',
-        'settings:setMany',
-        'settings:getAll',
-        'settings:reset',
-        'usage:recentTokenHistory',
-        // Env
-        'env:getConfig',
-        'env:setApiKey',
-        'env:deleteApiKey',
-        // Provider
-        'provider:list',
-        'provider:get',
-        'provider:save',
-        'provider:delete',
-        'provider:setApiKey',
-        'provider:updateWithKey',
-        'provider:deleteApiKey',
-        'provider:hasApiKey',
-        'provider:setDefault',
-        'provider:getDefault',
-        'provider:validateKey',
-        // File preview (sandboxed read/write/list/tree)
-        'file:readText',
-        'file:readBinary',
-        'file:writeText',
-        'file:stat',
-        'file:listDir',
-        'file:listTree',
-        // OpenClaw extras
-        'openclaw:getSkillsDir',
-        'openclaw:getCliCommand',
-      ];
-
-      if (validChannels.includes(channel)) {
-        return ipcRenderer.invoke(channel, ...args);
-      }
-
-      throw new Error(`Invalid IPC channel: ${channel}`);
-    },
-
     /**
      * Listen for events from main process
      */
@@ -162,13 +93,6 @@ const electronAPI = {
         ipcRenderer.removeAllListeners(channel);
       }
     },
-  },
-
-  /**
-   * Open external URL in default browser
-   */
-  openExternal: (url: string) => {
-    return ipcRenderer.invoke('shell:openExternal', url);
   },
 
   /**

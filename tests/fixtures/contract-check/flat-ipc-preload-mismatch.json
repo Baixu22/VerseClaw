@@ -3,12 +3,20 @@
   "id": "flat-ipc-preload-mismatch",
   "rule": "flat-ipc/preload-mismatch",
   "expect": "[flat-ipc/preload-mismatch] 'gateway:status' is unreachable in validChannels but the registry declares allowlisted",
-  "description": "A handler that the registry declares renderer-reachable but which the preload allowlist no longer exposes, i.e. the closed side of the known allowlist drift.",
+  "description": "An active compatibility entry declares allowlisted reachability while the synthetic validChannels list omits it. The fixture re-adds its handler so the mismatch is the only failure.",
   "mutations": [
     {
+      "file": "scripts/contract-check-flat-ipc.json",
+      "find": "      \"channel\": \"gateway:status\",\n      \"typedModule\": \"gateway\",\n      \"typedAction\": \"status\",\n      \"preload\": \"allowlisted\",\n      \"disposition\": \"retired\",",
+      "replace": "      \"channel\": \"gateway:status\",\n      \"typedModule\": \"gateway\",\n      \"typedAction\": \"status\",\n      \"preload\": \"allowlisted\",\n      \"disposition\": \"retire\","
+    },
+    {
+      "file": "electron/main/ipc-handlers.ts",
+      "append": "\nipcMain.handle('gateway:status', () => undefined);\n"
+    },
+    {
       "file": "electron/preload/index.ts",
-      "find": "        // Gateway\n        'gateway:status',\n",
-      "replace": "        // Gateway\n"
+      "append": "\nconst validChannels = [];\n"
     }
   ]
 }

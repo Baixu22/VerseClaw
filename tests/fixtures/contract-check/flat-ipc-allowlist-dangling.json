@@ -3,12 +3,11 @@
   "id": "flat-ipc-allowlist-dangling",
   "rule": "flat-ipc/allowlist-dangling",
   "expect": "[flat-ipc/allowlist-dangling] 'rogue:dangling' is in validChannels but has no ipcMain.handle",
-  "description": "A preload allowlist entry with no handler behind it and no adjudication, i.e. the open side of the known allowlist drift.",
+  "description": "A synthetic preload allowlist entry with no handler behind it and no adjudication, i.e. the open side of allowlist drift remains detected even after the production allowlist is removed.",
   "mutations": [
     {
       "file": "electron/preload/index.ts",
-      "find": "        'openclaw:getCliCommand',\n      ];",
-      "replace": "        'openclaw:getCliCommand',\n        'rogue:dangling',\n      ];"
+      "append": "\nconst validChannels = ['rogue:dangling'];\n"
     }
   ]
 }

@@ -2,8 +2,8 @@
   "schema": "ContractCheckFixture/v1",
   "id": "flat-ipc-preload-direct-invoke",
   "rule": "flat-ipc/preload-direct-invoke",
-  "expect": "[flat-ipc/preload-direct-invoke] 'provider:getApiKey' is invoked directly by a preload wrapper but is not in validChannels",
-  "description": "A preload wrapper calls ipcRenderer.invoke with a literal channel that validChannels does not expose (here the retired plaintext-key handler the registry marks unreachable). Reachability must be decided by the allowlist alone, so a direct wrapper around a non-allowlisted channel is a second door and fails.",
+  "expect": "[flat-ipc/preload-direct-invoke] 'provider:getApiKey' is invoked directly by the preload; only 'host:invoke' may use ipcRenderer.invoke",
+  "description": "A preload wrapper calls ipcRenderer.invoke with a retired flat channel. After retirement, host:invoke is the only literal invoke channel permitted in preload.",
   "mutations": [
     {
       "file": "electron/preload/index.ts",

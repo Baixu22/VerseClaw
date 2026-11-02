@@ -1,6 +1,7 @@
 import { Notification, type BrowserWindow } from 'electron';
 import { getSetting } from '../utils/store';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
+import { syncMacTrafficLightPosition } from '../main/traffic-light-layout';
 
 const MAX_TITLE = 80;
 const MAX_BODY = 240;
@@ -49,7 +50,9 @@ export function createSystemNotificationsApiWithDependencies(
   dependencies: SystemNotificationsDependencies,
 ): CompleteHostServiceRegistry['window'] {
   return {
-    syncTrafficLightPosition: () => {},
+    syncTrafficLightPosition: (payload) => {
+      syncMacTrafficLightPosition(mainWindow, payload.sidebarCollapsed);
+    },
     notify: async (payload) => {
       const enabled = await dependencies.isEnabled().catch(() => false);
       if (!enabled) return { success: true, delivered: false, reason: 'disabled' };
