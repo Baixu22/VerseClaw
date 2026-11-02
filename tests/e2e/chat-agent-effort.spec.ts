@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
 
@@ -33,27 +33,6 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
         (globalThis as unknown as {
           __clawxEffortRequests?: Array<{ agentId?: string; effort?: string }>;
         }).__clawxEffortRequests = [];
-
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => ({
-          state: 'running',
-          port: 18789,
-          pid: 12345,
-        }));
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string, _params: unknown) => {
-          if (method === 'sessions.list') {
-            return {
-              success: true,
-              result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
-            };
-          }
-          if (method === 'chat.history') {
-            return { success: true, result: { messages: [] } };
-          }
-          return { success: true, result: {} };
-        });
 
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (_event: unknown, request: {
@@ -141,6 +120,14 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
         });
       });
 
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+      });
       const page = await getStableWindow(app);
       await page.reload();
       await expect(page.getByTestId('main-layout')).toBeVisible();
@@ -218,18 +205,6 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await app.evaluate(async () => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
 
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => ({ state: 'running', port: 18789, pid: 12345 }));
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string) => {
-          if (method === 'sessions.list') {
-            return { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } };
-          }
-          if (method === 'chat.history') return { success: true, result: { messages: [] } };
-          return { success: true, result: {} };
-        });
-
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (_event: unknown, request: {
           id?: string;
@@ -298,6 +273,14 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
         });
       });
 
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+      });
       const page = await getStableWindow(app);
       await page.reload();
       await expect(page.getByTestId('main-layout')).toBeVisible();
@@ -377,18 +360,6 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
           __clawxEffortRequests?: Array<{ agentId?: string; effort?: string }>;
         }).__clawxEffortRequests = [];
 
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => ({ state: 'running', port: 18789, pid: 12345 }));
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string) => {
-          if (method === 'sessions.list') {
-            return { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } };
-          }
-          if (method === 'chat.history') return { success: true, result: { messages: [] } };
-          return { success: true, result: {} };
-        });
-
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (_event: unknown, request: {
           id?: string;
@@ -463,6 +434,14 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
         });
       });
 
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+      });
       const page = await getStableWindow(app);
       await page.reload();
       await expect(page.getByTestId('main-layout')).toBeVisible();
