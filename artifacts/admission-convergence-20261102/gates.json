@@ -37,7 +37,7 @@
       "schema": "AdmissionGate/v1",
       "command": "pnpm repo:artifacts:check",
       "exitCode": 0,
-      "classification": "pass-preliminary",
+      "classification": "pass",
       "stdout": "logs/formal-repo-artifacts.log"
     },
     {

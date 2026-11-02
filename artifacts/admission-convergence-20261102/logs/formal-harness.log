@@ -1,6 +1,5 @@
 $ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/architecture-skeleton-admission-regression.md"
 $ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/architecture-skeleton-admission-regression.md"
-NOTE: no changed files since origin/main; the changed-path ownership gate had nothing to check.
 Spec is valid: harness\specs\tasks\architecture-skeleton-admission-regression.md
 $ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/architecture-skeleton-admission-regression.md" "--dry-run"
 $ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/architecture-skeleton-admission-regression.md" "--dry-run"

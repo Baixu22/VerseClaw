@@ -5,5 +5,5 @@
   "classification": "pass",
   "stdout": "logs/formal-repo-artifacts.log",
   "captureMode": "combined",
-  "note": "Pre-final artifact check; rerun after final evidence and docs land."
+  "note": "Final rerun after evidence and docs landed."
 }

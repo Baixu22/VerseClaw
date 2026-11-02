@@ -28,7 +28,7 @@ A6 的 **A3-A5 兼容性判定为 pass**：相对基线，没有出现候选引�
 | `pnpm run typecheck` | 0 | pass；node/web/test 三段均 0 error | `logs/formal-typecheck.log` |
 | `pnpm run lint:check` | 0 | pass；0 errors / 116 warnings | `logs/lint.log` |
 | `pnpm contract:check` | 0 | pass | `logs/formal-contract.log` |
-| `pnpm repo:artifacts:check` | 0（最终文档落盘后需复跑） | pass-preliminary | `logs/formal-repo-artifacts.log` |
+| `pnpm repo:artifacts:check` | 0（最终复跑） | pass | `logs/formal-repo-artifacts.log` |
 | `pnpm harness validate --spec ...` | 0 | pass | `logs/formal-harness.log` |
 | `pnpm harness run --spec ... --dry-run` | 0 | pass | `logs/formal-harness.log` |
 | `pnpm run build:runtime` | 0 | pass；Gateway smoke ready | `logs/openclaw-build.log` |
