@@ -1,18 +1,8 @@
 {
-  "command": "pnpm --dir openclaw_runtime run build",
-  "exitCode": 134,
-  "startedAt": "2026-11-02T09:53:07.3794385Z",
-  "finishedAt": "2026-11-02T10:07:52.4451838Z",
-  "durationMs": 885066,
-  "stdout": "logs/openclaw-build.stdout.log",
-  "stderr": "logs/openclaw-build.stderr.log",
-  "purpose": "E2E setup",
-  "classification": "environment",
-  "reason": "tsdown reached the default 8GB V8 heap ceiling and exited 134; no source failure was produced.",
-  "fallback": {
-    "action": "copied existing openclaw_runtime/dist from the main checkout",
-    "source": "D:\\ClawX\\openclaw_runtime\\dist",
-    "target": "D:\\tmp\\ClawX-a6-regression-20261102-v2\\openclaw_runtime\\dist",
-    "sourceCodeRelation": "The candidate differs from the pushed A5/runtime source only by the A6 documentation spec; no openclaw_runtime source changed."
-  }
+  "schema": "AdmissionGate/v1",
+  "command": "pnpm run build:runtime",
+  "exitCode": 0,
+  "classification": "pass",
+  "stdout": "logs/openclaw-build.log",
+  "captureMode": "combined"
 }

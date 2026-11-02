@@ -1,18 +1,13 @@
 {
   "schema": "AdmissionE2ESummary/v1",
   "command": "pnpm run test:e2e:run",
-  "status": "not-complete",
+  "status": "pending-clean-run",
   "declared": 418,
-  "observed": 234,
-  "passed": 195,
-  "failed": 37,
-  "skipped": 2,
-  "didNotRun": 184,
-  "classification": "aborted-before-final-aggregate",
-  "observedLedger": "e2e/final-speed-ledger.json",
-  "logs": [
-    "logs/e2e-final.stdout.log",
-    "logs/e2e-full-a6.log"
-  ],
-  "note": "Both the formal serial attempt and the follow-up attempt were interrupted; neither is a full-suite pass."
+  "observed": 0,
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "didNotRun": 418,
+  "log": "logs/e2e-final.log",
+  "note": "Final clean-candidate run started after non-E2E evidence commit; this file is replaced by the final aggregate."
 }

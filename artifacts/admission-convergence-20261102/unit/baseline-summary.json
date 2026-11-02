@@ -1,0 +1,25 @@
+{
+  "schema": "AdmissionUnitBaselineSummary/v1",
+  "generatedAt": "2026-11-02T17:06:34.563Z",
+  "baseline": "97cda35de",
+  "command": "pnpm exec vitest run <candidate failing files> --maxWorkers=1 --no-cache",
+  "scope": "The 66 test files that failed in the original A6 candidate run, rerun at 97cda35de with the same local binary resources.",
+  "exitCode": 1,
+  "files": {
+    "failed": 58,
+    "passed": 8,
+    "skipped": 0,
+    "total": 66
+  },
+  "tests": {
+    "failed": 168,
+    "passed": 356,
+    "skipped": 57,
+    "total": 581
+  },
+  "log": "logs/baseline-unit.log",
+  "captureMode": "combined",
+  "failureKeysMatch": true,
+  "onlyFinal": [],
+  "onlyBaseline": []
+}

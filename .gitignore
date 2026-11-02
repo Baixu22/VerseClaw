@@ -237,6 +237,8 @@ openclaw_runtime/_tmp_*
 !/artifacts/admission-convergence-20261102/e2e/final-summary.json
 !/artifacts/admission-convergence-20261102/gates.json
 !/artifacts/admission-convergence-20261102/gates/build-vite.json
+!/artifacts/admission-convergence-20261102/gates/e2e-final.json
+!/artifacts/admission-convergence-20261102/unit/baseline-summary.json
 !/artifacts/admission-convergence-20261102/gates/e2e-attempt1-preflight-missing-runtime.json
 !/artifacts/admission-convergence-20261102/gates/e2e-attempt2-stale-runtime-mtime.json
 !/artifacts/admission-convergence-20261102/gates/e2e-attempt3-serial-superseded.json
@@ -252,6 +254,11 @@ openclaw_runtime/_tmp_*
 !/artifacts/admission-convergence-20261102/gates/unit.json
 !/artifacts/admission-convergence-20261102/logs/build-vite.stderr.log
 !/artifacts/admission-convergence-20261102/logs/build-vite.stdout.log
+!/artifacts/admission-convergence-20261102/logs/build-vite.log
+!/artifacts/admission-convergence-20261102/logs/baseline-unit.log
+!/artifacts/admission-convergence-20261102/logs/e2e-final.log
+!/artifacts/admission-convergence-20261102/logs/openclaw-build.log
+!/artifacts/admission-convergence-20261102/logs/unit.log
 !/artifacts/admission-convergence-20261102/logs/e2e-final.stderr.log
 !/artifacts/admission-convergence-20261102/logs/e2e-final.stdout.log
 !/artifacts/admission-convergence-20261102/logs/e2e-full-a6.log

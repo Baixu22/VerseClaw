@@ -1,9 +1,8 @@
 {
+  "schema": "AdmissionGate/v1",
   "command": "pnpm run build:vite",
   "exitCode": 0,
-  "startedAt": "2026-11-02T09:29:08.6341748Z",
-  "finishedAt": "2026-11-02T09:30:13.8882286Z",
-  "durationMs": 65254,
-  "stdout": "logs/build-vite.stdout.log",
-  "stderr": "logs/build-vite.stderr.log"
+  "classification": "pass",
+  "stdout": "logs/build-vite.log",
+  "captureMode": "combined"
 }

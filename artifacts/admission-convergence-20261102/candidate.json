@@ -1,13 +1,31 @@
 {
   "schema": "AdmissionConvergenceCandidate/v1",
-  "generatedAt": "2026-11-02T17:03:34.033953+08:00",
+  "generatedAt": "2026-11-02T17:06:34.563Z",
   "drivenBy": "agent",
   "actor": "codex",
-  "candidateCommit": "6b7f8eb496a43418ffaf880dc3590ed1042c6fc9",
-  "candidateTree": "55ee24451391bf67e23214915deaceb55d6704d9",
+  "candidateCommit": "590ba5258cd5ddd65e133657762e77811376d0a9",
+  "candidateTree": "01b8f8964ba487137e679383d15a111c174326ee",
   "baselinePreA3": "97cda35de",
   "baselineA5": "179a9b0f8",
-  "candidateDescription": "A6 regression spec commit; runtime source identical to pushed A5 closeout. Baseline is the direct parent of A3.",
-  "worktree": "D:\\tmp\\ClawX-a6-regression-20261102-v2",
-  "testRoot": "D:\\tmp\\ClawX-a6-final-results"
+  "candidateDescription": "Latest private-main candidate after A5/A6 repair, TF-0590/TF-0592 reseal, and TF-0598 decision integration.",
+  "worktree": "D:/ClawX-work/a6-final-main-590ba5258",
+  "testRoot": "D:/tmp/clawx-e2e-main-590ba5258-v2",
+  "branch": "codex/tf0652-a6-final-590ba5258",
+  "runtimeResources": {
+    "electron": {
+      "version": "40.8.4",
+      "executableSha256": "FAD08627E2F61846A9AFC3EC3E0B6110E6F0C57A79E716CBF2268C5F352BCE6E",
+      "tracked": false
+    },
+    "vg": {
+      "path": "resources/bin/win32-x64/vg.exe",
+      "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+      "tracked": false
+    },
+    "ae": {
+      "path": "resources/bin/win32-x64/ae.exe",
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "tracked": false
+    }
+  }
 }

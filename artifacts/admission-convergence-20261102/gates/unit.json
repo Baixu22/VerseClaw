@@ -1,12 +1,11 @@
 {
+  "schema": "AdmissionGate/v1",
   "command": "pnpm test",
   "exitCode": 1,
-  "startedAt": "2026-11-02T13:10:59.8617331Z",
-  "finishedAt": "2026-11-02T13:30:04.7198801Z",
-  "durationMs": 1144858,
-  "stdout": "logs/unit.stdout.log",
-  "stderr": "logs/unit.stderr.log",
-  "classification": "code-regression-or-environment",
-  "schema": "AdmissionGate/v1",
-  "failureSummary": "187 failed tests / 9697 passed / 92 skipped; aggregate matrix did not pass, so A6 cannot close."
+  "classification": "baseline-equivalent-failures",
+  "stdout": "logs/unit.log",
+  "captureMode": "combined",
+  "summary": "unit/final-summary.json",
+  "baselineSummary": "unit/baseline-summary.json",
+  "baselineLog": "logs/baseline-unit.log"
 }
