@@ -2,13 +2,26 @@
   "schema": "ContractCheckFixture/v1",
   "id": "flat-ipc-removal-plan-missing",
   "rule": "flat-ipc/removal-plan-missing",
-  "expect": "[flat-ipc/removal-plan-missing] 'file:stat' is freeze but declares no removalPlan",
-  "description": "A frozen channel that lost its removal plan, so the freeze has no exit path.",
+  "expect": "[flat-ipc/removal-plan-missing] 'gateway:status' is migrate but declares no removalPlan",
+  "description": "A migrated channel that lost its removal plan, so the compatibility exception has no exit path.",
   "mutations": [
     {
       "file": "scripts/contract-check-flat-ipc.json",
-      "find": "\"removalPlan\": \"Supply files.stat responses to the host:invoke interceptor in tests/e2e/fixtures/electron.ts directly and drop the legacy-override branch, then retire handler + allowlist entry.\"",
+      "find": "      \"channel\": \"gateway:status\",\n      \"typedModule\": \"gateway\",\n      \"typedAction\": \"status\",\n      \"preload\": \"allowlisted\",\n      \"disposition\": \"retired\",",
+      "replace": "      \"channel\": \"gateway:status\",\n      \"typedModule\": \"gateway\",\n      \"typedAction\": \"status\",\n      \"preload\": \"allowlisted\",\n      \"disposition\": \"migrate\","
+    },
+    {
+      "file": "scripts/contract-check-flat-ipc.json",
+      "find": "\"removalPlan\": \"Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.\"",
       "replace": "\"removalPlan\": \"\""
+    },
+    {
+      "file": "electron/main/ipc-handlers.ts",
+      "append": "\nipcMain.handle('gateway:status', () => undefined);\n"
+    },
+    {
+      "file": "electron/preload/index.ts",
+      "append": "\nconst validChannels = ['gateway:status'];\n"
     }
   ]
 }

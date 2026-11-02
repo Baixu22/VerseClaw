@@ -311,7 +311,7 @@ function collectFlatIpcIssues({ contract, flatIpcRegistry, ipcMainHandleSites, p
     }
     registryByChannel.set(channel, entry);
     if (!FLAT_IPC_DISPOSITIONS.has(entry.disposition)) {
-      issues.push(`${FLAT_IPC_REGISTRY_PATH}: ${tag('invalid-disposition')} '${channel}' disposition must be retire|migrate|freeze (got ${JSON.stringify(entry.disposition)})`);
+      issues.push(`${FLAT_IPC_REGISTRY_PATH}: ${tag('invalid-disposition')} '${channel}' disposition must be retire|migrate|freeze|retired (got ${JSON.stringify(entry.disposition)})`);
     }
     if (!FLAT_IPC_PRELOAD_STATES.has(entry.preload)) {
       issues.push(`${FLAT_IPC_REGISTRY_PATH}: ${tag('invalid-preload-state')} '${channel}' preload must be allowlisted|unreachable (got ${JSON.stringify(entry.preload)})`);
@@ -362,6 +362,7 @@ function collectFlatIpcIssues({ contract, flatIpcRegistry, ipcMainHandleSites, p
   const hasActiveRegistryEntry = [...registryByChannel.values()].some((entry) => entry.disposition !== 'retired');
   if (!allowlist && (hasActiveRegistryEntry || danglingEntries.length > 0)) {
     issues.push(`${allowlistFile}: ${tag('allowlist-missing')} could not locate the validChannels allowlist`);
+    return issues;
   }
   const allowSet = new Set(allowlist ?? []);
   if (allowlist && allowSet.size !== allowlist.length) {

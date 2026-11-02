@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-retired-channel-live",
+  "rule": "flat-ipc/retired-channel-live",
+  "expect": "[flat-ipc/retired-channel-live] ipcMain.handle('gateway:status') is registered but the registry marks it retired",
+  "description": "A retired flat channel is registered again. Retirement provenance remains in the registry, so reintroduction must fail instead of silently looking unregistered.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc-handlers.ts",
+      "append": "\nipcMain.handle('gateway:status', () => undefined);\n"
+    }
+  ]
+}

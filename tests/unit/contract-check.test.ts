@@ -286,6 +286,41 @@ describe('contract check: flat IPC admission surface', () => {
     ]);
   });
 
+  it('enforces the final zero-handler, host-invoke-only preload invariant', () => {
+    const retiredRegistry = flatIpcRegistry({
+      channels: flatIpcRegistry().channels.map((entry) => ({
+        ...entry,
+        disposition: 'retired',
+        retirement: { status: 'retired', commit: '1234567', batch: 9, retiredOn: '2026-11-02' },
+      })),
+      danglingAllowlistEntries: [],
+    });
+    const hostOnlyPreload = "const verseClawAPI = { hostInvoke: (request: HostRequest) => ipcRenderer.invoke('host:invoke', request) };\n";
+    const hostOnlySites = [{ file: HOST_INVOKE_FILE, line: 1, channel: 'host:invoke', expression: "'host:invoke'" }];
+
+    expect(collectContractIssues(baseInput({
+      flatIpcRegistry: retiredRegistry,
+      ipcMainHandleSites: hostOnlySites,
+      preloadText: hostOnlyPreload,
+    }))).toEqual([]);
+
+    expect(collectContractIssues(baseInput({
+      flatIpcRegistry: retiredRegistry,
+      ipcMainHandleSites: [...hostOnlySites, { file: HANDLERS_FILE, line: 9, channel: 'agentDev:ping', expression: "'agentDev:ping'" }],
+      preloadText: hostOnlyPreload,
+    }))).toEqual([
+      "electron/main/ipc-handlers.ts:9: [flat-ipc/retired-channel-live] ipcMain.handle('agentDev:ping') is registered but the registry marks it retired",
+    ]);
+
+    expect(collectContractIssues(baseInput({
+      flatIpcRegistry: retiredRegistry,
+      ipcMainHandleSites: hostOnlySites,
+      preloadText: hostOnlyPreload + "export const leak = () => ipcRenderer.invoke('gateway:status');\n",
+    }))).toEqual([
+      "electron/preload/index.ts:2: [flat-ipc/preload-direct-invoke] 'gateway:status' is invoked directly by the preload; only 'host:invoke' may use ipcRenderer.invoke",
+    ]);
+  });
+
   it('fails closed when the registry or the site enumeration is absent', () => {
     expect(collectContractIssues(baseInput({ flatIpcRegistry: undefined }))).toEqual([
       'scripts/contract-check-flat-ipc.json: [flat-ipc/registry-missing] flat IPC adjudication registry was not loaded',
@@ -360,7 +395,7 @@ describe('contract check: flat IPC admission surface', () => {
       "scripts/contract-check-flat-ipc.json: [flat-ipc/removal-plan-missing] 'agentDev:ping' is freeze but declares no removalPlan",
     ]);
     expect(collectContractIssues(baseInput({ flatIpcRegistry: registryWithChannel({ disposition: 'keep' }) }))).toEqual([
-      "scripts/contract-check-flat-ipc.json: [flat-ipc/invalid-disposition] 'agentDev:ping' disposition must be retire|migrate|freeze (got \"keep\")",
+      "scripts/contract-check-flat-ipc.json: [flat-ipc/invalid-disposition] 'agentDev:ping' disposition must be retire|migrate|freeze|retired (got \"keep\")",
     ]);
   });
 
@@ -402,6 +437,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
       'flat-ipc/allowlist-dangling',
       'flat-ipc/preload-mismatch',
       'flat-ipc/preload-direct-invoke',
+      'flat-ipc/retired-channel-live',
       'host-api/unresolved-alias-member',
       'host-api/facade-missing-action',
     ]));
