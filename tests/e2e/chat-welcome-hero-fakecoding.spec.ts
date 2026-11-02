@@ -122,19 +122,16 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       // Empty history is what puts Chat into the welcome state.
       await app.evaluate(async ({ app: _app }) => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string) => {
-          if (method === 'sessions.list') {
-            return {
-              success: true,
-              result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] },
-            };
-          }
-          if (method === 'chat.history') return { success: true, result: { messages: [] } };
-          return { success: true, result: {} };
-        });
       });
 
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+      });
       const page = await getStableWindow(app);
       await page.reload();
       await page.setViewportSize({ width: 1285, height: 820 });
