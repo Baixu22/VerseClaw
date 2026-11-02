@@ -35,7 +35,7 @@ describe('GatewayManager diagnostics', () => {
       const pending = manager.rpc('health', {}, 1000);
       const requestId = Array.from(internals.pendingRequests.keys())[0];
       internals.capabilityMonitor.reset();
-      internals.handleMessage({ type: 'res', id: requestId, ok, payload: { ok: true }, error: { code: 'UNAVAILABLE', message: 'old connection failure' } });
+      internals.handleMessage({ type: 'res', id: requestId, ok, ...(ok ? { payload: { ok: true } } : { error: { code: 'UNAVAILABLE', message: 'old connection failure' } }) });
       if (ok) await expect(pending).resolves.toEqual({ ok: true });
       else await expect(pending).rejects.toThrow('old connection failure');
       expect(manager.getCapabilitySnapshot().openclawHealth.state).toBe('unknown');
