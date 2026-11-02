@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, test, installIpcMocks } from './fixtures/electron';
 
 const alphaModelRef = 'custom-alpha123/model-alpha';
 const betaModelRef = 'custom-beta5678/provider/model-beta';
@@ -47,21 +47,6 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
           configuredChannelTypes: [],
           channelOwners: {},
           channelAccountOwners: {},
-        });
-
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => ({ state: 'running', port: 18789, pid: 12345 }));
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string, params: unknown) => {
-          hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params ?? null });
-          if (method === 'sessions.list') {
-            return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } };
-          }
-          if (method === 'chat.history') {
-            return { success: true, result: { messages: [] } };
-          }
-          return { success: true, result: {} };
         });
 
         ipcMain.removeHandler('host:invoke');
@@ -153,6 +138,15 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
         (globalThis as typeof globalThis & { __chatModelPickerTiersRequests?: typeof hostRequests }).__chatModelPickerTiersRequests = hostRequests;
       }, { alphaModelRef, betaModelRef });
 
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta', modelRefOverride: betaModelRef }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+      });
+
       const page = await getStableWindow(app);
       await page.reload();
       await expect(page.getByTestId('main-layout')).toBeVisible();
@@ -233,21 +227,6 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
           configuredChannelTypes: [],
           channelOwners: {},
           channelAccountOwners: {},
-        });
-
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => ({ state: 'running', port: 18789, pid: 12345 }));
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string, params: unknown) => {
-          hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params ?? null });
-          if (method === 'sessions.list') {
-            return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta', modelRefOverride: refs.betaModelRef }] } };
-          }
-          if (method === 'chat.history') {
-            return { success: true, result: { messages: [] } };
-          }
-          return { success: true, result: {} };
         });
 
         ipcMain.removeHandler('host:invoke');
@@ -336,6 +315,15 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
 
         (globalThis as typeof globalThis & { __chatModelPickerTiersRequests?: typeof hostRequests }).__chatModelPickerTiersRequests = hostRequests;
       }, { alphaModelRef, betaModelRef });
+
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta', modelRefOverride: betaModelRef }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+      });
 
       const page = await getStableWindow(app);
       await page.reload();
