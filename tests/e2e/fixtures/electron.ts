@@ -789,7 +789,7 @@ export async function installIpcMocks(
             return respond(request.id, mockConfig.gatewayStatus);
           }
 
-          if (mockConfig.gatewayRpc && request?.module === 'gateway' && request.action === 'rpc') {
+          if ((mockConfig.gatewayRpc || mockConfig.gatewayRpcByMethod || mockConfig.gatewayRpcDelays) && request?.module === 'gateway' && request.action === 'rpc') {
             const payload = request.payload ?? {};
             const method = typeof payload.method === 'string' ? payload.method : '';
             const params = 'params' in payload ? payload.params : null;
@@ -800,16 +800,19 @@ export async function installIpcMocks(
               if (method in byMethod) return respondGatewayRpc(request.id, byMethod[method]);
               if ('*' in byMethod) return respondGatewayRpc(request.id, byMethod['*']);
             }
-            const key = stableStringify([method, params ?? null]);
-            if (key in mockConfig.gatewayRpc) return respondGatewayRpc(request.id, mockConfig.gatewayRpc[key]);
-            if (method === 'sessions.list') {
-              const emptySessionsListKey = stableStringify([method, {}]);
-              if (emptySessionsListKey in mockConfig.gatewayRpc) {
-                return respondGatewayRpc(request.id, mockConfig.gatewayRpc[emptySessionsListKey]);
+            const rpcMap = mockConfig.gatewayRpc;
+            if (rpcMap) {
+              const key = stableStringify([method, params ?? null]);
+              if (key in rpcMap) return respondGatewayRpc(request.id, rpcMap[key]);
+              if (method === 'sessions.list') {
+                const emptySessionsListKey = stableStringify([method, {}]);
+                if (emptySessionsListKey in rpcMap) {
+                  return respondGatewayRpc(request.id, rpcMap[emptySessionsListKey]);
+                }
               }
+              const fallbackKey = stableStringify([method, null]);
+              if (fallbackKey in rpcMap) return respondGatewayRpc(request.id, rpcMap[fallbackKey]);
             }
-            const fallbackKey = stableStringify([method, null]);
-            if (fallbackKey in mockConfig.gatewayRpc) return respondGatewayRpc(request.id, mockConfig.gatewayRpc[fallbackKey]);
             const legacyGatewayRpc = getLegacyOverride('gateway:rpc', originalLegacyGatewayRpc);
             if (legacyGatewayRpc) {
               return respondGatewayRpc(

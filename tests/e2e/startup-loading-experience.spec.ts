@@ -108,7 +108,12 @@ test.describe('startup and route loading experience', () => {
           pid: 12345,
           connectedAt: Date.now(),
         },
-        gatewayRpc: {},
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } },
+          'chat.history': { success: true, result: { messages: [] } },
+          '*': { success: true, result: {} },
+        },
+        gatewayRpcDelays: { 'chat.history': 2000 },
         hostApi: {
           [stableStringify(['/api/agents', 'GET'])]: {
             ok: true,
@@ -124,20 +129,6 @@ test.describe('startup and route loading experience', () => {
       await app.evaluate(async ({ app: _app }) => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
 
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string) => {
-          if (method === 'sessions.list') {
-            return {
-              success: true,
-              result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] },
-            };
-          }
-          if (method === 'chat.history') {
-            await new Promise((resolve) => setTimeout(resolve, 2_000));
-            return { success: true, result: { messages: [] } };
-          }
-          return { success: true, result: {} };
-        });
       });
 
       const page = await getStableWindow(app);
@@ -217,7 +208,12 @@ test('keeps the loading skeleton centered when an active workspace has no rail c
         pid: 12345,
         connectedAt: Date.now(),
       },
-      gatewayRpc: {},
+      gatewayRpcByMethod: {
+        'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } },
+        'chat.history': { success: true, result: { messages: [] } },
+        '*': { success: true, result: {} },
+      },
+      gatewayRpcDelays: { 'chat.history': 2000 },
       hostApi: {
         [stableStringify(['/api/agents', 'GET'])]: {
           ok: true,
@@ -238,17 +234,6 @@ test('keeps the loading skeleton centered when an active workspace has no rail c
 
     await app.evaluate(async () => {
       const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-      ipcMain.removeHandler('gateway:rpc');
-      ipcMain.handle('gateway:rpc', async (_event: unknown, method: string) => {
-        if (method === 'sessions.list') {
-          return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } };
-        }
-        if (method === 'chat.history') {
-          await new Promise((resolve) => setTimeout(resolve, 2_000));
-          return { success: true, result: { messages: [] } };
-        }
-        return { success: true, result: {} };
-      });
     });
 
     const page = await getStableWindow(app);
