@@ -1,4 +1,4 @@
-import { expect, hoverUntilVisible, revealSectionHeadingActionsFor, test } from './fixtures/electron';
+import { expect, hoverUntilVisible, revealSectionHeadingActionsFor, test, installIpcMocks } from './fixtures/electron';
 import type { Locator } from '@playwright/test';
 
 const SESSION_KEY_A = 'agent:main:session-1700000000000';
@@ -126,9 +126,6 @@ async function setupStatefulHostHandler(
       { key: 'agent:main:session-1700000001000', displayName: 'Chat B' },
     ];
 
-    // Set up legacy gateway:status channel (some main-process code may poll it).
-    try { ipcMain.removeHandler('gateway:status'); } catch { /* not registered */ }
-    ipcMain.handle('gateway:status', async () => GATEWAY_STATUS);
 
     try { ipcMain.removeHandler('host:invoke'); } catch { /* not registered */ }
     ipcMain.handle('host:invoke', async (_event: unknown, request: {
@@ -327,6 +324,7 @@ async function setupStatefulHostHandler(
     archivedEntries: options.archivedEntries,
     sessionsList: options.sessionsList ?? SESSIONS_LIST,
   });
+  await installIpcMocks(electronApp, { gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } });
 }
 
 test.describe('Sidebar session workgroups and archive', () => {
