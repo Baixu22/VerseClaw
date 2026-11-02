@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "RsiFeedbackLoopProtocol/v1",
+  "generatedAt": "2026-11-02",
+  "driven_by": "agent",
+  "actor": "codex/rsi-feedback-pilot",
+  "status": "frozen",
+  "taskForestNode": "TF-0654",
+  "question": "Does recorded role-memory feedback improve retrieval/retention outcomes beyond the no-feedback baseline?",
+  "corpus": {
+    "suiteId": "rsi-historical-core",
+    "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
+    "cases": 24,
+    "split": { "public": 12, "heldOut": 12 },
+    "rule": "Task identities are reused unchanged; this pilot may not author its own task set."
+  },
+  "arms": [
+    { "id": "off", "feedbackWeight": 0, "description": "Today's behaviour; the flag is off." },
+    { "id": "on", "feedbackWeight": 0.2, "description": "Feedback contributes a bounded weight to the retrieval score." }
+  ],
+  "flag": {
+    "name": "runtime.memory.feedbackWeighting.enabled",
+    "default": false,
+    "singleFlagRollback": true,
+    "offState": "bit-identical to today's retrieval/retention outputs for the same inputs"
+  },
+  "feedbackSource": {
+    "table": "role_memory_feedback",
+    "outcomes": ["helpful", "neutral", "harmful", "missing_needed", "user_corrected"],
+    "attributionRequired": ["injectionId", "cardId"],
+    "exportPath": "harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json",
+    "offlineOnly": true
+  },
+  "design": {
+    "k": 3,
+    "minimumCompleteCases": 20,
+    "confidenceLevel": 0.95,
+    "pairUnit": "caseId/repeat",
+    "inferenceUnit": "caseId",
+    "intervalMethod": "normal-approximation over complete case clusters",
+    "insufficientSampleGate": "insufficient-evidence"
+  },
+  "metrics": {
+    "primary": "pass^k",
+    "reportedSeparately": ["pass@k", "meanTokens", "p95LatencyMs", "falseBlocks", "safetyViolations"],
+    "feedbackWeight": 0.2
+  },
+  "budget": {
+    "providerCallsAuthorized": 0,
+    "maxTokensPerCompletedCase": null,
+    "maxToolCallsPerCompletedCase": null,
+    "maxWallClockMsPerTrial": 900000,
+    "note": "Null budgets are recorded honestly; a promotion with a null cost dimension is disqualified."
+  },
+  "negativeControls": [
+    { "id": "unattributed-feedback", "expects": "reject rows without injectionId/cardId" },
+    { "id": "empty-store", "expects": "insufficient-evidence" },
+    { "id": "safety-anchor-regression", "expects": "eliminate even if pass^k improves" },
+    { "id": "missing-cost", "expects": "eliminate; a null cost dimension cannot be promoted" },
+    { "id": "weight-out-of-range", "expects": "reject protocol/run" },
+    { "id": "default-on-claim", "expects": "reject; the flag stays false" }
+  ],
+  "decisionStates": ["promote", "hold", "eliminate", "insufficient-evidence"],
+  "promotionRequirements": {
+    "passKAbsoluteImprovement": 0.05,
+    "intervalLowerBoundStrictlyPositive": true,
+    "costIncreaseMaximum": 0.1,
+    "zeroRegressionOnNegativeControls": true,
+    "zeroSkipOrFlakeOnSafetyCases": true
+  },
+  "forbidden": [
+    "changing a product default or product lock",
+    "adding provider calls",
+    "authoring the task set, grader or evidence generator inside the run",
+    "claiming benefit from a below-floor sample",
+    "claiming real-human evidence"
+  ],
+  "limitations": [
+    "This protocol fixes the question and the bar; it does not run the pilot.",
+    "No feedback rows exist in the current checkout, so the first report must be insufficient-evidence.",
+    "Feedback is a behavioural signal, not a quality oracle; it can be gamed."
+  ]
+}

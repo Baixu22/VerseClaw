@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "RsiFeedbackLoopReport/v1",
+  "generatedAt": "2026-11-02T03:17:52.919Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-feedback-pilot",
+  "taskForestNode": "TF-0654",
+  "protocolPath": "harness/specs/fixtures/rsi-feedback-loop/protocol.v1.json",
+  "status": "insufficient-evidence",
+  "reasons": [
+    "feedback export absent: harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json",
+    "no recorded feedback rows",
+    "attributed cases 0 < required 20",
+    "no provider calls authorised; this report is an offline eligibility readout, not an effect"
+  ],
+  "feedbackSource": {
+    "state": "absent",
+    "path": "harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json"
+  },
+  "input": {
+    "rows": 0,
+    "attributed": 0,
+    "unattributed": 0,
+    "completeCases": 0,
+    "counts": {}
+  },
+  "design": {
+    "k": 3,
+    "minimumCompleteCases": 20,
+    "confidenceLevel": 0.95,
+    "pairUnit": "caseId/repeat",
+    "inferenceUnit": "caseId",
+    "intervalMethod": "normal-approximation over complete case clusters",
+    "insufficientSampleGate": "insufficient-evidence"
+  },
+  "flag": {
+    "name": "runtime.memory.feedbackWeighting.enabled",
+    "default": false,
+    "singleFlagRollback": true,
+    "offState": "bit-identical to today's retrieval/retention outputs for the same inputs"
+  },
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "productLocksChanged": false,
+    "providerCalls": 0,
+    "realHuman": false
+  }
+}
