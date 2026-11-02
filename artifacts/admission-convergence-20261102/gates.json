@@ -2,7 +2,7 @@
   "schema": "AdmissionGateMatrix/v1",
   "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
   "boundary": "boundary-diff.json",
-  "verdict": "pending-full-e2e",
+  "verdict": "not-pass",
   "gates": [
     {
       "schema": "AdmissionGate/v1",
@@ -73,9 +73,10 @@
     {
       "schema": "AdmissionGate/v1",
       "command": "pnpm run test:e2e:run",
-      "exitCode": null,
-      "classification": "pending",
+      "exitCode": 1,
+      "classification": "not-pass",
       "stdout": "logs/e2e-final.log",
+      "captureMode": "combined",
       "summary": "e2e/final-summary.json"
     }
   ]

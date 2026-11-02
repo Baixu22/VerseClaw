@@ -1,8 +1,9 @@
 {
   "schema": "AdmissionGate/v1",
   "command": "pnpm run test:e2e:run",
-  "exitCode": null,
-  "classification": "pending-clean-run",
+  "exitCode": 1,
+  "classification": "not-pass",
   "stdout": "logs/e2e-final.log",
+  "captureMode": "combined",
   "summary": "e2e/final-summary.json"
 }

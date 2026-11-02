@@ -1,1 +1,1813 @@
-Final clean-candidate E2E run pending; this placeholder is replaced by the complete Playwright log.
+$ playwright test
+
+Running 418 tests using 1 worker
+
+(node:44076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 tests\e2e\agency-role-promotion.spec.ts:103:7 鈥?Agency role promotion 鈥?reviews, approves, refreshes, and retires a separate config role (21.4s)
+  ok   2 tests\e2e\agent-avatar-orchestration.spec.ts:11:7 鈥?local Agent avatar identity 鈥?persists a locally generated avatar across restart and restores the deterministic default (30.8s)
+  ok   3 tests\e2e\agent-browser-workbench.spec.ts:13:7 鈥?Agent Browser workbench 鈥?shows Host API session, task, profile, and Vault metadata at their workspace destinations (17.8s)
+  ok   4 tests\e2e\agent-dev-quality.spec.ts:8:7 鈥?agent dev quality gates 鈥?produces an accessibility report for a seeded scenario (15.3s)
+  ok   5 tests\e2e\agent-dev-quality.spec.ts:24:7 鈥?agent dev quality gates 鈥?renders assistant-ui welcome suggestions with aligned card styling (13.2s)
+  ok   6 tests\e2e\agent-dev-quality.spec.ts:60:7 鈥?agent dev quality gates 鈥?captures a stable visual artifact for a seeded scenario (14.1s)
+  ok   7 tests\e2e\agent-dev-quality.spec.ts:74:7 鈥?agent dev quality gates 鈥?loads the in-app Agent Dev Workbench through host-api and records a scenario (14.9s)
+
+  ok   8 tests\e2e\agent-first-operational.spec.ts:156:7 鈥?Agent First operational acceptance 鈥?runs source OAT and, when a frozen package is provided, packaged parity (2.7m)
+  ok   9 tests\e2e\agent-first-product-effect.spec.ts:22:7 鈥?agent-driven real product effects in isolated profile 1 (1.3m)
+  ok  10 tests\e2e\agent-first-product-effect.spec.ts:22:7 鈥?agent-driven real product effects in isolated profile 2 (1.2m)
+  ok  11 tests\e2e\agent-first-product-effect.spec.ts:22:7 鈥?agent-driven real product effects in isolated profile 3 (59.8s)
+  ok  12 tests\e2e\agent-reach-readers.spec.ts:18:7 鈥?Reach Readers packaged plugin 鈥?ships enabled with readonly tool contracts and a credential-safe handoff skill (48.5s)
+  ok  13 tests\e2e\agents-capability-workbench.spec.ts:13:7 鈥?Agent capability workbench 鈥?adds a candidate capability through the renderer workbench (19.9s)
+  ok  14 tests\e2e\agents-propose-facts-confirm.spec.ts:70:7 鈥?R3-2.4 proposeFacts confirm queue 鈥?lists a pending candidate and confirms it (14.6s)
+  ok  15 tests\e2e\agents-propose-facts-confirm.spec.ts:98:7 鈥?R3-2.4 proposeFacts confirm queue 鈥?shows the empty state when enabled with no candidates (13.1s)
+  ok  16 tests\e2e\agents-propose-facts-confirm.spec.ts:118:7 鈥?R3-2.4 proposeFacts confirm queue 鈥?shows the disabled notice when proposeFacts flags are off (default) (14.6s)
+  ok  17 tests\e2e\ai-elements-rendering.spec.ts:137:7 鈥?AI Elements local adapted rendering 鈥?renders migrated assistant output cards with screenshot coverage (13.3s)
+  ok  18 tests\e2e\app-smoke.spec.ts:4:7 鈥?Verse Claw Electron smoke flows 鈥?shows the setup wizard on a fresh profile (12.8s)
+  ok  19 tests\e2e\app-smoke.spec.ts:10:7 鈥?Verse Claw Electron smoke flows 鈥?can skip setup and navigate to the models page (12.9s)
+  ok  20 tests\e2e\app-smoke.spec.ts:23:7 鈥?Verse Claw Electron smoke flows 鈥?persists skipped setup across relaunch for the same isolated profile (26.3s)
+  ok  21 tests\e2e\app-smoke.spec.ts:43:7 鈥?Verse Claw Electron smoke flows 鈥?invokes the real typed host bridge for app version (11.2s)
+  ok  22 tests\e2e\app-smoke.spec.ts:54:7 鈥?Verse Claw Electron smoke flows 鈥?does not show a fatal dialog when an E2E output pipe closes (15.7s)
+  ok  23 tests\e2e\basic-advanced-mode.spec.ts:15:7 鈥?Basic and advanced UI depth mode 鈥?toggles diagnostic depth without changing chat dispatch payload shape (15.0s)
+BEAM_VERIFY_REPORT: {
+  "idle": {
+    "beam": true,
+    "shell": true,
+    "active": false,
+    "fading": false,
+    "overflow": "hidden",
+    "borderRadius": "25px",
+    "beamInsideShell": true,
+    "beamMatchesShellSize": true
+  },
+  "sendBtnState": {
+    "disabled": true,
+    "aria": "Send",
+    "title": null
+  },
+  "sendBtnAfterFill": {
+    "disabled": false,
+    "aria": "Send"
+  },
+  "sendingInstant": {
+    "beamActive": true,
+    "intervention": false,
+    "capabilityDialog": false,
+    "error": null,
+    "optimisticUserMsg": true
+  },
+  "sending": {
+    "active": true,
+    "fading": false,
+    "afterBackground": "conic-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 54%, rgba(0, 0, 0, 0.08) 57%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0,",
+    "strengthVar": "0.3"
+  },
+  "slashPalette": {
+    "found": true,
+    "paletteTop": 351,
+    "beamTop": 679,
+    "paletteAboveBeam": true,
+    "hitIsPalette": true
+  },
+  "lightTheme": {
+    "afterBackground": "conic-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 54%, rgba(0, 0, 0, 0.08) 57%, rgba(0, 0, 0, 0.2) 60%, rgba(0, 0, 0,",
+    "active": true
+  },
+  "consoleErrors": []
+}
+  ok  24 tests\e2e\beam-composer-verify.spec.ts:92:5 鈥?sunset beam wraps composer, lights on sending, menus unclipped (15.9s)
+  ok  25 tests\e2e\billing-page.spec.ts:223:5 鈥?shows no-data guidance when billing history is empty (12.0s)
+  ok  26 tests\e2e\billing-page.spec.ts:253:7 鈥?Billing page 鈥?renders a dedicated token billing page with complete charts (14.3s)
+  ok  27 tests\e2e\billing-page.spec.ts:333:7 鈥?Billing page 鈥?keeps transcript-backed billing history visible when gateway is offline (12.7s)
+  ok  28 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in light (21.7s)
+  ok  29 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to setup and reload in light (20.0s)
+  x   30 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in dark (25.8s)
+(node:12520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  31 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to setup and reload in dark (39.1s)
+  ok  32 tests\e2e\browser-security-recovery.spec.ts:99:7 鈥?Browser security + task recovery (TF-0005) 鈥?task approval/explain + vault health discrimination (host path) (16.8s)
+  ok  33 tests\e2e\browser-supervised-task-tf0503.spec.ts:69:7 鈥?Browser supervised task capability (TF-0503) 鈥?real Main path: supervised self-description and private-network default deny (19.5s)
+  ok  34 tests\e2e\change-context-review-loop.spec.ts:18:5 鈥?opt-in context comparisons and visible comment freshness never move an anchor (29.8s)
+HEAD is now at 4524d5d base
+  ok  35 tests\e2e\change-context-review-loop.spec.ts:84:5 鈥?real Main owners bind comments, verdicts and approved journaled apply (VG off) (37.1s)
+HEAD is now at 4524d5d base
+  ok  36 tests\e2e\change-context-review-loop.spec.ts:84:5 鈥?real Main owners bind comments, verdicts and approved journaled apply (VG opt-in) (36.8s)
+  ok  37 tests\e2e\channels-account-id-persistence.spec.ts:13:7 鈥?Channels account editor behavior 鈥?keeps Feishu credentials when account ID is changed (16.5s)
+  ok  38 tests\e2e\channels-account-id-validation.spec.ts:38:7 鈥?Channels account ID validation 鈥?rejects non-canonical custom account ID before save (13.7s)
+  x   39 tests\e2e\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent (13.1s)
+(node:26352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  40 tests\e2e\channels-health-diagnostics.spec.ts:4:7 鈥?Channels health diagnostics 鈥?does not flash a stale gateway-not-running banner while status is running (14.4s)
+  ok  41 tests\e2e\channels-health-diagnostics.spec.ts:62:7 鈥?Channels health diagnostics 鈥?shows degraded banner, restarts gateway, and copies diagnostics (14.0s)
+  ok  42 tests\e2e\chat-agent-effort.spec.ts:26:7 鈥?Verse Claw combined model and reasoning settings 鈥?opens the reasoning section in the shared menu, slides to max, and commits max (14.9s)
+  ok  43 tests\e2e\chat-agent-effort.spec.ts:201:7 鈥?Verse Claw combined model and reasoning settings 鈥?keeps the reasoning slider inside the shared dropdown surface (17.5s)
+  ok  44 tests\e2e\chat-agent-effort.spec.ts:352:7 鈥?Verse Claw combined model and reasoning settings 鈥?does not commit when slider stays at the current value (14.0s)
+  ok  45 tests\e2e\chat-artifact-panel.spec.ts:80:7 鈥?Chat artifact panel 鈥?shows artifact tab button in the artifact panel (14.0s)
+  ok  46 tests\e2e\chat-artifact-panel.spec.ts:119:7 鈥?Chat artifact panel 鈥?shows managed structured artifacts through the host gateway seam (14.2s)
+  ok  47 tests\e2e\chat-artifact-panel.spec.ts:169:7 鈥?Chat artifact panel 鈥?shows empty state when no artifacts exist (13.8s)
+  ok  48 tests\e2e\chat-artifact-panel.spec.ts:212:7 鈥?Chat artifact panel 鈥?shows the artifact view with title (13.4s)
+  ok  49 tests\e2e\chat-artifact-panel.spec.ts:254:5 鈥?keeps the conversation column in place until the workspace panel expands (13.7s)
+  ok  50 tests\e2e\chat-assistant-markdown-plain.spec.ts:54:7 鈥?Verse Claw assistant reply Markdown styling 鈥?renders assistant text as plain Markdown while keeping user prompts bubbled (13.2s)
+  ok  51 tests\e2e\chat-assistant-rendering-visual.spec.ts:220:7 鈥?Verse Claw assistant-style rendering layer 鈥?renders rich assistant cards and validates quote, token, and heatgraph interactions (13.5s)
+  -   52 tests\e2e\chat-cache-deepseek-cache-first.spec.ts:388:7 鈥?DeepSeek prompt cache-first live E2E 鈥?keeps a stable provider prefix warm across real DeepSeek turns
+  ok  53 tests\e2e\chat-cache-guard.spec.ts:8:7 鈥?Verse Claw chat prompt cache guard 鈥?shows cache health and requires confirmation before switching models (19.5s)
+  -   54 tests\e2e\chat-cache-live-model.spec.ts:400:7 鈥?Verse Claw prompt cache live model E2E 鈥?performs real model calls and exports prompt-cache metrics
+  ok  55 tests\e2e\chat-checkpoints.spec.ts:134:5 鈥?checkpoints dialog lists and restores a session checkpoint (12.9s)
+  ok  56 tests\e2e\chat-code-block-wrap.spec.ts:47:7 鈥?Verse Claw chat code block wrapping 鈥?soft-wraps long lines inside fenced code blocks instead of overflowing (12.3s)
+  ok  57 tests\e2e\chat-composer-git-strip.spec.ts:182:7 鈥?Chat composer Git strip 鈥?renders runtime approval inline with the composer and Git strip (13.7s)
+  ok  58 tests\e2e\chat-composer-git-strip.spec.ts:258:7 鈥?Chat composer Git strip 鈥?shows repository context and routes branch/worktree actions through host APIs (18.6s)
+  ok  59 tests\e2e\chat-composer-packs.spec.ts:104:7 鈥?Chat composer feature plugins 鈥?shows Superpowers skills and inserts enabled Office CLI actions (13.3s)
+  ok  60 tests\e2e\chat-composer-packs.spec.ts:135:7 鈥?Chat composer feature plugins 鈥?keeps Office actions visible and routes to setup when Office CLI skills are not enabled (13.7s)
+  ok  61 tests\e2e\chat-context-pressure.spec.ts:21:7 鈥?Verse Claw chat context pressure 鈥?shows session context, cache-served tokens and warm hit rate in the composer (12.1s)
+  ok  62 tests\e2e\chat-context-pressure.spec.ts:161:7 鈥?Verse Claw chat context pressure 鈥?shows the session row but omits optional metrics the runtime did not report (12.7s)
+  ok  63 tests\e2e\chat-conversation-resources.spec.ts:124:7 鈥?Conversation resources 鈥?renders every resource type, degrades explicitly, and survives history reload (26.3s)
+  ok  64 tests\e2e\chat-draft-preservation.spec.ts:159:7 鈥?Verse Claw chat draft preservation across session switches 鈥?preserves composer drafts when switching between sessions and back (15.0s)
+  ok  65 tests\e2e\chat-file-changes.spec.ts:125:7 鈥?Verse Claw chat file changes 鈥?shows line stats on generated file cards (12.0s)
+  ok  66 tests\e2e\chat-file-changes.spec.ts:219:7 鈥?Verse Claw chat file changes 鈥?opens html files from chat as rendered previews (13.0s)
+  ok  67 tests\e2e\chat-file-changes.spec.ts:328:7 鈥?Verse Claw chat file changes 鈥?keeps an attached file selected after switching through workspace (12.6s)
+  ok  68 tests\e2e\chat-history-startup-retry.spec.ts:13:7 鈥?Verse Claw startup chat history recovery 鈥?retries an initial chat.history timeout and eventually renders history (12.3s)
+  ok  69 tests\e2e\chat-history-startup-retry.spec.ts:66:7 鈥?Verse Claw startup chat history recovery 鈥?renders local transcript while initial chat.history is still pending (15.9s)
+  ok  70 tests\e2e\chat-latex-rendering.spec.ts:43:7 鈥?Verse Claw chat LaTeX rendering 鈥?renders KaTeX markup for $...$, $$...$$, \(...\) and \[...\] delimiters (11.6s)
+  ok  71 tests\e2e\chat-layout-cdp.spec.ts:156:7 鈥?Chat page layout CDP checks 鈥?keeps chat content, session search modal, and window controls aligned (19.5s)
+  ok  72 tests\e2e\chat-long-task-control.spec.ts:16:7 鈥?Verse Claw chat long-task recovery controls 鈥?shows recovery status and drains queued follow-up through Host API (15.9s)
+  ok  73 tests\e2e\chat-manual-compaction.spec.ts:15:7 鈥?Verse Claw chat manual compaction 鈥?opens confirmation dialog and calls the session compaction Host API (13.3s)
+  ok  74 tests\e2e\chat-memory-injection-panel.spec.ts:103:7 鈥?R3-2.2 memory-injection panel 鈥?injected: shows the source group with selected refs and budget (11.7s)
+  ok  75 tests\e2e\chat-memory-injection-panel.spec.ts:120:7 鈥?R3-2.2 memory-injection panel 鈥?none: a successful empty read shows the empty state (12.1s)
+  ok  76 tests\e2e\chat-memory-injection-panel.spec.ts:134:7 鈥?R3-2.2 memory-injection panel 鈥?timeout: a failed read shows a retryable error (12.9s)
+  ok  77 tests\e2e\chat-model-picker-tiers.spec.ts:12:7 鈥?Verse Claw chat model picker tiers (Area 2) 鈥?turn scope: sets chip and forwards modelRef in send payload (16.0s)
+  ok  78 tests\e2e\chat-model-picker-tiers.spec.ts:187:7 鈥?Verse Claw chat model picker tiers (Area 2) 鈥?session scope: calls sessions.patchRuntimeModel with modelRef (22.9s)
+  ok  79 tests\e2e\chat-model-picker.spec.ts:7:7 鈥?Verse Claw chat model picker 鈥?switches the current agent model without requesting a gateway refresh (20.5s)
+[fp-p1-harness] connection #1
+  x   80 tests\e2e\chat-model-scope-runtime.spec.ts:8:5 鈥?turn model wins for one real Gateway request without changing the session choice (1.8m)
+(node:32984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  81 tests\e2e\chat-new-session-date.spec.ts:20:7 鈥?Verse Claw chat session date grouping 鈥?lists every conversation newest-first, with no collapsible date buckets (23.0s)
+  ok  82 tests\e2e\chat-new-session-date.spec.ts:132:7 鈥?Verse Claw chat session date grouping 鈥?new chat appears in Today only after the first message and lands without overshoot (16.2s)
+  ok  83 tests\e2e\chat-plan-mode-write-challenge.spec.ts:56:7 鈥?Plan mode real write challenge 鈥?blocks terminal, file write, and mutating Gateway RPC without side effects (11.2s)
+  ok  84 tests\e2e\chat-plan-mode-write-challenge.spec.ts:116:7 鈥?Plan mode real write challenge 鈥?read-only mode blocks git --output without touching the target file (11.1s)
+  ok  85 tests\e2e\chat-question-directory.spec.ts:52:7 鈥?Verse Claw chat side panels 鈥?keeps assistive panels hidden on a fresh empty chat (11.1s)
+  ok  86 tests\e2e\chat-question-directory.spec.ts:118:7 鈥?Verse Claw chat side panels 鈥?keeps the transcript usable and the removed question directory absent on a long conversation (12.1s)
+  ok  87 tests\e2e\chat-question-directory.spec.ts:196:7 鈥?Verse Claw chat side panels 鈥?hides chat assistive panels when the workspace panel opens (11.9s)
+  ok  88 tests\e2e\chat-recovery-assist.spec.ts:16:7 鈥?Chat recovery assist 鈥?shows evidence-backed recovery suggestions through existing handoff, queue, and compaction actions (11.8s)
+  ok  89 tests\e2e\chat-renderer-pipeline.spec.ts:116:7 鈥?Chat renderer pipeline 鈥?assistant-ui + tool-ui coexistence 鈥?renders Markdown prose and tool-ui cards in the same assistant message (12.6s)
+  ok  90 tests\e2e\chat-run-activity-settings.spec.ts:4:7 鈥?Chat run activity settings 鈥?keeps completed run activity expanded by default and allows changing the preference (12.5s)
+  ok  91 tests\e2e\chat-run-state-events.spec.ts:60:9 鈥?Verse Claw chat run state events 鈥?preserves foreground exec output and releases the composer after error (13.2s)
+  ok  92 tests\e2e\chat-run-state-events.spec.ts:60:9 鈥?Verse Claw chat run state events 鈥?preserves foreground exec output and releases the composer after aborted (13.1s)
+  ok  93 tests\e2e\chat-run-state-events.spec.ts:143:7 鈥?Verse Claw chat run state events 鈥?anchors the live thinking matrix to the latest assistant output and clears it after completion (13.7s)
+  ok  94 tests\e2e\chat-run-state-events.spec.ts:325:7 鈥?Verse Claw chat run state events 鈥?keeps stop control active across non-terminal runtime events and clears it on run.ended (12.3s)
+  ok  95 tests\e2e\chat-run-state-events.spec.ts:482:7 鈥?Verse Claw chat run state events 鈥?accepts the five-state composer contract and separates guide, queue, interrupt, pause, and resume (14.4s)
+  ok  96 tests\e2e\chat-run-state-events.spec.ts:609:7 鈥?Verse Claw chat run state events 鈥?renders historical execution graph with tool results and final assistant reply (39.5s)
+  ok  97 tests\e2e\chat-run-state-events.spec.ts:746:7 鈥?Verse Claw chat run state events 鈥?shows clear image preview states for generated media while hydration retries (19.9s)
+  ok  98 tests\e2e\chat-run-state-events.spec.ts:821:7 鈥?Verse Claw chat run state events 鈥?hydrates Windows MEDIA SVG artifacts without leaking the marker text (11.3s)
+  ok  99 tests\e2e\chat-scroll-pin-bottom.spec.ts:29:7 鈥?Verse Claw chat scroll pin-to-bottom during runs 鈥?keeps the scrollbar pinned to the bottom through oscillating tool-heavy streaming, and yields to manual scroll-up (14.4s)
+  ok 100 tests\e2e\chat-scroll-to-latest.spec.ts:21:7 鈥?Verse Claw chat scroll-to-latest affordance 鈥?shows a jump button when reading older messages and returns to the latest message (12.5s)
+  ok 101 tests\e2e\chat-session-compact-range.spec.ts:155:7 鈥?Verse Claw located (range) compaction 鈥?summarizes from a chosen message through the host-api, keeping the newer side (12.4s)
+  ok 102 tests\e2e\chat-session-compact-range.spec.ts:198:7 鈥?Verse Claw located (range) compaction 鈥?summarizes up to a chosen message, folding it into the summary (11.5s)
+  ok 103 tests\e2e\chat-session-derived.spec.ts:206:7 鈥?Verse Claw derived-session listing 鈥?lists the sessions derived from the current one and switches to the child (11.6s)
+  ok 104 tests\e2e\chat-session-fork.spec.ts:275:7 鈥?Verse Claw chat session fork 鈥?creates and selects a forked session with inherited history and copied draft without auto-send (12.4s)
+  ok 105 tests\e2e\chat-session-fork.spec.ts:512:7 鈥?Verse Claw chat session fork 鈥?offers handoff preparation when fork fails because the parent is too large (12.4s)
+  ok 106 tests\e2e\chat-session-fork.spec.ts:606:7 鈥?Verse Claw chat session fork 鈥?disables fork entry points while a run is active (11.6s)
+  ok 107 tests\e2e\chat-session-handoff.spec.ts:227:7 鈥?Verse Claw chat session handoff 鈥?keeps the current handoff draft when an old conversation responds late (12.5s)
+  ok 108 tests\e2e\chat-session-handoff.spec.ts:291:7 鈥?Verse Claw chat session handoff 鈥?previews, edits, and creates a new session with the draft prefilled without auto-send (13.1s)
+  ok 109 tests\e2e\chat-session-handoff.spec.ts:450:7 鈥?Verse Claw chat session handoff 鈥?disables handoff entry points while a run is active (11.6s)
+  ok 110 tests\e2e\chat-session-handoff.spec.ts:519:7 鈥?Verse Claw chat session handoff 鈥?refuses a relay once the handoff depth limit is reached (#179) (11.0s)
+  ok 111 tests\e2e\chat-session-handoff.spec.ts:564:7 鈥?Verse Claw chat session handoff 鈥?keeps the editable draft and session when creation rejects changed ancestry (12.5s)
+  ok 112 tests\e2e\chat-skill-trigger-i18n.spec.ts:67:7 鈥?Verse Claw chat skill trigger 鈥?renders localized skill access inside the slash palette (14.2s)
+  ok 113 tests\e2e\chat-skill-trigger-i18n.spec.ts:215:7 鈥?Verse Claw chat skill trigger 鈥?clicking the composer skill token opens the preview sidebar (12.1s)
+  ok 114 tests\e2e\chat-skill-trigger-i18n.spec.ts:316:7 鈥?Verse Claw chat skill trigger 鈥?shows a confirmation dialog for chat-driven skill enable and cancels cleanly (12.9s)
+  ok 115 tests\e2e\chat-skill-trigger-i18n.spec.ts:426:7 鈥?Verse Claw chat skill trigger 鈥?blocks high-risk MCP JSON in the chat confirmation dialog (11.2s)
+  ok 116 tests\e2e\chat-slash-commands.spec.ts:125:7 鈥?Verse Claw chat slash commands 鈥?discovers and dispatches quick actions from the composer (14.1s)
+  ok 117 tests\e2e\chat-slash-commands.spec.ts:371:7 鈥?Verse Claw chat slash commands 鈥?runs the existing fork flow from /fork (11.2s)
+  ok 118 tests\e2e\chat-slash-commands.spec.ts:460:7 鈥?Verse Claw chat slash commands 鈥?keeps the slash menu above the composer on a narrow viewport (11.3s)
+  ok 119 tests\e2e\chat-slash-session-lifecycle.spec.ts:95:5 鈥?slash /rename renames the current session through the host API (12.1s)
+  ok 120 tests\e2e\chat-slash-session-lifecycle.spec.ts:125:5 鈥?slash /clear resets the local message view (11.3s)
+  ok 121 tests\e2e\chat-table-header-light.spec.ts:60:7 鈥?Verse Claw chat table header styling 鈥?renders markdown table headers with transparent background and bold text in light theme (12.3s)
+  ok 122 tests\e2e\chat-task-loop-upgrade.spec.ts:46:7 鈥?Chat Task Loop upgrade 鈥?suggests but only starts task_loop.run after explicit confirmation (11.4s)
+team-orchestration-host-calls [
+  { module: [32m'window'[39m, action: [32m'isMaximized'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'permissions'[39m,
+    action: [32m'approvals'[39m,
+    payload: { includeExpired: [33mtrue[39m, limit: [33m200[39m }
+  },
+  { module: [32m'remoteTasks'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'agentBrowser'[39m, action: [32m'tasks'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'gateway'[39m,
+    action: [32m'rpc'[39m,
+    payload: {
+      method: [32m'inbox.operator.list'[39m,
+      params: {},
+      timeoutMs: [90mundefined[39m,
+      approvalId: [90mundefined[39m
+    }
+  },
+  { module: [32m'agents'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  { module: [32m'resourceTracker'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'runtimeApprovals'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accounts'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accountKeyInfo'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'vendors'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'getDefaultAccount'[39m, payload: [1mnull[22m },
+  { module: [32m'gateway'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'sessionActivity'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [1mnull[22m, sessionKey: [32m'agent:main:main'[39m }
+  },
+  { module: [32m'agents'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'workspaces'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'settings'[39m, action: [32m'getAll'[39m, payload: [1mnull[22m },
+  { module: [32m'gateway'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accounts'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accountKeyInfo'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'vendors'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'getDefaultAccount'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accounts'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'accountKeyInfo'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'vendors'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'getDefaultAccount'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'branches'[39m, payload: [1mnull[22m },
+  { module: [32m'git'[39m, action: [32m'worktrees'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'taskLedger'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m }
+  },
+  {
+    module: [32m'sessionActivity'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m }
+  },
+  {
+    module: [32m'gateway'[39m,
+    action: [32m'rpc'[39m,
+    payload: {
+      method: [32m'chat.history'[39m,
+      params: [36m[Object][39m,
+      timeoutMs: [33m35000[39m,
+      approvalId: [90mundefined[39m
+    }
+  },
+  {
+    module: [32m'taskLedger'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m }
+  },
+  {
+    module: [32m'permissions'[39m,
+    action: [32m'approvals'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      sessionKey: [32m'agent:main:main'[39m,
+      status: [32m'pending'[39m,
+      limit: [33m50[39m
+    }
+  },
+  { module: [32m'gateway'[39m, action: [32m'status'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'gateway'[39m,
+    action: [32m'rpc'[39m,
+    payload: {
+      method: [32m'sessions.list'[39m,
+      params: [36m[Object][39m,
+      timeoutMs: [90mundefined[39m,
+      approvalId: [90mundefined[39m
+    }
+  },
+  {
+    module: [32m'sessionActivity'[39m,
+    action: [32m'snapshot'[39m,
+    payload: { workspaceId: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m }
+  },
+  { module: [32m'providers'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  { module: [32m'providers'[39m, action: [32m'list'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'taskLedger'[39m,
+    action: [32m'appendEvents'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      events: [36m[Array][39m,
+      idempotencyKey: [32m'turn:agent:main:main:1793642131466'[39m
+    }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'live'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, runId: [1mnull[22m, streaming: [33mfalse[39m }
+  },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'promptCacheStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, modelRef: [1mnull[22m, usedTokens: [1mnull[22m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'contextRange'[39m,
+    payload: {
+      sessionKey: [32m'agent:main:main'[39m,
+      modelRef: [1mnull[22m,
+      messageCount: [33m3[39m,
+      usedTokens: [1mnull[22m
+    }
+  },
+  {
+    module: [32m'sessions'[39m,
+    action: [32m'compactionStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, agentId: [32m'main'[39m }
+  },
+  {
+    module: [32m'sessions'[39m,
+    action: [32m'longTaskControlStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, agentId: [32m'main'[39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'saveState'[39m,
+    payload: { id: [32m'default'[39m, sessionKey: [32m'agent:main:main'[39m, state: [36m[Object][39m }
+  },
+  {
+    module: [32m'workspaces'[39m,
+    action: [32m'resolveCoordinator'[39m,
+    payload: {
+      workspaceId: [32m'default'[39m,
+      agentId: [32m'main'[39m,
+      sessionKey: [32m'agent:main:main'[39m
+    }
+  },
+  { module: [32m'resourceEnvelope'[39m, action: [32m'getState'[39m, payload: [1mnull[22m },
+  {
+    module: [32m'usage'[39m,
+    action: [32m'promptCacheStatus'[39m,
+    payload: { sessionKey: [32m'agent:main:main'[39m, modelRef: [1mnull[22m, usedTokens: [33m0[39m }
+  }
+]
+  ok 123 tests\e2e\chat-task-visualizer.spec.ts:288:7 鈥?Verse Claw chat execution graph 鈥?renders team orchestration task graph details from mocked history (22.7s)
+  ok 124 tests\e2e\chat-task-visualizer.spec.ts:420:7 鈥?Verse Claw chat execution graph 鈥?renders internal yield status and linked subagent branch from mocked IPC (17.5s)
+  ok 125 tests\e2e\chat-task-visualizer.spec.ts:572:7 鈥?Verse Claw chat execution graph 鈥?preserves long execution history counts and strips the full folded reply prefix (11.7s)
+  ok 126 tests\e2e\chat-task-visualizer.spec.ts:673:7 鈥?Verse Claw chat execution graph 鈥?surfaces terminal model errors and stops the stale thinking state (12.1s)
+  ok 127 tests\e2e\chat-tool-ui-execution-surfaces.spec.ts:108:7 鈥?Tool UI execution surfaces 鈥?renders official execution surfaces in light, dark, and narrow layouts (19.2s)
+  ok 128 tests\e2e\chat-tool-ui-interaction-flow.spec.ts:88:7 鈥?Verse Claw Tool UI interaction flow 鈥?option-list and question-flow send response 鈥?option-list: select option, send response, verify user message and mock assistant reply (12.8s)
+  ok 129 tests\e2e\chat-tool-ui-interaction-flow.spec.ts:214:7 鈥?Verse Claw Tool UI interaction flow 鈥?option-list and question-flow send response 鈥?question-flow: navigate steps, send response, verify user message and mock assistant reply (13.3s)
+  ok 130 tests\e2e\chat-tool-ui-interactions.spec.ts:111:7 鈥?Verse Claw Tool UI interaction rendering 鈥?renders plan, options, question flow, and preferences cards from assistant payloads (12.1s)
+  ok 131 tests\e2e\chat-turn-summary-collapse.spec.ts:150:7 鈥?Verse Claw chat turn summary collapse 鈥?collapses completed long task process and expands details on demand (12.6s)
+  ok 132 tests\e2e\chat-turn-summary-collapse.spec.ts:212:7 鈥?Verse Claw chat turn summary collapse 鈥?leaves short conversations unwrapped (11.2s)
+  ok 133 tests\e2e\chat-user-message-actions.spec.ts:234:7 鈥?Verse Claw user message hover actions 鈥?shows copy and edit controls, opens the inline editor, and resends through chat send (12.2s)
+  ok 134 tests\e2e\chat-welcome-hero-fakecoding.spec.ts:44:7 鈥?FakeCoding chat welcome hero alignment 鈥?names the workspace as a context-row token and opens the shared picker upward (12.7s)
+  ok 135 tests\e2e\chat-welcome-hero-verse-shot.spec.ts:134:7 鈥?verse welcome hero screenshot 鈥?dark (15.4s)
+  ok 136 tests\e2e\chat-welcome-hero-verse-shot.spec.ts:134:7 鈥?verse welcome hero screenshot 鈥?light (14.9s)
+  ok 137 tests\e2e\chat-welcome-hero-verse-shot.spec.ts:183:5 鈥?chips retract while the composer holds a draft and return when it is cleared (13.7s)
+  ok 138 tests\e2e\chat-work-mode.spec.ts:151:7 鈥?Verse Claw chat without Work Mode 鈥?hides Work Mode UI and sends payload without workMode (12.0s)
+  ok 139 tests\e2e\chat-workspace-header.spec.ts:71:7 鈥?Verse Claw chat workspace header 鈥?shows workspace and conversation without the legacy topic selector (13.4s)
+  ok 140 tests\e2e\chat-workspace-header.spec.ts:226:7 鈥?Verse Claw chat workspace header 鈥?keeps sidebar new chat scoped to the active workspace (12.1s)
+  ok 141 tests\e2e\clawgraph.spec.ts:110:7 鈥?ClawGraph 鈥?lists workflows, runs one, and shows DAG/events/review (13.5s)
+  ok 142 tests\e2e\code-review-center.spec.ts:98:7 鈥?Code Review Center 鈥?opens review center, reviews two targets, displays findings, and preserves read-only behavior (14.8s)
+[fp-p1-04-send] {"success":true,"result":{"runId":"fp-p1-04-1793642424544-0.457718601667105"}}
+[fp-p1-04-transcript] [{"role":"system","contentType":"string","preview":"You are a personal assistant running inside OpenClaw.\n## Tooling\nAvailable tools are policy-filtered. Names are case-sen"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:00 GMT+8] FIX-THE-BUG in util.js: add() subtracts."},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:00 GMT+8] ## Knowledge\nfixture: preserve the frozen controlled-preview boundaries"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:00 GMT+8] ## Tools (40 available)\n鈫?context_read('tool_registry') for full schema\n[Coding nav] Prefer"}]
+[fp-p1-04-transcript] [{"role":"system","contentType":"string","preview":"You are a personal assistant running inside OpenClaw.\n## Tooling\nAvailable tools are policy-filtered. Names are case-sen"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:00 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"g"},{"role":"assistant","contentType":"object","preview":"\"\""},{"role":"tool","tool_call_id":"callread","contentType":"string","preview":"function add(a, b) {\n  return a - b;\n}\nmodule.exports = { add };\n"}]
+[fp-p1-04-transcript] [{"role":"system","contentType":"string","preview":"You are a personal assistant running inside OpenClaw.\n## Tooling\nAvailable tools are policy-filtered. Names are case-sen"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:00 GMT+8] FIX-THE-BUG in util.js: add() subtracts."},{"role":"assistant","contentType":"object","preview":"\"\""},{"role":"tool","tool_call_id":"callread","contentType":"string","preview":"function add(a, b) {\n  return a - b;\n}\nmodule.exports = { add };\n"},{"role":"assistant","contentType":"object","preview":"\"\""},{"role":"tool","tool_call_id":"calledit","contentType":"string","preview":"Successfully replaced 1 block(s) in util.js.\ndiff:\n 1 function add(a, b) {\n-2   return a - b;\n+2   return a + b;\n 3 }\n 4"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:00 GMT+8] ## Recent Actions\n- edit: Edited util.js: 1 block(s) (high)"}]
+[fp-p1-04-t1] {"fixedApplied":true,"editResultPreview":"Successfully replaced 1 block(s) in util.js.\ndiff:\n 1 function add(a, b) {\n-2   return a - b;\n+2   return a + b;\n 3 }\n 4 module.exports = { add };\nverify_tests: passed(node/npm): npm test [cwd=.; exit","bashResultPreview":"(no output)","writeResultPreview":"Successfully wrote 14 bytes to summary.txt\nverify_tests: passed(node/npm): npm test [cwd=.; exit=0; 9962ms]\nverify_output_tail:\n> test\n> node auto-verify.cjs\n\nAUTO_VERIFY_PASS","journalMetas":[{"seq":1,"relPath":"util.js","absPath":"D:\\tmp\\clawx-e2e-main-clean\\verse-claw-e2e-run-Swu671\\fp-p1-04-workspace\\clawx-fp-p1-04-X3xENY\\util.js","hadPrior":true,"toolName":"edit","createdAtMs":1793642430326,"lineage":{"sessionId":"09cfe155-2eb9-40cb-8365-aafe71835e80","workspaceRoot":"D:\\tmp\\clawx-e2e-main-clean\\verse-claw-e2e-run-Swu671\\fp-p1-04-workspace\\clawx-fp-p1-04-X3xENY","gatewayGeneration":"1","requestId":"calledit","flags":{"parseOnTouch":true,"staleWriteGuard":true,"writeJournal":true,"symbolLease":false}}},{"seq":2,"relPath":"summary.txt","absPath":"D:\\tmp\\clawx-e2e-main-clean\\verse-claw-e2e-run-Swu671\\fp-p1-04-workspace\\clawx-fp-p1-04-X3xENY\\summary.txt","hadPrior":true,"toolName":"write","createdAtMs":1793642437961,"lineage":{"sessionId":"09cfe155-2eb9-40cb-8365-aafe71835e80","workspaceRoot":"D:\\tmp\\clawx-e2e-main-clean\\verse-claw-e2e-run-Swu671\\fp-p1-04-workspace\\clawx-fp-p1-04-X3xENY","gatewayGeneration":"1","requestId":"callwrite","flags":{"parseOnTouch":true,"staleWriteGuard":true,"writeJournal":true,"symbolLease":false}}}]}
+[fp-p1-04-activity] "CodingRun evidence\nutil.js\n+1 -1\nsummary.txt\n+1 -1\nMain Agent execution\nread\nutil.js\nread, util.js, Done\nTool Result: read\nfunction add(a, b) { return a - b; } module.exports = { add };\nedit\nutil.js\nedit, util.js, Done\nTool Result: edit\n{ \"patchArtifacts\": [ { \"schema\": \"GitPatchArtifact/v1\", \"file\": \"util.js\", \"status\": \"modified\", \"contentKind\": \"text\", \"hunks\": [ { \"oldStart\": 1, \"oldLines\": 4, \"newStart\": 1, \"newLines\": 4, \"lines\": [ { \"kind\": \"context\", \"text\": \"function add(a, b) {\", \"oldLine\": 1, \"newLine\": 1 }, { \"kind\": \"deletion\", \"text\": \" return a - b;\", \"oldLine\": 2, \"newLine\": null }, { \"kind\": \"addition\", \"text\": \" return a + b;\", \"oldLine\": null, \"newLine\": 2 }, { \"kind\": \"context\", \"text\": \"}\", \"oldLine\": 3, \"newLine\": 3 }, { \"kind\": \"context\", \"text\": \"module.exports = { add };\", \"oldLine\": 4, \"newLine\": 4 } ] } ], \"patch\": \"--- util.js\\n+++ util.js\\n@@ -1,4 +1,4 @@\\n function add(a, b) {\\n- return a - b;\\n+ return a + b;\\n }\\n module.exports = { add };\\n\", \"completeness\": \"complete\", \"lineage\": { \"requestId\": \"calledit\", \"journalEntryId\": \"write-journal:09cfe155-2eb9-40cb-8365-aafe71835e80:1\" } } ], \"write_journal\": { \"undoable\": true, \"snapshots\": [ { \"seq\": 1, \"journalEntryId\": \"write-journal:09cfe155-2eb9-40cb-8365-aafe71835e80:1\", \"path\": \"util.js\", \"hadPrior\": true } ] }, \"verify_tests\": { \"detected\": true, \"ecosystem\": \"node\", \"runner\": \"npm\", \"command\": \"npm test\", \"evidence\": \"package.json\", \"workdir\": \".\", \"execution\": { \"status\": \"passed\", \"command\": \"npm test\", \"workdir\": \".\", \"exitCode\": 0, \"durationMs\": 7339, \"outputTail\": \"(node:23940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n\\n> test\\n> node auto-verify.cjs\\n\\nAUTO_VERIFY_PASS\" }, \"rendered\": \"passed(node/npm): npm test [cwd=.; exit=0; 7339ms]\" } }\nwrite\nsummary.txt\nwrite, summary.txt, Done\nTool Result: write\n{ \"patchArtifacts\": [ { \"schema\": \"GitPatchArtifact/v1\", \"file\": \"summary.txt\", \"status\": \"modified\", \"contentKind\": \"text\", \"hunks\": [ { \"oldStart\": 1, \"oldLines\": 1, \"newStart\": 1, \"newLines\": 1, \"lines\": [ { \"kind\": \"deletion\", \"text\": \"status: pending\", \"oldLine\": 1, \"newLine\": null }, { \"kind\": \"additi
+[fp-p1-04-chatdom] "FIX-THE-BUG in util.js: add() subtracts.\n\njust now\nWorked for 29 seconds\nCodingRun evidence\nutil.js\n+1 -1\nsummary.txt\n+1 -1\nMain Agent execution\nread\nutil.js\nread, util.js, Done\nTool Result: read\nfunction add(a, b) { return a - b; } module.exports = { add };\nedit\nutil.js\nedit, util.js, Done\nTool Result: edit\n{ \"patchArtifacts\": [ { \"schema\": \"GitPatchArtifact/v1\", \"file\": \"util.js\", \"status\": \"modified\", \"contentKind\": \"text\", \"hunks\": [ { \"oldStart\": 1, \"oldLines\": 4, \"newStart\": 1, \"newLines\": 4, \"lines\": [ { \"kind\": \"context\", \"text\": \"function add(a, b) {\", \"oldLine\": 1, \"newLine\": 1 }, { \"kind\": \"deletion\", \"text\": \" return a - b;\", \"oldLine\": 2, \"newLine\": null }, { \"kind\": \"addition\", \"text\": \" return a + b;\", \"oldLine\": null, \"newLine\": 2 }, { \"kind\": \"context\", \"text\": \"}\", \"oldLine\": 3, \"newLine\": 3 }, { \"kind\": \"context\", \"text\": \"module.exports = { add };\", \"oldLine\": 4, \"newLine\": 4 } ] } ], \"patch\": \"--- util.js\\n+++ util.js\\n@@ -1,4 +1,4 @@\\n function add(a, b) {\\n- return a - b;\\n+ return a + b;\\n }\\n module.exports = { add };\\n\", \"completeness\": \"complete\", \"lineage\": { \"requestId\": \"calledit\", \"journalEntryId\": \"write-journal:09cfe155-2eb9-40cb-8365-aafe71835e80:1\" } } ], \"write_journal\": { \"undoable\": true, \"snapshots\": [ { \"seq\": 1, \"journalEntryId\": \"write-journal:09cfe155-2eb9-40cb-8365-aafe71835e80:1\", \"path\": \"util.js\", \"hadPrior\": true } ] }, \"verify_tests\": { \"detected\": true, \"ecosystem\": \"node\", \"runner\": \"npm\", \"command\": \"npm test\", \"evidence\": \"package.json\", \"workdir\": \".\", \"execution\": { \"status\": \"passed\", \"command\": \"npm test\", \"workdir\": \".\", \"exitCode\": 0, \"durationMs\": 7339, \"outputTail\": \"(node:23940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n\\n> test\\n> node auto-verify.cjs\\n\\nAUTO_VERIFY_PASS\" }, \"rendered\": \"passed(node/npm): npm test [cwd=.; exit=0; 7339ms]\" } }\nwrite\nsummary.txt\nwrite, summary.txt, Done\nTool Result: write\n{ \"patchArtifacts\": [ { \"schema\": \"GitPatchArtifact/v1\", \"file\": \"summary.txt\", \"status\": \"modified\", \"contentKind\": \"text\", \"hunks\": [ { \"oldStart\": 1, \"oldLines\": 1, \"newStart\": 1, \"newLines\": 1, \"lines\": [ { \"kind\": \"deletion\", \"text\": \"status: pending\", \"oldLine\": 1, \"newLine\": null }, { \"kind\": \"addition\", \"text\": \"status: fixed\", \"oldLine\": null, \"newLine\": 1 } ] } ], \"patch\": \"--- summary.txt\\n+++ summary.txt\\n@@ -1,1 +1,1 @@\\n-status: pending\\n+status: fixed\\n\", \"completeness\": \"complete\", \"lineage\": { \"requestId\": \"callwrite\", \"journalEntryId\": \"write-journal:09cfe155-2eb9-40cb-8365-aafe71835e80:2\" } } ], \"write_journal\": { \"undoable\": true, \"snapshots\": [ { \"seq\": 2, \"jou
+[fp-p1-04-budget] {"totalChars":6000,"precedence":["knowledge","session_start","working_memory","tool_registry","cvk_addition","vtoken","memory_pilot","other"],"dropAlertRatio":0.1,"counters":{"turns":1,"killedTurns":0,"appliedChars":4520,"requestedChars":8520,"droppedChars":0,"truncatedChars":4000,"dropAlerts":1},"lastTurn":{"turnId":"agent:main:main::fp-p1-04-1793642424544-0.457718601667105","killed":false,"charsApplied":4520,"charsRequested":8520,"charsDropped":0,"charsTruncated":4000,"byChannel":{"knowledge":{"requested":71,"applied":71,"disposition":"applied"},"tool_registry":{"requested":390,"applied":390,"disposition":"applied"},"cvk_addition":{"requested":8000,"applied":4000,"disposition":"truncate"},"working_memory":{"requested":59,"applied":59,"disposition":"applied"}},"degradationOrder":[{"channel":"cvk_addition","disposition":"truncate"}],"crossInjectionDuplicateChars":0,"crossInjectionDuplicationRatio":0}}
+[fp-p1-11-bychannel] {"channels":["knowledge","tool_registry","cvk_addition","working_memory"],"byChannel":{"knowledge":{"requested":71,"applied":71,"disposition":"applied"},"tool_registry":{"requested":390,"applied":390,"disposition":"applied"},"cvk_addition":{"requested":8000,"applied":4000,"disposition":"truncate"},"working_memory":{"requested":59,"applied":59,"disposition":"applied"}},"degradationOrder":[{"channel":"cvk_addition","disposition":"truncate"}],"measured":{"knowledge":{"requestCount":1,"messageCount":1,"chars":71},"working_memory":{"requestCount":1,"messageCount":1,"chars":59},"tool_registry":{"requestCount":1,"messageCount":1,"chars":390}}}
+[fp-p1-04-send] {"success":true,"result":{"runId":"fp-p1-04-1793642456203-0.9873869355693365"}}
+[fp-p1-04-t2] {"reverted":true,"undoResult":"{\n  \"ok\": true,\n  \"restored\": [\n    \"summary.txt\",\n    \"util.js\"\n  ],\n  \"errors\": [],\n  \"journalDir\": \"D:\\\\tmp\\\\clawx-e2e-main-clean\\\\verse-claw-e2e-run-Swu671\\\\fp-p1-04-workspace\\\\clawx-fp-p1-04-X3xENY\\\\.openclaw\\\\journal\\\\09cfe155-2eb9-40cb-8365-aafe71835e80\",\n  \"remainingEntries\": 0\n}"}
+[fp-p1-04-send] {"success":true,"result":{"runId":"fp-p1-04-1793642461373-0.4823822472620022"}}
+[fp-p1-04-t3] {"missResult":"{\n  \"status\": \"error\",\n  \"tool\": \"read\",\n  \"error\": \"ENOENT: no such file or directory, access 'D:\\\\tmp\\\\clawx-e2e-main-clean\\\\verse-claw-e2e-run-Swu671\\\\fp-p1-04-workspace\\\\clawx-fp-p1-04-X3xENY\\\\mis","badEditResult":"{\n  \"status\": \"error\",\n  \"tool\": \"edit\",\n  \"error\": \"Could not find the exact text in util.js. The old text must match exactly including all whitespace and newlines.\\nCurrent file contents:\\nfunction "}
+[fp-p1-04-send] {"success":true,"result":{"runId":"fp-p1-04-1793642466553-0.8641044414634239"}}
+[fp-p1-04-send] {"success":true,"result":{"runId":"fp-p1-04-1793642483212-0.5046434586267214"}}
+[fp-p1-04-t4] {"undo2Result":"{\n  \"ok\": false,\n  \"restored\": [],\n  \"errors\": [\n    \"util.js: journal snapshot missing: D:\\\\tmp\\\\clawx-e2e-main-clean\\\\verse-claw-e2e-run-Swu671\\\\fp-p1-04-workspace\\\\clawx-fp-p1-04-X3xENY\\\\.openclaw\\\\journal\\\\09cfe155-2eb9-40cb-8365-aafe71835e80\\\\0004-util.js.pre\"\n  ],\n  \"journalDir\": \"D:\\\\tmp\\\\cla"}
+[fp-p1-04-gateway-log]
+[fp-p1-04-gateway-err]
+  ok 143 tests\e2e\coding-loop-fp-p1-04.spec.ts:711:7 鈥?FP-P1-04 coding loop (real agent turn, scripted local LLM) 鈥?read 鈫?edit/write rich diffs 鈫?verify 鈫?undo, plus explicit failure paths (1.7m)
+[fp-p1-04-transcript] [{"role":"system","contentType":"string","preview":"You are a personal assistant running inside OpenClaw.\n## Tooling\nAvailable tools are policy-filtered. Names are case-sen"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:02 GMT+8] FIX-THE-BUG in util.js: add() subtracts."},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:02 GMT+8] ## Knowledge\nfixture: preserve the frozen controlled-preview boundaries"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:02 GMT+8] ## Tools (40 available)\n鈫?context_read('tool_registry') for full schema\n[Coding nav] Prefer"}]
+[fp-p1-04-transcript] [{"role":"system","contentType":"string","preview":"You are a personal assistant running inside OpenClaw.\n## Tooling\nAvailable tools are policy-filtered. Names are case-sen"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:02 GMT+8] Sender (untrusted metadata):\n```json\n{\n  \"label\": \"Verse Claw (gateway-client)\",\n  \"id\": \"g"},{"role":"assistant","contentType":"object","preview":"\"\""},{"role":"tool","tool_call_id":"callread","contentType":"string","preview":"function add(a, b) {\n  return a - b;\n}\nmodule.exports = { add };\n"}]
+[fp-p1-04-transcript] [{"role":"system","contentType":"string","preview":"You are a personal assistant running inside OpenClaw.\n## Tooling\nAvailable tools are policy-filtered. Names are case-sen"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:02 GMT+8] FIX-THE-BUG in util.js: add() subtracts."},{"role":"assistant","contentType":"object","preview":"\"\""},{"role":"tool","tool_call_id":"callread","contentType":"string","preview":"function add(a, b) {\n  return a - b;\n}\nmodule.exports = { add };\n"},{"role":"assistant","contentType":"object","preview":"\"\""},{"role":"tool","tool_call_id":"calledit","contentType":"string","preview":"Successfully replaced 1 block(s) in util.js.\ndiff:\n 1 function add(a, b) {\n-2   return a - b;\n+2   return a + b;\n 3 }\n 4"},{"role":"user","contentType":"string","preview":"[Tue 2026-11-03 02:02 GMT+8] ## Recent Actions\n- edit: Edited util.js: 1 block(s) (high)"}]
+[fp-p1-04-forced-abort] {"stream":true,"index":5}
+  ok 144 tests\e2e\coding-loop-fp-p1-04.spec.ts:1073:7 鈥?FP-P1-04 coding loop (real agent turn, scripted local LLM) 鈥?terminal provider disconnect fails visibly and the next turn succeeds (37.7s)
+  ok 145 tests\e2e\compaction-artifact-viewer.spec.ts:15:7 鈥?Compaction artifact viewer 鈥?opens compression evidence and prepares recovery context without lossless wording (12.9s)
+[fp-p0-06-parity-start] {"childPid":11096,"gatewayGeneration":"1","configExists":true,"vtokenAssembly":false,"killSwitch":false}
+  ok 146 tests\e2e\config-schema-parity-fp-p0-06.spec.ts:99:7 鈥?FP-P0-06 schema parity (real gateway child) 鈥?gateway starts with formerly schema-rejected runtime leaves present in config (27.6s)
+  ok 147 tests\e2e\context-control-plane-stage6.spec.ts:81:7 鈥?context control plane stage 6 panel 鈥?renders read-only diff/why/simulation/replay through host-api (12.6s)
+  ok 148 tests\e2e\context-view-tool-surface.spec.ts:4:7 鈥?TF-0495 context view tool surface 鈥?keeps automatic discovery distinct from the explicit rollback control (11.6s)
+  ok 149 tests\e2e\cron-browser-automation.spec.ts:13:7 鈥?Cron browser automation 鈥?creates a browser automation scheduled task from the cron dialog (17.3s)
+  ok 150 tests\e2e\cron-card-long-title.spec.ts:55:7 鈥?Scheduled task workbench 鈥?keeps long task rows contained and supports detail, status, and search views (12.1s)
+[fp-p1-09-sample] {"run":0,"enabled":true,"status":"applied","ackWaitMs":362,"totalMs":10435,"generation":"2","childPid":44832}
+[fp-p1-09-sample] {"run":1,"enabled":false,"status":"applied","ackWaitMs":10,"totalMs":17806,"generation":"3","childPid":17916}
+[fp-p1-09-sample] {"run":2,"enabled":true,"status":"applied","ackWaitMs":12,"totalMs":11339,"generation":"4","childPid":44372}
+[fp-p1-09-sample] {"run":3,"enabled":false,"status":"applied","ackWaitMs":10,"totalMs":11299,"generation":"5","childPid":36640}
+[fp-p1-09-sample] {"run":4,"enabled":true,"status":"applied","ackWaitMs":10,"totalMs":13682,"generation":"6","childPid":34172}
+[fp-p1-09-latency] [{"run":0,"enabled":true,"status":"applied","ackWaitMs":362,"totalMs":10435,"generation":"2","childPid":44832},{"run":1,"enabled":false,"status":"applied","ackWaitMs":10,"totalMs":17806,"generation":"3","childPid":17916},{"run":2,"enabled":true,"status":"applied","ackWaitMs":12,"totalMs":11339,"generation":"4","childPid":44372},{"run":3,"enabled":false,"status":"applied","ackWaitMs":10,"totalMs":11299,"generation":"5","childPid":36640},{"run":4,"enabled":true,"status":"applied","ackWaitMs":10,"totalMs":13682,"generation":"6","childPid":34172}]
+[fp-p1-09-requery] {"status":"applied","ackWaitMs":95,"generation":"6","childPid":34172}
+  ok 151 tests\e2e\dcs-flag-ack-tuning-fp-p1-09.spec.ts:92:7 鈥?FP-P1-09 ack tuning (real gateway children) 鈥?five real restart鈫抋ck cycles reach applied under the tuned defaults, then requery works (1.5m)
+[fp-p1-03-refused] {"success":false,"enabled":false,"status":"error","restartedGateway":false,"comboFlagIds":["context-view-tools","working-memory","tool-registry"],"missingPrereqs":["providerVerified","workspaceSelected","permissionChosen"],"error":"Preview prerequisites missing: providerVerified, workspaceSelected, permissionChosen"}
+  x  152 tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed (47.6s)
+(node:37168) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37168) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 153 tests\e2e\dcs-prod-p0-settings.spec.ts:83:7 鈥?DCS production P0 packaging surface 鈥?shows opt-in DCS production flags panel in Settings > Developer (12.1s)
+  ok 154 tests\e2e\dcs-prod-p0-settings.spec.ts:118:7 鈥?DCS production P0 packaging surface 鈥?renders the DCS control surface in Japanese and Russian (13.0s)
+  ok 155 tests\e2e\dcs-prod-p0-settings.spec.ts:145:7 鈥?DCS production P0 packaging surface 鈥?toggles writable flags, persists store, and restores baseline (12.9s)
+  ok 156 tests\e2e\dcs-prod-p0-settings.spec.ts:217:7 鈥?DCS production P0 packaging surface 鈥?shows discoverability banner for hidden view tools and one-click enable (12.1s)
+[dcs-w5-metrics:off] {"requestCount":1,"toolCount":43,"schemaChars":54269,"schemaUtf8Bytes":54273,"codegraphCount":0}
+  ok 157 tests\e2e\dcs-production-wiring-w5.spec.ts:411:7 鈥?DCS W5 production wiring via real Windows Electron Gateway 鈥?default-off exposes on-demand context tools without leaking always-on DCS blocks (34.0s)
+[dcs-w5-metrics:on] {"requestCount":6,"toolCount":43,"schemaChars":54269,"schemaUtf8Bytes":54273,"codegraphCount":0}
+  ok 158 tests\e2e\dcs-production-wiring-w5.spec.ts:457:7 鈥?DCS W5 production wiring via real Windows Electron Gateway 鈥?enabled flags persist real tool/notes blocks and context_read is non-destructive (49.5s)
+  ok 159 tests\e2e\dcs-production-wiring-w5.spec.ts:524:7 鈥?DCS W5 production wiring via real Windows Electron Gateway 鈥?config-sync copies user runtime.contextBlock flags into openclaw-source-state (21.8s)
+  ok 160 tests\e2e\developer-mode.spec.ts:5:7 鈥?Verse Claw developer-mode gated UI 鈥?keeps raw diagnostics hidden until the local dev switch is enabled (13.2s)
+  ok 161 tests\e2e\dialog-transitions.spec.ts:60:7 鈥?dialog transitions 鈥?uses the shared subtle transition for core modal dialogs (13.8s)
+  ok 162 tests\e2e\dialog-transitions.spec.ts:146:7 鈥?dialog transitions 鈥?keeps confirm dialog copy stable while closing (14.2s)
+  ok 163 tests\e2e\effort-intensity-smoke.spec.ts:31:7 鈥?Verse Claw effort & intensity smoke 鈥?effort button is visible and opens a popover with a slider (11.0s)
+  ok 164 tests\e2e\effort-intensity-smoke.spec.ts:148:7 鈥?Verse Claw effort & intensity smoke 鈥?intensity toggle is visible in the work mode summary panel after sending a message (10.6s)
+  x  165 tests\e2e\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile (18.9s)
+(node:38752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 166 tests\e2e\error-i18n.spec.ts:182:7 鈥?unified error exit i18n 鈥?switches language and renders auth/rate-limit/balance/timeout failures without English fallback (14.6s)
+  x  167 tests\e2e\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language (43.1s)
+(node:27332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 168 tests\e2e\fakecoding-inbox-navigation.spec.ts:155:7 鈥?FakeCoding Inbox navigation 鈥?keeps four top-level entries and redirects the legacy Remote Tasks route (11.9s)
+  x  169 tests\e2e\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count (41.8s)
+(node:27348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  170 tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings (43.4s)
+(node:40852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+[fp-p1-07-success] {"model":"mock-coder","dcsAck":"applied","read":true,"edit":true,"test":true,"undoBeforeRestart":true,"undoAfterRestart":true,"supportBundle":"D:\\tmp\\clawx-e2e-main-clean\\verse-claw-e2e-run-Swu671\\verse-claw-e2e-user-data-OjCzpp\\support-bundles\\verse-claw-support-2026-11-02T18-14-44-316Z.json"}
+  ok 171 tests\e2e\first-product-journey-fp-p1-07.spec.ts:334:7 鈥?FP-P1-07 first-product journey (real Electron + real Gateway) 鈥?clean setup through coding, undo, restart recovery, and support bundle (2.0m)
+[fp-p1-07-failure] {"gatewayNotReady":"start-gateway action shown and recovered","noProvider":"configure-provider action shown"}
+  ok 172 tests\e2e\first-product-journey-fp-p1-07.spec.ts:444:7 鈥?FP-P1-07 first-product journey (real Electron + real Gateway) 鈥?gateway-not-ready and no-provider failures both give an operator action (25.1s)
+[fp-p1-07-failure] {"invalidCredentials":"fresh-key retry guidance","modelUnavailable":"model-list failure with retry guidance blocks Next"}
+  ok 173 tests\e2e\first-product-journey-fp-p1-07.spec.ts:483:7 鈥?FP-P1-07 first-product journey (real Electron + real Gateway) 鈥?invalid credentials and unavailable model stay blocked with retry guidance (26.3s)
+[fp-p1-harness] connection #1
+[fp-p1-07-failure] {"workspaceDenied":"C:\\Windows","kill":"failed/killed with kill-switch explanation"}
+  ok 174 tests\e2e\first-product-journey-fp-p1-07.spec.ts:523:7 鈥?FP-P1-07 first-product journey (real Electron + real Gateway) 鈥?workspace denial and kill refusal fail closed without silent fallback (45.9s)
+  ok 175 tests\e2e\gateway-lifecycle.spec.ts:26:7 鈥?Verse Claw gateway lifecycle resilience 鈥?app remains fully navigable while gateway is disconnected (13.4s)
+  ok 176 tests\e2e\gateway-lifecycle.spec.ts:54:7 鈥?Verse Claw gateway lifecycle resilience 鈥?gateway status indicator updates when status transitions occur (15.8s)
+  ok 177 tests\e2e\gateway-lifecycle.spec.ts:140:7 鈥?Verse Claw gateway lifecycle resilience 鈥?shows gateway restart progress in the sidebar instead of page-level warnings (13.8s)
+  ok 178 tests\e2e\gateway-lifecycle.spec.ts:237:7 鈥?Verse Claw gateway lifecycle resilience 鈥?chat sidebar history reloads when gateway becomes ready after restart (11.4s)
+  ok 179 tests\e2e\image-generation-settings.spec.ts:19:7 鈥?Image generation settings page 鈥?shows image generation only as a developer-mode page after skipping setup (12.2s)
+  ok 180 tests\e2e\image-generation-settings.spec.ts:48:7 鈥?Image generation settings page 鈥?configures an independent OpenAI-compatible image endpoint (12.0s)
+  ok 181 tests\e2e\image-generation-settings.spec.ts:66:7 鈥?Image generation settings page 鈥?shows configured image API key like custom language model keys (11.7s)
+  ok 182 tests\e2e\image-generation-settings.spec.ts:117:7 鈥?Image generation settings page 鈥?clears configured image generation settings after confirmation (12.2s)
+  ok 183 tests\e2e\knowledge-bot.spec.ts:15:5 鈥?approved solid follows drag, real host requests, retries and shared conversation rendering (16.1s)
+  ok 184 tests\e2e\knowledge-hub.spec.ts:173:7 鈥?Knowledge Hub MVP 鈥?initializes, imports, searches, inspects, and applies an editable draft (35.6s)
+  ok 185 tests\e2e\knowledge-hub.spec.ts:704:7 鈥?Knowledge Hub MVP 鈥?creates a Source Set from search results and generates a review-only Studio draft (13.2s)
+  ok 186 tests\e2e\knowledge-hub.spec.ts:845:7 鈥?Knowledge Hub MVP 鈥?enables wiki knowledge from the chat composer scope picker (12.7s)
+  ok 187 tests\e2e\knowledge-hub.spec.ts:876:7 鈥?Knowledge Hub MVP 鈥?attaches wiki context through slash palette before sending (12.9s)
+  ok 188 tests\e2e\knowledge-ks04-chat-dcs.spec.ts:70:7 鈥?KS-04 Chat/DCS single consumption path 鈥?shows a visible reason toast when a selected knowledge reference is denied (12.3s)
+  ok 189 tests\e2e\knowledge-lifecycle.spec.ts:55:7 鈥?Knowledge lifecycle update goes through Main wiki RPC and shows EffectReceipt (13.0s)
+  ok 190 tests\e2e\knowledge-lifecycle.spec.ts:55:7 鈥?Knowledge lifecycle merge goes through Main wiki RPC and shows EffectReceipt (13.3s)
+  ok 191 tests\e2e\knowledge-lifecycle.spec.ts:55:7 鈥?Knowledge lifecycle archive goes through Main wiki RPC and shows EffectReceipt (12.7s)
+  ok 192 tests\e2e\knowledge-lifecycle.spec.ts:55:7 鈥?Knowledge lifecycle revoke goes through Main wiki RPC and shows EffectReceipt (12.7s)
+  ok 193 tests\e2e\knowledge-lifecycle.spec.ts:55:7 鈥?Knowledge lifecycle delete goes through Main wiki RPC and shows EffectReceipt (13.6s)
+  ok 194 tests\e2e\knowledge-lifecycle.spec.ts:55:7 鈥?Knowledge lifecycle restore goes through Main wiki RPC and shows EffectReceipt (12.8s)
+  ok 195 tests\e2e\knowledge-review-queue.spec.ts:71:7 鈥?KE-P1-3 Review Queue 鈥?confirm promotes a candidate and shows KE fields (13.2s)
+  ok 196 tests\e2e\knowledge-review-queue.spec.ts:103:7 鈥?KE-P1-3 Review Queue 鈥?reject dismisses a candidate without persisting (13.0s)
+  ok 197 tests\e2e\knowledge-review-queue.spec.ts:132:7 鈥?KE-P1-3 Review Queue 鈥?shows an empty state when there are no candidates (12.7s)
+  ok 198 tests\e2e\knowledge-review-queue.spec.ts:152:7 鈥?KE-P1-3 Review Queue 鈥?flag off shows unavailable state and hides KE fields (12.3s)
+  ok 199 tests\e2e\knowledge-review-queue.spec.ts:202:5 鈥?review selection prepares and approves only the corresponding proposal (12.3s)
+  x  200 tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light (27.8s)
+(node:24864) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24864) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  201 tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark (27.6s)
+(node:32280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 202 tests\e2e\knowledge-steward-config.spec.ts:4:7 鈥?Knowledge steward config (Area 5 搂3.5) 鈥?review tab shows steward section and Configure modal switches active variant (13.0s)
+  ok 203 tests\e2e\knowledge-ux-cdp.spec.ts:239:7 鈥?Knowledge Hub UX 鈥?workspace-first Library opens without dashboard clutter (12.1s)
+  ok 204 tests\e2e\knowledge-ux-cdp.spec.ts:253:7 鈥?Knowledge Hub UX 鈥?Library stays first-viewport visible at supported window widths (13.1s)
+  ok 205 tests\e2e\knowledge-ux-cdp.spec.ts:339:7 鈥?Knowledge Hub UX 鈥?workbench tabs render with icons for each tab (12.2s)
+  ok 206 tests\e2e\knowledge-ux-cdp.spec.ts:353:7 鈥?Knowledge Hub UX 鈥?clicking a tab selects it with distinct visual state (12.3s)
+  ok 207 tests\e2e\knowledge-ux-cdp.spec.ts:367:7 鈥?Knowledge Hub UX 鈥?Library type browsing is disclosed in one menu (12.2s)
+  ok 208 tests\e2e\knowledge-ux-cdp.spec.ts:379:7 鈥?Knowledge Hub UX 鈥?markdown workspace supports explicit editing, preview, and a compact knowledge conversation (13.1s)
+  ok 209 tests\e2e\knowledge-ux-cdp.spec.ts:424:7 鈥?Knowledge Hub UX 鈥?inbox panel shows pending items with source and warning info (12.4s)
+  ok 210 tests\e2e\knowledge-ux-cdp.spec.ts:447:7 鈥?Knowledge Hub UX 鈥?review queue filters drafts and retains their status information (11.7s)
+  ok 211 tests\e2e\knowledge-ux-cdp.spec.ts:463:7 鈥?Knowledge Hub UX 鈥?Governance remains available from the More menu (12.3s)
+  ok 212 tests\e2e\knowledge-ux-cdp.spec.ts:478:7 鈥?Knowledge Hub UX 鈥?search input is rendered and accepts text (12.1s)
+  ok 213 tests\e2e\knowledge-ux-cdp.spec.ts:588:7 鈥?Chat Knowledge Attachment UX 鈥?knowledge scope picker replaces the standalone quick wiki icon (11.9s)
+  ok 214 tests\e2e\knowledge-ux-cdp.spec.ts:607:7 鈥?Chat Knowledge Attachment UX 鈥?knowledge scope picker can switch wiki off again (13.2s)
+  ok 215 tests\e2e\knowledge-ux-cdp.spec.ts:620:7 鈥?Chat Knowledge Attachment UX 鈥?knowledge preflight can inspect, dismiss, and attach suggestions (15.2s)
+  ok 216 tests\e2e\knowledge-ux-cdp.spec.ts:643:7 鈥?Chat Knowledge Attachment UX 鈥?advisory error guard can be used and dismissed without blocking chat (13.1s)
+  ok 217 tests\e2e\knowledge-ux-cdp.spec.ts:687:7 鈥?Chat Knowledge Attachment UX 鈥?knowledge scope picker opens and shows all scope options (12.5s)
+  ok 218 tests\e2e\knowledge-ux-cdp.spec.ts:702:7 鈥?Chat Knowledge Attachment UX 鈥?runtime lessons source toggle is opt-in (12.7s)
+  ok 219 tests\e2e\knowledge-ux-cdp.spec.ts:717:7 鈥?Chat Knowledge Attachment UX 鈥?scope picker shows search input for knowledge attachment (11.7s)
+  ok 220 tests\e2e\knowledge-ux-cdp.spec.ts:732:7 鈥?Chat Knowledge Attachment UX 鈥?selecting a scope closes the menu and updates the button (12.4s)
+  ok 221 tests\e2e\knowledge-ux-cdp.spec.ts:746:7 鈥?Chat Knowledge Attachment UX 鈥?knowledge scope is the only visible knowledge entry in the composer controls (11.9s)
+CDP STATUS RESULT: {
+  id: [32m'test-status'[39m,
+  ok: [33mtrue[39m,
+  data: {
+    success: [33mtrue[39m,
+    configuredEnabled: [33mfalse[39m,
+    configuredPort: [33m9222[39m,
+    effectiveEnabled: [33mtrue[39m,
+    effectivePort: [33m51459[39m,
+    endpoint: [32m'http://127.0.0.1:51459/json/version'[39m,
+    envOverride: [33mtrue[39m,
+    restartRequired: [33mtrue[39m
+  }
+}
+CDP INSPECT RESULT: {
+  id: [32m'test-inspect'[39m,
+  ok: [33mtrue[39m,
+  data: {
+    success: [33mtrue[39m,
+    endpoint: [32m'http://127.0.0.1:51459/json/version'[39m,
+    webSocketDebuggerUrl: [32m'ws://127.0.0.1:51459/devtools/browser/074f868c-ba9c-4a17-814b-2059ebc0db83'[39m,
+    browser: [32m'Chrome/144.0.7559.236'[39m,
+    protocolVersion: [32m'1.3'[39m,
+    targets: [ [36m[Object][39m ]
+  }
+}
+  ok 222 tests\e2e\knowledge-ux-cdp.spec.ts:800:7 鈥?CDP Remote Control Developer API Dogfooding 鈥?CDP status and inspect returns active debugging state (11.3s)
+CDP NAVCLICK RESULT: {
+  id: [32m'test-navclick'[39m,
+  ok: [33mtrue[39m,
+  data: {
+    success: [33mtrue[39m,
+    target: {
+      id: [32m'87C3D867556E6CE6AA51F4C235D1F7D7'[39m,
+      title: [32m'Verse Claw'[39m,
+      type: [32m'page'[39m,
+      url: [32m'file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=dark#/'[39m,
+      webSocketDebuggerUrl: [32m'ws://127.0.0.1:55689/devtools/page/87C3D867556E6CE6AA51F4C235D1F7D7'[39m
+    }
+  }
+}
+  ok 223 tests\e2e\knowledge-ux-cdp.spec.ts:821:7 鈥?CDP Remote Control Developer API Dogfooding 鈥?CDP click drives UI navigation on the knowledge page (11.8s)
+  ok 224 tests\e2e\knowledge-ux-cdp.spec.ts:871:7 鈥?CDP Remote Control Developer API Dogfooding 鈥?CDP pageInfo and screenshot retrieves live DOM state (12.3s)
+  ok 225 tests\e2e\language-russian.spec.ts:4:7 鈥?Russian language localization 鈥?shows Russian language option in setup wizard (10.7s)
+  ok 226 tests\e2e\language-russian.spec.ts:21:7 鈥?Russian language localization 鈥?can switch to Russian language in setup wizard (11.5s)
+  ok 227 tests\e2e\language-russian.spec.ts:41:7 鈥?Russian language localization 鈥?Russian language persists after skipping setup (12.3s)
+  ok 228 tests\e2e\language-russian.spec.ts:74:7 鈥?Russian language localization 鈥?can switch to Russian in Settings page (12.4s)
+  ok 229 tests\e2e\lightweight-subagent-runner.spec.ts:4:7 鈥?Lightweight Subagent Runner 鈥?starts Explorer preset and renders lifecycle, summary, and trace link (12.3s)
+  ok 230 tests\e2e\lightweight-subagent-runner.spec.ts:107:7 鈥?Lightweight Subagent Runner 鈥?starts Reviewer preset with current diff (12.3s)
+  ok 231 tests\e2e\lightweight-subagent-runner.spec.ts:204:7 鈥?Lightweight Subagent Runner 鈥?shows failure when Reviewer has no current diff (12.5s)
+  ok 232 tests\e2e\long-session-completion-continuation.spec.ts:154:5 鈥?consolidates deferred worker completion into one generation-fenced batch after restart (53.9s)
+{"schema":"clawx.long-session.d1-continuity-preview/v1","driven_by":"agent","actor":"codex-long-session-r2","negatives":["ordinary session missing coordinator binding -> no pack","deleted coordinator session -> binding invalidated -> no pack"],"primary":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\long-session-continuity-co-5953e-losed-across-scope-rollback\\continuity-preview.json","status":"passed","packStatus":"partial","items":[{"kind":"constraint","source":"task-ledger-working-context","freshness":"fresh","scope":{"kind":"workspace","key":"default"}},{"kind":"next-action","source":"task-ledger-node","freshness":"fresh","scope":{"kind":"workspace","key":"default"}},{"kind":"next-action","source":"task-ledger-working-context","freshness":"fresh","scope":{"kind":"workspace","key":"default"}},{"kind":"memory-ref","source":"accepted-memory-ref","freshness":"fresh","scope":{"kind":"workspace","key":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mvzlgra0"}},{"kind":"knowledge-ref","source":"knowledge-ref","freshness":"fresh","scope":{"kind":"workspace","key":"default"}}],"sourceStates":[{"source":"task-ledger","status":"available","detail":"events=6; nodes=1"},{"source":"working-context","status":"available"},{"source":"compression-artifact","status":"unavailable","detail":"no compression artifact for this session"},{"source":"memory","status":"available","detail":"accepted=1; modelVisible=1"},{"source":"knowledge","status":"available","detail":"refs=1"}],"exclusions":[{"ref":"task-ledger-working-context:d1-pending-risk-mvzlgra0","reason":"pending-not-accepted"}],"observationPath":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\long-session-continuity-co-5953e-losed-across-scope-rollback\\continuity-observation.json"}
+  ok 233 tests\e2e\long-session-continuity-context.spec.ts:85:5 鈥?real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (27.2s)
+  ok 234 tests\e2e\long-session-coordination.spec.ts:182:5 鈥?opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (50.8s)
+  ok 235 tests\e2e\long-session-coordinator-binding.spec.ts:74:5 鈥?coordinator binding survives restart and follows rename, handoff, archive, restore, and pause boundaries (51.4s)
+  ok 236 tests\e2e\long-session-delegation-admission.spec.ts:123:5 鈥?delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (52.1s)
+  ok 237 tests\e2e\long-session-effective-policy.spec.ts:84:5 鈥?real Host and Gateway expose a secret-free configured policy without inventing effective facts (24.5s)
+{"schema":"clawx.long-session.e1-followup-journey/v1","driven_by":"agent","actor":"codex-long-session-e1","steps":[{"step":"bound-follow-up-created","jobId":"d902d828-e433-4bd6-bb8e-c74bc875daa1","state":"allowed","expectedSessionId":"539bb9b3-1af7-4282-9a2d-a55a42a1a98a"},{"step":"stop-current-turn-is-independent-of-schedule","stopped":true,"scheduleStillPresent":true},{"step":"trigger-after-invalidation","refusedWith":"Coordinator follow-up rejected (unverifiable: coordinator binding is invalidated)","gatewayRunCount":0},{"step":"pause-keeps-schedule","enabled":false},{"step":"cancel-removes-schedule","removed":true}],"negatives":["deleted coordinator session -> binding invalidated -> cron fence state unverifiable"],"status":"passed","workspaceId":"default","coordinatorSessionKey":"agent:main:dashboard:e8811f46-7856-492c-ab07-2341f7700022","jobId":"d902d828-e433-4bd6-bb8e-c74bc875daa1","observationPath":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\long-session-followup-sche-587bc-ire-after-it-is-invalidated\\followup-journey-observation.json"}
+  ok 238 tests\e2e\long-session-followup-scheduling.spec.ts:113:5 鈥?real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated (26.3s)
+  ok 239 tests\e2e\long-session-lifecycle-faults.spec.ts:104:5 鈥?real Host and Gateway archive/restore preserves history and rotates the physical generation (23.7s)
+  ok 240 tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 鈥?real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (23.8s)
+{"schema":"clawx.long-session.d2-continuity-preview/v1","driven_by":"agent","actor":"codex-long-session-r2","negatives":["ordinary session missing coordinator binding -> no pack","deleted coordinator session -> binding invalidated -> no pack"],"primary":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\continuity-preview.json","status":"passed","packStatus":"partial","items":[{"kind":"constraint","source":"task-ledger-working-context","freshness":"fresh","scope":{"kind":"workspace","key":"default"}},{"kind":"next-action","source":"task-ledger-node","freshness":"fresh","scope":{"kind":"workspace","key":"default"}},{"kind":"next-action","source":"task-ledger-working-context","freshness":"fresh","scope":{"kind":"workspace","key":"default"}},{"kind":"memory-ref","source":"accepted-memory-ref","freshness":"fresh","scope":{"kind":"workspace","key":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\workspace-mvzlmrtr"}},{"kind":"knowledge-ref","source":"knowledge-ref","freshness":"fresh","scope":{"kind":"workspace","key":"default"}}],"sourceStates":[{"source":"task-ledger","status":"available","detail":"events=6; nodes=1"},{"source":"working-context","status":"available"},{"source":"compression-artifact","status":"unavailable","detail":"no compression artifact for this session"},{"source":"memory","status":"available","detail":"accepted=1; modelVisible=1"},{"source":"knowledge","status":"available","detail":"refs=1"}],"exclusions":[{"ref":"task-ledger-working-context:d1-pending-risk-mvzlmrtr","reason":"pending-not-accepted"}],"observationPath":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\long-session-paired-evalua-66b1f-losed-across-scope-rollback\\continuity-observation.json"}
+  ok 241 tests\e2e\long-session-paired-evaluation.spec.ts:85:5 鈥?D2 clean candidate: real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback (27.6s)
+  ok 242 tests\e2e\long-session-policy-surface.spec.ts:257:5 鈥?policy surface explains provenance, lifecycle boundaries, narrow layout, and session scope (35.7s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 243 tests\e2e\long-session-restart-journeys.spec.ts:118:7 鈥?long-session restart journeys 鈥?real Electron journeys preserve scope, transcripts, task links, and lifecycle generations (1.5m)
+  -  244 tests\e2e\mac-titlebar-drag-region.spec.ts:10:7 鈥?macOS frameless chrome 鈥?keeps a draggable strip above non-chat pages and stacks chat above it
+  ok 245 tests\e2e\main-navigation.spec.ts:17:7 鈥?Verse Claw main navigation without setup flow 鈥?navigates between core pages with setup bypassed (11.2s)
+  ok 246 tests\e2e\main-navigation.spec.ts:45:7 鈥?Verse Claw main navigation without setup flow 鈥?native New Chat menu opens the same chat route as the sidebar action (11.3s)
+  x  247 tests\e2e\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language (25.6s)
+(node:25772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 248 tests\e2e\memory-surface.spec.ts:178:7 鈥?TF-0498 unified Memory surface 鈥?exposes candidate review, export and tombstone deletion in one panel (12.7s)
+  ok 249 tests\e2e\mission-control-panel.spec.ts:4:7 鈥?Mission Control panel 鈥?starts Mission Control through gateway RPC and renders lifecycle state (12.7s)
+  ok 250 tests\e2e\mission-control-panel.spec.ts:143:7 鈥?Mission Control panel 鈥?pauses, resumes, and cancels a Mission from the panel (12.6s)
+MORPH_VERIFY_REPORT: {
+  "idle": {
+    "open": "false",
+    "morphSize": {
+      "w": 32,
+      "h": 32
+    },
+    "morphRect": {
+      "x": 423,
+      "y": 743,
+      "right": 455,
+      "bottom": 775
+    },
+    "slotRect": {
+      "x": 423,
+      "y": 743,
+      "right": 455,
+      "bottom": 775
+    },
+    "borderRadius": "999px",
+    "overflow": "hidden",
+    "plusVisible": true,
+    "menuButtons": 3,
+    "position": "absolute",
+    "zIndex": "95"
+  },
+  "open": {
+    "open": "true",
+    "morphSize": {
+      "w": 161,
+      "h": 103
+    },
+    "morphRect": {
+      "x": 423,
+      "y": 672,
+      "right": 584,
+      "bottom": 775
+    },
+    "slotRect": {
+      "x": 423,
+      "y": 743,
+      "right": 455,
+      "bottom": 775
+    },
+    "shellRect": {
+      "x": 410,
+      "right": 1146
+    },
+    "borderRadius": "15px",
+    "plusOpacity": "0",
+    "menuOpacity": "1",
+    "menuPointerEvents": "auto",
+    "ariaExpanded": "true",
+    "labels": [
+      "Attach files",
+      "Search knowledge",
+      "More"
+    ]
+  },
+  "peersAfter": [],
+  "noLayoutShift": true,
+  "menuHit": {
+    "hitIsButton": true
+  },
+  "closedByOutside": "false",
+  "closedByEsc": "false",
+  "composerFocus": {
+    "idle": {
+      "border": "oklab(0.22559 -0.00131416 -0.00642684 / 0.08)",
+      "shadow": "oklab(0.22559 -0.00131416 -0.00642684 / 0.06) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.19) 0px 16px 32px -8px"
+    },
+    "focused": {
+      "border": "oklab(0.22559 -0.00131416 -0.00642684 / 0.08)",
+      "shadow": "oklab(0.22559 -0.00131416 -0.00642684 / 0.06) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.19) 0px 16px 32px -8px"
+    },
+    "nativeTitleCount": 0
+  },
+  "morePanel": {
+    "visible": true
+  },
+  "consoleErrors": []
+}
+  ok 251 tests\e2e\morph-plus-verify.spec.ts:123:5 鈥?plus menu morph expands panel, occupies slot, closes on outside click / Esc (15.8s)
+  ok 252 tests\e2e\observability-quick-locate.spec.ts:251:7 鈥?Observability quick-locate navigator 鈥?shows quick-locate panel for multi-turn traces and jumps to a turn (12.4s)
+  ok 253 tests\e2e\observability-quick-locate.spec.ts:322:7 鈥?Observability quick-locate navigator 鈥?hides quick-locate panel when the selected trace has three or fewer nodes (11.8s)
+  ok 254 tests\e2e\observability-trace-graph-drawer.spec.ts:280:7 鈥?Observability trace graph drawer 鈥?drawer is hidden until a node is clicked (12.0s)
+  ok 255 tests\e2e\observability-trace-graph-drawer.spec.ts:286:7 鈥?Observability trace graph drawer 鈥?drawer header shows node label and subtitle (11.8s)
+  ok 256 tests\e2e\observability-trace-graph-drawer.spec.ts:291:7 鈥?Observability trace graph drawer 鈥?clicking overlay closes the drawer (12.0s)
+  ok 257 tests\e2e\observability-trace-graph-drawer.spec.ts:298:7 鈥?Observability trace graph drawer 鈥?ESC key closes the drawer (12.3s)
+  ok 258 tests\e2e\observability-trace-graph-drawer.spec.ts:305:7 鈥?Observability trace graph drawer 鈥?close button closes the drawer (12.3s)
+  ok 259 tests\e2e\observability-trace-graph-drawer.spec.ts:312:7 鈥?Observability trace graph drawer 鈥?switching nodes updates drawer content (12.6s)
+  ok 260 tests\e2e\observability-trace-graph-drawer.spec.ts:324:7 鈥?Observability trace graph drawer 鈥?drawer preserves tab navigation (12.3s)
+  ok 261 tests\e2e\observability-trace-graph.spec.ts:320:7 鈥?Observability trace graph workbench 鈥?renders graph, details, and timeline from traceGraph host API (14.7s)
+  ok 262 tests\e2e\observability-trace-graph.spec.ts:432:7 鈥?Observability trace graph workbench 鈥?shows each source health and diagnostic reason when no trace is available (11.5s)
+  x  263 tests\e2e\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action (43.1s)
+(node:17216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  264 tests\e2e\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled (42.7s)
+(node:20704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  265 tests\e2e\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data (43.3s)
+(node:38252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ORB_VERIFY_REPORT: {
+  "canvases": {
+    "total": 3,
+    "sizes": [
+      {
+        "w": 20,
+        "h": 20
+      },
+      {
+        "w": 20,
+        "h": 20
+      },
+      {
+        "w": 28,
+        "h": 28
+      }
+    ]
+  },
+  "summary": {
+    "orb": {
+      "x": 368,
+      "y": 177,
+      "w": 28,
+      "h": 32
+    },
+    "canvas": {
+      "w": 28,
+      "h": 28
+    },
+    "card": {
+      "x": 368,
+      "y": 177,
+      "w": 820,
+      "h": 175
+    },
+    "scroll": {
+      "x": 291,
+      "y": 94,
+      "w": 974,
+      "h": 564
+    },
+    "orbInsideScrollX": true
+  },
+  "inkDark": {
+    "drawnPixels": 7,
+    "gray": [
+      48,
+      46,
+      47,
+      37,
+      38
+    ]
+  },
+  "tooltip": "Working for 1 second",
+  "sidebarOrb": {
+    "count": 1,
+    "x": 232,
+    "y": 302,
+    "w": 20,
+    "h": 20,
+    "drawn": 107,
+    "gray": [
+      80,
+      115,
+      90,
+      75
+    ],
+    "ancestors": [
+      "span",
+      "sidebar-session-status-agent:main:main",
+      "sidebar-session-agent:main:main",
+      "div",
+      "sidebar-session-drag-agent:main:main"
+    ],
+    "inSidebar": true
+  },
+  "inline20px": {
+    "count": 1,
+    "x": 232,
+    "y": 302,
+    "w": 20,
+    "h": 20,
+    "drawn": 107,
+    "gray": [
+      80,
+      115,
+      90,
+      75
+    ],
+    "ancestors": [
+      "span",
+      "sidebar-session-status-agent:main:main",
+      "sidebar-session-agent:main:main",
+      "div",
+      "sidebar-session-drag-agent:main:main"
+    ],
+    "inSidebar": true
+  },
+  "inkLight": {
+    "drawnPixels": 6,
+    "gray": [
+      62,
+      97,
+      59,
+      29,
+      182
+    ]
+  },
+  "consoleErrors": []
+}
+  ok 266 tests\e2e\orb-visual-verify.spec.ts:136:5 鈥?orbs render on turn-summary head with tooltip, both themes (14.3s)
+  ok 267 tests\e2e\project-rules-center.spec.ts:53:7 鈥?Project Rules Center 鈥?shows create action when AGENTS.md is missing (12.6s)
+  ok 268 tests\e2e\project-rules-center.spec.ts:85:7 鈥?Project Rules Center 鈥?previews AGENTS.md and lists local rule files (11.7s)
+  ok 269 tests\e2e\project-rules-center.spec.ts:113:7 鈥?Project Rules Center 鈥?shows deterministic validation warnings (11.4s)
+  ok 270 tests\e2e\provider-lifecycle.spec.ts:35:7 鈥?Verse Claw provider lifecycle 鈥?recognizes an environment SecretRef without saving the API key (11.6s)
+  ok 271 tests\e2e\provider-lifecycle.spec.ts:74:7 鈥?Verse Claw provider lifecycle 鈥?shows a saved provider and removes it cleanly after deletion (11.6s)
+  ok 272 tests\e2e\provider-lifecycle.spec.ts:90:7 鈥?Verse Claw provider lifecycle 鈥?does not redisplay a deleted provider after relaunch (12.5s)
+  ok 273 tests\e2e\provider-lifecycle.spec.ts:120:7 鈥?Verse Claw provider lifecycle 鈥?shows OpenAI OAuth and API key auth mode toggle in add-provider dialog (12.1s)
+  ok 274 tests\e2e\provider-lifecycle.spec.ts:139:7 鈥?Verse Claw provider lifecycle 鈥?trims whitespace before validating and saving a custom provider key (12.9s)
+  ok 275 tests\e2e\provider-lifecycle.spec.ts:233:7 鈥?Verse Claw provider lifecycle 鈥?edit form validates the new API key inline before saving (single button) (12.5s)
+  ok 276 tests\e2e\provider-lifecycle.spec.ts:417:7 鈥?Verse Claw provider lifecycle 鈥?add dialog sends the custom-header auth format to validation and save (12.6s)
+  ok 277 tests\e2e\provider-lifecycle.spec.ts:447:7 鈥?Verse Claw provider lifecycle 鈥?add dialog persists query auth and declared model capabilities (13.8s)
+  ok 278 tests\e2e\rareui-interactions.spec.ts:156:5 鈥?conversation rail, hook selection, completion bell and Markdown TOC have real Electron screenshot evidence (18.7s)
+  ok 279 tests\e2e\rareui-interactions.spec.ts:248:5 鈥?Cron time edits persist and animated deletion retains confirmation and cancellation (14.3s)
+  ok 280 tests\e2e\rc05-operator-inbox.spec.ts:90:7 鈥?RC-05 Operator Inbox surface 鈥?shows a pending Operator intent, resolves it via inbox.operator.decide, and updates the badge (12.2s)
+  ok 281 tests\e2e\rc05-operator-inbox.spec.ts:112:7 鈥?RC-05 Operator Inbox surface 鈥?a denied Operator intent leaves the actionable list with zero effect (12.1s)
+  x  282 tests\e2e\rc10-operator-live.spec.ts:6:5 鈥?RC-10 real Cron, Inbox, IRC and recovery scenarios (1.5m)
+(node:38504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 283 tests\e2e\readme-gallery.spec.ts:9:7 鈥?README gallery: real en application surfaces (29.7s)
+  ok 284 tests\e2e\readme-gallery.spec.ts:9:7 鈥?README gallery: real zh application surfaces (24.3s)
+  ok 285 tests\e2e\remote-forge-controlled-preview.spec.ts:200:7 鈥?Remote Forge controlled preview 鈥?reads complete and incomplete PR evidence through the real Main adapter without remote writes (13.7s)
+  ok 286 tests\e2e\remote-forge-controlled-preview.spec.ts:307:7 鈥?Remote Forge controlled preview 鈥?publishes only after exact approval and exposes stale and partial reconciliation states (14.2s)
+  ok 287 tests\e2e\remote-forge-controlled-preview.spec.ts:420:7 鈥?Remote Forge controlled preview 鈥?merges only after Main re-checks readiness and exposes TOCTOU and refresh reconciliation (14.4s)
+  ok 288 tests\e2e\remote-tasks.spec.ts:29:7 鈥?Remote tasks 鈥?creates a local test envelope from Settings > Developer (12.1s)
+  ok 289 tests\e2e\resource-tracker.spec.ts:32:7 鈥?Session resource tracker 鈥?shows tracked resources and sends manual stop requests (11.1s)
+  x  290 tests\e2e\restart-recovery-fp-p1-05.spec.ts:185:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?resumes a persisted in-flight assistant turn after Gateway startup (1.2m)
+(node:37008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+  x  291 tests\e2e\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed (2.6m)
+(node:42100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 292 tests\e2e\role-management.spec.ts:13:7 鈥?Role management 鈥?shows role origins and saves config roles through host-api with pending runtime state (12.2s)
+  ok 293 tests\e2e\role-memory-panel.spec.ts:4:7 鈥?Role memory panel 鈥?shows proposal source metadata in the review queue and applies review decisions through gateway RPC (13.2s)
+  ok 294 tests\e2e\role-memory-panel.spec.ts:163:7 鈥?Role memory panel 鈥?creates and archives role memory through gateway RPC (13.1s)
+  ok 295 tests\e2e\role-orchestration-diagnostics.spec.ts:67:7 鈥?Role orchestration diagnostics 鈥?shows diagnostics for ordinary orchestration failure without automatic Task Loop RPC (11.0s)
+  ok 296 tests\e2e\role-orchestration-diagnostics.spec.ts:167:7 鈥?Role orchestration diagnostics 鈥?shows Routing Memo shadow dashboard without claiming active routing (11.7s)
+  ok 297 tests\e2e\role-orchestration-plan-editing.spec.ts:30:7 鈥?Role orchestration plan editing 鈥?saves lightweight plan edits to Task Ledger without exposing an edge editor (11.8s)
+  ok 298 tests\e2e\role-orchestration-synthesis.spec.ts:88:7 鈥?Role orchestration synthesis 鈥?renders P4 synthesis with verifier failure and evidence detail after a run (12.3s)
+  ok 299 tests\e2e\role-orchestration-synthesis.spec.ts:132:7 鈥?Role orchestration synthesis 鈥?renders verified synthesis with concrete role, evidence, verifier, trace, and blackboard detail (12.1s)
+  ok 300 tests\e2e\role-orchestration-synthesis.spec.ts:171:7 鈥?Role orchestration synthesis 鈥?renders repair-required synthesis without presenting it as verified success (12.4s)
+  ok 301 tests\e2e\role-orchestration-synthesis.spec.ts:202:7 鈥?Role orchestration synthesis 鈥?renders repair-after-success as verified while keeping repair evidence visible (12.0s)
+  ok 302 tests\e2e\role-origin-badge.spec.ts:6:7 鈥?RoleCard origin badge (Area 1) 鈥?renders built-in and config origin badges from roles.list (12.1s)
+  ok 303 tests\e2e\runtime-approval-bridge.spec.ts:29:7 鈥?Runtime approval bridge 鈥?covers the composer without a modal and restores its draft after approval (15.2s)
+  ok 304 tests\e2e\runtime-approval-bridge.spec.ts:153:7 鈥?Runtime approval bridge 鈥?answers a pending runtime approval from the conversation input area (11.5s)
+  ok 305 tests\e2e\runtime-approval-bridge.spec.ts:204:7 鈥?Runtime approval bridge 鈥?offers only the decisions the runtime listed for the request (10.6s)
+[fp-p0-05-budget] {"totalChars":6000,"precedence":["knowledge","session_start","working_memory","tool_registry","cvk_addition","vtoken","memory_pilot","other"],"dropAlertRatio":0.1,"counters":{"turns":0,"killedTurns":0,"appliedChars":0,"requestedChars":0,"droppedChars":0,"truncatedChars":0,"dropAlerts":0},"lastTurn":null}
+[fp-p0-ack] {"childPid":42108,"gatewayGeneration":"1","configSource":{"path":"D:\\tmp\\clawx-e2e-main-clean\\verse-claw-e2e-run-Swu671\\verse-claw-e2e-user-data-Yn5txo\\openclaw-source-state\\openclaw.json","exists":true,"origin":"env-override"},"degradedReason":null,"turnEffectProbe":{"wouldChangeTurn":true,"killSwitchEngaged":false,"activeSurfaces":["runtime.contextBlock.working_memory.enabled","runtime.contextBlock.tool_registry.enabled"]},"vtokenAssembly":false}
+  ok 306 tests\e2e\runtime-launch-contract-fp-p0.spec.ts:144:7 鈥?FP-P0 runtime launch contract (real gateway child) 鈥?child env omits the VToken assembly opt-in and the child acknowledges its own flags (25.0s)
+[fp-p0-02-config-kill] {"childPid":44200,"envKillPresent":false,"killSwitch":true,"workingMemory":false,"toolRegistry":false,"turnEffectProbe":{"wouldChangeTurn":false,"killSwitchEngaged":true,"activeSurfaces":[]}}
+  ok 307 tests\e2e\runtime-launch-contract-fp-p0.spec.ts:271:7 鈥?FP-P0 runtime launch contract (real gateway child) 鈥?config-form kill switch zeroes the child's effective flags with no env kill set (24.3s)
+[fp-p0-04-setflag] {"status":"applied","ackTrail":["saved","pending-restart","restarting","runtime-acknowledged","applied"],"restartedGateway":true,"gatewayGeneration":"2","ackChildPid":7220,"ackGeneration":"2"}
+  ok 308 tests\e2e\runtime-launch-contract-fp-p0.spec.ts:356:7 鈥?FP-P0 runtime launch contract (real gateway child) 鈥?flag set reaches applied only via a real child acknowledgement (35.8s)
+  ok 309 tests\e2e\runtime-lifecycle-governance.spec.ts:42:7 鈥?runtime lifecycle governance 鈥?delete success removes the session and conversation switch keeps the app usable (12.9s)
+  ok 310 tests\e2e\runtime-lifecycle-governance.spec.ts:122:7 鈥?runtime lifecycle governance 鈥?delete failure keeps the persisted operationId so a retry reuses it (9.9s)
+[runtime-lifecycle-audit] processPollToolCalls=0
+  ok 311 tests\e2e\runtime-lifecycle-governance.spec.ts:182:7 鈥?runtime lifecycle governance 鈥?goal wake path records zero process.poll tool calls and duplicate wake has one tick (24.1s)
+  ok 312 tests\e2e\scrollbar-visibility.spec.ts:4:7 鈥?hover-only scrollbar visibility 鈥?hides scrollbars until a scroll container is hovered (11.2s)
+  ok 313 tests\e2e\secondary-surfaces-convergence.spec.ts:34:7 鈥?secondary Settings pages and diagnostics share controls in light (15.5s)
+  ok 314 tests\e2e\secondary-surfaces-convergence.spec.ts:74:7 鈥?first-run Setup keeps compact navigation in light (11.2s)
+  ok 315 tests\e2e\secondary-surfaces-convergence.spec.ts:34:7 鈥?secondary Settings pages and diagnostics share controls in dark (14.6s)
+  ok 316 tests\e2e\secondary-surfaces-convergence.spec.ts:74:7 鈥?first-run Setup keeps compact navigation in dark (11.1s)
+  ok 317 tests\e2e\sekb-golden-path.spec.ts:106:7 鈥?SEKB golden path (TF-0004) 鈥?semi-auto write 鈫?human confirm 鈫?recall 鈫?behavior delta with lineage (12.6s)
+  ok 318 tests\e2e\session-activity-background-read.spec.ts:175:7 鈥?Session activity background read state 鈥?shows the unknown state and its retry when the background read failed (10.7s)
+  ok 319 tests\e2e\session-activity-background-read.spec.ts:210:7 鈥?Session activity background read state 鈥?does not report a successful empty read as a failure (10.6s)
+  ok 320 tests\e2e\settings-controls-fakecoding.spec.ts:34:9 鈥?FakeCoding settings content alignment 鈥?renders reference card, row and control geometry in dark mode (11.4s)
+  ok 321 tests\e2e\settings-controls-fakecoding.spec.ts:34:9 鈥?FakeCoding settings content alignment 鈥?renders reference card, row and control geometry in light mode (11.2s)
+  ok 322 tests\e2e\settings-controls-fakecoding.spec.ts:138:7 鈥?FakeCoding settings content alignment 鈥?keeps rows readable and controls reachable at the minimum window (10.8s)
+  ok 323 tests\e2e\settings-drawer.spec.ts:6:7 鈥?Settings theme selector 鈥?switches the live theme from the preview selector and keeps one roving tab stop (12.5s)
+  ok 324 tests\e2e\settings-drawer.spec.ts:83:7 鈥?Windows full-page Settings 鈥?opens as a routed page and returns to the exact application route (11.5s)
+  ok 325 tests\e2e\settings-drawer.spec.ts:133:7 鈥?Windows full-page Settings 鈥?supports direct links, nested Select portals, narrow geometry, and reduced motion (12.2s)
+  ok 326 tests\e2e\settings-efficiency-sampling.spec.ts:27:7 鈥?Verse Claw runtime efficiency sampling settings 鈥?toggles sampling, fails closed when unmeasured, and persists (12.4s)
+  ok 327 tests\e2e\settings-hooks-trust.spec.ts:42:7 鈥?Settings hooks trust center 鈥?lists hook source, hash, managed state and records a trust action (10.9s)
+  ok 328 tests\e2e\settings-memory-embedding.spec.ts:26:7 鈥?Verse Claw memory embedding settings 鈥?toggles memory embedding in system settings and persists (11.5s)
+  ok 329 tests\e2e\settings-proxy.spec.ts:26:7 鈥?Verse Claw developer proxy settings 鈥?keeps proxy save available when disabling proxy in developer mode (12.1s)
+  ok 330 tests\e2e\settings-sandbox-environment.spec.ts:33:7 鈥?Settings execution environment 鈥?shows policy-light backend, guarantee, network and approval (10.5s)
+  ok 331 tests\e2e\settings-sandbox-environment.spec.ts:58:7 鈥?Settings execution environment 鈥?shows an unavailable strong environment with a readable reason (10.9s)
+[fp-p1-01-verification] {"status":"verified","accountId":"custom-1b02b21f-3577-4c70-a881-dee333791bad","vendorId":"custom","model":"mock-coder-small","checkedAt":"2026-11-02T19:03:50.867Z"}
+  ok 332 tests\e2e\setup-first-run-fp-p1-01.spec.ts:120:7 鈥?FP-P1-01 Setup provider/model verification (real Electron + real HTTP) 鈥?verified path plus all three failure classes in the Provider step (26.6s)
+[fp-p1-01-skip] {"status":"skipped"}
+  ok 333 tests\e2e\setup-first-run-fp-p1-01.spec.ts:242:7 鈥?FP-P1-01 Setup provider/model verification (real Electron + real HTTP) 鈥?skip path: limited-mode Complete state and chat first-send interception (24.5s)
+  ok 334 tests\e2e\sidebar-session-folders-archive.spec.ts:331:7 鈥?Sidebar session workgroups and archive 鈥?pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting (12.6s)
+  ok 335 tests\e2e\sidebar-session-folders-archive.spec.ts:392:7 鈥?Sidebar session workgroups and archive 鈥?keeps workgroups inside the project and renders time sorting as a direct list (12.5s)
+  ok 336 tests\e2e\sidebar-session-folders-archive.spec.ts:418:7 鈥?Sidebar session workgroups and archive 鈥?creates a workgroup, moves a running session into it, searches it, then deletes the workgroup (13.1s)
+  ok 337 tests\e2e\sidebar-session-folders-archive.spec.ts:515:7 鈥?Sidebar session workgroups and archive 鈥?delete dialog offers archive and permanent delete; archive modal restores sessions (13.0s)
+  ok 338 tests\e2e\sidebar-session-folders-archive.spec.ts:561:7 鈥?Sidebar session workgroups and archive 鈥?drags a conversation after another to auto-group, rename, and remove the group (12.0s)
+  ok 339 tests\e2e\sidebar-session-folders-archive.spec.ts:643:7 鈥?Sidebar session workgroups and archive 鈥?permanent delete from the archived settings page removes the entry (12.2s)
+  ok 340 tests\e2e\sidebar-session-row-polish.spec.ts:91:7 鈥?Sidebar session rows and activity bell 鈥?hover shows pin + more, long titles loop and settle, and reduced motion keeps them still (15.2s)
+  ok 341 tests\e2e\sidebar-session-row-polish.spec.ts:144:7 鈥?Sidebar session rows and activity bell 鈥?more menu opens under its button and archive offers an undo (13.4s)
+  ok 342 tests\e2e\sidebar-session-row-polish.spec.ts:192:7 鈥?Sidebar session rows and activity bell 鈥?bell shows a live ring and lists running sessions above recent activity (13.4s)
+  ok 343 tests\e2e\sidebar-settings-fakecoding.spec.ts:4:7 鈥?FakeCoding sidebar and full-page settings alignment 鈥?keeps meaningful sidebar and settings shells visible at all states (12.1s)
+  ok 344 tests\e2e\sidebar-settings-fakecoding.spec.ts:179:7 鈥?FakeCoding sidebar and full-page settings alignment 鈥?keeps the collapsed rail and compact footer usable at the minimum window (10.8s)
+  ok 345 tests\e2e\sidebar-settings-fakecoding.spec.ts:212:7 鈥?FakeCoding sidebar and full-page settings alignment 鈥?keeps narrow, light, and loading states fully populated (13.4s)
+  ok 346 tests\e2e\skills-gateway-readiness.spec.ts:4:7 鈥?Skills page gateway readiness 鈥?shows local skills even when gateway is stopped (13.7s)
+  ok 347 tests\e2e\skills-gateway-readiness.spec.ts:58:7 鈥?Skills page gateway readiness 鈥?hides uninstall for plugin-provided skills (12.0s)
+  ok 348 tests\e2e\skills-gateway-readiness.spec.ts:95:7 鈥?Skills page gateway readiness 鈥?clears stale startup banner once local skills load while runtime rpc is still starting (13.4s)
+  ok 349 tests\e2e\skills-packs.spec.ts:36:7 鈥?Skills feature plugins 鈥?shows managed packs and routes install and enable actions through host-api (12.2s)
+  ok 350 tests\e2e\startup-loading-experience.spec.ts:19:7 鈥?startup and route loading experience 鈥?shows the branded boot shell until the React shell is ready (13.4s)
+  ok 351 tests\e2e\startup-loading-experience.spec.ts:47:7 鈥?startup and route loading experience 鈥?disables boot-shell looping animation when reduced motion is requested (9.9s)
+  ok 352 tests\e2e\startup-loading-experience.spec.ts:72:7 鈥?startup and route loading experience 鈥?keeps the Settings shell stable while a lazy section loads (14.9s)
+  ok 353 tests\e2e\startup-loading-experience.spec.ts:99:7 鈥?startup and route loading experience 鈥?shows a Chat skeleton and never the welcome state before empty history is confirmed (12.9s)
+  ok 354 tests\e2e\startup-loading-experience.spec.ts:155:5 鈥?keeps a gateway-startup connection failure inside the Chat skeleton (10.8s)
+  ok 355 tests\e2e\startup-loading-experience.spec.ts:180:5 鈥?keeps the loading skeleton centered when an active workspace has no rail content (11.0s)
+  ok 356 tests\e2e\structural-loading-pilot.spec.ts:162:7 鈥?progressive loading surfaces 鈥?fast settings navigation never renders a structural surface (10.8s)
+  ok 357 tests\e2e\structural-loading-pilot.spec.ts:181:7 鈥?progressive loading surfaces 鈥?slow archived navigation uses only the quiet skeleton (12.0s)
+  ok 358 tests\e2e\structural-loading-pilot.spec.ts:198:9 鈥?progressive loading surfaces 鈥?agents hands measured wireframes to three real groups in light (14.1s)
+  ok 359 tests\e2e\structural-loading-pilot.spec.ts:198:9 鈥?progressive loading surfaces 鈥?agents hands measured wireframes to three real groups in dark (14.2s)
+  ok 360 tests\e2e\structural-loading-pilot.spec.ts:240:7 鈥?progressive loading surfaces 鈥?agents reduced motion is static and content is immediate (15.9s)
+  ok 361 tests\e2e\structural-loading-pilot.spec.ts:253:7 鈥?progressive loading surfaces 鈥?agents fast load and stable refresh keep real cards available (11.1s)
+  ok 362 tests\e2e\structural-loading-pilot.spec.ts:267:7 鈥?progressive loading surfaces 鈥?agents construction stays clipped in a narrow window (14.0s)
+  ok 363 tests\e2e\structural-loading-pilot.spec.ts:280:7 鈥?progressive loading surfaces 鈥?construction strokes travel along every outline before content is revealed (12.8s)
+  ok 364 tests\e2e\structural-loading-pilot.spec.ts:378:11 鈥?progressive loading surfaces 鈥?skills constructs its own rows and reveals real groups in light (14.7s)
+  ok 365 tests\e2e\structural-loading-pilot.spec.ts:378:11 鈥?progressive loading surfaces 鈥?skills constructs its own rows and reveals real groups in dark (15.5s)
+  ok 366 tests\e2e\structural-loading-pilot.spec.ts:378:11 鈥?progressive loading surfaces 鈥?channels constructs its own rows and reveals real groups in light (14.8s)
+  ok 367 tests\e2e\structural-loading-pilot.spec.ts:378:11 鈥?progressive loading surfaces 鈥?channels constructs its own rows and reveals real groups in dark (15.1s)
+  ok 368 tests\e2e\structural-loading-pilot.spec.ts:378:11 鈥?progressive loading surfaces 鈥?cron constructs its own rows and reveals real groups in light (15.0s)
+  ok 369 tests\e2e\structural-loading-pilot.spec.ts:378:11 鈥?progressive loading surfaces 鈥?cron constructs its own rows and reveals real groups in dark (14.8s)
+[fp-p1-06-ui] Saved to D:\tmp\clawx-e2e-main-clean\verse-claw-e2e-run-Swu671\verse-claw-e2e-user-data-Bi7HFl\support-bundles\verse-claw-support-2026-11-02T19-12-35-655Z.json 路 redaction hits: 0
+[fp-p1-06-export] {"success":true,"path":"D:\\tmp\\clawx-e2e-main-clean\\verse-claw-e2e-run-Swu671\\verse-claw-e2e-user-data-Bi7HFl\\support-bundles\\verse-claw-support-2026-11-02T19-12-35-777Z.json","redaction":{"findings":[],"totalHits":0,"verified":true}}
+[fp-p1-06-size] {"sizeBytes":12535,"truncated":["verseClawLogTail:300-lines"]}
+  ok 370 tests\e2e\support-bundle-fp-p1-06.spec.ts:97:7 鈥?FP-P1-06 support bundle export (real Electron + real child) 鈥?one-click export is sanitized, child-mirrored, and self-reporting (24.8s)
+  ok 371 tests\e2e\system-maturity-p45.spec.ts:64:7 鈥?System maturity Phase 4/5 runtime gates 鈥?shows localized budget denial and rolls back the optimistic message (6.2s)
+  x  372 tests\e2e\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection (20.0s)
+(node:18356) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18356) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 373 tests\e2e\system-maturity-p45.spec.ts:128:7 鈥?System maturity Phase 4/5 runtime gates 鈥?cancels the underlying run, clears UI state, and permits the next turn (7.3s)
+  ok 374 tests\e2e\system-maturity-p45.spec.ts:188:7 鈥?System maturity Phase 4/5 runtime gates 鈥?hard timeout aborts the underlying run and releases the next turn (7.4s)
+  ok 375 tests\e2e\system-maturity-p45.spec.ts:232:7 鈥?System maturity Phase 4/5 runtime gates 鈥?keeps browser profile sessions visibly isolated (6.8s)
+  ok 376 tests\e2e\task-ledger.spec.ts:217:7 鈥?Task ledger 鈥?shows task ledger page tabs without restoring the legacy chat context bar (11.5s)
+  ok 377 tests\e2e\task-ledger.spec.ts:293:7 鈥?Task ledger 鈥?passes the selected task node through chat send and records final turns (14.0s)
+  ok 378 tests\e2e\task-loop-panel.spec.ts:4:7 鈥?Agent task loop panel 鈥?starts a task loop through gateway RPC and renders lifecycle state (13.8s)
+  ok 379 tests\e2e\telemetry-consent.spec.ts:18:7 鈥?Verse Claw telemetry consent (#129) 鈥?applies the developer telemetry switch to persisted host settings at runtime (11.4s)
+  ok 380 tests\e2e\token-usage.spec.ts:137:7 鈥?Verse Claw token usage history 鈥?displays assistant usage for agent directory with zero and non-zero tokens (11.0s)
+  ok 381 tests\e2e\token-usage.spec.ts:156:7 鈥?Verse Claw token usage history 鈥?hides gateway internal usage rows from the usage list overview (11.5s)
+  ok 382 tests\e2e\versebrowser-host-invocation.spec.ts:5:5 鈥?real embedded browser preserves actions, denials and unsupported outcomes (5.3s)
+  -  383 tests\e2e\versebrowser-live-model-chain.spec.ts:143:5 鈥?a real model issues an agent_browser tool call through the Gateway
+  ok 384 tests\e2e\versebrowser-provider-sync-diagnostic.spec.ts:25:5 鈥?provider sync diagnostic (1.2m)
+  x  385 tests\e2e\versegit-candidate-apply.spec.ts:13:7 鈥?verified candidate host apply 鈥?runs completion, candidate verification, permission gate and journaled apply in order (14.5s)
+(node:43844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 386 tests\e2e\versegit-diagnostics.spec.ts:40:7 鈥?VerseGit host diagnostics 鈥?returns real frozen identity through renderer -> hostInvoke -> Main service (11.3s)
+  ok 387 tests\e2e\versegit-diagnostics.spec.ts:69:7 鈥?VerseGit host diagnostics 鈥?reports binary mismatch without spawning a process (10.5s)
+  ok 388 tests\e2e\versegit-feedback-delivery.spec.ts:39:7 鈥?VerseGit feedback delivery 鈥?carries the same risk evidence from a real tool result into the next call binding (21.9s)
+  ok 389 tests\e2e\versegit-feedback-paired.spec.ts:32:7 鈥?VerseGit paired agent evaluation 鈥?runs identical off/on fixtures and records a reproduceable behavior shift (26.0s)
+  ok 390 tests\e2e\versegit-lifecycle-cleanup.spec.ts:50:7 鈥?VerseGit cleanup barrier lifecycle 鈥?seals normal, failure and continuation cleanup before deleting owned resources (19.1s)
+  x  391 tests\e2e\versegit-packaged-flow.spec.ts:79:7 鈥?F4 packaged controlled stability 鈥?runs three cold starts and ten packaged task loops with interruption/revocation/undo evidence (35.2s)
+(node:24952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 392 tests\e2e\versegit-runtime-bindings.spec.ts:32:7 鈥?VerseGit runtime binding lifecycle 鈥?runs two real worktree workers through the product orchestrator and typed Main bridge (23.5s)
+  -  393 tests\e2e\visual-tune.spec.ts:23:7 鈥?visual tuning screenshots 鈥?capture composer, permission menu, slash palette, effort flame
+  ok 394 tests\e2e\vtoken-bridge-settings.spec.ts:4:7 鈥?Verse Token internal-only positioning 鈥?does not expose a VT bridge switch or standalone panel in Settings > Developer (11.2s)
+  ok 395 tests\e2e\windows-titlebar-chrome.spec.ts:6:7 鈥?Windows frameless chrome 鈥?uses sidebar-toned shell and no top border on the main panel (11.1s)
+  ok 396 tests\e2e\windows-ui-v2.spec.ts:4:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?uses neutral work surfaces by default and keeps native titlebar controls outside the content stage (10.8s)
+  ok 397 tests\e2e\windows-ui-v2.spec.ts:69:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?keeps dark materials neutral without inheriting light-only overrides (13.4s)
+  x  398 tests\e2e\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints (24.8s)
+(node:34224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 399 tests\e2e\windows-ui-v2.spec.ts:248:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?keeps old visual query values on the current shell and workspace destinations (12.0s)
+  ok 400 tests\e2e\work-mode-intensity.spec.ts:138:9 鈥?Chat send payload contract (work-mode intensity retired client-side) 鈥?legacy workMode 'plan' in workspace state does not leak into the send payload (11.0s)
+  ok 401 tests\e2e\work-mode-intensity.spec.ts:138:9 鈥?Chat send payload contract (work-mode intensity retired client-side) 鈥?legacy workMode 'build' in workspace state does not leak into the send payload (11.8s)
+  ok 402 tests\e2e\work-mode-intensity.spec.ts:138:9 鈥?Chat send payload contract (work-mode intensity retired client-side) 鈥?legacy workMode 'review' in workspace state does not leak into the send payload (12.3s)
+  ok 403 tests\e2e\work-mode-intensity.spec.ts:138:9 鈥?Chat send payload contract (work-mode intensity retired client-side) 鈥?legacy workMode 'docsData' in workspace state does not leak into the send payload (11.5s)
+  ok 404 tests\e2e\work-mode-intensity.spec.ts:161:7 鈥?Chat send payload contract (work-mode intensity retired client-side) 鈥?send payload carries no workMode/promptMode when workspace state is empty (11.6s)
+  ok 405 tests\e2e\workspace-context-settings.spec.ts:6:7 鈥?Workspace Context user settings 鈥?exposes one default-on profile and keeps low-level flags out of General settings (11.7s)
+  ok 406 tests\e2e\workspace-convergence-layout.spec.ts:10:7 鈥?workspace controls fit both supported widths in light (21.4s)
+  ok 407 tests\e2e\workspace-convergence-layout.spec.ts:10:7 鈥?workspace controls fit both supported widths in dark (22.3s)
+  ok 408 tests\e2e\workspace-git-mcp-runtime.spec.ts:62:7 鈥?Workspace Git MCP runtime 鈥?routes built-in clawx-git tools through the real Main Git service (14.7s)
+  ok 409 tests\e2e\workspace-git-mcp-runtime.spec.ts:195:7 鈥?Workspace Git MCP runtime 鈥?applyPatch reports applied and conflicted paths against a real repo (12.0s)
+  ok 410 tests\e2e\workspace-git-mcp-runtime.spec.ts:301:7 鈥?Workspace Git MCP runtime 鈥?diffToBase derives a base from a non-origin remote with no declared default (13.0s)
+  ok 411 tests\e2e\workspace-git-panel.spec.ts:253:7 鈥?Workspace Git panel 鈥?renders status, diff, auth guidance, and approval-blocked write actions (16.9s)
+  ok 412 tests\e2e\workspace-git-panel.spec.ts:651:7 鈥?Workspace Git panel 鈥?creates a draft GitHub PR with explicit base and head through approval (13.3s)
+  ok 413 tests\e2e\workspace-git-panel.spec.ts:857:7 鈥?Workspace Git panel 鈥?anchors audit partial failure, truncation, and drive-root worktree approval (16.5s)
+[fp-p1-02-active] {"id":"workspace","name":"workspace","rootPath":"D:\\tmp\\clawx-fp-p1-02-ihkzxM\\workspace","agentId":"main","selectedAgentId":"main","activeSessionKey":"agent:main:main","agentBindings":{"main":{"workspaceId":"workspace","agentId":"main","sessionKey":"agent:main:main"}},"permissionMode":"acceptEdits","createdAt":1793647431103,"updatedAt":1793647431103,"lastOpenedAt":1793647431103,"state":{"chatFooter":{"contextRangeVisible":true,"tokenUsageVisible":true,"workContextVisible":true}},"sessionStates":{"agent:main:main":{"chatFooter":{"contextRangeVisible":true,"tokenUsageVisible":true,"workContextVisible":true}}},"sessionFolders":[],"sessionFolderAssignments":{}}
+[fp-p1-02-outside] {"ok":false,"error":"approvalRequired","approvalRequired":true,"approval":{"id":"approval-mvzndcdo-erkz15","workspaceId":"workspace","sessionKey":"agent:main:main","runId":null,"mode":"acceptEdits","source":"file","requestedAt":1793647432428,"status":"pending","risk":"external-write","paths":["D:\\tmp\\clawx-fp-p1-02-ihkzxM\\outside.txt"],"requestHash":"D:\\tmp\\clawx-fp-p1-02-ihkzxM\\outside.txt:15","paramsPreview":"D:\\tmp\\clawx-fp-p1-02-ihkzxM\\outside.txt (15 bytes)","reason":"Write target is outside the workspace boundary (D:\\tmp\\clawx-fp-p1-02-ihkzxM\\workspace); external writes require approval"}}
+[fp-p1-02-traversal] {"ok":false,"error":"approvalRequired","approvalRequired":true,"approval":{"id":"approval-mvzndce9-erob2i","workspaceId":"workspace","sessionKey":"agent:main:main","runId":null,"mode":"acceptEdits","source":"file","requestedAt":1793647432449,"status":"pending","risk":"external-write","paths":["D:\\tmp\\clawx-fp-p1-02-ihkzxM\\traversal.txt"],"requestHash":"D:\\tmp\\clawx-fp-p1-02-ihkzxM\\traversal.txt:18","paramsPreview":"D:\\tmp\\clawx-fp-p1-02-ihkzxM\\traversal.txt (18 bytes)","reason":"Write target is outside the workspace boundary (D:\\tmp\\clawx-fp-p1-02-ihkzxM\\workspace); external writes require approval"}}
+  ok 414 tests\e2e\workspace-preflight-fp-p1-02.spec.ts:119:7 鈥?FP-P1-02 workspace preflight + boundary (real Electron) 鈥?preflight gates the folder, permission is explicit, and the runtime boundary rejects escapes (31.1s)
+  ok 415 tests\e2e\workspace-terminal-panel.spec.ts:31:7 鈥?Workspace terminal panel 鈥?renders compact terminal chrome and permission block state (11.7s)
+  ok 416 tests\e2e\workspace-terminal-panel.spec.ts:129:7 鈥?Workspace terminal panel 鈥?starts a live workspace terminal from the launcher (14.2s)
+  x  417 tests\e2e\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer (14.9s)
+(node:9388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 418 tests\e2e\zoom-shortcuts.spec.ts:26:7 鈥?Verse Claw window zoom shortcuts 鈥?can zoom back in after zooming out with keyboard shortcuts (10.4s)
+Error: tracked source changed during Electron E2E run: status, diffSha256
+
+   at fixtures\source-mutation-guard.ts:46
+
+  44 |     .filter((key) => before[key] !== after[key]);
+  45 |   if (changed.length > 0) {
+> 46 |     throw new Error(`tracked source changed during Electron E2E run: ${changed.join(', ')}`);
+     |           ^
+  47 |   }
+  48 | }
+  49 |
+    at assertTrackedSourceStateUnchanged (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fixtures\source-mutation-guard.ts:46:11)
+    at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fixtures\electron-process-cleanup.ts:222:40
+
+
+  1) tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in dark
+
+    TypeError: Cannot read properties of null (reading 'width')
+
+      16 |         expect(await page.locator('link[rel="icon"]').evaluate((link: HTMLLinkElement) => link.href)).toBe(source);
+      17 |         const bootSize = await bootLogo.boundingBox();
+    > 18 |         expect(bootSize!.width).toBe(28);
+         |                          ^
+      19 |         expect(bootSize!.height).toBe(28);
+      20 |         await expect(page.getByTestId('boot-shell')).toHaveCount(0);
+      21 |         const logo = page.getByTestId('brand-logo').first();
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\brand-logo.spec.ts:18:26
+
+    Error Context: test-results\brand-logo-B2-brand-stays--46a94--sidebar-and-reload-in-dark\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\brand-logo-B2-brand-stays--46a94--sidebar-and-reload-in-dark\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\brand-logo-B2-brand-stays--46a94--sidebar-and-reload-in-dark\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  2) tests\e2e\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('div.rounded-xl').filter({ hasText: 'feishu-04db5b0c' }).first().getByRole('combobox')
+    Expected substring: [32m"Unassigned"[39m
+    Error: strict mode violation: locator('div.rounded-xl').filter({ hasText: 'feishu-04db5b0c' }).first().getByRole('combobox') resolved to 2 elements:
+        1) <button dir="ltr" type="button" role="combobox" data-state="closed" aria-expanded="false" aria-autocomplete="none" aria-controls="radix-_r_2i_" class="flex items-center justify-between ring-offset-background transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none [&>span]:line-clamp-1 py-1.5 h-8 rounded-lg border 鈥?鈥?/button> aka getByRole('combobox').filter({ hasText: 'Main Agent' })
+        2) <button dir="ltr" type="button" role="combobox" data-state="closed" aria-expanded="false" aria-autocomplete="none" aria-controls="radix-_r_2m_" class="flex items-center justify-between ring-offset-background transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none [&>span]:line-clamp-1 py-1.5 h-8 rounded-lg border 鈥?鈥?/button> aka getByRole('combobox').filter({ hasText: 'Unassigned' })
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 15000ms[22m
+    [2m  - waiting for locator('div.rounded-xl').filter({ hasText: 'feishu-04db5b0c' }).first().getByRole('combobox')[22m
+
+
+      125 |     // "Unassigned" (an empty native value no longer exists).
+      126 |     const bindingSelect = newAccountRow.getByRole('combobox');
+    > 127 |     await expect(bindingSelect).toContainText('Unassigned');
+          |                                 ^
+      128 |
+      129 |     await bindingSelect.click();
+      130 |     await page.getByRole('option', { name: 'Code Agent' }).click();
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\channels-binding-regression.spec.ts:127:33
+
+    Error Context: test-results\channels-binding-regressio-b9106-til-the-user-binds-an-agent\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\channels-binding-regressio-b9106-til-the-user-binds-an-agent\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\channels-binding-regressio-b9106-til-the-user-binds-an-agent\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  3) tests\e2e\chat-model-scope-runtime.spec.ts:8:5 鈥?turn model wins for one real Gateway request without changing the session choice
+
+    Error: Command failed: C:\Program Files\nodejs\node.exe --import tsx --input-type=module --eval import { updateSessionStore } from './src/config/sessions/store.ts'; await updateSessionStore(process.argv[1], store => { const entry = store[process.argv[2]]; entry.authProfileOverride = process.argv[3]; entry.authProfileOverrideSource = 'user'; }); D:\tmp\clawx-e2e-main-clean\verse-claw-e2e-run-Swu671\verse-claw-e2e-user-data-XBMHoD\openclaw-source-state\agents\main\sessions\sessions.json agent:main:main custom-scopeb:default
+    (node:17684) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+    Error Context: test-results\chat-model-scope-runtime-t-422ba-changing-the-session-choice\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\chat-model-scope-runtime-t-422ba-changing-the-session-choice\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\chat-model-scope-runtime-t-422ba-changing-the-session-choice\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  4) tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('settings-dcs-preview-effective-runtime.coding.staleWriteGuard.enabled')
+    Expected substring: [32m"runtime.coding.staleWriteGuard.enabled: [7mtrue[27m"[39m
+    Received string:    [31m"runtime.coding.staleWriteGuard.enabled: [7mfalse(default)[27m"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('settings-dcs-preview-effective-runtime.coding.staleWriteGuard.enabled')[22m
+    [2m    18 脳 locator resolved to <li data-testid="settings-dcs-preview-effective-runtime.coding.staleWriteGuard.enabled">鈥?/li>[22m
+    [2m       - unexpected value "runtime.coding.staleWriteGuard.enabled: false(default)"[22m
+
+
+      176 |         // The effective flag remains the behavioral contract; keep the locator
+      177 |         // bound to that value without rejecting the separately rendered origin.
+    > 178 |         await expect(page.getByTestId(`settings-dcs-preview-effective-${key}`)).toContainText(
+          |                                                                                 ^
+      179 |           `${key}: true`,
+      180 |         );
+      181 |       }
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:178:81
+
+    Error Context: test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-鈫?kill-shows-killed\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-鈫?kill-shows-killed\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-鈫?kill-shows-killed\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  5) tests\e2e\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile
+
+    TypeError: Cannot read properties of undefined (reading 'length')
+
+      65 |       const cleanup = JSON.parse(await readFile(cleanupPath, 'utf8'));
+      66 |       expect(cleanup.runRoot.replace(/[\\/]+$/, '')).toBe(record.runRoot);
+    > 67 |       expect(cleanup.owned.length).toBeGreaterThan(0);
+         |                            ^
+      68 |       const orphan = cleanup.owned.find((process: { ParentProcessId: number }) => process.ParentProcessId === record.wrapperPid);
+      69 |       expect(orphan).toBeDefined();
+      70 |       expect(orphan.ParentAlive).toBe(false);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\electron-worker-cleanup.spec.ts:67:28
+
+    Error Context: test-results\electron-worker-cleanup-re-f004d-closing-another-run-profile\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  6) tests\e2e\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-image-generation')[22m
+
+
+      146 |   await page.getByTestId('settings-back-button').click();
+      147 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 148 |   await page.getByTestId('sidebar-more-image-generation').click();
+          |                                                           ^
+      149 |   await expect(page.getByTestId('image-generation-settings')).toBeVisible();
+      150 | }
+      151 |
+        at openImageGeneration (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\error-i18n.spec.ts:148:59)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\error-i18n.spec.ts:218:5
+
+    Error Context: test-results\error-i18n-unified-error-e-0fa06-ce-after-switching-language\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\error-i18n-unified-error-e-0fa06-ce-after-switching-language\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\error-i18n-unified-error-e-0fa06-ce-after-switching-language\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  7) tests\e2e\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('settings-theme-mode').getByRole('button', { name: 'Dark' })[22m
+
+
+      203 |     await page.getByTestId('sidebar-nav-settings').click();
+      204 |     const themeMode = page.getByTestId('settings-theme-mode');
+    > 205 |     await themeMode.getByRole('button', { name: 'Dark' }).click();
+          |                                                           ^
+      206 |     await page.getByTestId('settings-back-button').click();
+      207 |     await expect(page.getByTestId('inbox-page')).toBeVisible();
+      208 |     const darkDesktop = testInfo.outputPath('inbox-1280-dark.png');
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fakecoding-inbox-navigation.spec.ts:205:59
+
+    attachment #1: Inbox 1280 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\attachments\Inbox-1280-light-ab460389c75810c89a4a76bfae98a607dd1688bd.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    attachment #2: Inbox 960 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\attachments\Inbox-960-light-065d2aca730cdd5e03d663b3467f19d04470b101.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\error-context.md
+
+    attachment #4: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  8) tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('settings-theme-mode').getByRole('button', { name: 'Dark' })[22m
+
+
+      225 |     await page.setViewportSize({ width: 1280, height: 800 });
+      226 |     await page.getByTestId('sidebar-nav-settings').click();
+    > 227 |     await page.getByTestId('settings-theme-mode').getByRole('button', { name: 'Dark' }).click();
+          |                                                                                         ^
+      228 |     await page.getByTestId('settings-back-button').click();
+      229 |     const darkDesktop = testInfo.outputPath('scheduled-1280-dark.png');
+      230 |     await page.screenshot({ path: darkDesktop });
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:227:89
+
+    attachment #1: Scheduled 1280 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\attachments\Scheduled-1280-light-1a6cc6da3aeb39bc5f0eafae8bd54ae572e48d63.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    attachment #2: Scheduled 960 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\attachments\Scheduled-960-light-de0ad8a267353a38d9616889a8c52324cfc538e8.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\error-context.md
+
+    attachment #4: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  9) tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/knowledge=ask/[39m
+    Received string:  [31m"file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=light&e2eSkipSetup=1#/knowledge"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 15000ms[22m
+    [2m    18 脳 unexpected value "file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=light&e2eSkipSetup=1#/knowledge"[22m
+
+
+      296 |       await page.getByTestId('knowledge-librarian-open').click();
+      297 |       await expect(page.getByTestId('knowledge-chat-page')).toBeVisible();
+    > 298 |       await expect(page).toHaveURL(/knowledge=ask/);
+          |                          ^
+      299 |       await expect(page.getByTestId('knowledge-page')).toHaveCount(0);
+      300 |       await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
+      301 |       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\knowledge-review-queue.spec.ts:298:26
+
+    Error Context: test-results\knowledge-review-queue-Kno-f36a3-t-supported-widths-in-light\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\knowledge-review-queue-Kno-f36a3-t-supported-widths-in-light\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\knowledge-review-queue-Kno-f36a3-t-supported-widths-in-light\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  10) tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/knowledge=ask/[39m
+    Received string:  [31m"file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/knowledge"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 15000ms[22m
+    [2m    18 脳 unexpected value "file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/knowledge"[22m
+
+
+      296 |       await page.getByTestId('knowledge-librarian-open').click();
+      297 |       await expect(page.getByTestId('knowledge-chat-page')).toBeVisible();
+    > 298 |       await expect(page).toHaveURL(/knowledge=ask/);
+          |                          ^
+      299 |       await expect(page.getByTestId('knowledge-page')).toHaveCount(0);
+      300 |       await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
+      301 |       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\knowledge-review-queue.spec.ts:298:26
+
+    Error Context: test-results\knowledge-review-queue-Kno-4d04b-it-supported-widths-in-dark\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\knowledge-review-queue-Kno-4d04b-it-supported-widths-in-dark\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\knowledge-review-queue-Kno-4d04b-it-supported-widths-in-dark\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  11) tests\e2e\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('鑿滃崟璇█宸叉洿鏂?)
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByText('鑿滃崟璇█宸叉洿鏂?)[22m
+
+
+      86 |       await page.getByRole('option', { name: '涓枃', exact: true }).click();
+      87 |
+    > 88 |       await expect(page.getByText('鑿滃崟璇█宸叉洿鏂?)).toBeVisible();
+         |                                               ^
+      89 |       await expect.poll(() => readNativeMenuLabels(app)).toMatchObject({
+      90 |         file: '鏂囦欢',
+      91 |         newChat: '鏂板璇?,
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\main-navigation.spec.ts:88:47
+
+    Error Context: test-results\main-navigation-Verse-Claw-3319e-ls-after-switching-language\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\main-navigation-Verse-Claw-3319e-ls-after-switching-language\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\main-navigation-Verse-Claw-3319e-ls-after-switching-language\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  12) tests\e2e\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-dreams')[22m
+
+
+      41 |   await page.getByTestId('settings-back-button').click();
+      42 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 43 |   await page.getByTestId('sidebar-more-dreams').click();
+         |                                                 ^
+      44 | }
+      45 |
+      46 | test.describe('OpenClaw Dreams', () => {
+        at openDreams (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:43:49)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:140:5
+
+    Error Context: test-results\openclaw-dreams-OpenClaw-D-d98f3-d-runs-a-maintenance-action\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\openclaw-dreams-OpenClaw-D-d98f3-d-runs-a-maintenance-action\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\openclaw-dreams-OpenClaw-D-d98f3-d-runs-a-maintenance-action\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  13) tests\e2e\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-dreams')[22m
+
+
+      41 |   await page.getByTestId('settings-back-button').click();
+      42 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 43 |   await page.getByTestId('sidebar-more-dreams').click();
+         |                                                 ^
+      44 | }
+      45 |
+      46 | test.describe('OpenClaw Dreams', () => {
+        at openDreams (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:43:49)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:217:5
+
+    Error Context: test-results\openclaw-dreams-OpenClaw-D-51f69-e-when-dreaming-is-disabled\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\openclaw-dreams-OpenClaw-D-51f69-e-when-dreaming-is-disabled\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\openclaw-dreams-OpenClaw-D-51f69-e-when-dreaming-is-disabled\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  14) tests\e2e\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-dreams')[22m
+
+
+      41 |   await page.getByTestId('settings-back-button').click();
+      42 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 43 |   await page.getByTestId('sidebar-more-dreams').click();
+         |                                                 ^
+      44 | }
+      45 |
+      46 | test.describe('OpenClaw Dreams', () => {
+        at openDreams (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:43:49)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:244:5
+
+    Error Context: test-results\openclaw-dreams-OpenClaw-D-ab56c--before-loading-Dreams-data\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\openclaw-dreams-OpenClaw-D-ab56c--before-loading-Dreams-data\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\openclaw-dreams-OpenClaw-D-ab56c--before-loading-Dreams-data\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  15) tests\e2e\rc10-operator-live.spec.ts:6:5 鈥?RC-10 real Cron, Inbox, IRC and recovery scenarios
+
+    Error: {"at":"2026-11-02T18:47:09.649Z","driven_by":"agent","actor":"rc10-operator-driver","event":"begin","candidate":{"commit":"de1821e424b1dbe93dc1c862b5b78abcce80934c","tree":"7d1dfb50d3bd465f834911f01c5c0b4334b8b8a5","dirty":true},"scenario":"OPERATOR-ALL","root":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator"}
+    {"at":"2026-11-02T18:48:41.058Z","driven_by":"agent","actor":"rc10-operator-driver","event":"setup.fail","error":"real IRC channel join timed out after 60000ms"}
+    {"at":"2026-11-02T18:48:41.633Z","driven_by":"agent","actor":"rc10-operator-driver","event":"end","evidence":"D:\\ClawX-work\\a6-final-main-590ba5258\\test-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator\\evidence","failures":["setup"]}
+
+    (node:2784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    (node:2784) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/ClawX-work/a6-final-main-590ba5258/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.
+    Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+    To eliminate this warning, add "type": "module" to \\?\D:\ClawX-work\a6-final-main-590ba5258\package.json.
+
+    Command failed: C:\Program Files\nodejs\node.exe D:\ClawX-work\a6-final-main-590ba5258\scripts\rc10\driver.mjs --repo D:\ClawX-work\a6-final-main-590ba5258 --development --scenario OPERATOR-ALL --data-root D:\ClawX-work\a6-final-main-590ba5258\test-results\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\rc10-operator --timeout-min 8
+    (node:2784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    (node:2784) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/ClawX-work/a6-final-main-590ba5258/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.
+    Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+    To eliminate this warning, add "type": "module" to \\?\D:\ClawX-work\a6-final-main-590ba5258\package.json.
+
+
+      14 |     ], { windowsHide: true, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {
+      15 |       clearTimeout(timer);
+    > 16 |       if (error) fail(new Error(stdout + '\n' + stderr + '\n' + error.message));
+         |                       ^
+      17 |       else done();
+      18 |     });
+      19 |     const timer = setTimeout(() => {
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\rc10-operator-live.spec.ts:16:23
+
+    Error Context: test-results\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  16) tests\e2e\restart-recovery-fp-p1-05.spec.ts:185:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?resumes a persisted in-flight assistant turn after Gateway startup
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByTestId('main-layout')
+    Expected: visible
+    Timeout: 60000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 60000ms[22m
+    [2m  - waiting for getByTestId('main-layout')[22m
+
+
+      179 | async function waitForMainLayout(app: ElectronApplication): Promise<void> {
+      180 |   const page = await getStableWindow(app);
+    > 181 |   await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+          |                                                 ^
+      182 | }
+      183 |
+      184 | test.describe('FP-P1-05 restart / recovery / live kill / rollback', () => {
+        at waitForMainLayout (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\restart-recovery-fp-p1-05.spec.ts:181:49)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\restart-recovery-fp-p1-05.spec.ts:250:7
+
+    Error Context: test-results\restart-recovery-fp-p1-05--6dfe6--turn-after-Gateway-startup\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\restart-recovery-fp-p1-05--6dfe6--turn-after-Gateway-startup\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\restart-recovery-fp-p1-05--6dfe6--turn-after-Gateway-startup\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  17) tests\e2e\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mfalse[39m
+    Received: [31mtrue[39m
+
+      436 |         'dcsRoutingMemoShadowEnabled',
+      437 |       ]) {
+    > 438 |         expect(recoveredSettings[key]).toBe(false);
+          |                                        ^
+      439 |       }
+      440 |       expect(recoveredSettings.dcsSekbExperienceShadowEnabled).toBe(true);
+      441 |       expect(recoveredSettings.language).toBe('en');
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\restart-recovery-fp-p1-05.spec.ts:438:40
+
+    Error Context: test-results\restart-recovery-fp-p1-05--18ca0-explainable-and-fail-closed\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\restart-recovery-fp-p1-05--18ca0-explainable-and-fail-closed\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\restart-recovery-fp-p1-05--18ca0-explainable-and-fail-closed\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  18) tests\e2e\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m120[39m
+    Received:    [31m181[39m
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      120 |       const page = await getStableWindow(app);
+      121 |       await expect(page.getByText('bounded-history-999')).toBeVisible();
+    > 122 |       await expect.poll(async () => page.locator('[data-testid^="chat-message-"]:not([data-testid="chat-message-layout"])').count()).toBeLessThanOrEqual(120);
+          |       ^
+      123 |     } finally {
+      124 |       await app.close();
+      125 |     }
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\system-maturity-p45.spec.ts:122:7
+
+    attachment #1: screenshot (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\test-failed-1.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\error-context.md
+
+    attachment #3: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  19) tests\e2e\versegit-candidate-apply.spec.ts:13:7 鈥?verified candidate host apply 鈥?runs completion, candidate verification, permission gate and journaled apply in order
+
+    Error: Command failed: C:\Program Files\nodejs\node.exe D:\ClawX-work\a6-final-main-590ba5258\openclaw_runtime\node_modules\tsx\dist\cli.mjs --tsconfig tsconfig.node.json scripts/versegit-candidate-apply-probe.mts
+    (node:29188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    (node:13640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    [versegit-e3-probe] FAIL: Error: E3 probe source candidate is dirty
+
+       at ..\..\scripts\versegit-candidate-apply-probe.mts:701
+
+      699 | async function main(): Promise<void> {
+      700 |   const source = sourceState();
+    > 701 |   if (source.dirty) throw new Error('E3 probe source candidate is dirty');
+          |                           ^
+      702 |   if (!existsSync(BINARY)) throw new Error('qualified ae.exe is missing');
+      703 |   const reportPath = process.env.VERSEGIT_E3_REPORT_PATH?.trim()
+      704 |     || join(TEMP_ROOT, 'versegit-e3-report-' + Date.now() + '.json');
+        at main (D:\ClawX-work\a6-final-main-590ba5258\scripts\versegit-candidate-apply-probe.mts:701:27)
+        at <anonymous> (D:\ClawX-work\a6-final-main-590ba5258\scripts\versegit-candidate-apply-probe.mts:860:1)
+        at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async node:internal/modules/esm/loader:647:26
+        at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+        at main (D:\ClawX-work\a6-final-main-590ba5258\scripts\versegit-candidate-apply-probe.mts:701:27)
+        at <anonymous> (D:\ClawX-work\a6-final-main-590ba5258\scripts\versegit-candidate-apply-probe.mts:860:1)
+        at async node:internal/modules/esm/loader:647:26
+
+    Error Context: test-results\versegit-candidate-apply-v-3610b-nd-journaled-apply-in-order\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\versegit-candidate-apply-v-3610b-nd-journaled-apply-in-order\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\versegit-candidate-apply-v-3610b-nd-journaled-apply-in-order\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  20) tests\e2e\versegit-packaged-flow.spec.ts:79:7 鈥?F4 packaged controlled stability 鈥?runs three cold starts and ten packaged task loops with interruption/revocation/undo evidence
+
+    Error: Command failed: C:\Program Files\nodejs\node.exe D:\ClawX-work\a6-final-main-590ba5258\openclaw_runtime\node_modules\tsx\dist\cli.mjs --tsconfig tsconfig.node.json scripts/versegit-product-stability.mts --loops 10 --cold-starts D:\tmp\versegit-f4-e2e-LE2PWY\cold-starts.json --artifact-root D:\tmp\versegit-f4-e2e-LE2PWY\artifacts --samples D:\ClawX-work\a6-final-main-590ba5258\harness\specs\fixtures\versegit-product-integration\f4\stability-samples.jsonl --report D:\ClawX-work\a6-final-main-590ba5258\harness\specs\fixtures\versegit-product-integration\f4\stability-report.json --survivors D:\ClawX-work\a6-final-main-590ba5258\harness\specs\fixtures\versegit-product-integration\f4\resource-survivors.json --packaged-flow D:\ClawX-work\a6-final-main-590ba5258\harness\specs\fixtures\versegit-product-integration\f4\packaged-flow.json
+    (node:28580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    (node:44508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/child_process:487
+        throw new ErrnoException(err, 'spawn');
+              ^
+
+    Error: spawn UNKNOWN
+    [90m    at ChildProcess.spawn (node:internal/child_process:487:11)[39m
+    [90m    at spawn (node:child_process:813:9)[39m
+        at runLoop [90m(D:\ClawX-work\a6-final-main-590ba5258\[39mscripts\versegit-product-stability.mts:159:17[90m)[39m
+        at main [90m(D:\ClawX-work\a6-final-main-590ba5258\[39mscripts\versegit-product-stability.mts:291:24[90m)[39m
+    [90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+        at async <anonymous> [90m(D:\ClawX-work\a6-final-main-590ba5258\[39mscripts\versegit-product-stability.mts:370:3[90m)[39m {
+      errno: [33m-4094[39m,
+      code: [32m'UNKNOWN'[39m,
+      syscall: [32m'spawn'[39m
+    }
+
+    Node.js v24.22.1
+
+
+    Error Context: test-results\versegit-packaged-flow-F4--87d51-on-revocation-undo-evidence\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\versegit-packaged-flow-F4--87d51-on-revocation-undo-evidence\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\versegit-packaged-flow-F4--87d51-on-revocation-undo-evidence\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  21) tests\e2e\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByTestId('ui-v2-showcase')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('ui-v2-showcase')[22m
+
+
+       98 |       await openAgentDevScenario(page, 'ui-v2-showcase', { visualMode: true });
+       99 |       await page.setViewportSize({ width: 1280, height: 800 });
+    > 100 |       await expect(page.getByTestId('ui-v2-showcase')).toBeVisible();
+          |                                                        ^
+      101 |       await expect(page.locator('[data-material-level]')).toHaveCount(5);
+      102 |       await expect(page.getByTestId('ui-v2-showcase-codex-icons').locator('svg')).toHaveCount(5);
+      103 |       await expect(page.getByTestId('ui-v2-showcase-badges').locator('[class*="rounded-md"]')).toHaveCount(4);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\windows-ui-v2.spec.ts:100:56
+
+    Error Context: test-results\windows-ui-v2-Cross-platfo-fcbaf-enforces-visual-constraints\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\windows-ui-v2-Cross-platfo-fcbaf-enforces-visual-constraints\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\windows-ui-v2-Cross-platfo-fcbaf-enforces-visual-constraints\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  22) tests\e2e\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveScreenshot[2m([22m[32mexpected[39m[2m)[22m failed
+
+      366 pixels (ratio 0.01 of all image pixels) are different.
+
+      Snapshot: workspace-web-preview-browser-menu.png
+
+    Call log:
+    [2m  - Expect "toHaveScreenshot(workspace-web-preview-browser-menu.png)" with timeout 15000ms[22m
+    [2m    - verifying given screenshot expectation[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - 384 pixels (ratio 0.01 of all image pixels) are different.[22m
+    [2m  - waiting 100ms before taking screenshot[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - 18 pixels (ratio 0.01 of all image pixels) are different.[22m
+    [2m  - waiting 250ms before taking screenshot[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - captured a stable screenshot[22m
+    [2m  - 366 pixels (ratio 0.01 of all image pixels) are different.[22m
+
+
+      219 |       await expect(page.getByRole('menu')).toBeVisible();
+      220 |       await expect(page.getByRole('menuitem', { name: 'Open externally' })).toBeVisible();
+    > 221 |       await expect(page).toHaveScreenshot('workspace-web-preview-browser-menu.png', {
+          |                          ^
+      222 |         animations: 'disabled',
+      223 |         caret: 'hide',
+      224 |         // Brand identity is covered separately; this baseline targets preview controls.
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\workspace-web-preview-panel.spec.ts:221:26
+
+    attachment #1: workspace-web-preview-browser-menu (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    Expected: tests\e2e\workspace-web-preview-panel.spec.ts-snapshots\workspace-web-preview-browser-menu-win32.png
+    Received: test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\workspace-web-preview-browser-menu-actual.png
+    Diff:     test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\workspace-web-preview-browser-menu-diff.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\error-context.md
+
+    attachment #3: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  22 failed
+    tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in dark
+    tests\e2e\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent
+    tests\e2e\chat-model-scope-runtime.spec.ts:8:5 鈥?turn model wins for one real Gateway request without changing the session choice
+    tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed
+    tests\e2e\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile
+    tests\e2e\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language
+    tests\e2e\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count
+    tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings
+    tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light
+    tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark
+    tests\e2e\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language
+    tests\e2e\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action
+    tests\e2e\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled
+    tests\e2e\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data
+    tests\e2e\rc10-operator-live.spec.ts:6:5 鈥?RC-10 real Cron, Inbox, IRC and recovery scenarios 鈹€鈹€
+    tests\e2e\restart-recovery-fp-p1-05.spec.ts:185:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?resumes a persisted in-flight assistant turn after Gateway startup
+    tests\e2e\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed
+    tests\e2e\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection
+    tests\e2e\versegit-candidate-apply.spec.ts:13:7 鈥?verified candidate host apply 鈥?runs completion, candidate verification, permission gate and journaled apply in order
+    tests\e2e\versegit-packaged-flow.spec.ts:79:7 鈥?F4 packaged controlled stability 鈥?runs three cold starts and ten packaged task loops with interruption/revocation/undo evidence
+    tests\e2e\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints
+    tests\e2e\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer
+  5 skipped
+  391 passed (2.1h)
+  1 error was not a part of any test, see above for details
+
+To open last HTML report run:
+[36m[39m
+[36m  pnpm exec playwright show-report[39m
+[36m[39m
+[ELIFECYCLE] Command failed with exit code 1.
