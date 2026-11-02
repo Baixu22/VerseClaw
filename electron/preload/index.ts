@@ -34,8 +34,6 @@ const electronAPI = {
   ipcRenderer: {
     invoke: (channel: string, ...args: unknown[]) => {
       const validChannels = [
-        // Gateway
-        'gateway:status',
         // OpenClaw
         'openclaw:status',
         // Shell

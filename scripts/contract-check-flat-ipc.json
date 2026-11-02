@@ -20,42 +20,6 @@
       "reason": "Legacy unified dispatcher nesting app/provider/usage/settings modules; superseded wholesale by host:invoke. No renderer or test consumer (tests/unit/host-api-facade.test.ts records it as residual)."
     },
     {
-      "channel": "gateway:status",
-      "typedModule": "gateway",
-      "typedAction": "status",
-      "preload": "allowlisted",
-      "disposition": "migrate",
-      "reason": "No renderer consumer. Only live use is the E2E mock seam: specs replace this handler with ipcMain.handle and the fixture bridges typed gateway.status onto it. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
-      "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
-      "migration": {
-        "status": "consumers-migrated",
-        "node": "TF-0650",
-        "migratedOn": "2026-11-02",
-        "commit": "9c9ab5e007d6889176157dcbaf20eef00a41edb9",
-        "consumersBefore": [
-          "tests/e2e/chat-cache-guard.spec.ts"
-        ],
-        "consumersAfter": []
-      }
-    },
-    {
-      "channel": "gateway:rpc",
-      "typedModule": "gateway",
-      "typedAction": "rpc",
-      "preload": "unreachable",
-      "disposition": "migrate",
-      "reason": "Not in the preload allowlist, so unreachable from the renderer. Only live use is the E2E mock seam (fixture bridges typed gateway.rpc to this override). Return envelope {success,result} differs from the typed payload shape. (2026-11-02: E2E seam migrated — tests/ no longer registers this flat handler.) E2E seam migrated to typed host:invoke/typed mock seams (TF-0650, 2026-11-02).",
-      "removalPlan": "Consumers migrated (TF-0650, 2026-11-02). Remaining step (A5 / TF-0651): retire handler + allowlist entry.",
-      "migration": {
-        "status": "consumers-migrated",
-        "node": "TF-0650",
-        "migratedOn": "2026-11-02",
-        "commit": "9c9ab5e007d6889176157dcbaf20eef00a41edb9",
-        "consumersBefore": [],
-        "consumersAfter": []
-      }
-    },
-    {
       "channel": "openclaw:status",
       "typedModule": "openclaw",
       "typedAction": "status",

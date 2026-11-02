@@ -139,9 +139,6 @@ export function registerIpcHandlers(
   // Typed host invoke handlers (new renderer facade; legacy channels remain available)
   registerTypedHostHandlers(gatewayManager, clawHubService, mainWindow, hostApiRegistry);
 
-  // Gateway handlers
-  registerGatewayHandlers(gatewayManager);
-
   // OpenClaw handlers
   registerOpenClawHandlers();
 
@@ -726,33 +723,6 @@ function registerCronHandlers(gatewayManager: GatewayManager): void {
 /**
  * Gateway-related IPC handlers
  */
-function registerGatewayHandlers(gatewayManager: GatewayManager): void {
-  // Get Gateway status
-  ipcMain.handle('gateway:status', () => {
-    return gatewayManager.getStatus();
-  });
-
-  // Gateway RPC call
-  ipcMain.handle('gateway:rpc', async (_, method: string, params?: unknown, timeoutMs?: number) => {
-    try {
-      const result = await resourceFabric.run(
-        method,
-        params,
-        timeoutMs,
-        (rpcMethod, rpcParams, rpcTimeoutMs) => gatewayManager.rpc(rpcMethod, rpcParams, rpcTimeoutMs),
-      );
-      return { success: true, result };
-    } catch (error) {
-      logger.warn(`[gateway:rpc] ${method} failed (timeoutMs=${timeoutMs ?? 30000}): ${String(error)}`);
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // Gateway events are bridged once in main/index.ts through the typed
-  // hostEvents surface. Keeping listener forwarding here would double-deliver
-  // streaming/runtime events to the renderer.
-}
-
 /**
  * OpenClaw-related IPC handlers
  * For checking package status and channel configuration
