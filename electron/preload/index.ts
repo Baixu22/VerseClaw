@@ -34,10 +34,6 @@ const electronAPI = {
   ipcRenderer: {
     invoke: (channel: string, ...args: unknown[]) => {
       const validChannels = [
-        // Shell
-        'shell:openExternal',
-        'shell:showItemInFolder',
-        'shell:openPath',
         // Dialog
         'dialog:open',
         'dialog:message',
@@ -129,13 +125,6 @@ const electronAPI = {
         ipcRenderer.removeAllListeners(channel);
       }
     },
-  },
-
-  /**
-   * Open external URL in default browser
-   */
-  openExternal: (url: string) => {
-    return ipcRenderer.invoke('shell:openExternal', url);
   },
 
   /**

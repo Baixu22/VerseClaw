@@ -14,7 +14,6 @@ export interface IpcRenderer {
 
 export interface ElectronAPI {
   ipcRenderer: IpcRenderer;
-  openExternal: (url: string) => Promise<void>;
   getPathForFile: (file: File) => string;
   platform: NodeJS.Platform;
   isDev: boolean;

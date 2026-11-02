@@ -2,11 +2,9 @@
  * IPC Handlers
  * Registers all IPC handlers for main-renderer communication
  */
-import { ipcMain, BrowserWindow, shell, dialog, app } from 'electron';
-import { homedir } from 'node:os';
-import { join, sep } from 'node:path';
+import { ipcMain, BrowserWindow, dialog, app } from 'electron';
+import { join } from 'node:path';
 import { syncMacTrafficLightPosition } from './traffic-light-layout';
-import { openExternalSafe } from '../utils/safe-open-external';
 import { GatewayManager } from '../gateway/manager';
 import { registerAgentBrowserGatewayBridge } from '../gateway/agent-browser-bridge';
 import { ClawHubService } from '../gateway/clawhub';
@@ -131,9 +129,6 @@ export function registerIpcHandlers(
 
   // Typed host invoke handlers (new renderer facade; legacy channels remain available)
   registerTypedHostHandlers(gatewayManager, clawHubService, mainWindow, hostApiRegistry);
-
-  // Shell handlers
-  registerShellHandlers();
 
   // Dialog handlers
   registerDialogHandlers();
@@ -726,36 +721,7 @@ function registerWhatsAppHandlers(mainWindow: BrowserWindow): void {
   });
 }
 
-/**
- * Provider-related IPC handlers
- */
-/**
- * Shell-related IPC handlers
- */
-function expandShellPath(input: string): string {
-  if (input === '~') return homedir();
-  if (input.startsWith(`~${sep}`) || input.startsWith('~/') || input.startsWith('~\\')) {
-    return join(homedir(), input.slice(2));
-  }
-  return input;
-}
 
-function registerShellHandlers(): void {
-  // Open external URL
-  ipcMain.handle('shell:openExternal', async (_, url: string) => {
-    await openExternalSafe(url);
-  });
-
-  // Open path in file explorer
-  ipcMain.handle('shell:showItemInFolder', async (_, path: string) => {
-    shell.showItemInFolder(expandShellPath(path));
-  });
-
-  // Open path
-  ipcMain.handle('shell:openPath', async (_, path: string) => {
-    return await shell.openPath(expandShellPath(path));
-  });
-}
 
 /**
  * Dialog-related IPC handlers

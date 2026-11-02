@@ -20,44 +20,6 @@
       "reason": "Legacy unified dispatcher nesting app/provider/usage/settings modules; superseded wholesale by host:invoke. No renderer or test consumer (tests/unit/host-api-facade.test.ts records it as residual)."
     },
     {
-      "channel": "shell:openExternal",
-      "typedModule": "shell",
-      "typedAction": "openExternal",
-      "preload": "allowlisted",
-      "disposition": "migrate",
-      "reason": "Was the only flat channel with live renderer consumers: 4 call sites in 2 files went through the preload wrapper window.electron.openExternal; migrated in A3 (TF-0649) to the typed hostApi.shell.openExternal that already served 25 sites.",
-      "removalPlan": "Consumers migrated (TF-0649, 2026-11-02): src/components/channels/ChannelConfigModal.tsx and src/pages/Settings/index.tsx call hostApi.shell.openExternal; window.electron.openExternal has 0 renderer call sites. Remaining step (A5 / TF-0651): retire the preload wrapper electronAPI.openExternal, the allowlist entry and the handler.",
-      "migration": {
-        "status": "consumers-migrated",
-        "node": "TF-0649",
-        "migratedOn": "2026-11-02",
-        "commit": "512dc31a44b98ae8a25e3bc47bd6822353963d65",
-        "consumersBefore": [
-          "src/components/channels/ChannelConfigModal.tsx:423-424",
-          "src/pages/Settings/index.tsx:2289",
-          "src/pages/Settings/index.tsx:2292",
-          "src/pages/Settings/index.tsx:2295"
-        ],
-        "consumersAfter": []
-      }
-    },
-    {
-      "channel": "shell:showItemInFolder",
-      "typedModule": "shell",
-      "typedAction": "showItemInFolder",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.shell.showItemInFolder is the sole entry."
-    },
-    {
-      "channel": "shell:openPath",
-      "typedModule": "shell",
-      "typedAction": "openPath",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.shell.openPath is the sole entry."
-    },
-    {
       "channel": "dialog:open",
       "typedModule": "dialog",
       "typedAction": "open",
