@@ -23,7 +23,7 @@ const REQUIRED_AGENT_DEV_SCENARIOS = [
 const CONTRACT_PATH = 'shared/host-api/contract.ts';
 const FLAT_IPC_REGISTRY_PATH = 'scripts/contract-check-flat-ipc.json';
 const FLAT_IPC_REGISTRY_SCHEMA = 'ContractCheckFlatIpcAdjudication/v1';
-const FLAT_IPC_DISPOSITIONS = new Set(['retire', 'migrate', 'freeze']);
+const FLAT_IPC_DISPOSITIONS = new Set(['retire', 'migrate', 'freeze', 'retired']);
 const FLAT_IPC_PRELOAD_STATES = new Set(['allowlisted', 'unreachable']);
 const IPC_MAIN_SCAN_ROOT = 'electron';
 
@@ -225,8 +225,8 @@ function parsePreloadAllowlist(preloadText) {
 // channel without consulting validChannels, so the allowlist only describes
 // renderer reachability if every such literal is also allowlisted.
 function parsePreloadDirectInvokes(preloadText) {
-  return [...preloadText.matchAll(/ipcRenderer\.invoke\(\s*'([^']+)'/g)].map((match) => ({
-    channel: match[1],
+  return [...preloadText.matchAll(/ipcRenderer\.invoke\(\s*(?:'([^']+)'|"([^"]+)"|`([^`$]+)`)/g)].map((match) => ({
+    channel: match[1] ?? match[2] ?? match[3],
     line: preloadText.slice(0, match.index).split('\n').length,
   }));
 }
@@ -335,42 +335,51 @@ function collectFlatIpcIssues({ contract, flatIpcRegistry, ipcMainHandleSites, p
       && !(typeof entry.removalPlan === 'string' && entry.removalPlan.trim())) {
       issues.push(`${FLAT_IPC_REGISTRY_PATH}: ${tag('removal-plan-missing')} '${channel}' is ${entry.disposition} but declares no removalPlan`);
     }
+    if (entry.disposition === 'retired'
+      && !(typeof entry.retirement?.commit === 'string' && /^[0-9a-f]{7,40}$/i.test(entry.retirement.commit))) {
+      issues.push(`${FLAT_IPC_REGISTRY_PATH}: ${tag('retirement-provenance-missing')} '${channel}' is retired but declares no retirement.commit`);
+    }
   }
 
   const handlerSites = ipcMainHandleSites.filter((site) => site.file === handlersFile && site.channel !== null);
   const handlerChannels = new Set(handlerSites.map((site) => site.channel));
   for (const site of handlerSites) {
-    if (!registryByChannel.has(site.channel)) {
+    const entry = registryByChannel.get(site.channel);
+    if (!entry) {
       issues.push(`${site.file}:${site.line}: ${tag('unregistered-channel')} ipcMain.handle('${site.channel}') is not adjudicated in ${FLAT_IPC_REGISTRY_PATH}`);
+    } else if (entry.disposition === 'retired') {
+      issues.push(`${site.file}:${site.line}: ${tag('retired-channel-live')} ipcMain.handle('${site.channel}') is registered but the registry marks it retired`);
     }
   }
-  for (const channel of registryByChannel.keys()) {
-    if (!handlerChannels.has(channel)) {
+  for (const [channel, entry] of registryByChannel) {
+    if (entry.disposition !== 'retired' && !handlerChannels.has(channel)) {
       issues.push(`${FLAT_IPC_REGISTRY_PATH}: ${tag('stale-registry-entry')} '${channel}' is adjudicated but has no ipcMain.handle in ${handlersFile}`);
     }
   }
 
   const allowlist = parsePreloadAllowlist(typeof preloadText === 'string' ? preloadText : '');
-  if (!allowlist) {
+  const danglingEntries = flatIpcRegistry.danglingAllowlistEntries ?? [];
+  const hasActiveRegistryEntry = [...registryByChannel.values()].some((entry) => entry.disposition !== 'retired');
+  if (!allowlist && (hasActiveRegistryEntry || danglingEntries.length > 0)) {
     issues.push(`${allowlistFile}: ${tag('allowlist-missing')} could not locate the validChannels allowlist`);
-    return issues;
   }
-  const allowSet = new Set(allowlist);
-  if (allowSet.size !== allowlist.length) {
+  const allowSet = new Set(allowlist ?? []);
+  if (allowlist && allowSet.size !== allowlist.length) {
     issues.push(`${allowlistFile}: ${tag('allowlist-duplicate')} validChannels contains duplicate entries`);
   }
   for (const { channel, line } of parsePreloadDirectInvokes(typeof preloadText === 'string' ? preloadText : '')) {
-    if (channel === hostInvoke.channel || allowSet.has(channel)) continue;
-    issues.push(`${allowlistFile}:${line}: ${tag('preload-direct-invoke')} '${channel}' is invoked directly by a preload wrapper but is not in validChannels; a flat channel the renderer can reach must be allowlisted`);
+    if (channel === hostInvoke.channel) continue;
+    issues.push(`${allowlistFile}:${line}: ${tag('preload-direct-invoke')} '${channel}' is invoked directly by the preload; only '${hostInvoke.channel}' may use ipcRenderer.invoke`);
   }
   for (const [channel, entry] of registryByChannel) {
+    if (entry.disposition === 'retired') continue;
     const actual = allowSet.has(channel) ? 'allowlisted' : 'unreachable';
     if (FLAT_IPC_PRELOAD_STATES.has(entry.preload) && entry.preload !== actual) {
       issues.push(`${allowlistFile}: ${tag('preload-mismatch')} '${channel}' is ${actual} in validChannels but the registry declares ${entry.preload}`);
     }
   }
   const dangling = new Map();
-  for (const entry of flatIpcRegistry.danglingAllowlistEntries ?? []) {
+  for (const entry of danglingEntries) {
     const channel = String(entry.channel ?? '');
     dangling.set(channel, entry);
     if (!FLAT_IPC_DISPOSITIONS.has(entry.disposition) || !(typeof entry.reason === 'string' && entry.reason.trim())) {

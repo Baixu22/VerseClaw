@@ -2,9 +2,8 @@
  * IPC Handlers
  * Registers all IPC handlers for main-renderer communication
  */
-import { ipcMain, BrowserWindow, app } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import { join } from 'node:path';
-import { syncMacTrafficLightPosition } from './traffic-light-layout';
 import { GatewayManager } from '../gateway/manager';
 import { registerAgentBrowserGatewayBridge } from '../gateway/agent-browser-bridge';
 import { ClawHubService } from '../gateway/clawhub';
@@ -99,9 +98,6 @@ export function registerIpcHandlers(
 
   // Cron task handlers (proxy to Gateway RPC)
   registerCronHandlers(gatewayManager);
-
-  // Window control handlers (for custom title bar on Windows/Linux)
-  registerWindowHandlers(mainWindow);
 
   // WhatsApp handlers
   registerWhatsAppHandlers(mainWindow);
@@ -272,41 +268,5 @@ function registerWhatsAppHandlers(mainWindow: BrowserWindow): void {
       logger.error('whatsapp:login-error', error);
       mainWindow.webContents.send('channel:whatsapp-error', error);
     }
-  });
-}
-
-
-
-
-
-/**
- * Window control handlers (for custom title bar on Windows)
- */
-function registerWindowHandlers(mainWindow: BrowserWindow): void {
-  ipcMain.handle('window:syncTrafficLightPosition', (_, sidebarCollapsed: unknown) => {
-    if (typeof sidebarCollapsed !== 'boolean') {
-      return;
-    }
-    syncMacTrafficLightPosition(mainWindow, sidebarCollapsed);
-  });
-
-  ipcMain.handle('window:minimize', () => {
-    mainWindow.minimize();
-  });
-
-  ipcMain.handle('window:maximize', () => {
-    if (mainWindow.isMaximized()) {
-      mainWindow.unmaximize();
-    } else {
-      mainWindow.maximize();
-    }
-  });
-
-  ipcMain.handle('window:close', () => {
-    mainWindow.close();
-  });
-
-  ipcMain.handle('window:isMaximized', () => {
-    return mainWindow.isMaximized();
   });
 }

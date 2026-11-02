@@ -6,7 +6,6 @@
 import type { HostResponse, HostRequest } from '../lib/host-api-types';
 
 export interface IpcRenderer {
-  invoke(channel: string, ...args: unknown[]): Promise<unknown>;
   on(channel: string, callback: (...args: unknown[]) => void): (() => void) | void;
   once(channel: string, callback: (...args: unknown[]) => void): void;
   off(channel: string, callback?: (...args: unknown[]) => void): void;

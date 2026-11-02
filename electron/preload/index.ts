@@ -28,31 +28,7 @@ function isValidEventChannel(channel: string): boolean {
  * IPC renderer methods exposed to the renderer process
  */
 const electronAPI = {
-  /**
-   * IPC invoke (request-response pattern)
-   */
   ipcRenderer: {
-    invoke: (channel: string, ...args: unknown[]) => {
-      const validChannels = [
-        // Window controls
-        'window:minimize',
-        'window:maximize',
-        'window:close',
-        'window:isMaximized',
-        'window:syncTrafficLightPosition',
-        // Env
-        'env:getConfig',
-        'env:setApiKey',
-        'env:deleteApiKey',
-      ];
-
-      if (validChannels.includes(channel)) {
-        return ipcRenderer.invoke(channel, ...args);
-      }
-
-      throw new Error(`Invalid IPC channel: ${channel}`);
-    },
-
     /**
      * Listen for events from main process
      */

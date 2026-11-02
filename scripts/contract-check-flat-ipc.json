@@ -10,63 +10,6 @@
     "file": "electron/main/ipc/host-invoke.ts",
     "channel": "host:invoke"
   },
-  "channels": [
-    {
-      "channel": "window:syncTrafficLightPosition",
-      "typedModule": "window",
-      "typedAction": "syncTrafficLightPosition",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.syncTrafficLightPosition is the sole entry."
-    },
-    {
-      "channel": "window:minimize",
-      "typedModule": "window",
-      "typedAction": "minimize",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.minimize is the sole entry."
-    },
-    {
-      "channel": "window:maximize",
-      "typedModule": "window",
-      "typedAction": "maximize",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.maximize is the sole entry."
-    },
-    {
-      "channel": "window:close",
-      "typedModule": "window",
-      "typedAction": "close",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.close is the sole entry."
-    },
-    {
-      "channel": "window:isMaximized",
-      "typedModule": "window",
-      "typedAction": "isMaximized",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.window.isMaximized is the sole entry."
-    }
-  ],
-  "danglingAllowlistEntries": [
-    {
-      "channel": "env:getConfig",
-      "disposition": "retire",
-      "reason": "Allowlisted in preload but no ipcMain.handle exists anywhere under electron/, src/ or shared/; a dead allowlist entry."
-    },
-    {
-      "channel": "env:setApiKey",
-      "disposition": "retire",
-      "reason": "Allowlisted in preload but no ipcMain.handle exists anywhere under electron/, src/ or shared/; a dead allowlist entry."
-    },
-    {
-      "channel": "env:deleteApiKey",
-      "disposition": "retire",
-      "reason": "Allowlisted in preload but no ipcMain.handle exists anywhere under electron/, src/ or shared/; a dead allowlist entry."
-    }
-  ]
+  "channels": [],
+  "danglingAllowlistEntries": []
 }

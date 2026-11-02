@@ -21,6 +21,7 @@ function fakeWindow() {
     maximize: vi.fn(),
     unmaximize: vi.fn(),
     close: vi.fn(),
+    setWindowButtonPosition: vi.fn(),
     webContents: { isDestroyed: () => false, send },
   } as never;
   return { win, send };
@@ -41,6 +42,14 @@ beforeEach(() => {
 });
 
 describe('system notification boundary', () => {
+  it('applies the sidebar traffic-light position through the registered window service', () => {
+    const platform = vi.spyOn(process, 'platform', 'get').mockReturnValue('darwin');
+    const { win } = fakeWindow();
+    apiFor(win).syncTrafficLightPosition({ sidebarCollapsed: true });
+    expect(win.setWindowButtonPosition).toHaveBeenCalledWith({ x: 8, y: 8 });
+    platform.mockRestore();
+  });
+
   it('fails closed when the preference is off', async () => {
     enabled = false;
     const { win } = fakeWindow();
