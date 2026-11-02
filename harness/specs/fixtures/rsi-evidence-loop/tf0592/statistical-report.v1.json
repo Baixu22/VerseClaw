@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-02T02:57:19.968Z",
+  "generatedAt": "2026-11-02T03:18:36.141Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,12 +17,12 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-11-02T02:57:19.968Z",
+    "generatedAt": "2026-11-02T03:18:36.141Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "cf262c7cc05f2c11c736b533764d8625a288c2a6",
-      "tree": "9b0e8e78ccde6f0785f5a1250ba58515735b7feb",
+      "commit": "a5da25231be9b9b7c6cd536c79654b601c5355fe",
+      "tree": "b56af348ec4b1b47cc85f90a2970ae823f681793",
       "branch": "main",
       "dirty": false,
       "dirtyPaths": [],
@@ -42,7 +42,7 @@
         "harness/specs/rules/agent-engineering-acceptance-boundary.md": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
         "harness/specs/rules/task-forest-autoclose-and-roles.md": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
         "harness/src/profiles.mjs": "b8b2992c58362fa16c4f0f3b40886fe96ab6d1dea690537cec81df3634899622",
-        "package.json": "e747a58bff8d1585610df6e665d2a192a081d54c183862bcddac2b5bb38dcb6a",
+        "package.json": "6991c3f19e9935af89f1508276e32e4ab7b3fb84a1533aa3d22a93262aa8fd42",
         "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
       }
     },
@@ -56,9 +56,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 3696660480,
+      "freeMemoryBytes": 5001232384,
       "disk": {
-        "freeBytes": 170403663872,
+        "freeBytes": 168367325184,
         "totalBytes": 701020237824,
         "status": "measured"
       }
