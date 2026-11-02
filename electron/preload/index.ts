@@ -34,9 +34,6 @@ const electronAPI = {
   ipcRenderer: {
     invoke: (channel: string, ...args: unknown[]) => {
       const validChannels = [
-        // Dialog
-        'dialog:open',
-        'dialog:message',
         // App
         'app:version',
         'app:name',

@@ -20,22 +20,6 @@
       "reason": "Legacy unified dispatcher nesting app/provider/usage/settings modules; superseded wholesale by host:invoke. No renderer or test consumer (tests/unit/host-api-facade.test.ts records it as residual)."
     },
     {
-      "channel": "dialog:open",
-      "typedModule": "dialog",
-      "typedAction": "open",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.dialog.open is the sole entry."
-    },
-    {
-      "channel": "dialog:message",
-      "typedModule": "dialog",
-      "typedAction": "message",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.dialog.message is the sole entry."
-    },
-    {
       "channel": "app:version",
       "typedModule": "app",
       "typedAction": "version",

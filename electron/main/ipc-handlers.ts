@@ -2,7 +2,7 @@
  * IPC Handlers
  * Registers all IPC handlers for main-renderer communication
  */
-import { ipcMain, BrowserWindow, dialog, app } from 'electron';
+import { ipcMain, BrowserWindow, app } from 'electron';
 import { join } from 'node:path';
 import { syncMacTrafficLightPosition } from './traffic-light-layout';
 import { GatewayManager } from '../gateway/manager';
@@ -129,9 +129,6 @@ export function registerIpcHandlers(
 
   // Typed host invoke handlers (new renderer facade; legacy channels remain available)
   registerTypedHostHandlers(gatewayManager, clawHubService, mainWindow, hostApiRegistry);
-
-  // Dialog handlers
-  registerDialogHandlers();
 
   // App handlers
   registerAppHandlers();
@@ -723,22 +720,7 @@ function registerWhatsAppHandlers(mainWindow: BrowserWindow): void {
 
 
 
-/**
- * Dialog-related IPC handlers
- */
-function registerDialogHandlers(): void {
-  // Show open dialog
-  ipcMain.handle('dialog:open', async (_, options: Electron.OpenDialogOptions) => {
-    const result = await dialog.showOpenDialog(options);
-    return result;
-  });
 
-  // Show message box
-  ipcMain.handle('dialog:message', async (_, options: Electron.MessageBoxOptions) => {
-    const result = await dialog.showMessageBox(options);
-    return result;
-  });
-}
 
 /**
  * App-related IPC handlers
