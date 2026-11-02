@@ -31,6 +31,7 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       HOME: homeDir, USERPROFILE: homeDir,
       APPDATA: join(homeDir, 'AppData', 'Roaming'), LOCALAPPDATA: join(homeDir, 'AppData', 'Local'),
       OPENCLAW_CONFIG_DIR: openclawDir,
+      OPENCLAW_CONFIG_PATH: join(sourceStateDir, 'openclaw.json'), OPENCLAW_STATE_DIR: sourceStateDir,
       VERSE_CLAW_USER_DATA_DIR: userDataDir,
       VERSE_CLAW_E2E: '0', VERSE_CLAW_E2E_SKIP_SETUP: '1',
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(port),
@@ -60,7 +61,7 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       return JSON.stringify(result.messages ?? []).includes(marker);
     };
     async function turn(current: ElectronApplication, marker: string) {
-      await hostInvoke(current, 'chat', 'sendWithMedia', { sessionKey, message: marker, idempotencyKey: `a5-${marker}` });
+      await hostInvoke(current, 'chat', 'sendWithMedia', { workspaceId, sessionKey, message: marker, idempotencyKey: `a5-${marker}` });
       await expect.poll(() => history(current, `${marker}-RECEIPT`), { timeout: 150_000 }).toBe(true);
     }
     const firstApp = app;
@@ -71,7 +72,7 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
     const afterRun = await activity(firstApp);
     expect(afterRun.policy?.host?.runtime.state, JSON.stringify(afterRun.policy?.host)).toBe('supported');
     expect(afterRun.policy?.tools?.status).toBe('effective');
-    expect(afterRun.policy?.host?.tools.state).toBe('supported');
+    expect(afterRun.policy?.host?.tools).toMatchObject({ state: 'unknown', reason: 'adapter-health-not-probed' });
     expect(afterRun.policy?.host?.unattendedService.state).toBe('unknown');
     const initialAck = await ack(firstApp);
 

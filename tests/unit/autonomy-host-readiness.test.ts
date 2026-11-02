@@ -37,7 +37,7 @@ describe('TF-0674 current host capability projection', () => {
   it('projects current owner observations without converting them into permission or measured budgets', () => {
     const result = buildSessionHostReadiness(input());
     expect(result.runtime.state).toBe('supported');
-    expect(result.tools.state).toBe('supported');
+    expect(result.tools).toMatchObject({ state: 'unknown', reason: 'adapter-health-not-probed' });
     expect(result.scheduling).toMatchObject({ state: 'supported', source: 'cron.status', observedAt: new Date(NOW).toISOString() });
     expect(result.budget).toMatchObject({ state: 'unknown', reason: 'budget-owner-not-probed', observedAt: null });
     expect(result.unattendedService).toMatchObject({ state: 'unknown', reason: 'service-owner-not-probed', observedAt: null });

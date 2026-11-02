@@ -43,7 +43,7 @@ export function buildSessionHostReadiness(input: {
     ? fact('unknown', 'runtime-effective-capability.observation.effectiveToolNames', runtime.reason)
     : policy.tools?.status !== 'effective' || !policy.tools.value?.digest
       ? fact('unknown', 'runtime-effective-capability.observation.effectiveToolNames', 'runtime-adapter-tools-unverified')
-      : fact(policy.tools.value.names.length ? 'supported' : 'unsupported', policy.tools.source, policy.tools.value.names.length ? null : 'no-effective-tools', policy.generation.observedAt);
+      : fact(policy.tools.value.names.length ? 'unknown' : 'unsupported', policy.tools.source, policy.tools.value.names.length ? 'adapter-health-not-probed' : 'no-effective-tools', policy.generation.observedAt);
   const scheduling = !scopeMatches || !connected || input.cronEnabled === null
     ? fact('unknown', 'cron.status', !scopeMatches ? 'session-scope-mismatch' : !connected ? 'gateway-connection-unavailable-or-replaced' : 'cron-owner-unavailable')
     : fact(input.cronEnabled ? 'supported' : 'unsupported', 'cron.status', input.cronEnabled ? null : 'cron-owner-disabled', observedAt);

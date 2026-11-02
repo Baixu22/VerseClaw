@@ -88,6 +88,7 @@ export type SessionPolicyScheduleLimits = {
 };
 
 export type SessionPolicyTools = {
+  /** Runtime-exposed menu, not adapter health, permission, or effect evidence. */
   names: readonly string[];
   digest: string;
 };

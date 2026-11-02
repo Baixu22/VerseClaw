@@ -20,6 +20,28 @@ vi.mock('@electron/utils/logger', () => ({
 }));
 
 describe('GatewayManager diagnostics', () => {
+  it('fences delayed RPC success and failure from the previous connection epoch', async () => {
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    for (const ok of [true, false]) {
+      const manager = new GatewayManager();
+      const internals = manager as unknown as {
+        ws: unknown; status: unknown;
+        pendingRequests: Map<string, unknown>;
+        capabilityMonitor: { reset(): void };
+        handleMessage(message: unknown): void;
+      };
+      internals.ws = { readyState: 1, send: vi.fn() };
+      internals.status = { state: 'running', port: 18789, gatewayReady: true };
+      const pending = manager.rpc('health', {}, 1000);
+      const requestId = Array.from(internals.pendingRequests.keys())[0];
+      internals.capabilityMonitor.reset();
+      internals.handleMessage({ type: 'res', id: requestId, ok, payload: { ok: true }, error: { code: 'UNAVAILABLE', message: 'old connection failure' } });
+      if (ok) await expect(pending).resolves.toEqual({ ok: true });
+      else await expect(pending).rejects.toThrow('old connection failure');
+      expect(manager.getCapabilitySnapshot().openclawHealth.state).toBe('unknown');
+      expect(manager.getDiagnostics().lastRpcSuccessAt).toBeUndefined();
+    }
+  });
   it('does not apply a delayed health response to a replacement connection', async () => {
     const { GatewayManager } = await import('@electron/gateway/manager');
     const manager = new GatewayManager();
