@@ -79,6 +79,13 @@ owner and review date in the retained provenance.
 The active v2 reservation still contains zero completed model trials.
 `pnpm rsi:tf0592:check` verifies an instrument pack whose report remains
 `insufficient-evidence`; it does not convert a reservation into measurement.
+
+The SEKB off/shadow/confirmed Stage 0 decision is frozen in
+`harness/specs/fixtures/rsi-sekb-arms/decision.v1.json`: a 180-trial plan exists,
+zero model trials and zero provider calls were executed without a declared
+provider envelope and whole-run budget, and the verified verdict is
+`insufficient-evidence` with no benefit or promotion claim. Its contract,
+baseline, decision and verifier are hash-bound by the adjacent `SHA256SUMS`.
 `pnpm rsi:corpus:check` and `node scripts/rsi-tf0604-baseline.mjs --check --json`
 verify the current corpus and its bindings.
 
