@@ -42,6 +42,10 @@
     "currentEvidenceCommit": "90098744c02847e1154ef4b984114219643e6118",
     "frozenVerificationCommit": "fbefc43fc5ad6fb0170645c8c30696a0d9f5ec26",
     "currentSourceMatchesFrozenVerification": true,
+    "nonJudgedInputs": {
+      ".gitignore": "repository hygiene registry edited by unrelated tasks; not a judged RSI input",
+      "scripts/repository-artifacts.json": "repository retention registry edited by unrelated tasks; not a judged RSI input"
+    },
     "gitBlobHashes": {
       ".gitignore": "bb6994ab0dca515a832d911e1f45391f8533fc98",
       "README.ja-JP.md": "f0fefa3c3a3c8411fb820ad93b144eaf88ce23a7",
