@@ -27,6 +27,7 @@ expectedUserBehavior:
   - The static acceptance contract for agent-first acceptance is executable from disk and rejects malformed contracts instead of trusting a green command line.
 requiredProfiles:
   - fast
+  - rsi
 requiredRules:
   - repository-artifact-retention
   - docs-sync

@@ -13,6 +13,9 @@ touchedAreas:
   - scripts/rsi-*.d.mts
   - scripts/repository-artifacts.json
   - harness/specs/fixtures/rsi-evidence-loop/**
+  - harness/specs/fixtures/rsi-feedback-loop/**
+  - harness/specs/fixtures/rsi-sekb-arms/**
+  - harness/src/profiles.mjs
   - harness/specs/fixtures/agent-first-system/**
   - harness/specs/fixtures/agent-first-task-corpus/**
   - harness/specs/fixtures/agent-first-framework/loop-validation-report.json
@@ -45,6 +48,7 @@ expectedUserBehavior:
   - A reader can distinguish the failed historical provider measurement from deterministic replay and recompute the archived result offline.
 requiredProfiles:
   - fast
+  - rsi
   - comms
 requiredRules:
   - docs-sync
