@@ -6,7 +6,7 @@
 // action: 'injectionReceipts'), so the whole surface is driven by stubbing that
 // one host route — no runtime, no gateway RPC.
 import type { ElectronApplication } from '@playwright/test';
-import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, test, installIpcMocks } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
 
@@ -47,8 +47,6 @@ async function installStubs(app: ElectronApplication, mode: ReceiptMode, receipt
   await app.evaluate(async ({ ipcMain }, args: { mode: ReceiptMode; receipt: typeof INJECTED_RECEIPT; sessionKey: string; snapshot: typeof WORKSPACE_SNAPSHOT }) => {
     const { mode, receipt, sessionKey, snapshot } = args;
 
-    ipcMain.removeHandler('gateway:status');
-    ipcMain.handle('gateway:status', async () => ({ state: 'running', port: 18789, pid: 12345, gatewayReady: true }));
 
     ipcMain.removeHandler('host:invoke');
     ipcMain.handle('host:invoke', async (_event: unknown, request: {
@@ -83,6 +81,7 @@ async function installStubs(app: ElectronApplication, mode: ReceiptMode, receipt
       return makeResponse({});
     });
   }, { mode, receipt, sessionKey: SESSION_KEY, snapshot: WORKSPACE_SNAPSHOT });
+  await installIpcMocks(app, { gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } });
 }
 
 async function openChatAndPanel(app: ElectronApplication) {
