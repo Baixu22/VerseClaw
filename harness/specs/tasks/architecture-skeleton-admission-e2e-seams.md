@@ -122,6 +122,16 @@ spec 只提供数据（`mockConfig`），不再注册/移除任何扁平 channel
   verify the renderer's gateway-readiness source under the typed seam (the
   fixture installs the flat `gateway:status` handler when `mockConfig.gatewayStatus`
   is present, so readiness wiring is the suspect, not the rpc mock).
+- **Decisive evidence (2026-11-02)**: deleting *only* the flat
+  `ipcMain.handle('gateway:rpc')` lines while keeping `gatewayRpc: {}` makes
+  "shows a Chat skeleton and never the welcome state" fail, even though the same
+  case passes on the unmodified spec (verified twice, 27.6s / 30.9s). So this case
+  is served through the fixture's legacy-override bridge: with
+  `gatewayRpc: {}` the interceptor falls through to `getLegacyOverride('gateway:rpc', ...)`,
+  and removing the flat handler leaves an empty response that the client reads as
+  a failure. The typed replacement must reproduce the *exact* payload the client
+  expects, not merely a well-formed `{success,result}`; next pass should capture
+  the legacy handler's response shape and mirror it in `gatewayRpcByMethod`.
 - `chat-history-startup-retry.spec.ts` needs *stateful* rpc responses (first
   `chat.history` call fails, the retry succeeds) plus a 5s delay in the second
   test. A static `gatewayRpc` map cannot express that; a sequence seam was tried
