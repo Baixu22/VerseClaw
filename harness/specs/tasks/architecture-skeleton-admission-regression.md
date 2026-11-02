@@ -21,6 +21,7 @@ ownedPaths:
   - docs/dev/architecture-skeleton/CHARTER.md
   - scripts/repository-artifacts.json
   - artifacts/admission-convergence-20261102/**
+  - harness/specs/fixtures/rsi-evidence-loop/tf0592/**
   - docs/dev/error-governance-decision-record.md
   - harness/specs/rules/error-governance-boundary.md
   - scripts/check-error-governance.mjs

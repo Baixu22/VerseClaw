@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-02T03:18:36.141Z",
+  "generatedAt": "2026-11-02T14:44:29.605Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,13 +17,13 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-11-02T03:18:36.141Z",
+    "generatedAt": "2026-11-02T14:44:29.605Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "a5da25231be9b9b7c6cd536c79654b601c5355fe",
-      "tree": "b56af348ec4b1b47cc85f90a2970ae823f681793",
-      "branch": "main",
+      "commit": "1484a90e156ea603bf9568e5061c92459fd57096",
+      "tree": "a8c3f1ef1d8cda4f36dde91eece938f7c1f5d235",
+      "branch": "",
       "dirty": false,
       "dirtyPaths": [],
       "sourceHashes": {
@@ -41,7 +41,7 @@
         "harness/specs/rules/paired-ablation-boundary.md": "58bddcfc373b6cb3b5340398254f19a93383599b382002870a2c930965b06c04",
         "harness/specs/rules/agent-engineering-acceptance-boundary.md": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
         "harness/specs/rules/task-forest-autoclose-and-roles.md": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
-        "harness/src/profiles.mjs": "b8b2992c58362fa16c4f0f3b40886fe96ab6d1dea690537cec81df3634899622",
+        "harness/src/profiles.mjs": "6f52c8ea317661c6f8508537c72ccdf23bd9a01e6186b6dc2c535438d22634c1",
         "package.json": "6991c3f19e9935af89f1508276e32e4ab7b3fb84a1533aa3d22a93262aa8fd42",
         "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
       }
@@ -56,9 +56,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 5001232384,
+      "freeMemoryBytes": 2315669504,
       "disk": {
-        "freeBytes": 168367325184,
+        "freeBytes": 152785534976,
         "totalBytes": 701020237824,
         "status": "measured"
       }
