@@ -20,6 +20,23 @@ vi.mock('@electron/utils/logger', () => ({
 }));
 
 describe('GatewayManager diagnostics', () => {
+  it('does not apply a delayed health response to a replacement connection', async () => {
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    const manager = new GatewayManager();
+    const internals = manager as unknown as { ws: unknown; status: unknown; capabilityMonitor: { reset(): void } };
+    internals.ws = { readyState: 1 };
+    internals.status = { state: 'running', port: 18789, gatewayReady: true };
+    let finish!: (value: object) => void;
+    const pending = new Promise<object>((resolve) => { finish = resolve; });
+    vi.spyOn(manager, 'rpc').mockImplementation(async () => pending as never);
+    const health = manager.checkHealth();
+    await Promise.resolve();
+    internals.capabilityMonitor.reset();
+    finish({ ok: true });
+    await health;
+    expect(manager.getCapabilitySnapshot().openclawHealth.state).toBe('unknown');
+    expect(manager.getCapabilitySnapshot().openclawStatus.state).toBe('unknown');
+  });
   const originalPlatform = process.platform;
 
   beforeEach(() => {

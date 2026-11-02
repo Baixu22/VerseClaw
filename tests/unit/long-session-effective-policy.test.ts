@@ -132,6 +132,18 @@ function build(overrides: Partial<Parameters<typeof buildSessionEffectivePolicy>
 }
 
 describe("session effective policy", () => {
+  it("projects only actual acknowledged adapter tools, never descriptor or fallback claims", () => {
+    expect(build().tools).toMatchObject({ status: "effective", value: { names: ["exec"], digest: "sha256:effective" } });
+    for (const state of ["missing", "stale", "mismatch", "unverified"] as const) {
+      expect(build({ capabilityObservation: observation(state) }).tools).toMatchObject({ status: "unverified", value: null });
+    }
+    const fallback = observation();
+    fallback.observation!.result.source = "fallback";
+    expect(build({ capabilityObservation: fallback }).tools?.status).toBe("unverified");
+    const oldAck = observation();
+    oldAck.observation!.result.ack.generation = "old-generation";
+    expect(build({ capabilityObservation: oldAck }).tools?.status).toBe("unverified");
+  });
   it("separates configured and effective facts and derives only secret-free limits", () => {
     const policy = build();
 
