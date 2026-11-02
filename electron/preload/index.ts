@@ -34,11 +34,6 @@ const electronAPI = {
   ipcRenderer: {
     invoke: (channel: string, ...args: unknown[]) => {
       const validChannels = [
-        // App
-        'app:version',
-        'app:name',
-        'app:platform',
-        'app:request',
         // Window controls
         'window:minimize',
         'window:maximize',

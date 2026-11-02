@@ -12,38 +12,6 @@
   },
   "channels": [
     {
-      "channel": "app:request",
-      "typedModule": "app",
-      "typedAction": null,
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "Legacy unified dispatcher nesting app/provider/usage/settings modules; superseded wholesale by host:invoke. No renderer or test consumer (tests/unit/host-api-facade.test.ts records it as residual)."
-    },
-    {
-      "channel": "app:version",
-      "typedModule": "app",
-      "typedAction": "version",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.app.version is the sole entry."
-    },
-    {
-      "channel": "app:name",
-      "typedModule": "app",
-      "typedAction": null,
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer and no typed counterpart. If the value is ever needed it is added as a typed app action, not by keeping this channel."
-    },
-    {
-      "channel": "app:platform",
-      "typedModule": "app",
-      "typedAction": null,
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No consumer. The fact is already owned by the preload static property window.electron.platform, so no IPC round trip is needed."
-    },
-    {
       "channel": "window:syncTrafficLightPosition",
       "typedModule": "window",
       "typedAction": "syncTrafficLightPosition",
