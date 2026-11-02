@@ -111,6 +111,11 @@ spec 只提供数据（`mockConfig`），不再注册/移除任何扁平 channel
   "shows a Chat skeleton and never the welcome state" still fails — that case
   depends on the welcome state's own preconditions, not just the delay. Treat the
   two cases separately.
+  Root cause lead (2026-11-02): `src/pages/Chat/index.tsx` gates the welcome
+  chips on `isEmpty = startupPhase === 'ready' && !messageAreaLoading &&
+  messages.length === 0 && !sending`. The failing case never reaches that
+  combination with the current typed mock, so the next pass must inspect which
+  of `startupPhase` / `messageAreaLoading` stays unresolved.
 - `chat-history-startup-retry.spec.ts` needs *stateful* rpc responses (first
   `chat.history` call fails, the retry succeeds) plus a 5s delay in the second
   test. A static `gatewayRpc` map cannot express that; a sequence seam was tried
