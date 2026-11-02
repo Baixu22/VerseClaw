@@ -1,0 +1,58 @@
+{
+  "schema": "AutonomyA1Typecheck/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomous-project-system",
+  "candidate": {
+    "commit": "a7ce35fde61a87afd5a7d87ee73b8b74479fae4a",
+    "tree": "16377fc717671d22be6e5dbd2fff2966bf8743af",
+    "dirty": false
+  },
+  "command": [
+    "pnpm",
+    "typecheck"
+  ],
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 24642,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX-work\\autonomous-project-system\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "fd619f8ba30a1cbf906e34e9b16b6be214d8ffefc2cea00299da2c40f7fb43a0",
+    "inputCount": 12997,
+    "report": "D:\\ClawX-work\\autonomous-project-system\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 44426,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 343
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 22278
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 11952
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 24642,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\ClawX-work\\autonomous-project-system\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}

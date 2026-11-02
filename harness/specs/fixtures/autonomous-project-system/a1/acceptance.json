@@ -1,0 +1,69 @@
+{
+  "schema": "AutonomyA1Acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomous-project-system",
+  "candidate": {
+    "commit": "a7ce35fde61a87afd5a7d87ee73b8b74479fae4a",
+    "tree": "16377fc717671d22be6e5dbd2fff2966bf8743af",
+    "dirty": false
+  },
+  "verdict": "pass",
+  "scope": "TF-0670 object/role/scope/owner contract, not autonomous product execution",
+  "criteria": [
+    {
+      "criterion": "Explicit owner and project/workspace/session/generation; reject bare/mixed/stale/cross-scope pointers",
+      "artifacts": [
+        "tests-summary.json",
+        "contract-negatives.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "criterion": "Explicit 1:1 Project mapping and one-way Forest execution anchor without status mirroring",
+      "artifacts": [
+        "object-owner-consumer-map.json",
+        "tests-summary.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "criterion": "Existing ontology validator, semantic authority checker and Host API contract check",
+      "artifacts": [
+        "ontology-report.json",
+        "semantic-authority.json",
+        "gates.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "criterion": "Static grant metadata and Run completion cannot invent runtime authority or task acceptance",
+      "artifacts": [
+        "contract-negatives.json",
+        "tests-summary.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "criterion": "Clean candidate, input/config hashes, observed commands/counts, raw recovery and agent attribution",
+      "artifacts": [
+        "source-inputs.json",
+        "gates.json",
+        "raw-run-index.json"
+      ],
+      "status": "pass"
+    },
+    {
+      "criterion": "Static manifest owner/allow mutation cannot change actual Main permission checks; missing workspace owner fails closed",
+      "artifacts": [
+        "tests-summary.json",
+        "contract-negatives.json"
+      ],
+      "status": "pass"
+    }
+  ],
+  "limitations": [
+    "New adapters are not yet wired to automatic task writes, dispatch, UI or resource effects; A2/A4/U1 and subsequent leaves own those consumers.",
+    "No live provider quality, packaged app, non-Windows platform, long-running autonomous deployment or publication acceptance is claimed.",
+    "Full project release acceptance and Agent Dev maturity do not follow from these scoped contract gates."
+  ]
+}
