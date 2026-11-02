@@ -3,7 +3,6 @@
  * Registers all IPC handlers for main-renderer communication
  */
 import { ipcMain, BrowserWindow, shell, dialog, app } from 'electron';
-import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, sep } from 'node:path';
 import { syncMacTrafficLightPosition } from './traffic-light-layout';
@@ -14,8 +13,6 @@ import { ClawHubService } from '../gateway/clawhub';
 import {
   type ProviderConfig,
 } from '../utils/secure-storage';
-import { getOpenClawStatus, getOpenClawSkillsDir, ensureDir } from '../utils/paths';
-import { getOpenClawCliCommand } from '../utils/openclaw-cli';
 import { getAllSettings, getSetting, resetSettings, setSetting, type AppSettings } from '../utils/store';
 import {
   saveProviderKeyToOpenClaw,
@@ -134,9 +131,6 @@ export function registerIpcHandlers(
 
   // Typed host invoke handlers (new renderer facade; legacy channels remain available)
   registerTypedHostHandlers(gatewayManager, clawHubService, mainWindow, hostApiRegistry);
-
-  // OpenClaw handlers
-  registerOpenClawHandlers();
 
   // Shell handlers
   registerShellHandlers();
@@ -704,44 +698,7 @@ function registerCronHandlers(gatewayManager: GatewayManager): void {
   startCronAgentRepair(gatewayManager);
 }
 
-/**
- * Gateway-related IPC handlers
- */
-/**
- * OpenClaw-related IPC handlers
- * For checking package status and channel configuration
- */
-function registerOpenClawHandlers(): void {
-  // Get OpenClaw package status
-  ipcMain.handle('openclaw:status', () => {
-    const status = getOpenClawStatus();
-    logger.info('openclaw:status IPC called', status);
-    return status;
-  });
 
-  // Get the OpenClaw skills directory (~/.openclaw/skills)
-  ipcMain.handle('openclaw:getSkillsDir', () => {
-    const dir = getOpenClawSkillsDir();
-    ensureDir(dir);
-    return dir;
-  });
-
-  // Get a shell command to run OpenClaw CLI without modifying PATH
-  ipcMain.handle('openclaw:getCliCommand', () => {
-    try {
-      const status = getOpenClawStatus();
-      if (!status.packageExists) {
-        return { success: false, error: `OpenClaw package not found at: ${status.dir}` };
-      }
-      if (!existsSync(status.entryPath)) {
-        return { success: false, error: `OpenClaw entry script not found at: ${status.entryPath}` };
-      }
-      return { success: true, command: getOpenClawCliCommand() };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-}
 
 /**
  * WhatsApp Login Handlers

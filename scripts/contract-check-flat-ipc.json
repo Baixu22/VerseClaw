@@ -20,30 +20,6 @@
       "reason": "Legacy unified dispatcher nesting app/provider/usage/settings modules; superseded wholesale by host:invoke. No renderer or test consumer (tests/unit/host-api-facade.test.ts records it as residual)."
     },
     {
-      "channel": "openclaw:status",
-      "typedModule": "openclaw",
-      "typedAction": "status",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.openclaw.status is the sole entry."
-    },
-    {
-      "channel": "openclaw:getSkillsDir",
-      "typedModule": "openclaw",
-      "typedAction": "getSkillsDir",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.openclaw.getSkillsDir is the sole entry."
-    },
-    {
-      "channel": "openclaw:getCliCommand",
-      "typedModule": "openclaw",
-      "typedAction": "getCliCommand",
-      "preload": "allowlisted",
-      "disposition": "retire",
-      "reason": "No renderer or test consumer; hostApi.openclaw.getCliCommand is the sole entry."
-    },
-    {
       "channel": "shell:openExternal",
       "typedModule": "shell",
       "typedAction": "openExternal",

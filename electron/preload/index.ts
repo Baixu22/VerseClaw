@@ -34,8 +34,6 @@ const electronAPI = {
   ipcRenderer: {
     invoke: (channel: string, ...args: unknown[]) => {
       const validChannels = [
-        // OpenClaw
-        'openclaw:status',
         // Shell
         'shell:openExternal',
         'shell:showItemInFolder',
@@ -58,9 +56,6 @@ const electronAPI = {
         'env:getConfig',
         'env:setApiKey',
         'env:deleteApiKey',
-        // OpenClaw extras
-        'openclaw:getSkillsDir',
-        'openclaw:getCliCommand',
       ];
 
       if (validChannels.includes(channel)) {
