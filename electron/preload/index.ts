@@ -54,13 +54,6 @@ const electronAPI = {
         'window:close',
         'window:isMaximized',
         'window:syncTrafficLightPosition',
-        // Settings
-        'settings:get',
-        'settings:set',
-        'settings:setMany',
-        'settings:getAll',
-        'settings:reset',
-        'usage:recentTokenHistory',
         // Env
         'env:getConfig',
         'env:setApiKey',
