@@ -140,11 +140,6 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
 
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
-        gatewayRpcByMethod: {
-          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta', modelRefOverride: betaModelRef }] } },
-          'chat.history': { success: true, result: { messages: [] } },
-          '*': { success: true, result: {} },
-        },
       });
 
       const page = await getStableWindow(app);
@@ -318,11 +313,6 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
 
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
-        gatewayRpcByMethod: {
-          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta', modelRefOverride: betaModelRef }] } },
-          'chat.history': { success: true, result: { messages: [] } },
-          '*': { success: true, result: {} },
-        },
       });
 
       const page = await getStableWindow(app);
