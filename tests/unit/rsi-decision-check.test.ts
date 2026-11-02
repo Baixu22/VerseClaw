@@ -25,7 +25,7 @@ describe('rsi decision acceptance readback', () => {
 
   it('fails when a judged input moves after the seal', () => {
     const acceptance = readAcceptance();
-    const judged = Object.keys(acceptance.source.gitBlobHashes).find((path) => !(path in acceptance.source.nonJudgedInputs));
+    const judged = Object.keys(acceptance.source.gitBlobHashes).find((path) => !(path in acceptance.source.nonJudgedInputs)) as string;
     acceptance.source.gitBlobHashes[judged] = '0'.repeat(40);
 
     const result = validateDecisionAcceptance(acceptance, ROOT, { allowDirty: true });
