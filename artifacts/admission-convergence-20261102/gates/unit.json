@@ -7,5 +7,7 @@
   "captureMode": "combined",
   "summary": "unit/final-summary.json",
   "baselineSummary": "unit/baseline-summary.json",
-  "baselineLog": "logs/baseline-unit.log"
+  "baselineLog": "logs/baseline-unit.log",
+  "failureClassification": "unit/baseline-summary.json",
+  "changedPathStatus": "unit/changed-path-status.json"
 }

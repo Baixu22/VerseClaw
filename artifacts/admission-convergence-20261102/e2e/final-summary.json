@@ -13,5 +13,8 @@
   "suiteErrors": 1,
   "log": "logs/e2e-final.log",
   "ledger": "e2e/final-speed-ledger.json",
-  "captureMode": "combined"
+  "captureMode": "combined",
+  "triageSummary": "e2e/triage-summary.json",
+  "failureClassification": "e2e/failure-classification.json",
+  "changedPathStatus": "e2e/changed-path-status.json"
 }

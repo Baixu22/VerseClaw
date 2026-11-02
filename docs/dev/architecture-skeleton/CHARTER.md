@@ -235,7 +235,7 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 | 语义合同坏例拒绝率 | 100% 在预期规则上拒绝 | 负例 fixture + 既有门禁 |
 | 陈旧来源被当作当前通过 | 0 | 来源摘要 + 候选绑定 |
 | 新增运行时组件 / 第二真源 | 0 | 变更集审查 |
-| 现有产品行为变化 | **未证 0（A6，2026-11-02）** | 干净候选 `6b7f8eb49`：unit 9697 passed / 187 failed / 92 skipped；E2E 最终汇总未产生，观察到 195 passed / 37 failed / 2 skipped，184 not-run；lint 5 errors / 133 warnings。详见 `ADMISSION-CONVERGENCE.md` |
+| 现有产品行为变化 | **A3-A5 兼容性：0 新增回归；仓库既有失败：明确逐项列出（A6，2026-11-03）** | 干净候选 `590ba5258`（tree `01b8f896...`）：unit 9723 passed / 168 failed / 91 skipped，168 个失败名与 `97cda35de` 基线复现集完全相同；E2E 完整 418 条为 391 passed / 22 failed / 5 skipped / 1 suite error，22 条逐项分类，其中 6 条隔离复跑通过、16 条为候选变更路径外的持久产品/测试债；A3-A5 改动的 22 个 E2E 规格和 15 个单元测试文件全部通过。详见 `ADMISSION-CONVERGENCE.md` 与 `artifacts/admission-convergence-20261102/e2e/failure-classification.json` |
 
 **明确不在判据内**：业务收益、采用率、任务成功率、性能提升、GA 就绪、发布批准。这些需要各自独立的受控实验，不能由骨架绿灯外推。
 

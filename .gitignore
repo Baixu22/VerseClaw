@@ -235,10 +235,15 @@ openclaw_runtime/_tmp_*
 !/artifacts/admission-convergence-20261102/e2e/agent-first-preflight-gateway-missing.error-context.md
 !/artifacts/admission-convergence-20261102/e2e/final-speed-ledger.json
 !/artifacts/admission-convergence-20261102/e2e/final-summary.json
+!/artifacts/admission-convergence-20261102/e2e/triage-summary.json
+!/artifacts/admission-convergence-20261102/e2e/failure-classification.json
+!/artifacts/admission-convergence-20261102/e2e/changed-path-status.json
+!/artifacts/admission-convergence-20261102/logs/e2e-triage.log
 !/artifacts/admission-convergence-20261102/gates.json
 !/artifacts/admission-convergence-20261102/gates/build-vite.json
 !/artifacts/admission-convergence-20261102/gates/e2e-final.json
 !/artifacts/admission-convergence-20261102/unit/baseline-summary.json
+!/artifacts/admission-convergence-20261102/unit/changed-path-status.json
 !/artifacts/admission-convergence-20261102/gates/e2e-attempt1-preflight-missing-runtime.json
 !/artifacts/admission-convergence-20261102/gates/e2e-attempt2-stale-runtime-mtime.json
 !/artifacts/admission-convergence-20261102/gates/e2e-attempt3-serial-superseded.json

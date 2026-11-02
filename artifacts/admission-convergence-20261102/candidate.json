@@ -27,5 +27,7 @@
       "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
       "tracked": false
     }
-  }
+  },
+  "testedEvidenceHead": "de1821e424b1dbe93dc1c862b5b78abcce80934c",
+  "evidenceHeadRole": "Evidence/docs-only ancestor of the final E2E run; behavior source remains 590ba5258."
 }

@@ -21,5 +21,13 @@
   "captureMode": "combined",
   "knownEnvironmentSetup": "Local ignored vg.exe and ae.exe were copied from the main checkout after matching their tracked manifest SHA-256 values; Electron 40.8.4 dist was reused after matching the installed package version.",
   "classification": "baseline-equivalent-failures",
-  "note": "The 168 failing test names are exactly equal to the pre-A3 baseline reproduction set; no candidate-only failure key was observed."
+  "note": "The 168 failing test names are exactly equal to the pre-A3 baseline reproduction set; no candidate-only failure key was observed.",
+  "baselineComparison": {
+    "summary": "unit/baseline-summary.json",
+    "log": "logs/baseline-unit.log",
+    "failureKeysMatch": true,
+    "onlyFinal": [],
+    "onlyBase": []
+  },
+  "changedPathStatus": "unit/changed-path-status.json"
 }

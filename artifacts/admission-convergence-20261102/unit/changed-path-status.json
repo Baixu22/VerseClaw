@@ -1,0 +1,68 @@
+{
+  "schema": "AdmissionChangedPathUnitStatus/v1",
+  "baseline": "97cda35de",
+  "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
+  "items": [
+    {
+      "file": "openclaw_runtime/src/config/runtime-context-block-compass.test.ts",
+      "failed": false
+    },
+    {
+      "file": "openclaw_runtime/src/config/runtime-context-block-role-memory.test.ts",
+      "failed": false
+    },
+    {
+      "file": "openclaw_runtime/src/config/runtime-context-block-sekb.test.ts",
+      "failed": false
+    },
+    {
+      "file": "openclaw_runtime/src/config/runtime-context-block-tool-registry.test.ts",
+      "failed": false
+    },
+    {
+      "file": "openclaw_runtime/src/config/runtime-context-block-working-memory.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/agent-first-mainline.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/contract-check.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/error-governance-boundary.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/rsi-decision-check.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/rsi-feedback-pilot.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/rsi-sekb-arms-decision.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/rsi-sekb-arms.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/system-notifications-api.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/versegit-wp6-closeout.test.ts",
+      "failed": false
+    },
+    {
+      "file": "tests/unit/versegit-wp9-global-acceptance.test.ts",
+      "failed": false
+    }
+  ],
+  "allPassing": true
+}

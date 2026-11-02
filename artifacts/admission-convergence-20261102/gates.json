@@ -68,7 +68,9 @@
       "classification": "baseline-equivalent-failures",
       "stdout": "logs/unit.log",
       "summary": "unit/final-summary.json",
-      "baselineSummary": "unit/baseline-summary.json"
+      "baselineSummary": "unit/baseline-summary.json",
+      "baselineComparison": "unit/baseline-summary.json",
+      "changedPathStatus": "unit/changed-path-status.json"
     },
     {
       "schema": "AdmissionGate/v1",
@@ -77,7 +79,10 @@
       "classification": "not-pass",
       "stdout": "logs/e2e-final.log",
       "captureMode": "combined",
-      "summary": "e2e/final-summary.json"
+      "summary": "e2e/final-summary.json",
+      "triageSummary": "e2e/triage-summary.json",
+      "failureClassification": "e2e/failure-classification.json",
+      "changedPathStatus": "e2e/changed-path-status.json"
     }
   ]
 }

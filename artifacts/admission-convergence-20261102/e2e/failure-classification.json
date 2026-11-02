@@ -1,0 +1,220 @@
+{
+  "schema": "AdmissionE2EFailureClassification/v1",
+  "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
+  "fullSuite": {
+    "passed": 391,
+    "failed": 22,
+    "skipped": 5,
+    "suiteErrors": 1
+  },
+  "triage": {
+    "passed": 25,
+    "failed": 16
+  },
+  "items": [
+    {
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in dark",
+      "triageStatus": "passed",
+      "classification": "transient-context-dependent",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\chat-model-scope-runtime.spec.ts:8:5 鈥?turn model wins for one real Gateway request without changing the session choice",
+      "triageStatus": "passed",
+      "classification": "transient-context-dependent",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\rc10-operator-live.spec.ts:6:5 鈥?RC-10 real Cron, Inbox, IRC and recovery scenarios",
+      "triageStatus": "passed",
+      "classification": "transient-context-dependent",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\restart-recovery-fp-p1-05.spec.ts:185:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?resumes a persisted in-flight assistant turn after Gateway startup",
+      "triageStatus": "passed",
+      "classification": "transient-context-dependent",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\versegit-candidate-apply.spec.ts:13:7 鈥?verified candidate host apply 鈥?runs completion, candidate verification, permission gate and journaled apply in order",
+      "triageStatus": "passed",
+      "classification": "transient-context-dependent",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\versegit-packaged-flow.spec.ts:79:7 鈥?F4 packaged controlled stability 鈥?runs three cold starts and ten packaged task loops with interruption/revocation/undo evidence",
+      "triageStatus": "passed",
+      "classification": "transient-context-dependent",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    },
+    {
+      "title": "tests\\e2e\\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer",
+      "triageStatus": "failed",
+      "classification": "persistent-outside-A3-A5-changed-paths",
+      "evidence": [
+        "logs/e2e-final.log",
+        "logs/e2e-triage.log"
+      ]
+    }
+  ],
+  "suiteError": {
+    "count": 1,
+    "classification": "suite-level-unattributed",
+    "note": "Playwright reported one error not attached to an individual test; it is recorded, not counted as a pass."
+  },
+  "changedPathEvidence": "e2e/changed-path-status.json"
+}
