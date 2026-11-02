@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const alphaModelRef = 'anthropic/claude-sonnet';
 const betaModelRef = 'anthropic/claude-opus';
@@ -44,9 +44,6 @@ test.describe('Verse Claw chat prompt cache guard', () => {
           channelOwners: {},
           channelAccountOwners: {},
         });
-
-        ipcMain.removeHandler('gateway:status');
-        ipcMain.handle('gateway:status', async () => ({ state: 'running', port: 18789, pid: 12345, gatewayReady: true }));
 
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (event: unknown, request: {
@@ -193,6 +190,10 @@ test.describe('Verse Claw chat prompt cache guard', () => {
           __promptCacheRiskEvents?: typeof riskEvents;
         }).__promptCacheRiskEvents = riskEvents;
       }, { alphaModelRef, betaModelRef, mainSessionKey });
+
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+      });
 
       const page = await getStableWindow(app);
       await page.reload();
