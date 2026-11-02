@@ -67,6 +67,15 @@
       "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
     },
     {
+      "sha256": "769011d7244bbeece7091afab1ca83e8080124abb89236fe60e1f483c0d0cef5",
+      "paths": [
+        "harness/specs/fixtures/agent-first-system/product-effect/profile-1-profile-before-restart.png",
+        "harness/specs/fixtures/agent-first-system/product-effect/profile-2-profile-before-restart.png",
+        "harness/specs/fixtures/agent-first-system/product-effect/profile-3-profile-before-restart.png"
+      ],
+      "reason": "Retained product-effect evidence mirrors: each profile keeps its own pre-restart capture path so a single profile can be reviewed without rewriting sibling evidence."
+    },
+    {
       "sha256": "b96ac05ad95f4ada9565d02cd1c04068c1af4a21f6357cba9678e9ccfdee0bb1",
       "paths": [
         "artifacts/dcs-corpus/synthetic-agent/corpus.json",
@@ -82,6 +91,14 @@
         "resources/skills/preinstalled/xlsx/scripts/office/schemas/ISO-IEC29500-4_2016/sml.xsd"
       ],
       "reason": "Preinstalled skill bundles are distributed independently and must remain self-contained."
+    },
+    {
+      "sha256": "bf0cc9699c7b061a020e97d5e6a6856591fe872eca44a8ea80ac27e1af124d23",
+      "paths": [
+        "docs/dev/component-graduation/TF-0508/verified-glm-20261025/effective-state/profile.json",
+        "tests/unit/fixtures/model-capability-effective-state-tf0512/profile.json"
+      ],
+      "reason": "Stable effective-state fixture mirrored into retained component-graduation evidence; the test fixture must stay under tests/ and the accepted record must keep its own copy."
     },
     {
       "sha256": "c2dd9f61f892deae6acd8d20771ea79b12018af25f3bf8d06639c8542d218cfd",
