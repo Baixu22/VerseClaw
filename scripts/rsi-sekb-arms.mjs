@@ -46,6 +46,24 @@ export function validateArmsProtocol(protocol) {
   return { passed: errors.length === 0, errors };
 }
 
+export function buildArmsPlan(protocol) {
+  const cases = protocol.design.minimumCompleteCases;
+  const k = protocol.design.k;
+  return {
+    schemaVersion: 'RsiSekbArmsPlan/v1',
+    driven_by: 'agent',
+    actor: 'codex/rsi-sekb-arms',
+    status: 'awaiting-provider-envelope',
+    arms: ARM_IDS,
+    cases,
+    k,
+    trials: cases * k * ARM_IDS.length,
+    providerCallsAuthorized: protocol.budget.providerCallsAuthorized,
+    required: ['live provider endpoint + credential', 'token/turn/tool-call capture per trial', 'budget ceiling for the whole run'],
+    rule: 'This plan executes nothing. A real three-arm run must be launched with a declared provider envelope.',
+  };
+}
+
 export function buildArmsReport(root = ROOT) {
   const protocol = readJson(join(root, ARMS_PROTOCOL_PATH));
   const runs = readJson(join(root, ARMS_RUNS_PATH));
@@ -81,6 +99,8 @@ export function buildArmsReport(root = ROOT) {
     reasons.push('below the complete-case floor');
   }
   if (costWithinCeiling === false) reasons.push(`cost increase ${costIncrease} exceeds ${protocol.budget.costIncreaseMaximum}`);
+  const costMissing = costIncrease === null;
+  if (costMissing) reasons.push('cost dimension missing (null tokens); promotion is disqualified');
   if (runs.claims?.promotionReady === true) reasons.push('fixture/run claims promotion; refused');
 
   return {
@@ -99,16 +119,20 @@ export function buildArmsReport(root = ROOT) {
       flakeRate: arm.flakeRate, meanTokens: arm.meanTokens, gate: arm.gate,
     }])),
     comparisons,
-    cost: { offMeanTokens: offTokens, confirmedMeanTokens: confirmedTokens, relativeIncrease: costIncrease, ceiling: protocol.budget.costIncreaseMaximum, withinCeiling: costWithinCeiling },
+    cost: { offMeanTokens: offTokens, confirmedMeanTokens: confirmedTokens, relativeIncrease: costIncrease, ceiling: protocol.budget.costIncreaseMaximum, withinCeiling: costWithinCeiling, missing: costMissing },
     claims: { benefit: false, promotionReady: false, productLocksChanged: false, realHuman: false, providerCalls: 0 },
   };
 }
 
 if (isMainEntrypoint(import.meta.url)) {
-  const { values } = parseArgs({ options: { check: { type: 'boolean' }, write: { type: 'boolean' }, json: { type: 'boolean' } } });
+  const { values } = parseArgs({ options: { check: { type: 'boolean' }, write: { type: 'boolean' }, plan: { type: 'boolean' }, json: { type: 'boolean' } } });
   try {
     const protocol = readJson(join(ROOT, ARMS_PROTOCOL_PATH));
     const validation = validateArmsProtocol(protocol);
+    if (values.plan) {
+      console.log(JSON.stringify(buildArmsPlan(protocol), null, 2));
+      process.exitCode = validation.passed ? 0 : 1;
+    } else {
     const report = buildArmsReport(ROOT);
     if (values.write) {
       const target = join(ROOT, ARMS_REPORT_PATH);
@@ -118,6 +142,7 @@ if (isMainEntrypoint(import.meta.url)) {
     const result = { passed: validation.passed, protocolValidation: validation, status: report.status, reasons: report.reasons };
     console.log(JSON.stringify(result, null, 2));
     process.exitCode = validation.passed ? 0 : 1;
+    }
   } catch (caught) {
     console.error(caught.message);
     process.exitCode = 1;

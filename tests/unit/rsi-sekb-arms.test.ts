@@ -2,12 +2,15 @@
 // TF-0598: the three-arm readout must keep shadow distinguishable from
 // confirmed, reuse the single case-cluster instrument, and never promote from a
 // synthetic wiring fixture.
-import { readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join as joinPath, resolve as resolvePath, sep } from 'node:path';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 
 import {
   ARMS_PROTOCOL_PATH,
+  ARMS_RUNS_PATH,
+  buildArmsPlan,
   buildArmsReport,
   validateArmsProtocol,
 } from '../../scripts/rsi-sekb-arms.mjs';
@@ -15,6 +18,26 @@ import {
 const ROOT = process.cwd();
 const readProtocol = () => JSON.parse(readFileSync(join(ROOT, ARMS_PROTOCOL_PATH), 'utf8'));
 const codes = (result: { errors: Array<{ code: string }> }) => result.errors.map((entry) => entry.code);
+const TEMP_ROOT = 'D:/tmp';
+const created: string[] = [];
+function tempRootWith(mutate: (runs: any) => void): string {
+  mkdirSync(TEMP_ROOT, { recursive: true });
+  const dir = mkdtempSync(joinPath(TEMP_ROOT, 'rsi-sekb-arms-test-'));
+  created.push(dir);
+  const protocol = JSON.parse(readFileSync(joinPath(ROOT, ARMS_PROTOCOL_PATH), 'utf8'));
+  const runs = JSON.parse(readFileSync(joinPath(ROOT, ARMS_RUNS_PATH), 'utf8'));
+  mutate(runs);
+  mkdirSync(joinPath(dir, 'harness/specs/fixtures/rsi-sekb-arms'), { recursive: true });
+  writeFileSync(joinPath(dir, ARMS_PROTOCOL_PATH), JSON.stringify(protocol));
+  writeFileSync(joinPath(dir, ARMS_RUNS_PATH), JSON.stringify(runs));
+  return dir;
+}
+afterAll(() => {
+  for (const path of created) {
+    if (!resolvePath(path).startsWith(`${resolvePath(TEMP_ROOT)}${sep}rsi-sekb-arms-test-`)) throw new Error('unexpected cleanup path');
+    rmSync(path, { recursive: true, force: true });
+  }
+});
 
 describe('rsi sekb three-arm readout', () => {
   it('accepts the checked-in protocol', () => {
@@ -59,5 +82,20 @@ describe('rsi sekb three-arm readout', () => {
       mutate(protocol);
       expect(validateArmsProtocol(protocol).passed).toBe(false);
     }
+  });
+  it('plans the 180-trial three-arm run without executing it', () => {
+    const plan = buildArmsPlan(readProtocol());
+    expect(plan.trials).toBe(180);
+    expect(plan.status).toBe('awaiting-provider-envelope');
+    expect(plan.providerCallsAuthorized).toBe(0);
+  });
+
+  it('treats a missing cost dimension as a promotion disqualifier', () => {
+    const root = tempRootWith((runs) => {
+      for (const arm of Object.values(runs.arms) as any[]) for (const row of arm) row.tokens = null;
+    });
+    const report = buildArmsReport(root);
+    expect(report.cost.missing).toBe(true);
+    expect(report.reasons.join(' ')).toContain('cost dimension missing');
   });
 });

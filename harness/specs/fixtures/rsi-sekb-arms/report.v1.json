@@ -1,6 +1,6 @@
 {
   "schemaVersion": "RsiSekbArmsReport/v1",
-  "generatedAt": "2026-11-02T03:26:32.252Z",
+  "generatedAt": "2026-11-02T03:31:02.213Z",
   "driven_by": "agent",
   "actor": "codex/rsi-sekb-arms",
   "taskForestNode": "TF-0598",
@@ -87,7 +87,8 @@
     "confirmedMeanTokens": 1300,
     "relativeIncrease": 0.3,
     "ceiling": 0.1,
-    "withinCeiling": false
+    "withinCeiling": false,
+    "missing": false
   },
   "claims": {
     "benefit": false,
