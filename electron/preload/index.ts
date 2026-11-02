@@ -58,13 +58,6 @@ const electronAPI = {
         'env:getConfig',
         'env:setApiKey',
         'env:deleteApiKey',
-        // File preview (sandboxed read/write/list/tree)
-        'file:readText',
-        'file:readBinary',
-        'file:writeText',
-        'file:stat',
-        'file:listDir',
-        'file:listTree',
         // OpenClaw extras
         'openclaw:getSkillsDir',
         'openclaw:getCliCommand',
