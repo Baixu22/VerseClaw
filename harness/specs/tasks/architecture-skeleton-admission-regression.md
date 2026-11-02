@@ -39,6 +39,11 @@ ownedPaths:
   - tests/unit/rsi-sekb-arms.test.ts
   - tests/unit/versegit-wp6-closeout.test.ts
   - tests/unit/versegit-wp9-global-acceptance.test.ts
+  - openclaw_runtime/src/config/runtime-context-block-compass.test.ts
+  - openclaw_runtime/src/config/runtime-context-block-role-memory.test.ts
+  - openclaw_runtime/src/config/runtime-context-block-sekb.test.ts
+  - openclaw_runtime/src/config/runtime-context-block-tool-registry.test.ts
+  - openclaw_runtime/src/config/runtime-context-block-working-memory.test.ts
 requiredTests:
   - pnpm run build:vite
   - pnpm run test:e2e:run
