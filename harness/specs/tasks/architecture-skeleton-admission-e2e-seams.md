@@ -91,6 +91,25 @@ spec 只提供数据（`mockConfig`），不再注册/移除任何扁平 channel
 3. `tests/unit/gateway-events.test.ts` 的事件订阅键改为类型化事件名，不再出现扁平 channel 字面量。
 4. `scripts/contract-check-flat-ipc.json` 的 4 条 `removalPlan` 状态改为 `seams-migrated`。
 
+## Known migration constraints (2026-11-02, observed in Electron)
+
+- `visual-tune.spec.ts` cannot be executed in this environment: the spec launches
+  Electron directly and fails with `Process failed to launch!`. The same failure
+  reproduces on the pre-migration baseline, so it is an environment limit, not a
+  migration defect. Record it as `not-run`, never as a pass.
+- `chat-model-picker.spec.ts` and `chat-model-picker-tiers.spec.ts` assert on a
+  local `hostRequests` array populated inside the flat `gateway:rpc` handler.
+  Migrating them requires reading the fixture's `__verseClawE2eHostCalls`
+  observation instead, otherwise those assertions lose their source.
+- `startup-loading-experience.spec.ts` depends on the *empty* `gatewayRpc: {}`
+  semantics plus a 2s `chat.history` delay to observe the Chat skeleton. A second
+  `installIpcMocks` call replaces the first one's mock surface; the migration must
+  merge the rpc map into the existing install call and keep the delay, not add a
+  parallel install.
+- `chat-history-startup-retry.spec.ts` matches rpc responses by
+  `stableStringify([method, params])`; the fixture's `gatewayRpc` map already uses
+  that key shape, so it can migrate without a new seam.
+
 ## Non-goals
 
 - 不改 `electron/main/ipc-handlers.ts`、`electron/preload/index.ts`。
