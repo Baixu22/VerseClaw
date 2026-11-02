@@ -28,6 +28,10 @@ type IpcMockConfig = {
   gatewayStatus?: Record<string, unknown>;
   gatewayRpc?: Record<string, unknown>;
   hostApi?: Record<string, unknown>;
+  /** Typed seam for the former `file:stat` flat handler. */
+  fileStat?: Record<string, unknown> | ((path: string) => unknown);
+  /** Typed seam for the former `file:readText` flat handler. */
+  fileReadText?: Record<string, unknown> | ((path: string) => unknown);
 };
 
 type ElectronFixtures = {
@@ -838,13 +842,20 @@ export async function installIpcMocks(
           if (request?.module === 'files') {
             const payload = request.payload ?? {};
             const path = typeof payload.path === 'string' ? payload.path : '';
+            const typedFilePath = (seam: Record<string, unknown> | ((p: string) => unknown) | undefined) => (
+              typeof seam === 'function' ? seam(path) : seam && path in seam ? seam[path] : undefined
+            );
             if (request.action === 'stat') {
+              const typedStat = typedFilePath(mockConfig.fileStat);
+              if (typedStat !== undefined) return respond(request.id, typedStat);
               const legacyFileStat = getLegacyOverride('file:stat', originalLegacyFileStat);
               if (legacyFileStat) {
                 return respond(request.id, await legacyFileStat(event, path));
               }
             }
             if (request.action === 'readText') {
+              const typedReadText = typedFilePath(mockConfig.fileReadText);
+              if (typedReadText !== undefined) return respond(request.id, typedReadText);
               const legacyFileReadText = getLegacyOverride('file:readText', originalLegacyFileReadText);
               if (legacyFileReadText) {
                 return respond(request.id, await legacyFileReadText(event, path));
