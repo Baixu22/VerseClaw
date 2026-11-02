@@ -39,6 +39,13 @@ describe("runtime.contextBlock tool-registry config", () => {
             dropAlertRatio?: number;
             channelDecay?: Record<string, number>;
           };
+          sessionStartInjection?: {
+            enabled?: boolean;
+            budgetChars?: number;
+          };
+          checkpointedContextReset?: {
+            enabled?: boolean;
+          };
           "context-write"?: {
             role?: string;
           };
