@@ -16,7 +16,16 @@ test.describe('Verse Claw startup chat history recovery', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, connectedAt: Date.now() },
-        gatewayRpc: {},
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } },
+          '*': { success: true, result: {} },
+        },
+        gatewayRpcSequences: {
+          'chat.history': [
+            { success: false, error: 'RPC timeout: chat.history' },
+            { success: true, result: { messages: [{ role: 'user', content: 'hello', timestamp: 1000 }, { role: 'assistant', content: 'history restored after retry', timestamp: 1001 }] } },
+          ],
+        },
         hostApi: {
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
@@ -35,52 +44,6 @@ test.describe('Verse Claw startup chat history recovery', () => {
             },
           },
         },
-      });
-
-      await app.evaluate(async ({ app: _app }) => {
-        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-        let chatHistoryCallCount = 0;
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string, payload: unknown) => {
-          const stableStringify = (value: unknown): string => {
-            if (value == null || typeof value !== 'object') return JSON.stringify(value);
-            if (Array.isArray(value)) return `[${value.map((item) => stableStringify(item)).join(',')}]`;
-            const entries = Object.entries(value as Record<string, unknown>)
-              .sort(([left], [right]) => left.localeCompare(right))
-              .map(([key, entryValue]) => `${JSON.stringify(key)}:${stableStringify(entryValue)}`);
-            return `{${entries.join(',')}}`;
-          };
-
-          const key = stableStringify([method, payload ?? null]);
-          if (key === stableStringify(['sessions.list', {}])) {
-            return {
-              success: true,
-              result: {
-                sessions: [{ key: 'agent:main:main', displayName: 'main' }],
-              },
-            };
-          }
-          if (key === stableStringify(['chat.history', { sessionKey: 'agent:main:main', limit: 200, maxChars: 500000 }])) {
-            chatHistoryCallCount += 1;
-            if (chatHistoryCallCount === 1) {
-              return {
-                success: false,
-                error: 'RPC timeout: chat.history',
-              };
-            }
-            return {
-              success: true,
-              result: {
-                messages: [
-                  { role: 'user', content: 'hello', timestamp: 1000 },
-                  { role: 'assistant', content: 'history restored after retry', timestamp: 1001 },
-                ],
-              },
-            };
-          }
-          return { success: true, result: {} };
-        });
       });
 
       const page = await getStableWindow(app);
@@ -106,7 +69,12 @@ test.describe('Verse Claw startup chat history recovery', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, connectedAt: Date.now() },
-        gatewayRpc: {},
+        gatewayRpcByMethod: {
+          'sessions.list': { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } },
+          'chat.history': { success: true, result: { messages: [{ role: 'assistant', content: 'gateway authoritative history after delay', timestamp: 1001 }] } },
+          '*': { success: true, result: {} },
+        },
+        gatewayRpcDelays: { 'chat.history': 5000 },
         hostApi: {
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
@@ -137,44 +105,6 @@ test.describe('Verse Claw startup chat history recovery', () => {
             },
           },
         },
-      });
-
-      await app.evaluate(async ({ app: _app }) => {
-        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-
-        ipcMain.removeHandler('gateway:rpc');
-        ipcMain.handle('gateway:rpc', async (_event: unknown, method: string, payload: unknown) => {
-          const stableStringify = (value: unknown): string => {
-            if (value == null || typeof value !== 'object') return JSON.stringify(value);
-            if (Array.isArray(value)) return `[${value.map((item) => stableStringify(item)).join(',')}]`;
-            const entries = Object.entries(value as Record<string, unknown>)
-              .sort(([left], [right]) => left.localeCompare(right))
-              .map(([key, entryValue]) => `${JSON.stringify(key)}:${stableStringify(entryValue)}`);
-            return `{${entries.join(',')}}`;
-          };
-
-          const key = stableStringify([method, payload ?? null]);
-          if (key === stableStringify(['sessions.list', {}])) {
-            return {
-              success: true,
-              result: {
-                sessions: [{ key: 'agent:main:main', displayName: 'main' }],
-              },
-            };
-          }
-          if (key === stableStringify(['chat.history', { sessionKey: 'agent:main:main', limit: 200, maxChars: 500000 }])) {
-            await new Promise((resolve) => setTimeout(resolve, 5_000));
-            return {
-              success: true,
-              result: {
-                messages: [
-                  { role: 'assistant', content: 'gateway authoritative history after delay', timestamp: 1001 },
-                ],
-              },
-            };
-          }
-          return { success: true, result: {} };
-        });
       });
 
       const page = await getStableWindow(app);

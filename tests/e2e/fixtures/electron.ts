@@ -29,6 +29,8 @@ type IpcMockConfig = {
   gatewayRpc?: Record<string, unknown>;
   /** Plain method-name seam; `*` is the fallback for unlisted methods. */
   gatewayRpcByMethod?: Record<string, unknown>;
+  /** Per-method response sequences; the last entry repeats. */
+  gatewayRpcSequences?: Record<string, unknown[]>;
   /** Optional per-method delay in milliseconds for gatewayRpcByMethod. */
   gatewayRpcDelays?: Record<string, number>;
   hostApi?: Record<string, unknown>;
@@ -651,6 +653,7 @@ export async function installIpcMocks(
         return `{${entries.join(',')}}`;
       };
 
+      const rpcCallCounts = new Map<string, number>();
       const originalHostInvoke = (ipcMain as unknown as {
         _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
       })._invokeHandlers?.get('host:invoke');
@@ -793,6 +796,15 @@ export async function installIpcMocks(
             const payload = request.payload ?? {};
             const method = typeof payload.method === 'string' ? payload.method : '';
             const params = 'params' in payload ? payload.params : null;
+            const sequences = mockConfig.gatewayRpcSequences;
+            if (sequences && method in sequences) {
+              const list = sequences[method];
+              const count = rpcCallCounts.get(method) ?? 0;
+              rpcCallCounts.set(method, count + 1);
+              const delay = mockConfig.gatewayRpcDelays?.[method];
+              if (typeof delay === 'number' && delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
+              return respondGatewayRpc(request.id, list[Math.min(count, list.length - 1)]);
+            }
             const byMethod = mockConfig.gatewayRpcByMethod;
             if (byMethod) {
               const delay = mockConfig.gatewayRpcDelays?.[method];
