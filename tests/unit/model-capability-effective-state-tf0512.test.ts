@@ -431,8 +431,19 @@ describe("runtime effective capability adapter", () => {
     }
   });
   it("regenerates the acceptance pack from current disk facts", async () => {
-    await import("./fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts");
-    expect(fs.existsSync("tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json")).toBe(true);
-    expect(fs.existsSync("tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json")).toBe(true);
+    // The generator binds component-graduation-report.json to the current HEAD. The committed
+    // bytes are restored in `finally` so running the unit suite cannot dirty the worktree:
+    // clean-tree evidence gates (for example the RSI corpus/tf0592 checks) must stay runnable
+    // in the shared checkout instead of failing with dirty-candidate/dirty-workspace.
+    const packDir = "tests/unit/fixtures/model-capability-effective-state-tf0512";
+    const packFiles = ["acceptance.json", "component-graduation-report.json", "profile.json", "raw-evidence.json"];
+    const committedBytes = new Map(packFiles.map((name) => [name, fs.readFileSync(`${packDir}/${name}`)]));
+    try {
+      await import("./fixtures/model-capability-effective-state-tf0512/generate-acceptance.mts");
+      expect(fs.existsSync("tests/unit/fixtures/model-capability-effective-state-tf0512/acceptance.json")).toBe(true);
+      expect(fs.existsSync("tests/unit/fixtures/model-capability-effective-state-tf0512/component-graduation-report.json")).toBe(true);
+    } finally {
+      for (const [name, bytes] of committedBytes) fs.writeFileSync(`${packDir}/${name}`, bytes);
+    }
   });
 });
