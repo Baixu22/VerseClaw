@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "RsiSekbArmsProtocol/v1",
+  "generatedAt": "2026-11-02",
+  "driven_by": "agent",
+  "actor": "codex/rsi-sekb-arms",
+  "status": "frozen",
+  "taskForestNode": "TF-0598",
+  "question": "Does confirmed SEKB retrieval change outcomes relative to SEKB off, and is shadow indistinguishable from off?",
+  "arms": [
+    { "id": "sekb-off", "flags": { "runtime.contextBlock.sekb.enabled": false, "shadowEvaluation": false, "injection": false }, "description": "Today's default; nothing captured or injected." },
+    { "id": "sekb-shadow", "flags": { "runtime.contextBlock.sekb.enabled": true, "shadowEvaluation": true, "injection": false }, "description": "Capture + shadow evaluation only; no injection, so it must match off." },
+    { "id": "sekb-confirmed", "flags": { "runtime.contextBlock.sekb.enabled": true, "shadowEvaluation": true, "injection": true }, "description": "Confirmed principles retrieved and injected under the existing per-turn budget." }
+  ],
+  "comparisons": [
+    { "id": "shadow-vs-off", "baseline": "sekb-off", "treatment": "sekb-shadow", "role": "diagnostic" },
+    { "id": "confirmed-vs-off", "baseline": "sekb-off", "treatment": "sekb-confirmed", "role": "promotion-eligible" },
+    { "id": "confirmed-vs-shadow", "baseline": "sekb-shadow", "treatment": "sekb-confirmed", "role": "diagnostic" }
+  ],
+  "design": {
+    "k": 3,
+    "minimumCompleteCases": 20,
+    "confidenceLevel": 0.95,
+    "pairUnit": "caseId/repeat",
+    "inferenceUnit": "caseId",
+    "insufficientSampleGate": "insufficient-evidence"
+  },
+  "budget": {
+    "providerCallsAuthorized": 0,
+    "costIncreaseMaximum": 0.1,
+    "note": "The cost ceiling compares mean tokens per completed case against sekb-off."
+  },
+  "negativeControls": [
+    { "id": "shadow-must-not-inject", "expects": "shadow arm has no injection; a shadow/off behavioural difference is a wiring defect" },
+    { "id": "safety-anchor-regression", "expects": "eliminate even if pass^k improves" },
+    { "id": "missing-cost", "expects": "eliminate; null cost cannot be promoted" },
+    { "id": "synthetic-fixture", "expects": "never promote; report status synthetic-wiring-only" },
+    { "id": "below-floor", "expects": "insufficient-evidence" }
+  ],
+  "decisionStates": ["promote", "hold", "eliminate", "insufficient-evidence", "synthetic-wiring-only"],
+  "promotionRequirements": {
+    "passKAbsoluteImprovement": 0.05,
+    "intervalLowerBoundStrictlyPositive": true,
+    "costIncreaseMaximum": 0.1,
+    "zeroRegressionOnNegativeControls": true
+  },
+  "forbidden": [
+    "changing a product default or product lock",
+    "claiming benefit from a synthetic fixture",
+    "adding provider calls inside this instrument"
+  ],
+  "limitations": [
+    "The instrument proves the three-arm wiring and statistics; it does not run the real three-arm baseline.",
+    "A synthetic fixture can only produce synthetic-wiring-only, never a promotion."
+  ]
+}

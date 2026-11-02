@@ -1,0 +1,1644 @@
+{
+  "schemaVersion": "RsiSekbArmsRunFixture/v1",
+  "generatedAt": "2026-11-02",
+  "driven_by": "agent",
+  "actor": "codex/rsi-sekb-arms-fixture",
+  "evidenceKind": "synthetic-wiring-fixture",
+  "claimBoundary": "Deterministic wiring fixture for the three-arm analyzer. It is not a model run, not provider evidence and never a benefit claim.",
+  "k": 3,
+  "arms": {
+    "sekb-off": [
+      {
+        "caseId": "case-00",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1001
+      },
+      {
+        "caseId": "case-00",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1002
+      },
+      {
+        "caseId": "case-00",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1003
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1011
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1012
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1013
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1021
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1022
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1023
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1031
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1032
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1033
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1041
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1042
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1043
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1051
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1052
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1053
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1061
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1062
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1063
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1071
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1072
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1073
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1081
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1082
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1083
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1091
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1092
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1093
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1101
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1102
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1103
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1111
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1112
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1113
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1121
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1122
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1123
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1131
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1132
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1133
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1141
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1142
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1143
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1151
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1152
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1153
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1161
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1162
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1163
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1171
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1172
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1173
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1181
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1182
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1183
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1191
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1192
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1193
+      }
+    ],
+    "sekb-shadow": [
+      {
+        "caseId": "case-00",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1001
+      },
+      {
+        "caseId": "case-00",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1002
+      },
+      {
+        "caseId": "case-00",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1003
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1011
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1012
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1013
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1021
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1022
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1023
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1031
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1032
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1033
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1041
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1042
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1043
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1051
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1052
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1053
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1061
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1062
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1063
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1071
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1072
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1073
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1081
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1082
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1083
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1091
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1092
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1093
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1101
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1102
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1103
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1111
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1112
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1113
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1121
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1122
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1123
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1131
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1132
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1133
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1141
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1142
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1143
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1151
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1152
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1153
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1161
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1162
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1163
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1171
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1172
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1173
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1181
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1182
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1183
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1191
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1192
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1000,
+        "turns": 4,
+        "toolCalls": 10,
+        "latencyMs": 1193
+      }
+    ],
+    "sekb-confirmed": [
+      {
+        "caseId": "case-00",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1001
+      },
+      {
+        "caseId": "case-00",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1002
+      },
+      {
+        "caseId": "case-00",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1003
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1011
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1012
+      },
+      {
+        "caseId": "case-01",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1013
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1021
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1022
+      },
+      {
+        "caseId": "case-02",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1023
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1031
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1032
+      },
+      {
+        "caseId": "case-03",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1033
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1041
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1042
+      },
+      {
+        "caseId": "case-04",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1043
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1051
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1052
+      },
+      {
+        "caseId": "case-05",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1053
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1061
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1062
+      },
+      {
+        "caseId": "case-06",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1063
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 1,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1071
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1072
+      },
+      {
+        "caseId": "case-07",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1073
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1081
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1082
+      },
+      {
+        "caseId": "case-08",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1083
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1091
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 2,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1092
+      },
+      {
+        "caseId": "case-09",
+        "repeat": 3,
+        "success": true,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1093
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1101
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1102
+      },
+      {
+        "caseId": "case-10",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1103
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1111
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1112
+      },
+      {
+        "caseId": "case-11",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1113
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1121
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1122
+      },
+      {
+        "caseId": "case-12",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1123
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1131
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1132
+      },
+      {
+        "caseId": "case-13",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1133
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1141
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1142
+      },
+      {
+        "caseId": "case-14",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1143
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1151
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1152
+      },
+      {
+        "caseId": "case-15",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1153
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1161
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1162
+      },
+      {
+        "caseId": "case-16",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1163
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1171
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1172
+      },
+      {
+        "caseId": "case-17",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1173
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1181
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1182
+      },
+      {
+        "caseId": "case-18",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1183
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 1,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1191
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 2,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1192
+      },
+      {
+        "caseId": "case-19",
+        "repeat": 3,
+        "success": false,
+        "tokens": 1300,
+        "turns": 4,
+        "toolCalls": 12,
+        "latencyMs": 1193
+      }
+    ]
+  },
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "productLocksChanged": false,
+    "realHuman": false,
+    "providerCalls": 0
+  }
+}

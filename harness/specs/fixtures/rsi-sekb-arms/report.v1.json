@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "RsiSekbArmsReport/v1",
+  "generatedAt": "2026-11-02T03:26:32.252Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-sekb-arms",
+  "taskForestNode": "TF-0598",
+  "protocolPath": "harness/specs/fixtures/rsi-sekb-arms/protocol.v1.json",
+  "runsPath": "harness/specs/fixtures/rsi-sekb-arms/runs.v1.json",
+  "evidenceKind": "synthetic-wiring-fixture",
+  "status": "synthetic-wiring-only",
+  "reasons": [
+    "deterministic wiring fixture; not a model run and never a benefit claim",
+    "cost increase 0.3 exceeds 0.1"
+  ],
+  "arms": {
+    "sekb-off": {
+      "completeCaseCount": 20,
+      "passK": 0.3,
+      "flakeRate": 0,
+      "meanTokens": 1000,
+      "gate": "pass"
+    },
+    "sekb-shadow": {
+      "completeCaseCount": 20,
+      "passK": 0.3,
+      "flakeRate": 0,
+      "meanTokens": 1000,
+      "gate": "pass"
+    },
+    "sekb-confirmed": {
+      "completeCaseCount": 20,
+      "passK": 0.4,
+      "flakeRate": 0.05,
+      "meanTokens": 1300,
+      "gate": "pass"
+    }
+  },
+  "comparisons": [
+    {
+      "id": "shadow-vs-off",
+      "role": "diagnostic",
+      "baseline": 0.3,
+      "treatment": 0.3,
+      "meanDiff": 0,
+      "ci95": null,
+      "varianceStatus": "degenerate",
+      "verdict": "no-effect",
+      "reasons": [
+        "zero observed effect; degenerate variance does not establish equivalence or promotion"
+      ]
+    },
+    {
+      "id": "confirmed-vs-off",
+      "role": "promotion-eligible",
+      "baseline": 0.3,
+      "treatment": 0.4,
+      "meanDiff": 0.1,
+      "ci95": [
+        -0.034894,
+        0.234894
+      ],
+      "varianceStatus": "estimated",
+      "verdict": "no-effect",
+      "reasons": [
+        "95% CI contains zero"
+      ]
+    },
+    {
+      "id": "confirmed-vs-shadow",
+      "role": "diagnostic",
+      "baseline": 0.3,
+      "treatment": 0.4,
+      "meanDiff": 0.1,
+      "ci95": [
+        -0.034894,
+        0.234894
+      ],
+      "varianceStatus": "estimated",
+      "verdict": "no-effect",
+      "reasons": [
+        "95% CI contains zero"
+      ]
+    }
+  ],
+  "cost": {
+    "offMeanTokens": 1000,
+    "confirmedMeanTokens": 1300,
+    "relativeIncrease": 0.3,
+    "ceiling": 0.1,
+    "withinCeiling": false
+  },
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "productLocksChanged": false,
+    "realHuman": false,
+    "providerCalls": 0
+  }
+}
