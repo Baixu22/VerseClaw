@@ -1,0 +1,17 @@
+test_complete_moves_task_to_done_and_records_one_event (test_taskboard.TaskBoardTests) ... ok
+test_duplicate_task_id_is_rejected (test_taskboard.TaskBoardTests) ... ok
+test_repeated_completion_is_idempotent (test_taskboard.TaskBoardTests) ... FAIL
+test_unknown_task_is_rejected (test_taskboard.TaskBoardTests) ... ok
+
+======================================================================
+FAIL: test_repeated_completion_is_idempotent (test_taskboard.TaskBoardTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\tmp\context-folding-real-task-cfr-multiround-frozen-20261103-round-05\tests\test_taskboard.py", line 25, in test_repeated_completion_is_idempotent
+    self.assertEqual(task.revision, 1)
+AssertionError: 2 != 1
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+FAILED (failures=1)

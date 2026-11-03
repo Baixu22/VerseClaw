@@ -3,3 +3,4 @@ __pycache__/
 *.pyo
 # Curated TF-0695 acceptance logs are reviewed evidence, not transient output.
 !eval/*.log
+!eval/multiround-acceptance/**/*.log

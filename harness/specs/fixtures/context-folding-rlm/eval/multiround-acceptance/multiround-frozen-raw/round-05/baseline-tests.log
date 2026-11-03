@@ -1,0 +1,9 @@
+test_complete_moves_task_to_done_and_records_one_event (test_taskboard.TaskBoardTests) ... ok
+test_duplicate_task_id_is_rejected (test_taskboard.TaskBoardTests) ... ok
+test_repeated_completion_is_idempotent (test_taskboard.TaskBoardTests) ... ok
+test_unknown_task_is_rejected (test_taskboard.TaskBoardTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
