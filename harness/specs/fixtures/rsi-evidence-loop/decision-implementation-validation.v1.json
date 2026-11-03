@@ -1,6 +1,6 @@
 {
   "schemaVersion": "RsiDecisionImplementationAcceptance/v1",
-  "generatedAt": "2026-11-03T15:41:12.732Z",
+  "generatedAt": "2026-11-03T15:44:29.407Z",
   "driven_by": "agent",
   "actor": "codex/rsi-decision-implementation",
   "status": "passed-with-global-ci-residual",
@@ -84,7 +84,7 @@
       "scripts/repository-artifacts.json": "a34bffda249e9d07bdb392734a802d4edd1ca5a6",
       "scripts/rsi-measurement-archive.d.mts": "78d244ff99d4e992c2616ade50d10272d933dc7e",
       "scripts/rsi-measurement-archive.mjs": "684de7726f564282c49d5cc2a9b33fc2180c8416",
-      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "961ebcd2ef52c23d563c71c4d2d1407cc7298cec",
+      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "e40545a5a622c5a364dd41fabf3e0fb0815a4d63",
       "scripts/rsi-tf0592-statistical-adjudication.mjs": "5ff5fd3e202d45c43afc18a488b614098df4c82a",
       "scripts/rsi-tf0604-baseline.d.mts": "11c94178f9deeb91dd932487e73cdf7153dfa77d",
       "scripts/rsi-tf0604-baseline.mjs": "537e06b97736eee1350ae08241a17d26e4c9740a",
