@@ -9,12 +9,10 @@ import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/st
 import { closeRuntimeMemoryHydrationShadowDatabasesForTest } from "../../openclaw_runtime/src/runtime-core/memory-read-hydration-shadow";
 import {
   buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
-  type TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
 } from "../../openclaw_runtime/src/agents/task-loop-runtime-memory-read-hydration-shadow";
 import {
   buildConflictScenario,
   evaluateConflictResolution,
-  type ConflictGroup,
 } from "../../openclaw_runtime/src/agents/runtime-memory-eval/conflict-resolution-eval";
 import {
   appendFactToDb,
@@ -104,42 +102,4 @@ function tryInitializeDb(dbPath: string): string {
   });
   const result = persistence.migrate();
   return result.status === "skipped" ? result.reason : result.status;
-}
-
-function runConflictDiagnostics(
-  scenario: readonly ConflictGroup[],
-  dbPath: string,
-): TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] {
-  const results: TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] = [];
-  for (let i = 0; i < scenario.length; i += 1) {
-    const group = scenario[i];
-    const diag = buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
-      config: CONFIG,
-      loopRunId: `conflict_resolution_${i}`,
-      sessionKey: "agent:main:conflict-resolution",
-      iteration: i,
-      options: {
-        explicitOptIn: true,
-        testResearchOnly: true,
-        databasePath: dbPath,
-        limit: 50,
-        maxFacts: 200,
-        now: () => REFERENCE_TIME,
-        queries: [
-          {
-            queryId: group.query.queryId,
-            taskId: group.query.taskId,
-            subject: group.query.subject,
-            predicate: group.query.predicate,
-            referenceTime: group.query.referenceTime,
-            tokenBudget: group.query.tokenBudget,
-            limit: group.query.limit,
-            expectedFactIds: [...group.query.expectedFactIds],
-          },
-        ],
-      },
-    });
-    results.push(diag);
-  }
-  return results;
 }

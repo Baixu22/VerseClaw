@@ -36,6 +36,19 @@ touchedAreas:
   - tests/unit/context-inline-spill-eval-provider.test.ts
   - tests/unit/config-schema-parity.test.ts
   - tests/unit/native-raw-output-archive-reuse.test.ts
+  - tests/unit/runtime-memory-context-provider.test.ts
+  - tests/unit/runtime-memory-eval-budget-pressure.test.ts
+  - tests/unit/runtime-memory-eval-conflict-resolution.test.ts
+  - tests/unit/runtime-memory-eval-temporal-evolution.test.ts
+  - tests/unit/runtime-memory-eval-topic-drift.test.ts
+  - tests/unit/runtime-memory-locomo-benchmark.test.ts
+  - tests/unit/runtime-memory-proposal-shadow.test.ts
+  - tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts
+  - tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts
+  - tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts
+  - tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts
+  - tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts
+  - tests/unit/runtime-memory-read-hydration-shadow.test.ts
   - scripts/context-inline-spill-eval.mts
   - docs/modules/context-and-memory.md
   - docs/context-family/goal-progress.md
@@ -115,6 +128,7 @@ tool result 过大
 - 不新增第二套持久化 authority。
 - retention stability 对应同一父线 TF-0704；TF-0703 必须在它完成后补齐负例与稳定回读评测，不能用早期 visibility 结果替代。
 - 后端交互遵循 [gateway-backend-communication](../scenarios/gateway-backend-communication.md)，不改变 Main/Host API 与 Gateway 的所有权。
+- 完整 fast profile 的既有 lint 错误以删除已退休 Runtime Memory 测试中的未使用声明收复；仅清理无调用的 imports、常量、类型和本地 helper，测试与断言保持原样，不放宽 lint 或恢复退休功能。
 
 ## 短期保留契约与回滚
 
