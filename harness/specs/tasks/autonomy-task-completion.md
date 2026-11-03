@@ -75,6 +75,14 @@ text, a bare `accepted` flag, or exit code 0.
 | Recomputable success | raw event replay plus verifier/effect receipts |
 | Owner separation | TaskLoop/Workboard status remains independent |
 
+## Owner-readback boundary
+
+The current codebase has no durable verifier-receipt lookup keyed by a stable receipt id, and its
+effect receipts do not carry the TaskLoop candidate/generation tuple. Until both owners expose a
+readback contract with that correlation, `submitCompletion` must reject every claim rather than
+accept a caller-authored verdict or synthesize a second fact store. A future positive path requires
+a separate owner contract and evidence; absence of a positive path is not made green by mocks.
+
 ## Evidence
 
 Curated evidence lives under `harness/specs/fixtures/autonomy-task-completion/`, with a
