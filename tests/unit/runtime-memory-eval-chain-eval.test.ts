@@ -60,124 +60,57 @@ describe("runtime memory chain evaluation", () => {
     expect(scenario[0].queries).toHaveLength(1);
   });
 
-  it("baseline (empty DB) yields aggregateChainRecall=0", () => {
+  it("keeps the retired chain evaluation from producing diagnostics data", () => {
     const scenario = buildChainScenario({
       turns: TURNS,
       taskId: TASK_ID,
       baseSubject: SUBJECT,
       referenceTime: REFERENCE_TIME,
     });
-    const dbPath = createTempDbPath("chain-baseline-", tempDirs);
-    initializeEmptyDb(dbPath);
 
-    const diagnostics = runChainDiagnostics(scenario, dbPath, new Set());
+    // TF-0500 retired runtime.memory.persist; the DB-backed read-hydration shadow
+    // diagnostics this eval drives depend on that flag, so seeding a fact fails.
+    const dbPath = createTempDbPath("chain-retired-", tempDirs);
+    expect(tryInitializeDb(dbPath)).toBe("flag_disabled");
+    expect(() => runChainDiagnostics(scenario, dbPath, new Set([0]))).toThrow(
+      /appendFact failed .*status=skipped/,
+    );
+  });
+
+  it("still evaluates a fully supplied chain scenario without persistence", () => {
+    const scenario = buildChainScenario({
+      turns: TURNS,
+      taskId: TASK_ID,
+      baseSubject: SUBJECT,
+      referenceTime: REFERENCE_TIME,
+    });
+    // evaluateChain is a pure aggregation; it requires one diagnostic per turn.
+    // With nothing ever recalled, recall stays 0 and depth stays -1.
+    const diagnostics = scenario.map((plan) => ({
+      turn: plan.turn,
+      queries: plan.queries.map((query) => ({
+        query,
+        acceptedFacts: [],
+        rejectedFacts: [],
+        truePositiveCount: 0,
+        falsePositiveCount: 0,
+      })),
+    })) as unknown as TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[];
+
     const result = evaluateChain(scenario, diagnostics);
-
     expect(result.aggregateChainRecall).toBe(0);
     expect(result.maxDepth).toBe(-1);
-    for (const turn of result.perTurn) {
-      expect(turn.recall).toBe(0);
-      expect(turn.depth).toBe(-1);
-    }
-  });
-
-  it("treatment (all facts seeded) yields aggregateChainRecall=1 and maxDepth=3", () => {
-    const scenario = buildChainScenario({
-      turns: TURNS,
-      taskId: TASK_ID,
-      baseSubject: SUBJECT,
-      referenceTime: REFERENCE_TIME,
-    });
-    const dbPath = createTempDbPath("chain-treatment-", tempDirs);
-    initializeEmptyDb(dbPath);
-
-    const writeAll = new Set([0, 1, 2, 3]);
-    const diagnostics = runChainDiagnostics(scenario, dbPath, writeAll);
-    const result = evaluateChain(scenario, diagnostics);
-
-    expect(result.aggregateChainRecall).toBe(1);
-    expect(result.maxDepth).toBe(3);
-    for (const turn of result.perTurn) {
-      expect(turn.recall).toBe(1);
-      expect(turn.depth).toBe(turn.turn);
-    }
-  });
-
-  it("partial missing (only even turns seeded) yields aggregateChainRecall≈0.5", () => {
-    const scenario = buildChainScenario({
-      turns: TURNS,
-      taskId: TASK_ID,
-      baseSubject: SUBJECT,
-      referenceTime: REFERENCE_TIME,
-    });
-    const dbPath = createTempDbPath("chain-partial-", tempDirs);
-    initializeEmptyDb(dbPath);
-
-    const writeEven = new Set([0, 2]);
-    const diagnostics = runChainDiagnostics(scenario, dbPath, writeEven);
-    const result = evaluateChain(scenario, diagnostics);
-
-    // Turns 0 and 1 expect [f0] and [f0,f1]; f0 is present.
-    // Turn 0: recall = 1/1 = 1
-    // Turn 1: recall = 1/2 = 0.5
-    // Turns 2 and 3 expect [f0,f1,f2] and [f0,f1,f2,f3]; f0 and f2 present.
-    // Turn 2: recall = 2/3
-    // Turn 3: recall = 2/4 = 0.5
-    expect(result.perTurn[0].recall).toBe(1);
-    expect(result.perTurn[1].recall).toBeCloseTo(0.5, 5);
-    expect(result.perTurn[2].recall).toBeCloseTo(2 / 3, 5);
-    expect(result.perTurn[3].recall).toBe(0.5);
-    expect(result.aggregateChainRecall).toBeGreaterThan(0.4);
-    expect(result.aggregateChainRecall).toBeLessThan(0.7);
-  });
-
-  it("chainDepth is monotonically non-decreasing when all facts are seeded", () => {
-    const scenario = buildChainScenario({
-      turns: TURNS,
-      taskId: TASK_ID,
-      baseSubject: SUBJECT,
-      referenceTime: REFERENCE_TIME,
-    });
-    const dbPath = createTempDbPath("chain-monotonic-", tempDirs);
-    initializeEmptyDb(dbPath);
-
-    const diagnostics = runChainDiagnostics(scenario, dbPath, new Set([0, 1, 2, 3]));
-    const result = evaluateChain(scenario, diagnostics);
-
-    for (let i = 1; i < result.perTurn.length; i += 1) {
-      expect(result.perTurn[i].depth).toBeGreaterThanOrEqual(result.perTurn[i - 1].depth);
-    }
-  });
-
-  it("growthRate stays within [0, 1] for all turns", () => {
-    const scenario = buildChainScenario({
-      turns: TURNS,
-      taskId: TASK_ID,
-      baseSubject: SUBJECT,
-      referenceTime: REFERENCE_TIME,
-    });
-    const dbPath = createTempDbPath("chain-growth-", tempDirs);
-    initializeEmptyDb(dbPath);
-
-    const diagnostics = runChainDiagnostics(scenario, dbPath, new Set([0, 2]));
-    const result = evaluateChain(scenario, diagnostics);
-
-    for (const turn of result.perTurn) {
-      expect(turn.growthRate).toBeGreaterThanOrEqual(0);
-      expect(turn.growthRate).toBeLessThanOrEqual(1);
-    }
   });
 });
 
-function initializeEmptyDb(dbPath: string): void {
+function tryInitializeDb(dbPath: string): string {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: CONFIG,
     database: { path: dbPath },
     now: () => REFERENCE_TIME,
   });
-  if (persistence.migrate().status !== "migrated") {
-    throw new Error(`initializeEmptyDb: migration failed for ${dbPath}`);
-  }
+  const result = persistence.migrate();
+  return result.status === "skipped" ? result.reason : result.status;
 }
 
 function runChainDiagnostics(

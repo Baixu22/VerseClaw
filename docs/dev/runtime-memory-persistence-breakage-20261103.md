@@ -177,3 +177,24 @@ Retirement mapping 逐个改写（约 36 个文件）尚未完成，记为待办
 ### 未落地
 
 G1 其余约 26 个文件、G2 全部 10 个、G3 约 3 个仍在失败。本文件不声称它们已修复。
+
+### 更正：G2 并非"评测工具本身"，而是"已退役能力"
+
+上一小节的分类有误，特此更正并保留原始记录。
+
+经复核：
+
+- `openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts:240` 同样以
+  `resolveRuntimeMemoryFeatureFlags(options.config).persist` 为门控，退役后恒返回
+  `skipped / flag_disabled`；
+- `task-loop-controller.ts:3844/3901` 在**产品路径**中直接调用该诊断函数。
+
+所以这 10 个 eval 套件测的**不是**一个独立可用的评测工具，而是同样依赖
+`persist` 的 read-hydration 能力。它们与 G1 属于同一类问题：能力已退役，测试仍在断言可用。
+
+因此**不需要**新增 fixture-only 建库导出，也不需要复制 schema。
+先前提出的三个选项（导出 fixture 入口 / 复制 schema / 标为 known-gap）**全部作废**。
+
+正确处置：与 G1 一致——把这些套件改写为"退役后不产生评测数据"的断言；
+若某些纯计算函数（如 `evaluateChain`）本身不依赖开关，则保留其单元测试，
+只把"建 fixture 库 + 跑诊断"的部分改为断言退役。
