@@ -11,8 +11,8 @@ describe("retryAsync shared attempt budget", () => {
     ).resolves.toBe("first-ok");
 
     expect(budget.snapshot()).toMatchObject({
-      used: 2,
-      remaining: 1,
+      used: 1,
+      remaining: 2,
       attempts: [
         { physicalAttempt: 1, layer: "sdk", outcome: "failure" },
         { physicalAttempt: 2, layer: "sdk", outcome: "success" },
@@ -29,8 +29,8 @@ describe("retryAsync shared attempt budget", () => {
       ),
     ).resolves.toBe("ambient-ok");
     expect(budget.snapshot()).toMatchObject({
-      used: 2,
-      remaining: 0,
+      used: 1,
+      remaining: 1,
       attempts: [
         { physicalAttempt: 1, layer: "ambient-retry", outcome: "failure" },
         { physicalAttempt: 2, layer: "ambient-retry", outcome: "success" },

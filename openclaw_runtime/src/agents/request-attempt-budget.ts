@@ -17,6 +17,7 @@ export type RequestAttemptBudgetOptions = {
 };
 
 export type RequestAttemptRecord = {
+  /** Monotonic one-based identity. Never reused, never derived from the budget balance. */
   physicalAttempt: number;
   layer?: string;
   outcome?: "success" | "failure" | "skipped";
@@ -52,7 +53,14 @@ function normalizeRetryAfter(value: number | undefined): number | undefined {
 export class RequestAttemptBudget {
   readonly logicalRequestId: string | null;
   readonly maxPhysicalAttempts: number;
+  /** Failed attempts still holding budget. Successful attempts release their slot. */
   private usedCount = 0;
+  /** Monotonic identity source. Decoupled from usedCount so a released slot never reuses an id. */
+  private nextPhysicalAttempt = 1;
+  /** Identity to record index, so completion targets an exact attempt even if the balance changed. */
+  private readonly recordIndexByAttempt = new Map<number, number>();
+  /** Attempt ids whose outcome has been committed. Default provisional failure does not count. */
+  private readonly completedAttempts = new Set<number>();
   private readonly records: RequestAttemptRecord[] = [];
   private retryAfter: number | undefined;
 
@@ -74,14 +82,24 @@ export class RequestAttemptBudget {
     return this.remaining > 0;
   }
 
-  /** Records one physical attempt and returns its one-based index. */
+  /**
+   * Records one physical attempt and returns its one-based identity.
+   *
+   * Identity and budget are separate on purpose: a successful attempt releases
+   * its budget slot, but its identity must never be handed to a later attempt.
+   * TF-0729; the collision was reproduced by
+   * tests/unit/semantic-convergence-retry-identity.test.ts before this change.
+   */
   recordAttempt(record: Omit<RequestAttemptRecord, "physicalAttempt"> = {}): number {
     if (!this.canRetry()) {
       throw new Error("request attempt budget exhausted");
     }
+    const physicalAttempt = this.nextPhysicalAttempt;
+    this.nextPhysicalAttempt += 1;
     this.usedCount += 1;
+    this.recordIndexByAttempt.set(physicalAttempt, this.records.length);
     this.records.push({
-      physicalAttempt: this.usedCount,
+      physicalAttempt,
       ...record,
       ...(record.retryAfterMs !== undefined
         ? { retryAfterMs: normalizeRetryAfter(record.retryAfterMs) }
@@ -90,7 +108,7 @@ export class RequestAttemptBudget {
     if (record.retryAfterMs !== undefined) {
       this.setRetryAfterMs(record.retryAfterMs);
     }
-    return this.usedCount;
+    return physicalAttempt;
   }
 
   /**
@@ -107,15 +125,27 @@ export class RequestAttemptBudget {
     physicalAttempt: number,
     outcome: NonNullable<RequestAttemptRecord["outcome"]>,
   ): void {
-    const record = this.records.find((entry) => entry.physicalAttempt === physicalAttempt);
+    const index = this.recordIndexByAttempt.get(physicalAttempt);
+    if (index === undefined) {
+      return;
+    }
+    const record = this.records[index];
     if (!record) {
       return;
     }
+    // Idempotent: a repeated completion must not release the same slot twice.
+    // Callers record a provisional "failure" at start, so outcome alone cannot
+    // distinguish a committed completion from the default.
+    if (this.completedAttempts.has(physicalAttempt)) {
+      return;
+    }
+    this.completedAttempts.add(physicalAttempt);
     record.outcome = outcome;
     if (outcome === "success") {
       this.usedCount = Math.max(0, this.usedCount - 1);
     }
   }
+
   /** Returns undefined when the budget is exhausted; does not itself sleep or retry. */
   tryRecordAttempt(record: Omit<RequestAttemptRecord, "physicalAttempt"> = {}): number | undefined {
     return this.canRetry() ? this.recordAttempt(record) : undefined;

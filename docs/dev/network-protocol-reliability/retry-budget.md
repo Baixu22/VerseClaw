@@ -11,6 +11,12 @@ openclaw_runtime/src/agents/request-attempt-budget.ts defines a request-scoped b
 
 The budget is exposed through runWithRequestAttemptBudget and getRequestAttemptBudget (AsyncLocalStorage). Every layer reads the same budget for the active logical request.
 
+### Identity vs. balance (TF-0729)
+
+`physicalAttempt` is a monotonic attempt identity and is never derived from `usedCount`. `usedCount` is the reversible failure budget: a successful completion releases its slot, but the released identity is never reused. `completeAttempt` is idempotent through a separate completed-attempt set. This fixes the success→failure overwrite reproduced by `tests/unit/semantic-convergence-retry-identity.test.ts`.
+
+Known remaining gap: provider transport, agent auto-retry, model fallback and retryAsync still each call the budget; TF-0730 will make only the actual outbound request charge a physical attempt and have upper layers gate/annotate instead. Until then, RETRY-2's baseline remains four charging layers.
+
 ## Layer behavior
 
 - Agent auto-retry (agent-session.ts) creates the budget at the turn boundary and records each auto-retry attempt as agent-auto-retry.
