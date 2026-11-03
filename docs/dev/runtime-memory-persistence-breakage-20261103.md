@@ -347,6 +347,6 @@ scoped ESLint over the five changed memory test files
 
 ### Residual limitations
 
-- `pnpm harness validate --spec harness/specs/tasks/runtime-memory-retirement-closeout.md` still fails closed because the branch includes the separately merged context-folding surface (135 changed paths relative to `origin/main`) while this task spec only owns the memory closeout paths. This is not represented as a Harness pass.
+- Diff-aware Harness validation still fails closed because the same branch includes the separately merged context-folding surface (135 changed paths relative to `origin/main`) while this task spec only owns the memory closeout paths. `pnpm harness validate --spec harness/specs/tasks/runtime-memory-retirement-closeout.md --no-diff` passes its structural check, but neither result is represented as a full diff-aware Harness pass.
 - The retired durable SQLite success paths no longer have end-to-end test coverage because production deliberately cannot activate them. Sanitizer and failure-injection contracts that remain reachable are retained.
 - No claim is made that retired Runtime Memory persistence works, that the memory system benefits product behavior, that the full product is GA, or that any real-human evidence exists.

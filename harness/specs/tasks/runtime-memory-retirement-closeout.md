@@ -22,6 +22,14 @@ touchedAreas:
   - tests/unit/task-loop-controller.test.ts
   - tests/unit/runtime-memory-context-contracts.test.ts
   - tests/unit/product-acceptance-shortfalls.test.ts
+  - tests/unit/runtime-memory-operator-inspection.test.ts
+  - tests/unit/runtime-memory-relations.test.ts
+  - tests/unit/runtime-memory-runtime-integration.test.ts
+  - tests/unit/runtime-memory-self-edit-persistence.test.ts
+  - tests/unit/runtime-memory-baseline-doc-guard.test.ts
+  - tests/fixtures/runtime-memory-eval/locomo-full-500-report.json
+  - docs/dev/runtime-memory-persistence-breakage-20261103.md
+  - .gitattributes
 expectedUserBehavior:
   - Runtime Memory legacy shadow, provider, proposeFacts, and persist flags cannot be enabled from configuration.
   - A retired flag request produces no episode write, no SQLite open, no persisted row, and no replay.
