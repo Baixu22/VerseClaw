@@ -223,9 +223,11 @@ export function projectTaskLedgerSnapshot(
             status,
             updatedAt: timestamp,
             completedAt: status === 'done' ? (existing.completedAt ?? timestamp) : existing.completedAt ?? null,
-            metadata: event.payload.reviewReason
-              ? { ...(existing.metadata ?? {}), reviewReason: event.payload.reviewReason }
-              : existing.metadata,
+            metadata: {
+              ...existing.metadata,
+              ...(event.payload.reviewReason ? { reviewReason: event.payload.reviewReason } : {}),
+              ...(event.payload.completionClaim ? { completionClaim: event.payload.completionClaim } : {}),
+            },
           });
           break;
         }

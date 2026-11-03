@@ -7,6 +7,7 @@ import type {
   TaskLedgerCreateNodePayload,
   TaskLedgerLinkSessionPayload,
   TaskLedgerReviewPayload,
+  TaskLedgerSubmitCompletionPayload,
   TaskLedgerUpdateNodePayload,
 } from '@shared/host-api/contract';
 import type {
@@ -66,6 +67,13 @@ function normalizeEdgeInput(payload: TaskLedgerAddEdgePayload): TaskLedgerEdge {
     metadata: input.metadata,
     createdAt: input.createdAt ?? nowIso(),
   };
+}
+
+function requireDigest(value: unknown, label: string): string {
+  if (typeof value !== 'string' || !/^[a-f0-9]{64}$/iu.test(value)) {
+    throw new Error(`${label} must be a sha256 digest`);
+  }
+  return value;
 }
 
 function wrapSnapshot(snapshot: TaskLedgerSnapshot) {
@@ -200,6 +208,44 @@ export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger']
         payload: { nodeId: payload.nodeId, status: payload.status ?? 'todo' },
       }], payload.idempotencyKey),
     ),
+
+    submitCompletion: async (payload: TaskLedgerSubmitCompletionPayload) => {
+      const claim = payload.claim;
+      if (!claim || claim.schema !== 'TaskCompletionClaim/v1') {
+        return { success: false, accepted: false, reason: 'invalid_completion_claim', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
+      }
+      if (claim.taskId.trim().length === 0 || claim.generation.trim().length === 0 || claim.priorStatus.trim().length === 0) {
+        return { success: false, accepted: false, reason: 'invalid_completion_binding', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
+      }
+      try {
+        requireDigest(claim.candidateDigest, 'candidateDigest');
+        requireDigest(claim.verifierDigest, 'verifierDigest');
+        requireDigest(claim.effectDigest, 'effectDigest');
+      } catch {
+        return { success: false, accepted: false, reason: 'invalid_completion_digest', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
+      }
+      if (claim.verifierDigest !== claim.effectDigest) {
+        return { success: false, accepted: false, reason: 'evidence_mismatch', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
+      }
+      const before = await loadTaskLedgerSnapshot(payload.workspaceId);
+      const node = before.nodes.find((candidate) => candidate.id === claim.taskId);
+      if (!node) {
+        return { success: false, accepted: false, reason: 'task_not_found', snapshot: before };
+      }
+      if (node.status !== claim.priorStatus) {
+        return { success: false, accepted: false, reason: 'prior_status_mismatch', snapshot: before };
+      }
+      if (node.kind === 'check' || node.kind === 'review' || node.kind === 'decision') {
+        return { success: false, accepted: false, reason: 'task_kind_not_eligible', snapshot: before };
+      }
+      const snapshot = await appendTaskLedgerEvents(payload.workspaceId, [{
+        type: 'status_changed',
+        actor: 'system',
+        taskId: claim.taskId,
+        payload: { nodeId: claim.taskId, status: 'done', completionClaim: claim },
+      }], payload.idempotencyKey);
+      return { success: true, accepted: true, snapshot };
+    },
 
     exportHtml: async (payload) => {
       const workspaceId = payload?.workspaceId;

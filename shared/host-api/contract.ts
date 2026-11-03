@@ -4862,6 +4862,15 @@ export type TaskLedgerReviewPayload = TaskLedgerWorkspacePayload & {
   status?: TaskLedgerNodeStatus;
   idempotencyKey?: string | null;
 };
+export type TaskLedgerSubmitCompletionPayload = TaskLedgerWorkspacePayload & {
+  claim: import('../types/task-ledger').TaskLedgerCompletionClaim;
+  idempotencyKey?: string | null;
+};
+export type TaskLedgerSubmitCompletionResult = TaskLedgerSnapshotResult & {
+  accepted: boolean;
+  reason?: string;
+};
+
 export type TaskLedgerExportHtmlPayload = TaskLedgerWorkspacePayload & { includeHistory?: boolean };
 export type TaskLedgerExportHtmlResult = HostSuccess & { path: string };
 
@@ -6076,6 +6085,7 @@ export type HostApiContract = {
     linkSession: (payload: TaskLedgerLinkSessionPayload) => TaskLedgerSnapshotResult;
     requestReview: (payload: TaskLedgerReviewPayload) => TaskLedgerSnapshotResult;
     clearReview: (payload: TaskLedgerReviewPayload) => TaskLedgerSnapshotResult;
+    submitCompletion: (payload: TaskLedgerSubmitCompletionPayload) => TaskLedgerSubmitCompletionResult;
     exportHtml: (payload?: TaskLedgerExportHtmlPayload) => TaskLedgerExportHtmlResult;
   };
   remoteTasks: {

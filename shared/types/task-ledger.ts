@@ -215,6 +215,16 @@ export type TaskLedgerSessionLink = {
   createdAt: string;
 };
 
+export type TaskLedgerCompletionClaim = {
+  schema: 'TaskCompletionClaim/v1';
+  taskId: string;
+  candidateDigest: string;
+  generation: string;
+  verifierDigest: string;
+  effectDigest: string;
+  priorStatus: string;
+};
+
 export type TaskLedgerEventPayload = {
   node?: TaskLedgerNode;
   nodeId?: string;
@@ -230,6 +240,7 @@ export type TaskLedgerEventPayload = {
   note?: string;
   workingContextProposal?: TaskLedgerWorkingContextProposal;
   workingContextDecision?: TaskLedgerWorkingContextDecision;
+  completionClaim?: TaskLedgerCompletionClaim;
 };
 
 export type TaskLedgerEvent = {

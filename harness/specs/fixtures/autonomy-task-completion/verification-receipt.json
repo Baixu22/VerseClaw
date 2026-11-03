@@ -1,0 +1,133 @@
+{
+  "schema": "clawx.autonomy-task-completion.verification/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomy-a3",
+  "taskForestNode": "TF-0672",
+  "generatedAt": "2026-11-03T11:45:00.000Z",
+  "sourceCandidate": {
+    "head": "22a818f1caef9548247d6ae7e47745134cae3cbc",
+    "workingTree": "candidate+evidence commit"
+  },
+  "commands": [
+    {
+      "id": "a3-unit",
+      "command": "pnpm exec vitest run tests/unit/autonomy-task-completion.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 16
+    },
+    {
+      "id": "ledger-regression",
+      "command": "pnpm exec vitest run tests/unit/task-ledger-service.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 9
+    },
+    {
+      "id": "typecheck",
+      "command": "node scripts/typecheck-agent-dev.mjs --cache",
+      "exitCode": 0,
+      "node": 0,
+      "web": 0,
+      "test": 0,
+      "errorCount": 0
+    },
+    {
+      "id": "contract",
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/autonomy-task-completion.md",
+      "exitCode": 0
+    },
+    {
+      "id": "harness-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/autonomy-task-completion.md --dry-run",
+      "exitCode": 0
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "id": "eslint",
+      "command": "pnpm exec eslint ...A3 files",
+      "exitCode": 0
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "no-bare-run-or-text-completion",
+      "status": "passed",
+      "evidence": [
+        "tests/unit/autonomy-task-completion.test.ts",
+        "task-completion-claim.ts"
+      ]
+    },
+    {
+      "id": "same-task-candidate-generation",
+      "status": "passed",
+      "evidence": [
+        "tests/unit/autonomy-task-completion.test.ts"
+      ]
+    },
+    {
+      "id": "missing-tampered-stale-refused",
+      "status": "passed",
+      "evidence": [
+        "tests/unit/autonomy-task-completion.test.ts"
+      ]
+    },
+    {
+      "id": "recomputable-ledger-success",
+      "status": "passed",
+      "evidence": [
+        "tests/unit/autonomy-task-completion.test.ts",
+        "task-ledger-service.ts"
+      ]
+    },
+    {
+      "id": "owner-separation",
+      "status": "passed",
+      "evidence": [
+        "autonomy-task-completion-boundary.md"
+      ]
+    }
+  ],
+  "negativeCases": [
+    "task_mismatch",
+    "candidate_mismatch",
+    "generation_mismatch",
+    "verifier_not_approved",
+    "effect_not_applied",
+    "evidence_mismatch",
+    "already_done",
+    "prior_status_mismatch",
+    "task_not_found",
+    "invalid_completion_digest",
+    "task_kind_not_eligible"
+  ],
+  "unmeasured": [
+    "Live provider/model semantic quality is not claimed.",
+    "Native TaskLoop UI click-through is not part of this node; the existing host facade is exercised through the typed API.",
+    "No real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "survivors": 0,
+    "recoveryRequired": false
+  }
+}

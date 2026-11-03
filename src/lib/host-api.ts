@@ -292,6 +292,8 @@ import type {
   TaskLedgerLinkSessionPayload,
   TaskLedgerReviewPayload,
   TaskLedgerSnapshotResult,
+  TaskLedgerSubmitCompletionPayload,
+  TaskLedgerSubmitCompletionResult,
   TaskLedgerUpdateNodePayload,
   TaskLedgerWorkspacePayload,
   PermissionApprovalDecisionPayload,
@@ -1765,6 +1767,7 @@ export const hostApi = {
     linkSession: (input: TaskLedgerLinkSessionPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'linkSession', input),
     requestReview: (input: TaskLedgerReviewPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'requestReview', input),
     clearReview: (input: TaskLedgerReviewPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'clearReview', input),
+    submitCompletion: (input: TaskLedgerSubmitCompletionPayload): Promise<TaskLedgerSubmitCompletionResult> => invokeHost('taskLedger', 'submitCompletion', input),
     exportHtml: (input?: TaskLedgerExportHtmlPayload): Promise<TaskLedgerExportHtmlResult> => invokeHost('taskLedger', 'exportHtml', input),
   },
   remoteTasks: {

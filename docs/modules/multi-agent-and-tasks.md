@@ -251,6 +251,7 @@ Routing Memo 默认/internal：
 - linkSession；
 - requestReview；
 - clearReview；
+- submitCompletion（同 task/candidate/generation 的 approved verifier 与 applied effect receipt 准入后，才写既有 `status_changed`）；
 - exportHtml。
 
 节点类型：
@@ -283,6 +284,8 @@ Routing Memo 默认/internal：
 - needs_review
 
 Task Ledger 拥有用户可见任务事实、review flags、history 和 Task Loop 相关根节点。Workboard/ClawGraph 的调度状态可以单向引用 Task Ledger node，但不应双向镜像成第二任务账本。
+
+`submitCompletion` 是完成事件准入，不是第二完成权威：它拒绝 bare run/text/exit0/accepted、错 task、旧 candidate/generation、缺失或篡改证据，以及非 applied effect；成功时仍由 Task Ledger 的 `status_changed` 事件投影为 `done`。
 
 ## 12. Task Ledger Working Context
 

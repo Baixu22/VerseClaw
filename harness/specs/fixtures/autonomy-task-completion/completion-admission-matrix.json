@@ -1,0 +1,41 @@
+{
+  "schema": "clawx.autonomy-task-completion.matrix/v1",
+  "drivenBy": "agent",
+  "rows": [
+    {
+      "input": "run completed/text only",
+      "decision": "reject",
+      "reason": "verifier_not_approved"
+    },
+    {
+      "input": "accepted=true/exit0",
+      "decision": "reject",
+      "reason": "verifier_not_approved"
+    },
+    {
+      "input": "stale candidate",
+      "decision": "reject",
+      "reason": "candidate_mismatch"
+    },
+    {
+      "input": "old generation",
+      "decision": "reject",
+      "reason": "generation_mismatch"
+    },
+    {
+      "input": "missing/tampered evidence digest",
+      "decision": "reject",
+      "reason": "evidence_mismatch"
+    },
+    {
+      "input": "effect unknown or missing",
+      "decision": "reject",
+      "reason": "effect_not_applied"
+    },
+    {
+      "input": "same candidate+generation+approved verifier+applied effect",
+      "decision": "admit",
+      "transition": "node->done"
+    }
+  ]
+}
