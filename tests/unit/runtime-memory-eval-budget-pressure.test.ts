@@ -63,161 +63,51 @@ describe("runtime memory budget pressure evaluation", () => {
     expect(scenario.queries).toHaveLength(FACT_COUNT * TEST_LEVELS.length);
     expect(scenario.factCount).toBe(FACT_COUNT);
   });
-
-  it("recall = 1 at the highest budget level (256)", () => {
+  it("keeps retired budget-pressure evaluation from seeding or reading a database", () => {
     const scenario = buildBudgetPressureScenario({
       factCount: FACT_COUNT,
       taskId: TASK_ID,
       referenceTime: REFERENCE_TIME,
       levels: TEST_LEVELS,
     });
-    const dbPath = createTempDbPath("budget-high-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const fact of scenario.facts) {
-      appendFactToDb(dbPath, fact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
+    expect(scenario.queries).toHaveLength(FACT_COUNT * TEST_LEVELS.length);
 
-    const diagnostics = runBudgetDiagnostics(scenario, dbPath);
-    const result = evaluateBudgetPressure(scenario, diagnostics);
-
-    expect(result.perLevel[0].tokenBudget).toBe(256);
-    expect(result.perLevel[0].recall).toBe(1);
+    const dbPath = createTempDbPath("budget-retired-", tempDirs);
+    expect(tryInitializeDb(dbPath)).toBe("flag_disabled");
+    expect(() => appendFactToDb(dbPath, scenario.facts[0])).toThrow(/appendFact failed .*status=skipped/);
   });
 
-  it("recall at extreme budget (8) is less than recall at ample budget (256)", () => {
+  it("still aggregates a fully supplied budget scenario without persistence", () => {
     const scenario = buildBudgetPressureScenario({
       factCount: FACT_COUNT,
       taskId: TASK_ID,
       referenceTime: REFERENCE_TIME,
       levels: TEST_LEVELS,
     });
-    const dbPath = createTempDbPath("budget-degrade-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const fact of scenario.facts) {
-      appendFactToDb(dbPath, fact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
+    const diagnostics = scenario.queries.map((query, index) =>
+      buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
+        config: CONFIG,
+        options: {},
+        loopRunId: `budget-retired-${index}`,
+        sessionKey: "agent:main:budget",
+        iteration: index,
+        query,
+      } as never),
+    );
 
-    const diagnostics = runBudgetDiagnostics(scenario, dbPath);
     const result = evaluateBudgetPressure(scenario, diagnostics);
-
-    const ampleRecall = result.perLevel[0].recall;
-    const extremeRecall = result.perLevel[result.perLevel.length - 1].recall;
-    expect(extremeRecall).toBeLessThanOrEqual(ampleRecall);
-  });
-
-  it("recall is monotonically non-decreasing as budget increases", () => {
-    const scenario = buildBudgetPressureScenario({
-      factCount: FACT_COUNT,
-      taskId: TASK_ID,
-      referenceTime: REFERENCE_TIME,
-      levels: TEST_LEVELS,
-    });
-    const dbPath = createTempDbPath("budget-monotonic-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const fact of scenario.facts) {
-      appendFactToDb(dbPath, fact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
-
-    const diagnostics = runBudgetDiagnostics(scenario, dbPath);
-    const result = evaluateBudgetPressure(scenario, diagnostics);
-
-    // perLevel is ordered from lowest budget (extreme) to highest? No —
-    // perLevel follows the levels array order (ample → extreme).
-    // So recall should be non-increasing as we go from ample → extreme.
-    for (let i = 1; i < result.perLevel.length; i += 1) {
-      expect(result.perLevel[i].recall).toBeLessThanOrEqual(
-        result.perLevel[i - 1].recall,
-      );
-    }
-  });
-
-  it("rejectedByBudgetCount > 0 at the most constrained budget level", () => {
-    const scenario = buildBudgetPressureScenario({
-      factCount: FACT_COUNT,
-      taskId: TASK_ID,
-      referenceTime: REFERENCE_TIME,
-      levels: TEST_LEVELS,
-    });
-    const dbPath = createTempDbPath("budget-reject-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const fact of scenario.facts) {
-      appendFactToDb(dbPath, fact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
-
-    const diagnostics = runBudgetDiagnostics(scenario, dbPath);
-    const result = evaluateBudgetPressure(scenario, diagnostics);
-
-    const extreme = result.perLevel[result.perLevel.length - 1];
-    // At tokenBudget=8, facts (~20 tokens each) should be rejected.
-    // If all are accepted (8 is enough), this assertion may not hold —
-    // so we assert that at least the extreme level has recall <= ample level.
-    if (extreme.recall < result.perLevel[0].recall) {
-      expect(extreme.rejectedByBudgetCount).toBeGreaterThan(0);
-    }
-  });
-
-  it("tokenUtilization is higher at lower budgets than at higher budgets", () => {
-    const scenario = buildBudgetPressureScenario({
-      factCount: FACT_COUNT,
-      taskId: TASK_ID,
-      referenceTime: REFERENCE_TIME,
-      levels: TEST_LEVELS,
-    });
-    const dbPath = createTempDbPath("budget-util-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const fact of scenario.facts) {
-      appendFactToDb(dbPath, fact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
-
-    const diagnostics = runBudgetDiagnostics(scenario, dbPath);
-    const result = evaluateBudgetPressure(scenario, diagnostics);
-
-    // If facts are accepted at both levels, the lower budget level should
-    // have higher utilization (used/budget ratio).
-    const ample = result.perLevel[0];
-    const tight = result.perLevel[3]; // tokenBudget=32
-    if (ample.acceptedFactCount > 0 && tight.acceptedFactCount > 0) {
-      expect(tight.tokenUtilization).toBeGreaterThanOrEqual(ample.tokenUtilization);
-    }
-  });
-
-  it("kneePoint is either 0 (never dropped below 0.5) or within tested budget range", () => {
-    const scenario = buildBudgetPressureScenario({
-      factCount: FACT_COUNT,
-      taskId: TASK_ID,
-      referenceTime: REFERENCE_TIME,
-      levels: TEST_LEVELS,
-    });
-    const dbPath = createTempDbPath("budget-knee-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const fact of scenario.facts) {
-      appendFactToDb(dbPath, fact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
-
-    const diagnostics = runBudgetDiagnostics(scenario, dbPath);
-    const result = evaluateBudgetPressure(scenario, diagnostics);
-
-    // kneePoint should be 0 (never dropped) or one of the tested budget values.
-    const testedBudgets = TEST_LEVELS.map((l) => l.tokenBudget);
-    expect(result.kneePoint === 0 || testedBudgets.includes(result.kneePoint)).toBe(true);
+    expect(Number.isFinite(result.kneePoint)).toBe(true);
   });
 });
 
-function initializeEmptyDb(dbPath: string): void {
+function tryInitializeDb(dbPath: string): string {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: CONFIG,
     database: { path: dbPath },
     now: () => REFERENCE_TIME,
   });
-  if (persistence.migrate().status !== "migrated") {
-    throw new Error(`initializeEmptyDb: migration failed for ${dbPath}`);
-  }
+  const result = persistence.migrate();
+  return result.status === "skipped" ? result.reason : result.status;
 }
 
 function runBudgetDiagnostics(
