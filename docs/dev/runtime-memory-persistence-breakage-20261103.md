@@ -221,3 +221,19 @@ G1 其余约 26 个文件、G2 全部 10 个、G3 约 3 个仍在失败。本文
 | `evaluateChain(scenario, diagnostics)` | `diagnostics.length` 必须**等于** `scenario.length`；空数组会抛错 |
 | `evaluateTopicDrift(segments, diagnostics)` | `diagnostics.length` 必须等于**所有 segment 的 query 总数**（不是 segment 数） |
 | `appendFactToDb` / `seedTempDb` | 退役后直接抛 `... status=skipped`，不会静默返回 |
+
+### 改写时必须先自检（本轮两次改坏文件后补充）
+
+用脚本按行切片改写 TS 测试文件时，**写入前必须先做括号配平检查**：
+
+```js
+const opens = (out.match(/\{/g) || []).length;
+const closes = (out.match(/\}/g) || []).length;
+if (opens !== closes) throw new Error("unbalanced; not writing");
+fs.writeFileSync(path, out, "utf8");
+```
+
+本轮在 `conflict-resolution` 与 `chain-eval` 上各改坏过一次（切片边界多删了 describe 的
+闭合括号，导致 `Unexpected end of file`），都是从 `git checkout -- <file>` 恢复后重做。
+另外：`String.replace` 对含 CRLF 的多行块容易静默不匹配，**替换后必须断言替换确实发生**
+（`out !== before`），否则会出现"改了没生效"却误以为已修。
