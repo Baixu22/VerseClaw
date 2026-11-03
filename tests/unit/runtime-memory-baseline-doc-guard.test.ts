@@ -115,6 +115,12 @@ function readFixtureJson(): unknown {
   }
 }
 
+function canonicalTextBytes(text: string): Buffer {
+  // This guard binds semantic fixture fields, not the platform checkout's line
+  // endings. Raw-byte integrity belongs to repository attributes/manifests.
+  return Buffer.from(text.replace(/\r\n/g, "\n"), "utf8");
+}
+
 function percentCell(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
@@ -126,7 +132,9 @@ describe("docs/runtime-design/mem.md baseline guard (issue #146)", () => {
     const fixture = requireRecord(readFixtureJson(), FIXTURE_LABEL);
 
     expect(block.sourceArtifact).toBe(FIXTURE_LABEL);
-    expect(block.sha256).toBe(createHash("sha256").update(fixtureRaw).digest("hex"));
+    expect(block.sha256).toBe(
+      createHash("sha256").update(canonicalTextBytes(fixtureRaw)).digest("hex"),
+    );
     expect(block.reportVersion).toBe(fixture.version);
     expect(block.generatedAt).toBe(fixture.generatedAt);
     expect(block.totalQuestions).toBe(fixture.totalQuestions);
