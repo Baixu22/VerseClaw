@@ -1,14 +1,15 @@
 {
   "schemaVersion": "RsiTf0592ValidationReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-02T14:44:29.605Z",
+  "generatedAt": "2026-11-03T15:39:24.669Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "sealState": "sealed",
   "reportStatus": "insufficient-evidence",
   "reportValidation": {
     "passed": true,
-    "errors": []
+    "errors": [],
+    "warnings": []
   },
   "negativeControls": {
     "passed": true,

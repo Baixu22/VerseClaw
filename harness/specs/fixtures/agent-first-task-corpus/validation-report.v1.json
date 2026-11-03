@@ -3,18 +3,20 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "b78f1458fcd50755d21c823525e4ef0549ab7098",
-    "tree": "5cda0ee38a92f825a1a6d4b836519ba1a1efed40",
+    "commit": "50b80f73a4bac8b5212d6f9fad5299a493b56d5e",
+    "tree": "1e23cd893e3400fc7b044e4d61cdbbb16291d6c4",
     "dirty": false,
+    "dirtyPaths": [],
+    "unrelatedDirtyPaths": [],
     "sourceHashes": {
-      "scripts/rsi-historical-task-corpus.mjs": "0151e1949283b1de9e4f8abea2b507b764247749f450b082090f8de4d0ed5d9d",
+      "scripts/rsi-historical-task-corpus.mjs": "b5b8661dd1423f6eb52c48b644400327997537dc73f49c705581d7fdaa79aa8c",
       "scripts/rsi-historical-task-corpus.d.mts": "fc0a19370c47b08addc9730c68278ba7b392fc16bf5dd60034b420d438242683",
       "scripts/lib/rsi-historical-task-corpus.mjs": "934d278293d5aefb99fa7076b2a34624ec1cb1ebea4c28f4be5e84823c63cc81",
       "scripts/lib/rsi-historical-task-corpus.d.mts": "43156741a909994f933c99973ecc941e0a45caef13dcc4ac8f48327a2e58955a",
       "scripts/lib/agent-first-graders.mjs": "16073b5108f5118cd1ac8285837205942136bd5e3f069dce13512b2da16d6a0e",
       "scripts/lib/agent-first-graders.d.mts": "730c6865c5f16202e35272245f499505a6fe1d9bb2e16caf9ed196192f5d7a97",
-      "scripts/lib/evidence-binding.mjs": "1dbec511e851077aed26a5aa4ea9fe6fd27a8a6b5eea0141f4799ef025f42403",
-      "scripts/lib/evidence-binding.d.mts": "4a08ef3bcc6d78a86eec5d5d8c44efcff56a92ba5348c3d589a5235edee24a55",
+      "scripts/lib/evidence-binding.mjs": "78828b3ec560ba3d0fddea8b88fcf34e71cf1336c549906eb3899fcb3c02c52e",
+      "scripts/lib/evidence-binding.d.mts": "65c6e917f1b740516a635f954e32f26b9e8f774a674ec700544a1efbfcc81a4f",
       "tests/unit/rsi-historical-task-corpus.test.ts": "ceedd8cd86384d3f8c84b745034907420e0f045a974c64b19e964d4aaf4027e3",
       "tests/unit/agent-first-graders.test.ts": "54eb094f7d6af69439b10cf6c5f5963d89eec7b99b49d51b4e7fe926aad63dfb",
       "tests/unit/agent-first-evaluation-framework.test.ts": "3d01944ec3d056105d2fd4ae5e6c13538deee95f07b21d3fd96ee7c8f2f0ce40",
@@ -23,9 +25,9 @@
       "harness/specs/guides/agent-first-acceptance.md": "b62bf239dc25e251869a872ca0f771ac683de3e2dbe0024f7a9b560bee4509c7",
       "scripts/lib/agent-first-evaluation-framework.mjs": "3fab68930689b379c50296e58dbe30a55e86f7adc01f6f4dd7f72d127ed750f2",
       "scripts/lib/agent-first-evaluation-loop.mjs": "84ca20bbe6e997b6dc6ac58ca49edef291e7449be5e4c82a5671ce9ac8b3c76e",
-      "package.json": "6991c3f19e9935af89f1508276e32e4ab7b3fb84a1533aa3d22a93262aa8fd42",
+      "package.json": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
       "docs/README.md": "308b217c9a977cc6ae45eed0e1932f2f498f343fd62bd0ed0a05509a995b85e9",
-      "docs/dev/rsi-capability-and-boundaries.md": "520b2a5621308b392d0c2d54ddf17ebdb5e8760ccba6a09f6fa02e2b429813fc"
+      "docs/dev/rsi-capability-and-boundaries.md": "e0a08771c19e7b6ecba6a98bb47b09cdad7fb3bb398bb644e7ebafc6220e11b4"
     }
   },
   "corpus": {
