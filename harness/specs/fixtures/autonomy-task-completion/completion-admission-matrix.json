@@ -33,9 +33,15 @@
       "reason": "effect_not_applied"
     },
     {
-      "input": "same candidate+generation+approved verifier+applied effect",
+      "input": "caller-authored coherent verifier/effect digests with no owner receipts",
+      "decision": "reject",
+      "reason": "owner_receipt_readback_unavailable"
+    },
+    {
+      "input": "owner verifier receipt approved + owner effect receipt applied + same task/candidate/generation",
       "decision": "admit",
-      "transition": "node->done"
+      "transition": "node->done",
+      "note": "Only through the existing owner readback adapter; not yet connected end-to-end."
     }
   ]
 }

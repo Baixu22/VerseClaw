@@ -14,7 +14,8 @@
       "command": "pnpm exec vitest run tests/unit/autonomy-task-completion.test.ts",
       "exitCode": 0,
       "files": 1,
-      "tests": 19
+      "tests": 15,
+      "status": "superseded-by-owner-boundary-remediation"
     },
     {
       "id": "ledger-regression",
@@ -75,6 +76,14 @@
       "exitCode": 1,
       "status": "preexisting-unrelated",
       "note": "host-services chat.send timeout expectation observed 900000 vs expected 120000; not modified by A3."
+    },
+    {
+      "id": "a3-owner-boundary-remediation",
+      "command": "pnpm exec vitest run tests/unit/autonomy-task-completion.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 15,
+      "note": "Caller-authored coherent digests now fail closed; owner receipt ids are required and missing owner readback rejects."
     }
   ],
   "acceptance": [
@@ -84,7 +93,8 @@
       "evidence": [
         "tests/unit/autonomy-task-completion.test.ts",
         "task-completion-claim.ts"
-      ]
+      ],
+      "detail": "Caller-authored claim fields removed from host payload; no owner readback yields rejected."
     },
     {
       "id": "same-task-candidate-generation",
@@ -130,8 +140,8 @@
     "task_kind_not_eligible"
   ],
   "unmeasured": [
-    "Live provider/model semantic quality is not claimed.",
-    "Native TaskLoop UI click-through is not part of this node; the existing host facade is exercised through the typed API.",
+    "Existing verifier/effect owner readback is not yet connected end-to-end; the route now fails closed until that adapter exists.",
+    "No live provider/model semantic quality is claimed.",
     "No real-human evidence is claimed."
   ],
   "cleanup": {

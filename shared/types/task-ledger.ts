@@ -222,6 +222,8 @@ export type TaskLedgerCompletionClaim = {
   taskId: string;
   candidateDigest: string;
   generation: string;
+  verifierReceiptId: string;
+  effectReceiptId: string;
   verifierDigest: string;
   effectDigest: string;
   priorStatus: string;

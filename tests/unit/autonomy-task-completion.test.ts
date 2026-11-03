@@ -129,67 +129,46 @@ describe("A3 bounded task completion admission", () => {
 
 
 
-describe("A3 Task Ledger completion projection", () => {
-  it("submits one bound completion event and leaves a receipt readable from the ledger", async () => {
+describe("A3 Task Ledger owner-backed completion", () => {
+  it("rejects caller-authored coherent digests when no owner receipt exists", async () => {
     await ledger.createNode({ workspaceId: WORKSPACE, node: { title: "A3 owner task", status: "review" } });
-    const node = (await ledger.snapshot({ workspaceId: WORKSPACE })).snapshot.nodes[0];
-    const claim = {
-      schema: "TaskCompletionClaim/v1" as const,
-      taskId: node.id,
-      candidateDigest: "a".repeat(64),
-      generation: "generation-7",
-      verifierDigest: "b".repeat(64),
-      effectDigest: "b".repeat(64),
-      priorStatus: "review",
-    };
-    const result = await ledger.submitCompletion({ workspaceId: WORKSPACE, claim, idempotencyKey: "a3-submit-1" });
-    expect(result).toMatchObject({ success: true, accepted: true });
-    expect(result.snapshot.nodes.find((candidate) => candidate.id === node.id)).toMatchObject({
-      status: "done",
-      metadata: { completionClaim: claim },
-    });
-    const repeated = await ledger.submitCompletion({ workspaceId: WORKSPACE, claim, idempotencyKey: "a3-submit-1" });
-    expect(repeated.accepted).toBe(false);
-    expect(repeated.reason).toBe("prior_status_mismatch");
-  });
-
-  it("does not let an automatic claim complete a check, review, or decision node", async () => {
-    await ledger.createNode({ workspaceId: WORKSPACE, node: { title: "A3 check", kind: "check", status: "review" } });
     const node = (await ledger.snapshot({ workspaceId: WORKSPACE })).snapshot.nodes[0];
     const rejected = await ledger.submitCompletion({
       workspaceId: WORKSPACE,
-      claim: {
-        schema: "TaskCompletionClaim/v1",
+      refs: {
         taskId: node.id,
         candidateDigest: "a".repeat(64),
-        generation: "generation-7",
-        verifierDigest: "b".repeat(64),
-        effectDigest: "b".repeat(64),
-        priorStatus: "review",
+        generation: "never-existed-session-generation",
+        verifierReceiptId: "verifier-does-not-exist",
+        effectReceiptId: "effect-does-not-exist",
       },
     });
-    expect(rejected).toMatchObject({ success: false, accepted: false, reason: "task_kind_not_eligible" });
+    expect(rejected).toMatchObject({
+      success: false,
+      accepted: false,
+      reason: "owner_receipt_readback_unavailable",
+    });
     expect((await ledger.snapshot({ workspaceId: WORKSPACE })).snapshot.nodes[0]?.status).toBe("review");
   });
 
-  it("rejects stale or incomplete completion claims without writing done", async () => {
+  it("rejects malformed owner references without writing done", async () => {
     await ledger.createNode({ workspaceId: WORKSPACE, node: { title: "A3 owner task", status: "review" } });
     const node = (await ledger.snapshot({ workspaceId: WORKSPACE })).snapshot.nodes[0];
-    const base = {
-      schema: "TaskCompletionClaim/v1" as const,
-      taskId: node.id,
-      candidateDigest: "a".repeat(64),
-      generation: "generation-7",
-      verifierDigest: "b".repeat(64),
-      effectDigest: "c".repeat(64),
-      priorStatus: "review",
-    };
-    const rejected = await ledger.submitCompletion({ workspaceId: WORKSPACE, claim: base });
-    expect(rejected).toMatchObject({ success: false, accepted: false, reason: "evidence_mismatch" });
+    const rejected = await ledger.submitCompletion({
+      workspaceId: WORKSPACE,
+      refs: {
+        taskId: node.id,
+        candidateDigest: "not-a-digest",
+        generation: "generation-7",
+        verifierReceiptId: "verifier-1",
+        effectReceiptId: "effect-1",
+      },
+    });
+    expect(rejected).toMatchObject({ success: false, accepted: false, reason: "invalid_completion_digest" });
     expect((await ledger.snapshot({ workspaceId: WORKSPACE })).snapshot.nodes[0]?.status).toBe("review");
   });
 
-  it("projects status_changed completion metadata without losing the digest-only claim", () => {
+  it("projects digest-only completion metadata when a valid owner-backed claim is supplied by the owner seam", () => {
     const timestamp = "2026-11-03T00:00:00.000Z";
     const baseNode = {
       id: "task-a3",
@@ -210,6 +189,8 @@ describe("A3 Task Ledger completion projection", () => {
       taskId: "task-a3",
       candidateDigest: "a".repeat(64),
       generation: "generation-7",
+      verifierReceiptId: "verifier-1",
+      effectReceiptId: "effect-1",
       verifierDigest: "b".repeat(64),
       effectDigest: "b".repeat(64),
       priorStatus: "review",
@@ -229,7 +210,6 @@ describe("A3 Task Ledger completion projection", () => {
     });
   });
 });
-
 
 describe("A3 contract and evidence boundary", () => {
   it("keeps the completion contract, boundary rule, and evidence manifest bound on disk", async () => {

@@ -4864,8 +4864,18 @@ export type TaskLedgerReviewPayload = TaskLedgerWorkspacePayload & {
   status?: TaskLedgerNodeStatus;
   idempotencyKey?: string | null;
 };
+export type TaskLedgerCompletionOwnerRefs = {
+  taskId: string;
+  candidateDigest: string;
+  generation: string;
+  /** Identifier in the existing Evidence Verifier/owner receipt store. */
+  verifierReceiptId: string;
+  /** Identifier in the existing RC-04 EffectReceipt store. */
+  effectReceiptId: string;
+};
+
 export type TaskLedgerSubmitCompletionPayload = TaskLedgerWorkspacePayload & {
-  claim: import('../types/task-ledger').TaskLedgerCompletionClaim;
+  refs: TaskLedgerCompletionOwnerRefs;
   idempotencyKey?: string | null;
 };
 export type TaskLedgerSubmitCompletionResult = TaskLedgerSnapshotResult & {

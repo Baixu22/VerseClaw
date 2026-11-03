@@ -76,6 +76,22 @@ function requireDigest(value: unknown, label: string): string {
   return value;
 }
 
+type CompletionOwnerReadResult =
+  | { ok: true; taskId: string; priorStatus: string; claim: import('../../shared/types/task-ledger').TaskLedgerCompletionClaim }
+  | { ok: false; reason: string };
+
+/**
+ * A caller cannot self-certify completion. This seam is deliberately fail-closed
+ * until the existing verifier and effect-receipt owners are read by id.
+ */
+async function readCompletionClaimFromOwners(_params: {
+  workspaceId: string | null | undefined;
+  refs: import('@shared/host-api/contract').TaskLedgerCompletionOwnerRefs;
+  node: TaskLedgerNode | null;
+}): Promise<CompletionOwnerReadResult> {
+  return { ok: false, reason: 'owner_receipt_readback_unavailable' };
+}
+
 function wrapSnapshot(snapshot: TaskLedgerSnapshot) {
   return { success: true, snapshot };
 }
@@ -211,29 +227,38 @@ export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger']
     ),
 
     submitCompletion: async (payload: TaskLedgerSubmitCompletionPayload) => {
-      const claim = payload.claim;
-      if (!claim || claim.schema !== 'TaskCompletionClaim/v1') {
-        return { success: false, accepted: false, reason: 'invalid_completion_claim', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
-      }
-      if (claim.taskId.trim().length === 0 || claim.generation.trim().length === 0 || claim.priorStatus.trim().length === 0) {
-        return { success: false, accepted: false, reason: 'invalid_completion_binding', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
+      const refs = payload.refs;
+      const before = await loadTaskLedgerSnapshot(payload.workspaceId);
+      if (
+        !refs
+        || refs.taskId.trim().length === 0
+        || refs.generation.trim().length === 0
+        || refs.verifierReceiptId.trim().length === 0
+        || refs.effectReceiptId.trim().length === 0
+      ) {
+        return { success: false, accepted: false, reason: 'invalid_completion_binding', snapshot: before };
       }
       try {
-        requireDigest(claim.candidateDigest, 'candidateDigest');
-        requireDigest(claim.verifierDigest, 'verifierDigest');
-        requireDigest(claim.effectDigest, 'effectDigest');
+        requireDigest(refs.candidateDigest, 'candidateDigest');
       } catch {
-        return { success: false, accepted: false, reason: 'invalid_completion_digest', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
+        return { success: false, accepted: false, reason: 'invalid_completion_digest', snapshot: before };
       }
-      if (claim.verifierDigest !== claim.effectDigest) {
-        return { success: false, accepted: false, reason: 'evidence_mismatch', snapshot: await loadTaskLedgerSnapshot(payload.workspaceId) };
+      // The caller supplies identifiers only. Owner receipt readback is installed
+      // by the completion service; until then this route fails closed rather than
+      // trusting caller-authored verdict/effect fields.
+      const claim = await readCompletionClaimFromOwners({
+        workspaceId: payload.workspaceId,
+        refs,
+        node: before.nodes.find((candidate) => candidate.id === refs.taskId) ?? null,
+      });
+      if (!claim.ok) {
+        return { success: false, accepted: false, reason: claim.reason, snapshot: before };
       }
-      const before = await loadTaskLedgerSnapshot(payload.workspaceId);
-      const node = before.nodes.find((candidate) => candidate.id === claim.taskId);
+      const node = before.nodes.find((candidate) => candidate.id === refs.taskId);
       if (!node) {
         return { success: false, accepted: false, reason: 'task_not_found', snapshot: before };
       }
-      if (node.status !== claim.priorStatus) {
+      if (node.status !== claim.claim.priorStatus) {
         return { success: false, accepted: false, reason: 'prior_status_mismatch', snapshot: before };
       }
       if (node.kind === 'check' || node.kind === 'review' || node.kind === 'decision') {
@@ -243,7 +268,7 @@ export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger']
         type: 'status_changed',
         actor: 'system',
         taskId: claim.taskId,
-        payload: { nodeId: claim.taskId, status: 'done', completionClaim: claim },
+        payload: { nodeId: claim.claim.taskId, status: 'done', completionClaim: claim.claim },
       }], payload.idempotencyKey);
       return { success: true, accepted: true, snapshot };
     },
