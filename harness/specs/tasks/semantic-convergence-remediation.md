@@ -17,6 +17,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/provider-transport-fetch.ts
   - openclaw_runtime/src/agents/model-fallback.ts
   - openclaw_runtime/src/agents/model-fallback.loop-termination.test.ts
+  - openclaw_runtime/src/agents/retry-budget-invariants.test.ts
   - openclaw_runtime/src/agents/sessions/agent-session.ts
   - openclaw_runtime/src/infra/retry.ts
   - openclaw_runtime/src/infra/retry.test.ts
