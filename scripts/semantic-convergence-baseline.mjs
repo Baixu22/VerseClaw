@@ -16,7 +16,8 @@ const OUT_FILE = process.env.SEMANTIC_CONVERGENCE_OUT
 
 function read(path) {
   if (process.env.SEMANTIC_CONVERGENCE_SOURCE === "git-head") {
-    return execFileSync("git", ["show", `HEAD:${path}`], { cwd: ROOT, encoding: "utf8" });
+    const ref = process.env.SEMANTIC_CONVERGENCE_REF ?? "HEAD";
+    return execFileSync("git", ["show", `${ref}:${path}`], { cwd: ROOT, encoding: "utf8" });
   }
   return readFileSync(join(ROOT, path), "utf8");
 }
@@ -179,6 +180,7 @@ mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(OUT_FILE, JSON.stringify(report, null, 2) + "\n", "utf8");
 const digest = createHash("sha256").update(JSON.stringify(report)).digest("hex");
 console.log(JSON.stringify({ wrote: OUT_FILE, sha256: digest, metricCount: metrics.length }, null, 2));
+
 
 
 
