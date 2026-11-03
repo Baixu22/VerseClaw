@@ -40,7 +40,9 @@ function scanCredentials(root) {
 }
 
 function judgedPaths() {
-  return [...SOURCE_FILES, ...FILES.map((file) => `${TF0590_PACK_DIR}/${file}`)];
+  // The pack's own bytes are judged too: an uncommitted reseal must fail closed
+  // exactly like an uncommitted implementation change.
+  return [...SOURCE_FILES, ...FILES.map((file) => `${TF0590_PACK_DIR}/${file}`), `${TF0590_PACK_DIR}/SHA256SUMS`];
 }
 
 function identity(root) {
