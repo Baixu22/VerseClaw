@@ -59,3 +59,6 @@ artifacts/stepfun-basic-live-evidence-20261008/* -text
 harness/specs/fixtures/**/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Test fixture transcripts preserve exact captured stdout/stderr bytes; whitespace diagnostics would rewrite hashed evidence.
 tests/unit/fixtures/**/*.txt whitespace=-trailing-space
+
+# Runtime memory baseline docs hash the fixture raw bytes on every checkout.
+tests/fixtures/runtime-memory-eval/locomo-full-500-report.json -text
