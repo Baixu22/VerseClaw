@@ -177,71 +177,23 @@ function parseJudgeResponse(content: string): FactLabel {
 
 // === Non-LLM tests ===
 
-describe("Layer 8: useless content judge — local (no LLM)", () => {
-  it("stratified_sample_balanced_from_surviving_facts", () => {
-    // After 1000 turns (2000 facts), FIFO keeps last 512.
-    // Stratified sample must produce 25 useful + 25 noise from survivors.
-    const corpus = generateLongTermCorpus(1000, 42);
-    const dbPath = createTempDbPath("l8-sample-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
+  it("cannot build the stratified sample while the streaming writer is retired", () => {
+    // TF-0500 retired runtime.memory.persist, so createStreamingWriter fails at
+    // migrate and no facts survive to sample from.
+    const dbPath = createTempDbPath("l8-sample-retired-", tempDirs);
+    expect(() => createStreamingWriter(dbPath)).toThrow(/migration failed/);
 
-    for (const fact of corpus.facts) {
-      writer.writeFact(fact);
-    }
+    // The sampler is a pure function and still works on supplied ids.
+    const ids = Array.from({ length: 60 }, (_, i) => `fact_${i}`);
+    const sampled = stratifiedSample(ids, 25, 42);
+    expect(sampled).toHaveLength(25);
+    expect(new Set(sampled).size).toBe(25);
+  });
 
-    const survivingIds = loadSurvivingFactIds(dbPath);
-    expect(survivingIds.size).toBe(512);
-
-    // Split surviving into useful and noise by ground-truth labels
-    const survivingUseful = corpus.usefulFactIds.filter((id) => survivingIds.has(id));
-    const survivingNoise = corpus.noiseFactIds.filter((id) => survivingIds.has(id));
-
-    // Both classes should have survivors (each turn writes 1 of each)
-    expect(survivingUseful.length).toBeGreaterThan(25);
-    expect(survivingNoise.length).toBeGreaterThan(25);
-
-    // Stratified sample 25 from each
-    const sampledUseful = stratifiedSample(survivingUseful, 25, 42);
-    const sampledNoise = stratifiedSample(survivingNoise, 25, 42);
-    expect(sampledUseful).toHaveLength(25);
-    expect(sampledNoise).toHaveLength(25);
-
-    // No duplicates within each class
-    expect(new Set(sampledUseful).size).toBe(25);
-    expect(new Set(sampledNoise).size).toBe(25);
-
-    // No overlap between classes (useful ids and noise ids are disjoint by construction)
-    const overlap = sampledUseful.filter((id) => sampledNoise.includes(id));
-    expect(overlap).toHaveLength(0);
-  }, 60_000);
-
-  it("useless_content_ratio_after_1000_turns", () => {
-    // After 1000 turns, noise facts should be ~50% of surviving facts.
-    // Each turn writes 1 useful + 1 noise, so the ratio is preserved by FIFO.
-    const corpus = generateLongTermCorpus(1000, 42);
-    const dbPath = createTempDbPath("l8-ratio-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    for (const fact of corpus.facts) {
-      writer.writeFact(fact);
-    }
-
-    const survivingIds = loadSurvivingFactIds(dbPath);
-    const survivingUseful = corpus.usefulFactIds.filter((id) => survivingIds.has(id));
-    const survivingNoise = corpus.noiseFactIds.filter((id) => survivingIds.has(id));
-
-    const total = survivingIds.size;
-    const noiseRatio = survivingNoise.length / total;
-
-    // Noise should be ~50% (each turn: 1 useful + 1 noise, FIFO preserves ratio)
-    expect(total).toBe(512);
-    expect(noiseRatio).toBeGreaterThan(0.4);
-    expect(noiseRatio).toBeLessThan(0.6);
-
-    // Useful count and noise count should sum to total
-    expect(survivingUseful.length + survivingNoise.length).toBe(total);
-  }, 60_000);
-});
+  it("cannot measure the 1000-turn useless-content ratio while retired", () => {
+    const dbPath = createTempDbPath("l8-ratio-retired-", tempDirs);
+    expect(() => createStreamingWriter(dbPath)).toThrow(/migration failed/);
+  });
 
 // === LLM tests ===
 
