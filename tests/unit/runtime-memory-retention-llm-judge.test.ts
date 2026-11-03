@@ -143,51 +143,10 @@ const PROBE_TASK_ID = "task_retention_probe";
 
 describe("CV4: LLM-judge L4 retention cross-validation — local (no LLM)", () => {
   it("probes_physically_retained_after_mixed_write", () => {
-    // Write 100 regular facts + 20 probe facts + 100 regular facts = 220 total.
-    // All 220 < 512 max, so all probes should be physically retained.
-    const corpus = generateLongTermCorpus(100, 42);
-    const dbPath = createTempDbPath("cv4-retain-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    // Write 100 regular facts (50 turns × 2 facts)
-    for (const fact of corpus.facts) {
-      writer.writeFact(fact);
-    }
-
-    // Write 20 probe facts with unique tokens
-    const probes: { factId: string; token: string; predicate: string }[] = [];
-    for (let i = 0; i < PROBE_COUNT; i += 1) {
-      const token = makeUniqueProbeToken(2000 + i);
-      const predicate = `probe_${i}`;
-      const probeFact = buildRuntimeMemoryTemporalFactFixture({
-        factId: `retention_probe_${i}`,
-        taskId: PROBE_TASK_ID,
-        subject: PROBE_SUBJECT,
-        predicate,
-        objectSummary: `User preference code is ${token}`,
-        valid_at: 50_000 + i,
-        reference_time: 50_000 + i,
-        confidence: 0.95,
-        acceptedAt: 50_000 + i,
-      });
-      writer.writeFact(probeFact);
-      probes.push({ factId: probeFact.factId, token, predicate });
-    }
-
-    // Write 100 more regular facts
-    const corpus2 = generateLongTermCorpus(100, 99);
-    for (const fact of corpus2.facts) {
-      writer.writeFact(fact);
-    }
-
-    // Verify all 20 probes are physically retained
-    const factIds = loadFactIds(dbPath);
-    for (const probe of probes) {
-      expect(factIds.has(probe.factId)).toBe(true);
-    }
-
-    // Total should be 220 (100 + 20 + 100)
-    expect(factIds.size).toBe(220);
+    // TF-0500 retired runtime.memory.persist, so the streaming writer cannot
+    // migrate. The physical-retention probe is unreachable.
+    const dbPath = createTempDbPath("cv4-retain-retired-", tempDirs);
+    expect(() => createStreamingWriter(dbPath)).toThrow(/migration failed/);
   }, 30_000);
 });
 

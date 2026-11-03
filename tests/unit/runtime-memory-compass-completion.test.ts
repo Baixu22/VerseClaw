@@ -421,7 +421,9 @@ describe("ConfigVersionTree", () => {
     // Roll back to 1.0.1
     const rolledBack = rollbackConfigVersion(tree, "1.0.1");
     expect(rolledBack).toBeDefined();
-    expect(rolledBack!.featureFlags.enableSessionStatePage).toBe(true);
+    // TF-0500 retired enableSessionStatePage; rollback restores the version but the
+    // feature flag stays forced off (see memory-runtime-config RETIRED_MEMORY_INJECTION_FLAGS).
+    expect(rolledBack!.featureFlags.enableSessionStatePage).toBe(false);
     expect(tree.currentVersion).toBe("1.0.1");
     expect(tree.history).toEqual(["1.0.0", "1.0.1"]);
     // nodes should still contain 1.0.2 (preserved for potential re-advance)

@@ -234,24 +234,21 @@ describe("CV1: LLM-judge L1 cross-validation — local (no LLM)", () => {
   it("eval_set_l1_classification_matches_expected", () => {
     const evalSet = buildEvalSet();
     expect(evalSet).toHaveLength(20);
+    expect(evalSet.filter((i) => i.expectedVerdict === "reject")).toHaveLength(10);
+    expect(evalSet.filter((i) => i.expectedVerdict === "accept")).toHaveLength(10);
 
-    const dbPath = createTempDbPath("cv1-classify-", tempDirs);
-    const rejectItems = evalSet.filter((i) => i.expectedVerdict === "reject");
-    const acceptItems = evalSet.filter((i) => i.expectedVerdict === "accept");
-    expect(rejectItems).toHaveLength(10);
-    expect(acceptItems).toHaveLength(10);
+    // TF-0500 retired runtime.memory.persist. getL1Verdict derives the verdict
+    // from appendFact().status, which is now always "skipped", so EVERY item
+    // classifies as reject — including the 10 appropriate ones. The L1 write-path
+    // filter no longer distinguishes inputs at all.
+    const dbPath = createTempDbPath("cv1-classify-retired-", tempDirs);
+    const verdicts = evalSet.map((item) => getL1Verdict(item, dbPath));
+    expect(new Set(verdicts)).toEqual(new Set(["reject"]));
 
-    // Verify L1 classifies each item as expected
-    for (const item of evalSet) {
-      const l1Verdict = getL1Verdict(item, dbPath);
-      expect(l1Verdict).toBe(item.expectedVerdict);
-    }
-
-    // Per-category counts
+    // Category coverage of the fixture is still worth asserting.
     const categories: L1Category[] = ["raw_chat_log", "secret", "prompt", "raw_leak", "appropriate"];
     for (const cat of categories) {
-      const catItems = evalSet.filter((i) => i.category === cat);
-      expect(catItems.length).toBeGreaterThan(0);
+      expect(evalSet.filter((i) => i.category === cat).length).toBeGreaterThan(0);
     }
   });
 });
