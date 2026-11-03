@@ -35,182 +35,36 @@ afterEach(() => {
 });
 
 describe("runtime memory read hydration controlled real DB opt-in evaluation", () => {
-  it("keeps baseline and naive negative while Phase 28 guarded consumer is positive on sanitized DB projections", () => {
-    const dbPath = createControlledRuntimeMemoryDatabase();
-
-    const hydrationStartedAt = performance.now();
-    const hydration = readRuntimeMemoryHydrationShadow({
+  it("cannot build the sanitized real-DB projections this evaluation compares", () => {
+    // TF-0500 retired runtime.memory.persist; createControlledRuntimeMemoryDatabase
+    // writes episodes and facts through the retired store, so the Phase 28
+    // baseline/naive/guarded comparison cannot be constructed.
+    const dbPath = createTempDbPath();
+    const persistence = createRuntimeMemoryPersistenceStore({
       config: { runtime: { memory: { persist: true } } },
-      databasePath: dbPath,
-      readShadow: true,
-      limit: 8,
-      maxFacts: 32,
-      now: () => REFERENCE_TIME,
+      database: { path: dbPath },
     });
-    const hydrationLatencyMs = performance.now() - hydrationStartedAt;
-
-    expect(hydration.status).toBe("loaded");
-    if (hydration.status !== "loaded") {
-      throw new Error("controlled real DB hydration evaluation expected loaded facts");
-    }
-    expect(hydration.episodes).toHaveLength(2);
-    expect(hydration.stats.factCount).toBe(18);
-    expect(hydration.stats.factsReturned).toBe(18);
-    expect(hydration.authority).toMatchObject({
-      diagnosticsOnly: true,
-      readonly: true,
-      noPromptInjection: true,
-      noProviderOrdering: true,
-      noRuntimeAuthority: true,
-      noDurableFactAuthority: true,
-    });
-
-    const baseline = evaluateArm({
-      arm: "baseline_no_memory",
-      facts: hydration.facts,
-      latencyMs: 0,
-    });
-    const naive = evaluateArm({
-      arm: "naive_hydration",
-      facts: hydration.facts,
-      latencyMs: hydrationLatencyMs,
-    });
-    const guarded = evaluateArm({
-      arm: "guarded_opt_in_consumer",
-      facts: hydration.facts,
-      latencyMs: hydrationLatencyMs,
-    });
-
-    expect(baseline).toMatchObject({
-      arm: "baseline_no_memory",
-      assessment: "negative_no_memory_effect",
-      recallAtK: 0,
-      precision: 0,
-      staleInvalidSuppressionRate: 1,
-      candidateRejectedSuppressionRate: 1,
-      conflictSuppressionRate: 1,
-      rawLeakRate: 0,
-      promptInjectionReturnRate: 0,
-      latencyOverheadMs: 0,
-      tokenOverhead: 0,
-      failureNoOpRate: 1,
-    });
-
-    expect(naive.assessment).toBe("negative_naive_hydration");
-    expect(naive.recallAtK).toBe(1);
-    expect(naive.precision).toBeCloseTo(4 / 15, 5);
-    expect(naive.staleInvalidSuppressionRate).toBe(0);
-    expect(naive.candidateRejectedSuppressionRate).toBe(0);
-    expect(naive.conflictSuppressionRate).toBe(0);
-    expect(naive.rawLeakRate).toBeCloseTo(1 / 15, 5);
-    expect(naive.promptInjectionReturnRate).toBeCloseTo(1 / 15, 5);
-    expect(naive.failureNoOpRate).toBe(0);
-
-    expect(guarded).toMatchObject({
-      arm: "guarded_opt_in_consumer",
-      assessment: "positive_guarded_opt_in_real_db_corpus",
-      recallAtK: 1,
-      precision: 1,
-      staleInvalidSuppressionRate: 1,
-      candidateRejectedSuppressionRate: 1,
-      conflictSuppressionRate: 1,
-      rawLeakRate: 0,
-      promptInjectionReturnRate: 0,
-      failureNoOpRate: 0,
-    });
-    expect(guarded.latencyOverheadMs).toBeGreaterThanOrEqual(0);
-    expect(guarded.latencyOverheadMs).toBeLessThan(500);
-    expect(guarded.tokenOverhead).toBeGreaterThan(0);
-    expect(guarded.tokenOverhead).toBeLessThan(naive.tokenOverhead);
-    expect(guarded.precision).toBeGreaterThan(naive.precision);
-
-    const repoGuard = consumeRuntimeMemoryHydrationFacts(hydration.facts, {
-      ...EVALUATION_QUERIES[0],
-      tokenBudget: TOKEN_BUDGET,
-      limit: TOP_K,
-    });
-    expect(repoGuard.acceptedFacts.map((fact) => fact.factId)).toEqual([
-      "fact_pkg_pnpm",
-    ]);
-    expect(repoGuard.metrics.rejectionCounts.expired_at_reference_time).toBe(1);
-    expect(repoGuard.metrics.rejectionCounts.future_valid_at).toBeGreaterThan(0);
-    expect(repoGuard.metrics.rejectionCounts.conflicting_fact).toBeGreaterThan(0);
-    expect(repoGuard.metrics.rejectionCounts.task_mismatch).toBeGreaterThan(0);
-    expect(repoGuard.metrics.rejectionCounts.subject_mismatch).toBeGreaterThan(0);
-    expect(repoGuard.metrics.rejectionCounts.predicate_mismatch).toBeGreaterThan(
-      0,
-    );
-
-    const boundaryGuard = consumeRuntimeMemoryHydrationFacts(hydration.facts, {
-      ...EVALUATION_QUERIES[3],
-      tokenBudget: TOKEN_BUDGET,
-      limit: TOP_K,
-    });
-    expect(boundaryGuard.acceptedFacts.map((fact) => fact.factId)).toEqual([
-      "fact_host_api",
-    ]);
-    expect(boundaryGuard.metrics.rejectionCounts.record_kind_not_fact).toBe(2);
-    expect(
-      boundaryGuard.metrics.rejectionCounts.verification_status_not_verified,
-    ).toBe(1);
-    expect(
-      boundaryGuard.metrics.rejectionCounts.prompt_injection_sentinel,
-    ).toBe(1);
-    expect(boundaryGuard.metrics.rejectionCounts.raw_leak_sentinel).toBe(1);
+    expect(persistence.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
   });
 
-  it("preserves explicit zero budget, zero limit, and empty no-op behavior on real DB projections", () => {
-    const dbPath = createControlledRuntimeMemoryDatabase();
+  it("keeps the retired real-DB read path inert for explicit zero budget and zero limit", () => {
+    const dbPath = createTempDbPath();
+
+    // Even with every evaluation gate requested, the persist gate returns first,
+    // so no projection, budget or limit accounting is produced.
     const hydration = readRuntimeMemoryHydrationShadow({
       config: { runtime: { memory: { persist: true } } },
       databasePath: dbPath,
       readShadow: true,
-      limit: 8,
-      maxFacts: 32,
-      now: () => REFERENCE_TIME,
-    });
-
-    expect(hydration.status).toBe("loaded");
-    if (hydration.status !== "loaded") {
-      throw new Error("controlled real DB boundary evaluation expected loaded facts");
-    }
-
-    const zeroBudget = consumeRuntimeMemoryHydrationFacts(hydration.facts, {
-      ...EVALUATION_QUERIES[0],
-      tokenBudget: 0,
-      limit: TOP_K,
-    });
-    expect(zeroBudget.acceptedFacts).toEqual([]);
-    expect(zeroBudget.metrics.tokenBudget).toBe(0);
-    expect(zeroBudget.metrics.rejectionCounts.token_budget_exceeded).toBe(1);
-
-    const zeroLimit = consumeRuntimeMemoryHydrationFacts(hydration.facts, {
-      ...EVALUATION_QUERIES[0],
-      tokenBudget: TOKEN_BUDGET,
+      maxFacts: 0,
       limit: 0,
     });
-    expect(zeroLimit.acceptedFacts).toEqual([]);
-    expect(zeroLimit.metrics.estimatedTokens).toBe(0);
-    expect(zeroLimit.metrics.rejectionCounts.limit_exceeded).toBe(1);
-
-    const emptyNoOp = consumeRuntimeMemoryHydrationFacts([], {
-      ...EVALUATION_QUERIES[0],
-      tokenBudget: TOKEN_BUDGET,
-      limit: TOP_K,
-    });
-    expect(emptyNoOp).toMatchObject({
-      acceptedFacts: [],
-      rejectedFacts: [],
-      metrics: {
-        totalFacts: 0,
-        acceptedFacts: 0,
-        rejectedFacts: 0,
-        estimatedTokens: 0,
-      },
-    });
-    expect(Object.values(emptyNoOp.metrics.rejectionCounts)).toEqual(
-      Array.from({ length: 13 }, () => 0),
-    );
+    expect(hydration.status).toBe("skipped");
+    expect(hydration.status).toBe("skipped");
+    if (hydration.status !== "skipped") throw new Error("expected skipped");
+    expect(hydration.reason).toBe("flag_disabled");
+    expect(hydration.facts).toHaveLength(0);
+    expect(hydration.episodes).toHaveLength(0);
   });
 });
 
