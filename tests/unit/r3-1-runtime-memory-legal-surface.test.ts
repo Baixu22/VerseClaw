@@ -69,7 +69,7 @@ describe('R3-1 E-1 legal runtime-memory surface', () => {
     ).toThrow(/slot convergence rejected/);
   });
 
-  it('loadStore reads real persisted facts for the inject-pilot runtime-memory provider', async () => {
+  it('keeps the retired persist surface inert for the inject-pilot runtime-memory provider', async () => {
     const cfg = {
       plugins: { slots: { memory: 'runtime-memory' } },
       runtime: { memory: { persist: true, provider: true } },
@@ -79,28 +79,29 @@ describe('R3-1 E-1 legal runtime-memory surface', () => {
       database: { path: createTempDbPath() },
       now: () => Date.now(),
     });
-    expect(integration.migrate()).toMatchObject({ status: 'migrated' });
+
+    // TF-0500 retired the legacy persist/provider flags: they can no longer
+    // resolve to true, so every persistence primitive reports flag_disabled.
+    expect(integration.migrate()).toMatchObject({ status: 'skipped', reason: 'flag_disabled' });
 
     const fact = buildRuntimeMemoryTemporalFactFixture({
-      factId: 'r3-1-persisted-fact',
+      factId: 'r3-1-retired-fact',
       subject: 'runtime-memory',
-      predicate: 'serves persisted facts to',
+      predicate: 'retired from serving facts to',
       objectSummary: 'the inject-pilot provider',
       valid_at: Date.now(),
       reference_time: Date.now(),
     });
     expect(integration.appendFact(fact)).toMatchObject({
-      status: 'persisted',
-      stored: true,
+      status: 'skipped',
+      reason: 'flag_disabled',
     });
 
-    // This is the same loadStore() call shape used by
-    // run/attempt.ts queryFacts for providers=["runtime-memory"].
+    // loadStore() is the same call shape run/attempt.ts uses for
+    // providers=["runtime-memory"]; it must report skipped and expose an empty store.
     const loaded = integration.loadStore();
-    expect(loaded.status).toBe('loaded');
-    expect(
-      loaded.store.queryFacts({ limit: 24 }).filter((row) => row.factId === fact.factId),
-    ).toHaveLength(1);
+    expect(loaded.status).toBe('skipped');
+    expect(loaded.store.queryFacts({ limit: 24 })).toHaveLength(0);
 
     const provider = createRuntimeMemoryContextProvider({
       config: cfg,
@@ -111,11 +112,8 @@ describe('R3-1 E-1 legal runtime-memory surface', () => {
       { taskId: fact.taskId, tokenBudget: 512, activeFiles: [] },
       {},
     )) as RuntimeContextProviderResult;
-    expect(result.status).toBe('success');
-    expect(result.contextItems).toHaveLength(1);
-    expect(result.contextItems[0]?.metadata).toMatchObject({
-      providerId: 'runtime-memory',
-      factId: fact.factId,
-    });
+    expect(result.status).not.toBe('success');
+    expect(result.contextItems ?? []).toHaveLength(0);
   });
+
 });
