@@ -91,7 +91,7 @@ describe("runtime memory readonly read hydration shadow command proof", () => {
     expect(noReadShadow.status).toBe(0);
     expect(JSON.parse(noReadShadow.stdout)).toMatchObject({
       status: "skipped",
-      reason: "read_shadow_disabled",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
@@ -105,7 +105,7 @@ describe("runtime memory readonly read hydration shadow command proof", () => {
     expect(noDatabase.status).toBe(0);
     expect(JSON.parse(noDatabase.stdout)).toMatchObject({
       status: "skipped",
-      reason: "database_path_required",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
@@ -121,7 +121,7 @@ describe("runtime memory readonly read hydration shadow command proof", () => {
     expect(missingDatabase.status).toBe(0);
     expect(JSON.parse(missingDatabase.stdout)).toMatchObject({
       status: "skipped",
-      reason: "database_missing",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
@@ -148,7 +148,7 @@ describe("runtime memory readonly read hydration shadow command proof", () => {
     expect(result.status).toBe(0);
     expect(JSON.parse(result.stdout)).toMatchObject({
       status: "skipped",
-      reason: "table_missing",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
@@ -163,181 +163,31 @@ describe("runtime memory readonly read hydration shadow command proof", () => {
       readonlyDb.close();
     }
   });
-
-  it("prints sanitized bounded JSON and text for explicit existing runtime memory databases", () => {
+  it("prints a retired diagnostic and never leaks data when persistence is asked for", () => {
     const dbPath = createTempDbPath();
-    const firstEpisode = buildEpisode("phase23_episode_first", 70);
-    const secondEpisode = buildEpisode("phase23_episode_second", 80);
-    const sourceEpisodeRefs = [sourceEpisodeRef(firstEpisode)];
-    let persistedAt = 90;
     const persistence = createRuntimeMemoryPersistenceStore({
       config: { runtime: { memory: { persist: true } } },
       database: { path: dbPath },
-      now: () => persistedAt++,
+      now: () => 90,
+    });
+    expect(persistence.appendEpisode(buildEpisode("phase23_episode_first", 70))).toMatchObject({
+      status: "skipped",
+      reason: "flag_disabled",
     });
 
-    expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
-      status: "persisted",
-      stored: true,
-    });
-    expect(persistence.appendEpisode(secondEpisode)).toMatchObject({
-      status: "persisted",
-      stored: true,
-    });
-    expect(persistence.appendFact(buildRuntimeMemoryTemporalFactFixture({
-      factId: "phase23_fact",
-      taskId: "task_memory_hydration_command",
-      subject: "HydrationShadowCommand",
-      predicate: "reads",
-      objectSummary: "Sanitized command fact projection only.",
-      valid_at: 70,
-      reference_time: 70,
-      sourceEpisodeRefs,
-      metadata: {
-        safe: "kept",
-        env: "process.env SECRET traceparent",
-      },
-    }))).toMatchObject({ status: "persisted", stored: true });
-    expect(persistence.appendFact(buildRuntimeMemoryTemporalFactCandidateFixture({
-      factId: "phase23_candidate",
-      taskId: "task_memory_hydration_command",
-      subject: "HydrationShadowCommand",
-      predicate: "keeps",
-      objectSummary: "Candidate projection remains non-authoritative.",
-      verificationStatus: "candidate",
-      sourceEpisodeRefs,
-    }))).toMatchObject({ status: "persisted", stored: true });
-
-    const writeDb = new DatabaseSync(dbPath);
-    try {
-      writeDb.prepare(
-        "UPDATE runtime_memory_episodes SET metadata_json = ?, record_json = ? WHERE episode_id = ?",
-      ).run(
-        JSON.stringify({
-          safe: "kept",
-          prompt: "raw prompt",
-          tool: "tool args secret trace marker",
-        }),
-        JSON.stringify({
-          raw: "raw task text self-check subagent template stdout stderr env secret trace RuntimeMemoryProvider provider runtime authority",
-        }),
-        firstEpisode.episodeId,
-      );
-      writeDb.prepare(
-        "UPDATE runtime_memory_facts SET metadata_json = ?, record_json = ? WHERE fact_id = ?",
-      ).run(
-        JSON.stringify({
-          safe: "kept",
-          authorization: "secret bearer token",
-        }),
-        JSON.stringify({
-          raw: "raw fact record candidates provider runtime authority",
-        }),
-        "phase23_fact",
-      );
-    } finally {
-      writeDb.close();
-    }
-
-    const before = inspectPersistenceTables(dbPath);
-    const jsonResult = runHydrationUtility([
+    const result = runHydrationUtility([
       "--persist",
       "--read-shadow",
       "--database",
       dbPath,
-      "--limit",
-      "1",
-      "--max-facts",
-      "1",
       "--json",
     ]);
-    const textResult = runHydrationUtility([
-      "--persist",
-      "--read-shadow",
-      "--database",
-      dbPath,
-      "--limit",
-      "1",
-      "--max-facts",
-      "1",
-    ]);
-    const after = inspectPersistenceTables(dbPath);
-
-    expect(jsonResult.status).toBe(0);
-    expect(textResult.status).toBe(0);
-    expect(after).toEqual(before);
-
-    const parsed = JSON.parse(jsonResult.stdout);
-    expect(parsed).toMatchObject({
-      status: "loaded",
-      episodes: [
-        {
-          episodeId: "phase23_episode_first",
-          taskId: "task_memory_hydration_command",
-          kind: "verifier_summary",
-          boundedSummary: "Sanitized hydration command evidence for phase23_episode_first.",
-          metadata: {
-            safe: "kept",
-            prompt: "[redacted]",
-            tool: "[redacted]",
-          },
-        },
-      ],
-      facts: [
-        {
-          factId: "phase23_fact",
-          recordKind: "fact",
-          taskId: "task_memory_hydration_command",
-          subject: "HydrationShadowCommand",
-          predicate: "reads",
-          objectSummary: "Sanitized command fact projection only.",
-          metadata: {
-            safe: "kept",
-          },
-        },
-      ],
-      stats: {
-        episodeCount: 2,
-        factCount: 2,
-        episodesReturned: 1,
-        factsReturned: 1,
-        episodeLimit: 1,
-        factLimit: 1,
-        truncated: true,
-      },
-      authority: {
-        diagnosticsOnly: true,
-        readonly: true,
-        noPromptInjection: true,
-        noProviderOrdering: true,
-        noRuntimeAuthority: true,
-        noDurableFactAuthority: true,
-      },
-    });
-    expect(textResult.stdout).toContain(
-      "Runtime Memory readonly read-hydration shadow: loaded",
-    );
-    expect(textResult.stdout).toContain("phase23_episode_first");
-    expect(textResult.stdout).toContain("phase23_fact");
-
-    for (const output of [jsonResult.stdout, textResult.stdout]) {
-      expect(output).not.toContain("record_json");
-      expect(output).not.toContain("raw task text");
-      expect(output).not.toContain("raw fact record");
-      expect(output).not.toContain("self-check");
-      expect(output).not.toContain("subagent");
-      expect(output).not.toContain("template");
-      expect(output).not.toContain("stdout");
-      expect(output).not.toContain("stderr");
-      expect(output).not.toContain("process.env");
-      expect(output).not.toContain("SECRET");
-      expect(output).not.toContain("traceparent");
-      expect(output).not.toContain("tool args");
-      expect(output).not.toContain("secret bearer token");
-      expect(output).not.toContain("RuntimeMemoryProvider");
-      expect(output).not.toContain("provider runtime authority");
-      expect(output).not.toContain("runtimeAuthority");
-    }
+    expect(result.status).toBe(0);
+    const parsed = JSON.parse(result.stdout);
+    expect(parsed).toMatchObject({ status: "skipped", episodes: [], facts: [] });
+    // Nothing sensitive may appear in the retired output.
+    expect(result.stdout).not.toContain("traceparent");
+    expect(result.stdout).not.toContain("process.env SECRET");
   });
 
   it("exposes a package script that is only a pass-through to the hydration utility", () => {
@@ -394,7 +244,7 @@ describe("runtime memory readonly read hydration shadow command proof", () => {
     expect(noReadShadow.status).toBe(0);
     expect(JSON.parse(noReadShadow.stdout)).toMatchObject({
       status: "skipped",
-      reason: "read_shadow_disabled",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
