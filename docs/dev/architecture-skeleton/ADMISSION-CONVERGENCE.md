@@ -93,3 +93,14 @@ A6 的 **A3-A5 兼容性判定为 pass**：相对基线，没有出现候选引�
 ## 7. 收口边界
 
 TF-0652 可以作为 **A6 兼容性审计完成**关闭；不得把本报告解释为仓库全量测试全绿、产品 GA、release-ready 或 default-on。后续产品/测试债应继续由各自 owner 处理。
+## 10. 2026-11-03 补充候选（314a2e193）
+
+本报告主体描述候选 `590ba5258` 的完整 418/418 E2E 观测。其后另有一次独立复核，候选为 `314a2e193`（含 TF-0512 单测不再污染工作区的修复），证据保留在 `artifacts/admission-convergence-20261103/`。
+
+该次复核的结论与本文一致且互不矛盾：
+
+- build / typecheck / lint:check / contract:check / repo:artifacts:check / harness validate+dry-run 全部 exit 0。
+- 58 个失败单测套件在 `97cda35de` 基线上同样失败，候选可归属回归 0 个。
+- 该次 E2E 未能在当时的宿主上启动 Electron 窗口：411/413 条失败是同一个 `firstWindow` 超时，根因是 Electron 子进程对 profile 目录返回 EPERM，并由一个不含 ClawX 代码的最小 Electron 应用复现。那份证据因此记为 environment，不作为 E2E 通过或回归证据。
+
+也就是说：E2E 产品行为结论以本报告第 3 节的 418/418 观测为准；`20261103` 目录只补充「受保护边界零 diff」与「单测失败全为既有失败」两条独立复核。两次读数不冲突。
