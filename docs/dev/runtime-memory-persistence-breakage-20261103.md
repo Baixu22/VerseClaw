@@ -198,3 +198,26 @@ G1 其余约 26 个文件、G2 全部 10 个、G3 约 3 个仍在失败。本文
 正确处置：与 G1 一致——把这些套件改写为"退役后不产生评测数据"的断言；
 若某些纯计算函数（如 `evaluateChain`）本身不依赖开关，则保留其单元测试，
 只把"建 fixture 库 + 跑诊断"的部分改为断言退役。
+
+## 11. 可复用改写模式（本轮验证）
+
+对 G1/G2 里"断言退役能力可用"的套件，按下面三条改写，已在
+`r3-1-runtime-memory-legal-surface`、`memory-self-edit-adapter`、
+`runtime-memory-eval-chain-eval`、`runtime-memory-eval-topic-drift` 四个文件上验证：
+
+1. **保留纯函数覆盖**：`buildChainScenario` / `buildTopicSegments` / `evaluateChain` /
+   `evaluateTopicDrift` 这类不读退役开关的计算，继续测，不删。
+2. **把"建库 + 跑诊断"改成退役断言**：`migrate()` 返回 `skipped/flag_disabled`；
+   写 fact 抛 `appendFact failed ... status=skipped`；不再 grep 具体 reason 字符串之外的行为。
+3. **诊断对象用真实构造器生成**，不要手写：
+   `buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({ ... })`。
+   手写会被其内部结构拒绝（实测：`evaluateTopicDrift` 要求诊断数与 query 总数相等，
+   且诊断内部读取 `queries[0]` 之外还有字段）。
+
+### 已验证的契约细节（避免重复踩坑）
+
+| 函数 | 真实契约 |
+| --- | --- |
+| `evaluateChain(scenario, diagnostics)` | `diagnostics.length` 必须**等于** `scenario.length`；空数组会抛错 |
+| `evaluateTopicDrift(segments, diagnostics)` | `diagnostics.length` 必须等于**所有 segment 的 query 总数**（不是 segment 数） |
+| `appendFactToDb` / `seedTempDb` | 退役后直接抛 `... status=skipped`，不会静默返回 |
