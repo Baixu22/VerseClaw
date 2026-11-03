@@ -5,13 +5,8 @@ import path from "node:path";
 import process from "node:process";
 import { DatabaseSync } from "node:sqlite";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import {
-  inspectRuntimeMemoryForOperator,
-  type RuntimeMemoryEpisodeRecord,
-} from "../../openclaw_runtime/src/runtime-core";
-import { createRuntimeMemoryPersistenceStore } from "../../openclaw_runtime/src/runtime-core/memory-persistence";
+import { inspectRuntimeMemoryForOperator } from "../../openclaw_runtime/src/runtime-core";
 import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";
-import { buildRuntimeMemoryEpisodeFixture } from "../../openclaw_runtime/src/runtime-core/memory-context";
 
 const tempDirs: string[] = [];
 let runtimeBuilt = false;
@@ -92,7 +87,7 @@ describe("runtime memory readonly operator inspection surface", () => {
       },
     })).toMatchObject({
       status: "skipped",
-      reason: "database_path_required",
+      reason: "flag_disabled",
       episodes: [],
       stats: {
         episodeCount: 0,
@@ -113,7 +108,7 @@ describe("runtime memory readonly operator inspection surface", () => {
       databasePath: dbPath,
     })).toMatchObject({
       status: "skipped",
-      reason: "database_missing",
+      reason: "flag_disabled",
       episodes: [],
     });
     expect(existsSync(dbPath)).toBe(false);
@@ -133,7 +128,7 @@ describe("runtime memory readonly operator inspection surface", () => {
       databasePath: dbPath,
     })).toMatchObject({
       status: "skipped",
-      reason: "table_missing",
+      reason: "flag_disabled",
       episodes: [],
     });
 
@@ -147,96 +142,38 @@ describe("runtime memory readonly operator inspection surface", () => {
     }
   });
 
-  it("returns only sanitized episode summaries and leaves persistence tables unchanged", () => {
-    const dbPath = createTempDbPath();
-    const persistence = createRuntimeMemoryPersistenceStore({
-      config: { runtime: { memory: { persist: true } } },
-      database: { path: dbPath },
-      now: () => 30,
-    });
-    expect(persistence.appendEpisode(buildEpisode("phase17_episode", 30)))
-      .toMatchObject({ status: "persisted", stored: true });
+  it("does not reach episode inspection while persistence is retired", () => {
+    const dbPath = path.join(createTempDir(), "missing.sqlite");
+    let openCalls = 0;
 
-    const writeDb = new DatabaseSync(dbPath);
-    try {
-      writeDb.prepare(
-        "UPDATE runtime_memory_episodes SET metadata_json = ?, record_json = ? WHERE episode_id = ?",
-      ).run(
-        JSON.stringify({
-          safe: "kept",
-          prompt: "prompt dump",
-          env: "process.env SECRET traceparent",
-        }),
-        JSON.stringify({
-          raw: "raw task text self-check toolOutput RuntimeMemoryProvider runtimeAuthority",
-        }),
-        "phase17_episode",
-      );
-    } finally {
-      writeDb.close();
-    }
-
-    const before = inspectPersistenceTables(dbPath);
     const inspection = inspectRuntimeMemoryForOperator({
       config: { runtime: { memory: { persist: true } } },
       databasePath: dbPath,
       limit: 5,
       now: () => 40,
+      openReadOnlyDatabase: () => {
+        openCalls += 1;
+        throw new Error("retired inspection must not open sqlite");
+      },
     });
-    const after = inspectPersistenceTables(dbPath);
 
+    // TF-0500 gates before path and table validation. Sanitizer unit coverage
+    // lives in runtime-memory-context-contracts; this test locks the retired
+    // operator boundary and its zero-side-effect behavior.
     expect(inspection).toMatchObject({
-      status: "loaded",
-      episodes: [
-        {
-          episodeId: "phase17_episode",
-          taskId: "task_memory",
-          kind: "verifier_summary",
-          reference_time: 30,
-          boundedSummary: "Sanitized bounded memory evidence for phase17_episode.",
-          redactionStatus: "sanitized",
-          metadata: {
-            safe: "kept",
-            prompt: "[redacted]",
-            env: "[redacted]",
-          },
-          sourceRefs: [
-            expect.objectContaining({
-              type: "file",
-              ref: "src/runtime-core/memory-operator-inspection.ts",
-            }),
-          ],
-          evidenceRefs: [
-            expect.objectContaining({
-              type: "test",
-              ref: "tests/unit/runtime-memory-operator-inspection.test.ts",
-            }),
-          ],
-        },
-      ],
+      status: "skipped",
+      reason: "flag_disabled",
+      episodes: [],
       stats: {
-        episodeCount: 1,
-        returned: 1,
+        episodeCount: 0,
+        returned: 0,
         limit: 5,
         truncated: false,
         inspectedAt: 40,
       },
-      diagnostics: [],
     });
-    expect(after).toEqual(before);
-
-    const serialized = JSON.stringify(inspection);
-    expect(serialized).not.toContain("record_json");
-    expect(serialized).not.toContain("raw task text");
-    expect(serialized).not.toContain("self-check");
-    expect(serialized).not.toContain("toolOutput");
-    expect(serialized).not.toContain("process.env");
-    expect(serialized).not.toContain("SECRET");
-    expect(serialized).not.toContain("traceparent");
-    expect(serialized).not.toContain("RuntimeMemoryProvider");
-    expect(serialized).not.toContain("runtimeAuthority");
-    expect(serialized).not.toContain("candidate");
-    expect(serialized).not.toContain("proposeFacts");
+    expect(openCalls).toBe(0);
+    expect(existsSync(dbPath)).toBe(false);
   });
 });
 
@@ -280,7 +217,7 @@ describe("runtime memory readonly operator inspection utility", () => {
     expect(missingPath.status).toBe(0);
     expect(JSON.parse(missingPath.stdout)).toMatchObject({
       status: "skipped",
-      reason: "database_path_required",
+      reason: "flag_disabled",
       episodes: [],
     });
 
@@ -293,7 +230,7 @@ describe("runtime memory readonly operator inspection utility", () => {
     expect(missingDb.status).toBe(0);
     expect(JSON.parse(missingDb.stdout)).toMatchObject({
       status: "skipped",
-      reason: "database_missing",
+      reason: "flag_disabled",
       episodes: [],
     });
     expect(existsSync(missingDbPath)).toBe(false);
@@ -318,7 +255,7 @@ describe("runtime memory readonly operator inspection utility", () => {
     expect(result.status).toBe(0);
     expect(JSON.parse(result.stdout)).toMatchObject({
       status: "skipped",
-      reason: "table_missing",
+      reason: "flag_disabled",
       episodes: [],
     });
 
@@ -332,36 +269,15 @@ describe("runtime memory readonly operator inspection utility", () => {
     }
   });
 
-  it("prints sanitized JSON and text from an explicit existing built-runtime database", () => {
+  it("keeps the built utility on flag_disabled for an explicit existing database", () => {
     const dbPath = createTempDbPath();
-    const persistence = createRuntimeMemoryPersistenceStore({
-      config: { runtime: { memory: { persist: true } } },
-      database: { path: dbPath },
-      now: () => 50,
-    });
-    expect(persistence.appendEpisode(buildEpisode("phase18_episode", 50)))
-      .toMatchObject({ status: "persisted", stored: true });
-
-    const writeDb = new DatabaseSync(dbPath);
+    const db = new DatabaseSync(dbPath);
     try {
-      writeDb.prepare(
-        "UPDATE runtime_memory_episodes SET metadata_json = ?, record_json = ? WHERE episode_id = ?",
-      ).run(
-        JSON.stringify({
-          safe: "kept",
-          template: "subagent template",
-          tool: "tool args secret trace marker",
-        }),
-        JSON.stringify({
-          raw: "raw task text self-check stdout stderr env secret trace RuntimeMemoryProvider runtime authority facts candidates",
-        }),
-        "phase18_episode",
-      );
+      db.exec("CREATE TABLE unrelated_state (id TEXT PRIMARY KEY);");
     } finally {
-      writeDb.close();
+      db.close();
     }
 
-    const before = inspectPersistenceTables(dbPath);
     const jsonResult = runInspectionUtility([
       "--persist",
       "--database",
@@ -377,54 +293,26 @@ describe("runtime memory readonly operator inspection utility", () => {
       "--limit",
       "5",
     ]);
-    const after = inspectPersistenceTables(dbPath);
 
     expect(jsonResult.status).toBe(0);
     expect(textResult.status).toBe(0);
-    expect(after).toEqual(before);
-
-    const parsed = JSON.parse(jsonResult.stdout);
-    expect(parsed).toMatchObject({
-      status: "loaded",
-      episodes: [
-        {
-          episodeId: "phase18_episode",
-          taskId: "task_memory",
-          kind: "verifier_summary",
-          boundedSummary: "Sanitized bounded memory evidence for phase18_episode.",
-          metadata: {
-            safe: "kept",
-            tool: "[redacted]",
-          },
-        },
-      ],
-      stats: {
-        episodeCount: 1,
-        returned: 1,
-        limit: 5,
-      },
+    expect(JSON.parse(jsonResult.stdout)).toMatchObject({
+      status: "skipped",
+      reason: "flag_disabled",
+      episodes: [],
     });
-    expect(textResult.stdout).toContain("Runtime Memory readonly inspection: loaded");
-    expect(textResult.stdout).toContain("phase18_episode");
+    expect(textResult.stdout).toContain("Runtime Memory readonly inspection: skipped");
+    expect(textResult.stdout).toContain("Reason: flag_disabled");
 
-    for (const output of [jsonResult.stdout, textResult.stdout]) {
-      expect(output).not.toContain("record_json");
-      expect(output).not.toContain("raw task text");
-      expect(output).not.toContain("self-check");
-      expect(output).not.toContain("subagent template");
-      expect(output).not.toContain("tool args");
-      expect(output).not.toContain("stdout");
-      expect(output).not.toContain("stderr");
-      expect(output).not.toContain("env secret");
-      expect(output).not.toContain("trace marker");
-      expect(output).not.toContain("RuntimeMemoryProvider");
-      expect(output).not.toContain("runtime authority");
-      expect(output).not.toContain("facts");
-      expect(output).not.toContain("candidates");
+    const readonlyDb = new DatabaseSync(dbPath, { readOnly: true });
+    try {
+      expect(tableExists(readonlyDb, "runtime_memory_episodes")).toBe(false);
+      expect(tableExists(readonlyDb, "runtime_memory_meta")).toBe(false);
+      expect(tableExists(readonlyDb, "unrelated_state")).toBe(true);
+    } finally {
+      readonlyDb.close();
     }
-  });
-
-  it("reports invalid arguments without opening or creating sqlite", () => {
+  });  it("reports invalid arguments without opening or creating sqlite", () => {
     const dbPath = path.join(createTempDir(), "missing.sqlite");
     const result = runInspectionUtility([
       "--persist",
@@ -542,42 +430,21 @@ describe("runtime memory readonly operator inspection utility", () => {
     expect(missingPath.status).toBe(0);
     expect(JSON.parse(missingPath.stdout)).toMatchObject({
       status: "skipped",
-      reason: "database_path_required",
+      reason: "flag_disabled",
       episodes: [],
     });
     expect(existsSync(missingDbPath)).toBe(false);
   });
 
-  it("returns sanitized package script output for explicit existing databases", () => {
+  it("keeps package-script inspection on flag_disabled for an existing database", () => {
     const dbPath = createTempDbPath();
-    const persistence = createRuntimeMemoryPersistenceStore({
-      config: { runtime: { memory: { persist: true } } },
-      database: { path: dbPath },
-      now: () => 60,
-    });
-    expect(persistence.appendEpisode(buildEpisode("phase19_episode", 60)))
-      .toMatchObject({ status: "persisted", stored: true });
-
-    const writeDb = new DatabaseSync(dbPath);
+    const db = new DatabaseSync(dbPath);
     try {
-      writeDb.prepare(
-        "UPDATE runtime_memory_episodes SET metadata_json = ?, record_json = ? WHERE episode_id = ?",
-      ).run(
-        JSON.stringify({
-          safe: "kept",
-          authorization: "secret bearer token",
-          traceparent: "trace marker",
-        }),
-        JSON.stringify({
-          raw: "raw task text jsonl prompt payload checkpoint toolOutput provider runtime authority facts candidates",
-        }),
-        "phase19_episode",
-      );
+      db.exec("CREATE TABLE unrelated_state (id TEXT PRIMARY KEY);");
     } finally {
-      writeDb.close();
+      db.close();
     }
 
-    const before = inspectPersistenceTables(dbPath);
     const jsonResult = runPackageInspectionUtility([
       "--persist",
       "--database",
@@ -593,76 +460,27 @@ describe("runtime memory readonly operator inspection utility", () => {
       "--limit",
       "5",
     ]);
-    const after = inspectPersistenceTables(dbPath);
 
     expect(jsonResult.status).toBe(0);
     expect(textResult.status).toBe(0);
-    expect(after).toEqual(before);
-
     expect(JSON.parse(jsonResult.stdout)).toMatchObject({
-      status: "loaded",
-      episodes: [
-        {
-          episodeId: "phase19_episode",
-          taskId: "task_memory",
-          boundedSummary: "Sanitized bounded memory evidence for phase19_episode.",
-          metadata: {
-            safe: "kept",
-          },
-        },
-      ],
-      stats: {
-        episodeCount: 1,
-        returned: 1,
-        limit: 5,
-      },
+      status: "skipped",
+      reason: "flag_disabled",
+      episodes: [],
     });
-    expect(textResult.stdout).toContain("Runtime Memory readonly inspection: loaded");
-    expect(textResult.stdout).toContain("phase19_episode");
+    expect(textResult.stdout).toContain("Runtime Memory readonly inspection: skipped");
+    expect(textResult.stdout).toContain("Reason: flag_disabled");
 
-    for (const output of [jsonResult.stdout, textResult.stdout]) {
-      expect(output).not.toContain("record_json");
-      expect(output).not.toContain("raw task text");
-      expect(output).not.toContain("jsonl");
-      expect(output).not.toContain("prompt payload");
-      expect(output).not.toContain("checkpoint");
-      expect(output).not.toContain("toolOutput");
-      expect(output).not.toContain("secret bearer token");
-      expect(output).not.toContain("trace marker");
-      expect(output).not.toContain("provider");
-      expect(output).not.toContain("runtime authority");
-      expect(output).not.toContain("facts");
-      expect(output).not.toContain("candidates");
+    const readonlyDb = new DatabaseSync(dbPath, { readOnly: true });
+    try {
+      expect(tableExists(readonlyDb, "runtime_memory_episodes")).toBe(false);
+      expect(tableExists(readonlyDb, "runtime_memory_meta")).toBe(false);
+      expect(tableExists(readonlyDb, "unrelated_state")).toBe(true);
+    } finally {
+      readonlyDb.close();
     }
   });
 });
-
-function buildEpisode(
-  episodeId: string,
-  referenceTime: number,
-): RuntimeMemoryEpisodeRecord {
-  return buildRuntimeMemoryEpisodeFixture({
-    episodeId,
-    taskId: "task_memory",
-    kind: "verifier_summary",
-    reference_time: referenceTime,
-    idempotencyKey: `task_memory:${episodeId}`,
-    boundedSummary: `Sanitized bounded memory evidence for ${episodeId}.`,
-    sourceRefs: [
-      {
-        type: "file",
-        ref: "src/runtime-core/memory-operator-inspection.ts",
-        file: "src/runtime-core/memory-operator-inspection.ts",
-      },
-    ],
-    evidenceRefs: [
-      {
-        type: "test",
-        ref: "tests/unit/runtime-memory-operator-inspection.test.ts",
-      },
-    ],
-  });
-}
 
 function createTempDbPath(): string {
   return path.join(createTempDir(), "openclaw.sqlite");
@@ -801,31 +619,9 @@ function packageScripts(): Record<string, string> {
   return packageJson.scripts ?? {};
 }
 
-function sqlCount(db: DatabaseSync, tableName: string): number {
-  const row = db.prepare(`SELECT COUNT(*) AS count FROM ${tableName}`).get() as
-    | { count?: number | bigint }
-    | undefined;
-  return Number(row?.count ?? 0);
-}
-
 function tableExists(db: DatabaseSync, tableName: string): boolean {
   const row = db
     .prepare("SELECT 1 AS ok FROM sqlite_master WHERE type = 'table' AND name = ?")
     .get(tableName) as { ok?: unknown } | undefined;
   return row?.ok === 1;
-}
-
-function inspectPersistenceTables(dbPath: string): Record<string, unknown> {
-  const db = new DatabaseSync(dbPath, { readOnly: true });
-  try {
-    return {
-      meta: sqlCount(db, "runtime_memory_meta"),
-      episodes: sqlCount(db, "runtime_memory_episodes"),
-      idempotency: sqlCount(db, "runtime_memory_episode_idempotency_keys"),
-      facts: sqlCount(db, "runtime_memory_facts"),
-      invalidations: sqlCount(db, "runtime_memory_invalidations"),
-    };
-  } finally {
-    db.close();
-  }
 }
