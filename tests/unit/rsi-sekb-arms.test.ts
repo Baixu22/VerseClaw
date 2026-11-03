@@ -90,18 +90,42 @@ describe('rsi sekb three-arm readout', () => {
     expect(plan.providerCallsAuthorized).toBe(0);
   });
 
-  it('never leaves a real run with an unexplained insufficient-evidence status', () => {
+  it('derives a promotion state for a real run instead of a bare insufficient-evidence', () => {
     const root = tempRootWith((runs) => {
       runs.evidenceKind = 'live-provider';
       for (const arm of Object.values(runs.arms) as any[]) for (const row of arm) row.tokens = 1000;
     });
     const report = buildArmsReport(root);
 
-    // Above the floor and inside the cost ceiling, but this instrument has no
-    // promote/hold/eliminate path; the reason must say so.
-    expect(report.status).toBe('insufficient-evidence');
+    // The fixture improvement (0.1) does not clear a zero-containing interval,
+    // so the promotion gate must hold rather than silently pass.
+    expect(report.promotion.status).toBe('hold');
+    expect(report.status).toBe('hold');
     expect(report.reasons.length).toBeGreaterThan(0);
-    expect(report.reasons.join(' ')).toContain('promotion state is not derived');
+    expect(report.claims.promotionReady).toBe(false);
+  });
+
+  it('promotes a real run whose interval clears zero and whose cost stays inside the ceiling', () => {
+    const root = tempRootWith((runs) => {
+      runs.evidenceKind = 'live-provider';
+      const off: any[] = [];
+      const shadow: any[] = [];
+      const confirmed: any[] = [];
+      for (let index = 0; index < 20; index += 1) {
+        for (let repeat = 1; repeat <= 3; repeat += 1) {
+          off.push({ caseId: `case-${index}`, repeat, success: false, tokens: 1000 });
+          shadow.push({ caseId: `case-${index}`, repeat, success: false, tokens: 1000 });
+          confirmed.push({ caseId: `case-${index}`, repeat, success: index < 6, tokens: 1000 });
+        }
+      }
+      runs.arms = { 'sekb-off': off, 'sekb-shadow': shadow, 'sekb-confirmed': confirmed };
+      runs.claims = { benefit: false, promotionReady: false, productLocksChanged: false, realHuman: false, providerCalls: 180 };
+    });
+    const report = buildArmsReport(root);
+
+    expect(report.promotion.status).toBe('promote');
+    expect(report.status).toBe('promote');
+    expect(report.claims.promotionReady).toBe(true);
   });
 
   it('treats a missing cost dimension as a promotion disqualifier', () => {

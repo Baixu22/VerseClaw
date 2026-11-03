@@ -15,7 +15,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
-import { evaluateAblation, summarizeCondition } from './lib/paired-ablation.mjs';
+import { evaluateAblation, evaluatePromotion, summarizeCondition } from './lib/paired-ablation.mjs';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -90,21 +90,32 @@ export function buildArmsReport(root = ROOT) {
   const costIncrease = offTokens && confirmedTokens !== null ? Number((confirmedTokens / offTokens - 1).toFixed(4)) : null;
   const costWithinCeiling = costIncrease === null ? null : costIncrease <= protocol.budget.costIncreaseMaximum;
   const synthetic = runs.evidenceKind === 'synthetic-wiring-fixture';
+  const eligible = comparisons.find((entry) => entry.role === 'promotion-eligible');
+  const costMissing = costIncrease === null;
+  const promotion = evaluatePromotion({
+    minimumImprovement: protocol.promotionRequirements?.passKAbsoluteImprovement ?? 0.05,
+    costIncreaseMaximum: protocol.promotionRequirements?.costIncreaseMaximum ?? protocol.budget.costIncreaseMaximum,
+    costIncrease,
+    meanDiff: eligible?.meanDiff ?? null,
+    ci95: eligible?.ci95 ?? null,
+    integrityViolated: comparisons.some((entry) => entry.verdict === 'safety-regression'),
+    sampleSufficient: Object.values(arms).every((arm) => arm.gate !== 'insufficient-sample'),
+    unstable: Object.values(arms).some((arm) => arm.gate === 'fail'),
+  });
   const reasons = [];
-  let status = 'insufficient-evidence';
+  let status;
   if (synthetic) {
+    // A deterministic wiring fixture can never be a promotion, whatever the numbers say.
     status = 'synthetic-wiring-only';
     reasons.push('deterministic wiring fixture; not a model run and never a benefit claim');
-  } else if (Object.values(arms).some((arm) => arm.gate === 'insufficient-sample')) {
-    reasons.push('below the complete-case floor');
   } else {
-    // D6 boundary: this readout declares promote/hold/eliminate in its protocol
-    // but no code path derives them. Say that out loud instead of returning an
-    // unexplained insufficient-evidence for a complete, cost-compliant run.
-    reasons.push('promotion state is not derived by this instrument yet; status stays insufficient-evidence until an evaluator-owned decision path exists');
+    status = promotion.status;
+    reasons.push(...promotion.reasons);
+    if (status === 'insufficient-evidence' && Object.values(arms).some((arm) => arm.gate === 'insufficient-sample')) {
+      reasons.push('below the complete-case floor');
+    }
   }
   if (costWithinCeiling === false) reasons.push(`cost increase ${costIncrease} exceeds ${protocol.budget.costIncreaseMaximum}`);
-  const costMissing = costIncrease === null;
   if (costMissing) reasons.push('cost dimension missing (null tokens); promotion is disqualified');
   if (runs.claims?.promotionReady === true) reasons.push('fixture/run claims promotion; refused');
 
@@ -118,6 +129,7 @@ export function buildArmsReport(root = ROOT) {
     runsPath: ARMS_RUNS_PATH,
     evidenceKind: runs.evidenceKind ?? 'unknown',
     status,
+    promotion,
     reasons,
     arms: Object.fromEntries(Object.entries(arms).map(([id, arm]) => [id, {
       completeCaseCount: arm.completeCaseCount, passK: arm.passK, passAtK: arm.passAtK,
@@ -125,7 +137,12 @@ export function buildArmsReport(root = ROOT) {
     }])),
     comparisons,
     cost: { offMeanTokens: offTokens, confirmedMeanTokens: confirmedTokens, relativeIncrease: costIncrease, ceiling: protocol.budget.costIncreaseMaximum, withinCeiling: costWithinCeiling, missing: costMissing },
-    claims: { benefit: false, promotionReady: false, productLocksChanged: false, realHuman: false, providerCalls: 0 },
+    claims: {
+      benefit: false,
+      promotionReady: !synthetic && promotion.status === 'promote',
+      productLocksChanged: false, realHuman: false,
+      providerCalls: runs.claims?.providerCalls ?? 0,
+    },
   };
 }
 

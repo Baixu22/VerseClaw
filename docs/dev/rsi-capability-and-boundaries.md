@@ -86,6 +86,11 @@ and no safety/anchor regression. Missing cost is a `hold`, a cost overrun is an
 separate `promotion` judgement, so a stable run with no effect can no longer be
 read as a promotion. A missing or degenerate interval can never promote.
 
+The three-arm readout uses the same gate: a non-synthetic run's status is the
+promotion verdict (`promote` / `hold` / `eliminate` / `insufficient-evidence`),
+while the deterministic fixture stays `synthetic-wiring-only` and can never
+promote. `promotionReady` is true only when that gate promotes a real run.
+
 The feedback pilot's input now has a producer:
 `scripts/rsi-feedback-export.mjs` reads the shared state database, joins
 `role_memory_feedback` to `role_memory_injections.task`, and writes the export the

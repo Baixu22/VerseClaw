@@ -1,6 +1,6 @@
 {
   "schemaVersion": "RsiSekbArmsReport/v1",
-  "generatedAt": "2026-11-02T03:31:02.213Z",
+  "generatedAt": "2026-11-03T15:59:34.665Z",
   "driven_by": "agent",
   "actor": "codex/rsi-sekb-arms",
   "taskForestNode": "TF-0598",
@@ -8,6 +8,21 @@
   "runsPath": "harness/specs/fixtures/rsi-sekb-arms/runs.v1.json",
   "evidenceKind": "synthetic-wiring-fixture",
   "status": "synthetic-wiring-only",
+  "promotion": {
+    "status": "eliminate",
+    "reasons": [
+      "cost increase 0.3 exceeds ceiling 0.1"
+    ],
+    "thresholds": {
+      "minimumAbsoluteImprovement": 0.05,
+      "costIncreaseMaximum": 0.1
+    },
+    "observed": {
+      "meanDiff": 0.1,
+      "ci95Lower": -0.034894,
+      "costIncrease": 0.3
+    }
+  },
   "reasons": [
     "deterministic wiring fixture; not a model run and never a benefit claim",
     "cost increase 0.3 exceeds 0.1"
