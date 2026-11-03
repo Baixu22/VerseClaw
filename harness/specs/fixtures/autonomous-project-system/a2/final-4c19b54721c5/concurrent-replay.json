@@ -1,0 +1,399 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "cases": {
+    "batch-replay": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:30.186Z",
+      "data": {
+        "first": {
+          "operationId": "batch-1",
+          "requestSha256": "f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712",
+          "identity": {
+            "actor": "assistant",
+            "agentId": "main",
+            "runtimeGeneration": "gateway-1",
+            "runtimeOwner": {
+              "childPid": 42,
+              "connectedAt": 1
+            },
+            "scope": {
+              "workspaceId": "workspace-owner",
+              "projectId": "workspace-owner",
+              "sessionKey": "agent:main:owned",
+              "sessionGeneration": "session-generation-1"
+            }
+          },
+          "revision": 2,
+          "eventIds": [
+            "one",
+            "two"
+          ],
+          "replayed": false
+        },
+        "replay": {
+          "operationId": "batch-1",
+          "requestSha256": "f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712",
+          "identity": {
+            "actor": "assistant",
+            "agentId": "main",
+            "runtimeGeneration": "gateway-1",
+            "runtimeOwner": {
+              "childPid": 42,
+              "connectedAt": 1
+            },
+            "scope": {
+              "workspaceId": "workspace-owner",
+              "projectId": "workspace-owner",
+              "sessionKey": "agent:main:owned",
+              "sessionGeneration": "session-generation-1"
+            }
+          },
+          "revision": 2,
+          "eventIds": [
+            "one",
+            "two"
+          ],
+          "replayed": true
+        },
+        "journal": "{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"one\",\"type\":\"node_created\",\"actor\":\"assistant\",\"payload\":{\"node\":{\"id\":\"node-one\",\"title\":\"one\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":null,\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.173Z\",\"taskId\":\"node-one\",\"sessionId\":null},{\"id\":\"two\",\"type\":\"node_created\",\"actor\":\"assistant\",\"payload\":{\"node\":{\"id\":\"node-two\",\"title\":\"two\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":null,\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.173Z\",\"taskId\":\"node-two\",\"sessionId\":null}],\"operation\":{\"operationId\":\"batch-1\",\"requestSha256\":\"f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"workspace-owner\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":2,\"eventIds\":[\"one\",\"two\"]},\"checksum\":\"6bc455b8c2010f9461bacff009d95f5c5ced3477611996fdaee6c5355445bcbc\"}\n",
+        "snapshot": {
+          "schemaVersion": 1,
+          "workspaceId": "workspace-owner-8f9cb7e3b2",
+          "generatedAt": "2026-11-03T10:50:30.182Z",
+          "nodes": [
+            {
+              "id": "node-one",
+              "title": "one",
+              "kind": "task",
+              "status": "todo",
+              "createdAt": "2026-11-03T00:00:00Z",
+              "updatedAt": "2026-11-03T00:00:00Z",
+              "parentId": null,
+              "tags": [],
+              "completedAt": null
+            },
+            {
+              "id": "node-two",
+              "title": "two",
+              "kind": "task",
+              "status": "todo",
+              "createdAt": "2026-11-03T00:00:00Z",
+              "updatedAt": "2026-11-03T00:00:00Z",
+              "parentId": null,
+              "tags": [],
+              "completedAt": null
+            }
+          ],
+          "edges": [],
+          "sessionLinks": [],
+          "rootNodeIds": [
+            "node-one",
+            "node-two"
+          ],
+          "reviewNodeIds": [],
+          "activeNodeIds": [],
+          "blockedNodeIds": [],
+          "currentGoalId": null,
+          "recentDecisions": [],
+          "eventsCount": 2,
+          "warnings": []
+        }
+      }
+    },
+    "concurrent-replay": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:30.263Z",
+      "data": {
+        "writers": [
+          {
+            "status": "fulfilled",
+            "receipt": {
+              "operationId": "a",
+              "requestSha256": "f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712",
+              "identity": {
+                "actor": "assistant",
+                "agentId": "main",
+                "runtimeGeneration": "gateway-1",
+                "runtimeOwner": {
+                  "childPid": 42,
+                  "connectedAt": 1
+                },
+                "scope": {
+                  "workspaceId": "workspace-owner",
+                  "projectId": "workspace-owner",
+                  "sessionKey": "agent:main:owned",
+                  "sessionGeneration": "session-generation-1"
+                }
+              },
+              "revision": 1,
+              "eventIds": [
+                "a"
+              ],
+              "replayed": false
+            }
+          },
+          {
+            "status": "rejected",
+            "code": "VALIDATION",
+            "message": "Task Ledger revision conflict"
+          }
+        ],
+        "duplicates": [
+          {
+            "operationId": "a",
+            "requestSha256": "f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712",
+            "identity": {
+              "actor": "assistant",
+              "agentId": "main",
+              "runtimeGeneration": "gateway-1",
+              "runtimeOwner": {
+                "childPid": 42,
+                "connectedAt": 1
+              },
+              "scope": {
+                "workspaceId": "workspace-owner",
+                "projectId": "workspace-owner",
+                "sessionKey": "agent:main:owned",
+                "sessionGeneration": "session-generation-1"
+              }
+            },
+            "revision": 1,
+            "eventIds": [
+              "a"
+            ],
+            "replayed": true
+          },
+          {
+            "operationId": "a",
+            "requestSha256": "f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712",
+            "identity": {
+              "actor": "assistant",
+              "agentId": "main",
+              "runtimeGeneration": "gateway-1",
+              "runtimeOwner": {
+                "childPid": 42,
+                "connectedAt": 1
+              },
+              "scope": {
+                "workspaceId": "workspace-owner",
+                "projectId": "workspace-owner",
+                "sessionKey": "agent:main:owned",
+                "sessionGeneration": "session-generation-1"
+              }
+            },
+            "revision": 1,
+            "eventIds": [
+              "a"
+            ],
+            "replayed": true
+          }
+        ],
+        "events": [
+          {
+            "id": "a",
+            "type": "node_created",
+            "actor": "assistant",
+            "payload": {
+              "node": {
+                "id": "node-a",
+                "title": "a",
+                "kind": "task",
+                "status": "todo",
+                "createdAt": "2026-11-03T00:00:00Z",
+                "updatedAt": "2026-11-03T00:00:00Z"
+              }
+            },
+            "idempotencyKey": null,
+            "workspaceId": "workspace-owner-8f9cb7e3b2",
+            "createdAt": "2026-11-03T10:50:30.194Z",
+            "taskId": "node-a",
+            "sessionId": null
+          }
+        ]
+      }
+    },
+    "runtime-main-interop": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:53.771Z",
+      "data": {
+        "runtimeReplay": {
+          "code": 0,
+          "stdout": "{\"status\":\"runtime-committed\",\"revision\":{\"eventCount\":1,\"revision\":\"rev_1_7cd31380c050efb1\",\"contentDigest\":\"sha256:7cd31380c050efb192551fcece600ea4f8efbfb2c1df8c1486655735961b2b5d\"}}\n",
+          "stderr": ""
+        },
+        "crossOwner": [
+          {
+            "code": 0,
+            "stdout": "{\"status\":\"runtime-committed\",\"revision\":{\"eventCount\":1,\"revision\":\"rev_1_1118241581afcbe6\",\"contentDigest\":\"sha256:1118241581afcbe6c2fb068561145686cb792032bd15631ddaacfd8d12ea58b1\"}}\n",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"main-competing\",\"requestSha256\":\"dd75efb83756ab928143e328981d63aed0d266ee2a2ca59aeb252ae1d80aa0cf\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"runtime-shared-workspace\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":2,\"eventIds\":[\"main-competing\"],\"replayed\":false}}\n",
+            "stderr": ""
+          }
+        ],
+        "events": [
+          {
+            "id": "runtime-shared",
+            "type": "node_created",
+            "actor": "system",
+            "payload": {
+              "node": {
+                "id": "node-runtime-shared",
+                "title": "runtime-shared",
+                "kind": "task",
+                "status": "todo",
+                "createdAt": "2026-11-03T00:00:00Z",
+                "updatedAt": "2026-11-03T00:00:00Z"
+              }
+            },
+            "idempotencyKey": "main-runtime-shared-key",
+            "workspaceId": "runtime-shared-workspace-b553b9910b",
+            "createdAt": "2026-11-03T10:50:50.066Z",
+            "taskId": "node-runtime-shared",
+            "sessionId": null
+          },
+          {
+            "id": "main-competing",
+            "type": "node_created",
+            "actor": "assistant",
+            "payload": {
+              "node": {
+                "id": "node-main-competing",
+                "title": "main-competing",
+                "kind": "task",
+                "status": "todo",
+                "createdAt": "2026-11-03T00:00:00Z",
+                "updatedAt": "2026-11-03T00:00:00Z"
+              }
+            },
+            "idempotencyKey": null,
+            "workspaceId": "runtime-shared-workspace-b553b9910b",
+            "createdAt": "2026-11-03T10:50:53.619Z",
+            "taskId": "node-main-competing",
+            "sessionId": null
+          },
+          {
+            "id": "runtime-new",
+            "type": "node_created",
+            "actor": "system",
+            "payload": {
+              "node": {
+                "id": "node-runtime-new",
+                "title": "runtime-new",
+                "kind": "task",
+                "status": "todo",
+                "createdAt": "2026-11-03T00:00:00Z",
+                "updatedAt": "2026-11-03T00:00:00Z"
+              }
+            },
+            "idempotencyKey": "runtime-new-key",
+            "workspaceId": "runtime-shared-workspace-b553b9910b",
+            "createdAt": "2026-11-03T10:50:53.745Z",
+            "taskId": "node-runtime-new",
+            "sessionId": null
+          }
+        ],
+        "journal": "{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"runtime-shared\",\"type\":\"node_created\",\"actor\":\"system\",\"payload\":{\"node\":{\"id\":\"node-runtime-shared\",\"title\":\"runtime-shared\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":\"main-runtime-shared-key\",\"workspaceId\":\"runtime-shared-workspace-b553b9910b\",\"createdAt\":\"2026-11-03T10:50:50.066Z\",\"taskId\":\"node-runtime-shared\",\"sessionId\":null}],\"operation\":null,\"checksum\":\"6e2064d287b60c6007a55102c4061aa451bb73990f3b78f33e8ae2f146424793\"}\n{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"main-competing\",\"type\":\"node_created\",\"actor\":\"assistant\",\"payload\":{\"node\":{\"id\":\"node-main-competing\",\"title\":\"main-competing\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":null,\"workspaceId\":\"runtime-shared-workspace-b553b9910b\",\"createdAt\":\"2026-11-03T10:50:53.619Z\",\"taskId\":\"node-main-competing\",\"sessionId\":null}],\"operation\":{\"operationId\":\"main-competing\",\"requestSha256\":\"dd75efb83756ab928143e328981d63aed0d266ee2a2ca59aeb252ae1d80aa0cf\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"runtime-shared-workspace\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":2,\"eventIds\":[\"main-competing\"]},\"checksum\":\"5080edbe3014df5ca3fe4feb32ec567d83a5c7d914771db9edb24c088d406153\"}\n{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"runtime-new\",\"type\":\"node_created\",\"actor\":\"system\",\"payload\":{\"node\":{\"id\":\"node-runtime-new\",\"title\":\"runtime-new\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":\"runtime-new-key\",\"workspaceId\":\"runtime-shared-workspace-b553b9910b\",\"createdAt\":\"2026-11-03T10:50:53.745Z\",\"taskId\":\"node-runtime-new\",\"sessionId\":null}],\"operation\":null,\"checksum\":\"97d1b340e906041b716edde6f102653f6536193058f27025ae76d4a3fd8bcf7f\"}\n"
+      }
+    },
+    "cross-process-lock-exclusion": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:58.777Z",
+      "data": {
+        "results": [
+          {
+            "code": 0,
+            "stdout": "{\"lockAcquired\":true,\"iterations\":25}\n",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "{\"lockAcquired\":true,\"iterations\":25}\n",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "{\"lockAcquired\":true,\"iterations\":25}\n",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "{\"lockAcquired\":true,\"iterations\":25}\n",
+            "stderr": ""
+          }
+        ],
+        "count": 100,
+        "guard": "exclusive wx file inside every critical section"
+      }
+    },
+    "legacy-key-isolation": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:51:00.499Z",
+      "data": {
+        "events": [
+          {
+            "id": "agent-event-f49b6a52c45cedde054d8e842b735fbf",
+            "type": "node_created",
+            "actor": "assistant",
+            "taskId": "agent-node-4e5a4a15b1b386e1003f071a53a6630d",
+            "payload": {
+              "node": {
+                "title": "Automatic agent task",
+                "id": "agent-node-4e5a4a15b1b386e1003f071a53a6630d",
+                "kind": "task",
+                "status": "todo",
+                "owner": "agent",
+                "createdAt": "2026-11-03T10:51:00.480Z",
+                "updatedAt": "2026-11-03T10:51:00.480Z"
+              }
+            },
+            "idempotencyKey": null,
+            "workspaceId": "workspace-owner-8f9cb7e3b2",
+            "createdAt": "2026-11-03T10:51:00.482Z",
+            "sessionId": null
+          },
+          {
+            "id": "real-mission-lifecycle",
+            "type": "node_created",
+            "actor": "system",
+            "payload": {
+              "node": {
+                "id": "node-real-mission-lifecycle",
+                "title": "real-mission-lifecycle",
+                "kind": "task",
+                "status": "todo",
+                "createdAt": "2026-11-03T00:00:00Z",
+                "updatedAt": "2026-11-03T00:00:00Z"
+              }
+            },
+            "workspaceId": "workspace-owner-8f9cb7e3b2",
+            "createdAt": "2026-11-03T10:51:00.493Z",
+            "idempotencyKey": "mission:owner-mission",
+            "taskId": "node-real-mission-lifecycle",
+            "sessionId": null
+          }
+        ],
+        "warnings": []
+      }
+    }
+  }
+}

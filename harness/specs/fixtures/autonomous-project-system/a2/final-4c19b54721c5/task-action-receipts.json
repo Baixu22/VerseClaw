@@ -1,0 +1,207 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2-playwright",
+  "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+  "transport": "actual Electron/Main typed Host API -> current Gateway session/ack -> existing Task Ledger log",
+  "owner": {
+    "childPid": 42160,
+    "scope": {
+      "workspaceId": "default",
+      "projectId": "default",
+      "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+      "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+    },
+    "agentId": "main"
+  },
+  "receipts": [
+    {
+      "operationId": "a2-actual-create",
+      "requestSha256": "b28758b9c6105fa4e63c57b27d6ad5a2f0064e6abd36ee82be1e91c5562f03f1",
+      "identity": {
+        "actor": "assistant",
+        "agentId": "main",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+          "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+        },
+        "runtimeGeneration": "1",
+        "runtimeOwner": {
+          "childPid": 42160,
+          "connectedAt": 1793703169653
+        }
+      },
+      "revision": 1,
+      "eventIds": [
+        "agent-event-7db6c352c70c291141765dab539e8b87"
+      ],
+      "replayed": false
+    },
+    {
+      "operationId": "a2-actual-link",
+      "requestSha256": "7881c6617e837da9dbe8c33d609af1d6a08d9863d53cbef60fa47a28e5d7b9bf",
+      "identity": {
+        "actor": "assistant",
+        "agentId": "main",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+          "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+        },
+        "runtimeGeneration": "1",
+        "runtimeOwner": {
+          "childPid": 42160,
+          "connectedAt": 1793703169653
+        }
+      },
+      "revision": 2,
+      "eventIds": [
+        "agent-event-469249c23229cbb498e22bfcc2beb435"
+      ],
+      "replayed": false
+    },
+    {
+      "operationId": "a2-actual-update",
+      "requestSha256": "0621602365782a3ee280793fd8c43a1542e425417aaec2509cd85274327f5d47",
+      "identity": {
+        "actor": "assistant",
+        "agentId": "main",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+          "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+        },
+        "runtimeGeneration": "1",
+        "runtimeOwner": {
+          "childPid": 42160,
+          "connectedAt": 1793703169653
+        }
+      },
+      "revision": 3,
+      "eventIds": [
+        "agent-event-1ede1a944d28ff714bd40e629f4075c2"
+      ],
+      "replayed": false
+    },
+    {
+      "operationId": "a2-actual-create",
+      "requestSha256": "b28758b9c6105fa4e63c57b27d6ad5a2f0064e6abd36ee82be1e91c5562f03f1",
+      "identity": {
+        "actor": "assistant",
+        "agentId": "main",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+          "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+        },
+        "runtimeGeneration": "1",
+        "runtimeOwner": {
+          "childPid": 42160,
+          "connectedAt": 1793703169653
+        }
+      },
+      "revision": 1,
+      "eventIds": [
+        "agent-event-7db6c352c70c291141765dab539e8b87"
+      ],
+      "replayed": true
+    },
+    {
+      "operationId": "a2-actual-create",
+      "requestSha256": "b28758b9c6105fa4e63c57b27d6ad5a2f0064e6abd36ee82be1e91c5562f03f1",
+      "identity": {
+        "actor": "assistant",
+        "agentId": "main",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+          "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+        },
+        "runtimeGeneration": "1",
+        "runtimeOwner": {
+          "childPid": 42160,
+          "connectedAt": 1793703169653
+        }
+      },
+      "revision": 1,
+      "eventIds": [
+        "agent-event-7db6c352c70c291141765dab539e8b87"
+      ],
+      "replayed": true
+    },
+    {
+      "operationId": "a2-actual-create",
+      "requestSha256": "b28758b9c6105fa4e63c57b27d6ad5a2f0064e6abd36ee82be1e91c5562f03f1",
+      "identity": {
+        "actor": "assistant",
+        "agentId": "main",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+          "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+        },
+        "runtimeGeneration": "1",
+        "runtimeOwner": {
+          "childPid": 42160,
+          "connectedAt": 1793703169653
+        }
+      },
+      "revision": 1,
+      "eventIds": [
+        "agent-event-7db6c352c70c291141765dab539e8b87"
+      ],
+      "replayed": true
+    },
+    {
+      "operationId": "a2-actual-create",
+      "requestSha256": "b28758b9c6105fa4e63c57b27d6ad5a2f0064e6abd36ee82be1e91c5562f03f1",
+      "identity": {
+        "actor": "assistant",
+        "agentId": "main",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:cca7dd11-fb85-4b20-9136-aa0876fd5851",
+          "sessionGeneration": "4e635905-316a-4222-8839-52e1c908c13d"
+        },
+        "runtimeGeneration": "1",
+        "runtimeOwner": {
+          "childPid": 42160,
+          "connectedAt": 1793703169653
+        }
+      },
+      "revision": 1,
+      "eventIds": [
+        "agent-event-7db6c352c70c291141765dab539e8b87"
+      ],
+      "replayed": true
+    }
+  ],
+  "race": [
+    "fulfilled",
+    "rejected"
+  ],
+  "journalOperationCount": 4,
+  "forgedActorRejected": true,
+  "projectionRebuilt": true,
+  "sameIdDifferentPayloadRejected": true,
+  "committedReplayWithoutGateway": true,
+  "committedReplayAfterGatewayRestart": true,
+  "staleUncommittedAfterRestartRejected": true,
+  "reset": {
+    "before": "4e635905-316a-4222-8839-52e1c908c13d",
+    "after": "bf4dd951-f2fc-4802-90f7-f70d159be838",
+    "oldUncommittedRejected": true
+  },
+  "limitations": [
+    "agent-driven host interaction, no model quality claim",
+    "task action receipt does not accept task completion",
+    "fault-injection/cross-process crash checks are recorded separately"
+  ]
+}

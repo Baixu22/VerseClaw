@@ -1,0 +1,817 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "cases": {
+    "torn-frame-recovery": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:30.316Z",
+      "data": {
+        "receipt": {
+          "operationId": "torn",
+          "requestSha256": "f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712",
+          "identity": {
+            "actor": "assistant",
+            "agentId": "main",
+            "runtimeGeneration": "gateway-1",
+            "runtimeOwner": {
+              "childPid": 42,
+              "connectedAt": 1
+            },
+            "scope": {
+              "workspaceId": "workspace-owner",
+              "projectId": "workspace-owner",
+              "sessionKey": "agent:main:owned",
+              "sessionGeneration": "session-generation-1"
+            }
+          },
+          "revision": 2,
+          "eventIds": [
+            "complete-one",
+            "complete-two"
+          ],
+          "replayed": true
+        },
+        "snapshot": {
+          "schemaVersion": 1,
+          "workspaceId": "workspace-owner-8f9cb7e3b2",
+          "generatedAt": "2026-11-03T10:50:30.315Z",
+          "nodes": [
+            {
+              "id": "node-complete-one",
+              "title": "complete-one",
+              "kind": "task",
+              "status": "todo",
+              "createdAt": "2026-11-03T00:00:00Z",
+              "updatedAt": "2026-11-03T00:00:00Z",
+              "parentId": null,
+              "tags": [],
+              "completedAt": null
+            },
+            {
+              "id": "node-complete-two",
+              "title": "complete-two",
+              "kind": "task",
+              "status": "todo",
+              "createdAt": "2026-11-03T00:00:00Z",
+              "updatedAt": "2026-11-03T00:00:00Z",
+              "parentId": null,
+              "tags": [],
+              "completedAt": null
+            }
+          ],
+          "edges": [],
+          "sessionLinks": [],
+          "rootNodeIds": [
+            "node-complete-one",
+            "node-complete-two"
+          ],
+          "reviewNodeIds": [],
+          "activeNodeIds": [],
+          "blockedNodeIds": [],
+          "currentGoalId": null,
+          "recentDecisions": [],
+          "eventsCount": 2,
+          "warnings": [
+            {
+              "type": "invalid_jsonl",
+              "line": 1,
+              "message": "Unexpected end of JSON input"
+            }
+          ]
+        },
+        "journal": "{\"schema\":\"TaskLedgerCommit/v1\",\"operation\":{\"operationId\":\"torn\"},\"events\":[\n{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"complete-one\",\"type\":\"node_created\",\"actor\":\"assistant\",\"payload\":{\"node\":{\"id\":\"node-complete-one\",\"title\":\"complete-one\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":null,\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.309Z\",\"taskId\":\"node-complete-one\",\"sessionId\":null},{\"id\":\"complete-two\",\"type\":\"node_created\",\"actor\":\"assistant\",\"payload\":{\"node\":{\"id\":\"node-complete-two\",\"title\":\"complete-two\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":null,\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.309Z\",\"taskId\":\"node-complete-two\",\"sessionId\":null}],\"operation\":{\"operationId\":\"torn\",\"requestSha256\":\"f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"workspace-owner\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":2,\"eventIds\":[\"complete-one\",\"complete-two\"]},\"checksum\":\"0a75eac71ad10d69e242c58f26489abd978f18db5b7d72ba8badb228c1630390\"}\n"
+      }
+    },
+    "damaged-frame-recovery": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:30.393Z",
+      "data": {
+        "damaged": {
+          "schemaVersion": 1,
+          "workspaceId": "workspace-owner-8f9cb7e3b2",
+          "generatedAt": "2026-11-03T10:50:30.377Z",
+          "nodes": [],
+          "edges": [],
+          "sessionLinks": [],
+          "rootNodeIds": [],
+          "reviewNodeIds": [],
+          "activeNodeIds": [],
+          "blockedNodeIds": [],
+          "currentGoalId": null,
+          "recentDecisions": [],
+          "eventsCount": 0,
+          "warnings": [
+            {
+              "type": "invalid_jsonl",
+              "line": 1,
+              "message": "Incomplete or damaged Task Ledger commit frame"
+            }
+          ]
+        },
+        "repaired": {
+          "schemaVersion": 1,
+          "workspaceId": "workspace-owner-8f9cb7e3b2",
+          "generatedAt": "2026-11-03T10:50:30.386Z",
+          "nodes": [
+            {
+              "id": "node-batch-first",
+              "title": "batch-first",
+              "kind": "task",
+              "status": "todo",
+              "createdAt": "2026-11-03T00:00:00Z",
+              "updatedAt": "2026-11-03T00:00:00Z",
+              "parentId": null,
+              "tags": [],
+              "completedAt": null
+            },
+            {
+              "id": "node-batch-second",
+              "title": "batch-second",
+              "kind": "task",
+              "status": "todo",
+              "createdAt": "2026-11-03T00:00:00Z",
+              "updatedAt": "2026-11-03T00:00:00Z",
+              "parentId": null,
+              "tags": [],
+              "completedAt": null
+            }
+          ],
+          "edges": [],
+          "sessionLinks": [],
+          "rootNodeIds": [
+            "node-batch-first",
+            "node-batch-second"
+          ],
+          "reviewNodeIds": [],
+          "activeNodeIds": [],
+          "blockedNodeIds": [],
+          "currentGoalId": null,
+          "recentDecisions": [],
+          "eventsCount": 2,
+          "warnings": [
+            {
+              "type": "invalid_jsonl",
+              "line": 1,
+              "message": "Incomplete or damaged Task Ledger commit frame"
+            }
+          ]
+        },
+        "journal": "{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"batch-first\",\"type\":\"node_created\",\"actor\":\"system\",\"payload\":{\"node\":{\"id\":\"node-batch-first\",\"title\":\"batch-first\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.372Z\",\"idempotencyKey\":\"existing-batch\",\"taskId\":\"node-batch-first\",\"sessionId\":null},{\"id\":\"batch-second\",\"type\":\"node_created\",\"actor\":\"system\",\"payload\":{\"node\":{\"id\":\"node-batch-second\",\"title\":\"damaged bytes\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.372Z\",\"idempotencyKey\":\"existing-batch\",\"taskId\":\"node-batch-second\",\"sessionId\":null}],\"operation\":null,\"checksum\":\"13627b80f18c78f15dd38d03b9ade68e2c8012e71e353ec755e05820b9655b29\"}\n{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"batch-first\",\"type\":\"node_created\",\"actor\":\"system\",\"payload\":{\"node\":{\"id\":\"node-batch-first\",\"title\":\"batch-first\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.380Z\",\"idempotencyKey\":\"existing-batch\",\"taskId\":\"node-batch-first\",\"sessionId\":null},{\"id\":\"batch-second\",\"type\":\"node_created\",\"actor\":\"system\",\"payload\":{\"node\":{\"id\":\"node-batch-second\",\"title\":\"batch-second\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"workspaceId\":\"workspace-owner-8f9cb7e3b2\",\"createdAt\":\"2026-11-03T10:50:30.380Z\",\"idempotencyKey\":\"existing-batch\",\"taskId\":\"node-batch-second\",\"sessionId\":null}],\"operation\":null,\"checksum\":\"7603a228c12a1c3e07012561817e208cbc9d98922cdf24fc03e968e380a4a7c4\"}\n"
+      }
+    },
+    "session-reset-fence": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:58.860Z",
+      "data": {
+        "committed": {
+          "operationId": "reset-linearization",
+          "requestSha256": "b757d311b9cb4233f2ae4136a601cf83957bfd757d4467a6b00046f26bd028c0",
+          "identity": {
+            "actor": "assistant",
+            "agentId": "main",
+            "scope": {
+              "workspaceId": "workspace-owner",
+              "projectId": "workspace-owner",
+              "sessionKey": "agent:main:owned",
+              "sessionGeneration": "session-generation-1"
+            },
+            "runtimeGeneration": "gateway-1",
+            "runtimeOwner": {
+              "childPid": 42,
+              "connectedAt": 1
+            }
+          },
+          "revision": 1,
+          "eventIds": [
+            "agent-event-11267fcce141cdb0c29b34b9197d110a"
+          ],
+          "replayed": false
+        },
+        "resetStarted": true,
+        "resetDone": true,
+        "retiredGenerationRejected": true,
+        "fenceResource": "D:\\tmp\\clawx-a2-8bdKLY\\sessions.json.task-ledger-epoch",
+        "order": "existing session store writer epoch fence -> Task Ledger journal ticket"
+      }
+    }
+  },
+  "assertions": [
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) writes complete JSON and never leaves truncated target",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) retains .bak of previous good content across overwrite",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) A1: crash before rename leaves original intact (tmp orphan only)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) A1: rename failure after moving aside restores or keeps backup for recovery",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) A3: version CAS rejects stale expectedVersion and remains retryable",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) A2: concurrent writers under withFileLock do not lose updates",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) A2: concurrent withConfigLock RMW preserves all updates",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) A3: disk-full (ENOSPC) injection leaves original intact and is retryable",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) A3: read-only (EACCES) injection is visible and does not clobber target",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 atomic write (temp+fsync+rename) lock timeout is retryable when lock is held",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/atomic-config-write-p5-001.test.ts",
+      "name": "P5-001 channel-config integration (writeOpenClawConfig atomic) writeOpenClawConfig produces meta sidecar and valid JSON under concurrent saves",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction keeps accepted manual Date metadata when checksumming its persisted JSON representation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction commits a multi-event operation once and replays the same receipt after projection damage",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction allows exactly one of two stale revision writers and recovers concurrent duplicates",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction rejects same-key different payload while allowing a new same-parameter intent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction replays a durable append after the first projection write failed",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction does not project an incomplete log frame or treat it as a committed batch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction serializes new automatic and existing manual writes through the same log owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction keeps every event in an existing shared-key batch and rejects a complete damaged frame atomically",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction fences competing processes and recovers an actual subprocess exit after durable append",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction does not expire a live journal writer and fails closed on a corrupt participant",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction reclaims an orphan from an earlier incarnation even when its PID is the current live PID",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction preserves exclusion under four competing processes and one hundred guarded writes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action fences a same-key session reset attempted after the final owner read until the journal commits",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action refreshes the runtime session epoch after journal contention before admitting a new write",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action allows Gateway RPC handling to acquire the journal before automatic admission takes its ticket",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action recovers a committed receipt after Gateway replacement or unavailability without readmitting its old epoch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action does not let automatic operation IDs suppress existing lifecycle batch keys",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects requests from a prior Gateway process even when the app generation counter repeats",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action derives assistant identity from existing owners for create, link and update; manual edits stay user",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action replays an earlier link after its task was deleted without repeating its effect",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects model-provided actor before reading an owner or writing the log",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects model-provided principal before reading an owner or writing the log",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects model-provided identity before reading an owner or writing the log",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched workspaceId scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched sessionKey scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched sessionGeneration scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched projectId scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects a stale Gateway stamp and a session replaced while waiting for the journal owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes automatic Task Ledger operations through the typed Main action",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes the typed session stop surface through the sessions module",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls settings.getAll through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade throws response errors",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls settings.setMany and reset through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes project rules methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes agent browser methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes code review methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes Remote Forge reads through the typed host facade",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes uv installer setup through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes vtoken methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes git methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes log file path and tail lines through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls channels.accounts through hostInvoke with options",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes channel credential validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes channel target lookup payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls agents.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls providers.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes provider validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes provider OAuth requests through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls work provider APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls knowledge APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls sessions.summaries through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls session compaction methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls clawGraph methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls cron.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls skills.clawhubList through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability queryTraces through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability reportTrace through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade uses a function-shaped host API contract to type host invocations",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade lets service handlers inherit payload types from the host API contract",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep uninvoked direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep the legacy unified app:request client path",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) declares a closed, explicit inheritance table",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) explicitly covers the Linear-style property set",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) never lets status cross the one-way reference",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) classifies each field into exactly one side of the table",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) treats unknown fields as non-inherited (fail closed)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) apply drops non-inherited fields from a scheduling patch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) apply passes unknown fields through as dropped, not as inherited",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference-inheritance.test.ts",
+      "name": "TaskLedgerReference inheritance table (TF-0449) apply preserves falsy-but-valid inherited values",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "TaskLedgerReference contract creates a one-way Workboard to Task Ledger reference",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "TaskLedgerReference contract rejects empty Task Ledger node ids",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "TaskLedgerReference contract recognizes only the canonical one-way shape",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract preserves a one-way pointer without copying completion status or rewriting ID bytes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskId\":\"bare\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"status\":\"done\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"runtime\",\"taskNodeId\":\"runtime-A\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"taskNodeId\":\"ledger-A\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskNodeId\":\"\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskNodeId\":\"ledger-A\",\"scope\":{\"workspaceId\":\"other\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskNodeId\":\"ledger-A\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"old\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"},\"status\":\"done\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"},\"progress\":100}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-forest\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"task-forest-to-execution\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-ledger\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\",\"completedAt\":\"2026-11-02\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"other\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service projects nodes, dependencies, review state, decisions, and session links",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service removes deleted nodes and related edges from the snapshot",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service preserves long conversation control metadata and review tags without auto-clearing review state",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service projects long-task root children for checkpoints decisions deviations evidence and review",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service keeps valid JSONL events and reports damaged lines",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-working-context-single-source.test.ts",
+      "name": "L01 working-context single source persists through the JSONL ledger and reads back a consistent projection",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-working-context-single-source.test.ts",
+      "name": "L01 working-context single source is idempotent across a replayed batch (no duplicate events, identical projection)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-working-context-single-source.test.ts",
+      "name": "L01 working-context single source surfaces a write failure instead of reporting success",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-working-context-single-source.test.ts",
+      "name": "L01 working-context single source keeps workspaces isolated on the single ledger",
+      "status": "passed"
+    }
+  ]
+}

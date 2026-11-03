@@ -1,0 +1,243 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "storage": "Private local raw records, not public and not committed",
+  "files": [
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/run.json",
+      "bytes": 13529,
+      "sha256": "0f6b9f93bfcbecdeddd0af258350e2753dcb800d000dc6528f59d120bc2d09dd"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit.json",
+      "bytes": 49896,
+      "sha256": "1430e9d31fa23e06b29cd40f095b695e5ab83762ebb13542ee370e10b6d38c3c"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/runtime-unit.json",
+      "bytes": 2709,
+      "sha256": "f0736ba56d3168e09b92dc9f0b5bff4aaf26fa488d4667c4a9333d8fe1f9f0d2"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/source-env-unit.json",
+      "bytes": 7052,
+      "sha256": "51f9f63e365bc6acf001fe4e83ca40682294a430307f2d0f7d913e35f2e3f70e"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/e2e-report.json",
+      "bytes": 39548,
+      "sha256": "839f18990842fa76f9eb031ee9407392f2fedcad9848f5dab70396e2a2a1d736"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-a2-clean-4c19b54721c5-20261103\\e2e-results\\autonomy-task-actions-TF-0-5ce93-ays-the-same-persistent-log\\attachments\\task-action-receipts-a80a2c5e870e109ef042c70492e36cc94a7ebbb4.json",
+      "bytes": 6504,
+      "sha256": "5de060379b1f253bcbd96cd071901efe058c9ff04a577bf5462af12860cc5559"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-a2-clean-4c19b54721c5-20261103\\e2e-results\\autonomy-task-actions-TF-0-600a6-e-actual-Main-owned-journal\\attachments\\main-runtime-owner-journal-961c1b536813d13264bccbcfbab13788001f4bf8.json",
+      "bytes": 2311,
+      "sha256": "c9b92ee26c80a02a75778a6b8f41479137c3fa93f7500d7612cdc496119fb0aa"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/source-env-unit.log",
+      "bytes": 91,
+      "sha256": "bf400794aaa9b146f0f03c5ac7f83728f6a7f1bdedec457199650d04f4efd75e"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/runtime-build.log",
+      "bytes": 3115,
+      "sha256": "7295e22c0bc229d7d79ef54235e0f71f7202bdbf9918e24d6ec5e9f146316286"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/vite-build.log",
+      "bytes": 67497,
+      "sha256": "36a3a33b47a5a26feef9f16b681ea375bfdbe6b8a45d3b7cf66aa317bbe34625"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit.log",
+      "bytes": 80,
+      "sha256": "f25938165271721f6e3001def0a55ce938af91c1fb86cc8a8a0be9a4a595a461"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/runtime-unit.log",
+      "bytes": 88,
+      "sha256": "c1f6eb00d1b4eb27b1733d2116c3a97bd69640d1142667a9003f32813b79bed3"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/typecheck.log",
+      "bytes": 1626,
+      "sha256": "911fa6a980442360acf211ce6f3cd0c063084df1ea253afef792c28f123d0762"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/lint.log",
+      "bytes": 200,
+      "sha256": "6b93aa4981db28dcc456c99378bea526d15d7ebbfa0e0a6b482126b7d3d20e66"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/contract.log",
+      "bytes": 57,
+      "sha256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/comms-replay.log",
+      "bytes": 137,
+      "sha256": "0713a8a859f0f5c55a734d01874e97586dc3e999448f30c8746d40f7e214cbfe"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/comms-compare.log",
+      "bytes": 3463,
+      "sha256": "9bb3ce8315d6e8ca1dff1cb0c5473d7f3aff408c3482c0f2546759832e9fd7ee"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/harness-validate.log",
+      "bytes": 263,
+      "sha256": "508386eb9a2b7fa6176f76722233cb3ffe182e6ce163baccad158abfbc5bcf4d"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/harness-dry-run.log",
+      "bytes": 320,
+      "sha256": "fe2c696cc4d50769d49d38f84f5870e9d3e4729ff86138d206ff1ad7979af3b0"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/electron-e2e.log",
+      "bytes": 23323,
+      "sha256": "140ac581206600123f87d41294aa584c1463011b243d24d77b5df3ee2f1aa9ce"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/batch-replay.json",
+      "bytes": 4065,
+      "sha256": "e972d6d3024023c3e66366d69cae99524a8188ce10e4113608d99d47f67a65e9"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/concurrent-replay.json",
+      "bytes": 3122,
+      "sha256": "4b7c3cb43c6558ccbdd084167bbe90c9b4410e1c28ad578799ca8c8e937489b8"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/crash-recovery.json",
+      "bytes": 5686,
+      "sha256": "e14dadededbb57a56bcbd8610282888e92da52a5ff038eaa206572a1513942d6"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/torn-frame-recovery.json",
+      "bytes": 3769,
+      "sha256": "1f5777eaa7d44eb043aa147a7e88e8b0e765b87eca2ad0c42e4a979f62ccc30a"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/damaged-frame-recovery.json",
+      "bytes": 4155,
+      "sha256": "caf9b4fdd7e5a714a69a89090f3e81d089d4de23597376af02303a2f61de8b18"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/runtime-main-interop.json",
+      "bytes": 5656,
+      "sha256": "126fc6fe9fed499ff64e167aa67a9484a9978367417a8b8b4120ff24a9b4e301"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/interrupted-lock-publication.json",
+      "bytes": 3131,
+      "sha256": "c222458ec526dbc5a67c8a12c4e7653f5f6fe34816c8afd5625fefacf6948333"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/cross-process-lock-exclusion.json",
+      "bytes": 768,
+      "sha256": "272eef181b995e6e88fbe2189581612269e6d4127fd9655593f17501b41d3abb"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/hosted-restart-replay.json",
+      "bytes": 1641,
+      "sha256": "94e6f59e52083c8dc233d81996193fa3333f0163418968e73416bd86e076d9db"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/legacy-key-isolation.json",
+      "bytes": 1609,
+      "sha256": "f8f1959f397c8c0c6a2a9b2121b12627cb16bdae29f9ae8bf8c86999bfbe7664"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/reused-pid-orphan.json",
+      "bytes": 391,
+      "sha256": "557867d4851f7e6ff8107ed94bc7295328ebc2cc71fe6b59f685afc7e3925d89"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit-evidence/session-reset-fence.json",
+      "bytes": 1154,
+      "sha256": "fdc0492d3e460ea15b854dadb9bedfcdaedf637feaf36afcd7863c8c8a622459"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/e2e-results/source-mutation-guard.json",
+      "bytes": 585,
+      "sha256": "b6cce19232db70ca123636d1472c3c00a2b8bc4db157fe9fc2c2ecc4ecccf465"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/e2e-results/electron-process-cleanup.json",
+      "bytes": 556,
+      "sha256": "e4b230b1377d1a8164ad760c06fb88b63b138575edf241d8c5ab4721e79eb68b"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/autoreview.json",
+      "bytes": 607,
+      "sha256": "4c090f85ccdad00292450f70db6f889a2ca5825a6cfc48ee2c1a58b540430b5b"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/autoreview-exit.json",
+      "bytes": 78,
+      "sha256": "1bcaa69e6411f0f1788d5cb6f33de67e845bcd1d793f22bef28810dca0a0d78b"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/autoreview.stdout.log",
+      "bytes": 2198,
+      "sha256": "693ee3a36aa14123cadd534d71b7f956da02916bdef0c06f67ad6d32bbb7097b"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/report.json",
+      "bytes": 7410,
+      "sha256": "ce3452e9f62498e254662497e704b3c6c8d16b6353a688697d0c67581ce2f726"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/unit.json",
+      "bytes": 56497,
+      "sha256": "4384e379ab3a3900c3d30d0fc9c41b7337c6865eed78362236d319066c9cca29"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/runtime-unit.json",
+      "bytes": 2712,
+      "sha256": "3b74176992916c6ad35ec8052a6be5477fcde72814a46f907ae82357421a6ed9"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/versebrowser-declarations.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/unit.log",
+      "bytes": 67,
+      "sha256": "8cdf6295427c4bd1cf8d4744ee9b7fe60136d10f204fec03ea4ee919a8c7b401"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/runtime-unit.log",
+      "bytes": 75,
+      "sha256": "6da28f0dd1e308b58ee66384ac835e5f355cacf4bf3dcc99e7d2c86c03a25769"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/typecheck.log",
+      "bytes": 1633,
+      "sha256": "6cac6e86bbed6e70dcabf8fc632650da25701f0900683bab526ff01ff5bf68ca"
+    },
+    {
+      "path": "D:/tmp/autonomy-a2-r11/projection/vite-build.log",
+      "bytes": 67716,
+      "sha256": "d1d9847d67ec4c9a8322cb5b3831169b1b9c9f358ffdc096b65bcf1fa0c6f760"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "review": {
+    "findings": [],
+    "overall_confidence": 0.91,
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "Verified all 25 r11 working-tree hashes against the snapshots and confirmed that only the stated two functions and one regression assertion differ from r10. Scope failures correctly report VALIDATION while still rejecting admission; the Windows-only 5000ms probe preserves fail-closed identity handling. No actionable defects found in this focused static review. No tests or builds were run; r11 gates, Electron E2E, projection reruns, and candidate closure were not verified."
+  },
+  "exit": {
+    "exitCode": 0,
+    "signal": null,
+    "endedAt": "2026-11-03T10:44:09.498Z"
+  },
+  "invocation": {
+    "actor": "codex-a2",
+    "driven_by": "agent",
+    "args": [
+      "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+      "--mode",
+      "local",
+      "--no-web-search",
+      "--prompt-file",
+      "D:/tmp/autonomy-a2-r11/review-notes.md",
+      "--stream-engine-output",
+      "--json-output",
+      "D:/tmp/autonomy-a2-r11/autoreview.json"
+    ],
+    "driverPid": 22368,
+    "childPid": 27408,
+    "modelOverridePassed": false,
+    "engineOverridePassed": false,
+    "startedAt": "2026-11-03T10:41:54.837Z"
+  },
+  "previousCleanFullReview": {
+    "findings": [],
+    "overall_confidence": 0.85,
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "Static-only inspection of the current changes and relevant callers found no actionable defects. Checked session-store fencing and lock order, owner validation, committed replay, persisted-JSON checksums, process-incarnation recovery, and Main/runtime root alignment. No tests or builds were run; pending r10 gates and broader acceptance claims were not verified."
+  },
+  "scope": "Static source review only; runtime acceptance comes from the exact clean run."
+}

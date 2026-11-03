@@ -1,0 +1,369 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "gates": [
+    {
+      "name": "source-env-unit",
+      "command": "C:/Program Files/nodejs/node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/config-sync-source-runtime.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/source-env-unit.json"
+      ],
+      "startedAt": "2026-11-03T10:49:00.991Z",
+      "status": "passed",
+      "pid": 1168,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:49:04.912Z"
+    },
+    {
+      "name": "runtime-build",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "build:runtime"
+      ],
+      "startedAt": "2026-11-03T10:49:04.913Z",
+      "status": "passed",
+      "pid": 28680,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:49:35.290Z"
+    },
+    {
+      "name": "vite-build",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "build:vite"
+      ],
+      "startedAt": "2026-11-03T10:49:35.291Z",
+      "status": "passed",
+      "pid": 7176,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:50:25.477Z"
+    },
+    {
+      "name": "unit",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/task-ledger-service.test.ts",
+        "tests/unit/autonomy-task-actions.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/task-ledger-working-context-single-source.test.ts",
+        "tests/unit/atomic-config-write-p5-001.test.ts",
+        "tests/unit/task-ledger-reference.test.ts",
+        "tests/unit/task-ledger-reference-inheritance.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/unit.json"
+      ],
+      "startedAt": "2026-11-03T10:50:25.485Z",
+      "status": "passed",
+      "pid": 30464,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:51:09.764Z"
+    },
+    {
+      "name": "runtime-unit",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "src/agents/long-task-control/stage3-working-context.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/runtime-unit.json"
+      ],
+      "startedAt": "2026-11-03T10:51:09.764Z",
+      "status": "passed",
+      "pid": 27724,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:51:35.961Z"
+    },
+    {
+      "name": "typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-11-03T10:51:35.962Z",
+      "status": "passed",
+      "pid": 37588,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:09.895Z"
+    },
+    {
+      "name": "lint",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "eslint",
+        "electron/services/task-ledger-actions.ts",
+        "shared/task-ledger-journal-lock.ts",
+        "shared/task-ledger-journal.ts",
+        "shared/task-ledger-process.ts",
+        "tests/e2e/autonomy-task-actions.spec.ts",
+        "tests/fixtures/autonomy-task-action-worker.mts",
+        "tests/unit/autonomy-task-actions.test.ts",
+        "electron/gateway/config-sync.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/services/task-ledger-api.ts",
+        "electron/services/task-ledger-service.ts",
+        "openclaw_runtime/src/agents/long-task-control/stage3-working-context.test.ts",
+        "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+        "openclaw_runtime/src/config/sessions/store-writer.ts",
+        "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+        "shared/host-api/contract.ts",
+        "shared/types/session-activity.ts",
+        "shared/types/task-ledger.ts",
+        "src/lib/host-api.ts",
+        "tests/unit/config-sync-source-runtime.test.ts",
+        "tests/unit/host-api-facade.test.ts"
+      ],
+      "startedAt": "2026-11-03T10:52:09.904Z",
+      "status": "passed",
+      "pid": 38308,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:17.828Z"
+    },
+    {
+      "name": "contract",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "contract:check"
+      ],
+      "startedAt": "2026-11-03T10:52:17.829Z",
+      "status": "passed",
+      "pid": 28488,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:18.796Z"
+    },
+    {
+      "name": "comms-replay",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "comms:replay"
+      ],
+      "startedAt": "2026-11-03T10:52:18.798Z",
+      "status": "passed",
+      "pid": 1244,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:19.988Z"
+    },
+    {
+      "name": "comms-compare",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "comms:compare"
+      ],
+      "startedAt": "2026-11-03T10:52:19.992Z",
+      "status": "passed",
+      "pid": 22772,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:20.917Z"
+    },
+    {
+      "name": "harness-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-task-actions.md"
+      ],
+      "startedAt": "2026-11-03T10:52:20.918Z",
+      "status": "passed",
+      "pid": 25008,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:22.859Z"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-task-actions.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-03T10:52:22.859Z",
+      "status": "passed",
+      "pid": 15540,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:24.662Z"
+    },
+    {
+      "name": "diff-check",
+      "command": "git",
+      "args": [
+        "diff",
+        "--check"
+      ],
+      "startedAt": "2026-11-03T10:52:24.663Z",
+      "status": "passed",
+      "pid": 27656,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:52:24.789Z"
+    },
+    {
+      "name": "electron-e2e",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/autonomy-task-actions.spec.ts",
+        "--workers=1",
+        "--reporter=line,json",
+        "--output=D:/tmp/autonomy-a2-clean-4c19b54721c5-20261103/e2e-results"
+      ],
+      "startedAt": "2026-11-03T10:52:24.790Z",
+      "status": "passed",
+      "pid": 17360,
+      "exitCode": 0,
+      "signal": null,
+      "endedAt": "2026-11-03T10:53:37.406Z"
+    }
+  ],
+  "finalHead": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+  "finalDirty": false,
+  "sourceUnchanged": true,
+  "unit": {
+    "passed": 121,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceEnv": {
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+  },
+  "runtime": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0
+  },
+  "e2e": {
+    "stats": {
+      "startTime": "2026-11-03T10:52:25.864Z",
+      "duration": 71519.51000000001,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "sourceGuard": {
+      "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+      "driven_by": "agent",
+      "actor": "playwright-runner",
+      "ok": true,
+      "sourceChanged": false,
+      "before": {
+        "status": "",
+        "trackedFilesSha256": "900aa2475236c32cb1028dd83c0aee8d7a31777e8eba5a86edf616f1ffb3a290",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "status": "",
+        "trackedFilesSha256": "900aa2475236c32cb1028dd83c0aee8d7a31777e8eba5a86edf616f1ffb3a290",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cleanup": {
+      "driven_by": "agent",
+      "actor": "playwright-runner",
+      "runRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-vMNJpH",
+      "ledgerEntries": 2,
+      "reaped": [
+        {
+          "pid": 34444,
+          "aliveBefore": false,
+          "nodeKill": false,
+          "taskkill": false
+        },
+        {
+          "pid": 42756,
+          "aliveBefore": false,
+          "nodeKill": false,
+          "taskkill": false
+        }
+      ],
+      "survivors": [],
+      "sweep": {
+        "status": "ok",
+        "runRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-vMNJpH\\",
+        "owned": [],
+        "remaining": []
+      }
+    },
+    "tests": [
+      {
+        "title": "TF-0671 Main admits owner-derived agent operations and replays the same persistent log",
+        "status": "passed",
+        "durationMs": 43003
+      },
+      {
+        "title": "TF-0671 source Gateway writes long-task facts into the actual Main-owned journal",
+        "status": "passed",
+        "durationMs": 24617
+      }
+    ]
+  }
+}

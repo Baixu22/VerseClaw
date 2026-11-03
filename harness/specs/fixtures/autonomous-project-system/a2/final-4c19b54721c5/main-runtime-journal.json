@@ -1,0 +1,63 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2-playwright",
+  "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+  "workspaceId": "default",
+  "taskLedgerRootId": "a2-source-runtime-owner-root",
+  "mainJournal": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-vMNJpH\\verse-claw-e2e-home-4stlKl\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\events.jsonl",
+  "sourceRuntimeStateDir": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-vMNJpH\\verse-claw-e2e-user-data-S1NRNL\\openclaw-source-state",
+  "root": {
+    "id": "a2-source-runtime-owner-root",
+    "title": "A2 runtime owner journal probe",
+    "kind": "goal",
+    "parentId": null,
+    "status": "doing",
+    "owner": "agent",
+    "priority": "normal",
+    "tags": [
+      "long-task",
+      "task_loop"
+    ],
+    "evidenceRefs": [
+      {
+        "type": "session",
+        "ref": "agent:main:dashboard:07935fe6-8411-4761-800e-360a9ff1a841"
+      }
+    ],
+    "metadata": {
+      "taskLedgerRootId": "a2-source-runtime-owner-root",
+      "sessionKey": "agent:main:dashboard:07935fe6-8411-4761-800e-360a9ff1a841",
+      "agentId": "main",
+      "runId": "loop_6ee9723b-af1f-4f40-a0f8-36fe2837d3ee",
+      "source": "task_loop",
+      "acceptance": []
+    },
+    "createdAt": "2026-11-03T10:53:28.622Z",
+    "updatedAt": "2026-11-03T10:53:28.622Z",
+    "completedAt": null
+  },
+  "sessionLinks": [
+    {
+      "id": "task-loop:loop_6ee9723b-af1f-4f40-a0f8-36fe2837d3ee:session",
+      "sessionKey": "agent:main:dashboard:07935fe6-8411-4761-800e-360a9ff1a841",
+      "nodeId": "task-loop:loop_6ee9723b-af1f-4f40-a0f8-36fe2837d3ee:task",
+      "traceId": null,
+      "summary": "Task-loop runtime evidence",
+      "createdAt": "2026-11-03T10:53:28.634Z"
+    },
+    {
+      "id": "lts_c777c4b14116d512",
+      "nodeId": "a2-source-runtime-owner-root",
+      "sessionKey": "agent:main:dashboard:07935fe6-8411-4761-800e-360a9ff1a841",
+      "agentId": "main",
+      "relation": "related",
+      "summary": "task_loop root session",
+      "createdAt": "2026-11-03T10:53:28.622Z"
+    }
+  ],
+  "runtimeOutcome": {
+    "error": "Error: [INTERNAL] Gateway connection closed"
+  },
+  "scriptedProviderRequests": 0,
+  "limitation": "Existing runtime owner created and Main read the same facts; no Task Loop completion or model-quality acceptance."
+}

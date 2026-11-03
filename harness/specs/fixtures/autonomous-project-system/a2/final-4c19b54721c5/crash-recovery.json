@@ -1,0 +1,211 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "cases": {
+    "crash-recovery": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:41.177Z",
+      "data": {
+        "competing": [
+          {
+            "code": 2,
+            "stdout": "{\"status\":\"rejected\",\"code\":\"VALIDATION\",\"error\":\"Error: Task Ledger revision conflict\",\"durableEventsBeforeExit\":1,\"projectionFailureAfterAppend\":false}\n",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"process-two\",\"requestSha256\":\"f7fbad87208c2e1dcabdeeafffcc1f7de338c435a659fc4dd85f098e7c2d1712\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"workspace-owner\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"process-two\"],\"replayed\":false}}\n",
+            "stderr": ""
+          }
+        ],
+        "projectionFailureExit": {
+          "code": 73,
+          "stdout": "{\"status\":\"rejected\",\"code\":\"EISDIR\",\"error\":\"Error: EISDIR: illegal operation on a directory, open 'D:\\\\tmp\\\\clawx-a2-rpC0LU\\\\task-ledgers\\\\workspaces\\\\crash-workspace-4279049d9e\\\\snapshot.json'\",\"durableEventsBeforeExit\":1,\"projectionFailureAfterAppend\":true}\n",
+          "stderr": ""
+        },
+        "projectionReplay": {
+          "code": 0,
+          "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"5c98c5ed1d0170409117cbc91dbe8a357ff7100409bb84917c8ede518a54f1d6\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"crash-workspace\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"],\"replayed\":true}}\n",
+          "stderr": ""
+        },
+        "abruptExit": {
+          "code": 73,
+          "stdout": "{\"abruptExitAfterAppend\":true}\n",
+          "stderr": ""
+        },
+        "abruptRecovered": [
+          {
+            "code": 0,
+            "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"82996182c3f561903122d6dff72fa33cd74f41718835a52462202e366376510c\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"abrupt-workspace\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"],\"replayed\":true}}\n",
+            "stderr": ""
+          },
+          {
+            "code": 0,
+            "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"82996182c3f561903122d6dff72fa33cd74f41718835a52462202e366376510c\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"abrupt-workspace\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"],\"replayed\":true}}\n",
+            "stderr": ""
+          }
+        ],
+        "recovery": "unique per-acquisition participant record; dead process probe, no lease expiry",
+        "journal": "{\"schema\":\"TaskLedgerCommit/v1\",\"events\":[{\"id\":\"after-process-exit\",\"type\":\"node_created\",\"actor\":\"assistant\",\"payload\":{\"node\":{\"id\":\"node-after-process-exit\",\"title\":\"after-process-exit\",\"kind\":\"task\",\"status\":\"todo\",\"createdAt\":\"2026-11-03T00:00:00Z\",\"updatedAt\":\"2026-11-03T00:00:00Z\"}},\"idempotencyKey\":null,\"workspaceId\":\"abrupt-workspace-d5d98c57b8\",\"createdAt\":\"2026-11-03T10:50:36.509Z\",\"taskId\":\"node-after-process-exit\",\"sessionId\":null}],\"operation\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"82996182c3f561903122d6dff72fa33cd74f41718835a52462202e366376510c\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"abrupt-workspace\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"]},\"checksum\":\"dcfcc63494aa1d8d09dea6e93992e5c5a07045d205f60ac075511c7b444f6882\"}\n",
+        "snapshot": {
+          "schemaVersion": 1,
+          "workspaceId": "abrupt-workspace-d5d98c57b8",
+          "generatedAt": "2026-11-03T10:50:41.176Z",
+          "nodes": [
+            {
+              "id": "node-after-process-exit",
+              "title": "after-process-exit",
+              "kind": "task",
+              "status": "todo",
+              "createdAt": "2026-11-03T00:00:00Z",
+              "updatedAt": "2026-11-03T00:00:00Z",
+              "parentId": null,
+              "tags": [],
+              "completedAt": null
+            }
+          ],
+          "edges": [],
+          "sessionLinks": [],
+          "rootNodeIds": [
+            "node-after-process-exit"
+          ],
+          "reviewNodeIds": [],
+          "activeNodeIds": [],
+          "blockedNodeIds": [],
+          "currentGoalId": null,
+          "recentDecisions": [],
+          "eventsCount": 1,
+          "warnings": []
+        },
+        "limits": [
+          "controlled process.exit inside projection after journal fsync; not power-loss or arbitrary disk corruption proof"
+        ]
+      }
+    },
+    "interrupted-lock-publication": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:50.062Z",
+      "data": [
+        {
+          "mode": "lock-before",
+          "exited": {
+            "code": 74,
+            "stdout": "{\"interruptedLockPublication\":\"before\"}\n",
+            "stderr": ""
+          },
+          "resumes": [
+            {
+              "code": 0,
+              "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"d677d7e9a493e1be15541b1c27e8dc027cae6fb67fb540f4aac2ed37d0add15f\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"lock-before\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"],\"replayed\":true}}\n",
+              "stderr": ""
+            },
+            {
+              "code": 0,
+              "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"d677d7e9a493e1be15541b1c27e8dc027cae6fb67fb540f4aac2ed37d0add15f\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"lock-before\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"],\"replayed\":false}}\n",
+              "stderr": ""
+            }
+          ]
+        },
+        {
+          "mode": "lock-after",
+          "exited": {
+            "code": 75,
+            "stdout": "{\"interruptedLockPublication\":\"after\"}\n",
+            "stderr": ""
+          },
+          "resumes": [
+            {
+              "code": 0,
+              "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"4f48ac0cd71234e9a755662f6c4a95255b2de0b744dcb6d8191132baeb9ebbd3\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"lock-after\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"],\"replayed\":true}}\n",
+              "stderr": ""
+            },
+            {
+              "code": 0,
+              "stdout": "{\"status\":\"committed\",\"receipt\":{\"operationId\":\"after-process-exit\",\"requestSha256\":\"4f48ac0cd71234e9a755662f6c4a95255b2de0b744dcb6d8191132baeb9ebbd3\",\"identity\":{\"actor\":\"assistant\",\"agentId\":\"main\",\"runtimeGeneration\":\"gateway-1\",\"runtimeOwner\":{\"childPid\":42,\"connectedAt\":1},\"scope\":{\"workspaceId\":\"lock-after\",\"projectId\":\"workspace-owner\",\"sessionKey\":\"agent:main:owned\",\"sessionGeneration\":\"session-generation-1\"}},\"revision\":1,\"eventIds\":[\"after-process-exit\"],\"replayed\":false}}\n",
+              "stderr": ""
+            }
+          ]
+        }
+      ]
+    },
+    "reused-pid-orphan": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:50:53.896Z",
+      "data": {
+        "pid": 11708,
+        "oldIncarnation": "retired-process-incarnation",
+        "admitted": "admitted",
+        "limitation": "orphan record simulates OS PID reuse; current process birth identity is read from the actual OS"
+      }
+    },
+    "hosted-restart-replay": {
+      "driven_by": "agent",
+      "actor": "codex-a2-vitest",
+      "candidate": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+      "recordedAt": "2026-11-03T10:51:00.471Z",
+      "data": {
+        "first": {
+          "operationId": "persisted-before-restart",
+          "requestSha256": "94867b02ee9f24711ef86cd504ef2c6499d2163e503f5cace0dc76f3a88162b6",
+          "identity": {
+            "actor": "assistant",
+            "agentId": "main",
+            "scope": {
+              "workspaceId": "workspace-owner",
+              "projectId": "workspace-owner",
+              "sessionKey": "agent:main:owned",
+              "sessionGeneration": "session-generation-1"
+            },
+            "runtimeGeneration": "gateway-1",
+            "runtimeOwner": {
+              "childPid": 42,
+              "connectedAt": 1
+            }
+          },
+          "revision": 1,
+          "eventIds": [
+            "agent-event-372a3888c1c8edff792f98c6fe5753ab"
+          ],
+          "replayed": false
+        },
+        "replay": {
+          "operationId": "persisted-before-restart",
+          "requestSha256": "94867b02ee9f24711ef86cd504ef2c6499d2163e503f5cace0dc76f3a88162b6",
+          "identity": {
+            "actor": "assistant",
+            "agentId": "main",
+            "scope": {
+              "workspaceId": "workspace-owner",
+              "projectId": "workspace-owner",
+              "sessionKey": "agent:main:owned",
+              "sessionGeneration": "session-generation-1"
+            },
+            "runtimeGeneration": "gateway-1",
+            "runtimeOwner": {
+              "childPid": 42,
+              "connectedAt": 1
+            }
+          },
+          "revision": 1,
+          "eventIds": [
+            "agent-event-372a3888c1c8edff792f98c6fe5753ab"
+          ],
+          "replayed": true
+        },
+        "eventsCount": 1
+      }
+    }
+  }
+}

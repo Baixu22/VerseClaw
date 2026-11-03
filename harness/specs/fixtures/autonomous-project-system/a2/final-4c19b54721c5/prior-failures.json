@@ -1,0 +1,317 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "earlierReview": {
+    "r7": {
+      "findings": [
+        {
+          "body": "The final content comparison and unlink are separate filesystem operations. Two processes can both validate the same dead orphan; one removes it and acquires a new lock while the other is paused after its comparison. The second then unlinks the live replacement, allowing overlapping writers. This defeats revision CAS and can produce acknowledged operations whose frames are subsequently discarded. Recovery needs exclusive arbitration before removing the observed lock.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "D:/ClawX-work/autonomy-host-readiness/shared/task-ledger-journal-lock.ts",
+            "line": 35
+          },
+          "confidence": 0.99,
+          "priority": "P1",
+          "title": "[P1] Serialize competing orphan recovery before unlinking"
+        },
+        {
+          "body": "This callback runs while Main holds the journal lock and performs Gateway RPCs through ownerIdentity. If a concurrent Gateway checkpoint enters appendLongTaskLedgerEvents, its synchronous lock wait blocks the Gateway event loop. Main then waits for RPC replies that Gateway cannot send until Main releases the same lock. The 3-second RPC timeout eventually breaks the cycle by rejecting a valid action, while unrelated Gateway requests also stall. Break this lock/RPC dependency while retaining the final ownership check.",
+          "category": "regression",
+          "code_location": {
+            "file_path": "D:/ClawX-work/autonomy-host-readiness/electron/services/task-ledger-service.ts",
+            "line": 370
+          },
+          "confidence": 0.98,
+          "priority": "P2",
+          "title": "[P2] Avoid Gateway RPCs under its synchronous journal lock"
+        },
+        {
+          "body": "A persisted operation cannot replay through the public API after Gateway reconnect or app restart: connectedAt or childPid changes, so ownerIdentity rejects the original payload before the committed-operation lookup. Refreshing the owner stamp also fails because it changes requestSha256. Thus a crash after fsync but before delivery of the receipt leaves a committed operation without a recoverable receipt. The subprocess tests bypass this admission layer. Validate and return an existing committed request using its recorded identity before requiring the live epoch for new writes.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "D:/ClawX-work/autonomy-host-readiness/electron/services/task-ledger-actions.ts",
+            "line": 78
+          },
+          "confidence": 0.97,
+          "priority": "P2",
+          "title": "[P2] Allow committed-operation replay after owner replacement"
+        },
+        {
+          "body": "The exclusive open publishes an empty sidecar before its owner record is written. A process killed between this open and writeFileSync leaves an empty or truncated lock. Recovery suppresses JSON parse failures forever, and partial-write cleanup also requires an exact complete-record match. Consequently, even after the writer exits and the stale threshold passes, every snapshot read and append times out until the sidecar is externally removed. Publish complete ownership metadata atomically or provide safe recovery for interrupted acquisition.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "D:/ClawX-work/autonomy-host-readiness/shared/task-ledger-journal-lock.ts",
+            "line": 22
+          },
+          "confidence": 0.99,
+          "priority": "P2",
+          "title": "[P2] Recover locks interrupted before owner metadata is written"
+        },
+        {
+          "body": "shared/package.json declares ESM, while the runtime's tsconfig.core.json inherits NodeNext module resolution. This new extensionless relative import is therefore rejected with TS2835, including for a type-only import. The runtime already imports this Task Ledger type file, so its normal tsgo:core gate encounters the error even though Main's bundler-mode typecheck and TSX tests can pass. Use './identity-scope.js', consistent with the other runtime-consumed shared imports.",
+          "category": "regression",
+          "code_location": {
+            "file_path": "D:/ClawX-work/autonomy-host-readiness/shared/types/task-ledger.ts",
+            "line": 1
+          },
+          "confidence": 0.99,
+          "priority": "P2",
+          "title": "[P2] Use an ESM-compatible specifier for the shared scope import"
+        },
+        {
+          "body": "Caller-controlled operationId is copied verbatim into the legacy event idempotency-key namespace. Existing lifecycle writers dedupe against every event key: for example, an admitted automatic operation named 'mission:<missionId>' makes recordMissionLedgerLifecycle skip its later system batch entirely. Runtime long-task keys can be poisoned similarly. This lets an automatic fact submission suppress unrelated owner-generated history. Keep operation receipts as the automatic dedupe authority and isolate automatic event keys from legacy batch keys.",
+          "category": "security",
+          "code_location": {
+            "file_path": "D:/ClawX-work/autonomy-host-readiness/electron/services/task-ledger-service.ts",
+            "line": 373
+          },
+          "confidence": 0.95,
+          "priority": "P2",
+          "title": "[P2] Isolate automatic operation IDs from legacy dedupe keys"
+        }
+      ],
+      "overall_confidence": 0.97,
+      "overall_correctness": "patch is incorrect",
+      "overall_explanation": "All 19 current files match the r6 hashes. Static inspection found defects in orphan recovery, Main/Gateway locking, hosted replay, legacy dedupe isolation, and runtime ESM compatibility. No tests were run or files modified."
+    },
+    "schemaRejection": "Original advisory used absolute finding paths and was rejected; exact extracted JSON retained without upgrading it to a valid clean result.",
+    "r9": {
+      "findings": [
+        {
+          "body": "A same-key sessions.reset can replace the sessionId after the final ownerIdentity RPC but while commitTaskLedgerOperation awaits journal I/O. Reset does not acquire this journal lock, and this check only compares activeSessionKey, PID and connectedAt, which remain unchanged. An uncontended request can therefore append facts under a retired session generation. Coordinate session replacement with admission through an epoch fence, preserving the no-RPC-under-ticket rule, and cover reset after the final ownership check.",
+          "category": "security",
+          "code_location": {
+            "file_path": "electron/services/task-ledger-actions.ts",
+            "line": 121
+          },
+          "confidence": 0.96,
+          "priority": "P1",
+          "title": "[P1] Fence session replacement through the journal commit"
+        },
+        {
+          "body": "The checksum is calculated from the original objects, but JSON.stringify can change their representation. Existing manual APIs accept metadata containing Date values, and host payload validation explicitly permits Date. stableJson hashes such a value as {}, while the persisted JSON contains its ISO string. The immediate read consequently rejects the entire newly written frame as damaged, and the manual API returns success with the requested node missing. Normalize the content to its persisted JSON representation before calculating the checksum.",
+          "category": "regression",
+          "code_location": {
+            "file_path": "shared/task-ledger-journal.ts",
+            "line": 94
+          },
+          "confidence": 0.99,
+          "priority": "P2",
+          "title": "[P2] Calculate checksums from the persisted JSON representation"
+        },
+        {
+          "body": "After a crash or reboot leaves a participant record, the OS can reuse its PID before recovery scans it. This probe then succeeds for an unrelated process, or even the restarted Main process. The orphan retains its choosing state or lower ticket indefinitely, so writes, snapshots and historical receipt recovery repeatedly time out. Acquisition UUIDs prevent pathname reuse but do not identify process incarnations. Record and verify a process incarnation when determining liveness, without evicting live writers by age.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "shared/task-ledger-journal-lock.ts",
+            "line": 47
+          },
+          "confidence": 0.98,
+          "priority": "P2",
+          "title": "[P2] Distinguish process incarnations during orphan recovery"
+        },
+        {
+          "body": "getOpenClawConfigDir() preserves relative overrides such as OPENCLAW_CONFIG_DIR=./state. Main resolves journal accesses relative to its cwd, whereas process-launcher starts Gateway with cwd=openclawDir and runtime resolveUserPath resolves the forwarded value there. The two processes consequently use different journals and lock directories, defeating the shared-owner boundary this change adds. Resolve the ledger root to an absolute path in Main before passing it to the child.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "electron/gateway/config-sync.ts",
+            "line": 1014
+          },
+          "confidence": 0.99,
+          "priority": "P2",
+          "title": "[P2] Resolve the Main ledger root before forwarding it"
+        }
+      ],
+      "overall_confidence": 0.97,
+      "overall_correctness": "patch is incorrect",
+      "overall_explanation": "Read-only inspection of the current A2 bundle and relevant ownership, storage, transport and test code found four actionable defects. No tests, builds or gates were run. Supplied test counts were not independently verified; this review establishes no clean-candidate, formal acceptance or Task Forest closure result."
+    }
+  },
+  "r10": {
+    "e2e": {
+      "startTime": "2026-11-03T10:32:55.270Z",
+      "duration": 65962.12,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "projection": {
+      "driven_by": "agent",
+      "actor": "codex-a2",
+      "projection": "D:/tmp/autonomy-a2-source-projection-r10",
+      "baseline": "84acb1acb2f21f236c391f440866c53549c3ff7a",
+      "status": "failed",
+      "sourceSnapshot": [
+        {
+          "path": "electron/services/task-ledger-actions.ts",
+          "sha256": "57fc12b03c6bd764e16e20b0f1d8fb1a439baa9ee7c1b24e78d592ea39d64037"
+        },
+        {
+          "path": "harness/specs/rules/autonomy-task-action-boundary.md",
+          "sha256": "e6682c89035eee45512d0a8d66147f7723d5ddbb4901f2584d6057661221b6d3"
+        },
+        {
+          "path": "harness/specs/scenarios/autonomy-task-actions.md",
+          "sha256": "f8279d94cbb42e116b4a011dde35597076d7872c9c4384994eb77a8bc15fac6c"
+        },
+        {
+          "path": "harness/specs/tasks/autonomy-task-actions.md",
+          "sha256": "7e1b3c63ff681b3df7de5e9e7a019900fbe6853cbd1365ea3ed9bb13ca575e5f"
+        },
+        {
+          "path": "shared/task-ledger-journal-lock.ts",
+          "sha256": "610373301a66d4d991e3f2ed3218d34a221a301f14100e42da00209b8826ba00"
+        },
+        {
+          "path": "shared/task-ledger-journal.ts",
+          "sha256": "94b514b62605b2ead20cc9012bdf3ceea4767d91e2bddb40bc2da22790dc8676"
+        },
+        {
+          "path": "shared/task-ledger-process.ts",
+          "sha256": "98db2062e56ab1c173ce9ecaaf9ad51681a586148ca8612782349bdec30a7c67"
+        },
+        {
+          "path": "tests/e2e/autonomy-task-actions.spec.ts",
+          "sha256": "365c45e9862172e994c191653d1cc42749f0510f62795ad7c1be73777c447a82"
+        },
+        {
+          "path": "tests/fixtures/autonomy-task-action-worker.mts",
+          "sha256": "46032486515bfb36c3e385bac614dc2e2ebd7562033b97aa8278abf5733904da"
+        },
+        {
+          "path": "tests/unit/autonomy-task-actions.test.ts",
+          "sha256": "44eef8c83cb2aaf610601e6a4fd014e9b8602dfdcaaed36a97ed0167c306cf7f"
+        },
+        {
+          "path": "docs/modules/multi-agent-and-tasks.md",
+          "sha256": "a43cf898d2683c6a4b18acb9d4a162657d418e2e96424683592440439de1bbab"
+        },
+        {
+          "path": "electron/gateway/config-sync.ts",
+          "sha256": "0c6c066df8de4c59a13d7050cb1964554274e1d13e3f52b349d93e2732775ea0"
+        },
+        {
+          "path": "electron/main/ipc-handlers.ts",
+          "sha256": "9f671d39b6bb32a65216bf46c3ce01ecf862380ea773dc5c16e5fe97cccd3ff8"
+        },
+        {
+          "path": "electron/services/task-ledger-api.ts",
+          "sha256": "5e3d77e1598f30ffdbd5bbb4200b496fb9a37eb263fed65c0035966aa100a65a"
+        },
+        {
+          "path": "electron/services/task-ledger-service.ts",
+          "sha256": "7ca9e4e4a7f3a9b0220b50239489c6627832902de844b9a053dca7f75fe4db24"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.test.ts",
+          "sha256": "979a618bb498ecbfbdde7fdaa01238ece57c73a2b67621fde02aa1b69fc5008b"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+          "sha256": "ec535381db57da6321e1347a3ecf80a90ea91ea4d8d9609423e79716dac06ed3"
+        },
+        {
+          "path": "openclaw_runtime/src/config/sessions/store-writer.ts",
+          "sha256": "03dc88fb554b5c6f7e9e238d79aa11a6e8222561e7452cebb49b809bb4f782c7"
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+          "sha256": "788a927b16c1c86f8f96fd402824455e48599afc1b57e78d5fb86761ec3eef32"
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "sha256": "9ea855a8049ef62ea9678bd8435a60ee3ba51bd325eed08d496218191c996f06"
+        },
+        {
+          "path": "shared/types/session-activity.ts",
+          "sha256": "e82aa2b15521d3c50d9ed714058b74eefe254f44341ca5587e6662892e472bb0"
+        },
+        {
+          "path": "shared/types/task-ledger.ts",
+          "sha256": "1cbe3219bb65746318ace100290096e523c7c24a1f7f3760a6b76fce9a00df62"
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "sha256": "c1310ae321270024c73ebefb9731e4a956b0d6780888e4fb2e6bfac9a458a7fc"
+        },
+        {
+          "path": "tests/unit/config-sync-source-runtime.test.ts",
+          "sha256": "d29acc94616bdbd1c2c2c780b5d43f90e8ce6a852820b42da9868d460e4784d4"
+        },
+        {
+          "path": "tests/unit/host-api-facade.test.ts",
+          "sha256": "d4a4c468df3d1c2bee889fe8d939b6456de040cafeac0ee5ef5db1a8a2e8b7d6"
+        }
+      ],
+      "dependencyReuse": [
+        "node_modules",
+        "openclaw_runtime/node_modules",
+        "harness/node_modules",
+        "packages/versebrowser/node_modules"
+      ],
+      "freshInstall": false,
+      "copiedIgnoredRunArtifacts": false,
+      "gates": [
+        {
+          "name": "versebrowser-declarations",
+          "command": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "--config.verify-deps-before-run=false",
+            "--dir",
+            "packages/versebrowser",
+            "exec",
+            "tsc",
+            "-p",
+            "tsconfig.build.json"
+          ],
+          "startedAt": "2026-11-03T10:33:04.565Z",
+          "pid": 37920,
+          "exitCode": 0,
+          "endedAt": "2026-11-03T10:33:12.371Z"
+        },
+        {
+          "name": "unit",
+          "command": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "--config.verify-deps-before-run=false",
+            "exec",
+            "vitest",
+            "run",
+            "tests/unit/task-ledger-service.test.ts",
+            "tests/unit/autonomy-task-actions.test.ts",
+            "tests/unit/host-api-facade.test.ts",
+            "tests/unit/task-ledger-working-context-single-source.test.ts",
+            "tests/unit/atomic-config-write-p5-001.test.ts",
+            "tests/unit/task-ledger-reference.test.ts",
+            "tests/unit/task-ledger-reference-inheritance.test.ts",
+            "tests/unit/config-sync-source-runtime.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:/tmp/autonomy-a2-r10/projection/unit.json"
+          ],
+          "startedAt": "2026-11-03T10:33:12.371Z",
+          "pid": 20732,
+          "exitCode": 1,
+          "endedAt": "2026-11-03T10:34:01.282Z"
+        }
+      ],
+      "sourceUnchanged": true,
+      "endedAt": "2026-11-03T10:34:01.286Z"
+    },
+    "causes": [
+      "stale session generation rejected but misclassified INTERNAL; corrected to VALIDATION",
+      "Windows birth-probe2s timeout under4-process contention; changed to bounded5s, fail-closed remains"
+    ]
+  },
+  "evidencePolicy": "Historical failures and their candidate snapshots remain unchanged. Only the final exact clean run proves this finite A2 acceptance."
+}

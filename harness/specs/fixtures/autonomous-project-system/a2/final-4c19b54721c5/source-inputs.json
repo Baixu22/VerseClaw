@@ -1,0 +1,135 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "sources": [
+    {
+      "path": "electron/services/task-ledger-actions.ts",
+      "sha256": "83e3be342cf182624b4e547db26f84bf338f792e4f909c25d51af2de4139f894"
+    },
+    {
+      "path": "harness/specs/rules/autonomy-task-action-boundary.md",
+      "sha256": "e6682c89035eee45512d0a8d66147f7723d5ddbb4901f2584d6057661221b6d3"
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-task-actions.md",
+      "sha256": "f8279d94cbb42e116b4a011dde35597076d7872c9c4384994eb77a8bc15fac6c"
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-task-actions.md",
+      "sha256": "7e1b3c63ff681b3df7de5e9e7a019900fbe6853cbd1365ea3ed9bb13ca575e5f"
+    },
+    {
+      "path": "shared/task-ledger-journal-lock.ts",
+      "sha256": "610373301a66d4d991e3f2ed3218d34a221a301f14100e42da00209b8826ba00"
+    },
+    {
+      "path": "shared/task-ledger-journal.ts",
+      "sha256": "94b514b62605b2ead20cc9012bdf3ceea4767d91e2bddb40bc2da22790dc8676"
+    },
+    {
+      "path": "shared/task-ledger-process.ts",
+      "sha256": "517f856034692d9a0221ec41ba9d5a56b8981774772a04490ff4578395324a15"
+    },
+    {
+      "path": "tests/e2e/autonomy-task-actions.spec.ts",
+      "sha256": "365c45e9862172e994c191653d1cc42749f0510f62795ad7c1be73777c447a82"
+    },
+    {
+      "path": "tests/fixtures/autonomy-task-action-worker.mts",
+      "sha256": "46032486515bfb36c3e385bac614dc2e2ebd7562033b97aa8278abf5733904da"
+    },
+    {
+      "path": "tests/unit/autonomy-task-actions.test.ts",
+      "sha256": "df3283b61f41d28c165a512dbe8a244bbd84ee277ebe286dec0abd606f62a173"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "a43cf898d2683c6a4b18acb9d4a162657d418e2e96424683592440439de1bbab"
+    },
+    {
+      "path": "electron/gateway/config-sync.ts",
+      "sha256": "0c6c066df8de4c59a13d7050cb1964554274e1d13e3f52b349d93e2732775ea0"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "9f671d39b6bb32a65216bf46c3ce01ecf862380ea773dc5c16e5fe97cccd3ff8"
+    },
+    {
+      "path": "electron/services/task-ledger-api.ts",
+      "sha256": "5e3d77e1598f30ffdbd5bbb4200b496fb9a37eb263fed65c0035966aa100a65a"
+    },
+    {
+      "path": "electron/services/task-ledger-service.ts",
+      "sha256": "7ca9e4e4a7f3a9b0220b50239489c6627832902de844b9a053dca7f75fe4db24"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.test.ts",
+      "sha256": "979a618bb498ecbfbdde7fdaa01238ece57c73a2b67621fde02aa1b69fc5008b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+      "sha256": "ec535381db57da6321e1347a3ecf80a90ea91ea4d8d9609423e79716dac06ed3"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/store-writer.ts",
+      "sha256": "03dc88fb554b5c6f7e9e238d79aa11a6e8222561e7452cebb49b809bb4f782c7"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "sha256": "788a927b16c1c86f8f96fd402824455e48599afc1b57e78d5fb86761ec3eef32"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "9ea855a8049ef62ea9678bd8435a60ee3ba51bd325eed08d496218191c996f06"
+    },
+    {
+      "path": "shared/types/session-activity.ts",
+      "sha256": "e82aa2b15521d3c50d9ed714058b74eefe254f44341ca5587e6662892e472bb0"
+    },
+    {
+      "path": "shared/types/task-ledger.ts",
+      "sha256": "1cbe3219bb65746318ace100290096e523c7c24a1f7f3760a6b76fce9a00df62"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "c1310ae321270024c73ebefb9731e4a956b0d6780888e4fb2e6bfac9a458a7fc"
+    },
+    {
+      "path": "tests/unit/config-sync-source-runtime.test.ts",
+      "sha256": "d29acc94616bdbd1c2c2c780b5d43f90e8ce6a852820b42da9868d460e4784d4"
+    },
+    {
+      "path": "tests/unit/host-api-facade.test.ts",
+      "sha256": "d4a4c468df3d1c2bee889fe8d939b6456de040cafeac0ee5ef5db1a8a2e8b7d6"
+    }
+  ],
+  "base": "84acb1acb2f21f236c391f440866c53549c3ff7a",
+  "canonicalTree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+  "dependencyReuse": {
+    "driven_by": "agent",
+    "actor": "codex-a2",
+    "root": "D:/ClawX-work/autonomy-host-readiness",
+    "source": "D:/ClawX/openclaw_runtime/node_modules",
+    "ownJunction": "D:/ClawX-work/autonomy-host-readiness/openclaw_runtime/node_modules",
+    "view": "D:/tmp/autonomy-a2-runtime-deps-20261103/runtime-node_modules",
+    "savedJunction": "D:/tmp/autonomy-a2-runtime-deps-20261103/original-runtime-node_modules-junction",
+    "loader": {
+      "package": "tsx",
+      "version": "4.22.3",
+      "path": "D:/tmp/autonomy-a2-runtime-deps-20261103/node-tooling/node_modules/tsx/dist/cli.mjs",
+      "sha256": "5c916fa6ecad44aedbb01ca5815536d00ea07de6b73eeb9443d317326b0218d8",
+      "versionOutput": "tsx v4.22.3\nnode v24.22.1\r\n"
+    },
+    "inheritedEntries": 774,
+    "sharedInstallModified": false,
+    "projectManifestsModified": false,
+    "recordedAt": "2026-11-03T09:52:33.665Z"
+  },
+  "inputs": "Clean exact commit, repository-pinned tsx4.22.3 plus explicitly reused existing dependencies; not a fresh dependency install."
+}

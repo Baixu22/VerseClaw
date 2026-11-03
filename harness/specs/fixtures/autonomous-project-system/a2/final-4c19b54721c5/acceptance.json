@@ -1,0 +1,93 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "task": "TF-0671",
+  "fullObjective": "TF-0664",
+  "verdict": "accepted",
+  "nodeClosureAllowed": true,
+  "requirements": [
+    "骨架层：L4 单一接入 + L2 请求范围",
+    "受控写集/复用点：electron/services/task-ledger-api.ts；electron/services/task-ledger-service.ts；shared/types/task-ledger.ts；shared/host-api/contract.ts；src/lib/host-api.ts",
+    "身份从已有host/runtime principal派生；模型不能自报user/system完成归因。",
+    "首次持久化operationId；同逻辑动作重试复用key，同参数新意图允许新key；同key异payload拒绝。",
+    "基于已有持久日志补workspace级串行提交与expectedRevision或等效CAS；批次内多个合法事件共享batch key不被误删。"
+  ],
+  "acceptance": [
+    {
+      "index": 0,
+      "text": "自动create/link/update经受控路径记录agent身份；现有手工编辑保留其真实身份和语义。",
+      "status": "verified",
+      "evidence": [
+        "task-action-receipts.json",
+        "main-runtime-journal.json",
+        "negative-controls.json"
+      ]
+    },
+    {
+      "index": 1,
+      "text": "两个陈旧revision写入恰一个成功；并发重复operation、追加后崩溃、projection损坏均可恢复且无重复逻辑效果。",
+      "status": "verified",
+      "evidence": [
+        "concurrent-replay.json",
+        "crash-recovery.json",
+        "negative-controls.json"
+      ]
+    },
+    {
+      "index": 2,
+      "text": "Host API/facade/service合同一致；不新增扁平IPC/renderer直连，不新建任务数据库。",
+      "status": "verified",
+      "evidence": [
+        "gates.json",
+        "review.json",
+        "source-inputs.json"
+      ]
+    },
+    {
+      "index": 3,
+      "text": "负例：伪造actor；同key异参；合法同参数新操作被误去重；批次部分提交后重放",
+      "status": "verified",
+      "evidence": [
+        "concurrent-replay.json",
+        "crash-recovery.json",
+        "negative-controls.json"
+      ]
+    },
+    {
+      "index": 4,
+      "text": "证据包含driven_by:agent、真实actor、source/candidate/输入配置版本、命令/exit/count、artifact hash、负例与未测范围；不以stdout或模型自述收口。",
+      "status": "verified",
+      "evidence": [
+        "gates.json",
+        "source-inputs.json",
+        "source-projection.json",
+        "review.json",
+        "raw-run-index.json",
+        "credential-scan.json",
+        "SHA256SUMS"
+      ]
+    }
+  ],
+  "limits": [
+    "A2 records trusted facts and safe logical retries; it is not independent task completion acceptance or tool authorization.",
+    "TF-0664 remains incomplete; A3 and later leaves are not covered.",
+    "Agent-driven scripted local-provider flow is not real-human or model-quality evidence.",
+    "Controlled process exits, lock publication interruption and PID-reuse fixtures are not power-loss, network-filesystem or long-term reliability proof.",
+    "Existing installed dependencies were reused; fresh install, packaged release, non-Windows native execution and globally green CI are not claimed.",
+    "See repository-residuals.json and prior-failures.json for explicit failures that this acceptance does not erase."
+  ],
+  "testChanges": {
+    "added": [
+      "tests/unit/autonomy-task-actions.test.ts",
+      "tests/fixtures/autonomy-task-action-worker.mts",
+      "tests/e2e/autonomy-task-actions.spec.ts"
+    ],
+    "retired": []
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a2",
+  "candidate": {
+    "commit": "4c19b54721c5fc31e4856941f24188ebb50ffecf",
+    "tree": "914090d4a643cebf362e916bfb8f36a6fa40f682",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-03T10:54:02.788Z",
+  "globalHarness": {
+    "exit": {
+      "exitCode": 1,
+      "driven_by": "agent",
+      "endedAt": "2026-11-03T07:50:49.9733322Z",
+      "actor": "codex-a2"
+    },
+    "serialAgentDev": {
+      "status": "blocked",
+      "reason": "playwright-agent-dev exceeded hard performance limits.",
+      "dailyLoopReady": false,
+      "releaseReady": false,
+      "fullGateComplete": true,
+      "budgetStatus": "limit",
+      "fastPathModes": [],
+      "requiredFullGates": [],
+      "watchSteps": [
+        "e2e-build",
+        "typecheck",
+        "i18n"
+      ],
+      "limitSteps": [
+        "playwright-agent-dev"
+      ]
+    },
+    "note": "Global harness CI is not green. Controlled full AgentDev functional gates passed, but40543ms Playwright exceeds unchanged40000ms budget. No gate/default relaxed."
+  },
+  "runtimeCoreTypes": {
+    "driven_by": "agent",
+    "actor": "codex-a2",
+    "baseline": "84acb1acb2f21f236c391f440866c53549c3ff7a",
+    "dependencyReuse": "existing explicit junctions; not fresh install",
+    "results": [
+      {
+        "label": "current",
+        "cwd": "D:/ClawX-work/autonomy-host-readiness/openclaw_runtime",
+        "args": [
+          "scripts/run-tsgo.mjs",
+          "-p",
+          "tsconfig.core.json",
+          "--incremental",
+          "--tsBuildInfoFile",
+          "D:/tmp/autonomy-a2-r8/core-current.tsbuildinfo"
+        ],
+        "pid": 4520,
+        "exitCode": 2,
+        "endedAt": "2026-11-03T09:20:20.306Z"
+      },
+      {
+        "label": "baseline",
+        "cwd": "D:/tmp/autonomy-a2-core-baseline-84ac-r8/openclaw_runtime",
+        "args": [
+          "scripts/run-tsgo.mjs",
+          "-p",
+          "tsconfig.core.json",
+          "--incremental",
+          "--tsBuildInfoFile",
+          "D:/tmp/autonomy-a2-r8/core-baseline.tsbuildinfo"
+        ],
+        "pid": 30200,
+        "exitCode": 2,
+        "endedAt": "2026-11-03T09:20:48.145Z"
+      }
+    ],
+    "status": "finished"
+  },
+  "note": "Remaining runtime core diagnostics reproduced on exact tracked base84ac; initial cache-write denial separately environmental. This leaf does not claim global type/CI/GA acceptance."
+}
