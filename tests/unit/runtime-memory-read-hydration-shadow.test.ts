@@ -73,7 +73,8 @@ describe("runtime memory readonly read hydration shadow helper", () => {
       openReadOnlyDatabase,
     })).toMatchObject({
       status: "skipped",
-      reason: "read_shadow_disabled",
+      // TF-0500 retires persist, so the flag gate now precedes readShadow.
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
@@ -94,7 +95,7 @@ describe("runtime memory readonly read hydration shadow helper", () => {
       },
     })).toMatchObject({
       status: "skipped",
-      reason: "database_path_required",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
       stats: expect.objectContaining({ inspectedAt: 200 }),
@@ -111,7 +112,7 @@ describe("runtime memory readonly read hydration shadow helper", () => {
       readShadow: true,
     })).toMatchObject({
       status: "skipped",
-      reason: "database_missing",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
@@ -133,7 +134,7 @@ describe("runtime memory readonly read hydration shadow helper", () => {
       readShadow: true,
     })).toMatchObject({
       status: "skipped",
-      reason: "table_missing",
+      reason: "flag_disabled",
       episodes: [],
       facts: [],
     });
@@ -149,171 +150,29 @@ describe("runtime memory readonly read hydration shadow helper", () => {
     }
   });
 
-  it("returns bounded sanitized episode summaries and fact projections only", () => {
+  it("cannot persist the sanitized summaries and projections this helper reads", () => {
+    // TF-0500 retired runtime.memory.persist, so the store cannot be seeded and
+    // the bounded projection assertions below are unreachable. The read path must
+    // stay inert rather than surface partial or raw data.
     const dbPath = createTempDbPath();
-    const firstEpisode = buildEpisode("phase21_episode_first", 10);
-    const secondEpisode = buildEpisode("phase21_episode_second", 20);
-    const sourceEpisodeRefs = [sourceEpisodeRef(firstEpisode)];
-    let persistedAt = 300;
     const persistence = createRuntimeMemoryPersistenceStore({
       config: { runtime: { memory: { persist: true } } },
       database: { path: dbPath },
-      now: () => persistedAt++,
+      now: () => 300,
+    });
+    expect(persistence.appendEpisode(buildEpisode("phase21_episode_first", 10))).toMatchObject({
+      status: "skipped",
+      reason: "flag_disabled",
     });
 
-    expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
-      status: "persisted",
-      stored: true,
-    });
-    expect(persistence.appendEpisode(secondEpisode)).toMatchObject({
-      status: "persisted",
-      stored: true,
-    });
-    expect(persistence.appendFact(buildRuntimeMemoryTemporalFactFixture({
-      factId: "phase21_fact",
-      taskId: "task_memory_hydration",
-      subject: "HydrationShadow",
-      predicate: "reads",
-      objectSummary: "Sanitized fact projection only.",
-      valid_at: 10,
-      reference_time: 10,
-      sourceEpisodeRefs,
-      metadata: {
-        safe: "kept",
-        prompt: "raw prompt",
-        env: "process.env SECRET traceparent",
-      },
-    }))).toMatchObject({
-      status: "persisted",
-      stored: true,
-    });
-    expect(persistence.appendFact(buildRuntimeMemoryTemporalFactCandidateFixture({
-      factId: "phase21_candidate",
-      taskId: "task_memory_hydration",
-      subject: "HydrationShadow",
-      predicate: "keeps",
-      objectSummary: "Candidate projection is still non-authoritative.",
-      verificationStatus: "candidate",
-      sourceEpisodeRefs,
-    }))).toMatchObject({
-      status: "persisted",
-      stored: true,
-    });
-
-    const writeDb = new DatabaseSync(dbPath);
-    try {
-      writeDb.prepare(
-        "UPDATE runtime_memory_episodes SET metadata_json = ?, record_json = ? WHERE episode_id = ?",
-      ).run(
-        JSON.stringify({
-          safe: "kept",
-          raw: "process.env SECRET traceparent transcript jsonl toolOutput",
-        }),
-        JSON.stringify({
-          raw: "raw task text self-check subagent template stdout stderr traceparent RuntimeMemoryProvider runtime authority",
-        }),
-        firstEpisode.episodeId,
-      );
-      writeDb.prepare(
-        "UPDATE runtime_memory_facts SET metadata_json = ?, record_json = ? WHERE fact_id = ?",
-      ).run(
-        JSON.stringify({
-          safe: "kept",
-          toolOutput: "stdout secret trace marker",
-        }),
-        JSON.stringify({
-          raw: "raw fact record self-check provider runtime authority",
-        }),
-        "phase21_fact",
-      );
-    } finally {
-      writeDb.close();
-    }
-
-    const before = inspectPersistenceTables(dbPath);
-    let readOnlyOpenCalls = 0;
-    const hydration = hydrateRuntimeMemoryShadowContext({
+    const result = hydrateRuntimeMemoryShadowContext({
       config: { runtime: { memory: { persist: true } } },
       databasePath: dbPath,
       readShadow: true,
-      limit: 1,
-      maxFacts: 1,
-      now: () => 400,
-      openReadOnlyDatabase: (pathname) => {
-        readOnlyOpenCalls += 1;
-        return new DatabaseSync(pathname, { readOnly: true });
-      },
     });
-    const after = inspectPersistenceTables(dbPath);
-
-    expect(readOnlyOpenCalls).toBe(2);
-    expect(after).toEqual(before);
-    expect(hydration).toEqual({
-      status: "loaded",
-      episodes: [
-        expect.objectContaining({
-          episodeId: "phase21_episode_first",
-          taskId: "task_memory_hydration",
-          kind: "verifier_summary",
-          boundedSummary: "Sanitized hydration evidence for phase21_episode_first.",
-          metadata: {
-            safe: "kept",
-            raw: "[redacted]",
-          },
-        }),
-      ],
-      facts: [
-        expect.objectContaining({
-          factId: "phase21_fact",
-          recordKind: "fact",
-          taskId: "task_memory_hydration",
-          subject: "HydrationShadow",
-          predicate: "reads",
-          objectSummary: "Sanitized fact projection only.",
-          metadata: {
-            safe: "kept",
-          },
-        }),
-      ],
-      stats: {
-        episodeCount: 2,
-        factCount: 2,
-        episodesReturned: 1,
-        factsReturned: 1,
-        episodeLimit: 1,
-        factLimit: 1,
-        truncated: true,
-        inspectedAt: 400,
-      },
-      diagnostics: [],
-      authority: {
-        diagnosticsOnly: true,
-        readonly: true,
-        noPromptInjection: true,
-        noProviderOrdering: true,
-        noRuntimeAuthority: true,
-        noDurableFactAuthority: true,
-      },
-    });
-
-    const serialized = JSON.stringify(hydration);
-    expect(serialized).not.toContain("record_json");
-    expect(serialized).not.toContain("raw task text");
-    expect(serialized).not.toContain("raw fact record");
-    expect(serialized).not.toContain("self-check");
-    expect(serialized).not.toContain("subagent");
-    expect(serialized).not.toContain("template");
-    expect(serialized).not.toContain("stdout secret");
-    expect(serialized).not.toContain("stderr");
-    expect(serialized).not.toContain("process.env");
-    expect(serialized).not.toContain("SECRET");
-    expect(serialized).not.toContain("traceparent");
-    expect(serialized).not.toContain("transcript");
-    expect(serialized).not.toContain("jsonl");
-    expect(serialized).not.toContain("toolOutput\":\"stdout");
-    expect(serialized).not.toContain("RuntimeMemoryProvider");
-    expect(serialized).not.toContain("provider runtime authority");
-    expect(serialized).not.toContain("runtimeAuthority");
+    expect(result.status).toBe("skipped");
+    expect(result.episodes).toHaveLength(0);
+    expect(result.facts).toHaveLength(0);
   });
 });
 
