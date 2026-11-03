@@ -82,7 +82,10 @@ const chargeLayerCounts = Object.fromEntries(
     countMatches(text, "tryRecordAttempt|recordAttempt"),
   ]),
 );
-const chargedLayers = Object.values(chargeLayerCounts).filter((count) => count > 0).length;
+const ambientChargeLayers = Object.entries(productionFiles).filter(([name, text]) =>
+  countMatches(text, "tryRecordAttempt|recordAttempt") > 0 &&
+  !(name === "retryAsync" && text.includes("explicitAttemptBudget")),
+).length;
 
 const humanLabels = {
   humanConfirmationSource: countMatches(memorySelfEditTools, "source: \"human_confirmation\""),
@@ -138,7 +141,7 @@ const commit = git(["rev-parse", "HEAD"]);
 
 const metrics = [
   metric("RETRY-1", "attempt identity collides with reversible budget count", "identity==usedCount AND success decrements usedCount", retry1, "boolean", "static", "Source shape only; the contract test reproduces the collision dynamically.", ["openclaw_runtime/src/agents/request-attempt-budget.ts"]),
-  metric("RETRY-2", "retry charging layers present for one logical request", "count(files calling tryRecordAttempt/recordAttempt)", chargedLayers, "layers", "static", "Counts production call sites, not per-request amplification; the dynamic sequence is measured by the contract test.", Object.keys(productionFiles)),
+  metric("RETRY-2", "ambient charging layers present for one logical request", "count(files charging ambient tryRecordAttempt without explicit opt-in gate)", ambientChargeLayers, "layers", "static", "After TF-0730 only provider transport charges ambient requests; retryAsync only charges an explicitly supplied budget. Dynamic recovery is measured by model-fallback.loop-termination.test.ts.", Object.keys(productionFiles)),
   metric("MEM-1", "agent self-edit emits human provenance labels", "count(human_confirmation)+count(human_approved)+count(promotedBy human)", humanLabels.humanConfirmationSource + humanLabels.humanApprovedStatus + humanLabels.promotedByHuman, "labels", "static", "Persist is retired, so these labels are unreachable today; this is a recovery gate.", ["openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts"]),
   metric("MEM-2", "independent commit steps inside one logical memory update", "sum(step count) for self-edit and curation", Math.max(0, updateTransactions.selfEditSequence - 1) + Math.max(0, updateTransactions.curationSequence - 1), "steps", "static", "Transaction boundaries are inherited from the persistence port; values are candidate windows, not observed corruption.", ["openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts", "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts"]),
   metric("VALID-1", "status classes currently collapsed into valid=true", "count(success, rateLimit, probe400)", falseReadyScenarios, "classes", "static", "Classes only; actual provider behavior varies by API. The 12-scenario matrix is the behavioral gate.", ["electron/services/providers/provider-validation.ts"]),
@@ -180,10 +183,3 @@ mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(OUT_FILE, JSON.stringify(report, null, 2) + "\n", "utf8");
 const digest = createHash("sha256").update(JSON.stringify(report)).digest("hex");
 console.log(JSON.stringify({ wrote: OUT_FILE, sha256: digest, metricCount: metrics.length }, null, 2));
-
-
-
-
-
-
-

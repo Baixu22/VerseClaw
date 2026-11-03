@@ -1524,12 +1524,10 @@ export async function runWithModelFallback<T>(
       }
     }
 
-    const fallbackPhysicalAttempt = attemptBudget
-      ? attemptBudget.tryRecordAttempt({ layer: "model-fallback", outcome: "failure" })
-      : i + 1;
-    if (fallbackPhysicalAttempt === undefined) {
+    if (attemptBudget && !attemptBudget.canRetry()) {
       break;
     }
+    attemptBudget?.noteAttemptDecision({ layer: "model-fallback", reason: `candidate:${i + 1}` });
     const attemptRun = await runFallbackAttempt({
       run: params.run,
       ...candidate,
@@ -1542,7 +1540,6 @@ export async function runWithModelFallback<T>(
       abortSignal: params.abortSignal,
     });
     if ("success" in attemptRun) {
-      attemptBudget?.completeAttempt(fallbackPhysicalAttempt, "success");
       if (i > 0 || attempts.length > 0 || attemptedDuringCooldown) {
         await observeDecision({
           decision: "candidate_succeeded",
@@ -1569,7 +1566,6 @@ export async function runWithModelFallback<T>(
       }
       return attemptRun.success;
     }
-    attemptBudget?.completeAttempt(fallbackPhysicalAttempt, "failure");
     const err = attemptRun.error;
     {
       // Local runtime coordination errors (session write-lock timeout, embedded

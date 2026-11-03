@@ -16,6 +16,11 @@ export type RequestAttemptBudgetOptions = {
   retryAfterMs?: number;
 };
 
+export type RequestAttemptDecision = {
+  layer: string;
+  reason: string;
+};
+
 export type RequestAttemptRecord = {
   /** Monotonic one-based identity. Never reused, never derived from the budget balance. */
   physicalAttempt: number;
@@ -31,6 +36,7 @@ export type RequestAttemptBudgetSnapshot = {
   remaining: number;
   retryAfterMs?: number;
   attempts: RequestAttemptRecord[];
+  decisions: RequestAttemptDecision[];
 };
 
 function normalizeMaxAttempts(value: number): number {
@@ -62,6 +68,7 @@ export class RequestAttemptBudget {
   /** Attempt ids whose outcome has been committed. Default provisional failure does not count. */
   private readonly completedAttempts = new Set<number>();
   private readonly records: RequestAttemptRecord[] = [];
+  private readonly decisions: RequestAttemptDecision[] = [];
   private retryAfter: number | undefined;
 
   constructor(options: RequestAttemptBudgetOptions) {
@@ -146,6 +153,11 @@ export class RequestAttemptBudget {
     }
   }
 
+  /** Records a non-charging layer decision for observability. */
+  noteAttemptDecision(decision: RequestAttemptDecision): void {
+    this.decisions.push({ ...decision });
+  }
+
   /** Returns undefined when the budget is exhausted; does not itself sleep or retry. */
   tryRecordAttempt(record: Omit<RequestAttemptRecord, "physicalAttempt"> = {}): number | undefined {
     return this.canRetry() ? this.recordAttempt(record) : undefined;
@@ -170,6 +182,7 @@ export class RequestAttemptBudget {
       remaining: this.remaining,
       ...(this.retryAfter !== undefined ? { retryAfterMs: this.retryAfter } : {}),
       attempts: this.records.map((record) => ({ ...record })),
+      decisions: this.decisions.map((decision) => ({ ...decision })),
     };
   }
 }

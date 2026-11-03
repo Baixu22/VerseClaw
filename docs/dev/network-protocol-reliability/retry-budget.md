@@ -15,13 +15,13 @@ The budget is exposed through runWithRequestAttemptBudget and getRequestAttemptB
 
 `physicalAttempt` is a monotonic attempt identity and is never derived from `usedCount`. `usedCount` is the reversible failure budget: a successful completion releases its slot, but the released identity is never reused. `completeAttempt` is idempotent through a separate completed-attempt set. This fixes the success→failure overwrite reproduced by `tests/unit/semantic-convergence-retry-identity.test.ts`.
 
-Known remaining gap: provider transport, agent auto-retry, model fallback and retryAsync still each call the budget; TF-0730 will make only the actual outbound request charge a physical attempt and have upper layers gate/annotate instead. Until then, RETRY-2's baseline remains four charging layers.
+After TF-0730, only the actual provider transport charges an ambient physical attempt. Agent auto-retry and model fallback gate on canRetry() and record non-charging decisions; retryAsync charges only an explicitly supplied budget (not the ambient one). This removes the double charge that previously consumed a four-slot budget after two failed physical requests.
 
 ## Layer behavior
 
-- Agent auto-retry (agent-session.ts) creates the budget at the turn boundary and records each auto-retry attempt as agent-auto-retry.
-- Model fallback (model-fallback.ts) records one budget entry per candidate attempt as model-fallback; when the budget is exhausted it stops trying further candidates.
-- Generic retry runner (infra/retry.ts) accepts an optional budget and also reads the ambient budget; each physical call is recorded as retryAsync or the caller-supplied layer.
+- Agent auto-retry (agent-session.ts) creates the budget at the turn boundary, gates on canRetry(), and records a non-charging agent-auto-retry decision.
+- Model fallback (model-fallback.ts) gates on canRetry() and records a non-charging model-fallback decision per candidate; the actual provider transport charges the candidate request.
+- Generic retry runner (infra/retry.ts) reads the ambient budget only as a gate; it charges only an explicitly supplied attemptBudget, so wrapping a provider request does not double-charge.
 - Provider transport (provider-transport-fetch.ts) reads the ambient budget at fetch time and records each outbound request as provider-transport; an exhausted budget fails closed before sending.
 - SDK/provider retry hints (provider-transport-fetch.ts) retain the existing long-Retry-After bypass; the logical budget owns cross-layer retry decisions.
 

@@ -20,7 +20,7 @@ describe("retryAsync shared attempt budget", () => {
     });
   });
 
-  it("consumes the ambient logical-request budget without an explicit option", async () => {
+  it("does not charge the ambient budget when the operation does not record a physical attempt", async () => {
     const budget = createRequestAttemptBudget({ maxPhysicalAttempts: 2 });
     const fn = vi.fn().mockRejectedValueOnce(new Error("503")).mockResolvedValue("ambient-ok");
     await expect(
@@ -29,12 +29,9 @@ describe("retryAsync shared attempt budget", () => {
       ),
     ).resolves.toBe("ambient-ok");
     expect(budget.snapshot()).toMatchObject({
-      used: 1,
-      remaining: 1,
-      attempts: [
-        { physicalAttempt: 1, layer: "ambient-retry", outcome: "failure" },
-        { physicalAttempt: 2, layer: "ambient-retry", outcome: "success" },
-      ],
+      used: 0,
+      remaining: 2,
+      attempts: [],
     });
   });
 

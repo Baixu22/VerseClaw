@@ -2784,9 +2784,12 @@ export class AgentSession {
         maxPhysicalAttempts: Math.max(1, settings.maxRetries + 1),
       }));
     retryBudget.setRetryAfterMs(parseRetryAfterMsFromText(message.errorMessage));
-    if (retryBudget.tryRecordAttempt({ layer: "agent-auto-retry", outcome: "failure" }) === undefined) {
+    // Auto-retry only gates and annotates. The actual outbound provider request
+    // is the single owner that charges the shared physical-attempt budget.
+    if (!retryBudget.canRetry()) {
       return false;
     }
+    retryBudget.noteAttemptDecision({ layer: "agent-auto-retry", reason: "retryable_error" });
 
     this.retryCount++;
 

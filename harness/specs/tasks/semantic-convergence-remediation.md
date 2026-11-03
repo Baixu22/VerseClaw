@@ -16,6 +16,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/request-attempt-budget.test.ts
   - openclaw_runtime/src/agents/provider-transport-fetch.ts
   - openclaw_runtime/src/agents/model-fallback.ts
+  - openclaw_runtime/src/agents/model-fallback.loop-termination.test.ts
   - openclaw_runtime/src/agents/sessions/agent-session.ts
   - openclaw_runtime/src/infra/retry.ts
   - openclaw_runtime/src/infra/retry.test.ts
@@ -81,7 +82,3 @@ docs:
 # Non-goals
 
 No product lock/default/release change; no Runtime Memory persist restoration; no second memory/context/retry/telemetry store; no claim of real-human evidence; no GA.
-
-
-
-
