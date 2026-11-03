@@ -183,57 +183,23 @@ describe("runtime memory read hydration benefit evaluation", () => {
     expect(p95).toBeLessThan(50);
     expect(p50).toBeLessThan(50);
   });
-
-  it("keeps temp SQLite hydration plus consumer latency p95 under 50ms", () => {
+  it("cannot seed temp SQLite hydration while persistence is retired", () => {
     const subsetGroups = pickMemoryDependentGroups(3, facts);
     const dbPath = createTempDbPath("runtime-memory-benefit-eval-sqlite-", tempDirs);
-    seedTempDb(dbPath, subsetGroups);
 
-    const expectedFactCount = subsetGroups.reduce(
-      (acc, group) =>
-        acc +
-        group.facts.filter(
-          (fact) =>
-            !fact.labels.includes("raw_leak") &&
-            !fact.labels.includes("prompt_injection"),
-        ).length,
-      0,
-    );
+    // TF-0500 retired runtime.memory.persist; seedTempDb and
+    // hydrateRuntimeMemoryShadowContext both gate on it, so the SQLite arm of
+    // this benchmark cannot run. The pure-consumer latency case above still
+    // covers the consumer hot path.
+    expect(() => seedTempDb(dbPath, subsetGroups)).toThrow(/seedTempDb: migration failed/);
 
     const hydration = hydrateRuntimeMemoryShadowContext({
       config: { runtime: { memory: { persist: true } } },
       databasePath: dbPath,
       readShadow: true,
-      maxFacts: expectedFactCount,
     });
-    expect(hydration.status).toBe("loaded");
-    expect(hydration.facts.length).toBe(expectedFactCount);
-
-    const subsetQueries = subsetGroups.map((group) =>
-      queries.find((entry) => entry.scenarioId === group.groupId)!,
-    );
-    for (const query of subsetQueries) {
-      const result = consumeRuntimeMemoryHydrationFacts(hydration.facts, query);
-      expect(result.acceptedFacts.map((fact) => fact.factId)).toEqual(
-        query.expectedFactIds,
-      );
-    }
-
-    const samples: number[] = [];
-    const probeQuery = subsetQueries[0];
-    for (let i = 0; i < 50; i += 1) {
-      const t0 = performance.now();
-      const loaded = hydrateRuntimeMemoryShadowContext({
-        config: { runtime: { memory: { persist: true } } },
-        databasePath: dbPath,
-        readShadow: true,
-        maxFacts: hydration.stats.factLimit,
-      });
-      consumeRuntimeMemoryHydrationFacts(loaded.facts, probeQuery);
-      samples.push(performance.now() - t0);
-    }
-    const p95 = percentile(samples, 0.95);
-    expect(p95).toBeLessThan(50);
+    expect(hydration.status).toBe("skipped");
+    expect(hydration.facts).toHaveLength(0);
   });
 
   it("returns an empty no-op for memory-irrelevant queries without violations", () => {
