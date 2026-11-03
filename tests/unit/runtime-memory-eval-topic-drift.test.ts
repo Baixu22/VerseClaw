@@ -56,122 +56,58 @@ describe("runtime memory topic drift evaluation", () => {
     expect(totalQueries).toBe(12);
   });
 
-  it("perTopicRecall = 1 for all topics when all facts are seeded", () => {
+  it("keeps retired topic-drift evaluation from seeding or reading a database", () => {
     const segments = buildTopicSegments({
       topicCount: TOPIC_COUNT,
       turnsPerTopic: TURNS_PER_TOPIC,
       taskId: TASK_ID,
       referenceTime: REFERENCE_TIME,
     });
-    const dbPath = createTempDbPath("topic-all-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const seg of segments) {
-      appendFactToDb(dbPath, seg.writeFact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
 
-    const diagnostics = runTopicDiagnostics(segments, dbPath);
-    const result = evaluateTopicDrift(segments, diagnostics);
+    // TF-0500 retired runtime.memory.persist; both the fixture seeding above and
+    // the read-hydration shadow diagnostics below depend on it.
+    expect(segments).toHaveLength(TOPIC_COUNT);
 
-    expect(result.perTopicRecall).toHaveLength(3);
-    for (const topic of result.perTopicRecall) {
-      expect(topic.recall).toBe(1);
-    }
+    const dbPath = createTempDbPath("topic-retired-", tempDirs);
+    expect(tryInitializeDb(dbPath)).toBe("flag_disabled");
+    expect(() => appendFactToDb(dbPath, segments[0].writeFact)).toThrow(/appendFact failed .*status=skipped/);
   });
 
-  it("crossTopicInterference = 0 when subjects are distinct", () => {
+  it("still aggregates a fully supplied topic-drift scenario without persistence", () => {
     const segments = buildTopicSegments({
       topicCount: TOPIC_COUNT,
       turnsPerTopic: TURNS_PER_TOPIC,
       taskId: TASK_ID,
       referenceTime: REFERENCE_TIME,
     });
-    const dbPath = createTempDbPath("topic-isolation-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const seg of segments) {
-      appendFactToDb(dbPath, seg.writeFact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
+    // Use the real diagnostics builder so the shape stays authoritative. Without
+    // the retired persist/hydration path it reports skipped and recalls nothing.
+    const diagnostics = segments
+      .flatMap((seg) => seg.queries)
+      .map((query, index) =>
+        buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
+          config: CONFIG,
+          options: {},
+          loopRunId: `topic-retired-${index}`,
+          sessionKey: "agent:main:topic-drift",
+          iteration: index,
+          query,
+        } as never),
+      );
 
-    const diagnostics = runTopicDiagnostics(segments, dbPath);
     const result = evaluateTopicDrift(segments, diagnostics);
-
-    expect(result.crossTopicInterference).toBe(0);
-  });
-
-  it("topic B recall = 0 when topic B fact is not seeded", () => {
-    const segments = buildTopicSegments({
-      topicCount: TOPIC_COUNT,
-      turnsPerTopic: TURNS_PER_TOPIC,
-      taskId: TASK_ID,
-      referenceTime: REFERENCE_TIME,
-    });
-    const dbPath = createTempDbPath("topic-missing-b-", tempDirs);
-    initializeEmptyDb(dbPath);
-    // Seed only topics A and C (skip B).
-    appendFactToDb(dbPath, segments[0].writeFact);
-    appendFactToDb(dbPath, segments[2].writeFact);
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
-
-    const diagnostics = runTopicDiagnostics(segments, dbPath);
-    const result = evaluateTopicDrift(segments, diagnostics);
-
-    expect(result.perTopicRecall[0].recall).toBe(1);
-    expect(result.perTopicRecall[1].recall).toBe(0);
-    expect(result.perTopicRecall[2].recall).toBe(1);
-  });
-
-  it("driftRecoveryTime = 1 when second segment recovers immediately", () => {
-    const segments = buildTopicSegments({
-      topicCount: TOPIC_COUNT,
-      turnsPerTopic: TURNS_PER_TOPIC,
-      taskId: TASK_ID,
-      referenceTime: REFERENCE_TIME,
-    });
-    const dbPath = createTempDbPath("topic-recovery-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const seg of segments) {
-      appendFactToDb(dbPath, seg.writeFact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
-
-    const diagnostics = runTopicDiagnostics(segments, dbPath);
-    const result = evaluateTopicDrift(segments, diagnostics);
-
-    expect(result.driftRecoveryTime).toBe(1);
-  });
-
-  it("totalTurns equals sum of all segment turns", () => {
-    const segments = buildTopicSegments({
-      topicCount: TOPIC_COUNT,
-      turnsPerTopic: TURNS_PER_TOPIC,
-      taskId: TASK_ID,
-      referenceTime: REFERENCE_TIME,
-    });
-    const dbPath = createTempDbPath("topic-total-", tempDirs);
-    initializeEmptyDb(dbPath);
-    for (const seg of segments) {
-      appendFactToDb(dbPath, seg.writeFact);
-    }
-    closeRuntimeMemoryHydrationShadowDatabasesForTest();
-
-    const diagnostics = runTopicDiagnostics(segments, dbPath);
-    const result = evaluateTopicDrift(segments, diagnostics);
-
     expect(result.totalTurns).toBe(TOPIC_COUNT * TURNS_PER_TOPIC);
-    expect(diagnostics).toHaveLength(result.totalTurns);
   });
 });
 
-function initializeEmptyDb(dbPath: string): void {
+function tryInitializeDb(dbPath: string): string {
   const persistence = createRuntimeMemoryPersistenceStore({
     config: CONFIG,
     database: { path: dbPath },
     now: () => REFERENCE_TIME,
   });
-  if (persistence.migrate().status !== "migrated") {
-    throw new Error(`initializeEmptyDb: migration failed for ${dbPath}`);
-  }
+  const result = persistence.migrate();
+  return result.status === "skipped" ? result.reason : result.status;
 }
 
 function runTopicDiagnostics(
