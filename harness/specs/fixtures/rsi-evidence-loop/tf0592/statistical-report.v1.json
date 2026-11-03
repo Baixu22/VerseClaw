@@ -1,7 +1,7 @@
 {
   "schemaVersion": "RsiTf0592StatisticalReport/v1",
   "taskId": "TF-0592",
-  "generatedAt": "2026-11-03T15:44:11.402Z",
+  "generatedAt": "2026-11-03T17:16:48.853Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "inputs": {
@@ -17,20 +17,27 @@
   },
   "resourceFingerprint": {
     "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-    "generatedAt": "2026-11-03T15:44:11.402Z",
+    "generatedAt": "2026-11-03T17:16:48.853Z",
     "driven_by": "agent",
     "actor": "codex/rsi-tf0592-executor",
     "candidate": {
-      "commit": "d88f058b175f698a51badda3a25a68ef1b8c7b6e",
-      "tree": "e6a1e7695843365e1e2f96dcd51fd1e4c5cade5b",
-      "branch": "",
+      "commit": "7c7114b659ff1fc6250a7c2bef57af70b5790621",
+      "tree": "ef7a6c134de2563ee7762cd7b49bee36a0702dc0",
+      "branch": "main",
       "dirty": false,
       "dirtyPaths": [],
       "unrelatedDirtyPaths": [
-        "arness/specs/fixtures/agent-first-task-corpus/SHA256SUMS",
-        "harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json",
-        "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json",
-        "harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json"
+        "electron/services/session-delegation-admission.ts",
+        "electron/services/sessions-api.ts",
+        "openclaw_runtime/src/agents/request-attempt-budget.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "artifacts/runs/verse-claw-e2e-run-T7dpfm/verse-claw-e2e-home-OHZHqI/.openclaw/workspace/",
+        "artifacts/runs/verse-claw-e2e-run-T7dpfm/verse-claw-e2e-home-bbcmmn/a3-positive-source/",
+        "artifacts/runs/verse-claw-e2e-run-k0yygs/verse-claw-e2e-home-hh3wZO/a3-positive-source/",
+        "artifacts/runs/verse-claw-e2e-run-tmcAE5/verse-claw-e2e-home-l74BeZ/a3-positive-source/",
+        "harness/specs/tasks/semantic-convergence-remediation.md",
+        "scripts/semantic-convergence-baseline.mjs",
+        "tests/unit/semantic-convergence-retry-identity.test.ts"
       ],
       "sourceHashes": {
         "scripts/rsi-tf0592-statistical-adjudication.mjs": "f58483cf50346cdf11bfa12fc60eaaa74aebeab1f81f0741953195f1fcb1f3ac",
@@ -39,7 +46,7 @@
         "scripts/lib/reliability-aggregation.mjs": "1992d1aa0f64649b049b364cbb7241dc739dd3ef4329787ba8beaab358ebc3ed",
         "scripts/lib/paired-ablation.mjs": "f13dbe9835585ae929ec44488efef28f7c95ea5e1b19d80ee063259fde7cdeaa",
         "scripts/lib/entrypoint.mjs": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b",
-        "scripts/lib/evidence-binding.mjs": "78828b3ec560ba3d0fddea8b88fcf34e71cf1336c549906eb3899fcb3c02c52e",
+        "scripts/lib/evidence-binding.mjs": "ae85cd1c8b1fe67e6b74340915d6ee3ac0c299ddf39205e0b910d2f4d4fe2184",
         "scripts/lib/evidence-binding.d.mts": "65c6e917f1b740516a635f954e32f26b9e8f774a674ec700544a1efbfcc81a4f",
         "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "ec8ce0fed5f80afef426ab47b33a1253e86ff746c5bfb43969c3d3adc19f5472",
         "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "1b060525196b9af60a68621882242ca0a59b71a4b704a44a56e547ebad92fd68",
@@ -62,9 +69,9 @@
     "observedResources": {
       "cpuCount": 16,
       "totalMemoryBytes": 16295432192,
-      "freeMemoryBytes": 3013677056,
+      "freeMemoryBytes": 1321299968,
       "disk": {
-        "freeBytes": 118616293376,
+        "freeBytes": 120570785792,
         "totalBytes": 701020237824,
         "status": "measured"
       }
