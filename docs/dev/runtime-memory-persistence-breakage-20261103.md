@@ -237,3 +237,33 @@ fs.writeFileSync(path, out, "utf8");
 闭合括号，导致 `Unexpected end of file`），都是从 `git checkout -- <file>` 恢复后重做。
 另外：`String.replace` 对含 CRLF 的多行块容易静默不匹配，**替换后必须断言替换确实发生**
 （`out !== before`），否则会出现"改了没生效"却误以为已修。
+
+## 12. G2 完成记录（2026-11-03）
+
+10 个"离线评测 fixture"套件全部完成退役对齐，合并运行结果：
+
+```
+10 suites / 21 files / 23 tests / 0 failed / 1 skipped
+```
+
+逐个提交：
+
+| 套件 | 提交 | 覆盖变化 |
+| --- | --- | --- |
+| eval-chain-eval | 4a8806ebe | 6 → 3（保留纯构造 + 纯聚合） |
+| eval-topic-drift | 05e776f01 | 6 → 3（同上） |
+| eval-conflict-resolution | 858fd13ff | 6 → 3（同上） |
+| eval-budget-pressure | 6303c3f31 | 7 → 3（同上） |
+| eval-temporal-evolution | a43b7aaf4 | 7 → 1（全部依赖建库） |
+| eval-aggregate-report-real | 7e97bd5be | 15 → 2 |
+| eval-enhanced-integration | 5e5a7d5e8 | 7 → 2 |
+| eval-latency-benchmark-real | 330376a61 | 9 → 1 |
+| locomo-benchmark | 589ccf96e | 4 → 4（只改失败的那个） |
+| read-hydration-long-conversation-eval | 1030898b0 | 6 → 1 |
+
+**这些是覆盖缩减，不是等价替换。** 原来的断言测量的是"退役能力真实可用时"的
+性能/质量指标；能力退役后这些指标无法产生，保留断言只会让套件永久红。
+每个 commit message 都写明了具体缩减幅度。
+
+对于仍可独立验证的纯函数（scenario 构造、evaluate* 聚合、fixture 结构校验、
+短缺点分析），覆盖全部保留。
