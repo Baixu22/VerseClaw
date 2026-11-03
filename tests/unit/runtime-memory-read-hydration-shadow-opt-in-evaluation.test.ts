@@ -28,10 +28,13 @@ afterEach(() => {
 });
 
 describe("runtime memory read hydration shadow opt-in quality evaluation", () => {
-  it("shows positive memory effect only with explicit consumer guards", () => {
-    const dbPath = createMockRuntimeMemoryDatabase();
+  it("keeps the retired shadow read on the skipped path and still evaluates a baseline", () => {
+    // The fixture helper writes through the retired store, so it cannot be used
+    // here; a fresh temp path still exercises the earlier flag gate.
+    const dbPath = createTempDbPath();
 
-    const startedAt = performance.now();
+    // TF-0500 retired runtime.memory.persist, which readRuntimeMemoryHydrationShadow
+    // checks first; an explicit readShadow request cannot reach "loaded" anymore.
     const hydration = readRuntimeMemoryHydrationShadow({
       config: { runtime: { memory: { persist: true } } },
       databasePath: dbPath,
@@ -40,29 +43,15 @@ describe("runtime memory read hydration shadow opt-in quality evaluation", () =>
       maxFacts: 16,
       now: () => EVALUATION_TIME,
     });
-    const hydrationLatencyMs = performance.now() - startedAt;
+    expect(hydration.status).toBe("skipped");
+    expect(hydration.facts).toHaveLength(0);
 
-    expect(hydration.status).toBe("loaded");
-    if (hydration.status !== "loaded") {
-      throw new Error("mock opt-in hydration evaluation expected loaded facts");
-    }
-
+    // The pure effect evaluator stays covered: no facts means no memory effect.
     const baseline = evaluateMemoryEffect({
       mode: "baseline",
       facts: [],
       latencyMs: 0,
     });
-    const naiveHydration = evaluateMemoryEffect({
-      mode: "naive",
-      facts: hydration.facts,
-      latencyMs: hydrationLatencyMs,
-    });
-    const guardedHydration = evaluateMemoryEffect({
-      mode: "guarded",
-      facts: hydration.facts,
-      latencyMs: hydrationLatencyMs,
-    });
-
     expect(baseline).toMatchObject({
       mode: "baseline",
       assessment: "negative_no_memory_effect",
@@ -74,30 +63,6 @@ describe("runtime memory read hydration shadow opt-in quality evaluation", () =>
       failureNoOpRate: 1,
       tokenOverhead: 0,
     });
-
-    expect(naiveHydration.assessment).toBe("negative_without_consumer_guards");
-    expect(naiveHydration.recallAtK).toBe(1);
-    expect(naiveHydration.precision).toBeLessThan(0.5);
-    expect(naiveHydration.staleInvalidFactSuppressionRate).toBe(0);
-    expect(naiveHydration.promptInjectionRate).toBeGreaterThan(0);
-    expect(naiveHydration.rawLeakRate).toBe(0);
-    expect(naiveHydration.failureNoOpRate).toBe(0);
-
-    expect(guardedHydration).toMatchObject({
-      mode: "guarded",
-      assessment: "positive_in_mock_corpus_with_required_guards",
-      recallAtK: 1,
-      precision: 1,
-      staleInvalidFactSuppressionRate: 1,
-      promptInjectionRate: 0,
-      rawLeakRate: 0,
-      failureNoOpRate: 0,
-    });
-    expect(guardedHydration.tokenOverhead).toBeGreaterThan(0);
-    expect(guardedHydration.latencyOverheadMs).toBeGreaterThanOrEqual(0);
-    expect(guardedHydration.latencyOverheadMs).toBeLessThan(500);
-    expect(guardedHydration.precision).toBeGreaterThan(naiveHydration.precision);
-    expect(guardedHydration.tokenOverhead).toBeLessThan(naiveHydration.tokenOverhead);
   });
 });
 
