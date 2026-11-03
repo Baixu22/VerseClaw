@@ -1,0 +1,409 @@
+{
+  "schema": "AutonomyA5Gates/v2",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "gates": [
+    {
+      "name": "runtime-build",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "build:runtime"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:34:16.6405861Z",
+      "completedAt": "2026-11-03T03:34:56.1480792Z",
+      "durationMs": 39507,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\runtime-build.log"
+    },
+    {
+      "name": "vite-build",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "build:vite"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:34:56.1584627Z",
+      "completedAt": "2026-11-03T03:35:56.6647134Z",
+      "durationMs": 60506,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\vite-build.log"
+    },
+    {
+      "name": "unit",
+      "runner": "node",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/autonomy-host-readiness.test.ts",
+        "tests/unit/autonomy-runtime-workspace-scope.test.ts",
+        "tests/unit/config-sync-source-runtime.test.ts",
+        "tests/unit/gateway-doctor-repair-env.test.ts",
+        "tests/unit/gateway-manager-diagnostics.test.ts",
+        "tests/unit/gateway-manager-restart-recovery.test.ts",
+        "tests/unit/long-session-effective-policy.test.ts",
+        "tests/unit/session-activity-background-read.test.ts",
+        "tests/unit/workspace-preflight.test.ts",
+        "tests/unit/gateway-process-launcher-env.test.ts",
+        "tests/unit/runtime-effective-capability.test.ts",
+        "tests/unit/user-message-queue.test.ts",
+        "tests/unit/chat-send-input-mode.test.ts",
+        "tests/unit/model-capability-positioning-tf0507.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile",
+        "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\unit.json"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:35:56.6676557Z",
+      "completedAt": "2026-11-03T03:38:11.3843541Z",
+      "durationMs": 134717,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\unit.log"
+    },
+    {
+      "name": "typecheck",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:38:11.3882765Z",
+      "completedAt": "2026-11-03T03:38:44.7503863Z",
+      "durationMs": 33362,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\typecheck.log"
+    },
+    {
+      "name": "lint",
+      "runner": "node",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "electron/gateway/process-launcher.ts",
+        "tests/unit/gateway-process-launcher-env.test.ts",
+        "tests/unit/autonomy-runtime-workspace-scope.test.ts",
+        "tests/unit/runtime-effective-capability.test.ts",
+        "tests/unit/user-message-queue.test.ts",
+        "tests/unit/chat-send-input-mode.test.ts",
+        "tests/e2e/autonomy-host-readiness.spec.ts",
+        "tests/e2e/autonomy-runtime-readiness.spec.ts"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:38:44.7826432Z",
+      "completedAt": "2026-11-03T03:38:48.4004270Z",
+      "durationMs": 3618,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\lint.log"
+    },
+    {
+      "name": "contract",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "contract:check"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:38:48.4064500Z",
+      "completedAt": "2026-11-03T03:38:49.6172627Z",
+      "durationMs": 1211,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\contract.log"
+    },
+    {
+      "name": "semantic-authority",
+      "runner": "node",
+      "args": [
+        "scripts/check-semantic-authority.mjs"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:38:49.6258854Z",
+      "completedAt": "2026-11-03T03:38:50.1924637Z",
+      "durationMs": 567,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\semantic-authority.log"
+    },
+    {
+      "name": "comms-replay",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "comms:replay"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:38:50.1974137Z",
+      "completedAt": "2026-11-03T03:38:51.4631896Z",
+      "durationMs": 1266,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "comms:compare"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:38:51.4686771Z",
+      "completedAt": "2026-11-03T03:38:52.5194216Z",
+      "durationMs": 1051,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\comms-compare.log"
+    },
+    {
+      "name": "harness-ci",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "harness:ci"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:38:52.5244432Z",
+      "completedAt": "2026-11-03T03:39:18.4607707Z",
+      "durationMs": 25937,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\harness-ci.log"
+    },
+    {
+      "name": "harness-validate",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-host-readiness.md"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:39:18.4649642Z",
+      "completedAt": "2026-11-03T03:39:20.3625129Z",
+      "durationMs": 1898,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\harness-validate.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "runner": "pnpm",
+      "args": [
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-host-readiness.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:39:20.3655737Z",
+      "completedAt": "2026-11-03T03:39:22.2150667Z",
+      "durationMs": 1849,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\harness-dry-run.log"
+    },
+    {
+      "name": "diff-check",
+      "runner": "git",
+      "args": [
+        "diff",
+        "--check",
+        "d0723901104107e602efb7473aae4e1975663398",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-03T03:39:22.2184149Z",
+      "completedAt": "2026-11-03T03:39:22.3262797Z",
+      "durationMs": 108,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\diff-check.log"
+    },
+    {
+      "name": "e2e",
+      "runner": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/autonomy-host-readiness.spec.ts",
+        "tests/e2e/autonomy-runtime-readiness.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-resume-20261103T051143Z\\e2e-results"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-11-03T05:11:43.856Z",
+      "completedAt": "2026-11-03T05:44:51.758Z",
+      "durationMs": 1987902,
+      "log": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-resume-20261103T051143Z\\e2e.log"
+    }
+  ],
+  "unit": {
+    "total": 165,
+    "passed": 165,
+    "failed": 0,
+    "skipped": 0,
+    "files": [
+      {
+        "file": "tests/unit/autonomy-host-readiness.test.ts",
+        "total": 21,
+        "passed": 21,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/autonomy-runtime-workspace-scope.test.ts",
+        "total": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/chat-send-input-mode.test.ts",
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/config-sync-source-runtime.test.ts",
+        "total": 17,
+        "passed": 17,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/gateway-doctor-repair-env.test.ts",
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/gateway-manager-diagnostics.test.ts",
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/gateway-manager-restart-recovery.test.ts",
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/gateway-process-launcher-env.test.ts",
+        "total": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/long-session-effective-policy.test.ts",
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/model-capability-positioning-tf0507.test.ts",
+        "total": 30,
+        "passed": 30,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/runtime-effective-capability.test.ts",
+        "total": 19,
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/session-activity-background-read.test.ts",
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/user-message-queue.test.ts",
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "tests/unit/workspace-preflight.test.ts",
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "e2e": {
+    "stats": {
+      "startTime": "2026-11-03T05:11:46.091Z",
+      "duration": 1985506.019,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "title": "TF-0674 actual host probes, production close-to-tray continuation and restart recovery",
+        "status": "passed",
+        "durationMs": 1944901,
+        "retry": 0
+      },
+      {
+        "title": "reads actual Gateway tool exposure and continues the same isolated session after runtime restart",
+        "status": "passed",
+        "durationMs": 35647,
+        "retry": 0
+      }
+    ]
+  },
+  "sourceGuard": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "79a170cbb7bd344785c70af91ed0c6a307ddd117d4ef82ee4e3f686f40fb65b9",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "79a170cbb7bd344785c70af91ed0c6a307ddd117d4ef82ee4e3f686f40fb65b9",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "processCleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX\\artifacts\\runs\\autonomy-a5-clean-e0113c9507b3-resume-20261103T051143Z\\verse-claw-e2e-run-m7602f",
+    "ledgerEntries": 2,
+    "reaped": [
+      {
+        "pid": 26932,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      },
+      {
+        "pid": 16344,
+        "aliveBefore": false,
+        "nodeKill": false,
+        "taskkill": false
+      }
+    ],
+    "survivors": [],
+    "sweep": {
+      "status": "ok",
+      "runRoot": "D:\\ClawX\\artifacts\\runs\\autonomy-a5-clean-e0113c9507b3-resume-20261103T051143Z\\verse-claw-e2e-run-m7602f\\",
+      "owned": [],
+      "remaining": []
+    }
+  }
+}

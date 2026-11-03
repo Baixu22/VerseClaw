@@ -1,0 +1,151 @@
+{
+  "schema": "AutonomyA5ExecutionInterruptions/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "attempts": [
+    {
+      "completedPrerequisiteGates": 13,
+      "recordedAt": "2026-11-03T03:43:08.1629393Z",
+      "verifiedOrphanRoots": [
+        {
+          "verifiedRunRoot": "D:\\ClawX\\artifacts\\runs\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z",
+          "exitCode": 0,
+          "verifiedName": "electron.exe",
+          "pid": 36272
+        }
+      ],
+      "actor": "codex-a5",
+      "e2eVerdict": "interrupted-no-terminal-test-report",
+      "runRoot": "D:\\ClawX\\artifacts\\runs\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z",
+      "driven_by": "agent",
+      "playwrightParentMissing": true,
+      "observedExecTerminalCode": -1,
+      "playwrightWorkerMissing": true,
+      "sourceCandidate": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+      "remainingOwnedElectron": [],
+      "execHandle": 91995
+    },
+    {
+      "driverPid": 23532,
+      "liveProcessesAbsent": true,
+      "recordedAt": "2026-11-03T03:48:43.7405830Z",
+      "e2eTerminalReportPresent": false,
+      "systemCrashEvidence": "No matching Application 1000/1001 node/pwsh/electron event observed in the inspected 12-minute window.",
+      "driven_by": "agent",
+      "observedExecTerminalCode": -1,
+      "testVerdict": "interrupted; not passed or failed",
+      "playwrightPid": 2444,
+      "execHandle": 4008,
+      "actor": "codex-a5"
+    },
+    {
+      "result": "interrupted-no-verdict",
+      "currentPlaywrightAbsent": true,
+      "currentDriverAbsent": true,
+      "recordedAt": "2026-11-03T03:54:15.7097412Z",
+      "playwrightPid": 32068,
+      "remaining": [],
+      "driven_by": "agent",
+      "workerPid": 23288,
+      "actor": "codex-a5",
+      "driverPid": 40824,
+      "ownedOrphanCleanup": [
+        {
+          "verifiedName": "electron.exe",
+          "pid": 29840,
+          "verifiedRunRoot": "D:\\ClawX\\artifacts\\runs\\autonomy-a5-clean-e0113c9507b3-resume-20261103T034844Z",
+          "exitCode": 0
+        }
+      ],
+      "terminalReportPresent": false
+    }
+  ],
+  "successfulContinuation": {
+    "previousReport": "D:\\tmp\\autonomy-a5-clean-e0113c9507b3-20261103T033416Z\\run.json",
+    "previousReportSha256": "9125ca2aa427abccbe06b9e3927ce333969f935a6e3686bd3789b7d88287439a",
+    "reusedCompletedGates": 13,
+    "reason": "Original exec handle terminated -1; its Playwright parent and worker were verified absent, with no e2e terminal report. Candidate stayed clean and unchanged. Only the unfinished E2E gate is rerun."
+  },
+  "interpretation": "Three driver interruptions had no terminal test report. Two completed clean-candidate Native runs failed; exact cause remains unproven. The final completed exact-candidate report proves the finite required scenario passed, not reliability or soak acceptance, and never erases the earlier failures.",
+  "earlierNativeFailures": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-a5",
+      "recordedAt": "2026-11-03T04:16:56.954Z",
+      "candidate": {
+        "dirty": false,
+        "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+        "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+      },
+      "run": "D:/tmp/autonomy-a5-clean-e0113c9507b3-resume-20261103T035511Z",
+      "stats": {
+        "startTime": "2026-11-03T03:55:12.552Z",
+        "duration": 1043294.511,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "results": [
+        {
+          "title": "TF-0674 actual host probes, production close-to-tray continuation and restart recovery",
+          "status": "failed",
+          "error": "Error: electronApplication.evaluate: Target page, context or browser has been closed",
+          "duration": 1004704
+        },
+        {
+          "title": "reads actual Gateway tool exposure and continues the same isolated session after runtime restart",
+          "status": "passed",
+          "error": null,
+          "duration": 32853
+        }
+      ],
+      "sourceUnchanged": true,
+      "classification": "Native Electron closed during restart readiness; cause not established by available trace or Windows crash events. This is a real failed E2E outcome and cannot be replaced by prior dirty-source success.",
+      "nextObservation": "Same exact tests with existing Playwright browser diagnostics and read-only incremental Main log retention."
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-a5",
+      "recordedAt": "2026-11-03T05:03:37.739Z",
+      "sourceCandidate": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+      "raw": "D:/tmp/autonomy-a5-clean-e0113c9507b3-resume-20261103T041657Z",
+      "stats": {
+        "startTime": "2026-11-03T04:16:58.851Z",
+        "duration": 1504350.051,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "results": [
+        {
+          "title": "TF-0674 actual host probes, production close-to-tray continuation and restart recovery",
+          "status": "failed",
+          "error": "Error: electronApplication.evaluate: Target page, context or browser has been closed",
+          "duration": 1450797
+        },
+        {
+          "title": "reads actual Gateway tool exposure and continues the same isolated session after runtime restart",
+          "status": "passed",
+          "error": null,
+          "duration": 47400
+        }
+      ],
+      "observed": "Three native provider interactions and Gateway replacement completed. Application relaunch then lost the Inspector/Playwright connection; launch wrapper reported exitCode 0. Main logs do not show its normal shutdown path before the disconnection. Exact cause remains unproven.",
+      "sourceChanged": false,
+      "nativeAccepted": false
+    }
+  ],
+  "completedCleanNativeAttempts": {
+    "total": 3,
+    "passed": 1,
+    "failed": 2
+  }
+}

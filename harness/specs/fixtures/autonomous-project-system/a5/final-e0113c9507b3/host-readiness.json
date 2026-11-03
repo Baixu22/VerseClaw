@@ -1,0 +1,692 @@
+{
+  "schema": "clawx.autonomy-host-readiness/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5-playwright",
+  "candidate": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+  "transport": "built Electron production-window lifecycle -> actual Main/Gateway/runner -> scripted local provider",
+  "scope": {
+    "workspaceId": "default",
+    "sessionKey": "agent:main:dashboard:619dd541-0bec-43a0-a06e-1e9e03a51252"
+  },
+  "inputConfigSha256": "570a4f950f9110f8f55f6a633c387964339ec8286fa8fd54598232a36187ef9d",
+  "probes": {
+    "before": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:33.762Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "unknown",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:33.762Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshFirstRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:46.835Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:46.835Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:47.920Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:47.920Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshClosedRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:50.679Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.679Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterClose": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:50.879Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.879Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterGatewayRestart": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:23:01.883Z",
+      "runtimeGeneration": "2",
+      "runtime": {
+        "state": "unknown",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:23:01.883Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshGatewayRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:33:16.961Z",
+      "runtimeGeneration": "2",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:33:16.525Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:33:16.525Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:33:16.961Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshAppRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:44:05.510Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:05.510Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterAppRestart": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:44:06.209Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:06.209Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    }
+  },
+  "journeys": {
+    "isolatedRun": true,
+    "controlledContinuation": true,
+    "productionWindowClose": {
+      "destroyed": false,
+      "visible": false
+    },
+    "gatewayRestart": {
+      "before": {
+        "schema": "runtime-flag-ack/v1",
+        "gatewayGeneration": "1",
+        "childPid": 18360,
+        "launchEnv": {
+          "VERSE_VTOKEN_ASSEMBLY_ENABLED": {
+            "present": false
+          },
+          "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH": {
+            "present": false
+          },
+          "OPENCLAW_DCS_CONTEXT_VIEW_TOOLS": {
+            "present": false
+          },
+          "OPENCLAW_DCS_CONTEXT_TOOLS": {
+            "present": false
+          }
+        },
+        "injectionBudget": {
+          "totalChars": 6000,
+          "precedence": [
+            "knowledge",
+            "session_start",
+            "working_memory",
+            "tool_registry",
+            "cvk_addition",
+            "vtoken",
+            "memory_pilot",
+            "other"
+          ],
+          "dropAlertRatio": 0.1,
+          "counters": {
+            "turns": 1,
+            "killedTurns": 0,
+            "appliedChars": 4390,
+            "requestedChars": 8390,
+            "droppedChars": 0,
+            "truncatedChars": 4000,
+            "dropAlerts": 1
+          },
+          "lastTurn": {
+            "turnId": "agent:main:dashboard:619dd541-0bec-43a0-a06e-1e9e03a51252::a5-A5-FIRST",
+            "killed": false,
+            "charsApplied": 4390,
+            "charsRequested": 8390,
+            "charsDropped": 0,
+            "charsTruncated": 4000,
+            "byChannel": {
+              "tool_registry": {
+                "requested": 390,
+                "applied": 390,
+                "disposition": "applied"
+              },
+              "cvk_addition": {
+                "requested": 8000,
+                "applied": 4000,
+                "disposition": "truncate"
+              }
+            },
+            "degradationOrder": [
+              {
+                "channel": "cvk_addition",
+                "disposition": "truncate"
+              }
+            ],
+            "crossInjectionDuplicateChars": 0,
+            "crossInjectionDuplicationRatio": 0
+          }
+        },
+        "effectiveFlags": {
+          "runtime.contextBlock.compass.enabled": false,
+          "runtime.contextBlock.role_memory.enabled": false,
+          "runtime.contextBlock.working_memory.enabled": true,
+          "runtime.contextBlock.tool_registry.enabled": true,
+          "runtime.coding.parseOnTouch.enabled": true,
+          "runtime.coding.staleWriteGuard.enabled": true,
+          "runtime.coding.writeJournal.enabled": true,
+          "runtime.coding.autoVerify.enabled": "auto",
+          "runtime.coding.worktree.backend": "inprocess",
+          "runtime.coding.symbolLease.enabled": false,
+          "runtime.coding.symbolLease.mode": "memory",
+          "runtime.coding.patchFlow.default": false,
+          "runtime.coding.sekb.experienceShadow": false,
+          "runtime.coding.sekb.retrievalShadow": false,
+          "runtime.coding.routingMemo.shadow": false,
+          "runtime.vtoken.assembly.enabled": false,
+          "dcs.contextViewTools.enabled": false,
+          "runtime.contextEnhancement.killSwitch": false
+        },
+        "flagAttribution": {
+          "runtime.contextBlock.compass.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextBlock.role_memory.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextBlock.working_memory.enabled": {
+            "value": true,
+            "origin": "config",
+            "key": "runtime.contextBlock.working-memory.enabled"
+          },
+          "runtime.contextBlock.tool_registry.enabled": {
+            "value": true,
+            "origin": "config",
+            "key": "runtime.contextBlock.tool-registry.enabled"
+          },
+          "runtime.coding.parseOnTouch.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.coding.staleWriteGuard.enabled": {
+            "value": true,
+            "origin": "config",
+            "key": "runtime.coding.staleWriteGuard.enabled"
+          },
+          "runtime.coding.writeJournal.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.coding.autoVerify.enabled": {
+            "value": "auto",
+            "origin": "default"
+          },
+          "runtime.coding.worktree.backend": {
+            "value": "inprocess",
+            "origin": "default"
+          },
+          "runtime.coding.symbolLease.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.symbolLease.mode": {
+            "value": "memory",
+            "origin": "default"
+          },
+          "runtime.coding.patchFlow.default": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.sekb.experienceShadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.sekb.retrievalShadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.routingMemo.shadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.vtoken.assembly.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "dcs.contextViewTools.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextEnhancement.killSwitch": {
+            "value": false,
+            "origin": "default"
+          }
+        },
+        "configSource": {
+          "path": "D:\\ClawX\\artifacts\\runs\\autonomy-a5-clean-e0113c9507b3-resume-20261103T051143Z\\verse-claw-e2e-run-m7602f\\verse-claw-e2e-user-data-E1reUj\\openclaw-source-state\\openclaw.json",
+          "exists": true,
+          "origin": "env-override"
+        },
+        "runtimeBuildOrConfigHash": "9d2aeba47658fb6609fe5c9b75f44bd7",
+        "turnEffectProbe": {
+          "wouldChangeTurn": true,
+          "killSwitchEngaged": false,
+          "activeSurfaces": [
+            "runtime.contextBlock.working_memory.enabled",
+            "runtime.contextBlock.tool_registry.enabled"
+          ]
+        },
+        "degradedReason": null,
+        "answeredAt": "2026-11-03T05:22:47.939Z"
+      },
+      "after": {
+        "schema": "runtime-flag-ack/v1",
+        "gatewayGeneration": "2",
+        "childPid": 7216,
+        "launchEnv": {
+          "VERSE_VTOKEN_ASSEMBLY_ENABLED": {
+            "present": false
+          },
+          "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH": {
+            "present": false
+          },
+          "OPENCLAW_DCS_CONTEXT_VIEW_TOOLS": {
+            "present": false
+          },
+          "OPENCLAW_DCS_CONTEXT_TOOLS": {
+            "present": false
+          }
+        },
+        "injectionBudget": {
+          "totalChars": 6000,
+          "precedence": [
+            "knowledge",
+            "session_start",
+            "working_memory",
+            "tool_registry",
+            "cvk_addition",
+            "vtoken",
+            "memory_pilot",
+            "other"
+          ],
+          "dropAlertRatio": 0.1,
+          "counters": {
+            "turns": 0,
+            "killedTurns": 0,
+            "appliedChars": 0,
+            "requestedChars": 0,
+            "droppedChars": 0,
+            "truncatedChars": 0,
+            "dropAlerts": 0
+          },
+          "lastTurn": null
+        },
+        "effectiveFlags": {
+          "runtime.contextBlock.compass.enabled": false,
+          "runtime.contextBlock.role_memory.enabled": false,
+          "runtime.contextBlock.working_memory.enabled": true,
+          "runtime.contextBlock.tool_registry.enabled": true,
+          "runtime.coding.parseOnTouch.enabled": true,
+          "runtime.coding.staleWriteGuard.enabled": true,
+          "runtime.coding.writeJournal.enabled": true,
+          "runtime.coding.autoVerify.enabled": "auto",
+          "runtime.coding.worktree.backend": "inprocess",
+          "runtime.coding.symbolLease.enabled": false,
+          "runtime.coding.symbolLease.mode": "memory",
+          "runtime.coding.patchFlow.default": false,
+          "runtime.coding.sekb.experienceShadow": false,
+          "runtime.coding.sekb.retrievalShadow": false,
+          "runtime.coding.routingMemo.shadow": false,
+          "runtime.vtoken.assembly.enabled": false,
+          "dcs.contextViewTools.enabled": false,
+          "runtime.contextEnhancement.killSwitch": false
+        },
+        "flagAttribution": {
+          "runtime.contextBlock.compass.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextBlock.role_memory.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextBlock.working_memory.enabled": {
+            "value": true,
+            "origin": "config",
+            "key": "runtime.contextBlock.working-memory.enabled"
+          },
+          "runtime.contextBlock.tool_registry.enabled": {
+            "value": true,
+            "origin": "config",
+            "key": "runtime.contextBlock.tool-registry.enabled"
+          },
+          "runtime.coding.parseOnTouch.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.coding.staleWriteGuard.enabled": {
+            "value": true,
+            "origin": "config",
+            "key": "runtime.coding.staleWriteGuard.enabled"
+          },
+          "runtime.coding.writeJournal.enabled": {
+            "value": true,
+            "origin": "default"
+          },
+          "runtime.coding.autoVerify.enabled": {
+            "value": "auto",
+            "origin": "default"
+          },
+          "runtime.coding.worktree.backend": {
+            "value": "inprocess",
+            "origin": "default"
+          },
+          "runtime.coding.symbolLease.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.symbolLease.mode": {
+            "value": "memory",
+            "origin": "default"
+          },
+          "runtime.coding.patchFlow.default": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.sekb.experienceShadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.sekb.retrievalShadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.coding.routingMemo.shadow": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.vtoken.assembly.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "dcs.contextViewTools.enabled": {
+            "value": false,
+            "origin": "default"
+          },
+          "runtime.contextEnhancement.killSwitch": {
+            "value": false,
+            "origin": "default"
+          }
+        },
+        "configSource": {
+          "path": "D:\\ClawX\\artifacts\\runs\\autonomy-a5-clean-e0113c9507b3-resume-20261103T051143Z\\verse-claw-e2e-run-m7602f\\verse-claw-e2e-user-data-E1reUj\\openclaw-source-state\\openclaw.json",
+          "exists": true,
+          "origin": "env-override"
+        },
+        "runtimeBuildOrConfigHash": "e14b69fa3bf0560993439760f1a0506e",
+        "turnEffectProbe": {
+          "wouldChangeTurn": true,
+          "killSwitchEngaged": false,
+          "activeSurfaces": [
+            "runtime.contextBlock.working_memory.enabled",
+            "runtime.contextBlock.tool_registry.enabled"
+          ]
+        },
+        "degradedReason": null,
+        "answeredAt": "2026-11-03T05:23:01.866Z"
+      }
+    },
+    "appRestart": {
+      "transcriptReadback": true,
+      "newRunReadback": true
+    },
+    "configPreserved": true
+  },
+  "providerRequests": 4,
+  "anomalies": [],
+  "limitations": [
+    "scripted provider is not model quality evidence",
+    "no installed service or app-exit execution claim",
+    "no budget measurement",
+    "no configuration defect observed; no migration or rollback applied",
+    "source only; installer not tested"
+  ]
+}

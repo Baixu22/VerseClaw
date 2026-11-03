@@ -1,0 +1,36 @@
+{
+  "schema": "AutonomyA5InheritedRepositoryFindings/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "artifactRetention": {
+    "schemaVersion": 1,
+    "trackedPaths": 20190,
+    "issues": [
+      "Spec requires local or missing documentation: harness/specs/tasks/architecture-skeleton-admission-regression.md: docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md"
+    ],
+    "passed": false
+  },
+  "artifactRetentionExit": {
+    "driven_by": "agent",
+    "recordedAt": "2026-11-03T03:40:15.4568841Z",
+    "actor": "codex-a5",
+    "exitCode": 1,
+    "candidate": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7"
+  },
+  "baseline": {
+    "path": "docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md",
+    "touchedByThisChange": false,
+    "actor": "codex-a5",
+    "currentExists": false,
+    "driven_by": "agent",
+    "baseline": "d0723901104107e602efb7473aae4e1975663398",
+    "baselineCatFileExit": 128
+  },
+  "interpretation": "The global artifact-retention check is not green because the inherited A6 task spec names a missing document. The baseline also lacks that file; this leaf does not alter the A6 spec or fabricate its evidence. This node acceptance does not claim a globally green repository or default-branch landing."
+}

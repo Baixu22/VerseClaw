@@ -1,0 +1,197 @@
+{
+  "schema": "AutonomyA5RetainedSourceProjection/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "inputs": {
+    "projection": "D:\\tmp\\autonomy-a5-source-projection-e0113c9507b3",
+    "source": "git archive exact clean commit",
+    "dependencies": "Explicit junctions to existing D:/ClawX installed dependencies; not fresh install",
+    "candidate": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "driven_by": "agent",
+    "recordedAt": "2026-11-03T03:51:27.6876066Z",
+    "sourceDirty": false,
+    "actor": "codex-a5",
+    "copiedIgnoredRunArtifacts": false
+  },
+  "packageDependencies": {
+    "purpose": "Complete explicit workspace-package dependency reuse; no source/run artifacts copied",
+    "driven_by": "agent",
+    "recordedAt": "2026-11-03T04:01:53.9339346Z",
+    "actor": "codex-a5",
+    "junctions": [
+      {
+        "target": "D:\\ClawX\\packages\\versebrowser\\node_modules",
+        "path": "packages/versebrowser/node_modules"
+      }
+    ]
+  },
+  "report": {
+    "schema": "AutonomyA5SourceProjection/v1",
+    "driven_by": "agent",
+    "actor": "codex-a5",
+    "startedAt": "2026-11-03T04:01:54.468Z",
+    "candidate": {
+      "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+      "dirty": false
+    },
+    "root": "D:/tmp/autonomy-a5-source-projection-e0113c9507b3",
+    "status": "passed",
+    "dependencies": "Explicit existing dependency junctions only; no ignored run artifacts copied; not a fresh install.",
+    "gates": [
+      {
+        "name": "runtime-build",
+        "runner": "C:/Program Files/nodejs/node.exe",
+        "args": [
+          "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+          "--config.verify-deps-before-run=false",
+          "build:runtime"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "durationMs": 35352,
+        "log": "D:/tmp/autonomy-a5-r24/source-projection-retry/runtime-build.log"
+      },
+      {
+        "name": "vite-build",
+        "runner": "C:/Program Files/nodejs/node.exe",
+        "args": [
+          "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+          "--config.verify-deps-before-run=false",
+          "build:vite"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "durationMs": 94619,
+        "log": "D:/tmp/autonomy-a5-r24/source-projection-final/vite-build.log"
+      },
+      {
+        "name": "unit",
+        "runner": "C:/Program Files/nodejs/node.exe",
+        "args": [
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/autonomy-host-readiness.test.ts",
+          "tests/unit/autonomy-runtime-workspace-scope.test.ts",
+          "tests/unit/config-sync-source-runtime.test.ts",
+          "tests/unit/gateway-doctor-repair-env.test.ts",
+          "tests/unit/gateway-manager-diagnostics.test.ts",
+          "tests/unit/gateway-manager-restart-recovery.test.ts",
+          "tests/unit/long-session-effective-policy.test.ts",
+          "tests/unit/session-activity-background-read.test.ts",
+          "tests/unit/workspace-preflight.test.ts",
+          "tests/unit/gateway-process-launcher-env.test.ts",
+          "tests/unit/runtime-effective-capability.test.ts",
+          "tests/unit/user-message-queue.test.ts",
+          "tests/unit/chat-send-input-mode.test.ts",
+          "tests/unit/model-capability-positioning-tf0507.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile",
+          "D:/tmp/autonomy-a5-r24/source-projection-final/unit.json"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "durationMs": 187466,
+        "log": "D:/tmp/autonomy-a5-r24/source-projection-final/unit.log"
+      }
+    ],
+    "continuation": {
+      "previousReport": "D:/tmp/autonomy-a5-r24/source-projection-retry/report.json",
+      "reusedCompletedGate": "runtime-build",
+      "reason": "The next Vite prebuild needed the package-level installed dependency junctions. Those were added explicitly; tracked source stayed clean and unchanged."
+    },
+    "unit": {
+      "total": 165,
+      "passed": 165,
+      "failed": 0,
+      "skipped": 0
+    },
+    "finalHead": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "finalDirty": false,
+    "completedAt": "2026-11-03T04:06:36.948Z"
+  },
+  "earlierAttempts": [
+    {
+      "schema": "AutonomyA5SourceProjection/v1",
+      "driven_by": "agent",
+      "actor": "codex-a5",
+      "startedAt": "2026-11-03T03:57:05.606Z",
+      "candidate": {
+        "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+        "dirty": false
+      },
+      "root": "D:/tmp/autonomy-a5-source-projection-e0113c9507b3",
+      "status": "failed",
+      "dependencies": "Explicit existing dependency junctions only; no ignored run artifacts copied; not a fresh install.",
+      "gates": [
+        {
+          "name": "runtime-build",
+          "runner": "C:/Program Files/nodejs/node.exe",
+          "args": [
+            "scripts/build-openclaw-runtime.mjs"
+          ],
+          "exitCode": 1,
+          "signal": null,
+          "error": null,
+          "durationMs": 5140,
+          "log": "D:/tmp/autonomy-a5-r24/source-projection/runtime-build.log"
+        }
+      ],
+      "completedAt": "2026-11-03T03:57:10.752Z"
+    },
+    {
+      "schema": "AutonomyA5SourceProjection/v1",
+      "driven_by": "agent",
+      "actor": "codex-a5",
+      "startedAt": "2026-11-03T03:59:01.538Z",
+      "candidate": {
+        "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+        "dirty": false
+      },
+      "root": "D:/tmp/autonomy-a5-source-projection-e0113c9507b3",
+      "status": "failed",
+      "dependencies": "Explicit existing dependency junctions only; no ignored run artifacts copied; not a fresh install.",
+      "gates": [
+        {
+          "name": "runtime-build",
+          "runner": "C:/Program Files/nodejs/node.exe",
+          "args": [
+            "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+            "--config.verify-deps-before-run=false",
+            "build:runtime"
+          ],
+          "exitCode": 0,
+          "signal": null,
+          "error": null,
+          "durationMs": 35352,
+          "log": "D:/tmp/autonomy-a5-r24/source-projection-retry/runtime-build.log"
+        },
+        {
+          "name": "vite-build",
+          "runner": "C:/Program Files/nodejs/node.exe",
+          "args": [
+            "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+            "--config.verify-deps-before-run=false",
+            "build:vite"
+          ],
+          "exitCode": 1,
+          "signal": null,
+          "error": null,
+          "durationMs": 2826,
+          "log": "D:/tmp/autonomy-a5-r24/source-projection-retry/vite-build.log"
+        }
+      ],
+      "completedAt": "2026-11-03T03:59:39.721Z"
+    }
+  ],
+  "interpretation": "Only exact-candidate tracked source was extracted. Existing dependencies were reused explicitly. Setup attempts stopped at dependency reconciliation or missing package dependency junctions; their failures remain recorded. Successful projection build and focused tests do not claim a fresh installation."
+}

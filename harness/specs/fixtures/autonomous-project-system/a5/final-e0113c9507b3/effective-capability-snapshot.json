@@ -1,0 +1,989 @@
+{
+  "schema": "AutonomyA5EffectiveCapabilities/v2",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "scope": {
+    "workspaceId": "default",
+    "sessionKey": "agent:main:dashboard:619dd541-0bec-43a0-a06e-1e9e03a51252"
+  },
+  "probes": {
+    "before": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:33.762Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "unknown",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:33.762Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshFirstRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:46.835Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:46.835Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:47.920Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:46.493Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:47.920Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshClosedRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:50.679Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.679Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterClose": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:22:50.879Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:22:50.357Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:22:50.879Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterGatewayRestart": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:23:01.883Z",
+      "runtimeGeneration": "2",
+      "runtime": {
+        "state": "unknown",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "capability-observation-missing-or-stale",
+        "observedAt": null
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:23:01.883Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshGatewayRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:33:16.961Z",
+      "runtimeGeneration": "2",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:33:16.525Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:33:16.525Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:33:16.961Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "freshAppRun": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:44:05.510Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:05.510Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    },
+    "afterAppRestart": {
+      "owner": "electron-gateway",
+      "observedAt": "2026-11-03T05:44:06.209Z",
+      "runtimeGeneration": "1",
+      "runtime": {
+        "state": "supported",
+        "source": "runtime.flags.ack + runtime-effective-capability.observation",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "tools": {
+        "state": "unknown",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": "adapter-health-not-probed",
+        "observedAt": "2026-11-03T05:44:04.109Z"
+      },
+      "scheduling": {
+        "state": "supported",
+        "source": "cron.status",
+        "reason": null,
+        "observedAt": "2026-11-03T05:44:06.209Z"
+      },
+      "budget": {
+        "state": "unknown",
+        "source": "resource-fabric",
+        "reason": "budget-owner-not-probed",
+        "observedAt": null
+      },
+      "unattendedService": {
+        "state": "unknown",
+        "source": "service-owner",
+        "reason": "service-owner-not-probed",
+        "observedAt": null
+      }
+    }
+  },
+  "runtime": {
+    "firstPolicy": {
+      "schemaVersion": "SessionEffectivePolicy/v1",
+      "generatedAt": "2026-11-03T05:44:32.357Z",
+      "scope": {
+        "workspaceId": "a5-isolated-runtime-workspace",
+        "sessionKey": "agent:main:dashboard:c9821977-0140-4f5f-8ae0-91c61ffc4f57",
+        "agentId": "main",
+        "sessionId": "ce63baa4-f10b-428f-91ee-1de12e86f033",
+        "runId": null
+      },
+      "generation": {
+        "state": "effective",
+        "runtimeGeneration": "1",
+        "capabilityProfileGeneration": "1",
+        "observedAt": "2026-11-03T05:44:31.480Z",
+        "reason": null
+      },
+      "backend": {
+        "configured": {
+          "value": {
+            "runtime": "openclaw",
+            "kind": "openclaw",
+            "ownsNativeCompaction": false,
+            "provider": "openai",
+            "model": "mock-coder"
+          },
+          "status": "configured",
+          "source": "session.runtime + model resolution",
+          "reason": null
+        },
+        "effective": {
+          "value": {
+            "runtime": "openclaw",
+            "kind": "openclaw",
+            "ownsNativeCompaction": false,
+            "provider": "openai",
+            "model": "mock-coder"
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "harness": {
+        "configured": {
+          "value": {
+            "id": "openclaw",
+            "kind": "openclaw"
+          },
+          "status": "configured",
+          "source": "session.runtime + model resolution",
+          "reason": null
+        },
+        "effective": {
+          "value": {
+            "id": "openclaw",
+            "kind": "openclaw"
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "model": {
+        "configured": {
+          "value": {
+            "provider": "openai",
+            "model": "mock-coder",
+            "effort": "off"
+          },
+          "status": "configured",
+          "source": "session.model + model resolution + effort defaults",
+          "reason": "model.thinkingDefault"
+        },
+        "effective": {
+          "value": {
+            "provider": "openai",
+            "model": "mock-coder",
+            "effort": "off"
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "grants": {
+        "configured": {
+          "value": null,
+          "status": "unverified",
+          "source": "runtime-effective-capability.observation",
+          "reason": "grants are owned by runtime facts"
+        },
+        "effective": {
+          "value": {
+            "total": 10,
+            "allowed": 0,
+            "requiresApproval": 0,
+            "denied": 10,
+            "unknown": 0,
+            "actions": [
+              {
+                "actionId": "propose",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "read",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "apply_patch",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "edit",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "exec",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "write",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "click",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "navigate",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "screenshot",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "type",
+                "authorization": "denied",
+                "grantState": null
+              }
+            ]
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "context": {
+        "configured": {
+          "value": {
+            "contextTokens": 128000,
+            "contextPressure": null
+          },
+          "status": "configured",
+          "source": "session/agent context limits",
+          "reason": null
+        },
+        "effective": {
+          "value": null,
+          "status": "unverified",
+          "source": "session.contextBudgetStatus",
+          "reason": "no fresh context-budget observation for the current generation"
+        }
+      },
+      "queue": {
+        "configured": {
+          "value": {
+            "mode": null,
+            "cap": null,
+            "drop": null,
+            "debounceMs": null,
+            "queuedCount": 0
+          },
+          "status": "unverified",
+          "source": "session.entry.queue",
+          "reason": "no persisted queue override"
+        },
+        "effective": {
+          "value": {
+            "mode": null,
+            "cap": null,
+            "drop": null,
+            "debounceMs": null,
+            "queuedCount": 0
+          },
+          "status": "effective",
+          "source": "session.entry.queue + long-task-control.queue",
+          "reason": null
+        }
+      },
+      "resources": {
+        "configured": {
+          "value": {
+            "maxConcurrentRuns": null,
+            "maxConcurrentSubagents": null,
+            "maxSpawnDepth": null,
+            "maxChildrenPerAgent": null,
+            "maxProcesses": null,
+            "maxRssMb": null,
+            "maxBackgroundTerminals": null,
+            "maxWorktrees": null,
+            "idleTtlMs": null,
+            "keepOnLeave": null
+          },
+          "status": "unverified",
+          "source": "agents.defaults concurrency/subagent limits + explicit long-session flags",
+          "reason": null
+        },
+        "effective": {
+          "value": {
+            "maxConcurrentRuns": null,
+            "maxConcurrentSubagents": null,
+            "maxSpawnDepth": null,
+            "maxChildrenPerAgent": null,
+            "maxProcesses": null,
+            "maxRssMb": null,
+            "maxBackgroundTerminals": null,
+            "maxWorktrees": null,
+            "idleTtlMs": null,
+            "keepOnLeave": null
+          },
+          "status": "unverified",
+          "source": "session coordination policy (explicit values only)",
+          "reason": "no explicit long-session resource policy or agent.defaults limits are configured"
+        }
+      },
+      "schedule": {
+        "configured": {
+          "value": {
+            "cronEnabled": false,
+            "cronMaxConcurrentRuns": null,
+            "sessionRetention": null
+          },
+          "status": "configured",
+          "source": "cron configuration",
+          "reason": null
+        },
+        "effective": {
+          "value": null,
+          "status": "unverified",
+          "source": "cron.owner",
+          "reason": "current schedule state is not part of this read"
+        }
+      },
+      "tools": {
+        "value": {
+          "names": [
+            "apply_patch",
+            "browser",
+            "context_archive_recall",
+            "context_impact",
+            "context_read",
+            "context_reuse",
+            "context_search",
+            "context_understand",
+            "context_verify",
+            "context_write",
+            "edit",
+            "exec",
+            "memory_get",
+            "memory_search",
+            "mission_loop",
+            "sessions_spawn",
+            "skill_workshop",
+            "task_loop",
+            "tts",
+            "undo_write",
+            "web_search",
+            "write"
+          ],
+          "digest": "sha256:cd998122a7b8b2ee25e64eb14655f972ff28c7a3494cf0fa118a87f3c74fb03f"
+        },
+        "status": "effective",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": null
+      },
+      "compatibility": [
+        {
+          "backend": "openclaw",
+          "parameter": "automatic-compaction",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "compaction.provider",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "compaction.model",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "compaction.reserveTokens",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": null
+        }
+      ],
+      "sources": [
+        "session.entry",
+        "agents.defaults",
+        "model resolution",
+        "runtime-effective-capability.observation",
+        "long-task-control.queue",
+        "cron configuration"
+      ]
+    },
+    "continuedPolicy": {
+      "schemaVersion": "SessionEffectivePolicy/v1",
+      "generatedAt": "2026-11-03T05:44:48.876Z",
+      "scope": {
+        "workspaceId": "a5-isolated-runtime-workspace",
+        "sessionKey": "agent:main:dashboard:c9821977-0140-4f5f-8ae0-91c61ffc4f57",
+        "agentId": "main",
+        "sessionId": "ce63baa4-f10b-428f-91ee-1de12e86f033",
+        "runId": null
+      },
+      "generation": {
+        "state": "effective",
+        "runtimeGeneration": "2",
+        "capabilityProfileGeneration": "2",
+        "observedAt": "2026-11-03T05:44:48.050Z",
+        "reason": null
+      },
+      "backend": {
+        "configured": {
+          "value": {
+            "runtime": "openclaw",
+            "kind": "openclaw",
+            "ownsNativeCompaction": false,
+            "provider": "openai",
+            "model": "mock-coder"
+          },
+          "status": "configured",
+          "source": "session.runtime + model resolution",
+          "reason": null
+        },
+        "effective": {
+          "value": {
+            "runtime": "openclaw",
+            "kind": "openclaw",
+            "ownsNativeCompaction": false,
+            "provider": "openai",
+            "model": "mock-coder"
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "harness": {
+        "configured": {
+          "value": {
+            "id": "openclaw",
+            "kind": "openclaw"
+          },
+          "status": "configured",
+          "source": "session.runtime + model resolution",
+          "reason": null
+        },
+        "effective": {
+          "value": {
+            "id": "openclaw",
+            "kind": "openclaw"
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "model": {
+        "configured": {
+          "value": {
+            "provider": "openai",
+            "model": "mock-coder",
+            "effort": "off"
+          },
+          "status": "configured",
+          "source": "session.model + model resolution + effort defaults",
+          "reason": "model.thinkingDefault"
+        },
+        "effective": {
+          "value": {
+            "provider": "openai",
+            "model": "mock-coder",
+            "effort": "off"
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "grants": {
+        "configured": {
+          "value": null,
+          "status": "unverified",
+          "source": "runtime-effective-capability.observation",
+          "reason": "grants are owned by runtime facts"
+        },
+        "effective": {
+          "value": {
+            "total": 10,
+            "allowed": 0,
+            "requiresApproval": 0,
+            "denied": 10,
+            "unknown": 0,
+            "actions": [
+              {
+                "actionId": "propose",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "read",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "apply_patch",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "edit",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "exec",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "write",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "click",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "navigate",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "screenshot",
+                "authorization": "denied",
+                "grantState": null
+              },
+              {
+                "actionId": "type",
+                "authorization": "denied",
+                "grantState": null
+              }
+            ]
+          },
+          "status": "effective",
+          "source": "runtime-effective-capability.observation",
+          "reason": null
+        }
+      },
+      "context": {
+        "configured": {
+          "value": {
+            "contextTokens": 128000,
+            "contextPressure": null
+          },
+          "status": "configured",
+          "source": "session/agent context limits",
+          "reason": null
+        },
+        "effective": {
+          "value": null,
+          "status": "unverified",
+          "source": "session.contextBudgetStatus",
+          "reason": "no fresh context-budget observation for the current generation"
+        }
+      },
+      "queue": {
+        "configured": {
+          "value": {
+            "mode": null,
+            "cap": null,
+            "drop": null,
+            "debounceMs": null,
+            "queuedCount": 0
+          },
+          "status": "unverified",
+          "source": "session.entry.queue",
+          "reason": "no persisted queue override"
+        },
+        "effective": {
+          "value": {
+            "mode": null,
+            "cap": null,
+            "drop": null,
+            "debounceMs": null,
+            "queuedCount": 0
+          },
+          "status": "effective",
+          "source": "session.entry.queue + long-task-control.queue",
+          "reason": null
+        }
+      },
+      "resources": {
+        "configured": {
+          "value": {
+            "maxConcurrentRuns": null,
+            "maxConcurrentSubagents": null,
+            "maxSpawnDepth": null,
+            "maxChildrenPerAgent": null,
+            "maxProcesses": null,
+            "maxRssMb": null,
+            "maxBackgroundTerminals": null,
+            "maxWorktrees": null,
+            "idleTtlMs": null,
+            "keepOnLeave": null
+          },
+          "status": "unverified",
+          "source": "agents.defaults concurrency/subagent limits + explicit long-session flags",
+          "reason": null
+        },
+        "effective": {
+          "value": {
+            "maxConcurrentRuns": null,
+            "maxConcurrentSubagents": null,
+            "maxSpawnDepth": null,
+            "maxChildrenPerAgent": null,
+            "maxProcesses": null,
+            "maxRssMb": null,
+            "maxBackgroundTerminals": null,
+            "maxWorktrees": null,
+            "idleTtlMs": null,
+            "keepOnLeave": null
+          },
+          "status": "unverified",
+          "source": "session coordination policy (explicit values only)",
+          "reason": "no explicit long-session resource policy or agent.defaults limits are configured"
+        }
+      },
+      "schedule": {
+        "configured": {
+          "value": {
+            "cronEnabled": false,
+            "cronMaxConcurrentRuns": null,
+            "sessionRetention": null
+          },
+          "status": "configured",
+          "source": "cron configuration",
+          "reason": null
+        },
+        "effective": {
+          "value": null,
+          "status": "unverified",
+          "source": "cron.owner",
+          "reason": "current schedule state is not part of this read"
+        }
+      },
+      "tools": {
+        "value": {
+          "names": [
+            "apply_patch",
+            "browser",
+            "context_archive_recall",
+            "context_impact",
+            "context_read",
+            "context_reuse",
+            "context_search",
+            "context_understand",
+            "context_verify",
+            "context_write",
+            "edit",
+            "exec",
+            "memory_get",
+            "memory_search",
+            "mission_loop",
+            "sessions_spawn",
+            "skill_workshop",
+            "task_loop",
+            "tts",
+            "undo_write",
+            "web_search",
+            "write"
+          ],
+          "digest": "sha256:31ad13d61894d4564ae56baf934ccf2a60f7b0da473e7d9836ad09933c46dc42"
+        },
+        "status": "effective",
+        "source": "runtime-effective-capability.observation.effectiveToolNames",
+        "reason": null
+      },
+      "compatibility": [
+        {
+          "backend": "openclaw",
+          "parameter": "automatic-compaction",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "compaction.provider",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "compaction.model",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "compaction.reserveTokens",
+          "status": "configured",
+          "reason": null
+        },
+        {
+          "backend": "openclaw",
+          "parameter": "manual-compaction",
+          "status": "effective",
+          "reason": null
+        }
+      ],
+      "sources": [
+        "session.entry",
+        "agents.defaults",
+        "model resolution",
+        "runtime-effective-capability.observation",
+        "long-task-control.queue",
+        "cron configuration"
+      ]
+    }
+  },
+  "note": "Runtime tool exposure remains separate from adapter health and permission. Budget and installed service stay unknown."
+}

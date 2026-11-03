@@ -1,0 +1,382 @@
+{
+  "schema": "AutonomyA5NegativeControls/v2",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "assertions": [
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects mismatched workspaceId from another owner scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects mismatched sessionKey from another owner scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects mismatched sessionId from another owner scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects stale, future or malformed observation time 1793613569999",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects stale, future or malformed observation time 1793613600001",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects stale, future or malformed observation time NaN",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection does not promote missing generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection does not promote stale generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection does not promote mismatch generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection does not promote unverified generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects unacknowledged runtime generation null",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects unacknowledged runtime generation different-generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection does not turn configured descriptors or absent adapter evidence into available tools",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection rejects disconnected, blocked or replaced connections and missing service probes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 current host capability projection does not let gatewayReady or an old successful probe hide a disconnected transport",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "title": "TF-0674 existing Main sessionActivity integration keeps absent runtime probes unknown instead of treating configured policy as success",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "title": "chat.send inputMode gate rejects explicit inputMode without an active /loop Task Ledger root",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "title": "chat.send inputMode gate rejects unknown inputMode values at the protocol layer",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "title": "chat.send inputMode: guide falls back to a normal send when steering is rejected",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "applySourceRuntimeSandboxAutoFallback removes stale Verse Claw-only sandbox diagnostics from source runtime config",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "source runtime isolation user config merge does not overwrite isolated runtime when user config omits runtime",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel startup does not wipe isolated channels when the user config omits them",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-doctor-repair-env.test.ts",
+      "title": "runOpenClawDoctorRepair fork environment never hands utilityProcess.fork a non-string env value",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-manager-diagnostics.test.ts",
+      "title": "GatewayManager diagnostics does not apply a delayed health response to a replacement connection",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-manager-diagnostics.test.ts",
+      "title": "GatewayManager diagnostics does not count gateway-declared rpc errors as transport failures",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-manager-diagnostics.test.ts",
+      "title": "GatewayManager diagnostics does not let health polling mark core rpc degraded when OpenClaw health/status are slow",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-manager-restart-recovery.test.ts",
+      "title": "GatewayManager restart recovery does not schedule extra reconnect when restart succeeds",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-session-effective-policy.test.ts",
+      "title": "session effective policy projects only actual acknowledged adapter tools, never descriptor or fallback claims",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-session-effective-policy.test.ts",
+      "title": "session effective policy keeps current-run facts unverified when the observation is missing or mismatched",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-session-effective-policy.test.ts",
+      "title": "session effective policy does not promote configured runtime or model settings without a current observation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-session-effective-policy.test.ts",
+      "title": "session effective policy rejects stale observations for a different session generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-session-effective-policy.test.ts",
+      "title": "session effective policy does not fill missing observed backend identity from configured values",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-session-effective-policy.test.ts",
+      "title": "session effective policy does not carry a provider-incompatible harness id across model routes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/model-capability-positioning-tf0507.test.ts",
+      "title": "TF-0507 production prompt and positioning protocol freezes all 24 scenarios and rejects changes to the denominator or repetition count",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/model-capability-positioning-tf0507.test.ts",
+      "title": "TF-0507 production prompt and positioning protocol rejects stale acknowledgements and exposes unknown state after a generation change",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/model-capability-positioning-tf0507.test.ts",
+      "title": "TF-0507 production prompt and positioning protocol rejects factual overclaims even when a reply also contains negative language",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/runtime-effective-capability.test.ts",
+      "title": "runtime effective capability adapter keeps runtime availability and drivers unknown when acknowledgement is absent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/runtime-effective-capability.test.ts",
+      "title": "runtime effective capability adapter does not trust an unknown gateway generation from a local ack",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/runtime-effective-capability.test.ts",
+      "title": "runtime effective capability adapter fails closed when the ack generation does not match the runtime generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/runtime-effective-capability.test.ts",
+      "title": "runtime effective capability adapter rejects an older refresh after a newer run generation starts",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/runtime-effective-capability.test.ts",
+      "title": "runtime effective capability adapter keeps fallback facts unknown instead of promoting static dispositions",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/runtime-effective-capability.test.ts",
+      "title": "runtime effective capability adapter does not publish an observation from a stale capability refresh",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/runtime-effective-capability.test.ts",
+      "title": "runtime effective capability adapter keeps an unscoped legacy prompt local without publishing its directory as an owner identity",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "title": "session activity background read (Main service) 'an RPC timeout is unknown, never an e…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "title": "session activity background read (renderer store) does not present a failed first read as a successful empty read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "title": "session activity background read (renderer store) retains live background facts when a re-read fails and marks them stale",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/user-message-queue.test.ts",
+      "title": "persistent user message queue does not combine queued messages from different workspaceId owners",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/user-message-queue.test.ts",
+      "title": "persistent user message queue does not combine queued messages from different workspaceFingerprint owners",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/user-message-queue.test.ts",
+      "title": "persistent user message queue does not combine queued messages from different agentId owners",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/user-message-queue.test.ts",
+      "title": "persistent user message queue does not combine queued messages from different taskLedgerRootId owners",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/user-message-queue.test.ts",
+      "title": "persistent long-task control records does not infer a Task Ledger root from prior records",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-preflight.test.ts",
+      "title": "FP-P1-02 summarizePreflight decision table missing/unreadable/sensitive fail → blocked outright",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-preflight.test.ts",
+      "title": "FP-P1-02 summarizePreflight decision table warnings never block",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-preflight.test.ts",
+      "title": "FP-P1-02 runWorkspacePreflight (real fs) a missing path is blocked with an explaining check",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-preflight.test.ts",
+      "title": "FP-P1-02 write-boundary escapes readOnly mode rejects even in-workspace writes",
+      "status": "passed"
+    }
+  ],
+  "configPreservationCases": [
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "syncDefaultProviderRuntimeBeforeLaunch syncs the configured default provider before Gateway launch config is copied",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "loadProviderEnv injects the env SecretRef variable for keyed custom providers alongside registry keys",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "applySourceRuntimeSandboxAutoFallback strips legacy agent reasoningEffort from source runtime config copies",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "applySourceRuntimeSandboxAutoFallback forces sandbox off for defaults and per-agent overrides when Docker image is unavailable",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "applySourceRuntimeSandboxAutoFallback leaves config untouched when Docker image is available",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "applySourceRuntimeSandboxAutoFallback removes stale Verse Claw-only sandbox diagnostics from source runtime config",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "source runtime isolation user config merge copies runtime.contextBlock flags from user config into isolated config",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "source runtime isolation user config merge does not overwrite isolated runtime when user config omits runtime",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "source runtime isolation user config merge carries tools.exec (workspace permission mode) into the isolated source runtime config",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "source runtime isolation user config merge includes runtime on initial isolated config when user set it",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel startup carries the channels block into the isolated source runtime config",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel startup does not wipe isolated channels when the user config omits them",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel startup skips channel startup only when no channel is configured",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel plugin enablement leaves the config untouched when no channel is configured",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel plugin enablement ignores channels that are explicitly disabled",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel plugin enablement turns the global plugin switch back on when a channel is configured",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/config-sync-source-runtime.test.ts",
+      "title": "RC-10 source runtime channel plugin enablement is a no-op when the plugin switch is already on",
+      "status": "passed"
+    }
+  ],
+  "boundaries": [
+    "Descriptor/config persistence is never an execution grant.",
+    "Stale, cross-scope and prior-generation observations cannot show support.",
+    "Missing budget and service probes remain unknown.",
+    "Legacy directory prompt scope does not create an owner-keyed observation.",
+    "Queued owner identity and fingerprint survive SQLite reopen and both replay consumers; mixed-owner claims remain separate."
+  ]
+}

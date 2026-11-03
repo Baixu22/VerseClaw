@@ -1,0 +1,118 @@
+{
+  "schema": "AutonomyA5SourceInputs/v2",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "sourceSetSha256": "d2f47ea134284a90e4905aee8fb6c8ef46f5edf90fb16bc6b2a4807a4ba6faa7",
+  "sources": [
+    {
+      "path": "electron/gateway/process-launcher.ts",
+      "bytes": 12790,
+      "sha256": "c076b7e40d46916b8a2849aa473fe38ad864cdf291d1613ecb34749903a1223d",
+      "canonicalBlobSha256": "c076b7e40d46916b8a2849aa473fe38ad864cdf291d1613ecb34749903a1223d"
+    },
+    {
+      "path": "harness/specs/rules/autonomy-host-readiness-boundary.md",
+      "bytes": 1644,
+      "sha256": "773a74bcc0b524402732d574a93399a22d0e3df93deab59388e9cdf374f8b909",
+      "canonicalBlobSha256": "773a74bcc0b524402732d574a93399a22d0e3df93deab59388e9cdf374f8b909"
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-host-readiness.md",
+      "bytes": 5919,
+      "sha256": "3a904970c4109c9804de9535e288a24bd1083b8c3e518aadcb668299c9e8ce8f",
+      "canonicalBlobSha256": "3a904970c4109c9804de9535e288a24bd1083b8c3e518aadcb668299c9e8ce8f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+      "bytes": 175791,
+      "sha256": "478b0909c938e6a4f75713aaa12e1e47ba42e7c88277ecec02ae3f55e7dd3556",
+      "canonicalBlobSha256": "478b0909c938e6a4f75713aaa12e1e47ba42e7c88277ecec02ae3f55e7dd3556"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "bytes": 263317,
+      "sha256": "78c8f01b3e510eb9a3dccf0c11f56165df0a2129d3ea1b89fb71e283d8d21770",
+      "canonicalBlobSha256": "78c8f01b3e510eb9a3dccf0c11f56165df0a2129d3ea1b89fb71e283d8d21770"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/store.ts",
+      "bytes": 32604,
+      "sha256": "796b5f709411fcb8e79da3bc075f022bbacacb87d91394f3d95a1f9eb742d99c",
+      "canonicalBlobSha256": "796b5f709411fcb8e79da3bc075f022bbacacb87d91394f3d95a1f9eb742d99c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/runtime-effective-capability.ts",
+      "bytes": 22831,
+      "sha256": "024fa35518ed893421c2df595e73f8852cf932889679c5776c575360d5431adb",
+      "canonicalBlobSha256": "024fa35518ed893421c2df595e73f8852cf932889679c5776c575360d5431adb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/user-message-queue.ts",
+      "bytes": 4020,
+      "sha256": "be902290f2ed467066c13c7024255c75d1889ffbc4c30c4bf2ebf2e574d69c4a",
+      "canonicalBlobSha256": "be902290f2ed467066c13c7024255c75d1889ffbc4c30c4bf2ebf2e574d69c4a"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/followup-runner.ts",
+      "bytes": 53097,
+      "sha256": "8784be846359f6d29517faa56de9c5353b9c18fac7d17e3c9823ed595e026e21",
+      "canonicalBlobSha256": "8784be846359f6d29517faa56de9c5353b9c18fac7d17e3c9823ed595e026e21"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "bytes": 200684,
+      "sha256": "29aac345d798dcd9e2f7930d2174b902e462f6ff60185e52bdf2b202d54ff717",
+      "canonicalBlobSha256": "29aac345d798dcd9e2f7930d2174b902e462f6ff60185e52bdf2b202d54ff717"
+    },
+    {
+      "path": "tests/e2e/autonomy-host-readiness.spec.ts",
+      "bytes": 12534,
+      "sha256": "ddb023d27113fe84f3cb698d101871b4fe7a82952240225d2fc9ce302f3fa378",
+      "canonicalBlobSha256": "ddb023d27113fe84f3cb698d101871b4fe7a82952240225d2fc9ce302f3fa378"
+    },
+    {
+      "path": "tests/e2e/autonomy-runtime-readiness.spec.ts",
+      "bytes": 10445,
+      "sha256": "d978d8d1110beb3ce04ca74a42c2fc63388fa3b8cdc163bdd7b234cc925708d2",
+      "canonicalBlobSha256": "d978d8d1110beb3ce04ca74a42c2fc63388fa3b8cdc163bdd7b234cc925708d2"
+    },
+    {
+      "path": "tests/unit/autonomy-runtime-workspace-scope.test.ts",
+      "bytes": 5434,
+      "sha256": "6775c3cd57e5dd2254e8dea066f02e2fb20a360ed70340ed31d20e8f00a15079",
+      "canonicalBlobSha256": "6775c3cd57e5dd2254e8dea066f02e2fb20a360ed70340ed31d20e8f00a15079"
+    },
+    {
+      "path": "tests/unit/chat-send-input-mode.test.ts",
+      "bytes": 16076,
+      "sha256": "af04c9b8a4bebb94bd318dfb3a9fdba83f1ffd4910830b90b24ccb88a25804d3",
+      "canonicalBlobSha256": "af04c9b8a4bebb94bd318dfb3a9fdba83f1ffd4910830b90b24ccb88a25804d3"
+    },
+    {
+      "path": "tests/unit/gateway-process-launcher-env.test.ts",
+      "bytes": 4463,
+      "sha256": "799bc52aa82f086cdbaadad99109828891dae345a3470113b7dc0253f53b7e0d",
+      "canonicalBlobSha256": "799bc52aa82f086cdbaadad99109828891dae345a3470113b7dc0253f53b7e0d"
+    },
+    {
+      "path": "tests/unit/runtime-effective-capability.test.ts",
+      "bytes": 18938,
+      "sha256": "14742848e1af0bf5fc9ef523bd16b102c65b6af2ca0b0fc42cef1f55efac0b69",
+      "canonicalBlobSha256": "14742848e1af0bf5fc9ef523bd16b102c65b6af2ca0b0fc42cef1f55efac0b69"
+    },
+    {
+      "path": "tests/unit/user-message-queue.test.ts",
+      "bytes": 8815,
+      "sha256": "7469a18d3da1d5a1aa9d849354cb9f99f529eaf2f82efa8d59d5bebe10ae0d37",
+      "canonicalBlobSha256": "7469a18d3da1d5a1aa9d849354cb9f99f529eaf2f82efa8d59d5bebe10ae0d37"
+    }
+  ],
+  "dependencyReuse": "Existing D:/ClawX junctions; not a fresh install",
+  "scope": "Final source candidate plus existing installed dependencies; not a fresh installation or packaged build."
+}

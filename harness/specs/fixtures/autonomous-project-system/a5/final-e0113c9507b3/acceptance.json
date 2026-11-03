@@ -1,0 +1,110 @@
+{
+  "schema": "AutonomyA5Acceptance/v2",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "task": "TF-0674",
+  "fullObjective": "TF-0664",
+  "verdict": "accepted",
+  "nodeClosureAllowed": true,
+  "requirements": [
+    "骨架层：L1 实际运行 + L5 当前证据",
+    "受控写集/复用点：electron/services/workspace-preflight.ts；electron/services/sessions-api.ts；electron/gateway；openclaw_runtime/src/config；shared/types/session-effective-policy.ts",
+    "复用preflight/effective policy/capability描述，明确supported/unsupported/unknown及probe来源和时间。",
+    "重测当前embedded runtime/CLI来源、配置schema、Gateway/cron/service；原研究包配置故障仅作待核对线索。",
+    "有缺口时做保留语义的备份/迁移/readback；使用已具备权限，不擅自安装管理员服务或改变冻结default。"
+  ],
+  "acceptance": [
+    {
+      "index": 0,
+      "text": "一次isolated run与受控continuation有实际回执；UI关闭后的持续执行、重启恢复分别测量。",
+      "status": "verified",
+      "evidence": [
+        "host-readiness.json",
+        "restart-smoke.json",
+        "gates.json"
+      ]
+    },
+    {
+      "index": 1,
+      "text": "工具声明与实际adapter不符/未测budget/缺失service不能被投影为可用；失效状态回到现有诊断。",
+      "status": "verified",
+      "evidence": [
+        "negatives.json",
+        "effective-capability-snapshot.json",
+        "gates.json"
+      ]
+    },
+    {
+      "index": 2,
+      "text": "配置修复失败可回滚，UFTK等既有字段不盲删；无需用户亲自点UI验证。",
+      "status": "verified",
+      "evidence": [
+        "host-readiness.json",
+        "negatives.json",
+        "source-inputs.json"
+      ]
+    },
+    {
+      "index": 3,
+      "text": "负例：descriptor当runtime授权；旧探针当当前健康；保存配置成功当reload成功",
+      "status": "verified",
+      "evidence": [
+        "negatives.json",
+        "effective-capability-snapshot.json",
+        "gates.json"
+      ]
+    },
+    {
+      "index": 4,
+      "text": "证据包含driven_by:agent、真实actor、source/candidate/输入配置版本、命令/exit/count、artifact hash、负例与未测范围；不以stdout或模型自述收口。",
+      "status": "verified",
+      "evidence": [
+        "source-inputs.json",
+        "gates.json",
+        "review.json",
+        "raw-run-index.json",
+        "SHA256SUMS",
+        "credential-scan.json"
+      ]
+    }
+  ],
+  "observed": {
+    "unitPassed": 165,
+    "unitFailed": 0,
+    "unitSkipped": 0,
+    "explicitJourneysPassed": 2,
+    "nativeProviderRequests": 4,
+    "nodeProviderRequests": 2
+  },
+  "configuration": {
+    "repairRequired": false,
+    "migrationApplied": false,
+    "rollbackExercised": false,
+    "reason": "No config defect was observed. The read model and scope/liveness fixes add no config writer; actual boot, preserved runtime fields and existing owner sync tests prove preservation. Conditional failed-repair rollback was not invoked because no repair was introduced."
+  },
+  "limitations": [
+    "Scripted local provider is wiring evidence, not model quality.",
+    "No installed service, packaged distribution, budget measurement or release claim.",
+    "Supported runtime/scheduling observation is not permission, adapter health, service installation or effect admission.",
+    "Unknown budgets and service support deliberately stay unknown; no installer or app-exit-execution claim.",
+    "Full TF-0664 autonomy program remains incomplete; this acceptance covers TF-0674 only.",
+    "Global default-branch landing and publication are separate from this isolated source-candidate acceptance.",
+    "Two earlier completed Native attempts failed with connection closure; preserved in execution-interruptions.json. Their exact cause remains unproven; no reliability or soak claim."
+  ],
+  "knownExecutionResiduals": {
+    "completedCleanNativeAttempts": {
+      "total": 3,
+      "passed": 1,
+      "failed": 2
+    },
+    "interruptedDrivers": 3,
+    "priorFailureCause": "unproven",
+    "boundary": "The original node requires an actual isolated run and continuation/restart scenario. This pack proves that finite scenario on the frozen candidate. It does not claim every attempt passed or establish stable long-running reliability; later project recovery/soak scope remains outside this leaf."
+  }
+}

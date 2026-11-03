@@ -1,0 +1,36 @@
+{
+  "schema": "AutonomyA5FinalReview/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-03T05:45:56.853Z",
+  "candidate": {
+    "dirty": false,
+    "commit": "e0113c9507b3c88d7066b92e01ad1f2a4faaf4d7",
+    "tree": "21b9d6e3de96076c0741d185a4c5db9dbc10036d"
+  },
+  "review": {
+    "findings": [],
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "Reviewed the uncommitted TF-0674 bundle against its callers and consumers. The workspace owner ID and fingerprint now survive immediate and queued FollowupRun dispatch into attempts; the legacy local prompt still uses a directory-shaped scope for prompt construction but is not published into the owner-keyed observation cache; the chat input-mode queue persists and restores the fingerprint through the existing payload_json path and groups claims by agent/workspace/fingerprint/task-root; Gateway stdout is actively drained; and the added unit/E2E assertions exercise the relevant boundaries, including mixed-owner draining and both drain callbacks. I did not find an actionable bug introduced by this change. Inspection was read-only and static: the provided evidence says the latest typecheck and deterministic mixed-owner rerun are still in progress, and the earlier r14 native journey predates the owner fixes, so I have not independently established full E2E or acceptance proof for this exact snapshot.",
+    "overall_confidence": 0.84
+  },
+  "exit": {
+    "completedAt": "2026-11-03T03:33:03.3746098Z",
+    "actor": "codex-a5",
+    "driven_by": "agent",
+    "exitCode": 0
+  },
+  "invocation": {
+    "configLastWriteUtc": "2026-11-03T03:21:07.2341190Z",
+    "capturedDuringRunningReview": true,
+    "observedAt": "2026-11-03T03:24:45.6457151Z",
+    "modelOverridePassed": false,
+    "command": "python openclaw_runtime/.agents/skills/autoreview/scripts/autoreview --mode local --no-web-search --prompt-file D:/tmp/autonomy-a5-r15/review-final.md",
+    "configuredModel": "model = \"ccs-workbuddy/free-ds-4.1f\"",
+    "actor": "codex-a5",
+    "note": "The first metadata write serialized a PowerShell script block by mistake; preserved as review-invocation.invalid.json. This corrected record is an observation during the same live call, not a reconstructed verdict.",
+    "engineOverridePassed": false,
+    "driven_by": "agent"
+  },
+  "scope": "Mandatory final source review. Static code inspection; independent runtime acceptance is recorded separately in this pack."
+}
