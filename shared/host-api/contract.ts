@@ -41,6 +41,7 @@ import type {
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
 import type { GatewayHealth, GatewayStatus } from '../types/gateway';
 import type { ArchiveHandle } from '../types/context-family';
+import type { ContextDiagnostic, ContextFoldResult, ContextFoldingStatus } from '../types/context-folding';
 import type {
   MemoryCard,
   MemoryCardScope,
@@ -2924,6 +2925,18 @@ export type SessionListArchivedResult = HostSuccess & {
   entries: SessionArchiveEntry[];
 };
 export type SessionEmptyArchivePayload = { agentId?: string };
+/** context-folding-rlm: read-only flag/limits/rollback descriptor (no session required). */
+export type SessionContextFoldingStatusPayload = { sessionKey?: string };
+export type SessionContextFoldingStatusResult = HostSuccess & { status: ContextFoldingStatus };
+/** context-folding-rlm: validate a ContextFoldResult/v1 and bound it for the parent view. */
+export type SessionContextFoldProjectionPayload = { result: unknown; maxChars?: number };
+export type SessionContextFoldProjectionResult = HostSuccess & {
+  ok: boolean;
+  projection?: ContextFoldResult;
+  chars?: number;
+  truncated?: boolean;
+  diagnostics: ContextDiagnostic[];
+};
 export type SessionPatchThinkingPayload = {
   sessionKey: string;
   thinkingLevel: AgentReasoningEffort | null;
@@ -5971,6 +5984,8 @@ export type HostApiContract = {
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
     emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;
+    contextFoldingStatus: (payload?: SessionContextFoldingStatusPayload) => SessionContextFoldingStatusResult;
+    contextFoldProjection: (payload: SessionContextFoldProjectionPayload) => SessionContextFoldProjectionResult;
   };
   chat: {
     sendWithMedia: (payload: ChatSendWithMediaPayload) => ChatSendWithMediaResult;

@@ -42,6 +42,22 @@ import {
   readContext,
 } from "../../context-engine/tools/context-read-tool.js";
 import { searchContext } from "../../context-engine/tools/context-search-tool.js";
+import { isContextFoldingEnabled } from "../../context-engine/context-folding/flags.js";
+import {
+  contextExpandEvent,
+  expandContextHandle,
+  handleForContextBlock,
+  mintContextHandle,
+  type ContextExpandDeps,
+} from "../../context-engine/context-folding/expand.js";
+import {
+  CONTEXT_EXPAND_REQUEST_SCHEMA,
+  CONTEXT_FOLDING_LIMITS,
+  type ContextHandle,
+  type ContextHandleOwner,
+  type ContextRequesterIdentity,
+  type ContextSelector,
+} from "../../../../shared/types/context-folding.js";
 import {
   CONTEXT_WRITE_ROLE_WHITELIST,
   writeContext,
@@ -75,6 +91,12 @@ export const CONTEXT_UNDERSTAND_TOOL_NAME = "context_understand";
 export const CONTEXT_IMPACT_TOOL_NAME = "context_impact";
 export const CONTEXT_REUSE_TOOL_NAME = "context_reuse";
 export const CONTEXT_VERIFY_TOOL_NAME = "context_verify";
+export const CONTEXT_EXPAND_TOOL_NAME = "context_expand";
+/**
+ * context-folding-rlm tools. Deliberately not part of DCS_ALL_CONTEXT_TOOL_NAMES:
+ * those constants are frozen by the flag-off parity baseline.
+ */
+export const CONTEXT_FOLDING_TOOL_NAMES = [CONTEXT_EXPAND_TOOL_NAME] as const;
 
 export const DCS_CONTEXT_AGENT_TOOL_NAMES = [
   CONTEXT_READ_TOOL_NAME,
@@ -137,6 +159,15 @@ export type DcsContextAgentToolOptions = {
    * Used by context_understand when no activeFiles arg is provided.
    */
   activeFiles?: string[];
+  /**
+   * context-folding-rlm: runtime config used to resolve the context folding flag
+   * (runtime.contextBlock.contextFolding.enabled / VERSE_CONTEXT_FOLDING).
+   * `contextFoldingEnabled` is an explicit override for deterministic tests.
+   */
+  config?: unknown;
+  contextFoldingEnabled?: boolean;
+  /** Optional clock for deterministic handle freshness in tests. */
+  contextFoldingNow?: () => string;
 };
 
 const ContextReadSchema = Type.Object({
@@ -252,20 +283,29 @@ function resolveContextWriteRole(options: DcsContextAgentToolOptions): string {
   return "implementer";
 }
 
-function summarizeBlocks(blocks: ContextBlock[]): Array<{
+function summarizeBlocks(
+  blocks: ContextBlock[],
+  handleFor?: (block: ContextBlock) => ContextHandle | null,
+): Array<{
   block_id: string;
   block_type: string;
   summary: string;
   full_content: string;
   fallback_mode?: string;
+  handle?: ContextHandle;
 }> {
-  return blocks.map((block) => ({
-    block_id: block.block_id,
-    block_type: block.block_type,
-    summary: block.summary,
-    full_content: block.full_content ?? "",
-    ...(block.fallback_mode ? { fallback_mode: block.fallback_mode } : {}),
-  }));
+  return blocks.map((block) => {
+    const handle = handleFor ? handleFor(block) : null;
+    return {
+      block_id: block.block_id,
+      block_type: block.block_type,
+      summary: block.summary,
+      full_content: block.full_content ?? "",
+      ...(block.fallback_mode ? { fallback_mode: block.fallback_mode } : {}),
+      // Flag-on only: a scoped ContextHandle the model can expand later.
+      ...(handle ? { handle } : {}),
+    };
+  });
 }
 
 function requireFactService(options: DcsContextAgentToolOptions): WorkspaceFactService | null {
@@ -483,7 +523,7 @@ export function createContextSearchTool(options: DcsContextAgentToolOptions): An
       return jsonResult({
         ok: true,
         count: blocks.length,
-        results: summarizeBlocks(blocks),
+        results: summarizeBlocks(blocks, resolveBlockHandleMinter(options, sessionId)),
       });
     },
   };
@@ -839,6 +879,194 @@ export function createContextVerifyTool(options: DcsContextAgentToolOptions): An
   };
 }
 
+// ---------------------------------------------------------------------------
+// context-folding-rlm (TF-0692): bounded ContextHandle expansion.
+// Default off. With the flag off none of this is reachable: no tool is built and
+// context_search output is byte-identical to the baseline.
+// ---------------------------------------------------------------------------
+
+function resolveContextFoldingEnabledForOptions(options: DcsContextAgentToolOptions): boolean {
+  if (typeof options.contextFoldingEnabled === "boolean") return options.contextFoldingEnabled;
+  return isContextFoldingEnabled(options.config);
+}
+
+/**
+ * The requester is the executing session. The workspace identity follows the
+ * same owner-resolved mapping context_write already uses (workspace root path);
+ * it is never derived from a session key (identity-scope-boundary).
+ */
+function resolveContextFoldingRequester(
+  options: DcsContextAgentToolOptions,
+  sessionId: string,
+): ContextRequesterIdentity {
+  const workspaceId = (options.workspaceRoot?.trim() || process.cwd()) as ContextRequesterIdentity["workspaceId"];
+  const sessionKey = options.runSessionKey?.trim() || options.agentSessionKey?.trim();
+  return {
+    workspaceId,
+    sessionId,
+    ...(sessionKey ? { sessionKey: sessionKey as ContextRequesterIdentity["sessionKey"] } : {}),
+    actor: "parent",
+    depth: 0,
+  };
+}
+
+function resolveBlockHandleMinter(
+  options: DcsContextAgentToolOptions,
+  sessionId: string,
+): ((block: ContextBlock) => ContextHandle | null) | undefined {
+  if (!resolveContextFoldingEnabledForOptions(options)) return undefined;
+  const requester = resolveContextFoldingRequester(options, sessionId);
+  return (block) => handleForContextBlock(block, requester, {
+    ...(options.contextFoldingNow ? { now: options.contextFoldingNow } : {}),
+  });
+}
+
+function resolveContextExpandDeps(
+  options: DcsContextAgentToolOptions,
+  sessionId: string,
+): ContextExpandDeps {
+  return {
+    requester: resolveContextFoldingRequester(options, sessionId),
+    ...(options.blockStore ? { blockStore: options.blockStore } : {}),
+    ...(options.workspaceRoot?.trim() ? { workspaceRoot: options.workspaceRoot.trim() } : {}),
+    ...(options.contextFoldingNow ? { now: options.contextFoldingNow } : {}),
+  };
+}
+
+const ContextExpandSchema = Type.Object({
+  handle: Type.Optional(
+    Type.Record(Type.String(), Type.Unknown(), {
+      description:
+        "ContextHandle/v1 returned earlier by context_search or context_expand. Provide either handle or resource.",
+    }),
+  ),
+  resource: Type.Optional(
+    Type.Object(
+      {
+        owner: Type.String({ description: "workspace-file | block-store | context-archive" }),
+        resource_id: Type.String({
+          description: "Workspace-relative file path, block:<block_id>, or a context-archive uri.",
+        }),
+        checksum: Type.Optional(Type.String({ description: "Required for context-archive resources." })),
+        start_line: Type.Optional(Type.Integer({ minimum: 1 })),
+        end_line: Type.Optional(Type.Integer({ minimum: 1 })),
+        offset: Type.Optional(Type.Integer({ minimum: 0 })),
+        length: Type.Optional(Type.Integer({ minimum: 1 })),
+        label: Type.Optional(Type.String()),
+      },
+      { description: "Mint a new scoped handle for an owner resource, then expand it." },
+    ),
+  ),
+  mode: Type.String({ description: "excerpt | search | aggregate" }),
+  max_chars: Type.Optional(Type.Integer({ minimum: 1, maximum: CONTEXT_FOLDING_LIMITS.expandMaxChars })),
+  max_bytes: Type.Optional(Type.Integer({ minimum: 1, maximum: CONTEXT_FOLDING_LIMITS.expandMaxBytes })),
+  query: Type.Optional(Type.String({ description: "Required for mode=search." })),
+  start_line: Type.Optional(Type.Integer({ minimum: 1, description: "Absolute line range inside the handle selector (excerpt only)." })),
+  end_line: Type.Optional(Type.Integer({ minimum: 1 })),
+  offset: Type.Optional(Type.Integer({ minimum: 0, description: "Absolute char range inside the handle selector (excerpt only)." })),
+  length: Type.Optional(Type.Integer({ minimum: 1 })),
+});
+
+function readSelectorParams(params: Record<string, unknown>): ContextSelector | undefined {
+  const startLine = params.start_line;
+  const endLine = params.end_line;
+  if (typeof startLine === "number" && typeof endLine === "number") {
+    return { kind: "lines", startLine, endLine };
+  }
+  if (typeof startLine === "number") {
+    return { kind: "lines", startLine, endLine: startLine };
+  }
+  const offset = params.offset;
+  const length = params.length;
+  if (typeof offset === "number" && typeof length === "number") {
+    return { kind: "chars", offset, length };
+  }
+  return undefined;
+}
+
+/**
+ * context_expand: read a bounded excerpt, search or aggregate of a scoped
+ * ContextHandle. Registered only when the context folding flag is on.
+ */
+export function createContextExpandTool(options: DcsContextAgentToolOptions): AnyAgentTool | null {
+  const sessionId = resolveContextSessionId(options);
+  if (!sessionId || !resolveContextFoldingEnabledForOptions(options)) {
+    return null;
+  }
+  return {
+    label: "Context Expand",
+    name: CONTEXT_EXPAND_TOOL_NAME,
+    displaySummary: "Read a bounded excerpt, search or aggregate of a scoped ContextHandle",
+    description:
+      "Expand a ContextHandle within its declared limits: mode=excerpt returns bounded text, mode=search returns matching lines with context, mode=aggregate returns size/line/match counts without content. Pass a handle from context_search/context_expand or a resource to mint one. The handle must belong to this session and workspace; stale, missing, ambiguous, expired or cross-scope references fail with a named diagnostic.",
+    parameters: ContextExpandSchema,
+    risk: "readonly",
+    execute: async (_toolCallId, args) => {
+      const params = asToolParamsRecord(args);
+      const deps = resolveContextExpandDeps(options, sessionId);
+      const modeRaw = readStringParam(params, "mode", { required: true });
+      const mode = modeRaw === "search" || modeRaw === "aggregate" ? modeRaw : "excerpt";
+      let handle: ContextHandle | undefined;
+      let minted = false;
+      const resourceRaw = params.resource;
+      if (resourceRaw && typeof resourceRaw === "object" && !Array.isArray(resourceRaw)) {
+        const resource = resourceRaw as Record<string, unknown>;
+        const owner = readStringParam(resource, "owner", { required: true }) as ContextHandleOwner;
+        const resourceId = readStringParam(resource, "resource_id", { required: true });
+        const checksum = readStringParam(resource, "checksum");
+        const label = readStringParam(resource, "label");
+        const selector = readSelectorParams(resource);
+        const mintedHandle = await mintContextHandle(
+          { owner, resourceId, ...(selector ? { selector } : {}), ...(label ? { label } : {}) },
+          deps,
+          checksum ? { checksum } : {},
+        );
+        if (!mintedHandle.ok) {
+          return jsonResult({
+            ok: false,
+            tool: CONTEXT_EXPAND_TOOL_NAME,
+            diagnostics: [mintedHandle.diagnostic],
+          });
+        }
+        handle = mintedHandle.handle;
+        minted = true;
+      } else if (params.handle && typeof params.handle === "object") {
+        handle = params.handle as ContextHandle;
+      }
+      if (!handle) {
+        return jsonResult({
+          ok: false,
+          tool: CONTEXT_EXPAND_TOOL_NAME,
+          diagnostics: [{ code: "invalid_request", message: "Provide either handle or resource." }],
+        });
+      }
+      const range = readSelectorParams(params);
+      const query = readStringParam(params, "query");
+      const maxChars = typeof params.max_chars === "number" ? params.max_chars : undefined;
+      const maxBytes = typeof params.max_bytes === "number" ? params.max_bytes : undefined;
+      const result = await expandContextHandle({
+        schemaVersion: CONTEXT_EXPAND_REQUEST_SCHEMA,
+        handle,
+        mode,
+        ...(maxChars !== undefined ? { maxChars } : {}),
+        ...(maxBytes !== undefined ? { maxBytes } : {}),
+        ...(query ? { query } : {}),
+        ...(range ? { range } : {}),
+        requester: deps.requester,
+      }, deps);
+      codingObservability.recordFactToolCall(CONTEXT_EXPAND_TOOL_NAME);
+      codingObservability.recordFactStoreHit(result.ok);
+      return jsonResult({
+        ...result,
+        tool: CONTEXT_EXPAND_TOOL_NAME,
+        handle,
+        minted,
+        event: contextExpandEvent(result, handle, deps.now ? deps.now() : new Date().toISOString()),
+      });
+    },
+  };
+}
+
 /**
  * Serialize tool schemas for W0-4 / addendum 6 character-budget assertions.
  */
@@ -906,6 +1134,7 @@ export function createDcsContextAgentTools(options: DcsContextAgentToolOptions):
     createContextImpactTool(options),
     createContextReuseTool(options),
     createContextVerifyTool(options),
+    createContextExpandTool(options),
   ].filter((tool): tool is AnyAgentTool => tool !== null);
   // Keep W0-4 counter warm whenever the shell builds a non-empty catalog.
   if (tools.length > 0) {

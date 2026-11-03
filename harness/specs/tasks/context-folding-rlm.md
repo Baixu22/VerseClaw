@@ -69,7 +69,7 @@ requiredProfiles:
 requiredTests:
   - pnpm harness context --spec harness/specs/tasks/context-folding-rlm.md
   - pnpm harness validate --spec harness/specs/tasks/context-folding-rlm.md --no-diff
-  - pnpm exec vitest run tests/unit/context-folding-contract.test.ts tests/unit/context-folding-result.test.ts
+  - pnpm exec vitest run tests/unit/context-folding-contract.test.ts tests/unit/context-folding-result.test.ts tests/unit/context-folding-expand.test.ts tests/unit/context-folding-host-api.test.ts
   - pnpm exec vitest run tests/integration/context-folding-real-task.test.ts
   - pnpm run typecheck
   - pnpm run contract:check
@@ -80,6 +80,8 @@ requiredTests:
 plannedTests:
   - tests/unit/context-folding-contract.test.ts
   - tests/unit/context-folding-result.test.ts
+  - tests/unit/context-folding-expand.test.ts
+  - tests/unit/context-folding-host-api.test.ts
   - tests/integration/context-folding-real-task.test.ts
   - tests/e2e/context-folding-real-task.spec.ts
 acceptance:
