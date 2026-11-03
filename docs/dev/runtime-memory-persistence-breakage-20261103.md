@@ -134,3 +134,46 @@ inspectRuntimeMemorySanitizedEpisodes`。**没有任何覆盖入口**（无 opti
 `runtime-memory-retirement-closeout.md` 只是 repair 了 TaskLoop 与 context-contract 相关用例；
 本轮统计的 40 个 memory 相关失败套件中，绝大多数仍按旧口径断言"可开启"。按该规格的
 Retirement mapping 逐个改写（约 36 个文件）尚未完成，记为待办，不声称已完成。
+
+## 10. 2026-11-03 分类审计：40 个套件不是一个问题，是三组
+
+逐个实测（当前 HEAD `b48472cf3`）后，这 40 个失败套件可分成三组，
+**它们的正确修复方向不同，不能用同一种改写**：
+
+| 组 | 套件数 | 代表 | 失败性质 | 正确处置 |
+| --- | --- | --- | --- | --- |
+| G1 退役语义未对齐 | 约 27 | `memory-query-tool`、`memory-self-edit-adapter`、`runtime-memory-context-provider` | 断言退役后被禁用的行为仍可用 | 按 Retirement mapping 改成"断言不可用"（已验证：`r3-1-runtime-memory-legal-surface` 已改，2/2 通过） |
+| G2 离线评测 fixture | 10 | `runtime-memory-eval-*`、`locomo-benchmark` | 评测指标计算本身**不依赖**退役开关；只是"建 fixture 库"这一步走了被禁用的 store | 需要**测试侧** fixture 建库能力（见下） |
+| G3 其它 | 约 3 | `runtime-memory-compass-completion` 等 | 单点断言漂移 | 逐个判断 |
+
+### G2 是真正需要决策的一组
+
+- `evaluateChain` / `buildChainScenario` 等评测函数是**纯计算**，不读退役开关；
+- 但 `tests/unit/helpers/runtime-memory-eval-helpers.ts` 的 `seedTempDb` /
+  `appendFactToDb` / `invalidateFactInDb` 全部通过 `createRuntimeMemoryPersistenceStore` 建库，
+  而该 store 在退役后一律 `flag_disabled`；
+- 产品侧没有公开的 fixture 建库入口：`ensureRuntimeMemoryPersistenceSchema`、
+  `RUNTIME_MEMORY_PERSISTENCE_SCHEMA_SQL`、`persistFact` 均**未导出**；
+- 这些评测套件只有 `scripts/` 引用，不是产品运行时路径。
+
+因此 G2 有三条路，各有代价：
+
+1. **导出 fixture-only 建库入口**（产品模块新增一个明确标注 test/fixture 的导出）——
+   改动小，但会给产品模块增加测试用途 API；
+2. **在测试 helper 内实现等价建库**——不碰产品代码，但要复制 schema 与写入语义，
+   存在与产品实现漂移的风险；
+3. **把 G2 标为 not-run/known-gap**——最诚实，但 10 个评测套件继续不提供任何价值。
+
+我倾向 **1**（受控导出 + 明确命名如 `__createRuntimeMemoryPersistenceFixture`），
+因为它不复制 schema、不会漂移，且导出本身不启用任何产品能力。
+但这需要一次明确决定，我没有擅自选择。
+
+### 本轮已落地
+
+- `tests/unit/r3-1-runtime-memory-legal-surface.test.ts` → 退役断言，2/2 通过（`b48472cf3`）
+- `tests/unit/memory-tf0500-persistence-retirement.test.ts` → 10 条退役锁（`84df0ecd9`）
+- 两者均未改动任何产品源码。
+
+### 未落地
+
+G1 其余约 26 个文件、G2 全部 10 个、G3 约 3 个仍在失败。本文件不声称它们已修复。
