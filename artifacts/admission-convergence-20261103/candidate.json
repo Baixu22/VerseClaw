@@ -1,0 +1,13 @@
+{
+  "schema": "AdmissionConvergenceCandidate/v2",
+  "generatedAt": "2026-11-03T03:30:00+08:00",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "candidateCommit": "314a2e193f07480f882ec9410195ab080e927cf7",
+  "candidateTree": "24d4b97fd0a0ac7d00af739a974585df6106bda7",
+  "baselinePreA3": "97cda35de",
+  "baselineA5": "179a9b0f8",
+  "supersededEvidence": "artifacts/admission-convergence-20261102 (candidate 6b7f8eb49; unit exit 1, no E2E aggregate, lint exit 1)",
+  "candidateChangeSet": "68 commits after the pre-A3 baseline; 101 files. Runtime-source diff versus the A6 spec commit 6b7f8eb49 is config test files only (openclaw_runtime/src/config/runtime-context-block-*.test.ts); no product runtime behavior file changed by A6.",
+  "boundaryDiffVsBaseline": "zero changed files in docs/dev/default-config-matrix.md, shared/dcs/, electron/main/ipc/host-invoke.ts, electron/services/permissions-api.ts (7 blobs identical)"
+}

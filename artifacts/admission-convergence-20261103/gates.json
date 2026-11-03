@@ -1,0 +1,18 @@
+{
+  "schema": "AdmissionGateMatrix/v2",
+  "candidate": "314a2e193f07480f882ec9410195ab080e927cf7",
+  "verdict": "pass-with-environment-classified-residuals",
+  "gates": [
+    { "command": "pnpm run build:vite", "exitCode": 0, "classification": "pass", "log": "logs/gate-build.log" },
+    { "command": "pnpm run typecheck", "exitCode": 0, "classification": "pass", "log": "logs/gate-typecheck.log", "detail": "node/web/test all exit 0, errorCount 0" },
+    { "command": "pnpm run lint:check", "exitCode": 0, "classification": "pass", "log": "logs/gate-lint.log", "detail": "check-no-bom ok; eslint 0 errors within the configured max-warnings 120; lint:dcs ok; artifact-completion-class ok" },
+    { "command": "pnpm contract:check", "exitCode": 0, "classification": "pass", "log": "logs/gate-contract.log" },
+    { "command": "pnpm repo:artifacts:check", "exitCode": 0, "classification": "pass", "log": "logs/gate-repo-artifacts.log" },
+    { "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/architecture-skeleton-admission-regression.md --dry-run", "exitCode": 0, "classification": "pass", "log": "logs/gate-harness-dryrun-clean.log", "detail": "run inside the clean detached candidate worktree; the shared checkout fails only because another session's untracked fixture directory is in scope" },
+    { "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/architecture-skeleton-admission-regression.md", "exitCode": 0, "classification": "pass", "log": "logs/gate-harness-validate-clean.log" },
+    { "command": "node scripts/validate-system-maturity-findings-registry.mjs", "exitCode": 0, "classification": "pass", "log": "logs/gate-maturity-findings.log" },
+    { "command": "vitest run tests/unit/system-maturity-findings-registry.test.ts --maxWorkers=1", "exitCode": 0, "classification": "pass", "log": "logs/gate-maturity-registry-test.log", "detail": "7 passed" },
+    { "command": "pnpm test (phase 1 + phase 2 + test:dcs)", "exitCode": 1, "classification": "not-pass-but-no-candidate-regression", "summary": "unit/unit-regression-classification.json", "detail": "58 failing suites, all 58 also fail at the pre-A3 baseline 97cda35de; test:dcs reports 340/341 with one pre-existing failure that also fails at baseline" },
+    { "command": "pnpm run test:e2e:run", "exitCode": 1, "classification": "environment", "summary": "e2e-environment-failure.json", "detail": "418 declared; 413 unexpected / 5 skipped; 411 of 413 are the same firstWindow timeout caused by EPERM/access-denied on the Electron profile directory, reproduced by a standalone minimal Electron app" }
+  ]
+}

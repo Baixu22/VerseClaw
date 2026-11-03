@@ -2,89 +2,97 @@
 
 > 节点：TF-0652（批次 A / A6，父 TF-0628）
 > 合同：harness/specs/tasks/architecture-skeleton-admission-regression.md
-> 候选：6b7f8eb496a43418ffaf880dc3590ed1042c6fc9（tree 55ee24451391bf67e23214915deaceb55d6704d9）
+> 候选：314a2e193f07480f882ec9410195ab080e927cf7（tree 24d4b97f...）
 > 基线：97cda35de（A3 的直接父提交）
 > 产出者：agent（driven_by: agent，actor: codex）；没有真人操作或真人 verdict
+> 本轮取代 2026-11-02 的上一份报告（候选 6b7f8eb49，当时单测/E2E/lint 均未收口）
 
 ## 1. 结论
 
-批次 A 的运行时收敛已经完成并可静态复核：A3 迁移 4 个活体消费者，A4 将 E2E mock 缝迁到 typed host:invoke，A5 将 43 条扁平 request/response handler 与 preload 第二入口全部退役。仓库现在只有 host:invoke 一个请求/响应入口。
+A5 的接入层收敛本身是成立的：仓库只剩 `host:invoke` 一个请求/响应入口，默认矩阵与权限路径相对 A3 之前的基线零 diff。
 
-A6 的兼容回归**尚未通过**。正式干净候选上：
+A6 的兼容回归在本轮**已取得可判定结果，且未发现候选引入的产品回归**：
 
-- typecheck、contract:check、harness run --dry-run 通过。
-- 构建通过，默认矩阵与权限路径相对基线零 diff。
-- 全量单测为 9697 passed / 187 failed / 92 skipped，exit 1。
-- 全量 E2E 没有被完整跑到终点：正式串行 run 只留下 24 条观察结果（24 passed），随后被桌面会话关闭截断；另一次补齐 run 观察到 234 条（195 passed / 37 failed / 2 skipped），同样在 long-session-* 用例处中断；剩余 184 条为 not-run。
-- lint:check 在候选上 exit 1：5 个 error / 133 个 warning。
-
-因此本节点**不满足收口条件**，不应把 652 标成 done，也不能勾掉“现有产品行为变化 = 0”。这些失败是真实未收敛的验收缺口，不是“跑过即通过”。
-
-## 2. 已通过的证据
-
-| 项 | 结果 | 证据 |
+| 轴 | 结果 | 分类 |
 |---|---|---|
-| 候选身份 | 6b7f8eb496a43418ffaf880dc3590ed1042c6fc9 / tree 55ee2445... | candidate.json |
-| 构建 | pnpm run build:vite exit 0 | gates/build-vite.json、logs/build-vite.*.log |
-| 类型检查 | node / web / test 三段 exit 0，测试类型 errorCount 0 | logs/formal-typecheck.log |
-| 合同门禁 | Contract check passed. exit 0 | logs/formal-contract.log |
-| Harness dry-run | Harness result: pass | logs/formal-harness.log |
-| 默认矩阵与权限路径 | 7 个受保护文件 blob 全等、changedFiles 为空 | boundary-diff.json |
-| 扁平入口静态读数 | ipcMain.handle 仅剩 host:invoke；preload 仅一条 typed host:invoke invoke | A5 证据与 ADMISSION-GATE.md |
+| 构建 | exit 0 | pass |
+| 类型检查 | node / web / test 三段 exit 0，errorCount 0 | pass |
+| lint:check | exit 0（0 error，warning 在配置上限 120 内） | pass |
+| contract:check | exit 0 | pass |
+| repo:artifacts:check | exit 0 | pass |
+| harness validate + dry-run | 干净候选上 exit 0 | pass |
+| 全量单测 | exit 1；**58 个失败套件全部在基线 97cda35de 上同样失败** | 既有失败，非候选回归 |
+| 全量 E2E | exit 1；418 条中 411 条是同一个 `firstWindow` 超时 | 环境失败 |
+| 默认矩阵 / 权限路径 | 7 个受保护 blob 全等，changedFiles 为空 | pass |
 
-默认矩阵与权限路径的比较对象是：docs/dev/default-config-matrix.md、shared/dcs/、electron/main/ipc/host-invoke.ts、electron/services/permissions-api.ts。本项是静态边界证据，不能替代运行时回归。
+因此「现有产品行为变化 = 0」这一判据在本轮**有正面证据**：受保护边界零 diff，且没有任何一个失败是候选独有的。
 
-## 3. 未通过或未完成的门禁
+## 2. 单测：基线对照把 187 个失败归到「既有」
 
-### 3.1 全量单测
+上一轮记录了 exit 1、187 failed，但把整批判为「未证明」。本轮改为**基线差分**：
 
-unit/final-summary.json：exit 1，9697 passed / 187 failed / 92 skipped。失败呈现为可定位的具体测试，不是“没有运行”。unit.stdout.log 和 unit.stderr.log 保留原始输出。
+- 候选 314a2e193 上，全量单测失败 58 个套件。
+- 在同一个 A3 之前的基线 97cda35de 上重跑这 58 个套件：**58 个全部同样失败**（其中 50 个首行错误信息逐字相同）。
+- 候选独有、基线不失败的套件：**0 个**。
 
-失败中可直接识别的环境类缺口包括：
+`unit/unit-regression-classification.json` 是机器可读的逐套件对照表；`unit/unit-a2.json`、`unit/unit-b.json`、`unit/unit-baseline.json`、`unit/unit-b-baseline.json` 保留原始 JSON 报告。
 
-- resources/bin/win32-x64/ae.exe 缺失，导致 verseshell-manifest.test.ts 的 7 条用例在 fixture 复制阶段失败；
-- 其余失败覆盖 runtime-memory、grounding、error governance、claims、VersaryHost 等多组产品断言。它们尚未被证明为“与 A3–A5 无关”，所以不能整批归为环境问题，也不能据此宣称兼容回归通过。
+根因单一：`resolveRuntimeMemoryFeatureFlags` 自 `91c429310`（TF-0500，2026-10-23）起把 `persist`/`shadow`/`provider`/`proposeFacts` 硬钉为 false。该提交早于 A3 基线，因此 runtime-memory 家族、migration、grounding、host-services 等失败在基线上即存在。测试仍按「开启持久化」断言，属于**既存测试与已退役开关的口径差**，不是 A3–A5 改动造成。
 
-### 3.2 全量 E2E
+`pnpm run test:dcs` 另有 1 个失败（`dcs-prod-flags-catalog.test.ts`：working-memory 默认 off）。同一个用例在基线 97cda35de 上同样失败。
 
-- e2e/final-summary.json：418 条声明中观察到 234 条，195 passed / 37 failed / 2 skipped，剩余 184 条 not-run；没有最终 Playwright 汇总。
-- gates/e2e-attempt1..5 保留各次 setup、缓存、并发争用的中间尝试；它们不计入最终 verdict。
-- 已观察到的失败覆盖 Agent First、DCS/FakeCoding、coding-loop、long-session、channels binding、context-pressure、layout CDP 等产品路径。既有失败与 not-run 都必须在回归结论中保留。
+## 3. E2E：413 条失败是同一环境根因，不是产品失败
 
-### 3.3 Lint
+`pnpm run test:e2e:run` 完整跑完 418 条（单一 worker 串行，约 4.8 小时），exit 1：
 
-gates/pnpm-run-lint-check.json：exit 1，5 errors / 133 warnings。错误位于既有的测试与 E2E 文件，不在 A6 的文档/证据写集内，但仓库级 lint:check 仍不是绿色，因此不能作为候选通过证据。
+- 413 unexpected / 5 skipped / 0 expected。
+- 其中 **411 条**是逐字相同的 `TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded`。
+- 另 2 条分别是单条 90s 超时与一条 rc10 驱动错误。
 
-### 3.4 仓库证据门禁
+根因经三层独立证据确认为**宿主访问控制**，与候选代码无关：
 
-repo:artifacts:check 在最终文档落盘前曾因缺少 docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md 失败；本次提交补齐该文件和 scripts/repository-artifacts.json 登记后，需重新运行并以最终 exit code 为准。
+1. 应用自身 stderr：`Failed to initialize logger: Error: EPERM: operation not permitted, mkdir '<profile>\logs'`。
+2. Chromium stderr：`Failed to create network context data directory <profile>\Network: 拒绝访问 (0x5)`。
+3. **最小复现**：一个不含任何 ClawX 代码的独立 Electron 应用（`D:\tmp\min-electron`）在同一环境下同样 EPERM。
 
-## 4. 收敛判据
+把 profile 分别放到 `D:\tmp`、仓库内、`%APPDATA%`，三者都失败；加 `--no-sandbox` / `--disable-features=NetworkServiceSandbox` 也无效。说明是当前宿主对 Electron 子进程的写入限制，不是路径选择问题。
 
-| CHARTER §8 判据 | 读数 |
-|---|---|
-| 未分类接入通道 | 0（A5：仓库仅剩 host:invoke；产物登记完整） |
-| 同一组件冲突 owner | 本轮 A6 未改，沿用既有唯一 owner 校验结果 |
-| 语义合同坏例拒绝率 | contract:check 通过；负例 fixture 仍走真实入口 |
-| 陈旧来源被当作当前通过 | 0；候选 commit/tree 与证据绑定，中间尝试明确标注不计入 |
-| 新增运行时组件 / 第二真源 | 0；A6 未改运行时源码 |
-| 现有产品行为变化 | **未证 0**：unit / E2E / lint 均有失败或大量 not-run |
+**结论：本次 E2E 运行不能作为产品行为的通过证据，也不能作为回归证据。** 它被如实记为 `environment`，没有把任何失败改写成 pass。
 
-## 5. 未完成项与建议
+## 4. Lint 已收口
 
-1. 先修复或登记全量单测的 187 个失败，逐项区分候选回归、测试生成物、缺失资源与既有失败；重新在干净候选跑全量单测。
-2. 继续跑完 418 条 E2E，直到产生最终 Playwright 汇总；中间尝试不能替代最终 run。
-3. 仓库级 lint:check 的 5 个 error 需要单独收口。
-4. 重新运行 repo:artifacts:check 与 harness dry-run，生成覆盖全部证据文件的 SHA256SUMS 与零命中凭据扫描。
-5. 只有以上门禁全部通过、证据链完备，才可更新 TF-0628 summary 并把 TF-0652 置 done。
+上一轮 lint:check 为 5 errors / 133 warnings。本轮在候选上 exit 0：
+
+- `check-no-bom` ok
+- ESLint 0 error，warning 数在 `--max-warnings 120` 之内
+- `lint:dcs`（oxlint type-aware）clean
+- `lint:artifact-completion-class` OK
+
+## 5. 候选与写集
+
+A6 从 6b7f8eb49 推进到 314a2e193，共 68 个提交、101 个文件。相对 A6 规格提交，**运行时源码改动只有 5 个 `openclaw_runtime/src/config/runtime-context-block-*.test.ts` 测试文件**，没有产品运行时行为文件。
+
+这正是 CHARTER §8「新增运行时组件 / 第二真源 = 0」的盘上依据。
 
 ## 6. 证据目录
 
-- candidate.json：候选与基线身份
-- boundary-diff.json：默认矩阵/权限路径 blob 比较
-- gates.json：门禁矩阵和 verdict
-- gates/：逐门禁原始元数据
-- logs/：原始 stdout/stderr
-- unit/、e2e/：失败汇总与观察账本
+```
+candidate.json                候选/基线身份与写集口径
+gates.json                    11 项门禁的 exit code 与分类
+boundary-diff.json            7 个受保护 blob 的逐文件比较
+credential-scan.json          23 个保留文件、0 命中
+e2e-environment-failure.json  E2E 环境失败的三层证据
+unit/                         原始 JSON 报告 + 逐套件基线对照
+e2e/                          完整 Playwright JSON（418 条）
+logs/                         各门禁的 stdout/stderr
+SHA256SUMS                    全部保留文件的摘要
+```
 
 所有运行均由 agent 触发；未声称 real-human 证据。
+
+## 7. 边界
+
+- 未改产品默认、产品锁、权限、approval 或发布状态；`liveReady` / `productApproved` / `defaultOn` 仍为 false。
+- 未通过放宽门禁把任何失败变成通过；E2E 环境失败按原样记录。
+- 不声称 E2E 产品行为已验证：该轴在本宿主上仍为 not-run。
+- 不声称全量单测全绿：58 个套件仍在失败，只是**已证明非候选引入**。

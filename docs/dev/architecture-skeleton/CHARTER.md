@@ -235,7 +235,7 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 | 语义合同坏例拒绝率 | 100% 在预期规则上拒绝 | 负例 fixture + 既有门禁 |
 | 陈旧来源被当作当前通过 | 0 | 来源摘要 + 候选绑定 |
 | 新增运行时组件 / 第二真源 | 0 | 变更集审查 |
-| 现有产品行为变化 | **未证 0（A6，2026-11-02）** | 干净候选 `6b7f8eb49`：unit 9697 passed / 187 failed / 92 skipped；E2E 最终汇总未产生，观察到 195 passed / 37 failed / 2 skipped，184 not-run；lint 5 errors / 133 warnings。详见 `ADMISSION-CONVERGENCE.md` |
+| 现有产品行为变化 | **0（A6，2026-11-03 实测）** | 干净候选 `314a2e193`：受保护边界 7 blob 全等、changedFiles 为空；58 个失败单测套件经基线 `97cda35de` 差分后**全部为既有失败**，候选独有 0 个；全量 E2E 418 条因宿主 EPERM 阻断，记为 environment（not-run），不计为通过。详见 `ADMISSION-CONVERGENCE.md` |
 
 **明确不在判据内**：业务收益、采用率、任务成功率、性能提升、GA 就绪、发布批准。这些需要各自独立的受控实验，不能由骨架绿灯外推。
 

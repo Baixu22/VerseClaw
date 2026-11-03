@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/ClawX-a6-final-20261103
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  02:02:20
+   Duration  2.13s (transform 108ms, setup 279ms, import 28ms, tests 310ms, environment 1.25s)
+

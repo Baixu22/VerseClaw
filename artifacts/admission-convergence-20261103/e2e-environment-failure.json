@@ -1,0 +1,32 @@
+{
+  "schema": "AdmissionE2EEnvironmentFailure/v1",
+  "generatedAt": "2026-11-03T03:30:00+08:00",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "candidate": { "commit": "314a2e193f07480f882ec9410195ab080e927cf7", "sourceCheckout": "D:\\ClawX" },
+  "command": "pnpm run test:e2e:run --reporter=list --reporter=json",
+  "declaredTests": 418,
+  "observed": { "unexpected": 413, "skipped": 5, "expected": 0 },
+  "classification": "environment",
+  "classificationReason": "The Electron main process starts and the Gateway bootstrap runs, but no BrowserWindow is ever created. 411 of 413 failures are the identical TimeoutError at tests/e2e/fixtures/electron.ts:468 (electronApplication.firstWindow). The app's own stderr shows EPERM / access-denied (0x5) failures creating its user-data directories and logger directory.",
+  "rootCauseEvidence": [
+    {
+      "kind": "app-stderr",
+      "observed": "Failed to initialize logger: Error: EPERM: operation not permitted, mkdir '<profile>\\logs'",
+      "note": "Reproduced with profile roots on D:\\tmp, under the repository, and under %APPDATA%."
+    },
+    {
+      "kind": "chromium-stderr",
+      "observed": "Failed to create network context data directory <profile>\\Network: access denied (0x5)"
+    },
+    {
+      "kind": "minimal-repro",
+      "observed": "A standalone Electron app with no ClawX code (D:\\tmp\\min-electron) fails the same way: EPERM opening a report file and access-denied creating Code Cache / Network directories.",
+      "note": "This isolates the failure from the candidate and from ClawX source entirely."
+    }
+  ],
+  "notClaimed": [
+    "No E2E product behavior was verified for this candidate.",
+    "This run is not counted as a pass and does not establish product regression parity."
+  ]
+}

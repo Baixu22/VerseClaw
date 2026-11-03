@@ -1,0 +1,589 @@
+{
+  "schema": "AdmissionUnitRegressionClassification/v1",
+  "generatedAt": "2026-11-02T18:34:20.544Z",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "314a2e193f07480f882ec9410195ab080e927cf7",
+    "worktree": "D:\\\\tmp\\\\ClawX-a6-final-20261103",
+    "phaseA": "unit-a2.json",
+    "phaseB": "unit-b.json",
+    "totals": {
+      "phaseA": {
+        "suites": 3029,
+        "suitesPassed": 2901,
+        "suitesFailed": 128,
+        "tests": 9982,
+        "testsPassed": 9718,
+        "testsFailed": 173,
+        "testsSkipped": 91
+      },
+      "phaseB": {
+        "suites": 8,
+        "suitesPassed": 5,
+        "suitesFailed": 3,
+        "tests": 26,
+        "testsPassed": 17,
+        "testsFailed": 9,
+        "testsSkipped": 0
+      }
+    }
+  },
+  "baseline": {
+    "commit": "97cda35de",
+    "worktree": "D:\\\\tmp\\\\ClawX-a6-baseline-97cda35",
+    "phaseA": "unit-baseline.json (failing-suite re-run)",
+    "phaseB": "unit-b-baseline.json",
+    "totals": {
+      "phaseA": {
+        "suites": 172,
+        "suitesPassed": 44,
+        "suitesFailed": 128,
+        "tests": 572,
+        "testsPassed": 344,
+        "testsFailed": 171,
+        "testsSkipped": 57
+      },
+      "phaseB": {
+        "suites": 3,
+        "suitesPassed": 0,
+        "suitesFailed": 3,
+        "tests": 17,
+        "testsPassed": 8,
+        "testsFailed": 9,
+        "testsSkipped": 0
+      }
+    }
+  },
+  "summary": {
+    "failingSuitesOnCandidate": 58,
+    "failingSuitesAlsoFailingAtBaseline": 58,
+    "failingSuitesNotFailingAtBaseline": 0,
+    "sameFirstMessageAtBaseline": 50
+  },
+  "classification": "no-candidate-attributable-regression-detected",
+  "suites": [
+    {
+      "suite": "unit/agent-engineering-acceptance.test.ts",
+      "candidateFailedTests": 3,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: STACK_TRACE_ERROR",
+      "baselineFirstMessage": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "suite": "unit/app-version-rollback.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected true to be false // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected true to be false // Object.is equality"
+    },
+    {
+      "suite": "unit/cron-api-browser-automation.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: Coordinator follow-up requires workspaceId, coordinatorSessionKey, expectedSessionId, intent and notificationPolicy",
+      "baselineFirstMessage": "Error: Coordinator follow-up requires workspaceId, coordinatorSessionKey, expectedSessionId, intent and notificationPolicy"
+    },
+    {
+      "suite": "unit/cross-layer-closed-loop.v01.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'insufficient-sample' to be 'component-helps' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'insufficient-sample' to be 'component-helps' // Object.is equality"
+    },
+    {
+      "suite": "unit/dcs-preview-switch.test.ts",
+      "candidateFailedTests": 4,
+      "baselineFailedTests": 4,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected [ 'context-view-tools', …(2) ] to deeply equal [ 'context-view-tools', …(3) ]",
+      "baselineFirstMessage": "AssertionError: expected [ 'context-view-tools', …(2) ] to deeply equal [ 'context-view-tools', …(3) ]"
+    },
+    {
+      "suite": "unit/first-product-claims.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected [ …(4) ] to deeply equal []",
+      "baselineFirstMessage": "AssertionError: expected [ …(4) ] to deeply equal []"
+    },
+    {
+      "suite": "unit/gateway-ready-fallback.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected undefined to be defined",
+      "baselineFirstMessage": "AssertionError: expected undefined to be defined"
+    },
+    {
+      "suite": "unit/harness-codex-active-verification.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected false to be true // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected false to be true // Object.is equality"
+    },
+    {
+      "suite": "unit/harness-spec-portability.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected [ Array(1) ] to deeply equal []",
+      "baselineFirstMessage": "AssertionError: expected [ Array(1) ] to deeply equal []"
+    },
+    {
+      "suite": "unit/host-services.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected \"vi.fn()\" to be called with arguments: [ 'chat.send', { …(5) }, 120000 ]",
+      "baselineFirstMessage": "AssertionError: expected \"vi.fn()\" to be called with arguments: [ 'chat.send', { …(5) }, 120000 ]"
+    },
+    {
+      "suite": "unit/ke-integration-full-chain.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 0 to be greater than 0",
+      "baselineFirstMessage": "AssertionError: expected 0 to be greater than 0"
+    },
+    {
+      "suite": "unit/ke-p1-1-candidate-wiring.test.ts",
+      "candidateFailedTests": 3,
+      "baselineFailedTests": 3,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected false to be true // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected false to be true // Object.is equality"
+    },
+    {
+      "suite": "unit/memory-query-tool.test.ts",
+      "candidateFailedTests": 7,
+      "baselineFailedTests": 7,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected null not to be null",
+      "baselineFirstMessage": "AssertionError: expected null not to be null"
+    },
+    {
+      "suite": "unit/memory-self-edit-adapter.test.ts",
+      "candidateFailedTests": 3,
+      "baselineFailedTests": 3,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected [] to have a length of 4 but got +0",
+      "baselineFirstMessage": "AssertionError: expected [] to have a length of 4 but got +0"
+    },
+    {
+      "suite": "unit/openclaw-auth.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { …(2) } to deeply equal { …(2) }",
+      "baselineFirstMessage": "AssertionError: expected { …(2) } to deeply equal { …(2) }"
+    },
+    {
+      "suite": "unit/r0-2-sessions-delete-fail.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected false to be true // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected false to be true // Object.is equality"
+    },
+    {
+      "suite": "unit/r3-1-runtime-memory-legal-surface.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }"
+    },
+    {
+      "suite": "unit/runtime-deep-refs.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "AssertionError: expected [ …(6) ] to deeply equal []",
+      "baselineFirstMessage": "AssertionError: expected [ …(2) ] to deeply equal []"
+    },
+    {
+      "suite": "unit/runtime-grounding-shadow-consumers.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected [] to have a length of 1 but got +0",
+      "baselineFirstMessage": "AssertionError: expected [] to have a length of 1 but got +0"
+    },
+    {
+      "suite": "unit/runtime-memory-compass-completion.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected false to be true // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected false to be true // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-context-provider.test.ts",
+      "candidateFailedTests": 5,
+      "baselineFailedTests": 5,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'fallback' to be 'success' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'fallback' to be 'success' // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-embedding-integration.test.ts",
+      "candidateFailedTests": 3,
+      "baselineFailedTests": 3,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'skipped' to be 'migrated' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'skipped' to be 'migrated' // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-eval-budget-pressure.test.ts",
+      "candidateFailedTests": 6,
+      "baselineFailedTests": 6,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\budget-high-DN5I1v\\openclaw.sqlite",
+      "baselineFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\budget-high-5wQzgw\\openclaw.sqlite"
+    },
+    {
+      "suite": "unit/runtime-memory-eval-chain-eval.test.ts",
+      "candidateFailedTests": 5,
+      "baselineFailedTests": 5,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\chain-baseline-lKWy5R\\openclaw.sqlite",
+      "baselineFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\chain-baseline-Xi3M0y\\openclaw.sqlite"
+    },
+    {
+      "suite": "unit/runtime-memory-eval-conflict-resolution.test.ts",
+      "candidateFailedTests": 5,
+      "baselineFailedTests": 5,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\conflict-single-Yj6EmN\\openclaw.sqlite",
+      "baselineFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\conflict-single-9aPTeQ\\openclaw.sqlite"
+    },
+    {
+      "suite": "unit/runtime-memory-eval-temporal-evolution.test.ts",
+      "candidateFailedTests": 7,
+      "baselineFailedTests": 7,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "Error: runTemporalEvolution: migration failed for D:\\tmp\\temporal-empty-kkwD0I\\openclaw.sqlite",
+      "baselineFirstMessage": "Error: runTemporalEvolution: migration failed for D:\\tmp\\temporal-empty-ZEeeTw\\openclaw.sqlite"
+    },
+    {
+      "suite": "unit/runtime-memory-eval-topic-drift.test.ts",
+      "candidateFailedTests": 5,
+      "baselineFailedTests": 5,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\topic-all-sRvQO9\\openclaw.sqlite",
+      "baselineFirstMessage": "Error: initializeEmptyDb: migration failed for D:\\tmp\\topic-all-0zelun\\openclaw.sqlite"
+    },
+    {
+      "suite": "unit/runtime-memory-interleaved-read-write.test.ts",
+      "candidateFailedTests": 7,
+      "baselineFailedTests": 7,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: streaming writer migration failed: skipped",
+      "baselineFirstMessage": "Error: streaming writer migration failed: skipped"
+    },
+    {
+      "suite": "unit/runtime-memory-locomo-benchmark.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'skipped' to be 'migrated' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'skipped' to be 'migrated' // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-long-conversation-real.test.ts",
+      "candidateFailedTests": 8,
+      "baselineFailedTests": 8,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: streaming writer migration failed: skipped",
+      "baselineFirstMessage": "Error: streaming writer migration failed: skipped"
+    },
+    {
+      "suite": "unit/runtime-memory-long-term-accumulation.test.ts",
+      "candidateFailedTests": 10,
+      "baselineFailedTests": 10,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: seedCorpusToDb: migration failed",
+      "baselineFirstMessage": "Error: seedCorpusToDb: migration failed"
+    },
+    {
+      "suite": "unit/runtime-memory-operator-inspection.test.ts",
+      "candidateFailedTests": 9,
+      "baselineFailedTests": 9,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(4) } to match object { status: 'skipped', …(3) }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(4) } to match object { status: 'skipped', …(3) }"
+    },
+    {
+      "suite": "unit/runtime-memory-persistence.test.ts",
+      "candidateFailedTests": 4,
+      "baselineFailedTests": 4,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', …(2) }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', …(2) }"
+    },
+    {
+      "suite": "unit/runtime-memory-proposal-shadow.test.ts",
+      "candidateFailedTests": 3,
+      "baselineFailedTests": 3,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected false to be true // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected false to be true // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-benefit-evaluation.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "Error: seedTempDb: migration failed for D:\\tmp\\runtime-memory-benefit-eval-sqlite-uLjjgT\\openclaw.sqlite",
+      "baselineFirstMessage": "Error: seedTempDb: migration failed for D:\\tmp\\runtime-memory-benefit-eval-sqlite-a3q6Up\\openclaw.sqlite"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-shadow-command.test.ts",
+      "candidateFailedTests": 4,
+      "baselineFailedTests": 4,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-shadow.test.ts",
+      "candidateFailedTests": 5,
+      "baselineFailedTests": 5,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts",
+      "candidateFailedTests": 3,
+      "baselineFailedTests": 3,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'skipped' to be 'loaded' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'skipped' to be 'loaded' // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-relations.test.ts",
+      "candidateFailedTests": 6,
+      "baselineFailedTests": 6,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'skipped' to be 'migrated' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'skipped' to be 'migrated' // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-retention-llm-judge.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: migration failed: skipped",
+      "baselineFirstMessage": "Error: migration failed: skipped"
+    },
+    {
+      "suite": "unit/runtime-memory-runtime-integration.test.ts",
+      "candidateFailedTests": 5,
+      "baselineFailedTests": 5,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }"
+    },
+    {
+      "suite": "unit/runtime-memory-self-edit-persistence.test.ts",
+      "candidateFailedTests": 4,
+      "baselineFailedTests": 4,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }"
+    },
+    {
+      "suite": "unit/runtime-memory-taxonomy-persistence.test.ts",
+      "candidateFailedTests": 6,
+      "baselineFailedTests": 6,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }",
+      "baselineFirstMessage": "AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }"
+    },
+    {
+      "suite": "unit/runtime-memory-useless-content-judge.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: streaming writer migration failed: skipped",
+      "baselineFirstMessage": "Error: streaming writer migration failed: skipped"
+    },
+    {
+      "suite": "unit/runtime-memory-write-path-llm-judge.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'reject' to be 'accept' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'reject' to be 'accept' // Object.is equality"
+    },
+    {
+      "suite": "unit/runtime-memory-write-path-semantic-real.test.ts",
+      "candidateFailedTests": 12,
+      "baselineFailedTests": 12,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: migration failed: {\"status\":\"skipped\",\"reason\":\"flag_disabled\",\"migrated\":false}",
+      "baselineFirstMessage": "Error: migration failed: {\"status\":\"skipped\",\"reason\":\"flag_disabled\",\"migrated\":false}"
+    },
+    {
+      "suite": "unit/sandbox-api.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected 'ro' to be 'none' // Object.is equality",
+      "baselineFirstMessage": "AssertionError: expected 'ro' to be 'none' // Object.is equality"
+    },
+    {
+      "suite": "unit/typecheck-gate.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "SyntaxError: Unexpected token '>', \"",
+      "baselineFirstMessage": "SyntaxError: Unexpected token '>', \""
+    },
+    {
+      "suite": "unit/versegit-host-apply.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "Error: STACK_TRACE_ERROR",
+      "baselineFirstMessage": "Error: STACK_TRACE_ERROR"
+    },
+    {
+      "suite": "unit/versegit-product-acceptance.test.ts",
+      "candidateFailedTests": 2,
+      "baselineFailedTests": 2,
+      "failingAtBaseline": true,
+      "sameFirstMessage": false,
+      "candidateFirstMessage": "AssertionError: expected [ …(18) ] to deeply equal [ …(17) ]",
+      "baselineFirstMessage": "AssertionError: expected [ …(16) ] to deeply equal [ …(15) ]"
+    },
+    {
+      "suite": "unit/versegit-wp2-profile.test.ts",
+      "candidateFailedTests": 1,
+      "baselineFailedTests": 1,
+      "failingAtBaseline": true,
+      "sameFirstMessage": true,
+      "candidateFirstMessage": "AssertionError: expected { Object (caseCount, eligibleCount, ...) } to match object { Object (caseCount, eligibleCount, ...) }",
+      "baselineFirstMessage": "AssertionError: expected { Object (caseCount, eligibleCount, ...) } to match object { Object (caseCount, eligibleCount, ...) }"
+    }
+  ]
+}
