@@ -1,0 +1,116 @@
+{
+  "schema": "clawx.autonomy-session-task-scope.verification/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomy-a4",
+  "taskForestNode": "TF-0673",
+  "generatedAt": "2026-11-03T12:32:00.000Z",
+  "sourceCandidate": {
+    "head": "fd492e1e1"
+  },
+  "commands": [
+    {
+      "id": "a4-focused",
+      "command": "pnpm exec vitest run tests/unit/session-task-scope.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/long-session-coordinator-binding.test.ts",
+      "exitCode": 0,
+      "files": 3,
+      "tests": 33
+    },
+    {
+      "id": "typecheck",
+      "command": "node scripts/typecheck-agent-dev.mjs --cache",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/autonomy-session-task-scope.md",
+      "exitCode": 0
+    },
+    {
+      "id": "eslint",
+      "command": "pnpm exec eslint shared/session-task-scope.ts tests/unit/session-task-scope.test.ts",
+      "exitCode": 0
+    },
+    {
+      "id": "contract",
+      "command": "pnpm run contract:check",
+      "exitCode": 0
+    },
+    {
+      "id": "harness-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/autonomy-session-task-scope.md --dry-run",
+      "exitCode": 0
+    },
+    {
+      "id": "comms",
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "artifact-retention",
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "trackedPaths": 20373
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "explicit-task-ref",
+      "status": "passed",
+      "evidence": [
+        "session-task-scope.ts",
+        "session-task-scope.test.ts"
+      ]
+    },
+    {
+      "id": "empty-discussion-no-inference",
+      "status": "passed",
+      "evidence": [
+        "session-task-scope.test.ts"
+      ]
+    },
+    {
+      "id": "cross-workspace-stale-generation-refused",
+      "status": "passed",
+      "evidence": [
+        "session-task-scope.test.ts"
+      ]
+    },
+    {
+      "id": "fork-read-only",
+      "status": "passed",
+      "evidence": [
+        "session-task-scope.test.ts"
+      ],
+      "detail": "Resolver returns readOnly=true and writeClaim=not-granted."
+    },
+    {
+      "id": "existing-owner-regressions",
+      "status": "passed",
+      "evidence": [
+        "long-session-delegation-admission.test.ts",
+        "long-session-coordinator-binding.test.ts"
+      ]
+    }
+  ],
+  "negativeCases": [
+    "coordinator-missing",
+    "binding-not-ready",
+    "task-ref-missing",
+    "task-not-found",
+    "task-workspace-mismatch",
+    "task-generation-stale",
+    "external-ref-not-task"
+  ],
+  "unmeasured": [
+    "No live Electron side-effect journey was run; this node proves the scope predicate and the existing coordinator/delegation regressions.",
+    "The 10-round discussion-to-execution UI flow is not claimed as an E2E pass; the empty/no-inference predicate and existing delegation gates are covered.",
+    "Handoff generation is only enforced when a Task Ledger link supplies sessionGeneration; existing producers do not yet populate that optional field.",
+    "No real-human evidence is claimed."
+  ],
+  "cleanup": {
+    "survivors": 0,
+    "recoveryRequired": false
+  }
+}

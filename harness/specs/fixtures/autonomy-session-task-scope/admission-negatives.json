@@ -1,0 +1,36 @@
+{
+  "schema": "clawx.autonomy-session-task-scope.matrix/v1",
+  "rows": [
+    {
+      "case": "ordinary discussion",
+      "status": "empty",
+      "reason": "discussion-no-task"
+    },
+    {
+      "case": "same-session linked task",
+      "status": "ready",
+      "readOnly": true
+    },
+    {
+      "case": "another session link",
+      "status": "unavailable",
+      "reason": "task-ref-missing"
+    },
+    {
+      "case": "cross workspace task",
+      "status": "unavailable",
+      "reason": "task-workspace-mismatch"
+    },
+    {
+      "case": "stale generation",
+      "status": "unavailable",
+      "reason": "task-generation-stale"
+    },
+    {
+      "case": "fork read-only task",
+      "status": "ready",
+      "readOnly": true,
+      "writeClaim": "not-inherited"
+    }
+  ]
+}

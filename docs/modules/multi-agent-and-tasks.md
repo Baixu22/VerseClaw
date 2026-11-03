@@ -287,6 +287,13 @@ Task Ledger 拥有用户可见任务事实、review flags、history 和 Task Loo
 
 `submitCompletion` 是完成事件准入，不是第二完成权威：它拒绝 bare run/text/exit0/accepted、错 task、旧 candidate/generation、缺失或篡改证据，以及非 applied effect；成功时仍由 Task Ledger 的 `status_changed` 事件投影为 `done`。
 
+
+## 11.1 Session task scope
+
+会话的任务作用域来自同一 workspace 的 coordinator binding 与显式的 Task Ledger `sessionLink`。普通讨论可以为空；
+没有显式 task link、link 属于旧 generation、task 跨 workspace 或 task 缺失时，执行准入 fail closed。
+Fork 只获得只读 task 引用，不继承父会话写 claim；Handoff 需要重新绑定当前 generation。
+
 ## 12. Task Ledger Working Context
 
 Task Ledger 还拥有 task-scoped Working Context 的 proposal/accept/reject 事件。

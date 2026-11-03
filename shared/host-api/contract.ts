@@ -4851,6 +4851,8 @@ export type TaskLedgerLinkSessionPayload = TaskLedgerWorkspacePayload & {
   traceId?: string | null;
   relation?: TaskLedgerSessionLink['relation'];
   sourceSessionKey?: string | null;
+  /** Optional generation fence for links that must not survive a session handoff. */
+  sessionGeneration?: string | null;
   summary?: string;
   /** Relay depth of the linked session, so the depth is readable without re-walking the chain. */
   handoffDepth?: number;

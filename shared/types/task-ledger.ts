@@ -206,6 +206,8 @@ export type TaskLedgerSessionLink = {
   traceId?: string | null;
   relation?: 'related' | 'forked_from' | 'handoff_from';
   sourceSessionKey?: string | null;
+  /** Optional generation fence for links that must not survive a session handoff. */
+  sessionGeneration?: string | null;
   summary?: string;
   /** Relay depth of the linked session (1 is the first relay of a root). */
   handoffDepth?: number;

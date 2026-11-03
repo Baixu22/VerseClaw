@@ -183,6 +183,7 @@ export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger']
             traceId: payload.traceId ?? null,
             relation: payload.relation,
             sourceSessionKey: payload.sourceSessionKey ?? null,
+            ...(payload.sessionGeneration ? { sessionGeneration: payload.sessionGeneration } : {}),
             summary: payload.summary,
             ...(typeof payload.handoffDepth === 'number' ? { handoffDepth: payload.handoffDepth } : {}),
             createdAt: nowIso(),
