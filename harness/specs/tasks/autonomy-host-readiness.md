@@ -16,12 +16,25 @@ touchedAreas:
   - shared/types/session-effective-policy.ts
   - electron/gateway/capability-monitor.ts
   - electron/gateway/manager.ts
+  - electron/gateway/process-launcher.ts
   - electron/gateway/session-host-readiness.ts
   - electron/services/session-activity-api.ts
   - openclaw_runtime/src/gateway/session-effective-policy.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
+  - openclaw_runtime/src/auto-reply/reply/followup-runner.ts
+  - openclaw_runtime/src/agents/runtime-effective-capability.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
+  - openclaw_runtime/src/agents/user-message-queue.ts
+  - openclaw_runtime/src/agents/long-task-control/store.ts
+  - openclaw_runtime/src/gateway/server-methods/chat.ts
+  - tests/unit/autonomy-runtime-workspace-scope.test.ts
   - tests/unit/autonomy-host-readiness.test.ts
   - tests/unit/long-session-effective-policy.test.ts
   - tests/unit/gateway-manager-diagnostics.test.ts
+  - tests/unit/gateway-process-launcher-env.test.ts
+  - tests/unit/runtime-effective-capability.test.ts
+  - tests/unit/user-message-queue.test.ts
+  - tests/unit/chat-send-input-mode.test.ts
   - tests/e2e/autonomy-host-readiness.spec.ts
   - tests/e2e/autonomy-runtime-readiness.spec.ts
   - harness/specs/tasks/autonomy-host-readiness.md
@@ -61,6 +74,10 @@ requiredRules:
   - disk-temp-policy
   - docs-sync
 requiredTests:
+  - pnpm exec vitest run tests/unit/autonomy-runtime-workspace-scope.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/gateway-process-launcher-env.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/runtime-effective-capability.test.ts tests/unit/user-message-queue.test.ts tests/unit/chat-send-input-mode.test.ts --maxWorkers=1
+  - pnpm build:runtime
   - pnpm test:e2e:run tests/e2e/autonomy-runtime-readiness.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/autonomy-host-readiness.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/gateway-manager-diagnostics.test.ts tests/unit/gateway-manager-restart-recovery.test.ts tests/unit/session-activity-background-read.test.ts tests/unit/workspace-preflight.test.ts --maxWorkers=1
   - pnpm typecheck

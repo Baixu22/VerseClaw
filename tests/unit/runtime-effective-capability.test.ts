@@ -410,6 +410,17 @@ describe("runtime effective capability adapter", () => {
     })).toMatchObject({ state: "missing" });
   });
 
+  it("keeps an unscoped legacy prompt local without publishing its directory as an owner identity", async () => {
+    const legacy = input({ workspaceId: undefined });
+    const result = await buildRuntimeEffectiveCapabilityProfile(legacy);
+    expect(result.profile.scope.workspaceId).toBe(legacy.workspaceDir);
+    expect(result.profile.promptAddition.text.trim()).not.toBe("");
+    expect(readRuntimeEffectiveCapabilityObservation({
+      workspaceId: legacy.workspaceDir, sessionKey: legacy.sessionKey,
+      runtimeGeneration: "gateway-17", nowMs: NOW,
+    })).toMatchObject({ state: "missing" });
+  });
+
   it("composes the profile into the final model system prompt and wires it before prompt submission", () => {
     const attemptSource = fs.readFileSync(
       "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
@@ -443,7 +454,7 @@ describe("runtime effective capability adapter", () => {
       ["openclaw_runtime/src/auto-reply/reply/get-reply-run.ts", "workspaceId: normalizeOptionalString(ctx.WorkspaceId)"],
       ["openclaw_runtime/src/auto-reply/reply/queue/types.ts", "workspaceId?: string"],
       ["openclaw_runtime/src/auto-reply/reply/agent-runner-utils.ts", "workspaceId: params.run.workspaceId"],
-      ["openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts", "workspaceId: params.workspaceId ?? effectiveWorkspace"],
+      ["openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts", "workspaceId: params.workspaceId"],
     ] as const;
 
     for (const [path, marker] of expected) {

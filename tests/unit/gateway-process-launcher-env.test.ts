@@ -1,4 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { EventEmitter } from 'node:events';
+import { PassThrough } from 'node:stream';
+import { utilityProcess } from 'electron';
+import type { GatewayLaunchContext } from '@electron/gateway/config-sync';
+
+vi.mock('@electron/utils/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
+}));
 
 vi.mock('electron', () => ({
   app: {
@@ -68,5 +76,39 @@ describe('gateway process launcher env', () => {
 
     expect(disabled.OPENCLAW_FALLBACK_SKIP_TTL_MS).toBe('0');
     expect(custom.OPENCLAW_FALLBACK_SKIP_TTL_MS).toBe('90000');
+  });
+
+  it('lets child output exceed the pipe buffer without blocking the Gateway', async () => {
+    const { launchGatewayProcess } = await import('@electron/gateway/process-launcher');
+    const child = Object.assign(new EventEmitter(), {
+      pid: 12345, stdout: new PassThrough({ highWaterMark: 1024 }), stderr: new PassThrough(),
+      kill: vi.fn(),
+    });
+    vi.mocked(utilityProcess.fork).mockImplementationOnce(() => {
+      queueMicrotask(() => child.emit('spawn'));
+      return child as unknown as Electron.UtilityProcess;
+    });
+    const launchContext: GatewayLaunchContext = {
+      appSettings: {} as GatewayLaunchContext['appSettings'], openclawDir: process.cwd(),
+      entryScript: 'fixture-entry.js', entryScriptArgs: [], execArgv: [], gatewayArgs: ['gateway'], forkEnv: {},
+      mode: 'dev', runtimeMode: 'source', binPathExists: false, loadedProviderKeyCount: 0,
+      proxySummary: 'disabled', channelStartupSummary: 'none',
+    };
+    try {
+      await launchGatewayProcess({
+        port: 18789, launchContext, sanitizeSpawnArgs: args => args,
+        getCurrentState: () => 'running', getShouldReconnect: () => false,
+        onStderrLine: vi.fn(), onSpawn: vi.fn(), onExit: vi.fn(), onError: vi.fn(),
+      });
+      const writeComplete = vi.fn();
+      child.stdout.write(Buffer.alloc(256 * 1024), writeComplete);
+      await expect.poll(() => writeComplete.mock.calls.length, { timeout: 1000, interval: 20 }).toBe(1);
+      expect(writeComplete.mock.calls[0][0]).toBeFalsy();
+      expect(child.stdout.readableLength).toBe(0);
+    } finally {
+      child.stdout.destroy();
+      child.stderr.destroy();
+      child.removeAllListeners();
+    }
   });
 });

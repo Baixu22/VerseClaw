@@ -60,7 +60,8 @@ export type RuntimeCapabilityStateGenerationGuard = {
 };
 
 export type RuntimeEffectiveCapabilityInput = {
-  workspaceId: string;
+  /** Owner-supplied identity; absent legacy callers only build a local prompt. */
+  workspaceId?: string;
   workspaceDir: string;
   sessionKey: string;
   sessionId?: string;
@@ -131,6 +132,9 @@ function recordRuntimeCapabilityObservation(
   result: RuntimeEffectiveCapabilityResult,
   observedAtMs: number,
 ): void {
+  // A legacy directory scope can position a local prompt, but it cannot
+  // publish an owner-addressable workspace observation.
+  if (!input.workspaceId?.trim()) return;
   const now = Date.now();
   for (const [key, observation] of runtimeCapabilityObservations) {
     if (now - observation.observedAtMs > RUNTIME_CAPABILITY_OBSERVATION_RETENTION_MS) {
@@ -472,7 +476,7 @@ export async function buildRuntimeEffectiveCapabilityProfile(
   input: RuntimeEffectiveCapabilityInput,
 ): Promise<RuntimeEffectiveCapabilityResult> {
   const scope: ModelCapabilityScope = {
-    workspaceId: input.workspaceId.trim(),
+    workspaceId: (input.workspaceId ?? input.workspaceDir).trim(),
     roleId: null,
     sessionKey: input.sessionKey.trim(),
   };

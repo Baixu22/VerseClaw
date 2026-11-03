@@ -264,6 +264,9 @@ export async function launchGatewayProcess(options: {
       execArgv,
       serviceName: 'OpenClaw Gateway',
     });
+    // Only stderr is forwarded, but stdout is also piped. Drain it so a full
+    // Windows pipe cannot block Gateway requests behind routine log output.
+    child.stdout?.on('data', () => {});
 
     let settled = false;
     const resolveOnce = () => {

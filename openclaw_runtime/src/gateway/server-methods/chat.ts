@@ -2761,6 +2761,7 @@ export async function drainQueuedUserMessagesForSession(
   const combinedText = messages.map((message) => message.text).join("\n\n"); 
   const firstAgentId = messages[0]?.agentId; 
   const firstWorkspaceId = messages[0]?.workspaceId;
+  const firstWorkspaceFingerprint = messages[0]?.workspaceFingerprint;
   const firstTaskLedgerRootId = messages[0]?.taskLedgerRootId;
   const queueItemIds = messages.map((message) => message.id); 
   const syntheticIdempotencyKey = `queue_drain_${sessionKey}_${Date.now()}`;
@@ -2828,6 +2829,7 @@ export async function drainQueuedUserMessagesForSession(
         idempotencyKey: syntheticIdempotencyKey, 
         ...(firstAgentId ? { agentId: firstAgentId } : {}), 
         ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
+        ...(firstWorkspaceFingerprint ? { workspaceFingerprint: firstWorkspaceFingerprint } : {}),
       }, 
       respond: () => {
         // Background drain responses are observable through events/status.
@@ -3658,6 +3660,7 @@ export const chatHandlers: GatewayRequestHandlers = {
             workspaceId,
             taskLedgerRootId,
             source: "queue",
+            workspaceFingerprint,
             idempotencyKey: `chat:${clientRunId}:queue:item`,
           });
           recordLongTaskInterventionEvent({
@@ -3695,6 +3698,7 @@ export const chatHandlers: GatewayRequestHandlers = {
           const combinedText = messages.map((m) => m.text).join("\n\n"); 
           const firstAgentId = messages[0]?.agentId; 
           const firstWorkspaceId = messages[0]?.workspaceId;
+          const firstWorkspaceFingerprint = messages[0]?.workspaceFingerprint;
           const firstTaskLedgerRootId = messages[0]?.taskLedgerRootId;
           try {
             context.broadcast("chat.queue-status", {
@@ -3714,6 +3718,7 @@ export const chatHandlers: GatewayRequestHandlers = {
             idempotencyKey: `queue_drain_${drainSessionKey}_${Date.now()}`, 
             ...(firstAgentId ? { agentId: firstAgentId } : {}), 
             ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
+            ...(firstWorkspaceFingerprint ? { workspaceFingerprint: firstWorkspaceFingerprint } : {}),
           }; 
           const { resolveActiveEmbeddedRunSessionId } = await import("../../agents/embedded-agent-runner/runs.js");
           // Wait a tick to ensure the run-clear is fully committed.

@@ -76,7 +76,7 @@ import {
   listLongTaskQueuedMessages,
   recordLongTaskCheckpoint,
 } from '../../openclaw_runtime/src/agents/long-task-control/store';
-import { enqueueUserMessage } from '../../openclaw_runtime/src/agents/user-message-queue';
+import { enqueueUserMessage, triggerQueueDrain } from '../../openclaw_runtime/src/agents/user-message-queue';
 
 const ORIGINAL_STATE_DIR = process.env.OPENCLAW_STATE_DIR;
 let testStateRoot: string | undefined;
@@ -331,6 +331,8 @@ describe('chat.send inputMode: queue', () => {
     await callChatSend(context, respond, {
       sessionKey: SESSION_KEY,
       message: 'queue this follow-up',
+      workspaceId: 'workspace-owner',
+      workspaceFingerprint: 'owner-fingerprint',
       idempotencyKey: RUN_ID,
       inputMode: 'queue',
     });
@@ -348,12 +350,37 @@ describe('chat.send inputMode: queue', () => {
     expect(queued).toHaveLength(1);
     expect(queued[0]?.text).toBe('queue this follow-up');
     expect(queued[0]?.idempotencyKey).toBe(`chat:${RUN_ID}:queue:item`);
+    expect(queued[0]?.payload.workspaceFingerprint).toBe('owner-fingerprint');
     // chat.queue-status 广播（enqueue，含 dropIfSlow 选项）
     expect(context.broadcast).toHaveBeenCalledWith(
       'chat.queue-status',
       expect.objectContaining({ action: 'enqueue', queueCount: 1 }),
       { dropIfSlow: true },
     );
+  });
+
+  it.each(['direct', 'callback'] as const)('preserves owner scope when %s drain replays chat.send', async (mode) => {
+    seedLedgerRoot(SESSION_KEY);
+    const context = makeContext();
+    context.chatAbortControllers.set(RUN_ID, makeAbortEntry(SESSION_KEY));
+    await callChatSend(context, vi.fn(), {
+      sessionKey: SESSION_KEY, message: 'owner-scoped queue', idempotencyKey: `owner-${mode}`,
+      inputMode: 'queue', workspaceId: 'workspace-owner', workspaceFingerprint: 'owner-fingerprint',
+    });
+    closeOpenClawStateDatabaseForTest();
+    const { resolveActiveEmbeddedRunSessionId } = await import('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js');
+    vi.mocked(resolveActiveEmbeddedRunSessionId).mockReturnValue(undefined);
+    const replay = vi.spyOn(chatHandlers, 'chat.send').mockResolvedValue(undefined);
+    try {
+      if (mode === 'direct') await drainQueuedUserMessagesForSession(context as never, SESSION_KEY);
+      else {
+        triggerQueueDrain(SESSION_KEY);
+        await vi.waitFor(() => expect(replay).toHaveBeenCalledTimes(1));
+      }
+      expect(replay.mock.calls[0][0].params).toMatchObject({
+        workspaceId: 'workspace-owner', workspaceFingerprint: 'owner-fingerprint',
+      });
+    } finally { replay.mockRestore(); }
   });
 
   it('drain restores claimed rows when a new run started before drain', async () => {

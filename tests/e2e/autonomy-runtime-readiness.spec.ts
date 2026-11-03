@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, sign } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import { GatewayClient } from '../../openclaw_runtime/packages/gateway-client/src/index';
+import { nextGatewayGeneration, stampGatewayGeneration } from '../../electron/gateway/generation';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { allocatePort, buildMockProviderConfig, startScriptedLlm } from './fixtures/fp-p1-harness';
 
@@ -16,7 +17,7 @@ test('reads actual Gateway tool exposure and continues the same isolated session
   await mkdir(workspace);
   const llm = await startScriptedLlm((text) => ({ text: text.includes('A5-NODE-CONTINUE') ? 'A5-NODE-CONTINUE-RECEIPT' : 'A5-NODE-FIRST-RECEIPT' }));
   const configPath = join(root, 'openclaw.json');
-  await writeFile(configPath, JSON.stringify(buildMockProviderConfig(llm.port, workspace)));
+  await writeFile(configPath, JSON.stringify({ ...buildMockProviderConfig(llm.port, workspace), cron: { enabled: false } }));
   const keys = generateKeyPairSync('ed25519');
   const publicKeyPem = keys.publicKey.export({ type: 'spki', format: 'pem' }).toString();
   const privateKeyPem = keys.privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
@@ -24,13 +25,19 @@ test('reads actual Gateway tool exposure and continues the same isolated session
   const identity = { deviceId: createHash('sha256').update(rawPublicKey(publicKeyPem)).digest('hex'), publicKeyPem, privateKeyPem };
   const port = await allocatePort();
   const token = 'a5-isolated-runtime-fixture';
-  const env = { ...process.env, OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_STATE_DIR: join(root, 'state'), OPENCLAW_DISABLE_BONJOUR: '1' };
+  // This manual RPC journey has no channel or scheduled-work assertions. Keep
+  // their startup work out of its readiness boundary; native Host runs separately.
+  const env = { ...process.env, OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_STATE_DIR: join(root, 'state'), OPENCLAW_DISABLE_BONJOUR: '1', OPENCLAW_SKIP_CHANNELS: '1', OPENCLAW_SKIP_STARTUP_MODEL_PREWARM: '1' };
   let child: ChildProcess | undefined;
   let client: GatewayClient | undefined;
   let output = '';
+  const hostGenerations: string[] = [];
   async function boot() {
     output = '';
-    child = spawn(process.execPath, [resolve('openclaw_runtime/dist/entry.js'), 'gateway', 'run', '--port', String(port), '--bind', 'loopback', '--token', token, '--tailscale', 'off', '--allow-unconfigured'], { cwd: resolve('openclaw_runtime'), env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+    const generation = nextGatewayGeneration();
+    hostGenerations.push(generation);
+    const childEnv = stampGatewayGeneration({ ...env }, generation);
+    child = spawn(process.execPath, [resolve('openclaw_runtime/dist/entry.js'), 'gateway', 'run', '--port', String(port), '--bind', 'loopback', '--token', token, '--tailscale', 'off', '--allow-unconfigured'], { cwd: resolve('openclaw_runtime'), env: childEnv, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
     const append = (chunk: Buffer) => { output = (output + chunk.toString()).slice(-16000); };
     child.stdout?.on('data', append);
     child.stderr?.on('data', append);
@@ -77,6 +84,9 @@ test('reads actual Gateway tool exposure and continues the same isolated session
     const sessionKey = created.key ?? created.sessionKey;
     if (!sessionKey) throw new Error('No created session key');
     const workspaceId = 'a5-isolated-runtime-workspace';
+    const firstAck = await client!.request<{ gatewayGeneration: string; childPid: number }>('runtime.flags.ack', {});
+    expect(firstAck.gatewayGeneration).toBe(hostGenerations[0]);
+    await testInfo.attach('host-generation-input', { body: JSON.stringify({ hostGeneration: hostGenerations[0], acknowledged: firstAck, channelsStarted: false, startupModelPrewarm: false, cronEnabled: false }), contentType: 'application/json' });
     const snapshot = async () => (await client!.request<{ snapshot: SessionActivitySnapshot }>('session.activitySnapshot', { workspaceId, sessionKey })).snapshot;
     const history = async (marker: string) => JSON.stringify(await client!.request('chat.history', { sessionKey })).includes(marker);
     const turn = async (marker: string) => {
@@ -87,16 +97,22 @@ test('reads actual Gateway tool exposure and continues the same isolated session
     await expect(client!.request('chat.send', { sessionKey, workspaceId, workspaceDir: workspace, message: 'negative control', idempotencyKey: 'a5-reserved-root-negative' })).rejects.toThrow(/reserved for backend callers/);
     await turn('A5-NODE-FIRST');
     const first = await snapshot();
+    const inferred = await client!.request<{ snapshot: SessionActivitySnapshot }>('session.activitySnapshot', { sessionKey });
+    const configuredRoot = await client!.request<{ snapshot: SessionActivitySnapshot }>('session.activitySnapshot', { sessionKey, workspaceId: workspace });
+    expect(first.policy?.scope.workspaceId).toBe(workspaceId);
+    expect(inferred.snapshot.policy?.generation.state).toBe('missing');
+    expect(configuredRoot.snapshot.policy?.generation.state).toBe('missing');
+    await testInfo.attach('capability-scope-checks', { body: JSON.stringify({ requested: first.policy, inferredOwner: inferred.snapshot.policy, configuredRootProbe: configuredRoot.snapshot.policy }), contentType: 'application/json' });
     expect(first.policy?.generation.state, JSON.stringify(first.policy?.generation)).toBe('effective');
     expect(first.policy?.tools?.status).toBe('effective');
     expect(first.policy?.tools?.value?.names.length).toBeGreaterThan(0);
-    const firstAck = await client!.request<{ gatewayGeneration: string; childPid: number }>('runtime.flags.ack', {});
     expect(first.policy?.generation.runtimeGeneration).toBe(firstAck.gatewayGeneration);
     const cron = await client!.request<{ enabled: boolean }>('cron.status', {});
-    expect(typeof cron.enabled).toBe('boolean');
+    expect(cron.enabled).toBe(false);
     await stop();
     await boot();
     const secondAck = await client!.request<{ gatewayGeneration: string; childPid: number }>('runtime.flags.ack', {});
+    expect(secondAck.gatewayGeneration).toBe(hostGenerations[1]);
     expect(secondAck.gatewayGeneration).not.toBe(firstAck.gatewayGeneration);
     expect(secondAck.childPid).not.toBe(firstAck.childPid);
     expect((await snapshot()).policy?.generation.state).toBe('missing');

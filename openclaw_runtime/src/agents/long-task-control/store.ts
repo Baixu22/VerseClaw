@@ -707,7 +707,17 @@ export function getLatestLongTaskLedgerRootId(sessionKey: string): string | unde
 export function claimPendingLongTaskUserMessages(
   sessionKey: string,
 ): LongTaskQueuedUserMessage[] {
-  const rows = listLongTaskQueuedMessages(sessionKey);
+  const pending = listLongTaskQueuedMessages(sessionKey);
+  if (pending.length === 0) return [];
+  // A drain becomes one synthetic run. Stop at an owner boundary rather than
+  // attributing another workspace or generation's input to the first row.
+  const ownerKey = (row: LongTaskQueuedUserMessage) => JSON.stringify([
+    row.agentId, row.workspaceId, row.taskLedgerRootId,
+    typeof row.payload.workspaceFingerprint === "string" ? row.payload.workspaceFingerprint.trim() : null,
+  ]);
+  const firstOwner = ownerKey(pending[0]);
+  const boundary = pending.findIndex((row) => ownerKey(row) !== firstOwner);
+  const rows = boundary === -1 ? pending : pending.slice(0, boundary);
   if (rows.length === 0) {
     return [];
   }

@@ -15,6 +15,7 @@ export type QueuedUserMessage = {
   sessionKey: string;
   agentId?: string;
   workspaceId?: string;
+  workspaceFingerprint?: string;
   taskLedgerRootId?: string;
   enqueuedAt: number;
   source: string;
@@ -26,12 +27,15 @@ type QueueDrainCallback = (sessionKey: string) => Promise<void>;
 let drainCallback: QueueDrainCallback | undefined;
 
 function toQueuedUserMessage(entry: LongTaskQueuedUserMessage): QueuedUserMessage {
+  const workspaceFingerprint = typeof entry.payload.workspaceFingerprint === "string"
+    ? entry.payload.workspaceFingerprint.trim() : undefined;
   return {
     id: entry.id,
     text: entry.text,
     sessionKey: entry.sessionKey,
     ...(entry.agentId ? { agentId: entry.agentId } : {}),
     ...(entry.workspaceId ? { workspaceId: entry.workspaceId } : {}),
+    ...(workspaceFingerprint ? { workspaceFingerprint } : {}),
     ...(entry.taskLedgerRootId ? { taskLedgerRootId: entry.taskLedgerRootId } : {}),
     enqueuedAt: entry.enqueuedAt,
     source: entry.source,
@@ -59,6 +63,7 @@ export function enqueueUserMessage(
     text: string;
     agentId?: string;
     workspaceId?: string;
+    workspaceFingerprint?: string;
     taskLedgerRootId?: string;
     source?: string;
     idempotencyKey?: string;
@@ -70,6 +75,7 @@ export function enqueueUserMessage(
       text: msg.text,
       agentId: msg.agentId,
       workspaceId: msg.workspaceId,
+      ...(msg.workspaceFingerprint ? { payload: { workspaceFingerprint: msg.workspaceFingerprint } } : {}),
       taskLedgerRootId: msg.taskLedgerRootId,
       source: msg.source,
       idempotencyKey: msg.idempotencyKey,

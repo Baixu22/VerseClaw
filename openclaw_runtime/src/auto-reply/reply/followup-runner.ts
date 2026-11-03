@@ -1010,6 +1010,9 @@ export function createFollowupRunner(params: {
                 sessionFile: run.sessionFile,
                 agentDir: run.agentDir,
                 workspaceDir: run.workspaceDir,
+                // Queued turns retain the same owner scope as immediate turns.
+                workspaceId: run.workspaceId,
+                workspaceFingerprint: run.workspaceFingerprint,
                 cwd: run.cwd,
                 config: runtimeConfig,
                 skillsSnapshot: run.skillsSnapshot,

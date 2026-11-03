@@ -4513,7 +4513,7 @@ export async function runEmbeddedAttempt(
           const runtimeEffectiveCapability = isRawModelRun
             ? null
             : await buildRuntimeEffectiveCapabilityProfile({
-                workspaceId: params.workspaceId ?? effectiveWorkspace,
+                workspaceId: params.workspaceId,
                 workspaceDir: effectiveWorkspace,
                 sessionKey: params.sessionKey ?? params.sessionId,
                 sessionId: params.sessionId,

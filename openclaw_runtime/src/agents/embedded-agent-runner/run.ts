@@ -1656,6 +1656,10 @@ export async function runEmbeddedAgent(
             hasRepliedRef: params.hasRepliedRef,
             sessionFile: activeSessionFile,
             workspaceDir: resolvedWorkspace,
+            // Attempt observations must retain the owner's logical workspace,
+            // rather than silently indexing them by the resolved directory.
+            workspaceId: params.workspaceId,
+            workspaceFingerprint: params.workspaceFingerprint,
             cwd: params.cwd,
             agentDir,
             config: params.config,

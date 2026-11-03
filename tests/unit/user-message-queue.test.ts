@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   completeDrainedUserMessages,
@@ -30,6 +30,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   closeOpenClawStateDatabaseForTest();
   if (testStateRoot) {
     rmSync(testStateRoot, { recursive: true, force: true });
@@ -73,6 +74,8 @@ describe('persistent user message queue', () => {
     enqueueUserMessage(sessionKey, {
       text: 'continue after gateway restart',
       agentId: 'main',
+      workspaceId: 'workspace-owner',
+      workspaceFingerprint: 'owner-fingerprint',
       source: 'queue',
       idempotencyKey: 'queue-restart-1',
     });
@@ -87,10 +90,30 @@ describe('persistent user message queue', () => {
       {
         text: 'continue after gateway restart',
         agentId: 'main',
+        workspaceId: 'workspace-owner',
+        workspaceFingerprint: 'owner-fingerprint',
         attempts: 1,
       },
     ]);
     expect(peekUserMessageCount(sessionKey)).toBe(0);
+  });
+
+  it.each(['workspaceId', 'workspaceFingerprint', 'agentId', 'taskLedgerRootId'] as const)('does not combine queued messages from different %s owners', (field) => {
+    let now = Date.now();
+    vi.spyOn(Date, 'now').mockImplementation(() => ++now);
+    const sessionKey = `agent:main:queue-owner-${field}`;
+    const owner = { workspaceId: 'workspace-a', workspaceFingerprint: 'fingerprint-a', agentId: 'main', taskLedgerRootId: 'root-a' };
+    enqueueUserMessage(sessionKey, { text: 'first owner', ...owner });
+    enqueueUserMessage(sessionKey, { text: 'second owner', ...owner, [field]: 'other-owner' });
+    enqueueUserMessage(sessionKey, { text: 'first owner again', ...owner });
+    const first = drainUserMessages(sessionKey);
+    expect(first.map(message => message.text)).toEqual(['first owner']);
+    expect(peekUserMessageCount(sessionKey)).toBe(2);
+    completeDrainedUserMessages(first);
+    const second = drainUserMessages(sessionKey);
+    expect(second.map(message => message.text)).toEqual(['second owner']);
+    completeDrainedUserMessages(second);
+    expect(drainUserMessages(sessionKey).map(message => message.text)).toEqual(['first owner again']);
   });
 
   it('restores failed drain attempts without losing the queued message', () => {
