@@ -63,10 +63,28 @@ const XL_CONTEXT_TOOL_RESULT_TOKENS = 200_000;
 const MIN_KEEP_CHARS = 2_000;
 const RECOVERY_MIN_KEEP_CHARS = 0;
 
-type ToolResultTruncationOptions = {
+export type ToolResultTruncationOptions = {
   suffix?: string | ((truncatedChars: number) => string);
   minKeepChars?: number;
 };
+/** A bounded, model-visible pointer back to an archived tool result. */
+export function buildArchiveRecallTruncationSuffix(params: {
+  truncatedChars: number;
+  archiveHandle?: Pick<ArchiveHandle, "uri" | "checksum" | "byteLength">;
+}): string {
+  const truncatedChars = Math.max(1, Math.floor(params.truncatedChars));
+  const handle = params.archiveHandle;
+  if (!handle?.uri || !handle.checksum || !Number.isFinite(handle.byteLength)) {
+    return formatContextLimitTruncationNotice(truncatedChars);
+  }
+  return [
+    "[... " + truncatedChars + " characters truncated; original output archived]",
+    "archive_uri: " + handle.uri,
+    "checksum: " + handle.checksum,
+    "byte_length: " + handle.byteLength,
+    "Recall with context_archive_recall using archive_uri, checksum, byte_length, offset and max_chars.",
+  ].join("\n");
+}
 
 const DEFAULT_SUFFIX = (truncatedChars: number) =>
   formatContextLimitTruncationNotice(truncatedChars);
@@ -544,9 +562,18 @@ function buildAggregateToolResultReplacements(params: {
 
     const requestedReduction = Math.min(reducibleChars, remainingReduction);
     const targetChars = Math.max(minTruncatedTextChars, candidate.textLength - requestedReduction);
+    const archiveHandle = archiveOriginalToolResultPayload({
+      sessionId: params.sessionId,
+      entryId: candidate.entryId,
+      message: candidate.message,
+    });
+    const archiveSuffixFactory = archiveHandle
+      ? (truncatedChars: number) => buildArchiveRecallTruncationSuffix({ truncatedChars, archiveHandle })
+      : suffixFactory;
+    const archiveSuffixFits = targetChars >= minKeepChars + archiveSuffixFactory(1).length;
     const truncatedMessage = truncateToolResultMessage(candidate.message, targetChars, {
       minKeepChars,
-      suffix: suffixFactory,
+      suffix: archiveSuffixFits ? archiveSuffixFactory : suffixFactory,
     });
     const newLength = getToolResultTextLength(truncatedMessage);
     const actualReduction = Math.max(0, candidate.textLength - newLength);
@@ -560,11 +587,7 @@ function buildAggregateToolResultReplacements(params: {
       originalChars: candidate.textLength,
       projectedChars: newLength,
       replacementKind: "aggregate",
-      archiveHandle: archiveOriginalToolResultPayload({
-        sessionId: params.sessionId,
-        entryId: candidate.entryId,
-        message: candidate.message,
-      }),
+      archiveHandle,
     });
     remainingReduction -= actualReduction;
   }
@@ -592,8 +615,17 @@ function buildOversizedToolResultReplacements(params: {
     if (getToolResultTextLength(msg) <= params.maxChars) {
       continue;
     }
+    const archiveHandle = archiveOriginalToolResultPayload({
+      sessionId: params.sessionId,
+      entryId: entry.id,
+      message: msg,
+    });
+    const suffix = archiveHandle
+      ? (truncatedChars: number) => buildArchiveRecallTruncationSuffix({ truncatedChars, archiveHandle })
+      : undefined;
     const truncatedMessage = truncateToolResultMessage(msg, params.maxChars, {
       minKeepChars,
+      ...(suffix ? { suffix } : {}),
     });
     replacements.push({
       entryId: entry.id,
@@ -601,11 +633,7 @@ function buildOversizedToolResultReplacements(params: {
       originalChars: getToolResultTextLength(msg),
       projectedChars: getToolResultTextLength(truncatedMessage),
       replacementKind: "oversized",
-      archiveHandle: archiveOriginalToolResultPayload({
-        sessionId: params.sessionId,
-        entryId: entry.id,
-        message: msg,
-      }),
+      archiveHandle,
     });
   }
 

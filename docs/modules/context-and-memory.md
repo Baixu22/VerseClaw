@@ -140,6 +140,19 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 
 用户入口在 `Settings → General`。Developer DCS 面板是诊断面，不是正常用户开关。
 
+## 4.5 默认 tool-result 截断的可回读引用
+
+默认的 oversized / aggregate tool-result 截断仍由原有阈值和 head+tail 预算决定，不会因为引用投影改变触发时机。变化仅在 replacement 已经获得可用 ArchiveHandle 时发生：模型可见提示会包含 archive_uri、checksum、byte_length 和 context_archive_recall 指令，而不是只写“more characters truncated”。
+
+约束：
+
+- archive 创建或校验失败时退回原来的 truncation notice，不伪造可回读性，也不阻断 turn；
+- 引用文本仍受单条 maxChars / aggregate 预算约束；
+- lifecycle metadata 继续保存 archiveHandle，prompt 投影不新增持久化 authority；
+- 该行为不等于启用 observation masking、Tool Search 或更改 compaction 默认值。
+
+eval 入口：scripts/context-inline-spill-eval.mts。它先跑 deterministic baseline/reference-visible paired oracle，再按显式 provider/model/endpoint 运行 live-provider 对照。
+
 ## 4.1 会话起始注入（`session_start` 通道）
 
 一次会话起始最多有四个来源：startup memory 文件、长会话 continuity pack、handoff 稿件、fork 继承上下文。今天它们各自带预算、各自出诊断，"这个会话为什么以这段文字开场"没有单一答案。
