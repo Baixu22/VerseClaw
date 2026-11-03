@@ -1,0 +1,869 @@
+{
+  "schema": "AdmissionUnitBaselineSummary/v1",
+  "generatedAt": "2026-11-02T17:06:34.563Z",
+  "baseline": "97cda35de",
+  "command": "pnpm exec vitest run <candidate failing files> --maxWorkers=1 --no-cache",
+  "scope": "The 66 test files that failed in the original A6 candidate run, rerun at 97cda35de with the same local binary resources.",
+  "exitCode": 1,
+  "files": {
+    "failed": 58,
+    "passed": 8,
+    "skipped": 0,
+    "total": 66
+  },
+  "tests": {
+    "failed": 168,
+    "passed": 356,
+    "skipped": 57,
+    "total": 581
+  },
+  "log": "logs/baseline-unit.log",
+  "captureMode": "combined",
+  "failureKeysMatch": true,
+  "onlyFinal": [],
+  "onlyBaseline": [],
+  "failureCount": 168,
+  "failures": [
+    {
+      "key": "tests/unit/app-version-rollback.test.ts > app version rollback protection > forces every writable DCS config flag off without dropping ordinary data",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/cron-api-browser-automation.test.ts > createCronApi browser automation tasks > creates browser automation cron jobs as isolated agent turns with agent_browser allowlist",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/cross-layer-closed-loop.v01.test.ts > V01 cross-layer closed loop > re-runs the controlled paired ablation with the verdict unchanged (no regression)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/dcs-preview-switch.test.ts > FP-P1-03 combo definition > is exactly the declared first-product set — exclusions stay excluded",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/dcs-preview-switch.test.ts > FP-P1-03 getDcsPreviewState > off / partial / on are derived from the combo store keys",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > applied only via a complete current-generation child ack covering the combo",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > enable writes all four combo flags (store + config + env) and nothing else",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > keeps forbidden graduation terms out of every current product surface",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/gateway-ready-fallback.test.ts > GatewayManager gatewayReady fallback > marks gatewayReady after handshake advertises the Verse Claw required runtime surface",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/harness-codex-active-verification.test.ts > TF-0570 active verification matrix > checks the tracked matrix receipt and every retained evidence path",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/harness-spec-portability.test.ts > harness spec portability > finds no machine-specific user path in any checked-in spec",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/host-services.test.ts > host services > sends staged media through the typed chat service with gateway attachments",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/ke-integration-full-chain.test.ts > KE integration: full chain > ① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > flag on => fact evidence flows through the proposeFacts shadow as proposalOnly/readonly candidates",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > never auto-persists: acceptedFacts empty for every enabled run (zero-write guard)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > rejects an unsupported fact source (fail-closed, not silent)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-query-tool.test.ts > memory_query agent tool > createMemoryQueryTool 在 persist=true 时返回有效 tool",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool 参数 schema 包含 query (required), topK 和 subject (optional)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 在 facts 为空时返回 { ok: false }",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 在 query 为空时返回 { ok: false }",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 在有 facts 时返回 { ok: true, count, facts }",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 的 subject 过滤生效",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 的 topK 参数生效",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-self-edit-adapter.test.ts > P1-2 memory self-edit adapter > memory_recall executes against the runtime store",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-self-edit-adapter.test.ts > P1-2 memory self-edit adapter > memory_update reports failure for an unknown fact id",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/memory-self-edit-adapter.test.ts > P1-2 memory self-edit adapter > registers four tools when persist is enabled",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/openclaw-auth.test.ts > sanitizeOpenClawConfig > preserves user config (memory, agents, channels) when enforcing tools settings",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/r3-1-runtime-memory-legal-surface.test.ts > R3-1 E-1 legal runtime-memory surface > loadStore reads real persisted facts for the inject-pilot runtime-memory provider",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-deep-refs.test.ts > runtime deep reference guard (#93) > passes on the real tree and ships a reasoned exemption ledger",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-grounding-shadow-consumers.test.ts > grounding shadow consumer summaries > keeps diagnostics metadata invariants aligned across Registry, Trace, Symbol, AgentMap, and Runtime Memory",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-compass-completion.test.ts > ConfigVersionTree > rolls back to a previous version and truncates history",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > emits explicit grounding diagnostics metadata without memory context cutover",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > includes candidate facts only when the caller explicitly requests them",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > labels historical facts with their time fields",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > ranks verified current facts with task, file, symbol, and evidence matches first",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > uses the readonly query callback without exposing runtime authority",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > context provider falls back to 3-gram when embedding enabled but provider unavailable",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > context provider uses embedding path when enabled",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > persists and retrieves embeddings through the persistence store",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > kneePoint is either 0 (never dropped below 0.5) or within tested budget range",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > recall = 1 at the highest budget level (256)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > recall at extreme budget (8) is less than recall at ample budget (256)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > recall is monotonically non-decreasing as budget increases",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > rejectedByBudgetCount > 0 at the most constrained budget level",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > tokenUtilization is higher at lower budgets than at higher budgets",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > baseline (empty DB) yields aggregateChainRecall=0",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > chainDepth is monotonically non-decreasing when all facts are seeded",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > growthRate stays within [0, 1] for all turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > partial missing (only even turns seeded) yields aggregateChainRecall≈0.5",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > treatment (all facts seeded) yields aggregateChainRecall=1 and maxDepth=3",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > conflictSuppressionRate = 1 (all non-winners rejected)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > each group accepts exactly 1 fact (conflict resolution)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > highest confidence wins (pattern 0 groups)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > latest valid_at wins when confidence is tied (pattern 1 groups)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > wrongConflictWinnerRate = 0 when all winners are correct",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > expireAtTurn=4 takes effect immediately at turn 4",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > invalidateEffect < 0 after clock advances past invalid_at boundary",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > recall stays 0 throughout when no write and no expiry occur",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > recallBeforeWrite=0 when no initial facts exist",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > referenceTime increases monotonically across turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > writeAtTurn=2 takes effect immediately at turn 2",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > writeEffect > 0 after fact is written",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > crossTopicInterference = 0 when subjects are distinct",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > driftRecoveryTime = 1 when second segment recovers immediately",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > perTopicRecall = 1 for all topics when all facts are seeded",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > topic B recall = 0 when topic B fact is not seeded",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > totalTurns equals sum of all segment turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > consumer_conflict_resolution_during_interleaved_run",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > fifo_preserves_recent_512_interleaved",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > interleaved_invalidation_accumulation",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > invalidation_effective_removes_from_accepted",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > recall_degradation_over_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > write_read_consistency_immediate_query",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > write_read_query_during_interleaved_run",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-locomo-benchmark.test.ts > L11: LoCoMo benchmark — fixture and infrastructure > seeds conversation facts and verifies retrieval works",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > domain_distribution_at_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > fifo_eviction_at_512_boundary_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > fifo_preserves_recent_512_at_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > no_active_gc_at_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > noise_accumulation_rate_at_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > retention_at_checkpoints_100_500_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > retention_degradation_monotonic",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > useful_vs_noise_eviction_ratio_at_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > episode_retention_vs_fact_retention",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > fifo_eviction_critical_point",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > fifo_eviction_does_not_prioritize_useful",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > invalidation_accumulation",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > long_term_no_active_gc",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > noise_accumulation_rate_100_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > noise_accumulation_rate_300_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > retention_after_100_turns_programming",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > retention_after_300_turns_mixed_domains",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > topic_drift_recall_decay",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > lists sanitized episode summaries through a readonly no-mutation inspection helper",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > migrates the SQLite schema idempotently and persists only sanitized bounded records",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > returns bounded diagnostics without creating a missing database or table",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > trims persisted episodes, facts, and invalidations with the same bounded-store policy",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-proposal-shadow.test.ts > runtime memory fact proposal shadow > builds invalidation proposals for conflicting accepted facts without mutating them",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-proposal-shadow.test.ts > runtime memory fact proposal shadow > creates sanitized candidate facts only when both shadow and proposeFacts are enabled",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-proposal-shadow.test.ts > runtime memory fact proposal shadow > rejects unsupported sources, accepted fact inputs, invalid shapes, and raw summaries",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts > runtime memory read hydration benefit evaluation > keeps temp SQLite hydration plus consumer latency p95 under 50ms",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts > runtime memory read hydration controlled DB replay regression harness > enforces baseline, naive, and guarded thresholds across controlled replay DBs",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts > runtime memory read hydration controlled DB replay regression harness > preserves zero budget, zero result limit, and empty no-op replay behavior",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts > runtime memory read hydration controlled internal shadow pilot > keeps explicit empty pilot corpus hydration as a safe no-op",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts > runtime memory read hydration controlled internal shadow pilot > runs the explicit controlled pilot without changing TaskLoop authority surfaces",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts > runtime memory read hydration controlled real DB opt-in evaluation > keeps baseline and naive negative while Phase 28 guarded consumer is positive on sanitized DB projections",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts > runtime memory read hydration controlled real DB opt-in evaluation > preserves explicit zero budget, zero limit, and empty no-op behavior on real DB projections",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts > runtime memory read hydration limited production opt-in implementation > allows accepted operator gates only on the explicit diagnostics-only shadow path",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts > runtime memory read hydration limited production opt-in implementation > keeps accepted limited production opt-in with an empty corpus as a safe no-op",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts > runtime memory read hydration limited production opt-in readiness > accepts Phase 33 readiness gates while keeping the Phase 32 controlled corpus path readonly and non-authoritative",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts > runtime memory read hydration limited production opt-in readiness > keeps accepted readiness with an empty controlled corpus as a safe no-op",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > does not create runtime memory tables in unrelated existing databases",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > does not open or create sqlite unless persist, read-shadow, and database are explicit",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > keeps package script invocation no-open and no-create until all explicit flags are provided",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > prints sanitized bounded JSON and text for explicit existing runtime memory databases",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts > runtime memory read hydration shadow opt-in quality evaluation > shows positive memory effect only with explicit consumer guards",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > does not create a missing explicit database file",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > does not create runtime memory tables in an unrelated existing database",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > requires an explicit database path before opening sqlite",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > returns bounded sanitized episode summaries and fact projections only",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > stays default-off without opening, reading, creating, or writing sqlite",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts > runtime memory read hydration TaskLoop shadow-only explicit opt-in > keeps explicit empty DB no-op diagnostics safe",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts > runtime memory read hydration TaskLoop shadow-only explicit opt-in > runs explicit readonly diagnostics without changing TaskLoop decisions or prompts",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > loads without breakthroughInjection when breakthrough not enabled",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > marks truncatedByTokenBudget when tokens exceed the cap",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > records breakthroughInjection summary when breakthrough is enabled",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > AUDN auto-generates relations > AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > AUDN auto-generates relations > AUDN UPDATE disabled — refinement candidate is skipped, no relation generated (project_memory.md constraint)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > context provider 1-hop expansion > expands matched facts with 1-hop related facts",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > context provider 1-hop expansion > zero regression: no queryRelations callback → behaves as before",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > persistence > migrate is idempotent and relation table is created",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > persistence > persistRelation writes and loadStore reads relations back",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-retention-llm-judge.test.ts > CV4: LLM-judge L4 retention cross-validation — local (no LLM) > probes_physically_retained_after_mixed_write",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > delegates enabled writes and loads a store snapshot through explicit memory records",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > hydrates provider context only through explicit extra-provider injection from a loaded store",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > inspects persisted sanitized episode summaries without raw rows or fact authority",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > keeps adapter candidates non-durable without promotion fields",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > rejects raw retention markers at the adapter write boundary",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_forget persists invalidation across calls",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_strengthen persists usage across restart (SQLite row assertion)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_update persists supersede + invalidation across calls",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_update writes rows into SQLite (fact, invalidation, relation)",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > defaults memoryType to semantic in record_json when omitted",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > is idempotent: migrating twice does not error or duplicate columns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > migrates a pre-Phase-4.1 database by adding memory_type column",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > persists and reloads a fact with memoryType: episodic",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > persists and reloads a fact with memoryType: procedural",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > writes the memory_type column for all three types",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-useless-content-judge.test.ts > Layer 8: useless content judge — local (no LLM) > stratified_sample_balanced_from_surviving_facts",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-useless-content-judge.test.ts > Layer 8: useless content judge — local (no LLM) > useless_content_ratio_after_1000_turns",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-llm-judge.test.ts > CV1: LLM-judge L1 cross-validation — local (no LLM) > eval_set_l1_classification_matches_expected",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — FIFO eviction at boundary > fifo_eviction_at_maxFacts_boundary",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — FIFO eviction at boundary > fifo_eviction_preserves_invalidated_facts_equally",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — deduplication > duplicate_fact_id_not_merged",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — deduplication > episode_dedupe_merges_evidence",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — field truncation > field_truncation_preserves_semantic_core",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — invalidation marks not deletes > invalidation_marks_not_deletes",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — semantic noise NOT rejected (real finding) > semantic_noise_fact_NOT_rejected",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — semantic noise NOT rejected (real finding) > semantic_noise_travel_fact_NOT_rejected",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > prompt_dump_rejected_at_persistence",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > raw_chat_log_rejected_at_persistence",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > secret_rejected_at_persistence",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — useful facts persist through 4 layers > useful_fact_persists_through_4_layers",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/sandbox-api.test.ts > sandbox api > reports lightweight default sandbox status without requiring Docker",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > requires all three README languages, the controlled-preview lock and explicit M4 boundaries",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    },
+    {
+      "key": "tests/unit/versegit-wp2-profile.test.ts > WP2 concurrency-aux diagnostic profile > keeps single-worktree calls at zero and records observed/partial/unavailable facts",
+      "classification": "baseline-equivalent",
+      "baselineObserved": true
+    }
+  ],
+  "onlyBase": []
+}

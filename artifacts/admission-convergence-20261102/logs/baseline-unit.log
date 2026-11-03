@@ -1,0 +1,3511 @@
+
+ RUN  v4.1.1 D:/tmp/ClawX-a6-baseline-20261102
+
+(node:40872) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/openclaw-auth.test.ts (73 tests | 1 failed) 17190ms
+     × preserves user config (memory, agents, channels) when enforcing tools settings 118ms
+ ❯ tests/unit/host-services.test.ts (40 tests | 1 failed) 6774ms
+     × sends staged media through the typed chat service with gateway attachments 399ms
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts (2 tests | 2 failed) 32ms
+     × enforces baseline, naive, and guarded thresholds across controlled replay DBs 25ms
+     × preserves zero budget, zero result limit, and empty no-op replay behavior 4ms
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts (3 tests | 2 failed) 44ms
+     × accepts Phase 33 readiness gates while keeping the Phase 32 controlled corpus path readonly and non-authoritative 16ms
+     × keeps accepted readiness with an empty controlled corpus as a safe no-op 3ms
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts (4 tests | 2 failed) 489ms
+     × allows accepted operator gates only on the explicit diagnostics-only shadow path 437ms
+     × keeps accepted limited production opt-in with an empty corpus as a safe no-op 3ms
+ ❯ tests/unit/runtime-grounding-shadow-consumers.test.ts (7 tests | 1 failed) 56ms
+     × keeps diagnostics metadata invariants aligned across Registry, Trace, Symbol, AgentMap, and Runtime Memory 15ms
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts (2 tests | 2 failed) 15ms
+     × keeps baseline and naive negative while Phase 28 guarded consumer is positive on sanitized DB projections 11ms
+     × preserves explicit zero budget, zero limit, and empty no-op behavior on real DB projections 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts (3 tests | 2 failed) 58ms
+     × runs the explicit controlled pilot without changing TaskLoop authority surfaces 14ms
+     × keeps explicit empty pilot corpus hydration as a safe no-op 3ms
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts (11 tests | 8 failed | 3 skipped) 228ms
+     × retention_at_checkpoints_100_500_1000_turns 38ms
+     × noise_accumulation_rate_at_1000_turns 38ms
+     × fifo_eviction_at_512_boundary_1000_turns 25ms
+     × retention_degradation_monotonic 22ms
+     × fifo_preserves_recent_512_at_1000_turns 24ms
+     × no_active_gc_at_1000_turns 26ms
+     × useful_vs_noise_eviction_ratio_at_1000_turns 35ms
+     × domain_distribution_at_1000_turns 17ms
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts (10 tests | 7 failed | 3 skipped) 107ms
+     × write_read_consistency_immediate_query 18ms
+     × invalidation_effective_removes_from_accepted 4ms
+     × recall_degradation_over_1000_turns 49ms
+     × fifo_preserves_recent_512_interleaved 19ms
+     × interleaved_invalidation_accumulation 5ms
+     × write_read_query_during_interleaved_run 8ms
+     × consumer_conflict_resolution_during_interleaved_run 1ms
+ ❯ tests/unit/runtime-memory-persistence.test.ts (6 tests | 4 failed) 23ms
+     × migrates the SQLite schema idempotently and persists only sanitized bounded records 7ms
+     × trims persisted episodes, facts, and invalidations with the same bounded-store policy 2ms
+     × returns bounded diagnostics without creating a missing database or table 3ms
+     × lists sanitized episode summaries through a readonly no-mutation inspection helper 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts (3 tests | 2 failed) 35ms
+     × runs explicit readonly diagnostics without changing TaskLoop decisions or prompts 9ms
+     × keeps explicit empty DB no-op diagnostics safe 2ms
+ ❯ tests/unit/runtime-memory-useless-content-judge.test.ts (8 tests | 2 failed | 6 skipped) 120ms
+     × stratified_sample_balanced_from_surviving_facts 74ms
+     × useless_content_ratio_after_1000_turns 43ms
+ ❯ tests/unit/runtime-memory-eval-aggregate-report-real.test.ts (15 tests | 15 skipped) 49ms
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts (7 tests | 5 failed) 33ms
+     × delegates enabled writes and loads a store snapshot through explicit memory records 10ms
+     × inspects persisted sanitized episode summaries without raw rows or fact authority 3ms
+     × rejects raw retention markers at the adapter write boundary 2ms
+     × keeps adapter candidates non-durable without promotion fields 3ms
+     × hydrates provider context only through explicit extra-provider injection from a loaded store 3ms
+ ❯ tests/unit/runtime-memory-context-provider.test.ts (9 tests | 5 failed) 30ms
+     × emits explicit grounding diagnostics metadata without memory context cutover 9ms
+     × ranks verified current facts with task, file, symbol, and evidence matches first 3ms
+     × labels historical facts with their time fields 3ms
+     × includes candidate facts only when the caller explicitly requests them 2ms
+     × uses the readonly query callback without exposing runtime authority 2ms
+(node:29920) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts (8 tests | 4 failed) 6490ms
+     × does not open or create sqlite unless persist, read-shadow, and database are explicit 1705ms
+     × does not create runtime memory tables in unrelated existing databases 535ms
+     × prints sanitized bounded JSON and text for explicit existing runtime memory databases 5ms
+     × keeps package script invocation no-open and no-create until all explicit flags are provided 2920ms
+ ❯ tests/unit/runtime-memory-compass-completion.test.ts (21 tests | 1 failed) 54ms
+     × rolls back to a previous version and truncates history 6ms
+ ❯ tests/unit/runtime-memory-locomo-benchmark.test.ts (4 tests | 1 failed | 1 skipped) 18ms
+     × seeds conversation facts and verifies retrieval works 7ms
+ ❯ tests/unit/runtime-memory-relations.test.ts (14 tests | 6 failed) 33ms
+       × migrate is idempotent and relation table is created 9ms
+       × persistRelation writes and loadStore reads relations back 2ms
+       × AUDN UPDATE disabled — refinement candidate is skipped, no relation generated (project_memory.md constraint) 2ms
+       × AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations 1ms
+       × expands matched facts with 1-hop related facts 2ms
+       × zero regression: no queryRelations callback → behaves as before 1ms
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts (12 tests | 12 failed) 22ms
+     × useful_fact_persists_through_4_layers 4ms
+     × raw_chat_log_rejected_at_persistence 1ms
+     × secret_rejected_at_persistence 1ms
+     × prompt_dump_rejected_at_persistence 1ms
+     × field_truncation_preserves_semantic_core 1ms
+     × duplicate_fact_id_not_merged 1ms
+     × episode_dedupe_merges_evidence 1ms
+     × semantic_noise_fact_NOT_rejected 1ms
+     × semantic_noise_travel_fact_NOT_rejected 1ms
+     × invalidation_marks_not_deletes 1ms
+     × fifo_eviction_at_maxFacts_boundary 1ms
+     × fifo_eviction_preserves_invalidated_facts_equally 1ms
+ ❯ tests/unit/runtime-memory-retention-llm-judge.test.ts (5 tests | 1 failed | 4 skipped) 144ms
+     × probes_physically_retained_after_mixed_write 108ms
+ ❯ tests/unit/runtime-memory-write-path-llm-judge.test.ts (4 tests | 1 failed | 3 skipped) 14ms
+     × eval_set_l1_classification_matches_expected 12ms
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts (8 tests | 4 failed) 27ms
+     × memory_update persists supersede + invalidation across calls 13ms
+     × memory_update writes rows into SQLite (fact, invalidation, relation) 3ms
+     × memory_forget persists invalidation across calls 3ms
+     × memory_strengthen persists usage across restart (SQLite row assertion) 2ms
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts (10 tests | 10 failed) 107ms
+     × retention_after_100_turns_programming 17ms
+     × retention_after_300_turns_mixed_domains 17ms
+     × noise_accumulation_rate_100_turns 7ms
+     × noise_accumulation_rate_300_turns 15ms
+     × fifo_eviction_critical_point 11ms
+     × fifo_eviction_does_not_prioritize_useful 11ms
+     × topic_drift_recall_decay 6ms
+     × invalidation_accumulation 3ms
+     × episode_retention_vs_fact_retention 14ms
+     × long_term_no_active_gc 4ms
+ ❯ tests/unit/dcs-preview-switch.test.ts (15 tests | 4 failed) 24ms
+     × is exactly the declared first-product set — exclusions stay excluded 8ms
+     × enable writes all four combo flags (store + config + env) and nothing else 1ms
+     × applied only via a complete current-generation child ack covering the combo 2ms
+     × off / partial / on are derived from the combo store keys 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts (1 test | 1 failed) 21ms
+     × shows positive memory effect only with explicit consumer guards 19ms
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts (6 tests | 6 failed) 129ms
+     × persists and reloads a fact with memoryType: procedural 9ms
+     × persists and reloads a fact with memoryType: episodic 2ms
+     × defaults memoryType to semantic in record_json when omitted 2ms
+     × writes the memory_type column for all three types 1ms
+     × migrates a pre-Phase-4.1 database by adding memory_type column 112ms
+     × is idempotent: migrating twice does not error or duplicate columns 1ms
+ ❯ tests/unit/runtime-memory-read-hydration-shadow.test.ts (5 tests | 5 failed) 40ms
+     × stays default-off without opening, reading, creating, or writing sqlite 9ms
+     × requires an explicit database path before opening sqlite 1ms
+     × does not create a missing explicit database file 2ms
+     × does not create runtime memory tables in an unrelated existing database 22ms
+     × returns bounded sanitized episode summaries and fact projections only 4ms
+ ❯ tests/unit/harness-codex-active-verification.test.ts (9 tests | 1 failed) 1066ms
+     × checks the tracked matrix receipt and every retained evidence path 35ms
+stdout | tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete
+[2026-11-02T14:41:28.062Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-02T14:41:28.062Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-7ZOwXi\agents\main\sessions\sessions.json
+
+stderr | tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete
+[2026-11-02T14:41:28.062Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\tmp\clawx-r0-2-sessions-7ZOwXi\agents\main\sessions\sessions.json'
+
+ ❯ tests/unit/r0-2-sessions-delete-fail.test.ts (8 tests | 1 failed) 1469ms
+     × succeeds without a legacy sessions.json instead of failing the committed delete 12ms
+ ❯ tests/unit/versegit-product-acceptance.test.ts (7 tests | 2 failed) 9767ms
+     × recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence 4718ms
+     × requires all three README languages, the controlled-preview lock and explicit M4 boundaries 5ms
+ ❯ tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts (7 tests | 1 failed) 105ms
+     × keeps temp SQLite hydration plus consumer latency p95 under 50ms 5ms
+ ❯ tests/unit/gateway-ready-fallback.test.ts (8 tests | 1 failed) 1819ms
+     × marks gatewayReady after handshake advertises the Verse Claw required runtime surface 32ms
+ ❯ tests/unit/runtime-memory-eval-enhanced-integration.test.ts (7 tests | 7 skipped) 9ms
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts (5 tests | 3 failed) 58ms
+     × loads without breakthroughInjection when breakthrough not enabled 20ms
+     × records breakthroughInjection summary when breakthrough is enabled 11ms
+     × marks truncatedByTokenBudget when tokens exceed the cap 3ms
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts (9 tests | 3 failed) 24ms
+     × persists and retrieves embeddings through the persistence store 6ms
+     × context provider uses embedding path when enabled 1ms
+     × context provider falls back to 3-gram when embedding enabled but provider unavailable 1ms
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts (7 tests | 6 failed) 13ms
+     × recall = 1 at the highest budget level (256) 3ms
+     × recall at extreme budget (8) is less than recall at ample budget (256) 1ms
+     × recall is monotonically non-decreasing as budget increases 1ms
+     × rejectedByBudgetCount > 0 at the most constrained budget level 1ms
+     × tokenUtilization is higher at lower budgets than at higher budgets 1ms
+     × kneePoint is either 0 (never dropped below 0.5) or within tested budget range 1ms
+ ❯ tests/unit/runtime-memory-proposal-shadow.test.ts (7 tests | 3 failed) 13ms
+     × creates sanitized candidate facts only when both shadow and proposeFacts are enabled 4ms
+     × rejects unsupported sources, accepted fact inputs, invalid shapes, and raw summaries 2ms
+     × builds invalidation proposals for conflicting accepted facts without mutating them 1ms
+ ❯ tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts (9 tests | 9 skipped) 8ms
+ ❯ tests/unit/memory-query-tool.test.ts (8 tests | 7 failed) 567ms
+     × createMemoryQueryTool 在 persist=true 时返回有效 tool 3ms
+     × tool.execute 在 facts 为空时返回 { ok: false } 0ms
+     × tool.execute 在有 facts 时返回 { ok: true, count, facts } 0ms
+     × tool.execute 的 subject 过滤生效 0ms
+     × tool.execute 的 topK 参数生效 0ms
+     × tool.execute 在 query 为空时返回 { ok: false } 0ms
+     × tool 参数 schema 包含 query (required), topK 和 subject (optional) 0ms
+ ❯ tests/unit/runtime-memory-eval-conflict-resolution.test.ts (6 tests | 5 failed) 13ms
+     × each group accepts exactly 1 fact (conflict resolution) 3ms
+     × highest confidence wins (pattern 0 groups) 1ms
+     × latest valid_at wins when confidence is tied (pattern 1 groups) 1ms
+     × wrongConflictWinnerRate = 0 when all winners are correct 1ms
+     × conflictSuppressionRate = 1 (all non-winners rejected) 1ms
+ ❯ tests/unit/runtime-memory-eval-chain-eval.test.ts (6 tests | 5 failed) 14ms
+     × baseline (empty DB) yields aggregateChainRecall=0 3ms
+     × treatment (all facts seeded) yields aggregateChainRecall=1 and maxDepth=3 1ms
+     × partial missing (only even turns seeded) yields aggregateChainRecall≈0.5 1ms
+     × chainDepth is monotonically non-decreasing when all facts are seeded 1ms
+     × growthRate stays within [0, 1] for all turns 1ms
+ ❯ tests/unit/runtime-deep-refs.test.ts (7 tests | 1 failed) 2045ms
+     × passes on the real tree and ships a reasoned exemption ledger 922ms
+ ❯ tests/unit/runtime-memory-eval-topic-drift.test.ts (6 tests | 5 failed) 14ms
+     × perTopicRecall = 1 for all topics when all facts are seeded 4ms
+     × crossTopicInterference = 0 when subjects are distinct 1ms
+     × topic B recall = 0 when topic B fact is not seeded 1ms
+     × driftRecoveryTime = 1 when second segment recovers immediately 1ms
+     × totalTurns equals sum of all segment turns 1ms
+ ❯ tests/unit/ke-integration-full-chain.test.ts (4 tests | 1 failed) 10ms
+     × ① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt 4ms
+ ❯ tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts (6 tests | 6 skipped) 7ms
+ ❯ tests/unit/cron-api-browser-automation.test.ts (4 tests | 1 failed) 144ms
+     × creates browser automation cron jobs as isolated agent turns with agent_browser allowlist 136ms
+ ❯ tests/unit/sandbox-api.test.ts (6 tests | 1 failed) 26ms
+     × reports lightweight default sandbox status without requiring Docker 19ms
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts (7 tests | 7 failed) 16ms
+     × recallBeforeWrite=0 when no initial facts exist 8ms
+     × writeEffect > 0 after fact is written 1ms
+     × invalidateEffect < 0 after clock advances past invalid_at boundary 1ms
+     × referenceTime increases monotonically across turns 1ms
+     × writeAtTurn=2 takes effect immediately at turn 2 1ms
+     × expireAtTurn=4 takes effect immediately at turn 4 1ms
+     × recall stays 0 throughout when no write and no expiry occur 1ms
+ ❯ tests/unit/first-product-claims.test.ts (5 tests | 1 failed) 32ms
+     × keeps forbidden graduation terms out of every current product surface 26ms
+ ❯ tests/unit/harness-spec-portability.test.ts (6 tests | 1 failed) 854ms
+     × finds no machine-specific user path in any checked-in spec 307ms
+ ❯ tests/unit/cross-layer-closed-loop.v01.test.ts (2 tests | 1 failed) 10ms
+     × re-runs the controlled paired ablation with the verdict unchanged (no regression) 5ms
+ ❯ tests/unit/r3-1-runtime-memory-legal-surface.test.ts (2 tests | 1 failed) 12ms
+     × loadStore reads real persisted facts for the inject-pilot runtime-memory provider 7ms
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts (5 tests | 3 failed) 9ms
+     × flag on => fact evidence flows through the proposeFacts shadow as proposalOnly/readonly candidates 4ms
+     × never auto-persists: acceptedFacts empty for every enabled run (zero-write guard) 1ms
+     × rejects an unsupported fact source (fail-closed, not silent) 0ms
+ ❯ tests/unit/memory-self-edit-adapter.test.ts (6 tests | 3 failed) 8ms
+     × registers four tools when persist is enabled 5ms
+     × memory_recall executes against the runtime store 0ms
+     × memory_update reports failure for an unknown fact id 0ms
+ ❯ tests/unit/versegit-wp2-profile.test.ts (3 tests | 1 failed) 121ms
+     × keeps single-worktree calls at zero and records observed/partial/unavailable facts 58ms
+ ❯ tests/unit/app-version-rollback.test.ts (2 tests | 1 failed) 6ms
+     × forces every writable DCS config flag off without dropping ordinary data 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/runtime-memory-eval-aggregate-report-real.test.ts [ tests/unit/runtime-memory-eval-aggregate-report-real.test.ts ]
+Error: initializeEmptyDb: migration failed for D:\tmp\phase39-agg-baseline-zgJa7r\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-aggregate-report-real.test.ts:501:11
+    499|   });
+    500|   if (persistence.migrate().status !== "migrated") {
+    501|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    502|   }
+    503| }
+ ❯ tests/unit/runtime-memory-eval-aggregate-report-real.test.ts:118:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-enhanced-integration.test.ts [ tests/unit/runtime-memory-eval-enhanced-integration.test.ts ]
+Error: initializeEmptyDb: migration failed for D:\tmp\phase37-int-baseline-tx9mN8\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-enhanced-integration.test.ts:257:11
+    255|   });
+    256|   if (persistence.migrate().status !== "migrated") {
+    257|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    258|   }
+    259| }
+ ❯ tests/unit/runtime-memory-eval-enhanced-integration.test.ts:46:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts [ tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts ]
+Error: initializeEmptyDb: migration failed for D:\tmp\phase39-real-baseline-NC9Ba5\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts:218:11
+    216|   });
+    217|   if (persistence.migrate().status !== "migrated") {
+    218|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    219|   }
+    220| }
+ ❯ tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts:59:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts [ tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts ]
+Error: initializeEmptyDb: migration failed for D:\tmp\phase36-lc-baseline-SQ1zUJ\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts:190:11
+    188|   });
+    189|   if (persistence.migrate().status !== "migrated") {
+    190|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    191|   }
+    192| }
+ ❯ tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts:44:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/172]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 168 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/app-version-rollback.test.ts > app version rollback protection > forces every writable DCS config flag off without dropping ordinary data
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/app-version-rollback.test.ts:38:76
+     36|     expect(getConfigPathValue(next, 'runtime.contextBlock.tool-registr…
+     37|     expect(getConfigPathValue(next, 'runtime.coding.staleWriteGuard.en…
+     38|     expect(getConfigPathValue(next, 'runtime.coding.symbolLease.enable…
+       |                                                                            ^
+     39|     expect(getConfigPathValue(next, 'runtime.coding.routingMemo.shadow…
+     40|     // TF-0137: this leaf is API-only and is not a rollback surface.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/172]⎯
+
+ FAIL  tests/unit/cron-api-browser-automation.test.ts > createCronApi browser automation tasks > creates browser automation cron jobs as isolated agent turns with agent_browser allowlist
+Error: Coordinator follow-up requires workspaceId, coordinatorSessionKey, expectedSessionId, intent and notificationPolicy
+ ❯ assertCoordinatorBindingCurrent electron/services/cron-api.ts:544:11
+    542|   const scope = normalizeCronCoordinatorScope(rawScope);
+    543|   if (!scope) {
+    544|     throw new Error(
+       |           ^
+    545|       'Coordinator follow-up requires workspaceId, coordinatorSessionK…
+    546|     );
+ ❯ Object.create electron/services/cron-api.ts:749:33
+ ❯ tests/unit/cron-api-browser-automation.test.ts:36:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/172]⎯
+
+ FAIL  tests/unit/cross-layer-closed-loop.v01.test.ts > V01 cross-layer closed loop > re-runs the controlled paired ablation with the verdict unchanged (no regression)
+AssertionError: expected 'insufficient-sample' to be 'component-helps' // Object.is equality
+
+Expected: "component-helps"
+Received: "insufficient-sample"
+
+ ❯ tests/unit/cross-layer-closed-loop.v01.test.ts:106:28
+    104|       preRegistered: { primaryMetric: "retention", k: 3, minCases: 20,…
+    105|     });
+    106|     expect(result.verdict).toBe("component-helps");
+       |                            ^
+    107|     expect(result.effect.meanDiff).toBe(1);
+    108|     expect(result.treatment.falseBlocks).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/172]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 combo definition > is exactly the declared first-product set — exclusions stay excluded
+AssertionError: expected [ 'context-view-tools', …(2) ] to deeply equal [ 'context-view-tools', …(3) ]
+
+- Expected
++ Received
+
+  [
+    "context-view-tools",
+    "working-memory",
+    "tool-registry",
+-   "stale-write-guard",
+  ]
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:117:45
+    115| describe('FP-P1-03 combo definition', () => {
+    116|   it('is exactly the declared first-product set — exclusions stay excl…
+    117|     expect([...DCS_PREVIEW_COMBO_FLAG_IDS]).toEqual([
+       |                                             ^
+    118|       'context-view-tools',
+    119|       'working-memory',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/172]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > enable writes all four combo flags (store + config + env) and nothing else
+AssertionError: expected [ 'dcsContextViewToolsEnabled', …(2) ] to deeply equal [ 'dcsContextViewToolsEnabled', …(3) ]
+
+- Expected
++ Received
+
+  [
+    "dcsContextViewToolsEnabled",
+-   "dcsStaleWriteGuardEnabled",
+    "dcsToolRegistryEnabled",
+    "dcsWorkingMemoryEnabled",
+  ]
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:173:60
+    171|     expect(result.success).toBe(true);
+    172|     expect(result.status).toBe('pending-restart'); // no restart reque…
+    173|     expect(state.settingWrites.map(([key]) => key).sort()).toEqual([..…
+       |                                                            ^
+    174|     // Config leaves for the three config-kind flags:
+    175|     const written = JSON.stringify(state.config);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/172]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > applied only via a complete current-generation child ack covering the combo
+AssertionError: expected [ …(3) ] to deeply equal [ …(4) ]
+
+- Expected
++ Received
+
+  [
+    "OPENCLAW_DCS_CONTEXT_VIEW_TOOLS",
+-   "runtime.coding.staleWriteGuard.enabled",
+    "runtime.contextBlock.tool-registry.enabled",
+    "runtime.contextBlock.working-memory.enabled",
+  ]
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:213:49
+    211|     ]);
+    212|     // One ack covers every combo flag:
+    213|     expect(Object.keys(requested ?? {}).sort()).toEqual([
+       |                                                 ^
+    214|       'OPENCLAW_DCS_CONTEXT_VIEW_TOOLS',
+    215|       'runtime.coding.staleWriteGuard.enabled',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/172]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 getDcsPreviewState > off / partial / on are derived from the combo store keys
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:262:29
+    260|     state.settings.dcsContextViewToolsEnabled = true;
+    261|     const partial = await getDcsPreviewState();
+    262|     expect(partial.enabled).toBe(false);
+       |                             ^
+    263|     expect(partial.partial).toBe(true);
+    264|     for (const key of COMBO_STORE_KEYS) state.settings[key] = true;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/172]⎯
+
+ FAIL  tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > keeps forbidden graduation terms out of every current product surface
+AssertionError: expected [ …(4) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "filePath": "README.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 58,
++         "term": "default-on",
++       },
++     ],
++   },
++   {
++     "filePath": "README.zh-CN.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "live-ready-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "product-approved-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++     ],
++   },
++   {
++     "filePath": "README.ja-JP.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "live-ready-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "product-approved-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 58,
++         "term": "default-on",
++       },
++     ],
++   },
++   {
++     "filePath": "README.ru-RU.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "live-ready-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "product-approved-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 58,
++         "term": "default-on",
++       },
++     ],
++   },
++ ]
+
+ ❯ tests/unit/first-product-claims.test.ts:33:24
+     31|       if (matches.length > 0) violations.push({ filePath, matches });
+     32|     }
+     33|     expect(violations).toEqual([]);
+       |                        ^
+     34|   });
+     35|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/172]⎯
+
+ FAIL  tests/unit/gateway-ready-fallback.test.ts > GatewayManager gatewayReady fallback > marks gatewayReady after handshake advertises the Verse Claw required runtime surface
+AssertionError: expected undefined to be defined
+ ❯ tests/unit/gateway-ready-fallback.test.ts:204:64
+    202|     });
+    203|
+    204|     expect(statusUpdates.find((u) => u.gatewayReady === true)).toBeDef…
+       |                                                                ^
+    205|     expect(manager.getCapabilitySnapshot().core.rpcRouter).toBe('ready…
+    206|     expect(manager.getCapabilitySnapshot().presence.state).toBe('healt…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/172]⎯
+
+ FAIL  tests/unit/harness-codex-active-verification.test.ts > TF-0570 active verification matrix > checks the tracked matrix receipt and every retained evidence path
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/harness-codex-active-verification.test.ts:165:64
+    163|     expect(matrix.scenarios).toHaveLength(11);
+    164|     expect(matrix.scenarios.filter((entry) => entry.id === "S11")).toH…
+    165|     expect(validateMatrixStructure(matrix, { root: ROOT }).ok).toBe(tr…
+       |                                                                ^
+    166|     const result = verifyActiveMatrixArtifacts({ root: ROOT });
+    167|     expect(result.issues, result.issues.join("\n")).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/172]⎯
+
+ FAIL  tests/unit/harness-spec-portability.test.ts > harness spec portability > finds no machine-specific user path in any checked-in spec
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "D:/tmp/ClawX-a6-baseline-20261102/harness/specs/guides/session-lifecycle-worktree-and-node-development.md: Windows user profile path C:\\Users\\27933",
++ ]
+
+ ❯ tests/unit/harness-spec-portability.test.ts:41:22
+     39|     }
+     40|
+     41|     expect(offences).toEqual([]);
+       |                      ^
+     42|   });
+     43|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/172]⎯
+
+ FAIL  tests/unit/host-services.test.ts > host services > sends staged media through the typed chat service with gateway attachments
+AssertionError: expected "vi.fn()" to be called with arguments: [ 'chat.send', { …(5) }, 120000 ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -13,7 +13,7 @@
+      "message": "inspect this
+
+  [media attached: D:\\tmp\\verse-claw-host-services-media-1793630323446.png (image/png) | D:\\tmp\\verse-claw-host-services-media-1793630323446.png]",
+      "sessionKey": "agent:main:main",
+    },
+-   120000,
++   900000,
+  ]
+
+
+Number of calls: 1
+
+ ❯ tests/unit/host-services.test.ts:1007:32
+    1005|     })).resolves.toEqual({ success: true, result: { runId: 'run-123' }…
+    1006|
+    1007|     expect(gatewayManager.rpc).toHaveBeenCalledWith(
+       |                                ^
+    1008|       'chat.send',
+    1009|       {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/172]⎯
+
+ FAIL  tests/unit/ke-integration-full-chain.test.ts > KE integration: full chain > ① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt
+AssertionError: expected 0 to be greater than 0
+ ❯ tests/unit/ke-integration-full-chain.test.ts:52:50
+     50|     const gen = runKeCandidateGeneration(GEN_ON, factEvidence());
+     51|     expect(gen.enabled).toBe(true);
+     52|     expect(gen.proposalShadow.candidates.length).toBeGreaterThan(0);
+       |                                                  ^
+     53|     const candidate = gen.proposalShadow.candidates[0]!;
+     54|     expect(candidate.verificationStatus).toBe("candidate");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/172]⎯
+
+ FAIL  tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > flag on => fact evidence flows through the proposeFacts shadow as proposalOnly/readonly candidates
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts:40:40
+     38|     const run = runKeCandidateGeneration(ENABLED, evidence());
+     39|     expect(run.enabled).toBe(true);
+     40|     expect(run.proposalShadow.enabled).toBe(true);
+       |                                        ^
+     41|     expect(run.proposalShadow.proposalOnly).toBe(true);
+     42|     expect(run.proposalShadow.readonly).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/172]⎯
+
+ FAIL  tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > never auto-persists: acceptedFacts empty for every enabled run (zero-write guard)
+AssertionError: expected 0 to be greater than 0
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts:56:50
+     54|       ],
+     55|     }));
+     56|     expect(run.proposalShadow.candidates.length).toBeGreaterThan(0);
+       |                                                  ^
+     57|     // The single write authority (appendFact) is only reachable after…
+     58|     // promotion; the shadow must never surface an accepted fact by it…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/172]⎯
+
+ FAIL  tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > rejects an unsupported fact source (fail-closed, not silent)
+AssertionError: expected 0 to be greater than 0
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts:82:54
+     80|     }));
+     81|     expect(run.proposalShadow.candidates).toHaveLength(0);
+     82|     expect(run.proposalShadow.rejectedInputs.length).toBeGreaterThan(0…
+       |                                                      ^
+     83|     expect(run.proposalShadow.rejectedInputs[0]!.reason).toBe("unsuppo…
+     84|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/172]⎯
+
+ FAIL  tests/unit/memory-query-tool.test.ts > memory_query agent tool > createMemoryQueryTool 在 persist=true 时返回有效 tool
+AssertionError: expected null not to be null
+ ❯ tests/unit/memory-query-tool.test.ts:103:22
+    101|       config: { runtime: { memory: { persist: true } } },
+    102|     });
+    103|     expect(tool).not.toBeNull();
+       |                      ^
+    104|     expect(tool!.name).toBe("memory_query");
+    105|     expect(tool!.label).toBe("memory_query");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/172]⎯
+
+ FAIL  tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 在 facts 为空时返回 { ok: false }
+TypeError: Cannot read properties of null (reading 'execute')
+ ❯ tests/unit/memory-query-tool.test.ts:115:32
+    113|       config: { runtime: { memory: { persist: true } } },
+    114|     });
+    115|     const result = await tool!.execute("call-1", { query: "Alice" }, u…
+       |                                ^
+    116|
+    117|     const payload = parseJsonResultContent(result) as { ok: boolean; m…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/172]⎯
+
+ FAIL  tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 在有 facts 时返回 { ok: true, count, facts }
+TypeError: Cannot read properties of null (reading 'execute')
+ ❯ tests/unit/memory-query-tool.test.ts:127:32
+    125|       config: { runtime: { memory: { persist: true } } },
+    126|     });
+    127|     const result = await tool!.execute("call-2", { query: "Alice Bosto…
+       |                                ^
+    128|
+    129|     const payload = parseJsonResultContent(result) as {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/172]⎯
+
+ FAIL  tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 的 subject 过滤生效
+TypeError: Cannot read properties of null (reading 'execute')
+ ❯ tests/unit/memory-query-tool.test.ts:146:32
+    144|       config: { runtime: { memory: { persist: true } } },
+    145|     });
+    146|     const result = await tool!.execute(
+       |                                ^
+    147|       "call-3",
+    148|       { query: "lives in", subject: "bob" },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/172]⎯
+
+ FAIL  tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 的 topK 参数生效
+TypeError: Cannot read properties of null (reading 'execute')
+ ❯ tests/unit/memory-query-tool.test.ts:167:32
+    165|       config: { runtime: { memory: { persist: true } } },
+    166|     });
+    167|     const result = await tool!.execute(
+       |                                ^
+    168|       "call-4",
+    169|       { query: "lives works hobby", topK: 2 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/172]⎯
+
+ FAIL  tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool.execute 在 query 为空时返回 { ok: false }
+TypeError: Cannot read properties of null (reading 'execute')
+ ❯ tests/unit/memory-query-tool.test.ts:183:32
+    181|       config: { runtime: { memory: { persist: true } } },
+    182|     });
+    183|     const result = await tool!.execute("call-5", { query: "" }, undefi…
+       |                                ^
+    184|
+    185|     const payload = parseJsonResultContent(result) as { ok: boolean; c…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/172]⎯
+
+ FAIL  tests/unit/memory-query-tool.test.ts > memory_query agent tool > tool 参数 schema 包含 query (required), topK 和 subject (optional)
+TypeError: Cannot read properties of null (reading 'parameters')
+ ❯ tests/unit/memory-query-tool.test.ts:195:26
+    193|       config: { runtime: { memory: { persist: true } } },
+    194|     });
+    195|     const schema = tool!.parameters as { properties: Record<string, un…
+       |                          ^
+    196|     expect(schema.properties.query).toBeDefined();
+    197|     expect(schema.properties.topK).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/172]⎯
+
+ FAIL  tests/unit/memory-self-edit-adapter.test.ts > P1-2 memory self-edit adapter > registers four tools when persist is enabled
+AssertionError: expected [] to have a length of 4 but got +0
+
+- Expected
++ Received
+
+- 4
++ 0
+
+ ❯ tests/unit/memory-self-edit-adapter.test.ts:24:19
+     22|   it('registers four tools when persist is enabled', () => {
+     23|     const tools = createMemorySelfEditTools({ config: persistConfig });
+     24|     expect(tools).toHaveLength(4);
+       |                   ^
+     25|     const names = tools.map((t) => t.name).sort();
+     26|     expect(names).toEqual(['memory_forget', 'memory_recall', 'memory_s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/172]⎯
+
+ FAIL  tests/unit/memory-self-edit-adapter.test.ts > P1-2 memory self-edit adapter > memory_recall executes against the runtime store
+AssertionError: expected undefined to be defined
+ ❯ tests/unit/memory-self-edit-adapter.test.ts:42:20
+     40|     const tools = createMemorySelfEditTools({ config: persistConfig });
+     41|     const recall = tools.find((t) => t.name === 'memory_recall');
+     42|     expect(recall).toBeDefined();
+       |                    ^
+     43|     // execute signature is (toolCallId, params, signal, onUpdate); the
+     44|     // adapter wraps the self-edit result in an AgentToolResult via
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/172]⎯
+
+ FAIL  tests/unit/memory-self-edit-adapter.test.ts > P1-2 memory self-edit adapter > memory_update reports failure for an unknown fact id
+AssertionError: expected undefined to be defined
+ ❯ tests/unit/memory-self-edit-adapter.test.ts:54:20
+     52|     const tools = createMemorySelfEditTools({ config: persistConfig });
+     53|     const update = tools.find((t) => t.name === 'memory_update');
+     54|     expect(update).toBeDefined();
+       |                    ^
+     55|     const result = await update!.execute('call-2', { factId: 'no-such-…
+     56|     const details = (result as { details?: { ok?: boolean; message?: s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/172]⎯
+
+ FAIL  tests/unit/openclaw-auth.test.ts > sanitizeOpenClawConfig > preserves user config (memory, agents, channels) when enforcing tools settings
+AssertionError: expected { …(2) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+@@ -4,8 +4,8 @@
+    },
+    "sandbox": {
+      "backend": "openshell",
+      "mode": "off",
+      "scope": "session",
+-     "workspaceAccess": "none",
++     "workspaceAccess": "ro",
+    },
+  }
+
+ ❯ tests/unit/openclaw-auth.test.ts:525:65
+    523|     expect(result.memory).toEqual({ enabled: true, limit: 100 });
+    524|     expect(result.channels).toEqual({ discord: { token: 'tok', enabled…
+    525|     expect((result.agents as Record<string, unknown>).defaults).toEqua…
+       |                                                                 ^
+    526|       model: { primary: 'openai/gpt-4' },
+    527|       sandbox: {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/172]⎯
+
+ FAIL  tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/r0-2-sessions-delete-fail.test.ts:163:28
+    161|     const result = await createSessionsApi().delete({ sessionKey: 'age…
+    162|
+    163|     expect(result.success).toBe(true);
+       |                            ^
+    164|     await expect(access(join(sessionsDir, 'sessions.json'))).rejects.t…
+    165|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/172]⎯
+
+ FAIL  tests/unit/r3-1-runtime-memory-legal-surface.test.ts > R3-1 E-1 legal runtime-memory surface > loadStore reads real persisted facts for the inject-pilot runtime-memory provider
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/r3-1-runtime-memory-legal-surface.test.ts:82:35
+     80|       now: () => Date.now(),
+     81|     });
+     82|     expect(integration.migrate()).toMatchObject({ status: 'migrated' }…
+       |                                   ^
+     83|
+     84|     const fact = buildRuntimeMemoryTemporalFactFixture({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/172]⎯
+
+ FAIL  tests/unit/runtime-deep-refs.test.ts > runtime deep reference guard (#93) > passes on the real tree and ships a reasoned exemption ledger
+AssertionError: expected [ …(7) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "dangling vendored reference: scripts/lib/agent-first-trials.mjs:76 → openclaw_runtime/dist-runtime (string) does not resolve; fix the path or add it to scripts/runtime-deep-refs-baseline.json with a reason",
++   "dangling vendored reference: scripts/lib/agent-first-trials.mjs:108 → openclaw_runtime/dist/.buildstamp (string) does not resolve; fix the path or add it to scripts/runtime-deep-refs-baseline.json with a reason",
++   "dangling vendored reference: scripts/lib/agent-first-trials.mjs:140 → openclaw_runtime/dist/.buildstamp (string) does not resolve; fix the path or add it to scripts/runtime-deep-refs-baseline.json with a reason",
++   "dangling vendored reference: scripts/versegit-product-a2-evidence.mjs:69 → openclaw_runtime/dist/entry.js (string) does not resolve; fix the path or add it to scripts/runtime-deep-refs-baseline.json with a reason",
++   "dangling vendored reference: scripts/versegit-product-a2-evidence.mjs:69 → openclaw_runtime/dist/knowledge/sekb/index.js (string) does not resolve; fix the path or add it to scripts/runtime-deep-refs-baseline.json with a reason",
++   "dangling vendored reference: scripts/versegit-product-a2-evidence.mjs:69 → openclaw_runtime/dist/extensions/deepseek/provider-policy-api.js (string) does not resolve; fix the path or add it to scripts/runtime-deep-refs-baseline.json with a reason",
++   "dangling vendored reference: scripts/versegit-product-a2-evidence.mjs:69 → openclaw_runtime/dist-runtime/extensions/deepseek/provider-policy-api.js (string) does not resolve; fix the path or add it to scripts/runtime-deep-refs-baseline.json with a reason",
++ ]
+
+ ❯ tests/unit/runtime-deep-refs.test.ts:130:27
+    128|     const baseline = loadBaseline(repoRoot);
+    129|     const report = checkRuntimeDeepRefs({ root: repoRoot });
+    130|     expect(report.errors).toEqual([]);
+       |                           ^
+    131|     expect(report.ok).toBe(true);
+    132|     expect(report.referenceCount).toBeGreaterThan(100);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/172]⎯
+
+ FAIL  tests/unit/runtime-grounding-shadow-consumers.test.ts > grounding shadow consumer summaries > keeps diagnostics metadata invariants aligned across Registry, Trace, Symbol, AgentMap, and Runtime Memory
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/runtime-grounding-shadow-consumers.test.ts:370:39
+    368|     expect(symbolResult.contextItems).toHaveLength(1);
+    369|     expect(agentMapResult.contextItems.length).toBeGreaterThan(0);
+    370|     expect(memoryResult.contextItems).toHaveLength(1);
+       |                                       ^
+    371|   });
+    372|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/172]⎯
+
+ FAIL  tests/unit/runtime-memory-compass-completion.test.ts > ConfigVersionTree > rolls back to a previous version and truncates history
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/runtime-memory-compass-completion.test.ts:424:61
+    422|     const rolledBack = rollbackConfigVersion(tree, "1.0.1");
+    423|     expect(rolledBack).toBeDefined();
+    424|     expect(rolledBack!.featureFlags.enableSessionStatePage).toBe(true);
+       |                                                             ^
+    425|     expect(tree.currentVersion).toBe("1.0.1");
+    426|     expect(tree.history).toEqual(["1.0.0", "1.0.1"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/172]⎯
+
+ FAIL  tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > emits explicit grounding diagnostics metadata without memory context cutover
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-context-provider.test.ts:202:27
+    200|     expectProviderResult(baseline);
+    201|     expectProviderResult(result);
+    202|     expect(result.status).toBe("success");
+       |                           ^
+    203|     expect(result.contextItems).toEqual(baseline.contextItems);
+    204|     expect(result.evidenceRefs).toEqual(baseline.evidenceRefs);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/172]⎯
+
+ FAIL  tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > ranks verified current facts with task, file, symbol, and evidence matches first
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-context-provider.test.ts:329:27
+    327|
+    328|     expectProviderResult(result);
+    329|     expect(result.status).toBe("success");
+       |                           ^
+    330|     expect(result.contextItems.every(isContextItem)).toBe(true);
+    331|     expect(result.contextItems.map((item) => item.metadata?.factId)[0]…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/172]⎯
+
+ FAIL  tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > labels historical facts with their time fields
+AssertionError: expected [] to deeply equal [ 'fact_old' ]
+
+- Expected
++ Received
+
+- [
+-   "fact_old",
+- ]
++ []
+
+ ❯ tests/unit/runtime-memory-context-provider.test.ts:387:70
+    385|
+    386|     expectProviderResult(result);
+    387|     expect(result.contextItems.map((item) => item.metadata?.factId)).t…
+       |                                                                      ^
+    388|     expect(result.contextItems[0]?.text).toContain("time_scope=histori…
+    389|     expect(result.contextItems[0]?.text).toContain("valid_at=10");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/172]⎯
+
+ FAIL  tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > includes candidate facts only when the caller explicitly requests them
+AssertionError: expected [] to deeply equal [ 'fact_verified' ]
+
+- Expected
++ Received
+
+- [
+-   "fact_verified",
+- ]
++ []
+
+ ❯ tests/unit/runtime-memory-context-provider.test.ts:423:77
+    421|     expectProviderResult(defaultResult);
+    422|     expectProviderResult(requestedResult);
+    423|     expect(defaultResult.contextItems.map((item) => item.metadata?.fac…
+       |                                                                             ^
+    424|       "fact_verified",
+    425|     ]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/172]⎯
+
+ FAIL  tests/unit/runtime-memory-context-provider.test.ts > runtime memory context provider > uses the readonly query callback without exposing runtime authority
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/runtime-memory-context-provider.test.ts:482:33
+    480|
+    481|     expectProviderResult(result);
+    482|     expect(result.contextItems).toHaveLength(1);
+       |                                 ^
+    483|     expect(result.contextItems[0]?.metadata).toMatchObject({
+    484|       factId: "fact_for_task_callback",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/172]⎯
+
+ FAIL  tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > persists and retrieves embeddings through the persistence store
+AssertionError: expected 'skipped' to be 'migrated' // Object.is equality
+
+Expected: "migrated"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts:169:36
+    167|       now: () => 1000,
+    168|     });
+    169|     expect(store.migrate().status).toBe("migrated");
+       |                                    ^
+    170|
+    171|     const seedFact = buildRuntimeMemoryTemporalFactFixture({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/172]⎯
+
+ FAIL  tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > context provider uses embedding path when enabled
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts:252:27
+    250|     }) as { status: string; contextItems: unknown[] };
+    251|
+    252|     expect(result.status).toBe("success");
+       |                           ^
+    253|     expect(result.contextItems.length).toBeGreaterThan(0);
+    254|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/172]⎯
+
+ FAIL  tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > context provider falls back to 3-gram when embedding enabled but provider unavailable
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts:273:27
+    271|     }) as { status: string; contextItems: unknown[] };
+    272|
+    273|     expect(result.status).toBe("success");
+       |                           ^
+    274|     expect(result.contextItems.length).toBeGreaterThan(0);
+    275|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > recall = 1 at the highest budget level (256)
+Error: initializeEmptyDb: migration failed for D:\tmp\budget-high-fJyptf\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-budget-pressure.test.ts:219:11
+    217|   });
+    218|   if (persistence.migrate().status !== "migrated") {
+    219|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    220|   }
+    221| }
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts:75:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > recall at extreme budget (8) is less than recall at ample budget (256)
+Error: initializeEmptyDb: migration failed for D:\tmp\budget-degrade-IfXOX8\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-budget-pressure.test.ts:219:11
+    217|   });
+    218|   if (persistence.migrate().status !== "migrated") {
+    219|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    220|   }
+    221| }
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts:96:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > recall is monotonically non-decreasing as budget increases
+Error: initializeEmptyDb: migration failed for D:\tmp\budget-monotonic-BWEagJ\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-budget-pressure.test.ts:219:11
+    217|   });
+    218|   if (persistence.migrate().status !== "migrated") {
+    219|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    220|   }
+    221| }
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts:118:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > rejectedByBudgetCount > 0 at the most constrained budget level
+Error: initializeEmptyDb: migration failed for D:\tmp\budget-reject-d54mZv\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-budget-pressure.test.ts:219:11
+    217|   });
+    218|   if (persistence.migrate().status !== "migrated") {
+    219|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    220|   }
+    221| }
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts:145:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > tokenUtilization is higher at lower budgets than at higher budgets
+Error: initializeEmptyDb: migration failed for D:\tmp\budget-util-7gyN0Q\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-budget-pressure.test.ts:219:11
+    217|   });
+    218|   if (persistence.migrate().status !== "migrated") {
+    219|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    220|   }
+    221| }
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts:171:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-budget-pressure.test.ts > runtime memory budget pressure evaluation > kneePoint is either 0 (never dropped below 0.5) or within tested budget range
+Error: initializeEmptyDb: migration failed for D:\tmp\budget-knee-cpZuMo\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-budget-pressure.test.ts:219:11
+    217|   });
+    218|   if (persistence.migrate().status !== "migrated") {
+    219|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    220|   }
+    221| }
+ ❯ tests/unit/runtime-memory-eval-budget-pressure.test.ts:197:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > baseline (empty DB) yields aggregateChainRecall=0
+Error: initializeEmptyDb: migration failed for D:\tmp\chain-baseline-1KVGjP\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-chain-eval.test.ts:179:11
+    177|   });
+    178|   if (persistence.migrate().status !== "migrated") {
+    179|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    180|   }
+    181| }
+ ❯ tests/unit/runtime-memory-eval-chain-eval.test.ts:71:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > treatment (all facts seeded) yields aggregateChainRecall=1 and maxDepth=3
+Error: initializeEmptyDb: migration failed for D:\tmp\chain-treatment-THuhPJ\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-chain-eval.test.ts:179:11
+    177|   });
+    178|   if (persistence.migrate().status !== "migrated") {
+    179|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    180|   }
+    181| }
+ ❯ tests/unit/runtime-memory-eval-chain-eval.test.ts:92:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > partial missing (only even turns seeded) yields aggregateChainRecall≈0.5
+Error: initializeEmptyDb: migration failed for D:\tmp\chain-partial-RrPk59\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-chain-eval.test.ts:179:11
+    177|   });
+    178|   if (persistence.migrate().status !== "migrated") {
+    179|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    180|   }
+    181| }
+ ❯ tests/unit/runtime-memory-eval-chain-eval.test.ts:114:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > chainDepth is monotonically non-decreasing when all facts are seeded
+Error: initializeEmptyDb: migration failed for D:\tmp\chain-monotonic-7H3EhT\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-chain-eval.test.ts:179:11
+    177|   });
+    178|   if (persistence.migrate().status !== "migrated") {
+    179|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    180|   }
+    181| }
+ ❯ tests/unit/runtime-memory-eval-chain-eval.test.ts:142:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-chain-eval.test.ts > runtime memory chain evaluation > growthRate stays within [0, 1] for all turns
+Error: initializeEmptyDb: migration failed for D:\tmp\chain-growth-k11kWy\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-chain-eval.test.ts:179:11
+    177|   });
+    178|   if (persistence.migrate().status !== "migrated") {
+    179|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    180|   }
+    181| }
+ ❯ tests/unit/runtime-memory-eval-chain-eval.test.ts:160:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > each group accepts exactly 1 fact (conflict resolution)
+Error: initializeEmptyDb: migration failed for D:\tmp\conflict-single-vNSNsS\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-conflict-resolution.test.ts:184:11
+    182|   });
+    183|   if (persistence.migrate().status !== "migrated") {
+    184|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    185|   }
+    186| }
+ ❯ tests/unit/runtime-memory-eval-conflict-resolution.test.ts:64:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > highest confidence wins (pattern 0 groups)
+Error: initializeEmptyDb: migration failed for D:\tmp\conflict-confidence-lwrjfq\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-conflict-resolution.test.ts:184:11
+    182|   });
+    183|   if (persistence.migrate().status !== "migrated") {
+    184|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    185|   }
+    186| }
+ ❯ tests/unit/runtime-memory-eval-conflict-resolution.test.ts:87:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > latest valid_at wins when confidence is tied (pattern 1 groups)
+Error: initializeEmptyDb: migration failed for D:\tmp\conflict-validat-1LxYfl\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-conflict-resolution.test.ts:184:11
+    182|   });
+    183|   if (persistence.migrate().status !== "migrated") {
+    184|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    185|   }
+    186| }
+ ❯ tests/unit/runtime-memory-eval-conflict-resolution.test.ts:111:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > wrongConflictWinnerRate = 0 when all winners are correct
+Error: initializeEmptyDb: migration failed for D:\tmp\conflict-correct-LQ3bDi\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-conflict-resolution.test.ts:184:11
+    182|   });
+    183|   if (persistence.migrate().status !== "migrated") {
+    184|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    185|   }
+    186| }
+ ❯ tests/unit/runtime-memory-eval-conflict-resolution.test.ts:135:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[59/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-conflict-resolution.test.ts > runtime memory conflict resolution evaluation > conflictSuppressionRate = 1 (all non-winners rejected)
+Error: initializeEmptyDb: migration failed for D:\tmp\conflict-suppression-d1SFZj\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-conflict-resolution.test.ts:184:11
+    182|   });
+    183|   if (persistence.migrate().status !== "migrated") {
+    184|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    185|   }
+    186| }
+ ❯ tests/unit/runtime-memory-eval-conflict-resolution.test.ts:159:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[60/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > recallBeforeWrite=0 when no initial facts exist
+Error: runTemporalEvolution: migration failed for D:\tmp\temporal-empty-rsavau\openclaw.sqlite
+ ❯ runTemporalEvolution openclaw_runtime/src/agents/runtime-memory-eval/temporal-evolution-driver.ts:64:11
+     62|   });
+     63|   if (seedPersistence.migrate().status !== "migrated") {
+     64|     throw new Error(`runTemporalEvolution: migration failed for ${opti…
+       |           ^
+     65|   }
+     66|   for (const fact of options.initialFacts) {
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts:62:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[61/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > writeEffect > 0 after fact is written
+Error: runTemporalEvolution: migration failed for D:\tmp\temporal-write-oD8Vk9\openclaw.sqlite
+ ❯ runTemporalEvolution openclaw_runtime/src/agents/runtime-memory-eval/temporal-evolution-driver.ts:64:11
+     62|   });
+     63|   if (seedPersistence.migrate().status !== "migrated") {
+     64|     throw new Error(`runTemporalEvolution: migration failed for ${opti…
+       |           ^
+     65|   }
+     66|   for (const fact of options.initialFacts) {
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts:82:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[62/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > invalidateEffect < 0 after clock advances past invalid_at boundary
+Error: runTemporalEvolution: migration failed for D:\tmp\temporal-invalidate-wPQOXd\openclaw.sqlite
+ ❯ runTemporalEvolution openclaw_runtime/src/agents/runtime-memory-eval/temporal-evolution-driver.ts:64:11
+     62|   });
+     63|   if (seedPersistence.migrate().status !== "migrated") {
+     64|     throw new Error(`runTemporalEvolution: migration failed for ${opti…
+       |           ^
+     65|   }
+     66|   for (const fact of options.initialFacts) {
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts:103:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[63/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > referenceTime increases monotonically across turns
+Error: runTemporalEvolution: migration failed for D:\tmp\temporal-monotonic-3wQFyN\openclaw.sqlite
+ ❯ runTemporalEvolution openclaw_runtime/src/agents/runtime-memory-eval/temporal-evolution-driver.ts:64:11
+     62|   });
+     63|   if (seedPersistence.migrate().status !== "migrated") {
+     64|     throw new Error(`runTemporalEvolution: migration failed for ${opti…
+       |           ^
+     65|   }
+     66|   for (const fact of options.initialFacts) {
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts:124:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[64/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > writeAtTurn=2 takes effect immediately at turn 2
+Error: runTemporalEvolution: migration failed for D:\tmp\temporal-immediate-write-lQVNJm\openclaw.sqlite
+ ❯ runTemporalEvolution openclaw_runtime/src/agents/runtime-memory-eval/temporal-evolution-driver.ts:64:11
+     62|   });
+     63|   if (seedPersistence.migrate().status !== "migrated") {
+     64|     throw new Error(`runTemporalEvolution: migration failed for ${opti…
+       |           ^
+     65|   }
+     66|   for (const fact of options.initialFacts) {
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts:150:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[65/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > expireAtTurn=4 takes effect immediately at turn 4
+Error: runTemporalEvolution: migration failed for D:\tmp\temporal-immediate-invalidate-NX6TPQ\openclaw.sqlite
+ ❯ runTemporalEvolution openclaw_runtime/src/agents/runtime-memory-eval/temporal-evolution-driver.ts:64:11
+     62|   });
+     63|   if (seedPersistence.migrate().status !== "migrated") {
+     64|     throw new Error(`runTemporalEvolution: migration failed for ${opti…
+       |           ^
+     65|   }
+     66|   for (const fact of options.initialFacts) {
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts:171:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[66/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-temporal-evolution.test.ts > runtime memory temporal evolution > recall stays 0 throughout when no write and no expiry occur
+Error: runTemporalEvolution: migration failed for D:\tmp\temporal-noop-GqwInQ\openclaw.sqlite
+ ❯ runTemporalEvolution openclaw_runtime/src/agents/runtime-memory-eval/temporal-evolution-driver.ts:64:11
+     62|   });
+     63|   if (seedPersistence.migrate().status !== "migrated") {
+     64|     throw new Error(`runTemporalEvolution: migration failed for ${opti…
+       |           ^
+     65|   }
+     66|   for (const fact of options.initialFacts) {
+ ❯ tests/unit/runtime-memory-eval-temporal-evolution.test.ts:199:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[67/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > perTopicRecall = 1 for all topics when all facts are seeded
+Error: initializeEmptyDb: migration failed for D:\tmp\topic-all-dq0SBN\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-topic-drift.test.ts:173:11
+    171|   });
+    172|   if (persistence.migrate().status !== "migrated") {
+    173|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    174|   }
+    175| }
+ ❯ tests/unit/runtime-memory-eval-topic-drift.test.ts:67:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[68/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > crossTopicInterference = 0 when subjects are distinct
+Error: initializeEmptyDb: migration failed for D:\tmp\topic-isolation-yyHL9a\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-topic-drift.test.ts:173:11
+    171|   });
+    172|   if (persistence.migrate().status !== "migrated") {
+    173|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    174|   }
+    175| }
+ ❯ tests/unit/runtime-memory-eval-topic-drift.test.ts:90:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[69/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > topic B recall = 0 when topic B fact is not seeded
+Error: initializeEmptyDb: migration failed for D:\tmp\topic-missing-b-GTucRG\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-topic-drift.test.ts:173:11
+    171|   });
+    172|   if (persistence.migrate().status !== "migrated") {
+    173|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    174|   }
+    175| }
+ ❯ tests/unit/runtime-memory-eval-topic-drift.test.ts:110:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[70/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > driftRecoveryTime = 1 when second segment recovers immediately
+Error: initializeEmptyDb: migration failed for D:\tmp\topic-recovery-nuAKk2\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-topic-drift.test.ts:173:11
+    171|   });
+    172|   if (persistence.migrate().status !== "migrated") {
+    173|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    174|   }
+    175| }
+ ❯ tests/unit/runtime-memory-eval-topic-drift.test.ts:132:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[71/172]⎯
+
+ FAIL  tests/unit/runtime-memory-eval-topic-drift.test.ts > runtime memory topic drift evaluation > totalTurns equals sum of all segment turns
+Error: initializeEmptyDb: migration failed for D:\tmp\topic-total-eEGCM3\openclaw.sqlite
+ ❯ initializeEmptyDb tests/unit/runtime-memory-eval-topic-drift.test.ts:173:11
+    171|   });
+    172|   if (persistence.migrate().status !== "migrated") {
+    173|     throw new Error(`initializeEmptyDb: migration failed for ${dbPath}…
+       |           ^
+    174|   }
+    175| }
+ ❯ tests/unit/runtime-memory-eval-topic-drift.test.ts:152:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[72/172]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > write_read_consistency_immediate_query
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:173:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[73/172]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > invalidation_effective_removes_from_accepted
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:195:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[74/172]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > recall_degradation_over_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:230:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[75/172]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > fifo_preserves_recent_512_interleaved
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:274:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[76/172]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > interleaved_invalidation_accumulation
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:297:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[77/172]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > write_read_query_during_interleaved_run
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:324:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[78/172]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > consumer_conflict_resolution_during_interleaved_run
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:362:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[79/172]⎯
+
+ FAIL  tests/unit/runtime-memory-locomo-benchmark.test.ts > L11: LoCoMo benchmark — fixture and infrastructure > seeds conversation facts and verifies retrieval works
+AssertionError: expected 'skipped' to be 'migrated' // Object.is equality
+
+Expected: "migrated"
+Received: "skipped"
+
+ ❯ seedConversationFacts tests/unit/runtime-memory-locomo-benchmark.test.ts:87:34
+     85|     now: () => 10000,
+     86|   });
+     87|   expect(store.migrate().status).toBe("migrated");
+       |                                  ^
+     88|
+     89|   const facts: RuntimeMemoryQueryableFact[] = [];
+ ❯ tests/unit/runtime-memory-locomo-benchmark.test.ts:249:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[80/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > retention_at_checkpoints_100_500_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:228:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[81/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > noise_accumulation_rate_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:260:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[82/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > fifo_eviction_at_512_boundary_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:274:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[83/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > retention_degradation_monotonic
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:301:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[84/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > fifo_preserves_recent_512_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:334:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[85/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > no_active_gc_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:352:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[86/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > useful_vs_noise_eviction_ratio_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:375:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[87/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > domain_distribution_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:396:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[88/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > retention_after_100_turns_programming
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:141:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[89/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > retention_after_300_turns_mixed_domains
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:156:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[90/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > noise_accumulation_rate_100_turns
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:175:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[91/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > noise_accumulation_rate_300_turns
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:188:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[92/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > fifo_eviction_critical_point
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:201:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[93/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > fifo_eviction_does_not_prioritize_useful
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:222:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[94/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > topic_drift_recall_decay
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:240:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[95/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > invalidation_accumulation
+Error: migration failed
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:268:13
+    266|     });
+    267|     if (persistence.migrate().status !== "migrated") {
+    268|       throw new Error("migration failed");
+       |             ^
+    269|     }
+    270|     for (const fact of corpus.facts) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[96/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > episode_retention_vs_fact_retention
+Error: migration failed
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:312:13
+    310|     });
+    311|     if (persistence.migrate().status !== "migrated") {
+    312|       throw new Error("migration failed");
+       |             ^
+    313|     }
+    314|     // Write 50 episodes.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[97/172]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > long_term_no_active_gc
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:341:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[98/172]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > migrates the SQLite schema idempotently and persists only sanitized bounded records
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', …(2) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "owner": "openclaw_runtime.runtime-core.memory-persistence",
+-   "schemaVersion": 1,
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:77:35
+     75|     });
+     76|
+     77|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+     78|       status: "migrated",
+     79|       owner: RUNTIME_MEMORY_PERSISTENCE_OWNER,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[99/172]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > trims persisted episodes, facts, and invalidations with the same bounded-store policy
+AssertionError: expected { episodes: +0, facts: +0, …(4) } to match object { episodes: 1, facts: 1, …(4) }
+
+- Expected
++ Received
+
+  {
+-   "episodes": 1,
+-   "facts": 1,
+-   "invalidations": 1,
++   "episodes": 0,
++   "facts": 0,
++   "invalidations": 0,
+    "maxEpisodes": 1,
+    "maxFacts": 1,
+    "maxInvalidations": 1,
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:291:34
+    289|
+    290|     const loaded = persistence.loadStore();
+    291|     expect(loaded.store.stats()).toMatchObject({
+       |                                  ^
+    292|       episodes: 1,
+    293|       facts: 1,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[100/172]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > returns bounded diagnostics without creating a missing database or table
+AssertionError: expected { status: 'skipped', …(4) } to match object { status: 'skipped', …(3) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+-   "reason": "database_missing",
+-   "stats": {
++   "reason": "flag_disabled",
++   "stats": ObjectContaining {
+      "inspectedAt": 7100,
+    },
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:358:9
+    356|       database: { path: missingPath },
+    357|       now: () => 7_100,
+    358|     })).toMatchObject({
+       |         ^
+    359|       status: "skipped",
+    360|       reason: "database_missing",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[101/172]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > lists sanitized episode summaries through a readonly no-mutation inspection helper
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:411:53
+    409|     const sourceEpisodeRefs = [sourceEpisodeRef(firstEpisode)];
+    410|
+    411|     expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
+       |                                                     ^
+    412|       status: "persisted",
+    413|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[102/172]⎯
+
+ FAIL  tests/unit/runtime-memory-proposal-shadow.test.ts > runtime memory fact proposal shadow > creates sanitized candidate facts only when both shadow and proposeFacts are enabled
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/runtime-memory-proposal-shadow.test.ts:88:28
+     86|     });
+     87|
+     88|     expect(result.enabled).toBe(true);
+       |                            ^
+     89|     expect(result.proposalOnly).toBe(true);
+     90|     expect(result.readonly).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[103/172]⎯
+
+ FAIL  tests/unit/runtime-memory-proposal-shadow.test.ts > runtime memory fact proposal shadow > rejects unsupported sources, accepted fact inputs, invalid shapes, and raw summaries
+AssertionError: expected [] to deeply equal [ 'unsupported_source', …(3) ]
+
+- Expected
++ Received
+
+- [
+-   "unsupported_source",
+-   "accepted_fact_input",
+-   "invalid_shape",
+-   "raw_input",
+- ]
++ []
+
+ ❯ tests/unit/runtime-memory-proposal-shadow.test.ts:131:72
+    129|
+    130|     expect(result.candidates).toEqual([]);
+    131|     expect(result.rejectedInputs.map((rejection) => rejection.reason))…
+       |                                                                        ^
+    132|       "unsupported_source",
+    133|       "accepted_fact_input",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[104/172]⎯
+
+ FAIL  tests/unit/runtime-memory-proposal-shadow.test.ts > runtime memory fact proposal shadow > builds invalidation proposals for conflicting accepted facts without mutating them
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/runtime-memory-proposal-shadow.test.ts:171:31
+    169|     });
+    170|
+    171|     expect(result.candidates).toHaveLength(1);
+       |                               ^
+    172|     expect(result.candidates[0]?.verificationStatus).toBe("candidate");
+    173|     expect(result.acceptedFacts).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[105/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts > runtime memory read hydration benefit evaluation > keeps temp SQLite hydration plus consumer latency p95 under 50ms
+Error: seedTempDb: migration failed for D:\tmp\runtime-memory-benefit-eval-sqlite-uJ9DNS\openclaw.sqlite
+ ❯ seedTempDb tests/unit/helpers/runtime-memory-eval-helpers.ts:163:11
+    161|   });
+    162|   if (persistence.migrate().status !== "migrated") {
+    163|     throw new Error(`seedTempDb: migration failed for ${dbPath}`);
+       |           ^
+    164|   }
+    165|   for (const group of groups) {
+ ❯ tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts:190:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[106/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts > runtime memory read hydration controlled DB replay regression harness > enforces baseline, naive, and guarded thresholds across controlled replay DBs
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ persistReplay tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts:905:48
+    903|
+    904|   for (const episode of episodes) {
+    905|     expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    906|       status: "persisted",
+    907|       stored: true,
+ ❯ Object.seedPhase29ParityReplay [as seed] tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts:778:3
+ ❯ runReplayScenario tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts:353:12
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts:41:42
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[107/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts > runtime memory read hydration controlled DB replay regression harness > preserves zero budget, zero result limit, and empty no-op replay behavior
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', migrated: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "migrated": true,
+-   "status": "migrated",
++   "migrated": false,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts:144:35
+    142|     });
+    143|
+    144|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+    145|       status: "migrated",
+    146|       migrated: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[108/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts > runtime memory read hydration controlled internal shadow pilot > runs the explicit controlled pilot without changing TaskLoop authority surfaces
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ persistReplay tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts:651:48
+    649|
+    650|   for (const episode of episodes) {
+    651|     expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    652|       status: "persisted",
+    653|       stored: true,
+ ❯ seedControlledInternalShadowPilotCorpus tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts:598:3
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts:167:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[109/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts > runtime memory read hydration controlled internal shadow pilot > keeps explicit empty pilot corpus hydration as a safe no-op
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', migrated: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "migrated": true,
+-   "status": "migrated",
++   "migrated": false,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts:364:35
+    362|       now: () => 1_000,
+    363|     });
+    364|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+    365|       status: "migrated",
+    366|       migrated: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[110/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts > runtime memory read hydration controlled real DB opt-in evaluation > keeps baseline and naive negative while Phase 28 guarded consumer is positive on sanitized DB projections
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ createControlledRuntimeMemoryDatabase tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts:469:51
+    467|   });
+    468|
+    469|   expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
+       |                                                   ^
+    470|     status: "persisted",
+    471|     stored: true,
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts:39:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[111/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts > runtime memory read hydration controlled real DB opt-in evaluation > preserves explicit zero budget, zero limit, and empty no-op behavior on real DB projections
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ createControlledRuntimeMemoryDatabase tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts:469:51
+    467|   });
+    468|
+    469|   expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
+       |                                                   ^
+    470|     status: "persisted",
+    471|     stored: true,
+ ❯ tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts:163:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[112/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts > runtime memory read hydration limited production opt-in implementation > allows accepted operator gates only on the explicit diagnostics-only shadow path
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ persistReplay tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts:841:48
+    839|
+    840|   for (const episode of episodes) {
+    841|     expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    842|       status: "persisted",
+    843|       stored: true,
+ ❯ seedControlledPhase34Corpus tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts:788:3
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts:349:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[113/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts > runtime memory read hydration limited production opt-in implementation > keeps accepted limited production opt-in with an empty corpus as a safe no-op
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', migrated: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "migrated": true,
+-   "status": "migrated",
++   "migrated": false,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts:556:35
+    554|       now: () => 1_000,
+    555|     });
+    556|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+    557|       status: "migrated",
+    558|       migrated: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[114/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts > runtime memory read hydration limited production opt-in readiness > accepts Phase 33 readiness gates while keeping the Phase 32 controlled corpus path readonly and non-authoritative
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ persistReplay tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:967:48
+    965|
+    966|   for (const episode of episodes) {
+    967|     expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    968|       status: "persisted",
+    969|       stored: true,
+ ❯ seedControlledReadinessCorpus tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:914:3
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:241:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[115/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts > runtime memory read hydration limited production opt-in readiness > keeps accepted readiness with an empty controlled corpus as a safe no-op
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', migrated: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "migrated": true,
+-   "status": "migrated",
++   "migrated": false,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:464:35
+    462|       now: () => 1_000,
+    463|     });
+    464|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+    465|       status: "migrated",
+    466|       migrated: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[116/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > does not open or create sqlite unless persist, read-shadow, and database are explicit
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "read_shadow_disabled",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:92:45
+     90|     ]);
+     91|     expect(noReadShadow.status).toBe(0);
+     92|     expect(JSON.parse(noReadShadow.stdout)).toMatchObject({
+       |                                             ^
+     93|       status: "skipped",
+     94|       reason: "read_shadow_disabled",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[117/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > does not create runtime memory tables in unrelated existing databases
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "table_missing",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:149:39
+    147|
+    148|     expect(result.status).toBe(0);
+    149|     expect(JSON.parse(result.stdout)).toMatchObject({
+       |                                       ^
+    150|       status: "skipped",
+    151|       reason: "table_missing",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[118/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > prints sanitized bounded JSON and text for explicit existing runtime memory databases
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:179:53
+    177|     });
+    178|
+    179|     expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
+       |                                                     ^
+    180|       status: "persisted",
+    181|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[119/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > keeps package script invocation no-open and no-create until all explicit flags are provided
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "read_shadow_disabled",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:395:45
+    393|     ]);
+    394|     expect(noReadShadow.status).toBe(0);
+    395|     expect(JSON.parse(noReadShadow.stdout)).toMatchObject({
+       |                                             ^
+    396|       status: "skipped",
+    397|       reason: "read_shadow_disabled",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[120/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts > runtime memory read hydration shadow opt-in quality evaluation > shows positive memory effect only with explicit consumer guards
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ createMockRuntimeMemoryDatabase tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts:292:46
+    290|   });
+    291|
+    292|   expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                              ^
+    293|     status: "persisted",
+    294|     stored: true,
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts:32:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[121/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > stays default-off without opening, reading, creating, or writing sqlite
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "read_shadow_disabled",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow.test.ts:74:9
+     72|       readShadow: false,
+     73|       openReadOnlyDatabase,
+     74|     })).toMatchObject({
+       |         ^
+     75|       status: "skipped",
+     76|       reason: "read_shadow_disabled",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[122/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > requires an explicit database path before opening sqlite
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(4) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "database_path_required",
+-   "stats": {
++   "reason": "flag_disabled",
++   "stats": ObjectContaining {
+      "inspectedAt": 200,
+    },
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow.test.ts:95:9
+     93|         throw new Error("missing path must not open sqlite");
+     94|       },
+     95|     })).toMatchObject({
+       |         ^
+     96|       status: "skipped",
+     97|       reason: "database_path_required",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[123/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > does not create a missing explicit database file
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "database_missing",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow.test.ts:112:9
+    110|       databasePath: dbPath,
+    111|       readShadow: true,
+    112|     })).toMatchObject({
+       |         ^
+    113|       status: "skipped",
+    114|       reason: "database_missing",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[124/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > does not create runtime memory tables in an unrelated existing database
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "table_missing",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow.test.ts:134:9
+    132|       databasePath: dbPath,
+    133|       readShadow: true,
+    134|     })).toMatchObject({
+       |         ^
+    135|       status: "skipped",
+    136|       reason: "table_missing",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[125/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow.test.ts > runtime memory readonly read hydration shadow helper > returns bounded sanitized episode summaries and fact projections only
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow.test.ts:164:53
+    162|     });
+    163|
+    164|     expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
+       |                                                     ^
+    165|       status: "persisted",
+    166|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[126/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts > runtime memory read hydration TaskLoop shadow-only explicit opt-in > runs explicit readonly diagnostics without changing TaskLoop decisions or prompts
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ persistReplay tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:515:48
+    513|
+    514|   for (const episode of episodes) {
+    515|     expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    516|       status: "persisted",
+    517|       stored: true,
+ ❯ seedTaskLoopHydrationReplay tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:470:3
+ ❯ tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:107:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[127/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts > runtime memory read hydration TaskLoop shadow-only explicit opt-in > keeps explicit empty DB no-op diagnostics safe
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', migrated: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "migrated": true,
+-   "status": "migrated",
++   "migrated": false,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:261:35
+    259|       now: () => 1_000,
+    260|     });
+    261|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+    262|       status: "migrated",
+    263|       migrated: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[128/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > loads without breakthroughInjection when breakthrough not enabled
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts:82:27
+     80|       },
+     81|     });
+     82|     expect(result.status).toBe("loaded");
+       |                           ^
+     83|     expect(result.breakthroughInjection).toBeUndefined();
+     84|     expect(result.authority.noPromptContextModelMessageInjection).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[129/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > records breakthroughInjection summary when breakthrough is enabled
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts:132:27
+    130|       },
+    131|     });
+    132|     expect(result.status).toBe("loaded");
+       |                           ^
+    133|     expect(result.breakthroughInjection).toBeDefined();
+    134|     expect(result.breakthroughInjection).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[130/172]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > marks truncatedByTokenBudget when tokens exceed the cap
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts:181:27
+    179|       },
+    180|     });
+    181|     expect(result.status).toBe("loaded");
+       |                           ^
+    182|     expect(result.breakthroughInjection?.truncatedByTokenBudget).toBe(…
+    183|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[131/172]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > persistence > migrate is idempotent and relation table is created
+AssertionError: expected 'skipped' to be 'migrated' // Object.is equality
+
+Expected: "migrated"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:166:30
+    164|
+    165|       const result1 = store.migrate();
+    166|       expect(result1.status).toBe("migrated");
+       |                              ^
+    167|       const result2 = store.migrate();
+    168|       expect(result2.status).toBe("migrated");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[132/172]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > persistence > persistRelation writes and loadStore reads relations back
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:190:29
+    188|
+    189|       const loaded = store.loadStore();
+    190|       expect(loaded.status).toBe("loaded");
+       |                             ^
+    191|       const relations = loaded.store.queryRelations("f2");
+    192|       expect(relations).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[133/172]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > AUDN auto-generates relations > AUDN UPDATE disabled — refinement candidate is skipped, no relation generated (project_memory.md constraint)
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:237:29
+    235|
+    236|       const loaded = integration.loadStore();
+    237|       expect(loaded.status).toBe("loaded");
+       |                             ^
+    238|       const relations = loaded.store.queryRelations("new_fact");
+    239|       const supersedes = relations.filter((r) => r.relationType === "s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[134/172]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > AUDN auto-generates relations > AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations
+AssertionError: expected 'skipped' to be 'persisted' // Object.is equality
+
+Expected: "persisted"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:272:112
+    270|
+    271|       const result = integration.appendFact(candidate);
+    272|       expect((result as { status?: string; contextItems?: Array<{ meta…
+       |                                                                                                                ^
+    273|
+    274|       const loaded = integration.loadStore();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[135/172]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > context provider 1-hop expansion > expands matched facts with 1-hop related facts
+AssertionError: expected [] to include 'f1'
+ ❯ tests/unit/runtime-memory-relations.test.ts:419:23
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[136/172]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > context provider 1-hop expansion > zero regression: no queryRelations callback → behaves as before
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:478:112
+    476|       }, {});
+    477|
+    478|       expect((result as { status?: string; contextItems?: Array<{ meta…
+       |                                                                                                                ^
+    479|       expect((result as { status?: string; contextItems: Array<{ metad…
+    480|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[137/172]⎯
+
+ FAIL  tests/unit/runtime-memory-retention-llm-judge.test.ts > CV4: LLM-judge L4 retention cross-validation — local (no LLM) > probes_physically_retained_after_mixed_write
+Error: migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-retention-llm-judge.test.ts:57:11
+     55|   const migrateResult = persistence.migrate();
+     56|   if (migrateResult.status !== "migrated") {
+     57|     throw new Error(`migration failed: ${migrateResult.status}`);
+       |           ^
+     58|   }
+     59|   return {
+ ❯ tests/unit/runtime-memory-retention-llm-judge.test.ts:150:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[138/172]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > delegates enabled writes and loads a store snapshot through explicit memory records
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:93:35
+     91|     });
+     92|
+     93|     expect(integration.migrate()).toMatchObject({ status: "migrated" }…
+       |                                   ^
+     94|     expect(integration.appendEpisode(episode)).toMatchObject({
+     95|       status: "persisted",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[139/172]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > inspects persisted sanitized episode summaries without raw rows or fact authority
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:162:48
+    160|     });
+    161|
+    162|     expect(integration.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    163|       status: "persisted",
+    164|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[140/172]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > rejects raw retention markers at the adapter write boundary
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'rejected', …(2) }
+
+- Expected
++ Received
+
+  {
+    "persisted": false,
+-   "reason": "raw_transcript",
+-   "status": "rejected",
++   "reason": "flag_disabled",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:305:9
+    303|       ...episode,
+    304|       boundedSummary: "session transcript stored as .jsonl",
+    305|     })).toMatchObject({
+       |         ^
+    306|       status: "rejected",
+    307|       reason: "raw_transcript",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[141/172]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > keeps adapter candidates non-durable without promotion fields
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:352:48
+    350|     });
+    351|
+    352|     expect(integration.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    353|       status: "persisted",
+    354|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[142/172]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > hydrates provider context only through explicit extra-provider injection from a loaded store
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:420:27
+    418|     integration.appendFact(fact);
+    419|     const loaded = integration.loadStore();
+    420|     expect(loaded.status).toBe("loaded");
+       |                           ^
+    421|     expect(loaded.store.queryFacts({
+    422|       subject: "ProviderHydration",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[143/172]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_update persists supersede + invalidation across calls
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:100:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[144/172]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_update writes rows into SQLite (fact, invalidation, relation)
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:130:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[145/172]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_forget persists invalidation across calls
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:170:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[146/172]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_strengthen persists usage across restart (SQLite row assertion)
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:287:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[147/172]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > persists and reloads a fact with memoryType: procedural
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:54:42
+     52|       memoryType: "procedural",
+     53|     });
+     54|     expect(persistence.appendFact(fact)).toMatchObject({
+       |                                          ^
+     55|       status: "persisted",
+     56|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[148/172]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > persists and reloads a fact with memoryType: episodic
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:89:27
+     87|
+     88|     const loaded = persistence.loadStore();
+     89|     expect(loaded.status).toBe("loaded");
+       |                           ^
+     90|     if (loaded.status !== "loaded") return;
+     91|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[149/172]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > defaults memoryType to semantic in record_json when omitted
+Error: unable to open database file
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:118:16
+    116|
+    117|     // Verify the DB column has the default.
+    118|     const db = new DatabaseSync(dbPath, { readOnly: true });
+       |                ^
+    119|     try {
+    120|       const row = db
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[150/172]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > writes the memory_type column for all three types
+Error: unable to open database file
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:153:16
+    151|     }
+    152|
+    153|     const db = new DatabaseSync(dbPath, { readOnly: true });
+       |                ^
+    154|     try {
+    155|       for (const memoryType of types) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[151/172]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > migrates a pre-Phase-4.1 database by adding memory_type column
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:296:27
+    294|
+    295|     const migrateResult = persistence.migrate();
+    296|     expect(migrateResult).toMatchObject({ status: "migrated" });
+       |                           ^
+    297|
+    298|     // Verify the column was added.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[152/172]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > is idempotent: migrating twice does not error or duplicate columns
+Error: unable to open database file
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:338:16
+    336|     persistence.migrate();
+    337|
+    338|     const db = new DatabaseSync(dbPath, { readOnly: true });
+       |                ^
+    339|     try {
+    340|       const columns = db
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[153/172]⎯
+
+ FAIL  tests/unit/runtime-memory-useless-content-judge.test.ts > Layer 8: useless content judge — local (no LLM) > stratified_sample_balanced_from_surviving_facts
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-useless-content-judge.test.ts:68:11
+     66|   const migrateResult = persistence.migrate();
+     67|   if (migrateResult.status !== "migrated") {
+     68|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     69|   }
+     70|   return {
+ ❯ tests/unit/runtime-memory-useless-content-judge.test.ts:186:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[154/172]⎯
+
+ FAIL  tests/unit/runtime-memory-useless-content-judge.test.ts > Layer 8: useless content judge — local (no LLM) > useless_content_ratio_after_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-useless-content-judge.test.ts:68:11
+     66|   const migrateResult = persistence.migrate();
+     67|   if (migrateResult.status !== "migrated") {
+     68|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     69|   }
+     70|   return {
+ ❯ tests/unit/runtime-memory-useless-content-judge.test.ts:223:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[155/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-llm-judge.test.ts > CV1: LLM-judge L1 cross-validation — local (no LLM) > eval_set_l1_classification_matches_expected
+AssertionError: expected 'reject' to be 'accept' // Object.is equality
+
+Expected: "accept"
+Received: "reject"
+
+ ❯ tests/unit/runtime-memory-write-path-llm-judge.test.ts:247:25
+    245|     for (const item of evalSet) {
+    246|       const l1Verdict = getL1Verdict(item, dbPath);
+    247|       expect(l1Verdict).toBe(item.expectedVerdict);
+       |                         ^
+    248|     }
+    249|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[156/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — useful facts persist through 4 layers > useful_fact_persists_through_4_layers
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:83:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[157/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > raw_chat_log_rejected_at_persistence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:106:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[158/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > secret_rejected_at_persistence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:120:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[159/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > prompt_dump_rejected_at_persistence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:138:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[160/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — field truncation > field_truncation_preserves_semantic_core
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:154:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[161/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — deduplication > duplicate_fact_id_not_merged
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:183:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[162/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — deduplication > episode_dedupe_merges_evidence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:217:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[163/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — semantic noise NOT rejected (real finding) > semantic_noise_fact_NOT_rejected
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:253:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[164/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — semantic noise NOT rejected (real finding) > semantic_noise_travel_fact_NOT_rejected
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:276:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[165/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — invalidation marks not deletes > invalidation_marks_not_deletes
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:299:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[166/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — FIFO eviction at boundary > fifo_eviction_at_maxFacts_boundary
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:341:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[167/172]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — FIFO eviction at boundary > fifo_eviction_preserves_invalidated_facts_equally
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:372:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[168/172]⎯
+
+ FAIL  tests/unit/sandbox-api.test.ts > sandbox api > reports lightweight default sandbox status without requiring Docker
+AssertionError: expected 'ro' to be 'none' // Object.is equality
+
+Expected: "none"
+Received: "ro"
+
+ ❯ tests/unit/sandbox-api.test.ts:77:75
+     75|     expect(status.docker).toEqual({ cli: false, daemon: false, image: …
+     76|     expect(status.openClawConfig.agents.defaults.sandbox.mode).toBe('o…
+     77|     expect(status.openClawConfig.agents.defaults.sandbox.workspaceAcce…
+       |                                                                           ^
+     78|     expect(status.openClawConfig.tools.exec.security).toBe('allowlist'…
+     79|     expect(status.openClawConfig.tools.exec.host).toBe('gateway');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[169/172]⎯
+
+ FAIL  tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence
+AssertionError: expected [ …(16) ] to deeply equal [ …(15) ]
+
+- Expected
++ Received
+
+@@ -8,10 +8,11 @@
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/capability-claims.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/component-authority-manifest.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/dcs/component-disposition-catalog.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/orchestration-worktree-merge.test.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/versegit-product-acceptance.test.ts",
++   "live criterion failed: docs-capability-authority",
+    "criterion index candidate differs from live source inputs",
+    "global report candidate differs from live source inputs",
+    "criterion evidence index diverges from live replay",
+    "independent verdict candidate mismatch",
+  ]
+
+ ❯ tests/unit/versegit-product-acceptance.test.ts:54:27
+     52|     ));
+     53|     const rebuildable = pendingCommandIssues.length > 0 || pendingRebi…
+     54|     expect(result.issues).toEqual(rebuildable ? [...pendingSourceIssue…
+       |                           ^
+     55|     if (!rebuildable) {
+     56|       expect(result.state.ok).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[170/172]⎯
+
+ FAIL  tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > requires all three README languages, the controlled-preview lock and explicit M4 boundaries
+AssertionError: expected '<p align="center">\n  <img src="src/a…' to contain 'M4'
+
+- Expected
++ Received
+
+- M4
++ <p align="center">
++   <img src="src/assets/logo.png" width="96" height="96" alt="Verse Claw logo" />
++ </p>
++
++ Review Center includes a collapsed, opt-in Change Context view for four comparison modes, digest-anchored comments and explicit review verdicts. Pull Changes uses the existing approval, Git and Coding journal owners; review approval never completes a task or merges code. See [Workspace and coding](docs/modules/workspace-and-coding.md). The Windows source-host acceptance and feature-gate rollback are documented in [Controlled rollout](docs/dev/change-context-review-loop/rollout.md).
++
++ # Verse Claw
++
++ **Chat, code, knowledge and agent execution in one desktop workspace.**
++
++ [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)
++
++ [Module deep dives](docs/modules/README.md) · [Getting started](#getting-started) · [Architecture](#architecture) · [Development](#development) · [Troubleshooting](#troubleshooting) · [Documentation](#documentation)
++
++ Verse Claw is an Electron desktop application built on an embedded OpenClaw runtime. It combines conversation, project workspaces, coding tools, knowledge review, memory, multi-agent orchestration, messaging channels, schedules and runtime diagnostics in one local desktop product.
++
++ This repository is more than a renderer wrapper. It contains the React UI, Electron Main host, typed cross-process contracts, the vendored OpenClaw runtime, VerseBrowser, the VerseShell execution foundation, retired VToken source, executable Harness specifications and the build/evidence/release pipeline.
++
++ > **Current status:** `0.4.9-alpha.0`, controlled preview. Windows x64 local workflows are the primary acceptance target. macOS/Linux have build targets, but platform-specific runtime validation is separate. Release, GA, live readiness and product approval are not implied by component graduation or agent-driven evidence.
++
++ ## What is in the product
++
++ | Area | Current product shape | Deep dive |
++ |---|---|---|
++ | LLM and models | Account-based provider configuration, OAuth/API key/local auth, protocol adapters, model fallback, turn/session model overrides, streaming, tool loops, reasoning effort, usage and estimated cost | [LLM and models](docs/modules/llm-and-models.md) |
++ | Conversations and sessions | JSONL append-only session trees, runs, abort/stop/archive/delete, checkpoints, compaction, handoff/fork, searchable sidebar, persisted folders and long-session coordinator binding | [Sessions](docs/modules/sessions.md) |
++ | Context and memory | Context Orchestrator, 6,000-character turn budget, Workspace Context, context health, one reviewable Memory product over separate Role/Runtime stores | [Context and memory](docs/modules/context-and-memory.md) |
++ | Workspaces and coding | Workspace preflight, four permission modes, file preview, PTY terminals, web previews, Git operations, review panel, write journal, stale-write guard and auto verification | [Workspace and coding](docs/modules/workspace-and-coding.md) |
++ | Knowledge | Markdown/wiki-first library, Inbox → Draft → Steward → Proposal → explicit apply, Source Sets, OKF, Runtime Lessons/SEKB, provenance and governance | [Knowledge base](docs/modules/knowledge-base.md) |
++ | Multi-agent and tasks | Agent/Persona/Role separation, nine built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop and ClawGraph | [Multi-agent and tasks](docs/modules/multi-agent-and-tasks.md) |
++ | Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers, and retired VToken | [Verse tools](docs/modules/verse-tools.md) |
++ | Resources and observability | Cooperative ResourceFabric, background shedding, process/port tracking, token/cost limits, traces, issues, Problems, session activity and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
++ | Integrations and other surfaces | 15 channel types, schedules, Skills/MCP, Inbox, remote tasks, Code Review, VerseConf documents, media, Billing and Agent Dev | [Integrations and surfaces](docs/modules/integrations-and-surfaces.md) |
++
++ The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
++
++ Chat keeps the final reply visible alongside a collapsible process summary. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
++
++ Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
++
++ Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer; remote images and media are never loaded automatically and offer an open action instead. Charts draw their declared type with a data table available, standalone links become link cards, and any other structured resource gets a labelled fallback card.
++
++ ## Current maturity boundaries
++
++ | Label | Meaning |
++ |---|---|
++ | `default` / `advanced` | A current product surface, within the stated controlled-preview boundary. Not a GA claim. |
++ | `internal` | Implemented or exposed internally without an independent user product entry. |
++ | `shadow` / `experiment` | Observation or bounded experiment; it does not own routing, writes or approval. |
++ | `retired` | Kept only for compatibility, provenance or rollback inspection. |
++ | `agent-driven` | Evidence produced by an agent and labeled as such. It is not real-human evidence. |
++
++ The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 24 internal, 5 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
++
++ Important current defaults:
++
++ - Workspace Context and read-only DCS context tools are on under their declared health and permission gates.
++ - Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
++ - Memory feedback and SEKB adoption counts are diagnostic-only; feedback does not affect retrieval ranking or retention decisions. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md) distinguish historical measurement from deterministic replay.
++ - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
++ - VerseGit is default-off and landed-unwired. VerseShell is a default-off controlled foundation. VerseBrowser advertises actions from a live driver snapshot, not from its full contract.
++ - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.
++ - `liveReady=false`, `productApproved=false` and `defaultOn=false` remain product locks.
++
++ See the [default configuration matrix](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) and [capability claims](shared/capability-claims.ts) before changing a default or making a release claim.
++
++ ## Inside the app
++
++ The screenshots below were captured from the Windows Electron source build on 2026-10-05. The header now uses the later B2 identity. The Knowledge capture explicitly enables `memory-wiki`; no model account or model request was used.
++
++ | **Chat and task entry**<br>[![Chat and task entry](resources/readme/2026-10-05/en/chat.png)](resources/readme/2026-10-05/en/chat.png) | **Knowledge library and review entry**<br>[![Knowledge library and review entry](resources/readme/2026-10-05/en/knowledge.png)](resources/readme/2026-10-05/en/knowledge.png) |
++ | --- | --- |
++ | **Task Ledger**<br>[![Task Ledger](resources/readme/2026-10-05/en/tasks.png)](resources/readme/2026-10-05/en/tasks.png) | **Models and provider settings**<br>[![Models and provider settings](resources/readme/2026-10-05/en/settings.png)](resources/readme/2026-10-05/en/settings.png) |
++
++ See [visual provenance](resources/readme/2026-10-05/README.md) for capture conditions and hashes.
++
++ <a id="getting-started"></a>
++
++ ## Getting started
++
++ Prerequisites:
++
++ - **Node.js 24.16.0 or later in the 24.x line** and Git. Earlier Windows Node 24 releases can crash in TCP connections.
++ - **pnpm 11.2.2**, pinned in `package.json`.
++ - Network access for dependencies, Electron, uv and agent-browser.
++ - A provider account or a compatible local model service.
++
++ Run from the repository root:
++
++ ```sh
++ git clone https://github.com/Baixu22/VerseClaw.git
++ cd VerseClaw
++ corepack enable
++ corepack prepare pnpm@11.2.2 --activate
++ pnpm run init
++ pnpm --dir openclaw_runtime install --frozen-lockfile --ignore-scripts
++ node node_modules/electron/install.js
++ pnpm dev
++ ```
++
++ `pnpm dev` builds VerseBrowser, the embedded runtime and bundled skills before opening Vite and Electron. The Gateway normally needs 10–30 seconds to become ready. A Vite page alone does not provide the full Electron Host services.
++
++ First session:
++
++ 1. Complete Setup.
++ 2. Configure and validate a provider/model.
++ 3. Choose a project directory, permission mode and workspace.
++ 4. Send a scoped conversation and inspect the workspace panel.
++ 5. Resolve approvals in Inbox.
++ 6. Use Knowledge or Memory only through their review surfaces.
++ 7. Manage a conversation from its row: hovering shows Pin and ⋯ (rename, move to a workgroup, mark unread, fork, hand off, copy, archive with Undo, delete); right-click opens the same menu, and long titles scroll while hovered.
++ 8. The sidebar bell shows activity: a ring while a conversation runs (amber when one needs you), a list of running conversations with elapsed time, and completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
++
++ Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
++
++ | Platform | Configured artifacts | Validation scope |
++ |---|---|---|
++ | Windows x64 | NSIS | Primary controlled local acceptance target |
++ | macOS x64 / arm64 | DMG, ZIP | Build targets; capability-specific validation required |
++ | Linux x64 / arm64 | AppImage, DEB; RPM x64 | Build targets; graphical runtime required |
++
++ <a id="architecture"></a>
++
++ ## Architecture
++
++ The ordinary request path is:
++
++ ```text
++ React renderer
++   -> typed host facade (src/lib/host-api.ts)
++   -> preload IPC
++   -> Electron Main (authorization + dispatch)
++   -> Host service and/or Main-owned Gateway WebSocket RPC
++   -> embedded OpenClaw runtime
++ ```
++
++ Runtime events return through Main and `host-events.ts` to renderer stores. Local files, terminals and Git can complete in Main without traversing Gateway.
++
++ This is not a universal `WS -> HTTP -> IPC fallback` chain. Renderer pages must not open direct Gateway connections or add direct Electron IPC calls. `shared/host-api/contract.ts` is the typed shared boundary.
++
++ ```mermaid
++ flowchart LR
++   UI["React renderer"] --> HOST["Typed host facade"]
++   HOST --> IPC["Preload IPC"]
++   IPC --> MAIN["Electron Main"]
++   MAIN --> SERVICES["Desktop host services"]
++   MAIN --> GW["Gateway WebSocket RPC"]
++   GW --> RUNTIME["Embedded OpenClaw runtime"]
++   RUNTIME --> EVENTS["Runtime events"]
++   EVENTS --> MAIN --> UI
++ ```
++
++ Main repository layers:
++
++ - `src/`: renderer, pages, components, Zustand stores, Host facade, i18n and styles.
++ - `electron/`: Main services, IPC security, Gateway supervision, preload and desktop utilities.
++ - `shared/`: Host API/events, domain types, i18n resources, authority/default manifests.
++ - `openclaw_runtime/`: vendored runtime, Gateway, agents, tools, channels, packages and extensions.
++ - `packages/` and `resources/`: VerseBrowser, VToken, VerseShell, skills, plugins and native assets.
++ - `harness/`, `tests/`, `scripts/`: executable policy, tests, automation and evidence tooling.
++
++ See the [architecture guide](docs/architecture-overview.md) and [repository layout](docs/dev/repository-layout.md).
++
++ ## Local data and privacy
++
++ No separate database server is required.
++
++ - Desktop settings and exports live under Electron `userData`.
++ - Runtime configuration normally lives under `~/.openclaw`, with `OPENCLAW_CONFIG_DIR` support.
++ - Sessions use JSONL transcripts; runtime state also uses SQLite.
++ - Token history is aggregated from structured session usage records. Costs are estimates.
++ - Knowledge uses a `memory-wiki` vault plus local governance metadata.
++ - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
++
++ Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.
++
++ VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation). Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access.
++
++ <a id="development"></a>
++
++ ## Development and validation
++
++ Common commands:
++
++ | Command | Purpose |
++ |---|---|
++ | `pnpm dev` | Prepare resources/runtime and start Electron development |
++ | `pnpm run build:vite` | Build renderer and Electron bundles |
++ | `pnpm run build:runtime` | Build embedded runtime and smoke-test Gateway startup |
++ | `pnpm run typecheck` | Full node/web/test typecheck |
++ | `pnpm run lint:check` | Lint without modifying files |
++ | `pnpm test` | Root test groups and selected regressions |
++ | `pnpm run test:e2e` | Build and run Electron Playwright |
++ | `pnpm contract:check` / `pnpm i18n:lint` | Host contract and four-language coverage |
++ | `pnpm run harness:ci` | Repository Harness baseline |
++ | `pnpm run repo:artifacts:check` | Source/evidence/archive boundaries |
++ | `pnpm run docs:policy:validate` | Durable documentation policy |
++
++ For task-spec work:
++
++ ```bash
++ pnpm harness context --spec <task-spec>
++ pnpm harness validate --spec <task-spec>
++ pnpm harness run --spec <task-spec> --dry-run
++ ```
++
++ UI changes should include Electron E2E and en/zh/ja/ru strings. Communication changes also require `pnpm run comms:replay` and `pnpm run comms:compare`. Packaging success, installer success and release authorization are separate facts.
++
++ The [personal-agent QA pack](openclaw_runtime/qa/README.md) runs ten Gateway scenarios with a scripted provider and deterministic final-state checks. Its source-host evidence covers control flow, denial and recovery; live-model quality and packaged behavior have separate acceptance gates.
++
++ The [Responses acceptance contract](harness/specs/tasks/product-acceptance-space-bunny.md) covers text after reasoning, one tool round trip, session isolation, cancellation and provider failures on a configured local service. An interrupted Responses stream cannot finish a turn successfully or dispatch an incomplete tool call. These checks do not approve a model or a release.
++
++ See [development and validation](docs/modules/development-and-validation.md) for the full gate map and evidence rules.
++
++ <a id="troubleshooting"></a>
++
++ ## Troubleshooting
++
++ | Symptom | What to check |
++ |---|---|
++ | Knowledge shows `unknown method: wiki.status` | Enable and load `memory-wiki`, then initialize the vault. Gateway readiness alone is insufficient. |
++ | Wrong pnpm version / install failure | Check Node.js 24.x, pinned pnpm, both dependency workspaces and lockfiles. |
++ | Missing Electron executable | Run `node node_modules/electron/install.js` and check download connectivity. |
++ | Gateway stays unavailable | Inspect Settings → System & Runtime and logs; run Doctor before Doctor Fix. |
++ | Provider or channel unavailable | Check auth, model, plugin enablement, account status, proxy and real request/delivery evidence. |
++ | Tool write or command is blocked | Check workspace root, permission mode, path boundary and Inbox approvals. |
++ | E2E reports stale runtime | Run `pnpm run build:runtime`; rebuild the app as well if app sources changed. |
++ | Electron fails on headless Linux | Provide a display server, for example `xvfb-run -a pnpm run test:e2e`. |
++ | VerseConf PPTX export fails | Check plugin activation and the three-record template limit; use Markdown for longer outlines. |
++
++ <a id="documentation"></a>
++
++ ## Documentation
++
++ | Topic | Entry points |
++ |---|---|
++ | Module-by-module current implementation | [Module deep dives](docs/modules/README.md) |
++ | Architecture and data flow | [Architecture guide](docs/architecture-overview.md) · [Runtime control planes](docs/dev/runtime-control-planes.md) |
++ | Product boundaries and defaults | [Product semantics](docs/clawx-product-semantics.md) · [Default configuration](docs/dev/default-config-matrix.md) · [Component matrix](docs/dev/component-disposition-matrix-20261021.md) |
++ | Knowledge and context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) · [Context orchestrator](docs/dev/context-orchestrator.md) · [Memory control plane](docs/dev/memory-control-plane.md) |
++ | Agents and tasks | [Role-first design](docs/role-first-design.md) · [Multi-agent orchestration](docs/multi-agent-orchestration/README.md) |
++ | VerseGit / VerseShell / VerseBrowser | [VerseGit control plane](docs/dev/versegit-validation-layer/README.md) · [VerseShell status](docs/dev/verseshell-foundation/STATUS.md) · [VerseBrowser integration](packages/README.md) |
++ | Development and evidence | [Development docs](docs/README.md) · [Agent Dev](docs/agent-dev-control-plane.md) · [Repository layout](docs/dev/repository-layout.md) · [Harness](harness/specs/) |
++
++ Historical plans and acceptance snapshots have their own dates and candidates. Current behavior should be established from source, default manifests and fresh evidence, not from the age or length of a design document.
++
++ ## Contributing and license
++
++ Keep changes scoped, provide relevant validation and update all four root READMEs when behavior changes. For a functional or architecture change, also update the relevant module document under `docs/modules/`, the product semantics/default matrix when applicable, and reusable Harness specifications.
++
++ Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation/workspace interactions, including web-search source cards, adapted from [Rare UI](https://rareui.com) by Swami Malode retain attribution under `src/components/rareui`.
++
+
+ ❯ tests/unit/versegit-product-acceptance.test.ts:186:20
+    184|       expect(text).toContain('liveReady=false');
+    185|       expect(text).toContain('productApproved=false');
+    186|       expect(text).toContain('M4');
+       |                    ^
+    187|       expect(text).toContain('win32-x64');
+    188|       expect(text).toContain('M1');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[171/172]⎯
+
+ FAIL  tests/unit/versegit-wp2-profile.test.ts > WP2 concurrency-aux diagnostic profile > keeps single-worktree calls at zero and records observed/partial/unavailable facts
+AssertionError: expected { Object (caseCount, eligibleCount, ...) } to match object { Object (caseCount, eligibleCount, ...) }
+(4 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "caseCount": 3,
+    "eligibleCount": 2,
+-   "processCalls": 3,
++   "processCalls": 0,
+  }
+
+ ❯ tests/unit/versegit-wp2-profile.test.ts:14:34
+     12|     expect(built.report.schema).toBe(WP2_SCHEMA);
+     13|     expect(built.report.profile).toBe('concurrency-aux');
+     14|     expect(built.report.summary).toMatchObject({ caseCount: 3, eligibl…
+       |                                  ^
+     15|     expect(built.report.cases.find((entry: { caseId: string }) => entr…
+     16|     expect(built.report.cases.find((entry: { caseId: string }) => entr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[172/172]⎯
+
+
+ Test Files  58 failed | 8 passed (66)
+      Tests  168 failed | 356 passed | 57 skipped (581)
+   Start at  22:38:20
+   Duration  252.41s (transform 50.17s, setup 7.93s, import 124.43s, tests 72.54s, environment 25.78s)
+

@@ -1,18 +1,20 @@
 {
   "schema": "AdmissionE2ESummary/v1",
+  "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
   "command": "pnpm run test:e2e:run",
-  "status": "not-complete",
+  "status": "fail",
+  "exitCode": 1,
   "declared": 418,
-  "observed": 234,
-  "passed": 195,
-  "failed": 37,
-  "skipped": 2,
-  "didNotRun": 184,
-  "classification": "aborted-before-final-aggregate",
-  "observedLedger": "e2e/final-speed-ledger.json",
-  "logs": [
-    "logs/e2e-final.stdout.log",
-    "logs/e2e-full-a6.log"
-  ],
-  "note": "Both the formal serial attempt and the follow-up attempt were interrupted; neither is a full-suite pass."
+  "observed": 418,
+  "passed": 391,
+  "failed": 22,
+  "skipped": 5,
+  "didNotRun": 0,
+  "suiteErrors": 1,
+  "log": "logs/e2e-final.log",
+  "ledger": "e2e/final-speed-ledger.json",
+  "captureMode": "combined",
+  "triageSummary": "e2e/triage-summary.json",
+  "failureClassification": "e2e/failure-classification.json",
+  "changedPathStatus": "e2e/changed-path-status.json"
 }

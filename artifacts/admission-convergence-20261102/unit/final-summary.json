@@ -1,21 +1,33 @@
 {
   "schema": "AdmissionUnitSummary/v1",
+  "generatedAt": "2026-11-02T17:06:34.563Z",
+  "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
   "command": "pnpm test",
   "exitCode": 1,
   "files": {
-    "failed": 66,
-    "passed": 1056,
+    "failed": 58,
+    "passed": 1065,
     "skipped": 5,
-    "total": 1127
+    "total": 1128
   },
   "tests": {
-    "failed": 187,
-    "passed": 9697,
-    "skipped": 92,
-    "total": 9976
+    "failed": 168,
+    "passed": 9723,
+    "skipped": 91,
+    "total": 9982
   },
-  "stdout": "logs/unit.stdout.log",
-  "stderr": "logs/unit.stderr.log",
-  "knownEnvironmentGap": "resources/bin/win32-x64/ae.exe missing (7 verseshell-manifest cases)",
-  "classification": "not-pass"
+  "durationMs": 1306820,
+  "stdout": "logs/unit.log",
+  "captureMode": "combined",
+  "knownEnvironmentSetup": "Local ignored vg.exe and ae.exe were copied from the main checkout after matching their tracked manifest SHA-256 values; Electron 40.8.4 dist was reused after matching the installed package version.",
+  "classification": "baseline-equivalent-failures",
+  "note": "The 168 failing test names are exactly equal to the pre-A3 baseline reproduction set; no candidate-only failure key was observed.",
+  "baselineComparison": {
+    "summary": "unit/baseline-summary.json",
+    "log": "logs/baseline-unit.log",
+    "failureKeysMatch": true,
+    "onlyFinal": [],
+    "onlyBase": []
+  },
+  "changedPathStatus": "unit/changed-path-status.json"
 }

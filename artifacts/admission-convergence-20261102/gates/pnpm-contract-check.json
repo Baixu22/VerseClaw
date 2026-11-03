@@ -1,8 +1,8 @@
 {
-  "command": "pnpm contract:check",
   "schema": "AdmissionGate/v1",
-  "stdout": "logs/formal-contract.log",
+  "command": "pnpm contract:check",
+  "exitCode": 0,
   "classification": "pass",
-  "note": "Contract check passed.",
-  "exitCode": 0
+  "stdout": "logs/formal-contract.log",
+  "captureMode": "combined"
 }

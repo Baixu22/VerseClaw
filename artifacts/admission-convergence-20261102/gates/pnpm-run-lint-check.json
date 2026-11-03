@@ -1,8 +1,10 @@
 {
-  "command": "pnpm run lint:check",
   "schema": "AdmissionGate/v1",
+  "command": "pnpm run lint:check",
+  "exitCode": 0,
+  "classification": "pass",
   "stdout": "logs/lint.log",
-  "classification": "pre-existing-lint-debt",
-  "note": "5 errors / 133 warnings; errors are outside the A6 write set.",
-  "exitCode": 1
+  "captureMode": "combined",
+  "warnings": 116,
+  "errors": 0
 }

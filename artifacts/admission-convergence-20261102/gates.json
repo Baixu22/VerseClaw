@@ -1,6 +1,6 @@
 {
   "schema": "AdmissionGateMatrix/v1",
-  "candidate": "6b7f8eb496a43418ffaf880dc3590ed1042c6fc9",
+  "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
   "boundary": "boundary-diff.json",
   "verdict": "not-pass",
   "gates": [
@@ -9,8 +9,7 @@
       "command": "pnpm run build:vite",
       "exitCode": 0,
       "classification": "pass",
-      "stdout": "logs/build-vite.stdout.log",
-      "stderr": "logs/build-vite.stderr.log"
+      "stdout": "logs/build-vite.log"
     },
     {
       "schema": "AdmissionGate/v1",
@@ -21,10 +20,32 @@
     },
     {
       "schema": "AdmissionGate/v1",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/lint.log",
+      "warnings": 116
+    },
+    {
+      "schema": "AdmissionGate/v1",
       "command": "pnpm contract:check",
       "exitCode": 0,
       "classification": "pass",
       "stdout": "logs/formal-contract.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm repo:artifacts:check",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/formal-repo-artifacts.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
+      "command": "pnpm harness validate --spec harness/specs/tasks/architecture-skeleton-admission-regression.md",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/formal-harness.log"
     },
     {
       "schema": "AdmissionGate/v1",
@@ -35,35 +56,33 @@
     },
     {
       "schema": "AdmissionGate/v1",
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "classification": "pass",
+      "stdout": "logs/openclaw-build.log"
+    },
+    {
+      "schema": "AdmissionGate/v1",
       "command": "pnpm test",
       "exitCode": 1,
-      "classification": "not-pass",
-      "stdout": "logs/unit.stdout.log",
-      "stderr": "logs/unit.stderr.log",
-      "summary": "unit/final-summary.json"
+      "classification": "baseline-equivalent-failures",
+      "stdout": "logs/unit.log",
+      "summary": "unit/final-summary.json",
+      "baselineSummary": "unit/baseline-summary.json",
+      "baselineComparison": "unit/baseline-summary.json",
+      "changedPathStatus": "unit/changed-path-status.json"
     },
     {
       "schema": "AdmissionGate/v1",
       "command": "pnpm run test:e2e:run",
-      "exitCode": null,
-      "classification": "not-complete",
-      "stdout": "logs/e2e-final.stdout.log",
-      "stderr": "logs/e2e-final.stderr.log",
-      "summary": "e2e/final-summary.json"
-    },
-    {
-      "schema": "AdmissionGate/v1",
-      "command": "pnpm run lint:check",
       "exitCode": 1,
       "classification": "not-pass",
-      "stdout": "logs/lint.log"
-    },
-    {
-      "schema": "AdmissionGate/v1",
-      "command": "pnpm run repo:artifacts:check",
-      "exitCode": null,
-      "classification": "pending-final-rerun",
-      "note": "Must be rerun after ADMISSION-CONVERGENCE.md and retained-files registration land."
+      "stdout": "logs/e2e-final.log",
+      "captureMode": "combined",
+      "summary": "e2e/final-summary.json",
+      "triageSummary": "e2e/triage-summary.json",
+      "failureClassification": "e2e/failure-classification.json",
+      "changedPathStatus": "e2e/changed-path-status.json"
     }
   ]
 }

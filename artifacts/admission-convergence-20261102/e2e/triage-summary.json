@@ -1,0 +1,260 @@
+{
+  "schema": "AdmissionE2ETriageSummary/v1",
+  "scope": "Isolated rerun of all full-suite failed spec files on the same candidate.",
+  "exitCode": 1,
+  "declared": 41,
+  "observed": 41,
+  "passed": 25,
+  "failed": 16,
+  "skipped": 0,
+  "suiteErrors": 1,
+  "log": "logs/e2e-triage.log",
+  "records": [
+    {
+      "status": "passed",
+      "index": 1,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in light",
+      "duration": "18.5s"
+    },
+    {
+      "status": "passed",
+      "index": 2,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to setup and reload in light",
+      "duration": "17.1s"
+    },
+    {
+      "status": "passed",
+      "index": 3,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in dark",
+      "duration": "19.0s"
+    },
+    {
+      "status": "passed",
+      "index": 4,
+      "title": "tests\\e2e\\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to setup and reload in dark",
+      "duration": "17.4s"
+    },
+    {
+      "status": "failed",
+      "index": 5,
+      "title": "tests\\e2e\\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent",
+      "duration": "14.9s"
+    },
+    {
+      "status": "passed",
+      "index": 6,
+      "title": "tests\\e2e\\chat-model-scope-runtime.spec.ts:8:5 鈥?turn model wins for one real Gateway request without changing the session choice",
+      "duration": "1.9m"
+    },
+    {
+      "status": "failed",
+      "index": 7,
+      "title": "tests\\e2e\\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed",
+      "duration": "48.5s"
+    },
+    {
+      "status": "failed",
+      "index": 8,
+      "title": "tests\\e2e\\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile",
+      "duration": "20.6s"
+    },
+    {
+      "status": "passed",
+      "index": 9,
+      "title": "tests\\e2e\\error-i18n.spec.ts:182:7 鈥?unified error exit i18n 鈥?switches language and renders auth/rate-limit/balance/timeout failures without English fallback",
+      "duration": "14.9s"
+    },
+    {
+      "status": "failed",
+      "index": 10,
+      "title": "tests\\e2e\\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language",
+      "duration": "42.8s"
+    },
+    {
+      "status": "passed",
+      "index": 11,
+      "title": "tests\\e2e\\fakecoding-inbox-navigation.spec.ts:155:7 鈥?FakeCoding Inbox navigation 鈥?keeps four top-level entries and redirects the legacy Remote Tasks route",
+      "duration": "11.5s"
+    },
+    {
+      "status": "failed",
+      "index": 12,
+      "title": "tests\\e2e\\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count",
+      "duration": "41.9s"
+    },
+    {
+      "status": "failed",
+      "index": 13,
+      "title": "tests\\e2e\\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings",
+      "duration": "43.0s"
+    },
+    {
+      "status": "passed",
+      "index": 14,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:71:7 鈥?KE-P1-3 Review Queue 鈥?confirm promotes a candidate and shows KE fields",
+      "duration": "13.6s"
+    },
+    {
+      "status": "passed",
+      "index": 15,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:103:7 鈥?KE-P1-3 Review Queue 鈥?reject dismisses a candidate without persisting",
+      "duration": "13.0s"
+    },
+    {
+      "status": "passed",
+      "index": 16,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:132:7 鈥?KE-P1-3 Review Queue 鈥?shows an empty state when there are no candidates",
+      "duration": "12.4s"
+    },
+    {
+      "status": "passed",
+      "index": 17,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:152:7 鈥?KE-P1-3 Review Queue 鈥?flag off shows unavailable state and hides KE fields",
+      "duration": "13.9s"
+    },
+    {
+      "status": "passed",
+      "index": 18,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:202:5 鈥?review selection prepares and approves only the corresponding proposal",
+      "duration": "15.4s"
+    },
+    {
+      "status": "failed",
+      "index": 19,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light",
+      "duration": "28.2s"
+    },
+    {
+      "status": "failed",
+      "index": 20,
+      "title": "tests\\e2e\\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark",
+      "duration": "28.0s"
+    },
+    {
+      "status": "passed",
+      "index": 21,
+      "title": "tests\\e2e\\main-navigation.spec.ts:17:7 鈥?Verse Claw main navigation without setup flow 鈥?navigates between core pages with setup bypassed",
+      "duration": "11.7s"
+    },
+    {
+      "status": "passed",
+      "index": 22,
+      "title": "tests\\e2e\\main-navigation.spec.ts:45:7 鈥?Verse Claw main navigation without setup flow 鈥?native New Chat menu opens the same chat route as the sidebar action",
+      "duration": "11.3s"
+    },
+    {
+      "status": "failed",
+      "index": 23,
+      "title": "tests\\e2e\\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language",
+      "duration": "26.3s"
+    },
+    {
+      "status": "failed",
+      "index": 24,
+      "title": "tests\\e2e\\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action",
+      "duration": "44.1s"
+    },
+    {
+      "status": "failed",
+      "index": 25,
+      "title": "tests\\e2e\\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled",
+      "duration": "43.2s"
+    },
+    {
+      "status": "failed",
+      "index": 26,
+      "title": "tests\\e2e\\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data",
+      "duration": "42.9s"
+    },
+    {
+      "status": "passed",
+      "index": 27,
+      "title": "tests\\e2e\\rc10-operator-live.spec.ts:6:5 鈥?RC-10 real Cron, Inbox, IRC and recovery scenarios",
+      "duration": "1.8m"
+    },
+    {
+      "status": "passed",
+      "index": 28,
+      "title": "tests\\e2e\\restart-recovery-fp-p1-05.spec.ts:185:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?resumes a persisted in-flight assistant turn after Gateway startup",
+      "duration": "31.2s"
+    },
+    {
+      "status": "failed",
+      "index": 29,
+      "title": "tests\\e2e\\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed",
+      "duration": "2.4m"
+    },
+    {
+      "status": "passed",
+      "index": 30,
+      "title": "tests\\e2e\\system-maturity-p45.spec.ts:64:7 鈥?System maturity Phase 4/5 runtime gates 鈥?shows localized budget denial and rolls back the optimistic message",
+      "duration": "7.3s"
+    },
+    {
+      "status": "failed",
+      "index": 31,
+      "title": "tests\\e2e\\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection",
+      "duration": "20.2s"
+    },
+    {
+      "status": "passed",
+      "index": 32,
+      "title": "tests\\e2e\\system-maturity-p45.spec.ts:128:7 鈥?System maturity Phase 4/5 runtime gates 鈥?cancels the underlying run, clears UI state, and permits the next turn",
+      "duration": "8.5s"
+    },
+    {
+      "status": "passed",
+      "index": 33,
+      "title": "tests\\e2e\\system-maturity-p45.spec.ts:188:7 鈥?System maturity Phase 4/5 runtime gates 鈥?hard timeout aborts the underlying run and releases the next turn",
+      "duration": "7.4s"
+    },
+    {
+      "status": "passed",
+      "index": 34,
+      "title": "tests\\e2e\\system-maturity-p45.spec.ts:232:7 鈥?System maturity Phase 4/5 runtime gates 鈥?keeps browser profile sessions visibly isolated",
+      "duration": "7.0s"
+    },
+    {
+      "status": "passed",
+      "index": 35,
+      "title": "tests\\e2e\\versegit-candidate-apply.spec.ts:13:7 鈥?verified candidate host apply 鈥?runs completion, candidate verification, permission gate and journaled apply in order",
+      "duration": "42.5s"
+    },
+    {
+      "status": "passed",
+      "index": 36,
+      "title": "tests\\e2e\\versegit-packaged-flow.spec.ts:79:7 鈥?F4 packaged controlled stability 鈥?runs three cold starts and ten packaged task loops with interruption/revocation/undo evidence",
+      "duration": "5.1m"
+    },
+    {
+      "status": "passed",
+      "index": 37,
+      "title": "tests\\e2e\\windows-ui-v2.spec.ts:4:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?uses neutral work surfaces by default and keeps native titlebar controls outside the content stage",
+      "duration": "12.1s"
+    },
+    {
+      "status": "passed",
+      "index": 38,
+      "title": "tests\\e2e\\windows-ui-v2.spec.ts:69:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?keeps dark materials neutral without inheriting light-only overrides",
+      "duration": "11.8s"
+    },
+    {
+      "status": "failed",
+      "index": 39,
+      "title": "tests\\e2e\\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints",
+      "duration": "42.8s"
+    },
+    {
+      "status": "passed",
+      "index": 40,
+      "title": "tests\\e2e\\windows-ui-v2.spec.ts:248:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?keeps old visual query values on the current shell and workspace destinations",
+      "duration": "13.2s"
+    },
+    {
+      "status": "failed",
+      "index": 41,
+      "title": "tests\\e2e\\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer",
+      "duration": "16.5s"
+    }
+  ]
+}

@@ -1,8 +1,9 @@
 {
-  "command": "pnpm run repo:artifacts:check",
   "schema": "AdmissionGate/v1",
+  "command": "pnpm repo:artifacts:check",
+  "exitCode": 0,
+  "classification": "pass",
   "stdout": "logs/formal-repo-artifacts.log",
-  "classification": "missing-retained-doc",
-  "note": "A6 spec requires ADMISSION-CONVERGENCE.md but the candidate does not contain it yet.",
-  "exitCode": 1
+  "captureMode": "combined",
+  "note": "Final rerun after evidence and docs landed."
 }

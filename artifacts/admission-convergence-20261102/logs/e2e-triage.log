@@ -1,0 +1,669 @@
+
+Running 41 tests using 1 worker
+
+(node:33640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in light (18.5s)
+  ok  2 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to setup and reload in light (17.1s)
+  ok  3 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to sidebar and reload in dark (19.0s)
+  ok  4 tests\e2e\brand-logo.spec.ts:7:9 鈥?B2 brand stays consistent from boot to setup and reload in dark (17.4s)
+  x   5 tests\e2e\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent (14.9s)
+(node:17400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+  ok  6 tests\e2e\chat-model-scope-runtime.spec.ts:8:5 鈥?turn model wins for one real Gateway request without changing the session choice (1.9m)
+[fp-p1-03-refused] {"success":false,"enabled":false,"status":"error","restartedGateway":false,"comboFlagIds":["context-view-tools","working-memory","tool-registry"],"missingPrereqs":["providerVerified","workspaceSelected","permissionChosen"],"error":"Preview prerequisites missing: providerVerified, workspaceSelected, permissionChosen"}
+  x   7 tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed (48.5s)
+(node:33464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   8 tests\e2e\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile (20.6s)
+(node:39768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  9 tests\e2e\error-i18n.spec.ts:182:7 鈥?unified error exit i18n 鈥?switches language and renders auth/rate-limit/balance/timeout failures without English fallback (14.9s)
+  x  10 tests\e2e\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language (42.8s)
+(node:29740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 11 tests\e2e\fakecoding-inbox-navigation.spec.ts:155:7 鈥?FakeCoding Inbox navigation 鈥?keeps four top-level entries and redirects the legacy Remote Tasks route (11.5s)
+  x  12 tests\e2e\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count (41.9s)
+(node:31636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  13 tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings (43.0s)
+(node:34624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 14 tests\e2e\knowledge-review-queue.spec.ts:71:7 鈥?KE-P1-3 Review Queue 鈥?confirm promotes a candidate and shows KE fields (13.6s)
+  ok 15 tests\e2e\knowledge-review-queue.spec.ts:103:7 鈥?KE-P1-3 Review Queue 鈥?reject dismisses a candidate without persisting (13.0s)
+  ok 16 tests\e2e\knowledge-review-queue.spec.ts:132:7 鈥?KE-P1-3 Review Queue 鈥?shows an empty state when there are no candidates (12.4s)
+  ok 17 tests\e2e\knowledge-review-queue.spec.ts:152:7 鈥?KE-P1-3 Review Queue 鈥?flag off shows unavailable state and hides KE fields (13.9s)
+  ok 18 tests\e2e\knowledge-review-queue.spec.ts:202:5 鈥?review selection prepares and approves only the corresponding proposal (15.4s)
+  x  19 tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light (28.2s)
+(node:3684) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3684) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  20 tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark (28.0s)
+(node:39680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 21 tests\e2e\main-navigation.spec.ts:17:7 鈥?Verse Claw main navigation without setup flow 鈥?navigates between core pages with setup bypassed (11.7s)
+  ok 22 tests\e2e\main-navigation.spec.ts:45:7 鈥?Verse Claw main navigation without setup flow 鈥?native New Chat menu opens the same chat route as the sidebar action (11.3s)
+  x  23 tests\e2e\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language (26.3s)
+(node:33828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  24 tests\e2e\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action (44.1s)
+(node:32564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  25 tests\e2e\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled (43.2s)
+(node:29360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  26 tests\e2e\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data (42.9s)
+(node:44144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 27 tests\e2e\rc10-operator-live.spec.ts:6:5 鈥?RC-10 real Cron, Inbox, IRC and recovery scenarios (1.8m)
+[fp-p1-harness] connection #1
+  ok 28 tests\e2e\restart-recovery-fp-p1-05.spec.ts:185:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?resumes a persisted in-flight assistant turn after Gateway startup (31.2s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+  x  29 tests\e2e\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed (2.4m)
+(node:31444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 30 tests\e2e\system-maturity-p45.spec.ts:64:7 鈥?System maturity Phase 4/5 runtime gates 鈥?shows localized budget denial and rolls back the optimistic message (7.3s)
+  x  31 tests\e2e\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection (20.2s)
+(node:9644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 32 tests\e2e\system-maturity-p45.spec.ts:128:7 鈥?System maturity Phase 4/5 runtime gates 鈥?cancels the underlying run, clears UI state, and permits the next turn (8.5s)
+  ok 33 tests\e2e\system-maturity-p45.spec.ts:188:7 鈥?System maturity Phase 4/5 runtime gates 鈥?hard timeout aborts the underlying run and releases the next turn (7.4s)
+  ok 34 tests\e2e\system-maturity-p45.spec.ts:232:7 鈥?System maturity Phase 4/5 runtime gates 鈥?keeps browser profile sessions visibly isolated (7.0s)
+  ok 35 tests\e2e\versegit-candidate-apply.spec.ts:13:7 鈥?verified candidate host apply 鈥?runs completion, candidate verification, permission gate and journaled apply in order (42.5s)
+  ok 36 tests\e2e\versegit-packaged-flow.spec.ts:79:7 鈥?F4 packaged controlled stability 鈥?runs three cold starts and ten packaged task loops with interruption/revocation/undo evidence (5.1m)
+  ok 37 tests\e2e\windows-ui-v2.spec.ts:4:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?uses neutral work surfaces by default and keeps native titlebar controls outside the content stage (12.1s)
+  ok 38 tests\e2e\windows-ui-v2.spec.ts:69:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?keeps dark materials neutral without inheriting light-only overrides (11.8s)
+  x  39 tests\e2e\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints (42.8s)
+(node:14824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 40 tests\e2e\windows-ui-v2.spec.ts:248:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?keeps old visual query values on the current shell and workspace destinations (13.2s)
+  x  41 tests\e2e\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer (16.5s)
+Error: tracked source changed during Electron E2E run: status, diffSha256
+
+   at fixtures\source-mutation-guard.ts:46
+
+  44 |     .filter((key) => before[key] !== after[key]);
+  45 |   if (changed.length > 0) {
+> 46 |     throw new Error(`tracked source changed during Electron E2E run: ${changed.join(', ')}`);
+     |           ^
+  47 |   }
+  48 | }
+  49 |
+    at assertTrackedSourceStateUnchanged (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fixtures\source-mutation-guard.ts:46:11)
+    at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fixtures\electron-process-cleanup.ts:222:40
+
+
+  1) tests\e2e\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('div.rounded-xl').filter({ hasText: 'feishu-d3d59c3f' }).first().getByRole('combobox')
+    Expected substring: [32m"Unassigned"[39m
+    Error: strict mode violation: locator('div.rounded-xl').filter({ hasText: 'feishu-d3d59c3f' }).first().getByRole('combobox') resolved to 2 elements:
+        1) <button dir="ltr" type="button" role="combobox" data-state="closed" aria-expanded="false" aria-autocomplete="none" aria-controls="radix-_r_2j_" class="flex items-center justify-between ring-offset-background transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none [&>span]:line-clamp-1 py-1.5 h-8 rounded-lg border 鈥?鈥?/button> aka getByRole('combobox').filter({ hasText: 'Main Agent' })
+        2) <button dir="ltr" type="button" role="combobox" data-state="closed" aria-expanded="false" aria-autocomplete="none" aria-controls="radix-_r_2n_" class="flex items-center justify-between ring-offset-background transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none [&>span]:line-clamp-1 py-1.5 h-8 rounded-lg border 鈥?鈥?/button> aka getByRole('combobox').filter({ hasText: 'Unassigned' })
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 15000ms[22m
+    [2m  - waiting for locator('div.rounded-xl').filter({ hasText: 'feishu-d3d59c3f' }).first().getByRole('combobox')[22m
+
+
+      125 |     // "Unassigned" (an empty native value no longer exists).
+      126 |     const bindingSelect = newAccountRow.getByRole('combobox');
+    > 127 |     await expect(bindingSelect).toContainText('Unassigned');
+          |                                 ^
+      128 |
+      129 |     await bindingSelect.click();
+      130 |     await page.getByRole('option', { name: 'Code Agent' }).click();
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\channels-binding-regression.spec.ts:127:33
+
+    Error Context: test-results\channels-binding-regressio-b9106-til-the-user-binds-an-agent\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\channels-binding-regressio-b9106-til-the-user-binds-an-agent\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\channels-binding-regressio-b9106-til-the-user-binds-an-agent\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  2) tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('settings-dcs-preview-effective-runtime.coding.staleWriteGuard.enabled')
+    Expected substring: [32m"runtime.coding.staleWriteGuard.enabled: [7mtrue[27m"[39m
+    Received string:    [31m"runtime.coding.staleWriteGuard.enabled: [7mfalse(default)[27m"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('settings-dcs-preview-effective-runtime.coding.staleWriteGuard.enabled')[22m
+    [2m    18 脳 locator resolved to <li data-testid="settings-dcs-preview-effective-runtime.coding.staleWriteGuard.enabled">鈥?/li>[22m
+    [2m       - unexpected value "runtime.coding.staleWriteGuard.enabled: false(default)"[22m
+
+
+      176 |         // The effective flag remains the behavioral contract; keep the locator
+      177 |         // bound to that value without rejecting the separately rendered origin.
+    > 178 |         await expect(page.getByTestId(`settings-dcs-preview-effective-${key}`)).toContainText(
+          |                                                                                 ^
+      179 |           `${key}: true`,
+      180 |         );
+      181 |       }
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:178:81
+
+    Error Context: test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-鈫?kill-shows-killed\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-鈫?kill-shows-killed\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-鈫?kill-shows-killed\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  3) tests\e2e\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile
+
+    TypeError: Cannot read properties of undefined (reading 'length')
+
+      65 |       const cleanup = JSON.parse(await readFile(cleanupPath, 'utf8'));
+      66 |       expect(cleanup.runRoot.replace(/[\\/]+$/, '')).toBe(record.runRoot);
+    > 67 |       expect(cleanup.owned.length).toBeGreaterThan(0);
+         |                            ^
+      68 |       const orphan = cleanup.owned.find((process: { ParentProcessId: number }) => process.ParentProcessId === record.wrapperPid);
+      69 |       expect(orphan).toBeDefined();
+      70 |       expect(orphan.ParentAlive).toBe(false);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\electron-worker-cleanup.spec.ts:67:28
+
+    Error Context: test-results\electron-worker-cleanup-re-f004d-closing-another-run-profile\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\electron-worker-cleanup-re-f004d-closing-another-run-profile\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  4) tests\e2e\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-image-generation')[22m
+
+
+      146 |   await page.getByTestId('settings-back-button').click();
+      147 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 148 |   await page.getByTestId('sidebar-more-image-generation').click();
+          |                                                           ^
+      149 |   await expect(page.getByTestId('image-generation-settings')).toBeVisible();
+      150 | }
+      151 |
+        at openImageGeneration (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\error-i18n.spec.ts:148:59)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\error-i18n.spec.ts:218:5
+
+    Error Context: test-results\error-i18n-unified-error-e-0fa06-ce-after-switching-language\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\error-i18n-unified-error-e-0fa06-ce-after-switching-language\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\error-i18n-unified-error-e-0fa06-ce-after-switching-language\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  5) tests\e2e\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('settings-theme-mode').getByRole('button', { name: 'Dark' })[22m
+
+
+      203 |     await page.getByTestId('sidebar-nav-settings').click();
+      204 |     const themeMode = page.getByTestId('settings-theme-mode');
+    > 205 |     await themeMode.getByRole('button', { name: 'Dark' }).click();
+          |                                                           ^
+      206 |     await page.getByTestId('settings-back-button').click();
+      207 |     await expect(page.getByTestId('inbox-page')).toBeVisible();
+      208 |     const darkDesktop = testInfo.outputPath('inbox-1280-dark.png');
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fakecoding-inbox-navigation.spec.ts:205:59
+
+    attachment #1: Inbox 1280 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\attachments\Inbox-1280-light-ab460389c75810c89a4a76bfae98a607dd1688bd.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    attachment #2: Inbox 960 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\attachments\Inbox-960-light-065d2aca730cdd5e03d663b3467f19d04470b101.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\error-context.md
+
+    attachment #4: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  6) tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('settings-theme-mode').getByRole('button', { name: 'Dark' })[22m
+
+
+      225 |     await page.setViewportSize({ width: 1280, height: 800 });
+      226 |     await page.getByTestId('sidebar-nav-settings').click();
+    > 227 |     await page.getByTestId('settings-theme-mode').getByRole('button', { name: 'Dark' }).click();
+          |                                                                                         ^
+      228 |     await page.getByTestId('settings-back-button').click();
+      229 |     const darkDesktop = testInfo.outputPath('scheduled-1280-dark.png');
+      230 |     await page.screenshot({ path: darkDesktop });
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:227:89
+
+    attachment #1: Scheduled 1280 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\attachments\Scheduled-1280-light-1a6cc6da3aeb39bc5f0eafae8bd54ae572e48d63.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    attachment #2: Scheduled 960 light (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\attachments\Scheduled-960-light-de0ad8a267353a38d9616889a8c52324cfc538e8.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\error-context.md
+
+    attachment #4: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  7) tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/knowledge=ask/[39m
+    Received string:  [31m"file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=light&e2eSkipSetup=1#/knowledge"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 15000ms[22m
+    [2m    18 脳 unexpected value "file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=light&e2eSkipSetup=1#/knowledge"[22m
+
+
+      296 |       await page.getByTestId('knowledge-librarian-open').click();
+      297 |       await expect(page.getByTestId('knowledge-chat-page')).toBeVisible();
+    > 298 |       await expect(page).toHaveURL(/knowledge=ask/);
+          |                          ^
+      299 |       await expect(page.getByTestId('knowledge-page')).toHaveCount(0);
+      300 |       await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
+      301 |       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\knowledge-review-queue.spec.ts:298:26
+
+    Error Context: test-results\knowledge-review-queue-Kno-f36a3-t-supported-widths-in-light\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\knowledge-review-queue-Kno-f36a3-t-supported-widths-in-light\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\knowledge-review-queue-Kno-f36a3-t-supported-widths-in-light\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  8) tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/knowledge=ask/[39m
+    Received string:  [31m"file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/knowledge"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 15000ms[22m
+    [2m    18 脳 unexpected value "file:///D:/ClawX-work/a6-final-main-590ba5258/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/knowledge"[22m
+
+
+      296 |       await page.getByTestId('knowledge-librarian-open').click();
+      297 |       await expect(page.getByTestId('knowledge-chat-page')).toBeVisible();
+    > 298 |       await expect(page).toHaveURL(/knowledge=ask/);
+          |                          ^
+      299 |       await expect(page.getByTestId('knowledge-page')).toHaveCount(0);
+      300 |       await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
+      301 |       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\knowledge-review-queue.spec.ts:298:26
+
+    Error Context: test-results\knowledge-review-queue-Kno-4d04b-it-supported-widths-in-dark\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\knowledge-review-queue-Kno-4d04b-it-supported-widths-in-dark\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\knowledge-review-queue-Kno-4d04b-it-supported-widths-in-dark\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  9) tests\e2e\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('鑿滃崟璇█宸叉洿鏂?)
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByText('鑿滃崟璇█宸叉洿鏂?)[22m
+
+
+      86 |       await page.getByRole('option', { name: '涓枃', exact: true }).click();
+      87 |
+    > 88 |       await expect(page.getByText('鑿滃崟璇█宸叉洿鏂?)).toBeVisible();
+         |                                               ^
+      89 |       await expect.poll(() => readNativeMenuLabels(app)).toMatchObject({
+      90 |         file: '鏂囦欢',
+      91 |         newChat: '鏂板璇?,
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\main-navigation.spec.ts:88:47
+
+    Error Context: test-results\main-navigation-Verse-Claw-3319e-ls-after-switching-language\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\main-navigation-Verse-Claw-3319e-ls-after-switching-language\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\main-navigation-Verse-Claw-3319e-ls-after-switching-language\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  10) tests\e2e\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-dreams')[22m
+
+
+      41 |   await page.getByTestId('settings-back-button').click();
+      42 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 43 |   await page.getByTestId('sidebar-more-dreams').click();
+         |                                                 ^
+      44 | }
+      45 |
+      46 | test.describe('OpenClaw Dreams', () => {
+        at openDreams (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:43:49)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:140:5
+
+    Error Context: test-results\openclaw-dreams-OpenClaw-D-d98f3-d-runs-a-maintenance-action\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\openclaw-dreams-OpenClaw-D-d98f3-d-runs-a-maintenance-action\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\openclaw-dreams-OpenClaw-D-d98f3-d-runs-a-maintenance-action\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  11) tests\e2e\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-dreams')[22m
+
+
+      41 |   await page.getByTestId('settings-back-button').click();
+      42 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 43 |   await page.getByTestId('sidebar-more-dreams').click();
+         |                                                 ^
+      44 | }
+      45 |
+      46 | test.describe('OpenClaw Dreams', () => {
+        at openDreams (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:43:49)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:217:5
+
+    Error Context: test-results\openclaw-dreams-OpenClaw-D-51f69-e-when-dreaming-is-disabled\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\openclaw-dreams-OpenClaw-D-51f69-e-when-dreaming-is-disabled\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\openclaw-dreams-OpenClaw-D-51f69-e-when-dreaming-is-disabled\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  12) tests\e2e\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data
+
+    TimeoutError: locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sidebar-more-dreams')[22m
+
+
+      41 |   await page.getByTestId('settings-back-button').click();
+      42 |   await page.getByTestId('sidebar-footer-menu-trigger').click();
+    > 43 |   await page.getByTestId('sidebar-more-dreams').click();
+         |                                                 ^
+      44 | }
+      45 |
+      46 | test.describe('OpenClaw Dreams', () => {
+        at openDreams (D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:43:49)
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\openclaw-dreams.spec.ts:244:5
+
+    Error Context: test-results\openclaw-dreams-OpenClaw-D-ab56c--before-loading-Dreams-data\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\openclaw-dreams-OpenClaw-D-ab56c--before-loading-Dreams-data\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\openclaw-dreams-OpenClaw-D-ab56c--before-loading-Dreams-data\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  13) tests\e2e\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mfalse[39m
+    Received: [31mtrue[39m
+
+      436 |         'dcsRoutingMemoShadowEnabled',
+      437 |       ]) {
+    > 438 |         expect(recoveredSettings[key]).toBe(false);
+          |                                        ^
+      439 |       }
+      440 |       expect(recoveredSettings.dcsSekbExperienceShadowEnabled).toBe(true);
+      441 |       expect(recoveredSettings.language).toBe('en');
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\restart-recovery-fp-p1-05.spec.ts:438:40
+
+    Error Context: test-results\restart-recovery-fp-p1-05--18ca0-explainable-and-fail-closed\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\restart-recovery-fp-p1-05--18ca0-explainable-and-fail-closed\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\restart-recovery-fp-p1-05--18ca0-explainable-and-fail-closed\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  14) tests\e2e\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m120[39m
+    Received:    [31m181[39m
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      120 |       const page = await getStableWindow(app);
+      121 |       await expect(page.getByText('bounded-history-999')).toBeVisible();
+    > 122 |       await expect.poll(async () => page.locator('[data-testid^="chat-message-"]:not([data-testid="chat-message-layout"])').count()).toBeLessThanOrEqual(120);
+          |       ^
+      123 |     } finally {
+      124 |       await app.close();
+      125 |     }
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\system-maturity-p45.spec.ts:122:7
+
+    attachment #1: screenshot (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\test-failed-1.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\error-context.md
+
+    attachment #3: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\system-maturity-p45-System-293ba-arge-history-DOM-projection\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  15) tests\e2e\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByTestId('ui-v2-showcase')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('ui-v2-showcase')[22m
+
+
+       98 |       await openAgentDevScenario(page, 'ui-v2-showcase', { visualMode: true });
+       99 |       await page.setViewportSize({ width: 1280, height: 800 });
+    > 100 |       await expect(page.getByTestId('ui-v2-showcase')).toBeVisible();
+          |                                                        ^
+      101 |       await expect(page.locator('[data-material-level]')).toHaveCount(5);
+      102 |       await expect(page.getByTestId('ui-v2-showcase-codex-icons').locator('svg')).toHaveCount(5);
+      103 |       await expect(page.getByTestId('ui-v2-showcase-badges').locator('[class*="rounded-md"]')).toHaveCount(4);
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\windows-ui-v2.spec.ts:100:56
+
+    Error Context: test-results\windows-ui-v2-Cross-platfo-fcbaf-enforces-visual-constraints\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\windows-ui-v2-Cross-platfo-fcbaf-enforces-visual-constraints\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\windows-ui-v2-Cross-platfo-fcbaf-enforces-visual-constraints\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  16) tests\e2e\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveScreenshot[2m([22m[32mexpected[39m[2m)[22m failed
+
+      366 pixels (ratio 0.01 of all image pixels) are different.
+
+      Snapshot: workspace-web-preview-browser-menu.png
+
+    Call log:
+    [2m  - Expect "toHaveScreenshot(workspace-web-preview-browser-menu.png)" with timeout 15000ms[22m
+    [2m    - verifying given screenshot expectation[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - 258 pixels (ratio 0.01 of all image pixels) are different.[22m
+    [2m  - waiting 100ms before taking screenshot[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - 108 pixels (ratio 0.01 of all image pixels) are different.[22m
+    [2m  - waiting 250ms before taking screenshot[22m
+    [2m  - taking page screenshot[22m
+    [2m    - disabled all CSS animations[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - captured a stable screenshot[22m
+    [2m  - 366 pixels (ratio 0.01 of all image pixels) are different.[22m
+
+
+      219 |       await expect(page.getByRole('menu')).toBeVisible();
+      220 |       await expect(page.getByRole('menuitem', { name: 'Open externally' })).toBeVisible();
+    > 221 |       await expect(page).toHaveScreenshot('workspace-web-preview-browser-menu.png', {
+          |                          ^
+      222 |         animations: 'disabled',
+      223 |         caret: 'hide',
+      224 |         // Brand identity is covered separately; this baseline targets preview controls.
+        at D:\ClawX-work\a6-final-main-590ba5258\tests\e2e\workspace-web-preview-panel.spec.ts:221:26
+
+    attachment #1: workspace-web-preview-browser-menu (image/png) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    Expected: tests\e2e\workspace-web-preview-panel.spec.ts-snapshots\workspace-web-preview-browser-menu-win32.png
+    Received: test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\workspace-web-preview-browser-menu-actual.png
+    Diff:     test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\workspace-web-preview-browser-menu-diff.png
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+    Error Context: test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\error-context.md
+
+    attachment #3: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\workspace-web-preview-pane-2d713-nd-sends-it-to-the-composer\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  Slow test file: tests\e2e\versegit-packaged-flow.spec.ts (5.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  16 failed
+    tests\e2e\channels-binding-regression.spec.ts:4:7 鈥?Channels binding regression 鈥?keeps newly added non-default Feishu accounts unassigned until the user binds an agent
+    tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 鈥?FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) 鈥?prereq gating 鈫?applied via child ack 鈫?baseline parity on off 鈫?kill shows killed
+    tests\e2e\electron-worker-cleanup.spec.ts:7:5 鈥?reclaims an aborted worker app without closing another run profile
+    tests\e2e\error-i18n.spec.ts:207:7 鈥?unified error exit i18n 鈥?shows the class message, responsibility, next step and error reference after switching language
+    tests\e2e\fakecoding-inbox-navigation.spec.ts:181:7 鈥?FakeCoding Inbox navigation 鈥?aggregates all sources, runs real decisions, and refreshes the pending count
+    tests\e2e\fakecoding-scheduled-browser-runs.spec.ts:177:7 鈥?FakeCoding Scheduled and Browser settings 鈥?projects Cron and Browser runs, preserves actions, and manages Browser settings
+    tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in light
+    tests\e2e\knowledge-review-queue.spec.ts:267:7 鈥?Knowledge editing and Chat round trip fit supported widths in dark
+    tests\e2e\main-navigation.spec.ts:77:7 鈥?Verse Claw main navigation without setup flow 鈥?refreshes native menu labels after switching language
+    tests\e2e\openclaw-dreams.spec.ts:121:7 鈥?OpenClaw Dreams 鈥?renders the native Dreams page and runs a maintenance action
+    tests\e2e\openclaw-dreams.spec.ts:163:7 鈥?OpenClaw Dreams 鈥?starts Dreams from the native page when dreaming is disabled
+    tests\e2e\openclaw-dreams.spec.ts:226:7 鈥?OpenClaw Dreams 鈥?waits for the gateway process before loading Dreams data
+    tests\e2e\restart-recovery-fp-p1-05.spec.ts:277:7 鈥?FP-P1-05 restart / recovery / live kill / rollback 鈥?all seven live recovery scenarios remain explainable and fail closed
+    tests\e2e\system-maturity-p45.spec.ts:102:7 鈥?System maturity Phase 4/5 runtime gates 鈥?bounds large history DOM projection
+    tests\e2e\windows-ui-v2.spec.ts:93:7 鈥?Cross-platform FakeCoding UI v2 shell 鈥?registers an interactive design-system showcase and enforces visual constraints
+    tests\e2e\workspace-web-preview-panel.spec.ts:42:7 鈥?Workspace Web preview panel 鈥?selects a preview component and sends it to the composer
+  25 passed (25.5m)
+  1 error was not a part of any test, see above for details

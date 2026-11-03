@@ -1,8 +1,9 @@
 {
   "schema": "AdmissionBoundaryDiff/v1",
+  "generatedAt": "2026-11-02T17:06:34.563Z",
   "baseline": "97cda35de",
   "baselineRole": "direct parent of A3 commit 512dc31a4",
-  "candidate": "6b7f8eb496a43418ffaf880dc3590ed1042c6fc9",
+  "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
   "paths": [
     "docs/dev/default-config-matrix.md",
     "shared/dcs",
@@ -11,10 +12,8 @@
   ],
   "gitDiffExitCode": 0,
   "changedFiles": [],
-  "gitDiffStdout": "",
-  "gitDiffStderr": "",
-  "protectedFileCount": 7,
   "allBlobIdsEqual": true,
+  "protectedFileCount": 7,
   "blobs": {
     "docs/dev/default-config-matrix.md": {
       "baseline": "2659e9f80cded95e5705f0819f5e96b78936c777",

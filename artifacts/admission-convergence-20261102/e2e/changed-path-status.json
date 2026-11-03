@@ -1,0 +1,141 @@
+{
+  "schema": "AdmissionChangedPathE2EStatus/v1",
+  "baseline": "97cda35de",
+  "candidate": "590ba5258cd5ddd65e133657762e77811376d0a9",
+  "items": [
+    {
+      "file": "tests/e2e/agent-first-operational.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-agent-effort.spec.ts",
+      "tests": 3,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-cache-guard.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-file-changes.spec.ts",
+      "tests": 3,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-history-startup-retry.spec.ts",
+      "tests": 2,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-memory-injection-panel.spec.ts",
+      "tests": 3,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-model-picker-tiers.spec.ts",
+      "tests": 2,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-model-picker.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+      "tests": 3,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/dcs-prod-p0-settings.spec.ts",
+      "tests": 4,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/effort-intensity-smoke.spec.ts",
+      "tests": 2,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/long-session-restart-journeys.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/provider-lifecycle.spec.ts",
+      "tests": 8,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/settings-memory-embedding.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/settings-proxy.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/sidebar-session-folders-archive.spec.ts",
+      "tests": 6,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/startup-loading-experience.spec.ts",
+      "tests": 6,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/telemetry-consent.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/token-usage.spec.ts",
+      "tests": 2,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/versegit-feedback-paired.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    },
+    {
+      "file": "tests/e2e/visual-tune.spec.ts",
+      "tests": 1,
+      "failed": 0,
+      "observed": true
+    }
+  ],
+  "allObserved": true,
+  "allPassing": true
+}

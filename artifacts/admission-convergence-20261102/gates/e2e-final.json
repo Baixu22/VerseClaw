@@ -1,0 +1,12 @@
+{
+  "schema": "AdmissionGate/v1",
+  "command": "pnpm run test:e2e:run",
+  "exitCode": 1,
+  "classification": "not-pass",
+  "stdout": "logs/e2e-final.log",
+  "captureMode": "combined",
+  "summary": "e2e/final-summary.json",
+  "triageSummary": "e2e/triage-summary.json",
+  "failureClassification": "e2e/failure-classification.json",
+  "changedPathStatus": "e2e/changed-path-status.json"
+}
