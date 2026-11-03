@@ -22,6 +22,9 @@ touchedAreas:
   - openclaw_runtime/src/agents/orchestration-result-bundle.ts
   - openclaw_runtime/src/agents/handoff-artifacts.ts
   - openclaw_runtime/src/agents/subagent-registry.types.ts
+  - openclaw_runtime/src/agents/subagent-registry.ts
+  - openclaw_runtime/src/agents/subagent-registry-lifecycle.ts
+  - openclaw_runtime/src/agents/subagent-registry-run-manager.ts
   - tests/unit/context-folding-*.test.ts
   - tests/integration/context-folding-*.test.ts
   - tests/e2e/context-folding-real-task.spec.ts

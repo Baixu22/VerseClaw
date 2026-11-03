@@ -43,6 +43,7 @@ import {
 } from "../../context-engine/tools/context-read-tool.js";
 import { searchContext } from "../../context-engine/tools/context-search-tool.js";
 import { isContextFoldingEnabled } from "../../context-engine/context-folding/flags.js";
+import { createContextFoldTool } from "./context-fold-tool.js";
 import {
   contextExpandEvent,
   expandContextHandle,
@@ -1135,6 +1136,7 @@ export function createDcsContextAgentTools(options: DcsContextAgentToolOptions):
     createContextReuseTool(options),
     createContextVerifyTool(options),
     createContextExpandTool(options),
+    createContextFoldTool(options),
   ].filter((tool): tool is AnyAgentTool => tool !== null);
   // Keep W0-4 counter warm whenever the shell builds a non-empty catalog.
   if (tools.length > 0) {

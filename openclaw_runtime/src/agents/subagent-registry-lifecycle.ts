@@ -546,6 +546,7 @@ export function createSubagentRegistryLifecycleController(params: {
       wakeOnDescendantSettle:
         entry.delivery?.payload?.wakeOnDescendantSettle ?? entry.wakeOnDescendantSettle,
       orchestration: entry.delivery?.payload?.orchestration ?? entry.orchestration,
+      contextFold: entry.delivery?.payload?.contextFold ?? entry.contextFold,
     };
   };
 
@@ -579,6 +580,7 @@ export function createSubagentRegistryLifecycleController(params: {
       frozenResultText: entry.completion?.resultText,
       fallbackFrozenResultText: entry.completion?.fallbackResultText,
       orchestration: entry.orchestration,
+      contextFold: entry.contextFold,
     };
     return true;
   };

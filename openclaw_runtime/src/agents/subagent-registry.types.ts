@@ -127,6 +127,21 @@ export type TeamOrchestrationMetadata = {
     refsDigest: string;
   };};
 
+/** Optional tag that makes a child completion a ContextFoldResult delivery. */
+export type ContextFoldRunMetadata = {
+  foldId: string;
+  deliveryId: string;
+  maxResultChars: number;
+  childHandles: Array<{
+    handleId: string;
+    resourceId: string;
+    selector: string;
+    checksum: string;
+    kind: "excerpt" | "search" | "aggregate" | "file" | "test" | "run" | "tool";
+    label?: string;
+  }>;
+};
+
 export type PendingFinalDeliveryPayload = {
   requesterSessionKey: string;
   requesterOrigin?: DeliveryContext;
@@ -144,6 +159,7 @@ export type PendingFinalDeliveryPayload = {
   fallbackFrozenResultText?: string | null;
   wakeOnDescendantSettle?: boolean;
   orchestration?: TeamOrchestrationMetadata;
+  contextFold?: ContextFoldRunMetadata;
 };
 
 export type SubagentExecutionState = {
@@ -241,6 +257,7 @@ export type SubagentRunRecord = {
   pauseReason?: "sessions_yield";
   wakeOnDescendantSettle?: boolean;
   orchestration?: TeamOrchestrationMetadata;
+  contextFold?: ContextFoldRunMetadata;
   execution?: SubagentExecutionState;
   completion?: SubagentCompletionState;
   /** Set after the subagent_ended hook has been emitted successfully once. */

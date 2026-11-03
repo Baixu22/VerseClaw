@@ -161,6 +161,7 @@ export type RegisterSubagentRunParams = {
   attachmentsRootDir?: string;
   retainAttachmentsOnKeep?: boolean;
   orchestration?: TeamOrchestrationMetadata;
+  contextFold?: import("./subagent-registry.types.js").ContextFoldRunMetadata;
 };
 
 export function createSubagentRunManager(params: {
@@ -670,6 +671,7 @@ export function createSubagentRunManager(params: {
       cleanupHandled: false,
       wakeOnDescendantSettle: undefined,
       orchestration: registerParams.orchestration,
+      contextFold: registerParams.contextFold,
       attachmentsDir: registerParams.attachmentsDir,
       attachmentsRootDir: registerParams.attachmentsRootDir,
       retainAttachmentsOnKeep: registerParams.retainAttachmentsOnKeep,
