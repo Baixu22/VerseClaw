@@ -242,19 +242,15 @@ describe("L11: LoCoMo benchmark — fixture and infrastructure", () => {
     console.log("[LoCoMo] Categories:", [...categories]);
   });
 
-  it("seeds conversation facts and verifies retrieval works", () => {
+  it("refuses to seed conversation facts while persistence is retired", () => {
     const conversations = loadFixture<LocomoConversation[]>("conversations.json");
     const conversation = conversations[0];
-    const dbPath = createTempDbPath("locomo-seed-");
-    const facts = seedConversationFacts(dbPath, conversation);
+    const dbPath = createTempDbPath("locomo-seed-retired-");
 
-    expect(facts.length).toBe(conversation.turns.length);
-
-    const hits = findRuntimeMemoryFacts(facts, {
-      reference_time: 10000,
-      limit: 5,
-    });
-    expect(hits.length).toBeGreaterThan(0);
+    // TF-0500 retired runtime.memory.persist; seedConversationFacts asserts a
+    // migrated schema, so the retired path must fail closed rather than produce
+    // an empty dataset that a later benchmark could mistake for a real run.
+    expect(() => seedConversationFacts(dbPath, conversation)).toThrow();
 
     closeOpenClawStateDatabaseForTest();
     closeRuntimeMemoryHydrationShadowDatabasesForTest();
