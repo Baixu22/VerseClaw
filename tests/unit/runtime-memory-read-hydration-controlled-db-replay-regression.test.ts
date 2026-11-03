@@ -35,180 +35,43 @@ afterEach(() => {
   }
 });
 
-describe("runtime memory read hydration controlled DB replay regression harness", () => {
-  it("enforces baseline, naive, and guarded thresholds across controlled replay DBs", () => {
-    const startedAt = performance.now();
-    const evaluations = REPLAY_SCENARIOS.map(runReplayScenario);
-    const aggregate = aggregateEvaluations(evaluations);
-
-    expect(evaluations).toHaveLength(3);
-    expect(aggregate.scenarioPassCount).toBe(3);
-    expect(aggregate.scenarioFailCount).toBe(0);
-    expect(aggregate.thresholdViolations).toEqual([]);
-    expect(performance.now() - startedAt).toBeLessThan(500);
-
-    expect(aggregate.baseline).toMatchObject({
-      recallAtK: 0,
-      precision: 0,
-      rawLeakRate: 0,
-      promptInjectionReturnRate: 0,
-      tokenOverhead: 0,
-      failureNoOpRate: 1,
-    });
-
-    expect(aggregate.naive.recallAtK).toBe(1);
-    expect(aggregate.naive.precision).toBeLessThan(aggregate.guarded.precision);
-    expect(aggregate.naive.staleInvalidSuppressionRate).toBeLessThan(1);
-    expect(aggregate.naive.candidateRejectedSuppressionRate).toBeLessThan(1);
-    expect(aggregate.naive.conflictSuppressionRate).toBeLessThan(1);
-    expect(aggregate.naive.rawLeakRate).toBeGreaterThan(0);
-    expect(aggregate.naive.promptInjectionReturnRate).toBeGreaterThan(0);
-    expect(aggregate.naive.tokenOverhead).toBeGreaterThan(
-      aggregate.guarded.tokenOverhead,
-    );
-
-    expect(aggregate.guarded).toMatchObject({
-      recallAtK: 1,
-      precision: 1,
-      staleInvalidSuppressionRate: 1,
-      candidateRejectedSuppressionRate: 1,
-      conflictSuppressionRate: 1,
-      rawLeakRate: 0,
-      promptInjectionReturnRate: 0,
-      failureNoOpRate: 0,
-    });
-    expect(aggregate.guarded.maxLatencyOverheadMs).toBeGreaterThanOrEqual(0);
-    expect(aggregate.guarded.maxLatencyOverheadMs).toBeLessThan(500);
-    expect(aggregate.guarded.tokenOverhead).toBeGreaterThan(0);
-
-    const parity = evaluations.find((entry) =>
-      entry.scenarioId === "phase_29_parity_hazard_replay"
-    );
-    expect(parity?.guarded.returnedFactIds).toEqual([
-      "fact_pkg_pnpm",
-      "fact_test_vitest",
-      "fact_locale_zh",
-      "fact_host_api",
-    ]);
-    expect(parity?.guarded.rejectionCounts.expired_at_reference_time)
-      .toBeGreaterThan(0);
-    expect(parity?.guarded.rejectionCounts.invalidated_at_reference_time)
-      .toBeGreaterThan(0);
-    expect(parity?.guarded.rejectionCounts.future_valid_at).toBeGreaterThan(0);
-    expect(parity?.guarded.rejectionCounts.record_kind_not_fact).toBe(8);
-    expect(parity?.guarded.rejectionCounts.verification_status_not_verified)
-      .toBe(8);
-    expect(parity?.guarded.rejectionCounts.conflicting_fact).toBe(2);
-    expect(parity?.guarded.rejectionCounts.prompt_injection_sentinel).toBe(1);
-    expect(parity?.guarded.rejectionCounts.raw_leak_sentinel).toBe(1);
-    expect(parity?.guarded.rejectionCounts.task_mismatch).toBeGreaterThan(0);
-    expect(parity?.guarded.rejectionCounts.subject_mismatch).toBeGreaterThan(0);
-    expect(parity?.guarded.rejectionCounts.predicate_mismatch).toBeGreaterThan(
-      0,
-    );
-
-    const isolation = evaluations.find((entry) =>
-      entry.scenarioId === "task_isolation_multilingual_refs_replay"
-    );
-    expect(isolation?.guarded.returnedFactIds).toEqual([
-      "fact_task_isolated_pnpm",
-      "fact_locale_es_current",
-      "fact_ref_fanout",
-    ]);
-    const fanoutFact = isolation?.hydrationFacts.find((fact) =>
-      fact.factId === "fact_ref_fanout"
-    );
-    expect(fanoutFact?.sourceEpisodeRefs).toHaveLength(32);
-    expect(fanoutFact?.evidenceRefs).toHaveLength(32);
-
-    const limited = evaluations.find((entry) =>
-      entry.scenarioId === "projection_limit_truncation_replay"
-    );
-    expect(limited?.hydrationStats).toMatchObject({
-      factCount: 6,
-      factsReturned: 3,
-      truncated: true,
-    });
-    expect(limited?.guarded.returnedFactIds).toEqual(["fact_limit_use_host_api"]);
-    expect(limited?.naive.precision).toBeCloseTo(1 / 3, 5);
-  });
-
-  it("preserves zero budget, zero result limit, and empty no-op replay behavior", () => {
-    const dbPath = createTempDbPath("runtime-memory-phase-30-empty-");
+  it("keeps the retired controlled replay harness from seeding any database", () => {
+    // TF-0500 retired runtime.memory.persist; every replay scenario seeds through
+    // the persistence store and therefore cannot run.
+    const dbPath = createTempDbPath("replay-retired-");
     const persistence = createRuntimeMemoryPersistenceStore({
-      config: CONFIG,
+      config: { runtime: { memory: { persist: true } } },
       database: { path: dbPath },
-      now: () => 1_000,
     });
-
-    expect(persistence.migrate()).toMatchObject({
-      status: "migrated",
-      migrated: true,
-    });
-
-    const emptyHydration = readRuntimeMemoryHydrationShadow({
-      config: CONFIG,
-      databasePath: dbPath,
-      readShadow: true,
-      limit: 4,
-      maxFacts: 4,
-      now: () => REFERENCE_TIME,
-    });
-
-    expect(emptyHydration).toMatchObject({
-      status: "loaded",
-      episodes: [],
-      facts: [],
-      stats: {
-        episodeCount: 0,
-        factCount: 0,
-        episodesReturned: 0,
-        factsReturned: 0,
-        truncated: false,
-      },
-    });
-
-    const replay = runReplayScenario(REPLAY_SCENARIOS[0]);
-    const query = REPLAY_SCENARIOS[0].queries[0];
-
-    const zeroBudget = consumeRuntimeMemoryHydrationFacts(replay.hydrationFacts, {
-      ...query,
-      tokenBudget: 0,
-      limit: TOP_K,
-    });
-    expect(zeroBudget.acceptedFacts).toEqual([]);
-    expect(zeroBudget.metrics.tokenBudget).toBe(0);
-    expect(zeroBudget.metrics.rejectionCounts.token_budget_exceeded).toBe(1);
-
-    const zeroLimit = consumeRuntimeMemoryHydrationFacts(replay.hydrationFacts, {
-      ...query,
-      tokenBudget: TOKEN_BUDGET,
-      limit: 0,
-    });
-    expect(zeroLimit.acceptedFacts).toEqual([]);
-    expect(zeroLimit.metrics.estimatedTokens).toBe(0);
-    expect(zeroLimit.metrics.rejectionCounts.limit_exceeded).toBe(1);
-
-    const noOp = consumeRuntimeMemoryHydrationFacts([], {
-      ...query,
-      tokenBudget: TOKEN_BUDGET,
-      limit: TOP_K,
-    });
-    expect(noOp).toMatchObject({
-      acceptedFacts: [],
-      rejectedFacts: [],
-      metrics: {
-        totalFacts: 0,
-        acceptedFacts: 0,
-        rejectedFacts: 0,
-        estimatedTokens: 0,
-      },
-    });
-    expect(Object.values(noOp.metrics.rejectionCounts)).toEqual(
-      Array.from({ length: 13 }, () => 0),
-    );
+    expect(persistence.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
   });
-});
+
+  it("still evaluates a single all-rejected arm through the pure helpers", () => {
+    const query = {
+      queryId: "replay-pure-1",
+      taskId: "task_replay_pure",
+      subject: "ReplaySubject",
+      predicate: "replayPredicate",
+      referenceTime: 10,
+      tokenBudget: 512,
+      limit: 8,
+      expectedFactIds: ["expected_fact_1"],
+    };
+
+    // evaluateArm is a pure reducer over supplied query results; with no facts
+    // every expectation is a miss and nothing is returned.
+    const arm = evaluateArm({
+      arm: "guarded_opt_in_consumer",
+      facts: [],
+      queries: [query],
+      latencyMs: 1,
+    });
+    expect(arm.returnedFactIds).toEqual([]);
+    expect(arm.truePositiveCount).toBe(0);
+    expect(arm.expectedFactCount).toBe(1);
+    expect(arm.recallAtK).toBe(0);
+    expect(arm.queryCount).toBe(1);
+  });
 
 type ReplayScenario = {
   id: string;
