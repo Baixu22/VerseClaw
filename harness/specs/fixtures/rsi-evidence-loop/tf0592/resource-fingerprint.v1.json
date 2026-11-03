@@ -1,18 +1,23 @@
 {
   "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-  "generatedAt": "2026-11-03T15:39:24.669Z",
+  "generatedAt": "2026-11-03T15:44:11.402Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "candidate": {
-    "commit": "50b80f73a4bac8b5212d6f9fad5299a493b56d5e",
-    "tree": "1e23cd893e3400fc7b044e4d61cdbbb16291d6c4",
+    "commit": "d88f058b175f698a51badda3a25a68ef1b8c7b6e",
+    "tree": "e6a1e7695843365e1e2f96dcd51fd1e4c5cade5b",
     "branch": "",
     "dirty": false,
     "dirtyPaths": [],
-    "unrelatedDirtyPaths": [],
+    "unrelatedDirtyPaths": [
+      "arness/specs/fixtures/agent-first-task-corpus/SHA256SUMS",
+      "harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json",
+      "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json",
+      "harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json"
+    ],
     "sourceHashes": {
       "scripts/rsi-tf0592-statistical-adjudication.mjs": "f58483cf50346cdf11bfa12fc60eaaa74aebeab1f81f0741953195f1fcb1f3ac",
-      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "4027a1e86533630733e09b9595df4a764ab5bfa0ccaf1d6414e8d9d9d59117b8",
+      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "965b9c812d8fd8e91f78ffb16f99a71f5029f82c2e60c440ded08934d8e940c1",
       "scripts/rsi-tf0604-baseline.mjs": "796a6238586dea788d172cde296fc6dd86eafc17b7c6301e6e8349cefbe5a57b",
       "scripts/lib/reliability-aggregation.mjs": "1992d1aa0f64649b049b364cbb7241dc739dd3ef4329787ba8beaab358ebc3ed",
       "scripts/lib/paired-ablation.mjs": "f13dbe9835585ae929ec44488efef28f7c95ea5e1b19d80ee063259fde7cdeaa",
@@ -40,9 +45,9 @@
   "observedResources": {
     "cpuCount": 16,
     "totalMemoryBytes": 16295432192,
-    "freeMemoryBytes": 2939830272,
+    "freeMemoryBytes": 3013677056,
     "disk": {
-      "freeBytes": 118641209344,
+      "freeBytes": 118616293376,
       "totalBytes": 701020237824,
       "status": "measured"
     }

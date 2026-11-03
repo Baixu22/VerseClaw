@@ -3,14 +3,14 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "50b80f73a4bac8b5212d6f9fad5299a493b56d5e",
-    "tree": "1e23cd893e3400fc7b044e4d61cdbbb16291d6c4",
+    "commit": "d88f058b175f698a51badda3a25a68ef1b8c7b6e",
+    "tree": "e6a1e7695843365e1e2f96dcd51fd1e4c5cade5b",
     "dirty": false,
     "dirtyPaths": [],
     "unrelatedDirtyPaths": [],
     "sourceHashes": {
       "scripts/rsi-historical-task-corpus.mjs": "b5b8661dd1423f6eb52c48b644400327997537dc73f49c705581d7fdaa79aa8c",
-      "scripts/rsi-historical-task-corpus.d.mts": "fc0a19370c47b08addc9730c68278ba7b392fc16bf5dd60034b420d438242683",
+      "scripts/rsi-historical-task-corpus.d.mts": "e57bc4f0ab00b9567183f7ccc89fb9da64e34e5f2035ad3f51300aa4715ad35b",
       "scripts/lib/rsi-historical-task-corpus.mjs": "934d278293d5aefb99fa7076b2a34624ec1cb1ebea4c28f4be5e84823c63cc81",
       "scripts/lib/rsi-historical-task-corpus.d.mts": "43156741a909994f933c99973ecc941e0a45caef13dcc4ac8f48327a2e58955a",
       "scripts/lib/agent-first-graders.mjs": "16073b5108f5118cd1ac8285837205942136bd5e3f069dce13512b2da16d6a0e",
