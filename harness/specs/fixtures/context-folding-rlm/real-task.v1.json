@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ContextFoldingRealTask/v1",
   "id": "cfr-real-task-01",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "driven_by": "agent",
   "actor": "codex/context-folding-rlm",
   "workspace": "harness/specs/fixtures/context-folding-rlm/real-workspace",
@@ -42,15 +42,22 @@
     "requiredSkippedTests": 0
   },
   "thresholds": {
-    "taskCorrectness": 1.0,
-    "evidenceRetention": 1.0,
+    "taskCorrectness": 1,
+    "evidenceRetention": 1,
     "staleRefCountMax": 0,
     "scopeViolationMax": 0,
     "rawChildTranscriptCharsMax": 8000,
     "mainContextReductionMin": 0.3,
-    "totalTokenMultiplierMax": 2.0,
+    "totalTokenMultiplierMax": 2,
     "latencyMultiplierMax": 2.5,
-    "maxRecursiveDepth": 1
+    "maxRecursiveDepth": 1,
+    "multiRoundMinimumRounds": 5,
+    "multiRoundPerturbedRounds": 5,
+    "everyRoundTotalTokenMultiplierBelow": 1,
+    "everyRoundMainContextReductionMin": 0.3,
+    "everyRoundLatencyMultiplierMax": 2.5,
+    "multiRoundMedianTotalTokenMultiplierBelow": 1,
+    "multiRoundUpper95TotalTokenMultiplierBelow": 1
   },
   "evidencePolicy": {
     "driven_by": "agent",
@@ -58,6 +65,8 @@
     "realHumanClaimForbidden": true,
     "productReleaseApprovalForbidden": true,
     "fixtureMustRemainUnchanged": true,
-    "rawRunLocation": "D:/tmp/context-folding-real-task-<runId>"
+    "rawRunLocation": "D:/tmp/context-folding-real-task-<runId>",
+    "multiRoundFormalPath": "harness/specs/fixtures/context-folding-rlm/eval/multiround-acceptance",
+    "requireEveryRoundPositiveBenefit": true
   }
 }

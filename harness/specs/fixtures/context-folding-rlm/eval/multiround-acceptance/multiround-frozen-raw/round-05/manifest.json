@@ -1,0 +1,339 @@
+{
+  "schemaVersion": "ContextFoldingEvalResult/v1",
+  "runId": "cfr-multiround-frozen-20261103-round-05",
+  "taskId": "cfr-real-task-01",
+  "status": "pass",
+  "driven_by": "agent",
+  "actor": "codex/context-folding-rlm",
+  "generatedAt": "2026-11-03T06:53:05.659Z",
+  "fixture": {
+    "path": "frozen-round-fixture",
+    "sourceTreeDigest": "sha256:01bf03ca823ad3953c211654eeb6c8fe37064e52546e661a0c51e835515cf08c",
+    "sourceUnchanged": true
+  },
+  "workspace": "D:\\tmp\\context-folding-real-task-cfr-multiround-frozen-20261103-round-05",
+  "baselineRedFailure": {
+    "exitCode": 1,
+    "failedTest": "test_repeated_completion_is_idempotent",
+    "failures": 1,
+    "ran": 4
+  },
+  "patch": {
+    "path": "harness\\specs\\fixtures\\context-folding-rlm\\eval\\patch.diff",
+    "sha256": "sha256:c7224fd40ae86398bd9ce675f2d1eb0acfa34eb54a2b6d8eccd4911986a2f78a",
+    "summary": "Return the existing task when status is already done."
+  },
+  "modes": {
+    "baseline": {
+      "tests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 339
+      },
+      "evidenceRefs": [
+        {
+          "handleId": "cfh_d02adbdd78bd69007757323f9ca6c7ca",
+          "resourceId": "src/taskboard.py",
+          "selector": "L15-L27",
+          "checksum": "sha256:bdf8af92c1f9a55d015ada2df300f0b1f1bcf3d8ec1fc4481daaa660a6afb571",
+          "kind": "excerpt",
+          "label": "taskboard source and fixed completion path"
+        }
+      ],
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "metrics": {
+        "mainContextChars": 81943,
+        "totalTokens": 20486,
+        "latencyMs": 339,
+        "costUsd": null,
+        "units": {
+          "mainContextChars": "chars",
+          "totalTokens": "ceil(chars/4) local estimate",
+          "latencyMs": "Python unittest wall time"
+        }
+      },
+      "contextEvents": [
+        {
+          "type": "context_read",
+          "ok": true,
+          "resourceId": "src/taskboard.py",
+          "chars": 1407,
+          "at": "2026-11-03T00:00:00.000Z"
+        }
+      ],
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 0
+    },
+    "expand-only": {
+      "tests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 442
+      },
+      "evidenceRefs": [
+        {
+          "handleId": "cfh_d02adbdd78bd69007757323f9ca6c7ca",
+          "resourceId": "src/taskboard.py",
+          "selector": "L15-L27",
+          "checksum": "sha256:bdf8af92c1f9a55d015ada2df300f0b1f1bcf3d8ec1fc4481daaa660a6afb571",
+          "kind": "excerpt",
+          "label": "taskboard source and fixed completion path"
+        },
+        {
+          "handleId": "cfh_4d699ce4492ee31708cee437f45a80b4",
+          "resourceId": "tests/test_taskboard.py",
+          "selector": "full",
+          "checksum": "sha256:1b74e8504056c164b1e5236140571dd50ff63e23b63455dfdfc5c04df29faeaa",
+          "kind": "test",
+          "label": "unittest suite"
+        }
+      ],
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "metrics": {
+        "mainContextChars": 81007,
+        "totalTokens": 20252,
+        "latencyMs": 1,
+        "costUsd": null,
+        "units": {
+          "mainContextChars": "chars",
+          "totalTokens": "ceil(chars/4) local estimate",
+          "latencyMs": "bounded expansion wall time"
+        }
+      },
+      "contextEvents": [
+        {
+          "type": "context_handle",
+          "handleId": "cfh_d02adbdd78bd69007757323f9ca6c7ca",
+          "owner": "workspace-file",
+          "resourceId": "src/taskboard.py",
+          "chars": 471,
+          "at": "2026-11-03T00:00:00.000Z"
+        },
+        {
+          "type": "context_handle",
+          "handleId": "cfh_4d699ce4492ee31708cee437f45a80b4",
+          "owner": "workspace-file",
+          "resourceId": "tests/test_taskboard.py",
+          "chars": 1273,
+          "at": "2026-11-03T00:00:00.000Z"
+        },
+        {
+          "type": "context_expand",
+          "handleId": "cfh_d02adbdd78bd69007757323f9ca6c7ca",
+          "owner": "workspace-file",
+          "resourceId": "src/taskboard.py",
+          "mode": "excerpt",
+          "ok": true,
+          "charCount": 471,
+          "byteCount": 471,
+          "truncated": false,
+          "diagnosticCodes": [],
+          "at": "2026-11-03T00:00:00.000Z"
+        },
+        {
+          "type": "context_expand",
+          "handleId": "cfh_4d699ce4492ee31708cee437f45a80b4",
+          "owner": "workspace-file",
+          "resourceId": "tests/test_taskboard.py",
+          "mode": "excerpt",
+          "ok": true,
+          "charCount": 1273,
+          "byteCount": 1273,
+          "truncated": false,
+          "diagnosticCodes": [],
+          "at": "2026-11-03T00:00:00.000Z"
+        }
+      ],
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 0
+    },
+    "folded-child": {
+      "tests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 337
+      },
+      "evidenceRefs": [
+        {
+          "handleId": "cfh_d02adbdd78bd69007757323f9ca6c7ca",
+          "resourceId": "src/taskboard.py",
+          "selector": "L15-L27",
+          "checksum": "sha256:bdf8af92c1f9a55d015ada2df300f0b1f1bcf3d8ec1fc4481daaa660a6afb571",
+          "kind": "excerpt",
+          "label": "taskboard source and fixed completion path"
+        },
+        {
+          "handleId": "cfh_4d699ce4492ee31708cee437f45a80b4",
+          "resourceId": "tests/test_taskboard.py",
+          "selector": "full",
+          "checksum": "sha256:1b74e8504056c164b1e5236140571dd50ff63e23b63455dfdfc5c04df29faeaa",
+          "kind": "test",
+          "label": "unittest suite"
+        }
+      ],
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "metrics": {
+        "mainContextChars": 154,
+        "totalTokens": 1206,
+        "latencyMs": 337,
+        "costUsd": null,
+        "mainContextReduction": 0.998,
+        "totalTokenMultiplier": 0.059,
+        "latencyMultiplier": 0.994,
+        "childInputChars": 1647,
+        "childReadChars": 1744,
+        "childOutputChars": 1278,
+        "units": {
+          "mainContextChars": "parent-visible ContextFoldResult JSON chars",
+          "totalTokens": "ceil(parent projection + child task + child reads + child output chars/4) local estimate",
+          "latencyMs": "Python unittest wall time + fold parse"
+        }
+      },
+      "evidenceRefsResolution": 1,
+      "requiredEvidenceRefs": 2,
+      "contextEvents": [
+        {
+          "type": "context_handle",
+          "handleId": "cfh_d02adbdd78bd69007757323f9ca6c7ca",
+          "owner": "workspace-file",
+          "resourceId": "src/taskboard.py",
+          "chars": 471,
+          "at": "2026-11-03T00:00:00.000Z"
+        },
+        {
+          "type": "context_handle",
+          "handleId": "cfh_4d699ce4492ee31708cee437f45a80b4",
+          "owner": "workspace-file",
+          "resourceId": "tests/test_taskboard.py",
+          "chars": 1273,
+          "at": "2026-11-03T00:00:00.000Z"
+        },
+        {
+          "type": "context_expand",
+          "handleId": "cfh_d02adbdd78bd69007757323f9ca6c7ca",
+          "owner": "workspace-file",
+          "resourceId": "src/taskboard.py",
+          "mode": "excerpt",
+          "ok": true,
+          "charCount": 471,
+          "byteCount": 471,
+          "truncated": false,
+          "diagnosticCodes": [],
+          "at": "2026-11-03T00:00:00.000Z"
+        },
+        {
+          "type": "context_expand",
+          "handleId": "cfh_4d699ce4492ee31708cee437f45a80b4",
+          "owner": "workspace-file",
+          "resourceId": "tests/test_taskboard.py",
+          "mode": "excerpt",
+          "ok": true,
+          "charCount": 1273,
+          "byteCount": 1273,
+          "truncated": false,
+          "diagnosticCodes": [],
+          "at": "2026-11-03T00:00:00.000Z"
+        },
+        {
+          "type": "context_fold",
+          "foldId": "cff_0ace9b14d41b190973dcc6945ca7b607",
+          "childSessionKey": "agent:main:subagent:cfr-real",
+          "childRunId": "run-cfr-real",
+          "deliveryId": "cfd_1fbb79b9acabf67fde645d683bb33ef4",
+          "status": "accepted",
+          "at": "2026-11-03T00:00:00.000Z"
+        }
+      ],
+      "foldedResults": [
+        {
+          "schemaVersion": "ContextFoldResult/v1",
+          "foldId": "cff_0ace9b14d41b190973dcc6945ca7b607",
+          "childSessionKey": "agent:main:subagent:cfr-real",
+          "childRunId": "run-cfr-real",
+          "status": "completed",
+          "summary": "The copied taskboard returns immediately for an already-done task; all four real tests pass.",
+          "structuredOutput": {
+            "defectLocation": "src/taskboard.py:L18-L20",
+            "testExitCode": 0
+          },
+          "evidenceRefs": [
+            {
+              "handleId": "cfh_7ca577ac53a85afd3eb49f48afde56c9",
+              "resourceId": "src/taskboard.py",
+              "selector": "L15-L27",
+              "checksum": "sha256:bdf8af92c1f9a55d015ada2df300f0b1f1bcf3d8ec1fc4481daaa660a6afb571",
+              "kind": "excerpt",
+              "label": "fixed taskboard completion path"
+            },
+            {
+              "handleId": "cfh_dc1913da3fc0f2c285ccd64b964e9616",
+              "resourceId": "tests/test_taskboard.py",
+              "selector": "full",
+              "checksum": "sha256:1b74e8504056c164b1e5236140571dd50ff63e23b63455dfdfc5c04df29faeaa",
+              "kind": "test",
+              "label": "real unittest suite"
+            }
+          ],
+          "unresolvedClaims": [],
+          "blockers": [],
+          "failedAttempts": [],
+          "inputRefs": [
+            "cfh_7ca577ac53a85afd3eb49f48afde56c9",
+            "cfh_dc1913da3fc0f2c285ccd64b964e9616"
+          ],
+          "outputChars": 154,
+          "usage": {
+            "inputTokens": 848,
+            "outputTokens": 310,
+            "totalTokens": 1158,
+            "latencyMs": 337
+          },
+          "diagnostics": [],
+          "rawChildTranscriptChars": 0,
+          "recursionDepth": 1,
+          "deliveryId": "cfd_1fbb79b9acabf67fde645d683bb33ef4",
+          "drivenBy": "agent",
+          "actor": "codex/context-folding-rlm",
+          "evidenceRefsResolution": 1,
+          "resolvedEvidenceRefs": 2,
+          "requiredEvidenceRefs": 2
+        }
+      ],
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1
+    }
+  },
+  "offModeParity": {
+    "passed": true,
+    "evidence": "tests/unit/context-folding-result.test.ts flag-off byte parity; factory is null when disabled.",
+    "newPersistentRowsWhenOff": 0
+  },
+  "disableOnlyRollback": {
+    "passed": true,
+    "switch": "runtime.contextBlock.contextFolding.enabled / VERSE_CONTEXT_FOLDING=0"
+  },
+  "notes": [
+    "Agent-driven real copied workspace and real unittest execution.",
+    "Baseline and expand-only suites run in the frozen clean copy after the real fix is known; each mode records its own process result.",
+    "Token values are local ceil(chars/4) estimates and latency is local wall-clock time; no live provider or production approval is claimed."
+  ],
+  "unresolvedClaims": [
+    "No live model provider was used; provider-measured token/cost/latency quality remains outside this run.",
+    "Context-aware semantic answer quality from a live child model is not measured by this deterministic local eval."
+  ]
+}

@@ -23,14 +23,17 @@ import { pathToFileURL } from 'node:url';
 import { performance } from 'node:perf_hooks';
 
 const REPO = process.cwd();
-const FIXTURE = join(REPO, 'harness/specs/fixtures/context-folding-rlm/real-workspace');
 const EVIDENCE = join(REPO, 'harness/specs/fixtures/context-folding-rlm/eval');
 const PATCH_PATH = join(EVIDENCE, 'patch.diff');
 const RUN_ID = process.env.CF_EVAL_RUN_ID || `cfr-${new Date().toISOString().replace(/[:.]/g, '-')}`;
+const ROUND_ONLY = process.env.CF_EVAL_ROUND_ONLY === '1';
 const RUN_ROOT = join('D:/tmp', `context-folding-real-task-${RUN_ID}`);
 const CLEAN_ROOT = `${RUN_ROOT}-clean`;
 const RESULT = join(EVIDENCE, 'run-result.json');
 const RED_LOG = join(EVIDENCE, 'baseline-red.log');
+const BASELINE_LOG = join(EVIDENCE, 'baseline-tests.log');
+const EXPAND_LOG = join(EVIDENCE, 'expand-only-tests.log');
+const FOLDED_LOG = join(EVIDENCE, 'folded-child-tests.log');
 const hash = (value) => createHash('sha256').update(value, 'utf8').digest('hex');
 const sha = (value) => `sha256:${hash(value)}`;
 const read = (path) => readFileSync(path, 'utf8');
@@ -38,7 +41,7 @@ const python = process.platform === 'win32' ? 'python' : 'python3';
 const NOW = '2026-11-03T00:00:00.000Z';
 
 if (process.argv.length > 2) {
-  console.error('context-folding-real-task-eval does not accept arguments; set CF_EVAL_RUN_ID instead.');
+  console.error('context-folding-real-task-eval does not accept arguments; set CF_EVAL_RUN_ID and optional CF_EVAL_ROUND_ONLY=1 instead.');
   process.exit(2);
 }
 
@@ -128,34 +131,44 @@ function chars(value) {
   return typeof value === 'string' ? value.length : 0;
 }
 
-async function main() {
-  mkdirSync(EVIDENCE, { recursive: true });
-  const sourceTreeDigest = treeDigest(FIXTURE);
-  if (existsSync(RUN_ROOT)) rmSync(RUN_ROOT, { recursive: true, force: true });
-  if (existsSync(CLEAN_ROOT)) rmSync(CLEAN_ROOT, { recursive: true, force: true });
-  cpSync(FIXTURE, RUN_ROOT, { recursive: true });
-  cpSync(FIXTURE, CLEAN_ROOT, { recursive: true });
+export async function runPairedEval(options = {}) {
+  const fixture = options.fixtureRoot ?? join(REPO, 'harness/specs/fixtures/context-folding-rlm/real-workspace');
+  const configured = options.evidenceRoot ?? EVIDENCE;
+  const runId = options.runId ?? RUN_ID;
+  const runRoot = options.runRoot ?? join('D:/tmp', `context-folding-real-task-${runId}`);
+  const cleanRoot = options.cleanRoot ?? `${runRoot}-clean`;
+  const resultPath = options.resultPath ?? join(configured, 'run-result.json');
+  const redLogPath = options.redLogPath ?? join(configured, 'baseline-red.log');
+  const baselineLogPath = options.baselineLogPath ?? join(configured, 'baseline-tests.log');
+  const expandLogPath = options.expandLogPath ?? join(configured, 'expand-only-tests.log');
+  const foldedLogPath = options.foldedLogPath ?? join(configured, 'folded-child-tests.log');
+  mkdirSync(configured, { recursive: true });
+  const sourceTreeDigest = treeDigest(fixture);
+  if (existsSync(runRoot)) rmSync(runRoot, { recursive: true, force: true });
+  if (existsSync(cleanRoot)) rmSync(cleanRoot, { recursive: true, force: true });
+  cpSync(fixture, runRoot, { recursive: true });
+  cpSync(fixture, cleanRoot, { recursive: true });
 
-  const red = runTests(RUN_ROOT, RED_LOG);
+  const red = runTests(runRoot, redLogPath);
   if (red.exitCode !== 1 || red.ran !== 4 || red.failed !== 1 || red.skipped !== 0 || !red.output.includes('test_repeated_completion_is_idempotent')) {
     throw new Error(`red baseline failed for an unexpected reason: ${JSON.stringify({ exitCode: red.exitCode, ran: red.ran, failed: red.failed, skipped: red.skipped })}\n${red.output}`);
   }
-  applyFix(RUN_ROOT);
-  applyFix(CLEAN_ROOT);
+  applyFix(runRoot);
+  applyFix(cleanRoot);
 
-  const baselineTests = requireGreen('baseline', runTests(CLEAN_ROOT, join(EVIDENCE, 'baseline-tests.log')));
-  const expandTests = requireGreen('expand-only', runTests(CLEAN_ROOT, join(EVIDENCE, 'expand-only-tests.log')));
-  const foldedTests = requireGreen('folded-child', runTests(RUN_ROOT, join(EVIDENCE, 'folded-child-tests.log')));
+  const baselineTests = requireGreen('baseline', runTests(cleanRoot, baselineLogPath));
+  const expandTests = requireGreen('expand-only', runTests(cleanRoot, expandLogPath));
+  const foldedTests = requireGreen('folded-child', runTests(runRoot, foldedLogPath));
 
   const patch = patchText();
   writeFileSync(PATCH_PATH, patch, 'utf8');
 
   const { expandModule, foldModule, contractModule } = await loadModules();
-  const sourceText = read(join(RUN_ROOT, 'src/taskboard.py'));
-  const testText = read(join(RUN_ROOT, 'tests/test_taskboard.py'));
-  const noisyText = read(join(RUN_ROOT, 'docs/legacy-notes.md')) + '\n' + read(join(RUN_ROOT, 'data/taskboard-audit.txt'));
+  const sourceText = read(join(runRoot, 'src/taskboard.py'));
+  const testText = read(join(runRoot, 'tests/test_taskboard.py'));
+  const noisyText = read(join(runRoot, 'docs/legacy-notes.md')) + '\n' + read(join(runRoot, 'data/taskboard-audit.txt'));
   const requester = { workspaceId: 'ws-cfr-real', sessionId: 'sess-cfr-real', actor: 'parent', depth: 0 };
-  const deps = { requester, workspaceRoot: RUN_ROOT, now: () => NOW };
+  const deps = { requester, workspaceRoot: runRoot, now: () => NOW };
 
   const sourceHandleResult = await expandModule.mintContextHandle({
     owner: 'workspace-file', resourceId: 'src/taskboard.py', selector: { kind: 'lines', startLine: 15, endLine: 27 },
@@ -188,7 +201,7 @@ async function main() {
 
   const foldRequestBody = contractModule.createContextFoldRequest({
     objective: 'Fix TaskBoard.completeTask idempotency and verify the real unittest suite.',
-    taskScope: { workspaceId: requester.workspaceId, workspaceRoot: RUN_ROOT },
+    taskScope: { workspaceId: requester.workspaceId, workspaceRoot: runRoot },
     inputRefs: [sourceHandle, testHandle],
     allowedTools: ['context_expand', 'exec'],
     outputSchema: { kind: 'json-object', required: ['defectLocation'] },
@@ -283,11 +296,11 @@ async function main() {
     },
   };
   if (evidenceRefsResolution !== 1) throw new Error(`evidence refs did not fully resolve: ${evidenceRefsResolution}`);
-  writeFileSync(RESULT, JSON.stringify({
-    schemaVersion: 'ContextFoldingEvalResult/v1', runId: RUN_ID, taskId: 'cfr-real-task-01',
+  const manifest = {
+    schemaVersion: 'ContextFoldingEvalResult/v1', runId, taskId: 'cfr-real-task-01',
     status: 'pass', driven_by: 'agent', actor: 'codex/context-folding-rlm', generatedAt: new Date().toISOString(),
-    fixture: { path: relative(REPO, FIXTURE), sourceTreeDigest, sourceUnchanged: treeDigest(FIXTURE) === sourceTreeDigest },
-    workspace: RUN_ROOT, baselineRedFailure: { exitCode: red.exitCode, failedTest: 'test_repeated_completion_is_idempotent', failures: red.failed, ran: red.ran },
+    fixture: { path: options.fixtureLabel ?? relative(REPO, fixture), sourceTreeDigest, sourceUnchanged: treeDigest(fixture) === sourceTreeDigest },
+    workspace: runRoot, baselineRedFailure: { exitCode: red.exitCode, failedTest: 'test_repeated_completion_is_idempotent', failures: red.failed, ran: red.ran },
     patch: { path: relative(REPO, PATCH_PATH), sha256: sha(patch), summary: 'Return the existing task when status is already done.' },
     modes,
     offModeParity: { passed: true, evidence: 'tests/unit/context-folding-result.test.ts flag-off byte parity; factory is null when disabled.', newPersistentRowsWhenOff: 0 },
@@ -301,12 +314,26 @@ async function main() {
       'No live model provider was used; provider-measured token/cost/latency quality remains outside this run.',
       'Context-aware semantic answer quality from a live child model is not measured by this deterministic local eval.',
     ],
-  }, null, 2) + '\n', 'utf8');
-  console.log(JSON.stringify({ RUN_ROOT, RESULT, evidenceRefsResolution, mainContextReduction: modes['folded-child'].metrics.mainContextReduction,
-    totalTokenMultiplier: modes['folded-child'].metrics.totalTokenMultiplier, latencyMultiplier: modes['folded-child'].metrics.latencyMultiplier }, null, 2));
+  };
+  return { manifest, runRoot, cleanRoot, resultPath, workspace: runRoot };
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.stack : String(error));
-  process.exitCode = 1;
-});
+async function main() {
+  const { manifest, resultPath } = await runPairedEval();
+  if (ROUND_ONLY) {
+    process.stdout.write(JSON.stringify(manifest));
+  } else {
+    writeFileSync(resultPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+    console.log(JSON.stringify({ RUN_ROOT, RESULT: resultPath, evidenceRefsResolution: manifest.modes['folded-child'].evidenceRefsResolution,
+      mainContextReduction: manifest.modes['folded-child'].metrics.mainContextReduction,
+      totalTokenMultiplier: manifest.modes['folded-child'].metrics.totalTokenMultiplier,
+      latencyMultiplier: manifest.modes['folded-child'].metrics.latencyMultiplier }, null, 2));
+  }
+}
+
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.stack : String(error));
+    process.exitCode = 1;
+  });
+}

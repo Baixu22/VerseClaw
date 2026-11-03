@@ -12,6 +12,7 @@ touchedAreas:
   - harness/specs/guides/context-folding-rlm-design.md
   - harness/specs/fixtures/context-folding-rlm/**
   - scripts/context-folding-real-task-eval.mjs
+  - scripts/context-folding-multiround-eval.mjs
   - shared/types/context-folding.ts
   - shared/types/context-item.ts
   - shared/host-api/contract.ts
@@ -184,6 +185,19 @@ docs:
 - 必须输出：patch、测试命令/exit code/计数、ContextHandle/expand/FoldedResult 事件、evidence refs、usage 和未解决项。
 
 真实任务的详细 prompt、硬门和指标见 `real-task.v1.json`。
+
+## 多轮正收益门槛
+
+单轮结果只算一次观察，不能证明稳定正收益。正式完工必须同时满足：
+
+- 至少 5 个独立冻结任务轮次；本支线正式验收另加 5 个递增噪声轮次（4k/8k/12k/16k/24k chars），共 10 轮；
+- 每轮三种模式均为 4 passed / 0 failed / 0 skipped，且每轮 oracle exit 0；
+- **每一轮** folded-child 的主上下文下降 >= 30%、总 token 代理严格小于 baseline、延迟 <= 2.5x；不允许用平均数掩盖负收益轮次；
+- 跨 10 轮 median 与 P95 total-token multiplier 均 < 1.0，median main-context reduction >= 30%；
+- 每轮 evidence refs 100%、scope/stale 为 0、raw child transcript 为 0 且未注入、递归深度 <= 1；
+- 聚合证据、10 轮原始产物、oracle、SHA256SUMS、credential scan 与 agent provenance 必须可从磁盘回读。
+
+正式证据入口：`harness/specs/fixtures/context-folding-rlm/eval/multiround-acceptance/`。
 
 ## Eval 门槛
 

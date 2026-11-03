@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ContextFoldingMultiRoundGate/v1",
+  "status": "frozen-before-measurement",
+  "driven_by": "agent",
+  "actor": "codex/context-folding-rlm",
+  "minimumRounds": 5,
+  "roundsMustUseDistinctCopies": true,
+  "quality": {
+    "requiredPassedPerRound": 4,
+    "requiredFailedPerRound": 0,
+    "requiredSkippedPerRound": 0,
+    "requireOracleEveryRound": true
+  },
+  "positiveBenefit": {
+    "requireEveryRoundMainContextReductionAtLeast": 0.3,
+    "requireEveryRoundTotalTokenMultiplierBelow": 1,
+    "requireEveryRoundLatencyMultiplierAtMost": 2.5,
+    "requireMedianTotalTokenMultiplierBelow": 1,
+    "requireUpper95TotalTokenMultiplierBelow": 1,
+    "requireMedianMainContextReductionAtLeast": 0.3,
+    "requireUpper95MainContextReductionBelow": 1
+  },
+  "robustness": {
+    "requireEveryRoundEvidenceRefsResolution": 1,
+    "requireEveryRoundScopeViolations": 0,
+    "requireEveryRoundStaleReferences": 0,
+    "requireEveryRoundRawChildTranscriptInjected": false,
+    "requireEveryRoundMaxRecursiveDepthAtMost": 1
+  },
+  "metricPolicy": {
+    "tokenProxy": "ceil(visible chars / 4), identical accounting in every round",
+    "latency": "local wall clock, paired in each round",
+    "cost": "null without live provider",
+    "allowAveragingAwayNegativeRounds": false
+  },
+  "notes": [
+    "Thresholds are frozen before the multi-round run.",
+    "Any failed round makes the aggregate verdict fail.",
+    "This is an agent-driven local deterministic eval, not a live-provider quality claim."
+  ]
+}

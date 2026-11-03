@@ -31,3 +31,15 @@ python -m unittest discover -s tests -v
 ```
 
 The expected final state is exit 0 with four passing tests and zero skips.
+
+## Multi-round positive-benefit gate
+
+The formal completion gate now requires more than one successful observation:
+
+- **5 independent frozen rounds** plus **5 varied-noise rounds** (4k / 8k / 12k / 16k / 24k extra distractor chars);
+- every round independently runs baseline, expand-only and folded-child, then the real oracle;
+- every round must keep 4/4 quality and evidence/safety gates, have main-context reduction >= 30%, total-token proxy < baseline and latency <= 2.5x;
+- cross-round median and P95 total-token multiplier must both be < 1.0;
+- any negative round fails the aggregate; no averaging escape hatch.
+
+Formal evidence: `eval/multiround-acceptance/`. Runner: `scripts/context-folding-multiround-eval.mjs`.

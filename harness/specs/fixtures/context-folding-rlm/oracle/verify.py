@@ -114,6 +114,47 @@ def validate_result(result: dict, workspace: Path) -> None:
     require((workspace / "src" / "taskboard.py").is_file(), "workspace source is missing")
 
 
+
+def validate_multiround(result: dict) -> None:
+    """Validate the 10-round formal positive-benefit aggregate."""
+    require(result.get("schemaVersion") == "ContextFoldingMultiRoundEvalResult/v2", "unexpected multi-round schema")
+    require(result.get("driven_by") == "agent", "multi-round result must be agent-driven")
+    require(bool(str(result.get("actor", "")).strip()), "multi-round result must name an actor")
+    require(result.get("status") == "pass", "multi-round status must be pass")
+    rounds = result.get("rounds") or {}
+    require(rounds.get("frozen") == 5, "multi-round needs 5 frozen rounds")
+    require(rounds.get("perturbed") == 5, "multi-round needs 5 perturbed rounds")
+    require(rounds.get("total") == 10, "multi-round total must be 10")
+    round_summaries = result.get("roundSummaries")
+    require(isinstance(round_summaries, list) and len(round_summaries) == 10, "multi-round needs 10 per-round records")
+    for summary in round_summaries:
+        require(isinstance(summary, dict), "invalid per-round record")
+        require(summary.get("pass") is True, f"{summary.get('roundId')} did not pass")
+        require(not summary.get("failedChecks"), f"{summary.get('roundId')} has failed checks")
+        ratios = summary.get("ratios") or {}
+        require(float(ratios.get("mainContextReduction", 0)) >= 0.30, f"{summary.get('roundId')} main-context reduction below 30%")
+        require(float(ratios.get("totalTokenMultiplier", 99)) < 1.0, f"{summary.get('roundId')} total-token multiplier is not positive")
+        require(float(ratios.get("latencyMultiplier", 99)) <= 2.5, f"{summary.get('roundId')} latency multiplier above 2.5")
+        require(summary.get("evidenceRefsResolution") == 1.0, f"{summary.get('roundId')} evidence refs incomplete")
+        require(summary.get("scopeViolations") == 0 and summary.get("staleReferences") == 0, f"{summary.get('roundId')} has scope/stale failures")
+        require(summary.get("rawChildTranscriptChars") == 0, f"{summary.get('roundId')} leaked raw transcript")
+        require(summary.get("rawTranscriptInjected") is False, f"{summary.get('roundId')} injected raw transcript")
+        require(int(summary.get("maxRecursiveDepth", 99)) <= 1, f"{summary.get('roundId')} depth exceeded")
+    stats = result.get("stats") or {}
+    token = stats.get("tokenMultiplier") or {}
+    context = stats.get("mainContextReduction") or {}
+    require(float(token.get("median", 99)) < 1.0, "median total-token multiplier is not positive")
+    require(float(token.get("p95", 99)) < 1.0, "P95 total-token multiplier is not positive")
+    require(float(context.get("median", 0)) >= 0.30, "median main-context reduction below 30%")
+    gates = result.get("gates") or {}
+    require(gates.get("all") is True, "multi-round aggregate gate is not true")
+    perturbation = result.get("perturbation") if isinstance(result.get("perturbation"), dict) else None
+    require(perturbation is not None and perturbation.get("profile") == "varied", "aggregate perturbation profile is missing")
+    require(perturbation.get("extraCharsPerRound") == [4000, 8000, 12000, 16000, 24000], "varied-noise sizes are not the frozen sequence")
+    profiles = result.get("profiles")
+    require(isinstance(profiles, list) and len(profiles) == 2, "multi-round needs 2 profiles")
+    require(any((p.get("perturbation") or {}).get("profile") == "varied" for p in profiles if isinstance(p, dict)), "varied perturbation profile is missing")
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", required=True, type=Path)
@@ -121,6 +162,10 @@ def main() -> None:
     args = parser.parse_args()
     workspace = args.workspace.resolve()
     result = load_json(args.result.resolve())
+    if result.get("schemaVersion") == "ContextFoldingMultiRoundEvalResult/v2":
+        validate_multiround(result)
+        print("PASS: multi-round real-task evidence is valid")
+        return
     run_tests(workspace)
     validate_result(result, workspace)
     print("PASS: real task tests and context-folding eval manifest are valid")
