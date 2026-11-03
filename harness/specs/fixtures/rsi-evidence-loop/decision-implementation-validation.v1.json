@@ -1,6 +1,6 @@
 {
   "schemaVersion": "RsiDecisionImplementationAcceptance/v1",
-  "generatedAt": "2026-11-03T15:44:29.407Z",
+  "generatedAt": "2026-11-03T16:00:52.031Z",
   "driven_by": "agent",
   "actor": "codex/rsi-decision-implementation",
   "status": "passed-with-global-ci-residual",
@@ -51,7 +51,7 @@
       "README.ja-JP.md": "f0fefa3c3a3c8411fb820ad93b144eaf88ce23a7",
       "README.md": "ae738bf177f911169cce1fd68cc1a54c2d80900a",
       "README.zh-CN.md": "f0ab83dd208bfbd4902f96c0d7034bd8248afaed",
-      "docs/dev/rsi-capability-and-boundaries.md": "831d855d1d9060f5007a68856cec090645f75aee",
+      "docs/dev/rsi-capability-and-boundaries.md": "244a22829980ee752c245c1baff5bb55fa897061",
       "docs/dev/rsi-decision-implementation.md": "518a89cf1907ab848e7ee8a144a3746fbb182c2a",
       "harness/specs/fixtures/agent-first-framework/loop-validation-report.json": "a368708d02860efa95da56af21112592b8fc5357",
       "harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json": "47db72ba4f84b901283954e53383123e3acf8ded",
