@@ -28,7 +28,7 @@ function makeDbPath(prefix: string): string {
   return path.join(dir, "openclaw.sqlite");
 }
 
-import { mkdtempSync } from "node:fs";
+import { existsSync, mkdtempSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
@@ -78,333 +78,38 @@ afterAll(() => {
 });
 
 describe("Layer 1: write-path real filtering — useful facts persist through 4 layers", () => {
-  it("useful_fact_persists_through_4_layers", () => {
-    const dbPath = makeDbPath("l1-useful-");
-    const persistence = makePersistence(dbPath);
-    const fact = buildRuntimeMemoryTemporalFactFixture({
-      factId: "fact_useful_1",
-      taskId: "task_programming",
-      subject: "DevPreference",
-      predicate: "package_manager",
-      objectSummary: "User project uses pnpm as package manager",
-      valid_at: 100,
-      reference_time: 100,
-    });
-    const result = persistence.appendFact(fact);
-    expect(result).toMatchObject({ status: "persisted", stored: true, duplicate: false, persisted: true });
+  it("cannot exercise the write-path filtering layers while persistence is retired", () => {
+    const dbPath = makeDbPath("write-path-semantic-retired-");
 
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    const facts = loaded.store.queryFacts({ taskId: "task_programming" });
-    expect(facts.some((f) => f.factId === "fact_useful_1")).toBe(true);
-  });
-});
+    // TF-0500 retired runtime.memory.persist, so makePersistence() throws before any
+    // fact reaches the 4-layer write filter. The 12 cases that probed useful-fact
+    // acceptance, syntactic-noise rejection, truncation, dedupe, invalidation and
+    // FIFO eviction are therefore unreachable.
+    //
+    // NOTE: this is a real coverage loss. The sanitize/persist internals are not
+    // exported, so those behaviours cannot be tested without re-enabling persist.
+    expect(() => makePersistence(dbPath)).toThrow(/migration failed/);
 
-describe("Layer 1: write-path real filtering — syntactic noise rejected", () => {
-  it("raw_chat_log_rejected_at_persistence", () => {
-    const dbPath = makeDbPath("l1-rawchat-");
-    const persistence = makePersistence(dbPath);
-    const fact = makeRawContentFact({
-      factId: "fact_raw_chat",
-      objectSummary: "user: hello, assistant: hi there, tool: result output",
+    const persistence = createRuntimeMemoryPersistenceStore({
+      config: RUNTIME_MEMORY_EVAL_CONFIG,
+      database: { path: dbPath },
+      now: NOW,
     });
-    const result = persistence.appendFact(fact);
-    expect(result).toMatchObject({ status: "rejected", persisted: false });
-    if (result.status === "rejected") {
-      expect(result.reason).toBe("raw_chat_log");
-    }
+    expect(persistence.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
+    expect(persistence.appendFact(buildRuntimeMemoryTemporalFactFixture({ factId: "retired_fact" }))).toMatchObject({
+      status: "skipped",
+      reason: "flag_disabled",
+    });
   });
 
-  it("secret_rejected_at_persistence", () => {
-    const dbPath = makeDbPath("l1-secret-");
-    const persistence = makePersistence(dbPath);
-    const fact = makeRawContentFact({
-      factId: "fact_secret",
-      objectSummary: "User API key is sk-TEST-PLACEHOLDER-DO-NOT-USE",
+  it("keeps retired writes from creating a database file", () => {
+    const dbPath = makeDbPath("write-path-semantic-no-file-");
+    const persistence = createRuntimeMemoryPersistenceStore({
+      config: RUNTIME_MEMORY_EVAL_CONFIG,
+      database: { path: dbPath },
+      now: NOW,
     });
-    const result = persistence.appendFact(fact);
-    expect(result).toMatchObject({ status: "rejected", persisted: false });
-    if (result.status === "rejected") {
-      expect(result.reason).toBe("secret");
-    }
-  });
-
-  it("prompt_dump_rejected_at_persistence", () => {
-    // Persistence layer rejects raw prompt dumps (system prompt / raw prompt / template).
-    // NOTE: prompt-injection PHRASES ("ignore instructions") are caught by the
-    // consumer sentinel, NOT by persistence. This is a real architectural finding:
-    // persistence defends against raw leaks, consumer defends against injection.
-    const dbPath = makeDbPath("l1-promptdump-");
-    const persistence = makePersistence(dbPath);
-    const fact = makeRawContentFact({
-      factId: "fact_prompt_dump",
-      objectSummary: "Leaked raw system prompt dump with template and subagent details",
-    });
-    const result = persistence.appendFact(fact);
-    expect(result).toMatchObject({ status: "rejected", persisted: false });
-    if (result.status === "rejected") {
-      expect(result.reason).toBe("prompt");
-    }
-  });
-});
-
-describe("Layer 1: write-path real filtering — field truncation", () => {
-  it("field_truncation_preserves_semantic_core", () => {
-    const dbPath = makeDbPath("l1-trunc-");
-    const persistence = makePersistence(dbPath);
-    const longSummary = "A".repeat(2000);
-    const fact = buildRuntimeMemoryTemporalFactFixture({
-      factId: "fact_trunc",
-      taskId: "task_trunc",
-      subject: "TruncTest",
-      predicate: "long_field",
-      objectSummary: longSummary,
-      valid_at: 100,
-      reference_time: 100,
-    });
-    const result = persistence.appendFact(fact);
-    expect(result).toMatchObject({ status: "persisted", stored: true });
-
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    const facts = loaded.store.queryFacts({ taskId: "task_trunc" });
-    const stored = facts.find((f) => f.factId === "fact_trunc");
-    expect(stored).toBeDefined();
-    // objectSummary should be truncated to MAX_TEXT_LENGTH (512) + "..."
-    expect(stored!.objectSummary.length).toBeLessThanOrEqual(515);
-    // Semantic core (first 512 chars) preserved
-    expect(stored!.objectSummary.startsWith("A".repeat(100))).toBe(true);
-  });
-});
-
-describe("Layer 1: write-path real filtering — deduplication", () => {
-  it("duplicate_fact_id_not_merged", () => {
-    const dbPath = makeDbPath("l1-dup-");
-    const persistence = makePersistence(dbPath);
-    const fact1 = buildRuntimeMemoryTemporalFactFixture({
-      factId: "fact_dup",
-      taskId: "task_dup",
-      subject: "DupTest",
-      predicate: "value",
-      objectSummary: "First version",
-      valid_at: 100,
-      reference_time: 100,
-    });
-    const fact2 = buildRuntimeMemoryTemporalFactFixture({
-      factId: "fact_dup",
-      taskId: "task_dup",
-      subject: "DupTest",
-      predicate: "value",
-      objectSummary: "Second version with different content",
-      valid_at: 100,
-      reference_time: 100,
-    });
-    const r1 = persistence.appendFact(fact1);
-    const r2 = persistence.appendFact(fact2);
-    expect(r1).toMatchObject({ status: "persisted", stored: true });
-    expect(r2).toMatchObject({ status: "persisted", stored: false, duplicate: true });
-
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    const facts = loaded.store.queryFacts({ taskId: "task_dup" });
-    expect(facts.length).toBe(1);
-    // First version wins (fact dedup does NOT merge)
-    expect(facts[0].objectSummary).toBe("First version");
-  });
-
-  it("episode_dedupe_merges_evidence", () => {
-    const dbPath = makeDbPath("l1-epdup-");
-    const persistence = makePersistence(dbPath);
-    const episode = buildRuntimeMemoryEpisodeFixture({
-      episodeId: "episode_dedup",
-      taskId: "task_epdup",
-      kind: "verifier_summary",
-      reference_time: 100,
-      idempotencyKey: "task_epdup:verifier:summary",
-      boundedSummary: "Evidence merge test episode",
-      sourceRefs: [{ type: "test", ref: "evidence_a" }],
-      evidenceRefs: [{ type: "test", ref: "trace_a" }],
-    });
-    const episode2 = buildRuntimeMemoryEpisodeFixture({
-      episodeId: "episode_dedup",
-      taskId: "task_epdup",
-      kind: "verifier_summary",
-      reference_time: 100,
-      idempotencyKey: "task_epdup:verifier:summary",
-      boundedSummary: "Evidence merge test episode",
-      sourceRefs: [{ type: "test", ref: "evidence_b" }],
-      evidenceRefs: [{ type: "test", ref: "trace_b" }],
-    });
-    const r1 = persistence.appendEpisode(episode);
-    const r2 = persistence.appendEpisode(episode2);
-    expect(r1).toMatchObject({ status: "persisted", stored: true });
-    // Episode dedup MERGES evidence (unlike fact dedup)
-    expect(r2).toMatchObject({ status: "persisted", stored: false, duplicate: true });
-
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    expect(loaded.stats.episodes).toBe(1);
-  });
-});
-
-describe("Layer 1: write-path real filtering — semantic noise NOT rejected (real finding)", () => {
-  it("semantic_noise_fact_NOT_rejected", () => {
-    const dbPath = makeDbPath("l1-noise1-");
-    const persistence = makePersistence(dbPath);
-    // Well-formed, structurally valid, but semantically irrelevant to any task
-    const fact = buildRuntimeMemoryTemporalFactFixture({
-      factId: "fact_noise_pizza",
-      taskId: "task_programming",
-      subject: "DevPreference",
-      predicate: "package_manager",
-      objectSummary: "User likes pineapple on pizza",
-      valid_at: 100,
-      reference_time: 100,
-    });
-    const result = persistence.appendFact(fact);
-    // REAL FINDING: system has no semantic filter, so noise IS persisted
-    expect(result).toMatchObject({ status: "persisted", stored: true });
-
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    const facts = loaded.store.queryFacts({ taskId: "task_programming" });
-    expect(facts.some((f) => f.objectSummary === "User likes pineapple on pizza")).toBe(true);
-  });
-
-  it("semantic_noise_travel_fact_NOT_rejected", () => {
-    const dbPath = makeDbPath("l1-noise2-");
-    const persistence = makePersistence(dbPath);
-    const fact = buildRuntimeMemoryTemporalFactFixture({
-      factId: "fact_noise_cat",
-      taskId: "task_debugging",
-      subject: "DebugContext",
-      predicate: "root_cause",
-      objectSummary: "User's cat is named Mittens and likes to sit on the keyboard",
-      valid_at: 100,
-      reference_time: 100,
-    });
-    const result = persistence.appendFact(fact);
-    expect(result).toMatchObject({ status: "persisted", stored: true });
-
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    const facts = loaded.store.queryFacts({ taskId: "task_debugging" });
-    expect(facts.some((f) => f.factId === "fact_noise_cat")).toBe(true);
-  });
-});
-
-describe("Layer 1: write-path real filtering — invalidation marks not deletes", () => {
-  it("invalidation_marks_not_deletes", () => {
-    const dbPath = makeDbPath("l1-inval-");
-    const persistence = makePersistence(dbPath);
-    const fact = buildRuntimeMemoryTemporalFactFixture({
-      factId: "fact_inval",
-
-      subject: "InvalTest",
-      predicate: "value",
-      objectSummary: "Will be invalidated",
-      valid_at: 100,
-      reference_time: 100,
-    });
-    persistence.appendFact(fact);
-
-    const proposal = buildRuntimeMemoryInvalidationProposalFixture({
-      invalidationId: "inval_1",
-      factId: "fact_inval",
-
-      reason: "superseded",
-      invalid_at: 200,
-      reference_time: 200,
-      verificationStatus: "verified",
-    });
-    const invalResult = persistence.invalidateFact(proposal);
-    expect(invalResult).toMatchObject({ status: "persisted", stored: true });
-
-    // Fact still in DB (not deleted) — queryFacts filters invalidated facts by default,
-    // so use includeInvalidated: true OR check stats to verify physical presence.
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    expect(loaded.stats.facts).toBe(1); // fact still physically present
-    expect(loaded.stats.invalidations).toBe(1); // invalidation recorded
-    // Fact accessible with includeInvalidated flag
-    const facts = loaded.store.queryFacts({  includeInvalidated: true });
-    expect(facts.some((f) => f.factId === "fact_inval")).toBe(true);
-    // By default (without includeInvalidated), fact is filtered out — this is expected
-    const defaultFacts = loaded.store.queryFacts({ taskId: "task_inval" });
-    expect(defaultFacts.some((f) => f.factId === "fact_inval")).toBe(false);
-  });
-});
-
-describe("Layer 1: write-path real filtering — FIFO eviction at boundary", () => {
-  it("fifo_eviction_at_maxFacts_boundary", () => {
-    const dbPath = makeDbPath("l1-fifo-");
-    const persistence = makePersistence(dbPath, 10); // maxFacts=10
-    // Write 12 facts
-    for (let i = 0; i < 12; i += 1) {
-      const fact = buildRuntimeMemoryTemporalFactFixture({
-        factId: `fact_fifo_${i}`,
-        taskId: "task_fifo",
-        subject: "FifoTest",
-        predicate: "order",
-        objectSummary: `Fact number ${i}`,
-        valid_at: i,
-        reference_time: i,
-        confidence: 0.9,
-      });
-      persistence.appendFact(fact);
-    }
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    expect(loaded.stats.facts).toBe(10); // capped at maxFacts
-    const facts = loaded.store.queryFacts({ taskId: "task_fifo" });
-    const factIds = facts.map((f) => f.factId);
-    // First 2 evicted (FIFO)
-    expect(factIds).not.toContain("fact_fifo_0");
-    expect(factIds).not.toContain("fact_fifo_1");
-    // Last 10 retained
-    expect(factIds).toContain("fact_fifo_2");
-    expect(factIds).toContain("fact_fifo_11");
-  });
-
-  it("fifo_eviction_preserves_invalidated_facts_equally", () => {
-    // FIFO does not distinguish useful vs invalidated — both count toward maxFacts
-    const dbPath = makeDbPath("l1-fifo2-");
-    const persistence = makePersistence(dbPath, 5); // maxFacts=5
-    // Write 3 valid + 3 invalidated facts = 6 total, exceeds maxFacts=5
-    for (let i = 0; i < 3; i += 1) {
-      persistence.appendFact(buildRuntimeMemoryTemporalFactFixture({
-        factId: `fact_valid_${i}`,
-
-        subject: "FifoTest2",
-        predicate: "valid",
-        objectSummary: `Valid ${i}`,
-        valid_at: i,
-        reference_time: i,
-      }));
-    }
-    for (let i = 0; i < 3; i += 1) {
-      persistence.appendFact(buildRuntimeMemoryTemporalFactFixture({
-        factId: `fact_inval_${i}`,
-
-        subject: "FifoTest2",
-        predicate: "inval",
-        objectSummary: `Invalid ${i}`,
-        valid_at: i,
-        reference_time: i,
-      }));
-      persistence.invalidateFact(buildRuntimeMemoryInvalidationProposalFixture({
-        invalidationId: `inval_prop_${i}`,
-        factId: `fact_inval_${i}`,
-
-        reason: "superseded",
-        invalid_at: 100,
-        reference_time: 100,
-        verificationStatus: "verified",
-      }));
-    }
-    const loaded = persistence.loadStore();
-    if (loaded.status !== "loaded") throw new Error("loadStore failed");
-    // FIFO caps at 5, first fact evicted (no special retention for invalidated)
-    expect(loaded.stats.facts).toBe(5);
+    expect(persistence.migrate()).toMatchObject({ status: "skipped" });
+    expect(existsSync(dbPath)).toBe(false);
   });
 });
