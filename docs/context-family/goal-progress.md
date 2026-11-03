@@ -1315,3 +1315,35 @@ Use this packet before any handoff, fork, or context-pressure continuation.
     focused and repo-wide unit gates. Per the 2026-07-09 decision, those UI E2E
     failures are parked as UI/worktree drift and are not treated as backend
     closure blockers.
+
+## 2026-11-03 Inline/Spill retention development checkpoint
+
+- The default truncation references remain archive-backed and bounded. The
+  follow-up retention policy is explicitly off by default through
+  `runtime.contextFamily.archiveRecallRetention.enabled`.
+- The real recall tool issues provenance only after checksum/session checks.
+  The pruner and replacement planner use it for `ageTurns < 4`, at most 16000
+  visible characters total, and only when the existing budget can fit it.
+  Already-trimmed results, ordinary tools, user content, and assistant reasoning
+  get no added retention. No store, timer, queue, or re-injection is introduced.
+- The legacy pruner negative control was captured before implementation at
+  commit `10dd6c472`. The frozen `off-mode-baseline.json` is replayed by current
+  tests; metadata is never counted as provider-visible text.
+- Development proof passed 36 retention tests, one malformed-provider evidence
+  test, 10 would-trim tests, and 126 config-parity tests. Replay/precheck retain
+  minimal verified lineage; eligible sources are selected before conversion and
+  final budgets are planned afterward with transient lineage removed before
+  dispatch. Existing call-id rewrites carry only a previously valid binding.
+  Guarded disk reload covers large ASCII/CJK pages; multi-block budget failures
+  fall back to the existing unprotected plan. The evaluator retains real JSONL.
+  Multiple fitting recalls share the total cap, converter-added text remains
+  bounded, and masking replacements follow the enabled conversion boundary.
+  Retained pages do not consume truncation notices; actual budget pressure
+  releases the oldest protected page first through the existing planner.
+  This is a development checkpoint, not final acceptance.
+- Final deterministic/live-provider results, raw transcripts, source hashes,
+  command records, credential scan, and recovery index are retained under
+  `harness/specs/fixtures/context-inline-spill/`; closure depends on reading
+  those refreshed artifacts and completing the spec-declared gates.
+- Autonomous model recall selection, full-loop continuation, lossless full
+  summarization, product/default graduation, and GA are not claimed.

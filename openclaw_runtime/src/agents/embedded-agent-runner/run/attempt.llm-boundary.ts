@@ -5,14 +5,19 @@ import { stripInboundMetadata } from "../../../auto-reply/reply/strip-inbound-me
 import { buildTimestampPrefix } from "../../../gateway/server-methods/agent-timestamp.js";
 import { INTER_SESSION_PROMPT_PREFIX_BASE } from "../../../sessions/input-provenance.js";
 import { stripHistoricalRuntimeContextCustomMessages } from "../../internal-runtime-context.js";
-import type { AgentMessage } from "../../runtime/index.js";
+import type { Agent, AgentMessage } from "../../runtime/index.js";
+import { getRetainedArchiveRecalls, type ArchiveRecallRetentionOptions } from "../../archive-recall-retention.js";
 import { stripToolResultDetails } from "../../session-transcript-repair.js";
 import { normalizeAssistantReplayContent } from "../replay-history.js";
 import { markTranscriptPromptText } from "../tool-result-context-guard.js";
+import { truncateOversizedToolResultsInMessages } from "../tool-result-truncation.js";
+import { wrapStreamFnWithMessageTransform } from "./message-transform-stream-wrapper.js";
 import type { RuntimeContextCustomMessage } from "./runtime-context-prompt.js";
 
 type LlmBoundaryOptions = {
   timezone?: string;
+  /** Internal precheck only; provider conversion leaves this unset. */
+  archiveRecallRetention?: ArchiveRecallRetentionOptions;
   currentUserTimestampOverride?: {
     timestamp: number;
     text: string;
@@ -42,7 +47,10 @@ export function normalizeMessagesForLlmBoundary(
   options?: LlmBoundaryOptions,
 ): AgentMessage[] {
   const normalized = stripUnsafeBlockedRunMetadata(
-    stripToolResultDetails(normalizeAssistantReplayContent(messages)),
+    stripToolResultDetails(
+      normalizeAssistantReplayContent(messages),
+      options?.archiveRecallRetention,
+    ),
   );
   const withoutHistoricalInboundMetadata = stripHistoricalInboundMetadataFromUserMessages(
     normalized,
@@ -57,17 +65,95 @@ export function normalizeMessagesForCurrentPromptBoundary(params: {
   prompt: string;
   timezone?: string;
   currentUserTimestamp?: number;
+  archiveRecallRetention?: ArchiveRecallRetentionOptions;
 }): AgentMessage[] {
   const promptMessage = {
     role: "user" as const,
     content: [{ type: "text" as const, text: params.prompt }],
     timestamp: params.currentUserTimestamp ?? Date.now(),
   };
-  const boundaryOptions = params.timezone ? { timezone: params.timezone } : undefined;
+  const boundaryOptions = {
+    ...(params.timezone ? { timezone: params.timezone } : {}),
+    ...(params.archiveRecallRetention
+      ? { archiveRecallRetention: params.archiveRecallRetention }
+      : {}),
+  };
   return normalizeMessagesForLlmBoundary(
     [...params.messages, promptMessage],
     boundaryOptions,
   ).slice(0, -1);
+}
+
+/** Carries verified lineage across conversion, then enforces final provider budgets. */
+export function installProviderPromptHistoryTransform(params: {
+  agent: Pick<Agent, "convertToLlm" | "streamFn">;
+  contextWindowTokens: number;
+  maxChars: number;
+  aggregateMaxChars: number;
+  archiveRecallRetention: ArchiveRecallRetentionOptions;
+  observationMaskingMessages?: AgentMessage[];
+}): () => void {
+  const { agent, archiveRecallRetention } = params;
+  const project = (messages: AgentMessage[]): AgentMessage[] =>
+    truncateOversizedToolResultsInMessages(
+      messages,
+      params.contextWindowTokens,
+      params.maxChars,
+      params.aggregateMaxChars,
+      {
+        sessionId: archiveRecallRetention.sessionId,
+        archiveRecallRetention: archiveRecallRetention.enabled,
+      },
+    ).messages;
+  const baseConvertToLlm = agent.convertToLlm;
+  const providerConvertToLlm = archiveRecallRetention.enabled
+    ? async (messages: AgentMessage[]) => {
+        const source = params.observationMaskingMessages ?? messages;
+        const retainedByCallId = new Map(
+          getRetainedArchiveRecalls(source, {
+            ...archiveRecallRetention,
+            maxResultChars: Math.min(params.maxChars, archiveRecallRetention.maxResultChars ?? params.maxChars),
+          }).map((recall) => [recall.toolCallId, source[recall.index]]),
+        );
+        const converted = await baseConvertToLlm.call(agent, source);
+        const withoutDetails = stripToolResultDetails(converted as AgentMessage[]);
+        const planningMessages = withoutDetails.map((message) => {
+          if (message.role !== "toolResult") {
+            return message;
+          }
+          const original = retainedByCallId.get(message.toolCallId);
+          if (original?.role !== "toolResult" ||
+            JSON.stringify(original.content) !== JSON.stringify(message.content)) {
+            return message;
+          }
+          // This transient copy is only for planning. Conversion may add text
+          // to ordinary tools; final budgets must use those converted contents.
+          return { ...message, details: original.details };
+        }) as AgentMessage[];
+        return stripToolResultDetails(project(planningMessages)) as typeof converted;
+      }
+    : baseConvertToLlm;
+  agent.convertToLlm = providerConvertToLlm;
+  const baseStreamFn = agent.streamFn;
+  const providerPromptStreamFn = wrapStreamFnWithMessageTransform(baseStreamFn, (messages) => {
+    if (archiveRecallRetention.enabled) {
+      return messages;
+    }
+    if (params.observationMaskingMessages) {
+      return params.observationMaskingMessages;
+    }
+    // Flag-off keeps the existing stream-side projection and overlay behavior.
+    return project(messages);
+  });
+  agent.streamFn = providerPromptStreamFn;
+  return () => {
+    if (agent.convertToLlm === providerConvertToLlm) {
+      agent.convertToLlm = baseConvertToLlm;
+    }
+    if (agent.streamFn === providerPromptStreamFn) {
+      agent.streamFn = baseStreamFn;
+    }
+  };
 }
 
 export function normalizeCurrentPromptTextForLlmBoundary(params: {

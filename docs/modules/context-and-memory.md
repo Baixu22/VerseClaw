@@ -151,7 +151,21 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 - lifecycle metadata 继续保存 archiveHandle，prompt 投影不新增持久化 authority；
 - 该行为不等于启用 observation masking、Tool Search 或更改 compaction 默认值。
 
-eval 入口：scripts/context-inline-spill-eval.mts。它先跑 deterministic baseline/reference-visible paired oracle，再按显式 provider/model/endpoint 运行 live-provider 对照。
+回读保留开关为 `runtime.contextFamily.archiveRecallRetention.enabled`，默认关闭。显式启用后，只有已经通过 checksum 与当前 session 校验的 `context_archive_recall` 成功结果获得来源标记；pruner 和 tool-result replacement 保护 `ageTurns < 4` 的结果，所有保护文本合计最多 16,000 字符。单条/aggregate 预算优先，容纳不了时沿原有裁剪路径；普通工具、用户文本、assistant reasoning 与未回读 archive 不获得额外保护。
+
+年龄从消息序列的后续 assistant 轮推导，重复投影不刷新窗口。相同 archive 页只保护最近一次回读，已经裁剪过的投影不凭残留 metadata 重新获得保护；实现不新增 timer、持久队列或重复注入。达到第四轮或关闭开关后恢复旧路径。完整摘要 compaction 与硬上下文溢出继续由已有 owner 决定，这不是无限保留或无损摘要承诺。
+
+内部 session replay 和 precheck 保留最小已校验来源，调用 ID 规范化同步携带该绑定；原本不匹配的来源不会因 ID 重写变成有效。转换前选择来源，`convertToLlm` 后按最终可见文本规划保留与截断，再移除仅用于规划的标记，provider 消息不包含 `details`。最新回读页无法满足预算或已被裁剪时，不转而保护同页的旧回读。
+
+开启保留时，回读原文仅放在模型可见 `content`，`details` 只保留分页诊断和小型来源标记，以通过现有 8 KiB transcript 元数据上限。评测实际执行 guarded write、磁盘重载和重放，并保留 JSONL。共享计划按实际截断结果核算预算，不为完整保留项预扣 notice；空间不足时从最旧项开始释放保护重新规划，直到恢复无保留的既有路径。
+
+单条上限按每个结果分别判断，多个回读共享 16,000 字符与 aggregate 剩余空间。转换器补入的可见提示也接受最终预算检查；已有 observation-masking 替换在开启保留时通过正常转换和标记移除，保持内部来源不进入 provider 消息。
+
+eval 入口：`openclaw_runtime/node_modules/.bin/tsx --expose-gc scripts/context-inline-spill-eval.mts --mode deterministic --out D:/tmp/context-inline-spill-eval`。四臂为 `baseline`、`reference-visible`、`recall-stable` 和 `retention-off`，最后一臂必须实际丢失回读证据；工具调用由 agent 驱动，不声称模型自主选择 recall。`--mode live` 按显式 endpoint/model 与进程环境凭据执行第三方模型对照，只提供模型可见文本，不把 oracle 答案或隐藏 details 放入请求。
+
+结果分别记录质量、主上下文字符/token 代理、真实 provider usage、各阶段延迟、成本或 not-run、scope/stale、refs resolution 和原始 transcript。5000 次重复投影的 GC 后 heap 增长门限为 2 MiB，只代表该投影路径的工程测量。当前可回读的 curated 证据与来源索引位于 `harness/specs/fixtures/context-inline-spill/`。
+
+评测经过真实 replay、pruner、precheck 和 provider projection helper，原始 transcript 保存各边界输入与输出。提供方答案不能解析时，失败结果继续保留脱敏原始响应、HTTP 状态和已返回 usage，避免把已消耗 token 错写成未知。
 
 ## 4.1 会话起始注入（`session_start` 通道）
 

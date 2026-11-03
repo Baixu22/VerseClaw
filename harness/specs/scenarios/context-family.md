@@ -13,6 +13,8 @@ ownedPaths:
   - harness/specs/tasks/context-status-projection-shadow.md
   - harness/specs/tasks/context-observation-masking-projection.md
   - harness/specs/tasks/context-readonly-recall-surface.md
+  - harness/specs/tasks/context-inline-spill-default-path.md
+  - harness/specs/fixtures/context-inline-spill/**
 requiredRules:
   - context-family-boundary
   - context-runtime-kit-boundary
@@ -33,6 +35,8 @@ Use this scenario when work defines or changes:
 - ContextItemRegistry shadow metadata.
 - Context Status projections.
 - Observation masking and read-only recall surfaces.
+- Default truncation archive references and explicitly enabled, bounded
+  retention of verified archive recall result projections.
 - The staged harness task map for Context Family work.
 
 ## Scenario Boundaries

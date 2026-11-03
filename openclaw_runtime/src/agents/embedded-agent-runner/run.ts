@@ -2453,6 +2453,8 @@ export async function runEmbeddedAgent(
                     sessionKey: params.sessionKey,
                     agentId: sessionAgentId,
                     config: params.config,
+                    archiveRecallRetention:
+                      params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
                   });
                   if (truncResult.truncated) {
                     log.info(
@@ -2516,6 +2518,8 @@ export async function runEmbeddedAgent(
                   sessionKey: params.sessionKey,
                   agentId: sessionAgentId,
                   config: params.config,
+                  archiveRecallRetention:
+                    params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
                 });
                 if (truncResult.truncated) {
                   log.info(

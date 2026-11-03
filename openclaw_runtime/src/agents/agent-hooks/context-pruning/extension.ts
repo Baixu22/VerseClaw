@@ -16,6 +16,10 @@ export default function contextPruningExtension(api: ExtensionAPI): void {
     if (!runtime) {
       return undefined;
     }
+    const archiveRecallRetention = {
+      enabled: runtime.archiveRecallRetention,
+      sessionId: runtime.sessionId,
+    };
 
     // TF-0646: shadow evidence only. The flag changes whether a report is
     // recorded, never whether the pruner runs or what it returns.
@@ -27,6 +31,7 @@ export default function contextPruningExtension(api: ExtensionAPI): void {
         isToolPrunable: runtime.isToolPrunable,
         contextWindowTokensOverride: runtime.contextWindowTokens ?? undefined,
         dropThinkingBlocksForEstimate: runtime.dropThinkingBlocks,
+        archiveRecallRetention,
       });
       runtime.lastWouldTrim = { ...report, gate: decideWouldTrimGate(report) };
     }
@@ -50,8 +55,8 @@ export default function contextPruningExtension(api: ExtensionAPI): void {
       isToolPrunable: runtime.isToolPrunable,
       contextWindowTokensOverride: runtime.contextWindowTokens ?? undefined,
       dropThinkingBlocksForEstimate: runtime.dropThinkingBlocks,
+      archiveRecallRetention,
     });
-
 
     if (next === event.messages) {
       return undefined;
@@ -67,6 +72,7 @@ export default function contextPruningExtension(api: ExtensionAPI): void {
         isToolPrunable: runtime.isToolPrunable,
         contextWindowTokensOverride: runtime.contextWindowTokens ?? undefined,
         dropThinkingBlocksForEstimate: runtime.dropThinkingBlocks,
+        archiveRecallRetention,
       });
       runtime.lastWouldTrim = { ...report, gate: decideWouldTrimGate(report) };
     }

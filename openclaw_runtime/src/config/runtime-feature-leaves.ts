@@ -86,6 +86,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
   },
   contextRuntimeKit: { enabled: true, shadow: true },
   contextFamily: {
+    archiveRecallRetention: { enabled: false },
     observationMasking: { enabled: true, minChars: 2000, preserveNewestObservationCount: 2 },
     contextStatus: { enabled: true },
   },

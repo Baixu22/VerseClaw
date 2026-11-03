@@ -100,6 +100,8 @@ export type DcsContextViewToolName = (typeof DCS_CONTEXT_VIEW_TOOL_NAMES)[number
 
 export type DcsContextAgentToolOptions = {
   sessionId?: string;
+  /** Opt-in recall provenance for bounded prompt retention; omitted/false preserves results. */
+  archiveRecallRetention?: boolean;
   /** Prefer live run session when sandbox session key differs. */
   runSessionKey?: string;
   agentSessionKey?: string;
@@ -352,13 +354,15 @@ export function createContextArchiveRecallTool(
       "Read only an archive handle emitted by Context observation masking. The handle must belong to the current session; output is bounded and can be paged with offset.",
     parameters: ContextArchiveRecallSchema,
     risk: "readonly",
-    execute: async (_toolCallId, args) => {
+    execute: async (toolCallId, args) => {
       const params = asToolParamsRecord(args);
       const uri = readStringParam(params, "archive_uri", { required: true })!;
       const checksum = readStringParam(params, "checksum", { required: true })!;
       const byteLengthRaw = params.byte_length;
       const byteLength =
-        typeof byteLengthRaw === "number" && Number.isSafeInteger(byteLengthRaw) && byteLengthRaw >= 0
+        typeof byteLengthRaw === "number" &&
+        Number.isSafeInteger(byteLengthRaw) &&
+        byteLengthRaw >= 0
           ? byteLengthRaw
           : 0;
       let handle;
@@ -394,7 +398,7 @@ export function createContextArchiveRecallTool(
           : CONTEXT_ARCHIVE_RECALL_DEFAULT_MAX_CHARS;
       const text = archivePayloadToText(verified.payload);
       const content = text.slice(offset, offset + maxChars);
-      return jsonResult({
+      const payload = {
         ok: true,
         archive_uri: handle.uri,
         checksum: handle.checksum,
@@ -404,7 +408,40 @@ export function createContextArchiveRecallTool(
         char_count: text.length,
         byte_count: Buffer.byteLength(text, "utf8"),
         truncated: offset + content.length < text.length,
-      });
+      };
+      const result = jsonResult(payload);
+      if (options.archiveRecallRetention !== true) {
+        return result;
+      }
+      // Provenance is issued only after checksum and session verification.
+      // Keep it out of the text payload so retention-off output stays identical.
+      return {
+        ...result,
+        details: {
+          // Raw recalled text is already in content. Keep lineage small enough
+          // for the existing transcript details cap, including CJK pages.
+          ok: payload.ok,
+          archive_uri: payload.archive_uri,
+          checksum: payload.checksum,
+          offset: payload.offset,
+          max_chars: payload.max_chars,
+          char_count: payload.char_count,
+          byte_count: payload.byte_count,
+          truncated: payload.truncated,
+          archiveRecallOrigin: {
+            source: CONTEXT_ARCHIVE_RECALL_TOOL_NAME,
+            sessionId,
+            archiveUri: handle.uri,
+            checksum: handle.checksum,
+            offset,
+            toolCallId,
+            projectedChars: result.content.reduce(
+              (sum, block) => sum + (block.type === "text" ? block.text.length : 0),
+              0,
+            ),
+          },
+        },
+      };
     },
   };
 }

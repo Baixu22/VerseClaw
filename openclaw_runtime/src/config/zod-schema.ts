@@ -216,6 +216,7 @@ const RuntimeFeatureSchema = z
       .optional(),
     contextFamily: z
       .object({
+        archiveRecallRetention: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         observationMasking: z
           .object({
             enabled: z.boolean().optional(),

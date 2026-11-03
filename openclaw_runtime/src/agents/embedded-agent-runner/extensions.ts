@@ -649,6 +649,7 @@ function resolveContextWindowTokens(params: {
 function buildContextPruningFactory(params: {
   cfg: OpenClawConfig | undefined;
   sessionManager: SessionManager;
+  sessionId?: string;
   provider: string;
   modelId: string;
   model: ProviderRuntimeModel | undefined;
@@ -673,6 +674,9 @@ function buildContextPruningFactory(params: {
 
   setContextPruningRuntime(params.sessionManager, {
     settings,
+    sessionId: params.sessionId,
+    archiveRecallRetention:
+      params.cfg?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
     contextWindowTokens: resolveContextWindowTokens(params),
     isToolPrunable: makeToolPrunablePredicate(settings.tools),
     dropThinkingBlocks: transcriptPolicy.dropThinkingBlocks,
