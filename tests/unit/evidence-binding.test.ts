@@ -8,7 +8,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { changedPathsBetween } from '../../scripts/lib/evidence-binding.mjs';
+import { changedPathsBetween, splitDirtyPaths } from '../../scripts/lib/evidence-binding.mjs';
 
 const TEMP_ROOT = 'D:/tmp';
 const created: string[] = [];
@@ -64,5 +64,32 @@ describe('changedPathsBetween', () => {
     git(root, ['commit', '-q', '-m', 'bound input changed']);
 
     expect(changedPathsBetween(root, sealed, 'HEAD', ['bound/input.txt', 'docs.md'])).toEqual(['bound/input.txt']);
+  });
+});
+
+describe('splitDirtyPaths', () => {
+  it('keeps a leading status space from corrupting the first path', () => {
+    const root = makeRepo();
+    // A staged deletion and an unstaged edit both start with a space column.
+    writeFileSync(join(root, 'bound', 'input.txt'), 'v2\n');
+    const split = splitDirtyPaths(root, ['bound/input.txt']);
+
+    expect(split.judged).toEqual(['bound/input.txt']);
+    expect(split.unrelated).toEqual([]);
+  });
+
+  it('separates an unbound edit from a judged input edit', () => {
+    const root = makeRepo();
+    writeFileSync(join(root, 'docs.md'), 'v2\n');
+    writeFileSync(join(root, 'bound', 'input.txt'), 'v2\n');
+    const split = splitDirtyPaths(root, ['bound/input.txt']);
+
+    expect(split.judged).toEqual(['bound/input.txt']);
+    expect(split.unrelated).toEqual(['docs.md']);
+  });
+
+  it('reports nothing for a clean tree', () => {
+    const root = makeRepo();
+    expect(splitDirtyPaths(root, ['bound/input.txt'])).toEqual({ judged: [], unrelated: [] });
   });
 });

@@ -41,11 +41,14 @@ export function changedPathsBetween(root, fromCommit, toRef = 'HEAD', paths = []
 export function splitDirtyPaths(root, boundPaths) {
   let out = '';
   try {
-    out = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], {
+    // -z avoids path quoting and, more importantly, keeps the two status
+    // columns verbatim: trimming a line would eat a leading status space and
+    // corrupt the first path.
+    out = execFileSync('git', ['status', '--porcelain', '-z', '--untracked-files=all'], {
       cwd: root,
       encoding: 'utf8',
       windowsHide: true,
-    }).trim();
+    });
   } catch {
     return { judged: [], unrelated: [] };
   }
@@ -53,12 +56,16 @@ export function splitDirtyPaths(root, boundPaths) {
   const bound = new Set((boundPaths ?? []).map((path) => String(path).replaceAll('\\', '/')));
   const judged = [];
   const unrelated = [];
-  for (const line of out.split(/\r?\n/u)) {
-    if (!line.trim()) continue;
-    let path = line.slice(3).trim();
-    const renamed = path.split(' -> ');
-    if (renamed.length === 2) path = renamed[1];
-    path = path.replace(/^"|"$/gu, '').replaceAll('\\', '/');
+  const fields = out.split('\0');
+  for (let index = 0; index < fields.length; index += 1) {
+    const field = fields[index];
+    if (!field) continue;
+    // In -z mode the record is `XY<path>`; a rename adds a second field that
+    // holds the original path, which is not a separate dirty entry.
+    const status = field.slice(0, 2);
+    const path = field.slice(3).replaceAll('\\', '/');
+    if (!path) continue;
+    if (status.includes('R') || status.includes('C')) index += 1;
     if (bound.has(path)) judged.push(path);
     else unrelated.push(path);
   }
