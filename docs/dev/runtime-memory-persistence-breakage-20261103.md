@@ -300,3 +300,53 @@ fs.writeFileSync(path, out, "utf8");
    全部塌缩成 `flag_disabled`。修法：只改 reason，保留"不打开 sqlite / 不建文件 / 不建表"断言。
 2. **写入辅助函数行为不一致**：`seedTempDb` 会抛错，`persistFacts` 不抛错（静默什么都不写）。
    修法：先读实现再决定断言，不要跨文件套用。
+
+## 14. TF-0697 closeout evidence (2026-11-03)
+
+- driven_by: agent
+- actor: codex/runtime-memory-audit
+- baseline before this closeout: `origin/main 610e7cfc4`
+- decision: **A — tests follow the existing TF-0500 retirement decision; product behavior is unchanged**
+- rollback boundary: revert the test-only commits listed below or set aside the local test rewrite; no product default, lock, approval authority, release verdict, persisted user data, or production source is changed
+
+### Final memory-surface result
+
+```text
+113 suites / 1070 passed / 0 failed / 40 skipped
+command: pnpm exec vitest run runtime-memory --reporter=json --outputFile=D:/tmp/tf0697-all-memory-final.json
+
+report SHA-256: b30fa75b72b6b4552d54ee3189397173e17064503094511486038f2b9f00318d
+```
+
+The 40 skips are pre-existing live/model-dependent `skipIf` cases; they are not converted
+into passes and are not evidence of the retired persistence path working.
+
+### Additional closeout commits
+
+- `a95412254` — relation-chain retirement assertions (14/14)
+- `1480ec8db` — adapter and self-edit persistence boundaries (enabled success paths are unreachable; those probes are semantic coverage loss, while reachable failure-injection cases remain)
+- `57a85749d` — operator-inspection retirement boundary (success-path probes become zero-side-effect `flag_disabled` assertions)
+- `a358d4a43` — repository attribute pin for the byte-addressed baseline fixture
+- `3d36783bb` — baseline-doc guard hashes canonical text bytes so Windows checkout EOL policy cannot create a false drift
+
+### Final focused and type gates
+
+```text
+pnpm exec vitest run tests/unit/task-loop-controller.test.ts tests/unit/runtime-memory-context-contracts.test.ts tests/unit/product-acceptance-shortfalls.test.ts tests/unit/runtime-memory-baseline-doc-guard.test.ts
+4 files / 96 tests passed
+
+node scripts/typecheck-agent-dev.mjs --cache
+success=true; node=0, web=0, test=0; errorCount=0
+
+git diff --check
+0 findings
+
+scoped ESLint over the five changed memory test files
+0 errors / 0 warnings
+```
+
+### Residual limitations
+
+- `pnpm harness validate --spec harness/specs/tasks/runtime-memory-retirement-closeout.md` still fails closed because the branch includes the separately merged context-folding surface (135 changed paths relative to `origin/main`) while this task spec only owns the memory closeout paths. This is not represented as a Harness pass.
+- The retired durable SQLite success paths no longer have end-to-end test coverage because production deliberately cannot activate them. Sanitizer and failure-injection contracts that remain reachable are retained.
+- No claim is made that retired Runtime Memory persistence works, that the memory system benefits product behavior, that the full product is GA, or that any real-human evidence exists.
