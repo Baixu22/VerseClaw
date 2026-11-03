@@ -3,11 +3,11 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "candidate": {
-    "commit": "cae358822fb87a2c8cfeee689b7e49a8e3b6ba81",
-    "tree": "f1017d2e3e10664d8b331973e12a48e8bbd42b07",
+    "commit": "b78f1458fcd50755d21c823525e4ef0549ab7098",
+    "tree": "5cda0ee38a92f825a1a6d4b836519ba1a1efed40",
     "dirty": false,
     "sourceHashes": {
-      "scripts/rsi-historical-task-corpus.mjs": "5df8a7c4ac6505628aed9087eabdc1e4d722e1f3b36d536663be0a6f54df7b19",
+      "scripts/rsi-historical-task-corpus.mjs": "0151e1949283b1de9e4f8abea2b507b764247749f450b082090f8de4d0ed5d9d",
       "scripts/rsi-historical-task-corpus.d.mts": "fc0a19370c47b08addc9730c68278ba7b392fc16bf5dd60034b420d438242683",
       "scripts/lib/rsi-historical-task-corpus.mjs": "934d278293d5aefb99fa7076b2a34624ec1cb1ebea4c28f4be5e84823c63cc81",
       "scripts/lib/rsi-historical-task-corpus.d.mts": "43156741a909994f933c99973ecc941e0a45caef13dcc4ac8f48327a2e58955a",
@@ -15,7 +15,7 @@
       "scripts/lib/agent-first-graders.d.mts": "730c6865c5f16202e35272245f499505a6fe1d9bb2e16caf9ed196192f5d7a97",
       "scripts/lib/evidence-binding.mjs": "1dbec511e851077aed26a5aa4ea9fe6fd27a8a6b5eea0141f4799ef025f42403",
       "scripts/lib/evidence-binding.d.mts": "4a08ef3bcc6d78a86eec5d5d8c44efcff56a92ba5348c3d589a5235edee24a55",
-      "tests/unit/rsi-historical-task-corpus.test.ts": "f746e7f846d935c843e306d8cb84f8fd3a4c1d0d5c1cbb414ee493f43ec3bb61",
+      "tests/unit/rsi-historical-task-corpus.test.ts": "ceedd8cd86384d3f8c84b745034907420e0f045a974c64b19e964d4aaf4027e3",
       "tests/unit/agent-first-graders.test.ts": "54eb094f7d6af69439b10cf6c5f5963d89eec7b99b49d51b4e7fe926aad63dfb",
       "tests/unit/agent-first-evaluation-framework.test.ts": "3d01944ec3d056105d2fd4ae5e6c13538deee95f07b21d3fd96ee7c8f2f0ce40",
       "tests/unit/agent-first-evaluation-loop.test.ts": "aafa24981f08f1cfd43278c17e0507aee9d854ad3bd6b322f4fb3a1a4fce2059",
