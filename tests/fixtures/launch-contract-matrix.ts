@@ -215,8 +215,8 @@ export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
   },
   {
     mdLabel: 'Runtime Memory shadow/provider/persist',
-    mdDefaultCell: '**false**',
-    declaredDefault: 'false',
+    mdDefaultCell: '**retired** (always off)',
+    declaredDefault: 'retired',
     assertedBy: 'memory-shadow-provider-persist-default',
   },
   {

@@ -157,7 +157,7 @@ describe('TF-0003 default configuration matrix', () => {
     });
 
     it('implementation defaults agree with declaredDefault for every row', async () => {
-      const { DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS } = await import(
+      const { DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS, resolveRuntimeMemoryFeatureFlags } = await import(
         '../../openclaw_runtime/src/runtime-core/memory-context'
       );
       const { readVtokenBridgeEnabledFromEnv } = await import(
@@ -207,12 +207,20 @@ describe('TF-0003 default configuration matrix', () => {
           resolveMemoryInjectPilotConfig({}).enabled === false
             ? 'false'
             : 'true',
-        'Runtime Memory shadow/provider/persist': () =>
-          DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS.shadow === false &&
-          DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS.provider === false &&
-          DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS.persist === false
-            ? 'false'
-            : 'true',
+        'Runtime Memory shadow/provider/persist': () => {
+          // TF-0500 retired these leaves: the default is off AND an explicit
+          // opt-in cannot turn them on. The probe must report 'retired', not
+          // merely 'false', or the md cell and the implementation can disagree
+          // while both look "off".
+          const retired =
+            DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS.shadow === false &&
+            DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS.provider === false &&
+            DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS.persist === false &&
+            resolveRuntimeMemoryFeatureFlags({
+              runtime: { memory: { shadow: true, provider: true, persist: true } },
+            }).persist === false;
+          return retired ? 'retired' : 'false';
+        },
         'SEKB master': () => (isSekbEnabled({}) === false ? 'false' : 'true'),
         // No enabling key exists at all; master-off means nothing writes back.
         'SEKB auto writeback': () => (isSekbEnabled({}) === false ? 'off' : 'on'),
@@ -291,19 +299,35 @@ describe('TF-0003 default configuration matrix', () => {
     expect(resolveMemoryInjectPilotConfig({}).enabled).toBe(false);
   });
 
-  // FP-P0-03: md row "Runtime Memory shadow/provider/persist" — explicit opt-in only.
-  it('locks Runtime Memory shadow/provider/persist default OFF [memory-shadow-provider-persist-default]', () => {
-    const empty = {} as { runtime?: { memory?: Record<string, unknown> } };
-    const memory = empty.runtime?.memory;
-    // Omitted config must not read as enabled for any of the three leaves.
-    expect(memory?.shadow === true).toBe(false);
-    expect(memory?.provider === true).toBe(false);
-    expect(memory?.persist === true).toBe(false);
-    // Explicit true is the only way in (documented "explicit opt-in only").
-    const optIn = { runtime: { memory: { shadow: true, provider: true, persist: true } } };
-    expect(optIn.runtime.memory.shadow).toBe(true);
-    expect(optIn.runtime.memory.provider).toBe(true);
-    expect(optIn.runtime.memory.persist).toBe(true);
+  // FP-P0-03 / TF-0500: md row "Runtime Memory shadow/provider/persist" — retired (always off).
+  it('locks Runtime Memory shadow/provider/persist as retired, not merely default-off [memory-shadow-provider-persist-default]', async () => {
+    const { resolveRuntimeMemoryFeatureFlags } = await import(
+      '../../openclaw_runtime/src/runtime-core/memory-context'
+    );
+
+    // Omitted config resolves to false for every retired leaf.
+    const empty = resolveRuntimeMemoryFeatureFlags({});
+    expect(empty.shadow).toBe(false);
+    expect(empty.provider).toBe(false);
+    expect(empty.persist).toBe(false);
+    expect(empty.proposeFacts).toBe(false);
+
+    // TF-0500 retires these: even an explicit opt-in cannot turn them on.
+    // (The previous assertion compared a freshly built object literal to itself,
+    // so it passed while production ignored the config entirely.)
+    const optIn = resolveRuntimeMemoryFeatureFlags({
+      runtime: { memory: { shadow: true, provider: true, persist: true, proposeFacts: true } },
+    });
+    expect(optIn.shadow).toBe(false);
+    expect(optIn.provider).toBe(false);
+    expect(optIn.persist).toBe(false);
+    expect(optIn.proposeFacts).toBe(false);
+
+    // candidateGeneration is deliberately kept configurable.
+    const candidate = resolveRuntimeMemoryFeatureFlags({
+      runtime: { memory: { candidateGeneration: true } },
+    });
+    expect(candidate.candidateGeneration).toBe(true);
   });
 
   it('locks SEKB master default OFF (no auto writeback graduation) [sekb-master-default]', () => {

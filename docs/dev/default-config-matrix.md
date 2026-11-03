@@ -22,7 +22,7 @@ This matrix is the single source of truth for **product defaults**. A component 
 | **working-memory** | runtime.contextBlock.working_memory.enabled | **true** | internal component of Workspace Context | Workspace Context off or kill switch |
 | **tool-registry** | runtime.contextBlock.tool-registry.enabled | **true** | internal component of Workspace Context | Workspace Context off or kill switch |
 | **Runtime Memory inject pilot** | runtime.memory.injectPilot.enabled | **false** | explicit true for a bounded pilot | flag off or kill switch |
-| **Runtime Memory shadow/provider/persist** | runtime.memory.shadow / .provider / .persist | **false** | explicit opt-in only | flag off |
+| **Runtime Memory shadow/provider/persist** | runtime.memory.shadow / .provider / .persist / .proposeFacts | **retired** (always off) | none; RETIRED_RUNTIME_MEMORY_FLAGS pins these to false, so no config can enable them (TF-0500) | always off |
 | **SEKB master** | runtime.contextBlock.sekb.enabled / OPENCLAW_SEKB_ENABLED | **false** | explicit true | flag/env off |
 | **SEKB auto writeback** | (none) | **off** | no automatic path; explicit review can create a governed proposal | leave flags false |
 | **SEKB shadow evaluation** | runtime.contextBlock.sekb.shadowEvaluation.enabled | **false** | SEKB master + explicit true | flags off |
