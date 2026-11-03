@@ -1,14 +1,9 @@
 // @vitest-environment node
-// P0-B: memory self-edit writes must persist through the runtime integration
-// port (SQLite), not just mutate the in-memory store snapshot that the adapter
-// rebuilds on every call. Covers cross-call / cross-restart durability, direct
-// SQLite row assertions, and persistence-failure injection.
+// P0-B: TF-0500 retires durable Runtime Memory persistence. These tests keep
+// the self-edit persistence-failure contracts reachable through an explicit
+// port while asserting configured persistence never reaches SQLite.
 
-import { mkdtempSync, rmSync } from "node:fs";
-import os from "node:os";
-import path from "node:path";
-import { DatabaseSync } from "node:sqlite";
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   executeMemorySelfEditTool,
   type MemorySelfEditToolContext,
@@ -22,24 +17,8 @@ import {
   buildRuntimeMemoryTemporalFactFixture,
   type RuntimeMemoryTemporalFact,
 } from "../../openclaw_runtime/src/runtime-core";
-import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";
 
 const persistConfig = { runtime: { memory: { persist: true } } };
-
-const tempDirs: string[] = [];
-
-afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
-  for (const dir of tempDirs.splice(0)) {
-    rmSync(dir, { recursive: true, force: true });
-  }
-});
-
-function createTempDbPath(): string {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "runtime-memory-self-edit-"));
-  tempDirs.push(dir);
-  return path.join(dir, "openclaw.sqlite");
-}
 
 function makeFact(
   id: string,
@@ -60,128 +39,115 @@ function makeFact(
   });
 }
 
-function seedFact(dbPath: string, fact: RuntimeMemoryTemporalFact): void {
-  const integration = createRuntimeMemoryRuntimeIntegration({
-    config: persistConfig,
-    database: { path: dbPath },
-    now: () => 100,
-  });
-  expect(integration.migrate()).toMatchObject({ status: "migrated" });
-  expect(integration.appendFact(fact)).toMatchObject({
-    status: "persisted",
-    stored: true,
-  });
-}
+describe("P0-B: memory self-edit persistence retirement", () => {
+  it("retires durable memory_update while preserving the disabled-write contract", async () => {
+    let appendFactCalls = 0;
+    let appendRelationCalls = 0;
+    const store = new RuntimeMemoryStore({ now: () => 1000 });
+    store.appendFact(makeFact("old_fact"));
+    const integration = createRuntimeMemoryRuntimeIntegration({
+      config: persistConfig,
+      persistence: {
+        migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
+        appendEpisode: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        appendFact: () => {
+          appendFactCalls += 1;
+          throw new Error("retired persistence must not be reached");
+        },
+        invalidateFact: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        persistRelation: () => {
+          appendRelationCalls += 1;
+          throw new Error("retired persistence must not be reached");
+        },
+        recordFactAccess: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        loadStore: () => ({ status: "skipped", reason: "flag_disabled", store }),
+      },
+      now: () => 2000,
+    });
 
-function makePersistentContext(dbPath: string, now = 1000): MemorySelfEditToolContext {
-  const integration = createRuntimeMemoryRuntimeIntegration({
-    config: persistConfig,
-    database: { path: dbPath },
-    now: () => now,
-  });
-  const { store } = integration.loadStore();
-  return { store, persistence: integration, now };
-}
-
-function loadFreshStore(dbPath: string, now = 1000): RuntimeMemoryStore {
-  const integration = createRuntimeMemoryRuntimeIntegration({
-    config: persistConfig,
-    database: { path: dbPath },
-    now: () => now,
-  });
-  const loaded = integration.loadStore();
-  expect(loaded.status).toBe("loaded");
-  return loaded.store;
-}
-
-describe("P0-B: memory self-edit durable persistence", () => {
-  it("memory_update persists supersede + invalidation across calls", async () => {
-    const dbPath = createTempDbPath();
-    seedFact(dbPath, makeFact("old_fact"));
-
-    const context = makePersistentContext(dbPath, 2000);
     const result = await executeMemorySelfEditTool(
       "memory_update",
       { factId: "old_fact", objectSummary: "New summary.", confidence: 0.9 },
-      context,
+      { store, persistence: integration, now: 2000 },
     );
 
-    expect(result.ok).toBe(true);
-    const data = result.data as { newFactId: string };
-    expect(data.newFactId).toContain("old_fact_superseded_");
-
-    // A fresh integration (new process / new call) reads persisted state back.
-    const store = loadFreshStore(dbPath, 2000);
-    const newFact = store.getFactById(data.newFactId);
-    expect(newFact).toBeDefined();
-    expect(newFact?.objectSummary).toBe("New summary.");
-    expect(newFact?.confidence).toBe(0.9);
-
-    const invalidation = store
-      .listInvalidations()
-      .find((inv) => inv.factId === "old_fact");
-    expect(invalidation).toBeDefined();
-    expect(invalidation?.reason).toBe("superseded");
-    expect(invalidation?.replacementFactId).toBe(data.newFactId);
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("persistence skipped (flag_disabled)");
+    expect({ appendFactCalls, appendRelationCalls }).toEqual({
+      appendFactCalls: 0,
+      appendRelationCalls: 0,
+    });
+    expect(store.getFactById("old_fact")?.objectSummary).toBe("Fact old_fact summary.");
+    expect(store.listInvalidations()).toEqual([]);
   });
 
-  it("memory_update writes rows into SQLite (fact, invalidation, relation)", async () => {
-    const dbPath = createTempDbPath();
-    seedFact(dbPath, makeFact("old_fact"));
-
-    const result = await executeMemorySelfEditTool(
-      "memory_update",
-      { factId: "old_fact", objectSummary: "New summary." },
-      makePersistentContext(dbPath, 2000),
-    );
-    expect(result.ok).toBe(true);
-    const newFactId = (result.data as { newFactId: string }).newFactId;
-
-    const db = new DatabaseSync(dbPath, { readOnly: true });
-    try {
-      const factRow = db
-        .prepare("SELECT record_kind FROM runtime_memory_facts WHERE fact_id = ?")
-        .get(newFactId) as { record_kind?: unknown } | undefined;
-      expect(factRow?.record_kind).toBe("fact");
-
-      const invRow = db
-        .prepare(
-          "SELECT reason, replacement_fact_id FROM runtime_memory_invalidations WHERE fact_id = ?",
-        )
-        .get("old_fact") as
-        | { reason?: unknown; replacement_fact_id?: unknown }
-        | undefined;
-      expect(invRow?.reason).toBe("superseded");
-      expect(invRow?.replacement_fact_id).toBe(newFactId);
-
-      const relRow = db
-        .prepare(
-          "SELECT relation_type FROM runtime_memory_fact_relations WHERE source_fact_id = ? AND target_fact_id = ?",
-        )
-        .get(newFactId, "old_fact") as { relation_type?: unknown } | undefined;
-      expect(relRow?.relation_type).toBe("supersedes");
-    } finally {
-      db.close();
-    }
-  });
-
-  it("memory_forget persists invalidation across calls", async () => {
-    const dbPath = createTempDbPath();
-    seedFact(dbPath, makeFact("forget_me"));
+  it("retires durable memory_forget and leaves the store untouched", async () => {
+    let invalidateCalls = 0;
+    const store = new RuntimeMemoryStore({ now: () => 1000 });
+    store.appendFact(makeFact("forget_me"));
+    const integration = createRuntimeMemoryRuntimeIntegration({
+      config: persistConfig,
+      persistence: {
+        migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
+        appendEpisode: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        appendFact: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        invalidateFact: () => {
+          invalidateCalls += 1;
+          throw new Error("retired persistence must not be reached");
+        },
+        persistRelation: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        recordFactAccess: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        loadStore: () => ({ status: "skipped", reason: "flag_disabled", store }),
+      },
+      now: () => 2000,
+    });
 
     const result = await executeMemorySelfEditTool(
       "memory_forget",
       { factId: "forget_me", reason: "human_rejected" },
-      makePersistentContext(dbPath, 2000),
+      { store, persistence: integration, now: 2000 },
     );
-    expect(result.ok).toBe(true);
 
-    const store = loadFreshStore(dbPath, 2000);
-    const invalidation = store
-      .listInvalidations()
-      .find((inv) => inv.factId === "forget_me");
-    expect(invalidation).toBeDefined();
-    expect(invalidation?.reason).toBe("human_rejected");
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("persistence skipped (flag_disabled)");
+    expect(invalidateCalls).toBe(0);
+    expect(store.getFactById("forget_me")).toBeDefined();
+    expect(store.listInvalidations()).toEqual([]);
+  });
+
+  it("retires durable memory_strengthen while preserving the failure contract", async () => {
+    let accessCalls = 0;
+    const store = new RuntimeMemoryStore({ now: () => 1000 });
+    store.appendFact(makeFact("hot_fact"));
+    const integration = createRuntimeMemoryRuntimeIntegration({
+      config: persistConfig,
+      persistence: {
+        migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
+        appendEpisode: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        appendFact: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        invalidateFact: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        persistRelation: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
+        recordFactAccess: () => {
+          accessCalls += 1;
+          throw new Error("retired persistence must not be reached");
+        },
+        loadStore: () => ({ status: "skipped", reason: "flag_disabled", store }),
+      },
+      now: () => 2000,
+    });
+
+    const result = await executeMemorySelfEditTool(
+      "memory_strengthen",
+      { factId: "hot_fact" },
+      { store, persistence: integration, now: 2000 },
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("persistence skipped (flag_disabled)");
+    expect(accessCalls).toBe(0);
+    expect(store.getUsageStats()).toEqual([
+      { factId: "hot_fact", count: 0, lastAccessedAt: undefined },
+    ]);
   });
 
   it("memory_update returns ok:false when persistence rejects the write", async () => {
@@ -280,49 +246,6 @@ describe("P0-B: memory self-edit durable persistence", () => {
 
     expect(result.ok).toBe(false);
     expect(result.message).toContain("forget failed");
-  });
-
-  it("memory_strengthen persists usage across restart (SQLite row assertion)", async () => {
-    const dbPath = createTempDbPath();
-    seedFact(dbPath, makeFact("hot_fact"));
-
-    const first = await executeMemorySelfEditTool(
-      "memory_strengthen",
-      { factId: "hot_fact" },
-      makePersistentContext(dbPath, 2000),
-    );
-    expect(first.ok).toBe(true);
-    expect((first.data as { usageCount: number }).usageCount).toBe(1);
-
-    // A second call from a fresh context (new process) sees the prior access.
-    const second = await executeMemorySelfEditTool(
-      "memory_strengthen",
-      { factId: "hot_fact" },
-      makePersistentContext(dbPath, 3000),
-    );
-    expect(second.ok).toBe(true);
-    expect((second.data as { usageCount: number }).usageCount).toBe(2);
-
-    const db = new DatabaseSync(dbPath, { readOnly: true });
-    try {
-      const row = db
-        .prepare(
-          "SELECT access_count, last_accessed_at FROM runtime_memory_fact_usage WHERE fact_id = ?",
-        )
-        .get("hot_fact") as
-        | { access_count?: unknown; last_accessed_at?: unknown }
-        | undefined;
-      expect(row?.access_count).toBe(2);
-      expect(row?.last_accessed_at).toBe(3000);
-    } finally {
-      db.close();
-    }
-
-    // Reloading the store hydrates the persisted usage stats.
-    const store = loadFreshStore(dbPath, 4000);
-    const stat = store.getUsageStats().find((s) => s.factId === "hot_fact");
-    expect(stat?.count).toBe(2);
-    expect(stat?.lastAccessedAt).toBe(3000);
   });
 
   it("memory_strengthen returns ok:false when persistence rejects the access", async () => {
