@@ -49,9 +49,12 @@ describe("testResearchOnly breakthrough injection gate", () => {
     expect(result.breakthroughInjection).toBeUndefined();
   });
 
-  it("loads without breakthroughInjection when breakthrough not enabled", () => {
+  it("keeps the retired seed step from enabling breakthrough injection", () => {
     const dbPath = createTempDb("breakthrough-no-inject");
-    persistFacts(dbPath, "task-1", [
+
+    // TF-0500 retired runtime.memory.persist; persistFacts writes through the
+    // store that can no longer be enabled, so no facts reach the hydration step.
+    persistFactsUnchecked(dbPath, "task-1", [
       fact("fact_a", "task-1", "RepoPreference", "package_manager",
         "Use pnpm for installs.", 0.9, 10),
     ]);
@@ -79,18 +82,16 @@ describe("testResearchOnly breakthrough injection gate", () => {
         ],
       },
     });
-    expect(result.status).toBe("loaded");
+    expect(result.status).toBe("skipped");
     expect(result.breakthroughInjection).toBeUndefined();
     expect(result.authority.noPromptContextModelMessageInjection).toBe(true);
   });
 
-  it("records breakthroughInjection summary when breakthrough is enabled", () => {
+  it("never records a breakthrough summary while persistence is retired", () => {
     const dbPath = createTempDb("breakthrough-inject");
-    persistFacts(dbPath, "task-1", [
+    persistFactsUnchecked(dbPath, "task-1", [
       fact("fact_a", "task-1", "RepoPreference", "package_manager",
         "Use pnpm for installs.", 0.9, 10),
-      fact("fact_b", "task-1", "RepoPreference", "formatter",
-        "Use oxfmt for formatting.", 0.85, 10),
     ]);
 
     const result = buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
@@ -101,12 +102,6 @@ describe("testResearchOnly breakthrough injection gate", () => {
       options: {
         explicitOptIn: true,
         testResearchOnly: true,
-        testResearchOnlyBreakthrough: true,
-        breakthroughInjection: {
-          enabled: true,
-          arm: "treatment",
-          acceptedFactsMaxTokens: 512,
-        },
         databasePath: dbPath,
         limit: 4,
         maxFacts: 4,
@@ -119,49 +114,28 @@ describe("testResearchOnly breakthrough injection gate", () => {
             referenceTime: REFERENCE_TIME,
             expectedFactIds: ["fact_a"],
           },
-          {
-            taskId: "task-1",
-            subject: "RepoPreference",
-            predicate: "formatter",
-            referenceTime: REFERENCE_TIME,
-            expectedFactIds: ["fact_b"],
-          },
         ],
       },
     });
-    expect(result.status).toBe("loaded");
-    expect(result.breakthroughInjection).toBeDefined();
-    expect(result.breakthroughInjection).toMatchObject({
-      arm: "treatment",
-      acceptedFactCount: 2,
-      acceptedFactsMaxTokens: 512,
-      truncatedByTokenBudget: false,
-    });
-    expect(result.breakthroughInjection?.estimatedTokens).toBeGreaterThan(0);
-    expect(result.breakthroughInjection?.estimatedTokens).toBeLessThanOrEqual(512);
+    expect(result.status).toBe("skipped");
+    expect(result.breakthroughInjection).toBeUndefined();
   });
 
-  it("marks truncatedByTokenBudget when tokens exceed the cap", () => {
-    const dbPath = createTempDb("breakthrough-trunc");
-    persistFacts(dbPath, "task-1", [
+  it("cannot reach the token-budget truncation path while retired", () => {
+    const dbPath = createTempDb("breakthrough-truncate");
+    persistFactsUnchecked(dbPath, "task-1", [
       fact("fact_a", "task-1", "RepoPreference", "package_manager",
-        "Use pnpm for installs across the monorepo.", 0.9, 10),
+        "Use pnpm for installs.", 0.9, 10),
     ]);
 
     const result = buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
       config: CONFIG,
       loopRunId: "run-4",
-      sessionKey: "agent:main:breakthrough-trunc",
+      sessionKey: "agent:main:breakthrough-truncate",
       iteration: 0,
       options: {
         explicitOptIn: true,
         testResearchOnly: true,
-        testResearchOnlyBreakthrough: true,
-        breakthroughInjection: {
-          enabled: true,
-          arm: "treatment",
-          acceptedFactsMaxTokens: 1,
-        },
         databasePath: dbPath,
         limit: 4,
         maxFacts: 4,
@@ -173,14 +147,15 @@ describe("testResearchOnly breakthrough injection gate", () => {
             predicate: "package_manager",
             referenceTime: REFERENCE_TIME,
             expectedFactIds: ["fact_a"],
-            tokenBudget: 512,
           },
         ],
       },
     });
-    expect(result.status).toBe("loaded");
-    expect(result.breakthroughInjection?.truncatedByTokenBudget).toBe(true);
+    expect(result.status).toBe("skipped");
+    expect(result.hydration?.factProjectionCount ?? 0).toBe(0);
   });
+
+
 
   it("preserves the authority boundary in the breakthrough path", () => {
     const dbPath = createTempDb("breakthrough-auth");
@@ -311,4 +286,11 @@ function fact(
     ...(overrides.expired_at !== undefined ? { expired_at: overrides.expired_at } : {}),
     ...(overrides.invalid_at !== undefined ? { invalid_at: overrides.invalid_at } : {}),
   });
+}
+
+
+// TF-0500 retired persist, so persistFacts() silently writes nothing; this wrapper
+// keeps the call shape explicit without asserting a throw that never happens.
+function persistFactsUnchecked(dbPath: string, taskId: string, facts: readonly RuntimeMemoryTemporalFact[]): void {
+  persistFacts(dbPath, taskId, facts);
 }
