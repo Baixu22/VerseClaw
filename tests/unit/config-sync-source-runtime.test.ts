@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { resolve } from 'node:path';
 
 const {
   mockExecFile,
@@ -39,6 +40,16 @@ vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
 }));
 
 describe('syncDefaultProviderRuntimeBeforeLaunch', () => {
+  it('shares only the explicit Main ledger root while preserving isolated runtime state and config paths', async () => {
+    const { buildSourceRuntimeIsolationEnv } = await import('@electron/gateway/config-sync');
+    const result = buildSourceRuntimeIsolationEnv({ stateDir: 'D:/isolated-state', homeDir: 'D:/isolated-home',
+      configPath: 'D:/isolated-state/openclaw.json', taskLedgerConfigDir: 'D:/main-facts' });
+    expect(result).toMatchObject({ OPENCLAW_STATE_DIR: 'D:/isolated-state', OPENCLAW_HOME: 'D:/isolated-home',
+      OPENCLAW_CONFIG_PATH: 'D:/isolated-state/openclaw.json', OPENCLAW_CONFIG_DIR: resolve('D:/main-facts') });
+    const relative = buildSourceRuntimeIsolationEnv({ stateDir: 'D:/isolated-state', homeDir: 'D:/isolated-home',
+      configPath: 'D:/isolated-state/openclaw.json', taskLedgerConfigDir: './relative-facts' });
+    expect(relative.OPENCLAW_CONFIG_DIR).toBe(resolve('./relative-facts'));
+  });
   it('syncs the configured default provider before Gateway launch config is copied', async () => {
     mockGetDefaultProvider.mockResolvedValue('deepseek');
     mockSyncDefaultProviderToRuntime.mockResolvedValue({ degraded: false });

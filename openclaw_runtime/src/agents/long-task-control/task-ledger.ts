@@ -1,7 +1,9 @@
 import { createHash, randomUUID } from "node:crypto";
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { appendFileSync, closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { resolveConfigDir } from "../../utils.js";
+import { resolveConfigDir, resolveUserPath } from "../../utils.js";
+import { parseTaskLedgerJournal, serializeTaskLedgerCommit } from "../../../../shared/task-ledger-journal.js";
+import { withTaskLedgerJournalLockSync } from "../../../../shared/task-ledger-journal-lock.js";
 import type {
   TaskLedgerEventInput,
   TaskLedgerEventType,
@@ -67,7 +69,7 @@ function taskLedgerEventsPath(
   env: NodeJS.ProcessEnv = process.env,
 ): string {
   return join(
-    resolveConfigDir(env),
+    env.OPENCLAW_CONFIG_DIR?.trim() ? resolveUserPath(env.OPENCLAW_CONFIG_DIR, env) : resolveConfigDir(env),
     "task-ledgers",
     "workspaces",
     normalizeTaskLedgerWorkspaceId(workspaceId),
@@ -79,22 +81,12 @@ function nowIso(ms?: number): string {
   return new Date(ms ?? Date.now()).toISOString();
 }
 
-function eventAlreadyExists(pathname: string, idempotencyKey?: string | null): boolean {
-  if (!idempotencyKey || !existsSync(pathname)) return false;
+function readJournal(pathname: string): string {
   try {
-    return readFileSync(pathname, "utf8")
-      .split(/\r?\n/u)
-      .some((line) => {
-        if (!line.trim()) return false;
-        try {
-          const parsed = JSON.parse(line) as { idempotencyKey?: unknown };
-          return parsed.idempotencyKey === idempotencyKey;
-        } catch {
-          return false;
-        }
-      });
-  } catch {
-    return false;
+    return readFileSync(pathname, "utf8");
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return "";
+    throw error;
   }
 }
 
@@ -107,21 +99,33 @@ export function appendLongTaskLedgerEvents(
   const pathname = taskLedgerEventsPath(workspaceId, env);
   mkdirSync(dirname(pathname), { recursive: true });
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
-  const events = inputs.flatMap((input): TaskLedgerEvent[] => {
-    if (eventAlreadyExists(pathname, input.idempotencyKey)) return [];
-    return [{
-      ...input,
-      id: input.id ?? randomUUID(),
-      workspaceId: normalizedWorkspaceId,
-      createdAt: input.createdAt ?? nowIso(),
-      idempotencyKey: input.idempotencyKey ?? null,
-      taskId: input.taskId ?? input.payload.nodeId ?? input.payload.node?.id ?? null,
-      sessionId: input.sessionId ?? null,
-    }];
+  withTaskLedgerJournalLockSync(pathname, () => {
+    const raw = readJournal(pathname);
+    const prior = parseTaskLedgerJournal(raw).events;
+    const ids = new Set(prior.map((event) => event.id));
+    const keys = new Set(prior.map((event) => event.idempotencyKey).filter(Boolean));
+    // Compare against the committed prefix, not siblings in this batch: a
+    // shared batch key must not discard later legitimate events.
+    const events = inputs.flatMap((input): TaskLedgerEvent[] => {
+      if ((input.id && ids.has(input.id)) || (input.idempotencyKey && keys.has(input.idempotencyKey))) return [];
+      return [{
+        ...input,
+        id: input.id ?? randomUUID(),
+        workspaceId: normalizedWorkspaceId,
+        createdAt: input.createdAt ?? nowIso(),
+        idempotencyKey: input.idempotencyKey ?? null,
+        taskId: input.taskId ?? input.payload.nodeId ?? input.payload.node?.id ?? null,
+        sessionId: input.sessionId ?? null,
+      }];
+    });
+    if (events.length > 0) {
+      const fd = openSync(pathname, "a");
+      try {
+        appendFileSync(fd, `${raw && !raw.endsWith("\n") ? "\n" : ""}${serializeTaskLedgerCommit(events, null)}\n`, "utf8");
+        fsyncSync(fd);
+      } finally { closeSync(fd); }
+    }
   });
-  if (events.length > 0) {
-    appendFileSync(pathname, `${events.map((event) => JSON.stringify(event)).join("\n")}\n`, "utf8");
-  }
 }
 
 function taskLedgerEvidence(rootId: string): TaskLedgerEvidenceRef {
@@ -239,18 +243,8 @@ export function readLongTaskLedgerRevision(input: {
   } catch {
     return undefined;
   }
-  const ownedLines: string[] = [];
-  for (const line of raw.split(String.fromCharCode(10))) {
-    if (!line.trim()) continue;
-    try {
-      const parsed = JSON.parse(line) as { taskId?: unknown };
-      if (parsed.taskId === input.taskLedgerRootId) {
-        ownedLines.push(line);
-      }
-    } catch {
-      // A malformed unrelated line must not poison the projection.
-    }
-  }
+  const parsed = parseTaskLedgerJournal(raw);
+  const ownedLines = parsed.eventLines.filter((_, index) => parsed.events[index].taskId === input.taskLedgerRootId);
   if (ownedLines.length === 0) return undefined;
   const contentDigest = createHash('sha256').update(ownedLines.join(String.fromCharCode(10))).digest('hex');
   return {

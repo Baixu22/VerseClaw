@@ -19,6 +19,7 @@ import { readRuntimeSessionResourceInventory } from "../session-resource-invento
 import { projectSessionStage } from "./session-stage-projection.js";
 import { readSessionDerivation } from "./session-derivation-projection.js";
 import type { GatewayRequestHandlers } from "./types.js";
+import { resolve } from "node:path";
 
 function readSessionKey(params: Record<string, unknown>): string | null {
   const value = params.sessionKey ?? params.key;
@@ -212,6 +213,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         session: {
           sessionKey,
           sessionId: expectedSessionId,
+          ...(loaded.storePath ? { storePath: resolve(loaded.storePath) } : {}),
           runId: activeRun?.[0] ?? null,
           status: activeRun ? "running" : "idle",
           phase: activeRun ? "execute" : undefined,

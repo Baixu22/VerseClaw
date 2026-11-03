@@ -15,6 +15,16 @@ beforeEach(() => {
 });
 
 describe('hostApi facade', () => {
+  it('routes automatic Task Ledger operations through the typed Main action', async () => {
+    hostInvoke.mockResolvedValueOnce({ ok: true, data: { success: true } });
+    const { hostApi } = await import('@/lib/host-api');
+    const input = { operationId: 'op-1', expectedRevision: 0, runtimeGeneration: 'gateway-1',
+      runtimeOwner: { childPid: 42, connectedAt: 1 },
+      scope: { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'session-a', sessionGeneration: 'generation-a' },
+      action: { type: 'create', node: { title: 'Agent task' } } };
+    await hostApi.taskLedger.applyAgentAction(input as Parameters<typeof hostApi.taskLedger.applyAgentAction>[0]);
+    expect(hostInvoke).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ module: 'taskLedger', action: 'applyAgentAction', payload: input }));
+  });
   it('routes handoff creation through Main with the source session and edited draft', async () => {
     hostInvoke.mockResolvedValueOnce({ ok: true, data: { success: true, sessionKey: 'agent:main:derived', handoffDepth: 1 } });
     const { hostApi } = await import('@/lib/host-api');

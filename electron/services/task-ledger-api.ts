@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import type { GatewayManager } from '../gateway/manager';
+import { applyTaskLedgerAgentAction } from './task-ledger-actions';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
   TaskLedgerAddEdgePayload,
@@ -122,8 +124,9 @@ document.getElementById('search').addEventListener('input',e=>{query=e.target.va
 </html>`;
 }
 
-export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger'] {
+export function createTaskLedgerApi(options: { gatewayManager?: Pick<GatewayManager, 'rpc' | 'getStatus'> } = {}): CompleteHostServiceRegistry['taskLedger'] {
   return {
+    applyAgentAction: payload => applyTaskLedgerAgentAction(options.gatewayManager, payload),
     snapshot: async (payload) => wrapSnapshot(await loadTaskLedgerSnapshot(payload?.workspaceId)),
 
     appendEvents: async (payload) => wrapSnapshot(

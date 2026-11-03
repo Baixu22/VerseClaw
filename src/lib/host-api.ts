@@ -286,6 +286,8 @@ import type {
   SkillUpdatePayload,
   TaskLedgerAddEdgePayload,
   TaskLedgerAppendEventsPayload,
+  TaskLedgerAgentActionPayload,
+  TaskLedgerAgentActionResult,
   TaskLedgerCreateNodePayload,
   TaskLedgerExportHtmlPayload,
   TaskLedgerExportHtmlResult,
@@ -1747,6 +1749,7 @@ export const hostApi = {
     getContext: (input: { id: string; agentId?: string; workspacePath?: string }) => invokeHost('topics', 'getContext', input),
   },
   taskLedger: {
+    applyAgentAction: (input: TaskLedgerAgentActionPayload): Promise<TaskLedgerAgentActionResult> => invokeHost('taskLedger', 'applyAgentAction', input),
     snapshot: (input?: TaskLedgerWorkspacePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'snapshot', input),
     appendEvents: (input: TaskLedgerAppendEventsPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'appendEvents', input),
     createNode: (input: TaskLedgerCreateNodePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'createNode', input),

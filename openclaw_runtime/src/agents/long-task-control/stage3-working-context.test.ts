@@ -1,8 +1,10 @@
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { parseTaskLedgerJournal } from "../../../../shared/task-ledger-journal.js";
 
 import {
   createTaskLedgerWorkingContextProposal,
@@ -38,6 +40,7 @@ afterEach(() => {
 function env(): NodeJS.ProcessEnv {
   const base: NodeJS.ProcessEnv = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
   delete base[STAGE3_TASK_LEDGER_WORKING_CONTEXT_ENV];
+  delete base.OPENCLAW_CONFIG_DIR;
   return base;
 }
 
@@ -70,6 +73,28 @@ function stage3Events(rootId: string, createdAt: string) {
 }
 
 describe("stage3 long-task Working Context runtime adapter", () => {
+  it("uses the Main-owned Task Ledger root while keeping runtime state isolated", () => {
+    const runtimeEnv = { ...env(), OPENCLAW_CONFIG_DIR: path.join(stateDir, "main-owner") };
+    const rootId = ensureLongTaskLedgerRoot({ workspaceId: "split-owner", sessionKey: "sess:split", runId: "run:split",
+      title: "Main-owned facts", source: "task_loop", env: runtimeEnv });
+    expect(readLongTaskLedgerRevision({ workspaceId: "split-owner", taskLedgerRootId: rootId, env: runtimeEnv })?.eventCount).toBe(2);
+    expect(fs.existsSync(path.join(runtimeEnv.OPENCLAW_CONFIG_DIR, "task-ledgers"))).toBe(true);
+    expect(fs.existsSync(path.join(stateDir, "task-ledgers"))).toBe(false);
+  });
+  it("retains the existing digest bytes for standalone CRLF journal records", () => {
+    const runtimeEnv = env();
+    const rootId = ensureLongTaskLedgerRoot({ workspaceId: "legacy-bytes", sessionKey: "sess:legacy", runId: "run:legacy",
+      title: "legacy root", source: "task_loop", env: runtimeEnv });
+    const workspacesRoot = path.join(stateDir, "task-ledgers", "workspaces");
+    const workspaceDir = fs.readdirSync(workspacesRoot)[0];
+    const journal = path.join(workspacesRoot, workspaceDir, "events.jsonl");
+    const event = parseTaskLedgerJournal(fs.readFileSync(journal, "utf8")).events[0];
+    const line = JSON.stringify(event) + "\r";
+    fs.writeFileSync(journal, line + "\n");
+    const digest = createHash("sha256").update(line).digest("hex");
+    expect(readLongTaskLedgerRevision({ workspaceId: "legacy-bytes", taskLedgerRootId: rootId, env: runtimeEnv }))
+      .toEqual({ eventCount: 1, revision: `rev_1_${digest.slice(0, 16)}`, contentDigest: `sha256:${digest}` });
+  });
   it("defaults off and performs zero JSONL I/O", () => {
     const runtimeEnv = env();
     expect(resolveStage3WorkingContextState(runtimeEnv).enabled).toBe(false);
@@ -161,8 +186,9 @@ describe("stage3 long-task Working Context runtime adapter", () => {
     expect(workspaceDir).toBeDefined();
     const stateDirLedger = path.join(workspacesRoot, workspaceDir as string, "events.jsonl");
     const lines = fs.readFileSync(stateDirLedger, "utf8").trim().split(/\r?\n/u);
-    expect(lines).toHaveLength(4);
-    const parsed = lines.map((line) => JSON.parse(line) as { type?: string; taskId?: string });
+    expect(lines).toHaveLength(2);
+    const parsed = parseTaskLedgerJournal(lines.join("\n")).events;
+    expect(parsed).toHaveLength(4);
     expect(parsed.filter((line) => line.type === "working_context_proposed")).toHaveLength(1);
     expect(parsed.filter((line) => line.type === "working_context_proposal_accepted")).toHaveLength(1);
     expect(parsed.every((line) => line.taskId === rootId)).toBe(true);

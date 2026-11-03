@@ -777,6 +777,7 @@ export function buildSourceRuntimeIsolationEnv(params: {
   stateDir: string;
   homeDir: string;
   configPath: string;
+  taskLedgerConfigDir?: string;
 }): Record<string, string> {
   // Desktop source isolation defers post-ready sidecars so chat can attach quickly.
   // Playwright E2E needs startup-gated RPCs (tools.effective) available before
@@ -789,6 +790,9 @@ export function buildSourceRuntimeIsolationEnv(params: {
     OPENCLAW_STATE_DIR: params.stateDir,
     OPENCLAW_CONFIG_PATH: params.configPath,
     OPENCLAW_HOME: params.homeDir,
+    // Task Ledger facts have the Main owner even while runtime config/state
+    // remain isolated. Reuse its existing override, not a second task store.
+    ...(params.taskLedgerConfigDir ? { OPENCLAW_CONFIG_DIR: path.resolve(params.taskLedgerConfigDir) } : {}),
     OPENCLAW_SKIP_LEGACY_STATE_MIGRATION: '1',
     OPENCLAW_NO_AUTO_UPDATE: '1',
     ...(isE2E
@@ -1007,7 +1011,7 @@ function prepareSourceRuntimeIsolation(): {
     stateDir,
     homeDir,
     configPath,
-    env: buildSourceRuntimeIsolationEnv({ stateDir, homeDir, configPath }),
+    env: buildSourceRuntimeIsolationEnv({ stateDir, homeDir, configPath, taskLedgerConfigDir: getOpenClawConfigDir() }),
   };
 }
 

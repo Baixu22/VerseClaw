@@ -244,6 +244,7 @@ Routing Memo 默认/internal：
 用户入口：`/task-ledger`。Host API：
 
 - snapshot；
+- applyAgentAction（Main 回读当前 workspace/session owner 的自动 create/update/link）；
 - appendEvents；
 - createNode；
 - updateNode；
@@ -283,6 +284,15 @@ Routing Memo 默认/internal：
 - needs_review
 
 Task Ledger 拥有用户可见任务事实、review flags、history 和 Task Loop 相关根节点。Workboard/ClawGraph 的调度状态可以单向引用 Task Ledger node，但不应双向镜像成第二任务账本。
+
+自动动作携带调用方在首次提交前保留的 `operationId`、`expectedRevision` 及完整
+project/workspace/session/generation。Main 核对现有 Gateway owner 后固定记录
+`assistant` 与实际 agent；payload 不能声明 actor、principal 或 identity。
+owner 的 `childPid` 与连接时间也随请求核对，防止应用重启后复用的 generation 计数接纳旧请求。
+同一 ID 的相同请求返回原回执，同 ID 异参或陈旧 revision 拒绝；同参数新 ID 是新意图。
+各入口共用现有 `events.jsonl` 的 workspace 写锁，批次按校验和帧追加并同步；
+`snapshot.json` 仅为可重建投影。自动动作回执和普通 `done` 状态不等于独立任务验收，
+也不授予工具权限或改变 Task Forest 完成状态。
 
 ## 12. Task Ledger Working Context
 

@@ -259,6 +259,8 @@ export type SessionActivitySnapshot = {
     sessionKey: string;
     /** Physical generation used by lifecycle cleanup receipts. */
     sessionId?: string | null;
+    /** Existing session-store owner path for Main's automatic admission fence. */
+    storePath?: string;
     runId?: string | null;
     status: SessionActivityRunStatus;
     phase?: string;

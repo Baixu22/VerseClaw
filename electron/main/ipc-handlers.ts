@@ -128,7 +128,7 @@ function registerTypedHostHandlers(
   const knowledgeApi = createKnowledgeApi({ gatewayManager });
   const remoteForgeApi = createRemoteForgeApi();
   const gitApi = createGitApi();
-  const taskLedgerApi = createTaskLedgerApi();
+  const taskLedgerApi = createTaskLedgerApi({ gatewayManager });
   const workspacesApi = createWorkspacesApi({
     gatewayManager,
     terminalManager,

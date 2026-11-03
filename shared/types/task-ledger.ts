@@ -1,3 +1,22 @@
+import type { AutonomySessionScope } from './identity-scope.js';
+
+export type TaskLedgerOperationIdentity = {
+  actor: 'assistant';
+  agentId: string;
+  scope: AutonomySessionScope;
+  runtimeGeneration: string;
+  runtimeOwner: { childPid: number; connectedAt: number };
+};
+
+export type TaskLedgerOperationReceipt = {
+  operationId: string;
+  requestSha256: string;
+  revision: number;
+  identity: TaskLedgerOperationIdentity;
+  replayed: boolean;
+  eventIds: string[];
+};
+
 export type TaskLedgerNodeKind =
   | 'goal'
   | 'milestone'

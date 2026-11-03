@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, open, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type {
   TaskLedgerEdge,
@@ -9,8 +9,12 @@ import type {
   TaskLedgerSessionLink,
   TaskLedgerSnapshot,
   TaskLedgerWarning,
+  TaskLedgerOperationIdentity,
+  TaskLedgerOperationReceipt,
 } from '../../shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
+import { withTaskLedgerJournalLock } from '../../shared/task-ledger-journal-lock';
+import { parseTaskLedgerJournal as parseTaskLedgerLog, serializeTaskLedgerCommit, taskLedgerDigest as digest, type CommittedOperation } from '../../shared/task-ledger-journal';
 
 const SCHEMA_VERSION = 1 as const;
 
@@ -18,6 +22,10 @@ export type TaskLedgerReadResult = {
   events: TaskLedgerEvent[];
   warnings: TaskLedgerWarning[];
 };
+
+function validation(message: string): Error & { code: string } {
+  return Object.assign(new Error(message), { code: 'VALIDATION' });
+}
 
 export function normalizeTaskLedgerWorkspaceId(workspaceId?: string | null): string {
   const raw = workspaceId?.trim() || 'default';
@@ -43,10 +51,6 @@ export function getTaskLedgerEventsPath(workspaceId?: string | null): string {
   return join(getTaskLedgerDir(workspaceId), 'events.jsonl');
 }
 
-function getTaskLedgerEventsPathForKey(workspaceKey: string): string {
-  return join(getTaskLedgerDirForKey(workspaceKey), 'events.jsonl');
-}
-
 export function getTaskLedgerSnapshotPath(workspaceId?: string | null): string {
   return join(getTaskLedgerDir(workspaceId), 'snapshot.json');
 }
@@ -57,20 +61,6 @@ function getTaskLedgerSnapshotPathForKey(workspaceKey: string): string {
 
 function nowIso(): string {
   return new Date().toISOString();
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
-}
-
-function hasValidEventShape(value: unknown): value is TaskLedgerEvent {
-  if (!isRecord(value)) return false;
-  return typeof value.id === 'string'
-    && typeof value.workspaceId === 'string'
-    && typeof value.type === 'string'
-    && typeof value.actor === 'string'
-    && typeof value.createdAt === 'string'
-    && isRecord(value.payload);
 }
 
 function clampProgress(value: number | undefined): number | undefined {
@@ -116,37 +106,21 @@ export function createTaskLedgerEvent(
   };
 }
 
-export async function readTaskLedgerEvents(workspaceId?: string | null): Promise<TaskLedgerReadResult> {
-  const eventsPath = getTaskLedgerEventsPathForKey(normalizeTaskLedgerWorkspaceId(workspaceId));
-  let raw;
+async function readLogText(workspaceId?: string | null): Promise<string> {
   try {
-    raw = await readFile(eventsPath, 'utf8');
-  } catch {
-    return { events: [], warnings: [] };
+    return await readFile(getTaskLedgerEventsPath(workspaceId), 'utf8');
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return '';
+    throw error;
   }
-  return parseTaskLedgerEventLog(raw);
+}
+
+export async function readTaskLedgerEvents(workspaceId?: string | null): Promise<TaskLedgerReadResult> {
+  return withTaskLedgerJournalLock(getTaskLedgerEventsPath(workspaceId), async () => parseTaskLedgerEventLog(await readLogText(workspaceId)));
 }
 
 export function parseTaskLedgerEventLog(raw: string): TaskLedgerReadResult {
-  const events: TaskLedgerEvent[] = [];
-  const warnings: TaskLedgerWarning[] = [];
-  raw.split(/\r?\n/u).forEach((line, index) => {
-    if (!line.trim()) return;
-    try {
-      const parsed = JSON.parse(line) as unknown;
-      if (!hasValidEventShape(parsed)) {
-        warnings.push({ type: 'invalid_event', line: index + 1, message: 'Task ledger event is missing required fields.' });
-        return;
-      }
-      events.push(parsed);
-    } catch (error) {
-      warnings.push({
-        type: 'invalid_jsonl',
-        line: index + 1,
-        message: error instanceof Error ? error.message : String(error),
-      });
-    }
-  });
+  const { events, warnings } = parseTaskLedgerLog(raw);
   return { events, warnings };
 }
 
@@ -310,8 +284,12 @@ export async function writeTaskLedgerSnapshot(snapshot: TaskLedgerSnapshot): Pro
 }
 
 export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promise<TaskLedgerSnapshot> {
+  return withTaskLedgerJournalLock(getTaskLedgerEventsPath(workspaceId), () => loadSnapshotUnlocked(workspaceId));
+}
+
+async function loadSnapshotUnlocked(workspaceId?: string | null): Promise<TaskLedgerSnapshot> {
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
-  const { events, warnings } = await readTaskLedgerEvents(workspaceId);
+  const { events, warnings } = parseTaskLedgerLog(await readLogText(workspaceId));
   const snapshot = projectTaskLedgerSnapshot(normalizedWorkspaceId, events, warnings);
   await writeTaskLedgerSnapshot(snapshot);
   return snapshot;
@@ -322,25 +300,115 @@ export async function appendTaskLedgerEvents(
   inputs: TaskLedgerEventInput[],
   batchIdempotencyKey?: string | null,
 ): Promise<TaskLedgerSnapshot> {
-  const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
-  const dir = getTaskLedgerDirForKey(normalizedWorkspaceId);
-  await mkdir(dir, { recursive: true });
+  // Manual, runtime lifecycle and automatic operation writers share this owner
+  // lock; projection rebuilds cannot overwrite a newer committed revision.
+  return withTaskLedgerJournalLock(getTaskLedgerEventsPath(workspaceId), async () => {
+    const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
+    const dir = getTaskLedgerDirForKey(normalizedWorkspaceId);
+    await mkdir(dir, { recursive: true });
 
-  const { events } = await readTaskLedgerEvents(workspaceId);
-  const existingEventIds = new Set(events.map((event) => event.id));
-  const existingIdempotencyKeys = new Set(
-    events.map((event) => event.idempotencyKey).filter((key): key is string => typeof key === 'string' && key.length > 0),
-  );
-  if (batchIdempotencyKey && existingIdempotencyKeys.has(batchIdempotencyKey)) {
-    return loadTaskLedgerSnapshot(workspaceId);
-  }
+    const raw = await readLogText(workspaceId);
+    const { events } = parseTaskLedgerLog(raw);
+    const existingEventIds = new Set(events.map((event) => event.id));
+    const existingIdempotencyKeys = new Set(
+      events.map((event) => event.idempotencyKey).filter((key): key is string => typeof key === 'string' && key.length > 0),
+    );
+    if (batchIdempotencyKey && existingIdempotencyKeys.has(batchIdempotencyKey)) {
+      return loadSnapshotUnlocked(workspaceId);
+    }
 
-  const nextEvents = inputs
-    .map((input) => createTaskLedgerEvent(normalizedWorkspaceId, input, batchIdempotencyKey))
-    .filter((event) => !existingEventIds.has(event.id) && !(event.idempotencyKey && existingIdempotencyKeys.has(event.idempotencyKey)));
-  if (nextEvents.length > 0) {
-    const lines = nextEvents.map((event) => JSON.stringify(event)).join('\n');
-    await writeFile(getTaskLedgerEventsPathForKey(normalizedWorkspaceId), `${lines}\n`, { encoding: 'utf8', flag: 'a' });
+    const nextEvents = inputs
+      .map((input) => createTaskLedgerEvent(normalizedWorkspaceId, input, batchIdempotencyKey))
+      .filter((event) => !existingEventIds.has(event.id) && !(event.idempotencyKey && existingIdempotencyKeys.has(event.idempotencyKey)));
+    if (nextEvents.length > 0) {
+      await appendCommitFrame(workspaceId, raw, nextEvents, null);
+    }
+    return loadSnapshotUnlocked(workspaceId);
+  });
+}
+
+async function appendCommitFrame(
+  workspaceId: string | null | undefined,
+  priorRaw: string,
+  events: TaskLedgerEvent[],
+  operation: CommittedOperation | null,
+): Promise<void> {
+  const frame = serializeTaskLedgerCommit(events, operation);
+  // A single checksummed record is the commit boundary. Torn records have no
+  // projected effects; preserve their bytes and separate the next retry line.
+  const handle = await open(getTaskLedgerEventsPath(workspaceId), 'a');
+  try {
+    await handle.writeFile(`${priorRaw && !priorRaw.endsWith('\n') ? '\n' : ''}${frame}\n`, 'utf8');
+    await handle.sync();
+  } finally { await handle.close(); }
+}
+
+export async function commitTaskLedgerOperation(input: {
+  workspaceId: string;
+  operationId: string;
+  expectedRevision: number;
+  request: unknown;
+  identity: TaskLedgerOperationIdentity;
+  events: TaskLedgerEventInput[];
+  validateIdentity?: () => Promise<void>;
+  validateCurrentOwner?: () => Promise<void>;
+  validateState?: (snapshot: TaskLedgerSnapshot) => void;
+}): Promise<{ snapshot: TaskLedgerSnapshot; receipt: TaskLedgerOperationReceipt }> {
+  if (!input.operationId.trim() || input.operationId.length > 200
+    || !Number.isSafeInteger(input.expectedRevision) || input.expectedRevision < 0
+    || input.identity.actor !== 'assistant' || input.workspaceId !== input.identity.scope.workspaceId
+    || !input.events.length || input.events.length > 64) throw validation('Invalid Task Ledger operation identity, revision or batch');
+  const requestSha256 = digest({ request: input.request, identity: input.identity, expectedRevision: input.expectedRevision });
+  const deadline = Date.now() + 10_000;
+  for (;;) {
+    // Gateway's synchronous writer may be waiting on this journal. Never wait
+    // for Gateway RPC while owning a ticket in the journal's critical section.
+    await input.validateIdentity?.();
+    const result = await withTaskLedgerJournalLock(getTaskLedgerEventsPath(input.workspaceId), async ({ waited }) => {
+      const raw = await readLogText(input.workspaceId);
+      const log = parseTaskLedgerLog(raw);
+      const prior = log.operations.get(input.operationId);
+      if (prior) {
+        if (prior.requestSha256 !== requestSha256) throw validation('Operation ID was already used with a different request');
+        return { snapshot: await loadSnapshotUnlocked(input.workspaceId), receipt: { ...prior, replayed: true } };
+      }
+      if (waited && input.validateIdentity) return null;
+      if (log.events.length !== input.expectedRevision) throw validation('Task Ledger revision conflict');
+      await input.validateCurrentOwner?.();
+      const workspaceKey = normalizeTaskLedgerWorkspaceId(input.workspaceId);
+      input.validateState?.(projectTaskLedgerSnapshot(workspaceKey, log.events, log.warnings));
+      // Automatic operation receipts own dedupe. A model-chosen operation ID
+      // must never poison manual/lifecycle batch keys such as mission:<id>.
+      const events = input.events.map(event => createTaskLedgerEvent(workspaceKey, { ...event, actor: 'assistant', idempotencyKey: null }));
+      if (new Set(events.map(event => event.id)).size !== events.length
+        || events.some(event => log.events.some(existing => existing.id === event.id))) throw validation('Operation event IDs must be unique');
+      const operation: CommittedOperation = {
+        operationId: input.operationId, requestSha256, identity: input.identity,
+        revision: log.events.length + events.length, eventIds: events.map(event => event.id),
+      };
+      await appendCommitFrame(input.workspaceId, raw, events, operation);
+      // Failure after the durable append is recovered from this same log on retry;
+      // snapshot.json is a cache and never decides whether the operation committed.
+      return { snapshot: await loadSnapshotUnlocked(input.workspaceId), receipt: { ...operation, replayed: false } };
+    }, { timeoutMs: Math.max(0, deadline - Date.now()) });
+    if (result) return result;
+    if (Date.now() >= deadline) throw Object.assign(new Error('Task Ledger admission contention timed out'), { code: 'LOCK_TIMEOUT', retryable: true });
+    // Release before refreshing identity; a queued request must not carry an
+    // earlier session epoch through contention, or deadlock the Gateway writer.
   }
-  return loadTaskLedgerSnapshot(workspaceId);
+}
+
+export async function replayCommittedTaskLedgerOperation(input: {
+  workspaceId: string; operationId: string; expectedRevision: number; request: unknown;
+}): Promise<{ snapshot: TaskLedgerSnapshot; receipt: TaskLedgerOperationReceipt } | null> {
+  return withTaskLedgerJournalLock(getTaskLedgerEventsPath(input.workspaceId), async () => {
+    const log = parseTaskLedgerLog(await readLogText(input.workspaceId));
+    const prior = log.operations.get(input.operationId);
+    if (!prior) return null;
+    const requestSha256 = digest({ request: input.request, identity: prior.identity, expectedRevision: input.expectedRevision });
+    if (requestSha256 !== prior.requestSha256) throw validation('Operation ID was already used with a different request');
+    // This is only a historical receipt read, never a new admission. A dead or
+    // replaced Gateway must not prevent recovery of a commit already fsynced.
+    return { snapshot: await loadSnapshotUnlocked(input.workspaceId), receipt: { ...prior, replayed: true } };
+  });
 }

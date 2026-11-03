@@ -57,6 +57,8 @@ import type {
   MemorySurfaceSource,
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
+import type { AutonomySessionScope } from '../types/identity-scope';
+import type { TaskLedgerOperationReceipt } from '../types/task-ledger';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -4822,6 +4824,20 @@ export type TaskLedgerCreateNodePayload = TaskLedgerWorkspacePayload & {
   node: TaskLedgerNodeInput;
   idempotencyKey?: string | null;
 };
+/** The actor is never supplied by a model; Main reads the existing session owner. */
+export type TaskLedgerAgentActionPayload = {
+  operationId: string;
+  expectedRevision: number;
+  scope: AutonomySessionScope;
+  runtimeGeneration: string;
+  /** Existing owner stamp; the per-app generation counter can repeat after restart. */
+  runtimeOwner: { childPid: number; connectedAt: number };
+  action:
+    | { type: 'create'; node: Omit<TaskLedgerNodeInput, 'owner' | 'metadata'> }
+    | { type: 'update'; taskNodeId: string; patch: Pick<Partial<TaskLedgerNode>, 'title' | 'description' | 'progress' | 'status'> }
+    | { type: 'link'; taskNodeId: string };
+};
+export type TaskLedgerAgentActionResult = TaskLedgerSnapshotResult & { receipt: TaskLedgerOperationReceipt };
 export type TaskLedgerUpdateNodePayload = TaskLedgerWorkspacePayload & {
   nodeId: string;
   patch: Partial<Omit<TaskLedgerNode, 'id' | 'createdAt'>>;
@@ -6054,6 +6070,7 @@ export type HostApiContract = {
   };
   taskLedger: {
     snapshot: (payload?: TaskLedgerWorkspacePayload) => TaskLedgerSnapshotResult;
+    applyAgentAction: (payload: TaskLedgerAgentActionPayload) => TaskLedgerAgentActionResult;
     appendEvents: (payload: TaskLedgerAppendEventsPayload) => TaskLedgerSnapshotResult;
     createNode: (payload: TaskLedgerCreateNodePayload) => TaskLedgerSnapshotResult;
     updateNode: (payload: TaskLedgerUpdateNodePayload) => TaskLedgerSnapshotResult;
