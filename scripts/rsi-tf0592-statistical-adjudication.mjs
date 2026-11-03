@@ -7,10 +7,10 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
 import { aggregateReliability, RELIABILITY_TRIAL_OUTCOMES } from './lib/reliability-aggregation.mjs';
-import { pairedEffect } from './lib/paired-ablation.mjs';
+import { evaluatePromotion, pairedEffect } from './lib/paired-ablation.mjs';
 import { sha256File, TF0604_PACK_DIR } from './rsi-tf0604-baseline.mjs';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
-import { changedPathsBetween } from './lib/evidence-binding.mjs';
+import { changedPathsBetween, splitDirtyPaths } from './lib/evidence-binding.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const TF0592_PACK_DIR = 'harness/specs/fixtures/rsi-evidence-loop/tf0592';
@@ -49,6 +49,15 @@ const SOURCE_PATHS = [
   'package.json',
   'pnpm-lock.yaml',
 ];
+// Judged inputs plus the pack's own bytes. Anything else that is dirty is an
+// unrelated in-flight edit and must not block a final readback.
+const BOUND_PATHS = [
+  ...SOURCE_PATHS,
+  INPUT_PATHS.corpus,
+  INPUT_PATHS.rawTrials,
+  INPUT_PATHS.policy,
+  ...Object.values(FILES).map((file) => `${TF0592_PACK_DIR}/${file}`),
+];
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const round = (value) => value === null ? null : Number(value.toFixed(6));
 const mean = (values) => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
@@ -72,7 +81,7 @@ function readInputs(root) {
 }
 
 export function collectResourceFingerprint(root = ROOT) {
-  const status = git(['status', '--porcelain', '--untracked-files=all'], root);
+  const { judged, unrelated } = splitDirtyPaths(root, BOUND_PATHS);
   const stats = statfsSync(root);
   const pnpm = process.platform === 'win32'
     ? execFileSync(process.env.ComSpec ?? 'cmd.exe', ['/d', '/c', 'pnpm --version'], { cwd: root, encoding: 'utf8', windowsHide: true, timeout: 15000 }).trim()
@@ -86,8 +95,9 @@ export function collectResourceFingerprint(root = ROOT) {
       commit: git(['rev-parse', 'HEAD'], root),
       tree: git(['rev-parse', 'HEAD^{tree}'], root),
       branch: git(['branch', '--show-current'], root),
-      dirty: status.length > 0,
-      dirtyPaths: status ? status.split(/\r?\n/u) : [],
+      dirty: judged.length > 0,
+      dirtyPaths: judged,
+      unrelatedDirtyPaths: unrelated,
       sourceHashes: Object.fromEntries(SOURCE_PATHS.map((path) => [path, sha256File(join(root, path))])),
     },
     runtime: { node: process.version, pnpm, platform: process.platform, arch: process.arch, osRelease: os.release() },
@@ -280,8 +290,34 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
       ? !covered ? 'required safety/anchor annotations are unavailable for this policy' : 'one or more arms lack complete required cases'
       : null;
 
+  const promotionThresholds = policy.promotion?.thresholds ?? {};
+  const minimumImprovement = promotionThresholds.passKAbsoluteImprovement?.minimum ?? 0.05;
+  const costCeiling = policy.budgets?.costCeiling?.maxRelativeIncrease ?? null;
+  const baselineTokens = baseline.budget?.tokensPerCompletedCase ?? null;
+  const treatmentTokens = treatment.budget?.tokensPerCompletedCase ?? null;
+  const costIncrease = baselineTokens !== null && baselineTokens > 0 && treatmentTokens !== null
+    ? Number((treatmentTokens / baselineTokens - 1).toFixed(4))
+    : null;
+  const armsIntegrity = [baseline, treatment].some(
+    (arm) => arm.aggregate?.safety?.violated === true || arm.aggregate?.anchors?.violated === true,
+  );
+  // The headline `status` describes the run (stable/complete/safe); promotion is
+  // a separate judgement that applies the frozen product floor and cost ceiling.
+  const promotion = evaluatePromotion({
+    minimumImprovement,
+    costIncreaseMaximum: costCeiling,
+    costIncrease,
+    meanDiff: status === 'insufficient-evidence' ? null : effect.meanDiff,
+    ci95: varianceUsable ? effect.ci95 : null,
+    integrityViolated: armsIntegrity,
+    sampleSufficient: status === 'pass',
+    unstable: status === 'fail' && !armsIntegrity,
+  });
+
   return {
     status,
+    runStatus: status,
+    promotion,
     reason: statusReason,
     policyCoverage: { ...policyCoverage, satisfied: covered },
     run: { k: K, minimumCompleteCases: MIN_CASES, trialCount: baseline.trialCount + treatment.trialCount, baselineTrialCount: baseline.trialCount, treatmentTrialCount: treatment.trialCount, completeCaseCount: baseline.completeCaseCount, incompleteCaseCount: baseline.incompleteCaseCount, cleanStateRequired: true },
@@ -298,7 +334,7 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
       passKDelta: enoughPairs ? effect.meanDiff : null,
     },
     power: effect.power,
-    budget: { ...baseline.budget, costCeilingRelativeIncrease: policy.budgets.costCeiling.maxRelativeIncrease },
+    budget: { ...baseline.budget, treatmentTokensPerCompletedCase: treatment.budget?.tokensPerCompletedCase ?? null, observedRelativeTokenIncrease: costIncrease, costCeilingRelativeIncrease: policy.budgets.costCeiling.maxRelativeIncrease },
     claims: { realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },
   };
 }
@@ -318,6 +354,7 @@ export function buildTf0592Report(root = ROOT) {
 
 export function validateTf0592Report(report, root = ROOT, options = {}) {
   const errors = [];
+  const warnings = [];
   if (report?.schemaVersion !== 'RsiTf0592StatisticalReport/v1' || report.taskId !== 'TF-0592') errors.push(error('schema-version', 'unexpected report identity'));
   if (report?.driven_by !== 'agent' || !report?.actor) errors.push(error('agent-label', 'a concrete agent actor is required'));
   const resource = report?.resourceFingerprint;
@@ -361,12 +398,14 @@ export function validateTf0592Report(report, root = ROOT, options = {}) {
       // pack must not; otherwise every seal turns into a reseal obligation.
       const drift = changedPathsBetween(root, commit, 'HEAD', [...SOURCE_PATHS, INPUT_PATHS.corpus, INPUT_PATHS.rawTrials, INPUT_PATHS.policy]);
       if (drift.length > 0) errors.push(error('candidate-identity', `bound inputs changed since the candidate commit: ${drift.join(', ')}`));
-      if (git(['status', '--porcelain', '--untracked-files=all'], root)) errors.push(error('dirty-workspace', 'final check requires a clean worktree'));
+      const dirty = splitDirtyPaths(root, BOUND_PATHS);
+      if (dirty.judged.length > 0) errors.push(error('dirty-workspace', `judged inputs are uncommitted: ${dirty.judged.join(', ')}`));
+      if (dirty.unrelated.length > 0) warnings.push(error('unrelated-dirty', `unrelated edits present: ${dirty.unrelated.join(', ')}`));
     }
   } catch (caught) {
     errors.push(error('input-or-candidate-invalid', caught.message));
   }
-  return { passed: errors.length === 0, errors };
+  return { passed: errors.length === 0, errors, warnings };
 }
 
 const CONTROL_DEFINITIONS = [

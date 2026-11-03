@@ -64,6 +64,22 @@ describe('rsi feedback pilot protocol', () => {
     expect(report.reasons.join(' ')).toContain('no recorded feedback rows');
   });
 
+  it('does not count attributed rows that have no case join', () => {
+    const protocol = readProtocol();
+    protocol.feedbackSource.exportPath = tempExport([
+      ...Array.from({ length: 20 }, (_, index) => ({
+        injectionId: `i${index}`, cardId: `c${index}`, caseId: `case-${index}`, outcome: 'helpful',
+      })),
+      { injectionId: 'i-orphan', cardId: 'c-orphan', caseId: null, outcome: 'helpful' },
+    ]);
+    const report = buildFeedbackReport(ROOT, protocol);
+
+    expect(report.input.attributed).toBe(21);
+    expect(report.input.missingCaseJoin).toBe(1);
+    expect(report.input.completeCases).toBe(20);
+    expect(report.reasons.join(' ')).toContain('no case join');
+  });
+
   it('states why an above-floor export still cannot produce a decision', () => {
     const protocol = readProtocol();
     protocol.feedbackSource.exportPath = tempExport(

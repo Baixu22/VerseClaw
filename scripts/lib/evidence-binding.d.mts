@@ -1,1 +1,1 @@
-export function changedPathsBetween(root: string, fromCommit: string, toRef?: string, paths?: string[]): string[];
+export function changedPathsBetween(root: string, fromCommit: string, toRef?: string, paths?: string[]): string[];export function splitDirtyPaths(root: string, boundPaths: string[]): { judged: string[]; unrelated: string[] };

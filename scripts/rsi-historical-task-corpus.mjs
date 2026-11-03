@@ -5,7 +5,7 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
-import { changedPathsBetween } from './lib/evidence-binding.mjs';
+import { changedPathsBetween, splitDirtyPaths } from './lib/evidence-binding.mjs';
 import { buildTaskCorpus, validateTaskCorpus, buildCalibrationSamples, replayCalibration, TF0590_PACK_DIR, CORPUS_ACTOR } from './lib/rsi-historical-task-corpus.mjs';
 import { buildRubricRequest, graderDigest, GRADER_VERSION } from './lib/agent-first-graders.mjs';
 import { sha256File } from './rsi-tf0604-baseline.mjs';
@@ -39,9 +39,23 @@ function scanCredentials(root) {
   return { schemaVersion: 'RsiHistoricalCredentialScan/v1', driven_by: 'agent', actor: CORPUS_ACTOR, scope, patterns: CREDENTIAL_PATTERNS.map(([id]) => id), hits, passed: hits.length === 0, limitation: 'Recognized credential patterns; no claim of exhaustive secret detection.' };
 }
 
+function judgedPaths() {
+  return [...SOURCE_FILES, ...FILES.map((file) => `${TF0590_PACK_DIR}/${file}`)];
+}
+
 function identity(root) {
   const git = (args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
-  return { commit: git(['rev-parse', 'HEAD']), tree: git(['rev-parse', 'HEAD^{tree}']), dirty: Boolean(git(['status', '--porcelain', '--untracked-files=all'])), sourceHashes: Object.fromEntries(SOURCE_FILES.map((path) => [path, sha256File(join(root, path))])) };
+  // Only judged inputs (and the pack's own bytes) can invalidate this seal; an
+  // unrelated in-flight edit stays a warning instead of blocking the readback.
+  const { judged, unrelated } = splitDirtyPaths(root, judgedPaths());
+  return {
+    commit: git(['rev-parse', 'HEAD']),
+    tree: git(['rev-parse', 'HEAD^{tree}']),
+    dirty: judged.length > 0,
+    dirtyPaths: judged,
+    unrelatedDirtyPaths: unrelated,
+    sourceHashes: Object.fromEntries(SOURCE_FILES.map((path) => [path, sha256File(join(root, path))])),
+  };
 }
 
 export function writeTaskCorpusPack(root = ROOT) {
@@ -172,7 +186,9 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
       else errors.push(`source-fingerprint:${path}`);
     }
     if (!options.allowDraft) {
-      if (validation.candidate?.dirty !== false || identity(root).dirty) errors.push('dirty-candidate');
+      const observed = identity(root);
+      if (validation.candidate?.dirty !== false || observed.dirty) errors.push('dirty-candidate');
+      if (observed.unrelatedDirtyPaths.length > 0) warnings.push(`unrelated-dirty:${observed.unrelatedDirtyPaths.join(',')}`);
       const candidate = validation.candidate?.commit;
       if (!/^[a-f0-9]{40}$/u.test(candidate ?? '')) errors.push('candidate-identity');
       else {

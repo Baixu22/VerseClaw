@@ -76,6 +76,26 @@ hidden oracles to the executor. The archive is statistical readback, not a new
 workspace regrade or a claim of 144 valid provider executions. Residuals have an
 owner and review date in the retained provenance.
 
+The shared instrument now carries an explicit promotion gate
+(`evaluatePromotion` in `scripts/lib/paired-ablation.mjs`). `component-helps`
+stays a statistical statement about the paired interval; only the gate may say
+`promote`, and it requires the 5pp absolute improvement floor, a paired 95%
+interval whose lower bound is above zero, a cost increase within the 10% ceiling,
+and no safety/anchor regression. Missing cost is a `hold`, a cost overrun is an
+`eliminate`. TF-0592 reports both the run status (`status`/`runStatus`) and this
+separate `promotion` judgement, so a stable run with no effect can no longer be
+read as a promotion. A missing or degenerate interval can never promote.
+
+The feedback pilot's input now has a producer:
+`scripts/rsi-feedback-export.mjs` reads the shared state database, joins
+`role_memory_feedback` to `role_memory_injections.task`, and writes the export the
+pilot consumes. Rows without that join are counted as attributed-to-no-case
+instead of being silently folded into the case floor. The pilot still computes
+no paired effect, so it can only issue an eligibility readout.
+
+Seal readback is scoped to judged inputs: an unrelated in-flight edit in the
+shared checkout is a warning, while a dirty judged input still fails closed.
+
 The active v2 reservation still contains zero completed model trials.
 `pnpm rsi:tf0592:check` verifies an instrument pack whose report remains
 `insufficient-evidence`; it does not convert a reservation into measurement.

@@ -79,7 +79,28 @@ export type PreRegisteredAblation = {
   flakeThreshold?: number;
   maxFlakeCases?: number;
   minimumEffect?: number;
+  minimumImprovement?: number;
+  costIncreaseMaximum?: number | null;
+  costIncrease?: number | null;
 };
+
+export type PromotionVerdict = {
+  status: 'promote' | 'hold' | 'eliminate' | 'insufficient-evidence';
+  reasons: string[];
+  thresholds: { minimumAbsoluteImprovement: number; costIncreaseMaximum: number | null };
+  observed: { meanDiff: number | null; ci95Lower: number | null; costIncrease: number | null };
+};
+
+export function evaluatePromotion(input?: {
+  minimumImprovement?: number;
+  costIncreaseMaximum?: number | null;
+  meanDiff?: number | null;
+  ci95?: [number | null, number | null] | null;
+  costIncrease?: number | null;
+  integrityViolated?: boolean;
+  sampleSufficient?: boolean;
+  unstable?: boolean;
+}): PromotionVerdict;
 
 export function summarizeCondition(runs: AblationRun[], options?: { k?: number; minCases?: number; flakeThreshold?: number; maxFlakeCases?: number }): ConditionSummary;
 export function pairedEffect(baselineRuns: AblationRun[], treatmentRuns: AblationRun[], options?: { metric?: string; k?: number; minCases?: number; minimumEffect?: number }): PairedEffect;
@@ -93,5 +114,6 @@ export function evaluateAblation(input: {
   treatment: ConditionSummary;
   effect: PairedEffect;
   verdict: 'component-helps' | 'no-effect' | 'hurts' | 'safety-regression' | 'insufficient-sample';
+  promotion: PromotionVerdict;
   reasons: string[];
 };

@@ -28,3 +28,39 @@ export function changedPathsBetween(root, fromCommit, toRef = 'HEAD', paths = []
   const out = execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
   return out ? out.split(/\r?\n/u).filter(Boolean) : [];
 }
+/**
+ * Split the working-tree status into paths that are judged inputs of a pack and
+ * paths that are unrelated. Only the former may invalidate a seal: an unrelated
+ * in-flight edit (another agent's work, a docs change) must stay a warning,
+ * otherwise every seal depends on the whole shared checkout being clean.
+ *
+ * @param {string} root repository root
+ * @param {string[]} boundPaths judged inputs plus the pack's own files
+ * @returns {{judged: string[], unrelated: string[]}}
+ */
+export function splitDirtyPaths(root, boundPaths) {
+  let out = '';
+  try {
+    out = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], {
+      cwd: root,
+      encoding: 'utf8',
+      windowsHide: true,
+    }).trim();
+  } catch {
+    return { judged: [], unrelated: [] };
+  }
+  if (!out) return { judged: [], unrelated: [] };
+  const bound = new Set((boundPaths ?? []).map((path) => String(path).replaceAll('\\', '/')));
+  const judged = [];
+  const unrelated = [];
+  for (const line of out.split(/\r?\n/u)) {
+    if (!line.trim()) continue;
+    let path = line.slice(3).trim();
+    const renamed = path.split(' -> ');
+    if (renamed.length === 2) path = renamed[1];
+    path = path.replace(/^"|"$/gu, '').replaceAll('\\', '/');
+    if (bound.has(path)) judged.push(path);
+    else unrelated.push(path);
+  }
+  return { judged, unrelated };
+}

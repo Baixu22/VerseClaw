@@ -105,6 +105,7 @@
     "rsi:tf0592:check": "node scripts/rsi-tf0592-statistical-adjudication.mjs --check --json",
     "rsi:decision:check": "node scripts/rsi-decision-check.mjs --json",
     "rsi:feedback:check": "node scripts/rsi-feedback-pilot.mjs --check --json",
+    "rsi:feedback:export": "node scripts/rsi-feedback-export.mjs --write --json",
     "agent-first:corpus:check": "node scripts/agent-first-corpus-check.mjs",
     "rsi:corpus:write": "node scripts/rsi-historical-task-corpus.mjs --write",
     "rsi:corpus:check": "node scripts/rsi-historical-task-corpus.mjs --check",

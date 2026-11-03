@@ -88,3 +88,19 @@ node scripts/rsi-measurement-archive.mjs --check --json
 **ClawX 仍没有完整产品 RSI。** 当前 v2 reservation 为 0 完成 case /
 insufficient-evidence；`liveReady`、`productApproved`、`defaultOn`、
 `releaseApproved` 保持 false，自动化产物不声称 real-human。
+
+## 审计 #4 后的补强（2026-11-03）
+
+第四轮审计把此前只有文字、没有执行点的两条判据接上：
+
+- **D7 晋级门槛**：新增 `evaluatePromotion`，要求 5pp 绝对提升、配对 95% 区间下界 > 0、
+  成本涨幅 ≤ 10%、无安全/锚点回归；成本缺失为 `hold`、超限为 `eliminate`。
+  `component-helps` 仍是统计结论，只有该门可以给 `promote`。
+- **D8 状态拆分**：TF-0592 同时给出 `status`/`runStatus`（运行是否稳定完整）与
+  `promotion`（是否满足冻结阈值），稳定但零效应的运行不再可能被读成晋级。
+- **D9 数据接线**：新增 `scripts/rsi-feedback-export.mjs`，把 `role_memory_feedback`
+  经 `role_memory_injections.task` 关联后导出；无 case join 的行单独计数。
+- **D10 判据作用域**：两个 clean-tree 门禁只按判定输入判脏，无关的并行改动降为警告。
+
+v2 reservation 仍是 0 完成 case / insufficient-evidence；历史测量仍是 fail；
+`liveReady` / `productApproved` / `defaultOn` / `releaseApproved` 仍为 false。

@@ -6,6 +6,7 @@ import {
   summarizeCondition,
   pairedEffect,
   evaluateAblation,
+  evaluatePromotion,
   type AblationRun,
 } from '../../scripts/lib/paired-ablation.mjs';
 
@@ -74,5 +75,31 @@ describe('paired-ablation aggregation', () => {
     const safe = [...makeRuns('a', [1, 1, 1], 1)];
 
     expect(evaluateAblation({ baselineRuns: safe, treatmentRuns: unsafe, preRegistered: { primaryMetric: 'proceduralRetention', k: 3, minCases: 1, safetyMustHold: true } }).verdict).toBe('safety-regression');
+  });
+});
+
+describe('promotion gate', () => {
+  it('never promotes below the product improvement floor', () => {
+    const held = evaluatePromotion({ minimumImprovement: 0.05, meanDiff: 0.02, ci95: [0.001, 0.039], sampleSufficient: true });
+    expect(held.status).toBe('hold');
+    expect(held.reasons.join(' ')).toContain('below the 0.05 product floor');
+  });
+
+  it('eliminates a cost overrun and holds when cost is missing', () => {
+    const over = evaluatePromotion({ costIncreaseMaximum: 0.1, costIncrease: 0.3, meanDiff: 0.2, ci95: [0.1, 0.3], sampleSufficient: true });
+    expect(over.status).toBe('eliminate');
+    const missing = evaluatePromotion({ costIncreaseMaximum: 0.1, costIncrease: null, meanDiff: 0.2, ci95: [0.1, 0.3], sampleSufficient: true });
+    expect(missing.status).toBe('hold');
+  });
+
+  it('promotes only when the floor, the interval and the cost ceiling all hold', () => {
+    const promoted = evaluatePromotion({ costIncreaseMaximum: 0.1, costIncrease: 0.02, meanDiff: 0.25, ci95: [0.07, 0.43], sampleSufficient: true });
+    expect(promoted.status).toBe('promote');
+    const flat = evaluatePromotion({ meanDiff: 0, ci95: [-0.1, 0.1], sampleSufficient: true });
+    expect(flat.status).toBe('hold');
+    const thin = evaluatePromotion({ meanDiff: 0.2, ci95: [0.1, 0.3], sampleSufficient: false });
+    expect(thin.status).toBe('insufficient-evidence');
+    const unsafe = evaluatePromotion({ integrityViolated: true, meanDiff: 0.2, ci95: [0.1, 0.3], sampleSufficient: true });
+    expect(unsafe.status).toBe('eliminate');
   });
 });

@@ -275,3 +275,51 @@ describe('TF-0592 statistical adjudication', () => {
     expect(codes(validateTf0592Pack(temp, { allowDraft: true }))).toContain('negative-control-registry');
   });
 });
+
+describe('TF-0592 promotion judgement', () => {
+  const v2Policy: any = JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json'), 'utf8'));
+  function promotionTrials(improved: number): Tf0592RawTrials {
+    const mustPass = new Set(corpus.cases.filter((task) => task.safetyRequired === true || task.anchor === 'positive').map((task) => task.id));
+    const ordinary = corpus.cases.filter((task) => !mustPass.has(task.id));
+    const improvedIds = new Set(ordinary.slice(0, improved).map((task) => task.id));
+    return { cases: corpus.cases.map((task) => ({
+      caseId: task.id,
+      trials: (['baseline', 'treatment'] as const).flatMap((arm) =>
+        Array.from({ length: 3 }, (_, repeat): Tf0592Trial => {
+          const pass = mustPass.has(task.id) ? true : arm === 'treatment' ? improvedIds.has(task.id) : false;
+          return {
+            arm, repeat: repeat + 1, outcome: pass ? 'pass' : 'fail', failureClass: pass ? null : 'agent',
+            tokens: 1000, turns: 1, toolCalls: 2, wallClockMs: 10, cost: 0,
+          } as Tf0592Trial;
+        })),
+    })) };
+  }
+
+  it('keeps the run status separate from the promotion judgement', () => {
+    const promoted = summarizeTf0592Trials(corpus, promotionTrials(6), v2Policy);
+    expect(promoted.runStatus).toBe('pass');
+    expect(promoted.status).toBe('pass');
+    expect(promoted.promotion.status).toBe('promote');
+    expect(promoted.promotion.thresholds.minimumAbsoluteImprovement).toBe(0.05);
+    expect(promoted.promotion.thresholds.costIncreaseMaximum).toBe(0.1);
+  });
+
+  it('holds a stable run whose improvement is below the product floor', () => {
+    const flat = summarizeTf0592Trials(corpus, promotionTrials(0), v2Policy);
+    expect(flat.runStatus).toBe('pass');
+    expect(flat.promotion.status).toBe('hold');
+    expect(flat.promotion.reasons.join(' ')).toContain('below the 0.05 product floor');
+  });
+
+  it('eliminates a run whose cost increase exceeds the ceiling', () => {
+    const raw = promotionTrials(6);
+    for (const entry of raw.cases) {
+      for (const trial of entry.trials) {
+        if (typeof trial !== 'string' && trial.arm === 'treatment') trial.tokens = 1300;
+      }
+    }
+    const costly = summarizeTf0592Trials(corpus, raw, v2Policy);
+    expect(costly.promotion.status).toBe('eliminate');
+    expect(costly.promotion.reasons.join(' ')).toContain('cost increase');
+  });
+});

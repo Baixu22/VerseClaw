@@ -10,12 +10,23 @@
     "suiteId": "rsi-historical-core",
     "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
     "cases": 24,
-    "split": { "public": 12, "heldOut": 12 },
+    "split": {
+      "public": 12,
+      "heldOut": 12
+    },
     "rule": "Task identities are reused unchanged; this pilot may not author its own task set."
   },
   "arms": [
-    { "id": "off", "feedbackWeight": 0, "description": "Today's behaviour; the flag is off." },
-    { "id": "on", "feedbackWeight": 0.2, "description": "Feedback contributes a bounded weight to the retrieval score." }
+    {
+      "id": "off",
+      "feedbackWeight": 0,
+      "description": "Today's behaviour; the flag is off."
+    },
+    {
+      "id": "on",
+      "feedbackWeight": 0.2,
+      "description": "Feedback contributes a bounded weight to the retrieval score."
+    }
   ],
   "flag": {
     "name": "runtime.memory.feedbackWeighting.enabled",
@@ -25,10 +36,21 @@
   },
   "feedbackSource": {
     "table": "role_memory_feedback",
-    "outcomes": ["helpful", "neutral", "harmful", "missing_needed", "user_corrected"],
-    "attributionRequired": ["injectionId", "cardId"],
+    "outcomes": [
+      "helpful",
+      "neutral",
+      "harmful",
+      "missing_needed",
+      "user_corrected"
+    ],
+    "attributionRequired": [
+      "injectionId",
+      "cardId"
+    ],
     "exportPath": "harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json",
-    "offlineOnly": true
+    "offlineOnly": true,
+    "exporter": "scripts/rsi-feedback-export.mjs",
+    "caseJoin": "role_memory_injections.task via injection_id; rows without a join are counted as unattributed-to-case"
   },
   "design": {
     "k": 3,
@@ -41,7 +63,13 @@
   },
   "metrics": {
     "primary": "pass^k",
-    "reportedSeparately": ["pass@k", "meanTokens", "p95LatencyMs", "falseBlocks", "safetyViolations"],
+    "reportedSeparately": [
+      "pass@k",
+      "meanTokens",
+      "p95LatencyMs",
+      "falseBlocks",
+      "safetyViolations"
+    ],
     "feedbackWeight": 0.2
   },
   "budget": {
@@ -52,14 +80,37 @@
     "note": "Null budgets are recorded honestly; a promotion with a null cost dimension is disqualified."
   },
   "negativeControls": [
-    { "id": "unattributed-feedback", "expects": "reject rows without injectionId/cardId" },
-    { "id": "empty-store", "expects": "insufficient-evidence" },
-    { "id": "safety-anchor-regression", "expects": "eliminate even if pass^k improves" },
-    { "id": "missing-cost", "expects": "eliminate; a null cost dimension cannot be promoted" },
-    { "id": "weight-out-of-range", "expects": "reject protocol/run" },
-    { "id": "default-on-claim", "expects": "reject; the flag stays false" }
+    {
+      "id": "unattributed-feedback",
+      "expects": "reject rows without injectionId/cardId"
+    },
+    {
+      "id": "empty-store",
+      "expects": "insufficient-evidence"
+    },
+    {
+      "id": "safety-anchor-regression",
+      "expects": "eliminate even if pass^k improves"
+    },
+    {
+      "id": "missing-cost",
+      "expects": "eliminate; a null cost dimension cannot be promoted"
+    },
+    {
+      "id": "weight-out-of-range",
+      "expects": "reject protocol/run"
+    },
+    {
+      "id": "default-on-claim",
+      "expects": "reject; the flag stays false"
+    }
   ],
-  "decisionStates": ["promote", "hold", "eliminate", "insufficient-evidence"],
+  "decisionStates": [
+    "promote",
+    "hold",
+    "eliminate",
+    "insufficient-evidence"
+  ],
   "promotionRequirements": {
     "passKAbsoluteImprovement": 0.05,
     "intervalLowerBoundStrictlyPositive": true,

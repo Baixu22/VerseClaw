@@ -52,6 +52,41 @@ function numericMetric(value) {
   return null;
 }
 
+/**
+ * Promotion gate over already-computed evidence. It mirrors
+ * promotion-policy.v2 -> promotion.thresholds: absolute pass^k improvement at or
+ * above the product floor, a paired 95% interval whose lower bound is strictly
+ * positive, cost inside the ceiling, and no safety/anchor regression. A missing
+ * cost dimension disqualifies promotion but is not itself a regression, so it
+ * returns 'hold' rather than 'eliminate'. 'component-helps' remains a statement
+ * about the statistics; only this gate may say 'promote'.
+ */
+export function evaluatePromotion(input = {}) {
+  const minimumImprovement = input.minimumImprovement ?? 0.05;
+  const costIncreaseMaximum = input.costIncreaseMaximum ?? null;
+  const meanDiff = input.meanDiff ?? null;
+  const ci95 = input.ci95 ?? null;
+  const costIncrease = input.costIncrease ?? null;
+  if (!Number.isFinite(minimumImprovement) || minimumImprovement <= 0) throw new Error('invalid-minimum-improvement');
+  const thresholds = { minimumAbsoluteImprovement: minimumImprovement, costIncreaseMaximum };
+  const observed = { meanDiff, ci95Lower: Array.isArray(ci95) ? ci95[0] : null, costIncrease };
+  const result = (status, reasons) => ({ status, reasons, thresholds, observed });
+  if (input.integrityViolated === true) return result('eliminate', ['safety-required case or positive/negative anchor violated']);
+  if (input.sampleSufficient !== true) return result('insufficient-evidence', ['complete-case or paired-case floor not met']);
+  if (input.unstable === true) return result('hold', ['sample is unstable (flake above the frozen allowance)']);
+  if (costIncreaseMaximum !== null && costIncrease === null) return result('hold', ['cost dimension missing; promotion is disqualified']);
+  if (costIncreaseMaximum !== null && costIncrease > costIncreaseMaximum) {
+    return result('eliminate', [`cost increase ${costIncrease} exceeds ceiling ${costIncreaseMaximum}`]);
+  }
+  if (meanDiff === null) return result('insufficient-evidence', ['no paired effect was computed']);
+  if (meanDiff < minimumImprovement) {
+    return result('hold', [`observed improvement ${meanDiff} is below the ${minimumImprovement} product floor`]);
+  }
+  if (ci95 === null) return result('hold', ['no usable paired interval (degenerate variance or missing pairs)']);
+  if (!(ci95[0] > 0)) return result('hold', ['95% interval lower bound is not above zero']);
+  return result('promote', ['improvement meets the product floor and the interval excludes zero']);
+}
+
 export function summarizeCondition(runs, options = {}) {
   const k = options.k ?? 3;
   const minCases = options.minCases ?? 20;
@@ -276,5 +311,22 @@ export function evaluateAblation(input) {
   }
   if (effect.droppedPairCount > 0) reasons.push(`${effect.droppedPairCount} pair(s) dropped as non-numeric or unmatched`);
 
-  return { preRegistered, baseline, treatment, effect, verdict, reasons };
+  const promotion = evaluatePromotion({
+    minimumImprovement: preRegistered.minimumImprovement ?? preRegistered.minimumEffect ?? 0.05,
+    costIncreaseMaximum: preRegistered.costIncreaseMaximum ?? null,
+    meanDiff: effect.meanDiff,
+    ci95: effect.ci95,
+    costIncrease: preRegistered.costIncrease ?? null,
+    integrityViolated,
+    sampleSufficient:
+      !belowFloor
+      && treatment.incompleteCaseCount === 0
+      && baseline.incompleteCaseCount === 0
+      && effect.pairCount >= minCases
+      && effect.droppedPairCount === 0
+      && effect.excludedPartialPairs.length === 0,
+    unstable,
+  });
+
+  return { preRegistered, baseline, treatment, effect, verdict, promotion, reasons };
 }
