@@ -2116,6 +2116,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/prompt-cache-tool-mask-auto-20261012/acceptance.json
 !/docs/dev/provider-error-retry-boundaries.md
 !/docs/dev/rareui-interactions.md
+!/docs/dev/recovery-contract/EVAL-CONTRACT.zh-CN.md
 !/docs/dev/repo-hygiene-20261017.md
 !/docs/dev/repository-artifact-retention.md
 !/docs/dev/repository-cleanup-triage-2026-10-08.md
