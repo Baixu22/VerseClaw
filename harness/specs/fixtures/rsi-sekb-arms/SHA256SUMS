@@ -4,4 +4,3 @@ c966e779337d50010520f62cde1fbda8937dde2e2b0ba86934b1b14376d1fb85  harness/specs/
 63d44493b0d82b6e5d4ebef5bd3031286deac7bbabc3120611b26da3b32edf9e  harness/specs/fixtures/rsi-sekb-arms/decision.v1.json
 ea0c54de0b1bcf1a93edc40af4cd9e745fda3d5f19257a364f0e54fcf9c1256e  scripts/rsi-sekb-arms.mjs
 ad3b84184eb9496d04054a61a39885e8f29c79e512fb4bb08d9dfa6fb832644d  tests/unit/rsi-sekb-arms-decision.test.ts
-520b2a5621308b392d0c2d54ddf17ebdb5e8760ccba6a09f6fa02e2b429813fc  docs/dev/rsi-capability-and-boundaries.md

@@ -1,5 +1,5 @@
 export type Tf0592Error = { code: string; message: string };
-export type Tf0592Validation = { passed: boolean; errors: Tf0592Error[] };
+export type Tf0592Validation = { passed: boolean; errors: Tf0592Error[]; warnings?: Tf0592Error[] };
 export type Tf0592Options = { allowDraft?: boolean; verifyCandidate?: boolean };
 export type FailureClass = 'infrastructure' | 'task' | 'grader' | 'agent';
 export type Tf0592Trial = {
@@ -16,7 +16,7 @@ export type Tf0592Policy = {
 };
 export type Tf0592Resources = {
   schemaVersion: string; generatedAt: string; driven_by: string; actor: string;
-  candidate: { commit: string; tree: string; branch: string; dirty: boolean; dirtyPaths: string[]; sourceHashes: Record<string, string> };
+  candidate: { commit: string; tree: string; branch: string; dirty: boolean; dirtyPaths: string[]; unrelatedDirtyPaths?: string[]; sourceHashes: Record<string, string> };
   runtime: { node: string; pnpm: string; platform: string; arch: string; osRelease: string };
   observedResources: { cpuCount: number; totalMemoryBytes: number; freeMemoryBytes: number; disk: { freeBytes: number; totalBytes: number; status: string } };
   envelope: Record<string, unknown>;
@@ -27,6 +27,7 @@ export type Tf0592Budget = {
   wallClockP50Ms: number | null; wallClockP95Ms: number | null; observedTrialCount: number;
   recordedTotals: Record<string, number | null>; incompleteCaseConsumption: Record<string, number | null>;
   completedCaseOnly: Record<string, number | null>; costCeilingRelativeIncrease?: number;
+  treatmentTokensPerCompletedCase?: number | null; observedRelativeTokenIncrease?: number | null;
 };
 export type Tf0592Arm = {
   status: string; trialCount: number; completeCaseCount: number; incompleteCaseCount: number;
@@ -43,8 +44,14 @@ export type Tf0592Arm = {
   failureClasses: Record<FailureClass, { trialCount: number; caseCount: number }>;
   budget: Tf0592Budget;
 };
+export type Tf0592Promotion = {
+  status: 'promote' | 'hold' | 'eliminate' | 'insufficient-evidence';
+  reasons: string[];
+  thresholds: { minimumAbsoluteImprovement: number; costIncreaseMaximum: number | null };
+  observed: { meanDiff: number | null; ci95Lower: number | null; costIncrease: number | null };
+};
 export type Tf0592Summary = {
-  status: string; reason: string | null;
+  status: string; runStatus: string; promotion: Tf0592Promotion; reason: string | null;
   run: { k: number; minimumCompleteCases: number; trialCount: number; baselineTrialCount: number; treatmentTrialCount: number; completeCaseCount: number; incompleteCaseCount: number; cleanStateRequired: boolean };
   perTask: Tf0592Arm['perTask']; aggregate: Tf0592Arm['aggregate']; failureClasses: Tf0592Arm['failureClasses'];
   treatment: Tf0592Arm;
