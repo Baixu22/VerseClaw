@@ -159,14 +159,14 @@ describe("runtime memory embedding integration", () => {
     expect(hits[0].fact.factId).toBe("f1");
   });
 
-  it("persists and retrieves embeddings through the persistence store", () => {
-    const dbPath = createTempDbPath("emb-persist-");
+  it("cannot persist or retrieve embeddings through the retired store", () => {
+    const dbPath = createTempDbPath("emb-persist-retired-");
     const store = createRuntimeMemoryPersistenceStore({
       config: PERSIST_CONFIG,
       database: { path: dbPath },
       now: () => 1000,
     });
-    expect(store.migrate().status).toBe("migrated");
+    expect(store.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
 
     const seedFact = buildRuntimeMemoryTemporalFactFixture({
       factId: "fact_emb_1",
@@ -175,29 +175,7 @@ describe("runtime memory embedding integration", () => {
       objectSummary: "seed fact for embedding roundtrip",
       taskId: "emb_test",
     });
-    expect(store.appendFact(seedFact).status).toBe("persisted");
-
-    const embedding = new Float32Array([0.1, 0.2, 0.3, 0.4]);
-    store.replaceEmbedding({
-      factId: "fact_emb_1",
-      providerId: "mock",
-      model: "mock-model",
-      dimension: 4,
-      embedding,
-    });
-
-    const retrieved = store.getEmbedding("fact_emb_1", "mock", "mock-model");
-    expect(retrieved).not.toBeNull();
-    expect(retrieved!.length).toBe(4);
-    expect(Array.from(retrieved!)).toEqual([
-      expect.closeTo(0.1, 5),
-      expect.closeTo(0.2, 5),
-      expect.closeTo(0.3, 5),
-      expect.closeTo(0.4, 5),
-    ]);
-
-    store.deleteEmbedding("fact_emb_1");
-    expect(store.getEmbedding("fact_emb_1", "mock", "mock-model")).toBeNull();
+    expect(store.appendFact(seedFact)).toMatchObject({ status: "skipped", reason: "flag_disabled" });
   });
 
   it("adaptMemoryEmbeddingProvider bridges interface and probes dimension", async () => {
@@ -230,16 +208,14 @@ describe("runtime memory embedding integration", () => {
     );
   });
 
-  it("context provider uses embedding path when enabled", async () => {
+  it("keeps the retired provider from producing memory context items", async () => {
     const facts = [
       makeFact("f1", "User", "likes Python programming language"),
       makeFact("f2", "User", "owns a cat named Whiskers"),
-      makeFact("f3", "User", "prefers Python over Rust for scripting"),
     ];
-    const provider = createMockRuntimeEmbeddingProvider();
     const memoryProvider = createRuntimeMemoryContextProvider({
       facts,
-      embeddingProvider: provider,
+      embeddingProvider: createMockRuntimeEmbeddingProvider(),
       embeddingEnabled: true,
       config: { runtime: { memory: { provider: true } } },
     });
@@ -249,15 +225,14 @@ describe("runtime memory embedding integration", () => {
       metadata: { memoryQuery: { subject: "User", predicate: "knows" } },
     }) as { status: string; contextItems: unknown[] };
 
-    expect(result.status).toBe("success");
-    expect(result.contextItems.length).toBeGreaterThan(0);
+    // TF-0500 retired runtime.memory.provider, so both the embedding path and its
+    // 3-gram fallback are unreachable; the provider reports no success.
+    expect(result.status).not.toBe("success");
+    expect(result.contextItems ?? []).toHaveLength(0);
   });
 
-  it("context provider falls back to 3-gram when embedding enabled but provider unavailable", async () => {
-    const facts = [
-      makeFact("f1", "User", "likes Python programming"),
-      makeFact("f2", "User", "owns a cat"),
-    ];
+  it("keeps the retired 3-gram fallback unreachable as well", async () => {
+    const facts = [makeFact("f1", "User", "likes Python programming")];
     const memoryProvider = createRuntimeMemoryContextProvider({
       facts,
       embeddingProvider: NO_EMBEDDING_PROVIDER,
@@ -270,8 +245,8 @@ describe("runtime memory embedding integration", () => {
       metadata: { memoryQuery: { subject: "User", predicate: "knows" } },
     }) as { status: string; contextItems: unknown[] };
 
-    expect(result.status).toBe("success");
-    expect(result.contextItems.length).toBeGreaterThan(0);
+    expect(result.status).not.toBe("success");
+    expect(result.contextItems ?? []).toHaveLength(0);
   });
 
   it("isEmbeddingProviderAvailable distinguishes provider from sentinel", () => {
