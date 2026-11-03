@@ -165,244 +165,31 @@ function queryConsumer(
 // === Non-LLM tests: interleaved read-write ===
 
 describe("Layer 7: interleaved read-write — local (no LLM)", () => {
-  it("write_read_consistency_immediate_query", () => {
-    // After writing a fact, immediately querying for it should return it
-    // in acceptedFacts.
-    const corpus = generateLongTermCorpus(100, 42);
-    const dbPath = createTempDbPath("l7-consistency-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    // Write turn 0 (2 facts)
-    writer.writeFact(corpus.facts[0]);
-    writer.writeFact(corpus.facts[1]);
-
-    // Query for the useful fact written at turn 0
-    const usefulFact = corpus.facts[0]; // useful fact
-    const result = queryConsumer(dbPath, {
-      taskId: usefulFact.taskId ?? "task",
-      subject: usefulFact.subject,
-      predicate: usefulFact.predicate,
-      referenceTime: 100_000,
-    });
-    expect(result.acceptedFactIds).toContain(usefulFact.factId);
+  it("cannot build the interleaved corpus while the streaming writer is retired", () => {
+    // TF-0500 retired runtime.memory.persist; createStreamingWriter fails at
+    // migrate, so none of the read/write consistency probes can run.
+    const dbPath = createTempDbPath("l7-retired-", tempDirs);
+    expect(() => createStreamingWriter(dbPath)).toThrow(/migration failed/);
   });
 
-  it("invalidation_effective_removes_from_accepted", () => {
-    // After invalidating a fact, querying for it should NOT return it
-    // in acceptedFacts (rejection reason: invalidated_at_reference_time).
-    const corpus = generateLongTermCorpus(50, 42);
-    const dbPath = createTempDbPath("l7-inval-effective-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    // Write 10 useful facts
-    for (let i = 0; i < 10; i += 1) {
-      writer.writeFact(corpus.facts[i * 2]); // useful facts at even indices
-    }
-
-    // Query before invalidation — should be accepted
-    const fact = corpus.facts[0];
-    const beforeResult = queryConsumer(dbPath, {
-      taskId: fact.taskId ?? "task",
-      subject: fact.subject,
-      predicate: fact.predicate,
-      referenceTime: 100_000,
-    });
-    expect(beforeResult.acceptedFactIds).toContain(fact.factId);
-
-    // Invalidate the fact
-    writer.invalidateFact(fact.factId, fact, 50_000);
-
-    // Query after invalidation — should NOT be accepted
-    const afterResult = queryConsumer(dbPath, {
-      taskId: fact.taskId ?? "task",
-      subject: fact.subject,
-      predicate: fact.predicate,
-      referenceTime: 100_000, // referenceTime > invalid_at
-    });
-    expect(afterResult.acceptedFactIds).not.toContain(fact.factId);
+  it("keeps the retired read path returning no facts", () => {
+    const dbPath = createTempDbPath("l7-retired-read-", tempDirs);
+    // The reader opens the same store, which is retired, so it fails closed.
+    expect(() => loadFactIds(dbPath)).toThrow(/load failed/);
   });
 
-  it("recall_degradation_over_1000_turns", () => {
-    // Recall of a fixed cohort should degrade as more facts are written
-    // (FIFO evicts older facts). Measure at turn 100, 500, 1000.
-    const corpus = generateLongTermCorpus(1000, 42);
-    const dbPath = createTempDbPath("l7-degradation-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    // Cohort: useful facts from turns 200-204 (5 facts)
-    const cohort = corpus.usefulFactIds.slice(200, 205);
-
-    // Write 300 turns (cohort written at turns 200-204, within 0-299)
-    for (let t = 0; t < 300; t += 1) {
-      writer.writeFact(corpus.facts[t * 2]);
-      writer.writeFact(corpus.facts[t * 2 + 1]);
-    }
-
-    // At turn 300 (600 facts > 512, FIFO evicted 88): cohort should be present
-    // (cohort is at facts 400-408, which are after the first 512 facts)
-    // Actually 300 turns = 600 facts, FIFO caps at 512, so 88 evicted.
-    // Cohort (turns 200-204 = facts 400-408) are within the first 512, so present.
-    const present1 = loadFactIds(dbPath);
-    let cohortPresent = cohort.filter((id) => present1.has(id)).length;
-    expect(cohortPresent).toBe(5); // all present
-
-    // Write 200 more turns (500 total = 1000 facts, FIFO evicted 488)
-    for (let t = 300; t < 500; t += 1) {
-      writer.writeFact(corpus.facts[t * 2]);
-      writer.writeFact(corpus.facts[t * 2 + 1]);
-    }
-    const present2 = loadFactIds(dbPath);
-    cohortPresent = cohort.filter((id) => present2.has(id)).length;
-    // Cohort (turns 200-204 = facts 400-408) should be evicted by now
-    // (1000 facts written, 512 retained, facts 488-999 retained)
-    expect(cohortPresent).toBeLessThan(5);
-
-    // Write 500 more turns (1000 total = 2000 facts, FIFO evicted 1488)
-    for (let t = 500; t < 1000; t += 1) {
-      writer.writeFact(corpus.facts[t * 2]);
-      writer.writeFact(corpus.facts[t * 2 + 1]);
-    }
-    const present3 = loadFactIds(dbPath);
-    cohortPresent = cohort.filter((id) => present3.has(id)).length;
-    expect(cohortPresent).toBeLessThanOrEqual(cohortPresent);
-  }, 60_000); // 60s timeout — writes 1000 turns
-
-  it("fifo_preserves_recent_512_interleaved", () => {
-    // After 1000 interleaved turns, the most recent 512 facts should be present.
-    const corpus = generateLongTermCorpus(1000, 42);
-    const dbPath = createTempDbPath("l7-fifo-recent-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    for (let t = 0; t < 1000; t += 1) {
-      writer.writeFact(corpus.facts[t * 2]);
-      writer.writeFact(corpus.facts[t * 2 + 1]);
-      // Every 50 turns, invalidate an early fact
-      if (t > 0 && t % 50 === 0) {
-        const earlyFact = corpus.facts[(t - 50) * 2];
-        writer.invalidateFact(earlyFact.factId, earlyFact, t * 1000);
-      }
-    }
-
-    const stats = loadStats(dbPath);
-    expect(stats.facts).toBe(512);
-    // Invalidations should have accumulated
-    expect(stats.invalidations).toBe(19); // turns 50, 100, ..., 950 = 19 invalidations
-  }, 60_000);
-
-  it("interleaved_invalidation_accumulation", () => {
-    // Invalidating facts during the run should accumulate in the DB
-    // (invalidation marks, doesn't delete).
-    const corpus = generateLongTermCorpus(200, 42);
-    const dbPath = createTempDbPath("l7-inval-accum-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    const invalidatedFactIds: string[] = [];
-    for (let t = 0; t < 200; t += 1) {
-      writer.writeFact(corpus.facts[t * 2]);
-      writer.writeFact(corpus.facts[t * 2 + 1]);
-      // Every 20 turns, invalidate the useful fact from 20 turns ago
-      if (t > 0 && t % 20 === 0) {
-        const target = corpus.facts[(t - 20) * 2];
-        writer.invalidateFact(target.factId, target, t * 1000);
-        invalidatedFactIds.push(target.factId);
-      }
-    }
-
-    const stats = loadStats(dbPath);
-    expect(stats.invalidations).toBe(invalidatedFactIds.length);
-    // Invalidated facts are still physically present
-    for (const factId of invalidatedFactIds) {
-      expect(stats.factIds.has(factId)).toBe(true);
-    }
-  }, 30_000);
-
-  it("write_read_query_during_interleaved_run", () => {
-    // During an interleaved run, querying for a recently-written fact
-    // should return it in acceptedFacts.
-    const corpus = generateLongTermCorpus(100, 42);
-    const dbPath = createTempDbPath("l7-query-during-run-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    // Write 50 turns
-    for (let t = 0; t < 50; t += 1) {
-      writer.writeFact(corpus.facts[t * 2]);
-      writer.writeFact(corpus.facts[t * 2 + 1]);
-    }
-
-    // Query for a fact written at turn 40
-    const targetFact = corpus.facts[40 * 2]; // useful fact at turn 40
-    const result = queryConsumer(dbPath, {
-      taskId: targetFact.taskId ?? "task",
-      subject: targetFact.subject,
-      predicate: targetFact.predicate,
-      referenceTime: 100_000,
-    });
-    expect(result.acceptedFactIds).toContain(targetFact.factId);
-
-    // Write 50 more turns
-    for (let t = 50; t < 100; t += 1) {
-      writer.writeFact(corpus.facts[t * 2]);
-      writer.writeFact(corpus.facts[t * 2 + 1]);
-    }
-
-    // Query again — fact should still be present (100 turns = 200 facts < 512)
-    const result2 = queryConsumer(dbPath, {
-      taskId: targetFact.taskId ?? "task",
-      subject: targetFact.subject,
-      predicate: targetFact.predicate,
-      referenceTime: 100_000,
-    });
-    expect(result2.acceptedFactIds).toContain(targetFact.factId);
+  it("keeps the pure consumer free of runtime memory when no facts are supplied", () => {
+    const query = {
+      taskId: "task_l7_retired",
+      subject: "RepoPreference",
+      predicate: "package_manager",
+      referenceTime: 100,
+      expectedFactIds: ["fact_pkg_pnpm"],
+    };
+    // queryConsumer loads facts through the retired store and fails closed.
+    expect(() => queryConsumer(createTempDbPath("l7-retired-consumer-", tempDirs), query)).toThrow(/load failed/);
   });
 
-  it("consumer_conflict_resolution_during_interleaved_run", () => {
-    // When two facts share the same taskId+subject+predicate, the consumer
-    // should resolve the conflict (keep only the higher-confidence one).
-    const dbPath = createTempDbPath("l7-conflict-", tempDirs);
-    const writer = createStreamingWriter(dbPath);
-
-    const taskId = "task_conflict_interleaved";
-    const subject = "ConflictSubject";
-    const predicate = "preference_code";
-
-    // Write a low-confidence fact
-    const factOld = buildRuntimeMemoryTemporalFactFixture({
-      factId: "conf_old",
-      taskId,
-      subject,
-      predicate,
-      objectSummary: "User preference code is OLD-TOKEN",
-      valid_at: 100,
-      reference_time: 100,
-      confidence: 0.5,
-      acceptedAt: 100,
-    });
-    writer.writeFact(factOld);
-
-    // Write a high-confidence fact (same taskId+subject+predicate)
-    const factNew = buildRuntimeMemoryTemporalFactFixture({
-      factId: "conf_new",
-      taskId,
-      subject,
-      predicate,
-      objectSummary: "User preference code is NEW-TOKEN",
-      valid_at: 100,
-      reference_time: 100,
-      confidence: 0.9,
-      acceptedAt: 200,
-    });
-    writer.writeFact(factNew);
-
-    // Query — consumer should keep only the high-confidence fact
-    const result = queryConsumer(dbPath, {
-      taskId,
-      subject,
-      predicate,
-      referenceTime: 100_000,
-    });
-    expect(result.acceptedFactIds).toContain("conf_new");
-    expect(result.acceptedFactIds).not.toContain("conf_old");
-  });
 });
 
 // === LLM tests: recentFactRecall ===
