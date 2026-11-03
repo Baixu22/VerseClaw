@@ -11,6 +11,7 @@ touchedAreas:
   - harness/specs/rules/context-folding-boundary.md
   - harness/specs/guides/context-folding-rlm-design.md
   - harness/specs/fixtures/context-folding-rlm/**
+  - scripts/context-folding-real-task-eval.mjs
   - shared/types/context-folding.ts
   - shared/types/context-item.ts
   - shared/host-api/contract.ts
@@ -111,7 +112,7 @@ docs:
 
 这是 `context-folding-rlm` 支线的 durable task entry point。它把上一轮 RLM 对比转化为可执行的开发、功能验收和 eval 合同。
 
-本文只冻结契约、测试入口、真实任务 fixture 和验收边界；不宣称任何实现已经落地。实现必须在专用 worktree 中按 Task Forest 的 ready leaf 串行推进。
+实现已在专用 worktree `codex/context-folding-rlm` 按 Task Forest 的 TF-0691 → TF-0695 串行落地；当前验收证据见 `harness/specs/fixtures/context-folding-rlm/eval/summary.md`。默认关闭、disable-only rollback 和 agent-driven 边界不变。
 
 ## Task Forest 节点映射
 

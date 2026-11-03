@@ -77,6 +77,9 @@ def validate_result(result: dict, workspace: Path) -> None:
         require(not mode.get("scopeViolations"), f"{mode_name} has scope violations")
         require(not mode.get("staleReferences"), f"{mode_name} has stale references")
 
+    folded_mode = modes["folded-child"]
+    require(folded_mode.get("evidenceRefsResolution") == 1.0, "required evidence refs did not resolve 100%")
+
     baseline = modes["baseline"].get("metrics", {})
     folded = modes["folded-child"].get("metrics", {})
     baseline_chars = baseline.get("mainContextChars")
@@ -88,8 +91,9 @@ def validate_result(result: dict, workspace: Path) -> None:
     if isinstance(baseline.get("totalTokens"), (int, float)) and baseline["totalTokens"] > 0:
         ratio = float(folded.get("totalTokens", 0)) / float(baseline["totalTokens"])
         require(ratio <= 2.0, f"total token multiplier above 2.0: {ratio:.3f}")
-
-    folded_mode = modes["folded-child"]
+    if isinstance(baseline.get("latencyMs"), (int, float)) and baseline["latencyMs"] > 0:
+        latency_ratio = float(folded.get("latencyMs", 0)) / float(baseline["latencyMs"])
+        require(latency_ratio <= 2.5, f"latency multiplier above 2.5: {latency_ratio:.3f}")
     require(folded_mode.get("maxRecursiveDepth", 99) <= 1, "recursive depth must not exceed 1")
     require(folded_mode.get("rawChildTranscriptChars", 10**9) <= 8000, "raw child transcript exceeded 8000 chars")
     require(folded_mode.get("rawTranscriptInjected") is False, "raw child transcript was injected")
