@@ -64,6 +64,20 @@ describe('rsi feedback pilot protocol', () => {
     expect(report.reasons.join(' ')).toContain('no recorded feedback rows');
   });
 
+  it('states why an above-floor export still cannot produce a decision', () => {
+    const protocol = readProtocol();
+    protocol.feedbackSource.exportPath = tempExport(
+      Array.from({ length: 20 }, (_, index) => ({
+        injectionId: `i${index}`, cardId: `c${index}`, caseId: `case-${index}`, outcome: 'helpful',
+      })),
+    );
+    const report = buildFeedbackReport(ROOT, protocol);
+
+    expect(report.input.completeCases).toBe(20);
+    expect(report.status).toBe('insufficient-evidence');
+    expect(report.reasons.join(' ')).toContain('no paired effect');
+  });
+
   it('counts attributed rows but still refuses to claim an effect', () => {
     const protocol = readProtocol();
     protocol.feedbackSource.exportPath = tempExport([

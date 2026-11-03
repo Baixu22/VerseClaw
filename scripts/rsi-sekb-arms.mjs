@@ -97,6 +97,11 @@ export function buildArmsReport(root = ROOT) {
     reasons.push('deterministic wiring fixture; not a model run and never a benefit claim');
   } else if (Object.values(arms).some((arm) => arm.gate === 'insufficient-sample')) {
     reasons.push('below the complete-case floor');
+  } else {
+    // D6 boundary: this readout declares promote/hold/eliminate in its protocol
+    // but no code path derives them. Say that out loud instead of returning an
+    // unexplained insufficient-evidence for a complete, cost-compliant run.
+    reasons.push('promotion state is not derived by this instrument yet; status stays insufficient-evidence until an evaluator-owned decision path exists');
   }
   if (costWithinCeiling === false) reasons.push(`cost increase ${costIncrease} exceeds ${protocol.budget.costIncreaseMaximum}`);
   const costMissing = costIncrease === null;

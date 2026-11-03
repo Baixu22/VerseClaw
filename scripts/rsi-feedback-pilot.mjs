@@ -77,6 +77,12 @@ export function buildFeedbackReport(root = ROOT, protocol = readJson(join(root, 
   if (rows.length === 0) reasons.push('no recorded feedback rows');
   if (belowFloor) reasons.push(`attributed cases ${completeCases} < required ${MIN_CASES}`);
   if (unattributed > 0) reasons.push(`${unattributed} unattributable row(s) rejected`);
+  if (!belowFloor && sourceState === 'present' && rows.length > 0) {
+    // An above-floor export still cannot produce promote/hold/eliminate here:
+    // this pilot records no paired off/on comparison. State the limit instead
+    // of returning a bare insufficient-evidence.
+    reasons.push('this pilot computes no paired effect; an above-floor export cannot produce promote, hold or eliminate');
+  }
   reasons.push('no provider calls authorised; this report is an offline eligibility readout, not an effect');
 
   return {

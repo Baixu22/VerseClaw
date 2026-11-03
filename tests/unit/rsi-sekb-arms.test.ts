@@ -90,6 +90,20 @@ describe('rsi sekb three-arm readout', () => {
     expect(plan.providerCallsAuthorized).toBe(0);
   });
 
+  it('never leaves a real run with an unexplained insufficient-evidence status', () => {
+    const root = tempRootWith((runs) => {
+      runs.evidenceKind = 'live-provider';
+      for (const arm of Object.values(runs.arms) as any[]) for (const row of arm) row.tokens = 1000;
+    });
+    const report = buildArmsReport(root);
+
+    // Above the floor and inside the cost ceiling, but this instrument has no
+    // promote/hold/eliminate path; the reason must say so.
+    expect(report.status).toBe('insufficient-evidence');
+    expect(report.reasons.length).toBeGreaterThan(0);
+    expect(report.reasons.join(' ')).toContain('promotion state is not derived');
+  });
+
   it('treats a missing cost dimension as a promotion disqualifier', () => {
     const root = tempRootWith((runs) => {
       for (const arm of Object.values(runs.arms) as any[]) for (const row of arm) row.tokens = null;
