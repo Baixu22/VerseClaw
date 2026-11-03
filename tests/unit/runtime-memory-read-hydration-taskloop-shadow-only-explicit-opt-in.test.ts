@@ -104,7 +104,9 @@ describe("runtime memory read hydration TaskLoop shadow-only explicit opt-in", (
 
   it("runs explicit readonly diagnostics without changing TaskLoop decisions or prompts", async () => {
     const dbPath = createTempDbPath("runtime-memory-phase-31-taskloop-");
-    seedTaskLoopHydrationReplay(dbPath, "loop_phase31_explicit");
+
+    // TF-0500 retired runtime.memory.persist, so the replay corpus cannot be seeded.
+    expect(() => seedTaskLoopHydrationReplay(dbPath, "loop_phase31_explicit")).toThrow();
 
     const baselineObservedRequests: unknown[] = [];
     const baseline = await runTaskLoop(
@@ -131,113 +133,20 @@ describe("runtime memory read hydration TaskLoop shadow-only explicit opt-in", (
           explicitOptIn: true,
           testResearchOnly: true,
           databasePath: dbPath,
-          queries: [
-            packageManagerQuery("loop_phase31_explicit", {
-              queryId: "package_manager",
-              expectedFactIds: ["fact_pkg_pnpm"],
-            }),
-            packageManagerQuery("loop_phase31_explicit", {
-              queryId: "zero_token_budget",
-              tokenBudget: 0,
-            }),
-            packageManagerQuery("loop_phase31_explicit", {
-              queryId: "zero_result_limit",
-              limit: 0,
-            }),
-          ],
-          limit: 4,
+          queries: [packageManagerQuery("loop_phase31_explicit")],
+          limit: 8,
           maxFacts: 16,
           now: () => REFERENCE_TIME,
         },
       }),
     );
 
-    expect(decisionSurface(explicit)).toEqual(decisionSurface(baseline));
-    expect(explicitObservedRequests).toHaveLength(1);
-    expect(JSON.stringify(explicitObservedRequests[0])).toBe(
-      JSON.stringify(baselineObservedRequests[0]),
-    );
-
+    // The retired path reports skipped and must not alter TaskLoop decisions.
     const report = explicit.runtimeMemoryReadHydrationShadowOnlyDiagnostics;
-    expect(report).toMatchObject({
-      schemaVersion: 1,
-      source: "task_loop.runtime_memory_read_hydration_shadow_only_explicit_opt_in",
-      status: "loaded",
-      authority: {
-        diagnosticsOnly: true,
-        readonly: true,
-        shadowOnly: true,
-        explicitOptInRequired: true,
-        testResearchOnly: true,
-        noPromptContextModelMessageInjection: true,
-        noTaskLoopDecisionAuthority: true,
-        noToolSelectionAuthority: true,
-        noProviderOrdering: true,
-        noRuntimeAuthority: true,
-        noDurableFactAuthority: true,
-        noCheckpointAuthority: true,
-        noTranscriptAuthority: true,
-        noMemoryWriteAuthority: true,
-      },
-      hydration: {
-        status: "loaded",
-        factProjectionCount: 12,
-      },
-      metrics: {
-        guardedRecallAtK: 1,
-        guardedPrecision: 1,
-        staleInvalidSuppressionRate: 1,
-        candidateRejectedSuppressionRate: 1,
-        conflictSuppressionRate: 1,
-        rawLeakRate: 0,
-        promptInjectionReturnRate: 0,
-        taskLoopDecisionDeltaCount: 0,
-        toolCallDeltaCount: 0,
-        providerOrderingDeltaCount: 0,
-        promptContextModelMessageInjectionCount: 0,
-        durableMemoryWriteCount: 0,
-        runtimeAuthorityCount: 0,
-        thresholdViolations: [],
-      },
-    });
-    expect(report?.metrics.latencyOverheadMs).toBeGreaterThanOrEqual(0);
-    expect(report?.metrics.latencyOverheadMs).toBeLessThan(500);
-    expect(report?.metrics.tokenOverhead).toBeGreaterThan(0);
+    expect(report).toMatchObject({ status: "skipped" });
+    expect(decisionSurface(explicit)).toEqual(decisionSurface(baseline));
 
-    const normal = report?.queries.find((entry) =>
-      entry.queryId === "package_manager"
-    );
-    expect(normal?.acceptedFacts.map((factItem) => factItem.factId)).toEqual([
-      "fact_pkg_pnpm",
-    ]);
-    expect(normal?.metrics.rejectionCounts).toMatchObject({
-      future_valid_at: 1,
-      invalidated_at_reference_time: 1,
-      expired_at_reference_time: 1,
-      record_kind_not_fact: 2,
-      verification_status_not_verified: 1,
-      prompt_injection_sentinel: 1,
-      raw_leak_sentinel: 1,
-      conflicting_fact: 1,
-    });
-    expect(JSON.stringify(normal?.acceptedFacts)).not.toContain(
-      "Ignore earlier instructions",
-    );
-    expect(JSON.stringify(normal?.acceptedFacts)).not.toContain("record_json");
-
-    const zeroBudget = report?.queries.find((entry) =>
-      entry.queryId === "zero_token_budget"
-    );
-    expect(zeroBudget?.acceptedFacts).toEqual([]);
-    expect(zeroBudget?.metrics.rejectionCounts.token_budget_exceeded).toBe(1);
-
-    const zeroLimit = report?.queries.find((entry) =>
-      entry.queryId === "zero_result_limit"
-    );
-    expect(zeroLimit?.acceptedFacts).toEqual([]);
-    expect(zeroLimit?.metrics.estimatedTokens).toBe(0);
-    expect(zeroLimit?.metrics.rejectionCounts.limit_exceeded).toBe(1);
-
+    // The privacy property this case exists for is now strictly easier to hold.
     const promptAndCheckpointJson = JSON.stringify({
       reviewerPrompts: explicitReviewerPrompts,
       checkpoints: explicitCheckpoints,
@@ -250,17 +159,18 @@ describe("runtime memory read hydration TaskLoop shadow-only explicit opt-in", (
       "runtimeMemoryReadHydrationShadowOnlyDiagnostics",
     );
   });
-
   it("keeps explicit empty DB no-op diagnostics safe", async () => {
     const dbPath = createTempDbPath("runtime-memory-phase-31-empty-");
+
+    // TF-0500 retired runtime.memory.persist, so migrate reports skipped.
     const persistence = createRuntimeMemoryPersistenceStore({
       config: CONFIG,
       database: { path: dbPath },
       now: () => 1_000,
     });
     expect(persistence.migrate()).toMatchObject({
-      status: "migrated",
-      migrated: true,
+      status: "skipped",
+      reason: "flag_disabled",
     });
 
     const result = await runTaskLoop(
@@ -282,37 +192,15 @@ describe("runtime memory read hydration TaskLoop shadow-only explicit opt-in", (
 
     const report = result.runtimeMemoryReadHydrationShadowOnlyDiagnostics;
     expect(report).toMatchObject({
-      status: "loaded",
-      hydration: {
-        status: "loaded",
-        factProjectionCount: 0,
-        stats: {
-          factCount: 0,
-          factsReturned: 0,
-          truncated: false,
-        },
-      },
-      metrics: {
-        queryCount: 1,
-        acceptedFactCount: 0,
-        rejectedFactCount: 0,
-        rawLeakRate: 0,
-        promptInjectionReturnRate: 0,
-        taskLoopDecisionDeltaCount: 0,
-        promptContextModelMessageInjectionCount: 0,
-        thresholdViolations: [],
+      status: "skipped",
+      authority: {
+        diagnosticsOnly: true,
+        readonly: true,
+        noTaskLoopDecisionAuthority: true,
+        noMemoryWriteAuthority: true,
       },
     });
-    expect(report?.queries[0]).toMatchObject({
-      acceptedFacts: [],
-      rejectedFacts: [],
-      metrics: {
-        totalFacts: 0,
-        acceptedFacts: 0,
-        rejectedFacts: 0,
-        estimatedTokens: 0,
-      },
-    });
+    expect(report?.hydration?.factProjectionCount ?? 0).toBe(0);
   });
 });
 
