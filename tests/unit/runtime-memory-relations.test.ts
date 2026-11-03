@@ -162,10 +162,10 @@ describe("Phase 6: Relation chain", () => {
         now: () => 1_000,
       });
 
-      const result1 = store.migrate();
-      expect(result1.status).toBe("migrated");
-      const result2 = store.migrate();
-      expect(result2.status).toBe("migrated");
+      // TF-0500 retired runtime.memory.persist: both migrate calls are skipped and
+      // idempotent, but no relation table is created.
+      expect(store.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
+      expect(store.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
     });
 
     it("persistRelation writes and loadStore reads relations back", () => {
@@ -177,21 +177,17 @@ describe("Phase 6: Relation chain", () => {
       });
 
       store.migrate();
-      store.appendFact(makeFact("f1", "User", "likes tea"));
-      store.appendFact(makeFact("f2", "User", "likes coffee"));
-      store.persistRelation({
+      expect(store.appendFact(makeFact("f1", "User", "likes tea"))).toMatchObject({ status: "skipped" });
+      expect(store.persistRelation({
         sourceFactId: "f2",
         targetFactId: "f1",
         relationType: "supersedes",
         confidence: 0.85,
-      });
+      })).toMatchObject({ status: "skipped", reason: "flag_disabled" });
 
       const loaded = store.loadStore();
-      expect(loaded.status).toBe("loaded");
-      const relations = loaded.store.queryRelations("f2");
-      expect(relations).toHaveLength(1);
-      expect(relations[0].relationType).toBe("supersedes");
-      expect(relations[0].confidence).toBe(0.85);
+      expect(loaded.status).toBe("skipped");
+      expect(loaded.store.queryRelations("f2")).toHaveLength(0);
     });
   });
 
@@ -207,37 +203,20 @@ describe("Phase 6: Relation chain", () => {
         curation: { enabled: true },
       });
 
-      integration.migrate();
+      expect(integration.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
 
-      // Write an existing fact (verified)
-      // Convert to a full fact for direct append (bypass curation)
-      integration.appendFact(buildRuntimeMemoryTemporalFactFixture({
-        factId: "old_fact",
-        subject: "User",
-        predicate: "has_setting",
-        objectSummary: "prefers dark theme",
-        valid_at: 100,
-        reference_time: 100,
-        acceptedAt: 100,
-      }));
-
-      // Write a refinement candidate (high overlap, non-contradictory).
-      // UPDATE 已禁用 (project_memory.md). 信号层对 verified-existing vs candidate
-      // 保守返回 NONE → candidate 被 skipped, 不持久化, 不生成 relation.
+      // TF-0500 retired persist, so no fact is stored and no relation is derived.
       const candidate = makeCandidate("new_fact", "User", "prefers dark theme with serif fonts", {
         proposedAt: 200,
         valid_at: 200,
         reference_time: 200,
       });
-
       const result = integration.appendFact(candidate);
-      expect((result as { status?: string; contextItems?: Array<{ metadata?: { factId?: string } }> }).status).toBe("skipped");
+      expect((result as { status?: string }).status).toBe("skipped");
 
       const loaded = integration.loadStore();
-      expect(loaded.status).toBe("loaded");
-      const relations = loaded.store.queryRelations("new_fact");
-      const supersedes = relations.filter((r) => r.relationType === "supersedes");
-      expect(supersedes.length).toBe(0);
+      expect(loaded.status).toBe("skipped");
+      expect(loaded.store.queryRelations("new_fact")).toHaveLength(0);
     });
 
     it("AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations", () => {
@@ -249,35 +228,21 @@ describe("Phase 6: Relation chain", () => {
         curation: { enabled: true },
       });
 
-      integration.migrate();
+      expect(integration.migrate()).toMatchObject({ status: "skipped", reason: "flag_disabled" });
 
-      integration.appendFact(buildRuntimeMemoryTemporalFactFixture({
-        factId: "old_setting",
-        subject: "User",
-        predicate: "has_setting",
-        objectSummary: "prefers dark theme",
-        valid_at: 100,
-        reference_time: 100,
-        acceptedAt: 100,
-      }));
-
-      // Candidate that contradicts (negation signal + sufficient token difference)
       const candidate = makeCandidate("new_setting", "User", "now prefers light theme over dark", {
         proposedAt: 200,
         valid_at: 200,
         reference_time: 200,
       });
-
-      const result = integration.appendFact(candidate);
-      expect((result as { status?: string; contextItems?: Array<{ metadata?: { factId?: string } }> }).status).toBe("persisted");
+      expect((integration.appendFact(candidate) as { status?: string }).status).toBe("skipped");
 
       const loaded = integration.loadStore();
-      expect(loaded.status).toBe("loaded");
+      expect(loaded.status).toBe("skipped");
       const relations = loaded.store.queryRelations("new_setting");
-      const supersedes = relations.filter((r) => r.relationType === "supersedes");
-      const contradicts = relations.filter((r) => r.relationType === "contradicts");
-      expect(supersedes.length).toBeGreaterThanOrEqual(1);
-      expect(contradicts.length).toBeGreaterThanOrEqual(1);
+      // No relation is ever derived on the retired path.
+      expect(relations.filter((r) => r.relationType === "supersedes")).toHaveLength(0);
+      expect(relations.filter((r) => r.relationType === "contradicts")).toHaveLength(0);
     });
   });
 
@@ -383,41 +348,28 @@ describe("Phase 6: Relation chain", () => {
 
   describe("context provider 1-hop expansion", () => {
     it("expands matched facts with 1-hop related facts", async () => {
-      const fact1 = makeFact("f1", "User", "likes Python", { taskId: "test" });
-      const fact2 = makeFact("f2", "User", "also likes Rust", { taskId: "test" });
-      const fact3 = makeFact("f3", "User", "unrelated hobby", { taskId: "test" });
-      const allFacts = [fact1, fact2, fact3];
-
+      // TF-0500 retired runtime.memory.provider; the expansion path is unreachable.
       const provider = createRuntimeMemoryContextProvider({
-        facts: allFacts,
+        facts: [
+          makeFact("f1", "User", "likes Python", { taskId: "test" }),
+          makeFact("f2", "User", "also likes Rust", { taskId: "test" }),
+        ],
         config: { runtime: { memory: { provider: true } } },
-        queryRelations: (factId: string) => {
-          if (factId === "f1") {
-            return [{
-              relationId: "f1:f2:related_to",
-              sourceFactId: "f1",
-              targetFactId: "f2",
-              relationType: "related_to",
-              confidence: 0.9,
-              createdAt: 100,
-            }];
-          }
-          return [];
-        },
+        queryRelations: () => [{
+          relationId: "f1:f2:related_to",
+          sourceFactId: "f1",
+          targetFactId: "f2",
+          relationType: "related_to",
+          confidence: 0.9,
+          createdAt: 100,
+        }],
       });
-
       const result = await provider.getContext({
         taskId: "test",
-        tokenBudget: 512,
-        metadata: {
-          memoryQuery: { subject: "User", limit: 10 },
-        },
-      }, {});
-
-      // The context items should include f2 (expanded) in addition to matched facts
-      const factIds = (result as { status?: string; contextItems: Array<{ metadata?: { factId?: string } }> }).contextItems.map((item: { metadata?: { factId?: string } }) => item.metadata?.factId).filter(Boolean);
-      expect(factIds).toContain("f1");
-      expect(factIds).toContain("f2");
+        metadata: { memoryQuery: { subject: "User", predicate: "likes" } },
+      }) as { status: string; contextItems: unknown[] };
+      expect(result.status).not.toBe("success");
+      expect(result.contextItems ?? []).toHaveLength(0);
     });
 
     it("budget limit: expansion does not exceed MAX_RELATION_EXPANSIONS (2)", async () => {
@@ -461,22 +413,17 @@ describe("Phase 6: Relation chain", () => {
     });
 
     it("zero regression: no queryRelations callback → behaves as before", async () => {
-      const fact1 = makeFact("f1", "User", "likes Python", { taskId: "test" });
       const provider = createRuntimeMemoryContextProvider({
-        facts: [fact1],
+        facts: [makeFact("f1", "User", "likes Python", { taskId: "test" })],
         config: { runtime: { memory: { provider: true } } },
       });
-
       const result = await provider.getContext({
         taskId: "test",
-        tokenBudget: 256,
-        metadata: {
-          memoryQuery: { subject: "User", limit: 10 },
-        },
-      }, {});
-
-      expect((result as { status?: string; contextItems?: Array<{ metadata?: { factId?: string } }> }).status).toBe("success");
-      expect((result as { status?: string; contextItems: Array<{ metadata?: { factId?: string } }> }).contextItems.length).toBeGreaterThan(0);
+        metadata: { memoryQuery: { subject: "User", predicate: "likes" } },
+      }) as { status: string; contextItems: unknown[] };
+      // TF-0500 retired provider, so neither expansion nor the baseline path succeeds.
+      expect(result.status).not.toBe("success");
+      expect(result.contextItems ?? []).toHaveLength(0);
     });
   });
 });
