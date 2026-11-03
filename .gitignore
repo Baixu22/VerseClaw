@@ -2486,3 +2486,4 @@ openclaw_runtime/_tmp_*
 
 !/docs/dev/runtime-memory-persistence-breakage-20261103.md
 !/docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md
+!/docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md

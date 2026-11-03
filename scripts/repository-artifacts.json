@@ -2326,7 +2326,8 @@
     "team/dcs/dcs-v1.6-spec.md",
     "team/dcs/dcs-v1.6.1-addendum.md",
     "team/role-architecture-design/area-4-role-memory-completion.md",
-    "docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md"
+    "docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md",
+    "docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md"
   ],
   "artifactBatches": {}
 }
