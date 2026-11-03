@@ -744,7 +744,7 @@
       "exit_code": 0,
       "elapsed_ms": 32620,
       "report_ref": "retention-final/gates/reference-family-candidate-c.json",
-      "log_ref": "retention-final/gates/reference-family-candidate-c.log",
+      "log_ref": "retention-final/gates/reference-family-candidate-c.txt",
       "log_sha256": "0631ade2c6dc72f802f1d806967014da77a5b5c2d8dec852603c5b791cc0deeb"
     },
     {
@@ -766,7 +766,7 @@
       "exit_code": 0,
       "elapsed_ms": 34053,
       "report_ref": "retention-final/gates/retention-candidate-c.json",
-      "log_ref": "retention-final/gates/retention-candidate-c.log",
+      "log_ref": "retention-final/gates/retention-candidate-c.txt",
       "log_sha256": "fb62c97f30d43427f0503993e0789e34d944b9ead56bae4a70c285ce15715b15"
     },
     {
@@ -797,7 +797,7 @@
       "exit_code": 0,
       "elapsed_ms": 41835,
       "report_ref": "retention-final/gates/memory-cleanup-candidate-c.json",
-      "log_ref": "retention-final/gates/memory-cleanup-candidate-c.log",
+      "log_ref": "retention-final/gates/memory-cleanup-candidate-c.txt",
       "log_sha256": "7c99a1ebb536a35cc1d7fab080d0011ae56ea2a61fb48976ff5dbe28fcfeba3c"
     },
     {
@@ -810,7 +810,7 @@
       "exit_code": 0,
       "elapsed_ms": 35445,
       "report_ref": "retention-final/gates/typecheck-candidate-c.json",
-      "log_ref": "retention-final/gates/typecheck-candidate-c.log",
+      "log_ref": "retention-final/gates/typecheck-candidate-c.txt",
       "log_sha256": "4163cc00708309c7236fdd4061d7d1954de451d0aeff252a093396d95a8447ed"
     },
     {
@@ -823,7 +823,7 @@
       "exit_code": 0,
       "elapsed_ms": 1183,
       "report_ref": "retention-final/gates/contract-candidate-c.json",
-      "log_ref": "retention-final/gates/contract-candidate-c.log",
+      "log_ref": "retention-final/gates/contract-candidate-c.txt",
       "log_sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
     },
     {
@@ -836,7 +836,7 @@
       "exit_code": 0,
       "elapsed_ms": 1075,
       "report_ref": "retention-final/gates/comms-replay-candidate-c.json",
-      "log_ref": "retention-final/gates/comms-replay-candidate-c.log",
+      "log_ref": "retention-final/gates/comms-replay-candidate-c.txt",
       "log_sha256": "a114bc39c9bce600d6ebdecc4392ea121380adabe018e5644a2546473d9361b6"
     },
     {
@@ -849,7 +849,7 @@
       "exit_code": 0,
       "elapsed_ms": 938,
       "report_ref": "retention-final/gates/comms-compare-candidate-c.json",
-      "log_ref": "retention-final/gates/comms-compare-candidate-c.log",
+      "log_ref": "retention-final/gates/comms-compare-candidate-c.txt",
       "log_sha256": "aca981aa2141407bd2532afb7b3f587924d6944c679ee10e7021aeb1e2b755c9"
     },
     {
@@ -864,7 +864,7 @@
       "exit_code": 0,
       "elapsed_ms": 1361,
       "report_ref": "retention-final/gates/harness-context-candidate-c.json",
-      "log_ref": "retention-final/gates/harness-context-candidate-c.log",
+      "log_ref": "retention-final/gates/harness-context-candidate-c.txt",
       "log_sha256": "04b42d6eacd1ec0bc5c6345787b3de6428ceed8d3f65ee2038dc52fff2879d62"
     },
     {
@@ -879,7 +879,7 @@
       "exit_code": 0,
       "elapsed_ms": 2199,
       "report_ref": "retention-final/gates/harness-validate-candidate-c.json",
-      "log_ref": "retention-final/gates/harness-validate-candidate-c.log",
+      "log_ref": "retention-final/gates/harness-validate-candidate-c.txt",
       "log_sha256": "0f81f6e4e1c0eaf52f9963ca5d3b71ae8eb490cd54217b3d3b96d7ef27a617df"
     },
     {
@@ -895,7 +895,7 @@
       "exit_code": 0,
       "elapsed_ms": 2151,
       "report_ref": "retention-final/gates/harness-dry-run-candidate-c.json",
-      "log_ref": "retention-final/gates/harness-dry-run-candidate-c.log",
+      "log_ref": "retention-final/gates/harness-dry-run-candidate-c.txt",
       "log_sha256": "f7c41ac50f935e6e095b7829aadbb1d7dc3304420dbe90887f1103a42f121d0d"
     },
     {
@@ -947,7 +947,7 @@
       "exit_code": 0,
       "elapsed_ms": 10378,
       "report_ref": "retention-final/gates/changed-source-lint-candidate-c.json",
-      "log_ref": "retention-final/gates/changed-source-lint-candidate-c.log",
+      "log_ref": "retention-final/gates/changed-source-lint-candidate-c.txt",
       "log_sha256": "d8a7437e475991994e0605022ebbea69109a746e97dc0afa0edc0c03124eb948"
     },
     {
@@ -965,7 +965,7 @@
       "exit_code": 0,
       "elapsed_ms": 7427,
       "report_ref": "retention-final/gates/eval-typecheck-candidate-c-rooted.json",
-      "log_ref": "retention-final/gates/eval-typecheck-candidate-c-rooted.log",
+      "log_ref": "retention-final/gates/eval-typecheck-candidate-c-rooted.txt",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
@@ -982,7 +982,7 @@
       "exit_code": 0,
       "elapsed_ms": 7501,
       "report_ref": "retention-final/gates/deterministic-candidate-c.json",
-      "log_ref": "retention-final/gates/deterministic-candidate-c.log",
+      "log_ref": "retention-final/gates/deterministic-candidate-c.txt",
       "log_sha256": "a9dc9f40ed4de7c2cba107204977eaf301b7aff1a9f88350450d34b65c8ae318"
     },
     {
@@ -999,7 +999,7 @@
       "exit_code": 0,
       "elapsed_ms": 21795,
       "report_ref": "retention-final/gates/live-provider-candidate-c.json",
-      "log_ref": "retention-final/gates/live-provider-candidate-c.log",
+      "log_ref": "retention-final/gates/live-provider-candidate-c.txt",
       "log_sha256": "bd1697ec3d04bef6cae6dd3350675bea2aa399e46bfb373c885260ce51d8060f"
     },
     {
@@ -1012,7 +1012,7 @@
       "exit_code": 0,
       "elapsed_ms": 352,
       "report_ref": "retention-final/gates/artifact-replay-candidate-c.json",
-      "log_ref": "retention-final/gates/artifact-replay-candidate-c.log",
+      "log_ref": "retention-final/gates/artifact-replay-candidate-c.txt",
       "log_sha256": "9ce265d874ecf59dc5ea043a233ec7ea660deacd2319e0e3fb5b4ffd6bc90577"
     },
     {
@@ -1044,7 +1044,7 @@
       "exit_code": 0,
       "elapsed_ms": 23782,
       "report_ref": "retention-final/gates/autoreview-final-isolated.json",
-      "log_ref": "retention-final/gates/autoreview-final-isolated.log",
+      "log_ref": "retention-final/gates/autoreview-final-isolated.txt",
       "log_sha256": "5e57a6f2ab419a373bfee49e1ee6eccfd1d9689b27efa7f2e824c92fa61977bc"
     },
     {
@@ -1056,7 +1056,7 @@
       "exit_code": 0,
       "elapsed_ms": 578,
       "report_ref": "retention-final/gates/malformed-lineage-readback-candidate-c.json",
-      "log_ref": "retention-final/gates/malformed-lineage-readback-candidate-c.log",
+      "log_ref": "retention-final/gates/malformed-lineage-readback-candidate-c.txt",
       "log_sha256": "6a298fd5fd350009a21007738024c31b36a2bd8aa6f18f0a1ea76ae132dcb8dd"
     }
   ],
@@ -1146,7 +1146,7 @@
         "harness/specs/tasks/context-inline-spill-default-path.md"
       ],
       "report_ref": "retention-final/additional-diagnostics/harness-fast-comms-candidate-b.json",
-      "log_ref": "retention-final/additional-diagnostics/harness-fast-comms-candidate-b.log",
+      "log_ref": "retention-final/additional-diagnostics/harness-fast-comms-candidate-b.txt",
       "log_sha256": "ddcdee0350537b66ceaa1cd7cfa6f85b57124d120890771ede41796f7294d80d"
     },
     {
@@ -1164,7 +1164,7 @@
         "harness:ci"
       ],
       "report_ref": "retention-final/additional-diagnostics/harness-ci-candidate-b.json",
-      "log_ref": "retention-final/additional-diagnostics/harness-ci-candidate-b.log",
+      "log_ref": "retention-final/additional-diagnostics/harness-ci-candidate-b.txt",
       "log_sha256": "f558d1c76e13fc14085337b4a70d74df7e92424f6c0ae13956cf7588ebcb1cbe"
     }
   ],

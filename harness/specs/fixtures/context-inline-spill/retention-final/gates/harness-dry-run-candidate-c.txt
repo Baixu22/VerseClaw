@@ -1,0 +1,4 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/context-inline-spill-default-path.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/context-inline-spill-default-path.md" "--dry-run"
+Harness report: C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\artifacts\harness\latest.md
+Harness result: pass

@@ -156,7 +156,7 @@
       "sha256": "57afbde8e4d3eeba53465e6999b2d5132abf3b513919a8a8a32d668969f8bd50"
     },
     {
-      "path": "retention-final/gates/reference-family-candidate-c.log",
+      "path": "retention-final/gates/reference-family-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/reference-family-candidate-c.log",
       "sha256": "0631ade2c6dc72f802f1d806967014da77a5b5c2d8dec852603c5b791cc0deeb"
     },
@@ -166,7 +166,7 @@
       "sha256": "d2717618300e3626c32f19cdc77bcb2921429a3835f95a2d45e3fcf2dd7557c2"
     },
     {
-      "path": "retention-final/gates/retention-candidate-c.log",
+      "path": "retention-final/gates/retention-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/retention-candidate-c.log",
       "sha256": "fb62c97f30d43427f0503993e0789e34d944b9ead56bae4a70c285ce15715b15"
     },
@@ -176,7 +176,7 @@
       "sha256": "62002c17cb9ab4dfaf532a77de64ce7622dd480f20b1ce4d56455635f09a4f67"
     },
     {
-      "path": "retention-final/gates/memory-cleanup-candidate-c.log",
+      "path": "retention-final/gates/memory-cleanup-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/memory-cleanup-candidate-c.log",
       "sha256": "7c99a1ebb536a35cc1d7fab080d0011ae56ea2a61fb48976ff5dbe28fcfeba3c"
     },
@@ -186,7 +186,7 @@
       "sha256": "9601c94b6ef693a3dd50a21d19d204d0ba39163ccc9f68b396100cb18769f934"
     },
     {
-      "path": "retention-final/gates/typecheck-candidate-c.log",
+      "path": "retention-final/gates/typecheck-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/typecheck-candidate-c.log",
       "sha256": "4163cc00708309c7236fdd4061d7d1954de451d0aeff252a093396d95a8447ed"
     },
@@ -196,7 +196,7 @@
       "sha256": "201676bd3ef5dc1fb281256f5e02a9029aee86c3e0dcda79c929a19d8f3f504a"
     },
     {
-      "path": "retention-final/gates/contract-candidate-c.log",
+      "path": "retention-final/gates/contract-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/contract-candidate-c.log",
       "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
     },
@@ -206,7 +206,7 @@
       "sha256": "3f644242aaeaa6bf80fc8568b5e3cb896e730af3d8558fa18e9f2802a8359e88"
     },
     {
-      "path": "retention-final/gates/comms-replay-candidate-c.log",
+      "path": "retention-final/gates/comms-replay-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/comms-replay-candidate-c.log",
       "sha256": "a114bc39c9bce600d6ebdecc4392ea121380adabe018e5644a2546473d9361b6"
     },
@@ -216,7 +216,7 @@
       "sha256": "a4f1e85f1a4b7c165884455198748041c4c1c670c1a331964e6b7554337caf1c"
     },
     {
-      "path": "retention-final/gates/comms-compare-candidate-c.log",
+      "path": "retention-final/gates/comms-compare-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/comms-compare-candidate-c.log",
       "sha256": "aca981aa2141407bd2532afb7b3f587924d6944c679ee10e7021aeb1e2b755c9"
     },
@@ -226,7 +226,7 @@
       "sha256": "57bdbfed6bad8d4539f814b7569b28a67b998d09f8ca58febace74a9b63b43c6"
     },
     {
-      "path": "retention-final/gates/harness-context-candidate-c.log",
+      "path": "retention-final/gates/harness-context-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/harness-context-candidate-c.log",
       "sha256": "04b42d6eacd1ec0bc5c6345787b3de6428ceed8d3f65ee2038dc52fff2879d62"
     },
@@ -236,7 +236,7 @@
       "sha256": "dde1d8480b32fb7f4a81d4b46f9abd5b47a5463107cb483f21d48bae56cd354f"
     },
     {
-      "path": "retention-final/gates/harness-validate-candidate-c.log",
+      "path": "retention-final/gates/harness-validate-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/harness-validate-candidate-c.log",
       "sha256": "0f81f6e4e1c0eaf52f9963ca5d3b71ae8eb490cd54217b3d3b96d7ef27a617df"
     },
@@ -246,7 +246,7 @@
       "sha256": "ce368ddcd86cf68a6ad1067b2dc942ba7c0d9c65993a82790c852160add7a2df"
     },
     {
-      "path": "retention-final/gates/harness-dry-run-candidate-c.log",
+      "path": "retention-final/gates/harness-dry-run-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/harness-dry-run-candidate-c.log",
       "sha256": "f7c41ac50f935e6e095b7829aadbb1d7dc3304420dbe90887f1103a42f121d0d"
     },
@@ -256,7 +256,7 @@
       "sha256": "7079469e3e9fb100979da645d618056f89b7948f66f424bb49269b7eea4a0a92"
     },
     {
-      "path": "retention-final/gates/changed-source-lint-candidate-c.log",
+      "path": "retention-final/gates/changed-source-lint-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/changed-source-lint-candidate-c.log",
       "sha256": "d8a7437e475991994e0605022ebbea69109a746e97dc0afa0edc0c03124eb948"
     },
@@ -266,7 +266,7 @@
       "sha256": "d3898aec928d7e94c96258636ef2e77c45b765ddd3f4dbf84cbc5bc8f6eefff3"
     },
     {
-      "path": "retention-final/gates/eval-typecheck-candidate-c-rooted.log",
+      "path": "retention-final/gates/eval-typecheck-candidate-c-rooted.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/eval-typecheck-candidate-c-rooted.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -276,7 +276,7 @@
       "sha256": "0da8a1d63a1cb330b4207eee0f243346280327194a21283886d7c0fc5c618aa9"
     },
     {
-      "path": "retention-final/gates/deterministic-candidate-c.log",
+      "path": "retention-final/gates/deterministic-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/deterministic-candidate-c.log",
       "sha256": "a9dc9f40ed4de7c2cba107204977eaf301b7aff1a9f88350450d34b65c8ae318"
     },
@@ -286,7 +286,7 @@
       "sha256": "d60909b790cc170a3932cccc56f105d59c26019f6b9bbda2955d4ea435c6550f"
     },
     {
-      "path": "retention-final/gates/live-provider-candidate-c.log",
+      "path": "retention-final/gates/live-provider-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/live-provider-candidate-c.log",
       "sha256": "bd1697ec3d04bef6cae6dd3350675bea2aa399e46bfb373c885260ce51d8060f"
     },
@@ -296,7 +296,7 @@
       "sha256": "d232d5578d450c64c2ac96d0bee13354fc238de5e66181eacfd1dd393fe8e70b"
     },
     {
-      "path": "retention-final/gates/artifact-replay-candidate-c.log",
+      "path": "retention-final/gates/artifact-replay-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/artifact-replay-candidate-c.log",
       "sha256": "9ce265d874ecf59dc5ea043a233ec7ea660deacd2319e0e3fb5b4ffd6bc90577"
     },
@@ -306,7 +306,7 @@
       "sha256": "9770a6247a876a98a710538f44636ffe2497a98c384bc5305e730a9d0fe83f5d"
     },
     {
-      "path": "retention-final/gates/autoreview-final-isolated.log",
+      "path": "retention-final/gates/autoreview-final-isolated.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/autoreview-final-isolated.log",
       "sha256": "5e57a6f2ab419a373bfee49e1ee6eccfd1d9689b27efa7f2e824c92fa61977bc"
     },
@@ -316,7 +316,7 @@
       "sha256": "0c6e92b403e27cbb05988b486b47cd97e92fb7f5b0091770d2a5a1e4e284e85a"
     },
     {
-      "path": "retention-final/gates/malformed-lineage-readback-candidate-c.log",
+      "path": "retention-final/gates/malformed-lineage-readback-candidate-c.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/malformed-lineage-readback-candidate-c.log",
       "sha256": "6a298fd5fd350009a21007738024c31b36a2bd8aa6f18f0a1ea76ae132dcb8dd"
     },
@@ -341,7 +341,7 @@
       "sha256": "74fc6b3172bc723aca14a8de3d86873a7bd8040f25f47af9daecadb865a78414"
     },
     {
-      "path": "retention-final/additional-diagnostics/harness-fast-comms-candidate-b.log",
+      "path": "retention-final/additional-diagnostics/harness-fast-comms-candidate-b.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/harness-fast-comms-candidate-b.log",
       "sha256": "ddcdee0350537b66ceaa1cd7cfa6f85b57124d120890771ede41796f7294d80d"
     },
@@ -351,7 +351,7 @@
       "sha256": "7bc110fd663ea6be99af64c33f6e1b44bcfccfc2d815d2ed068e429a83f5bd75"
     },
     {
-      "path": "retention-final/additional-diagnostics/harness-ci-candidate-b.log",
+      "path": "retention-final/additional-diagnostics/harness-ci-candidate-b.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/harness-ci-candidate-b.log",
       "sha256": "f558d1c76e13fc14085337b4a70d74df7e92424f6c0ae13956cf7588ebcb1cbe"
     },
@@ -371,7 +371,7 @@
       "sha256": "db39a18966c41b623319f6b301ee19b0fd31606f5059989dd04f0ef2788cafba"
     },
     {
-      "path": "retention-final/pre-implementation/negative-control-gate.log",
+      "path": "retention-final/pre-implementation/negative-control-gate.txt",
       "source": "D:/tmp/context-inline-spill-retention-20261103-0804/pre-implementation-default-pruner.log",
       "sha256": "7cabb38c2f323f39a13a882cebece46bb5f57e43453ea0f46ca1d96b16b53fde"
     },
@@ -401,7 +401,7 @@
       "sha256": "c84e82f2d80b50d67e0ee662a4292313048c0bf60d20637676dd8f04ce1c95ea"
     },
     {
-      "path": "retention-final/review-service-failures/initial-attempt.log",
+      "path": "retention-final/review-service-failures/initial-attempt.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/autoreview-candidate-b.log",
       "sha256": "d7d917eccbe788d2a3277afb287d1fc932ab646b25319e4289019b0716c651bc"
     },
@@ -411,7 +411,7 @@
       "sha256": "e778fa4fea5438ff3bd01fd3f0f44e1582081a5c48d965851fe8afd3bcb5c107"
     },
     {
-      "path": "retention-final/review-service-failures/model-routing-probe.log",
+      "path": "retention-final/review-service-failures/model-routing-probe.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/codex-model-routing-probe-b.log",
       "sha256": "5c0b2adca5cb4d4b3e7ebc726a81babc3efd954767f3fada1aca8135adf0523f"
     },
@@ -471,7 +471,7 @@
       "sha256": "78d97037961d6deefe0dd13eadbe5eb4bea958bf5d51dca581a29d2071cee1bd"
     },
     {
-      "path": "retention-final/development/malformed-lineage-regressions-before-fix.log",
+      "path": "retention-final/development/malformed-lineage-regressions-before-fix.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/malformed-lineage-regressions-before-fix.log",
       "sha256": "022be68c59e7930fe6f56601d56879b0bad15805177cbec8ee991af9fdde6af5"
     },
@@ -481,7 +481,7 @@
       "sha256": "755e4a67ebae46df0d3896deebdd25b3f5fbc8c965e0b711432d56f960430704"
     },
     {
-      "path": "retention-final/review-service-failures/c-interrupted.log",
+      "path": "retention-final/review-service-failures/c-interrupted.txt",
       "source": "D:/tmp/context-inline-spill-closeout-20261103/gates/autoreview-candidate-c.log",
       "sha256": "8fcc38b5d94f6ee310ede807ada5b7af5c6f8f0df7b0e4ce2bdca7468ab32e4f"
     },
