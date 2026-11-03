@@ -1629,6 +1629,23 @@ export function registerSubagentRun(params: RegisterSubagentRunParams) {
   subagentRunManager.registerSubagentRun(params);
 }
 
+/** Tag an already registered child run as a context-fold delivery. */
+export function updateSubagentRunContextFoldMetadata(
+  runId: string,
+  metadata: NonNullable<SubagentRunRecord["contextFold"]>,
+): boolean {
+  const key = runId.trim();
+  if (!key) return false;
+  const entry = subagentRuns.get(key);
+  if (!entry) return false;
+  entry.contextFold = metadata;
+  if (entry.delivery?.payload) {
+    entry.delivery.payload = { ...entry.delivery.payload, contextFold: metadata };
+  }
+  persistSubagentRuns();
+  return true;
+}
+
 export function updateSubagentRunOrchestrationMetadata(
   runId: string,
   patch: Partial<NonNullable<SubagentRunRecord["orchestration"]>>,

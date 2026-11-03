@@ -1125,6 +1125,8 @@ export function createOpenClawCodingTools(options?: {
     role: options?.dcsContextRole,
     factService: options?.factService,
     budgetChars: options?.dcsFactBudgetChars,
+    // context-folding-rlm: flag resolves from the attempt config (default off).
+    config: options?.config,
   });
   if (dcsContextTools.length > 0) {
     base.push(...dcsContextTools);

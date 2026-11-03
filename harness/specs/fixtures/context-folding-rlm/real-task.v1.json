@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ContextFoldingRealTask/v1",
+  "id": "cfr-real-task-01",
+  "version": "1.1.0",
+  "driven_by": "agent",
+  "actor": "codex/context-folding-rlm",
+  "workspace": "harness/specs/fixtures/context-folding-rlm/real-workspace",
+  "workspaceKind": "frozen-small-python-repo",
+  "resetPolicy": "copy-to-D:/tmp/context-folding-real-task-<runId>-before-run",
+  "taskSummary": "修复任务板重复完成导致 revision 和 completion event 重复的真实代码缺陷，并给出可回读的测试与证据。",
+  "prompt": "在复制的 real-workspace 中完成以下真实任务：修复 TaskBoard.completeTask 的幂等性缺陷，使已完成任务再次完成时不增加 revision、不追加重复 completion event，同时保留未知任务和重复 task id 的既有错误语义。以源码和测试为权威，忽略 docs/legacy-notes.md 的陈旧说法。运行 `python -m unittest discover -s tests -v`，产出 patch、测试结果、ContextHandle/expand/FoldedResult 事件和 evidence refs。不要修改 checked-in fixture，不要用模型文本代替 oracle。",
+  "initialState": {
+    "testCommand": "python -m unittest discover -s tests -v",
+    "expectedExitCode": 1,
+    "expectedFailure": "test_repeated_completion_is_idempotent"
+  },
+  "requiredOutputs": [
+    "patch",
+    "test-command-and-exit-code",
+    "test-counts",
+    "context-events",
+    "evidence-refs",
+    "unresolved-claims",
+    "usage"
+  ],
+  "modes": [
+    "baseline",
+    "expand-only",
+    "folded-child"
+  ],
+  "requiredFlowAssertions": [
+    "在 folded-child 模式至少出现一次 ContextHandle 和一次 bounded context_expand",
+    "至少出现一个 ContextFoldResult，且包含 evidenceRefs、未解决项和 usage",
+    "父会话不注入 child transcript，raw child chars 不超过 8000",
+    "stale、missing、cross-session、cross-workspace selector 均显式失败",
+    "feature off 时 prompt/tool/compaction 行为与 baseline 等价"
+  ],
+  "oracle": {
+    "command": "python harness/specs/fixtures/context-folding-rlm/oracle/verify.py --workspace <copy> --result <run-result.json>",
+    "expectedExitCode": 0,
+    "requiredTestExitCode": 0,
+    "requiredSkippedTests": 0
+  },
+  "thresholds": {
+    "taskCorrectness": 1,
+    "evidenceRetention": 1,
+    "staleRefCountMax": 0,
+    "scopeViolationMax": 0,
+    "rawChildTranscriptCharsMax": 8000,
+    "mainContextReductionMin": 0.3,
+    "totalTokenMultiplierMax": 2,
+    "latencyMultiplierMax": 2.5,
+    "maxRecursiveDepth": 1,
+    "multiRoundMinimumRounds": 5,
+    "multiRoundPerturbedRounds": 5,
+    "everyRoundTotalTokenMultiplierBelow": 1,
+    "everyRoundMainContextReductionMin": 0.3,
+    "everyRoundLatencyMultiplierMax": 2.5,
+    "multiRoundMedianTotalTokenMultiplierBelow": 1,
+    "multiRoundUpper95TotalTokenMultiplierBelow": 1
+  },
+  "evidencePolicy": {
+    "driven_by": "agent",
+    "actorRequired": true,
+    "realHumanClaimForbidden": true,
+    "productReleaseApprovalForbidden": true,
+    "fixtureMustRemainUnchanged": true,
+    "rawRunLocation": "D:/tmp/context-folding-real-task-<runId>",
+    "multiRoundFormalPath": "harness/specs/fixtures/context-folding-rlm/eval/multiround-acceptance",
+    "requireEveryRoundPositiveBenefit": true
+  }
+}

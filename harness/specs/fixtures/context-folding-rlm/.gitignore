@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+*.pyo
+# Curated TF-0695 acceptance logs are reviewed evidence, not transient output.
+!eval/*.log

@@ -343,6 +343,10 @@ import type {
   SessionHandoffPayload,
   SessionHandoffResult,
   SessionListArchivedPayload,
+  SessionContextFoldingStatusPayload,
+  SessionContextFoldingStatusResult,
+  SessionContextFoldProjectionPayload,
+  SessionContextFoldProjectionResult,
   SessionListArchivedResult,
   SessionLongTaskControlHistoryPayload,
   SessionLongTaskControlHistoryResult,
@@ -1562,6 +1566,12 @@ export const hostApi = {
     ),
     emptyArchive: (input: SessionEmptyArchivePayload) => (
       invokeHost('sessions', 'emptyArchive', input)
+    ),
+    contextFoldingStatus: (input?: SessionContextFoldingStatusPayload): Promise<SessionContextFoldingStatusResult> => (
+      invokeHost('sessions', 'contextFoldingStatus', input)
+    ),
+    contextFoldProjection: (input: SessionContextFoldProjectionPayload): Promise<SessionContextFoldProjectionResult> => (
+      invokeHost('sessions', 'contextFoldProjection', input)
     ),
   },
   chat: {

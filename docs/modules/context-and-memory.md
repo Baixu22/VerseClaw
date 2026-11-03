@@ -248,6 +248,25 @@ cache-TTL pruner 是**真改**：TTL 过期后它会重写旧的 tool result。�
 - 报告在 cache-age 早退**之前**生成，因此刚触发的轮次也能看到"会修剪什么"；但真正是否修剪仍由原逻辑决定。
 
 非目标：不实现服务端 `cache_edits`、不改任何 compaction 阈值、不默认开启。
+## 4.5 上下文折叠：ContextHandle 与有界展开（`context_expand`，默认关闭）
+
+长材料不再只有"整段塞进 prompt"或"生成摘要"两条路。`context-folding-rlm` 支线把它们接成一条受控读面：
+
+```text
+owner 资源 -> ContextHandle/v1 -> bounded context_expand -> 父会话只持有 handle + 有界 excerpt
+```
+
+- **ContextHandle/v1**（`shared/types/context-folding.ts`）：`handleId`（由 owner、scope、resourceId、selector、checksum、revision 决定，`cfh_` 前缀，可重算）、`owner`、`scope`（workspaceId + sessionId，永不从 session 回退到 workspace）、`selector`（full / lines / chars）、`checksum`、`freshness`、`estimatedChars`、`allowedExpansion`、`revision`。handle 只是读引用，不授予任何工具、写入或跨 scope 权限。
+- **`context_expand`**（`openclaw_runtime/src/agents/tools/context-agent-tools.ts` → `context-engine/context-folding/expand.ts`）：三种模式 `excerpt` / `search` / `aggregate`，字符与字节上限分别不超过 20000 / 65536；检查顺序固定为 scope → 模式允许 → range 包含 → freshness ttl → owner 解析 → checksum → 有界读取。已接入的 owner：`workspace-file`、`block-store`、`context-archive`；其余 owner 返回 `owner_unavailable`，不伪装。
+- **显式诊断**：`workspace_mismatch`、`session_mismatch`、`stale_checksum`、`missing_resource`、`ambiguous_selector`（glob、目录或多个同 id block）、`expired`、`expansion_not_allowed`、`limit_exceeded`、`scope_violation`（路径穿越）。任何一项都返回 `ok:false` 加 diagnostics，没有静默回退。
+- **搜索到展开的读面**：flag 开启时 `context_search` 的每条结果附带一个会话内 handle；模型随后用 `context_expand` 读有界 excerpt 或先 `aggregate` 只看体积。flag 关闭时 `context_search` 输出与基线逐字节相同。
+- **`context_fold` 子任务回传**：`context_fold` 通过现有 `sessions_spawn` 启动单层 isolated child，只向 child 下发重新 scope 的 handles、显式工具清单、workspace scope 和预算。child 的完成结果必须是一个 `ContextFoldResult/v1`，含 summary、structuredOutput、evidenceRefs、unresolvedClaims、blockers、failedAttempts、child identity 与 usage；父会话只接收经校验和预算裁剪的投影，缺证据、身份不匹配、重复 delivery、超时/取消状态或 transcript 形状字段均显式拒绝。
+- **Host API**：`sessions.contextFoldingStatus` 返回 flag 状态、来源（env / config / default）、限制与 `disable-only` 回退说明；`sessions.contextFoldProjection` 校验 `ContextFoldResult/v1` 并裁到父视图预算，拒绝任何携带 transcript 形状字段的结果。两者均为只读，不触碰 Gateway。
+
+开关：`runtime.contextBlock.contextFolding.enabled`，或环境变量 `VERSE_CONTEXT_FOLDING`（显式 env 值双向覆盖配置，所以回退只需关闭开关）。默认关闭；关闭时不注册任何新工具，prompt、工具清单、compaction 与 subagent 行为与基线一致（`tests/unit/context-folding-result.test.ts` 以 clean-HEAD 基线做字节级比对）。
+
+非目标：不引入任意 Python REPL / pip / shell，不默认开启递归深度大于 1 的子代理，handle、摘要与 FoldedResult 都不是任务验收或 Memory/Knowledge/Task Ledger 的写入权威。
+
 ## 5. Context health
 
 `ContextHealthMonitor v1` 是确定性、无 LLM 的四维评分：

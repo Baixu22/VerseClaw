@@ -1,0 +1,1588 @@
+{
+  "schemaVersion": "ContextFoldingMultiRoundEvalResult/v2",
+  "runId": "cfr-multiround-acceptance-20261103",
+  "status": "pass",
+  "driven_by": "agent",
+  "actor": "codex/context-folding-rlm",
+  "generatedAt": "2026-11-03T06:57:17.898Z",
+  "profiles": [
+    {
+      "schemaVersion": "ContextFoldingMultiRoundEvalResult/v1",
+      "runId": "cfr-multiround-frozen-20261103",
+      "status": "pass",
+      "driven_by": "agent",
+      "actor": "codex/context-folding-rlm",
+      "generatedAt": "2026-11-03T06:53:06.199Z",
+      "rounds": 5,
+      "sourceTreeDigest": "01bf03ca823ad3953c211654eeb6c8fe37064e52546e661a0c51e835515cf08c",
+      "sourceUnchanged": true,
+      "perturbation": {
+        "kind": "none",
+        "extraCharsPerRound": 0,
+        "appliedTo": []
+      },
+      "roundSummaries": [
+        {
+          "roundId": "round-01",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 147
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 135
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 139
+          },
+          "baseline": {
+            "mainContextChars": 81943,
+            "totalTokens": 20486,
+            "latencyMs": 147
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1206,
+            "latencyMs": 140
+          },
+          "ratios": {
+            "mainContextReduction": 0.9981206448384853,
+            "totalTokenMultiplier": 0.05886947183442351,
+            "latencyMultiplier": 0.9523809523809523
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-02",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 147
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 145
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 142
+          },
+          "baseline": {
+            "mainContextChars": 81943,
+            "totalTokens": 20486,
+            "latencyMs": 147
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1206,
+            "latencyMs": 142
+          },
+          "ratios": {
+            "mainContextReduction": 0.9981206448384853,
+            "totalTokenMultiplier": 0.05886947183442351,
+            "latencyMultiplier": 0.9659863945578231
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-03",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 167
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 151
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 167
+          },
+          "baseline": {
+            "mainContextChars": 81943,
+            "totalTokens": 20486,
+            "latencyMs": 167
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1206,
+            "latencyMs": 167
+          },
+          "ratios": {
+            "mainContextReduction": 0.9981206448384853,
+            "totalTokenMultiplier": 0.05886947183442351,
+            "latencyMultiplier": 1
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-04",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 188
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 177
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 160
+          },
+          "baseline": {
+            "mainContextChars": 81943,
+            "totalTokens": 20486,
+            "latencyMs": 188
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1206,
+            "latencyMs": 160
+          },
+          "ratios": {
+            "mainContextReduction": 0.9981206448384853,
+            "totalTokenMultiplier": 0.05886947183442351,
+            "latencyMultiplier": 0.851063829787234
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-05",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 339
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 442
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 337
+          },
+          "baseline": {
+            "mainContextChars": 81943,
+            "totalTokens": 20486,
+            "latencyMs": 339
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1206,
+            "latencyMs": 337
+          },
+          "ratios": {
+            "mainContextReduction": 0.9981206448384853,
+            "totalTokenMultiplier": 0.05886947183442351,
+            "latencyMultiplier": 0.9941002949852508
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        }
+      ],
+      "stats": {
+        "tokenMultiplier": {
+          "values": [
+            0.05886947183442351,
+            0.05886947183442351,
+            0.05886947183442351,
+            0.05886947183442351,
+            0.05886947183442351
+          ],
+          "mean": 0.058869,
+          "median": 0.058869,
+          "p95": 0.058869,
+          "max": 0.058869
+        },
+        "mainContextReduction": {
+          "values": [
+            0.9981206448384853,
+            0.9981206448384853,
+            0.9981206448384853,
+            0.9981206448384853,
+            0.9981206448384853
+          ],
+          "mean": 0.998121,
+          "median": 0.998121,
+          "p05": 0.998121,
+          "min": 0.998121
+        },
+        "latencyMultiplier": {
+          "values": [
+            0.9523809523809523,
+            0.9659863945578231,
+            1,
+            0.851063829787234,
+            0.9941002949852508
+          ],
+          "mean": 0.952706,
+          "median": 0.965986,
+          "p95": 0.99882,
+          "max": 1
+        }
+      },
+      "gates": {
+        "rounds": true,
+        "everyRoundPass": true,
+        "everyRoundContext": true,
+        "everyRoundTokenPositive": true,
+        "everyRoundLatency": true,
+        "medianTokenPositive": true,
+        "upper95TokenPositive": true,
+        "medianContext": true,
+        "allQuality": true,
+        "allEvidence": true,
+        "allSafety": true,
+        "allOracle": true
+      },
+      "notes": [
+        "Each round uses a fresh D:/tmp copy and independent real unittest + oracle execution.",
+        "A failed or negative round makes the whole aggregate fail; no averaging escape hatch.",
+        "Token values are local ceil(chars/4) estimates, not live-provider billing."
+      ],
+      "unresolvedClaims": [
+        "No live model provider was used; provider-measured token/cost/latency and live semantic quality are outside this eval."
+      ]
+    },
+    {
+      "schemaVersion": "ContextFoldingMultiRoundEvalResult/v1",
+      "runId": "cfr-multiround-perturbed-20261103",
+      "status": "pass",
+      "driven_by": "agent",
+      "actor": "codex/context-folding-rlm",
+      "generatedAt": "2026-11-03T06:57:09.240Z",
+      "rounds": 5,
+      "sourceTreeDigest": "01bf03ca823ad3953c211654eeb6c8fe37064e52546e661a0c51e835515cf08c",
+      "sourceUnchanged": true,
+      "perturbation": {
+        "kind": "noisy-distractor",
+        "profile": "varied",
+        "extraCharsPerRound": [
+          4000,
+          8000,
+          12000,
+          16000,
+          24000
+        ],
+        "appliedTo": [
+          "data/taskboard-audit.txt"
+        ]
+      },
+      "roundSummaries": [
+        {
+          "roundId": "round-01",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 126
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 123
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 120
+          },
+          "baseline": {
+            "mainContextChars": 85973,
+            "totalTokens": 21494,
+            "latencyMs": 126
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1207,
+            "latencyMs": 121
+          },
+          "ratios": {
+            "mainContextReduction": 0.9982087399532411,
+            "totalTokenMultiplier": 0.056155206104029035,
+            "latencyMultiplier": 0.9603174603174603
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-02",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 121
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 127
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 123
+          },
+          "baseline": {
+            "mainContextChars": 89973,
+            "totalTokens": 22494,
+            "latencyMs": 121
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1207,
+            "latencyMs": 123
+          },
+          "ratios": {
+            "mainContextReduction": 0.9982883754015094,
+            "totalTokenMultiplier": 0.05365875344536321,
+            "latencyMultiplier": 1.0165289256198347
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-03",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 121
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 120
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 121
+          },
+          "baseline": {
+            "mainContextChars": 93973,
+            "totalTokens": 23494,
+            "latencyMs": 121
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1207,
+            "latencyMs": 121
+          },
+          "ratios": {
+            "mainContextReduction": 0.9983612314175349,
+            "totalTokenMultiplier": 0.05137481910274964,
+            "latencyMultiplier": 1
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-04",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 121
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 128
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 126
+          },
+          "baseline": {
+            "mainContextChars": 97973,
+            "totalTokens": 24494,
+            "latencyMs": 121
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1207,
+            "latencyMs": 126
+          },
+          "ratios": {
+            "mainContextReduction": 0.9984281383646515,
+            "totalTokenMultiplier": 0.04927737405078795,
+            "latencyMultiplier": 1.0413223140495869
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        },
+        {
+          "roundId": "round-05",
+          "baselineTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 126
+          },
+          "expandOnlyTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 136
+          },
+          "foldedChildTests": {
+            "exitCode": 0,
+            "ran": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "latencyMs": 133
+          },
+          "baseline": {
+            "mainContextChars": 105973,
+            "totalTokens": 26494,
+            "latencyMs": 126
+          },
+          "folded": {
+            "mainContextChars": 154,
+            "totalTokens": 1207,
+            "latencyMs": 133
+          },
+          "ratios": {
+            "mainContextReduction": 0.9985467996565163,
+            "totalTokenMultiplier": 0.045557484713520044,
+            "latencyMultiplier": 1.0555555555555556
+          },
+          "evidenceRefsResolution": 1,
+          "scopeViolations": 0,
+          "staleReferences": 0,
+          "rawChildTranscriptChars": 0,
+          "rawTranscriptInjected": false,
+          "maxRecursiveDepth": 1,
+          "checks": {
+            "schema": true,
+            "agent": true,
+            "fixtureUnchanged": true,
+            "allModeTests": true,
+            "qualityParity": true,
+            "evidence": true,
+            "scope": true,
+            "transcript": true,
+            "depth": true,
+            "mainContextPositive": true,
+            "totalTokensPositive": true,
+            "latencyBounded": true,
+            "unfold": true
+          },
+          "failedChecks": [],
+          "pass": true
+        }
+      ],
+      "stats": {
+        "tokenMultiplier": {
+          "values": [
+            0.056155206104029035,
+            0.05365875344536321,
+            0.05137481910274964,
+            0.04927737405078795,
+            0.045557484713520044
+          ],
+          "mean": 0.051205,
+          "median": 0.051375,
+          "p95": 0.055656,
+          "max": 0.056155
+        },
+        "mainContextReduction": {
+          "values": [
+            0.9982087399532411,
+            0.9982883754015094,
+            0.9983612314175349,
+            0.9984281383646515,
+            0.9985467996565163
+          ],
+          "mean": 0.998367,
+          "median": 0.998361,
+          "p05": 0.998225,
+          "min": 0.998209
+        },
+        "latencyMultiplier": {
+          "values": [
+            0.9603174603174603,
+            1.0165289256198347,
+            1,
+            1.0413223140495869,
+            1.0555555555555556
+          ],
+          "mean": 1.014745,
+          "median": 1.016529,
+          "p95": 1.052709,
+          "max": 1.055556
+        }
+      },
+      "gates": {
+        "rounds": true,
+        "everyRoundPass": true,
+        "everyRoundContext": true,
+        "everyRoundTokenPositive": true,
+        "everyRoundLatency": true,
+        "medianTokenPositive": true,
+        "upper95TokenPositive": true,
+        "medianContext": true,
+        "allQuality": true,
+        "allEvidence": true,
+        "allSafety": true,
+        "allOracle": true
+      },
+      "notes": [
+        "Each round uses a fresh D:/tmp copy and independent real unittest + oracle execution.",
+        "A failed or negative round makes the whole aggregate fail; no averaging escape hatch.",
+        "Token values are local ceil(chars/4) estimates, not live-provider billing."
+      ],
+      "unresolvedClaims": [
+        "No live model provider was used; provider-measured token/cost/latency and live semantic quality are outside this eval."
+      ]
+    }
+  ],
+  "rounds": {
+    "frozen": 5,
+    "perturbed": 5,
+    "total": 10
+  },
+  "sourceTreeDigest": "01bf03ca823ad3953c211654eeb6c8fe37064e52546e661a0c51e835515cf08c",
+  "sourceUnchanged": true,
+  "roundSummaries": [
+    {
+      "roundId": "round-01",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 147
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 135
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 139
+      },
+      "baseline": {
+        "mainContextChars": 81943,
+        "totalTokens": 20486,
+        "latencyMs": 147
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1206,
+        "latencyMs": 140
+      },
+      "ratios": {
+        "mainContextReduction": 0.9981206448384853,
+        "totalTokenMultiplier": 0.05886947183442351,
+        "latencyMultiplier": 0.9523809523809523
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-02",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 147
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 145
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 142
+      },
+      "baseline": {
+        "mainContextChars": 81943,
+        "totalTokens": 20486,
+        "latencyMs": 147
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1206,
+        "latencyMs": 142
+      },
+      "ratios": {
+        "mainContextReduction": 0.9981206448384853,
+        "totalTokenMultiplier": 0.05886947183442351,
+        "latencyMultiplier": 0.9659863945578231
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-03",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 167
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 151
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 167
+      },
+      "baseline": {
+        "mainContextChars": 81943,
+        "totalTokens": 20486,
+        "latencyMs": 167
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1206,
+        "latencyMs": 167
+      },
+      "ratios": {
+        "mainContextReduction": 0.9981206448384853,
+        "totalTokenMultiplier": 0.05886947183442351,
+        "latencyMultiplier": 1
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-04",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 188
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 177
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 160
+      },
+      "baseline": {
+        "mainContextChars": 81943,
+        "totalTokens": 20486,
+        "latencyMs": 188
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1206,
+        "latencyMs": 160
+      },
+      "ratios": {
+        "mainContextReduction": 0.9981206448384853,
+        "totalTokenMultiplier": 0.05886947183442351,
+        "latencyMultiplier": 0.851063829787234
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-05",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 339
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 442
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 337
+      },
+      "baseline": {
+        "mainContextChars": 81943,
+        "totalTokens": 20486,
+        "latencyMs": 339
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1206,
+        "latencyMs": 337
+      },
+      "ratios": {
+        "mainContextReduction": 0.9981206448384853,
+        "totalTokenMultiplier": 0.05886947183442351,
+        "latencyMultiplier": 0.9941002949852508
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-01",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 126
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 123
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 120
+      },
+      "baseline": {
+        "mainContextChars": 85973,
+        "totalTokens": 21494,
+        "latencyMs": 126
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1207,
+        "latencyMs": 121
+      },
+      "ratios": {
+        "mainContextReduction": 0.9982087399532411,
+        "totalTokenMultiplier": 0.056155206104029035,
+        "latencyMultiplier": 0.9603174603174603
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-02",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 121
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 127
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 123
+      },
+      "baseline": {
+        "mainContextChars": 89973,
+        "totalTokens": 22494,
+        "latencyMs": 121
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1207,
+        "latencyMs": 123
+      },
+      "ratios": {
+        "mainContextReduction": 0.9982883754015094,
+        "totalTokenMultiplier": 0.05365875344536321,
+        "latencyMultiplier": 1.0165289256198347
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-03",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 121
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 120
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 121
+      },
+      "baseline": {
+        "mainContextChars": 93973,
+        "totalTokens": 23494,
+        "latencyMs": 121
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1207,
+        "latencyMs": 121
+      },
+      "ratios": {
+        "mainContextReduction": 0.9983612314175349,
+        "totalTokenMultiplier": 0.05137481910274964,
+        "latencyMultiplier": 1
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-04",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 121
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 128
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 126
+      },
+      "baseline": {
+        "mainContextChars": 97973,
+        "totalTokens": 24494,
+        "latencyMs": 121
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1207,
+        "latencyMs": 126
+      },
+      "ratios": {
+        "mainContextReduction": 0.9984281383646515,
+        "totalTokenMultiplier": 0.04927737405078795,
+        "latencyMultiplier": 1.0413223140495869
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    },
+    {
+      "roundId": "round-05",
+      "baselineTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 126
+      },
+      "expandOnlyTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 136
+      },
+      "foldedChildTests": {
+        "exitCode": 0,
+        "ran": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "latencyMs": 133
+      },
+      "baseline": {
+        "mainContextChars": 105973,
+        "totalTokens": 26494,
+        "latencyMs": 126
+      },
+      "folded": {
+        "mainContextChars": 154,
+        "totalTokens": 1207,
+        "latencyMs": 133
+      },
+      "ratios": {
+        "mainContextReduction": 0.9985467996565163,
+        "totalTokenMultiplier": 0.045557484713520044,
+        "latencyMultiplier": 1.0555555555555556
+      },
+      "evidenceRefsResolution": 1,
+      "scopeViolations": 0,
+      "staleReferences": 0,
+      "rawChildTranscriptChars": 0,
+      "rawTranscriptInjected": false,
+      "maxRecursiveDepth": 1,
+      "checks": {
+        "schema": true,
+        "agent": true,
+        "fixtureUnchanged": true,
+        "allModeTests": true,
+        "qualityParity": true,
+        "evidence": true,
+        "scope": true,
+        "transcript": true,
+        "depth": true,
+        "mainContextPositive": true,
+        "totalTokensPositive": true,
+        "latencyBounded": true,
+        "unfold": true
+      },
+      "failedChecks": [],
+      "pass": true
+    }
+  ],
+  "stats": {
+    "tokenMultiplier": {
+      "values": [
+        0.05886947183442351,
+        0.05886947183442351,
+        0.05886947183442351,
+        0.05886947183442351,
+        0.05886947183442351,
+        0.056155206104029035,
+        0.05365875344536321,
+        0.05137481910274964,
+        0.04927737405078795,
+        0.045557484713520044
+      ],
+      "mean": 0.055037,
+      "median": 0.057512,
+      "p95": 0.058869,
+      "max": 0.058869
+    },
+    "mainContextReduction": {
+      "values": [
+        0.9981206448384853,
+        0.9981206448384853,
+        0.9981206448384853,
+        0.9981206448384853,
+        0.9981206448384853,
+        0.9982087399532411,
+        0.9982883754015094,
+        0.9983612314175349,
+        0.9984281383646515,
+        0.9985467996565163
+      ],
+      "mean": 0.998244,
+      "median": 0.998165,
+      "p05": 0.998121,
+      "min": 0.998121
+    },
+    "latencyMultiplier": {
+      "values": [
+        0.9523809523809523,
+        0.9659863945578231,
+        1,
+        0.851063829787234,
+        0.9941002949852508,
+        0.9603174603174603,
+        1.0165289256198347,
+        1,
+        1.0413223140495869,
+        1.0555555555555556
+      ],
+      "mean": 0.983726,
+      "median": 0.99705,
+      "p95": 1.049151,
+      "max": 1.055556
+    }
+  },
+  "gates": {
+    "profiles": 2,
+    "profilesAtLeastTwo": true,
+    "atLeastFiveFrozenRounds": true,
+    "atLeastFivePerturbedRounds": true,
+    "everyRoundPass": true,
+    "everyRoundQuality": true,
+    "everyRoundOracle": true,
+    "everyRoundEvidence": true,
+    "everyRoundSafety": true,
+    "everyRoundMainContextPositive": true,
+    "everyRoundTotalTokenPositive": true,
+    "everyRoundLatencyBounded": true,
+    "medianTokenPositive": true,
+    "upper95TokenPositive": true,
+    "medianContext": true,
+    "variedPerturbationApplied": true,
+    "all": true
+  },
+  "notes": [
+    "Formal acceptance uses 5 frozen rounds plus 5 varied-noise rounds, 10 paired runs total.",
+    "Every round is independently executed and accepted; any negative round fails the aggregate.",
+    "The varied-noise profile increases distractor size 4k/8k/12k/16k/24k chars per round and preserves 4/4 quality.",
+    "Token values are local ceil(chars/4) estimates, not live-provider billing."
+  ],
+  "unresolvedClaims": [
+    "No live model provider was used; provider-measured token/cost/latency and live semantic quality remain outside this eval."
+  ],
+  "perturbation": {
+    "kind": "noisy-distractor",
+    "profile": "varied",
+    "extraCharsPerRound": [
+      4000,
+      8000,
+      12000,
+      16000,
+      24000
+    ],
+    "appliedTo": [
+      "data/taskboard-audit.txt"
+    ]
+  }
+}

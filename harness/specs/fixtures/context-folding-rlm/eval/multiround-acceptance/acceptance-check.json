@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "ContextFoldingMultiRoundAcceptanceCheck/v1",
+  "status": "pass",
+  "entries": 63,
+  "failures": 0,
+  "checkedAt": "2026-11-03T07:36:47.679Z",
+  "driven_by": "agent",
+  "actor": "codex/context-folding-rlm",
+  "checks": [
+    "aggregate and per-round manifest/oracle/mode logs",
+    "10/10 rounds pass",
+    "63/63 SHA256 entries match",
+    "6 credential classes 0 hits",
+    "oracle PASS"
+  ],
+  "sources": [
+    "aggregate.json",
+    "summary.md",
+    "SHA256SUMS",
+    "../oracle/verify.py"
+  ]
+}

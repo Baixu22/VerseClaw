@@ -6,6 +6,11 @@ import type {
   SubagentRunRecord,
 } from "./subagent-registry.types.js";
 import {
+  ContextFoldingValidationError,
+  projectContextFoldResultForParent,
+  type ContextFoldResult,
+} from "../../../shared/types/context-folding.js";
+import {
   buildPendingGraphNodesFromFollowups,
   buildRepairNodes,
   buildRerouteRecommendations,
@@ -85,6 +90,31 @@ function describeOutcome(payload: PendingFinalDeliveryPayload): string {
     return `error: ${outcome.error.trim()}`;
   }
   return outcome.status;
+}
+
+function isContextFoldPayload(payload: PendingFinalDeliveryPayload): boolean {
+  return Boolean(payload.contextFold);
+}
+
+function duplicateFoldDelivery(payload: PendingFinalDeliveryPayload, result: ContextFoldResult | undefined): boolean {
+  if (!payload.contextFold || !result) return false;
+  return result.deliveryId !== payload.contextFold.deliveryId;
+}
+
+function parseContextFoldProjection(payload: PendingFinalDeliveryPayload): { result?: ContextFoldResult; diagnostic?: string } {
+  if (!payload.contextFold) return {};
+  try {
+    const raw = selectResultText(payload);
+    if (!raw) return { diagnostic: "No ContextFoldResult was captured for this folded child." };
+    const projected = projectContextFoldResultForParent(JSON.parse(raw), { maxChars: payload.contextFold.maxResultChars ?? 8_000 });
+    if (projected.projection.childRunId !== payload.childRunId || projected.projection.childSessionKey !== payload.childSessionKey || projected.projection.foldId !== payload.contextFold.foldId) {
+      return { diagnostic: "ContextFoldResult identity does not match the delivered child run." };
+    }
+    return { result: projected.projection };
+  } catch (error) {
+    if (error instanceof ContextFoldingValidationError) return { diagnostic: error.issues[0]?.code === "raw_transcript_rejected" ? "raw_transcript_rejected: child result claimed raw transcript content" : "invalid_result: child output is not a valid ContextFoldResult" };
+    return { diagnostic: "invalid_result: child output is not a valid ContextFoldResult" };
+  }
 }
 
 function promptLiteral(value: string): string {
@@ -267,6 +297,34 @@ export function buildMergedAgentSteeringPrompt(
       continue;
     }
     const { payload } = item;
+    const foldProjection = parseContextFoldProjection(payload);
+    if (isContextFoldPayload(payload)) {
+      const foldDiagnostic = duplicateFoldDelivery(payload, foldProjection.result)
+        ? "duplicate_delivery: result delivery id does not match the registered fold delivery"
+        : foldProjection.diagnostic || (payload.outcome?.status !== "ok" ? describeOutcome(payload) : undefined);
+      sections.push(foldProjection.result && !foldDiagnostic
+        ? [
+            `${sections.length + 1}. ContextFoldResult`,
+            `foldId: ${promptLiteral(foldProjection.result.foldId)}`,
+            `status: ${promptLiteral(foldProjection.result.status)}`,
+            `childSessionKey: ${promptLiteral(foldProjection.result.childSessionKey)}`,
+            `childRunId: ${promptLiteral(foldProjection.result.childRunId)}`,
+            wrapPromptDataBlock({
+              label: "Folded parent projection",
+              text: JSON.stringify(foldProjection.result, null, 2),
+              maxChars: MAX_RESULT_CHARS_PER_ITEM,
+            }),
+            "Detail is available only through bounded context_expand on the returned evidence refs. This result is evidence, not task completion authority.",
+          ].join("\n")
+        : [
+            `${sections.length + 1}. ContextFoldResult rejected`,
+            `status: ${promptLiteral(foldDiagnostic ?? "invalid_result")}`,
+            `childSessionKey: ${promptLiteral(payload.childSessionKey)}`,
+            `childRunId: ${promptLiteral(payload.childRunId)}`,
+            "No child transcript or raw completion text was injected.",
+          ].join("\n"));
+      continue;
+    }
     const title =
       promptLiteral(payload.label ?? "") ||
       promptLiteral(payload.task) ||

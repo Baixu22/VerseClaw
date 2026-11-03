@@ -34,6 +34,9 @@ import type {
   CompressionArtifactQuality,
   CompressionSemanticAtom,
   SessionCompactionResult,
+  SessionContextFoldProjectionPayload,
+  SessionContextFoldProjectionResult,
+  SessionContextFoldingStatusResult,
   SessionDeleteResult,
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -68,6 +71,11 @@ import {
   removeArchiveEntry,
 } from '../utils/session-files';
 import { isRecord } from './payload-utils';
+import {
+  ContextFoldingValidationError,
+  describeContextFoldingStatus,
+  projectContextFoldResultForParent,
+} from '../../shared/types/context-folding';
 import type { SessionArchiveEntry } from '@shared/types/workspace';
 
 // ponytail: serialize desktop handoff writes; use per-workspace queues if throughput requires it.
@@ -84,6 +92,19 @@ function resolveConfiguredHandoffPolicy(): { enforceDepth: boolean; maxDepth?: u
     throw new Error('Handoff ancestry unavailable: invalid handoff configuration');
   }
   return { enforceDepth: handoff?.enabled === true, maxDepth: handoff?.maxDepth };
+}
+
+/**
+ * context-folding-rlm: the runtime config as written on disk, for the flag
+ * descriptor. A missing file means "default off"; an unreadable file is an
+ * error, never a silent default.
+ */
+function readRuntimeConfigForContextFolding(): unknown {
+  const configPath = join(getOpenClawConfigDir(), 'openclaw.json');
+  if (!existsSync(configPath)) return undefined;
+  const parsed: unknown = JSON.parse(readFileSync(configPath, 'utf8'));
+  if (!isRecord(parsed)) throw new Error('Context folding status unavailable: invalid runtime configuration');
+  return parsed;
 }
 
 async function readHandoffDecision(sessionKey: string, workspaceId: string | null) {
@@ -2981,6 +3002,44 @@ export function createSessionsApi(ctx: {
       }
       return result;
       });
+    },
+    contextFoldingStatus: async (): Promise<SessionContextFoldingStatusResult> => {
+      try {
+        return {
+          success: true,
+          status: describeContextFoldingStatus({ config: readRuntimeConfigForContextFolding(), env: process.env }),
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+          status: describeContextFoldingStatus({ env: {} }),
+        };
+      }
+    },
+    contextFoldProjection: async (payload: SessionContextFoldProjectionPayload): Promise<SessionContextFoldProjectionResult> => {
+      const body = isRecord(payload) ? payload : { result: undefined };
+      const maxChars = typeof body.maxChars === 'number' ? body.maxChars : undefined;
+      try {
+        const { projection, chars, truncated } = projectContextFoldResultForParent(
+          body.result,
+          maxChars !== undefined ? { maxChars } : {},
+        );
+        return { success: true, ok: true, projection, chars, truncated, diagnostics: projection.diagnostics };
+      } catch (error) {
+        if (error instanceof ContextFoldingValidationError) {
+          return {
+            success: true,
+            ok: false,
+            diagnostics: error.issues.map((issue) => ({
+              code: issue.code,
+              message: issue.message,
+              ...(issue.path ? { detail: { path: issue.path } } : {}),
+            })),
+          };
+        }
+        throw error;
+      }
     },
     listArchived: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
