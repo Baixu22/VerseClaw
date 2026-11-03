@@ -84,7 +84,7 @@ acceptance:
   - 默认 truncation replacement 的模型可见文本包含 archive_uri、checksum、byte_length 和 context_archive_recall 指令；handle 缺字段或不可读时不声称可回读。
   - 引用加入后仍遵守既有单条/aggregate 字符预算；tool-call 结构、head+tail 截断语义和现有 lifecycle metadata 不变。
   - 不修改 observationMasking、Tool Search、compaction 阈值、产品锁或冻结默认值；flag/enablement 行为与当前 main 一致。
-  - retention 默认关闭，仅识别 context_archive_recall 成功结果中的匹配 session、toolCallId 和 archive identity 来源标记；普通工具、用户内容、assistant reasoning 和未回读 archive 不获得额外保护。
+  - retention 默认关闭，仅识别 context_archive_recall 成功结果中的匹配 session、非空且非空白的 toolCallId、非负安全整数分页 offset 和 archive identity 来源标记；缺失绑定不得在 ID 重写时被修复为有效来源，普通工具、用户内容、assistant reasoning 和未回读 archive 不获得额外保护。
   - 已校验来源能通过真实 guarded transcript 写入与磁盘重载，details 不复制回读原文且遵守既有 8192-byte 上限；内部 session replay 和 precheck 保留最小来源标记。转换前选择已校验来源，convertToLlm 后按最终可见文本规划 provider truncation，再去除仅用于规划的标记；最终 provider 消息不含 details。评测必须经过这些实际边界，不得绕过持久化或归一化。
   - 单条字符上限按每个回读结果分别判断，总保留量按 16000 字符和 aggregate 剩余空间判断；多个同时符合预算的回读结果不能误用单条上限作为总上限。
   - 保留窗口为 ageTurns < 4，所有受保护模型可见文本总计不超过 16000 字符；重复投影不刷新年龄、不重复注入，不建立持久队列或新 owner store。

@@ -14,6 +14,7 @@ import {
   ARCHIVE_RECALL_RETENTION_MAX_CHARS,
   ARCHIVE_RECALL_RETENTION_TURNS,
   getRetainedArchiveRecalls,
+  preserveArchiveRecallOriginAfterIdRewrite,
 } from "../../openclaw_runtime/src/agents/archive-recall-retention";
 import {
   estimateToolResultReductionPotential,
@@ -445,6 +446,34 @@ describe("Inline/Spill archive recall retention", () => {
       expect(agent.streamFn).toBe(baseStream);
     },
   );
+
+  it("rejects incomplete call-id lineage instead of repairing it into a valid binding", async () => {
+    const original = await recalledMessage(true);
+    expect(getRetainedArchiveRecalls([original], { enabled: true, sessionId })).toHaveLength(1);
+    for (const toolCallId of [undefined, "", "   "]) {
+      const malformed = structuredClone(original);
+      Object.assign(malformed, { toolCallId });
+      const details = malformed.details as Record<string, unknown>;
+      Object.assign(details.archiveRecallOrigin as Record<string, unknown>, { toolCallId });
+      expect(getRetainedArchiveRecalls([malformed], { enabled: true, sessionId })).toEqual([]);
+      const rewritten = preserveArchiveRecallOriginAfterIdRewrite(malformed, {
+        ...malformed,
+        toolCallId: "rewritten-valid-call",
+      });
+      expect((rewritten.details as Record<string, unknown>).archiveRecallOrigin).toBeUndefined();
+    }
+  });
+
+  it("rejects missing, negative, fractional and unsafe archive page offsets", async () => {
+    const original = await recalledMessage(true);
+    for (const offset of [undefined, -1, 0.5, Number.NaN, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+      const malformed = structuredClone(original);
+      const details = malformed.details as Record<string, unknown>;
+      details.offset = offset;
+      (details.archiveRecallOrigin as Record<string, unknown>).offset = offset;
+      expect(getRetainedArchiveRecalls([malformed], { enabled: true, sessionId })).toEqual([]);
+    }
+  });
 
   it.each(["strict", "strict9", "openai-responses"] as const)(
     "keeps only verified lineage across the existing call-id rewrite: %s",

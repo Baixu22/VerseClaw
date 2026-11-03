@@ -151,7 +151,7 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 - lifecycle metadata 继续保存 archiveHandle，prompt 投影不新增持久化 authority；
 - 该行为不等于启用 observation masking、Tool Search 或更改 compaction 默认值。
 
-回读保留开关为 `runtime.contextFamily.archiveRecallRetention.enabled`，默认关闭。显式启用后，只有已经通过 checksum 与当前 session 校验的 `context_archive_recall` 成功结果获得来源标记；pruner 和 tool-result replacement 保护 `ageTurns < 4` 的结果，所有保护文本合计最多 16,000 字符。单条/aggregate 预算优先，容纳不了时沿原有裁剪路径；普通工具、用户文本、assistant reasoning 与未回读 archive 不获得额外保护。
+回读保留开关为 `runtime.contextFamily.archiveRecallRetention.enabled`，默认关闭。显式启用后，只有已经通过 checksum 与当前 session 校验的 `context_archive_recall` 成功结果获得来源标记；标记必须带非空、非空白的 call-id 和非负安全整数分页 offset，缺失绑定不能通过 ID 重写获得保护。pruner 和 tool-result replacement 保护 `ageTurns < 4` 的结果，所有保护文本合计最多 16,000 字符。单条/aggregate 预算优先，容纳不了时沿原有裁剪路径；普通工具、用户文本、assistant reasoning 与未回读 archive 不获得额外保护。
 
 年龄从消息序列的后续 assistant 轮推导，重复投影不刷新窗口。相同 archive 页只保护最近一次回读，已经裁剪过的投影不凭残留 metadata 重新获得保护；实现不新增 timer、持久队列或重复注入。达到第四轮或关闭开关后恢复旧路径。完整摘要 compaction 与硬上下文溢出继续由已有 owner 决定，这不是无限保留或无损摘要承诺。
 

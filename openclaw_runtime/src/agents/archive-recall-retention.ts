@@ -75,9 +75,14 @@ export function getRetainedArchiveRecalls(
     if (
       origin.source !== "context_archive_recall" ||
       origin.sessionId !== sessionId ||
+      typeof origin.toolCallId !== "string" ||
+      !origin.toolCallId.trim() ||
       origin.toolCallId !== message.toolCallId ||
       origin.archiveUri !== details.archive_uri ||
       origin.checksum !== details.checksum ||
+      typeof origin.offset !== "number" ||
+      !Number.isSafeInteger(origin.offset) ||
+      origin.offset < 0 ||
       origin.offset !== details.offset ||
       typeof origin.archiveUri !== "string" ||
       !origin.archiveUri.startsWith(`context-archive://${encodeURIComponent(sessionId)}/`) ||
