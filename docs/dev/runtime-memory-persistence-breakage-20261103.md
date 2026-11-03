@@ -267,3 +267,36 @@ fs.writeFileSync(path, out, "utf8");
 
 对于仍可独立验证的纯函数（scenario 构造、evaluate* 聚合、fixture 结构校验、
 短缺点分析），覆盖全部保留。
+
+## 13. read-hydration 组完成记录（2026-11-03）
+
+11 个文件全部完成退役对齐，合并运行结果：
+
+```
+22 suites / 43 tests / 0 failed / 0 skipped
+```
+
+| 套件 | 提交 | 原/现用例 |
+| --- | --- | --- |
+| shadow-opt-in-evaluation | d96a26193 | 1 → 1 |
+| shadow | 00b105e75 | 5 → 5（4 个仅改 reason） |
+| benefit-evaluation | 8b7bf05a5 | 7 → 7（1 个改动） |
+| controlled-db-replay-regression | 7c6c0ef82 | 2 → 2 |
+| controlled-real-db-evaluation | 3280352a0 | 2 → 2 |
+| controlled-internal-shadow-pilot | 07488b311 | 3 → 3 |
+| limited-production-opt-in-implementation | 8188cc0db | 4 → 4 |
+| limited-production-opt-in-readiness | 26d8377ff | 3 → 3 |
+| test-research-breakthrough | a685e89a6 | 5 → 5 |
+| taskloop-shadow-only-explicit-opt-in | 663aa5dba | 3 → 3 |
+| shadow-command | 5dbd4717b | 8 → 8 |
+
+**这一组与 G2 不同：几乎全部是"改断言而非删覆盖"。** 因为多数文件里同时存在
+"默认关闭 / 非法门控在 DB 访问前失败"的用例，它们本来就通过，只需改真正失败的那部分。
+
+### 反复出现的两种失败形态
+
+1. **门控短路**：`persist` 检查排在所有其他门控之前，退役后
+   `read_shadow_disabled / database_path_required / database_missing / table_missing`
+   全部塌缩成 `flag_disabled`。修法：只改 reason，保留"不打开 sqlite / 不建文件 / 不建表"断言。
+2. **写入辅助函数行为不一致**：`seedTempDb` 会抛错，`persistFacts` 不抛错（静默什么都不写）。
+   修法：先读实现再决定断言，不要跨文件套用。
