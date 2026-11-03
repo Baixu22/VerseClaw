@@ -14,14 +14,15 @@
       "command": "pnpm exec vitest run tests/unit/autonomy-task-completion.test.ts",
       "exitCode": 0,
       "files": 1,
-      "tests": 16
+      "tests": 19
     },
     {
       "id": "ledger-regression",
-      "command": "pnpm exec vitest run tests/unit/task-ledger-service.test.ts",
+      "command": "pnpm exec vitest run tests/unit/autonomy-task-completion.test.ts tests/unit/task-ledger-service.test.ts",
       "exitCode": 0,
-      "files": 1,
-      "tests": 9
+      "files": 2,
+      "tests": 24,
+      "note": "Combined final focused run; includes A3 admission, actual submitCompletion, ledger projection, and contract-evidence guard."
     },
     {
       "id": "typecheck",
@@ -67,6 +68,13 @@
       "id": "eslint",
       "command": "pnpm exec eslint ...A3 files",
       "exitCode": 0
+    },
+    {
+      "id": "host-expanded-observer",
+      "command": "pnpm exec vitest run host-services + host-api-facade",
+      "exitCode": 1,
+      "status": "preexisting-unrelated",
+      "note": "host-services chat.send timeout expectation observed 900000 vs expected 120000; not modified by A3."
     }
   ],
   "acceptance": [
