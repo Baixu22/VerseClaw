@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { buildTaskCorpus, validateTaskCorpus, buildCalibrationSamples, replayCalibration, TF0590_PACK_DIR } from '../../scripts/lib/rsi-historical-task-corpus.mjs';
-import { validateTaskCorpusPack } from '../../scripts/rsi-historical-task-corpus.mjs';
+import { NON_JUDGED_SOURCE_FILES, validateTaskCorpusPack } from '../../scripts/rsi-historical-task-corpus.mjs';
 import { loadCorpus, checkCorpus } from '../../scripts/lib/agent-first-task-corpus.mjs';
 import { validateFrameworkRegistry } from '../../scripts/lib/agent-first-evaluation-framework.mjs';
 import type { RubricReceipt } from '../../scripts/lib/agent-first-graders.mjs';
@@ -39,6 +39,14 @@ describe('TF-0590 real task corpus and grader calibration', () => {
     expect(result.passed).toBe(true);
     expect(result.rows).toHaveLength(16);
     expect(replayCalibration(corpus, samples, []).passed).toBe(false);
+  });
+  it('treats documentation drift as a warning rather than a seal violation', () => {
+    // rsi-evidence-binding.md: a README edit must not invalidate a sealed pack.
+    expect(NON_JUDGED_SOURCE_FILES).toContain('docs/README.md');
+    expect(NON_JUDGED_SOURCE_FILES).not.toContain('scripts/rsi-historical-task-corpus.mjs');
+    const readback = validateTaskCorpusPack(process.cwd(), { allowDraft: true });
+    expect(Array.isArray(readback.warnings)).toBe(true);
+    expect(readback.errors.some((entry) => entry.includes('docs/README.md'))).toBe(false);
   });
   it('validates every retained pack checksum and raw calibration outcome from disk', () => {
     expect(validateTaskCorpusPack(process.cwd(), { allowDraft: true })).toMatchObject({ passed: true, taskCount: 24, calibratedRows: 16 });

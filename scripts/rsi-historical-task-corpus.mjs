@@ -16,6 +16,10 @@ const CALIBRATION_GROUPS = { 'deterministic-final-state': 'deterministic', 'trac
 const CALIBRATION_FILES = Object.values(CALIBRATION_GROUPS).flatMap((group) => ['known-good', 'known-bad', 'unknown'].map((kind) => `calibration/${group}/${kind}.json`));
 const FILES = ['task-corpus.v1.json', 'calibration-samples.v1.json', 'model-calibration.v1.json', 'calibration-results.v1.json', 'validation-report.v1.json', ...CALIBRATION_FILES, 'model-calibration-attempt1.v1.json', 'registry-extension.v1.json', 'credential-scan.json'];
 const SOURCE_FILES = ['scripts/rsi-historical-task-corpus.mjs', 'scripts/rsi-historical-task-corpus.d.mts', 'scripts/lib/rsi-historical-task-corpus.mjs', 'scripts/lib/rsi-historical-task-corpus.d.mts', 'scripts/lib/agent-first-graders.mjs', 'scripts/lib/agent-first-graders.d.mts', 'scripts/lib/evidence-binding.mjs', 'scripts/lib/evidence-binding.d.mts', 'tests/unit/rsi-historical-task-corpus.test.ts', 'tests/unit/agent-first-graders.test.ts', 'tests/unit/agent-first-evaluation-framework.test.ts', 'tests/unit/agent-first-evaluation-loop.test.ts', 'harness/specs/tasks/agent-first-task-corpus-calibration.md', 'harness/specs/guides/agent-first-acceptance.md', 'scripts/lib/agent-first-evaluation-framework.mjs', 'scripts/lib/agent-first-evaluation-loop.mjs', 'package.json', 'docs/README.md', 'docs/dev/rsi-capability-and-boundaries.md'];
+// Documentation is recorded in the fingerprint for transparency but is not a
+// judged input: per harness/specs/guides/rsi-evidence-binding.md a README edit
+// must not invalidate a sealed pack. Drift here is a warning, never an error.
+export const NON_JUDGED_SOURCE_FILES = ['docs/README.md'];
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const writeJson = (path, value) => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, JSON.stringify(value, null, 2) + '\n'); };
 const CREDENTIAL_PATTERNS = [
@@ -135,6 +139,7 @@ function readComposedRegistry(root) {
 
 export function validateTaskCorpusPack(root = ROOT, options = {}) {
   const errors = [];
+  const warnings = [];
   let corpus, replay;
   try {
     const pack = join(root, TF0590_PACK_DIR);
@@ -161,7 +166,11 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
       || validation.taskCount !== corpus.tasks.length
       || JSON.stringify(validation.claims) !== JSON.stringify({ realHuman: false, actualSystemBaselineRun: false, liveModelCalibration: model.receipts.length > 0, rsiCandidateGenerated: false, productLocksChanged: false })) errors.push('validation-report');
     if (JSON.stringify(Object.keys(validation.candidate?.sourceHashes ?? {}).sort()) !== JSON.stringify([...SOURCE_FILES].sort())) errors.push('source-fingerprint-missing');
-    for (const path of SOURCE_FILES) if (validation.candidate?.sourceHashes?.[path] !== sha256File(join(root, path))) errors.push(`source-fingerprint:${path}`);
+    for (const path of SOURCE_FILES) {
+      if (validation.candidate?.sourceHashes?.[path] === sha256File(join(root, path))) continue;
+      if (NON_JUDGED_SOURCE_FILES.includes(path)) warnings.push(`source-fingerprint:${path}`);
+      else errors.push(`source-fingerprint:${path}`);
+    }
     if (!options.allowDraft) {
       if (validation.candidate?.dirty !== false || identity(root).dirty) errors.push('dirty-candidate');
       const candidate = validation.candidate?.commit;
@@ -193,7 +202,7 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
     if (suite?.corpusStatus !== 'frozen' || suite?.contentDigest !== `sha256:${sha256File(join(pack, FILES[0]))}` || JSON.stringify(suite?.taskIds) !== JSON.stringify(corpus.tasks.map((task) => task.id))) errors.push('registry-corpus-binding');
     if (suite?.split?.public !== corpus.split.public.length || suite?.split?.heldOut !== corpus.split.heldOut.length) errors.push('registry-split-binding');
   } catch (error) { errors.push(error.message); }
-  return { passed: !errors.length, errors, taskCount: corpus?.tasks.length ?? null, calibratedRows: replay?.rows?.filter((row) => row.observed === row.expected).length ?? 0 };
+  return { passed: !errors.length, errors, warnings, taskCount: corpus?.tasks.length ?? null, calibratedRows: replay?.rows?.filter((row) => row.observed === row.expected).length ?? 0 };
 }
 
 if (isMainEntrypoint(import.meta.url)) {
