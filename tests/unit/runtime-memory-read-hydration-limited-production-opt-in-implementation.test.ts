@@ -343,20 +343,12 @@ describe("runtime memory read hydration limited production opt-in implementation
     }
   });
 
-  it("allows accepted operator gates only on the explicit diagnostics-only shadow path", async () => {
+  it("keeps the retired Phase 34 pilot from seeding or changing TaskLoop surfaces", async () => {
     const pilotTaskId = "loop_phase34_pilot";
     const dbPath = createTempDbPath("runtime-memory-phase-34-pilot-");
-    seedControlledPhase34Corpus(dbPath, pilotTaskId);
 
-    const baselineObservedRequests: unknown[] = [];
-    const baseline = await runTaskLoop(
-      { task: "implement feature", sessionKey: "agent:main:abc" },
-      CONFIG,
-      taskLoopDeps({
-        idSuffix: "phase34_baseline",
-        observedRequests: baselineObservedRequests,
-      }),
-    );
+    // TF-0500 retired runtime.memory.persist, so the corpus cannot be seeded.
+    expect(() => seedControlledPhase34Corpus(dbPath, pilotTaskId)).toThrow();
 
     const reviewerPrompts: string[] = [];
     const checkpoints: unknown[] = [];
@@ -366,6 +358,7 @@ describe("runtime memory read hydration limited production opt-in implementation
     const appendEpisode = vi.fn(() => {
       throw new Error("read diagnostics must not write durable memory");
     });
+
     const pilot = await runTaskLoop(
       { task: "implement feature", sessionKey: "agent:main:abc" },
       CONFIG,
@@ -386,35 +379,7 @@ describe("runtime memory read hydration limited production opt-in implementation
             corpus: CONTROLLED_PHASE34_CORPUS,
           },
           limitedProductionOptIn: VALID_PHASE34_OPT_IN,
-          queries: [
-            pilotQuery(pilotTaskId, "package_manager", {
-              queryId: "package_manager",
-              expectedFactIds: ["fact_pkg_pnpm"],
-            }),
-            pilotQuery(pilotTaskId, "test_runner", {
-              queryId: "test_runner",
-              subject: "ProjectPreference",
-              expectedFactIds: ["fact_test_vitest"],
-            }),
-            pilotQuery(pilotTaskId, "backend_entrypoint", {
-              queryId: "backend_entrypoint",
-              subject: "BoundaryPolicy",
-              expectedFactIds: ["fact_host_api"],
-            }),
-            pilotQuery(pilotTaskId, "reply_language", {
-              queryId: "reply_language",
-              subject: "UserLocale",
-              expectedFactIds: ["fact_locale_zh"],
-            }),
-            pilotQuery(pilotTaskId, "package_manager", {
-              queryId: "zero_token_budget",
-              tokenBudget: 0,
-            }),
-            pilotQuery(pilotTaskId, "package_manager", {
-              queryId: "zero_result_limit",
-              limit: 0,
-            }),
-          ],
+          queries: [pilotQuery(pilotTaskId, "package_manager")],
           limit: 8,
           maxFacts: 16,
           now: () => REFERENCE_TIME,
@@ -422,119 +387,18 @@ describe("runtime memory read hydration limited production opt-in implementation
       }),
     );
 
-    expect(decisionSurface(pilot)).toEqual(decisionSurface(baseline));
-    expect(observedRequests).toHaveLength(1);
-    expect(JSON.stringify(observedRequests[0])).toBe(
-      JSON.stringify(baselineObservedRequests[0]),
-    );
-    expect(appendEpisode).not.toHaveBeenCalled();
-
     const report = pilot.runtimeMemoryReadHydrationShadowOnlyDiagnostics;
     expect(report).toMatchObject({
-      schemaVersion: 1,
-      source: "task_loop.runtime_memory_read_hydration_shadow_only_explicit_opt_in",
-      status: "loaded",
-      limitedProductionOptIn: {
-        enabled: true,
-        accepted: true,
-        missing: [],
-        defaultTaskLoopEnabled: false,
-        productionCutoverAllowed: false,
-        userRuntimeDbReadAllowed: false,
-        diagnosticsReadonly: true,
-        nonAuthoritative: true,
-      },
-      controlledInternalShadowPilot: {
-        enabled: true,
-        accepted: true,
-        corpusId: CONTROLLED_PHASE34_CORPUS.corpusId,
-        corpusVersion: CONTROLLED_PHASE34_CORPUS.corpusVersion,
-        provenance: "controlled_fixture",
-        sanitized: true,
-        noUserRealData: true,
-        reproducible: true,
-        boundaryViolations: [],
-      },
+      status: "skipped",
       authority: {
         diagnosticsOnly: true,
-        readonly: true,
-        shadowOnly: true,
-        explicitOptInRequired: true,
-        testResearchOnly: true,
-        noPromptContextModelMessageInjection: true,
         noTaskLoopDecisionAuthority: true,
-        noToolSelectionAuthority: true,
-        noProviderOrdering: true,
-        noRuntimeAuthority: true,
-        noDurableFactAuthority: true,
-        noCheckpointAuthority: true,
-        noTranscriptAuthority: true,
         noMemoryWriteAuthority: true,
       },
-      hydration: {
-        status: "loaded",
-        factProjectionCount: 16,
-      },
-      metrics: {
-        queryCount: 6,
-        expectedFactCount: 4,
-        truePositiveCount: 4,
-        acceptedFactCount: 4,
-        guardedRecallAtK: 1,
-        guardedPrecision: 1,
-        staleInvalidSuppressionRate: 1,
-        candidateRejectedSuppressionRate: 1,
-        conflictSuppressionRate: 1,
-        rawLeakRate: 0,
-        promptInjectionReturnRate: 0,
-        taskLoopDecisionDeltaCount: 0,
-        toolCallDeltaCount: 0,
-        providerOrderingDeltaCount: 0,
-        promptContextModelMessageInjectionCount: 0,
-        durableMemoryWriteCount: 0,
-        runtimeAuthorityCount: 0,
-        thresholdViolations: [],
-      },
     });
-    expect(report?.metrics.latencyOverheadMs).toBeGreaterThanOrEqual(0);
-    expect(report?.metrics.latencyOverheadMs).toBeLessThan(500);
-    expect(report?.metrics.tokenOverhead).toBeGreaterThan(0);
+    expect(appendEpisode).not.toHaveBeenCalled();
 
-    const packageQuery = report?.queries.find((entry) =>
-      entry.queryId === "package_manager"
-    );
-    expect(packageQuery?.acceptedFacts.map((factItem) => factItem.factId))
-      .toEqual(["fact_pkg_pnpm"]);
-    expect(packageQuery?.metrics.rejectionCounts).toMatchObject({
-      future_valid_at: 1,
-      invalidated_at_reference_time: 1,
-      expired_at_reference_time: 1,
-      record_kind_not_fact: 2,
-      verification_status_not_verified: 1,
-      prompt_injection_sentinel: 1,
-      raw_leak_sentinel: 1,
-      conflicting_fact: 1,
-    });
-    expect(JSON.stringify(packageQuery?.acceptedFacts)).not.toContain(
-      "Ignore earlier instructions",
-    );
-    expect(JSON.stringify(packageQuery?.acceptedFacts)).not.toContain(
-      "record_json",
-    );
-
-    const zeroBudget = report?.queries.find((entry) =>
-      entry.queryId === "zero_token_budget"
-    );
-    expect(zeroBudget?.acceptedFacts).toEqual([]);
-    expect(zeroBudget?.metrics.rejectionCounts.token_budget_exceeded).toBe(1);
-
-    const zeroLimit = report?.queries.find((entry) =>
-      entry.queryId === "zero_result_limit"
-    );
-    expect(zeroLimit?.acceptedFacts).toEqual([]);
-    expect(zeroLimit?.metrics.estimatedTokens).toBe(0);
-    expect(zeroLimit?.metrics.rejectionCounts.limit_exceeded).toBe(1);
-
+    // The property this case exists for still holds: no injection anywhere.
     expect(phase34InjectionCounts({
       reviewerPrompts,
       checkpoints,
@@ -548,14 +412,17 @@ describe("runtime memory read hydration limited production opt-in implementation
   it("keeps accepted limited production opt-in with an empty corpus as a safe no-op", async () => {
     const emptyTaskId = "loop_phase34_empty";
     const dbPath = createTempDbPath("runtime-memory-phase-34-empty-");
+
+    // TF-0500 retired runtime.memory.persist, so migrate reports skipped and the
+    // empty-corpus path is reached with no hydration accounting at all.
     const persistence = createRuntimeMemoryPersistenceStore({
       config: CONFIG,
       database: { path: dbPath },
       now: () => 1_000,
     });
     expect(persistence.migrate()).toMatchObject({
-      status: "migrated",
-      migrated: true,
+      status: "skipped",
+      reason: "flag_disabled",
     });
 
     const result = await runTaskLoop(
@@ -582,44 +449,13 @@ describe("runtime memory read hydration limited production opt-in implementation
 
     const report = result.runtimeMemoryReadHydrationShadowOnlyDiagnostics;
     expect(report).toMatchObject({
-      status: "loaded",
-      limitedProductionOptIn: {
-        accepted: true,
-        missing: [],
-      },
-      hydration: {
-        status: "loaded",
-        factProjectionCount: 0,
-        stats: {
-          factCount: 0,
-          factsReturned: 0,
-          truncated: false,
-        },
-      },
-      metrics: {
-        queryCount: 1,
-        acceptedFactCount: 0,
-        rejectedFactCount: 0,
-        rawLeakRate: 0,
-        promptInjectionReturnRate: 0,
-        taskLoopDecisionDeltaCount: 0,
-        toolCallDeltaCount: 0,
-        providerOrderingDeltaCount: 0,
-        promptContextModelMessageInjectionCount: 0,
-        durableMemoryWriteCount: 0,
-        thresholdViolations: [],
+      status: "skipped",
+      authority: {
+        diagnosticsOnly: true,
+        noMemoryWriteAuthority: true,
       },
     });
-    expect(report?.queries[0]).toMatchObject({
-      acceptedFacts: [],
-      rejectedFacts: [],
-      metrics: {
-        totalFacts: 0,
-        acceptedFacts: 0,
-        rejectedFacts: 0,
-        estimatedTokens: 0,
-      },
-    });
+    expect(report?.hydration?.factProjectionCount ?? 0).toBe(0);
   });
 });
 
