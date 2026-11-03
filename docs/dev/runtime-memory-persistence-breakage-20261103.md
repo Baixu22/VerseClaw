@@ -103,3 +103,34 @@ inspectRuntimeMemorySanitizedEpisodes`。**没有任何覆盖入口**（无 opti
 - 本文档未修改任何源代码、默认值、产品锁或发布状态。
 - 未声称 runtime memory 能力可用或不可用为最终产品定位；这需要决策后确定。
 - 全部结论可由本文件所列文件路径与行号在 `e52bc9038` 上复核。
+
+## 9. 2026-11-03 补充：权威口径已存在，先前的"启用端口"方案作废
+
+本轮先实现了一个 `persistenceActivation: "explicit"` 的启用端口，让 store/integration/inspector
+可以在测试里跑真实 SQLite。随后在仓库中发现了**既有的权威规格**：
+
+`harness/specs/tasks/runtime-memory-retirement-closeout.md`（TF-0574，已在 main 上）明确写明：
+
+> `resolveRuntimeMemoryFeatureFlags` already forces `shadow`, `provider`, `proposeFacts`
+> and `persist` to false. **No production source change is required for this node.**
+> Retired persistence returns `skipped / flag_disabled`, exposes an empty store, and leaves
+> no database file.
+
+因此**启用端口方案与既有决策冲突，已全部回退**（未留下任何产品源码改动）。
+正确的方向是该规格已经指定的：测试断言"退役语义"，而不是让能力重新可用。
+
+### 本轮已交付
+
+- `tests/unit/memory-tf0500-persistence-retirement.test.ts`：10 条锁定测试，覆盖
+  - 五个输入形态（explicit true / string true / omitted / explicit false / 全 legacy true）
+    下四个退役 flag 全部为 false；
+  - `candidateGeneration` 仍独立可配置（严格布尔）；
+  - 退役写入不落盘、不建库、不打开 SQLite；
+  - 退役集成不会调用注入的 writer。
+- 该文件在干净工作区上 10/10 通过，且**不修改任何产品源码**。
+
+### 仍未完成
+
+`runtime-memory-retirement-closeout.md` 只是 repair 了 TaskLoop 与 context-contract 相关用例；
+本轮统计的 40 个 memory 相关失败套件中，绝大多数仍按旧口径断言"可开启"。按该规格的
+Retirement mapping 逐个改写（约 36 个文件）尚未完成，记为待办，不声称已完成。
