@@ -1,0 +1,48 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+[ext-bridge] No external extensions configured — empty stubs up to date.
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 34732,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX-work\\architecture-convergence-20261105\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "9cc0ac3c8f3765c80617d37357e09c5f1bec59fad801af61ef1e2cf8d919187b",
+    "inputCount": 13060,
+    "report": "D:\\ClawX-work\\architecture-convergence-20261105\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 44908,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 78
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 39424
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 9096
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 34732,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\ClawX-work\\architecture-convergence-20261105\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}

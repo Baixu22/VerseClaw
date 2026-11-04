@@ -1,0 +1,48 @@
+{
+  "run": {
+    "schema": "ArchitectureAdmissionGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "versebrowser-build",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "--dir",
+      "packages/versebrowser",
+      "exec",
+      "tsc",
+      "-p",
+      "tsconfig.build.json"
+    ],
+    "cwd": "D:/ClawX-work/architecture-convergence-20261105",
+    "startedAt": "2026-11-04T22:42:23.642Z",
+    "finishedAt": "2026-11-04T22:42:31.874Z",
+    "durationMs": 8228.9128,
+    "exitCode": 0,
+    "signal": null,
+    "candidate": {
+      "before": {
+        "commit": "acfb263194acca0fba30d8fb1e48f62e4fb043cb",
+        "tree": "da2b3c00b25b6934af1a95c8b2f567729299d8a8",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      },
+      "after": {
+        "commit": "acfb263194acca0fba30d8fb1e48f62e4fb043cb",
+        "tree": "da2b3c00b25b6934af1a95c8b2f567729299d8a8",
+        "branch": "codex/architecture-convergence-20261105",
+        "dirty": false,
+        "status": ""
+      }
+    },
+    "dependencyMode": "explicit-reuse",
+    "tempRoot": "D:/tmp",
+    "stdout": "D:\\tmp\\architecture-convergence-20261105\\gates\\versebrowser-build.stdout.log",
+    "stderr": "D:\\tmp\\architecture-convergence-20261105\\gates\\versebrowser-build.stderr.log"
+  },
+  "consumerCandidate": "11adcfbdb1892618332babe6a52dd91b069a642c",
+  "packageSourceTree": "4829eb7c1a95dc3d4fd3b72f836e6818e7de5d58",
+  "packageSourcesUnchanged": true,
+  "generatedTypesSha256": "dc9fcdf2ccca0a5bffcbbde3bdcc6c004c2d983a55de59a735826da81f2a9e05"
+}

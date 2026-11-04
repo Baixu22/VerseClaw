@@ -1,0 +1,54 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "entries": [
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stderr-1.log",
+      "baselineSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stdout-1.log",
+      "baselineSha256": "699d80eac8f68719a579343344dffc7862b38c3092850c9a79e97777b555527f",
+      "candidateSha256": "699d80eac8f68719a579343344dffc7862b38c3092850c9a79e97777b555527f",
+      "unchanged": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stderr-1.log",
+      "baselineSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stdout-1.log",
+      "baselineSha256": "23eb1481754fa433512646acfc75dffdfaa6cd8a4f938a1bc52b7fbc529889da",
+      "candidateSha256": "23eb1481754fa433512646acfc75dffdfaa6cd8a4f938a1bc52b7fbc529889da",
+      "unchanged": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stderr-1.log",
+      "baselineSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stdout-1.log",
+      "baselineSha256": "feb91815cdc99d0206789d09b51a1aa8d928d18a93621d274cdd85c4394c1eca",
+      "candidateSha256": "feb91815cdc99d0206789d09b51a1aa8d928d18a93621d274cdd85c4394c1eca",
+      "unchanged": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stderr-1.log",
+      "baselineSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "candidateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log",
+      "baselineSha256": "a1a649b64cd5350dc6ebcb874154df51c946a1c98130671e77eacaf6da07a179",
+      "candidateSha256": "a1a649b64cd5350dc6ebcb874154df51c946a1c98130671e77eacaf6da07a179",
+      "unchanged": true
+    }
+  ]
+}

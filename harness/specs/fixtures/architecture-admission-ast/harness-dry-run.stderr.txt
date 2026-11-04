@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/architecture-skeleton-admission-ast-hardening.md" "--since" "bfcf57616b361a12845014b3f054b95e31c4021c" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/architecture-skeleton-admission-ast-hardening.md" "--since" "bfcf57616b361a12845014b3f054b95e31c4021c" "--dry-run"
