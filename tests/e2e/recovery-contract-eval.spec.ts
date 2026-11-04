@@ -77,6 +77,21 @@ async function crashGateway(app: ElectronApplication): Promise<number | null> {
   return pid;
 }
 
+async function waitForLlmRequests(llm: LlmHandle, min: number, timeoutMs = 60_000): Promise<number> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (llm.log.length >= min) return llm.log.length;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  return llm.log.length;
+}
+
+async function sessionMessages(app: ElectronApplication, sessionKey: string): Promise<unknown[]> {
+  const history = await hostInvoke<{ messages?: unknown[] }>(app, 'sessions', 'history', { sessionKey })
+    .catch(() => ({ messages: [] }));
+  return history.messages ?? [];
+}
+
 async function sendTurnNoWait(app: ElectronApplication, message: string): Promise<void> {
   await hostInvoke(app, 'chat', 'sendWithMedia', {
     sessionKey: MAIN_SESSION_KEY,
@@ -174,7 +189,7 @@ test.describe('recovery contract eval windows', () => {
       await waitGatewayReady(app);
 
       let receipt: TrialReceipt | null = null;
-      const baseObserved = { startedAt, markerPath, llmRequests: llm.log.length };
+      const baseObserved = { startedAt, markerPath };
 
       if (WINDOW === 'intent-after-persist-kill' || WINDOW === 'effect-before-receipt-kill') {
         await sendTurnNoWait(app, `RECOVERY-${WINDOW} start`);
@@ -183,7 +198,7 @@ test.describe('recovery contract eval windows', () => {
           const crashedPid = await crashGateway(app);
           const crashedAt = Date.now();
           await waitGatewayReady(app);
-          await waitForTurnSettled(app);
+          const settled = await waitForTurnSettled(app, 150_000);
           const afterCrash = effectCount(markerPath);
           receipt = {
             schema: 'RecoveryContractWindowTrialReceipt/v1', windowId: WINDOW, trialIndex: TRIAL_INDEX,
@@ -193,26 +208,28 @@ test.describe('recovery contract eval windows', () => {
             recoveryLatencyMs: Date.now() - crashedAt, diskEvidenceComplete: afterCrash >= 1,
             rerunOutsideAllowedRegion: afterCrash > 1,
             evidenceRef: `recovery-eval:${WINDOW}:${TRIAL_INDEX}`,
-            observed: { ...baseObserved, crashedPid, beforeCrash, afterCrash, toolResult: lastToolResult(llm) },
+            observed: { ...baseObserved, crashedPid, beforeCrash, afterCrash, settled, llmRequests: llm.log.length, toolResult: lastToolResult(llm) },
             drivenBy: 'agent', realHumanEvidence: false, generatedAt: new Date().toISOString(),
           };
         } else {
-          await new Promise((resolve) => setTimeout(resolve, 8_000));
+          await waitForLlmRequests(llm, 1);
+          await new Promise((resolve) => setTimeout(resolve, 2_000));
           const crashedPid = await crashGateway(app);
           const crashedAt = Date.now();
           const beforeRestart = effectCount(markerPath);
           await waitGatewayReady(app);
-          await waitForTurnSettled(app);
+          const settled = await waitForTurnSettled(app, 150_000);
           const afterRestart = effectCount(markerPath);
+          const resumedEvidence = JSON.stringify(await sessionMessages(app, MAIN_SESSION_KEY)).includes(`${WINDOW} complete`);
           receipt = {
             schema: 'RecoveryContractWindowTrialReceipt/v1', windowId: WINDOW, trialIndex: TRIAL_INDEX,
             injectionPoint: 'tool-dispatch-persisted-effect-not-started', injectionMechanism: 'real-process-kill',
-            duplicateEffects: Math.max(0, afterRestart - 1), lostTasks: 0,
-            terminalCorrect: afterRestart >= 1, unknownClassifiable: false,
-            recoveryLatencyMs: Date.now() - crashedAt, diskEvidenceComplete: afterRestart >= 1,
-            rerunOutsideAllowedRegion: false,
+            duplicateEffects: Math.max(0, afterRestart - 1), lostTasks: afterRestart >= 1 ? 0 : 1,
+            terminalCorrect: settled && afterRestart >= 1, unknownClassifiable: false,
+            recoveryLatencyMs: Date.now() - crashedAt, diskEvidenceComplete: settled && afterRestart >= 1,
+            rerunOutsideAllowedRegion: afterRestart > 1,
             evidenceRef: `recovery-eval:${WINDOW}:${TRIAL_INDEX}`,
-            observed: { ...baseObserved, crashedPid, beforeRestart, afterRestart, toolResult: lastToolResult(llm) },
+            observed: { ...baseObserved, crashedPid, beforeRestart, afterRestart, settled, resumedEvidence, llmRequests: llm.log.length, toolResult: lastToolResult(llm) },
             drivenBy: 'agent', realHumanEvidence: false, generatedAt: new Date().toISOString(),
           };
         }
@@ -304,4 +321,7 @@ test.describe('recovery contract eval windows', () => {
     }
   });
 });
+
+
+
 

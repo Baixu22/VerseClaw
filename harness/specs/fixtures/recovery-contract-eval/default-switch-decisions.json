@@ -1,0 +1,71 @@
+{
+  "schema": "RecoveryContractDefaultSwitchDecisions/v1",
+  "drivenBy": "agent",
+  "actor": "recovery-contract-eval-driver",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-04T00:00:00.000Z",
+  "decisionOwner": "repository-owner",
+  "note": "Agent prepares evidence only. Flipping any default or product lock is an owner decision; nothing here changes a default.",
+  "switches": [
+    {
+      "id": "taskflow-lifecycle-writer",
+      "env": ["OPENCLAW_CLAWGRAPH_LIFECYCLE_WRITER", "OPENCLAW_MISSION_LIFECYCLE_WRITER", "OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER"],
+      "currentDefault": "legacy",
+      "candidate": "taskflow",
+      "whatItChanges": "TaskFlow CAS row becomes the single lifecycle truth for ClawGraph / Mission / Task Loop.",
+      "existingEvidence": "RC-06B/C/D engineering acceptance (independent verifier pass) recorded in docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md; cutover proven, never switched on by default.",
+      "evidenceStillNeeded": [
+        "recovery-contract eval PASS on the taskflow writer (this report currently EVIDENCE_INSUFFICIENT)",
+        "a rollback drill from taskflow back to legacy on a live candidate"
+      ],
+      "risk": "medium-high: changes the lifecycle truth of three domains at once",
+      "rollback": "select legacy again; the TaskFlow writer freezes and no mode writes both authorities as truth",
+      "recommendation": "keep legacy until the eval is complete and a rollback drill lands"
+    },
+    {
+      "id": "recovery-authority-shadow",
+      "env": ["OPENCLAW_RECOVERY_AUTHORITY_SHADOW"],
+      "currentDefault": "off",
+      "candidate": "on (shadow only)",
+      "whatItChanges": "runs the single-decision authority beside the legacy main-session recovery path and records drift; it does not change behaviour",
+      "existingEvidence": "unit tests for the authority contract, adapter and shadow (24 passed); the shadow path is guarded and default-off",
+      "evidenceStillNeeded": [
+        "a real run that shows the shadow record with zero unrecorded divergence",
+        "decide whether the authority should ever own the decision rather than shadow it"
+      ],
+      "risk": "low while shadow-only; the risk is the follow-up step where it starts to decide",
+      "rollback": "unset the env var",
+      "recommendation": "turning the shadow on for measurement is a low-risk operator action; making it authoritative is an owner decision"
+    },
+    {
+      "id": "execution-phase-writer",
+      "env": ["OPENCLAW_EXECUTION_PHASE_WRITER"],
+      "currentDefault": "legacy",
+      "candidate": "taskflow",
+      "whatItChanges": "a committed execution phase becomes the judge of what already happened, and tool intent is recorded before the effect",
+      "existingEvidence": "frozen execution-phase state machine and recovery decisions with K1-K5 mapping (24 unit tests)",
+      "evidenceStillNeeded": [
+        "production wiring of intent-before-effect for covered effectful tools",
+        "the kill-window matrix passing on the phase writer"
+      ],
+      "risk": "high: an incorrect phase judgement can duplicate or drop an external effect",
+      "rollback": "select legacy; reconcile any pending row first; never dual-write",
+      "recommendation": "keep legacy until intent persistence and the kill-window matrix land"
+    },
+    {
+      "id": "event-log-replay",
+      "env": ["runtime.eventLog.shadow", "runtime.eventLog.persist", "runtime.checkpointSerializer.shadow", "runtime.resume.replayShadow"],
+      "currentDefault": "all false (built-but-unwired)",
+      "candidate": "not proposed",
+      "whatItChanges": "would allow event-level replay as a recovery basis",
+      "existingEvidence": "runtime-core/event-log.ts documents built-but-unwired; checkpoint-rollback-executor returns event_log_replay_not_implemented; no producer satisfies the event_log rollback target",
+      "evidenceStillNeeded": [
+        "crash/restore correctness evidence, not more shadow runs",
+        "the readiness veto gates (unsafe_side_effect_ambiguity etc.) clearing"
+      ],
+      "risk": "very high: replay can silently repeat external effects",
+      "rollback": "keep the flags false",
+      "recommendation": "do not enable; keep event-log as evidence only"
+    }
+  ]
+}
