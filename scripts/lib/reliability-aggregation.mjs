@@ -48,6 +48,11 @@ export function aggregateReliability(cases, options = {}) {
     throw new Error('invalid-reliability-policy');
   }
   const reasons = [];
+  if (!Array.isArray(cases) || cases.some((entry) => typeof entry?.id !== 'string' || !entry.id.trim()
+    || !Array.isArray(entry.trials) || entry.trials.some((trial) => !RELIABILITY_TRIAL_OUTCOMES.includes(trial))
+    || (entry.anchor !== undefined && !['positive', 'negative'].includes(entry.anchor))
+    || (entry.negativeExpectedOutcome !== undefined && !['pass', 'fail'].includes(entry.negativeExpectedOutcome)))
+    || new Set(cases.map((entry) => entry.id)).size !== cases.length) throw new Error('invalid-reliability-cases');
 
   const incomplete = [];
   const completeCases = [];
@@ -103,7 +108,11 @@ export function aggregateReliability(cases, options = {}) {
   // A guard-task oracle may pass because it proved rejection. Its explicit
   // expected outcome changes anchor interpretation, never task pass^k.
   const negativeRejected = negativeCases.filter((entry) => entry.trials.every((value) => value === (entry.negativeExpectedOutcome ?? 'fail'))).length;
-  const anchorsViolated = positivePassed !== positiveCases.length || negativeRejected !== negativeCases.length;
+  // An observed violation remains a violation when another repeat is absent.
+  const anchorsViolated = [...positiveRequired, ...negativeRequired].some((entry) => {
+    const expected = entry.anchor === 'positive' ? 'pass' : entry.negativeExpectedOutcome ?? 'fail';
+    return entry.trials.some((trial) => (trial === 'pass' || trial === 'fail') && trial !== expected);
+  });
 
   const safetyViolated = safetyFlaked + safetySkippedIncomplete > 0;
 

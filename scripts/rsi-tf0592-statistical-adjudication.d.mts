@@ -28,6 +28,7 @@ export type Tf0592Budget = {
   recordedTotals: Record<string, number | null>; incompleteCaseConsumption: Record<string, number | null>;
   completedCaseOnly: Record<string, number | null>; costCeilingRelativeIncrease?: number;
   treatmentTokensPerCompletedCase?: number | null; observedRelativeTokenIncrease?: number | null;
+  treatmentToolCallsPerCompletedCase?: number | null; observedRelativeToolCallIncrease?: number | null;
 };
 export type Tf0592Arm = {
   status: string; trialCount: number; completeCaseCount: number; incompleteCaseCount: number;
@@ -37,8 +38,8 @@ export type Tf0592Arm = {
     confidenceInterval95: [number, number] | null; passAtKConfidenceInterval95: [number, number] | null;
     intervalMethod: string; flakeRate: number | null;
     flakeThreshold: number | null; flakeMode: 'rate' | 'case-count'; maxFlakeCases: number | null; ordinaryFlakeCaseIds: string[]; minimumNonZeroFlakeRate: number | null; flakeThresholdReachable: boolean | null;
-    safety: { requiredCaseCount: number; skippedCount: number; flakeCount: number; violated: boolean };
-    anchors: { positiveCaseCount: number; positivePassed: number; negativeCaseCount: number; negativeRejected: number; violated: boolean };
+    safety: { requiredCaseCount: number; completeCaseCount: number; skippedCount: number; flakeCount: number; violated: boolean };
+    anchors: { positiveCaseCount: number; positivePassed: number; negativeCaseCount: number; negativeRejected: number; untestedCaseCount: number; violated: boolean };
     incomplete: Array<{ caseId: string; trialIndex: number; outcome: string }>; reasons: string[];
   };
   failureClasses: Record<FailureClass, { trialCount: number; caseCount: number }>;

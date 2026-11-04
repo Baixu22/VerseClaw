@@ -14,6 +14,15 @@ const readAcceptance = () => JSON.parse(readFileSync(join(ROOT, PATHS.acceptance
 const codes = (result: { errors: Array<{ code: string }> }) => result.errors.map((entry) => entry.code);
 
 describe('rsi decision acceptance readback', () => {
+  it('rejects an emptied hash inventory or a judged source relabelled non-judged', () => {
+    const missing = readAcceptance();
+    missing.source.gitBlobHashes = {};
+    expect(codes(validateDecisionAcceptance(missing, ROOT, { allowDirty: true }))).toContain('bound-file-coverage');
+    const bypass = readAcceptance();
+    bypass.source.nonJudgedInputs['scripts/lib/paired-ablation.mjs'] = 'not judged';
+    expect(codes(validateDecisionAcceptance(bypass, ROOT, { allowDirty: true }))).toContain('non-judged-scope');
+  });
+
   it('passes on the checked-in record and agrees with the decisions file', () => {
     const result = validateDecisionAcceptance(readAcceptance(), ROOT, { allowDirty: true });
 

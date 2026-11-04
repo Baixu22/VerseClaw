@@ -1,6 +1,11 @@
-acb9936aefd6bd43a760654e04ab1a16d6e2563548c10b389884c9cdc405a490  harness/specs/fixtures/rsi-sekb-arms/protocol.v1.json
+ae463b9ffd0ebf00e1f04c993ac365c1d4cf151be5370f1d298311ad5dcd8ed1  harness/specs/fixtures/rsi-sekb-arms/protocol.v1.json
 e38cebf7c38e889f706d9e718fd38ec575e239806796e98b34702059809a3f7f  harness/specs/fixtures/rsi-sekb-arms/runs.v1.json
-199090714f5ab1e795076fbee4982ca32315ee922dec92cd7abd5535807815e9  harness/specs/fixtures/rsi-sekb-arms/report.v1.json
+eef73645949f8b48c247d09c7a5efeec27b2d4968dfefcfd90b5d5758cef513b  harness/specs/fixtures/rsi-sekb-arms/report.v1.json
 63d44493b0d82b6e5d4ebef5bd3031286deac7bbabc3120611b26da3b32edf9e  harness/specs/fixtures/rsi-sekb-arms/decision.v1.json
-07c01074ac0d7273478d8c7c5b0331e88029ce1fdeab279dbde567b389ed20e8  scripts/rsi-sekb-arms.mjs
+56d73313f2a1705754b00ce3619cf0598b0dc03b7a013c25f63e58f09ab8ee88  scripts/rsi-sekb-arms.mjs
+9c87aecbf9c23bc9643353a43e596028a0f99d49578ec1ad9808f6318b836738  scripts/rsi-sekb-arms.d.mts
+df61dddd780abe1945d5d204308077da1f290fc7b328722061cbd150e6884e32  scripts/lib/paired-ablation.mjs
+c8dfb2d45d7aabf154b1eecbd5fa7da95200bdff9addc7b40ebeb29261873cb5  scripts/lib/paired-ablation.d.mts
+764b31e2244dc70945ba4a15a90c9be6b6b7b7b02e40236fd86c5b54adb37483  scripts/lib/reliability-aggregation.mjs
+2b79e450de708b0aac9a2219419990139fa029f45170d3820428bf46f5b6442e  tests/unit/rsi-sekb-arms.test.ts
 ad3b84184eb9496d04054a61a39885e8f29c79e512fb4bb08d9dfa6fb832644d  tests/unit/rsi-sekb-arms-decision.test.ts

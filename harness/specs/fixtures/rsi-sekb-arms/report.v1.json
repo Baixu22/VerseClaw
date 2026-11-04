@@ -1,6 +1,6 @@
 {
   "schemaVersion": "RsiSekbArmsReport/v1",
-  "generatedAt": "2026-11-03T15:59:34.665Z",
+  "generatedAt": "2026-11-04T13:43:40.186Z",
   "driven_by": "agent",
   "actor": "codex/rsi-sekb-arms",
   "taskForestNode": "TF-0598",
@@ -9,9 +9,10 @@
   "evidenceKind": "synthetic-wiring-fixture",
   "status": "synthetic-wiring-only",
   "promotion": {
-    "status": "eliminate",
+    "status": "insufficient-evidence",
     "reasons": [
-      "cost increase 0.3 exceeds ceiling 0.1"
+      "complete-case or paired-case floor not met",
+      "no declared live-provider execution; statistical wiring cannot authorize promotion"
     ],
     "thresholds": {
       "minimumAbsoluteImprovement": 0.05,
@@ -23,6 +24,7 @@
       "costIncrease": 0.3
     }
   },
+  "claimBoundary": "Numerical threshold readout only; independent execution and sealed candidate acceptance are required before promotion.",
   "reasons": [
     "deterministic wiring fixture; not a model run and never a benefit claim",
     "cost increase 0.3 exceeds 0.1"
@@ -31,6 +33,7 @@
     "sekb-off": {
       "completeCaseCount": 20,
       "passK": 0.3,
+      "passAtK": 0.3,
       "flakeRate": 0,
       "meanTokens": 1000,
       "gate": "pass"
@@ -38,6 +41,7 @@
     "sekb-shadow": {
       "completeCaseCount": 20,
       "passK": 0.3,
+      "passAtK": 0.3,
       "flakeRate": 0,
       "meanTokens": 1000,
       "gate": "pass"
@@ -45,6 +49,7 @@
     "sekb-confirmed": {
       "completeCaseCount": 20,
       "passK": 0.4,
+      "passAtK": 0.45,
       "flakeRate": 0.05,
       "meanTokens": 1300,
       "gate": "pass"

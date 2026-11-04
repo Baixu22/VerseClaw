@@ -57,16 +57,19 @@ export function buildFeedbackReport(root = ROOT, protocol = readJson(join(root, 
   const absolute = resolve(root, exportPath);
   let rows = [];
   let sourceState = 'absent';
+  let source = null;
   if (existsSync(absolute)) {
     try {
       const parsed = readJson(absolute);
       rows = Array.isArray(parsed?.records) ? parsed.records : Array.isArray(parsed) ? parsed : [];
-      sourceState = 'present';
+      source = parsed?.source ?? null;
+      sourceState = Array.isArray(parsed?.records) || Array.isArray(parsed) ? source?.state ?? 'present' : 'invalid';
+      if (sourceState !== 'present') rows = [];
     } catch {
       sourceState = 'unreadable';
     }
   }
-  const attributed = rows.filter((row) => Boolean(row?.injectionId) && Boolean(row?.cardId));
+  const attributed = rows.filter((row) => [row?.injectionId, row?.cardId].every((value) => typeof value === 'string' && value.trim()));
   // A case floor only means something for rows that join to a recorded task:
   // role_memory_feedback has no case column, the join comes from the injection.
   const caseAttributed = attributed.filter(
@@ -75,15 +78,18 @@ export function buildFeedbackReport(root = ROOT, protocol = readJson(join(root, 
   const missingCaseJoin = attributed.length - caseAttributed.length;
   const unattributed = rows.length - attributed.length;
   const counts = attributed.reduce((acc, row) => ({ ...acc, [row.outcome ?? 'unknown']: (acc[row.outcome ?? 'unknown'] ?? 0) + 1 }), {});
-  const completeCases = new Set(caseAttributed.map((row) => row.caseId)).size;
-  const belowFloor = completeCases < MIN_CASES;
+  const attributedCases = new Set(caseAttributed.map((row) => row.caseId)).size;
+  // Task labels carry neither arm nor repeat identity. They are not k=3 trials.
+  const completeCases = 0;
+  const belowFloor = attributedCases < MIN_CASES;
   const reasons = [];
-  let status = 'insufficient-evidence';
+  const status = 'insufficient-evidence';
   if (sourceState !== 'present') reasons.push(`feedback export ${sourceState}: ${exportPath}`);
   if (rows.length === 0) reasons.push('no recorded feedback rows');
-  if (belowFloor) reasons.push(`attributed cases ${completeCases} < required ${MIN_CASES}`);
+  if (belowFloor) reasons.push(`attributed tasks ${attributedCases} < required ${MIN_CASES}`);
   if (unattributed > 0) reasons.push(`${unattributed} unattributable row(s) rejected`);
   if (missingCaseJoin > 0) reasons.push(`${missingCaseJoin} attributed row(s) carry no case join (role_memory_injections.task)`);
+  if (source?.truncated === true) reasons.push(`feedback export truncated: ${rows.length} of ${source.totalRows} recorded rows; not a complete cohort`);
   if (!belowFloor && sourceState === 'present' && rows.length > 0) {
     // An above-floor export still cannot produce promote/hold/eliminate here:
     // this pilot records no paired off/on comparison. State the limit instead
@@ -91,6 +97,7 @@ export function buildFeedbackReport(root = ROOT, protocol = readJson(join(root, 
     reasons.push('this pilot computes no paired effect; an above-floor export cannot produce promote, hold or eliminate');
   }
   reasons.push('no provider calls authorised; this report is an offline eligibility readout, not an effect');
+  reasons.push('task attribution does not establish complete k=3 paired cases');
 
   return {
     schemaVersion: 'RsiFeedbackLoopReport/v1',
@@ -101,12 +108,16 @@ export function buildFeedbackReport(root = ROOT, protocol = readJson(join(root, 
     protocolPath: PROTOCOL_PATH,
     status,
     reasons,
-    feedbackSource: { state: sourceState, path: exportPath },
-    input: { rows: rows.length, attributed: attributed.length, caseAttributed: caseAttributed.length, missingCaseJoin, unattributed, completeCases, counts },
+    feedbackSource: { state: sourceState, path: exportPath, truncated: source?.truncated === true },
+    input: { rows: rows.length, attributed: attributed.length, caseAttributed: caseAttributed.length, missingCaseJoin, unattributed, attributedCases, completeCases, counts },
     design: protocol.design,
     flag: protocol.flag,
     claims: { benefit: false, promotionReady: false, productLocksChanged: false, providerCalls: 0, realHuman: false },
   };
+}
+
+export function validateFeedbackReport(report, expected) {
+  return JSON.stringify({ ...report, generatedAt: null }) === JSON.stringify({ ...expected, generatedAt: null });
 }
 
 if (isMainEntrypoint(import.meta.url)) {
@@ -120,9 +131,14 @@ if (isMainEntrypoint(import.meta.url)) {
       mkdirSync(dirname(target), { recursive: true });
       writeFileSync(target, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
     }
-    const result = { passed: validation.passed, protocolValidation: validation, reportStatus: report.status, reasons: report.reasons };
+    const passed = validation.passed && !['unreadable', 'invalid'].includes(report.feedbackSource.state);
+    const result = { passed, protocolValidation: validation, reportStatus: report.status, reasons: report.reasons };
+    if (values.check && !validateFeedbackReport(readJson(join(ROOT, REPORT_PATH)), report)) {
+      result.passed = false;
+      result.reasons = [...result.reasons, 'saved report differs from current feedback inputs'];
+    }
     console.log(JSON.stringify(values.json ? result : result, null, 2));
-    process.exitCode = validation.passed ? 0 : 1;
+    process.exitCode = result.passed ? 0 : 1;
   } catch (caught) {
     console.error(caught.message);
     process.exitCode = 1;

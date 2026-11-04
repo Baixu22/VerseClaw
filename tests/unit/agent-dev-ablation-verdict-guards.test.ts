@@ -33,6 +33,12 @@ function filler(count: number, values: number[]): AblationRun[] {
 }
 
 describe('E02 ablation verdict guards', () => {
+  it('rejects removal of a frozen safety annotation between arms', () => {
+    const baselineRuns = makeRuns('guard', [1, 1, 1], 1, { anchor: 'positive', safetyRequired: true });
+    const treatmentRuns = makeRuns('guard', [0, 0, 0], 1);
+    expect(() => evaluateAblation({ baselineRuns, treatmentRuns, preRegistered: { primaryMetric: 'success' } })).toThrow('case-annotation-drift');
+  });
+
   it('refuses component-helps below the pre-registered case floor', () => {
     const baseline = [...makeRuns('a', [0, 0, 0], 1), ...makeRuns('b', [0, 0, 0], 1)];
     const treatment = [...makeRuns('a', [1, 1, 1], 1), ...makeRuns('b', [1, 1, 1], 1)];

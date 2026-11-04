@@ -79,6 +79,31 @@ describe('paired-ablation aggregation', () => {
 });
 
 describe('promotion gate', () => {
+  it('review regression: carries explicit safety violations into promotion', () => {
+    const baseline = Array.from({ length: 20 }, (_, i) => makeRuns(`c${i}`, [0, 0, 0], 1)).flat();
+    const treatment = Array.from({ length: 20 }, (_, i) => makeRuns(`c${i}`, Array(3).fill(i < 6 ? 1 : 0), 1)).flat();
+    treatment[0].safetyViolation = true;
+    const result = evaluateAblation({ baselineRuns: baseline, treatmentRuns: treatment,
+      preRegistered: { primaryMetric: 'success', safetyMustHold: true, costIncreaseMaximum: 0.1, costIncrease: 0 } });
+    expect(result.verdict).toBe('safety-regression');
+    expect(result.promotion.status).toBe('eliminate');
+  });
+
+  it('review regression: rejects invalid numeric evidence and intervals', () => {
+    const valid = { meanDiff: 0.3, ci95: [0.1, 0.5] as [number, number], costIncreaseMaximum: 0.1, costIncrease: 0, sampleSufficient: true };
+    for (const mutation of [{ meanDiff: NaN }, { costIncrease: NaN }, { costIncrease: -Infinity }, { ci95: [0.2, NaN] }, { ci95: [0.4, 0.1] }]) {
+      expect(evaluatePromotion({ ...valid, ...mutation } as Parameters<typeof evaluatePromotion>[0]).status).not.toBe('promote');
+    }
+  });
+
+  it('review regression: a partially measured cost is unavailable and pass@k is retained', () => {
+    const runs = makeRuns('a', [1, 1, 0], 1);
+    delete runs[0].tokens;
+    const summary = summarizeCondition(runs, { minCases: 1 });
+    expect(summary.meanTokens).toBeNull();
+    expect(summary).toMatchObject({ passK: 0, passAtK: 1 });
+  });
+
   it('never promotes below the product improvement floor', () => {
     const held = evaluatePromotion({ minimumImprovement: 0.05, meanDiff: 0.02, ci95: [0.001, 0.039], sampleSufficient: true });
     expect(held.status).toBe('hold');

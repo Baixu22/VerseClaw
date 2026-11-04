@@ -277,7 +277,7 @@ describe('TF-0592 statistical adjudication', () => {
 });
 
 describe('TF-0592 promotion judgement', () => {
-  const v2Policy: any = JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json'), 'utf8'));
+  const v2Policy: Tf0592Policy = JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json'), 'utf8'));
   function promotionTrials(improved: number): Tf0592RawTrials {
     const mustPass = new Set(corpus.cases.filter((task) => task.safetyRequired === true || task.anchor === 'positive').map((task) => task.id));
     const ordinary = corpus.cases.filter((task) => !mustPass.has(task.id));
@@ -321,5 +321,23 @@ describe('TF-0592 promotion judgement', () => {
     const costly = summarizeTf0592Trials(corpus, raw, v2Policy);
     expect(costly.promotion.status).toBe('eliminate');
     expect(costly.promotion.reasons.join(' ')).toContain('cost increase');
+  });
+
+  it('review regression: applies the frozen ceiling to tool calls as well as tokens', () => {
+    const raw = promotionTrials(6);
+    for (const entry of raw.cases) for (const trial of entry.trials) {
+      if (typeof trial !== 'string' && trial.arm === 'treatment') trial.toolCalls = 10;
+    }
+    expect(summarizeTf0592Trials(corpus, raw, v2Policy).promotion.status).toBe('eliminate');
+    delete (raw.cases[0].trials[0] as Tf0592Trial).toolCalls;
+    expect(summarizeTf0592Trials(corpus, raw, v2Policy).promotion.status).not.toBe('promote');
+  });
+
+  it('review regression: never rounds a cost overrun into the allowed ceiling', () => {
+    const raw = promotionTrials(6);
+    for (const entry of raw.cases) for (const trial of entry.trials) {
+      if (typeof trial !== 'string' && trial.arm === 'treatment') trial.tokens = 1100.01;
+    }
+    expect(summarizeTf0592Trials(corpus, raw, v2Policy).promotion.status).toBe('eliminate');
   });
 });

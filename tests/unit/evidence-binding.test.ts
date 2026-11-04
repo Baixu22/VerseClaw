@@ -68,6 +68,17 @@ describe('changedPathsBetween', () => {
 });
 
 describe('splitDirtyPaths', () => {
+  it('review regression: a rename away from a judged path is still judged', () => {
+    const root = makeRepo();
+    git(root, ['mv', 'bound/input.txt', 'unbound.txt']);
+    expect(splitDirtyPaths(root, ['bound/input.txt']).judged).toContain('bound/input.txt');
+  });
+
+  it('review regression: an unreadable git state cannot appear clean', () => {
+    const root = makeRepo();
+    expect(() => splitDirtyPaths(join(root, 'does-not-exist'), ['bound/input.txt'])).toThrow();
+  });
+
   it('keeps a leading status space from corrupting the first path', () => {
     const root = makeRepo();
     // A staged deletion and an unstaged edit both start with a space column.

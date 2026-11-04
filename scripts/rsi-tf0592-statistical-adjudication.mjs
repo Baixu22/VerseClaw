@@ -57,6 +57,7 @@ const BOUND_PATHS = [
   INPUT_PATHS.rawTrials,
   INPUT_PATHS.policy,
   ...Object.values(FILES).map((file) => `${TF0592_PACK_DIR}/${file}`),
+  `${TF0592_PACK_DIR}/SHA256SUMS`,
 ];
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const round = (value) => value === null ? null : Number(value.toFixed(6));
@@ -293,11 +294,19 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
   const promotionThresholds = policy.promotion?.thresholds ?? {};
   const minimumImprovement = promotionThresholds.passKAbsoluteImprovement?.minimum ?? 0.05;
   const costCeiling = policy.budgets?.costCeiling?.maxRelativeIncrease ?? null;
-  const baselineTokens = baseline.budget?.tokensPerCompletedCase ?? null;
   const treatmentTokens = treatment.budget?.tokensPerCompletedCase ?? null;
-  const costIncrease = baselineTokens !== null && baselineTokens > 0 && treatmentTokens !== null
-    ? Number((treatmentTokens / baselineTokens - 1).toFixed(4))
-    : null;
+  const relativeIncrease = (metric) => {
+    const base = baseline.budget?.[metric], treated = treatment.budget?.[metric];
+    if (base === null || treated === null) return null;
+    return base > 0 ? (treated - base) / base : treated === 0 ? 0 : Infinity;
+  };
+  const tokenIncrease = relativeIncrease('tokensPerCompletedCase');
+  const toolCallIncrease = relativeIncrease('toolCallsPerCompletedCase');
+  const costs = [tokenIncrease, toolCallIncrease];
+  // Preserve any known overrun even when another required dimension is absent.
+  const costIncrease = costs.some((value) => value !== null && value > costCeiling)
+    ? Math.max(...costs.filter((value) => value !== null))
+    : costs.some((value) => value === null) ? null : Math.max(...costs);
   const armsIntegrity = [baseline, treatment].some(
     (arm) => arm.aggregate?.safety?.violated === true || arm.aggregate?.anchors?.violated === true,
   );
@@ -310,7 +319,11 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
     meanDiff: status === 'insufficient-evidence' ? null : effect.meanDiff,
     ci95: varianceUsable ? effect.ci95 : null,
     integrityViolated: armsIntegrity,
-    sampleSufficient: status === 'pass',
+    sampleSufficient: covered && baseline.completeCaseCount >= MIN_CASES && treatment.completeCaseCount >= MIN_CASES
+      && baseline.aggregate.safety.completeCaseCount === baseline.aggregate.safety.requiredCaseCount
+      && treatment.aggregate.safety.completeCaseCount === treatment.aggregate.safety.requiredCaseCount
+      && baseline.aggregate.anchors.untestedCaseCount === 0 && treatment.aggregate.anchors.untestedCaseCount === 0
+      && enoughPairs,
     unstable: status === 'fail' && !armsIntegrity,
   });
 
@@ -334,7 +347,10 @@ export function summarizeTf0592Trials(corpus, rawTrials, policy) {
       passKDelta: enoughPairs ? effect.meanDiff : null,
     },
     power: effect.power,
-    budget: { ...baseline.budget, treatmentTokensPerCompletedCase: treatment.budget?.tokensPerCompletedCase ?? null, observedRelativeTokenIncrease: costIncrease, costCeilingRelativeIncrease: policy.budgets.costCeiling.maxRelativeIncrease },
+    budget: { ...baseline.budget, treatmentTokensPerCompletedCase: treatmentTokens,
+      treatmentToolCallsPerCompletedCase: treatment.budget.toolCallsPerCompletedCase,
+      observedRelativeTokenIncrease: tokenIncrease, observedRelativeToolCallIncrease: toolCallIncrease,
+      costCeilingRelativeIncrease: policy.budgets.costCeiling.maxRelativeIncrease },
     claims: { realHuman: false, liveProvider: false, promotionReady: false, productLocksChanged: false },
   };
 }

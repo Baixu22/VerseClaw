@@ -39,19 +39,10 @@ export function changedPathsBetween(root, fromCommit, toRef = 'HEAD', paths = []
  * @returns {{judged: string[], unrelated: string[]}}
  */
 export function splitDirtyPaths(root, boundPaths) {
-  let out = '';
-  try {
-    // -z avoids path quoting and, more importantly, keeps the two status
-    // columns verbatim: trimming a line would eat a leading status space and
-    // corrupt the first path.
-    out = execFileSync('git', ['status', '--porcelain', '-z', '--untracked-files=all'], {
-      cwd: root,
-      encoding: 'utf8',
-      windowsHide: true,
-    });
-  } catch {
-    return { judged: [], unrelated: [] };
-  }
+  // Preserve path bytes and propagate Git failures: unavailable is not clean.
+  const out = execFileSync('git', ['status', '--porcelain', '-z', '--untracked-files=all'], {
+    cwd: root, encoding: 'utf8', windowsHide: true, timeout: 15000,
+  });
   if (!out) return { judged: [], unrelated: [] };
   const bound = new Set((boundPaths ?? []).map((path) => String(path).replaceAll('\\', '/')));
   const judged = [];
@@ -60,14 +51,17 @@ export function splitDirtyPaths(root, boundPaths) {
   for (let index = 0; index < fields.length; index += 1) {
     const field = fields[index];
     if (!field) continue;
-    // In -z mode the record is `XY<path>`; a rename adds a second field that
-    // holds the original path, which is not a separate dirty entry.
+    // A rename changes both paths, including a judged input moved out of scope.
     const status = field.slice(0, 2);
     const path = field.slice(3).replaceAll('\\', '/');
     if (!path) continue;
-    if (status.includes('R') || status.includes('C')) index += 1;
-    if (bound.has(path)) judged.push(path);
-    else unrelated.push(path);
+    const paths = [path];
+    if (status.includes('R') || status.includes('C')) paths.push(fields[++index]?.replaceAll('\\', '/'));
+    for (const changed of paths) {
+      if (!changed) throw new Error('invalid-git-status');
+      if (bound.has(changed)) judged.push(changed);
+      else unrelated.push(changed);
+    }
   }
   return { judged, unrelated };
 }

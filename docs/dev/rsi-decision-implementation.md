@@ -104,3 +104,36 @@ insufficient-evidence；`liveReady`、`productApproved`、`defaultOn`、
 
 v2 reservation 仍是 0 完成 case / insufficient-evidence；历史测量仍是 fail；
 `liveReady` / `productApproved` / `defaultOn` / `releaseApproved` 仍为 false。
+
+## 2026-11-04 本地实现完整复核
+
+`driven_by: agent`，`actor: codex/rsi-review`。复核基线 `d8d1691a2`；
+本轮是 evaluator 维护，不是被测候选修改自己的门槛。验收规格为
+`harness/specs/tasks/rsi-review-convergence.md`，最终读数记录在
+`harness/specs/fixtures/rsi-evidence-loop/review-20261104.json`。
+
+基线七道读回全部 exit 0，但新增的 18 个回归用例全部失败，说明原门禁
+没有覆盖下列实际缺陷。本轮修复和对应边界如下：
+
+| 问题 | 修复 |
+| --- | --- |
+| safety-regression 没有传给 promotion；不完整锚点隐藏已发生的违规 | 安全违规两层一致否决；缺测不抹掉已观察到的违规 |
+| NaN、无效区间、缺测成本可能被当作有效证据 | 有限值和区间校验；任一成本缺测仍为 null |
+| 三臂重新拼装判定，丢掉配对拒绝、shadow/off 差异和 evidence 类型边界 | 复用共享配对结果；shadow 行为差异拒绝；未知类型不能冒充 live |
+| TF-0592 只比较 token 成本，且四位小数舍入可吞掉超限 | token 与 tool-call 两维执行现有 10% 上限，判定前不舍入 |
+| passAtK 在声明中存在但实际输出缺失 | 与 passK 分列输出，声明与 JSON 对齐 |
+| 导出器读错 SQLite，且 partial/unknown 被压成 false | 读取生产 role-memory.sqlite；保留四态；明确缺表、不可读和截断 |
+| task 文本去重被报告成完整 k=3 case | 只计 attributedCases；没有 arm/repeat 的反馈不能计完整实验样本 |
+| check 只重新计算，未检查保存在盘报告 | 三臂和反馈读回比较保存值；三臂同时核对完整清单 |
+| 哈希清单可删项、判定输入可自行改标 non-judged | 校验器拥有必需输入清单和非判定输入许可表 |
+| Git 失败变成干净、rename 只看新路径、TF-0592 漏掉 SHA256SUMS | Git 不可读即失败、检查改名前后路径、封印清单纳入判脏 |
+| README 的 hash 漂移降级了，但 dirty/commit-range 仍硬失败 | 三处统一使用判定输入集合 |
+
+三臂的 numerical `promotion.status=promote` 仅表示数值门槛满足；
+`claims.promotionReady` 保持 false，与 TF-0592 一致。独立执行、完整封存和
+产品权限不由原始统计输入的标签授予。合成回归即使测试 live-provider
+分支，也仍标注为 agent 驱动的合成测试，不声称新 provider 执行。
+
+本轮未改生产 UI、反馈排序、存储协议、默认值、产品锁或发布状态。
+README 三种语言的诊断用途说明仍准确。历史测量原始文件保留；新增预算
+字段和校验器摘要仅属于当前离线复算，不追认旧运行通过新验收。

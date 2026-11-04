@@ -42,7 +42,7 @@ function scanCredentials(root) {
 function judgedPaths() {
   // The pack's own bytes are judged too: an uncommitted reseal must fail closed
   // exactly like an uncommitted implementation change.
-  return [...SOURCE_FILES, ...FILES.map((file) => `${TF0590_PACK_DIR}/${file}`), `${TF0590_PACK_DIR}/SHA256SUMS`];
+  return [...SOURCE_FILES.filter((path) => !NON_JUDGED_SOURCE_FILES.includes(path)), ...FILES.map((file) => `${TF0590_PACK_DIR}/${file}`), `${TF0590_PACK_DIR}/SHA256SUMS`];
 }
 
 function identity(root) {
@@ -198,7 +198,7 @@ export function validateTaskCorpusPack(root = ROOT, options = {}) {
         if (git(['rev-parse', `${candidate}^{tree}`]) !== validation.candidate.tree) errors.push('candidate-tree');
         git(['merge-base', '--is-ancestor', candidate, 'HEAD']);
         // Only the corpus' own judged inputs can invalidate this seal.
-        const drift = changedPathsBetween(root, candidate, 'HEAD', SOURCE_FILES);
+        const drift = changedPathsBetween(root, candidate, 'HEAD', SOURCE_FILES.filter((path) => !NON_JUDGED_SOURCE_FILES.includes(path)));
         if (drift.length > 0) errors.push(`candidate-source-drift:${drift.join(',')}`);
       }
     }

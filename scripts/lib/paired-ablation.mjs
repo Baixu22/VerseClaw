@@ -68,21 +68,26 @@ export function evaluatePromotion(input = {}) {
   const ci95 = input.ci95 ?? null;
   const costIncrease = input.costIncrease ?? null;
   if (!Number.isFinite(minimumImprovement) || minimumImprovement <= 0) throw new Error('invalid-minimum-improvement');
+  if (costIncreaseMaximum !== null && (!Number.isFinite(costIncreaseMaximum) || costIncreaseMaximum < 0)) throw new Error('invalid-cost-ceiling');
   const thresholds = { minimumAbsoluteImprovement: minimumImprovement, costIncreaseMaximum };
-  const observed = { meanDiff, ci95Lower: Array.isArray(ci95) ? ci95[0] : null, costIncrease };
+  const observed = { meanDiff: Number.isFinite(meanDiff) ? meanDiff : null,
+    ci95Lower: Array.isArray(ci95) && Number.isFinite(ci95[0]) ? ci95[0] : null,
+    costIncrease: Number.isFinite(costIncrease) ? costIncrease : null };
   const result = (status, reasons) => ({ status, reasons, thresholds, observed });
   if (input.integrityViolated === true) return result('eliminate', ['safety-required case or positive/negative anchor violated']);
   if (input.sampleSufficient !== true) return result('insufficient-evidence', ['complete-case or paired-case floor not met']);
   if (input.unstable === true) return result('hold', ['sample is unstable (flake above the frozen allowance)']);
-  if (costIncreaseMaximum !== null && costIncrease === null) return result('hold', ['cost dimension missing; promotion is disqualified']);
+  if (costIncreaseMaximum !== null && costIncrease === Infinity) return result('eliminate', ['cost increase is unbounded from a zero baseline']);
+  if (costIncreaseMaximum !== null && (!Number.isFinite(costIncrease) || costIncrease < -1)) return result('hold', ['cost dimension missing or invalid; promotion is disqualified']);
   if (costIncreaseMaximum !== null && costIncrease > costIncreaseMaximum) {
     return result('eliminate', [`cost increase ${costIncrease} exceeds ceiling ${costIncreaseMaximum}`]);
   }
-  if (meanDiff === null) return result('insufficient-evidence', ['no paired effect was computed']);
+  if (!Number.isFinite(meanDiff)) return result('insufficient-evidence', ['no valid paired effect was computed']);
   if (meanDiff < minimumImprovement) {
     return result('hold', [`observed improvement ${meanDiff} is below the ${minimumImprovement} product floor`]);
   }
-  if (ci95 === null) return result('hold', ['no usable paired interval (degenerate variance or missing pairs)']);
+  if (!Array.isArray(ci95) || ci95.length !== 2 || !ci95.every(Number.isFinite)
+    || ci95[0] > meanDiff || ci95[1] < meanDiff) return result('hold', ['no usable paired interval (degenerate variance, invalid or missing pairs)']);
   if (!(ci95[0] > 0)) return result('hold', ['95% interval lower bound is not above zero']);
   return result('promote', ['improvement meets the product floor and the interval excludes zero']);
 }
@@ -92,7 +97,12 @@ export function summarizeCondition(runs, options = {}) {
   const minCases = options.minCases ?? 20;
   if (!Number.isInteger(k) || k < 1 || !Number.isInteger(minCases) || minCases < 1) throw new Error('invalid-paired-design');
   const byCase = new Map();
+  pairByKey(runs);
   for (const run of runs) {
+    if (run.outcome !== undefined && !['pass', 'fail', 'missing', 'timeout', 'crash', 'skip'].includes(run.outcome)) throw new Error('unknown-trial-outcome');
+    if (run.outcome === undefined && ![true, false, 0, 1].includes(run.success)) throw new Error('invalid-success-metric');
+    if (['pass', 'fail'].includes(run.outcome) && run.success !== undefined
+      && numericMetric(run.success) !== Number(run.outcome === 'pass')) throw new Error('outcome-metric-mismatch');
     if (!byCase.has(run.caseId)) byCase.set(run.caseId, []);
     byCase.get(run.caseId).push(run);
   }
@@ -114,17 +124,20 @@ export function summarizeCondition(runs, options = {}) {
     });
 
   const reliability = aggregateReliability(reliabilityCases, { ...options, k, minCases });
-  const latencies = runs.map((run) => run.latencyMs).filter((value) => typeof value === 'number').sort((a, b) => a - b);
-  const tokens = runs.map((run) => run.tokens).filter((value) => typeof value === 'number');
+  const measured = (metric) => runs.length > 0 && runs.every((run) => Number.isFinite(run[metric]) && run[metric] >= 0)
+    ? runs.map((run) => run[metric]) : [];
+  const latencies = measured('latencyMs').sort((a, b) => a - b);
+  const tokens = measured('tokens');
 
   return {
     runCount: runs.length,
     caseCount: byCase.size,
     successRate: reliability.perTrialSuccessRate,
     passK: reliability.passK,
+    passAtK: reliability.passAtK,
     p50LatencyMs: round(quantile(latencies, 0.5)),
     p95LatencyMs: round(quantile(latencies, 0.95)),
-    meanTokens: round(mean(tokens)),
+    meanTokens: mean(tokens),
     falseBlocks: runs.filter((run) => run.falseBlock === true).length,
     safetyViolations: runs.filter((run) => run.safetyViolation === true).length,
     completeCaseCount: reliability.completeCaseCount,
@@ -145,6 +158,7 @@ export function summarizeCondition(runs, options = {}) {
 function pairByKey(runs) {
   const map = new Map();
   for (const run of runs) {
+    if (typeof run?.caseId !== 'string' || !run.caseId.trim() || !Number.isInteger(run.repeat) || run.repeat < 0) throw new Error('invalid-pair-key');
     const key = `${run.caseId}::${run.repeat}`;
     if (map.has(key)) throw new Error('duplicate-pair-key');
     map.set(key, run);
@@ -170,8 +184,13 @@ export function pairedEffect(baselineRuns, treatmentRuns, options = {}) {
     }
     const baseValue = numericMetric(baseRun[metric]);
     const treatValue = numericMetric(treatRun[metric]);
-    if (baseValue === null || treatValue === null) {
+    if (baseValue === null || treatValue === null || (metric === 'success' && ![baseValue, treatValue].every((value) => value === 0 || value === 1))) {
       dropped.push({ key, reason: 'non-numeric-metric' });
+      continue;
+    }
+    if ([baseRun, treatRun].some((run) => (run.outcome !== undefined && !['pass', 'fail'].includes(run.outcome))
+      || (run.failureClass != null && run.failureClass !== 'agent'))) {
+      dropped.push({ key, reason: 'ineligible-trial' });
       continue;
     }
     const pairs = byCase.get(baseRun.caseId) ?? [];
@@ -216,7 +235,7 @@ export function pairedEffect(baselineRuns, treatmentRuns, options = {}) {
     excludedPartialPairs,
     droppedPairCount: dropped.length,
     droppedPairs: dropped.slice(0, 20),
-    meanDiff: precise(meanDiff),
+    meanDiff,
     sd: precise(sd),
     standardError: precise(standardError),
     ci95: varianceUsable && enoughCases ? [precise(meanDiff - margin), precise(meanDiff + margin)] : null,
@@ -244,6 +263,12 @@ function armIntegrityViolated(summary) {
  */
 export function evaluateAblation(input) {
   const { baselineRuns, treatmentRuns, preRegistered } = input;
+  const annotations = new Map();
+  for (const run of [...baselineRuns, ...treatmentRuns]) {
+    const annotation = JSON.stringify([run.safetyRequired === true, run.anchor ?? null, run.negativeExpectedOutcome ?? 'fail']);
+    if (annotations.has(run.caseId) && annotations.get(run.caseId) !== annotation) throw new Error('case-annotation-drift');
+    annotations.set(run.caseId, annotation);
+  }
   const k = preRegistered.k ?? 3;
   const minCases = preRegistered.minCases ?? 20;
   const budget = preRegistered.degradationBudget ?? 0;
@@ -317,7 +342,7 @@ export function evaluateAblation(input) {
     meanDiff: effect.meanDiff,
     ci95: effect.ci95,
     costIncrease: preRegistered.costIncrease ?? null,
-    integrityViolated,
+    integrityViolated: integrityViolated || !safetyOk,
     sampleSufficient:
       !belowFloor
       && treatment.incompleteCaseCount === 0
