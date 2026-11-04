@@ -7,10 +7,10 @@
  * - `memory_recall`: search the memory store for matching facts.
  * - `memory_update`: supersede an existing fact with updated information.
  * - `memory_forget`: actively invalidate (retract) a fact.
- * - `memory_strengthen`: boost a fact's usage signal (user positive feedback).
+ * - `memory_strengthen`: boost a fact's usage signal (agent-observed usefulness).
  *
- * Phase 1: interface + tests only. Not wired into the actual agent tool
- * registration system yet.
+ * The agent adapter exists, but runtime.memory.persist remains retired. Direct
+ * calls support owner-level tests; self-edit actions never imply human approval.
  */
 
 import {
@@ -192,10 +192,11 @@ function persistSupersedesRelation(
 
 function selfEditEvidenceRef(now: number): EvidenceRef {
   return buildEvidenceRefFixture({
-    type: "human",
+    type: "tool",
     ref: "memory_self_edit",
     label: "Memory self-edit tool",
     summary: `Self-edit action at ${now}.`,
+    metadata: { driven_by: "agent", actor: "memory_self_edit" },
   });
 }
 
@@ -236,6 +237,23 @@ function cloneSourceEpisodeRef(
 
 function cloneRuntimeCoreJsonObject(value: unknown): RuntimeCoreJsonObject {
   return JSON.parse(JSON.stringify(value)) as RuntimeCoreJsonObject;
+}
+
+function selfEditSourceEpisodeRefs(
+  context: MemorySelfEditToolContext,
+  existing: { factId: string; sourceEpisodeRefs: readonly RuntimeMemorySourceEpisodeRef[] },
+  now: number,
+): RuntimeMemorySourceEpisodeRef[] {
+  return [
+    ...existing.sourceEpisodeRefs.map(cloneSourceEpisodeRef),
+    {
+      episodeId: "memory_self_edit",
+      taskId: context.taskId ?? "memory_self_edit",
+      kind: "agent_self_edit",
+      idempotencyKey: `memory_self_edit:${existing.factId}:${now}`,
+      reference_time: now,
+    },
+  ];
 }
 
 // ---------------------------------------------------------------------------
@@ -327,18 +345,7 @@ export const memoryUpdateTool: MemorySelfEditTool = {
     const objectSummary = stringArg(args, "objectSummary") ?? existing.objectSummary;
     const confidence = numberArg(args, "confidence") ?? existing.confidence;
 
-    const sourceEpisodeRefs: RuntimeMemorySourceEpisodeRef[] =
-      existing.sourceEpisodeRefs.length > 0
-        ? existing.sourceEpisodeRefs.map(cloneSourceEpisodeRef)
-        : [
-            {
-              episodeId: "memory_self_edit",
-              taskId: context.taskId ?? "memory_self_edit",
-              kind: "human_confirmation",
-              idempotencyKey: `memory_self_edit:${factId}:${now}`,
-              reference_time: now,
-            },
-          ];
+    const sourceEpisodeRefs = selfEditSourceEpisodeRefs(context, existing, now);
 
     const evidenceRefs: EvidenceRef[] = [
       ...existing.evidenceRefs.map(cloneEvidenceRef),
@@ -353,16 +360,16 @@ export const memoryUpdateTool: MemorySelfEditTool = {
       predicate,
       objectSummary,
       confidence,
-      source: "human_confirmation",
+      source: "agent_self_edit",
       sourceEpisodeRefs,
       evidenceRefs,
       valid_at: now,
       reference_time: now,
       acceptedAt: now,
-      verificationStatus: "human_approved",
+      verificationStatus: "agent_approved",
       ...(existing.memoryType !== undefined ? { memoryType: existing.memoryType } : {}),
       promotion: {
-        promotedBy: "human",
+        promotedBy: "agent",
         evidenceRefs: [selfEditEvidenceRef(now)],
       },
     };
@@ -384,8 +391,8 @@ export const memoryUpdateTool: MemorySelfEditTool = {
       reason: "superseded",
       invalid_at: now,
       reference_time: now,
-      proposedBy: "human_confirmation",
-      verificationStatus: "human_approved",
+      proposedBy: "agent_self_edit",
+      verificationStatus: "agent_approved",
       sourceEpisodeRefs,
       evidenceRefs: [selfEditEvidenceRef(now)],
       replacementFactId: newFactId,
@@ -455,7 +462,7 @@ export const memoryForgetTool: MemorySelfEditTool = {
       factId: { type: "string", description: "ID of the fact to forget." },
       reason: {
         type: "string",
-        enum: ["retracted", "human_rejected"],
+        enum: ["retracted"],
         description: "Reason for forgetting. Defaults to 'retracted'.",
       },
     },
@@ -481,20 +488,12 @@ export const memoryForgetTool: MemorySelfEditTool = {
     }
 
     const now = resolveNow(context);
-    const reason = (stringArg(args, "reason") as "retracted" | "human_rejected" | undefined) ?? "retracted";
+    const reason = stringArg(args, "reason") ?? "retracted";
+    if (reason !== "retracted") {
+      return { ok: false, tool: "memory_forget", message: "Agent forgetting only supports reason 'retracted'." };
+    }
 
-    const sourceEpisodeRefs: RuntimeMemorySourceEpisodeRef[] =
-      existing.sourceEpisodeRefs.length > 0
-        ? [...existing.sourceEpisodeRefs]
-        : [
-            {
-              episodeId: "memory_self_edit",
-              taskId: context.taskId ?? "memory_self_edit",
-              kind: "human_confirmation",
-              idempotencyKey: `memory_self_edit_forget:${factId}:${now}`,
-              reference_time: now,
-            },
-          ];
+    const sourceEpisodeRefs = selfEditSourceEpisodeRefs(context, existing, now);
 
     const invalidation: RuntimeMemoryInvalidationProposal = {
       schemaVersion: 1,
@@ -503,8 +502,8 @@ export const memoryForgetTool: MemorySelfEditTool = {
       reason,
       invalid_at: now,
       reference_time: now,
-      proposedBy: "human_confirmation",
-      verificationStatus: "human_approved",
+      proposedBy: "agent_self_edit",
+      verificationStatus: "agent_approved",
       sourceEpisodeRefs,
       evidenceRefs: [selfEditEvidenceRef(now)],
     };

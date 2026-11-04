@@ -25,6 +25,17 @@ Candidates may persist, but `memory-candidate` has `retrieval=none` and `injecta
 
 ## Approval and consumption
 
+Memory self-edit operations use `source/kind: agent_self_edit`,
+`verificationStatus: agent_approved` and `promotedBy: agent`. This status means
+agent acceptance of its own edit, not independent verification or human approval.
+Each update/forget appends agent action lineage and tool evidence carrying
+`driven_by: agent` / `actor: memory_self_edit`; historical evidence remains intact.
+The forgetting tool accepts only `retracted`. Strengthening records usage without
+changing fact provenance or verification. Schema guards reject contradictory
+self-edit approval records before storage. These values are additive; historical
+records are not rewritten and no SQLite migration is run. The TF-0500 persistence
+retirement and empty adapter tool list remain unchanged.
+
 - Role cards use review/governance transitions owned by `role-memory-card-governance`.
 - Runtime facts/timelines/episodes use the Runtime Memory owner's acceptance and invalidation paths.
 - Embeddings and Dreaming consume accepted inputs and may be rebuilt; they cannot accept memory or inject prompt context.

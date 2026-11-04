@@ -23,6 +23,7 @@ export const RUNTIME_MEMORY_EPISODE_KINDS = [
   "verifier_summary",
   "trace_summary",
   "human_confirmation",
+  "agent_self_edit",
   "deterministic_rule",
   "other",
 ] as const;
@@ -54,6 +55,7 @@ export const RUNTIME_MEMORY_FACT_SOURCES = [
   "verifier_summary",
   "trace_summary",
   "human_confirmation",
+  "agent_self_edit",
   "deterministic_rule",
   "other",
 ] as const;
@@ -65,6 +67,7 @@ export const RUNTIME_MEMORY_VERIFICATION_STATUSES = [
   "candidate",
   "verified",
   "human_approved",
+  "agent_approved",
   "deterministic_rule",
   "rejected",
   "invalidated",
@@ -76,6 +79,7 @@ export type RuntimeMemoryVerificationStatus =
 export const RUNTIME_MEMORY_ACCEPTED_VERIFICATION_STATUSES = [
   "verified",
   "human_approved",
+  "agent_approved",
   "deterministic_rule",
 ] as const satisfies readonly RuntimeMemoryVerificationStatus[];
 
@@ -255,7 +259,7 @@ export type RuntimeMemoryTemporalFields = {
 };
 
 export type RuntimeMemoryFactPromotionEvidence = {
-  promotedBy: "verifier" | "human" | "deterministic_rule";
+  promotedBy: "verifier" | "human" | "agent" | "deterministic_rule";
   evidenceRefs: EvidenceRef[];
   approvedBy?: string;
   ruleId?: string;
@@ -696,6 +700,7 @@ export function isRuntimeMemoryFactPromotionEvidence(
   return (
     (value.promotedBy === "verifier" ||
       value.promotedBy === "human" ||
+      value.promotedBy === "agent" ||
       value.promotedBy === "deterministic_rule") &&
     nonEmptyArrayEvery(value.evidenceRefs, isEvidenceRef) &&
     isOptionalString(value.approvedBy) &&
@@ -709,6 +714,12 @@ export function isRuntimeMemoryTemporalFactCandidate(
   if (!isRecord(value)) {
     return false;
   }
+  const promotedByAgent = isRecord(value.promotion) && value.promotion.promotedBy === "agent";
+  const selfEditApprovalMatches = value.source === "agent_self_edit"
+    ? value.verificationStatus === "agent_approved"
+      ? promotedByAgent && isRuntimeMemoryFactPromotionEvidence(value.promotion)
+      : (value.verificationStatus === "candidate" || value.verificationStatus === "rejected" || value.verificationStatus === "invalidated") && value.promotion === undefined
+    : !promotedByAgent && value.verificationStatus !== "agent_approved";
   return (
     value.schemaVersion === 1 &&
     isNonEmptyString(value.factId) &&
@@ -721,6 +732,7 @@ export function isRuntimeMemoryTemporalFactCandidate(
     Number(value.confidence) <= 1 &&
     isRuntimeMemoryFactSource(value.source) &&
     isRuntimeMemoryVerificationStatus(value.verificationStatus) &&
+    selfEditApprovalMatches &&
     hasRuntimeMemoryTemporalFields(value) &&
     nonEmptyArrayEvery(value.sourceEpisodeRefs, isRuntimeMemorySourceEpisodeRef) &&
     nonEmptyArrayEvery(value.evidenceRefs, isEvidenceRef) &&
@@ -762,6 +774,9 @@ export function isRuntimeMemoryInvalidationProposal(
     isFiniteNumber(value.reference_time) &&
     isRuntimeMemoryFactSource(value.proposedBy) &&
     isRuntimeMemoryVerificationStatus(value.verificationStatus) &&
+    (value.proposedBy !== "agent_self_edit" ||
+      (value.verificationStatus === "agent_approved" && value.reason !== "human_rejected")) &&
+    (value.verificationStatus !== "agent_approved" || value.proposedBy === "agent_self_edit") &&
     nonEmptyArrayEvery(value.sourceEpisodeRefs, isRuntimeMemorySourceEpisodeRef) &&
     nonEmptyArrayEvery(value.evidenceRefs, isEvidenceRef) &&
     isOptionalString(value.replacementFactId) &&

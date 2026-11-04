@@ -49,7 +49,7 @@ const updateSchema = Type.Object({
 
 const forgetSchema = Type.Object({
   factId: Type.String({ description: "ID of the fact to invalidate." }),
-  reason: Type.Optional(Type.String({ description: "Optional invalidation reason." })),
+  reason: Type.Optional(Type.Literal("retracted", { description: "Agent retraction; never implies human rejection." })),
 });
 
 const strengthenSchema = Type.Object({
@@ -90,7 +90,7 @@ const TOOL_DEFS: ReadonlyArray<{
     name: "memory_strengthen",
     label: "Memory Strengthen",
     description:
-      "Boost a memory fact's usage signal (user positive feedback). Use when a fact proved useful.",
+      "Boost a memory fact's usage signal (agent-observed usefulness). Does not approve or verify the fact.",
     parameters: strengthenSchema,
   },
 ];

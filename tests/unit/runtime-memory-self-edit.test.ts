@@ -162,7 +162,7 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(newFact?.subject).toBe("NewSubject");
       expect(newFact?.objectSummary).toBe("New summary.");
       expect(newFact?.confidence).toBe(0.9);
-      expect(newFact?.verificationStatus).toBe("human_approved");
+      expect(newFact?.verificationStatus).toBe("agent_approved");
 
       // The old fact is invalidated (check via invalidation proposals).
       const invalidations = store.listInvalidations();
@@ -239,7 +239,7 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(inv?.invalid_at).toBe(2000);
     });
 
-    it("accepts 'human_rejected' as reason", async () => {
+    it("rejects an agent claiming 'human_rejected' as reason", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("reject_me"));
 
@@ -249,9 +249,8 @@ describe("Phase 4.4: Self-editing memory interface", () => {
         makeContext(store, 2000),
       );
 
-      expect(result.ok).toBe(true);
-      const data = result.data as { reason: string };
-      expect(data.reason).toBe("human_rejected");
+      expect(result.ok).toBe(false);
+      expect(store.listInvalidations()).toEqual([]);
     });
 
     it("fails when fact is not found", async () => {

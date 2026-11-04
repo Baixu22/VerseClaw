@@ -42,6 +42,7 @@ describe("runtime memory context contracts", () => {
       "verifier_summary",
       "trace_summary",
       "human_confirmation",
+      "agent_self_edit",
       "deterministic_rule",
       "other",
     ]);
@@ -65,6 +66,7 @@ describe("runtime memory context contracts", () => {
       "verifier_summary",
       "trace_summary",
       "human_confirmation",
+      "agent_self_edit",
       "deterministic_rule",
       "other",
     ]);
@@ -72,6 +74,7 @@ describe("runtime memory context contracts", () => {
       "candidate",
       "verified",
       "human_approved",
+      "agent_approved",
       "deterministic_rule",
       "rejected",
       "invalidated",
@@ -79,6 +82,7 @@ describe("runtime memory context contracts", () => {
     expect(RUNTIME_MEMORY_ACCEPTED_VERIFICATION_STATUSES).toEqual([
       "verified",
       "human_approved",
+      "agent_approved",
       "deterministic_rule",
     ]);
     expect(RUNTIME_MEMORY_INVALIDATION_REASONS).toEqual([
