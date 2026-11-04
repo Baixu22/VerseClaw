@@ -525,6 +525,8 @@ reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验�
 
 第三轮按[输入修复任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round3.md)推进：协议工具输出只来自当轮生产投影，正文不重复列出回读结果；两压力臂使用同一 archive/session 身份，主上下文按实际发送的 input JSON 计量。第三轮结果单独封存，不重写第二轮数据；B1–B7 与语料、压力和输出预算保持冻结，任务收益仍以新实测判定。
 
+第三轮实测已完成：96次运行/360次provider调用，24对初始请求相同，原始历史回退和oracle泄漏均为0。`decision.status=mechanism-only`；recall-stable证据0/18，token相对reference-visible增长59.61%。原评分器B3=true仅来自一个控制任务差异，不表示证据还原收益。53次响应因900输出token预算返回incomplete，下一步需处理评测页预算与模型工具说明的适配，详见[第三轮交付记录](../../harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md)。
+
 复算：
 
 ```powershell

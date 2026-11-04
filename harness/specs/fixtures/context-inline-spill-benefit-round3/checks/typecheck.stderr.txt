@@ -1,0 +1,3 @@
+$ node scripts/typecheck-agent-dev.mjs
+$ tsgo --noEmit -p tsconfig.web.json --composite false
+$ tsgo --noEmit -p tsconfig.node.json --composite false
