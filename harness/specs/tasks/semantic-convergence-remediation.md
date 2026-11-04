@@ -64,6 +64,12 @@ touchedAreas:
   - openclaw_runtime/src/plugins/registry.ts
   - openclaw_runtime/src/plugins/hooks.ts
   - tests/unit/semantic-convergence-prompt-authority.test.ts
+  - tests/unit/semantic-convergence-prompt-budget.test.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
+  - harness/specs/rules/prompt-injection-accounting.md
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
   - docs/dev/context-orchestrator.md
   - docs/dev/prompt-contribution-authority.md
   - harness/specs/rules/prompt-contribution-authority.md
@@ -100,9 +106,11 @@ requiredRules:
   - provider-error-retry-boundaries
   - outbound-protocol-payload-consistency
   - prompt-contribution-authority
+  - prompt-injection-accounting
   - task-forest-autoclose-and-roles
 humanEvidence: not-required
 requiredTests:
+  - pnpm exec vitest run tests/unit/semantic-convergence-prompt-budget.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/prompt-contribution-authority.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/semantic-convergence-prompt-authority.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/request-attempt-budget.test.ts src/agents/model-fallback.loop-termination.test.ts --maxWorkers=1
@@ -147,3 +155,22 @@ existing default. Enforcement does not authenticate a malicious in-process plugi
 README translations: reviewed; no update required because there is no new application UI,
 setup flow or product promise. Runtime plugin API and Context Orchestrator documentation
 are updated with the registration and enforcement contracts.
+
+## TF-0738 accounting boundary
+
+The existing managed character ceiling remains unchanged. Post-orchestrator writes
+are recorded separately in the same turn ledger, including join characters. The
+embedded runner uses the shared composer and tracked successful system-prompt setter;
+hook message appends are also recorded. A full base-component replacement retires
+its previous base/post system attribution without altering the managed budget.
+
+Snapshot budgetCoverage independently observes the final system prompt and combines
+it with turn message-injection charges. It excludes ordinary history, user input and
+tool payloads; it is not wire serialization size or provider token usage. basePromptChars
+is separate, and unaccountedChars/overaccountedChars expose coverage gaps instead of
+asserting zero from an accounted sum. No-turnId composition and missing baseline
+observations are explicitly unbudgeted. Provider token values remain in existing
+structured usage/window-control paths and are not estimated from character counts.
+
+README en/zh/ja descriptions now qualify 6000 as a managed injection budget and
+mention the separate post-orchestrator accounting; no new application UI is introduced.

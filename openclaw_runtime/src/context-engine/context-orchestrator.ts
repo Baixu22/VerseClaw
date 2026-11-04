@@ -65,6 +65,10 @@ import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
   endTurnInjectionBudget,
+  observeTurnSystemPromptBase,
+  recordManagedSystemChars,
+  recordPostOrchestratorChange,
+  recordPostOrchestratorContribution,
   reserveTurnInjectionCapacity,
   skipTurnInjection,
   summarizeTurnInjection,
@@ -125,6 +129,7 @@ export type ContextOrchestratorSource = {
 };
 
 export type ContextOrchestratorLineage = {
+  unbudgeted: boolean;
   turnId?: string;
   sessionId?: string;
   sessionKey?: string;
@@ -224,6 +229,47 @@ export type ContextOrchestratorResult = {
   extraSystemPrompt: string | undefined;
   lineage: ContextOrchestratorLineage;
 };
+
+/** Compose the real post-orchestrator component without spending or widening the managed limit. */
+export function composePostOrchestratorPrompt(params: {
+  turnId?: string;
+  basePrompt?: string;
+  additions: readonly { sourceId: string; text?: string }[];
+  applied?: boolean;
+}): { prompt: string; unbudgeted: boolean; postOrchestratorChars: number } {
+  const included = (text: string | undefined): text is string => typeof text === "string" && text.trim().length > 0;
+  let prompt = included(params.basePrompt) ? params.basePrompt : "";
+  let postOrchestratorChars = 0;
+  const ledger = params.turnId ? beginTurnInjectionBudget({ turnId: params.turnId }) : undefined;
+  for (const { sourceId, text } of params.additions) {
+    const written = included(text) ? (prompt ? `\n\n${text}` : text) : "";
+    prompt += written;
+    postOrchestratorChars += written.length;
+    if (ledger) recordPostOrchestratorContribution(ledger, sourceId, params.applied === false ? 0 : written.length);
+  }
+  return { prompt, unbudgeted: !params.turnId,
+    postOrchestratorChars: params.applied === false ? 0 : postOrchestratorChars };
+}
+
+/** Same setter used by the embedded runner, with accounting after successful application. */
+export function createTrackedSystemPromptSetter(params: {
+  turnId: string;
+  basePrompt: string;
+  apply: (prompt: string) => void;
+}): (prompt: string) => void {
+  const ledger = beginTurnInjectionBudget({ turnId: params.turnId });
+  let current = params.basePrompt;
+  observeTurnSystemPromptBase(ledger, current);
+  return next => {
+    params.apply(next);
+    recordPostOrchestratorChange(ledger, current, next, "system_prompt");
+    current = next;
+  };
+}
+
+export function recordPostOrchestratorMessageChange(turnId: string, before: string, after: string): void {
+  recordPostOrchestratorChange(beginTurnInjectionBudget({ turnId }), before, after, "message");
+}
 
 function resolveMemoryLineageSourceId(providerIds: readonly string[] | undefined): string {
   const ids = [...new Set((providerIds ?? []).map((id) => id.trim()).filter(Boolean))].toSorted();
@@ -385,6 +431,17 @@ export function finalizeContextOrchestratorTurn(params: {
     messages: params.messages,
     priorDedupKeys: params.priorDedupKeys,
   });
+  const managedSystemChars = projected.projection.lineage
+    .filter(entry => entry.target === "system_prompt")
+    .reduce((sum, entry) => sum + entry.charsApplied, 0);
+  if (!wasFinalized) recordManagedSystemChars(ledger, managedSystemChars);
+  const systemAddition = projected.projection.systemPromptAddition;
+  if (systemAddition) {
+    const joiningChars = systemAddition.length - managedSystemChars +
+      (params.systemPrompt?.endsWith(`\n\n${systemAddition}`) ? 2 : 0);
+    recordPostOrchestratorContribution(ledger,
+      `projection-joining:${params.attemptIndex ?? 0}:${params.modelCallIndex ?? 0}`, joiningChars);
+  }
   // The first projection precedes the model-call seal. Register the charged
   // text, so a later reopened collection still attributes the actual prompt.
   for (const contribution of projected.projection.systemPromptContributions ?? []) {
@@ -642,6 +699,7 @@ function chargeAppendedSegment(
   const head = text.slice(0, beforeLen);
   const segment = text.slice(beforeLen);
   const charged = chargeTurnInjection(ledger, channel, segment);
+  recordManagedSystemChars(ledger, charged.charsApplied);
   if (!charged.text) {
     return {
       text: head.length > 0 ? head : undefined,
@@ -669,6 +727,7 @@ export async function computeContextExtraSystemPrompt(
   const hasNativeDeclaration = nativeContext.nativeMemory || nativeContext.nativeContextGating;
   rememberNativeNegotiation(input.turnId, nativeContext);
   const lineage: ContextOrchestratorLineage = {
+    unbudgeted: !input.turnId,
     turnId: input.turnId,
     sessionId: input.sessionId,
     sessionKey: input.sessionKey,

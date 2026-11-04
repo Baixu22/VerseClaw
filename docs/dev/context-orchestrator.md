@@ -95,6 +95,48 @@ are also distinguished. This is not global production enforcement. These checks 
 declared mutation surfaces and do not classify the semantics of appended data. Native
 assembly, budget accounting after orchestration and RC-03 coverage remain separate tasks.
 
+## Prompt accounting (TF-0738)
+
+The 6000-character limit governs **managed injection**, including its existing
+precedence, drops and truncation. It does not limit the base system prompt, separate
+post-orchestrator instructions or the provider's total token window. Those token limits
+and the provider's structured usage records remain separate; no character-to-token
+conversion is used for billing or provider-usage claims.
+
+`composePostOrchestratorPrompt` preserves the existing filtered join and records
+Runtime Intensity/degradation additions and their separators in a separate bucket on
+the same turn ledger. The embedded runner uses `createTrackedSystemPromptSetter` for
+its actual system-prompt writes. It records successful changes, including provider,
+hook, media, model-identity, runtime-context and capability updates. Whole replacements
+retire prior base/post system attribution. Hook data appends use the corresponding
+message observation. Repeated composition/cached projection replaces an observation,
+rather than billing it again.
+
+`ContextFinalSnapshot.budgetCoverage` exposes:
+
+| Field | Meaning |
+|---|---|
+| managedChars | Cumulative characters applied by the existing turn injection budget |
+| postOrchestratorChars | Separately attributed system/message changes and joining characters |
+| totalPromptChars | Observed full system-prompt length plus turn message-injection charges |
+| basePromptChars | Base component observed before later managed/post contributions |
+| unaccountedChars | Positive observed injection footprint not covered by managed/post accounting |
+| overaccountedChars | Attributed footprint exceeding the observation; exposes double counting |
+| unbudgeted | A turn/baseline observation is unavailable |
+
+`accounted_char_ratio = (managedChars + postOrchestratorChars) /
+(totalPromptChars - basePromptChars)` for a nonempty observed injection footprint.
+Complete coverage requires zero unaccounted and zero overaccounted characters. The
+empty-footprint convention is 1.0. Ordinary history, user input and tool outputs are
+not part of this character footprint; the field is not the complete provider request
+or wire-serialization size. Managed/message counts remain the turn's applied charges,
+not a fresh token estimate for each model call.
+
+No-turnId composition reports `unbudgeted` in returned and retained orchestrator
+diagnostics. Normal embedded attempts initialize the observed baseline and snapshots
+are readable through the existing snapshot getters. Ledger observations are copied
+when summarized, so later model calls cannot rewrite earlier snapshots.
+
 ## Product boundaries
 
 - Does not enable default-on memory/VToken (see `docs/dev/default-config-matrix.md`)

@@ -162,7 +162,7 @@ const promptAuthorityMappings = Object.fromEntries(mutationFields.map((field) =>
 const promptAuthorityCoverage = Object.values(promptAuthorityMappings).filter(Boolean).length;
 
 const postOrchestratorAdditions = ["runtimeIntensitySystemPrompt", "dcsDepsResolution.degradationNotice"].filter((name) =>
-  attemptRunner.includes(name),
+  attemptRunner.includes(name) && !new RegExp(`sourceId:\\s*"[^"]+",\\s*text:\\s*${name.replaceAll('.', '\\.')}\\s*}`).test(attemptRunner),
 ).length;
 
 const sealMatrix = rc03Seal.includes("unregisteredProducers") && rc03Seal.includes("registeredTransportTransformIds");
@@ -201,7 +201,7 @@ const metrics = [
   metric("NET-3", "validation probes carrying the total deadline signal", "count(models, responses, chat, anthropic probes with signal)", probeDeadlineCoverage, "probes", "static", "Static coverage of the four probe call sites; runtime abort behaviour is unit-tested.", ["electron/services/providers/provider-validation.ts"]),
   metric("NET-4", "policy parity between validation and inference", "bothUseSharedPolicy ? 1 : 0", policyParity, "boolean", "static", "Same resolver, same normalized fingerprint; behavioural matrix in semantic-convergence-provider-network-parity.test.ts.", ["openclaw_runtime/src/agents/provider-network-policy.ts"]),
   metric("PROMPT-1", "prompt mutation fields mapped to required authority", "count(explicit PLUGIN_PROMPT_MUTATION_AUTHORITIES field mappings)", promptAuthorityCoverage, "fields", "static", "Field-map coverage only; separate behavioral tests verify producer admission in explicit enforce mode. This does not prove global default enforcement.", ["openclaw_runtime/src/plugins/hook-before-agent-start.types.ts"]),
-  metric("PROMPT-2", "post-orchestrator additions outside the managed ledger", "count(runtimeIntensitySystemPrompt, degradationNotice)", postOrchestratorAdditions, "additions", "static", "Counts code paths, not actual chars; the snapshot coverage test measures chars.", ["openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"]),
+  metric("PROMPT-2", "named post-orchestrator additions lacking explicit accounting wiring", "count(named additions without a sourceId/text entry in composePostOrchestratorPrompt)", postOrchestratorAdditions, "additions", "static", "Source wiring only, not a runtime coverage ratio. Behavioral tests and recorded budgetCoverage observations measure actual characters.", ["openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"]),
   metric("PROMPT-3", "seal producer coverage matrix present", "sealMatrix ? 1 : 0", sealMatrix ? 1 : 0, "boolean", "static", "Seal is default-off; presence is not enforcement evidence.", ["openclaw_runtime/src/context-engine/rc03-seal-hook.ts"]),
   metric("MEM-3", "shared memory cache invalidated on write path", "cacheInvalidationInQuery && cacheInvalidationInPreReply", cacheInvalidationInQuery && cacheInvalidationInPreReply ? 1 : 0, "boolean", "static", "No write-path invalidation found; TTL is 30s.", ["openclaw_runtime/src/runtime-core/memory-query-tool.ts", "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts"]),
   metric("FACADE-1", "production consumers of Stage5 facade", "count(non-test files referencing facade)", facadeConsumers.length, "consumers", "static", "Includes golden-run by design; the node decides adopt-or-retire.", ["openclaw_runtime/src/context-engine/stage5-memory-facade.ts"]),

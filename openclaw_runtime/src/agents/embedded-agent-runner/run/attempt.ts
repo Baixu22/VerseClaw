@@ -257,7 +257,10 @@ import { loadVtokenDcsMemoryEntries } from "../../../context-engine/chat-turn-vt
 import {
   collectContextOrchestratorCandidate,
   computeContextExtraSystemPrompt,
+  composePostOrchestratorPrompt,
+  createTrackedSystemPromptSetter,
   endContextOrchestratorTurn,
+  recordPostOrchestratorMessageChange,
   recordContextOrchestratorSourceDecision,
 } from "../../../context-engine/context-orchestrator.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
@@ -2189,13 +2192,15 @@ export async function runEmbeddedAttempt(
       },
     );
     const orchestratedExtraSystemPrompt = contextOrchestration.extraSystemPrompt;
-    const effectiveExtraSystemPrompt = [
-      orchestratedExtraSystemPrompt,
-      runtimeIntensitySystemPrompt,
-      dcsDepsResolution.degradationNotice,
-    ]
-      .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
-      .join("\n\n");
+    const effectiveExtraSystemPrompt = composePostOrchestratorPrompt({
+      turnId: injectionTurnId,
+      basePrompt: orchestratedExtraSystemPrompt,
+      additions: [
+        { sourceId: "runtime-intensity", text: runtimeIntensitySystemPrompt },
+        { sourceId: "dcs-degradation", text: dcsDepsResolution.degradationNotice },
+      ],
+      applied: !isRawModelRun,
+    }).prompt;
     const attemptSystemPrompt = buildAttemptSystemPrompt({
       isRawModelRun,
       transformProviderSystemPrompt: (transformParams) =>
@@ -2710,10 +2715,14 @@ export async function runEmbeddedAttempt(
       }
       session.setActiveToolsByName(sessionToolAllowlist);
       const activeSession = session;
-      const setActiveSessionSystemPrompt = (nextSystemPrompt: string) => {
-        systemPromptText = nextSystemPrompt;
-        applySystemPromptToSession(activeSession, nextSystemPrompt);
-      };
+      const setActiveSessionSystemPrompt = createTrackedSystemPromptSetter({
+        turnId: injectionTurnId,
+        basePrompt: attemptSystemPrompt.baseSystemPrompt,
+        apply: nextSystemPrompt => {
+          systemPromptText = nextSystemPrompt;
+          applySystemPromptToSession(activeSession, nextSystemPrompt);
+        },
+      });
       setActiveSessionSystemPrompt(systemPromptText);
       let didDeliverSourceReplyViaMessageTool = false;
       installMessageToolOnlyTerminalHook({
@@ -4084,13 +4093,17 @@ export async function runEmbeddedAttempt(
           Boolean(promptBuildPrependContext?.trim()) || Boolean(promptBuildAppendContext?.trim());
         {
           if (hookResult?.prependContext) {
+            const before = effectivePrompt;
             effectivePrompt = `${hookResult.prependContext}\n\n${effectivePrompt}`;
+            recordPostOrchestratorMessageChange(injectionTurnId, before, effectivePrompt);
             log.debug(
               `hooks: prepended context to prompt (${hookResult.prependContext.length} chars)`,
             );
           }
           if (hookResult?.appendContext) {
+            const before = effectivePrompt;
             effectivePrompt = `${effectivePrompt}\n\n${hookResult.appendContext}`;
+            recordPostOrchestratorMessageChange(injectionTurnId, before, effectivePrompt);
             log.debug(
               `hooks: appended context to prompt (${hookResult.appendContext.length} chars)`,
             );

@@ -188,6 +188,8 @@ export type TurnInjectionEntry = {
 };
 
 export type TurnInjectionLedger = {
+  /** Observed prompt writes outside the managed character limit. No raw text is stored. */
+  promptAccounting?: TurnPromptAccounting;
   turnId: string;
   /** B-1: zero-based turn counter used by channel decay; 0 ⇒ no decay yet. */
   turnIndex: number;
@@ -223,6 +225,7 @@ export type TurnInjectionReservation = {
 };
 
 export type TurnInjectionAccounting = {
+  promptAccounting?: TurnPromptAccounting;
   turnId: string;
   total: number;
   charsApplied: number;
@@ -252,6 +255,62 @@ export type TurnInjectionAccounting = {
 };
 
 const ledgers = new Map<string, TurnInjectionLedger>();
+
+export type TurnPromptAccounting = {
+  basePromptChars?: number;
+  managedSystemChars: number;
+  postOrchestrator: Record<string, { target: "system_prompt" | "message"; charsApplied: number }>;
+};
+
+function promptAccounting(ledger: TurnInjectionLedger): TurnPromptAccounting {
+  return ledger.promptAccounting ??= { managedSystemChars: 0, postOrchestrator: {} };
+}
+
+export function recordManagedSystemChars(ledger: TurnInjectionLedger, chars: number): void {
+  promptAccounting(ledger).managedSystemChars += chars;
+}
+
+/** Updating a source observation replaces its old reading; repeated projection is not a charge. */
+export function recordPostOrchestratorContribution(
+  ledger: TurnInjectionLedger,
+  sourceId: string,
+  charsApplied: number,
+  target: "system_prompt" | "message" = "system_prompt",
+): void {
+  promptAccounting(ledger).postOrchestrator[sourceId] = { target, charsApplied };
+}
+
+export function observeTurnSystemPromptBase(ledger: TurnInjectionLedger, systemPrompt: string): void {
+  const accounting = promptAccounting(ledger);
+  const postSystemChars = Object.values(accounting.postOrchestrator)
+    .filter(entry => entry.target === "system_prompt")
+    .reduce((sum, entry) => sum + entry.charsApplied, 0);
+  accounting.basePromptChars = Math.max(0, systemPrompt.length - postSystemChars - accounting.managedSystemChars);
+}
+
+/** Observe an actual successful write, separately from the unchanged managed budget. */
+export function recordPostOrchestratorChange(
+  ledger: TurnInjectionLedger,
+  before: string,
+  after: string,
+  target: "system_prompt" | "message",
+): void {
+  if (before === after) return;
+  const accounting = promptAccounting(ledger);
+  const sourceId = `runtime-${target}`;
+  const preservesBefore = after.includes(before);
+  if (!preservesBefore && target === "system_prompt") {
+    // This setter owns the base component; managed projections are appended
+    // separately. A replacement retires prior base/post system attribution.
+    accounting.basePromptChars = 0;
+    for (const [id, entry] of Object.entries(accounting.postOrchestrator)) {
+      if (entry.target === "system_prompt") delete accounting.postOrchestrator[id];
+    }
+  }
+  const prior = accounting.postOrchestrator[sourceId]?.charsApplied ?? 0;
+  const written = preservesBefore ? after.length - before.length : after.length;
+  recordPostOrchestratorContribution(ledger, sourceId, prior + written, target);
+}
 
 /** Precedence index of a channel; unknown channels sort last. */
 export function precedenceIndexOf(channel: TurnInjectionChannel): number {
@@ -525,8 +584,8 @@ export function skipTurnInjection(
  * injection-budget.ts). It is NOT the turn's total prompt growth: baseline
  * prompt components that never charge the budget — the base system prompt
  * and agent-level extra system prompt text — are not in this denominator.
- * The two-tier boundary between injected growth and baseline growth belongs
- * to T-C5 (M4), not to this ledger.
+ * TF-0738 keeps that managed counter intact and adds optional promptAccounting
+ * for base/post system components; final snapshots independently check coverage.
  */
 export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjectionAccounting {
   let charsApplied = 0;
@@ -563,6 +622,13 @@ export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjecti
 
   return {
     turnId: ledger.turnId,
+    ...(ledger.promptAccounting ? {
+      promptAccounting: {
+        ...ledger.promptAccounting,
+        postOrchestrator: Object.fromEntries(Object.entries(ledger.promptAccounting.postOrchestrator)
+          .map(([id, entry]) => [id, { ...entry }])),
+      },
+    } : {}),
     total,
     charsApplied,
     charsRequested,
