@@ -1877,6 +1877,11 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0734/network-before.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0734/report.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0734/unit-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0735/README.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0735/embedding-after.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0735/embedding-before.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0735/report.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0735/unit-tests.json
 !/docs/dev/first-product-controlled-preview/DEFINITION-OF-DONE.md
 !/docs/dev/first-product-controlled-preview/FP-P0-EXIT-ACCEPTANCE.md
 !/docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md
@@ -2026,6 +2031,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/harness-gap-closure/v03-delivery-verdict.md
 !/docs/dev/hd-double-compression-contract.md
 !/docs/dev/knowledge-bot.md
+!/docs/dev/knowledge-embedding-deadline.md
 !/docs/dev/knowledge-system-unification/evidence/KS-00-03-INDEPENDENT-ACCEPTANCE.md
 !/docs/dev/knowledge-system-unification/evidence/KS-00-BASELINE-DIFF.md
 !/docs/dev/knowledge-system-unification/evidence/KS-01-03-ACCEPTANCE.md

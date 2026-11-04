@@ -12,6 +12,8 @@ touchedAreas:
   - docs/dev/semantic-convergence-benefit-20261104.md
   - docs/dev/network-protocol-reliability/retry-budget.md
   - docs/dev/network-protocol-reliability/provider-health.md
+  - docs/dev/knowledge-embedding-deadline.md
+  - tests/unit/knowledge-embedding-deadline.test.ts
   - harness/specs/tasks/semantic-convergence-remediation.md
   - openclaw_runtime/src/agents/request-attempt-budget.ts
   - openclaw_runtime/src/agents/request-attempt-budget.test.ts

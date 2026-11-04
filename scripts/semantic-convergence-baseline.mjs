@@ -174,7 +174,14 @@ const facadeConsumers = listFilesRecursive("openclaw_runtime/src", (path) => pat
 
 const batchTimeoutMs = Number((knowledgeEmbedding.match(/REQUEST_TIMEOUT_MS = ([0-9_]+)/) ?? [])[1]?.replaceAll("_", "") ?? 0);
 const batchSize = Number((knowledgeEmbedding.match(/MAX_BATCH_SIZE = ([0-9_]+)/) ?? [])[1] ?? 0);
-const embWorstCaseFor100 = batchTimeoutMs * Math.ceil(100 / Math.max(1, batchSize));
+const embeddingDeadlineMs = Number((knowledgeEmbedding.match(/DEFAULT_EMBEDDING_DEADLINE_MS = ([0-9_]+)/) ?? [])[1]?.replaceAll("_", "") ?? 0);
+const embeddingBatchesFor100 = Math.ceil(100 / Math.max(1, batchSize));
+const worstCaseWithoutDeadline = batchTimeoutMs * embeddingBatchesFor100;
+// TF-0735: the per-batch ceiling is capped by the caller's total budget, and
+// the batch loop refuses to start another batch once the budget is exhausted.
+const embWorstCaseFor100 = embeddingDeadlineMs > 0
+  ? Math.min(worstCaseWithoutDeadline, embeddingDeadlineMs)
+  : worstCaseWithoutDeadline;
 
 const dirty = git(["status", "--porcelain"]).length > 0;
 const commit = git(["rev-parse", "HEAD"]);
@@ -195,7 +202,8 @@ const metrics = [
   metric("PROMPT-3", "seal producer coverage matrix present", "sealMatrix ? 1 : 0", sealMatrix ? 1 : 0, "boolean", "static", "Seal is default-off; presence is not enforcement evidence.", ["openclaw_runtime/src/context-engine/rc03-seal-hook.ts"]),
   metric("MEM-3", "shared memory cache invalidated on write path", "cacheInvalidationInQuery && cacheInvalidationInPreReply", cacheInvalidationInQuery && cacheInvalidationInPreReply ? 1 : 0, "boolean", "static", "No write-path invalidation found; TTL is 30s.", ["openclaw_runtime/src/runtime-core/memory-query-tool.ts", "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts"]),
   metric("FACADE-1", "production consumers of Stage5 facade", "count(non-test files referencing facade)", facadeConsumers.length, "consumers", "static", "Includes golden-run by design; the node decides adopt-or-retire.", ["openclaw_runtime/src/context-engine/stage5-memory-facade.ts"]),
-  metric("EMB-1", "worst-case embedding time for 100 texts", "REQUEST_TIMEOUT_MS * ceil(100 / MAX_BATCH_SIZE)", embWorstCaseFor100, "ms", "static", "Assumes every batch hits the timeout; no network measurement.", ["electron/services/knowledge-embedding-provider.ts"]),
+  metric("EMB-1", "worst-case embedding time for 100 texts", "min(REQUEST_TIMEOUT_MS * ceil(100 / MAX_BATCH_SIZE), DEFAULT_EMBEDDING_DEADLINE_MS)", embWorstCaseFor100, "ms", "static", "Assumes every batch hits its ceiling; the total operation is capped by the caller deadline. No network measurement.", ["electron/services/knowledge-embedding-provider.ts"]),
+  metric("EMB-2", "embedding batches started after the total deadline", "0 if the loop checks remaining budget before every batch", knowledgeEmbedding.includes("remainingMs() <= 0") ? 0 : 1, "batches", "static", "Source-shape only; the fake-clock test exercises the 100-text/13-batch path.", ["electron/services/knowledge-embedding-provider.ts"]),
 ];
 
 const report = {

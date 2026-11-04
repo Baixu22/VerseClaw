@@ -48,6 +48,7 @@ import {
 import {
   createSiliconFlowEmbeddingProvider,
   hasSiliconFlowEmbeddingProvider,
+  resolveEmbeddingDeadlineMs,
 } from './knowledge-embedding-provider';
 import type { ContextBlockSink } from '../../openclaw_runtime/src/context-engine/block';
 import type {
@@ -3434,8 +3435,13 @@ export function createKnowledgeApi({
     let semanticLane: NonNullable<KnowledgeAnswerFromSourceSetResult['semanticLane']> | undefined;
     let orderedSources = sources;
     if (semanticRequested && sources.length > 0) {
+      // TF-0735: one total budget covers the query embedding plus every
+      // document batch. The provider never returns partial vectors, so a
+      // deadline expiry degrades semanticLane to "error" and keeps lexical order.
       const embeddingProvider = hasSiliconFlowEmbeddingProvider()
-        ? createSiliconFlowEmbeddingProvider()
+        ? createSiliconFlowEmbeddingProvider({
+          deadlineMs: resolveEmbeddingDeadlineMs(process.env.KNOWLEDGE_EMBEDDING_DEADLINE_MS),
+        })
         : undefined;
       const sourceSetCandidates = sources.map(sourceSetCandidateFromAnswerSource);
       const sourceSetResult = await retrieveSourceSet({
