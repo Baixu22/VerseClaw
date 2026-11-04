@@ -1,0 +1,1223 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-c0-builder",
+  "realHumanEvidence": false,
+  "vg": {
+    "binary": {
+      "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+      "bytes": 41011712
+    },
+    "binaryMatchesManifest": true,
+    "sourceCommit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "capabilities": {
+      "compat": {
+        "git_only": "preserved",
+        "next": "preserved",
+        "package_names": [
+          "smart-test-sorter",
+          "smart_sorter"
+        ],
+        "sts_protocols": [
+          "1.1",
+          "2.0"
+        ]
+      },
+      "mcp_tools": [
+        "vg_capabilities",
+        "verdict",
+        "integration_status",
+        "who_touches",
+        "explain_conflict",
+        "declare_intent",
+        "basis_status",
+        "basis_watermark"
+      ],
+      "read": [
+        "workspace.root",
+        "change.status",
+        "change.log",
+        "verify.status",
+        "conflicts",
+        "basis.status",
+        "report",
+        "verdict",
+        "doctor"
+      ],
+      "safety": {
+        "default_enable": false,
+        "evidence_land_present": true,
+        "managed_opt_in": true,
+        "strict_admission_present": true
+      },
+      "schema": "versegit.capabilities/v1",
+      "verdict": {
+        "dimensions": [
+          "candidate",
+          "execution",
+          "evidence",
+          "freshness",
+          "risk",
+          "trial"
+        ],
+        "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+        "read_surface": {
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ]
+        },
+        "schema": "versegit.verdict/v1",
+        "single_green_light": false
+      },
+      "workflows": [
+        {
+          "entries": [
+            "workspace.init",
+            "workspace.root",
+            "doctor"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+            "crates/vg-cli/tests/jj_public_surface.rs"
+          ],
+          "id": "workspace",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.new",
+            "change.file",
+            "change.describe",
+            "change.snapshot",
+            "change.diffedit"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_change_lifecycle.rs",
+            "crates/vg-cli/tests/jj_diffedit.rs"
+          ],
+          "id": "change.edit",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.log",
+            "op.restore",
+            "op.undo"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_operation_restore.rs",
+            "crates/vg-cli/tests/jj_op_undo_redo.rs",
+            "crates/vg-cli/tests/jj_backup_restore.rs"
+          ],
+          "id": "history.recover",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "verify.status",
+            "verdict",
+            "basis.status"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_managed_plan.rs",
+            "crates/vg-cli/tests/jj_evidence_land.rs",
+            "crates/vg-cli/tests/jj_verdict.rs"
+          ],
+          "id": "validation.admit",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.materialize",
+            "land",
+            "report"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_managed_candidate.rs",
+            "crates/vg-cli/tests/jj_closed_loop.rs",
+            "crates/vg-cli/tests/land_concurrency.rs"
+          ],
+          "id": "candidate.land",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "git.fetch",
+            "git.push",
+            "gerrit.upload"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_git_ref_sync.rs",
+            "crates/vg-cli/tests/jj_gerrit_upload.rs"
+          ],
+          "id": "external.publish",
+          "status": "controlled"
+        }
+      ],
+      "write": [
+        "workspace.init",
+        "change.new",
+        "change.file",
+        "change.describe",
+        "change.snapshot",
+        "change.diffedit",
+        "change.materialize",
+        "change.duplicate",
+        "change.abandon",
+        "change.rebase",
+        "change.squash",
+        "change.split",
+        "op.restore",
+        "op.undo",
+        "land",
+        "admit.check",
+        "git.fetch",
+        "git.push",
+        "gerrit.upload"
+      ]
+    },
+    "nativeCapabilityIsHostPermission": false
+  },
+  "vs": {
+    "binary": {
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448
+    },
+    "binaryMatchesManifest": true,
+    "versionObservation": "ae 1.0.0",
+    "source": {
+      "cargo_repository": "https://github.com/nervosys/verseshell",
+      "source_repository": "https://github.com/Baixu22/VerseShell.git",
+      "pinned_commit": "c06f406e83566bb968448222d9c8caf429e580a0",
+      "pinned_commit_epoch": 1791974123,
+      "source_model": "pinned-commit-plus-ordered-patches",
+      "pinned_commit_status": "qualified_ordered_patch_stack"
+    },
+    "protocol": {
+      "observation_schema": "verseshell.observation/v1",
+      "mcp_protocol_version": "2024-11-05",
+      "expected_server_protocol": "verseshell.jsonl/v1",
+      "operation_catalog_schema": "verseshell.operation-catalog/v1",
+      "operation_catalog_digest": "sha256:67f78a723d582bf0809aab1f94352772c8a2818367b2f5e9d931722c06e979e8",
+      "operation_catalog_count": 32,
+      "handshake_operation": "runtime.handshake",
+      "server_name": "ae-mcp",
+      "server_version": "1.0.0"
+    },
+    "sourceIdentity": "b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0",
+    "governedProcessTrial": "not-run; TF-0777"
+  },
+  "sts": {
+    "sourceCommit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+    "sourceInputs": [
+      {
+        "path": "extensions/sts/contracts/finalize_v2.py",
+        "sha256": "3b5eadc0e8ceb5f93601bae2120e6eecfe6644d6bae01fb69f9edc5cff3fda67",
+        "bytes": 6205
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/tools/v2/make_semantic_audit.py",
+        "sha256": "b43df89bb3fcdfa683b1e3866771b31dc5443ff1c42af9fb969bdff7ada9cb79",
+        "bytes": 4358
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/tools/v2/manifest.json",
+        "sha256": "10423dd31a16e4cacc387b2fbbc07a8f330e83e1f72f4e590e173e96640edd87",
+        "bytes": 7878
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/tools/v2/semantic-audit.json",
+        "sha256": "81686bdb1dc5c69200e33552d371b333e0767899fa97a3c301883a8c9ce81e9d",
+        "bytes": 9188
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/README.md",
+        "sha256": "93c6d81e35013bff3df40df7578e9a4fbea369eef78fcd7af5fae9e45f2ed5e6",
+        "bytes": 6966
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/manifest.json",
+        "sha256": "51f247c2cbcd3da6d63f09615d3229515829c0f9b96d5746486633379da5f152",
+        "bytes": 6739
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/plan_empty_selection.json",
+        "sha256": "b8dd464d0da1ca5426a612d67ce34c70dd4cd2122fe536f54b7e6eb3f626c69e",
+        "bytes": 363
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/plan_full_scope_not_all.json",
+        "sha256": "a9a976c894e6747f7805b167efeb460912fdfb24f58bbfd4744c209a6e0aee13",
+        "bytes": 418
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/refusal_full_without_confirm.json",
+        "sha256": "a77277e09245f7664b3894c7ed2584e51d46424f16556f18e8729b0bc7ce9cdf",
+        "bytes": 477
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/request_candidate_missing_theirs.json",
+        "sha256": "f04b780647871ebf273ad73c795dc15f3933a7d94edd3820537da7280c470233",
+        "bytes": 426
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/request_missing_code_oid.json",
+        "sha256": "f18086f8105ccd557bbd1c77a55a4c0154cd0101eccb1e7d5ead44e456b98de9",
+        "bytes": 274
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/request_unknown_protocol_version.json",
+        "sha256": "53d325c680016acde4eb92d4b63ecdd97d729d8ff507f037a627f4b763ab6c33",
+        "bytes": 271
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/result_complete_but_not_executed.json",
+        "sha256": "0bc565d030d7138119ddf469021fee43294d74492aa148fd13dee45aed860202",
+        "bytes": 457
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/result_exit0_but_failure.json",
+        "sha256": "6688fa5a73897d9475ffea38eae1a6dc42044de43bfe1616712795816a822641",
+        "bytes": 511
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/result_incomplete_missing_reason.json",
+        "sha256": "a1c42bcac85905b2005bac3d4a19f06ce9971c325f7789b1a6b4069193830fe4",
+        "bytes": 462
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/invalid/result_zero_exec_marked_pass.json",
+        "sha256": "832832cfb510fe7f065ddb42da22c74c27eb969d3cdc5b2549bb7db0c58f211e",
+        "bytes": 343
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/pairs/invalid/wrong_candidate/plan.json",
+        "sha256": "c0c59f3b747a3f499b65d65934167017a9d16c6727441b73e497ca6f6b89fef8",
+        "bytes": 529
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/pairs/invalid/wrong_candidate/request.json",
+        "sha256": "7d421264cce299895ff792f7e9e4741672376c213feb205ad7bdd0c889be3f31",
+        "bytes": 575
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/pairs/valid/matched/plan.json",
+        "sha256": "3cc3cddf6caeba84244ebc9890ed49c5b05e55bf6a7bbaa2a1651ccc8e0664a9",
+        "bytes": 529
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/pairs/valid/matched/request.json",
+        "sha256": "234219f6744d47d8dd8fd9817ce1c36818bdfcfb56c20ee4a2ea0aa788a84a02",
+        "bytes": 575
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/pairs/valid/matched/result.json",
+        "sha256": "ee4cfc16f01dbbc0a2623dda92fa585eb3d229a6a97378046bcd8c9af82dff05",
+        "bytes": 427
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/plan_full_fallback.json",
+        "sha256": "b40c646b5d486e87c34c74a17760a6d9c65ea063e4e73b58ff67f31ee527c877",
+        "bytes": 657
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/plan_risk_decisions_stale.json",
+        "sha256": "6dab97d5aba88a1d072fee2924e4d7ddd18370a661d36aa4eaaa43b5432b8700",
+        "bytes": 1685
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/plan_selected_parametrized.json",
+        "sha256": "526758e934996dbcd1e206206298e2f666e854089e5e5ba2438b5d4a41a36b8a",
+        "bytes": 1035
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/refusal_collection_error.json",
+        "sha256": "5d0738c4a358c37120f95aca7c2527b29e3397ae3b86bc6472a82c55760a25da",
+        "bytes": 633
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/request_candidate_risk_cjk_path.json",
+        "sha256": "28ad4cbecdf78473e4195b2f2ffb91a4c3474b520ef35d990ae98556738e93c7",
+        "bytes": 1338
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/request_commit_minimal.json",
+        "sha256": "77e4bacf4b75ab6d08a05f66c86fee4a4484679a9b15ad4af3304968066561e8",
+        "bytes": 283
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/request_workspace_norisk.json",
+        "sha256": "faf7bcc1648add22de2796dee9bcf048876cf15a9b66200bb71eb3b4edef0d33",
+        "bytes": 516
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/result_complete_pass.json",
+        "sha256": "d03692a185398f37d2a7415fabee4a84b9a9d32958be24892cd31a2ebe2eb46a",
+        "bytes": 772
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/samples/valid/result_incomplete_budget_abort.json",
+        "sha256": "8e6d3f636b7f6dda06145a07bd6e3bf3c6d0f05501b3f5ceff2624c5cfe55f40",
+        "bytes": 847
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/schema/candidate_request.schema.json",
+        "sha256": "63a3dc99795d83f58a44fb06c03455b702ebc92c3f37e07b699706eb924d486b",
+        "bytes": 6583
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/schema/execution_result.schema.json",
+        "sha256": "473d7905718c663f58e1f26b34deb65a5ca81748404366a3fef3eb969bb24136",
+        "bytes": 3972
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/schema/plan_refusal.schema.json",
+        "sha256": "30d3500e8bbaac4599a521974999a2dea0dfa0b2ff58c363d904e3be277747dc",
+        "bytes": 2888
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v1/schema/test_plan.schema.json",
+        "sha256": "41505c8d5bdaaea4182fa2722adf944949155e68fdd194fa48e5cb5e440d904c",
+        "bytes": 4244
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/README.md",
+        "sha256": "b8cdfa7cf67c8826d4756f35a8e3eb14de851456144090ceed0f8f31db371f6c",
+        "bytes": 18427
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/check_draft.py",
+        "sha256": "d08e08a2dc02ded6a30c64e141df08981bda9e3d9bf9e2ff0849530e587077f3",
+        "bytes": 31797
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/make_manifest.py",
+        "sha256": "ad642468ad672441b3c1401c22330bc9dc0e43391d0c49425e11ac296ba430fd",
+        "bytes": 11921
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/manifest.json",
+        "sha256": "99a1f34813780c4aacf5a44d382b507d3342de7165d10e22b16c5d2c6b3df11a",
+        "bytes": 9098
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/plan_order_not_permutation_of_selected.json",
+        "sha256": "f5e7b53fae9be16c4e211c9c9920c4ca64fd72d173b44101afeebeadbb53a589",
+        "bytes": 1181
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/refusal_full_available_without_content.json",
+        "sha256": "25df6649d9913db08ac524b255441c045be0e72cbf8e6c42a8189f8391b35ddf",
+        "bytes": 495
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/request_bare_short_content_value.json",
+        "sha256": "ad736be83a9e4c49ac40894cecf816a5320e0591e72a3fe49389f6d6b35b5d07",
+        "bytes": 1177
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/request_digest_without_algorithm.json",
+        "sha256": "efaa38543ed1beed84943ecfcd5183535e3b66ed2d479fa8f7c4b71155f728e8",
+        "bytes": 1260
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/request_manifest_declares_absent_but_has_config.json",
+        "sha256": "d0dc2903b770d9becedf387530f4a428c3065d39eb6c4bc7398a7e0235329a4b",
+        "bytes": 2788
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/request_manifest_only_source_entry.json",
+        "sha256": "79e48b8d81477b701ba508285dc8927ab8c9c6b607657ac54c9a8873493e22a8",
+        "bytes": 1149
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/request_unknown_field.json",
+        "sha256": "84a97306f92b1038fc15e5891c21e6540a3d1433bccddbabbb77d45446e77546",
+        "bytes": 1417
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/invalid/result_execution_end_unconfirmed_but_valid.json",
+        "sha256": "822adec7d8a667e65bd0ec0fa836a9625b5c5a819eb9ef327d9266254fee1b03",
+        "bytes": 961
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/dependencies_identity_drift/plan.json",
+        "sha256": "cd44f4509d41566123eee8b792fe3f7ca061ac81339dde44fd82b98a3e752438",
+        "bytes": 1342
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/dependencies_identity_drift/request.json",
+        "sha256": "583af1efa7f373ac983891e637120bddb5ad87ba84807eb5e28d5c9cecd38191",
+        "bytes": 1692
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/dependencies_identity_drift/result.json",
+        "sha256": "cf0255291319b46072458deb36b1c61d70f859ca026890db3249ca84f4973744",
+        "bytes": 1243
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/environment_identity_drift/plan.json",
+        "sha256": "e58265f974ab8a335846880b3d05b8d81bfc102db09e827ee1018e557e878b9c",
+        "bytes": 1136
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/environment_identity_drift/request.json",
+        "sha256": "a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+        "bytes": 1074
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/environment_identity_drift/result.json",
+        "sha256": "029ceed30ce8d223fd556440537564ab800cac4d8f123c07a58d703ce9c14d3d",
+        "bytes": 1035
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/environment_not_reported/plan.json",
+        "sha256": "457e196c8d027f72e4d9818f51b79c5c9124fb7f53b68565d6231e5b667d2581",
+        "bytes": 1136
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/environment_not_reported/request.json",
+        "sha256": "583af1efa7f373ac983891e637120bddb5ad87ba84807eb5e28d5c9cecd38191",
+        "bytes": 1692
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/environment_not_reported/result.json",
+        "sha256": "7bb3cd5c1e61ee554c3100e55646ac7166b35c2e5923f54718192444c66558d1",
+        "bytes": 1055
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/execution_identity_drift/plan.json",
+        "sha256": "02516da1435b4e4903a922fd4c40f62e70610afe11323e7f760683465e01ac60",
+        "bytes": 1268
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/execution_identity_drift/request.json",
+        "sha256": "a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+        "bytes": 1074
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/execution_identity_drift/result.json",
+        "sha256": "df479fc079a83c651da196d2affc04bf1c1b5ac3008f3b909b4ee72158bab3d5",
+        "bytes": 957
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/same_label_different_content/plan.json",
+        "sha256": "457e196c8d027f72e4d9818f51b79c5c9124fb7f53b68565d6231e5b667d2581",
+        "bytes": 1136
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/same_label_different_content/request.json",
+        "sha256": "3bc1adc2a25f97b3d3974a3c8d3996b88b5c40688931a9c8ece6934197a5075c",
+        "bytes": 1516
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/same_label_different_content/result.json",
+        "sha256": "4954ef6ccae337de628b6aba0fc420d7c2d0dc2b9c20e8f120d8821ca8b03fd8",
+        "bytes": 956
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/same_value_different_kind/plan.json",
+        "sha256": "311a0d3d5dd8005569e3d548ecf6cbbc0069873ff964775cac44a72ec76f17b1",
+        "bytes": 1138
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/invalid/same_value_different_kind/request.json",
+        "sha256": "a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+        "bytes": 1074
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/valid/matched/plan.json",
+        "sha256": "457e196c8d027f72e4d9818f51b79c5c9124fb7f53b68565d6231e5b667d2581",
+        "bytes": 1136
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/valid/matched/request.json",
+        "sha256": "583af1efa7f373ac983891e637120bddb5ad87ba84807eb5e28d5c9cecd38191",
+        "bytes": 1692
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/pairs/valid/matched/result.json",
+        "sha256": "99cc0f61dab36966667c847da70fe1e8a2cab829646abe0f4e68ad0e3685b27a",
+        "bytes": 1140
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/valid/plan_with_full_content_identity.json",
+        "sha256": "4cfd312a319bb7aba732894ce6624d1309ea467175a1caf4f73f3dd906c6481f",
+        "bytes": 1335
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/valid/refusal_content_unbound.json",
+        "sha256": "1f210e16a043aa56310dcaa3ae895e8560d8eb3bfa2655fd1bc0231e041983bc",
+        "bytes": 695
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/valid/request_candidate_full_content_identity.json",
+        "sha256": "f5d54119a2aa2ef2903019eb9dffb0c7d7d0cb1e420e7eb2c5f66ca94d7c944b",
+        "bytes": 2398
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/valid/request_pure_source_no_config_data.json",
+        "sha256": "154cca784ccd109f451c5ef76ff39c414ed1da845b9bc10aefe664f519a65cb6",
+        "bytes": 2425
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/samples/valid/result_with_execution_identity.json",
+        "sha256": "1f58dbff2a90dc8433ff2a6968be29f5c693e936883fdafb52a5fbf5d8d0b11f",
+        "bytes": 1230
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/schema/candidate_request.schema.json",
+        "sha256": "b3059abc6c263a16896a11247404e52a4779648ee3c3585e8dc2e0436519c05a",
+        "bytes": 10156
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/schema/execution_result.schema.json",
+        "sha256": "864a5d008fbc5f34d8386ef8364b9ac176c69f28379c017db6c84463651fc65e",
+        "bytes": 5496
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/schema/plan_refusal.schema.json",
+        "sha256": "a7ded329a35381632aa773f8aea65d63761b1f1b2ea0a9ced9853b72088777e0",
+        "bytes": 3163
+      },
+      {
+        "path": "extensions/sts/contracts/vg-sts/v2/schema/test_plan.schema.json",
+        "sha256": "ec30080bce693ac274e28ec322c288c175d76f152ed26db0fe3f6523b1cbd13b",
+        "bytes": 8733
+      },
+      {
+        "path": "extensions/sts/pyproject.toml",
+        "sha256": "81474ce9c9662005476f40d25e9b06cce57f7bab48d7892e8ae73912545db0ba",
+        "bytes": 1250
+      },
+      {
+        "path": "extensions/sts/requirements-dev.txt",
+        "sha256": "5ba15e7599b25bc449d65e95b9f7d270ce0d942147ae6412dd862d67952e900d",
+        "bytes": 486
+      },
+      {
+        "path": "extensions/sts/setup.py",
+        "sha256": "0262e7c0074fd39b8c0d14a29356e52313321cc1d8560864cb3c839fcabfe06d",
+        "bytes": 2857
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/__init__.py",
+        "sha256": "3e91a688839d1e99db979338ec550d6c303c7775385e6810b26699523351b476",
+        "bytes": 254
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/__main__.py",
+        "sha256": "8b3b85cd0fe787f7592e8c001ad5ded96038df2631ed3675da9d2e4fbf63e706",
+        "bytes": 180
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/ast_diff.py",
+        "sha256": "5521007fdcfac0d526df3d44ba6be16ab9ddbefad692a4605e284239812c7fb9",
+        "bytes": 5228
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/call_graph.py",
+        "sha256": "6496ccdc507e2a536de789d9ea5793e23cad68c31f5cef87226bf04172802df5",
+        "bytes": 16346
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/cli.py",
+        "sha256": "e8f1ef87f2c512f73449bf1e440f4b873995d447b3fa1a41a6dbeb08a313075f",
+        "bytes": 8119
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/collect.py",
+        "sha256": "daa2e614120f221edf782f6cd07b8b8012c5b1b52451772d21b61854ca465cd5",
+        "bytes": 8097
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/contract_trees.py",
+        "sha256": "88dc846069e2393741840c3095698d00aedd7f4aa945c80d1dfded5e1a184a69",
+        "bytes": 2843
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/contracts.py",
+        "sha256": "ed1e405a3efa7c71f9ad29401e93067a1b0fd755e2ad746cdd22c5fa23a82e51",
+        "bytes": 25171
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/environment.py",
+        "sha256": "e9de2d127fbf5cf819029dce3f8a29465466048eee8e7acde98c7476565d6c05",
+        "bytes": 1089
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/graph.py",
+        "sha256": "6591f8baf2e180b8f07e944ec2e5a81f510a15f59882a6b5246bd4829d8d52ac",
+        "bytes": 16916
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/history.py",
+        "sha256": "ab7b3d372796e3c50451610e91f295d0e70207f86f0184c4d486794e1e21214e",
+        "bytes": 6735
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/plan.py",
+        "sha256": "49ce0acdccefdd10185098c70e5c4eff85d0fec5c783c3852575aa3460615e89",
+        "bytes": 21541
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/plan_request.py",
+        "sha256": "47a3d98c1afea3e76ce2bfb4c3dd0ecb2dfa12f2b3e69dd2e771a4ceb805687a",
+        "bytes": 43987
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/plan_v2.py",
+        "sha256": "168b55f491a24185f2870a83fe98bf8f60964f0855fbbd7c965ee83e30d8db9e",
+        "bytes": 9706
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/plugin.py",
+        "sha256": "c9268a4bcdd64c18c79ae3caf7e782e5951e1267785f3e44eaf59923e3624e4b",
+        "bytes": 8294
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/pytest_order.py",
+        "sha256": "39672b804583bdca4e5e2959957dfefb9c5685a2c0cc57c3c072c995c1f2b241",
+        "bytes": 1111
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/revision.py",
+        "sha256": "8eb9b19703b51c01fd8a98a6b8cb32be9f9b6e1dac36bd7e73eb77592bacb2e4",
+        "bytes": 21627
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/risk.py",
+        "sha256": "02d841f7f3685ad47c6c59f9bd55e2d3bdad3e1040ecd0df15483a80889fd8da",
+        "bytes": 10803
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/run_plan.py",
+        "sha256": "d32dd866c741b4707cf629987ce23783f270cf89ae201a65f5a1119a6bdb9346",
+        "bytes": 40969
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/safety.py",
+        "sha256": "c648de7df82c752bed1e725bdcaa0967e06a38dcc6278b9410c11197454c210a",
+        "bytes": 18761
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/scorer.py",
+        "sha256": "51b681158ee75796193476c6fb4dcb200dd8574a6f5d6442ddae36a88a4daf46",
+        "bytes": 8828
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/shadow.py",
+        "sha256": "57513c69c031410faf7618865d832cc008ce515082d294f293cede7decdaa633",
+        "bytes": 36491
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/stability.py",
+        "sha256": "89a037f76d2ae7ab1d6254dc1a702e2db0d3544d652580beaf16e8d6ad9c4f10",
+        "bytes": 29684
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/static/app.css",
+        "sha256": "50a8ffdd2d1bea389df5c025defab15415b22513c2431ae17eb736d55e38e60a",
+        "bytes": 7404
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/templates/analyze.html",
+        "sha256": "5d46d3e694e2f255aa97baa51afa5300705b4171f3ac4577f0706b4ab810c11f",
+        "bytes": 4755
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/templates/index.html",
+        "sha256": "a1f21d43f1134cac11d153b5dd89d419b023b01c59d76f3aac05e0009b57cfd2",
+        "bytes": 1550
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/trial.py",
+        "sha256": "dfa9f7120fe317bf8c741c3fc5deeb55f8dc3ca1d84369fb1001c3cc91cdc4f2",
+        "bytes": 38604
+      },
+      {
+        "path": "extensions/sts/src/smart_sorter/webapp.py",
+        "sha256": "53c7281f56e118157b5a769868cd03161b859e074f7bd8631ec729a6cbaa2735",
+        "bytes": 8984
+      }
+    ],
+    "contracts": [
+      {
+        "version": "1.1",
+        "manifest": {
+          "sha256": "51f247c2cbcd3da6d63f09615d3229515829c0f9b96d5746486633379da5f152",
+          "bytes": 6739
+        },
+        "declaredFiles": 29,
+        "invalid": []
+      },
+      {
+        "version": "2.0",
+        "manifest": {
+          "sha256": "99a1f34813780c4aacf5a44d382b507d3342de7165d10e22b16c5d2c6b3df11a",
+          "bytes": 9098
+        },
+        "declaredFiles": 40,
+        "invalid": []
+      }
+    ],
+    "environment": {
+      "python": "3.10.3",
+      "platform": "win32",
+      "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444"
+    },
+    "installation": {
+      "pythonExecutable": "D:\\Projects\\VerseGit\\.venv-sts\\Scripts\\python.exe",
+      "version": "0.1.0",
+      "module": "D:\\Projects\\VerseGit\\extensions\\sts\\src\\smart_sorter\\__init__.py",
+      "moduleSha256": "3e91a688839d1e99db979338ec550d6c303c7775385e6810b26699523351b476",
+      "metadataSha256": "67ddacf945d9c218793131ed36a9d076c0ef7870e9833e62ded8ad0382aa44ed",
+      "installedDistributions": [
+        [
+          "Flask",
+          "3.1.3"
+        ],
+        [
+          "GitPython",
+          "3.2.0"
+        ],
+        [
+          "Jinja2",
+          "3.1.6"
+        ],
+        [
+          "MarkupSafe",
+          "3.0.4"
+        ],
+        [
+          "Pygments",
+          "2.21.0"
+        ],
+        [
+          "Werkzeug",
+          "3.1.9"
+        ],
+        [
+          "blinker",
+          "1.9.0"
+        ],
+        [
+          "build",
+          "1.6.1"
+        ],
+        [
+          "click",
+          "8.5.0"
+        ],
+        [
+          "colorama",
+          "0.4.6"
+        ],
+        [
+          "exceptiongroup",
+          "1.3.1"
+        ],
+        [
+          "gitdb",
+          "4.0.12"
+        ],
+        [
+          "iniconfig",
+          "2.3.0"
+        ],
+        [
+          "itsdangerous",
+          "2.2.0"
+        ],
+        [
+          "packaging",
+          "26.3"
+        ],
+        [
+          "pip",
+          "22.0.4"
+        ],
+        [
+          "pluggy",
+          "1.6.0"
+        ],
+        [
+          "pyproject_hooks",
+          "1.3.3"
+        ],
+        [
+          "pytest",
+          "9.1.1"
+        ],
+        [
+          "setuptools",
+          "84.0.0"
+        ],
+        [
+          "smart-test-sorter",
+          "0.1.0"
+        ],
+        [
+          "smart-test-sorter",
+          "0.1.0"
+        ],
+        [
+          "smmap",
+          "5.0.3"
+        ],
+        [
+          "tomli",
+          "2.4.1"
+        ],
+        [
+          "typing_extensions",
+          "4.16.0"
+        ],
+        [
+          "wheel",
+          "0.48.0"
+        ]
+      ]
+    },
+    "wheel": {
+      "sha256": "1a95e53bc86e7afd5afc4cb8c17991e44bbd62dbf5111b715d38cb722c522812",
+      "bytes": 252124,
+      "filename": "smart_test_sorter-0.1.0-py3-none-any.whl",
+      "sourceCommit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+      "binding": {
+        "verified": true,
+        "scope": "all smart_sorter Python modules and v1/v2 contract bytes",
+        "filesChecked": 96,
+        "issues": []
+      },
+      "installationTest": "not-run; TF-0778"
+    },
+    "supportedSelectionRunner": "pytest",
+    "defaultSelection": false,
+    "selectionPerformance": "not-run; TF-0778"
+  },
+  "jj": {
+    "libraryVersion": "0.46.0",
+    "cargoLock": {
+      "sha256": "11eb2982c91b6cbfcf4f32c2c57ce81264c520b2602a74eca23270ed3ca47491",
+      "bytes": 108417
+    },
+    "cliClaim": "not-executed",
+    "oracleRequirement": "TF-0776 must provision and pin the independent jj 0.46.0 oracle before parity measurements; absence is not parity"
+  },
+  "corpus": [
+    {
+      "id": "httpx",
+      "origin": "https://github.com/encode/httpx.git",
+      "commit": "326b9431c761e1ef1e00b9f760d1f654c8db48c6",
+      "tree": "40173b1c8fd3f7895fb2e5ae91f41cf66f1d2cb8",
+      "runner": "pytest",
+      "selection": "STS-opt-in-only",
+      "fullOracle": [
+        "python",
+        "-m",
+        "pytest"
+      ],
+      "environment": "isolated target interpreter; pin complete distributions before any A/B run",
+      "dependencyInputs": [
+        "pyproject.toml",
+        "requirements.txt"
+      ],
+      "observedCommit": "326b9431c761e1ef1e00b9f760d1f654c8db48c6",
+      "observedTree": "40173b1c8fd3f7895fb2e5ae91f41cf66f1d2cb8",
+      "verified": true,
+      "testRun": "not-run; TF-0778"
+    },
+    {
+      "id": "packaging",
+      "origin": "https://github.com/pypa/packaging.git",
+      "commit": "7b898d9f0b343ca06993157fc328d7caad51d5c2",
+      "tree": "37d527564c7c335232e4bd594161917955b13f3e",
+      "runner": "pytest",
+      "selection": "STS-opt-in-only",
+      "fullOracle": [
+        "python",
+        "-m",
+        "pytest"
+      ],
+      "environment": "isolated target interpreter; pin complete distributions before any A/B run",
+      "dependencyInputs": [
+        "pyproject.toml"
+      ],
+      "observedCommit": "7b898d9f0b343ca06993157fc328d7caad51d5c2",
+      "observedTree": "37d527564c7c335232e4bd594161917955b13f3e",
+      "verified": true,
+      "testRun": "not-run; TF-0778"
+    },
+    {
+      "id": "clawx-typescript",
+      "origin": "local ClawX repository",
+      "commit": "32236f49295fc73b7f63e1cbcb9216042f2ec359",
+      "runner": "vitest",
+      "selection": "not-applicable-to-pytest-STS",
+      "fullOracle": [
+        "pnpm",
+        "test"
+      ],
+      "environment": "Node/pnpm/package-lock identities from the same frozen candidate",
+      "observedTree": "8f5efd2d95db48444ebef31791e222bde1c86a25",
+      "verified": true,
+      "testRun": "not-run; input identity only"
+    }
+  ],
+  "capabilities": {
+    "schema": "CodingCapabilityBaseline/v1",
+    "driven_by": "agent",
+    "taskId": "TF-0764",
+    "entries": [
+      {
+        "id": "native-file-tools",
+        "owner": "runtime coding + workspace path policy + write journal",
+        "entry": "openclaw_runtime/src/agents/agent-tools.ts",
+        "protocol": "AgentToolResult + journal details",
+        "permission": "effective workspace/tool/provenance policy",
+        "effects": "workspace read/write/undo",
+        "defaultMode": "journal enabled; stale-write opt-in",
+        "support": "Windows source mechanisms",
+        "observedBy": [
+          "boundaries",
+          "journal"
+        ],
+        "limits": [
+          "A1",
+          "A2",
+          "A5"
+        ],
+        "next": "TF-0765"
+      },
+      {
+        "id": "worktree",
+        "owner": "worktree service + orchestration merge",
+        "entry": "openclaw_runtime/src/agents/worktree-service.ts",
+        "protocol": "WorktreeRecord/MergeQueueItem",
+        "permission": "caller scope and managed ownership",
+        "effects": "create/copy/delete/integrate",
+        "defaultMode": "shared; inprocess backend; explicit worktree opt-in",
+        "support": "generated local directory and real Git worktree",
+        "observedBy": [
+          "worktrees"
+        ],
+        "limits": [
+          "A3",
+          "A4"
+        ],
+        "next": "TF-0767"
+      },
+      {
+        "id": "orchestrator-isolation",
+        "owner": "Gateway/Orchestrator/RoleSpawn",
+        "entry": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "protocol": "orchestrator.plan/run",
+        "permission": "operator scope and parent workspace",
+        "effects": "plan and worker spawn",
+        "defaultMode": "shared",
+        "support": "real plan handler and executor with explicit spawn spy",
+        "observedBy": [
+          "routing"
+        ],
+        "limits": [
+          "A6"
+        ],
+        "next": "TF-0768"
+      },
+      {
+        "id": "coding-run",
+        "owner": "read-only execution projection and CI parser",
+        "entry": "shared/types/coding-run.ts",
+        "protocol": "coding-run/v1",
+        "permission": "does not own task completion",
+        "effects": "display/export only",
+        "defaultMode": "read-only",
+        "support": "actual serializer/parser/CLI",
+        "observedBy": [
+          "worktrees",
+          "routing"
+        ],
+        "limits": [
+          "A7"
+        ],
+        "next": "TF-0771"
+      },
+      {
+        "id": "mcp-management",
+        "owner": "Main MCP API and Gateway tool registry",
+        "entry": "electron/services/mcp-api.ts",
+        "protocol": "HostAPI / mcp.* vs tools.* RPC",
+        "permission": "server/session/tool policy",
+        "effects": "discovery and delegated tool effects",
+        "defaultMode": "server-specific opt-in",
+        "support": "actual stock method catalog; full external server trip not run",
+        "observedBy": [
+          "routing"
+        ],
+        "limits": [
+          "A8"
+        ],
+        "next": "TF-0772"
+      },
+      {
+        "id": "mcp-loopback",
+        "owner": "Gateway loopback result adapter",
+        "entry": "openclaw_runtime/src/gateway/mcp-http.handlers.ts",
+        "protocol": "MCP JSON-RPC negotiated version",
+        "permission": "existing before-tool hook",
+        "effects": "tool results; effects belong to tool",
+        "defaultMode": "internal adapter",
+        "support": "real hook/handler + installed SDK schema",
+        "observedBy": [
+          "routing"
+        ],
+        "limits": [
+          "A9"
+        ],
+        "next": "TF-0773"
+      },
+      {
+        "id": "retired-coding-controls",
+        "owner": "coding flag resolvers and actual orchestration trigger",
+        "entry": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "protocol": "request flags / effective tool policy",
+        "permission": "retirement and original authority",
+        "effects": "potential proposal-only worker policy",
+        "defaultMode": "symbol lease/Patch Flow declared retired",
+        "support": "three-worker opt-in/off spy",
+        "observedBy": [
+          "routing"
+        ],
+        "limits": [
+          "A10"
+        ],
+        "next": "TF-0774"
+      },
+      {
+        "id": "vg",
+        "owner": "VG repository facts/candidates; host retains execution/task/harness",
+        "entry": "electron/services/versegit-fact-adapter.ts",
+        "protocol": "pinned consumer contract + runtime binding + receipts",
+        "permission": "M0/M1 and bounded existing M2/M3; M4 not granted",
+        "effects": "provider-domain facts; candidate apply via existing host",
+        "defaultMode": "default-off",
+        "support": "binary hash/capabilities measured; integrated effects deferred",
+        "observedBy": [
+          "vg-capabilities"
+        ],
+        "limits": [
+          "capabilities declaration is not host execution",
+          "bash/direct-fs/other-mcp/network unobserved"
+        ],
+        "next": "TF-0775"
+      },
+      {
+        "id": "jj",
+        "owner": "VG vg-jj graph/operation adapter",
+        "entry": "external:vg/crates/vg-jj",
+        "protocol": "pinned jj-lib graph and operation semantics",
+        "permission": "managed workspace explicit opt-in",
+        "effects": "snapshot/materialize/restore/ref graph",
+        "defaultMode": "opt-in; no migration from capability discovery",
+        "support": "jj-lib lock verified; independent CLI not executed",
+        "observedBy": [
+          "source-inventory"
+        ],
+        "limits": [
+          "no CLI parity claim",
+          "no implied read-only mutation"
+        ],
+        "next": "TF-0776"
+      },
+      {
+        "id": "vs",
+        "owner": "governed process manager",
+        "entry": "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+        "protocol": "pinned typed ACI and bounded observation",
+        "permission": "existing approval/workspace/process owner",
+        "effects": "bounded process tree; host verification receipts",
+        "defaultMode": "controlled default-off foundation; no native fallback in governed route",
+        "support": "binary/manifest/version identity only",
+        "observedBy": [
+          "vs-version"
+        ],
+        "limits": [
+          "process cancellation and package execution not run in C0"
+        ],
+        "next": "TF-0777"
+      },
+      {
+        "id": "sts",
+        "owner": "VG extensions/sts smart-test-sorter",
+        "entry": "external:vg/extensions/sts",
+        "protocol": "vg-sts 1.1 and 2.0",
+        "permission": "explicit interpreter and selection opt-in",
+        "effects": "pytest collection/planning/execution facts",
+        "defaultMode": "selection/ranking off; protocol default preserved",
+        "support": "Python/pytest only; source/contracts/wheel/environment frozen",
+        "observedBy": [
+          "sts-environment",
+          "sts-installation"
+        ],
+        "limits": [
+          "selected never full",
+          "Vitest/Cargo selection not supported",
+          "performance and clean wheel install not run"
+        ],
+        "next": "TF-0778"
+      },
+      {
+        "id": "context-and-ast-diagnostics",
+        "owner": "DCS / AgentMap / existing AST pilot owners",
+        "entry": "shared/dcs/component-disposition-catalog.ts",
+        "protocol": "context candidates and diagnostic readiness",
+        "permission": "internal diagnostic/explicit controlled apply only",
+        "effects": "read-only candidates; explicit pilot separately governed",
+        "defaultMode": "internal/opt-in; not GA",
+        "support": "inventory classification; runtime benefit not measured in C0",
+        "observedBy": [
+          "source-inventory"
+        ],
+        "limits": [
+          "not an ordinary-chat automatic refactoring promise"
+        ],
+        "next": "TF-0782"
+      },
+      {
+        "id": "target-runners-and-package",
+        "owner": "project runner + Windows packaging and existing OAT owners",
+        "entry": "package.json",
+        "protocol": "exit/results/full scope and frozen artifact manifests",
+        "permission": "original execution owner",
+        "effects": "tests/build/cleanup in disposable environments",
+        "defaultMode": "required full tests retained",
+        "support": "two pinned pytest repos and ClawX TypeScript input; package not run",
+        "observedBy": [
+          "corpus-inventory"
+        ],
+        "limits": [
+          "test collection is not full execution",
+          "source and package evidence separate"
+        ],
+        "next": "TF-0781"
+      }
+    ]
+  },
+  "dependencies": {
+    "node": "v24.22.1",
+    "rootModules": "D:\\ClawX\\node_modules",
+    "runtimeModules": "D:\\ClawX\\openclaw_runtime\\node_modules",
+    "freshInstall": false,
+    "resourceBuild": "not-run; prebuilt VG/VS binaries are accepted only after matching the tracked manifest digests"
+  }
+}

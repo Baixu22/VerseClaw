@@ -1,0 +1,566 @@
+{
+  "schema": "CodingBaselineEvidence/v1",
+  "taskId": "TF-0764",
+  "driven_by": "agent",
+  "actor": "codex-coding-c0-builder",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-04T15:41:06.489Z",
+  "candidate": {
+    "commit": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+    "tree": "811915f1ad0bfde40c90d7821878ff4e01d86188",
+    "dirty": false
+  },
+  "sourceInputs": [
+    {
+      "path": "README.md",
+      "sha256": "6166df7491aa770a1dca16780bc8be54bc6e6903d5d373f9b6a9965db4e6ebaa",
+      "bytes": 19390
+    },
+    {
+      "path": "docs/dev/coding-parity-introduce-assessment.md",
+      "sha256": "ef903ccca5138c0cfc0850eead4a8acc1a4a7020a75bc8d240a9a237d0071d95",
+      "bytes": 10471
+    },
+    {
+      "path": "docs/dev/coding-run-protocol.md",
+      "sha256": "7b48bd9bd850a8f7bcf7979b98fcf437bb8331dabbba17d2a55188b9a9f65656",
+      "bytes": 2407
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
+      "sha256": "542791309ca076f64948e83ebb5858a5b2c137aabe78d02a9bb155278a9907a6",
+      "bytes": 2546
+    },
+    {
+      "path": "docs/dev/versegit-product-integration/TF-0517/verified-glm-20261025/acceptance.json",
+      "sha256": "3f7b8607d0319301f25d575458e10b86b431b2c1c25bb616342b0438d9c4ae69",
+      "bytes": 66106
+    },
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "sha256": "6df199bda1a30d4ff80ef2284ec35050686f1dcae0c3790b53ef9b1451886b0f",
+      "bytes": 14514
+    },
+    {
+      "path": "electron/services/mcp-api.ts",
+      "sha256": "d155dca01548a332df6617e18ef0994bfb141042c1b6ab5c100b8902b90e88c2",
+      "bytes": 67446
+    },
+    {
+      "path": "electron/services/tool-protocol-shadow.ts",
+      "sha256": "12ef570db6a3634794bef2aa1073345fcb93cf6f6cbffbb437c0303ecee6a15b",
+      "bytes": 11463
+    },
+    {
+      "path": "harness/specs/fixtures/agent-first-system/mainline/candidate-report.v1.json",
+      "sha256": "0e2cf6c367d331481938ffa00b7149f4db0f97ead9b66ccb96daa278f16653cf",
+      "bytes": 19177
+    },
+    {
+      "path": "harness/specs/fixtures/coding-vg-sts-jj-baseline/capabilities.json",
+      "sha256": "1b4a5a2d4f8b85409d0e44e4850e1db73368570559bf4982c2eeb797b33d7fe2",
+      "bytes": 8204
+    },
+    {
+      "path": "harness/specs/fixtures/coding-vg-sts-jj-baseline/evaluation-protocol.json",
+      "sha256": "7a49dcfcda87295c2cd85195332f5cf6e93f367c0181d2e61903326a9d4a1fb4",
+      "bytes": 6110
+    },
+    {
+      "path": "harness/specs/fixtures/coding-vg-sts-jj-baseline/historical-inputs.json",
+      "sha256": "5aea84236f291fe821223bde4dec556857ddfb8bc38e3bc793cdc04604e32499",
+      "bytes": 9811
+    },
+    {
+      "path": "harness/specs/tasks/coding-vg-sts-jj-baseline.md",
+      "sha256": "b6212ce41198e3fe3f4a2a2f85a3c727744a0cc992843cbfa38fc776fb1d3a12",
+      "bytes": 3185
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-bundle-mcp-materialize.ts",
+      "sha256": "c6576c2ec40b5b2db76f172a07b5a84f4cc59d80cbbf045b79ad5624334e3a4d",
+      "bytes": 17459
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "sha256": "7db3c579ccba7ca33221b3b5d63436dea00fb5430e63bef08bd2abb37dbfb7a2",
+      "bytes": 64535
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+      "sha256": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+      "bytes": 14908
+    },
+    {
+      "path": "openclaw_runtime/src/agents/apply-patch-preflight.ts",
+      "sha256": "cb802f8393d375ecbfc07b6a2abd893e9d2c4f8d22e70d8562a0904c1a5b03cf",
+      "bytes": 14624
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-protocol.ts",
+      "sha256": "d531488619c4163652e8520cb64d34967c3218b0cc08e59aaa2f8611d36c5f5c",
+      "bytes": 37409
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+      "sha256": "a725cf7a11eb9ae95b2cccbc66ca25937f4e12dc5401a801ea52bf1fb4de16e0",
+      "bytes": 4645
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "sha256": "2a821f3c745350f2724c12dbfad6b07bd08c2f8f4635cbc80d31f96be817f396",
+      "bytes": 45795
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestrator.ts",
+      "sha256": "b03f55e3bad9b6e690c9a5f54bee301f6a46fb68e4d7b0f261d91f4e745925d5",
+      "bytes": 27740
+    },
+    {
+      "path": "openclaw_runtime/src/agents/path-policy.ts",
+      "sha256": "59fa54fe4c4c821260dca370bd6d4f45d256f0ead57d25be3603b206c1b90e85",
+      "bytes": 5167
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+      "sha256": "3484169bf3d488c2e39f436adacf3fa7f8382e7b673632425fda01936647caf6",
+      "bytes": 65954
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+      "sha256": "8ef63c67cce5fdf356cc56c2d657b584b52704342125808e924db059954582ac",
+      "bytes": 14859
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "sha256": "b8abcc9dda4ed98f62941930bb0fc2bba43aab83920db04fab4970bd1112a72f",
+      "bytes": 11967
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell-foundation-flags.ts",
+      "sha256": "be873ef9d520e2b4bb6b7478752ad3ead9770bc1aaf7beab9a50c5b59cc9d340",
+      "bytes": 6216
+    },
+    {
+      "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+      "sha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+      "bytes": 5013
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "sha256": "d5f360aa8ac08646e0dfe0d1fa67e45ca9c2957202f674ef60ee9dec92e50f7b",
+      "bytes": 23440
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/coding-runtime-flags.ts",
+      "sha256": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+      "bytes": 10641
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/mcp-http.handlers.ts",
+      "sha256": "bc2c827ed3feec27b3ee2d32b91ab390dcd5a98e6531580c70d88f1b8c3603f5",
+      "bytes": 4691
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/mcp-http.protocol.ts",
+      "sha256": "4017ac8dcd3b18b6177332649dee02495f91d1409be28b0f2fdc829b794d248c",
+      "bytes": 1216
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+      "sha256": "8b8aba68ebadb1c22a3241987f9b2ec4262b4c3b34e42afa958c43e02489c0c3",
+      "bytes": 23161
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods-list.ts",
+      "sha256": "33fc9e1f1adeaba29a5277129fb1b45d5069c72c1e36d744714b6b52abe55384",
+      "bytes": 2233
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+      "sha256": "bfa7bed5fb78a3949c215c46026447d20373b86fcdf0466e732cf3394e2a806b",
+      "bytes": 63703
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/ast-edit-plan-controlled-apply-pilot.ts",
+      "sha256": "8f0dfb9984e65d6a866f1694e8b5a06c8882e6100a71a9c3a62b92f5629dcdb2",
+      "bytes": 35733
+    },
+    {
+      "path": "scripts/coding-baseline/inspect-wheel.py",
+      "sha256": "f0bace4e071d0b0168f109599c787b03e9445b989d6300822bba996f8fdb44f3",
+      "bytes": 1360
+    },
+    {
+      "path": "scripts/coding-baseline/probes/boundaries.mts",
+      "sha256": "752210115c46020e8c0678c0007c8493506adf4e16174fa118070e47b1f625d8",
+      "bytes": 5023
+    },
+    {
+      "path": "scripts/coding-baseline/probes/journal.mts",
+      "sha256": "9261ef91f10e621f3fe3711d14a4c3d843724eea861760e767877a5f7965ce3f",
+      "bytes": 3201
+    },
+    {
+      "path": "scripts/coding-baseline/probes/routing.mts",
+      "sha256": "b88fc42d3b0a7f84e7e73cbf624fd6aeaf9b500e1ca9299c3f1cf7d5edc59c33",
+      "bytes": 5579
+    },
+    {
+      "path": "scripts/coding-baseline/probes/worktrees.mts",
+      "sha256": "4a0ab10424e6753300e7215c5dc9055f0d59eb34ca1c1073d5ad5038a5a12d21",
+      "bytes": 6946
+    },
+    {
+      "path": "scripts/coding-baseline/run.mjs",
+      "sha256": "6204b5e6e4e0b8c0ad2d65a7e4811b64850e87ad6a7da305d42a9585f2635e41",
+      "bytes": 12416
+    },
+    {
+      "path": "scripts/coding-baseline/support.mjs",
+      "sha256": "4f2decb11591a885f85a2831e2e199ee559ab9068af0ad62e72143785e077587",
+      "bytes": 1263
+    },
+    {
+      "path": "scripts/coding-baseline/verify.mjs",
+      "sha256": "0abf3056452e82bdbb81a912f6806ffcbf5cc7f8763e7559b45706982f07f365",
+      "bytes": 9869
+    },
+    {
+      "path": "scripts/coding-run-summary.mjs",
+      "sha256": "82758e106445c2ce8d425c010241d495cf21bd744543a7118c51f390c2b5caf3",
+      "bytes": 988
+    },
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "9a31fb00bc1de641197c3cbdca835f804d38943270c443014f29fc6ff7d01a7c",
+      "bytes": 48122
+    },
+    {
+      "path": "shared/dcs/prod-flags-catalog.ts",
+      "sha256": "f377723bb962b38b02592baca5f3c1c588dc19465ab413da718e9082b7daac74",
+      "bytes": 21470
+    },
+    {
+      "path": "shared/types/coding-run.ts",
+      "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "bytes": 17799
+    },
+    {
+      "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+      "sha256": "1a3a47d2c3cf97a1d25772d3f5b1e96c6b2810eb780f108c9036ed32c0401320",
+      "bytes": 202427
+    },
+    {
+      "path": "src/components/settings/DcsProdFlagsPanel.tsx",
+      "sha256": "11e985d4ca73d4ed652602121a53c97dc627d504c54596a981e6f1181d355a0c",
+      "bytes": 31704
+    },
+    {
+      "path": "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+      "sha256": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+      "bytes": 3270
+    }
+  ],
+  "commands": [
+    {
+      "name": "probe-worktrees",
+      "probe": "worktrees",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "--import",
+        "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\worktrees.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1486
+    },
+    {
+      "name": "probe-boundaries",
+      "probe": "boundaries",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "--import",
+        "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\boundaries.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 15696
+    },
+    {
+      "name": "probe-routing",
+      "probe": "routing",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "--import",
+        "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\routing.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8966
+    },
+    {
+      "name": "probe-journal",
+      "probe": "journal",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "--import",
+        "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\journal.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1185
+    },
+    {
+      "name": "sts-environment",
+      "executable": "D:\\Projects\\VerseGit\\.venv-sts\\Scripts\\python.exe",
+      "argv": [
+        "-I",
+        "-B",
+        "-m",
+        "smart_sorter.environment"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 267
+    },
+    {
+      "name": "sts-installation",
+      "executable": "D:\\Projects\\VerseGit\\.venv-sts\\Scripts\\python.exe",
+      "argv": [
+        "-I",
+        "-B",
+        "-c",
+        "import sys,json,hashlib,importlib.metadata as m,smart_sorter\nfrom pathlib import Path\nd=m.distribution(\"smart-test-sorter\")\nprint(json.dumps({\"pythonExecutable\":sys.executable,\"version\":d.version,\"module\":str(Path(smart_sorter.__file__).resolve()),\"moduleSha256\":hashlib.sha256(Path(smart_sorter.__file__).read_bytes()).hexdigest(),\"metadataSha256\":hashlib.sha256(d.read_text(\"METADATA\").encode()).hexdigest(),\"installedDistributions\":sorted((x.metadata[\"Name\"],x.version) for x in m.distributions())}))"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 170
+    },
+    {
+      "name": "sts-wheel-binding",
+      "executable": "D:\\Projects\\VerseGit\\.venv-sts\\Scripts\\python.exe",
+      "argv": [
+        "-I",
+        "-B",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\inspect-wheel.py",
+        "D:\\Projects\\VerseGit",
+        "D:\\tmp\\coding-c0-sts-mh9zayh3\\wheel\\smart_test_sorter-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 132
+    },
+    {
+      "name": "vg-capabilities",
+      "executable": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+      "argv": [
+        "capabilities",
+        "--json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 195
+    },
+    {
+      "name": "vs-version",
+      "executable": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\ae.exe",
+      "argv": [
+        "--version"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 140
+    }
+  ],
+  "artifacts": {
+    "worktrees/probe-results.json": {
+      "sha256": "e01136ed5f0fb2d900bb3bee3ffeb0b1d18c0cd6e863c05ba5315a8d3ae75a85",
+      "bytes": 4969
+    },
+    "boundaries/boundary-results.json": {
+      "sha256": "93956d8e1002c10e7e24ee2430766719fb6201683f052ace1a47735888e7e87f",
+      "bytes": 2032
+    },
+    "routing/routing-results.json": {
+      "sha256": "6d180b074ec8a368104d60d147089e845c980ee674c401a20bf29161c6bd9f1b",
+      "bytes": 4601
+    },
+    "journal/journal-results.json": {
+      "sha256": "15d230077a2b5139403bb7883a020cdca5c1851a99dfdc2e0e9798a89210bd48",
+      "bytes": 738
+    },
+    "inventory.json": {
+      "sha256": "775a481c158e4915a863d0f2d66efa7afd57a34151a0a686987826e1babf76e3",
+      "bytes": 43510
+    },
+    "historical-comparison.json": {
+      "sha256": "dec90e950dcccebb489c3d5fdef4bb20af153a9eae689c0d67af114bca4914cd",
+      "bytes": 11213
+    },
+    "commands.json": {
+      "sha256": "090f6dc3fdd82aee12b52bf818f7920071ebeb870d29dde1958d87a8462e4ee5",
+      "bytes": 4508
+    },
+    "probe-worktrees.stdout.log": {
+      "sha256": "e01136ed5f0fb2d900bb3bee3ffeb0b1d18c0cd6e863c05ba5315a8d3ae75a85",
+      "bytes": 4969
+    },
+    "probe-worktrees.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "probe-boundaries.stdout.log": {
+      "sha256": "765d8b1f0bd6822c37e3d5ce1bcfdec67888f9a71113ff24c138d64a690b4142",
+      "bytes": 2135
+    },
+    "probe-boundaries.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "probe-routing.stdout.log": {
+      "sha256": "46cf5d4d07a30841993457b342449cb3459e6f0c4b90b14ba130ab55fbf40a71",
+      "bytes": 4602
+    },
+    "probe-routing.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "probe-journal.stdout.log": {
+      "sha256": "c21e74b4311b697ff9611e6aef4dbf4696f4b6823e8dc2a6dcaecb75efb953a1",
+      "bytes": 739
+    },
+    "probe-journal.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "sts-environment.stdout.log": {
+      "sha256": "705fba922a3b6ea72098c6821260e3b0fdd84d89ab6b9be254c7a5e5449fcb51",
+      "bytes": 141
+    },
+    "sts-environment.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "sts-installation.stdout.log": {
+      "sha256": "f6787b6b174942edb776c99d92ff3512b297c1232ba4dd8d580c84974a6437d6",
+      "bytes": 1004
+    },
+    "sts-installation.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "sts-wheel-binding.stdout.log": {
+      "sha256": "c379203821a5bea565efb0a91cd6fc8a167e8abe22e4996ab6ad4e59098624ba",
+      "bytes": 123
+    },
+    "sts-wheel-binding.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "vg-capabilities.stdout.log": {
+      "sha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+      "bytes": 3737
+    },
+    "vg-capabilities.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "vs-version.stdout.log": {
+      "sha256": "1465334d5260501196377a50a45bbd96a1b522d7beff4fe0778cd9037966fd14",
+      "bytes": 9
+    },
+    "vs-version.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "findings": [
+    {
+      "id": "A1",
+      "repairNode": "TF-0765",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A2",
+      "repairNode": "TF-0766",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A3",
+      "repairNode": "TF-0767",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A4",
+      "repairNode": "TF-0769",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A5",
+      "repairNode": "TF-0770",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A6",
+      "repairNode": "TF-0768",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A7",
+      "repairNode": "TF-0771",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A8",
+      "repairNode": "TF-0772",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A9",
+      "repairNode": "TF-0773",
+      "status": "reproduced",
+      "productPass": false
+    },
+    {
+      "id": "A10",
+      "repairNode": "TF-0774",
+      "status": "reproduced",
+      "productPass": false
+    }
+  ],
+  "baselineVerdict": "established",
+  "productVerdict": "needs-fix",
+  "releaseApproved": false,
+  "protocolScope": "mechanism-baseline-not-performance-or-live-quality"
+}

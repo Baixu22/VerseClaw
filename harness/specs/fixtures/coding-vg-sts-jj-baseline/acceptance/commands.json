@@ -1,0 +1,133 @@
+[
+  {
+    "name": "probe-worktrees",
+    "probe": "worktrees",
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "--import",
+      "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+      "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\worktrees.mts"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 1486
+  },
+  {
+    "name": "probe-boundaries",
+    "probe": "boundaries",
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "--import",
+      "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+      "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\boundaries.mts"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 15696
+  },
+  {
+    "name": "probe-routing",
+    "probe": "routing",
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "--import",
+      "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+      "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\routing.mts"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 8966
+  },
+  {
+    "name": "probe-journal",
+    "probe": "journal",
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "--import",
+      "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+      "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\probes\\journal.mts"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 1185
+  },
+  {
+    "name": "sts-environment",
+    "executable": "D:\\Projects\\VerseGit\\.venv-sts\\Scripts\\python.exe",
+    "argv": [
+      "-I",
+      "-B",
+      "-m",
+      "smart_sorter.environment"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 267
+  },
+  {
+    "name": "sts-installation",
+    "executable": "D:\\Projects\\VerseGit\\.venv-sts\\Scripts\\python.exe",
+    "argv": [
+      "-I",
+      "-B",
+      "-c",
+      "import sys,json,hashlib,importlib.metadata as m,smart_sorter\nfrom pathlib import Path\nd=m.distribution(\"smart-test-sorter\")\nprint(json.dumps({\"pythonExecutable\":sys.executable,\"version\":d.version,\"module\":str(Path(smart_sorter.__file__).resolve()),\"moduleSha256\":hashlib.sha256(Path(smart_sorter.__file__).read_bytes()).hexdigest(),\"metadataSha256\":hashlib.sha256(d.read_text(\"METADATA\").encode()).hexdigest(),\"installedDistributions\":sorted((x.metadata[\"Name\"],x.version) for x in m.distributions())}))"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 170
+  },
+  {
+    "name": "sts-wheel-binding",
+    "executable": "D:\\Projects\\VerseGit\\.venv-sts\\Scripts\\python.exe",
+    "argv": [
+      "-I",
+      "-B",
+      "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\scripts\\coding-baseline\\inspect-wheel.py",
+      "D:\\Projects\\VerseGit",
+      "D:\\tmp\\coding-c0-sts-mh9zayh3\\wheel\\smart_test_sorter-0.1.0-py3-none-any.whl"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 132
+  },
+  {
+    "name": "vg-capabilities",
+    "executable": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+    "argv": [
+      "capabilities",
+      "--json"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 195
+  },
+  {
+    "name": "vs-version",
+    "executable": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\ae.exe",
+    "argv": [
+      "--version"
+    ],
+    "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 140
+  }
+]
