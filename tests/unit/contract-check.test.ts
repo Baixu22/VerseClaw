@@ -263,6 +263,17 @@ describe('contract check: alias contract members', () => {
 });
 
 describe('contract check: flat IPC admission surface', () => {
+  it('finds a namespace registration after an interpolated template', () => {
+    const text = [
+      'const example = `a${1}b`;',
+      "const owner = require('electron');",
+      "owner['ipcMain']['handle']('a:one', () => 1);",
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.cjs')).toEqual([
+      { file: 'f.cjs', line: 3, channel: 'a:one', expression: "'a:one'" },
+    ]);
+  });
+
   it('ignores comments, strings, unrelated handles and shadowed IPC objects', () => {
     const text = [
       "import { ipcMain } from 'electron';",

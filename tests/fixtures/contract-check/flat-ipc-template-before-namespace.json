@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-template-before-namespace",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry] ipcMain.handle('rogue:template')",
+  "description": "IPC after a template expression in a CommonJS production file must not be skipped by a lexical prefilter.",
+  "mutations": [
+    {
+      "file": "electron/contract-check-template-probe.cjs",
+      "create": "const example = `a${1}b`;\nconst owner = require('electron');\nowner['ipcMain']['handle']('rogue:template', () => undefined);\n"
+    }
+  ]
+}

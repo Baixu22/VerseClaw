@@ -214,18 +214,10 @@ function parseRegistryScenarioIds(registryText) {
 // Syntax owns call shape; local symbols distinguish Electron aliases from
 // unrelated or shadowed objects. No project typecheck or module loading occurs.
 function parseIpcCalls(text, file, ipcName, methods) {
-  // Token values decode escaped identifiers and strings. This avoids parsing
-  // unrelated files without reintroducing a spelling/whitespace blind spot.
-  const scanner = ts.createScanner(ts.ScriptTarget.Latest, true, ts.LanguageVariant.Standard, text);
-  let hasIpcName = false;
-  for (let token = scanner.scan(); token !== ts.SyntaxKind.EndOfFileToken; token = scanner.scan()) {
-    if ((token === ts.SyntaxKind.Identifier || token === ts.SyntaxKind.StringLiteral || token === ts.SyntaxKind.NoSubstitutionTemplateLiteral)
-      && scanner.getTokenValue() === ipcName) {
-      hasIpcName = true;
-      break;
-    }
-  }
-  if (!hasIpcName) return [];
+  // A decoded IPC root must either occur literally or contain an escape.
+  // Any escape forces AST parsing; a context-free lexer cannot safely skip
+  // template/regexp contents and would hide subsequent registrations.
+  if (!text.includes(ipcName) && !text.includes('\\')) return [];
   const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
   if (source.parseDiagnostics.length) {
     const diagnostic = source.parseDiagnostics[0];

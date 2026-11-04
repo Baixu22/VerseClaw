@@ -1,6 +1,6 @@
 # 扁平 IPC 接入面门禁（ADMISSION-GATE）
 
-> 状态：A1/A5 已实施；2026-11-05 的 TF-0787 将枚举升级为 token/AST 与局部符号解析，当前机制见 §8，历史计数保留原日期与候选。
+> 状态：A1/A5 已实施；2026-11-05 的 TF-0787 将枚举升级为 AST 与局部符号解析，当前机制见 §8，历史计数保留原日期与候选。
 > 节点：`TF-0630`（父 `TF-0628` 架构骨架收敛；依赖 `TF-0629`）
 > 合同：`harness/specs/tasks/architecture-skeleton-admission-gate.md`
 > 输入：`docs/dev/architecture-skeleton/ADMISSION-INVENTORY.md` §4 / §6 / §7
@@ -85,7 +85,7 @@ schema `ContractCheckFlatIpcAdjudication/v1`。它是 ADMISSION-INVENTORY §6 �
 | `flat-ipc/non-literal-channel` | `ipcMain.handle(<非字符串字面量>)` | 无法枚举即失败 |
 | `flat-ipc/typed-entry-missing` | `host-invoke.ts` 中找不到 `ipcMain.handle('host:invoke')` | 唯一类型化入口必须存在 |
 
-当前枚举口径：递归扫描 `electron` 下 ts/tsx/mts/cts/js/jsx/mjs/cjs 生产文件，排除对应测试、声明文件及 `node_modules` / `dist` / `__tests__`。TypeScript token value 预筛选能解码转义标识符；实际调用、接收对象和静态别名由 AST/局部符号解析识别，不再依赖 `ipcMain.handle(` 的精确字符串。细节见 §8。
+当前枚举口径：递归扫描 `electron` 下 ts/tsx/mts/cts/js/jsx/mjs/cjs 生产文件，排除对应测试、声明文件及 `node_modules` / `dist` / `__tests__`。保守预筛选只跳过既无 IPC 根名字也无转义的文本；可疑文本由 TypeScript AST 解码。实际调用、接收对象和静态别名由 AST/局部符号解析识别，不再依赖 `ipcMain.handle(` 的精确字符串。细节见 §8。
 
 ### 3.3 preload 白名单
 
@@ -305,7 +305,7 @@ A5 删 handler 前将该 action 接到 `syncMacTrafficLightPosition`，并由
 `ipcMain['handle'](...)` 和 `ipcMain.handle (...)` 却 exit 0。本轮在独立基线
 重现这组结果，再将枚举修复到既有 `pnpm contract:check`，未修改运行时接入路径。
 
-当前覆盖属性/计算属性、空白/注释、转义标识符、静态方法名、Electron import
+当前覆盖属性/计算属性、空白/注释、转义标识符、模板之后的调用、静态方法名、Electron import
 别名、namespace/require 对象、局部对象/方法别名及解构、bind、call/apply。
 `handleOnce` 同样是 request handler；同文件的重复 `host:invoke` 也被拒绝。
 局部符号用于排除被函数参数遮蔽的名字、无关对象、注释与字符串。它不解析项目
