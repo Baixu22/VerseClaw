@@ -36,6 +36,7 @@ touchedAreas:
   - scripts/lib/versebrowser-build-identity.mjs
   - scripts/lib/versebrowser-build-provenance.mjs
   - scripts/versebrowser-build-provenance.mjs
+  - scripts/versebrowser-build-wiring.test.mjs
   - scripts/lib/versebrowser-probe-cleanup.mjs
   - scripts/verify-versegit-product-integration.mjs
   - scripts/verify-versegit-product-integration.d.mts
@@ -69,6 +70,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
+  - node --test scripts/versebrowser-build-wiring.test.mjs
   - node --test scripts/versebrowser-n9-stability-probe.test.mjs
   - pnpm exec vitest run tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/versebrowser-capability-gating.test.ts tests/unit/versebrowser-n6-authorization-conservation.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/versebrowser-boundary-repair.test.ts tests/unit/versebrowser-evidence-verification.test.ts tests/unit/browser-private-network-tf0503.test.ts tests/unit/versegit-product-acceptance.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.agents-tools.config.ts src/agents/tools/agent-browser-tool.provenance.test.ts --maxWorkers=1
