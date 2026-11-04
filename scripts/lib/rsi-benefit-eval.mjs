@@ -8,6 +8,7 @@ import { evaluateAblation } from './paired-ablation.mjs';
 import { summarizeTf0592Trials } from '../rsi-tf0592-statistical-adjudication.mjs';
 import { sha256File } from '../rsi-tf0604-baseline.mjs';
 import { buildResponsesRequest, parseResponsesReply } from './rsi-responses-provider.mjs';
+import { assessTaskAdmission } from '../rsi-live-acceptance.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
 const CORPUS = 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json';
@@ -19,6 +20,7 @@ const SOURCES = [CORPUS, TASKS, POLICY, 'scripts/lib/rsi-benefit-eval.mjs', 'scr
   'scripts/rsi-tf0604-baseline.mjs', 'scripts/lib/entrypoint.mjs',
   'scripts/rsi-tf0592-statistical-adjudication.mjs', 'scripts/lib/agent-first-trials.mjs',
   'tests/unit/rsi-benefit-eval.test.ts', 'tests/unit/rsi-responses-provider.test.ts',
+  'scripts/rsi-live-acceptance.mjs', 'scripts/rsi-live-acceptance.d.mts',
   'harness/specs/tasks/rsi-benefit-eval.md'];
 const FLAGS = {
   'sekb-off': { enabled: false, shadowEvaluation: false, injection: false },
@@ -341,6 +343,7 @@ export function recordMeasuredBenefitTrials(root, directory, receipts) {
   assert.equal(plan.evidenceKind, 'live-provider', 'measured-receipt-requires-measured-plan');
   assert(Array.isArray(receipts) && receipts.length > 0, 'receipt-array-required');
   assert.equal(new Set(receipts.map((receipt) => receipt?.slot?.id)).size, receipts.length, 'duplicate-import-slot');
+  verifyTaskAdmissions(root, directory, plan, new Set(receipts.map((receipt) => receipt?.slot?.caseId)));
   // Import only collector output. Existing receipts are immutable, never retries.
   const lock = join(directory, '.run.lock'), handle = openSync(lock, 'wx');
   try {
@@ -365,6 +368,28 @@ export function recordMeasuredBenefitTrials(root, directory, receipts) {
   } finally { closeSync(handle); unlinkSync(lock); }
 }
 
+function verifyTaskAdmissions(root, directory, plan, taskIds) {
+  const historical = read(join(root, TASKS));
+  for (const taskId of taskIds) {
+    const task = plan.tasks.find((task) => task.id === taskId);
+    assert(task, 'unknown-calibration-task');
+    const admission = read(artifactPath(directory, `calibration/${taskId}/admission.json`));
+    const originalTask = historical.tasks.find((task) => task.id === taskId);
+    const source = read(join(root, originalTask.referenceSolution.sourceRecord));
+    assert.equal(admission.taskId, taskId, 'calibration-task-mismatch');
+    assert.equal(admission.source?.base, source.candidate.base, 'calibration-base-drift');
+    assert.equal(admission.source?.reference, source.candidate.commit, 'calibration-reference-drift');
+    const { reference, baseline } = admission.stages ?? {};
+    for (const stage of [reference, baseline]) {
+      assert.deepEqual(stage?.commands, task.oracle.commands, 'calibration-command-drift');
+      assert.deepEqual(stage?.inputDigests, task.oracle.inputDigests, 'calibration-input-drift');
+    }
+    const observed = assessTaskAdmission({ reference, baseline });
+    assert.deepEqual(admission.admission, observed, 'calibration-verdict-drift');
+    assert(observed.passed, `task-calibration-rejected:${taskId}`);
+  }
+}
+
 export function summarizeBenefitRun(root, directory, actor = 'codex/rsi-benefit-verifier') {
   directory = resolve(directory);
   assert(!existsSync(join(directory, '.run.lock')), 'run-in-progress');
@@ -372,6 +397,9 @@ export function summarizeBenefitRun(root, directory, actor = 'codex/rsi-benefit-
   assert(text(actor) && actor !== plan.actor && actor !== `${plan.actor}/executor`, 'distinct-verifier-role-required');
   const records = new Map(plan.slots.map((slot) => [slot.id, readTrial(plan, slot, directory)]));
   const actual = [...records.values()].filter(Boolean);
+  if (plan.evidenceKind === 'live-provider' && actual.length > 0) {
+    verifyTaskAdmissions(root, directory, plan, new Set(actual.map((record) => record.row.slot.caseId)));
+  }
   assert(actual.every((record, index) => index === 0 || Date.parse(record.row.execution.startedAt) >= Date.parse(actual[index - 1].row.execution.endedAt)), 'collector-order-or-overlap');
   assert(actual.every((record) => record.row.grader?.actor !== actor), 'verifier-cannot-grade-own-run');
   const responseIds = actual.flatMap((record) => record.row.providerAttempts.map((attempt) => attempt.rawResponse.id));
@@ -436,7 +464,8 @@ function packFiles(directory) {
   return walk(directory).filter((path) => path !== 'SHA256SUMS').sort();
 }
 function allowedFiles(plan) {
-  return new Set(['plan.json', 'plan.sha256', 'report.json', ...plan.slots.flatMap((slot) => [recordPath(slot), startPath(slot)])]);
+  return new Set(['plan.json', 'plan.sha256', 'report.json', ...plan.slots.flatMap((slot) => [recordPath(slot), startPath(slot)]),
+    ...(plan.evidenceKind === 'live-provider' ? plan.tasks.map((task) => `calibration/${task.id}/admission.json`) : [])]);
 }
 export function sealBenefitRun(root, directory, actor) {
   directory = resolve(directory);
@@ -457,6 +486,7 @@ export function checkBenefitRun(root, directory) {
     assert.deepEqual(saved, report, 'report-recomputation');
     const plan = loadPlan(root, directory), allowed = allowedFiles(plan), files = packFiles(directory);
     if (plan.evidenceKind === 'live-provider') {
+      verifyTaskAdmissions(root, directory, plan, new Set(plan.tasks.map((task) => task.id)));
       assert.equal(git(root, ['status', '--porcelain', '--', ...Object.keys(plan.source.bindings)]), '', 'measured-evaluator-uncommitted');
       for (const [path, digest] of Object.entries(plan.source.bindings)) {
         const committed = execFileSync('git', ['show', `${plan.source.commit}:${path}`], { cwd: root, windowsHide: true, encoding: 'utf8' });

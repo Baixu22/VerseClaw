@@ -4,6 +4,7 @@ import { dirname, join, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { afterAll, describe, expect, it } from 'vitest';
 import { parseResponsesReply } from '../../scripts/lib/rsi-responses-provider.mjs';
+import { assessTaskAdmission } from '../../scripts/rsi-live-acceptance.mjs';
 import { BENEFIT_ARMS, benefitDigest, buildBenefitRequest, checkBenefitRun, createBenefitPlan, recordMeasuredBenefitTrials,
   runOfflineBenefit, sealBenefitRun, summarizeBenefitRun, validateBenefitPlan, writeBenefitPlan,
   type BenefitPlan } from '../../scripts/lib/rsi-benefit-eval.mjs';
@@ -38,15 +39,28 @@ afterAll(() => {
 });
 
 describe('measured receipt admission (synthetic contract controls, no provider calls)', () => {
-  function measuredPack() {
-    const { directory: offlineDir, plan: offlinePlan } = pack();
+  function measuredPack(limit = 2) {
+    const { directory: offlineDir, plan: offlinePlan } = pack(limit);
     const directory = mkdtempSync(join(TEMP, 'rsi-benefit-test-measured-'));
     created.push(directory);
     const plan = writeBenefitPlan(ROOT, directory, {
       mode: 'measured', runId: 'measured-contract-control', maxProviderCalls: 216, maxTotalTokens: 1_000_000,
       candidate: { ...offlinePlan.candidate, kind: 'confirmed-sekb' },
     });
-    const receipts = plan.slots.map((slot) => {
+    const historical = JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json'), 'utf8'));
+    for (const task of plan.tasks) {
+      const original = historical.tasks.find((entry: { id: string }) => entry.id === task.id);
+      const record = JSON.parse(readFileSync(join(ROOT, original.referenceSolution.sourceRecord), 'utf8'));
+      const stage = (pass: boolean) => ({ passed: pass, commands: task.oracle.commands, oracleUnchanged: true, inputDigests: task.oracle.inputDigests,
+        executions: task.oracle.commands.map((command) => ({ command, kind: 'vitest', exitCode: pass ? 0 : 1, error: null, timedOut: false,
+          report: { success: pass, numTotalTests: 1, numPassedTests: pass ? 1 : 0, numFailedTests: pass ? 0 : 1, numPendingTests: 0,
+            testResults: [{ assertionResults: [{ status: pass ? 'passed' : 'failed' }] }] } })) });
+      const stages = { reference: stage(true), baseline: stage(false) };
+      const path = join(directory, 'calibration', task.id, 'admission.json'); mkdirSync(dirname(path), { recursive: true });
+      writeFileSync(path, JSON.stringify({ evidenceKind: 'synthetic-contract-control', taskId: task.id,
+        source: { base: record.candidate.base, reference: record.candidate.commit }, stages, admission: assessTaskAdmission(stages) }));
+    }
+    const receipts = plan.slots.slice(0, limit).map((slot) => {
       const row = JSON.parse(readFileSync(join(offlineDir, 'trials', `${slot.id}.json`), 'utf8'));
       const task = plan.tasks.find((task) => task.id === slot.caseId)!;
       const passed = JSON.parse(row.rawResponse.output[0].content[0].text).probeValue === 'ok';
@@ -77,7 +91,7 @@ describe('measured receipt admission (synthetic contract controls, no provider c
   }
 
   it('has a reachable measured benefit gate and derives it from independent oracle results', () => {
-    const { directory, receipts } = measuredPack();
+    const { directory, receipts } = measuredPack(216);
     recordMeasuredBenefitTrials(ROOT, directory, receipts);
     const report = sealBenefitRun(ROOT, directory);
     expect(report.benefit.status).toBe('promote');
@@ -86,6 +100,18 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     // Final measured checks additionally require the evaluator inputs committed.
     expect(report.coverage.missing).toEqual([]);
     // These in-memory contract-control responses are never retained as live evidence.
+  });
+
+  it('rejects absent or failed calibration before importing a measured receipt', () => {
+    const { directory, plan, receipts } = measuredPack();
+    const path = join(directory, 'calibration', plan.tasks[0].id, 'admission.json');
+    const admission = JSON.parse(readFileSync(path, 'utf8'));
+    admission.stages.baseline = structuredClone(admission.stages.reference);
+    admission.admission = assessTaskAdmission(admission.stages);
+    writeFileSync(path, JSON.stringify(admission));
+    expect(() => recordMeasuredBenefitTrials(ROOT, directory, [receipts[0]])).toThrow('task-calibration-rejected');
+    unlinkSync(path);
+    expect(() => recordMeasuredBenefitTrials(ROOT, directory, [receipts[0]])).toThrow();
   });
 
   it.each(['self-grade', 'oracle', 'test-count', 'contamination', 'endpoint', 'usage', 'hidden-retry', 'raw-parsed', 'skipped', 'actual-position'])(
