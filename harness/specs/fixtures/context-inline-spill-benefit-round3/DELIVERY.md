@@ -94,4 +94,4 @@ node "$pack/verify-run.mjs" "$pack/live" D:/tmp/inline-spill-r3-live-verify.json
 node "$pack/verify-evidence.mjs" "$pack"
 ```
 
-TF-0755的收口以输入修复、完整实测和证据复验为准；TF-0749的任务收益验收保持未完成。Task Forest与会话交接只保留本地，不提交其历史数据；未push、未发布。
+Task Forest 收尾已完成：提案 TFP-inline-spill-benefit-r3-closeout-20261104-01a1a56d 的保存、应用、validate、正式export均exit 0；TF-0755=done/100%，TF-0749=in_progress/80%，TF-0750–0754保持done/100%。CLI与HTML当前内容匹配（仅忽略生成时间字段），回读记录 D:/tmp/inline-spill-benefit-r3/tf-readback.json。输入修复节点完成不表示任务收益验收通过，父节点仍保留B2/B4/B5/B6与页预算/输出预算缺口。Task Forest与会话交接只保留本地，不提交其历史数据；未push、未发布。
