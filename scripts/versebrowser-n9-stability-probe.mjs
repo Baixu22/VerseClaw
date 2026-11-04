@@ -238,7 +238,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
     },
     interrupts: {
       rounds: byKind('interrupt').length,
-      killedWithLiveSession: byKind('interrupt').filter((r) => r.interruptedWithLiveSession === true).length,
+      killedWithLiveSession: byKind('interrupt').filter((r) => r.interruptedWithLiveSession === true && r.forcedShutdown === true && r.status === 'pass').length,
       recoveryRounds: byKind('recovery').length,
       recoveryPassed: byKind('recovery').filter((r) => r.status === 'pass' && r.snapshotHasFixture === true).length,
     },
