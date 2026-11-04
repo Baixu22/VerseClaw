@@ -16,7 +16,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ElectronApplication, TestInfo } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { buildMockProviderConfig, hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { buildRecoveryContractManifest } from '../../shared/recovery-contract-eval';
 
 const OUT_DIR = process.env.RECOVERY_LONGSESSION_OUT ?? '';
@@ -164,8 +164,8 @@ test.describe('long-session recovery evaluation', () => {
       await hostInvoke(app, 'workspaces', 'create', {
         rootPath: workspaceDir, permissionMode: 'fullAccess', name: 'longsession-eval',
       }).catch(() => undefined);
-      await startGateway(app);
-      await waitGatewayReady(app);
+      await hostInvoke(app, 'gateway', 'start').catch(() => undefined);
+      if (!(await waitGatewayReady(app))) throw new Error('gateway never became ready');
 
       for (const pair of pairs) {
         const startedAt = Date.now();
@@ -240,6 +240,7 @@ test.describe('long-session recovery evaluation', () => {
     }
   });
 });
+
 
 
 

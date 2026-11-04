@@ -95,3 +95,29 @@ node --experimental-strip-types scripts/recovery-contract-eval.mjs --check
 
 下一次复跑：先确保网关能稳定启动（清空本工作树 Electron/gateway 残留），再用
 `RECOVERY_LONGSESSION_OUT=D:/tmp/recovery-longsession-v3` 跑全量 30 对。
+
+## 2026-11-04 全量 30 对长会话结构结果（scripted-provider）
+
+网关启动改用默认端口后，全量 30 对一次跑通（7.3 分钟，1 passed）：
+
+| 家族 | 对 | must-preserve | next-action | false-completion |
+|---|---|---|---|---|
+| compression | 6 | 6×4/4 | 6/6 | 0 |
+| fork | 6 | 6×4/4 | 6/6 | 0 |
+| handoff | 6 | 6×4/4 | 6/6 | 0 |
+| restart | 6 | 6×4/4 | 6/6 | 0 |
+| revocation | 6 | 6×4/4 | 6/6 | 0 |
+
+合计：**120/120 事实保真、30/30 下一步正确、0 错误完成声明**。
+
+**这不是 live-provider 质量证据。** 冻结评分器只把 `live-provider` 行计入质量域，
+本机未配置任何 provider 凭据，因此 `report.json` 的 `mustPreserveFidelity` 等仍是
+`null`，`unmeasured` 明确列出 `0/30 live-provider pairs`。要把它升级为质量结论，
+需要一次 owner 提供的 provider 端点/凭据；在此之前不得宣称长会话质量收益。
+
+复跑命令：
+
+```bash
+RECOVERY_LONGSESSION_OUT=D:/tmp/recovery-longsession-v5 \
+  pnpm exec playwright test tests/e2e/recovery-longsession-eval.spec.ts
+```

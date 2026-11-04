@@ -3,7 +3,7 @@
   "drivenBy": "agent",
   "actor": "recovery-contract-eval-driver",
   "realHumanEvidence": false,
-  "generatedAt": "2026-11-04T04:59:38.897Z",
+  "generatedAt": "2026-11-04T07:12:34.620Z",
   "manifest": {
     "schema": "RecoveryContractManifest/v1",
     "frozenAt": "2026-11-03T00:00:00.000Z",
@@ -12,7 +12,7 @@
     "longSessionPairs": 30
   },
   "trialReceiptsDir": "D:/tmp/recovery-eval-v3",
-  "pairReceiptsDir": "D:/tmp/__no_pairs__",
+  "pairReceiptsDir": "D:/tmp/recovery-longsession-v5",
   "trialCountsByWindow": {
     "child-created-before-parent-advance-kill": 3,
     "effect-before-receipt-kill": 3,
@@ -22,7 +22,7 @@
   },
   "evaluation": {
     "schema": "RecoveryContractEval/v1",
-    "generatedAt": "2026-11-04T04:59:38.885Z",
+    "generatedAt": "2026-11-04T07:12:34.618Z",
     "drivenBy": "agent",
     "actor": "recovery-contract-eval-driver",
     "realHumanEvidence": false,
@@ -75,10 +75,10 @@
       ],
       "longSession": {
         "requiredPairs": 30,
-        "observedPairs": 0,
-        "completePairs": 0,
+        "observedPairs": 30,
+        "completePairs": 30,
         "liveProviderPairs": 0,
-        "scriptedProviderPairs": 0,
+        "scriptedProviderPairs": 30,
         "agentDerivedPairs": 0,
         "families": {
           "compression": 0,
@@ -160,6 +160,7 @@
     "blockers": [],
     "unmeasured": [
       "long-session live-provider pairs: 0/30",
+      "scripted-provider and agent-derived long-session rows are recorded but never counted as quality evidence",
       "long-session family compression: 0/6 live-provider pairs",
       "long-session family handoff: 0/6 live-provider pairs",
       "long-session family fork: 0/6 live-provider pairs",
