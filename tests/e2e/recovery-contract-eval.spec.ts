@@ -29,11 +29,16 @@ const MAIN_SESSION_KEY = 'agent:main:main';
 type GatewayStatus = { state?: string; gatewayReady?: boolean; childPid?: number };
 type LlmHandle = { log: Array<{ issued: string | null; toolResults: Record<string, string> }>; server: { close(cb: () => void): void } };
 
+/** A write tool overwrites the file, so a re-run shows up as a changed stamp. */
 function effectCount(markerPath: string): number {
   if (!existsSync(markerPath)) return 0;
-  return readFileSync(markerPath, 'utf8').split('\n').filter((line) => line.trim() === 'EFFECT').length;
+  return readFileSync(markerPath, "utf8").includes("EFFECT-") ? 1 : 0;
 }
 
+function effectStamp(markerPath: string): string {
+  if (!existsSync(markerPath)) return "";
+  return readFileSync(markerPath, "utf8").trim();
+}
 function lastToolResult(llm: LlmHandle | null): string {
   if (!llm) return '';
   for (let i = llm.log.length - 1; i >= 0; i -= 1) {
@@ -161,15 +166,13 @@ test.describe('recovery contract eval windows', () => {
   test('window under evaluation', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
     const startedAt = Date.now();
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-recovery-eval-'));
-    const markerPath = process.env.RECOVERY_MARKER_PATH || join(workspaceDir, 'recovery-effect-marker.txt');
-    const intentCommand = `sleep 45; printf 'EFFECT\\n' >> "${markerPath}"`;
-    const effectCommand = `printf 'EFFECT\\n' >> "${markerPath}"; sleep 45`;
-    const commandForWindow = WINDOW === 'intent-after-persist-kill' ? intentCommand : effectCommand;
+    const markerPath = join(workspaceDir, 'recovery-effect-marker.txt');
+    await writeFile(markerPath, "", "utf8");
     const llm = await startScriptedLlm((_userText, toolResults) => {
       if (Object.keys(toolResults).length > 0) return { text: `${WINDOW} complete` };
-      return { toolCall: { id: `w-${WINDOW}-0`, name: 'bash', args: { command: commandForWindow } } };
+      if (WINDOW === "intent-after-persist-kill") return { toolCall: { id: "w-intent-0", name: "bash", args: { command: "sleep 45" } } };
+      return { toolCall: { id: `w-${WINDOW}-0`, name: "write", args: { path: "recovery-effect-marker.txt", content: `EFFECT-${Date.now()}` } } };
     });
-
     const openclawDir = join(homeDir, '.openclaw');
     const sourceStateDir = join(userDataDir, 'openclaw-source-state');
     await mkdir(openclawDir, { recursive: true });
@@ -321,6 +324,11 @@ test.describe('recovery contract eval windows', () => {
     }
   });
 });
+
+
+
+
+
 
 
 

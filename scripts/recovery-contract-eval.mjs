@@ -54,10 +54,13 @@ const dir = resolve(argValue('--dir', 'D:/tmp/recovery-eval'));
 const manifest = buildRecoveryContractManifest();
 const receipts = readReceipts(dir);
 
+const windowById = new Map(manifest.windows.map((window) => [window.id, window]));
 const windowTrials = receipts.map((receipt) => ({
   windowId: receipt.windowId,
   trialIndex: receipt.trialIndex,
-  injectionPoint: receipt.injectionPoint,
+  // The frozen annotation is the contract's injection point; the receipt's own
+  // string is a descriptive label and must not override the frozen text.
+  injectionPoint: windowById.get(receipt.windowId)?.annotation?.injectionPoint ?? receipt.injectionPoint,
   duplicateEffects: receipt.duplicateEffects,
   lostTasks: receipt.lostTasks,
   terminalCorrect: receipt.terminalCorrect,
@@ -68,9 +71,36 @@ const windowTrials = receipts.map((receipt) => ({
   evidenceRef: receipt.evidenceRef,
 }));
 
-// Long-session recovery pairs are measured by TF-0722; until that runs the
-// array is empty and the evaluation must stay EVIDENCE_INSUFFICIENT.
-const longSessionMeasurements = [];
+// Long-session recovery pairs are measured by tests/e2e/recovery-longsession-eval.spec.ts.
+// A missing directory means that measurement has not run: the evaluation must
+// then stay EVIDENCE_INSUFFICIENT rather than inventing benign rows.
+function readPairReceipts(dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((name) => name.startsWith('pair-') && name.endsWith('.json'))
+    .map((name) => {
+      try {
+        return JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      } catch {
+        return null;
+      }
+    })
+    .filter((value) => value && typeof value === 'object');
+}
+
+const pairDir = resolve(argValue('--pairs', 'D:/tmp/recovery-longsession-eval'));
+const longSessionMeasurements = readPairReceipts(pairDir).map((receipt) => ({
+  pairId: receipt.pairId,
+  family: receipt.family,
+  provider: receipt.provider,
+  model: receipt.model,
+  measurementBasis: receipt.measurementBasis,
+  mustPreserveMatched: receipt.mustPreserveMatched,
+  falseCompletionClaim: receipt.falseCompletionClaim,
+  nextActionCorrect: receipt.nextActionCorrect,
+  recoveryLatencyMs: receipt.recoveryLatencyMs,
+  evidenceRef: receipt.evidenceRef,
+}));
 
 const result = evaluateRecoveryContractEval({
   manifest,
@@ -98,6 +128,7 @@ const report = {
     longSessionPairs: manifest.longSessionPairs.length,
   },
   trialReceiptsDir: dir.replaceAll('\\', '/'),
+  pairReceiptsDir: pairDir.replaceAll('\\', '/'),
   trialCountsByWindow: byWindow,
   evaluation: result,
 };
@@ -120,3 +151,5 @@ console.log(JSON.stringify({
 }, null, 1));
 
 process.exit(result.status === 'PASS' ? 0 : 1);
+
+
