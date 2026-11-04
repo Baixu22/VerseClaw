@@ -1,6 +1,6 @@
 ae463b9ffd0ebf00e1f04c993ac365c1d4cf151be5370f1d298311ad5dcd8ed1  harness/specs/fixtures/rsi-sekb-arms/protocol.v1.json
 e38cebf7c38e889f706d9e718fd38ec575e239806796e98b34702059809a3f7f  harness/specs/fixtures/rsi-sekb-arms/runs.v1.json
-eef73645949f8b48c247d09c7a5efeec27b2d4968dfefcfd90b5d5758cef513b  harness/specs/fixtures/rsi-sekb-arms/report.v1.json
+dc14e16919e0c33a432bc817d5f2f1957797ada11e29d81ce0814d179ae669e1  harness/specs/fixtures/rsi-sekb-arms/report.v1.json
 63d44493b0d82b6e5d4ebef5bd3031286deac7bbabc3120611b26da3b32edf9e  harness/specs/fixtures/rsi-sekb-arms/decision.v1.json
 56d73313f2a1705754b00ce3619cf0598b0dc03b7a013c25f63e58f09ab8ee88  scripts/rsi-sekb-arms.mjs
 9c87aecbf9c23bc9643353a43e596028a0f99d49578ec1ad9808f6318b836738  scripts/rsi-sekb-arms.d.mts

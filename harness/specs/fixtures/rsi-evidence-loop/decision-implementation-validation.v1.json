@@ -1,6 +1,6 @@
 {
   "schemaVersion": "RsiDecisionImplementationAcceptance/v1",
-  "generatedAt": "2026-11-04T13:43:40.768Z",
+  "generatedAt": "2026-11-04T13:47:12.955Z",
   "driven_by": "agent",
   "actor": "codex/rsi-decision-implementation",
   "status": "passed-with-global-ci-residual",
@@ -39,7 +39,7 @@
   ],
   "source": {
     "implementationCommit": "80ba67bb7d2d89855eb8c2066639ed9eaf2d3a0c",
-    "currentEvidenceCommit": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+    "currentEvidenceCommit": "4b930199a320b5e9d0a3ab542c2f16c7e8b8dfb5",
     "frozenVerificationCommit": "fbefc43fc5ad6fb0170645c8c30696a0d9f5ec26",
     "currentSourceMatchesFrozenVerification": false,
     "nonJudgedInputs": {
