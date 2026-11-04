@@ -14,6 +14,7 @@ requiredRules:
   - docs-sync
   - task-forest-autoclose-and-roles
 ownedPaths:
+  - .gitattributes
   - scripts/contract-check.mjs
   - scripts/contract-check.d.mts
   - scripts/repository-artifacts.json
@@ -54,3 +55,7 @@ readmeUpdates: not-required
 基线为 bfcf57616b361a12845014b3f054b95e31c4021c。修复沿用既有
 ContractCheckFixture/v1 和门禁规则；AST 负责源码枚举，不新增运行时权威。
 `gateway-backend-communication` 的接入边界保持原样。本轮没有产品可见行为变化。
+
+基线中的八份已跟踪 RSI calibration 日志仍被 `*.log` 忽略。本叶子仅将其加入
+精确 requiredInputs 与 ignore 例外，不改日志字节、历史 verdict 或 RSI 产品声明。
+新增验收目录使用精确字节属性，确保工作树读回不因换行转换改变摘要。

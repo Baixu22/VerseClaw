@@ -119,7 +119,15 @@
     "docs/dev/memory-control-plane.md",
     "harness/specs/tasks/memory-control-plane-authority.md",
     "harness/specs/tasks/memory-user-surface.md",
-    "harness/specs/fixtures/long-session-development/d1/typecheck-errors.log"
+    "harness/specs/fixtures/long-session-development/d1/typecheck-errors.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stderr-1.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stdout-1.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stderr-1.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stdout-1.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stderr-1.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stdout-1.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stderr-1.log",
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
