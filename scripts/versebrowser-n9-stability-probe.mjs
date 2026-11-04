@@ -35,15 +35,25 @@ function rssMbFor(runDir) {
 }
 
 export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = join(hostRoot, '.tmp'), coldStarts = 10, loops = 30, interrupts = 3, output } = {}) {
+  const fail = async (kind, message) => {
+    const report = { schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'fail', issues: [issue(kind, { message })] };
+    if (output) await writeFile(resolve(hostRoot, output), JSON.stringify(report, null, 2) + '\n', 'utf8');
+    return report;
+  };
+  if (![coldStarts, loops, interrupts].every(value => Number.isSafeInteger(value) && value >= 0) || coldStarts + loops + interrupts === 0) {
+    return fail('invalid_round_counts', 'At least one stability round is required; counts must be non-negative integers');
+  }
   const exePath = resolve(hostRoot, exe);
   const require = createRequire(join(hostRoot, 'package.json'));
   const electron = require('playwright-core')._electron;
   const issues = [];
   const rows = [];
   if (!existsSync(exePath)) {
-    return { schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'fail', issues: [issue('packaged_exe_missing', { exe })] };
+    return fail('packaged_exe_missing', exe);
   }
-  const build = await browserBuildIdentity(exePath);
+  let build;
+  try { build = await browserBuildIdentity(exePath); }
+  catch (error) { return fail('build_identity_failed', String(error.message ?? error)); }
 
   const fixture = createServer((_req, res) => {
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
@@ -51,23 +61,34 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       <input id="name" aria-label="Name"><button id="submit" onclick="document.querySelector('#result').textContent='Saved '+document.querySelector('#name').value">Save</button>
       <p id="result">Not saved</p>`);
   });
-  await new Promise((done) => fixture.listen(0, '127.0.0.1', done));
-  const url = `http://127.0.0.1:${fixture.address().port}/`;
-  await mkdir(tempRoot, { recursive: true });
-  const batchRoot = await mkdtemp(join(tempRoot, 'n9-batch-'));
+  let url;
+  let batchRoot;
+  try {
+    await mkdir(tempRoot, { recursive: true });
+    batchRoot = await mkdtemp(join(tempRoot, 'n9-batch-'));
+    await new Promise((done, reject) => { fixture.once('error', reject); fixture.listen(0, '127.0.0.1', done); });
+    url = `http://127.0.0.1:${fixture.address().port}/`;
+  } catch (error) {
+    fixture.closeAllConnections();
+    await new Promise(done => fixture.close(() => done()));
+    if (batchRoot) await rmdir(batchRoot).catch(() => undefined);
+    return fail('probe_initialization_failed', String(error.message ?? error));
+  }
 
   async function withInstance(kind, index, body) {
-    const runRoot = await mkdtemp(join(batchRoot, `n9-${kind}-`));
-    const userDataDir = join(runRoot, 'ud');
-    const homeDir = join(runRoot, 'home');
-    const artifactsDir = join(runRoot, 'playwright');
-    for (const dir of [userDataDir, homeDir, artifactsDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
-    await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
+    let runRoot;
     const runId = `n9-${kind}-${index}-${Date.now().toString(36)}`;
     const startedAt = Date.now();
     let app;
-    const row = { kind, index, runId, runRoot, status: 'fail' };
+    const row = { kind, index, runId, status: 'fail' };
     try {
+      runRoot = await mkdtemp(join(batchRoot, `n9-${kind}-`));
+      row.runRoot = runRoot;
+      const userDataDir = join(runRoot, 'ud');
+      const homeDir = join(runRoot, 'home');
+      const artifactsDir = join(runRoot, 'playwright');
+      for (const dir of [userDataDir, homeDir, artifactsDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
+      await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
       app = await electron.launch({ executablePath: exePath, artifactsDir, args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
         env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
           APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
@@ -92,7 +113,8 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       row.error = String((error && error.message) || error);
       issues.push(issue('round_failed', { kind, index, message: row.error }));
     } finally {
-      const cleanup = await cleanupBrowserProbe({ app, runRoot, interrupt: kind === 'interrupt' });
+      const cleanup = runRoot ? await cleanupBrowserProbe({ app, runRoot, interrupt: kind === 'interrupt' })
+        : { residualProcesses: 0, runDirReclaimed: false, resourcesCreated: false, errors: [] };
       Object.assign(row, cleanup);
       for (const message of cleanup.errors) issues.push(issue('round_cleanup_failed', { kind, index, message }));
       if (cleanup.errors.length) row.status = 'fail';
@@ -202,6 +224,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
   // The shared temp root can contain another running probe. Reclaim only the
   // exact per-round directories allocated by this invocation.
   for (const row of rows) {
+    if (!row.runRoot) { row.finalResidualProcesses = 0; row.finalResidualNames = []; row.runDirReclaimedFinal = false; continue; }
     const existed = existsSync(row.runRoot);
     const cleanup = await cleanupBrowserProbe({ runRoot: row.runRoot, removalAttempts: 5 });
     finalSweepKilled += cleanup.killed;

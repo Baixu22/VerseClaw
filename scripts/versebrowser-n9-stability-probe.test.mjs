@@ -1,10 +1,34 @@
 import assert from 'node:assert/strict';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { runProbe } from './versebrowser-n9-stability-probe.mjs';
 import { cleanupBrowserProbe } from './lib/versebrowser-probe-cleanup.mjs';
+import { browserBuildIdentity } from './lib/versebrowser-build-identity.mjs';
+import { PROVENANCE_PATH, sha256 } from './lib/versebrowser-build-provenance.mjs';
+import { recordBuildProvenance } from './versebrowser-build-provenance.mjs';
+
+const require = createRequire(import.meta.url);
+const asar = createRequire(require.resolve('electron-builder'))('@electron/asar');
+async function syntheticPackage(root) {
+  const app = join(root,'app'), runtime = join(root,'runtime'), resources = join(root,'package/resources');
+  const inputs = [
+    {archive:'app.asar',path:'dist/index.html',root:app},
+    {archive:'app.asar',path:'dist-electron/main/index.js',root:app},
+    {archive:'main-runtime.asar',path:'node_modules/@verse-claw/versebrowser/dist/engine/service.js',root:runtime},
+  ];
+  for (const input of inputs) {await mkdir(dirname(join(input.root,input.path)),{recursive:true});await writeFile(join(input.root,input.path),'synthetic fixture, never executed');}
+  const proof = {schemaVersion:1,scope:'versebrowser-desktop-build-v1',status:'bound',driven_by:'agent',actor:'unit-fixture',sourceCommit:'a'.repeat(40),sourceTree:'b'.repeat(40),dirty:false,outputs:inputs.map(({archive,path})=>({archive,path,sha256:sha256('synthetic fixture, never executed')}))};
+  await writeFile(join(app,PROVENANCE_PATH),JSON.stringify(proof)+'\n');
+  await mkdir(resources,{recursive:true});
+  await asar.createPackage(app,join(resources,'app.asar'));
+  await asar.createPackage(runtime,join(resources,'main-runtime.asar'));
+  const exe=join(root,'package/Verse Claw.exe');await writeFile(exe,'not executable');
+  return {exe,app,runtime,resources};
+}
 
 test('census failures remain unknown and cannot skip owned directory reclamation', async () => {
   const root = await mkdtemp(join(tmpdir(), 'verse-failed-census-'));
@@ -27,21 +51,80 @@ test('an interruption without an actual owned termination is not successful evid
 test('a probe never sweeps another run from its shared temp root', async () => {
   const root = await mkdtemp(join(tmpdir(), 'verse-probe-cleanup-'));
   try {
-    const exe = join(root, 'build', 'Verse Claw.exe');
-    for (const file of [exe, join(root, 'build/resources/app.asar'), join(root, 'build/resources/main-runtime.asar')]) {
-      await mkdir(dirname(file), { recursive: true });
-      await writeFile(file, 'synthetic identity fixture; never launched');
-    }
     const tempRoot = join(root, 'temp');
     await mkdir(join(tempRoot, 'n9-other-run'), { recursive: true });
     const sentinel = join(tempRoot, 'n9-other-run/keep.txt');
     await writeFile(sentinel, 'another run owns this');
-    // No Electron launch: exercise the real directory allocation/cleanup only.
-    const report = await runProbe({ exe, tempRoot, coldStarts: 0, loops: 0, interrupts: 0 });
-    assert.equal(report.status, 'pass');
+    const owned = await mkdtemp(join(tempRoot,'n9-owned-'));
+    const cleanup = await cleanupBrowserProbe({runRoot:owned,query:()=>[]});
+    assert.equal(cleanup.runDirReclaimed,true);
     assert.equal(await readFile(sentinel, 'utf8'), 'another run owns this');
     assert.deepEqual(await readdir(tempRoot), ['n9-other-run']);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test('zero or invalid stability rounds cannot create a pass receipt', async () => {
+  for (const count of [0,-1,NaN,0.5]) {
+    const report=await runProbe({coldStarts:count,loops:0,interrupts:0});
+    assert.equal(report.status,'fail');assert.equal(report.issues[0].kind,'invalid_round_counts');
+  }
+});
+
+test('packaged output changes are detected against the embedded build proof', async () => {
+  const root=await mkdtemp(join(tmpdir(),'verse-build-proof-'));
+  try {
+    const fixture=await syntheticPackage(root);
+    assert.equal((await browserBuildIdentity(fixture.exe)).schemaVersion,2);
+    await writeFile(join(fixture.runtime,'node_modules/@verse-claw/versebrowser/dist/engine/service.js'),'changed after build');
+    await asar.createPackage(fixture.runtime,join(fixture.resources,'main-runtime.asar'));
+    await assert.rejects(browserBuildIdentity(fixture.exe),/Packaged build output differs/);
+  } finally {await rm(root,{recursive:true,force:true});}
+});
+
+test('an unrecorded browser copy in app.asar cannot escape compiled-output verification', async () => {
+  const root=await mkdtemp(join(tmpdir(),'verse-build-mirror-'));
+  try {
+    const fixture=await syntheticPackage(root);
+    const mirror=join(fixture.app,'node_modules/@verse-claw/versebrowser/dist/engine/service.js');
+    await mkdir(dirname(mirror),{recursive:true});await writeFile(mirror,'unverified mirror');
+    await asar.createPackage(fixture.app,join(fixture.resources,'app.asar'));
+    await assert.rejects(browserBuildIdentity(fixture.exe),/Unrecorded packaged build output/);
+  } finally {await rm(root,{recursive:true,force:true});}
+});
+
+test('the build seal rejects production source changed after capture', async () => {
+  const root=await mkdtemp(join(tmpdir(),'verse-build-source-'));
+  const git=(...args)=>execFileSync('git',args,{cwd:root,windowsHide:true,encoding:'utf8'});
+  try {
+    await mkdir(join(root,'shared'),{recursive:true});
+    await writeFile(join(root,'shared/contract.ts'),'export const value = 1;\n');
+    await writeFile(join(root,'.gitignore'),'build/\ndist/\ndist-electron/\npackages/versebrowser/dist/\n');
+    git('init','--initial-branch=main');git('add','.');git('-c','user.name=Agent fixture','-c','user.email=fixture@example.invalid','commit','-m','fixture');
+    await recordBuildProvenance(root,true);
+    for(const file of ['dist/index.html','dist-electron/main/index.js','packages/versebrowser/dist/engine/service.js']) {
+      await mkdir(dirname(join(root,file)),{recursive:true});await writeFile(join(root,file),'compiled fixture');
+    }
+    assert.equal((await recordBuildProvenance(root)).status,'bound');
+    await writeFile(join(root,'shared/contract.ts'),'export const value = 2;\n');
+    assert.equal((await recordBuildProvenance(root)).status,'source-changed-or-dirty');
+    git('add','shared/contract.ts');git('-c','user.name=Agent fixture','-c','user.email=fixture@example.invalid','commit','-m','source changed');
+    assert.equal((await recordBuildProvenance(root)).status,'source-changed-or-dirty');
+  } finally {await rm(root,{recursive:true,force:true});}
+});
+
+test('both runners release the fixture and write failure evidence on initialization errors', async () => {
+  const root=await mkdtemp(join(tmpdir(),'verse-init-failure-'));
+  try {
+    const fixture=await syntheticPackage(root);const invalidRoot=join(root,'not-a-directory');await writeFile(invalidRoot,'fixture');
+    for (const runner of ['versebrowser-m10-packaged-flow-verify.mjs','versebrowser-n9-stability-probe.mjs']) {
+      const output=join(root,runner+'.json');
+      const result=spawnSync(process.execPath,[resolve('scripts',runner),'--exe',fixture.exe,'--temp-root',invalidRoot,'--output',output],{cwd:resolve('.'),encoding:'utf8',windowsHide:true,timeout:10000});
+      assert.equal(result.error,undefined,`${runner} did not exit: ${result.error}`);
+      assert.equal(result.status,1,result.stderr);
+      const report=JSON.parse(await readFile(output,'utf8'));assert.equal(report.status,'fail');
+      assert.notEqual(report.issues[0].kind,'build_identity_failed');
+    }
+  } finally {await rm(root,{recursive:true,force:true});}
 });

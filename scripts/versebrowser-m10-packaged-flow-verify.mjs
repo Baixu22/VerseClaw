@@ -21,7 +21,9 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
   const exePath = resolve(hostRoot, exe);
   const issues = [];
   if (!existsSync(exePath)) return { schemaVersion: 1, driven_by: 'agent', actor: 'codex', status: 'fail', issues: [{ kind: 'packaged_exe_missing', path: exe }] };
-  const build = await browserBuildIdentity(exePath);
+  let build;
+  try { build = await browserBuildIdentity(exePath); }
+  catch (error) { return {schemaVersion:1,artifact:'versebrowser-m10-packaged-flow',driven_by:'agent',actor:'codex',status:'fail',issues:[{kind:'build_identity_failed',message:String(error.message ?? error)}]}; }
   const require = createRequire(join(hostRoot, 'package.json'));
   const electron = require('playwright-core')._electron;
 
@@ -29,22 +31,23 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     res.end('<!doctype html><title>M10 Fixture</title><h1 id="h">M10 PACKAGED OK</h1><p>body marker 42</p>');
   });
-  await new Promise((done) => fixture.listen(0, '127.0.0.1', done));
-  const url = `http://127.0.0.1:${fixture.address().port}/`;
-  // A fresh checkout has no .tmp directory, so mkdtemp would fail with ENOENT before
-  // the app is ever launched (N8 F3).
-  await mkdir(tempRoot, { recursive: true });
-  const runRoot = await mkdtemp(join(tempRoot, 'm10-packaged-flow-'));
-  const userDataDir = join(runRoot, 'ud');
-  const homeDir = join(runRoot, 'home');
-  const artifactsDir = join(runRoot, 'playwright');
-  for (const dir of [userDataDir, homeDir, artifactsDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
-  await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
   const runId = `m10-${Date.now().toString(36)}`;
-
-  const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, build, fixtureUrl: url, runId };
+  const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, build, runId };
   let app;
+  let runRoot;
   try {
+    await new Promise((done, reject) => { fixture.once('error', reject); fixture.listen(0, '127.0.0.1', done); });
+    const url = `http://127.0.0.1:${fixture.address().port}/`;
+    result.fixtureUrl = url;
+    // A fresh checkout has no .tmp directory, so mkdtemp would fail with ENOENT before
+    // the app is ever launched (N8 F3).
+    await mkdir(tempRoot, { recursive: true });
+    runRoot = await mkdtemp(join(tempRoot, 'm10-packaged-flow-'));
+    const userDataDir = join(runRoot, 'ud');
+    const homeDir = join(runRoot, 'home');
+    const artifactsDir = join(runRoot, 'playwright');
+    for (const dir of [userDataDir, homeDir, artifactsDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
+    await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
     app = await electron.launch({ executablePath: exePath, artifactsDir, args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
       env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
         APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
@@ -96,11 +99,12 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
   } catch (error) {
     issues.push({ kind: 'packaged_flow_failed', message: String(error?.message ?? error) });
   } finally {
-    result.cleanup = await cleanupBrowserProbe({ app, runRoot, removalAttempts: 5 });
-    for (const message of result.cleanup.errors) issues.push({ kind: 'packaged_cleanup_failed', message });
     // Never let a lingering client connection hang the verifier (N8 F3).
     fixture.closeAllConnections();
     await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
+    result.cleanup = runRoot ? await cleanupBrowserProbe({ app, runRoot, removalAttempts: 5 })
+      : { residualProcesses: 0, runDirReclaimed: true, errors: [], resourcesCreated: false };
+    for (const message of result.cleanup.errors) issues.push({ kind: 'packaged_cleanup_failed', message });
   }
 
   const f = result.flow ?? {};

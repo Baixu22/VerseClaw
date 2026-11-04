@@ -11,6 +11,7 @@ expectedUserBehavior:
   - Capability discovery does not advertise executable actions from an empty host snapshot.
   - Verse acceptance reports distinguish current verified candidates from historical evidence and stale source.
 touchedAreas:
+  - package.json
   - electron/gateway/agent-browser-bridge.ts
   - electron/services/agent-browser-api.ts
   - electron/services/agent-browser-network-proxy.ts
@@ -33,6 +34,8 @@ touchedAreas:
   - scripts/versebrowser-n9-stability-probe.mjs
   - scripts/versebrowser-n9-stability-probe.test.mjs
   - scripts/lib/versebrowser-build-identity.mjs
+  - scripts/lib/versebrowser-build-provenance.mjs
+  - scripts/versebrowser-build-provenance.mjs
   - scripts/lib/versebrowser-probe-cleanup.mjs
   - scripts/verify-versegit-product-integration.mjs
   - scripts/verify-versegit-product-integration.d.mts
@@ -47,6 +50,7 @@ touchedAreas:
   - harness/specs/tasks/versegit-product-f5-global-acceptance.md
   - harness/specs/fixtures/verse-tools-boundary-repair/**
   - harness/specs/fixtures/versebrowser-invocation-maturity/current-20261104/**
+  - harness/specs/fixtures/versebrowser-invocation-maturity/current-20261105/**
   - harness/specs/fixtures/versegit-product-integration/f5-current-20261104/**
   - docs/modules/verse-tools.md
   - docs/dev/versegit-validation-layer/README.md
@@ -119,6 +123,13 @@ matches the complete owned path; it does not serialize the entire host inventory
 Unicode command lines are preserved. A query error or timeout still fails the run and
 cannot bypass cleanup or discard the affected round. Playwright controls its
 own ephemeral debugging port; its artifacts remain under the owned run root.
+
+Initialization failures are covered before any fixture server is left listening;
+an empty N9 round selection is a failure, not stability evidence. The Vite build
+captures clean source before compilation and seals a compiled-output manifest
+afterward. That provenance travels inside app.asar, and N8/N9 verify the actual
+packaged outputs against it. Current verification checks its commit/tree and the
+absence of production-source changes between the build and run candidates.
 
 The required full typecheck also repairs a pre-existing declaration omission:
 `buildArmsReport` already returns `promotion` at runtime, but its declaration did

@@ -16,10 +16,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { PRODUCT_SOURCE_SCOPE, validBuildProvenance } from './lib/versebrowser-build-provenance.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EVIDENCE_ROOT = 'harness/specs/fixtures/versebrowser-invocation-maturity';
-const CURRENT = 'current-20261104';
+const CURRENT = 'current-20261105';
 const SOURCE_SCOPE = [
   'packages/versebrowser',
   'electron/services/agent-browser-api.ts',
@@ -38,6 +39,9 @@ const SOURCE_SCOPE = [
   'scripts/versebrowser-host-integration-verify.mjs',
   'scripts/lib/versebrowser-build-identity.mjs',
   'scripts/lib/versebrowser-probe-cleanup.mjs',
+  'scripts/lib/versebrowser-build-provenance.mjs',
+  'scripts/versebrowser-build-provenance.mjs',
+  'package.json',
   'tests/e2e/versebrowser-host-invocation.spec.ts',
   'tests/unit/versebrowser-*.test.ts',
 ];
@@ -168,11 +172,25 @@ export async function verifyCurrent(hostRoot) {
   if (n9?.status !== 'pass') issues.push(issue('current_n9_not_pass'));
   const build = candidate?.build;
   const expectedPaths = ['Verse Claw.exe', 'resources/app.asar', 'resources/main-runtime.asar'];
-  const validBuild = build?.schemaVersion === 1 && Array.isArray(build.artifacts)
+  const validBuild = build?.schemaVersion === 2 && Array.isArray(build.artifacts)
     && JSON.stringify(build.artifacts.map(entry => entry.path)) === JSON.stringify(expectedPaths)
     && build.artifacts.every(entry => Number.isSafeInteger(entry.bytes) && entry.bytes > 0 && /^[0-9a-f]{64}$/.test(entry.sha256))
     && build.digest === sha256(Buffer.from(JSON.stringify(build.artifacts)));
   if (!validBuild) issues.push(issue('current_build_identity_invalid'));
+  const provenance = build?.provenance;
+  if (!validBuildProvenance(provenance) || build?.provenanceSha256 !== sha256(Buffer.from(JSON.stringify(provenance)+'\n'))) {
+    issues.push(issue('current_build_provenance_invalid'));
+  } else {
+    try {
+      if (candidate?.productBuildCommit !== provenance.sourceCommit) issues.push(issue('current_product_build_commit_mismatch'));
+      if (git(hostRoot,['rev-parse',`${provenance.sourceCommit}^{tree}`]) !== provenance.sourceTree) issues.push(issue('current_product_build_tree_mismatch'));
+      git(hostRoot,['merge-base','--is-ancestor',provenance.sourceCommit,candidate.sourceCommit]);
+      const drift = git(hostRoot,['diff','--name-only',provenance.sourceCommit,candidate.sourceCommit,'--',...PRODUCT_SOURCE_SCOPE]);
+      if (drift) issues.push(issue('current_product_build_source_drift',{changed:drift.split(/\r?\n/)}));
+    } catch (error) {
+      issues.push(issue('current_product_build_git_check_failed',{message:String(error.message ?? error)}));
+    }
+  }
   for (const [label, result] of [['n8', n8], ['n9', n9]]) {
     if (!validBuild || JSON.stringify(result?.build) !== JSON.stringify(build)) issues.push(issue('current_run_build_mismatch', { run: label }));
   }
@@ -219,14 +237,15 @@ async function scanCredentials(hostRoot) {
 }
 
 export async function verifyEvidence(hostRoot = ROOT) {
-  const [n8, n9, previous, current] = await Promise.all([
+  const [n8, n9, previous, previousRepair, current] = await Promise.all([
     verifyN8(hostRoot),
     verifyHistoricalN9(hostRoot),
     verifyManifest(hostRoot, path.join(EVIDENCE_ROOT, 'current-merge-20261025')),
+    verifyManifest(hostRoot, path.join(EVIDENCE_ROOT, 'current-20261104')),
     verifyCurrent(hostRoot),
   ]);
   const credentials = await scanCredentials(hostRoot);
-  const issues = [n8, n9, previous, current].flatMap((section) => section.issues ?? []);
+  const issues = [n8, n9, previous, previousRepair, current].flatMap((section) => section.issues ?? []);
   for (const hit of credentials) issues.push(issue('credential_pattern_hit', hit));
   return {
     schemaVersion: 1,

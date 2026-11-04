@@ -32,17 +32,29 @@ afterAll(() => {
 describe('Verse evidence candidate identity', () => {
   it('rejects both dirty tracked changes and untracked source even when HEAD is unchanged', async () => {
     const root = fixture();
-    const dir = 'harness/specs/fixtures/versebrowser-invocation-maturity/current-20261104';
+    const dir = 'harness/specs/fixtures/versebrowser-invocation-maturity/current-20261105';
     // Synthetic verifier fixture, never product/runtime acceptance evidence.
     const json = (file: string, value: unknown) => write(root, `${dir}/${file}`, JSON.stringify(value));
     const artifacts = ['Verse Claw.exe', 'resources/app.asar', 'resources/main-runtime.asar'].map(path => ({ path, bytes: 1, sha256: hash(path) }));
-    const build = { schemaVersion: 1, artifacts, digest: hash(JSON.stringify(artifacts)) };
-    json('candidate.json', { driven_by: 'agent', actor: 'unit-fixture', dirty: false, sourceCommit: git(root, ['rev-parse', 'HEAD']), sourceTree: git(root, ['rev-parse', 'HEAD^{tree}']), build });
+    const sourceCommit = git(root, ['rev-parse', 'HEAD']);
+    const sourceTree = git(root, ['rev-parse', 'HEAD^{tree}']);
+    const provenance = {schemaVersion:1,scope:'versebrowser-desktop-build-v1',status:'bound',driven_by:'agent',actor:'unit-fixture',sourceCommit,sourceTree,dirty:false,outputs:[
+      {archive:'app.asar',path:'dist/index.html',sha256:hash('renderer')},
+      {archive:'app.asar',path:'dist-electron/main/index.js',sha256:hash('main')},
+      {archive:'main-runtime.asar',path:'node_modules/@verse-claw/versebrowser/dist/engine/service.js',sha256:hash('browser')},
+    ]};
+    const build = { schemaVersion: 2, artifacts, digest: hash(JSON.stringify(artifacts)), provenance, provenanceSha256:hash(JSON.stringify(provenance)+'\n') };
+    const candidate = { driven_by: 'agent', actor: 'unit-fixture', dirty: false, sourceCommit, sourceTree, productBuildCommit:sourceCommit, build };
+    json('candidate.json', candidate);
     json('status.json', { status: 'pass' });
     json('n8-result.json', { status: 'pass', build });
     json('n9-result.json', { status: 'pass', build, summary: { loops: { passed: 30, fullLoops: 30 }, coldStarts: { passed: 10 }, interrupts: { killedWithLiveSession: 3, recoveryPassed: 3 }, runDirsReclaimed: 46, totalRounds: 46 } });
-    write(root, `${dir}/SHA256SUMS`, readdirSync(join(root, dir)).sort().map(file => `${hash(readFileSync(join(root, dir, file)))}  ${file}`).join('\n') + '\n');
+    const seal = () => write(root, `${dir}/SHA256SUMS`, readdirSync(join(root, dir)).filter(file=>file!=='SHA256SUMS').sort().map(file => `${hash(readFileSync(join(root, dir, file)))}  ${file}`).join('\n') + '\n');
+    seal();
     expect((await verifyCurrent(root)).status).toBe('pass');
+    json('candidate.json',{...candidate,productBuildCommit:'f'.repeat(40)});
+    expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_product_build_commit_mismatch'});
+    json('candidate.json',candidate);seal();
     json('n8-result.json', { status: 'pass' });
     expect((await verifyCurrent(root)).issues).toContainEqual({ kind: 'current_run_build_mismatch', run: 'n8' });
     json('n8-result.json', { status: 'pass', build });
@@ -61,6 +73,11 @@ describe('Verse evidence candidate identity', () => {
     git(root, ['-c', 'user.name=Agent fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-m', 'untested source']);
     write(root, 'shared/host-api/contract.ts', 'export const contract = 1;\n');
     expect((await verifyCurrent(root)).issues).toContainEqual({ kind: 'current_evidence_stale', changed: expect.arrayContaining(['shared/host-api/contract.ts']) });
+    rmSync(join(root,'packages/versebrowser/new-source.ts'));
+    write(root, 'shared/host-api/contract.ts', 'export const contract = 2;\n');
+    json('candidate.json',{...candidate,sourceCommit:git(root,['rev-parse','HEAD']),sourceTree:git(root,['rev-parse','HEAD^{tree}'])});
+    seal();
+    expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_product_build_source_drift',changed:['shared/host-api/contract.ts']});
   });
 
   it('uses the pinned Git object despite checkout drift and verifies the applied patch result', async () => {
