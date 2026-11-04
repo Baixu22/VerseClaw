@@ -2377,7 +2377,8 @@
     "docs/dev/evidence/semantic-convergence-20261104/tf-0738/comms-replay.json",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0738/comms-compare.json",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0738/credential-scan.json",
-    "docs/dev/evidence/semantic-convergence-20261104/tf-0738/SHA256SUMS"
+    "docs/dev/evidence/semantic-convergence-20261104/tf-0738/SHA256SUMS",
+    "docs/dev/rc03-seal-coverage.md"
   ],
   "artifactBatches": {}
 }

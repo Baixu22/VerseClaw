@@ -3,6 +3,7 @@
  */
 
 import type { KeyId } from "@earendil-works/pi-tui";
+import { SealMutationError } from "../../../context-engine/seal-registry.js";
 import type { ImageContent, Model } from "../../../llm/types.js";
 import { type Theme, theme } from "../../modes/interactive/theme/theme.js";
 import type { AgentMessage } from "../../runtime/index.js";
@@ -928,6 +929,8 @@ export class ExtensionRunner {
             currentMessages = (handlerResult as ContextEventResult).messages!;
           }
         } catch (err) {
+          // A seal denial is a send boundary, not an optional extension failure.
+          if (err instanceof SealMutationError) throw err;
           const message = err instanceof Error ? err.message : String(err);
           const stack = err instanceof Error ? err.stack : undefined;
           this.emitError({

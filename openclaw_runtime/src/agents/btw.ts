@@ -3,6 +3,13 @@
  * or continuing the main task.
  */
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { randomUUID } from "node:crypto";
+import {
+  releaseRc03Run,
+  resolveCurrentRc03SealState,
+  runRc03SealHook,
+} from "../context-engine/rc03-seal-hook.js";
+import { RC03_PRE_SEAL_PRODUCERS } from "../context-engine/rc03-producers.js";
 import type { GetReplyOptions } from "../auto-reply/get-reply-options.types.js";
 import type { ReplyPayload } from "../auto-reply/reply-payload.js";
 import type { ReasoningLevel, ThinkLevel } from "../auto-reply/thinking.js";
@@ -505,46 +512,47 @@ export async function runBtwSideQuestion(
     workspaceDir,
     env: process.env,
   });
-  const streamFn = resolveEmbeddedAgentStreamFn({
-    currentStreamFn: streamSimple,
-    providerStreamFn,
-    sessionId,
-    signal: params.opts?.abortSignal,
-    model: runtimeModel,
-    resolvedApiKey: apiKey,
-    authProfileId: resolvedAuthProfileId,
-  });
-
-  const chunker =
-    params.opts?.onBlockReply && params.blockReplyChunking
-      ? new EmbeddedBlockChunker(params.blockReplyChunking)
-      : undefined;
-  let emittedBlocks = 0;
-  let blockEmitChain: Promise<void> = Promise.resolve();
-  let answerText = "";
-  let reasoningText = "";
-  let assistantStarted = false;
-  let sawTextEvent = false;
-
-  const emitBlockChunk = async (text: string) => {
-    const trimmed = text.trim();
-    if (!trimmed || !params.opts?.onBlockReply) {
-      return;
-    }
-    emittedBlocks += 1;
-    blockEmitChain = blockEmitChain.then(async () => {
-      await params.opts?.onBlockReply?.({
-        text,
-        btw: { question: params.question },
-      });
+  const runId = `btw:${sessionId}:${randomUUID()}`;
+  try {
+    const streamFn = resolveEmbeddedAgentStreamFn({
+      cfg: params.cfg,
+      currentStreamFn: streamSimple,
+      providerStreamFn,
+      sessionId,
+      runId,
+      signal: params.opts?.abortSignal,
+      model: runtimeModel,
+      resolvedApiKey: apiKey,
+      authProfileId: resolvedAuthProfileId,
     });
-    await blockEmitChain;
-  };
 
-  const stream = await streamWithPayloadPatch(
-    streamFn,
-    runtimeModel,
-    {
+    const chunker =
+      params.opts?.onBlockReply && params.blockReplyChunking
+        ? new EmbeddedBlockChunker(params.blockReplyChunking)
+        : undefined;
+    let emittedBlocks = 0;
+    let blockEmitChain: Promise<void> = Promise.resolve();
+    let answerText = "";
+    let reasoningText = "";
+    let assistantStarted = false;
+    let sawTextEvent = false;
+
+    const emitBlockChunk = async (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed || !params.opts?.onBlockReply) {
+        return;
+      }
+      emittedBlocks += 1;
+      blockEmitChain = blockEmitChain.then(async () => {
+        await params.opts?.onBlockReply?.({
+          text,
+          btw: { question: params.question },
+        });
+      });
+      await blockEmitChain;
+    };
+
+    const context: { systemPrompt: string; messages: Message[] } = {
       systemPrompt: buildBtwSystemPrompt(),
       messages: [
         ...messages,
@@ -559,92 +567,121 @@ export async function runBtwSideQuestion(
           timestamp: Date.now(),
         },
       ],
-    },
-    {
-      apiKey,
-      // BTW is intentionally a lightweight side question path. Keep provider
-      // reasoning off so we reliably receive answer text instead of thinking-only output.
-      reasoning: undefined,
-      signal: params.opts?.abortSignal,
-    },
-    (payloadObj) => {
-      // BTW is intentionally tool-less. Some OpenAI-compatible providers reject
-      // the empty tools arrays injected for generic tool-history replay.
-      if (Array.isArray(payloadObj.tools) && payloadObj.tools.length === 0) {
-        delete payloadObj.tools;
+    };
+    const sealState = resolveCurrentRc03SealState(params.cfg);
+    if (sealState.enabled) {
+      runRc03SealHook(
+        { messages: [], lineage: [], systemPromptAddition: context.systemPrompt },
+        context.messages,
+        {
+          enabled: true,
+          runId,
+          sessionKey: params.sessionKey ?? sessionId,
+          providerId: runtimeModel.provider,
+          systemPrompt: context.systemPrompt,
+          boundaryProducer: {
+            id: RC03_PRE_SEAL_PRODUCERS.btwSideQuestion,
+            chars: context.systemPrompt.length + JSON.stringify(context.messages).length,
+          },
+        },
+      );
+    }
+    const stream = await streamWithPayloadPatch(
+      streamFn,
+      runtimeModel,
+      context,
+      {
+        apiKey,
+        // BTW is intentionally a lightweight side question path. Keep provider
+        // reasoning off so we reliably receive answer text instead of thinking-only output.
+        reasoning: undefined,
+        signal: params.opts?.abortSignal,
+      },
+      (payloadObj) => {
+        // BTW is intentionally tool-less. Some OpenAI-compatible providers reject
+        // the empty tools arrays injected for generic tool-history replay.
+        if (Array.isArray(payloadObj.tools) && payloadObj.tools.length === 0) {
+          delete payloadObj.tools;
+        }
+      },
+    );
+
+    let finalEvent:
+      | Extract<AssistantMessageEvent, { type: "done" }>
+      | Extract<AssistantMessageEvent, { type: "error" }>
+      | undefined;
+
+    for await (const event of stream) {
+      finalEvent = event.type === "done" || event.type === "error" ? event : finalEvent;
+
+      if (!assistantStarted && (event.type === "text_start" || event.type === "start")) {
+        assistantStarted = true;
+        await params.opts?.onAssistantMessageStart?.();
       }
-    },
-  );
 
-  let finalEvent:
-    | Extract<AssistantMessageEvent, { type: "done" }>
-    | Extract<AssistantMessageEvent, { type: "error" }>
-    | undefined;
+      if (event.type === "text_delta") {
+        sawTextEvent = true;
+        answerText += event.delta;
+        chunker?.append(event.delta);
+        if (chunker && params.resolvedBlockStreamingBreak === "text_end") {
+          chunker.drain({ force: false, emit: (chunk) => void emitBlockChunk(chunk) });
+        }
+        continue;
+      }
 
-  for await (const event of stream) {
-    finalEvent = event.type === "done" || event.type === "error" ? event : finalEvent;
+      if (
+        event.type === "text_end" &&
+        chunker &&
+        params.resolvedBlockStreamingBreak === "text_end"
+      ) {
+        chunker.drain({ force: true, emit: (chunk) => void emitBlockChunk(chunk) });
+        continue;
+      }
 
-    if (!assistantStarted && (event.type === "text_start" || event.type === "start")) {
-      assistantStarted = true;
-      await params.opts?.onAssistantMessageStart?.();
+      if (event.type === "thinking_delta") {
+        reasoningText += event.delta;
+        if (params.resolvedReasoningLevel !== "off") {
+          await params.opts?.onReasoningStream?.({ text: reasoningText, isReasoning: true });
+        }
+        continue;
+      }
+
+      if (event.type === "thinking_end" && params.resolvedReasoningLevel !== "off") {
+        await params.opts?.onReasoningEnd?.();
+      }
     }
 
-    if (event.type === "text_delta") {
-      sawTextEvent = true;
-      answerText += event.delta;
-      chunker?.append(event.delta);
-      if (chunker && params.resolvedBlockStreamingBreak === "text_end") {
-        chunker.drain({ force: false, emit: (chunk) => void emitBlockChunk(chunk) });
-      }
-      continue;
-    }
-
-    if (event.type === "text_end" && chunker && params.resolvedBlockStreamingBreak === "text_end") {
+    if (chunker && params.resolvedBlockStreamingBreak !== "text_end" && chunker.hasBuffered()) {
       chunker.drain({ force: true, emit: (chunk) => void emitBlockChunk(chunk) });
-      continue;
+    }
+    await blockEmitChain;
+
+    if (finalEvent?.type === "error") {
+      const message = collectTextContent(finalEvent.error.content);
+      throw new Error(message || finalEvent.error.errorMessage || "BTW failed.");
     }
 
-    if (event.type === "thinking_delta") {
-      reasoningText += event.delta;
-      if (params.resolvedReasoningLevel !== "off") {
-        await params.opts?.onReasoningStream?.({ text: reasoningText, isReasoning: true });
+    const finalMessage = finalEvent?.type === "done" ? finalEvent.message : undefined;
+    if (finalMessage) {
+      if (!sawTextEvent) {
+        answerText = collectTextContent(finalMessage.content);
       }
-      continue;
+      if (!reasoningText) {
+        collectThinkingContent(finalMessage.content);
+      }
     }
 
-    if (event.type === "thinking_end" && params.resolvedReasoningLevel !== "off") {
-      await params.opts?.onReasoningEnd?.();
+    const answer = answerText.trim();
+    if (!answer) {
+      throw new Error("No BTW response generated.");
     }
-  }
 
-  if (chunker && params.resolvedBlockStreamingBreak !== "text_end" && chunker.hasBuffered()) {
-    chunker.drain({ force: true, emit: (chunk) => void emitBlockChunk(chunk) });
-  }
-  await blockEmitChain;
-
-  if (finalEvent?.type === "error") {
-    const message = collectTextContent(finalEvent.error.content);
-    throw new Error(message || finalEvent.error.errorMessage || "BTW failed.");
-  }
-
-  const finalMessage = finalEvent?.type === "done" ? finalEvent.message : undefined;
-  if (finalMessage) {
-    if (!sawTextEvent) {
-      answerText = collectTextContent(finalMessage.content);
+    if (emittedBlocks > 0) {
+      return undefined;
     }
-    if (!reasoningText) {
-      collectThinkingContent(finalMessage.content);
-    }
-  }
 
-  const answer = answerText.trim();
-  if (!answer) {
-    throw new Error("No BTW response generated.");
+    return { text: answer };
+  } finally {
+    releaseRc03Run(runId);
   }
-
-  if (emittedBlocks > 0) {
-    return undefined;
-  }
-
-  return { text: answer };
 }

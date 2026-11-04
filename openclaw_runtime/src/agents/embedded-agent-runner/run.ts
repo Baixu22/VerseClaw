@@ -12,7 +12,7 @@ import { resolveStorePath, updateSessionStoreEntry } from "../../config/sessions
 import { ensureContextEnginesInitialized } from "../../context-engine/init.js";
 import {
   beginRc03RunAttempts,
-  clearRc03SealPlan,
+  releaseRc03Run,
   endRc03RunAttempts,
   resolveRc03SealState,
 } from "../../context-engine/rc03-seal-hook.js";
@@ -3871,7 +3871,7 @@ export async function runEmbeddedAgent(
       } finally {
         forgetPromptBuildDrainCacheForRun(params.runId);
         if (rc03AttemptBase === undefined) {
-          clearRc03SealPlan(params.runId);
+          releaseRc03Run(params.runId);
         } else {
           endRc03RunAttempts(params.runId, rc03AttemptBase + runLoopIterations);
         }

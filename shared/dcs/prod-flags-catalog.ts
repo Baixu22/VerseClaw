@@ -443,11 +443,11 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     defaultValue: false,
     risk: 'opt-in',
     enable:
-      'Set env OPENCLAW_RC03_SEAL=1 (or runtime.rc03.seal = true) and restart gateway/runtime. Enabling turns on RC-03 message-replacement sealing plus the correlated runtime/wire receipts; it does not change returned summaries.',
+      'Set env OPENCLAW_RC03_SEAL=1 (or runtime.rc03.seal = true) and restart gateway/runtime. Enabling turns on RC-03 producer admission, message-replacement sealing and correlated runtime/wire receipts. Unknown applied producers and post-seal system-prompt changes reject before the embedded provider function runs.',
     rollback:
       'Unset OPENCLAW_RC03_SEAL or set runtime.rc03.seal = false and restart. With the flag off no seal, runtime receipt, or wire receipt is written.',
     riskNote:
-      'Opt-in observation only. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.',
+      'Opt-in semantic admission; receipt persistence remains observational. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.',
     executor: {
       status: 'wired',
       sites: [

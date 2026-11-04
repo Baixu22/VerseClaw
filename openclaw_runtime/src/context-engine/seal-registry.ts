@@ -9,6 +9,16 @@ import { createHash } from 'node:crypto';
 export const SEAL_REGISTRY_SCHEMA = 'SealRegistry/v1' as const;
 
 export type SealProducerKind = 'semantic' | 'non-semantic';
+export type SealPhase = 'pre-seal' | 'post-seal';
+
+export class SealMutationError extends Error {
+  readonly code = 'RC03_SEAL_MUTATION_REJECTED';
+
+  constructor(readonly producerId: string, readonly phase: SealPhase, readonly reason: 'unregistered' | 'wrong-phase' | 'content-changed' | 'unsealed-model-call') {
+    super(`RC-03 seal rejected ${producerId} at ${phase}: ${reason}`);
+    this.name = 'SealMutationError';
+  }
+}
 
 export type SealProducerRegistration = {
   /** Stable producer id, e.g. "compass-ssp", "cvk-message-replacement", "dcs-knowledge". */
@@ -38,7 +48,23 @@ export function registerSealProducer(registration: SealProducerRegistration): vo
   if (registration.kind === 'semantic' && registration.mutates === 'transport') {
     throw new Error(`semantic seal producer cannot mutate transport: ${registration.id}`);
   }
-  registry.set(registration.id, registration);
+  // A caller cannot relabel a registered semantic producer as transport later.
+  registry.set(registration.id, Object.freeze({ ...registration }));
+}
+
+/** The matrix is derived from the same registrations the runtime enforces. */
+export function getSealCoverageMatrix(): readonly (SealProducerRegistration & { phase: SealPhase })[] {
+  return Object.freeze(getRegisteredSealProducers().map(registration => Object.freeze({
+    ...registration,
+    phase: registration.kind === 'semantic' ? 'pre-seal' as const : 'post-seal' as const,
+  })));
+}
+
+export function assertSealMutation(producerId: string, phase: SealPhase): void {
+  const registration = registry.get(producerId);
+  if (!registration) throw new SealMutationError(producerId, phase, 'unregistered');
+  const requiredKind = phase === 'pre-seal' ? 'semantic' : 'non-semantic';
+  if (registration.kind !== requiredKind) throw new SealMutationError(producerId, phase, 'wrong-phase');
 }
 
 export function isSealProducerRegistered(id: string): boolean {

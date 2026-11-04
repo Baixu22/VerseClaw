@@ -23,9 +23,14 @@ import { buildContextReceiptInput } from './dcs-receipts.js';
 import { createCompilePlan, type CompilePlan } from './compile-plan.js';
 import { isContextEnhancementKillSwitchEngaged } from './enhancement-kill-switch.js';
 import {
-  assertSealProducersRegistered,
+  assertSealMutation,
+  getSealCoverageMatrix,
   getSealProducer,
+  registeredTransportTransformIds,
+  SealMutationError,
 } from './seal-registry.js';
+import { stripSystemPromptCacheBoundary } from '../agents/system-prompt-cache-boundary.js';
+import { resolveKillSwitchConfig } from './kill-switch-config-source.js';
 import {
   RC03_PRE_SEAL_PRODUCERS,
   rc03PreSealProducerIds,
@@ -49,8 +54,24 @@ const sealedPlansByRun = new Map<string, Map<number, CompilePlan>>();
 const sealedSystemPromptDigestsByRun = new Map<string, Map<number, string>>();
 /** ContextReceipt correlation digest (bundle digest) per run and model call. */
 const sealedCorrelationDigestsByRun = new Map<string, Map<number, string>>();
+/** Accepted model calls include summaries and periods when enhancement is killed. */
+const modelCallHighWaterByRun = new Map<string, Map<number, number>>();
 
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
+
+/** Check the actual stream input and the allowed transforms before provider code runs. */
+export function assertRc03SealedSystemPrompt(runId: string | undefined, modelCallIndex: number, systemPrompt: string | undefined): void {
+  const plan = getRc03SealPlan(runId, modelCallIndex);
+  if (!plan) throw new SealMutationError('provider-context', 'post-seal', 'unsealed-model-call');
+  for (const producer of plan.preSealProducers) {
+    if (producer.applied) assertSealMutation(producer.producerId, 'pre-seal');
+  }
+  for (const id of plan.postSealTransformIds) assertSealMutation(id, 'post-seal');
+  const expected = getRc03SealedSystemPromptDigest(runId, modelCallIndex);
+  if (expected !== undefined && sha256(stripSystemPromptCacheBoundary(systemPrompt ?? '')) !== expected) {
+    throw new SealMutationError('provider-system-prompt', 'post-seal', 'content-changed');
+  }
+}
 
 export function recordRc03SealPlan(
   runId: string | undefined,
@@ -64,7 +85,7 @@ export function recordRc03SealPlan(
     byModelCall = new Map();
     sealedPlansByRun.set(runId, byModelCall);
   }
-  byModelCall.set(plan.callIndex.modelCallIndex, plan);
+  byModelCall.set(plan.callIndex.modelCallIndex, structuredClone(plan));
   if (systemPromptDigest) {
     let digests = sealedSystemPromptDigestsByRun.get(runId);
     if (!digests) {
@@ -102,16 +123,39 @@ export function getRc03SealCorrelationDigest(
 export function getRc03SealPlan(
   runId: string | undefined,
   modelCallIndex?: number,
+  attemptIndex?: number,
 ): CompilePlan | undefined {
   if (!runId) return undefined;
   const byModelCall = sealedPlansByRun.get(runId);
   if (!byModelCall) return undefined;
   if (modelCallIndex !== undefined) {
-    return byModelCall.get(modelCallIndex);
+    const plan = byModelCall.get(modelCallIndex);
+    return plan && (attemptIndex === undefined || plan.callIndex.attemptIndex === attemptIndex)
+      ? structuredClone(plan) : undefined;
   }
   // Legacy callers without an index resolve the latest sealed plan of the run.
-  const indexes = [...byModelCall.keys()].sort((left, right) => right - left);
-  return indexes.length > 0 ? byModelCall.get(indexes[0]) : undefined;
+  const indexes = [...byModelCall.keys()]
+    .filter(index => attemptIndex === undefined || byModelCall.get(index)?.callIndex.attemptIndex === attemptIndex)
+    .sort((left, right) => right - left);
+  const plan = indexes.length > 0 ? byModelCall.get(indexes[0]) : undefined;
+  return plan ? structuredClone(plan) : undefined;
+}
+
+/** Normal calls and compaction share the same model-call identity sequence. */
+export function nextRc03ModelCallIndex(runId: string | undefined, attemptIndex: number, requestedIndex: number): number {
+  const latest = getRc03SealPlan(runId, undefined, attemptIndex);
+  return Math.max(requestedIndex, modelCallHighWaterByRun.get(runId ?? '')?.get(attemptIndex) ?? 0,
+    latest ? latest.callIndex.modelCallIndex + 1 : 0);
+}
+
+export function recordRc03ModelCallStarted(runId: string | undefined, attemptIndex: number, modelCallIndex: number): void {
+  if (!runId) return;
+  let highWater = modelCallHighWaterByRun.get(runId);
+  if (!highWater) {
+    highWater = new Map();
+    modelCallHighWaterByRun.set(runId, highWater);
+  }
+  highWater.set(attemptIndex, Math.max(highWater.get(attemptIndex) ?? 0, modelCallIndex + 1));
 }
 
 export function clearRc03SealPlan(runId: string | undefined): void {
@@ -122,6 +166,12 @@ export function clearRc03SealPlan(runId: string | undefined): void {
   for (const key of messageReplacementAttempts) {
     if (key.startsWith(`${runId}|`)) messageReplacementAttempts.delete(key);
   }
+}
+
+/** End-of-run release is distinct from temporarily disabling a live turn. */
+export function releaseRc03Run(runId: string | undefined): void {
+  clearRc03SealPlan(runId);
+  if (runId) modelCallHighWaterByRun.delete(runId);
 }
 
 /** Attempts whose transcript the active ContextEngine replaced before the seal. */
@@ -151,7 +201,7 @@ export function beginRc03RunAttempts(runId: string | undefined): number {
 /** Release the run's sealed plans and remember where its attempt identity ended. */
 export function endRc03RunAttempts(runId: string | undefined, nextAttemptIndex: number): void {
   if (!runId) return;
-  clearRc03SealPlan(runId);
+  releaseRc03Run(runId);
   nextAttemptIndexByRun.delete(runId);
   nextAttemptIndexByRun.set(runId, nextAttemptIndex);
   if (nextAttemptIndexByRun.size > RC03_ATTEMPT_HIGH_WATER_LIMIT) {
@@ -163,6 +213,8 @@ export function endRc03RunAttempts(runId: string | undefined, nextAttemptIndex: 
 export function resetRc03SealPlansForTest(): void {
   sealedPlansByRun.clear();
   sealedSystemPromptDigestsByRun.clear();
+  sealedCorrelationDigestsByRun.clear();
+  modelCallHighWaterByRun.clear();
   nextAttemptIndexByRun.clear();
   systemPromptContributions.clear();
   messageReplacementAttempts.clear();
@@ -240,6 +292,7 @@ export type Rc03SealHookOptions = {
 };
 
 export type Rc03SealHookResult = {
+  sealCoverage: 'disabled' | 'enforced';
   engaged: boolean;
   enforced: boolean;
   bundleSealed: boolean;
@@ -283,6 +336,12 @@ export function resolveRc03SealState(
     enabled = false;
   }
   return { enabled: enabled && !killed, killed };
+}
+
+/** Both seal creation and stream enforcement use the same current config. */
+export function resolveCurrentRc03SealState(cfg?: unknown): { enabled: boolean; killed: boolean; configured: boolean } {
+  const current = resolveKillSwitchConfig();
+  return { ...resolveRc03SealState(current ?? cfg), configured: current !== undefined || cfg !== undefined };
 }
 
 /** Map a projection lineage source id to its registered pre-seal producer.
@@ -339,7 +398,10 @@ function producerIdForLineageSource(sourceId: string): string | undefined {
       return 'memory-pilot-injection';
     case 'compaction-summarizer':
       return 'compaction-summarizer';
+    case 'session-start':
+      return RC03_PRE_SEAL_PRODUCERS.sessionStart;
     default:
+      if (sourceId.startsWith('session-start:')) return RC03_PRE_SEAL_PRODUCERS.sessionStart;
       if (sourceId.startsWith('memory-inject-pilot:')) {
         return 'memory-pilot-injection';
       }
@@ -355,7 +417,8 @@ export function appliedProducerIdsFromLineage(
   for (const entry of projection.lineage) {
     if (entry.charsApplied <= 0) continue;
     const producerId = producerIdForLineageSource(entry.sourceId);
-    if (producerId) applied.add(producerId);
+    // Unknown sources must reach admission instead of disappearing from the plan.
+    applied.add(producerId ?? entry.sourceId);
   }
   return [...applied].sort();
 }
@@ -445,31 +508,33 @@ export function runRc03SealHook(
   const enabled = options.enabled === true;
   const killed = options.killed === true;
   if (!enabled || killed) {
-    return { engaged: false, enforced: false, bundleSealed: false, contextReceiptPersisted: false, unregisteredProducers: [], postSealTransformIds: [] };
+    clearRc03SealPlan(options.runId);
+    return { sealCoverage: 'disabled', engaged: false, enforced: false, bundleSealed: false, contextReceiptPersisted: false, unregisteredProducers: [], postSealTransformIds: [] };
   }
   registerRc03SealProducers();
-  // Zero-bypass enforcement: every registered pre-seal producer must be present.
-  const unregisteredProducers = assertSealProducersRegistered(rc03PreSealProducerIds());
-
   const boundary = options.boundaryProducer;
-  const systemPrompt = boundary ? undefined : options.systemPrompt;
-  const attributed = systemPrompt
+  const systemPrompt = options.systemPrompt ?? projection.systemPromptAddition ?? '';
+  const attributed = systemPrompt && !boundary
     ? attributeRc03SystemPromptContributions(systemPrompt, projection.systemPromptContributions)
     : [];
-  const appliedProducerIds = boundary
-    ? [boundary.id]
-    : [
+  const appliedProducerIds = [
         ...new Set([
-          ...(options.appliedProducerIds ?? appliedProducerIdsFromLineage(projection)),
+          ...appliedProducerIdsFromLineage(projection),
+          ...(options.appliedProducerIds ?? []),
+          ...(boundary ? [boundary.id] : []),
           ...attributed.map((entry) => entry.producerId),
-          ...(systemPrompt ? [RC03_PRE_SEAL_PRODUCERS.embeddedSystemPrompt] : []),
+          ...(systemPrompt && !boundary ? [RC03_PRE_SEAL_PRODUCERS.embeddedSystemPrompt] : []),
           ...(options.runId &&
           messageReplacementAttempts.has(`${options.runId}|${options.attemptIndex ?? 0}`)
             ? [RC03_PRE_SEAL_PRODUCERS.cvkMessageReplacement]
             : []),
         ]),
       ].sort();
-  const preSealProducers = rc03PreSealProducerIds().map((id) => {
+  for (const id of appliedProducerIds) assertSealMutation(id, 'pre-seal');
+  // Registered custom producers use the same plan, not a second registry.
+  const preSealIds = [...new Set([...rc03PreSealProducerIds(),
+    ...getSealCoverageMatrix().filter(row => row.phase === 'pre-seal').map(row => row.id)])];
+  const preSealProducers = preSealIds.map((id) => {
     const registration = getSealProducer(id);
     return {
       producerId: id,
@@ -477,7 +542,8 @@ export function runRc03SealHook(
       applied: appliedProducerIds.includes(id),
     };
   });
-  const postSealTransformIds = ['transport-wire-serialization'];
+  const postSealTransformIds = registeredTransportTransformIds();
+  for (const id of postSealTransformIds) assertSealMutation(id, 'post-seal');
 
   const plan = createCompilePlan({
     sessionKey: options.sessionKey,
@@ -562,16 +628,17 @@ export function runRc03SealHook(
   recordRc03SealPlan(
     options.runId,
     plan,
-    systemPrompt !== undefined ? sha256(systemPrompt) : undefined,
+    sha256(stripSystemPromptCacheBoundary(systemPrompt)),
     bundle.bundleDigest,
   );
 
   return {
+    sealCoverage: 'enforced',
     engaged: true,
-    enforced: unregisteredProducers.length === 0,
+    enforced: true,
     bundleSealed: bundle.sealed,
     contextReceiptPersisted,
-    unregisteredProducers,
+    unregisteredProducers: [],
     plan,
     bundleDigest: bundle.bundleDigest,
     postSealTransformIds,

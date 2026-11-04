@@ -57,8 +57,9 @@ import type {
 } from "../../../shared/types/session-start-injection.js";
 import {
   runRc03SealHook,
-  resolveRc03SealState,
+  resolveCurrentRc03SealState,
   recordRc03SystemPromptContribution,
+  clearRc03SealPlan,
   type Rc03SealHookResult,
 } from "./rc03-seal-hook.js";
 import {
@@ -455,14 +456,16 @@ export function finalizeContextOrchestratorTurn(params: {
   // DCS semantic producers are registered (zero-bypass), seals the immutable
   // ContextBundle, and persists a ContextReceipt/v1. When off, this is a no-op
   // and the legacy path is byte-identical.
+  const rc03State = resolveCurrentRc03SealState(params.cfg);
   const rc03Enabled =
     params.seal !== false &&
-    (params.rc03Seal?.enabled === true || resolveRc03SealState(params.cfg).enabled);
+    !rc03State.killed &&
+    (params.rc03Seal?.enabled === true || rc03State.enabled);
   let sealResult: Rc03SealHookResult | undefined;
   if (rc03Enabled) {
     sealResult = runRc03SealHook(projected.projection, projected.messages, {
       enabled: true,
-      killed: lineageByTurn.get(params.turnId)?.killSwitchEngaged,
+      killed: rc03State.killed,
       sessionKey: params.sessionKey,
       runId: params.runId,
       providerId: params.providerId,
@@ -471,6 +474,8 @@ export function finalizeContextOrchestratorTurn(params: {
       systemPrompt: params.systemPrompt,
       database: params.rc03Seal?.database,
     });
+  } else if (params.seal !== false) {
+    clearRc03SealPlan(params.runId);
   }
   if (params.seal !== false) {
     const providerSystemPrompt = params.systemPrompt ?? projected.projection.systemPromptAddition;

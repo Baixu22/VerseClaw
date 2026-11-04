@@ -519,7 +519,7 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
     expect(pairs[0].wire.receipt_id).toBe(wire.receipt_id);
   });
 
-  it('RC-03R: a system prompt changed after the seal is an unknown semantic mutation in the census', async () => {
+  it('TF-0739: post-seal system mutation rejects before provider execution and remains in the census', async () => {
     const { attachShadowReceiptOptions } = await import('../agents/shadow-census.js');
     const { resolveEmbeddedAgentStreamFn } = await import('../agents/embedded-agent-runner/stream-resolution.js');
     const model = {
@@ -534,6 +534,7 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
       contextWindow: 200000,
       cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
     } as never;
+    const inner = vi.fn(() => ({}));
     const drive = async (runId: string, sealed: string, sent: string) => {
       runRc03SealHook(
         { lineage: [], systemPromptAddition: undefined } as never,
@@ -547,7 +548,7 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
         },
       );
       const wrapped = resolveEmbeddedAgentStreamFn({
-        currentStreamFn: (() => ({})) as never,
+        currentStreamFn: inner as never,
         sessionId: 'sess-mutation',
         runId,
         attemptIndex: 0,
@@ -572,10 +573,12 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
       );
     };
     expect(await drive('run-unchanged', 'base prompt', 'base prompt')).toEqual([]);
-    const mutated = await drive('run-mutated', 'base prompt', 'base prompt\n\ninjected after seal');
-    expect(mutated).toEqual([
+    inner.mockClear();
+    await expect(drive('run-mutated', 'base prompt', 'base prompt\n\ninjected after seal')).rejects.toThrow(/content-changed/);
+    expect(inner).not.toHaveBeenCalled();
+    expect(getShadowCensusDiagnostics().failures).toContainEqual(
       { phase: 'context-write', code: 'post-seal-semantic-mutation', count: 1 },
-    ]);
+    );
   });
 
   it('RC-03R: ContextEngine message replacement is applied only on the attempt that replaced', () => {

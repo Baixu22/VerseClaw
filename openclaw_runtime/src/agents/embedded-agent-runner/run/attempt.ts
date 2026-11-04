@@ -3068,6 +3068,7 @@ export async function runEmbeddedAttempt(
         resolvedApiKey: params.resolvedApiKey,
       });
       activeSession.agent.streamFn = resolveEmbeddedAgentStreamFn({
+        cfg: params.config,
         currentStreamFn: defaultSessionStreamFn,
         providerStreamFn,
         sessionId: params.sessionId,

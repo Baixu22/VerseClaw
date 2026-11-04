@@ -18,6 +18,8 @@ export const RC03_PRE_SEAL_PRODUCERS = {
   compassRetrieval: 'compass-retrieval',
   roleSpawnMemoryPack: 'role-spawn-memory-pack',
   embeddedSystemPrompt: 'embedded-system-prompt',
+  sessionStart: 'session-start-injection',
+  btwSideQuestion: 'btw-side-question',
 } as const;
 
 const preSealRegistrations: SealProducerRegistration[] = [
@@ -51,7 +53,7 @@ const preSealRegistrations: SealProducerRegistration[] = [
   },
   {
     id: RC03_PRE_SEAL_PRODUCERS.dcsToolRegistry,
-    mutates: 'tool-schema',
+    mutates: 'messages',
     kind: 'semantic',
     purpose: 'DCS tool-registry injection (assembler #appendToolRegistry -> tool_registry channel).',
     version: '1',
@@ -72,7 +74,7 @@ const preSealRegistrations: SealProducerRegistration[] = [
   },
   {
     id: RC03_PRE_SEAL_PRODUCERS.vtokenPacker,
-    mutates: 'messages',
+    mutates: 'system_prompt',
     kind: 'semantic',
     purpose: 'VToken assembly output injected as context candidates.',
     version: '1',
@@ -110,6 +112,20 @@ const preSealRegistrations: SealProducerRegistration[] = [
     mutates: 'system_prompt',
     kind: 'semantic',
     purpose: 'Attempt system prompt builder (attempt.ts buildAttemptSystemPrompt, provider transform, pre-loop hook overrides); owns every system-prompt byte not attributed to a narrower producer. Its digest is bound at the seal.',
+    version: '1',
+  },
+  {
+    id: RC03_PRE_SEAL_PRODUCERS.sessionStart,
+    mutates: 'system_prompt',
+    kind: 'semantic',
+    purpose: 'Session-start plan projected through the existing Context Orchestrator candidate collection.',
+    version: '1',
+  },
+  {
+    id: RC03_PRE_SEAL_PRODUCERS.btwSideQuestion,
+    mutates: 'system_prompt',
+    kind: 'semantic',
+    purpose: 'Ephemeral BTW side-question prompt and sanitized conversation sealed by the BTW entry before provider execution.',
     version: '1',
   },
 ];

@@ -14,6 +14,7 @@ import { resolveAgentModelFallbackValues } from "../../config/model-input.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { endContextOrchestratorTurn } from "../../context-engine/context-orchestrator.js";
 import { endTurnInjectionBudget } from "../../context-engine/turn-injection-budget.js";
+import { releaseRc03Run } from "../../context-engine/rc03-seal-hook.js";
 import { deprecationCounters } from "../../observability/deprecation-counters.js";
 import {
   createContextItemId,
@@ -271,10 +272,11 @@ function prepareCompactionSessionAgent(params: {
   runtimePlan?: AgentRuntimePlan;
 }) {
   params.session.agent.streamFn = resolveEmbeddedAgentStreamFn({
+    cfg: params.config,
     currentStreamFn: resolveEmbeddedAgentBaseStreamFn({ session: params.session as never }),
     providerStreamFn: params.providerStreamFn as never,
     sessionId: params.sessionId,
-    runId: params.runId,
+    runId: params.runId ?? params.sessionId,
     attemptIndex: params.attemptIndex,
     signal: params.signal,
     model: params.effectiveModel,
@@ -1407,7 +1409,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
             session,
             providerStreamFn,
             sessionId: params.sessionId,
-            runId: params.runId,
+            runId,
             attemptIndex: params.attempt,
             signal: runAbortController.signal,
             effectiveModel,
@@ -1797,6 +1799,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
   } finally {
     endContextOrchestratorTurn(injectionTurnId);
     endTurnInjectionBudget(injectionTurnId);
+    if (!params.runId) releaseRc03Run(runId);
     if (!checkpointSnapshotRetained) {
       await cleanupCompactionCheckpointSnapshot(checkpointSnapshot);
     }

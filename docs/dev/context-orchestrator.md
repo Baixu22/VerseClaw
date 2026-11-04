@@ -97,6 +97,9 @@ assembly, budget accounting after orchestration and RC-03 coverage remain separa
 
 ## Prompt accounting (TF-0738)
 
+Optional RC-03 admission and the flag-independent final snapshot report their
+coverage separately through `sealCoverage`; see [RC-03 seal coverage](rc03-seal-coverage.md).
+
 The 6000-character limit governs **managed injection**, including its existing
 precedence, drops and truncation. It does not limit the base system prompt, separate
 post-orchestrator instructions or the provider's total token window. Those token limits

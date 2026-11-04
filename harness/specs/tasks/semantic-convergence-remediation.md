@@ -78,6 +78,20 @@ touchedAreas:
   - openclaw_runtime/src/context-engine/context-final-snapshot.ts
   - openclaw_runtime/src/context-engine/rc03-seal-hook.ts
   - openclaw_runtime/src/context-engine/seal-registry.ts
+  - openclaw_runtime/src/context-engine/rc03-producers.ts
+  - openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
+  - openclaw_runtime/src/agents/btw.ts
+  - openclaw_runtime/src/agents/sessions/extensions/runner.ts
+  - tests/unit/rc03-seal-coverage.test.ts
+  - tests/unit/rc03-btw-seal.test.ts
+  - tests/unit/rc03-manual-compaction-seal.test.ts
+  - shared/dcs/prod-flags-catalog.ts
+  - docs/dev/rc03-seal-coverage.md
+  - harness/specs/rules/rc03-seal-coverage.md
   - openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts
   - openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts
   - openclaw_runtime/src/runtime-core/memory-runtime-integration.ts
@@ -107,9 +121,12 @@ requiredRules:
   - outbound-protocol-payload-consistency
   - prompt-contribution-authority
   - prompt-injection-accounting
+  - rc03-seal-coverage
   - task-forest-autoclose-and-roles
 humanEvidence: not-required
 requiredTests:
+  - pnpm exec vitest run tests/unit/rc03-seal-coverage.test.ts tests/unit/rc03-btw-seal.test.ts tests/unit/rc03-manual-compaction-seal.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/rc03-seal.test.ts src/context-engine/rc03-seal-wiring.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/semantic-convergence-prompt-budget.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/prompt-contribution-authority.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/semantic-convergence-prompt-authority.test.ts --maxWorkers=1
@@ -127,8 +144,10 @@ acceptance:
   - Memory persist 仍为 false；默认值、产品锁、发布状态未变；最终报告给出 decision.status 与未测边界。
 docs:
   required: true
+  readmeTranslations: not-required
   files:
     - docs/dev/network-protocol-reliability/retry-budget.md
+    - docs/dev/rc03-seal-coverage.md
 ---
 
 # Non-goals

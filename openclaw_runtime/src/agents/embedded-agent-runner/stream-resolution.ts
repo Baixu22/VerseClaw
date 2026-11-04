@@ -1,8 +1,6 @@
 /**
  * Resolves provider stream functions and API keys for embedded agents.
  */
-import { createHash } from "node:crypto";
-
 import { getApiProvider } from "../../llm/api-registry.js";
 import { streamSimple } from "../../llm/stream.js";
 import { createAnthropicVertexStreamFnForModel } from "../anthropic-vertex-stream.js";
@@ -16,7 +14,11 @@ import {
 import {
   getRc03SealCorrelationDigest,
   getRc03SealPlan,
-  getRc03SealedSystemPromptDigest,
+  assertRc03SealedSystemPrompt,
+  clearRc03SealPlan,
+  nextRc03ModelCallIndex,
+  recordRc03ModelCallStarted,
+  resolveCurrentRc03SealState,
   runRc03SealHook,
 } from "../../context-engine/rc03-seal-hook.js";
 import {
@@ -25,6 +27,7 @@ import {
   type ModelCallObservation,
 } from "../model-call-observations.js";
 import { RC03_PRE_SEAL_PRODUCERS } from "../../context-engine/rc03-producers.js";
+import { SealMutationError } from "../../context-engine/seal-registry.js";
 import type { CompilePlan } from "../../context-engine/compile-plan.js";
 import { SUMMARIZATION_SYSTEM_PROMPT } from "../../../packages/agent-core/src/harness/compaction/compaction.js";
 import type { StreamFn } from "../runtime/index.js";
@@ -138,6 +141,7 @@ export async function resolveEmbeddedAgentApiKey(params: {
 }
 
 export function resolveEmbeddedAgentStreamFn(params: {
+  cfg?: unknown;
   currentStreamFn: StreamFn | undefined;
   providerStreamFn?: StreamFn;
   sessionId: string;
@@ -159,6 +163,7 @@ export function resolveEmbeddedAgentStreamFn(params: {
       providerId: params.model.provider,
       sessionId: params.sessionId,
       runId: params.runId,
+      cfg: params.cfg,
       attemptIndex: params.attemptIndex,
       promptCacheKey: params.promptCacheKey,
       transformContext: (context) =>
@@ -181,6 +186,7 @@ export function resolveEmbeddedAgentStreamFn(params: {
       providerId: params.model.provider,
       sessionId: params.sessionId,
       runId: params.runId,
+      cfg: params.cfg,
       attemptIndex: params.attemptIndex,
       promptCacheKey: params.promptCacheKey,
     });
@@ -199,6 +205,7 @@ export function resolveEmbeddedAgentStreamFn(params: {
       providerId: params.model.provider,
       sessionId: params.sessionId,
       runId: params.runId,
+      cfg: params.cfg,
       attemptIndex: params.attemptIndex,
       promptCacheKey: params.promptCacheKey,
       transformContext: (context) =>
@@ -234,6 +241,7 @@ export function resolveEmbeddedAgentStreamFn(params: {
         providerId: params.model.provider,
         sessionId: params.sessionId,
         runId: params.runId,
+        cfg: params.cfg,
         attemptIndex: params.attemptIndex,
         promptCacheKey: params.promptCacheKey,
       });
@@ -248,6 +256,7 @@ export function resolveEmbeddedAgentStreamFn(params: {
     providerId: params.model.provider,
     sessionId: params.sessionId,
     runId: params.runId,
+    cfg: params.cfg,
     attemptIndex: params.attemptIndex,
     promptCacheKey: params.promptCacheKey,
   });
@@ -278,12 +287,9 @@ function sealBoundaryModelCall(
     modelCallIndex: number;
   },
 ): CompilePlan | undefined {
-  if (!getRc03SealPlan(identity.runId)) {
-    return undefined;
-  }
   if (context.systemPrompt !== SUMMARIZATION_SYSTEM_PROMPT) {
     recordShadowCensusFailure("context-write", "unsealed-model-call");
-    return undefined;
+    throw new SealMutationError('provider-context', 'post-seal', 'unsealed-model-call');
   }
   const chars = context.systemPrompt.length + JSON.stringify(context.messages ?? []).length;
   return runRc03SealHook(
@@ -304,6 +310,7 @@ function sealBoundaryModelCall(
 function wrapEmbeddedAgentStreamFn(
   inner: StreamFn,
   params: {
+    cfg?: unknown;
     runSignal: AbortSignal | undefined;
     resolvedApiKey: string | undefined;
     authProfileId: string | undefined;
@@ -339,18 +346,25 @@ function wrapEmbeddedAgentStreamFn(
     model: Parameters<StreamFn>[0],
     context: Parameters<StreamFn>[1],
     options: Parameters<StreamFn>[2],
+    transformedContext: Parameters<StreamFn>[1],
   ): {
     options: Parameters<StreamFn>[2];
     observation?: ModelCallObservation;
   } => {
     const optionRecord = options as Record<string, unknown> | undefined;
-    const modelCallIndex =
-      typeof optionRecord?.modelCallIndex === "number"
-        ? optionRecord.modelCallIndex
-        : nextModelCallIndex;
-    nextModelCallIndex = Math.max(nextModelCallIndex, modelCallIndex + 1);
     const runId =
       typeof optionRecord?.runId === "string" ? optionRecord.runId : params.runId;
+    const attemptIndex = typeof optionRecord?.attemptIndex === "number" ? optionRecord.attemptIndex : params.attemptIndex ?? 0;
+    const sealState = resolveCurrentRc03SealState(params.cfg);
+    if (sealState.killed || (sealState.configured && !sealState.enabled)) clearRc03SealPlan(runId);
+    const latestPlan = getRc03SealPlan(runId, undefined, attemptIndex);
+    const sealEnabled = !sealState.killed && (sealState.enabled || latestPlan !== undefined);
+    const explicitIndex = typeof optionRecord?.modelCallIndex === "number" ? optionRecord.modelCallIndex : undefined;
+    const summarizing = context.systemPrompt === SUMMARIZATION_SYSTEM_PROMPT;
+    // Explicit identities are never silently renamed, including summary retries.
+    const modelCallIndex = explicitIndex ?? (sealEnabled && summarizing
+      ? nextRc03ModelCallIndex(runId, attemptIndex, nextModelCallIndex)
+      : sealEnabled ? Math.max(nextModelCallIndex, latestPlan?.callIndex.modelCallIndex ?? 0) : nextModelCallIndex);
     const callContext = {
       providerId: model.provider,
       adapterId: model.api,
@@ -358,29 +372,35 @@ function wrapEmbeddedAgentStreamFn(
       sessionKey: typeof optionRecord?.sessionId === "string" ? optionRecord.sessionId : params.sessionId,
       runId,
       traceId: typeof optionRecord?.traceId === "string" ? optionRecord.traceId : undefined,
-      attemptIndex: typeof optionRecord?.attemptIndex === "number" ? optionRecord.attemptIndex : params.attemptIndex,
+      attemptIndex,
       modelCallIndex,
       wireAttemptIndex: typeof optionRecord?.wireAttemptIndex === "number" ? optionRecord.wireAttemptIndex : undefined,
     };
-    const existingPlan = getRc03SealPlan(runId, modelCallIndex);
+    const existingPlan = sealEnabled ? getRc03SealPlan(runId, modelCallIndex, attemptIndex) : undefined;
     const shadowCall = beginShadowModelCall(context, callContext, options);
-    if (!shadowCall.active && !existingPlan) {
+    if (!shadowCall.active && !sealEnabled) {
+      nextModelCallIndex = Math.max(nextModelCallIndex, modelCallIndex + 1);
+      recordRc03ModelCallStarted(runId, attemptIndex, modelCallIndex);
       return { options };
     }
     const plan =
       existingPlan ??
-      (shadowCall.active
+      (sealEnabled
         ? sealBoundaryModelCall(context, { ...callContext, runId, modelCallIndex })
         : undefined);
-    const sealedSystemPromptDigest = getRc03SealedSystemPromptDigest(runId, modelCallIndex);
-    if (
-      plan &&
-      sealedSystemPromptDigest !== undefined &&
-      createHash("sha256").update(context.systemPrompt ?? "").digest("hex") !==
-        sealedSystemPromptDigest
-    ) {
-      recordShadowCensusFailure("context-write", "post-seal-semantic-mutation");
+    if (plan) {
+      try {
+        assertRc03SealedSystemPrompt(runId, modelCallIndex, context.systemPrompt);
+        // Validate the real result of the registered cache-boundary transform too.
+        assertRc03SealedSystemPrompt(runId, modelCallIndex, transformedContext.systemPrompt);
+      } catch (error) {
+        recordShadowCensusFailure("context-write", "post-seal-semantic-mutation");
+        throw error;
+      }
     }
+    // A refused invocation must not advance into an unsealed gap on retry.
+    nextModelCallIndex = Math.max(nextModelCallIndex, modelCallIndex + 1);
+    recordRc03ModelCallStarted(runId, attemptIndex, modelCallIndex);
     // R5-3: overwrite the wire-side correlation with the sealed
     // ContextReceipt's correlation digest (the bundle digest) so
     // WireReceipt/v1 and ContextReceipt/v1 join on the same value. A miss
@@ -435,9 +455,10 @@ function wrapEmbeddedAgentStreamFn(
   if (!params.authStorage && !params.resolvedApiKey) {
     return (m, context, options) => {
       const merged = mergeRunSignal(options);
-      const observed = withShadowContext(m, context, merged);
+      const transformedContext = transformContext(context);
+      const observed = withShadowContext(m, context, merged, transformedContext);
       return observeModelCallResult(
-        inner(m, transformContext(context), observed.options),
+        inner(m, transformedContext, observed.options),
         observed.observation,
       );
     };
@@ -449,9 +470,10 @@ function wrapEmbeddedAgentStreamFn(
       resolvedApiKey,
       authStorage,
     });
-    const observed = withShadowContext(m, context, mergeRunSignal(options));
+    const transformedContext = transformContext(context);
+    const observed = withShadowContext(m, context, mergeRunSignal(options), transformedContext);
     return observeModelCallResult(
-      inner(m, transformContext(context), {
+      inner(m, transformedContext, {
         ...observed.options,
         apiKey: apiKey ?? options?.apiKey,
       }),

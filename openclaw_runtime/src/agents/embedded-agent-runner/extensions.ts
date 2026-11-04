@@ -27,6 +27,7 @@ import {
 } from "../../context-engine/chat-knowledge-intent.js";
 import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
+import { nextRc03ModelCallIndex } from "../../context-engine/rc03-seal-hook.js";
 import { isWorkingMemoryRegatherEnabled } from "../../context-engine/working-memory-regather.js";
 import { resolveInternalContextLadderPolicy } from "../../context-engine/context-ladder.js";
 import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
@@ -435,6 +436,9 @@ function buildContextBlockFactory(params: {
         log.warn(`context source preparation failed: ${String(error)}`);
       }
     }
+    if (options.seal !== false) {
+      modelCallIndex = nextRc03ModelCallIndex(params.runId, params.attemptIndex ?? 0, modelCallIndex);
+    }
     const finalized = finalizeContextOrchestratorTurn({
       turnId,
       messages,
@@ -565,7 +569,7 @@ function buildContextBlockFactory(params: {
       });
     }
 
-    agent.on("context", async (event: unknown) => {
+    agent.on("context", async (event: unknown, ctx?: { getSystemPrompt?: () => string }) => {
       if (!sessionId) {
         return undefined;
       }
@@ -574,6 +578,9 @@ function buildContextBlockFactory(params: {
         return undefined;
       }
       if (params.injectionTurnId) {
+        // Continuations can skip before_agent_start; bind the live prompt for this call.
+        const currentPrompt = ctx?.getSystemPrompt?.();
+        if (typeof currentPrompt === "string") sealedSystemPrompt = currentPrompt;
         // F-01: the first context callback of the attempt reuses the projection
         // sealed at before_agent_start (modelCallIndex 0). Every later callback
         // is a new model call: skip channels already injected into the

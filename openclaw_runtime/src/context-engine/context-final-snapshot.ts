@@ -58,7 +58,9 @@ export type ContextFinalSnapshot = {
   providerId?: string;
   attemptIndex: number;
   modelCallIndex: number;
+  /** Immutable finalization; RC-03 enforcement is reported separately. */
   sealed: true;
+  sealCoverage: 'disabled' | 'enforced';
   systemPromptDigest: string;
   messagesDigest: string;
   contextCompositionDigest: string;
@@ -128,6 +130,7 @@ function createSnapshot(input: ContextFinalSnapshotInput): ContextFinalSnapshot 
     attemptIndex,
     modelCallIndex,
     sealed: true,
+    sealCoverage: input.rc03PlanId ? 'enforced' : 'disabled',
     systemPromptDigest,
     messagesDigest,
     contextCompositionDigest,
