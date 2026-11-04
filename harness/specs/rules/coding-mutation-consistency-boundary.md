@@ -10,6 +10,11 @@ appliesTo:
 
 ## Preflight Requirement
 
+- Native write/edit workspace authorization wraps every pre-image/diagnostic
+  read, including the write journal. A refused target must not be copied into
+  workspace-readable snapshots. Limited journal reads use the existing rooted
+  filesystem boundary after acquiring their path lease.
+
 - `apply_patch` must complete a preflight phase before any filesystem mutation.
 - Preflight parses every hunk, resolves every target path, pre-reads every file
   to be updated, and pre-computes every update result. A preflight failure

@@ -14,6 +14,7 @@ import { getToolParamsRecord } from "../agent-tools.params.js";
 import { acquirePatchBatchLocks } from "../apply-patch-batch-lock.js";
 import type { AnyAgentTool } from "../agent-tools.types.js";
 import { toRelativeWorkspacePath } from "../path-policy.js";
+import { FsSafeError, root as fsRoot } from "../../infra/fs-safe.js";
 import { generateUnifiedPatch } from "../sessions/tools/edit-diff.js";
 import { jsonResult } from "./common.js";
 import {
@@ -30,7 +31,7 @@ import type {
   RemoteForgeErrorV1,
 } from "../../../../shared/types/remote-forge.js";
 
-import { journalEntryId, journalDirFor, snapshotBeforeWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
+import { journalEntryId, journalDirFor, snapshotBeforeWrite, snapshotPreparedWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
 export * from "./write-journal-core.js";
 
 /** Preserve the original workspace path policy at the existing tool entrypoint. */
@@ -197,6 +198,7 @@ export function wrapToolWithWriteJournal(
   tool: AnyAgentTool,
   options: {
     workspaceRoot: string;
+    workspaceOnly?: boolean;
     sessionId?: string;
     enabled?: boolean;
     /** FP-P1-04: coding flags in force, recorded into each entry's lineage. */
@@ -228,45 +230,63 @@ export function wrapToolWithWriteJournal(
       const release = await acquirePatchBatchLocks(lockTargets);
       try {
         const snapshots: WriteJournalEntry[] = [];
+        const confinedRoot = options.workspaceOnly && paths.length > 0
+          ? await fsRoot(options.workspaceRoot)
+          : undefined;
         for (const filePath of paths) {
-          const entry = snapshotBeforeWrite({
-          workspaceRoot: options.workspaceRoot,
-          sessionId: options.sessionId,
-          filePath,
-          toolName: tool.name,
-          ...(toolCallId ? { requestId: toolCallId } : {}),
-          ...(options.flags ? { flags: options.flags } : {}),
-        });
-        if (entry) {
-          snapshots.push(entry);
+          const metadata = {
+            workspaceRoot: options.workspaceRoot,
+            sessionId: options.sessionId,
+            filePath,
+            toolName: tool.name,
+            ...(toolCallId ? { requestId: toolCallId } : {}),
+            ...(options.flags ? { flags: options.flags } : {}),
+          };
+          // Read through the existing rooted file handle after acquiring the
+          // lease: a path swapped while waiting must not leak into a snapshot.
+          let entry: WriteJournalEntry | null;
+          if (confinedRoot) {
+            const relative = toRelativeWorkspacePath(options.workspaceRoot, filePath);
+            let prior: Buffer | undefined;
+            try {
+              prior = (await confinedRoot.read(relative)).buffer;
+            } catch (error) {
+              if (!(error instanceof FsSafeError && error.code === "not-found")) throw error;
+            }
+            entry = snapshotPreparedWrite({ ...metadata, hadPrior: prior !== undefined, ...(prior !== undefined ? { priorContent: prior } : {}) });
+          } else {
+            entry = snapshotBeforeWrite(metadata);
+          }
+          if (entry) {
+            snapshots.push(entry);
+          }
         }
-      }
-      const result = await tool.execute(toolCallId, args, signal, onUpdate);
-      if (snapshots.length === 0) {
-        return result;
-      }
-      const prevDetails =
-        result.details && typeof result.details === "object" && !Array.isArray(result.details)
-          ? (result.details as Record<string, unknown>)
+        const result = await tool.execute(toolCallId, args, signal, onUpdate);
+        if (snapshots.length === 0) {
+          return result;
+        }
+        const prevDetails =
+          result.details && typeof result.details === "object" && !Array.isArray(result.details)
+            ? (result.details as Record<string, unknown>)
+            : {};
+        const detailsForLineage =
+          tool.name === "write"
+            ? (() => {
+                const {
+                  patch: _untrustedPatch,
+                  patchArtifacts: _untrustedArtifacts,
+                  patchArtifactError: _untrustedError,
+                  ...otherDetails
+                } = prevDetails;
+                return {
+                  ...otherDetails,
+                  ...projectFullFileWrite({ args, requestId: toolCallId, snapshots }),
+                };
+              })()
+            : prevDetails;
+        const patchLineage = toolCallId
+          ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
           : {};
-      const detailsForLineage =
-        tool.name === "write"
-          ? (() => {
-              const {
-                patch: _untrustedPatch,
-                patchArtifacts: _untrustedArtifacts,
-                patchArtifactError: _untrustedError,
-                ...otherDetails
-              } = prevDetails;
-              return {
-                ...otherDetails,
-                ...projectFullFileWrite({ args, requestId: toolCallId, snapshots }),
-              };
-            })()
-          : prevDetails;
-      const patchLineage = toolCallId
-        ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
-        : {};
         return {
           ...result,
           details: {

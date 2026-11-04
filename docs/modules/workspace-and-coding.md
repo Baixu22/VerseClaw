@@ -272,6 +272,10 @@ Remote forge 有独立 Host API：
 
 ### Write journal
 
+限域 write/edit 在读取 journal 原文件快照前验证工作区边界；可信来源也不能绕过
+`workspaceOnly`。等待路径锁后通过现有 fs-safe 根读取快照，拒绝的外部文件内容不会
+先进入可读的工作区 journal。
+
 - 是 supported coding writes 的恢复权威；
 - 记录写操作与可撤销来源；
 - journal failure 不应被宣称成“成功写入且可恢复”；
