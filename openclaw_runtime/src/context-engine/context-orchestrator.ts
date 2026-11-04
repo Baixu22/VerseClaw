@@ -44,6 +44,7 @@ import {
   type ContextCandidateTarget,
 } from "./context-candidate.js";
 import { recordContextFinalSnapshot } from "./context-final-snapshot.js";
+import type { PromptContributionAdmission } from "./prompt-contribution-authority.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { applySessionStartInjection } from "./session-start-injection.js";
 import {
@@ -300,8 +301,9 @@ export type ContextOrchestratorCandidateInput = Omit<
 export function collectContextOrchestratorCandidate(
   turnId: string,
   input: ContextOrchestratorCandidateInput,
+  admission?: PromptContributionAdmission,
 ): ContextCandidateLineage {
-  return collectContextCandidate(turnId, createContextCandidate(input));
+  return collectContextCandidate(turnId, createContextCandidate(input), admission);
 }
 
 export function recordContextOrchestratorSourceDecision(

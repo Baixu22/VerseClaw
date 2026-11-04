@@ -63,7 +63,32 @@ After each turn orchestration:
 
 VToken remains a stateless internal packing strategy behind the Context Orchestrator. The host bridge is an internal diagnostics/test boundary only; Settings has no VToken bridge toggle or independent VToken product panel. C6 remains an explicit internal assembler request API for bounded lifecycle/pressure selection rather than a permanent user opt-in. Context/request receipts remain per actual model call and are paired through the existing RC-03 seal owner.
 
-## Non-goals
+## Prompt contribution authority (TF-0737)
+
+The admitting host passes a `PromptContributionAdmission` as the third argument of
+`collectContextCandidate` or `collectContextOrchestratorCandidate`. Its declaration names
+`source` (equal to candidate.sourceId), `authority`, exact `scope` and a nonempty `reason`.
+Content authority object IDs and digests continue to identify content; they grant no rights.
+
+| Candidate target | Required authority |
+|---|---|
+| message | append_data |
+| system_prompt (appends to the existing prompt) | append_instruction |
+| message_replacement | replace_messages |
+
+With `mode: "enforce"`, an undeclared source may append data only. Source/scope/authority
+mismatches reject before collection and budget charging with
+`PromptContributionAuthorityError` (`PROMPT_CONTRIBUTION_AUTHORITY_DENIED`). Rejection
+does not append the replacement as data or alter the original history. A host must supply
+the declaration separately from untrusted candidate content.
+
+Existing callers retain warn mode. High-authority violations emit warnings and surviving
+candidate lineage records `promptAuthority: "warned"`; declared and default-data admissions
+are also distinguished. This is not global production enforcement. These checks govern
+declared mutation surfaces and do not classify the semantics of appended data. Native
+assembly, budget accounting after orchestration and RC-03 coverage remain separate tasks.
+
+## Product boundaries
 
 - Does not enable default-on memory/VToken (see `docs/dev/default-config-matrix.md`)
 - Does not replace BlockStore / SEKB writeback / TF-0004 E2E

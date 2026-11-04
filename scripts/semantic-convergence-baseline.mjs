@@ -65,7 +65,6 @@ const memoryRuntimeIntegration = read("openclaw_runtime/src/runtime-core/memory-
 const memoryQueryTool = read("openclaw_runtime/src/runtime-core/memory-query-tool.ts");
 const memoryPreReply = read("openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts");
 const providerValidation = read("electron/services/providers/provider-validation.ts");
-const contextCandidate = read("openclaw_runtime/src/context-engine/context-candidate.ts");
 const hookTypes = read("openclaw_runtime/src/plugins/hook-before-agent-start.types.ts");
 const attemptRunner = read("openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts");
 const rc03Seal = read("openclaw_runtime/src/context-engine/rc03-seal-hook.ts");
@@ -155,8 +154,12 @@ const probeDeadlineCoverage = ["performProviderValidationRequest", "performRespo
 ).length;
 
 const mutationFields = ["systemPrompt", "prependContext", "appendContext", "prependSystemContext", "appendSystemContext"];
-const declaredAuthority = contextCandidate.includes("ContextCandidateAuthority") || hookTypes.includes("PromptContributionAuthority");
-const promptAuthorityCoverage = declaredAuthority ? mutationFields.length : 0;
+// Count actual field mappings, not the mere presence of an authority type name.
+const promptAuthorityMappings = Object.fromEntries(mutationFields.map((field) => {
+  const authority = hookTypes.match(new RegExp(`\\b${field}:\\s*"(append_data|append_instruction|replace_system_prompt|replace_messages)"`))?.[1];
+  return [field, authority ?? null];
+}));
+const promptAuthorityCoverage = Object.values(promptAuthorityMappings).filter(Boolean).length;
 
 const postOrchestratorAdditions = ["runtimeIntensitySystemPrompt", "dcsDepsResolution.degradationNotice"].filter((name) =>
   attemptRunner.includes(name),
@@ -197,7 +200,7 @@ const metrics = [
   metric("NET-2", "validation probe carries explicit deadline", "deadline gate + signal present", validationHasDeadline ? 1 : 0, "boolean", "static", "Source contract; probe coverage is measured as NET-3.", ["electron/services/providers/provider-validation.ts"]),
   metric("NET-3", "validation probes carrying the total deadline signal", "count(models, responses, chat, anthropic probes with signal)", probeDeadlineCoverage, "probes", "static", "Static coverage of the four probe call sites; runtime abort behaviour is unit-tested.", ["electron/services/providers/provider-validation.ts"]),
   metric("NET-4", "policy parity between validation and inference", "bothUseSharedPolicy ? 1 : 0", policyParity, "boolean", "static", "Same resolver, same normalized fingerprint; behavioural matrix in semantic-convergence-provider-network-parity.test.ts.", ["openclaw_runtime/src/agents/provider-network-policy.ts"]),
-  metric("PROMPT-1", "prompt mutation fields covered by an authority declaration", "declaredAuthority ? 5 : 0", promptAuthorityCoverage, "fields", "static", "No producer-level declaration exists today; this counts the public field list.", ["openclaw_runtime/src/plugins/hook-before-agent-start.types.ts", "openclaw_runtime/src/context-engine/context-candidate.ts"]),
+  metric("PROMPT-1", "prompt mutation fields mapped to required authority", "count(explicit PLUGIN_PROMPT_MUTATION_AUTHORITIES field mappings)", promptAuthorityCoverage, "fields", "static", "Field-map coverage only; separate behavioral tests verify producer admission in explicit enforce mode. This does not prove global default enforcement.", ["openclaw_runtime/src/plugins/hook-before-agent-start.types.ts"]),
   metric("PROMPT-2", "post-orchestrator additions outside the managed ledger", "count(runtimeIntensitySystemPrompt, degradationNotice)", postOrchestratorAdditions, "additions", "static", "Counts code paths, not actual chars; the snapshot coverage test measures chars.", ["openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"]),
   metric("PROMPT-3", "seal producer coverage matrix present", "sealMatrix ? 1 : 0", sealMatrix ? 1 : 0, "boolean", "static", "Seal is default-off; presence is not enforcement evidence.", ["openclaw_runtime/src/context-engine/rc03-seal-hook.ts"]),
   metric("MEM-3", "shared memory cache invalidated on write path", "cacheInvalidationInQuery && cacheInvalidationInPreReply", cacheInvalidationInQuery && cacheInvalidationInPreReply ? 1 : 0, "boolean", "static", "No write-path invalidation found; TTL is 30s.", ["openclaw_runtime/src/runtime-core/memory-query-tool.ts", "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts"]),

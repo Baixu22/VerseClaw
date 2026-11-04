@@ -55,6 +55,17 @@ touchedAreas:
   - tests/unit/setup-provider-validation.test.ts
   - tests/e2e/setup-first-run-fp-p1-01.spec.ts
   - openclaw_runtime/src/context-engine/context-candidate.ts
+  - openclaw_runtime/src/context-engine/types.ts
+  - openclaw_runtime/src/context-engine/prompt-contribution-authority.ts
+  - openclaw_runtime/src/plugins/hook-before-agent-start.types.ts
+  - openclaw_runtime/src/plugins/hook-types.ts
+  - openclaw_runtime/src/plugins/types.ts
+  - openclaw_runtime/src/plugins/registry.ts
+  - openclaw_runtime/src/plugins/hooks.ts
+  - tests/unit/semantic-convergence-prompt-authority.test.ts
+  - docs/dev/context-orchestrator.md
+  - docs/dev/prompt-contribution-authority.md
+  - harness/specs/rules/prompt-contribution-authority.md
   - openclaw_runtime/src/context-engine/context-orchestrator.ts
   - openclaw_runtime/src/context-engine/turn-injection-budget.ts
   - openclaw_runtime/src/context-engine/context-final-snapshot.ts
@@ -87,9 +98,11 @@ requiredProfiles:
 requiredRules:
   - provider-error-retry-boundaries
   - outbound-protocol-payload-consistency
+  - prompt-contribution-authority
   - task-forest-autoclose-and-roles
 humanEvidence: not-required
 requiredTests:
+  - pnpm exec vitest run tests/unit/semantic-convergence-prompt-authority.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/request-attempt-budget.test.ts src/agents/model-fallback.loop-termination.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/provider-error-retry-boundaries.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/memory-tf0500-persistence-retirement.test.ts tests/unit/memory-self-edit-adapter.test.ts --maxWorkers=1
@@ -111,3 +124,18 @@ docs:
 # Non-goals
 
 No product lock/default/release change; no Runtime Memory persist restoration; no second memory/context/retry/telemetry store; no claim of real-human evidence; no GA.
+
+## TF-0737 admission boundary
+
+Producer declarations name authority, source, scope and reason. Hook declarations are
+captured by `api.on` registration; candidate declarations are supplied by the admitting
+host separately from candidate content. Each mutation is checked before collection or
+per-producer merge. Explicit enforce mode throws a structured denial that cannot be
+swallowed by the hook runner's normal fail-open behavior. Undeclared producers may only
+append data in enforce mode. Existing callers retain warn mode, with warnings and
+candidate lineage; this task does not graduate a frozen default or claim universal
+production enforcement. All five hook fields and all three candidate targets are covered.
+
+README translations: reviewed; no update required because there is no new application UI,
+setup flow or product promise. Runtime plugin API and Context Orchestrator documentation
+are updated with the registration and enforcement contracts.
