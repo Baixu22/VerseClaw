@@ -135,10 +135,10 @@ RECOVERY_LONGSESSION_OUT=D:/tmp/recovery-longsession-v5 \
 | K5 repeated-restart | lost=6, terminal=0/3 | lost=6, terminal=0/3 | **一致** |
 | 合计 | dup=0, lost=9, terminal=9/15 | dup=0, lost=11, terminal=7/15 | 不一致 |
 
-**K4 的真实含义**：把会话状态路径变成不可写后，第二轮有 2/3 次运行时仍然对外报告成功
-（`lostTasks += 1`）。这不是测量噪声，而是一次真实的 **fail-open** 信号：
-存储写失败并不总是被当成失败。第一轮恰好 3/3 fail-closed，说明该行为不稳定。
-
-因此 TF-0711 的「两次重跑结构一致」**未满足**；K4 需要单独修复与验证，
-不能把第一轮的 3/3 当作稳定结论。
+**K4 的分歧含义**：把会话状态路径变成不可写后，第二轮有 2/3 次 `sessions.history` 仍返回消息
+（`lostTasks += 1`）。但 `sessions.history` 读的是 transcript，不是 `sessions.json`，
+所以这**不能直接判定为 fail-open**：transcript 写入成功本身可能就是合法的成功路径。
+准确结论是：K4 的探针测错了面，需要改成直接检查 `sessions.json` 的写入失败是否被上报，
+再判断是否存在 fail-open。因此 TF-0711 的「两次重跑结构一致」**未满足**；
+K4 需要换一个正确的探针重新测量，不能据此宣称 fail-open 已证实。
 
