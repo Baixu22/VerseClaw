@@ -3,6 +3,7 @@
 // bridge to the embedded @verse-claw/versebrowser module. Agent approvals are driven
 // through the Main inspector, never supplied as renderer permission claims.
 import { createServer } from 'node:http';
+import { spawnSync } from 'node:child_process';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
@@ -18,7 +19,7 @@ const EXE = 'release/win-unpacked/Verse Claw.exe';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
+export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot = join(hostRoot, '.tmp') } = {}) {
   const exePath = resolve(hostRoot, exe);
   const issues = [];
   if (!existsSync(exePath)) return { schemaVersion: 1, driven_by: 'agent', actor: 'codex', status: 'fail', issues: [{ kind: 'packaged_exe_missing', path: exe }] };
@@ -34,10 +35,11 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   const url = `http://127.0.0.1:${fixture.address().port}/`;
   // A fresh checkout has no .tmp directory, so mkdtemp would fail with ENOENT before
   // the app is ever launched (N8 F3).
-  await mkdir(join(hostRoot, '.tmp'), { recursive: true });
-  const runRoot = await mkdtemp(join(hostRoot, '.tmp', 'm10-packaged-flow-'));
+  await mkdir(tempRoot, { recursive: true });
+  const runRoot = await mkdtemp(join(tempRoot, 'm10-packaged-flow-'));
   const userDataDir = join(runRoot, 'ud');
-  await mkdir(userDataDir, { recursive: true });
+  const homeDir = join(runRoot, 'home');
+  for (const dir of [userDataDir, homeDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
   await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
   const port = 9300 + Math.floor(Math.random() * 600);
   const runId = `m10-${Date.now().toString(36)}`;
@@ -46,8 +48,12 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   let app;
   try {
     app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
-      env: { ...process.env, TEMP: runRoot, TMP: runRoot, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
+      env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
+        APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
+        XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
+        VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
     const page = await app.firstWindow({ timeout: 30_000 });
+    await page.waitForLoadState('domcontentloaded', { timeout: 30_000 });
     await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
     result.pageTitle = await page.title();
     result.hostBridgePresent = await page.evaluate(() => Boolean(window.verseClaw?.hostInvoke));
@@ -92,7 +98,15 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   } catch (error) {
     issues.push({ kind: 'packaged_flow_failed', message: String(error?.message ?? error) });
   } finally {
-    if (app) await app.close().catch(() => { try { app.process().kill(); } catch { /* already exited */ } });
+    if (app) {
+      const child = app.process();
+      let timer;
+      await Promise.race([app.close().catch(() => undefined), new Promise((done) => { timer = setTimeout(done, 8000); })]);
+      clearTimeout(timer);
+      if (child.exitCode === null && child.signalCode === null) {
+        spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
+      }
+    }
     // Never let a lingering client connection hang the verifier (N8 F3).
     await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
     // The app's own child processes can still be shutting down and hold files under the
@@ -122,8 +136,8 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
 }
 
 async function main() {
-  const { values } = parseArgs({ options: { 'host-root': { type: 'string' }, exe: { type: 'string' }, output: { type: 'string' } }, allowPositionals: false });
-  const report = await verifyPackagedFlow({ hostRoot: values['host-root'], exe: values.exe });
+  const { values } = parseArgs({ options: { 'host-root': { type: 'string' }, exe: { type: 'string' }, 'temp-root': { type: 'string' }, output: { type: 'string' } }, allowPositionals: false });
+  const report = await verifyPackagedFlow({ hostRoot: values['host-root'], exe: values.exe, tempRoot: values['temp-root'] });
   const text = JSON.stringify(report, null, 2) + '\n';
   if (values.output) await writeFile(resolve(values.output), text, 'utf8');
   process.stdout.write(text);

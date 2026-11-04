@@ -222,3 +222,12 @@ agent 驱动的等价路径从 Main inspector 调用已有批准函数，记录 
 同一批准不能再次打开其他会话，close 后撤销。无 session 的批准、跨会话、跨 origin、
 过期批准和伪造请求字段均应被拒绝。批准步骤不替代 sandbox、权限 owner 或审计门禁。
 N8/N9 必须先验证伪造批准仍被拒绝，再由 Main 自动批准并执行既有完整闭环。
+
+## 2026-11-04 边界修复的当前验收
+
+本次新候选使用 `current-20261104/`；`current-merge-20261025/` 保留为历史。
+N8/N9 在运行前后计算同一安装包的 EXE、app.asar、main-runtime.asar 身份，
+必须与当前 candidate 一致。Windows 可用 `--temp-root` 指定 D: 上现有可写的
+测试目录；无需更改应用默认值或目录权限。N9 仅回收本次分配的批次与轮次，
+不得扫描或删除其他测试的共享临时目录。进程枚举失败不能算零残留。
+验收等待 DOMContentLoaded 与 hostInvoke 就绪，正常退出超时后仅终止所属进程树。

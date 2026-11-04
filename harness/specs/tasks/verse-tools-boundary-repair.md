@@ -31,6 +31,7 @@ touchedAreas:
   - scripts/versebrowser-evidence-verify.d.mts
   - scripts/versebrowser-m10-packaged-flow-verify.mjs
   - scripts/versebrowser-n9-stability-probe.mjs
+  - scripts/versebrowser-n9-stability-probe.test.mjs
   - scripts/lib/versebrowser-build-identity.mjs
   - scripts/verify-versegit-product-integration.mjs
   - scripts/verify-versegit-product-integration.d.mts
@@ -62,6 +63,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
+  - node --test scripts/versebrowser-n9-stability-probe.test.mjs
   - pnpm exec vitest run tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/versebrowser-capability-gating.test.ts tests/unit/versebrowser-n6-authorization-conservation.test.ts tests/unit/versebrowser-host-adapter.test.ts tests/unit/versebrowser-boundary-repair.test.ts tests/unit/versebrowser-evidence-verification.test.ts tests/unit/browser-private-network-tf0503.test.ts tests/unit/versegit-product-acceptance.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.agents-tools.config.ts src/agents/tools/agent-browser-tool.provenance.test.ts --maxWorkers=1
   - pnpm --filter @verse-claw/versebrowser exec vitest run tests/agent-browser-service.test.ts tests/agent-browser-tab-manager.test.ts --maxWorkers=1
@@ -100,6 +102,14 @@ executor, authorization service, browser driver or task authority.
 The original acceptance reports remain attributed to their original candidates.
 New results bind the current source and actual command outputs. A manifest update
 alone must never be used to manufacture a current runtime or packaged pass.
+
+On Windows, N8/N9 accept `--temp-root` for an existing writable test location
+on D:. Each N9 invocation owns a unique batch directory and only reclaims its
+own round directories and processes. A failed process census is not evidence of
+zero residual processes. Renderer readiness includes DOM content loading before
+the probe can close the application; teardown remains bounded.
+User data, home/app-data and OpenClaw config paths are isolated per round, so a
+packaged probe does not acquire locks in the owner's real runtime directory.
 
 The required full typecheck also repairs a pre-existing declaration omission:
 `buildArmsReport` already returns `promotion` at runtime, but its declaration did

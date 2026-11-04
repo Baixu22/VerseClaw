@@ -15,9 +15,9 @@
  */
 import { createServer } from 'node:http';
 import { spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, rmdir, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -35,14 +35,11 @@ function listProcesses() {
     "$ErrorActionPreference='SilentlyContinue'",
     'Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine,WorkingSetSize | ConvertTo-Json -Compress -Depth 3',
   ].join('; ');
-  const out = spawnSync('powershell.exe', ['-NoProfile', '-Command', ps], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true });
-  if (out.status !== 0 || !out.stdout) return [];
-  try {
-    const parsed = JSON.parse(out.stdout);
-    return Array.isArray(parsed) ? parsed : [parsed];
-  } catch {
-    return [];
-  }
+  const out = spawnSync('powershell.exe', ['-NoProfile', '-Command', ps], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true, timeout: 15_000 });
+  if (out.status !== 0 || !out.stdout) throw new Error(`Process census failed: ${out.error?.message ?? out.stderr ?? out.status}`);
+  const parsed = JSON.parse(out.stdout);
+  if (!parsed || typeof parsed !== 'object') throw new Error('Process census returned no inventory');
+  return Array.isArray(parsed) ? parsed : [parsed];
 }
 
 function processesFor(runDir) {
@@ -55,7 +52,7 @@ function rssMbFor(runDir) {
   return Math.round((bytes / (1024 * 1024)) * 10) / 10;
 }
 
-export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts = 10, loops = 30, interrupts = 3, output } = {}) {
+export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = join(hostRoot, '.tmp'), coldStarts = 10, loops = 30, interrupts = 3, output } = {}) {
   const exePath = resolve(hostRoot, exe);
   const require = createRequire(join(hostRoot, 'package.json'));
   const electron = require('playwright-core')._electron;
@@ -74,12 +71,14 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
   });
   await new Promise((done) => fixture.listen(0, '127.0.0.1', done));
   const url = `http://127.0.0.1:${fixture.address().port}/`;
-  await mkdir(join(hostRoot, '.tmp'), { recursive: true });
+  await mkdir(tempRoot, { recursive: true });
+  const batchRoot = await mkdtemp(join(tempRoot, 'n9-batch-'));
 
   async function withInstance(kind, index, body) {
-    const runRoot = await mkdtemp(join(hostRoot, '.tmp', `n9-${kind}-`));
+    const runRoot = await mkdtemp(join(batchRoot, `n9-${kind}-`));
     const userDataDir = join(runRoot, 'ud');
-    await mkdir(userDataDir, { recursive: true });
+    const homeDir = join(runRoot, 'home');
+    for (const dir of [userDataDir, homeDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
     await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
     const port = 9200 + Math.floor(Math.random() * 700);
     const runId = `n9-${kind}-${index}-${Date.now().toString(36)}`;
@@ -90,11 +89,15 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
     const row = { kind, index, runId, runRoot, status: 'fail' };
     try {
       app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
-        env: { ...process.env, TEMP: runRoot, TMP: runRoot, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
+        env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
+          APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
+          XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
+          VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
       child = app.process();
       child.on('exit', () => { exited = true; });
       row.launchMs = Date.now() - startedAt;
       const page = await app.firstWindow({ timeout: 30_000 });
+      await page.waitForLoadState('domcontentloaded', { timeout: 30_000 });
       await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
       row.rendererReadyMs = Date.now() - startedAt;
       row.pageTitle = await page.title();
@@ -111,7 +114,11 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       row.error = String((error && error.message) || error);
       issues.push(issue('round_failed', { kind, index, message: row.error }));
     } finally {
-      if (app && kind !== 'interrupt') await app.close().catch(() => undefined);
+      if (app && kind !== 'interrupt') {
+        let timer;
+        await Promise.race([app.close().catch(() => undefined), new Promise((done) => { timer = setTimeout(done, 8000); })]);
+        clearTimeout(timer);
+      }
       // Every round tears the app tree down; for `interrupt` rounds this kill happens with a
       // live browser session still open, which is the controlled-interrupt case.
       if (child && !exited) spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
@@ -238,30 +245,30 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
   // Some packaged-app children can exit just after the per-round observation. Keep
   // the first residue in each row, then perform one final deterministic sweep so the
   // whole batch reports the actual end state instead of a transient shutdown race.
-  const tmpRoot = join(hostRoot, '.tmp');
   let finalSweepRemoved = 0;
   let finalSweepKilled = 0;
-  if (existsSync(tmpRoot)) {
+  // The shared temp root can contain another running probe. Reclaim only the
+  // exact per-round directories allocated by this invocation.
+  for (const row of rows) {
     for (let attempt = 0; attempt < 5; attempt += 1) {
-      const leftovers = processesFor(tmpRoot);
+      const leftovers = processesFor(row.runRoot);
       if (leftovers.length === 0) break;
       for (const processInfo of leftovers) {
         try { process.kill(Number(processInfo.ProcessId), 'SIGKILL'); } catch { /* already exited */ }
-        spawnSync('taskkill', ['/PID', String(processInfo.ProcessId), '/T', '/F'], { windowsHide: true });
+        spawnSync('taskkill', ['/PID', String(processInfo.ProcessId), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
         finalSweepKilled += 1;
       }
       await sleep(1000);
     }
-    const leftovers = readdirSync(tmpRoot).filter((name) => name.startsWith('n9-'));
-    for (const name of leftovers) {
-      const target = join(tmpRoot, name);
+    if (existsSync(row.runRoot)) {
       for (let attempt = 0; attempt < 5; attempt += 1) {
-        try { await rm(target, { recursive: true, force: true }); break; }
+        try { await rm(row.runRoot, { recursive: true, force: true }); break; }
         catch { await sleep(1000); }
       }
-      if (!existsSync(target)) finalSweepRemoved += 1;
+      if (!existsSync(row.runRoot)) finalSweepRemoved += 1;
     }
   }
+  await rmdir(batchRoot).catch((error) => issues.push(issue('batch_dir_not_reclaimed', { message: String(error.message) })));
 
   for (const row of rows) {
     const finalResidual = row.runRoot ? processesFor(row.runRoot) : [];
@@ -330,6 +337,7 @@ async function main() {
     options: {
       'host-root': { type: 'string' },
       exe: { type: 'string' },
+      'temp-root': { type: 'string' },
       'cold-starts': { type: 'string' },
       loops: { type: 'string' },
       interrupts: { type: 'string' },
@@ -340,6 +348,7 @@ async function main() {
   const report = await runProbe({
     hostRoot: values['host-root'],
     exe: values.exe,
+    tempRoot: values['temp-root'],
     coldStarts: Number(values['cold-starts'] ?? 10),
     loops: Number(values.loops ?? 30),
     interrupts: Number(values.interrupts ?? 3),

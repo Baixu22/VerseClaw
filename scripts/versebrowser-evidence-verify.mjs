@@ -32,6 +32,7 @@ const SOURCE_SCOPE = [
   'openclaw_runtime/src/agents/tools/agent-browser-tool.ts',
   'openclaw_runtime/src/gateway/server-methods/agent-browser.ts',
   'scripts/versebrowser-n9-stability-probe.mjs',
+  'scripts/versebrowser-n9-stability-probe.test.mjs',
   'scripts/versebrowser-m10-packaged-flow-verify.mjs',
   'scripts/versebrowser-evidence-verify.mjs',
   'scripts/versebrowser-host-integration-verify.mjs',
