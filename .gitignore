@@ -1793,6 +1793,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/context-moat/designs/.gitkeep
 !/docs/dev/context-moat/loss-trace-spike.md
 !/docs/dev/context-orchestrator.md
+!/docs/dev/prompt-contribution-authority.md
+!/docs/dev/semantic-convergence-program-20261104.md
 !/docs/dev/cvk-real-runtime-evidence-20261009.md
 !/docs/dev/dcs-deep-test-week1-kickoff.md
 !/docs/dev/dcs-first-architecture-review-assignment.md

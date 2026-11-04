@@ -1,0 +1,200 @@
+{
+  "schema": "SemanticConvergenceNodeReport/v1",
+  "node": "TF-0737",
+  "title": "定义并接入 PromptContributionAuthority 声明",
+  "generatedAt": "2026-11-04T08:19:23.527Z",
+  "driven_by": "agent",
+  "actor": "codex/prompt-authority",
+  "base": {
+    "parentCommit": "f7afdc11f2dbf918901e31833ed081d03c96a2bc"
+  },
+  "candidate": {
+    "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+    "tree": "be287894c58222959238611b31564bca17e5d33e",
+    "dirty": false
+  },
+  "decision": {
+    "status": "scoped-development-complete",
+    "nodeAcceptancePassed": true,
+    "programFullTypecheckPassed": false,
+    "releaseReady": false,
+    "liveReady": false,
+    "defaultOn": false,
+    "realHumanEvidence": false
+  },
+  "metrics": {
+    "PROMPT-1": {
+      "before": 0,
+      "after": 5,
+      "unit": "hook fields",
+      "method": "explicit source field maps plus behavioral tests"
+    },
+    "candidateTargetsCovered": {
+      "after": "3/3",
+      "method": "behavioral"
+    },
+    "coreProducerDeclarations": {
+      "after": 9,
+      "highAuthorityFamilies": 7,
+      "method": "fixed static authority/scope registry"
+    },
+    "ungoverned_mutation_count": {
+      "before": null,
+      "after": 0,
+      "testedDeniedDecisions": 8,
+      "method": "enforce-mode API trace; not global runtime enforcement"
+    }
+  },
+  "tests": {
+    "total": 163,
+    "failed": 0,
+    "skipped": 0,
+    "root": {
+      "files": 5,
+      "tests": 100,
+      "passed": 100,
+      "failed": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "files": 4,
+      "tests": 50,
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0
+    },
+    "retry": {
+      "files": 2,
+      "tests": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    "promptAuthorityTests": 48
+  },
+  "gates": [
+    {
+      "id": "root-tests-final",
+      "exitCode": 0,
+      "durationMs": 56136,
+      "sourceStable": true
+    },
+    {
+      "id": "runtime-tests-final",
+      "exitCode": 0,
+      "durationMs": 28595,
+      "sourceStable": true
+    },
+    {
+      "id": "retry-tests-final",
+      "exitCode": 0,
+      "durationMs": 23457,
+      "sourceStable": true
+    },
+    {
+      "id": "typecheck-final",
+      "exitCode": 1,
+      "durationMs": 46557,
+      "sourceStable": true
+    },
+    {
+      "id": "scoped-typecheck-final",
+      "exitCode": 0,
+      "durationMs": 12343,
+      "sourceStable": true
+    },
+    {
+      "id": "eslint-final",
+      "exitCode": 0,
+      "durationMs": 8150,
+      "sourceStable": true
+    },
+    {
+      "id": "harness-validate-final",
+      "exitCode": 0,
+      "durationMs": 1926,
+      "sourceStable": true
+    },
+    {
+      "id": "harness-dry-run-final",
+      "exitCode": 0,
+      "durationMs": 22920,
+      "sourceStable": true
+    },
+    {
+      "id": "behavioral-trace-final",
+      "exitCode": 0,
+      "durationMs": 1698,
+      "sourceStable": true
+    },
+    {
+      "id": "comms-replay-final",
+      "exitCode": 0,
+      "durationMs": 3804,
+      "sourceStable": true
+    },
+    {
+      "id": "comms-compare-final",
+      "exitCode": 0,
+      "durationMs": 8472,
+      "sourceStable": true
+    },
+    {
+      "id": "baseline-before-final",
+      "exitCode": 0,
+      "durationMs": 8868,
+      "sourceStable": true
+    },
+    {
+      "id": "baseline-after-final",
+      "exitCode": 0,
+      "durationMs": 3047,
+      "sourceStable": true
+    }
+  ],
+  "acceptance": [
+    {
+      "criterion": "5/5 mutation fields declared",
+      "verdict": "pass",
+      "evidence": [
+        "prompt-after.json",
+        "unit-tests.json",
+        "runtime-tests.json"
+      ]
+    },
+    {
+      "criterion": "Undeclared systemPrompt/message_replacement rejected",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "runtime-tests.json",
+        "commands.json#behavioralTrace"
+      ]
+    },
+    {
+      "criterion": "Matching declarations pass; negatives never silently downgrade",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "runtime-tests.json",
+        "commands.json#behavioralTrace"
+      ]
+    }
+  ],
+  "limitations": [
+    "Default mode remains warn. Host environment or explicit options can enforce; no global production default graduation is claimed.",
+    "Full uncached typecheck ran and failed only on two pre-existing RSI promotion-property errors at rsi-sekb-arms.test.ts:102,126; node/web and scoped typecheck passed. Both unrelated source blobs match the pre-node base.",
+    "Deterministic agent-driven API fixtures and comms dataset replay were used; no paid provider or source Electron/Gateway scenario was executed.",
+    "Authority declarations govern supported mutation surfaces; they do not authenticate a malicious in-process plugin or classify arbitrary appended data.",
+    "Post-orchestrator budget accounting and RC-03 seal coverage belong to TF-0738/TF-0739. Earlier source-interference runs are excluded from closure."
+  ],
+  "closeoutChecks": {
+    "retention": 0,
+    "evidenceRefs": 0,
+    "productionAndTestSourcesUnchanged": true,
+    "deliveryMetadataUpdates": [
+      ".gitignore",
+      "scripts/repository-artifacts.json"
+    ]
+  }
+}

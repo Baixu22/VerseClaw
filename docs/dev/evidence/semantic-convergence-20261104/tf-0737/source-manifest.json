@@ -1,0 +1,65 @@
+{
+  "schema": "PromptAuthoritySourceManifest/v1",
+  "candidate": {
+    "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+    "tree": "be287894c58222959238611b31564bca17e5d33e",
+    "dirty": false
+  },
+  "sourceHashes": {
+    ".gitignore": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+    "docs/dev/context-orchestrator.md": "a85f0a15728eaa447dc3f2fc3497e265018b0d2d5b1bb67e7ee489ef7ce840eb",
+    "docs/dev/prompt-contribution-authority.md": "a80471963ca5855d81f123e7b87d37dc618589c2deaf833f1a7377ce5c36a446",
+    "docs/dev/semantic-convergence-program-20261104.md": "15a0dcf49dbe89d92071b5b4c4c35cf2a3744f0d1a77fa454d79ea7de3bd83d4",
+    "harness/specs/rules/prompt-contribution-authority.md": "6ffb729947c6ce1c30a96b037957fb9dce3f49ae80cef1794ee6949561f3cdd2",
+    "harness/specs/tasks/semantic-convergence-remediation.md": "eb4ab15839a49f48273beebe0ea24b81d3173be7d3c58aeb42a648522d8dc67c",
+    "openclaw_runtime/src/context-engine/context-candidate.ts": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+    "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+    "openclaw_runtime/src/context-engine/prompt-contribution-authority.ts": "5b3bdb1cfae7a3343e564ad922fd83dba1f555880ba188bff14e02946836ef78",
+    "openclaw_runtime/src/context-engine/types.ts": "5bdd2bc8173a39f812364ef36c69b9243839c08c72e15f6068203974b3bd939e",
+    "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts": "fc8f44cca835ac346f4eb3d1748bb698ea619c1932aa592524b10740c0f5c308",
+    "openclaw_runtime/src/plugins/hook-types.ts": "f9a35bbb9fdcca01786498eefa86bd73b731f90da9717cf1323366d5669126d4",
+    "openclaw_runtime/src/plugins/hooks.ts": "fc29928bad947853b725e8a66afbb5b407e56d0bc55f03088557a7d4a3442096",
+    "openclaw_runtime/src/plugins/registry.ts": "a8bf92f8ddb221747bfdad26f520b265cdc7133b81d33435ec51cfba575be152",
+    "openclaw_runtime/src/plugins/types.ts": "d337af964e2289ea711efbcbef3a2a18ba79c4235e552f072f4d08b745a4e7ed",
+    "scripts/repository-artifacts.json": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+    "scripts/semantic-convergence-baseline.mjs": "dd0ac4376ff5c6370d9668b56852894f3cf6f3ec7d53fecab539853537b37227",
+    "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d"
+  },
+  "unchangedFullGateFailureSources": [
+    {
+      "path": "tests/unit/rsi-sekb-arms.test.ts",
+      "beforeBlob": "ffce1df01612e7b438a011e201c94abc75ee9d11",
+      "afterBlob": "ffce1df01612e7b438a011e201c94abc75ee9d11"
+    },
+    {
+      "path": "scripts/rsi-sekb-arms.mjs",
+      "beforeBlob": "d8858a66adfda5c460ff8fb90b40cabcf6f80aa6",
+      "afterBlob": "d8858a66adfda5c460ff8fb90b40cabcf6f80aa6"
+    }
+  ],
+  "externalInputs": {
+    "scopedTypecheckConfig": {
+      "sha256": "53c7924aa408c6bf84812ec0a443abc57dd4802b3fab55d0cfce1ee7aef1f80f",
+      "capture": "Agent-owned configuration retained unchanged after the successful run"
+    },
+    "behavioralTraceDriver": {
+      "sha256": "9d97381c3e599569e6ab656d274a0de57a2fadfc5b68f9258f1d3b032d0679a2"
+    }
+  },
+  "deliveryMetadataUpdates": [
+    {
+      "path": ".gitignore",
+      "testedHash": "e8306ab86063bcc9046b3b7490736384b89201a65d71069babb505c49c2d034e",
+      "currentHash": "d69ad0fcb68422268ca6398a7eb7300bc68dd31623dd5d69376831b3f7ab057a",
+      "reason": "Retain and unignore the two new reviewed documentation inputs; runtime and test sources unchanged"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "testedHash": "4097e70243e617dc788b5861f07a0e6bf78f0df3d0c329e4b385733a949ec388",
+      "currentHash": "298edb7a8ab4f1511e89da521ed0c3a0c7103ef9cc4ae0115c765960b7a04e11",
+      "reason": "Retain and unignore the two new reviewed documentation inputs; runtime and test sources unchanged"
+    }
+  ],
+  "productionAndTestSourcesUnchanged": true
+}

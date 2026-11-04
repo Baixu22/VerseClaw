@@ -1,0 +1,255 @@
+{
+  "numTotalTestSuites": 4,
+  "numPassedTestSuites": 4,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 13,
+  "numPassedTests": 13,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793780133051,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "model fallback respects runtime loop termination"
+          ],
+          "fullName": "model fallback respects runtime loop termination preserves 'ToolLoopTerminatedError' without trying another model",
+          "status": "passed",
+          "title": "preserves 'ToolLoopTerminatedError' without trying another model",
+          "duration": 950.6455999999998,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "model fallback respects runtime loop termination"
+          ],
+          "fullName": "model fallback respects runtime loop termination preserves 'PostCompactionLoopPersistedError' without trying another model",
+          "status": "passed",
+          "title": "preserves 'PostCompactionLoopPersistedError' without trying another model",
+          "duration": 436.72219999999834,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "model fallback respects runtime loop termination"
+          ],
+          "fullName": "model fallback respects runtime loop termination uses the ambient logical-request budget when none is passed explicitly",
+          "status": "passed",
+          "title": "uses the ambient logical-request budget when none is passed explicitly",
+          "duration": 440.89559999999983,
+          "failureMessages": [],
+          "location": {
+            "line": 49,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "model fallback respects runtime loop termination"
+          ],
+          "fullName": "model fallback respects runtime loop termination stops fallback candidates at the shared physical-attempt budget",
+          "status": "passed",
+          "title": "stops fallback candidates at the shared physical-attempt budget",
+          "duration": 421.53969999999936,
+          "failureMessages": [],
+          "location": {
+            "line": 73,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "model fallback respects runtime loop termination"
+          ],
+          "fullName": "model fallback respects runtime loop termination leaves charging to provider transport when the run does not record a physical attempt",
+          "status": "passed",
+          "title": "leaves charging to provider transport when the run does not record a physical attempt",
+          "duration": 415.35070000000087,
+          "failureMessages": [],
+          "location": {
+            "line": 96,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "model fallback respects runtime loop termination"
+          ],
+          "fullName": "model fallback respects runtime loop termination still tries the next model for a provider failure",
+          "status": "passed",
+          "title": "still tries the next model for a provider failure",
+          "duration": 394.09989999999925,
+          "failureMessages": [],
+          "location": {
+            "line": 122,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "does not exhaust a four-slot budget after two failed physical attempts",
+          "status": "passed",
+          "title": "does not exhaust a four-slot budget after two failed physical attempts",
+          "duration": 407.58290000000125,
+          "failureMessages": [],
+          "location": {
+            "line": 140,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793780144463,
+      "endTime": 1793780147930.583,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/agents/model-fallback.loop-termination.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "RequestAttemptBudget"
+          ],
+          "fullName": "RequestAttemptBudget shares one physical-attempt budget across retry layers",
+          "status": "passed",
+          "title": "shares one physical-attempt budget across retry layers",
+          "duration": 0.5555999999996857,
+          "failureMessages": [],
+          "location": {
+            "line": 5,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RequestAttemptBudget"
+          ],
+          "fullName": "RequestAttemptBudget fails closed when a layer tries to exceed the budget",
+          "status": "passed",
+          "title": "fails closed when a layer tries to exceed the budget",
+          "duration": 0.5740000000005239,
+          "failureMessages": [],
+          "location": {
+            "line": 24,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RequestAttemptBudget"
+          ],
+          "fullName": "RequestAttemptBudget keeps finite non-negative Retry-After metadata as a lower bound",
+          "status": "passed",
+          "title": "keeps finite non-negative Retry-After metadata as a lower bound",
+          "duration": 0.38610000000153377,
+          "failureMessages": [],
+          "location": {
+            "line": 33,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RequestAttemptBudget"
+          ],
+          "fullName": "RequestAttemptBudget does not turn invalid Retry-After metadata into a delay",
+          "status": "passed",
+          "title": "does not turn invalid Retry-After metadata into a delay",
+          "duration": 0.21180000000094878,
+          "failureMessages": [],
+          "location": {
+            "line": 44,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RequestAttemptBudget"
+          ],
+          "fullName": "RequestAttemptBudget rounds fractional and invalid maxima into a safe bounded budget",
+          "status": "passed",
+          "title": "rounds fractional and invalid maxima into a safe bounded budget",
+          "duration": 0.3055999999996857,
+          "failureMessages": [],
+          "location": {
+            "line": 54,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "RequestAttemptBudget"
+          ],
+          "fullName": "RequestAttemptBudget never schedules retries by itself",
+          "status": "passed",
+          "title": "never schedules retries by itself",
+          "duration": 1.7784000000010565,
+          "failureMessages": [],
+          "location": {
+            "line": 60,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793780147955,
+      "endTime": 1793780147959.7783,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/agents/request-attempt-budget.test.ts"
+    }
+  ]
+}
