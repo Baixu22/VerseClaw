@@ -31,6 +31,7 @@ import {
 } from "../openclaw_runtime/src/context-engine/registry/context-item-registry.js";
 import type { AgentMessage } from "../openclaw_runtime/src/agents/runtime/index.js";
 import { mcnemarExact, parseAnswer, wilson } from "./context-inline-spill-benefit-scoring.mjs";
+import { buildProjectedEvalInput, contentText, pairedSessionId, textOf } from "./context-inline-spill-benefit-input.mjs";
 
 const ROOT = process.cwd();
 const MODE = argValue("--mode") ?? "deterministic";
@@ -38,7 +39,7 @@ if (!["deterministic", "live"].includes(MODE)) throw new Error("mode must be det
 const RUN_ID = new Date().toISOString().replace(/[:.]/g, "-") + "-" + MODE;
 const runDir = resolve(argValue("--out") ?? "D:/tmp/context-inline-spill-benefit", RUN_ID);
 mkdirSync(runDir, { recursive: true });
-const ACTOR = "codex-inline-spill-benefit";
+const ACTOR = "codex-inline-spill-benefit-r3";
 const API_KEY = process.env.CONTEXT_INLINE_SPILL_API_KEY;
 const BASE_URL = process.env.CONTEXT_INLINE_SPILL_BASE_URL ?? "http://127.0.0.1:3065/v1";
 const MODEL = process.env.CONTEXT_INLINE_SPILL_MODEL ?? "space-bunny";
@@ -73,23 +74,6 @@ function redact(text: string): string {
 }
 function save(name: string, value: unknown): void {
   writeFileSync(join(runDir, name), redact(JSON.stringify(value, null, 2)) + "\n");
-}
-function textOf(messages: readonly AgentMessage[]): string {
-  return messages
-    .map((m) => {
-      const content = (m as { content?: unknown }).content;
-      const text =
-        typeof content === "string"
-          ? content
-          : Array.isArray(content)
-            ? content
-                .filter((b): b is { type: "text"; text: string } => b?.type === "text" && typeof b.text === "string")
-                .map((b) => b.text)
-                .join("\n")
-            : "";
-      return m.role + ": " + text;
-    })
-    .join("\n\n");
 }
 function user(text: string): AgentMessage {
   return { role: "user", content: text, timestamp: 1 } as AgentMessage;
@@ -196,38 +180,13 @@ const RECALL_TOOL_DEF = {
   },
 };
 
-function promptFor(visible: string, taskPrompt: string): string {
-  return [
-    "You are completing a real task. Only the context below is visible to you.",
-    "If the exact information is not present and cannot be retrieved, answer null.",
-    "Archived tool output can be retrieved with the context_archive_recall tool using the archive_uri and checksum shown in the context.",
-    "If the first excerpt does not contain the exact value, page further with the offset argument before concluding it is absent.",
-    "Call context_archive_recall at most once per turn and at most 3 times in total. Additional parallel calls are rejected.",
-    'As soon as you obtain the exact value, stop recalling and immediately output only JSON. If you still cannot obtain it after at most 3 recalls, output {"value":null}.',
-    'Answer with strict JSON only: {"value": string|null}',
-    "",
-    "TASK:",
-    taskPrompt,
-    "",
-    "VISIBLE CONTEXT:",
-    visible,
-  ].join("\n");
-}
-
-async function liveTurn(prompt: string, toolHistory: Array<Record<string, unknown>>): Promise<ProviderTurn> {
+async function liveTurn(requestBody: string): Promise<ProviderTurn> {
   const started = performance.now();
   try {
     const response = await fetch(BASE_URL.replace(/\/$/, "") + "/responses", {
       method: "POST",
       headers: { authorization: "Bearer " + API_KEY, "content-type": "application/json" },
-      body: JSON.stringify({
-        model: MODEL,
-        input: [{ role: "user", content: prompt }, ...toolHistory],
-        tools: [RECALL_TOOL_DEF],
-        tool_choice: "auto",
-        temperature: 0,
-        max_output_tokens: 900,
-      }),
+      body: requestBody,
       signal: AbortSignal.timeout(120_000),
     });
     const raw = redact(await response.text());
@@ -276,6 +235,7 @@ type RunRecord = {
   arm: Arm; fixtureId: string; repetition: number; sessionId: string;
   success: boolean; recallAttempted: boolean; recallOk: boolean; turns: number;
   mainContextChars: number; retainedAtEnd: number;
+  projectedContextChars: number; initialRequestSha256: string;
   inputTokens: number; outputTokens: number; totalTokens: number; latencyMs: number;
   cost: Record<string, unknown>; failureClass: string | null;
   finalAnswer: { ok: boolean; value: string | null };
@@ -291,7 +251,7 @@ for (const fixture of fixtures) {
   for (const arm of ARMS) {
     const cfg = ARM_CONFIG[arm];
     for (let repetition = 0; repetition < REPEATS; repetition++) {
-      const sessionId = "benefit-" + fixture.id + "-" + arm + "-" + repetition;
+      const sessionId = pairedSessionId(fixture.id, arm, repetition);
       const handle = createContextArchiveHandleForPayloadSync({
         sessionId,
         itemId: (fixture.id + "-" + repetition) as never,
@@ -321,6 +281,8 @@ for (const fixture of fixtures) {
       let recallOk = false;
       let turns = 0;
       let mainContextChars = 0;
+      let projectedContextChars = 0;
+      let initialRequestSha256 = "";
       let retainedAtEnd = 0;
       let inputTokens = 0;
       let outputTokens = 0;
@@ -332,18 +294,26 @@ for (const fixture of fixtures) {
       for (let turn = 0; turn < MAX_TURNS; turn++) {
         const projected = project(messages, sessionId, arm);
         const visibleText = textOf(projected.visible);
-        mainContextChars = visibleText.length;
+        projectedContextChars = visibleText.length;
         retainedAtEnd = projected.retained;
-        const prompt = promptFor(visibleText, fixture.question);
+        const input = buildProjectedEvalInput(projected.visible, toolHistory, fixture.question);
+        const inputJson = JSON.stringify(input);
+        mainContextChars = inputJson.length;
+        const request = { model: MODEL, input, tools: [RECALL_TOOL_DEF], tool_choice: "auto", temperature: 0, max_output_tokens: 900 };
+        const requestBody = JSON.stringify(request);
+        const outputIds = new Set(toolHistory.filter((item) => item.type === "function_call_output").map((item) => String(item.call_id)));
+        const projectedToolOutputs = Object.fromEntries(projected.visible.filter((m) => m.role === "toolResult" && outputIds.has(m.toolCallId)).map((m) => [m.toolCallId, contentText(m)]));
+        if (turn === 0) initialRequestSha256 = digest(requestBody);
+        if (!cfg.reference && fixture.oracle && requestBody.includes(fixture.oracle)) throw new Error("baseline input contains oracle");
         const result = MODE === "live"
-          ? await liveTurn(prompt, toolHistory)
-          : deterministicTurn(prompt, fixture.oracle, toolCallLog.length, { uri: handle.uri, checksum: handle.checksum });
+          ? await liveTurn(requestBody)
+          : deterministicTurn(inputJson, fixture.oracle, toolCallLog.length, { uri: handle.uri, checksum: handle.checksum });
         turns++;
         inputTokens += Number((result.usage as { input_tokens?: number } | null)?.input_tokens ?? 0);
         outputTokens += Number((result.usage as { output_tokens?: number } | null)?.output_tokens ?? 0);
         totalTokens += Number((result.usage as { total_tokens?: number } | null)?.total_tokens ?? 0);
         latencyMs += result.latencyMs;
-        providerCalls.push({ turn, status: result.status, http_status: result.httpStatus ?? null, latency_ms: result.latencyMs, usage: result.usage, tool_call_count: result.toolCalls.length, text: result.text, failure_class: result.failureClass ?? null });
+        providerCalls.push({ turn, status: result.status, http_status: result.httpStatus ?? null, latency_ms: result.latencyMs, usage: result.usage, tool_call_count: result.toolCalls.length, text: result.text, failure_class: result.failureClass ?? null, request, request_sha256: digest(requestBody), input_chars: mainContextChars, input_bytes: Buffer.byteLength(inputJson), request_chars: requestBody.length, request_bytes: Buffer.byteLength(requestBody), projected_tool_outputs: projectedToolOutputs, raw_response: result.raw ?? null });
         if (result.status === "failed") { failureClass = result.failureClass ?? "provider_error"; break; }
         if (result.toolCalls.length === 0) {
           finalAnswer = parseAnswer(result.text);
@@ -354,13 +324,16 @@ for (const fixture of fixtures) {
         for (const call of result.toolCalls) {
           toolHistory.push({ type: "function_call", call_id: call.callId, name: call.name, arguments: JSON.stringify(call.arguments) });
           if (call.name !== "context_archive_recall") {
-            toolHistory.push({ type: "function_call_output", call_id: call.callId, output: JSON.stringify({ ok: false, diagnostics: [{ code: "unknown_tool" }] }) });
+            const output = JSON.stringify({ ok: false, diagnostics: [{ code: "unknown_tool" }] });
+            toolHistory.push({ type: "function_call_output", call_id: call.callId });
+            messages.push(toolResult(call.callId, call.name, output));
             continue;
           }
           recallAttempted = true;
           if (recallHandledThisTurn) {
             const output = JSON.stringify({ ok: false, diagnostics: [{ code: "parallel_recall_limit" }] });
-            toolHistory.push({ type: "function_call_output", call_id: call.callId, output });
+            toolHistory.push({ type: "function_call_output", call_id: call.callId });
+            messages.push(toolResult(call.callId, "context_archive_recall", output));
             toolCallLog.push({ call_id: call.callId, name: call.name, arguments: call.arguments, ok: false, result_chars: output.length, result_has_oracle: false, failure_code: "parallel_recall_limit" });
             continue;
           }
@@ -378,8 +351,8 @@ for (const fixture of fixtures) {
           const resultText = executed.content.map((b) => b.text ?? "").join("\n");
           const details = executed.details;
           if (details && details.ok === true) recallOk = true;
-          toolCallLog.push({ call_id: call.callId, name: call.name, arguments: call.arguments, ok: details?.ok === true, result_chars: resultText.length, result_has_oracle: Boolean(fixture.oracle && resultText.includes(fixture.oracle)) });
-          toolHistory.push({ type: "function_call_output", call_id: call.callId, output: resultText });
+          toolCallLog.push({ call_id: call.callId, name: call.name, arguments: call.arguments, ok: details?.ok === true, result_chars: resultText.length, result_has_oracle: Boolean(fixture.oracle && resultText.includes(fixture.oracle)), raw_result: resultText });
+          toolHistory.push({ type: "function_call_output", call_id: call.callId });
           messages.push(toolResult(call.callId, "context_archive_recall", resultText, details));
           if (cfg.pressure) {
             messages.push(assistantText("Acknowledged. Continuing with the remaining verification steps."));
@@ -400,7 +373,7 @@ for (const fixture of fixtures) {
       }
       records.push({
         arm, fixtureId: fixture.id, repetition, sessionId, success, recallAttempted, recallOk, turns,
-        mainContextChars, retainedAtEnd, inputTokens, outputTokens, totalTokens,
+        mainContextChars, projectedContextChars, initialRequestSha256, retainedAtEnd, inputTokens, outputTokens, totalTokens,
         latencyMs: Number(latencyMs.toFixed(3)),
         cost: { status: "not-run", reason: "Provider billing rates were not supplied; token usage is recorded." },
         failureClass, finalAnswer, providerCalls, toolCalls: toolCallLog,
@@ -449,6 +422,10 @@ function armStats(arm: Arm) {
 }
 
 const stats = Object.fromEntries(ARMS.map((a) => [a, armStats(a)])) as Record<Arm, ReturnType<typeof armStats>>;
+const initialPairs = records.filter((r) => r.arm === "recall-stable").map((r) => {
+  const off = records.find((o) => o.arm === "retention-off" && o.fixtureId === r.fixtureId && o.repetition === r.repetition)!;
+  return { fixtureId: r.fixtureId, repetition: r.repetition, stableSha256: r.initialRequestSha256, offSha256: off.initialRequestSha256, byteIdentical: r.initialRequestSha256 === off.initialRequestSha256 };
+});
 
 function paired(a: Arm, b: Arm) {
   let both = 0, onlyA = 0, onlyB = 0, neither = 0;
@@ -502,6 +479,7 @@ const result = {
     : { kind: "deterministic-scripted-policy", endpoint_origin: null, model: null, credential_persisted: false },
   design: { repeats: REPEATS, maxTurns: MAX_TURNS, evidenceTasks, controlTasks, arms: ARM_CONFIG, contextWindowTokens: CONTEXT_WINDOW_TOKENS, toolMaxChars: TOOL_MAX_CHARS, aggregateMaxChars: AGGREGATE_MAX_CHARS, recallPageChars: RECALL_PAGE_CHARS },
   stats, comparisons,
+  inputIntegrity: { assembly: "production-projection-only/function-protocol/v3", mainContextCharsSource: "JSON.stringify(actual request.input).length", initialPairs, allInitialPairsByteIdentical: initialPairs.every((p) => p.byteIdentical), unprojectedOutputFallback: false },
   decision: {
     status: decisionStatus,
     b1_mechanism_and_autonomy: b1,
@@ -537,6 +515,6 @@ save("credential-scan.json", { schema: "ContextInlineSpillBenefitCredentialScan/
 files.push("credential-scan.json");
 writeFileSync(join(runDir, "SHA256SUMS"), files.map((n) => digest(readFileSync(join(runDir, n))) + "  " + n).join("\n") + "\n");
 console.log(JSON.stringify({ runDir, mode: MODE, decision: result.decision, stats: Object.fromEntries(ARMS.map((a) => [a, { evidenceSuccessRate: stats[a].evidenceSuccessRate, controlSuccessRate: stats[a].controlSuccessRate, recallAttemptRate: stats[a].recallAttemptRate, meanMainContextChars: stats[a].meanMainContextChars, meanTotalTokens: stats[a].meanTotalTokens, p95LatencyMs: stats[a].p95LatencyMs }])), credentialHits }, null, 2));
-process.exitCode = credentialHits === 0 && (MODE === "deterministic" || result.decision.status !== "inconclusive") ? 0 : 1;
+process.exitCode = credentialHits === 0 && result.inputIntegrity.allInitialPairsByteIdentical && (MODE === "deterministic" || result.decision.status !== "inconclusive") ? 0 : 1;
 
 

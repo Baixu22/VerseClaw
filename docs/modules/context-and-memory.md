@@ -523,6 +523,8 @@ recall-stable 证据任务 11/18，通过 B1/B2/B5；B3/B4/B6 未通过，token 
 reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验限制见
 [收益评测交付记录](../../harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md)。
 
+第三轮按[输入修复任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round3.md)推进：协议工具输出只来自当轮生产投影，正文不重复列出回读结果；两压力臂使用同一 archive/session 身份，主上下文按实际发送的 input JSON 计量。第三轮结果单独封存，不重写第二轮数据；B1–B7 与语料、压力和输出预算保持冻结，任务收益仍以新实测判定。
+
 复算：
 
 ```powershell
