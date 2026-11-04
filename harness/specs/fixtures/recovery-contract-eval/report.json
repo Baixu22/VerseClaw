@@ -3,7 +3,7 @@
   "drivenBy": "agent",
   "actor": "recovery-contract-eval-driver",
   "realHumanEvidence": false,
-  "generatedAt": "2026-11-04T08:10:59.292Z",
+  "generatedAt": "2026-11-04T08:50:08.918Z",
   "manifest": {
     "schema": "RecoveryContractManifest/v1",
     "frozenAt": "2026-11-03T00:00:00.000Z",
@@ -12,7 +12,7 @@
     "longSessionPairs": 30
   },
   "trialReceiptsDir": "D:/tmp/recovery-eval-v5",
-  "pairReceiptsDir": "D:/tmp/recovery-longsession-v5",
+  "pairReceiptsDir": "D:/tmp/live-full",
   "trialCountsByWindow": {
     "child-created-before-parent-advance-kill": 3,
     "effect-before-receipt-kill": 3,
@@ -22,23 +22,23 @@
   },
   "evaluation": {
     "schema": "RecoveryContractEval/v1",
-    "generatedAt": "2026-11-04T08:10:59.290Z",
+    "generatedAt": "2026-11-04T08:50:08.915Z",
     "drivenBy": "agent",
     "actor": "recovery-contract-eval-driver",
     "realHumanEvidence": false,
     "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
-    "status": "EVIDENCE_INSUFFICIENT",
+    "status": "FAIL",
     "qualityClaimAllowed": false,
     "metrics": {
       "duplicateEffects": 0,
       "lostTasks": 9,
       "terminalCorrectness": 0.6,
       "unknownClassifiableRate": 0,
-      "mustPreserveFidelity": null,
-      "falseCompletionClaims": null,
-      "nextActionAccuracy": null,
-      "recoveryLatencyP50": null,
-      "recoveryLatencyP95": null
+      "mustPreserveFidelity": 1,
+      "falseCompletionClaims": 0,
+      "nextActionAccuracy": 1,
+      "recoveryLatencyP50": 17728,
+      "recoveryLatencyP95": 230768.39999999938
     },
     "coverage": {
       "windows": [
@@ -77,15 +77,15 @@
         "requiredPairs": 30,
         "observedPairs": 30,
         "completePairs": 30,
-        "liveProviderPairs": 0,
-        "scriptedProviderPairs": 30,
+        "liveProviderPairs": 30,
+        "scriptedProviderPairs": 0,
         "agentDerivedPairs": 0,
         "families": {
-          "compression": 0,
-          "handoff": 0,
-          "fork": 0,
-          "restart": 0,
-          "revocation": 0
+          "compression": 6,
+          "handoff": 6,
+          "fork": 6,
+          "restart": 6,
+          "revocation": 6
         }
       }
     },
@@ -116,33 +116,33 @@
       },
       {
         "name": "mustPreserveFidelity",
-        "observed": null,
+        "observed": 1,
         "threshold": "= 1",
-        "pass": null
+        "pass": true
       },
       {
         "name": "falseCompletionClaims",
-        "observed": null,
+        "observed": 0,
         "threshold": "= 0",
-        "pass": null
+        "pass": true
       },
       {
         "name": "nextActionAccuracy",
-        "observed": null,
+        "observed": 1,
         "threshold": ">= 0.95",
-        "pass": null
+        "pass": true
       },
       {
         "name": "recoveryLatencyP50",
-        "observed": null,
+        "observed": 17728,
         "threshold": "<= 5000ms",
-        "pass": null
+        "pass": false
       },
       {
         "name": "recoveryLatencyP95",
-        "observed": null,
+        "observed": 230768.39999999938,
         "threshold": "<= 15000ms",
-        "pass": null
+        "pass": false
       },
       {
         "name": "diskEvidenceComplete",
@@ -157,18 +157,16 @@
         "pass": true
       }
     ],
-    "blockers": [],
-    "unmeasured": [
-      "long-session live-provider pairs: 0/30",
-      "scripted-provider and agent-derived long-session rows are recorded but never counted as quality evidence",
-      "long-session family compression: 0/6 live-provider pairs",
-      "long-session family handoff: 0/6 live-provider pairs",
-      "long-session family fork: 0/6 live-provider pairs",
-      "long-session family restart: 0/6 live-provider pairs",
-      "long-session family revocation: 0/6 live-provider pairs"
+    "blockers": [
+      "lostTasks must be 0 (observed 9)",
+      "terminalCorrectness must be 1 (observed 0.6)",
+      "recoveryLatencyP50 must be <= 5000ms (observed 17728)",
+      "recoveryLatencyP95 must be <= 15000ms (observed 230768.39999999938)",
+      "6 window trial(s) did not read back all required disk evidence"
     ],
+    "unmeasured": [],
     "decision": {
-      "disposition": "evidence-insufficient",
+      "disposition": "contract-failed",
       "productDefaultChanged": false,
       "requiresPublisherDecision": false
     }

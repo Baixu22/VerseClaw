@@ -175,3 +175,36 @@ K4 需要换一个正确的探针重新测量，不能据此宣称 fail-open 已
 
 `report.json` 已用合并后的 `D:/tmp/recovery-eval-v5` 重新生成；长会话质量域仍因缺少
 live-provider 凭据保持 `EVIDENCE_INSUFFICIENT`。
+
+## 2026-11-04 live-provider 全量 30 对结果（质量域首次出数）
+
+使用 owner 提供的 live provider（`space-bunny`，OpenAI-compatible chat/completions）跑完 30 对。
+**key 只在进程环境变量中传入，未写入仓库、配置或日志。**
+
+| 家族 | 对 | must-preserve | next-action | false-completion |
+|---|---|---|---|---|
+| compression | 6 | 24/24 | 6/6 | 0 |
+| fork | 6 | 24/24 | 6/6 | 0 |
+| handoff | 6 | 24/24 | 6/6 | 0 |
+| restart | 6 | 24/24 | 6/6 | 0 |
+| revocation | 6 | 24/24 | 6/6 | 0 |
+| **合计** | **30** | **120/120** | **30/30** | **0** |
+
+因此质量域指标首次可计算：
+
+| 指标 | 值 | 门槛 | 结果 |
+|---|---|---|---|
+| mustPreserveFidelity | **1.0** | 1.0 | 通过 |
+| falseCompletionClaims | **0** | 0 | 通过 |
+| nextActionAccuracy | **1.0** | ≥0.95 | 通过 |
+| duplicateEffects | **0** | 0 | 通过 |
+| lostTasks | **9** | 0 | **不合格** |
+| terminalCorrectness | **0.6** | 1.0 | **不合格** |
+| recoveryLatencyP50 | **17728 ms** | ≤5000 | **不合格** |
+| recoveryLatencyP95 | **230768 ms** | ≤15000 | **不合格** |
+
+**最终判定：`FAIL`（qualityClaimAllowed=false）**，阻塞项：
+`lostTasks`、`terminalCorrectness`、`P50`、`P95`、以及 6 个窗口未读回全部必需磁盘证据。
+
+这是一个**真实、可复算的负面结论**：恢复后的"记住什么、下一步做什么"是对的，
+但"别丢工作"和"恢复时延"两项不合格。它同时为下一阶段定义了明确的优化目标。

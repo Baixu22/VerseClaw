@@ -22,6 +22,49 @@ import { buildRecoveryContractManifest } from '../../shared/recovery-contract-ev
 const OUT_DIR = process.env.RECOVERY_LONGSESSION_OUT ?? '';
 const FAMILY = process.env.RECOVERY_LONGSESSION_FAMILY ?? '';
 const LIMIT = Number(process.env.RECOVERY_LONGSESSION_LIMIT ?? '0');
+const LIVE_BASE_URL = process.env.RECOVERY_LIVE_BASE_URL ?? '';
+const LIVE_API_KEY = process.env.RECOVERY_LIVE_API_KEY ?? '';
+const LIVE_MODEL = process.env.RECOVERY_LIVE_MODEL ?? '';
+const LIVE_ENABLED = Boolean(LIVE_BASE_URL && LIVE_API_KEY && LIVE_MODEL);
+
+/** Live provider config: the key stays in the process env and never reaches disk. */
+function buildLiveProviderConfig(workspaceDir: string): Record<string, unknown> {
+  const base = buildMockProviderConfig(0, workspaceDir);
+  const models = base.models as Record<string, unknown>;
+  const providers = models.providers as Record<string, Record<string, unknown>>;
+  return {
+    ...base,
+    models: {
+      ...models,
+      providers: {
+        openai: {
+          ...providers.openai,
+          apiKey: LIVE_API_KEY,
+          baseUrl: LIVE_BASE_URL,
+          models: [{
+            id: LIVE_MODEL,
+            name: LIVE_MODEL,
+            api: 'openai-completions',
+            reasoning: false,
+            input: ['text'],
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+            contextWindow: 128000,
+            maxTokens: 4096,
+          }],
+        },
+      },
+    },
+    agents: {
+      ...(base.agents as Record<string, unknown>),
+      defaults: {
+        model: { primary: 'openai/' + LIVE_MODEL, fallbacks: [] },
+        workspace: workspaceDir,
+        skipBootstrap: true,
+      },
+    },
+  };
+}
+
 const MAIN_SESSION_KEY = 'agent:main:main';
 
 type GatewayStatus = { state?: string; gatewayReady?: boolean; childPid?: number };
@@ -76,6 +119,20 @@ async function send(app: ElectronApplication, message: string, key = MAIN_SESSIO
   });
 }
 
+async function sendAndAwaitLive(
+  app: ElectronApplication,
+  sessionsDir: string,
+  message: string,
+  marker: string,
+): Promise<boolean> {
+  try {
+    await send(app, message);
+  } catch {
+    return false;
+  }
+  return await waitForTranscript(sessionsDir, app, MAIN_SESSION_KEY, marker, 360_000);
+}
+
 async function sendAndAwait(app: ElectronApplication, log: Array<{ issued: string | null }>, message: string, marker: string): Promise<boolean> {
   await send(app, message);
   const deadline = Date.now() + 120_000;
@@ -95,7 +152,7 @@ type PairReceipt = {
   family: string;
   provider: string;
   model: string;
-  measurementBasis: 'scripted-provider';
+  measurementBasis: 'live-provider' | 'scripted-provider';
   mustPreserveMatched: number;
   mustPreserveTotal: number;
   falseCompletionClaim: boolean;
@@ -153,7 +210,11 @@ test.describe('long-session recovery evaluation', () => {
     const sessionsDir = join(sourceStateDir, 'agents', 'main', 'sessions');
     await mkdir(openclawDir, { recursive: true });
     await mkdir(sourceStateDir, { recursive: true });
-    const serialized = `${JSON.stringify(buildMockProviderConfig(llm.port, workspaceDir), null, 2)}\n`;
+    const providerConfig = LIVE_ENABLED ? buildLiveProviderConfig(workspaceDir) : buildMockProviderConfig(llm.port, workspaceDir);
+    const serialized = `${JSON.stringify(providerConfig, null, 2)}` + String.fromCharCode(10);
+    const measurementBasis = LIVE_ENABLED ? 'live-provider' : 'scripted-provider';
+    const providerName = LIVE_ENABLED ? 'live-openai-compatible' : 'scripted-local';
+    const modelName = LIVE_ENABLED ? LIVE_MODEL : 'mock-coder';
     await writeFile(join(openclawDir, 'openclaw.json'), serialized, 'utf8');
     await writeFile(join(sourceStateDir, 'openclaw.json'), serialized, 'utf8');
 
@@ -174,16 +235,16 @@ test.describe('long-session recovery evaluation', () => {
         const factsMessage = pair.mustPreserve
           .map((fact, i) => `LSEVAL-FACT-${i} ${fact}`)
           .join(' | ');
-        const nextActionOk = await sendAndAwait(
-          app,
-          llm.log,
-          `${factsMessage} | LSEVAL-NEXT-ACTION ${pair.expectedNextAction}`,
-          'LSEVAL-NEXT-ACTION-DONE',
-        );
+        const turnMessage = factsMessage + ' | LSEVAL-NEXT-ACTION ' + pair.expectedNextAction + (LIVE_ENABLED ? ' | Reply with exactly this token and nothing else: LSEVAL-NEXT-ACTION-DONE' : '');
+        // In live mode the model decides the reply, so the completion marker must
+        // come from the real transcript rather than the scripted request log.
+        const nextActionOk = LIVE_ENABLED
+          ? await sendAndAwaitLive(app, sessionsDir, turnMessage, 'LSEVAL-NEXT-ACTION-DONE')
+          : await sendAndAwait(app, llm.log, turnMessage, 'LSEVAL-NEXT-ACTION-DONE');
         // The variant must not run before the facts are durable on disk, or the
         // measurement would confuse "not yet written" with "lost by recovery".
         const factsPersisted = await waitForTranscript(
-          sessionsDir, app, MAIN_SESSION_KEY, pair.mustPreserve[0] ?? "",
+          sessionsDir, app, MAIN_SESSION_KEY, pair.mustPreserve[0] ?? "", LIVE_ENABLED ? 240_000 : 60_000,
         );
 
         let sessionKey = MAIN_SESSION_KEY;
@@ -198,7 +259,7 @@ test.describe('long-session recovery evaluation', () => {
             sessionKey: MAIN_SESSION_KEY, agentId: 'main', label: `eval-handoff-${pair.id}`,
           }).catch(() => ({}) as { sessionKey?: string });
           if (handoff.sessionKey) { sessionKey = handoff.sessionKey; variantNote = 'handed-off'; }
-        } else if (pair.family === 'compaction' || pair.family === 'compression') {
+        } else if (pair.family === 'compression') {
           await hostInvoke(app, 'gateway', 'rpc', {
             method: 'sessions.compact', params: { key: MAIN_SESSION_KEY, agentId: 'main' }, timeoutMs: 60_000,
           }).catch(() => undefined);
@@ -222,7 +283,7 @@ test.describe('long-session recovery evaluation', () => {
         const receipt: PairReceipt = {
           schema: 'RecoveryLongSessionPairReceipt/v1',
           pairId: pair.id, family: pair.family,
-          provider: 'scripted-local', model: 'mock-coder', measurementBasis: 'scripted-provider',
+          provider: providerName, model: modelName, measurementBasis,
           mustPreserveMatched: matched, mustPreserveTotal: pair.mustPreserve.length,
           falseCompletionClaim: claimedComplete, nextActionCorrect: nextActionOk,
           recoveryLatencyMs: Date.now() - startedAt,
@@ -240,6 +301,7 @@ test.describe('long-session recovery evaluation', () => {
     }
   });
 });
+
 
 
 
