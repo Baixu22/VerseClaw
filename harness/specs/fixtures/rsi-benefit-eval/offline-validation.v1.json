@@ -1,0 +1,634 @@
+{
+  "schemaVersion": "RsiBenefitEvalAcceptance/v1",
+  "generatedAt": "2026-11-04T15:21:29.809Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval-integrator",
+  "taskForestNode": "TF-0784",
+  "status": "pass-offline-eval-implementation",
+  "source": {
+    "commit": "f5dcd02db706e15c188833c113fc876a249199ea",
+    "tree": "d8068fb6f49fa85aa0e9c03c7e2a1b6a99dc28a5",
+    "sourceHashes": {
+      "harness/specs/tasks/rsi-benefit-eval.md": "17bc006318ea4edd056a6909ce232ba473e64f053577ef810a25108126f90313",
+      "scripts/lib/rsi-benefit-eval.d.mts": "da01909fb85af73888ecd466e327c3c3ff9e94bfbe5e7cf06efed8b2a52dd96a",
+      "scripts/lib/rsi-benefit-eval.mjs": "f883e1bf0138162614e29ba66a21be1b94faac20ccb35988fd5bf01bad61ae80",
+      "scripts/lib/rsi-responses-provider.d.mts": "8df10266ef6400d120164a8597777c5b6e1f252487939c6f33e5266a97da5cd0",
+      "scripts/lib/rsi-responses-provider.mjs": "e9c9591f5ab241334cdfe742dc2ff75719566943d9ac186db06dd2f5bf695959",
+      "scripts/rsi-benefit-eval.mjs": "73163115b4711fe2748699ab6f2bb2cbb023ae674559816baab0d674196cef72",
+      "tests/unit/rsi-benefit-eval.test.ts": "e4cc959dc6bcc15e870a9bc76b4bfdf2e313c06ec16406a76dd47f31da1fcae3",
+      "tests/unit/rsi-responses-provider.test.ts": "fe7dc93729765a58e550f7f5d40ea3deaba701706dbad5b25aff8b51a537c4ca"
+    }
+  },
+  "implementation": {
+    "commands": [
+      "plan",
+      "offline",
+      "record",
+      "report",
+      "check"
+    ],
+    "frozenTaskCount": 24,
+    "arms": [
+      "sekb-off",
+      "sekb-shadow",
+      "sekb-confirmed"
+    ],
+    "k": 3,
+    "plannedSlots": 216,
+    "provider": {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "model": "space-bunny",
+      "maxOutputTokens": 2048
+    },
+    "candidate": {
+      "kind": "synthetic-control",
+      "digest": "420aa5b4f4eb5446725b4827ae0dcee54f1faa98b1e7e96cf7366256e66ea4af"
+    },
+    "measuredAdmission": "Imported collector receipts only; raw/parsed Responses, command reports, order, cost and source identity are validated. The live coding executor is not implemented by this offline driver."
+  },
+  "tests": {
+    "files": 5,
+    "passed": 94,
+    "failed": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "path": "tests/unit/agent-dev-paired-ablation.test.ts",
+        "passed": 11,
+        "status": "passed"
+      },
+      {
+        "path": "tests/unit/agent-dev-reliability-aggregation.test.ts",
+        "passed": 8,
+        "status": "passed"
+      },
+      {
+        "path": "tests/unit/rsi-benefit-eval.test.ts",
+        "passed": 28,
+        "status": "passed"
+      },
+      {
+        "path": "tests/unit/rsi-responses-provider.test.ts",
+        "passed": 21,
+        "status": "passed"
+      },
+      {
+        "path": "tests/unit/rsi-tf0592-statistical-adjudication.test.ts",
+        "passed": 26,
+        "status": "passed"
+      }
+    ]
+  },
+  "cli": [
+    {
+      "id": "plan",
+      "command": "node scripts/rsi-benefit-eval.mjs plan --model space-bunny --endpoint http://127.0.0.1:3065/v1/responses --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "durationMs": 447,
+      "result": {
+        "passed": true,
+        "runId": "1ea42a0e-78d5-4c41-8329-2f38c4a10fb1",
+        "trials": 216,
+        "provider": {
+          "endpoint": "http://127.0.0.1:3065/v1/responses",
+          "model": "space-bunny",
+          "maxOutputTokens": 2048
+        },
+        "budget": {
+          "providerCallsAuthorized": 0,
+          "maxTotalTokens": null,
+          "network": "none",
+          "retries": 0
+        }
+      }
+    },
+    {
+      "id": "partial",
+      "command": "node scripts/rsi-benefit-eval.mjs offline --limit 9 --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "durationMs": 836,
+      "result": {
+        "passed": true,
+        "execution": {
+          "written": 9,
+          "resumed": 0,
+          "planned": 216,
+          "providerCalls": 0
+        },
+        "status": "synthetic-wiring-only",
+        "benefit": {
+          "status": "insufficient-evidence",
+          "numericalStatus": "insufficient-evidence",
+          "reasons": [
+            "Offline controls do not execute the historical tasks or measure model quality.",
+            "A live executor, independent final-state oracle and runtime effect receipts are required."
+          ]
+        }
+      }
+    },
+    {
+      "id": "partial-check",
+      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "durationMs": 627,
+      "result": {
+        "passed": false,
+        "errors": [
+          "unexecuted-slots\n\n207 !== 0\n"
+        ],
+        "evidenceKind": "synthetic-wiring-fixture",
+        "reportStatus": "synthetic-wiring-only",
+        "benefitStatus": "insufficient-evidence",
+        "coverage": {
+          "planned": 216,
+          "recorded": 9,
+          "missing": [
+            "tf-0275-e02-1-sekb-shadow",
+            "tf-0275-e02-1-sekb-confirmed",
+            "tf-0275-e02-1-sekb-off",
+            "tf-0275-e02-2-sekb-confirmed",
+            "tf-0275-e02-2-sekb-off",
+            "tf-0275-e02-2-sekb-shadow",
+            "tf-0275-e02-3-sekb-off",
+            "tf-0275-e02-3-sekb-shadow",
+            "tf-0275-e02-3-sekb-confirmed",
+            "tf-0289-g01-1-sekb-confirmed",
+            "tf-0289-g01-1-sekb-off",
+            "tf-0289-g01-1-sekb-shadow",
+            "tf-0289-g01-2-sekb-off",
+            "tf-0289-g01-2-sekb-shadow",
+            "tf-0289-g01-2-sekb-confirmed",
+            "tf-0289-g01-3-sekb-shadow",
+            "tf-0289-g01-3-sekb-confirmed",
+            "tf-0289-g01-3-sekb-off",
+            "tf-0290-g02-1-sekb-off",
+            "tf-0290-g02-1-sekb-shadow",
+            "tf-0290-g02-1-sekb-confirmed",
+            "tf-0290-g02-2-sekb-shadow",
+            "tf-0290-g02-2-sekb-confirmed",
+            "tf-0290-g02-2-sekb-off",
+            "tf-0290-g02-3-sekb-confirmed",
+            "tf-0290-g02-3-sekb-off",
+            "tf-0290-g02-3-sekb-shadow",
+            "tf-0291-g03-1-sekb-shadow",
+            "tf-0291-g03-1-sekb-confirmed",
+            "tf-0291-g03-1-sekb-off",
+            "tf-0291-g03-2-sekb-confirmed",
+            "tf-0291-g03-2-sekb-off",
+            "tf-0291-g03-2-sekb-shadow",
+            "tf-0291-g03-3-sekb-off",
+            "tf-0291-g03-3-sekb-shadow",
+            "tf-0291-g03-3-sekb-confirmed",
+            "tf-0283-l01-1-sekb-confirmed",
+            "tf-0283-l01-1-sekb-off",
+            "tf-0283-l01-1-sekb-shadow",
+            "tf-0283-l01-2-sekb-off",
+            "tf-0283-l01-2-sekb-shadow",
+            "tf-0283-l01-2-sekb-confirmed",
+            "tf-0283-l01-3-sekb-shadow",
+            "tf-0283-l01-3-sekb-confirmed",
+            "tf-0283-l01-3-sekb-off",
+            "tf-0284-l02-1-sekb-off",
+            "tf-0284-l02-1-sekb-shadow",
+            "tf-0284-l02-1-sekb-confirmed",
+            "tf-0284-l02-2-sekb-shadow",
+            "tf-0284-l02-2-sekb-confirmed",
+            "tf-0284-l02-2-sekb-off",
+            "tf-0284-l02-3-sekb-confirmed",
+            "tf-0284-l02-3-sekb-off",
+            "tf-0284-l02-3-sekb-shadow",
+            "tf-0285-l03-1-sekb-shadow",
+            "tf-0285-l03-1-sekb-confirmed",
+            "tf-0285-l03-1-sekb-off",
+            "tf-0285-l03-2-sekb-confirmed",
+            "tf-0285-l03-2-sekb-off",
+            "tf-0285-l03-2-sekb-shadow",
+            "tf-0285-l03-3-sekb-off",
+            "tf-0285-l03-3-sekb-shadow",
+            "tf-0285-l03-3-sekb-confirmed",
+            "tf-0286-l04-1-sekb-confirmed",
+            "tf-0286-l04-1-sekb-off",
+            "tf-0286-l04-1-sekb-shadow",
+            "tf-0286-l04-2-sekb-off",
+            "tf-0286-l04-2-sekb-shadow",
+            "tf-0286-l04-2-sekb-confirmed",
+            "tf-0286-l04-3-sekb-shadow",
+            "tf-0286-l04-3-sekb-confirmed",
+            "tf-0286-l04-3-sekb-off",
+            "tf-0287-l05-1-sekb-off",
+            "tf-0287-l05-1-sekb-shadow",
+            "tf-0287-l05-1-sekb-confirmed",
+            "tf-0287-l05-2-sekb-shadow",
+            "tf-0287-l05-2-sekb-confirmed",
+            "tf-0287-l05-2-sekb-off",
+            "tf-0287-l05-3-sekb-confirmed",
+            "tf-0287-l05-3-sekb-off",
+            "tf-0287-l05-3-sekb-shadow",
+            "tf-0288-l06-1-sekb-shadow",
+            "tf-0288-l06-1-sekb-confirmed",
+            "tf-0288-l06-1-sekb-off",
+            "tf-0288-l06-2-sekb-confirmed",
+            "tf-0288-l06-2-sekb-off",
+            "tf-0288-l06-2-sekb-shadow",
+            "tf-0288-l06-3-sekb-off",
+            "tf-0288-l06-3-sekb-shadow",
+            "tf-0288-l06-3-sekb-confirmed",
+            "tf-0276-s01-1-sekb-confirmed",
+            "tf-0276-s01-1-sekb-off",
+            "tf-0276-s01-1-sekb-shadow",
+            "tf-0276-s01-2-sekb-off",
+            "tf-0276-s01-2-sekb-shadow",
+            "tf-0276-s01-2-sekb-confirmed",
+            "tf-0276-s01-3-sekb-shadow",
+            "tf-0276-s01-3-sekb-confirmed",
+            "tf-0276-s01-3-sekb-off",
+            "tf-0277-s02-1-sekb-off",
+            "tf-0277-s02-1-sekb-shadow",
+            "tf-0277-s02-1-sekb-confirmed",
+            "tf-0277-s02-2-sekb-shadow",
+            "tf-0277-s02-2-sekb-confirmed",
+            "tf-0277-s02-2-sekb-off",
+            "tf-0277-s02-3-sekb-confirmed",
+            "tf-0277-s02-3-sekb-off",
+            "tf-0277-s02-3-sekb-shadow",
+            "tf-0278-s03-1-sekb-shadow",
+            "tf-0278-s03-1-sekb-confirmed",
+            "tf-0278-s03-1-sekb-off",
+            "tf-0278-s03-2-sekb-confirmed",
+            "tf-0278-s03-2-sekb-off",
+            "tf-0278-s03-2-sekb-shadow",
+            "tf-0278-s03-3-sekb-off",
+            "tf-0278-s03-3-sekb-shadow",
+            "tf-0278-s03-3-sekb-confirmed",
+            "tf-0279-s04-1-sekb-confirmed",
+            "tf-0279-s04-1-sekb-off",
+            "tf-0279-s04-1-sekb-shadow",
+            "tf-0279-s04-2-sekb-off",
+            "tf-0279-s04-2-sekb-shadow",
+            "tf-0279-s04-2-sekb-confirmed",
+            "tf-0279-s04-3-sekb-shadow",
+            "tf-0279-s04-3-sekb-confirmed",
+            "tf-0279-s04-3-sekb-off",
+            "tf-0280-s05-1-sekb-off",
+            "tf-0280-s05-1-sekb-shadow",
+            "tf-0280-s05-1-sekb-confirmed",
+            "tf-0280-s05-2-sekb-shadow",
+            "tf-0280-s05-2-sekb-confirmed",
+            "tf-0280-s05-2-sekb-off",
+            "tf-0280-s05-3-sekb-confirmed",
+            "tf-0280-s05-3-sekb-off",
+            "tf-0280-s05-3-sekb-shadow",
+            "tf-0281-s06-1-sekb-shadow",
+            "tf-0281-s06-1-sekb-confirmed",
+            "tf-0281-s06-1-sekb-off",
+            "tf-0281-s06-2-sekb-confirmed",
+            "tf-0281-s06-2-sekb-off",
+            "tf-0281-s06-2-sekb-shadow",
+            "tf-0281-s06-3-sekb-off",
+            "tf-0281-s06-3-sekb-shadow",
+            "tf-0281-s06-3-sekb-confirmed",
+            "tf-0282-s07-1-sekb-confirmed",
+            "tf-0282-s07-1-sekb-off",
+            "tf-0282-s07-1-sekb-shadow",
+            "tf-0282-s07-2-sekb-off",
+            "tf-0282-s07-2-sekb-shadow",
+            "tf-0282-s07-2-sekb-confirmed",
+            "tf-0282-s07-3-sekb-shadow",
+            "tf-0282-s07-3-sekb-confirmed",
+            "tf-0282-s07-3-sekb-off",
+            "tf-0293-a01-1-sekb-off",
+            "tf-0293-a01-1-sekb-shadow",
+            "tf-0293-a01-1-sekb-confirmed",
+            "tf-0293-a01-2-sekb-shadow",
+            "tf-0293-a01-2-sekb-confirmed",
+            "tf-0293-a01-2-sekb-off",
+            "tf-0293-a01-3-sekb-confirmed",
+            "tf-0293-a01-3-sekb-off",
+            "tf-0293-a01-3-sekb-shadow",
+            "tf-0294-a02-1-sekb-shadow",
+            "tf-0294-a02-1-sekb-confirmed",
+            "tf-0294-a02-1-sekb-off",
+            "tf-0294-a02-2-sekb-confirmed",
+            "tf-0294-a02-2-sekb-off",
+            "tf-0294-a02-2-sekb-shadow",
+            "tf-0294-a02-3-sekb-off",
+            "tf-0294-a02-3-sekb-shadow",
+            "tf-0294-a02-3-sekb-confirmed",
+            "tf-0295-a03-1-sekb-confirmed",
+            "tf-0295-a03-1-sekb-off",
+            "tf-0295-a03-1-sekb-shadow",
+            "tf-0295-a03-2-sekb-off",
+            "tf-0295-a03-2-sekb-shadow",
+            "tf-0295-a03-2-sekb-confirmed",
+            "tf-0295-a03-3-sekb-shadow",
+            "tf-0295-a03-3-sekb-confirmed",
+            "tf-0295-a03-3-sekb-off",
+            "tf-0296-a04-1-sekb-off",
+            "tf-0296-a04-1-sekb-shadow",
+            "tf-0296-a04-1-sekb-confirmed",
+            "tf-0296-a04-2-sekb-shadow",
+            "tf-0296-a04-2-sekb-confirmed",
+            "tf-0296-a04-2-sekb-off",
+            "tf-0296-a04-3-sekb-confirmed",
+            "tf-0296-a04-3-sekb-off",
+            "tf-0296-a04-3-sekb-shadow",
+            "tf-0297-a05-1-sekb-shadow",
+            "tf-0297-a05-1-sekb-confirmed",
+            "tf-0297-a05-1-sekb-off",
+            "tf-0297-a05-2-sekb-confirmed",
+            "tf-0297-a05-2-sekb-off",
+            "tf-0297-a05-2-sekb-shadow",
+            "tf-0297-a05-3-sekb-off",
+            "tf-0297-a05-3-sekb-shadow",
+            "tf-0297-a05-3-sekb-confirmed",
+            "tf-0298-a06-1-sekb-confirmed",
+            "tf-0298-a06-1-sekb-off",
+            "tf-0298-a06-1-sekb-shadow",
+            "tf-0298-a06-2-sekb-off",
+            "tf-0298-a06-2-sekb-shadow",
+            "tf-0298-a06-2-sekb-confirmed",
+            "tf-0298-a06-3-sekb-shadow",
+            "tf-0298-a06-3-sekb-confirmed",
+            "tf-0298-a06-3-sekb-off"
+          ],
+          "incomplete": []
+        },
+        "claims": {
+          "benefit": false,
+          "promotionReady": false,
+          "liveProvider": false,
+          "realHuman": false
+        }
+      }
+    },
+    {
+      "id": "resume",
+      "command": "node scripts/rsi-benefit-eval.mjs offline --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "durationMs": 1720,
+      "result": {
+        "passed": true,
+        "execution": {
+          "written": 207,
+          "resumed": 9,
+          "planned": 216,
+          "providerCalls": 0
+        },
+        "status": "synthetic-wiring-only",
+        "benefit": {
+          "status": "insufficient-evidence",
+          "numericalStatus": "promote",
+          "reasons": [
+            "Offline controls do not execute the historical tasks or measure model quality.",
+            "A live executor, independent final-state oracle and runtime effect receipts are required."
+          ]
+        }
+      }
+    },
+    {
+      "id": "check",
+      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "durationMs": 1018,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "evidenceKind": "synthetic-wiring-fixture",
+        "reportStatus": "synthetic-wiring-only",
+        "benefitStatus": "insufficient-evidence",
+        "coverage": {
+          "planned": 216,
+          "recorded": 216,
+          "missing": [],
+          "incomplete": []
+        },
+        "claims": {
+          "benefit": false,
+          "promotionReady": false,
+          "liveProvider": false,
+          "realHuman": false,
+          "productLocksChanged": false
+        }
+      }
+    },
+    {
+      "id": "idempotent",
+      "command": "node scripts/rsi-benefit-eval.mjs offline --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "durationMs": 1563,
+      "result": {
+        "passed": true,
+        "execution": {
+          "written": 0,
+          "resumed": 216,
+          "planned": 216,
+          "providerCalls": 0
+        },
+        "status": "synthetic-wiring-only",
+        "benefit": {
+          "status": "insufficient-evidence",
+          "numericalStatus": "promote",
+          "reasons": [
+            "Offline controls do not execute the historical tasks or measure model quality.",
+            "A live executor, independent final-state oracle and runtime effect receipts are required."
+          ]
+        }
+      }
+    },
+    {
+      "id": "final-check",
+      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "durationMs": 949,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "evidenceKind": "synthetic-wiring-fixture",
+        "reportStatus": "synthetic-wiring-only",
+        "benefitStatus": "insufficient-evidence",
+        "coverage": {
+          "planned": 216,
+          "recorded": 216,
+          "missing": [],
+          "incomplete": []
+        },
+        "claims": {
+          "benefit": false,
+          "promotionReady": false,
+          "liveProvider": false,
+          "realHuman": false,
+          "productLocksChanged": false
+        }
+      }
+    }
+  ],
+  "readback": {
+    "runDirectory": "D:/tmp/rsi-benefit-eval-20261104/offline-final",
+    "planDigest": "6260b9b602812667806fe3d42c7fb76cfac52bec42553dde80bbc069df16a758",
+    "manifestDigest": "2502328e8d9b0f8a65c2cbb8c8466bdb8fe8eb88b47fe4dc388c0add864e6c46",
+    "reportDigest": "0e93dd7fe55cb04cf8dd4f5f1e645b5dfebc82ab7f8a23f0ccd25b0c8280079d",
+    "coverage": {
+      "planned": 216,
+      "recorded": 216,
+      "missing": [],
+      "incomplete": []
+    },
+    "status": "synthetic-wiring-only",
+    "benefit": {
+      "status": "insufficient-evidence",
+      "numericalStatus": "promote",
+      "reasons": [
+        "Offline controls do not execute the historical tasks or measure model quality.",
+        "A live executor, independent final-state oracle and runtime effect receipts are required."
+      ]
+    },
+    "claims": {
+      "benefit": false,
+      "promotionReady": false,
+      "liveProvider": false,
+      "realHuman": false,
+      "productLocksChanged": false
+    }
+  },
+  "validation": {
+    "typecheck": {
+      "success": true,
+      "cache": "disabled",
+      "checks": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 474
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 86937
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 48297
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 86725,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "D:\\tmp\\rsi-review-20261104\\verify\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    },
+    "finalTestTypes": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "log": "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-test-reviewed.log"
+    },
+    "lint": {
+      "exitCode": 0,
+      "maxWarnings": 0
+    },
+    "harnessValidate": {
+      "exitCode": 0
+    },
+    "harnessDryRun": {
+      "exitCode": 0
+    },
+    "originalRsiReadbacks": [
+      {
+        "script": "rsi-decision-check",
+        "exit": 0,
+        "passed": true,
+        "errors": [],
+        "status": "passed-with-global-ci-residual"
+      },
+      {
+        "script": "rsi-feedback-pilot",
+        "exit": 0,
+        "passed": true,
+        "status": "insufficient-evidence"
+      },
+      {
+        "script": "rsi-sekb-arms",
+        "exit": 0,
+        "passed": true,
+        "errors": [],
+        "status": "synthetic-wiring-only"
+      },
+      {
+        "script": "rsi-historical-task-corpus",
+        "exit": 0,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "script": "rsi-tf0604-baseline",
+        "exit": 0,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "script": "rsi-tf0592-statistical-adjudication",
+        "exit": 0,
+        "passed": true,
+        "errors": [],
+        "status": "insufficient-evidence"
+      },
+      {
+        "script": "rsi-measurement-archive",
+        "exit": 0,
+        "passed": true,
+        "errors": []
+      }
+    ]
+  },
+  "independentReview": {
+    "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+    "actors": [
+      "Parfit",
+      "Dewey"
+    ],
+    "findingsResolved": [
+      "tool continuation hidden context",
+      "collector schedule/overlap",
+      "raw/parsed response divergence",
+      "skipped/todo grader counts"
+    ],
+    "finalVerdict": "no additional blocking findings within the reviewed changes",
+    "boundary": "Agent source review; not independent live-provider measurement."
+  },
+  "recoveredFailure": {
+    "testTimeout": "A 216-row admission test exceeded the default per-test timeout when every row repeated Git/hash preflight. Batched admission now validates all rows once before writes; timeouts were not relaxed.",
+    "sharedDependencySetup": "Reused root/runtime/VerseBrowser node_modules from D:/ClawX; pnpm_config_verify_deps_before_run=warn. This is not a fresh dependency install test."
+  },
+  "boundaries": {
+    "evaluationProviderCalls": 0,
+    "realHumanEvidence": false,
+    "benefitClaim": false,
+    "promotionReady": false,
+    "productLocksChanged": false,
+    "completeRsiImplementation": false,
+    "released": false,
+    "futureLiveRun": [
+      "Freeze independent confirmed experience and budget",
+      "Execute the historical coding tasks in isolated runtime collectors",
+      "Retain independent final-state oracle reports",
+      "Import receipts and check the sealed measured pack"
+    ]
+  },
+  "logs": {
+    "D:\\tmp\\rsi-benefit-eval-20261104\\final-tests-reviewed.json": "1dc1630adc9da2afa785f73dd99b50ac07efb68bdb18903037a3020e0cfefa53",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-final.log": "de0913e185f750ecee86af431e6329ce79acdda00b0de5a26c547063d6434053",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-test-reviewed.log": "ce80bd735f90fb5568de3790430530209778640424df49c90ee2433e6d417867",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\cli-results.json": "a0c942fd17708636e2e3f0504b7b58ea77b223685944accede5adc6f336df8aa",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\old-readbacks.json": "12b57fbaff5b2dbfb108dcb204174176ad681af90e2d854ad8f4c4c423d2909a"
+  }
+}
