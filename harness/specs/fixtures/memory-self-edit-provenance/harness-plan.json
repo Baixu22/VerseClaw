@@ -1,0 +1,129 @@
+{
+  "specPath": "harness\\specs\\tasks\\memory-self-edit-provenance.md",
+  "scenario": "gateway-backend-communication",
+  "taskType": "runtime-bridge",
+  "startedAt": "2026-11-04T12:58:15.217Z",
+  "finishedAt": "2026-11-04T12:58:15.723Z",
+  "changedFiles": [
+    "docs/dev/memory-control-plane.md",
+    "harness/specs/rules/memory-self-edit-provenance.md",
+    "harness/specs/tasks/memory-self-edit-provenance.md",
+    "openclaw_runtime/src/runtime-core/memory-context.ts",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+    "tests/unit/memory-self-edit-provenance.test.ts",
+    "tests/unit/runtime-memory-context-contracts.test.ts",
+    "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+    "tests/unit/runtime-memory-self-edit.test.ts"
+  ],
+  "residualPaths": [],
+  "ownership": {
+    "checked": true,
+    "covered": [
+      "docs/dev/memory-control-plane.md",
+      "harness/specs/rules/memory-self-edit-provenance.md",
+      "harness/specs/tasks/memory-self-edit-provenance.md",
+      "openclaw_runtime/src/runtime-core/memory-context.ts",
+      "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts",
+      "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+      "tests/unit/memory-self-edit-provenance.test.ts",
+      "tests/unit/runtime-memory-context-contracts.test.ts",
+      "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+      "tests/unit/runtime-memory-self-edit.test.ts"
+    ],
+    "residual": [],
+    "uncovered": []
+  },
+  "selectedProfiles": [
+    "fast",
+    "comms"
+  ],
+  "steps": [
+    {
+      "profile": "rules",
+      "name": "Backend communication boundary scan",
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Generate extension bridge",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "ext:bridge"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Lint without autofix",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "lint:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Typecheck",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "typecheck"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Unit tests",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "test"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "comms",
+      "name": "Comms replay",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "comms:replay"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "comms",
+      "name": "Comms compare",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "comms:compare"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    }
+  ],
+  "failures": [],
+  "result": "pass"
+}

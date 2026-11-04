@@ -1,0 +1,22 @@
+{
+  "exclude": [],
+  "extends": "D:/ClawX-work/tf0741-memory-provenance-20261104/tsconfig.test.json",
+  "include": [
+    "D:/ClawX-work/tf0741-memory-provenance-20261104/tests/unit/memory-self-edit-provenance.test.ts",
+    "D:/ClawX-work/tf0741-memory-provenance-20261104/openclaw_runtime/src/runtime-core/memory-context.ts",
+    "D:/ClawX-work/tf0741-memory-provenance-20261104/openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+    "D:/ClawX-work/tf0741-memory-provenance-20261104/openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts"
+  ],
+  "compilerOptions": {
+    "incremental": false,
+    "typeRoots": [
+      "D:/ClawX-work/tf0741-memory-provenance-20261104/node_modules/@types",
+      "D:/ClawX-work/tf0741-memory-provenance-20261104/node_modules"
+    ],
+    "types": [
+      "node",
+      "vitest/globals"
+    ],
+    "composite": false
+  }
+}
