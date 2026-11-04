@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -180,7 +180,8 @@ if (isMainEntrypoint(import.meta.url)) {
       'timeout-ms': { type: 'string' },
     } });
     assert(values['run-dir'], '--run-dir required');
-    const directory = resolve(values['run-dir']);
+    const requestedDirectory = resolve(values['run-dir']);
+    const directory = existsSync(requestedDirectory) ? realpathSync(requestedDirectory) : requestedDirectory;
     assert(/^[dD]:[\\/]/u.test(directory), 'live scratch must stay on D:');
     mkdirSync(directory, { recursive: true });
     let result;
