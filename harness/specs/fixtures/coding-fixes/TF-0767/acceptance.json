@@ -1,0 +1,182 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0767",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "25785558ef0eeeecbc2d6eb6edfd36174806118c",
+    "tree": "67de322edfb6fe31520f863878dcd8eef864ab99",
+    "dirty": false
+  },
+  "taskId": "TF-0767",
+  "finding": "A3",
+  "status": "resolved",
+  "criteria": [
+    "12 newly planted pre-fix failures rejected; reserved ids, normalized/truncated names, existing paths, aliases and live locks retain bytes",
+    "new cleanup tests preserve unknown inprocess files, replacement-directory inode and nonintegrated Git commits",
+    "real original A3 probe cannot erase .openclaw; actual Git positive paths and existing VG cleanup barriers pass"
+  ],
+  "unitCounts": {
+    "runtime-unit.json": 34,
+    "host-unit.json": 14
+  },
+  "sourceHashes": {
+    "docs/modules/workspace-and-coding.md": "da2fff22200385b1489802fd187686d9228b92c53b30a15a8c9c9129e6482c54",
+    "harness/specs/tasks/coding-worktree-creation-boundary.md": "8cfa6bd52eea592bfa806f7d1d45e3ca3eb5737c41055e4ee0fb33a1b24d4fc4",
+    "openclaw_runtime/src/agents/worktree-service.test.ts": "62b568be674cc6d1f0c054b2e9191afee8b3229486aef1a7c1a70d4a8b1ef3e8",
+    "openclaw_runtime/src/agents/worktree-service.ts": "5086e2affa65188c5a3b6fd6b3b8ffdbc848a67529600a9ba45ae00f62e65f19"
+  },
+  "commands": [
+    {
+      "name": "runtime-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents.config.ts",
+        "src/agents/worktree-service.test.ts",
+        "src/agents/worktree-pnpm-install.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0767\\final/runtime-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 16.863497018814087
+    },
+    {
+      "name": "host-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/versegit-cleanup-barrier.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0767\\final/host-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 18.601144552230835
+    },
+    {
+      "name": "typecheck-node",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 10.692990064620972
+    },
+    {
+      "name": "typecheck-web",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 5.016031742095947
+    },
+    {
+      "name": "typecheck-test",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 30.147613048553467
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/worktree-service.ts",
+        "openclaw_runtime/src/agents/worktree-service.test.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 4.523787975311279
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-worktree-creation-boundary.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.9302089214324951
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.37523865699768066
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.35573768615722656
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.22793173789978027
+    },
+    {
+      "name": "worktree-probe",
+      "argv": [
+        "node",
+        "--import",
+        "file:///D:\\ClawX-work\\coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/coding-baseline/probes/worktrees.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 2.2940688133239746
+    }
+  ],
+  "limitations": [
+    "A4 merge content semantics are still pending TF-0769",
+    "Shared ownership/isolated execution admission belongs to TF-0768",
+    "No process/kernel sandbox or cross-platform release claim"
+  ]
+}
