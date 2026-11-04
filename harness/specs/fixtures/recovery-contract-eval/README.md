@@ -31,6 +31,28 @@
 
 指标为 `null` 表示该域样本不足，绝不补 0。
 
+## 本轮真实结果（legacy 基线，2026-11-04）
+
+15 个真实故障窗口样本（5 窗口 × 3 重复）已跑完，聚合结果：
+
+| 指标 | 值 |
+|---|---|
+| duplicateEffects | **0** |
+| lostTasks | **9** |
+| terminalCorrectness | **0.6** |
+| unknownClassifiableRate | 0 |
+
+| 窗口 | 3 次一致结果 |
+|---|---|
+| K1 intent-after-persist-kill | 副作用 0、任务丢失 1、终态 false |
+| K2 effect-before-receipt-kill | 副作用 1、崩溃后仍 1、重复 0、终态 true |
+| K3 child-created-before-parent-advance-kill | 子节点 1 份、终态 true |
+| K4 store-write-failure | 未对外声称成功、终态 true |
+| K5 repeated-restart | 3 次崩溃、副作用 1、丢失 2、重复 0 |
+
+结论：**当前 legacy 的主要缺陷是丢失工作（9/15），不是重复副作用（0/15）**。
+这是基线事实，不是 candidate 收益：candidate（authority/execution-phase 生产接线）
+尚未启用，因此没有 Δ。
 ## 未测边界（诚实清单）
 
 1. 长会话 ≥30 对（TF-0722）本轮未测量：`longSessionMeasurements` 为空，
@@ -43,7 +65,7 @@
 ## 复算
 
 ```bash
-node --experimental-strip-types scripts/recovery-contract-eval.mjs --dir D:/tmp/recovery-eval-v2
+node --experimental-strip-types scripts/recovery-contract-eval.mjs --dir D:/tmp/recovery-eval-v3
 node --experimental-strip-types scripts/recovery-contract-eval.mjs --check
 ```
 
@@ -59,3 +81,4 @@ node --experimental-strip-types scripts/recovery-contract-eval.mjs --check
 下一轮必须先修读回面：从
 `<userData>/openclaw-source-state/agents/main/sessions/<sessionFile>` 直接读
 完整 transcript（其它 long-session spec 已经这么做），再重跑 ≥30 对。
+
