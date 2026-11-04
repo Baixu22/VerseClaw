@@ -50,6 +50,10 @@ appliesTo:
 
 - The existing write journal (`write-journal.ts`) remains the single mutation
   evidence authority. UAS-04 adds no second journal.
+- Undo and checkpoint restoration must await rooted filesystem I/O. Both the
+  snapshot and confined destination are revalidated by the existing fs-safe
+  owner, and a refused alias leaves its journal entry intact. After asynchronous
+  I/O, consume only the selected entry, never a newer concurrent journal tail.
 - When rollback fails, the journal entries for the unrestored files are
   retained and the `recoveryRef` points to them.
 - Crash recovery can detect a prepared-but-uncommitted entry after a simulated

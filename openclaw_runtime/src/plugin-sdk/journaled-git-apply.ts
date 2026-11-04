@@ -26,7 +26,7 @@ export async function journaledGitApply<T extends { success: boolean; approvalRe
     discardWriteJournalEntries(entries);
     clearWriteJournal({ workspaceRoot: input.workspaceRoot, sessionId });
   }
-  function rollback() {
+  async function rollback() {
     // Approval denial/pre-write validation must not rewrite identical preimages:
     // even a same-byte restore changes destination metadata without approval.
     const unchanged = entries.every((entry) => entry.hadPrior
@@ -36,7 +36,7 @@ export async function journaledGitApply<T extends { success: boolean; approvalRe
       discardPrepared();
       return {};
     }
-    const restored = undoLastWrites({ workspaceRoot: input.workspaceRoot, sessionId, steps: entries.length });
+    const restored = await undoLastWrites({ workspaceRoot: input.workspaceRoot, sessionId, steps: entries.length, workspaceOnly: true });
     if (restored.errors.length === 0) clearWriteJournal({ workspaceRoot: input.workspaceRoot, sessionId });
     return { recoveryRequired: restored.errors.length > 0,
       journalRef: restored.errors.length && entries[0] ? journalEntryId(sessionId, entries[0].seq) : undefined };
@@ -57,13 +57,13 @@ export async function journaledGitApply<T extends { success: boolean; approvalRe
     const result = await input.apply();
     if (!result.success) {
       if (result.approvalRequired || result.blocked || result.stale) { discardPrepared(); return { result }; }
-      return { result, ...rollback() };
+      return { result, ...(await rollback()) };
     }
     const persisted = setWriteJournalBatchState(entries, 'committed');
     return { result, journalRef: journalEntryId(sessionId, entries[0].seq), recoveryRequired: !persisted };
   } catch (error) {
     if (!applyStarted) { discardPrepared(); return { error: error instanceof Error ? error.message : String(error) }; }
-    try { return { error: error instanceof Error ? error.message : String(error), ...rollback() }; }
+    try { return { error: error instanceof Error ? error.message : String(error), ...(await rollback()) }; }
     catch { return { error: 'Journal recovery could not prove destination state.', recoveryRequired: true,
       journalRef: entries[0] ? journalEntryId(sessionId, entries[0].seq) : undefined }; }
   } finally { release(); }

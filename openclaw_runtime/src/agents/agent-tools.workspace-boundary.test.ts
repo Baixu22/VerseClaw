@@ -1,4 +1,4 @@
-import { link, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { link, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -128,6 +128,35 @@ describe("coding mutation workspace boundary", () => {
     const result = await requireTool(tools, "undo_write").execute("undo", { steps: 2 });
     expect(result.details).toMatchObject({ ok: true });
     expect(await readFile(target, "utf8")).toBe("before\n");
+  });
+
+  it.each(["create", "modify"] as const)("refuses %s undo after a parent is replaced by an external junction", async (operation) => {
+    const { workspaceDir, outsideFile } = await makeWorkspace();
+    const folder = path.join(workspaceDir, "sub");
+    const local = path.join(folder, path.basename(outsideFile));
+    await mkdir(folder);
+    if (operation === "modify") await writeFile(local, "local-before\n");
+    const tools = createTools({ workspaceDir, fsWorkspaceOnly: true, journal: true, sessionId: "undo-junction" });
+    await requireTool(tools, "write").execute("local", { path: local, content: "local-after\n" });
+    await rename(folder, path.join(workspaceDir, "original-sub"));
+    await symlink(path.dirname(outsideFile), folder, process.platform === "win32" ? "junction" : "dir");
+    const result = await requireTool(tools, "undo_write").execute("undo", { steps: 1 });
+    expect(result.details).toMatchObject({ ok: false, restored: [], remainingEntries: 1 });
+    expect(await readFile(outsideFile, "utf8")).toBe("original\n");
+    expect((await readdir(path.join(workspaceDir, ".openclaw/journal/undo-junction"))).some((p) => p.endsWith(".pre"))).toBe(true);
+  });
+
+  it("refuses undo through a hardlinked target and retains its snapshot", async () => {
+    const { workspaceDir, outsideFile } = await makeWorkspace();
+    const local = path.join(workspaceDir, "local.txt");
+    await writeFile(local, "before\n");
+    const tools = createTools({ workspaceDir, fsWorkspaceOnly: true, journal: true, sessionId: "undo-hardlink" });
+    await requireTool(tools, "write").execute("local", { path: local, content: "after\n" });
+    await rm(local);
+    await link(outsideFile, local);
+    const result = await requireTool(tools, "undo_write").execute("undo", { steps: 1 });
+    expect(result.details).toMatchObject({ ok: false, restored: [], remainingEntries: 1 });
+    expect(await readFile(outsideFile, "utf8")).toBe("original\n");
   });
 
   it("allows trusted operator write, edit, and apply_patch outside the workspace", async () => {

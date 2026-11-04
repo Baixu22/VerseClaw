@@ -276,6 +276,10 @@ Remote forge 有独立 Host API：
 `workspaceOnly`。等待路径锁后通过现有 fs-safe 根读取快照，拒绝的外部文件内容不会
 先进入可读的工作区 journal。
 
+撤销和检查点恢复同样通过 fs-safe 重新验证目标与快照，等待实际 I/O 完成后才报告
+成功。目标被换成越界目录联接或硬链接时拒绝恢复并保留 journal；异步恢复期间的新
+写入不会被当作旧 journal 项消费。
+
 - 是 supported coding writes 的恢复权威；
 - 记录写操作与可撤销来源；
 - journal failure 不应被宣称成“成功写入且可恢复”；

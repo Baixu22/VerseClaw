@@ -31,7 +31,7 @@ import type {
   RemoteForgeErrorV1,
 } from "../../../../shared/types/remote-forge.js";
 
-import { journalEntryId, journalDirFor, snapshotBeforeWrite, snapshotPreparedWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
+import { getOrCreateWriteJournal, journalEntryId, journalDirFor, snapshotBeforeWrite, snapshotPreparedWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
 export * from "./write-journal-core.js";
 
 /** Preserve the original workspace path policy at the existing tool entrypoint. */
@@ -333,13 +333,28 @@ export function createUndoWriteTool(options: {
     }),
     execute: async (_id, args) => {
       const record = getToolParamsRecord(args) ?? {};
-      const steps = typeof record.steps === "number" ? record.steps : 1;
-      const outcome = undoLastWrites({
-        workspaceRoot: options.workspaceRoot,
-        sessionId: options.sessionId,
-        steps,
-        workspaceOnly: options.workspaceOnly,
-      });
+      if (record.steps !== undefined && (typeof record.steps !== "number" || !Number.isFinite(record.steps) || record.steps < 1)) {
+        throw new Error("steps must be a finite positive number");
+      }
+      const steps = Math.max(1, Math.floor(typeof record.steps === "number" ? record.steps : 1));
+      const journal = getOrCreateWriteJournal(options.workspaceRoot, options.sessionId?.trim() || "default");
+      const selected = journal.entries.slice(-steps).toReversed();
+      const release = await acquirePatchBatchLocks(selected.map((entry) => entry.absPath));
+      let outcome: Awaited<ReturnType<typeof undoLastWrites>>;
+      try {
+        // Empty selection is a no-op, not permission to undo a later new write.
+        outcome = selected.length === 0
+          ? { restored: [], errors: [], journalDir: journal.rootDir, remainingEntries: journal.entries.length }
+          : await undoLastWrites({
+              workspaceRoot: options.workspaceRoot,
+              sessionId: options.sessionId,
+              steps: selected.length,
+              workspaceOnly: options.workspaceOnly,
+              expectedEntries: selected.map(({ seq, relPath }) => ({ seq, relPath })),
+            });
+      } finally {
+        release();
+      }
       // FP-P1-04: partial restore is a FAILURE; the journal dir is reported so
       // a human can recover from the preserved snapshots.
       return jsonResult({

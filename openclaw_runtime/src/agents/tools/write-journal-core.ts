@@ -1,6 +1,9 @@
 /** Coding journal storage/recovery owner. Tool schemas and media helpers live in write-journal.ts. */
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { FsSafeError, root as fsRoot } from "../../infra/fs-safe.js";
+import { assertSandboxPath } from "../sandbox-paths.js";
+import { toRelativeWorkspacePath } from "../path-policy.js";
 import { codingObservability } from "../../context-engine/coding-observability.js";
 import { toFactRelPath } from "../fact-rel-path.js";
 
@@ -315,7 +318,7 @@ export function writeJournalRecoveryRef(entries: WriteJournalEntry[]): string | 
  * the outcome reports failure with the journal directory preserved for manual
  * recovery. A partially restored batch is a failure, never a success.
  */
-export function undoLastWrites(params: {
+export async function undoLastWrites(params: {
   workspaceRoot: string;
   sessionId?: string;
   steps?: number;
@@ -327,10 +330,11 @@ export function undoLastWrites(params: {
    * while the intended target is left untouched.
    */
   expectedEntries?: readonly { seq: number; relPath: string }[];
-}, validateWorkspacePath?: (root: string, candidate: string) => unknown): { restored: string[]; errors: string[]; journalDir: string; remainingEntries: number } {
+}, validateWorkspacePath?: (root: string, candidate: string) => unknown): Promise<{ restored: string[]; errors: string[]; journalDir: string; remainingEntries: number }> {
   const sessionId = params.sessionId?.trim() || "default";
   const journal = getOrCreateWriteJournal(params.workspaceRoot, sessionId);
   const steps = Math.max(1, Math.floor(params.steps ?? 1));
+  const expectedEntries = params.expectedEntries ?? journal.entries.slice(-steps).toReversed().map(({ seq, relPath }) => ({ seq, relPath }));
   const restored: string[] = [];
   const errors: string[] = [];
   for (let i = 0; i < steps; i += 1) {
@@ -338,7 +342,8 @@ export function undoLastWrites(params: {
     if (!entry) {
       break;
     }
-    const expected = params.expectedEntries?.[i];
+    const expected = expectedEntries[i];
+    if (!expected) break;
     if (expected && (entry.seq !== expected.seq || entry.relPath !== expected.relPath)) {
       // Abort BEFORE mutating anything: whatever sits at the tail now is not
       // what the caller selected, so it must survive. Reporting an error keeps
@@ -350,27 +355,47 @@ export function undoLastWrites(params: {
     }
     try {
       if (params.workspaceOnly) {
-        if (!validateWorkspacePath) throw new Error("workspace validator is unavailable");
-        validateWorkspacePath(params.workspaceRoot, entry.absPath);
+        (validateWorkspacePath ?? toRelativeWorkspacePath)(params.workspaceRoot, entry.absPath);
       }
-      if (entry.hadPrior && existsSync(entry.snapshotPath)) {
-        mkdirSync(path.dirname(entry.absPath), { recursive: true });
-        copyFileSync(entry.snapshotPath, entry.absPath);
-      } else if (entry.hadPrior) {
-        // The snapshot vanished: restoring is impossible. This must surface as
-        // a failure, not silently skip the entry.
-        throw new Error(`journal snapshot missing: ${entry.snapshotPath}`);
-      } else {
-        // Was a create: remove the file if present.
-        if (existsSync(entry.absPath)) {
-          unlinkSync(entry.absPath);
+      // Snapshot bytes always belong to this workspace, even when an operator
+      // explicitly permits restoring an external target. Never follow a swapped
+      // .pre link to bring external bytes into the restored file.
+      const journalRoot = await fsRoot(params.workspaceRoot);
+      const snapshotRelative = toRelativeWorkspacePath(params.workspaceRoot, entry.snapshotPath);
+      let preimage: Buffer | undefined;
+      if (entry.hadPrior) {
+        try {
+          preimage = (await journalRoot.read(snapshotRelative)).buffer;
+        } catch (error) {
+          if (error instanceof FsSafeError && error.code === "not-found") {
+            throw new Error(`journal snapshot missing: ${entry.snapshotPath}`, { cause: error });
+          }
+          throw error;
         }
       }
-      // Only a fully successful restore removes the entry from the journal.
-      journal.entries.pop();
+      const targetRoot = params.workspaceOnly ? params.workspaceRoot : path.dirname(entry.absPath);
+      await assertSandboxPath({ filePath: entry.absPath, cwd: targetRoot, root: targetRoot });
+      const destination = await fsRoot(targetRoot);
+      const relative = toRelativeWorkspacePath(targetRoot, entry.absPath);
+      if (journal.entries.at(-1) !== entry) {
+        throw new Error("concurrent_write_detected: journal tail changed before restore");
+      }
+      if (preimage !== undefined) {
+        await destination.write(relative, preimage, { mkdir: true });
+      } else {
+        try {
+          await destination.remove(relative);
+        } catch (error) {
+          if (!(error instanceof FsSafeError && error.code === "not-found")) throw error;
+        }
+      }
+      // An unrelated path may journal while the async restore is in flight.
+      // Consume exactly the restored entry, never the new tail from another call.
+      const entryIndex = journal.entries.indexOf(entry);
+      if (entryIndex >= 0) journal.entries.splice(entryIndex, 1);
       try {
-        rmSync(`${entry.snapshotPath}.meta.json`, { force: true });
-        rmSync(entry.snapshotPath, { force: true });
+        await journalRoot.remove(`${snapshotRelative}.meta.json`);
+        await journalRoot.remove(snapshotRelative);
       } catch {
         // Snapshot cleanup is best-effort; the restore already succeeded.
       }

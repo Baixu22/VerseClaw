@@ -215,7 +215,7 @@ describe('candidate-first host apply', () => {
     expect(journalSteps).toBeGreaterThanOrEqual(2);
     const journalSnapshotFiles = listJournalSnapshotFiles(root, 'session-e3');
     expect(journalSnapshotFiles.length).toBeGreaterThanOrEqual(2);
-    const undone = undoLastWrites({ workspaceRoot: root, sessionId: 'session-e3', steps: journalSteps, workspaceOnly: true });
+    const undone = await undoLastWrites({ workspaceRoot: root, sessionId: 'session-e3', steps: journalSteps, workspaceOnly: true });
     expect(undone.errors).toEqual([]);
     expect(readFileSync(join(root, 'a.txt'), 'utf8')).toBe('one\n');
     expect(readFileSync(join(root, 'b.txt'), 'utf8')).toBe('two\n');
