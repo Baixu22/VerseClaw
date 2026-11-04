@@ -1,21 +1,21 @@
 {
   "schemaVersion": "RsiBenefitEvalAcceptance/v1",
-  "generatedAt": "2026-11-04T15:21:29.809Z",
+  "generatedAt": "2026-11-04T15:31:28.319Z",
   "driven_by": "agent",
   "actor": "codex/rsi-benefit-eval-integrator",
   "taskForestNode": "TF-0784",
   "status": "pass-offline-eval-implementation",
   "source": {
-    "commit": "f5dcd02db706e15c188833c113fc876a249199ea",
-    "tree": "d8068fb6f49fa85aa0e9c03c7e2a1b6a99dc28a5",
+    "commit": "5973c4096b107c5d38bc9d6cd0f1c92aa6363aa6",
+    "tree": "266c437ab302d4912905d35238245ecfc835d902",
     "sourceHashes": {
       "harness/specs/tasks/rsi-benefit-eval.md": "17bc006318ea4edd056a6909ce232ba473e64f053577ef810a25108126f90313",
       "scripts/lib/rsi-benefit-eval.d.mts": "da01909fb85af73888ecd466e327c3c3ff9e94bfbe5e7cf06efed8b2a52dd96a",
-      "scripts/lib/rsi-benefit-eval.mjs": "f883e1bf0138162614e29ba66a21be1b94faac20ccb35988fd5bf01bad61ae80",
+      "scripts/lib/rsi-benefit-eval.mjs": "d7e3cb995b2744e275d5de1f110e9533b211c75ff08c2bfa84897aea419f500f",
       "scripts/lib/rsi-responses-provider.d.mts": "8df10266ef6400d120164a8597777c5b6e1f252487939c6f33e5266a97da5cd0",
       "scripts/lib/rsi-responses-provider.mjs": "e9c9591f5ab241334cdfe742dc2ff75719566943d9ac186db06dd2f5bf695959",
       "scripts/rsi-benefit-eval.mjs": "73163115b4711fe2748699ab6f2bb2cbb023ae674559816baab0d674196cef72",
-      "tests/unit/rsi-benefit-eval.test.ts": "e4cc959dc6bcc15e870a9bc76b4bfdf2e313c06ec16406a76dd47f31da1fcae3",
+      "tests/unit/rsi-benefit-eval.test.ts": "1693ac2d4964cc3a2f26ecf52faf0a0310d0ab77ed23654271f85b5371a482e6",
       "tests/unit/rsi-responses-provider.test.ts": "fe7dc93729765a58e550f7f5d40ea3deaba701706dbad5b25aff8b51a537c4ca"
     }
   },
@@ -48,7 +48,7 @@
   },
   "tests": {
     "files": 5,
-    "passed": 94,
+    "passed": 95,
     "failed": 0,
     "skipped": 0,
     "suites": [
@@ -64,7 +64,7 @@
       },
       {
         "path": "tests/unit/rsi-benefit-eval.test.ts",
-        "passed": 28,
+        "passed": 29,
         "status": "passed"
       },
       {
@@ -82,13 +82,13 @@
   "cli": [
     {
       "id": "plan",
-      "command": "node scripts/rsi-benefit-eval.mjs plan --model space-bunny --endpoint http://127.0.0.1:3065/v1/responses --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "command": "node scripts/rsi-benefit-eval.mjs plan --model space-bunny --endpoint http://127.0.0.1:3065/v1/responses --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-portable",
       "exitCode": 0,
       "expectedExit": 0,
-      "durationMs": 447,
+      "durationMs": 511,
       "result": {
         "passed": true,
-        "runId": "1ea42a0e-78d5-4c41-8329-2f38c4a10fb1",
+        "runId": "0bd7a23e-6352-4d22-845a-62f5ee95475c",
         "trials": 216,
         "provider": {
           "endpoint": "http://127.0.0.1:3065/v1/responses",
@@ -105,10 +105,10 @@
     },
     {
       "id": "partial",
-      "command": "node scripts/rsi-benefit-eval.mjs offline --limit 9 --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "command": "node scripts/rsi-benefit-eval.mjs offline --limit 9 --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-portable",
       "exitCode": 0,
       "expectedExit": 0,
-      "durationMs": 836,
+      "durationMs": 1416,
       "result": {
         "passed": true,
         "execution": {
@@ -130,10 +130,10 @@
     },
     {
       "id": "partial-check",
-      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-portable",
       "exitCode": 1,
       "expectedExit": 1,
-      "durationMs": 627,
+      "durationMs": 942,
       "result": {
         "passed": false,
         "errors": [
@@ -366,10 +366,10 @@
     },
     {
       "id": "resume",
-      "command": "node scripts/rsi-benefit-eval.mjs offline --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "command": "node scripts/rsi-benefit-eval.mjs offline --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-portable",
       "exitCode": 0,
       "expectedExit": 0,
-      "durationMs": 1720,
+      "durationMs": 2688,
       "result": {
         "passed": true,
         "execution": {
@@ -391,10 +391,10 @@
     },
     {
       "id": "check",
-      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-portable",
       "exitCode": 0,
       "expectedExit": 0,
-      "durationMs": 1018,
+      "durationMs": 1396,
       "result": {
         "passed": true,
         "errors": [],
@@ -418,10 +418,10 @@
     },
     {
       "id": "idempotent",
-      "command": "node scripts/rsi-benefit-eval.mjs offline --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "command": "node scripts/rsi-benefit-eval.mjs offline --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-portable",
       "exitCode": 0,
       "expectedExit": 0,
-      "durationMs": 1563,
+      "durationMs": 2452,
       "result": {
         "passed": true,
         "execution": {
@@ -443,10 +443,10 @@
     },
     {
       "id": "final-check",
-      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-final",
+      "command": "node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-eval-20261104/offline-portable",
       "exitCode": 0,
       "expectedExit": 0,
-      "durationMs": 949,
+      "durationMs": 1816,
       "result": {
         "passed": true,
         "errors": [],
@@ -470,10 +470,10 @@
     }
   ],
   "readback": {
-    "runDirectory": "D:/tmp/rsi-benefit-eval-20261104/offline-final",
-    "planDigest": "6260b9b602812667806fe3d42c7fb76cfac52bec42553dde80bbc069df16a758",
-    "manifestDigest": "2502328e8d9b0f8a65c2cbb8c8466bdb8fe8eb88b47fe4dc388c0add864e6c46",
-    "reportDigest": "0e93dd7fe55cb04cf8dd4f5f1e645b5dfebc82ab7f8a23f0ccd25b0c8280079d",
+    "runDirectory": "D:/tmp/rsi-benefit-eval-20261104/offline-portable",
+    "planDigest": "141577bf688d00ba7ac35394d0ee1a2a47b4bf93ae6798301a99da3a32cbd72f",
+    "manifestDigest": "e56ca976d8b2a1fdc285615ebaac561a7f00bafded49da21a8390f30f20c71d4",
+    "reportDigest": "e7fd12c6c8d149f858ec504e4a10a20082aee321c771a816ba4292da432fdce5",
     "coverage": {
       "planned": 216,
       "recorded": 216,
@@ -530,7 +530,7 @@
     "finalTestTypes": {
       "command": "pnpm run typecheck:test",
       "exitCode": 0,
-      "log": "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-test-reviewed.log"
+      "log": "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-test-portable.log"
     },
     "lint": {
       "exitCode": 0,
@@ -607,6 +607,7 @@
   },
   "recoveredFailure": {
     "testTimeout": "A 216-row admission test exceeded the default per-test timeout when every row repeated Git/hash preflight. Batched admission now validates all rows once before writes; timeouts were not relaxed.",
+    "sourceLineEndings": "First main-checkout readback detected LF/CRLF-only drift in old oracle inputs. Source hashes now reuse the repository canonical-text SHA256; raw trial and manifest hashes remain byte-exact. A regression verifies CRLF equivalence and rejects meaningful source edits.",
     "sharedDependencySetup": "Reused root/runtime/VerseBrowser node_modules from D:/ClawX; pnpm_config_verify_deps_before_run=warn. This is not a fresh dependency install test."
   },
   "boundaries": {
@@ -624,11 +625,32 @@
       "Import receipts and check the sealed measured pack"
     ]
   },
+  "mainCheckoutReadback": {
+    "passed": true,
+    "errors": [],
+    "evidenceKind": "synthetic-wiring-fixture",
+    "reportStatus": "synthetic-wiring-only",
+    "benefitStatus": "insufficient-evidence",
+    "coverage": {
+      "planned": 216,
+      "recorded": 216,
+      "missing": [],
+      "incomplete": []
+    },
+    "claims": {
+      "benefit": false,
+      "promotionReady": false,
+      "liveProvider": false,
+      "realHuman": false,
+      "productLocksChanged": false
+    }
+  },
   "logs": {
-    "D:\\tmp\\rsi-benefit-eval-20261104\\final-tests-reviewed.json": "1dc1630adc9da2afa785f73dd99b50ac07efb68bdb18903037a3020e0cfefa53",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\final-tests-portable.json": "1b6899d9d0b9ecea37aea560daa6984e35921d5963adcbf3443511b737d896aa",
     "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-final.log": "de0913e185f750ecee86af431e6329ce79acdda00b0de5a26c547063d6434053",
-    "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-test-reviewed.log": "ce80bd735f90fb5568de3790430530209778640424df49c90ee2433e6d417867",
-    "D:\\tmp\\rsi-benefit-eval-20261104\\cli-results.json": "a0c942fd17708636e2e3f0504b7b58ea77b223685944accede5adc6f336df8aa",
-    "D:\\tmp\\rsi-benefit-eval-20261104\\old-readbacks.json": "12b57fbaff5b2dbfb108dcb204174176ad681af90e2d854ad8f4c4c423d2909a"
+    "D:\\tmp\\rsi-benefit-eval-20261104\\typecheck-test-portable.log": "ce80bd735f90fb5568de3790430530209778640424df49c90ee2433e6d417867",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\cli-results.json": "24c3ebc9b8ae05fc44c2f29a174f1c40705f20f41871093d10b85764407bed93",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\old-readbacks.json": "12b57fbaff5b2dbfb108dcb204174176ad681af90e2d854ad8f4c4c423d2909a",
+    "D:\\tmp\\rsi-benefit-eval-20261104\\main-readback.json": "df73adc86a686a0be0be6ec7c6ddd49127df3b285e5dce730d385ec63ad57563"
   }
 }
