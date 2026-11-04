@@ -53,7 +53,9 @@ describe('Verse evidence candidate identity', () => {
     const rows = Object.entries({cold:10,loop:30,interrupt:3,recovery:3}).flatMap(([kind,count]) => Array.from({length:count},(_,index)=>({
       kind,index:index+1,runId:`fixture-${kind}-${index}`,runRoot:join(root,`run-${kind}-${index}`),status:'pass',durationMs:1,errors:[],
       hostStatusOk:true,privateNetworkDenied:true,openOk:true,blockedFailsClosed:true,upgradeOk:true,typed:true,clicked:true,snapshotOk:true,snapshotHasFixture:true,ownedSessionCount:1,closed:true,sessionsAfterClose:0,
-      interruptedPrivateNetworkDenied:true,interruptedOpenOk:true,interruptedWithLiveSession:true,forcedShutdown:true,terminationRequests:[{accepted:true,signal:'SIGKILL',name:'Verse Claw.exe'}],
+      interruptedPrivateNetworkDenied:true,interruptedOpenOk:true,interruptedWithLiveSession:true,forcedShutdown:true,
+      terminationRequests:[{pid:index+1,accepted:true,signal:'SIGKILL',name:'Verse Claw.exe',backend:'verified-process-handle',creationTimeTicks:String(index+10)}],
+      ownedProcesses:[{pid:index+1,name:'Verse Claw.exe',creationTimeTicks:String(index+10),userDataDir:join(root,`run-${kind}-${index}`,'ud')}],
       appExited:true,residualProcesses:0,runDirReclaimed:true,finalResidualProcesses:0,runDirReclaimedFinal:true,rssMbAfterLoop:1,
     })));
     const n9 = {status:'pass',build,driven_by:'agent',actor:'unit-fixture',issues:[],rows,summary:{
@@ -71,6 +73,14 @@ describe('Verse evidence candidate identity', () => {
     expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_n8_checks_invalid'});
     json('n8-result.json',n8);
     for (const badRows of [[],rows.map((row,index)=>index===0?{...row,hostStatusOk:false}:row),rows.map((row,index)=>index===0?{...row,runDirReclaimed:false}:row),rows.map((row,index)=>index===0?rows[1]:row)]) {
+      json('n9-result.json',{...n9,rows:badRows});seal();
+      expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_n9_rows_invalid'});
+    }
+    for (const badRows of [
+      rows.map(row=>row.kind==='interrupt'?{...row,terminationRequests:row.terminationRequests.map(receipt=>({...receipt,backend:'unverified'}))}:row),
+      rows.map(row=>row.kind==='interrupt'?{...row,ownedProcesses:row.ownedProcesses.map(owner=>({...owner,creationTimeTicks:'999'}))}:row),
+      rows.map(row=>row.kind==='interrupt'?{...row,ownedProcesses:row.ownedProcesses.map(owner=>({...owner,userDataDir:join(root,'other-run','ud')}))}:row),
+    ]) {
       json('n9-result.json',{...n9,rows:badRows});seal();
       expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_n9_rows_invalid'});
     }

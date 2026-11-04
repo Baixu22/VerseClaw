@@ -191,7 +191,11 @@ export async function verifyCurrent(hostRoot) {
     && row.residualProcesses === 0 && row.runDirReclaimed === true
     && row.finalResidualProcesses === 0 && row.runDirReclaimedFinal === true
     && (row.kind !== 'interrupt' || (row.forcedShutdown === true && Array.isArray(row.terminationRequests)
-      && row.terminationRequests.some(request => request.accepted === true && request.signal === 'SIGKILL' && typeof request.name === 'string' && request.name.toLowerCase() !== 'cmd.exe'))))
+      && Array.isArray(row.ownedProcesses) && row.terminationRequests.some(request => request.accepted === true && request.signal === 'SIGKILL'
+        && Number.isSafeInteger(request.pid) && request.pid > 0 && request.backend === 'verified-process-handle'
+        && /^\d+$/u.test(request.creationTimeTicks ?? '') && ['verse claw.exe','electron.exe'].includes(request.name?.toLowerCase())
+        && row.ownedProcesses.some(owner => owner.pid === request.pid && owner.name === request.name && owner.creationTimeTicks === request.creationTimeTicks
+          && typeof owner.userDataDir === 'string' && path.win32.normalize(owner.userDataDir).toLowerCase() === path.win32.join(row.runRoot,'ud').toLowerCase())))))
     && new Set(rows.map(row => `${row.kind}:${row.index}`)).size === 46
     && new Set(rows.map(row => row.runId)).size === 46 && new Set(rows.map(row => row.runRoot)).size === 46;
   if (!validRows) issues.push(issue('current_n9_rows_invalid'));

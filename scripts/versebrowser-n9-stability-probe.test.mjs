@@ -64,6 +64,20 @@ test('census failure retains the controller termination receipt and closes once'
   assert.ok(!result.errors.includes('Controlled interruption did not terminate an owned process'));
 });
 
+test('a transient census failure does not abandon the remaining cleanup observations', async () => {
+  const root=await mkdtemp(join(tmpdir(),'verse-census-retry-'));
+  let observations=0;
+  const result=await cleanupBrowserProbe({runRoot:root,query:()=>{
+    observations+=1;
+    if(observations===1)return [{ProcessId:0,Name:'synthetic observation, never terminated'}];
+    if(observations===2)throw new Error('transient census failure');
+    return [];
+  }});
+  assert.ok(observations>=4);
+  assert.equal(result.runDirReclaimed,true);assert.equal(result.residualProcesses,0);
+  assert.ok(result.errors.includes('transient census failure'));
+});
+
 test('an interruption without an actual owned termination is not successful evidence', async () => {
   const root = await mkdtemp(join(tmpdir(), 'verse-empty-interruption-'));
   const result = await cleanupBrowserProbe({ runRoot: root, interrupt: true, query: () => [] });

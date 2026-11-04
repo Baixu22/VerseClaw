@@ -132,6 +132,8 @@ process handle and rechecks that birth time before killing, so PID reuse cannot
 inherit ownership. Controller fallback termination and removal failures retain
 receipts. Current evidence replays the N8 checks and every N9 row, checks unique
 round identities, and recalculates the summary; asserted pass flags alone fail.
+Interruption receipts must identify a verified process handle and match the
+observed process birth time and owned user-data directory for that exact round.
 
 Initialization failures are covered before any fixture server is left listening;
 an empty N9 round selection is a failure, not stability evidence. The Vite build
