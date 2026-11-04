@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
-import { closeSync, existsSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { artifactPath } from './agent-first-trials.mjs';
 import { evaluateAblation } from './paired-ablation.mjs';
 import { summarizeTf0592Trials } from '../rsi-tf0592-statistical-adjudication.mjs';
 import { sha256File } from '../rsi-tf0604-baseline.mjs';
 import { buildResponsesRequest, parseResponsesReply } from './rsi-responses-provider.mjs';
-import { assessTaskAdmission } from '../rsi-live-acceptance.mjs';
+import { assessTaskAdmission, finalizeLiveAdmission } from '../rsi-live-acceptance.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
 const CORPUS = 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json';
@@ -21,7 +21,8 @@ const SOURCES = [CORPUS, TASKS, POLICY, 'scripts/lib/rsi-benefit-eval.mjs', 'scr
   'scripts/rsi-tf0592-statistical-adjudication.mjs', 'scripts/lib/agent-first-trials.mjs',
   'tests/unit/rsi-benefit-eval.test.ts', 'tests/unit/rsi-responses-provider.test.ts',
   'scripts/rsi-live-acceptance.mjs', 'scripts/rsi-live-acceptance.d.mts',
-  'harness/specs/tasks/rsi-benefit-eval.md'];
+  'scripts/lib/rsi-live-grader.mjs', 'scripts/lib/rsi-live-grader.d.mts',
+  'tests/unit/rsi-live-grader.test.ts', 'harness/specs/tasks/rsi-benefit-eval.md'];
 const FLAGS = {
   'sekb-off': { enabled: false, shadowEvaluation: false, injection: false },
   'sekb-shadow': { enabled: true, shadowEvaluation: true, injection: false },
@@ -31,7 +32,38 @@ const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 export const benefitDigest = (value) => createHash('sha256').update(Buffer.isBuffer(value) || typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
 const fileDigest = (path) => benefitDigest(readFileSync(path));
 const text = (value) => typeof value === 'string' && value.trim().length > 0;
-function write(path, value, exclusive = false) {
+function repoPath(value, label = 'repository path') {
+  assert(text(value), `${label}-required`);
+  const normalized = value.replaceAll('\\', '/').replace(/^\.\//u, '').replace(/\/+$/u, '');
+  const parts = normalized.split('/');
+  assert(normalized && !isAbsolute(value) && !parts.some((part) => !part || part === '..' || /^[A-Za-z]:$/u.test(part))
+    && !parts.includes('.git') && !parts.includes('node_modules'), `invalid-${label}`);
+  return normalized;
+}
+function inTaskScope(path, scope) {
+  const normalized = repoPath(scope, 'target-scope');
+  return path === normalized || path.startsWith(normalized.endsWith('/') ? normalized : `${normalized}/`);
+}
+function validateTaskEdits(task, edits, measured) {
+  assert(Array.isArray(edits), 'trial-edits-required');
+  if (!measured) {
+    assert.equal(edits.length, 0, 'offline-trial-cannot-claim-edits');
+    return [];
+  }
+  const oraclePaths = new Set(task.oracle.testPaths.map((path) => repoPath(path, 'oracle-path')));
+  const seen = new Set();
+  for (const edit of edits) {
+    assert.deepEqual(Object.keys(edit ?? {}).sort(), ['content', 'path'], 'undeclared-edit-fields');
+    const path = repoPath(edit.path, 'edit-path');
+    assert.equal(edit.path, path, 'non-canonical-edit-path');
+    assert(!oraclePaths.has(path), `edit-targets-hidden-oracle:${path}`);
+    assert(task.targetScope.some((scope) => inTaskScope(path, scope)), `edit-outside-task-scope:${path}`);
+    assert(typeof edit.content === 'string', `edit-content-required:${path}`);
+    assert(!seen.has(path), `duplicate-edit-path:${path}`);
+    seen.add(path);
+  }
+  return edits;
+}function write(path, value, exclusive = false) {
   mkdirSync(dirname(path), { recursive: true });
   const bytes = `${JSON.stringify(value, null, 2)}\n`;
   if (exclusive) writeFileSync(path, bytes, { flag: 'wx' });
@@ -41,26 +73,74 @@ function write(path, value, exclusive = false) {
     renameSync(temp, path);
   }
 }
-function git(root, args) {
+function processAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return error?.code !== 'ESRCH';
+  }
+}
+function acquireRunLock(directory, planDigest) {
+  const path = join(directory, '.run.lock');
+  const payload = { schemaVersion: 'RsiRunLock/v1', pid: process.pid, startedAt: new Date().toISOString(), planDigest };
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      writeFileSync(path, `${JSON.stringify(payload)}\n`, { flag: 'wx' });
+      return path;
+    } catch (error) {
+      if (error?.code !== 'EEXIST') throw error;
+      let existing;
+      try { existing = read(path); } catch { throw new Error('run-lock-invalid'); }
+      assert.equal(existing.schemaVersion, 'RsiRunLock/v1', 'run-lock-invalid');
+      assert(Number.isInteger(existing.pid) && existing.pid > 0, 'run-lock-invalid');
+      if (processAlive(existing.pid)) throw new Error('run-in-progress');
+      unlinkSync(path);
+    }
+  }
+  throw new Error('run-in-progress');
+}
+function releaseRunLock(path) {
+  try { unlinkSync(path); } catch (error) { if (error?.code !== 'ENOENT') throw error; }
+}function git(root, args) {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true, timeout: 15000 }).trim();
 }
 function taskSet(root) {
   const corpus = read(join(root, CORPUS));
   const historical = read(join(root, TASKS));
-  return corpus.cases.map((entry) => {
+  const tasks = corpus.cases.map((entry) => {
     const task = historical.tasks.find((task) => task.id === entry.id);
     assert(task, `task-source-missing:${entry.id}`);
+    assert(text(task.input?.prompt), `task-prompt-missing:${entry.id}`);
+    const targetScope = (task.input?.targetScope ?? []).map((path) => repoPath(path, 'target-scope'));
+    const acceptanceCriteria = (task.input?.acceptanceCriteria ?? []).map((criterion, index) => {
+      assert(text(criterion), `task-acceptance-criterion-missing:${entry.id}:${index}`);
+      return criterion;
+    });
+    assert(targetScope.length > 0 && task.input.targetScope.length === targetScope.length, `task-target-scope-required:${entry.id}`);
+    const recordPath = repoPath(task.referenceSolution?.sourceRecord, 'source-record-path');
+    const recordDigest = sha256File(artifactPath(root, recordPath));
+    assert.equal(recordDigest, task.referenceSolution.sourceRecordSha256, `source-record-digest-mismatch:${entry.id}`);
+    const sourceRecord = read(artifactPath(root, recordPath));
+    const base = sourceRecord.candidate?.base;
+    const reference = sourceRecord.candidate?.commit;
+    assert(/^[0-9a-f]{40}$/u.test(base ?? '') && /^[0-9a-f]{40}$/u.test(reference ?? ''), `source-revision-missing:${entry.id}`);
+    assert.equal(reference, task.referenceSolution.referenceCommit, `source-reference-drift:${entry.id}`);
     return {
       id: entry.id, taskId: entry.taskId, split: historical.split.heldOut.includes(entry.id) ? 'held-out' : 'public',
       safetyRequired: entry.safetyRequired === true, anchor: entry.anchor ?? null,
       negativeExpectedOutcome: entry.negativeExpectedOutcome ?? 'fail',
-      prompt: task.input.prompt, oracleDigest: benefitDigest(task.oracle),
+      prompt: task.input.prompt, acceptanceCriteria, targetScope,
+      source: { recordPath, recordDigest, base, reference },
+      oracleDigest: benefitDigest(task.oracle),
       oracle: { commands: task.oracle.commandLines, testPaths: task.oracle.testPaths,
         expectedSkips: task.oracle.expectedSkips, inputDigests: task.oracle.inputDigests },
     };
   });
-}
-function schedule(tasks) {
+  assert.equal(new Set(tasks.map((task) => task.id)).size, tasks.length, 'duplicate-task-identity');
+  assert.equal(new Set(tasks.map((task) => task.source.recordPath)).size > 0, true, 'source-record-coverage');
+  return tasks;
+}function schedule(tasks) {
   // Rotate arm order within each case/repeat: no all-off-then-all-treatment run.
   return tasks.flatMap((task, index) => [1, 2, 3].flatMap((repeat) => {
     const offset = (index + repeat - 1) % BENEFIT_ARMS.length;
@@ -99,7 +179,7 @@ export function createBenefitPlan(root, options = {}) {
   const maxTotalTokens = mode === 'offline' ? null : options.maxTotalTokens;
   if (mode === 'measured') assert(Number.isSafeInteger(maxProviderCalls) && maxProviderCalls >= 216
     && Number.isSafeInteger(maxTotalTokens) && maxTotalTokens > 0, 'explicit-measurement-budget-required');
-  const paths = [...new Set([...SOURCES, ...tasks.flatMap((task) => Object.keys(task.oracle.inputDigests))])].sort();
+  const paths = [...new Set([...SOURCES, ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
   // Source bindings use the repository's canonical text bytes across LF/CRLF
   // checkouts. Raw run receipts and their manifest remain byte-addressed.
   const bindings = Object.fromEntries(paths.map((path) => [path, sha256File(artifactPath(root, path))]));
@@ -153,11 +233,14 @@ function loadPlan(root, directory) {
 export function buildBenefitRequest(plan, slot) {
   const task = plan.tasks.find((entry) => entry.id === slot.caseId);
   assert(task && plan.slots.some((entry) => entry.id === slot.id), 'unknown-trial');
-  // Only this projection reaches the subject. No oracle, split or reference solution.
+  // Only this projection reaches the subject. Oracle content, split membership and
+  // reference solutions remain evaluator-only; task criteria and target scope are
+  // subject inputs rather than hidden grading metadata.
   const instructions = 'Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.';
+  const input = JSON.stringify({ prompt: task.prompt, acceptanceCriteria: task.acceptanceCriteria, targetScope: task.targetScope }, null, 2);
   return buildResponsesRequest({ model: plan.provider.model, maxOutputTokens: plan.provider.maxOutputTokens,
-    instructions: slot.arm === 'sekb-confirmed' ? `${instructions}\n${plan.candidate.context}` : instructions,
-    input: task.prompt });
+    instructions: slot.arm === 'sekb-confirmed' ? [instructions, plan.candidate.context].join("\n") : instructions,
+    input });
 }
 
 function offlineResponse(plan, slot) {
@@ -184,6 +267,7 @@ function trialReceipt(plan, slot, interrupted = false) {
     runtime: { flags: plan.arms[slot.arm], flagsDigest: slot.flagsDigest,
       candidateDigest: plan.candidateDigest, injectionDigest: slot.arm === 'sekb-confirmed' ? benefitDigest(plan.candidate.context) : null,
       isolationId: `${plan.runId}/${slot.id}`, runtimeEffectMeasured: plan.evidenceKind === 'live-provider' },
+    edits: [],
     execution: { status: interrupted ? 'crash' : 'completed', failureClass: interrupted ? 'infrastructure' : null,
       attempts: 1, providerCalls: 0, wallClockMs: null, costUsd: null, toolEvents: [],
       runPosition: slot.position, startedAt: null, endedAt: null,
@@ -198,8 +282,7 @@ export function runOfflineBenefit(root, directory, options = {}) {
   const plan = loadPlan(root, directory), limit = options.limit ?? plan.slots.length;
   assert.equal(plan.evidenceKind, 'synthetic-wiring-fixture', 'offline-driver-cannot-execute-measured-plan');
   assert(Number.isInteger(limit) && limit >= 0, 'invalid-trial-limit');
-  const lock = join(directory, '.run.lock');
-  const handle = openSync(lock, 'wx');
+  const lock = acquireRunLock(directory, benefitDigest(plan));
   let written = 0, resumed = 0;
   try {
     for (const slot of plan.slots) {
@@ -218,7 +301,7 @@ export function runOfflineBenefit(root, directory, options = {}) {
       write(path, receipt, true);
       written++;
     }
-  } finally { closeSync(handle); unlinkSync(lock); }
+  } finally { releaseRunLock(lock); }
   return { written, resumed, planned: plan.slots.length, providerCalls: 0 };
 }
 
@@ -234,6 +317,9 @@ function readTrial(plan, slot, directory, supplied) {
   const execution = row.execution;
   assert.equal(execution.attempts, 1, 'hidden-retry');
   const measured = plan.evidenceKind === 'live-provider';
+  const task = plan.tasks.find((entry) => entry.id === slot.caseId);
+  assert(task, 'unknown-trial-task');
+  validateTaskEdits(task, row.edits, measured);
   assert.equal(execution.measurementBasis, measured ? 'live-provider' : 'synthetic-control', 'measurement-basis-drift');
   assert((execution.costUsd === null || measured && Number.isFinite(execution.costUsd) && execution.costUsd >= 0)
     && Array.isArray(execution.toolEvents) && Array.isArray(row.providerAttempts), 'invalid-cost-receipt');
@@ -259,7 +345,7 @@ function readTrial(plan, slot, directory, supplied) {
   assert.equal(response.functionCalls.length, 0, 'unconsumed-terminal-tool-call');
   let success = false;
   if (response.status === 'completed') {
-    if (measured) success = gradeMeasuredObservation(plan, slot, row);
+    if (measured) { success = gradeMeasuredObservation(plan, slot, row); if (success) assert(row.edits.length > 0, 'pass-without-edits'); }
     else try { const answer = JSON.parse(response.text); success = answer.caseId === slot.caseId && answer.probeValue === 'ok'; } catch { /* Malformed output is an agent failure. */ }
   }
   const outcome = response.status === 'completed' ? success ? 'pass' : 'fail' : 'missing';
@@ -306,8 +392,12 @@ function readProviderAttempts(plan, row) {
 
 function gradeMeasuredObservation(plan, slot, row) {
   const task = plan.tasks.find((task) => task.id === slot.caseId), grader = row.grader;
+  assert(task, 'unknown-grader-task');
+  assert.equal(grader?.schemaVersion, 'RsiBenefitGrader/v1', 'grader-schema');
   assert(grader?.driven_by === 'agent' && text(grader.actor) && grader.actor !== row.actor && grader.actor !== plan.actor, 'independent-grader-required');
+  assert.equal(grader.workspaceRevision, task.source.base, 'grader-workspace-revision-drift');
   assert.equal(grader.oracleDigest, task.oracleDigest, 'grader-oracle-drift');
+  assert.equal(grader.editsDigest, benefitDigest(row.edits), 'grader-edits-drift');
   assert.deepEqual(grader.commands, task.oracle.commands, 'grader-command-drift');
   assert.equal(grader.responseDigest, benefitDigest(row.rawResponse), 'grader-response-drift');
   assert(grader.isolation?.hiddenOracleVisible === false && grader.isolation?.unapprovedEgress === false
@@ -344,8 +434,9 @@ export function recordMeasuredBenefitTrials(root, directory, receipts) {
   assert(Array.isArray(receipts) && receipts.length > 0, 'receipt-array-required');
   assert.equal(new Set(receipts.map((receipt) => receipt?.slot?.id)).size, receipts.length, 'duplicate-import-slot');
   verifyTaskAdmissions(root, directory, plan, new Set(receipts.map((receipt) => receipt?.slot?.caseId)));
+  verifyLiveAdmissionReport(root, directory, plan);
   // Import only collector output. Existing receipts are immutable, never retries.
-  const lock = join(directory, '.run.lock'), handle = openSync(lock, 'wx');
+  const lock = acquireRunLock(directory, benefitDigest(plan));
   try {
     const existing = plan.slots.filter((slot) => existsSync(artifactPath(directory, recordPath(slot))));
     assert(existing.every((slot, index) => slot.position === index), 'existing-schedule-gap');
@@ -365,20 +456,24 @@ export function recordMeasuredBenefitTrials(root, directory, receipts) {
       write(path, receipt, true);
     }
     return admitted.map(({ validated }) => validated);
-  } finally { closeSync(handle); unlinkSync(lock); }
+  } finally { releaseRunLock(lock); }
 }
 
 function verifyTaskAdmissions(root, directory, plan, taskIds) {
-  const historical = read(join(root, TASKS));
   for (const taskId of taskIds) {
     const task = plan.tasks.find((task) => task.id === taskId);
     assert(task, 'unknown-calibration-task');
     const admission = read(artifactPath(directory, `calibration/${taskId}/admission.json`));
-    const originalTask = historical.tasks.find((task) => task.id === taskId);
-    const source = read(join(root, originalTask.referenceSolution.sourceRecord));
+    assert.equal(admission.schemaVersion, 'RsiLiveTaskAdmission/v1', 'calibration-schema');
+    assert.equal(admission.driven_by, 'agent', 'calibration-agent-label');
+    assert(text(admission.actor), 'calibration-actor-required');
     assert.equal(admission.taskId, taskId, 'calibration-task-mismatch');
-    assert.equal(admission.source?.base, source.candidate.base, 'calibration-base-drift');
-    assert.equal(admission.source?.reference, source.candidate.commit, 'calibration-reference-drift');
+    assert.deepEqual(admission.claims, { modelQuality: false, benefit: false, realHuman: false }, 'calibration-claim-boundary');
+    assert.equal(admission.source?.base, task.source.base, 'calibration-base-drift');
+    assert.equal(admission.source?.reference, task.source.reference, 'calibration-reference-drift');
+    assert.equal(admission.source?.sourceRecord, task.source.recordPath, 'calibration-source-path-drift');
+    assert.equal(admission.source?.sourceRecordDigest, task.source.recordDigest, 'calibration-source-digest-drift');
+    assert.equal(sha256File(artifactPath(root, task.source.recordPath)), task.source.recordDigest, 'bound-source-record-drift');
     const { reference, baseline } = admission.stages ?? {};
     for (const stage of [reference, baseline]) {
       assert.deepEqual(stage?.commands, task.oracle.commands, 'calibration-command-drift');
@@ -389,8 +484,54 @@ function verifyTaskAdmissions(root, directory, plan, taskIds) {
     assert(observed.passed, `task-calibration-rejected:${taskId}`);
   }
 }
-
-export function summarizeBenefitRun(root, directory, actor = 'codex/rsi-benefit-verifier') {
+function verifyLiveAdmissionReport(root, directory, plan) {
+  const saved = read(artifactPath(directory, 'calibration/admission-report.json'));
+  const recomputed = finalizeLiveAdmission(root, directory, { write: false });
+  assert.deepEqual(saved, recomputed, 'live-admission-recomputation');
+  assert.equal(saved.status, 'ready-for-measurement', 'live-admission-not-ready');
+  const providerReceipt = read(artifactPath(directory, 'provider-preflight.json'));
+  assert.equal(providerReceipt.request?.url, plan.provider.endpoint, 'live-provider-endpoint-drift');
+  assert.equal(providerReceipt.response?.model, plan.provider.model, 'live-provider-model-drift');
+  assert.equal(saved.trialSlots.length, plan.slots.length, 'live-admission-slot-count');
+  assert.deepEqual(saved.admissions.map((entry) => entry.taskId).sort(), plan.tasks.map((task) => task.id).sort(), 'live-admission-task-set');
+  assert(saved.admissions.every((entry) => entry.passed === true && entry.status === 'admitted'), 'live-admission-task-rejected');
+  return saved;
+}
+export function adoptLiveCalibration(root, directory, calibrationDir) {
+  root = resolve(root); directory = resolve(directory); calibrationDir = resolve(calibrationDir);
+  const plan = loadPlan(root, directory);
+  assert.equal(plan.evidenceKind, 'live-provider', 'measured-plan-required');
+  const sourceReportPath = artifactPath(calibrationDir, 'admission-report.json');
+  const sourceReport = read(sourceReportPath);
+  const recomputed = finalizeLiveAdmission(root, calibrationDir, { write: false });
+  assert.deepEqual(sourceReport, recomputed, 'live-admission-report-drift');
+  assert.equal(sourceReport.status, 'ready-for-measurement', 'live-admission-not-ready');
+  assert.equal(sourceReport.trialSlots.length, plan.slots.length, 'live-admission-slot-count');
+  assert.deepEqual(sourceReport.admissions.map((entry) => entry.taskId).sort(), plan.tasks.map((task) => task.id).sort(), 'live-admission-task-set');
+  assert(sourceReport.admissions.every((entry) => entry.passed === true && entry.status === 'admitted'), 'live-admission-task-rejected');
+  let copied = 0, existing = 0;
+  const copyExact = (source, target) => {
+    const bytes = readFileSync(source);
+    if (existsSync(target)) {
+      assert(readFileSync(target).equals(bytes), `calibration-copy-drift:${relative(directory, target)}`);
+      existing += 1;
+    } else {
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(target, bytes, { flag: 'wx' });
+      copied += 1;
+    }
+  };
+  copyExact(sourceReportPath, artifactPath(directory, 'calibration/admission-report.json'));
+  copyExact(artifactPath(calibrationDir, 'provider-preflight.json'), artifactPath(directory, 'provider-preflight.json'));
+  for (const task of plan.tasks) {
+    const source = artifactPath(calibrationDir, `calibration/${task.id}/admission.json`);
+    const target = artifactPath(directory, `calibration/${task.id}/admission.json`);
+    copyExact(source, target);
+  }
+  verifyTaskAdmissions(root, directory, plan, new Set(plan.tasks.map((task) => task.id)));
+  verifyLiveAdmissionReport(root, directory, plan);
+  return { copied, existing, reportDigest: fileDigest(sourceReportPath), status: sourceReport.status };
+}export function summarizeBenefitRun(root, directory, actor = 'codex/rsi-benefit-verifier') {
   directory = resolve(directory);
   assert(!existsSync(join(directory, '.run.lock')), 'run-in-progress');
   const plan = loadPlan(root, directory);
@@ -399,6 +540,7 @@ export function summarizeBenefitRun(root, directory, actor = 'codex/rsi-benefit-
   const actual = [...records.values()].filter(Boolean);
   if (plan.evidenceKind === 'live-provider' && actual.length > 0) {
     verifyTaskAdmissions(root, directory, plan, new Set(actual.map((record) => record.row.slot.caseId)));
+    verifyLiveAdmissionReport(root, directory, plan);
   }
   assert(actual.every((record, index) => index === 0 || Date.parse(record.row.execution.startedAt) >= Date.parse(actual[index - 1].row.execution.endedAt)), 'collector-order-or-overlap');
   assert(actual.every((record) => record.row.grader?.actor !== actor), 'verifier-cannot-grade-own-run');
@@ -406,7 +548,7 @@ export function summarizeBenefitRun(root, directory, actor = 'codex/rsi-benefit-
   assert.equal(new Set(responseIds).size, responseIds.length, 'reused-provider-response');
   const providerCalls = actual.reduce((total, record) => total + record.row.execution.providerCalls, 0);
   assert(providerCalls <= plan.budget.providerCallsAuthorized, 'provider-call-budget-exceeded');
-  const totalTokens = actual.every((record) => record.tokens !== null) ? actual.reduce((n, record) => n + record.tokens, 0) : null;
+  const totalTokens = actual.length > 0 && actual.every((record) => record.tokens !== null) ? actual.reduce((n, record) => n + record.tokens, 0) : null;
   if (totalTokens !== null && plan.budget.maxTotalTokens !== null) assert(totalTokens <= plan.budget.maxTotalTokens, 'token-budget-exceeded');
   const corpus = { cases: plan.tasks.map((task) => ({ id: task.id, taskId: task.taskId, safetyRequired: task.safetyRequired,
     ...(task.anchor ? { anchor: task.anchor } : {}), negativeExpectedOutcome: task.negativeExpectedOutcome })) };
@@ -434,22 +576,45 @@ export function summarizeBenefitRun(root, directory, actor = 'codex/rsi-benefit-
   const missing = plan.slots.filter((slot) => records.get(slot.id) === null).map((slot) => slot.id);
   const incomplete = plan.slots.filter((slot) => records.get(slot.id) && !['pass', 'fail'].includes(records.get(slot.id).outcome)).map((slot) => slot.id);
   const measured = plan.evidenceKind === 'live-provider';
+  const slotByKey = new Map(plan.slots.map((slot) => [`${slot.caseId}/${slot.repeat}/${slot.arm}`, slot]));
+  const requestFor = (taskId, repeat, arm) => records.get(slotByKey.get(`${taskId}/${repeat}/${arm}`)?.id)?.row.request ?? null;
+  const offShadowInputsIdentical = plan.tasks.every((task) => [1, 2, 3].every((repeat) => {
+    const off = requestFor(task.id, repeat, 'sekb-off');
+    const shadow = requestFor(task.id, repeat, 'sekb-shadow');
+    return Boolean(off && shadow) && benefitDigest(off) === benefitDigest(shadow);
+  }));
+  const confirmedCandidateBound = plan.tasks.every((task) => [1, 2, 3].every((repeat) => {
+    const off = requestFor(task.id, repeat, 'sekb-off');
+    const shadow = requestFor(task.id, repeat, 'sekb-shadow');
+    const confirmedRequest = requestFor(task.id, repeat, 'sekb-confirmed');
+    return Boolean(off && shadow && confirmedRequest)
+      && !off.instructions.includes(plan.candidate.context)
+      && !shadow.instructions.includes(plan.candidate.context)
+      && confirmedRequest.instructions.includes(plan.candidate.context);
+  }));
+  const runtimeEffectMeasured = measured && actual.length === plan.slots.length
+    && actual.every((record) => record.row.runtime.runtimeEffectMeasured === true
+      && record.row.execution.measurementBasis === 'live-provider');
+  const wiringReasons = [];
+  if (!offShadowInputsIdentical) wiringReasons.push('off/shadow subject inputs are not identical');
+  if (!confirmedCandidateBound) wiringReasons.push('confirmed arm does not bind the frozen candidate context');
+  if (measured && !runtimeEffectMeasured) wiringReasons.push('runtime effect receipts are incomplete');
   const benefitStatus = !measured ? 'insufficient-evidence'
     : confirmed.promotion.status === 'eliminate' || shadow.promotion.status === 'eliminate' ? 'eliminate'
       : missing.length || incomplete.length || totalTokens === null ? 'insufficient-evidence'
-        : shadow.runStatus !== 'pass' ? 'hold' : confirmed.promotion.status;
+        : wiringReasons.length > 0 || shadow.runStatus !== 'pass' ? 'hold' : confirmed.promotion.status;
   return {
     schemaVersion: 'RsiBenefitReport/v1', driven_by: 'agent', actor, planDigest: benefitDigest(plan),
     evidenceKind: plan.evidenceKind, status: measured ? benefitStatus : 'synthetic-wiring-only',
     coverage: { planned: plan.slots.length, recorded: records.size - missing.length, missing, incomplete },
     comparisons: { confirmedVsOff: confirmed, shadowVsOff: shadow }, splitEffects,
-    wiring: { offShadowInputsIdentical: true, confirmedCandidateBound: true, runtimeEffectMeasured: measured },
+    wiring: { offShadowInputsIdentical, confirmedCandidateBound, runtimeEffectMeasured },
     benefit: { status: benefitStatus, numericalStatus: confirmed.promotion.status,
       reasons: measured ? ['Benefit is scoped to the frozen task cohort; this is not product promotion or evidence of a complete RSI system.',
-        ...confirmed.promotion.reasons] : ['Offline controls do not execute the historical tasks or measure model quality.',
+        ...wiringReasons, ...confirmed.promotion.reasons] : ['Offline controls do not execute the historical tasks or measure model quality.',
         'A live executor, independent final-state oracle and runtime effect receipts are required.'] },
     cost: { measurementBasis: measured ? 'live-provider' : 'synthetic-control', providerCalls, totalTokens,
-      actualCostUsd: measured && actual.every((record) => record.row.execution.costUsd !== null) ? actual.reduce((n, record) => n + record.row.execution.costUsd, 0) : null,
+      actualCostUsd: measured && actual.length > 0 && actual.every((record) => record.row.execution.costUsd !== null) ? actual.reduce((n, record) => n + record.row.execution.costUsd, 0) : null,
       missingUsageTrials: [...records.values()].filter((record) => record && record.tokens === null).length },
     claims: { benefit: measured && benefitStatus === 'promote', promotionReady: false, liveProvider: measured && providerCalls > 0, realHuman: false, productLocksChanged: false },
   };
@@ -465,7 +630,8 @@ function packFiles(directory) {
 }
 function allowedFiles(plan) {
   return new Set(['plan.json', 'plan.sha256', 'report.json', ...plan.slots.flatMap((slot) => [recordPath(slot), startPath(slot)]),
-    ...(plan.evidenceKind === 'live-provider' ? plan.tasks.map((task) => `calibration/${task.id}/admission.json`) : [])]);
+    ...(plan.evidenceKind === 'live-provider' ? ['provider-preflight.json', 'calibration/admission-report.json',
+      ...plan.tasks.map((task) => `calibration/${task.id}/admission.json`)] : [])]);
 }
 export function sealBenefitRun(root, directory, actor) {
   directory = resolve(directory);
@@ -487,6 +653,7 @@ export function checkBenefitRun(root, directory) {
     const plan = loadPlan(root, directory), allowed = allowedFiles(plan), files = packFiles(directory);
     if (plan.evidenceKind === 'live-provider') {
       verifyTaskAdmissions(root, directory, plan, new Set(plan.tasks.map((task) => task.id)));
+      verifyLiveAdmissionReport(root, directory, plan);
       assert.equal(git(root, ['status', '--porcelain', '--', ...Object.keys(plan.source.bindings)]), '', 'measured-evaluator-uncommitted');
       for (const [path, digest] of Object.entries(plan.source.bindings)) {
         const committed = execFileSync('git', ['show', `${plan.source.commit}:${path}`], { cwd: root, windowsHide: true, encoding: 'utf8' });

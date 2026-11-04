@@ -53,7 +53,7 @@ are configuration for the adapter; no live-provider call is authorized this run.
 
 The old 180-slot plan was a minimum of 20 cases. This plan retains all 24 current
 task identities, so it has **216 slots**. Public/held-out membership comes from
-the existing historical corpus and is reported separately. Task prompts are
+the existing historical corpus and is reported separately. Task prompts, acceptance criteria and target scope are
 executor input; reference solutions, oracle definitions and grade results are
 evaluator-only. Candidate experiences must be frozen independently and may not
 be learned from these evaluation tasks.
@@ -78,6 +78,16 @@ node scripts/rsi-benefit-eval.mjs offline --run-dir D:/tmp/rsi-benefit-offline
 node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-offline
 ```
 
+For a measured run, keep the admission package separate and adopt it before receipts:
+
+```powershell
+node scripts/rsi-benefit-eval.mjs plan --mode measured --run-dir D:/tmp/rsi-benefit-measured --candidate-file D:/tmp/confirmed-sekb.json --max-provider-calls <n> --max-total-tokens <n>
+node scripts/rsi-benefit-eval.mjs calibrate --run-dir D:/tmp/rsi-benefit-measured --calibration-dir <ready-live-run>
+node scripts/rsi-benefit-eval.mjs record --run-dir D:/tmp/rsi-benefit-measured --receipt <collector-receipt.json>
+node scripts/rsi-benefit-eval.mjs report --run-dir D:/tmp/rsi-benefit-measured
+node scripts/rsi-benefit-eval.mjs check --run-dir D:/tmp/rsi-benefit-measured
+```
+
 `plan` requires a fresh directory. `offline` resumes untouched slots and never
 calls the network. An interrupted start marker becomes a retained crash, not a
 second attempt. `report` rederives results; `check` verifies the manifest, raw
@@ -87,7 +97,7 @@ A future measured plan uses `--mode measured --candidate-file <json>` plus
 explicit `--max-provider-calls` and `--max-total-tokens`. Its candidate contains
 `id`, `kind: confirmed-sekb`, `context` and independent `sourceCaseIds`. Creating
 this plan does not call a provider. `record --receipt <json>` admits one immutable
-collector receipt or an ordered array in one validation batch; the offline runner refuses measured plans. The runtime
+collector receipt or an ordered array in one validation batch; the offline runner refuses measured plans. Before `record`, run `calibrate --calibration-dir <ready-live-run>`; it verifies the live admission report and provider preflight, then copies the immutable calibration artefacts into the measurement pack. Manual or synthetic calibration files are rejected. The runtime
 executor must use `buildBenefitRequest`, retain provider attempts and real
 oracle reports, and supply the exact slot/config identity. The provider adapter
 returns both parsed fields and `rawResponse` for that collector. Read credentials
@@ -109,7 +119,7 @@ safety and stability gates.
 ## Collector receipt
 
 `BenefitTrialReceipt` in `scripts/lib/rsi-benefit-eval.d.mts` defines the full
-shape. `slot`, `planDigest`, `requestDigest`, runtime flags and candidate context
+shape. The plan also binds each task source record, base/reference revision, target scope and acceptance criteria. A measured receipt carries replayable `edits` and a grader with `workspaceRevision` and `editsDigest`; a passing trial without an edit is rejected. `slot`, `planDigest`, `requestDigest`, runtime flags and candidate context
 must match the frozen plan. `providerAttempts` retain the complete request,
 `rawResponse` and `parsedResponse`; the latter is rederived on admission. The
 terminal `rawResponse` and grader's `responseDigest` refer to the same content.
@@ -117,7 +127,7 @@ Tool continuations append exactly the previous response output and matching
 tool results to the existing input. Extra hidden prompt items are rejected.
 
 `execution.runPosition`, `startedAt` and `endedAt` record actual collector order;
-out-of-order batches and overlapping timestamps are rejected. Interrupted slots
+out-of-order batches and overlapping timestamps are rejected. A lock left by a dead process is reclaimed on resume; a live process still fails closed. Interrupted slots
 stay visible. Grader reports carry their exact command, required test paths and
 assertion results; inconsistent counts, skipped/todo tests and self-grading are
 rejected. The optional dollar cost stays null if the provider does not report

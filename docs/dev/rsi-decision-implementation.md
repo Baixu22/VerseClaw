@@ -137,3 +137,27 @@ v2 reservation 仍是 0 完成 case / insufficient-evidence；历史测量仍是
 本轮未改生产 UI、反馈排序、存储协议、默认值、产品锁或发布状态。
 README 三种语言的诊断用途说明仍准确。历史测量原始文件保留；新增预算
 字段和校验器摘要仅属于当前离线复算，不追认旧运行通过新验收。
+
+## 2026-11-05 second local layer audit
+
+`driven_by: agent`, `actor: codex/rsi-layer-audit`. This pass reviewed the live
+admission and measured-benefit layers added after the 2026-11-04 review:
+
+- The decision readback now treats the three README files as hash-recorded but
+  non-judged documentation. A parallel UI/doc edit is a warning; RSI source,
+  fixture, rule and acceptance-record drift remains a hard failure.
+- A measured benefit plan now freezes each task's source-record digest,
+  base/reference revisions, target scope and acceptance criteria, rather than
+  binding only the prompt and oracle inputs.
+- A measured trial now carries replayable `edits`, and its grader binds the
+  workspace revision and `editsDigest`. A passing trial with no edit is rejected.
+- `calibrate --calibration-dir` imports the 24 task admissions only after a
+  recomputable `ready-for-measurement` report and matching provider preflight
+  exist; `record`, `report` and `check` consume that same package.
+- An interrupted offline run can reclaim a lock left by a dead PID. Active locks,
+  malformed locks and plan drift still fail closed.
+- Empty measured packs no longer report invented zero token/dollar cost.
+
+The historical real-provider result remains `NO_GO`; no provider call, benefit
+claim, default change, product-lock change or release approval is introduced by
+this audit.

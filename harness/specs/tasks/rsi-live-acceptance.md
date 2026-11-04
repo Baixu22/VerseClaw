@@ -35,6 +35,7 @@ acceptance:
   - The API key enters through stdin, is never passed to the subject or grader process and is not written to source, configuration, logs or retained evidence.
   - Current corpus identities and public/held-out membership are retained; each historical base and reference revision is recovered from its original acceptance record before execution.
   - A hard admission failure leaves model task execution and subject isolation explicitly unexecuted; endpoint preflight is never counted as a quality trial.
+  - eady-for-measurement requires all 24 task admissions and a retained passing provider preflight matched to the planned endpoint/model; a missing or failed preflight leaves the result NO_GO.
   - Every reference oracle is calibrated before its task's agent outcomes may be used as quality evidence. A calibration failure is a hard admission failure, not a retryable agent result.
   - No result-dependent advice, candidate or threshold changes are introduced to bypass a failed admission gate. A later experiment must separately freeze its confirmed SEKB candidate.
   - Actual provider usage, tools, timestamps, failures, edits and independent oracle reports are persisted and replayable. A hard acceptance failure may stop the campaign, with unexecuted slots retained explicitly.
@@ -59,7 +60,7 @@ oracle files must remain hidden and pinned. If the current oracle cannot grade
 its historical reference, report the exact calibration mismatch and do not
 convert that mismatch into evidence of model or RSI quality.
 
-This is the admission stage of real acceptance. Independent test execution uses
+A task-ready package is still NO_GO until a passing provider preflight exists. Independent test execution uses
 a fresh local workspace and sanitized environment; it is not an OS-level sandbox
 or packaged desktop acceptance. A NO_GO is a completed admission decision, not a
 completed RSI benefit measurement. Subject execution and confirmed candidate

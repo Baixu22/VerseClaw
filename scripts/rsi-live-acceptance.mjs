@@ -87,6 +87,7 @@ export function assessTaskAdmission({ reference, baseline }) {
 
 export function finalizeLiveAdmission(root, directory, options = {}) {
   const tasks = inspectLiveCorpus(root);
+  assert.equal(tasks.length, 24, 'live-admission-corpus-size');
   const admissions = tasks.map((task) => {
     const path = join(directory, 'calibration', task.id, 'admission.json');
     if (!existsSync(path)) return { taskId: task.id, passed: false, status: 'not-calibrated', issues: ['task-not-calibrated'] };
@@ -96,18 +97,35 @@ export function finalizeLiveAdmission(root, directory, options = {}) {
     assert.deepEqual(retained.admission, admission, 'admission-recomputation');
     return { taskId: task.id, ...admission, status: admission.passed ? 'admitted' : 'rejected', admissionDigest: sha(readFileSync(path)) };
   });
-  const passed = admissions.every((task) => task.passed);
+  const tasksAdmitted = admissions.every((task) => task.passed);
+  let provider = { status: tasksAdmitted ? 'missing' : 'not-evaluated', receipt: 'provider-preflight.json', responseId: null, usage: null };
+  let providerPassed = false;
+  if (tasksAdmitted) {
+    const path = join(directory, 'provider-preflight.json');
+    if (existsSync(path)) {
+      try {
+        const receipt = read(path);
+        providerPassed = receipt?.driven_by === 'agent' && typeof receipt.actor === 'string' && receipt.actor.trim().length > 0
+          && receipt.passed === true && receipt.response?.status === 'completed' && receipt.response?.usage !== null
+          && typeof receipt.response?.usage === 'object';
+        provider = { status: providerPassed ? 'ready' : 'failed', receipt: 'provider-preflight.json',
+          responseId: receipt.response?.id ?? null, usage: receipt.response?.usage ?? null };
+      } catch {
+        provider = { status: 'invalid', receipt: 'provider-preflight.json', responseId: null, usage: null };
+      }
+    }
+  }
+  const passed = tasksAdmitted && providerPassed;
   const result = { schemaVersion: 'RsiLiveAdmissionReport/v1', driven_by: 'agent', actor: 'codex/rsi-admission-verifier',
-    status: passed ? 'ready-for-measurement' : 'NO_GO', admissions,
+    status: passed ? 'ready-for-measurement' : 'NO_GO', admissions, provider,
     trialSlots: tasks.flatMap((task) => [1, 2, 3].flatMap((repeat) => ['sekb-off', 'sekb-shadow', 'sekb-confirmed'].map((arm) => ({
-      taskId: task.id, repeat, arm, status: 'not-run', reason: passed ? 'measurement-not-started' : 'task-admission-not-satisfied',
+      taskId: task.id, repeat, arm, status: 'not-run',
+      reason: passed ? 'measurement-not-started' : !tasksAdmitted ? 'task-admission-not-satisfied' : 'provider-admission-not-satisfied',
     })))),
     claims: { taskQualityMeasured: false, benefit: false, promotionReady: false, realHuman: false, productLocksChanged: false } };
   if (options.write !== false) write(join(directory, 'admission-report.json'), result);
   return result;
-}
-
-export function checkLiveAcceptance(root, directory) {
+}export function checkLiveAcceptance(root, directory) {
   const errors = [];
   let report;
   try {

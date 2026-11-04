@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { readFileSync } from 'node:fs';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
-import { checkBenefitRun, recordMeasuredBenefitTrials, runOfflineBenefit, sealBenefitRun, writeBenefitPlan } from './lib/rsi-benefit-eval.mjs';
+import { adoptLiveCalibration, checkBenefitRun, recordMeasuredBenefitTrials, runOfflineBenefit, sealBenefitRun, writeBenefitPlan } from './lib/rsi-benefit-eval.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 if (isMainEntrypoint(import.meta.url)) {
@@ -13,11 +13,11 @@ if (isMainEntrypoint(import.meta.url)) {
       'run-dir': { type: 'string' }, endpoint: { type: 'string' }, model: { type: 'string' }, actor: { type: 'string' },
       limit: { type: 'string' }, json: { type: 'boolean' },
       mode: { type: 'string' }, 'candidate-file': { type: 'string' }, 'max-provider-calls': { type: 'string' },
-      'max-total-tokens': { type: 'string' }, receipt: { type: 'string' },
+      'max-total-tokens': { type: 'string' }, receipt: { type: 'string' }, 'calibration-dir': { type: 'string' },
     } });
     const command = positionals[0];
-    if (!values['run-dir'] || positionals.length !== 1 || !['plan', 'offline', 'record', 'report', 'check'].includes(command)) {
-      throw new Error('Usage: node scripts/rsi-benefit-eval.mjs <plan|offline|record|report|check> --run-dir <new/retained directory> [--endpoint URL --model ID]');
+    if (!values['run-dir'] || positionals.length !== 1 || !['plan', 'offline', 'calibrate', 'record', 'report', 'check'].includes(command)) {
+      throw new Error('Usage: node scripts/rsi-benefit-eval.mjs <plan|offline|calibrate|record|report|check> --run-dir <new/retained directory> [--endpoint URL --model ID]');
     }
     const directory = resolve(values['run-dir']);
     let result;
@@ -31,6 +31,9 @@ if (isMainEntrypoint(import.meta.url)) {
       const execution = runOfflineBenefit(ROOT, directory, { limit: values.limit === undefined ? undefined : Number(values.limit) });
       const report = sealBenefitRun(ROOT, directory);
       result = { passed: true, execution, status: report.status, benefit: report.benefit };
+    } else if (command === 'calibrate') {
+      if (!values['calibration-dir']) throw new Error('--calibration-dir is required');
+      result = { passed: true, ...adoptLiveCalibration(ROOT, directory, values['calibration-dir']) };
     } else if (command === 'record') {
       if (!values.receipt) throw new Error('--receipt is required');
       const input = JSON.parse(readFileSync(values.receipt, 'utf8'));

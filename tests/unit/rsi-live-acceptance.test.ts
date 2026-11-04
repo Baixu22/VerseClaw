@@ -14,6 +14,7 @@ describe('real RSI task admission', () => {
     try {
       const report = finalizeLiveAdmission(process.cwd(), directory);
       expect(report.status).toBe('NO_GO');
+      expect(report.provider.status).toBe('not-evaluated');
       expect(report.trialSlots).toHaveLength(216);
       seal();
       expect(checkLiveAcceptance(process.cwd(), directory)).toMatchObject({ passed: true, acceptanceStatus: 'NO_GO', measuredTaskTrials: 0 });

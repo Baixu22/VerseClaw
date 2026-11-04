@@ -1,11 +1,11 @@
 // @vitest-environment node
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { afterAll, describe, expect, it } from 'vitest';
 import { parseResponsesReply } from '../../scripts/lib/rsi-responses-provider.mjs';
-import { assessTaskAdmission } from '../../scripts/rsi-live-acceptance.mjs';
-import { BENEFIT_ARMS, benefitDigest, buildBenefitRequest, checkBenefitRun, createBenefitPlan, recordMeasuredBenefitTrials,
+import { assessTaskAdmission, finalizeLiveAdmission, inspectLiveCorpus } from '../../scripts/rsi-live-acceptance.mjs';
+import { adoptLiveCalibration, BENEFIT_ARMS, benefitDigest, buildBenefitRequest, checkBenefitRun, createBenefitPlan, recordMeasuredBenefitTrials,
   runOfflineBenefit, sealBenefitRun, summarizeBenefitRun, validateBenefitPlan, writeBenefitPlan,
   type BenefitPlan } from '../../scripts/lib/rsi-benefit-eval.mjs';
 
@@ -47,28 +47,41 @@ describe('measured receipt admission (synthetic contract controls, no provider c
       mode: 'measured', runId: 'measured-contract-control', maxProviderCalls: 216, maxTotalTokens: 1_000_000,
       candidate: { ...offlinePlan.candidate, kind: 'confirmed-sekb' },
     });
-    const historical = JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json'), 'utf8'));
+    const identities = new Map(inspectLiveCorpus(ROOT).map((identity) => [identity.id, identity]));
     for (const task of plan.tasks) {
-      const original = historical.tasks.find((entry: { id: string }) => entry.id === task.id);
-      const record = JSON.parse(readFileSync(join(ROOT, original.referenceSolution.sourceRecord), 'utf8'));
       const stage = (pass: boolean) => ({ passed: pass, commands: task.oracle.commands, oracleUnchanged: true, inputDigests: task.oracle.inputDigests,
         executions: task.oracle.commands.map((command) => ({ command, kind: 'vitest', exitCode: pass ? 0 : 1, error: null, timedOut: false,
           report: { success: pass, numTotalTests: 1, numPassedTests: pass ? 1 : 0, numFailedTests: pass ? 0 : 1, numPendingTests: 0,
             testResults: [{ assertionResults: [{ status: pass ? 'passed' : 'failed' }] }] } })) });
       const stages = { reference: stage(true), baseline: stage(false) };
       const path = join(directory, 'calibration', task.id, 'admission.json'); mkdirSync(dirname(path), { recursive: true });
-      writeFileSync(path, JSON.stringify({ evidenceKind: 'synthetic-contract-control', taskId: task.id,
-        source: { base: record.candidate.base, reference: record.candidate.commit }, stages, admission: assessTaskAdmission(stages) }));
+      writeFileSync(path, JSON.stringify({
+        schemaVersion: 'RsiLiveTaskAdmission/v1', driven_by: 'agent', actor: 'offline-contract-calibrator', taskId: task.id,
+        source: identities.get(task.id),
+        stages, admission: assessTaskAdmission(stages), claims: { modelQuality: false, benefit: false, realHuman: false },
+      }));
     }
+    const providerPreflight = {
+      driven_by: 'agent', actor: 'offline-contract-preflight', scope: 'provider admission; not a task outcome',
+      startedAt: new Date().toISOString(), durationMs: 1, passed: true,
+      request: { url: plan.provider.endpoint, instructions: 'Reply with the exact marker only.', input: 'RSI_PROVIDER_READY' },
+      response: { id: 'offline-provider-preflight', model: plan.provider.model, status: 'completed', text: 'RSI_PROVIDER_READY',
+        usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, functionCalls: [], incompleteReason: null },
+    };
+    writeFileSync(join(directory, 'provider-preflight.json'), JSON.stringify(providerPreflight));
+    const admissionReport = finalizeLiveAdmission(ROOT, directory, { write: false });
+    writeFileSync(join(directory, 'calibration/admission-report.json'), JSON.stringify(admissionReport));
     const receipts = plan.slots.slice(0, limit).map((slot) => {
       const row = JSON.parse(readFileSync(join(offlineDir, 'trials', `${slot.id}.json`), 'utf8'));
       const task = plan.tasks.find((task) => task.id === slot.caseId)!;
       const passed = JSON.parse(row.rawResponse.output[0].content[0].text).probeValue === 'ok';
+      const editPath = task.targetScope.find((path) => !task.oracle.testPaths.includes(path))!;
       row.planDigest = benefitDigest(plan);
       row.evidenceKind = plan.evidenceKind;
       row.runtime.isolationId = `${plan.runId}/${slot.id}`;
       row.runtime.candidateDigest = plan.candidateDigest;
       row.runtime.runtimeEffectMeasured = true;
+      row.edits = [{ path: editPath, content: '// measured contract-control edit\n' }];
       row.execution.measurementBasis = 'live-provider';
       row.execution.providerCalls = 1;
       row.execution.startedAt = new Date(Date.UTC(2026, 0, 1) + slot.position * 10).toISOString();
@@ -76,8 +89,9 @@ describe('measured receipt admission (synthetic contract controls, no provider c
       row.rawResponse.id = `contract-control-${slot.id}`;
       row.providerAttempts = [{ endpoint: plan.provider.endpoint, request: row.request, rawResponse: row.rawResponse, parsedResponse: parseResponsesReply(row.rawResponse) }];
       row.grader = {
-        driven_by: 'agent', actor: 'offline-contract-grader', oracleDigest: task.oracleDigest, commands: task.oracle.commands,
-        responseDigest: benefitDigest(row.rawResponse),
+        schemaVersion: 'RsiBenefitGrader/v1', driven_by: 'agent', actor: 'offline-contract-grader',
+        workspaceRevision: task.source.base, oracleDigest: task.oracleDigest, commands: task.oracle.commands,
+        responseDigest: benefitDigest(row.rawResponse), editsDigest: benefitDigest(row.edits),
         isolation: { hiddenOracleVisible: false, unapprovedEgress: false, candidateChangedEvaluator: false },
         reports: task.oracle.commands.map((command) => ({ command, exitCode: passed ? 0 : 1, report: {
           success: passed, numTotalTests: task.oracle.testPaths.length, numPassedTests: passed ? task.oracle.testPaths.length : 0,
@@ -89,7 +103,6 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     });
     return { directory, plan, receipts };
   }
-
   it('has a reachable measured benefit gate and derives it from independent oracle results', () => {
     const { directory, receipts } = measuredPack(216);
     recordMeasuredBenefitTrials(ROOT, directory, receipts);
@@ -114,7 +127,7 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     expect(() => recordMeasuredBenefitTrials(ROOT, directory, [receipts[0]])).toThrow();
   });
 
-  it.each(['self-grade', 'oracle', 'test-count', 'contamination', 'endpoint', 'usage', 'hidden-retry', 'raw-parsed', 'skipped', 'actual-position'])(
+  it.each(['self-grade', 'oracle', 'test-count', 'contamination', 'endpoint', 'usage', 'hidden-retry', 'raw-parsed', 'skipped', 'actual-position', 'edit-scope', 'edit-digest', 'hidden-oracle-edit', 'workspace-revision', 'calibration-schema', 'calibration-claim', 'provider-endpoint', 'provider-model'])(
     'rejects %s before writing an imported slot', (mutation) => {
       const { directory, plan, receipts } = measuredPack();
       const row = receipts[0];
@@ -127,6 +140,27 @@ describe('measured receipt admission (synthetic contract controls, no provider c
       if (mutation === 'raw-parsed') row.providerAttempts[0].parsedResponse.text = 'different';
       if (mutation === 'skipped') row.grader.reports[0].report.numSkippedTests = 1;
       if (mutation === 'actual-position') row.execution.runPosition = 8;
+      if (mutation === 'edit-scope') row.edits[0].path = 'outside-task-scope.txt';
+      if (mutation === 'edit-digest') row.grader.editsDigest = '0'.repeat(64);
+      if (mutation === 'hidden-oracle-edit') {
+        row.edits[0].path = plan.tasks.find((task) => task.id === row.slot.caseId)!.oracle.testPaths[0];
+        row.grader.editsDigest = benefitDigest(row.edits);
+      }
+      if (mutation === 'workspace-revision') row.grader.workspaceRevision = '0'.repeat(40);
+      if (mutation === 'provider-endpoint' || mutation === 'provider-model') {
+        const preflightPath = join(directory, 'provider-preflight.json');
+        const preflight = JSON.parse(readFileSync(preflightPath, 'utf8'));
+        if (mutation === 'provider-endpoint') preflight.request.url = 'https://other.example/v1/responses';
+        else preflight.response.model = 'other-model';
+        writeFileSync(preflightPath, JSON.stringify(preflight));
+      }
+      if (mutation === 'calibration-schema' || mutation === 'calibration-claim') {
+        const admissionPath = join(directory, 'calibration', row.slot.caseId, 'admission.json');
+        const admission = JSON.parse(readFileSync(admissionPath, 'utf8'));
+        if (mutation === 'calibration-schema') delete admission.schemaVersion;
+        else admission.claims.benefit = true;
+        writeFileSync(admissionPath, JSON.stringify(admission));
+      }
       if (mutation === 'hidden-retry') {
         row.providerAttempts.push(structuredClone(row.providerAttempts[0]));
         row.execution.providerCalls = 2;
@@ -135,7 +169,14 @@ describe('measured receipt admission (synthetic contract controls, no provider c
       expect(summarizeBenefitRun(ROOT, directory).coverage.missing).toContain(plan.slots[0].id);
     });
 
-  it('rejects out-of-order imports and overlapping execution timestamps', () => {
+  it('requires a replayable edit when the measured oracle passes', () => {
+    const { directory, receipts } = measuredPack(9);
+    const row = receipts.find((receipt) => JSON.parse(receipt.rawResponse.output[0].content[0].text).probeValue === 'ok')!;
+    row.edits = [];
+    row.grader.editsDigest = benefitDigest(row.edits);
+
+    expect(() => recordMeasuredBenefitTrials(ROOT, directory, [row])).toThrow('pass-without-edits');
+  });  it('rejects out-of-order imports and overlapping execution timestamps', () => {
     const { directory, receipts } = measuredPack();
     expect(() => recordMeasuredBenefitTrials(ROOT, directory, [receipts[1]])).toThrow('import-schedule-drift');
     receipts[1].execution.startedAt = receipts[0].execution.startedAt;
@@ -160,7 +201,28 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     expect(recordMeasuredBenefitTrials(ROOT, directory, [row])).toHaveLength(1);
   });
 
-  it('does not run a measured plan through the offline driver or accept an unstated budget', () => {
+  it('adopts a ready live calibration package without requiring a manual copy', () => {
+    const { directory } = measuredPack(0);
+    const source = mkdtempSync(join(TEMP, 'rsi-benefit-test-live-admission-'));
+    created.push(source);
+    cpSync(join(directory, 'calibration'), join(source, 'calibration'), { recursive: true });
+    cpSync(join(directory, 'provider-preflight.json'), join(source, 'provider-preflight.json'));
+    const sourceReport = finalizeLiveAdmission(ROOT, source);
+    expect(sourceReport.status).toBe('ready-for-measurement');
+    rmSync(join(directory, 'calibration'), { recursive: true, force: true });
+
+    const adopted = adoptLiveCalibration(ROOT, directory, source);
+    expect(adopted).toMatchObject({ copied: 25, existing: 1, status: 'ready-for-measurement' });
+    const retained = JSON.parse(readFileSync(join(directory, 'calibration/admission-report.json'), 'utf8'));
+    expect(retained).toEqual(sourceReport);
+    expect(adoptLiveCalibration(ROOT, directory, source)).toMatchObject({ copied: 0, existing: 26 });
+  });  it('keeps token and dollar cost unavailable before any measured receipt is imported', () => {
+    const { directory } = measuredPack(0);
+    const report = summarizeBenefitRun(ROOT, directory);
+
+    expect(report.cost).toMatchObject({ providerCalls: 0, totalTokens: null, actualCostUsd: null, missingUsageTrials: 0 });
+    expect(report.wiring).toEqual({ offShadowInputsIdentical: false, confirmedCandidateBound: false, runtimeEffectMeasured: false });
+  });  it('does not run a measured plan through the offline driver or accept an unstated budget', () => {
     const { directory, plan } = measuredPack();
     expect(() => runOfflineBenefit(ROOT, directory)).toThrow('offline-driver-cannot-execute-measured-plan');
     expect(() => createBenefitPlan(ROOT, { mode: 'measured', candidate: plan.candidate })).toThrow('explicit-measurement-budget-required');
@@ -183,9 +245,17 @@ describe('RSI benefit plan', () => {
     const lf = readFileSync(path, 'utf8');
     writeFileSync(path, lf.replaceAll('\n', '\r\n'));
     expect(validateBenefitPlan(plan, directory)).toBe(true);
+    const recordPath = plan.tasks[0].source.recordPath;
+    const recordFile = join(directory, recordPath);
+    const recordBytes = readFileSync(recordFile);
+    const changedRecord = JSON.parse(recordBytes.toString('utf8'));
+    changedRecord.candidate.base = '1'.repeat(40);
+    writeFileSync(recordFile, JSON.stringify(changedRecord));
+    expect(() => validateBenefitPlan(plan, directory)).toThrow();
+    writeFileSync(recordFile, recordBytes);
+    expect(validateBenefitPlan(plan, directory)).toBe(true);
     writeFileSync(path, `${lf}\n// meaningful change\n`);
-    expect(() => validateBenefitPlan(plan, directory)).toThrow('evaluator-source-drift');
-  });
+    expect(() => validateBenefitPlan(plan, directory)).toThrow('evaluator-source-drift');  });
 
   it('freezes all 24 tasks and 216 counterbalanced slots without changing the old protocol', () => {
     const plan = createBenefitPlan(ROOT);
@@ -193,6 +263,9 @@ describe('RSI benefit plan', () => {
     expect(plan.tasks.filter((task) => task.split === 'held-out')).toHaveLength(12);
     expect(plan.slots).toHaveLength(216);
     expect(plan.budget).toMatchObject({ providerCallsAuthorized: 0, retries: 0 });
+    expect(plan.tasks[0]).toMatchObject({ acceptanceCriteria: expect.any(Array), targetScope: expect.any(Array),
+      source: { recordPath: expect.any(String), recordDigest: expect.any(String), base: expect.stringMatching(/^[a-f0-9]{40}$/u), reference: expect.stringMatching(/^[a-f0-9]{40}$/u) } });
+    expect(plan.source.bindings[plan.tasks[0].source.recordPath]).toBe(plan.tasks[0].source.recordDigest);
     for (const task of plan.tasks) {
       const slots = plan.slots.filter((slot) => slot.caseId === task.id);
       expect(new Set(slots.map((slot) => `${slot.arm}/${slot.repeat}`)).size).toBe(9);
@@ -206,6 +279,7 @@ describe('RSI benefit plan', () => {
     const requests = Object.fromEntries(slots.map((slot) => [slot.arm, buildBenefitRequest(plan, slot)]));
     expect(requests['sekb-off']).toEqual(requests['sekb-shadow']);
     expect(requests['sekb-confirmed']).not.toEqual(requests['sekb-off']);
+    expect(JSON.parse(String(requests['sekb-off'].input))).toEqual({ prompt: plan.tasks[0].prompt, acceptanceCriteria: plan.tasks[0].acceptanceCriteria, targetScope: plan.tasks[0].targetScope });
     const content = JSON.stringify(requests);
     expect(content).not.toContain(plan.tasks[0].oracleDigest);
     expect(content).not.toContain('referenceSolution');
@@ -253,6 +327,18 @@ describe('RSI offline benefit run', () => {
     sealBenefitRun(ROOT, directory);
     expect(checkBenefitRun(ROOT, directory).passed).toBe(true);
     expect(runOfflineBenefit(ROOT, directory)).toMatchObject({ written: 0, resumed: 216 });
+  });
+
+  it('recovers a lock left by a dead process and refuses a live one', () => {
+    const { directory, plan } = pack(0);
+    const lock = join(directory, '.run.lock');
+    writeFileSync(lock, JSON.stringify({ schemaVersion: 'RsiRunLock/v1', pid: process.pid, startedAt: new Date().toISOString(), planDigest: benefitDigest(plan) }));
+    expect(() => runOfflineBenefit(ROOT, directory)).toThrow('run-in-progress');
+    unlinkSync(lock);
+
+    writeFileSync(lock, JSON.stringify({ schemaVersion: 'RsiRunLock/v1', pid: 99999999, startedAt: new Date().toISOString(), planDigest: benefitDigest(plan) }));
+    expect(runOfflineBenefit(ROOT, directory, { limit: 0 })).toMatchObject({ written: 0, resumed: 0, planned: 216 });
+    expect(existsSync(lock)).toBe(false);
   });
 
   it('preserves an interrupted slot as a crash instead of retrying it', () => {
