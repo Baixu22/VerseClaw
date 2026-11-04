@@ -32,6 +32,14 @@ import {
 import { isDeliverableMessageChannel } from "../utils/message-channel.js";
 import { resolveAgentSessionDirs } from "./session-dirs.js";
 import { resolveMainSessionResumeBlockReason } from "./main-session-restart-recovery-boundary.js";
+import { recoveryAuthorityV1 } from "./recovery-authority/authority.js";
+import { buildMainSessionRecoveryRequest } from "./recovery-authority/main-session-adapter.js";
+import {
+  compareRecoveryShadow,
+  isRecoveryAuthorityShadowEnabled,
+  recoveryShadowSink,
+  type LegacyRecoveryOutcome,
+} from "./recovery-authority/shadow.js";
 import type { SessionLockInspection } from "./session-write-lock.js";
 
 const log = createSubsystemLogger("main-session-restart-recovery");
@@ -512,6 +520,29 @@ async function recoverStore(params: {
     }
 
     const resumeBlockReason = resolveMainSessionResumeBlockReason(messages);
+
+    // TF-0714: read-only shadow. Default off; it never changes the outcome.
+    if (isRecoveryAuthorityShadowEnabled()) {
+      try {
+        const request = buildMainSessionRecoveryRequest({
+          sessionKey,
+          sessionId: entry.sessionId ?? sessionKey,
+          attemptsConsumed: 0,
+          maxAttempts: MAX_RECOVERY_RETRIES,
+          resumable: !resumeBlockReason,
+          approvalPending: Boolean(resumeBlockReason?.includes("approval-pending")),
+          visibleOutputObserved: false,
+          pendingFinalDelivery: Boolean(
+            (entry as { pendingFinalDeliveryText?: unknown }).pendingFinalDeliveryText,
+          ),
+        });
+        const decision = recoveryAuthorityV1.decide(request);
+        const legacyOutcome: LegacyRecoveryOutcome = resumeBlockReason ? "not-resumed" : "resumed";
+        recoveryShadowSink.record(compareRecoveryShadow(request, decision, legacyOutcome));
+      } catch (err) {
+        log.warn(`recovery authority shadow failed for ${sessionKey}: ${String(err)}`);
+      }
+    }
     if (resumeBlockReason) {
       await sendUnresumableSessionNotice({
         cfg: params.cfg,
@@ -630,3 +661,4 @@ export function scheduleRestartAbortedMainSessionRecovery(
 
   attemptRecovery(1, initialDelay);
 }
+
