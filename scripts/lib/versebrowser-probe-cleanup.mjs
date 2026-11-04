@@ -25,7 +25,7 @@ function runPowerShell(script) {
   if (out.error?.code === 'ENOENT' && censusBackend === 'pwsh.exe') {
     censusBackend = 'powershell.exe'; out = spawnSync(censusBackend, args, options);
   }
-  if (out.status !== 0 || !out.stdout) throw new Error(`Process observation failed: ${out.error?.message ?? out.stderr ?? out.status}`);
+  if (out.status !== 0 || !out.stdout) throw new Error(`Process observation failed (exit=${out.status}, signal=${out.signal ?? 'none'}): ${out.error?.message || out.stderr?.trim() || out.stdout?.trim().slice(-2000) || 'empty worker output'}`);
   return JSON.parse(out.stdout);
 }
 
@@ -37,7 +37,7 @@ export function readProbeProcesses(runRoot) {
   const query = 'SELECT ProcessId,Name,CommandLine,WorkingSetSize,CreationDate FROM Win32_Process'
     + (marker ? ` WHERE CommandLine LIKE '%${marker}%'` : '');
   const encodedQuery = Buffer.from(query, 'utf8').toString('base64');
-  const script = `$ErrorActionPreference='Stop'; [Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); $query=[System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${encodedQuery}')); $rows=@(foreach($row in Get-CimInstance -Query $query) { $live=$null; try { $live=[Diagnostics.Process]::GetProcessById([int]$row.ProcessId); if (!$live.HasExited -and [Math]::Abs(($live.StartTime.ToUniversalTime()-$row.CreationDate.ToUniversalTime()).TotalMilliseconds) -lt 1) { [pscustomobject]@{ProcessId=$row.ProcessId;Name=$row.Name;CommandLine=$row.CommandLine;WorkingSetSize=$row.WorkingSetSize;CreationTimeTicks=[string]$live.StartTime.ToUniversalTime().Ticks} } } catch [System.ArgumentException] {} finally { if($null -ne $live){$live.Dispose()} } }); ConvertTo-Json -InputObject $rows -Compress -Depth 3`;
+  const script = `$ErrorActionPreference='Stop'; [Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); $query=[System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${encodedQuery}')); $rows=@(foreach($row in Get-CimInstance -Query $query) { $live=$null; try { $live=[Diagnostics.Process]::GetProcessById([int]$row.ProcessId); if (!$live.HasExited -and [Math]::Abs(($live.StartTime.ToUniversalTime()-$row.CreationDate.ToUniversalTime()).TotalMilliseconds) -lt 1) { [pscustomobject]@{ProcessId=$row.ProcessId;Name=$row.Name;CommandLine=$row.CommandLine;WorkingSetSize=$row.WorkingSetSize;CreationTimeTicks=[string]$live.StartTime.ToUniversalTime().Ticks} } } catch [System.ArgumentException] {} catch [System.InvalidOperationException] { if($null -eq $live -or !$live.HasExited){throw} } finally { if($null -ne $live){$live.Dispose()} } }); ConvertTo-Json -InputObject $rows -Compress -Depth 3`;
   const processes = runPowerShell(script);
   if (!Array.isArray(processes)) throw new Error('Process census returned no inventory');
   return processes.filter(process => ['verse claw.exe', 'electron.exe', 'cmd.exe'].includes(process.Name?.toLowerCase()) && ownsProbeCommandLine(runRoot, process.CommandLine));
