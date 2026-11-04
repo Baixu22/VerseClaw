@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
-import { join, resolve, sep } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { afterAll, describe, expect, it } from 'vitest';
 import { parseResponsesReply } from '../../scripts/lib/rsi-responses-provider.mjs';
 import { BENEFIT_ARMS, benefitDigest, buildBenefitRequest, checkBenefitRun, createBenefitPlan, recordMeasuredBenefitTrials,
@@ -141,6 +142,25 @@ describe('measured receipt admission (synthetic contract controls, no provider c
 });
 
 describe('RSI benefit plan', () => {
+  it('accepts equivalent CRLF source checkouts while rejecting meaningful source drift', () => {
+    const original = createBenefitPlan(ROOT);
+    const directory = mkdtempSync(join(TEMP, 'rsi-benefit-test-source-'));
+    created.push(directory);
+    for (const path of Object.keys(original.source.bindings)) {
+      mkdirSync(dirname(join(directory, path)), { recursive: true });
+      writeFileSync(join(directory, path), readFileSync(join(ROOT, path), 'utf8').replace(/\r\n?/gu, '\n'));
+    }
+    const git = (...args: string[]) => execFileSync('git', ['-c', 'user.name=rsi-offline-test', '-c', 'user.email=offline@example.invalid', ...args], { cwd: directory, windowsHide: true, encoding: 'utf8' });
+    git('init', '-q'); git('add', '.'); git('commit', '-q', '-m', 'offline source fixture');
+    const plan = createBenefitPlan(directory);
+    const path = join(directory, 'tests/unit/agent-dev-paired-ablation.test.ts');
+    const lf = readFileSync(path, 'utf8');
+    writeFileSync(path, lf.replaceAll('\n', '\r\n'));
+    expect(validateBenefitPlan(plan, directory)).toBe(true);
+    writeFileSync(path, `${lf}\n// meaningful change\n`);
+    expect(() => validateBenefitPlan(plan, directory)).toThrow('evaluator-source-drift');
+  });
+
   it('freezes all 24 tasks and 216 counterbalanced slots without changing the old protocol', () => {
     const plan = createBenefitPlan(ROOT);
     expect(plan.tasks).toHaveLength(24);

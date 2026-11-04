@@ -6,6 +6,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { artifactPath } from './agent-first-trials.mjs';
 import { evaluateAblation } from './paired-ablation.mjs';
 import { summarizeTf0592Trials } from '../rsi-tf0592-statistical-adjudication.mjs';
+import { sha256File } from '../rsi-tf0604-baseline.mjs';
 import { buildResponsesRequest, parseResponsesReply } from './rsi-responses-provider.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
@@ -15,6 +16,7 @@ const POLICY = 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.jso
 const SOURCES = [CORPUS, TASKS, POLICY, 'scripts/lib/rsi-benefit-eval.mjs', 'scripts/lib/rsi-benefit-eval.d.mts',
   'scripts/rsi-benefit-eval.mjs', 'scripts/lib/rsi-responses-provider.mjs', 'scripts/lib/rsi-responses-provider.d.mts',
   'scripts/lib/paired-ablation.mjs', 'scripts/lib/reliability-aggregation.mjs',
+  'scripts/rsi-tf0604-baseline.mjs', 'scripts/lib/entrypoint.mjs',
   'scripts/rsi-tf0592-statistical-adjudication.mjs', 'scripts/lib/agent-first-trials.mjs',
   'tests/unit/rsi-benefit-eval.test.ts', 'tests/unit/rsi-responses-provider.test.ts',
   'harness/specs/tasks/rsi-benefit-eval.md'];
@@ -96,7 +98,9 @@ export function createBenefitPlan(root, options = {}) {
   if (mode === 'measured') assert(Number.isSafeInteger(maxProviderCalls) && maxProviderCalls >= 216
     && Number.isSafeInteger(maxTotalTokens) && maxTotalTokens > 0, 'explicit-measurement-budget-required');
   const paths = [...new Set([...SOURCES, ...tasks.flatMap((task) => Object.keys(task.oracle.inputDigests))])].sort();
-  const bindings = Object.fromEntries(paths.map((path) => [path, fileDigest(artifactPath(root, path))]));
+  // Source bindings use the repository's canonical text bytes across LF/CRLF
+  // checkouts. Raw run receipts and their manifest remain byte-addressed.
+  const bindings = Object.fromEntries(paths.map((path) => [path, sha256File(artifactPath(root, path))]));
   const commit = git(root, ['rev-parse', 'HEAD']);
   return {
     schemaVersion: 'RsiBenefitPlan/v1', driven_by: 'agent', actor: options.actor ?? 'codex/rsi-benefit-eval',
@@ -455,7 +459,8 @@ export function checkBenefitRun(root, directory) {
     if (plan.evidenceKind === 'live-provider') {
       assert.equal(git(root, ['status', '--porcelain', '--', ...Object.keys(plan.source.bindings)]), '', 'measured-evaluator-uncommitted');
       for (const [path, digest] of Object.entries(plan.source.bindings)) {
-        assert.equal(benefitDigest(execFileSync('git', ['show', `${plan.source.commit}:${path}`], { cwd: root, windowsHide: true })), digest, 'measured-source-not-in-candidate');
+        const committed = execFileSync('git', ['show', `${plan.source.commit}:${path}`], { cwd: root, windowsHide: true, encoding: 'utf8' });
+        assert.equal(benefitDigest(committed.replace(/\r\n?/gu, '\n')), digest, 'measured-source-not-in-candidate');
       }
     }
     assert(files.every((path) => allowed.has(path)), 'undeclared-pack-file');
