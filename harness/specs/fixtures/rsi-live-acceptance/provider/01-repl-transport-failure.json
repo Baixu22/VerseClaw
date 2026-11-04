@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-live-preflight",
+  "scope": "endpoint-only; not an RSI benefit trial",
+  "startedAt": "2026-11-04T15:41:17.421Z",
+  "durationMs": 2217,
+  "passed": false,
+  "error": "Responses response body failed (transport error)"
+}
