@@ -2443,6 +2443,26 @@ openclaw_runtime/_tmp_*
 !/team/dcs/dcs-v1.6-spec.md
 !/team/dcs/dcs-v1.6.1-addendum.md
 !/team/role-architecture-design/area-4-role-memory-completion.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/README.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/report.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/accounting-before.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/accounting-after.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/unit-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/runtime-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/embedded-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/embedded-baseline.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/retry-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/commands.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/source-manifest.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/scope-typecheck.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/baseline-loader.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/baseline.config.ts
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/typecheck-errors.log
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/comms-replay.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/comms-compare.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/credential-scan.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0738/SHA256SUMS
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

@@ -1,0 +1,21 @@
+{
+  "schema": "PromptAccountingStatic/v1",
+  "sourceSnapshot": {
+    "commit": "65b8be15bf37039d2a7c9089d81b86df45bc644b",
+    "sourcePath": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+    "sourceBlob": "335b46108d406ad70ccc75649d66f105db5d1334"
+  },
+  "driverCandidate": "65b8be15bf37039d2a7c9089d81b86df45bc644b",
+  "metric": {
+    "id": "PROMPT-2",
+    "definition": "named post-orchestrator additions lacking explicit accounting wiring",
+    "formula": "count(named additions without a sourceId/text entry in composePostOrchestratorPrompt)",
+    "value": 0,
+    "unit": "additions",
+    "method": "static",
+    "limitation": "Source wiring only, not a runtime coverage ratio. Behavioral tests and recorded budgetCoverage observations measure actual characters.",
+    "sources": [
+      "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
+    ]
+  }
+}

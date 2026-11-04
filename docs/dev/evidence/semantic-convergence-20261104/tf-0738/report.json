@@ -1,0 +1,130 @@
+{
+  "schema": "SemanticConvergenceNodeReport/v1",
+  "node": "TF-0738",
+  "title": "注入账本覆盖编排后追加/替换并显式分账",
+  "generatedAt": "2026-11-04T10:57:35.917Z",
+  "driven_by": "agent",
+  "actor": "codex/prompt-budget",
+  "base": {
+    "parentCommit": "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3"
+  },
+  "candidate": {
+    "commit": "65b8be15bf37039d2a7c9089d81b86df45bc644b",
+    "tree": "28733902bd2dcce227c4116e88674928cfd2336b",
+    "dirty": false
+  },
+  "decision": {
+    "status": "scoped-development-complete-with-existing-failures",
+    "nodeAcceptancePassed": true,
+    "newRegressions": 0,
+    "broaderRuntimeGatePassed": false,
+    "fullTypecheckPassed": false,
+    "releaseReady": false,
+    "liveReady": false,
+    "defaultOn": false,
+    "realHumanEvidence": false
+  },
+  "metrics": {
+    "untrackedNamedPostSources": {
+      "before": 2,
+      "after": 0,
+      "method": "static wiring"
+    },
+    "accountedCharRatio": {
+      "min": 1,
+      "sampleCount": 8
+    },
+    "unaccountedChars": {
+      "p95": 0,
+      "p99": 0
+    },
+    "unbudgetedTurnCount": 0,
+    "negativeControlUnaccountedChars": 20,
+    "managedCharLimit": 6000
+  },
+  "tests": {
+    "total": 238,
+    "passed": 235,
+    "failed": 3,
+    "skipped": 0,
+    "root": {
+      "files": 6,
+      "total": 116,
+      "passed": 116,
+      "failed": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "files": 6,
+      "total": 97,
+      "passed": 97,
+      "failed": 0,
+      "skipped": 0
+    },
+    "embedded": {
+      "files": 2,
+      "total": 12,
+      "passed": 9,
+      "failed": 3,
+      "skipped": 0
+    },
+    "retry": {
+      "files": 2,
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    "nodeBehavioralTests": 16,
+    "existingFailedTests": 3,
+    "baselineMatchedFailures": true
+  },
+  "acceptance": [
+    {
+      "criterion": "accounted_char_ratio=1.0",
+      "verdict": "pass",
+      "evidence": [
+        "observations.json",
+        "unit-tests.json"
+      ]
+    },
+    {
+      "criterion": "No-turnId path explicitly unbudgeted",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json"
+      ]
+    },
+    {
+      "criterion": "ContextFinalSnapshot budgetCoverage readable and immutable",
+      "verdict": "pass",
+      "evidence": [
+        "observations.json",
+        "unit-tests.json"
+      ]
+    },
+    {
+      "criterion": "6000 is not the total provider request budget",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "README.md",
+        "docs/dev/context-orchestrator.md"
+      ]
+    }
+  ],
+  "limitations": [
+    "Coverage observes the full system component plus turn injection message charges; it excludes ordinary history, user/tool input, transport serialization and provider billing. No provider token amount is estimated from characters.",
+    "8 deterministic agent-driven API observations are not a live-provider workload or source Electron/Gateway acceptance.",
+    "The two-file embedded regression has 3 existing working-memory-regather assertion failures. A frozen-source loader replay of the pre-change runtime reproduces the same 3 failures; both results and loaded source hashes are retained, not treated as green.",
+    "Full uncached typecheck remains failed on two pre-existing RSI promotion-property errors; scoped and node/web checks passed. Related source blobs are unchanged.",
+    "Semantic producer/seal coverage and later transport effects belong to TF-0739; no GA/default/lock or broad runtime acceptance change is claimed.",
+    "Existing node_modules junctions were reused; no fresh dependency installation was performed."
+  ],
+  "deliveryChecks": {
+    "retentionExitCode": 0,
+    "evidenceRefsExitCode": 0,
+    "evidence": "commands.json",
+    "phase": "post-curation delivery checks; clean tested source candidate is recorded separately"
+  }
+}

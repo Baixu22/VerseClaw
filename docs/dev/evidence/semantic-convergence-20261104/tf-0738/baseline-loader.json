@@ -1,0 +1,14 @@
+{
+  "ref": "7abbf58a3e1d4404f26076c54fd7ea00d75e26a3",
+  "mappedPaths": [
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+    "openclaw_runtime/src/context-engine/context-final-snapshot.ts",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
+  ],
+  "loaded": {
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts": "ba5f9de1bd7da1be2e5bd85c2f135e7c8c1d1e66d7242581e5bae7622f55c996",
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts": "fb21da682239b98521a8c882daf79e5013aa3e4ef9e5583ab9b1834d4f90c5be",
+    "openclaw_runtime/src/context-engine/context-final-snapshot.ts": "ffbe2caad45c08d063b5089ae5f594ce3b6d0fe11a7fb4f72e6d8da61bbd1f29"
+  }
+}
