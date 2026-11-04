@@ -82,3 +82,16 @@ node --experimental-strip-types scripts/recovery-contract-eval.mjs --check
 `<userData>/openclaw-source-state/agents/main/sessions/<sessionFile>` 直接读
 完整 transcript（其它 long-session spec 已经这么做），再重跑 ≥30 对。
 
+
+## 2026-11-04 长会话复跑记录
+
+- 第一次单对抽样（`ls-compression-01`）：`mustPreserveMatched=0/4`，读回面是 `sessions.history`，不可信。
+- 改为磁盘 transcript 后跑了 5 对：`compression 4/4`，其余 4 对 `0/4`。
+- 根因定位：变体（fork/handoff/compact/restart）在事实写入转录**之前**就执行了。已加
+  `waitForTranscript(...)`，确保事实落盘后再施加变体；这项修复在
+  `tests/e2e/recovery-longsession-eval.spec.ts` 中。
+- 修复后的 30 对复跑被网关启动不稳定阻塞（`gateway never became ready`，本机残留实例清理后仍复现），
+  因此 `report.json` 的 long-session 仍保持 **0/30 未计入**。
+
+下一次复跑：先确保网关能稳定启动（清空本工作树 Electron/gateway 残留），再用
+`RECOVERY_LONGSESSION_OUT=D:/tmp/recovery-longsession-v3` 跑全量 30 对。

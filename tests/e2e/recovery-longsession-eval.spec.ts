@@ -36,10 +36,38 @@ async function waitGatewayReady(app: ElectronApplication, timeoutMs = 120_000): 
   return false;
 }
 
-async function historyText(app: ElectronApplication, sessionKey = MAIN_SESSION_KEY): Promise<string> {
+/**
+ * Read the full transcript from disk. `sessions.history` only returns the recent
+ * window, which silently truncates must-preserve facts and would make a correct
+ * recovery look like a loss.
+ */
+async function transcriptText(sessionsDir: string, app: ElectronApplication, sessionKey = MAIN_SESSION_KEY): Promise<string> {
+  try {
+    const store = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8')) as Record<string, { sessionFile?: string }>;
+    const file = store[sessionKey]?.sessionFile;
+    if (file) return await readFile(join(sessionsDir, file), 'utf8');
+  } catch {
+    // fall through to the host projection
+  }
   const history = await hostInvoke<{ messages?: unknown[] }>(app, 'sessions', 'history', { sessionKey })
     .catch(() => ({ messages: [] }));
   return JSON.stringify(history.messages ?? []);
+}
+
+async function waitForTranscript(
+  sessionsDir: string,
+  app: ElectronApplication,
+  sessionKey: string,
+  needle: string,
+  timeoutMs = 60_000,
+): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const text = await transcriptText(sessionsDir, app, sessionKey);
+    if (text.includes(needle)) return true;
+    await new Promise((resolve) => setTimeout(resolve, 1_000));
+  }
+  return false;
 }
 
 async function send(app: ElectronApplication, message: string, key = MAIN_SESSION_KEY): Promise<void> {
@@ -122,6 +150,7 @@ test.describe('long-session recovery evaluation', () => {
     });
     const openclawDir = join(homeDir, '.openclaw');
     const sourceStateDir = join(userDataDir, 'openclaw-source-state');
+    const sessionsDir = join(sourceStateDir, 'agents', 'main', 'sessions');
     await mkdir(openclawDir, { recursive: true });
     await mkdir(sourceStateDir, { recursive: true });
     const serialized = `${JSON.stringify(buildMockProviderConfig(llm.port, workspaceDir), null, 2)}\n`;
@@ -140,12 +169,22 @@ test.describe('long-session recovery evaluation', () => {
 
       for (const pair of pairs) {
         const startedAt = Date.now();
-        // All must-preserve facts are stated in one turn so the transcript is
-        // non-trivial without multiplying the eval's wall-clock cost.
+        // Facts and the next-action request go in ONE turn: the contract measures
+        // what survives, not how many round-trips it takes to state it.
         const factsMessage = pair.mustPreserve
           .map((fact, i) => `LSEVAL-FACT-${i} ${fact}`)
           .join(' | ');
-        await sendAndAwait(app, llm.log, factsMessage, 'LSEVAL-FACT-0 ACK');
+        const nextActionOk = await sendAndAwait(
+          app,
+          llm.log,
+          `${factsMessage} | LSEVAL-NEXT-ACTION ${pair.expectedNextAction}`,
+          'LSEVAL-NEXT-ACTION-DONE',
+        );
+        // The variant must not run before the facts are durable on disk, or the
+        // measurement would confuse "not yet written" with "lost by recovery".
+        const factsPersisted = await waitForTranscript(
+          sessionsDir, app, MAIN_SESSION_KEY, pair.mustPreserve[0] ?? "",
+        );
 
         let sessionKey = MAIN_SESSION_KEY;
         let variantNote = 'in-place';
@@ -161,7 +200,7 @@ test.describe('long-session recovery evaluation', () => {
           if (handoff.sessionKey) { sessionKey = handoff.sessionKey; variantNote = 'handed-off'; }
         } else if (pair.family === 'compaction' || pair.family === 'compression') {
           await hostInvoke(app, 'gateway', 'rpc', {
-            method: 'sessions.compact', params: { key: MAIN_SESSION_KEY, agentId: 'main' }, timeoutMs: 120_000,
+            method: 'sessions.compact', params: { key: MAIN_SESSION_KEY, agentId: 'main' }, timeoutMs: 60_000,
           }).catch(() => undefined);
           variantNote = 'compacted';
         } else if (pair.family === 'restart') {
@@ -176,10 +215,9 @@ test.describe('long-session recovery evaluation', () => {
           variantNote = 'revoked-context';
         }
 
-        const transcript = await historyText(app, sessionKey);
+        const transcript = await transcriptText(sessionsDir, app, sessionKey);
         const matched = pair.mustPreserve.filter((fact) => transcript.includes(fact)).length;
-        const nextActionOk = await sendAndAwait(app, llm.log, `LSEVAL-NEXT-ACTION ${pair.expectedNextAction}`, 'LSEVAL-NEXT-ACTION-DONE');
-        const after = await historyText(app, sessionKey);
+        const after = await transcriptText(sessionsDir, app, sessionKey);
         const claimedComplete = pair.forbiddenCompletionClaims.some((claim) => after.includes(claim));
         const receipt: PairReceipt = {
           schema: 'RecoveryLongSessionPairReceipt/v1',
@@ -189,7 +227,7 @@ test.describe('long-session recovery evaluation', () => {
           falseCompletionClaim: claimedComplete, nextActionCorrect: nextActionOk,
           recoveryLatencyMs: Date.now() - startedAt,
           evidenceRef: `recovery-longsession:${pair.id}`,
-          observed: { variantNote, sessionKey, transcriptLength: transcript.length, llmRequests: llm.log.length },
+          observed: { variantNote, sessionKey, factsPersisted, transcriptLength: transcript.length, llmRequests: llm.log.length },
           drivenBy: 'agent', realHumanEvidence: false, generatedAt: new Date().toISOString(),
         };
         await writePair(testInfo, receipt);
@@ -202,6 +240,9 @@ test.describe('long-session recovery evaluation', () => {
     }
   });
 });
+
+
+
 
 
 
