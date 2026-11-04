@@ -106,7 +106,12 @@ test('the build seal rejects production source changed after capture', async () 
     for(const file of ['dist/index.html','dist-electron/main/index.js','packages/versebrowser/dist/engine/service.js']) {
       await mkdir(dirname(join(root,file)),{recursive:true});await writeFile(join(root,file),'compiled fixture');
     }
-    assert.equal((await recordBuildProvenance(root)).status,'bound');
+    await writeFile(join(root,'packages/versebrowser/dist/engine/service.d.ts'),'export declare class Service {}');
+    const proof=await recordBuildProvenance(root);
+    assert.equal(proof.status,'bound');
+    assert.ok(proof.outputs.some(output=>output.archive==='main-runtime.asar' && output.path.endsWith('/service.d.ts')));
+    assert.ok(!proof.outputs.some(output=>output.archive==='app.asar' && output.path.endsWith('/service.d.ts')));
+    assert.ok(proof.outputs.some(output=>output.archive==='app.asar' && output.path.endsWith('/service.js')));
     await writeFile(join(root,'shared/contract.ts'),'export const value = 2;\n');
     assert.equal((await recordBuildProvenance(root)).status,'source-changed-or-dirty');
     git('add','shared/contract.ts');git('-c','user.name=Agent fixture','-c','user.email=fixture@example.invalid','commit','-m','source changed');

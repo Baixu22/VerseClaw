@@ -14,7 +14,9 @@ export const COMPILED_ROOTS = [
   { archive: 'app.asar', source: 'dist', prefix: 'dist/' },
   { archive: 'app.asar', source: 'dist-electron', prefix: 'dist-electron/' },
   { archive: 'main-runtime.asar', source: 'packages/versebrowser/dist', prefix: 'node_modules/@verse-claw/versebrowser/dist/' },
-  { archive: 'app.asar', source: 'packages/versebrowser/dist', prefix: 'node_modules/@verse-claw/versebrowser/dist/' },
+  // electron-builder omits dependency declarations from app.asar. The complete
+  // main-runtime copy above still binds them; all executable outputs stay bound.
+  { archive: 'app.asar', source: 'packages/versebrowser/dist', prefix: 'node_modules/@verse-claw/versebrowser/dist/', omitDeclarations: true },
 ];
 export const sha256 = value => createHash('sha256').update(value).digest('hex');
 
@@ -32,7 +34,7 @@ export async function collectCompiledOutputs(root) {
     for (const entry of await readdir(path.join(root,mapping.source,relative),{withFileTypes:true})) {
       const file = relative + entry.name;
       if (entry.isDirectory()) await visit(mapping,file+'/');
-      else if (entry.isFile() && mapping.prefix+file !== PROVENANCE_PATH) {
+      else if (entry.isFile() && mapping.prefix+file !== PROVENANCE_PATH && !(mapping.omitDeclarations && file.endsWith('.d.ts'))) {
         outputs.push({archive:mapping.archive,path:mapping.prefix+file,sha256:sha256(await readFile(path.join(root,mapping.source,file)))});
       }
     }
