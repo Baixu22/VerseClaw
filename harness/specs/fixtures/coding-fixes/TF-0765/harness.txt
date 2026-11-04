@@ -1,0 +1,1 @@
+Spec is valid: harness\specs\tasks\coding-journal-preimage-boundary.md
