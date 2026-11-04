@@ -1,0 +1,639 @@
+{
+  "schemaVersion": "RsiReviewAcceptance/v1",
+  "generatedAt": "2026-11-04T14:00:45.191Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-review",
+  "taskForestNode": "TF-0757",
+  "verdict": "pass-scoped-review",
+  "scope": "Current local RSI evaluators, feedback export/pilot, evidence binding, declarations, documentation and runtime-boundary regression tests. Historical research-only branches were identified, not reintroduced as product code.",
+  "candidate": {
+    "baseline": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+    "commit": "5c7d6674c563b5df72c962ee1575dd624fd86fe2",
+    "tree": "73b3cfa1770d7be96258bc4bf0e543ae2629fa12",
+    "implementationCommit": "4b930199a320b5e9d0a3ab542c2f16c7e8b8dfb5",
+    "sourceHashes": {
+      "docs/dev/rsi-capability-and-boundaries.md": "11666e46d06e70720baadad80ce1f9b1a8a113455f5f32e0cda889e904d8e87f",
+      "docs/dev/rsi-decision-implementation.md": "06c4f430d5b4952cc227471b106d77ff73f02f501843d7cea543221381a5a42e",
+      "harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS": "afdc5bf4746e6b5722ab293a43a0ce546a7d32b3844b5967d593143426e4193b",
+      "harness/specs/fixtures/agent-first-task-corpus/calibration-samples.v1.json": "3503379316ef40c01aea2ff98175bf07e7353ebb277ce1251bc710550d3cdec9",
+      "harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/known-bad.json": "cfe4f373e07157bbdc8c43d4cffe1e5cc12a64b2cd10e31f0c6136db73b7b0d3",
+      "harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/known-good.json": "066dcc9bdafee8467fa85c0ca048cd879c3e8221b29d757168135da4b2eb4436",
+      "harness/specs/fixtures/agent-first-task-corpus/calibration/deterministic/unknown.json": "273d1aad23a02f3f69ba1eb47b9ef7aa460099d2e44f8c852fcf7564d6358c54",
+      "harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json": "9886cf68a6113094ce1a84a8a36ff8d05c919d74c499d388be128c4d5b6236c6",
+      "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json": "1e3a119c3725caa99f8e209bfe8b216445e97857ea6bbfc1c6fd6c5950fe45ea",
+      "harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json": "1ce4dfffbe3f8453a52be3dc863f44b58566d60a50492eedadd3bd43f6460344",
+      "harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json": "31e54a20f58ebf3d3913984cdebab7a3c134e1fd2826966b593d13a3a577954e",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS": "74eb9ddcdce13f542c976bacdbe3ac6ff9854c6cb3a291f87d781809db82ea24",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0592/resource-fingerprint.v1.json": "1deffb89331834cba95d443829898f7cea59b18094aac51246e6899b9118c58d",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0592/statistical-report.v1.json": "c858af70f0fa13d2fdecec30ae8df00cf5a9cb2ac09810c1a807ac2822222c8f",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0592/validation-report.v1.json": "8c912a6c4852b925862d3c7be6faf2f2f05cbea76cd62b9c076169800db3dc53",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/SHA256SUMS": "6fd0e2181358998246e2c7bf0d0f2fe850d3b932ac04c5b8d5367dcb41647dc2",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/verification.v1.json": "71d33d017645f9f80c21fc2defba5bd6935d969c53d4210fc3da531aada32e45",
+      "harness/specs/fixtures/rsi-feedback-loop/protocol.v1.json": "fc9eb3c1bc190d36c57b531669de901137f8737310d30e5f5d2c2343fd233a04",
+      "harness/specs/fixtures/rsi-feedback-loop/report.v1.json": "1de1be54a1b4455e7b1c8815815583abc157dad5d7e7a775a92c8dc07c3c460e",
+      "harness/specs/fixtures/rsi-sekb-arms/SHA256SUMS": "22c9b444fabfc488a2f83894c80a8b6ec488355e917d0d54f58df3388da45a78",
+      "harness/specs/fixtures/rsi-sekb-arms/protocol.v1.json": "ae463b9ffd0ebf00e1f04c993ac365c1d4cf151be5370f1d298311ad5dcd8ed1",
+      "harness/specs/fixtures/rsi-sekb-arms/report.v1.json": "dc14e16919e0c33a432bc817d5f2f1957797ada11e29d81ce0814d179ae669e1",
+      "harness/specs/guides/rsi-evidence-binding.md": "16ac57e7b8bd76eaf06c02e9d26b1e82a51889417cc453203293e24e12e46c30",
+      "scripts/lib/evidence-binding.mjs": "745240fbc6b75c7c03a6596b381b4871079427a74acdcd7b2f0cfb571fae830b",
+      "scripts/lib/paired-ablation.d.mts": "c8dfb2d45d7aabf154b1eecbd5fa7da95200bdff9addc7b40ebeb29261873cb5",
+      "scripts/lib/paired-ablation.mjs": "df61dddd780abe1945d5d204308077da1f290fc7b328722061cbd150e6884e32",
+      "scripts/lib/reliability-aggregation.mjs": "764b31e2244dc70945ba4a15a90c9be6b6b7b7b02e40236fd86c5b54adb37483",
+      "scripts/rsi-decision-check.mjs": "a27e425f3d0747e9df3f194e0ce47ef2e5134ff24c05ebcff0fd611d755862f7",
+      "scripts/rsi-feedback-export.d.mts": "bcad442741469ed8450bb1deeeac9b8c71b3e1f1a30e9c2d6b5b8b421536b5dc",
+      "scripts/rsi-feedback-export.mjs": "5daa05f7b039394740535f39afefb2b845624c24a2c8180389d1459d54106bcc",
+      "scripts/rsi-feedback-pilot.d.mts": "76a4af02f594cf562902d6a5bdd8b48f5112d2065d6b26d22929bf1300800464",
+      "scripts/rsi-feedback-pilot.mjs": "e2b029a0a7aefd3270a77c0bfd28c5f39879a60e197cfcc35eb5bacf63d35743",
+      "scripts/rsi-historical-task-corpus.mjs": "6cbd62d3b6ddf73ca1f76eba519592060d3d5d4de98851ee3af6705df7f2b8ca",
+      "scripts/rsi-sekb-arms.d.mts": "9c87aecbf9c23bc9643353a43e596028a0f99d49578ec1ad9808f6318b836738",
+      "scripts/rsi-sekb-arms.mjs": "56d73313f2a1705754b00ce3619cf0598b0dc03b7a013c25f63e58f09ab8ee88",
+      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "3db43e10678cd94838e4f0b8d17775f9ec397a0a2cc67241a4f407884a434d41",
+      "scripts/rsi-tf0592-statistical-adjudication.mjs": "586819cea8c88a6c32d391ecb8634f863967e2de9592eeec4318f8b5bc9a4291",
+      "tests/unit/agent-dev-ablation-verdict-guards.test.ts": "440be633bac1eb47b93fe433876721e947b943abb494df0054d195bde7a71f20",
+      "tests/unit/agent-dev-paired-ablation.test.ts": "44634cdf74c172b70b42602b6593b96a996ecf57d49721acc93a39a0118d8d45",
+      "tests/unit/agent-dev-reliability-aggregation.test.ts": "6d446ed2fe11f82154645ad75e5822e7d0ab39ec296ec1f72a67405f7afe5ea9",
+      "tests/unit/evidence-binding.test.ts": "77b3d28187cef4a7169a4fea68af1436c38ec0642d58d41284344dc31ffc87cb",
+      "tests/unit/rsi-decision-check.test.ts": "363c471f5301ad8cd9ef52710f1ea48a23002bafc3a4750449f32878a78c546a",
+      "tests/unit/rsi-feedback-export.test.ts": "b9b37ff3ba661472ff179f9f5f2b5ddb469bba9a45a2ce7556854e160f18eade",
+      "tests/unit/rsi-feedback-pilot.test.ts": "b18781ce6cff1207bf93a13bf84e7d2fdd47035094fe106a943654e1490b06d1",
+      "tests/unit/rsi-sekb-arms.test.ts": "2b79e450de708b0aac9a2219419990139fa029f45170d3820428bf46f5b6442e",
+      "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "61deeafb600f6caea7ef0947016758932206c377671f59bf0f1262f1027f6f5c",
+      "harness/specs/tasks/rsi-review-convergence.md": "dece2b4b0efd105554043b9c6a0f65747dfa15d57123a6dce95a1706fa4968ff"
+    }
+  },
+  "findings": [
+    {
+      "id": "RSI-R5-01",
+      "priority": "P1",
+      "issue": "Safety verdict omitted from promotion and incomplete anchors hid observed violations",
+      "status": "fixed",
+      "paths": [
+        "scripts/lib/paired-ablation.mjs",
+        "scripts/lib/reliability-aggregation.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-02",
+      "priority": "P1",
+      "issue": "Non-finite metrics, invalid intervals and partially measured cost could promote",
+      "status": "fixed",
+      "paths": [
+        "scripts/lib/paired-ablation.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-03",
+      "priority": "P1",
+      "issue": "Three-arm recombination lost incomplete pairing, shadow parity and live-evidence guards",
+      "status": "fixed",
+      "paths": [
+        "scripts/rsi-sekb-arms.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-04",
+      "priority": "P1",
+      "issue": "Tool-call ceiling was unwired and rounding could admit a cost overrun",
+      "status": "fixed",
+      "paths": [
+        "scripts/rsi-tf0592-statistical-adjudication.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-05",
+      "priority": "P2",
+      "issue": "passAtK and promotion declarations disagreed with actual reports",
+      "status": "fixed",
+      "paths": [
+        "scripts/lib/paired-ablation.d.mts",
+        "scripts/rsi-sekb-arms.d.mts"
+      ]
+    },
+    {
+      "id": "RSI-R5-06",
+      "priority": "P1",
+      "issue": "Feedback exporter defaulted to the wrong database and collapsed partial/unknown to failure",
+      "status": "fixed",
+      "paths": [
+        "scripts/rsi-feedback-export.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-07",
+      "priority": "P2",
+      "issue": "Feedback task labels were reported as complete experimental cases; source failures/truncation were hidden",
+      "status": "fixed",
+      "paths": [
+        "scripts/rsi-feedback-pilot.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-08",
+      "priority": "P1",
+      "issue": "Check commands ignored saved reports; numerical eligibility incorrectly claimed promotion readiness",
+      "status": "fixed",
+      "paths": [
+        "scripts/rsi-sekb-arms.mjs",
+        "scripts/rsi-feedback-pilot.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-09",
+      "priority": "P1",
+      "issue": "Acceptance could omit bound hashes or relabel judged inputs as non-judged",
+      "status": "fixed",
+      "paths": [
+        "scripts/rsi-decision-check.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-10",
+      "priority": "P1",
+      "issue": "Git errors, renames away from scope and an unjudged TF-0592 manifest could bypass dirty checks",
+      "status": "fixed",
+      "paths": [
+        "scripts/lib/evidence-binding.mjs",
+        "scripts/rsi-tf0592-statistical-adjudication.mjs"
+      ]
+    },
+    {
+      "id": "RSI-R5-11",
+      "priority": "P2",
+      "issue": "Non-judged README still failed dirty and commit-range checks",
+      "status": "fixed",
+      "paths": [
+        "scripts/rsi-historical-task-corpus.mjs"
+      ]
+    }
+  ],
+  "regressions": {
+    "baselineExistingChecksPassed": 7,
+    "failingAddedTestsBeforeFix": 18,
+    "afterFix": {
+      "files": 15,
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0,
+      "suites": [
+        {
+          "path": "tests/unit/agent-dev-ablation-verdict-guards.test.ts",
+          "passed": 14,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/agent-dev-paired-ablation.test.ts",
+          "passed": 11,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/agent-dev-reliability-aggregation.test.ts",
+          "passed": 8,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/evidence-binding.test.ts",
+          "passed": 7,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-decision-check.test.ts",
+          "passed": 6,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-evidence-loop-contract.test.ts",
+          "passed": 8,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-feedback-export.test.ts",
+          "passed": 5,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-feedback-pilot.test.ts",
+          "passed": 8,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-historical-task-corpus.test.ts",
+          "passed": 7,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-measurement-archive.test.ts",
+          "passed": 2,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-sekb-arms-decision.test.ts",
+          "passed": 2,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-sekb-arms.test.ts",
+          "passed": 17,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-tf0592-statistical-adjudication.test.ts",
+          "passed": 26,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/rsi-tf0604-baseline.test.ts",
+          "passed": 6,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/runtime-memory-paired-ablation.test.ts",
+          "passed": 1,
+          "status": "passed"
+        }
+      ]
+    },
+    "runtimeBoundaryChecks": {
+      "files": 4,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0,
+      "suites": [
+        {
+          "path": "tests/unit/knowledge-api.test.ts",
+          "passed": 37,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/role-memory-v2.test.ts",
+          "passed": 16,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/sekb-confirm-provenance-p3-002.test.ts",
+          "passed": 6,
+          "status": "passed"
+        },
+        {
+          "path": "tests/unit/tf0018-sekb-no-auto-writeback.test.ts",
+          "passed": 1,
+          "status": "passed"
+        }
+      ]
+    },
+    "totalPassed": 188
+  },
+  "readbacks": [
+    {
+      "command": "scripts/rsi-decision-check.mjs --json",
+      "exitCode": 0,
+      "durationMs": 3753,
+      "result": {
+        "passed": true,
+        "status": "passed-with-global-ci-residual",
+        "decisions": {
+          "D1": "C",
+          "D2": "B",
+          "D3": "A",
+          "D4": "A",
+          "D5": "A",
+          "D6": "B"
+        },
+        "boundFileCount": 75,
+        "nonJudgedInputCount": 2,
+        "hashDrift": [
+          {
+            "path": ".gitignore",
+            "recorded": "bb6994ab0dca515a832d911e1f45391f8533fc98",
+            "current": "497c81d88d18babaf385c2ae41ef0d4910e14d56"
+          },
+          {
+            "path": "scripts/repository-artifacts.json",
+            "recorded": "a34bffda249e9d07bdb392734a802d4edd1ca5a6",
+            "current": "a57cb10d502ed026ae4905ccc6b65813287100ed"
+          }
+        ],
+        "errors": [],
+        "warnings": [
+          {
+            "code": "non-judged-drift",
+            "message": ".gitignore (repository hygiene registry edited by unrelated tasks; not a judged RSI input)"
+          },
+          {
+            "code": "non-judged-drift",
+            "message": "scripts/repository-artifacts.json (repository retention registry edited by unrelated tasks; not a judged RSI input)"
+          }
+        ]
+      }
+    },
+    {
+      "command": "scripts/rsi-feedback-pilot.mjs --check --json",
+      "exitCode": 0,
+      "durationMs": 77,
+      "result": {
+        "passed": true,
+        "protocolValidation": {
+          "passed": true,
+          "errors": []
+        },
+        "reportStatus": "insufficient-evidence",
+        "reasons": [
+          "feedback export absent: harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json",
+          "no recorded feedback rows",
+          "attributed tasks 0 < required 20",
+          "no provider calls authorised; this report is an offline eligibility readout, not an effect",
+          "task attribution does not establish complete k=3 paired cases"
+        ]
+      }
+    },
+    {
+      "command": "scripts/rsi-sekb-arms.mjs --check --json",
+      "exitCode": 0,
+      "durationMs": 133,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "status": "synthetic-wiring-only",
+        "reasons": [
+          "deterministic wiring fixture; not a model run and never a benefit claim",
+          "cost increase 0.3 exceeds 0.1"
+        ]
+      }
+    },
+    {
+      "command": "scripts/rsi-historical-task-corpus.mjs --check",
+      "exitCode": 0,
+      "durationMs": 962,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "taskCount": 24,
+        "calibratedRows": 16
+      }
+    },
+    {
+      "command": "scripts/rsi-tf0604-baseline.mjs --check --json",
+      "exitCode": 0,
+      "durationMs": 139,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "corpusCaseCount": 24,
+        "baselineStatus": "insufficient-evidence",
+        "negativeControlCount": 8
+      }
+    },
+    {
+      "command": "scripts/rsi-tf0592-statistical-adjudication.mjs --check --json",
+      "exitCode": 0,
+      "durationMs": 447,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "status": "insufficient-evidence",
+        "completeCaseCount": 0,
+        "negativeControlCount": 12
+      }
+    },
+    {
+      "command": "scripts/rsi-measurement-archive.mjs --check --json",
+      "exitCode": 0,
+      "durationMs": 119,
+      "result": {
+        "passed": true,
+        "errors": [],
+        "evidenceKind": "historical-real-provider-measurement",
+        "recordedTrialSlots": 144,
+        "originalStatus": "fail",
+        "reproducedStatus": "fail",
+        "reanalysisStatus": "fail",
+        "promotionReady": false
+      }
+    }
+  ],
+  "validation": {
+    "typecheck": {
+      "exitCode": 0,
+      "success": true,
+      "cache": "disabled",
+      "durationMs": 43826,
+      "checks": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 90
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 18139
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 10668
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 35237,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "D:\\tmp\\rsi-review-20261104\\verify\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    },
+    "harness": [
+      {
+        "id": "harness",
+        "command": "harness/src/cli.mjs validate --spec harness/specs/tasks/rsi-review-convergence.md",
+        "exitCode": 0,
+        "durationMs": 791
+      },
+      {
+        "id": "harness-dry-run",
+        "command": "harness/src/cli.mjs run --spec harness/specs/tasks/rsi-review-convergence.md --dry-run",
+        "exitCode": 0,
+        "durationMs": 607
+      },
+      {
+        "id": "lint",
+        "command": "node_modules/eslint/bin/eslint.js scripts/lib/evidence-binding.mjs scripts/lib/paired-ablation.mjs scripts/lib/reliability-aggregation.mjs scripts/rsi-decision-check.mjs scripts/rsi-feedback-export.mjs scripts/rsi-feedback-pilot.mjs scripts/rsi-historical-task-corpus.mjs scripts/rsi-sekb-arms.mjs scripts/rsi-tf0592-statistical-adjudication.mjs tests/unit/agent-dev-ablation-verdict-guards.test.ts tests/unit/agent-dev-paired-ablation.test.ts tests/unit/agent-dev-reliability-aggregation.test.ts tests/unit/evidence-binding.test.ts tests/unit/rsi-decision-check.test.ts tests/unit/rsi-feedback-export.test.ts tests/unit/rsi-feedback-pilot.test.ts tests/unit/rsi-sekb-arms.test.ts tests/unit/rsi-tf0592-statistical-adjudication.test.ts",
+        "exitCode": 0,
+        "durationMs": 4490
+      },
+      {
+        "id": "diff-check",
+        "command": "diff --check d8d1691a2 HEAD",
+        "exitCode": 0,
+        "durationMs": 191
+      }
+    ],
+    "mutationProbes": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-review",
+      "evidenceKind": "isolated-mutation-probes",
+      "results": [
+        {
+          "id": "non-judged-dirty-document",
+          "passed": true,
+          "exit": 0,
+          "expectedExit": 0,
+          "readback": {
+            "passed": true,
+            "errors": [],
+            "warnings": [
+              "source-fingerprint:docs/README.md",
+              "unrelated-dirty:docs/README.md"
+            ],
+            "taskCount": 24,
+            "calibratedRows": 16
+          }
+        },
+        {
+          "id": "non-judged-committed-document",
+          "passed": true,
+          "exit": 0,
+          "expectedExit": 0,
+          "readback": {
+            "passed": true,
+            "errors": [],
+            "warnings": [
+              "source-fingerprint:docs/README.md"
+            ],
+            "taskCount": 24,
+            "calibratedRows": 16
+          }
+        },
+        {
+          "id": "dirty-tf0592-manifest",
+          "passed": true,
+          "exit": 1,
+          "expectedExit": 1,
+          "readback": {
+            "passed": false,
+            "errors": [
+              {
+                "code": "dirty-workspace",
+                "message": "judged inputs are uncommitted: harness/specs/fixtures/rsi-evidence-loop/tf0592/SHA256SUMS"
+              }
+            ],
+            "status": "insufficient-evidence",
+            "completeCaseCount": 0,
+            "negativeControlCount": 12
+          }
+        }
+      ],
+      "cleanAfter": true,
+      "originalTreeRestored": true
+    },
+    "preservation": {
+      "preexistingDiffByteIdentical": true,
+      "originalArchive": [
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/manifest.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-audit.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-exclusions.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/progress.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/promotion-policy.v1.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/raw-trials.v1.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/corpus.v1.json",
+          "unchanged": true
+        },
+        {
+          "path": "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/provenance.v1.json",
+          "unchanged": true
+        }
+      ]
+    }
+  },
+  "environment": {
+    "checkout": "D:\\tmp\\rsi-review-20261104\\verify",
+    "trackedInputsOnly": true,
+    "cleanAfter": true,
+    "reusedDependencies": [
+      "D:/ClawX/node_modules",
+      "D:/ClawX/openclaw_runtime/node_modules",
+      "D:/ClawX/packages/versebrowser/node_modules"
+    ],
+    "setup": [
+      "pnpm_config_verify_deps_before_run=warn prevents dependency reconciliation of reused directories",
+      "Built packages/versebrowser with node node_modules/typescript/bin/tsc -p packages/versebrowser/tsconfig.build.json; exit 0"
+    ],
+    "recoveredAttempts": [
+      {
+        "log": "D:\\tmp\\rsi-review-20261104\\typecheck.log",
+        "exitCode": 1,
+        "reason": "Shared checkout contained three pre-existing unrelated delegation edits, producing 13 test type errors; preserved byte-for-byte."
+      },
+      {
+        "log": "D:\\tmp\\rsi-review-20261104\\isolated-typecheck.log",
+        "exitCode": 1,
+        "reason": "pnpm dependency reconciliation aborted before typecheck; automatic reinstall disabled for reused dependencies."
+      },
+      {
+        "log": "D:\\tmp\\rsi-review-20261104\\isolated-typecheck-reuse.log",
+        "exitCode": 1,
+        "reason": "Fresh tracked checkout lacked generated VerseBrowser declarations; its workspace dependencies and build restored."
+      },
+      {
+        "log": "D:\\tmp\\rsi-review-20261104\\isolated-versebrowser-build.log",
+        "exitCode": 2,
+        "reason": "VerseBrowser workspace dependencies not yet linked; rerun after linking exited 0."
+      }
+    ]
+  },
+  "limits": {
+    "newProviderCalls": 0,
+    "realHumanEvidence": false,
+    "independentReviewer": false,
+    "completeRsiImplementation": false,
+    "productLocksChanged": false,
+    "releaseApproved": false,
+    "newBenefitClaim": false,
+    "omitted": [
+      "Full repository CI",
+      "Packaged/Electron E2E (no visible UI change)",
+      "New live-provider quality or benefit measurement"
+    ],
+    "currentEvidence": {
+      "reservation": "insufficient-evidence; zero completed cases",
+      "threeArm": "synthetic-wiring-only",
+      "feedback": "insufficient-evidence",
+      "historicalMeasurement": "fail; preserved"
+    }
+  },
+  "localLogs": {
+    "D:\\tmp\\rsi-review-20261104\\regressions-before.json": "b25500ce301b4239499568caab5f3be3369c426cee87c291369b968aabee9768",
+    "D:\\tmp\\rsi-review-20261104\\arms-before.json": "2293e15839b7957defcc9b4c88c8991ea35b05842d1d7bf01c79d8a3f52b8f75",
+    "D:\\tmp\\rsi-review-20261104\\unit-isolated.json": "d4182344e74802fab9ada15a21d548352c04da7ff289209f02bb43925d294374",
+    "D:\\tmp\\rsi-review-20261104\\runtime-boundaries.json": "c3b283c859647bb318c1ee7d6497d6500d997227209a3845b1e41d4a63cc8a1a",
+    "D:\\tmp\\rsi-review-20261104\\isolated-results.json": "bb3b33dbf5090740a20211456e3b9ea478790bb2a98fc87a255adff2dd025235",
+    "D:\\tmp\\rsi-review-20261104\\isolated-typecheck-final.log": "e9ccda1e76cfa68d3272a9e520187cc9091743b364a34a75bfbd6296a23b4ee6",
+    "D:\\tmp\\rsi-review-20261104\\isolated-versebrowser-build-reuse.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "D:\\tmp\\rsi-review-20261104\\integration-probes.json": "eb0b1886e8975da6294c2c568e3063a58a6c116f4eb1e08662ce5f081ecb1d17",
+    "D:\\tmp\\rsi-review-20261104\\preservation.json": "164dc247a92c5b65d62f6010326b0f170699bb71c1a3396a4d9cdd5317d0f526"
+  }
+}
