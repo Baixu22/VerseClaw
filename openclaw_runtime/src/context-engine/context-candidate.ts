@@ -4,6 +4,8 @@ import type { AgentMessage } from "../agents/runtime/index.js";
 import { computeNovelty } from "./context-health-monitor.js";
 import {
   admitPromptContribution,
+  getBuiltinPromptContributionDeclaration,
+  resolvePromptAuthorityMode,
   type PromptContributionAdmission,
   type PromptContributionAuthority,
 } from "./prompt-contribution-authority.js";
@@ -296,11 +298,18 @@ export function collectContextCandidate(
   }
   // Admission precedes collection and budget charging; a rejected replacement
   // cannot enter a cached projection or masquerade as appended data.
+  const requiredAuthority = CONTEXT_CANDIDATE_AUTHORITIES[candidate.target];
+  const resolvedAdmission: PromptContributionAdmission = {
+    ...admission,
+    mode: admission?.mode ?? resolvePromptAuthorityMode(process.env.OPENCLAW_PROMPT_AUTHORITY_MODE),
+    declaration:
+      admission?.declaration ?? getBuiltinPromptContributionDeclaration(candidate.sourceId),
+  };
   const promptAuthority = admitPromptContribution(
     candidate.sourceId,
     candidate.target,
-    CONTEXT_CANDIDATE_AUTHORITIES[candidate.target],
-    admission,
+    requiredAuthority,
+    resolvedAdmission,
   );
   const lineage: ContextCandidateLineage = {
     promptAuthority,

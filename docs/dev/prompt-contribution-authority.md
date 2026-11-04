@@ -32,9 +32,17 @@ throws `PromptContributionAuthorityError`, with code, source, scope, requiredAut
 and reason. The runner's normal catchErrors/fail-open behavior cannot swallow a deny,
 return partially merged prompts or silently turn a replacement into an append.
 
+Hosts can select enforce with `OPENCLAW_PROMPT_AUTHORITY_MODE=enforce`; explicit
+runner/admission modes take precedence. Unknown environment values reject instead of
+silently disabling enforcement. The runner captures the selected mode at construction.
+Core context producer declarations use fixed authorities and scopes for their real
+projection operations. For example, `dcs-knowledge` and `context-block:*` only append
+data messages; they cannot gain history replacement by requesting that target. Synthetic
+names such as `shared-source` and loose COMPASS/CVK prefixes are not core registrations.
+
 Existing hosts retain warn mode: missing/mismatched grants are reported and existing
 results continue. This task supplies and tests enforcement; it does not switch every
-production host into enforce mode, introduce a persistent configuration default, or
+production host into enforce mode, change the existing default, or
 graduate product flags. Appended data is not semantically classified. A malicious
 in-process plugin is outside this contract. The Context Orchestrator has an equivalent
 admitting-host boundary described in `context-orchestrator.md`; native assembly,

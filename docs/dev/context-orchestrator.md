@@ -69,6 +69,11 @@ The admitting host passes a `PromptContributionAdmission` as the third argument 
 `collectContextCandidate` or `collectContextOrchestratorCandidate`. Its declaration names
 `source` (equal to candidate.sourceId), `authority`, exact `scope` and a nonempty `reason`.
 Content authority object IDs and digests continue to identify content; they grant no rights.
+Core sources have an explicit registry matching real projection operations. Registered
+authorities/scopes are fixed before seeing a requested target; data producers cannot
+upgrade themselves to history replacement. Dynamic Memory/session-start source families
+retain system-append scope only. This is declaration governance, not source authentication
+against a malicious in-process plugin.
 
 | Candidate target | Required authority |
 |---|---|
@@ -82,7 +87,9 @@ mismatches reject before collection and budget charging with
 does not append the replacement as data or alter the original history. A host must supply
 the declaration separately from untrusted candidate content.
 
-Existing callers retain warn mode. High-authority violations emit warnings and surviving
+The host can select enforce with `OPENCLAW_PROMPT_AUTHORITY_MODE=enforce`; an explicit
+admission mode wins. An unknown environment mode rejects. Existing callers retain warn
+mode by default. High-authority violations emit warnings and surviving
 candidate lineage records `promptAuthority: "warned"`; declared and default-data admissions
 are also distinguished. This is not global production enforcement. These checks govern
 declared mutation surfaces and do not classify the semantics of appended data. Native

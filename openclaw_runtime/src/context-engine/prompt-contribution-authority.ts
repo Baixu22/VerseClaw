@@ -79,3 +79,88 @@ export function admitPromptContribution(
   else process.emitWarning(error.message, { code: error.code });
   return "warned";
 }
+
+/**
+ * TF-0737: host mode selector. The existing default stays warn;
+ * `OPENCLAW_PROMPT_AUTHORITY_MODE=enforce` makes undeclared strong mutations
+ * fail closed instead of silently downgrading to append_data.
+ */
+export function resolvePromptAuthorityMode(value: string | undefined): "warn" | "enforce" {
+  const mode = value?.trim().toLowerCase();
+  if (mode === undefined || mode === "" || mode === "warn") return "warn";
+  if (mode === "enforce") return "enforce";
+  throw new Error("Invalid OPENCLAW_PROMPT_AUTHORITY_MODE; expected warn or enforce");
+}
+
+/**
+ * Core producer grants are fixed by their real projection operations. Never
+ * derive a grant from the target being requested: that would authorize escalation.
+ */
+export const BUILTIN_PROMPT_CONTRIBUTION_DECLARATIONS = [
+  {
+    source: "compass-ssp",
+    authority: ["append_instruction"],
+    scope: ["system_prompt"],
+    reason: "COMPASS session-state projection",
+  },
+  {
+    source: "compass-retrieval",
+    authority: ["append_instruction"],
+    scope: ["system_prompt"],
+    reason: "COMPASS fact retrieval projection",
+  },
+  {
+    source: "memory-inject-pilot",
+    authority: ["append_instruction"],
+    scope: ["system_prompt"],
+    reason: "Runtime Memory pilot system context",
+  },
+  {
+    source: "vtoken-assembly",
+    authority: ["append_instruction"],
+    scope: ["system_prompt"],
+    reason: "VToken assembly system context",
+  },
+  {
+    source: "session-start:",
+    authority: ["append_instruction"],
+    scope: ["system_prompt"],
+    reason: "Session-start plan system context",
+  },
+  {
+    source: "cvk-context-engine",
+    authority: ["append_instruction"],
+    scope: ["system_prompt"],
+    reason: "Selected ContextEngine system addition",
+  },
+  {
+    source: "cvk-message-replacement",
+    authority: ["replace_messages"],
+    scope: ["message_replacement"],
+    reason: "Selected ContextEngine assembled history projection",
+  },
+  {
+    source: "context-block:",
+    authority: ["append_data"],
+    scope: ["message"],
+    reason: "DCS Assembler context-block data projection",
+  },
+  {
+    source: "dcs-knowledge",
+    authority: ["append_data"],
+    scope: ["message"],
+    reason: "Resolved chat knowledge data projection",
+  },
+] as const satisfies readonly PromptContributionDeclaration[];
+
+export function getBuiltinPromptContributionDeclaration(
+  source: string,
+): PromptContributionDeclaration | undefined {
+  const declaration = BUILTIN_PROMPT_CONTRIBUTION_DECLARATIONS.find((entry) =>
+    entry.source.endsWith(":")
+      ? source.startsWith(entry.source) && source.length > entry.source.length
+      : source === entry.source ||
+        (entry.source === "memory-inject-pilot" && source.startsWith("memory-inject-pilot:")),
+  );
+  return declaration ? { ...declaration, source } : undefined;
+}

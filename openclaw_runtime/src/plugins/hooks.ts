@@ -8,6 +8,7 @@
 import { clampPositiveTimerTimeoutMs } from "@openclaw/normalization-core/number-coercion";
 import {
   admitPromptContribution,
+  resolvePromptAuthorityMode,
   PromptContributionAuthorityError,
 } from "../context-engine/prompt-contribution-authority.js";
 import { copyReplyPayloadMetadata, type ReplyPayload } from "../auto-reply/reply-payload.js";
@@ -308,6 +309,8 @@ export function createHookRunner(
   options: HookRunnerOptions = {},
 ) {
   const logger = options.logger;
+  const promptAuthorityMode = options.promptAuthorityMode ??
+    resolvePromptAuthorityMode(process.env.OPENCLAW_PROMPT_AUTHORITY_MODE);
   const catchErrors = options.catchErrors ?? true;
   const failurePolicyByHook = {
     before_agent_run: "fail-closed",
@@ -679,7 +682,7 @@ export function createHookRunner(
             if (promptResult[field] !== undefined) {
               admitPromptContribution(hook.pluginId, field, PLUGIN_PROMPT_MUTATION_AUTHORITIES[field], {
                 declaration: hook.promptContribution,
-                mode: options.promptAuthorityMode,
+                mode: promptAuthorityMode,
                 warn: logger ? (message) => logger.warn(message) : undefined,
               });
             }

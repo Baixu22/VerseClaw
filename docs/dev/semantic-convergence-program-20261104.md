@@ -187,6 +187,7 @@ TF-0731, TF-0734, TF-0735, TF-0738, TF-0739, TF-0744 → TF-0746 → TF-0747
 - 量化：基线 0/5 字段有权限声明 → 5/5；高权限 producer 数量可枚举，新增高权限 producer 必须显式登记。
 - 回滚：warn-only 模式保留；按 producer 白名单逐步 enforce。
 - 默认行为：既有调用保留 warn 模式；显式 enforce 是本节点的验收边界。未注册高权限贡献在 warn 模式可继续执行且有警告/lineage，不能宣称生产默认全面阻断。候选声明由 admission 参数传入，hook 声明由 `api.on` 的 `promptContribution` 注册项传入。
+- 宿主可通过 `OPENCLAW_PROMPT_AUTHORITY_MODE=enforce` 选择 enforce；显式入参优先，非法环境值拒绝。内置来源使用真实操作对应的固定 authority/scope 声明，不得按候选请求目标自动授予权限，也不登记 synthetic test ID。
 
 ### 3.9 TF-0738 M3-2：注入账本覆盖与分账
 

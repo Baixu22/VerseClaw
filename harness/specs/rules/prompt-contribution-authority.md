@@ -18,6 +18,10 @@ declarations name authority, source, exact field/target scope and a nonempty rea
 Candidate identity/digests and hook result content do not grant mutation privileges.
 The admitting host supplies candidate declarations; plugin hook declarations come from
 registration metadata, copied independently of plugin-owned mutable arrays.
+Core declarations match their real operations with fixed authority and scope; no core
+source name may earn stronger rights from the target requested by a candidate. A known
+data source trying to replace history must be denied. Synthetic test IDs do not enter
+the production registry. The optional host environment mode rejects unknown values.
 
 Enforce mode admits undeclared append-data contributions only. It checks source, scope,
 and authority before candidate collection/budget charging or per-producer hook merging.
