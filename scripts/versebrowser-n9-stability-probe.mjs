@@ -97,7 +97,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       child.on('exit', () => { exited = true; });
       row.launchMs = Date.now() - startedAt;
       const page = await app.firstWindow({ timeout: 30_000 });
-      await page.waitForLoadState('domcontentloaded', { timeout: 30_000 });
+      await page.waitForLoadState('load', { timeout: 30_000 });
       await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
       row.rendererReadyMs = Date.now() - startedAt;
       row.pageTitle = await page.title();
@@ -151,7 +151,8 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       row.durationMs = Date.now() - startedAt;
     }
     rows.push(row);
-    process.stdout.write(JSON.stringify({ kind, index, status: row.status, residualProcesses: row.residualProcesses, runDirReclaimed: row.runDirReclaimed }) + '\n');
+    if (output) await writeFile(resolve(hostRoot, output), JSON.stringify({ schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'in_progress', build, rows, issues }, null, 2) + '\n', 'utf8');
+    process.stdout.write(JSON.stringify({ kind, index, status: row.status, error: row.error, residualProcesses: row.residualProcesses, residualNames: row.residualNames, runDirReclaimed: row.runDirReclaimed }) + '\n');
     return row;
   }
 
@@ -233,14 +234,17 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
     return { interruptedPrivateNetworkDenied: denied.ok === false && String(denied.error?.message ?? '').includes('private-network-default-deny'), approval, interruptedOpenOk: opened.openOk, interruptedWithLiveSession: opened.openOk === true, rssMbAtInterrupt: rssMbFor(ctx.runRoot) };
   };
 
-  for (let i = 1; i <= coldStarts; i += 1) await withInstance('cold', i, statusOnly);
-  for (let i = 1; i <= loops; i += 1) await withInstance('loop', i, fullLoop);
-  for (let i = 1; i <= interrupts; i += 1) {
-    await withInstance('interrupt', i, interruptOpen);
-    await withInstance('recovery', i, fullLoop);
+  try {
+    for (let i = 1; i <= coldStarts; i += 1) await withInstance('cold', i, statusOnly);
+    for (let i = 1; i <= loops; i += 1) await withInstance('loop', i, fullLoop);
+    for (let i = 1; i <= interrupts; i += 1) {
+      await withInstance('interrupt', i, interruptOpen);
+      await withInstance('recovery', i, fullLoop);
+    }
+  } finally {
+    fixture.closeAllConnections();
+    await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
   }
-
-  await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
 
   // Some packaged-app children can exit just after the per-round observation. Keep
   // the first residue in each row, then perform one final deterministic sweep so the

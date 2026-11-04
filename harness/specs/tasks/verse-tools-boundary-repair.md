@@ -106,10 +106,12 @@ alone must never be used to manufacture a current runtime or packaged pass.
 On Windows, N8/N9 accept `--temp-root` for an existing writable test location
 on D:. Each N9 invocation owns a unique batch directory and only reclaims its
 own round directories and processes. A failed process census is not evidence of
-zero residual processes. Renderer readiness includes DOM content loading before
+zero residual processes. Renderer readiness includes the complete load event before
 the probe can close the application; teardown remains bounded.
 User data, home/app-data and OpenClaw config paths are isolated per round, so a
 packaged probe does not acquire locks in the owner's real runtime directory.
+N9 writes incomplete per-round results during execution so an interrupted or
+failed batch remains diagnosable and cannot be mistaken for a final pass.
 
 The required full typecheck also repairs a pre-existing declaration omission:
 `buildArmsReport` already returns `promotion` at runtime, but its declaration did

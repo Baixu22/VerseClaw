@@ -230,4 +230,4 @@ N8/N9 在运行前后计算同一安装包的 EXE、app.asar、main-runtime.asar
 必须与当前 candidate 一致。Windows 可用 `--temp-root` 指定 D: 上现有可写的
 测试目录；无需更改应用默认值或目录权限。N9 仅回收本次分配的批次与轮次，
 不得扫描或删除其他测试的共享临时目录。进程枚举失败不能算零残留。
-验收等待 DOMContentLoaded 与 hostInvoke 就绪，正常退出超时后仅终止所属进程树。
+验收等待完整 load 事件与 hostInvoke 就绪，正常退出超时后仅终止所属进程树。

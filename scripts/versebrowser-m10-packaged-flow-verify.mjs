@@ -46,14 +46,16 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
 
   const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, build, fixtureUrl: url, runId };
   let app;
+  let mainPid;
   try {
     app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
       env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
         APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
         XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
         VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
+    mainPid = await app.evaluate(() => process.pid);
     const page = await app.firstWindow({ timeout: 30_000 });
-    await page.waitForLoadState('domcontentloaded', { timeout: 30_000 });
+    await page.waitForLoadState('load', { timeout: 30_000 });
     await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
     result.pageTitle = await page.title();
     result.hostBridgePresent = await page.evaluate(() => Boolean(window.verseClaw?.hostInvoke));
@@ -103,11 +105,21 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
       let timer;
       await Promise.race([app.close().catch(() => undefined), new Promise((done) => { timer = setTimeout(done, 8000); })]);
       clearTimeout(timer);
+      // On Windows Playwright's child is cmd.exe, which can exit before its
+      // Electron child. Keep the Main PID observed through the inspector.
+      result.forcedShutdown = false;
+      if (mainPid) {
+        try {
+          process.kill(mainPid, 0);
+          result.forcedShutdown = spawnSync('taskkill', ['/PID', String(mainPid), '/T', '/F'], { windowsHide: true, timeout: 15_000 }).status === 0;
+        } catch { /* Main has already exited. */ }
+      }
       if (child.exitCode === null && child.signalCode === null) {
         spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
       }
     }
     // Never let a lingering client connection hang the verifier (N8 F3).
+    fixture.closeAllConnections();
     await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
     // The app's own child processes can still be shutting down and hold files under the
     // run directory, which made a single rm() fail silently and leave the run root behind
