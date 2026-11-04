@@ -1,0 +1,239 @@
+{
+  "schema": "CodingCapabilityBaseline/v1",
+  "driven_by": "agent",
+  "taskId": "TF-0764",
+  "entries": [
+    {
+      "id": "native-file-tools",
+      "owner": "runtime coding + workspace path policy + write journal",
+      "entry": "openclaw_runtime/src/agents/agent-tools.ts",
+      "protocol": "AgentToolResult + journal details",
+      "permission": "effective workspace/tool/provenance policy",
+      "effects": "workspace read/write/undo",
+      "defaultMode": "journal enabled; stale-write opt-in",
+      "support": "Windows source mechanisms",
+      "observedBy": [
+        "boundaries",
+        "journal"
+      ],
+      "limits": [
+        "A1",
+        "A2",
+        "A5"
+      ],
+      "next": "TF-0765"
+    },
+    {
+      "id": "worktree",
+      "owner": "worktree service + orchestration merge",
+      "entry": "openclaw_runtime/src/agents/worktree-service.ts",
+      "protocol": "WorktreeRecord/MergeQueueItem",
+      "permission": "caller scope and managed ownership",
+      "effects": "create/copy/delete/integrate",
+      "defaultMode": "shared; inprocess backend; explicit worktree opt-in",
+      "support": "generated local directory and real Git worktree",
+      "observedBy": [
+        "worktrees"
+      ],
+      "limits": [
+        "A3",
+        "A4"
+      ],
+      "next": "TF-0767"
+    },
+    {
+      "id": "orchestrator-isolation",
+      "owner": "Gateway/Orchestrator/RoleSpawn",
+      "entry": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+      "protocol": "orchestrator.plan/run",
+      "permission": "operator scope and parent workspace",
+      "effects": "plan and worker spawn",
+      "defaultMode": "shared",
+      "support": "real plan handler and executor with explicit spawn spy",
+      "observedBy": [
+        "routing"
+      ],
+      "limits": [
+        "A6"
+      ],
+      "next": "TF-0768"
+    },
+    {
+      "id": "coding-run",
+      "owner": "read-only execution projection and CI parser",
+      "entry": "shared/types/coding-run.ts",
+      "protocol": "coding-run/v1",
+      "permission": "does not own task completion",
+      "effects": "display/export only",
+      "defaultMode": "read-only",
+      "support": "actual serializer/parser/CLI",
+      "observedBy": [
+        "worktrees",
+        "routing"
+      ],
+      "limits": [
+        "A7"
+      ],
+      "next": "TF-0771"
+    },
+    {
+      "id": "mcp-management",
+      "owner": "Main MCP API and Gateway tool registry",
+      "entry": "electron/services/mcp-api.ts",
+      "protocol": "HostAPI / mcp.* vs tools.* RPC",
+      "permission": "server/session/tool policy",
+      "effects": "discovery and delegated tool effects",
+      "defaultMode": "server-specific opt-in",
+      "support": "actual stock method catalog; full external server trip not run",
+      "observedBy": [
+        "routing"
+      ],
+      "limits": [
+        "A8"
+      ],
+      "next": "TF-0772"
+    },
+    {
+      "id": "mcp-loopback",
+      "owner": "Gateway loopback result adapter",
+      "entry": "openclaw_runtime/src/gateway/mcp-http.handlers.ts",
+      "protocol": "MCP JSON-RPC negotiated version",
+      "permission": "existing before-tool hook",
+      "effects": "tool results; effects belong to tool",
+      "defaultMode": "internal adapter",
+      "support": "real hook/handler + installed SDK schema",
+      "observedBy": [
+        "routing"
+      ],
+      "limits": [
+        "A9"
+      ],
+      "next": "TF-0773"
+    },
+    {
+      "id": "retired-coding-controls",
+      "owner": "coding flag resolvers and actual orchestration trigger",
+      "entry": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "protocol": "request flags / effective tool policy",
+      "permission": "retirement and original authority",
+      "effects": "potential proposal-only worker policy",
+      "defaultMode": "symbol lease/Patch Flow declared retired",
+      "support": "three-worker opt-in/off spy",
+      "observedBy": [
+        "routing"
+      ],
+      "limits": [
+        "A10"
+      ],
+      "next": "TF-0774"
+    },
+    {
+      "id": "vg",
+      "owner": "VG repository facts/candidates; host retains execution/task/harness",
+      "entry": "electron/services/versegit-fact-adapter.ts",
+      "protocol": "pinned consumer contract + runtime binding + receipts",
+      "permission": "M0/M1 and bounded existing M2/M3; M4 not granted",
+      "effects": "provider-domain facts; candidate apply via existing host",
+      "defaultMode": "default-off",
+      "support": "binary hash/capabilities measured; integrated effects deferred",
+      "observedBy": [
+        "vg-capabilities"
+      ],
+      "limits": [
+        "capabilities declaration is not host execution",
+        "bash/direct-fs/other-mcp/network unobserved"
+      ],
+      "next": "TF-0775"
+    },
+    {
+      "id": "jj",
+      "owner": "VG vg-jj graph/operation adapter",
+      "entry": "external:vg/crates/vg-jj",
+      "protocol": "pinned jj-lib graph and operation semantics",
+      "permission": "managed workspace explicit opt-in",
+      "effects": "snapshot/materialize/restore/ref graph",
+      "defaultMode": "opt-in; no migration from capability discovery",
+      "support": "jj-lib lock verified; independent CLI not executed",
+      "observedBy": [
+        "source-inventory"
+      ],
+      "limits": [
+        "no CLI parity claim",
+        "no implied read-only mutation"
+      ],
+      "next": "TF-0776"
+    },
+    {
+      "id": "vs",
+      "owner": "governed process manager",
+      "entry": "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+      "protocol": "pinned typed ACI and bounded observation",
+      "permission": "existing approval/workspace/process owner",
+      "effects": "bounded process tree; host verification receipts",
+      "defaultMode": "controlled default-off foundation; no native fallback in governed route",
+      "support": "binary/manifest/version identity only",
+      "observedBy": [
+        "vs-version"
+      ],
+      "limits": [
+        "process cancellation and package execution not run in C0"
+      ],
+      "next": "TF-0777"
+    },
+    {
+      "id": "sts",
+      "owner": "VG extensions/sts smart-test-sorter",
+      "entry": "external:vg/extensions/sts",
+      "protocol": "vg-sts 1.1 and 2.0",
+      "permission": "explicit interpreter and selection opt-in",
+      "effects": "pytest collection/planning/execution facts",
+      "defaultMode": "selection/ranking off; protocol default preserved",
+      "support": "Python/pytest only; source/contracts/wheel/environment frozen",
+      "observedBy": [
+        "sts-environment",
+        "sts-installation"
+      ],
+      "limits": [
+        "selected never full",
+        "Vitest/Cargo selection not supported",
+        "performance and clean wheel install not run"
+      ],
+      "next": "TF-0778"
+    },
+    {
+      "id": "context-and-ast-diagnostics",
+      "owner": "DCS / AgentMap / existing AST pilot owners",
+      "entry": "shared/dcs/component-disposition-catalog.ts",
+      "protocol": "context candidates and diagnostic readiness",
+      "permission": "internal diagnostic/explicit controlled apply only",
+      "effects": "read-only candidates; explicit pilot separately governed",
+      "defaultMode": "internal/opt-in; not GA",
+      "support": "inventory classification; runtime benefit not measured in C0",
+      "observedBy": [
+        "source-inventory"
+      ],
+      "limits": [
+        "not an ordinary-chat automatic refactoring promise"
+      ],
+      "next": "TF-0782"
+    },
+    {
+      "id": "target-runners-and-package",
+      "owner": "project runner + Windows packaging and existing OAT owners",
+      "entry": "package.json",
+      "protocol": "exit/results/full scope and frozen artifact manifests",
+      "permission": "original execution owner",
+      "effects": "tests/build/cleanup in disposable environments",
+      "defaultMode": "required full tests retained",
+      "support": "two pinned pytest repos and ClawX TypeScript input; package not run",
+      "observedBy": [
+        "corpus-inventory"
+      ],
+      "limits": [
+        "test collection is not full execution",
+        "source and package evidence separate"
+      ],
+      "next": "TF-0781"
+    }
+  ]
+}
