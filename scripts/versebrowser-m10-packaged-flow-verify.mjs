@@ -44,14 +44,12 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
 
   const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, build, fixtureUrl: url, runId };
   let app;
-  let mainPid;
   try {
     app = await electron.launch({ executablePath: exePath, artifactsDir, args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
       env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
         APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
         XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
         VERSE_CLAW_REMOTE_DEBUGGING_PORT: '', VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
-    mainPid = await app.evaluate(() => process.pid);
     const page = await app.firstWindow({ timeout: 30_000 });
     await page.waitForLoadState('load', { timeout: 30_000 });
     await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
@@ -98,7 +96,7 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
   } catch (error) {
     issues.push({ kind: 'packaged_flow_failed', message: String(error?.message ?? error) });
   } finally {
-    result.cleanup = await cleanupBrowserProbe({ app, mainPid, runRoot, removalAttempts: 5 });
+    result.cleanup = await cleanupBrowserProbe({ app, runRoot, removalAttempts: 5 });
     for (const message of result.cleanup.errors) issues.push({ kind: 'packaged_cleanup_failed', message });
     // Never let a lingering client connection hang the verifier (N8 F3).
     fixture.closeAllConnections();

@@ -65,7 +65,6 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
     await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
     const runId = `n9-${kind}-${index}-${Date.now().toString(36)}`;
     const startedAt = Date.now();
-    let mainPid;
     let app;
     const row = { kind, index, runId, runRoot, status: 'fail' };
     try {
@@ -74,7 +73,6 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
           APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
           XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
           VERSE_CLAW_REMOTE_DEBUGGING_PORT: '', VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
-      mainPid = await app.evaluate(() => process.pid);
       row.launchMs = Date.now() - startedAt;
       const page = await app.firstWindow({ timeout: 30_000 });
       await page.waitForLoadState('load', { timeout: 30_000 });
@@ -94,7 +92,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       row.error = String((error && error.message) || error);
       issues.push(issue('round_failed', { kind, index, message: row.error }));
     } finally {
-      const cleanup = await cleanupBrowserProbe({ app, mainPid, runRoot, interrupt: kind === 'interrupt' });
+      const cleanup = await cleanupBrowserProbe({ app, runRoot, interrupt: kind === 'interrupt' });
       Object.assign(row, cleanup);
       for (const message of cleanup.errors) issues.push(issue('round_cleanup_failed', { kind, index, message }));
       if (cleanup.errors.length) row.status = 'fail';

@@ -33,7 +33,7 @@ async function closeWithin(app, ms) {
 }
 
 /** Cleanup cannot suppress the original failure or prevent its receipt being saved. */
-export async function cleanupBrowserProbe({ app, mainPid, runRoot, interrupt = false, removalAttempts = 6, query = readProbeProcesses }) {
+export async function cleanupBrowserProbe({ app, runRoot, interrupt = false, removalAttempts = 6, query = readProbeProcesses }) {
   const errors = [];
   let forcedShutdown = false;
   let killed = 0;
@@ -47,7 +47,6 @@ export async function cleanupBrowserProbe({ app, mainPid, runRoot, interrupt = f
     catch (error) { errors.push(String(error.message ?? error)); return null; }
   };
   if (app && !interrupt) await closeWithin(app, 8000);
-  if (interrupt) { kill(mainPid); kill(app?.process().pid); }
   let residual = census();
   const initialResidual = residual;
   let attempts = 0;
@@ -57,9 +56,10 @@ export async function cleanupBrowserProbe({ app, mainPid, runRoot, interrupt = f
     await sleep(1500);
     residual = census();
   }
-  // A failed census grants no new PID authority. The captured launch handles
-  // still identify this probe's Main process and Playwright wrapper.
-  if (residual === null) { kill(mainPid); kill(app?.process().pid); }
+  // A failed census grants no authority over a numeric PID that may have been
+  // reused. Only the controller's still-owned process handle can be stopped.
+  if (residual === null && app) { try { app.process().kill('SIGKILL'); } catch { /* Recorded census failure remains fatal. */ } }
+  if (interrupt && !forcedShutdown) errors.push('Controlled interruption did not terminate an owned process');
   if (app) await closeWithin(app, 5000);
   let reclaimed = false;
   for (let attempt = 0; attempt < removalAttempts && !reclaimed; attempt += 1) {

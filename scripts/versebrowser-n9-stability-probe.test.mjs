@@ -16,6 +16,14 @@ test('census failures remain unknown and cannot skip owned directory reclamation
   assert.ok(result.errors.includes('census timeout'));
 });
 
+test('an interruption without an actual owned termination is not successful evidence', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'verse-empty-interruption-'));
+  const result = await cleanupBrowserProbe({ runRoot: root, interrupt: true, query: () => [] });
+  assert.equal(result.runDirReclaimed, true);
+  assert.equal(result.forcedShutdown, false);
+  assert.ok(result.errors.includes('Controlled interruption did not terminate an owned process'));
+});
+
 test('a probe never sweeps another run from its shared temp root', async () => {
   const root = await mkdtemp(join(tmpdir(), 'verse-probe-cleanup-'));
   try {
