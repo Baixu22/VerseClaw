@@ -1,0 +1,657 @@
+{
+  "schema": "clawx.versegit.product-f5-global-acceptance/v1",
+  "generated_at": "2026-11-04T14:54:02.985Z",
+  "task": "TF-0539",
+  "parentTask": "TF-0523",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "passed": true,
+  "source": {
+    "branch": "codex/verse-tools-boundaries-20261104",
+    "commit": "71496d4e0ac751078b6684978c2bc1e0e42b01cc",
+    "tree": "7786fb723b6e61a3992aea2978ab06cb314f0d66",
+    "dirty": false
+  },
+  "candidate": {
+    "id": "4c27870dd7ee190eb0cde2e88a132b75a93210fa4c17f3ef6b3cf2527a66680b",
+    "sourceInputDigest": "388149c6103e27c571258c641caea218e575dfcae3d0475fa17586b304117859",
+    "inputs": [
+      {
+        "path": "README.ja-JP.md",
+        "sha256": "e50c0b63fbad06ed7998c33b5333f14aac900cbe818736a9f544d14eb3dc3f13",
+        "bytes": 21890
+      },
+      {
+        "path": "README.md",
+        "sha256": "2ec1a2edf48fcf770ef3522611c073030f680a75e074b481f4533e8edbf828d0",
+        "bytes": 20015
+      },
+      {
+        "path": "README.zh-CN.md",
+        "sha256": "0d74e56f34666339f01866db1947c1262a6cc4e8d97a680511241e7bf2203f76",
+        "bytes": 18485
+      },
+      {
+        "path": "docs/clawx-product-semantics.md",
+        "sha256": "fdd9ad271a95321c9e7438e9311dd902edbefe39df131b8c4288a7458970df64",
+        "bytes": 45512
+      },
+      {
+        "path": "docs/dev/versegit-validation-layer/README.md",
+        "sha256": "2c6f5572636eb6a267a31023687b0c166c437c530c1e539ae8c6659dd5092b63",
+        "bytes": 17233
+      },
+      {
+        "path": "docs/modules/verse-tools.md",
+        "sha256": "d83a54fb42953979b21bd1bb24e9b02aec1a28231762e4ae74f841bc4ed641ee",
+        "bytes": 16704
+      },
+      {
+        "path": "electron/services/versegit-fact-adapter.ts",
+        "sha256": "f073f779506467c7da6c1a170084f5d01278f3ec85f0473657a263d629d02b4d",
+        "bytes": 21407
+      },
+      {
+        "path": "electron/services/versegit-lifecycle.ts",
+        "sha256": "80994977ee6d0a4b93b869a974b0370a9501e0fb1e991f2f4710178edb704524",
+        "bytes": 10967
+      },
+      {
+        "path": "electron/services/versegit-module.ts",
+        "sha256": "d7e32f30ee7fd470e0208e9b12786e10ca7fa19701327b65773633621b4bf817",
+        "bytes": 34066
+      },
+      {
+        "path": "electron/services/versegit-receipt-evidence.ts",
+        "sha256": "3a5c0312e760721860315785409e3e14aad7716308c53ed96d420570d27a9104",
+        "bytes": 42904
+      },
+      {
+        "path": "harness/specs/rules/task-forest-autoclose-and-roles.md",
+        "sha256": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
+        "bytes": 6470
+      },
+      {
+        "path": "harness/specs/tasks/verse-tools-boundary-repair.md",
+        "sha256": "3369584d84429e8b27263f9dba87a100094e47de68a1a579bc6f0f75f5c20da6",
+        "bytes": 6545
+      },
+      {
+        "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
+        "sha256": "8806acacd43895a8aaa38ec1e0eaab486f8f9f7a92f66843664382ef35760243",
+        "bytes": 6342
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-a1-evidence-baseline.md",
+        "sha256": "b0613cf709328c4b2b47bf5bee6119480d5d63d9d38b2fd8ddd7f5a6296f8986",
+        "bytes": 7612
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-a2-runtime-baseline.md",
+        "sha256": "ca7ce0f14677a4e454528e7e65fa893d29df27dea86f18f1779941db339d68f6",
+        "bytes": 8311
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-b1-fact-adapter.md",
+        "sha256": "2c8ed9b39e283105bab3b6c9858c23952219dbd4e81e974d295b272fff889a75",
+        "bytes": 9035
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-b2-host-diagnostics.md",
+        "sha256": "81d9571defe5598f2de7a76ad1096b47554b4be988b68796bd4c3ce0c7208d50",
+        "bytes": 9688
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-c1-runtime-bindings.md",
+        "sha256": "e711ea0fd7b36330d8b3b378c8b761047ad9b1183f6dceaafcfe7f59f04f679e",
+        "bytes": 10682
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-c2-observation-basis.md",
+        "sha256": "c1d12341f3ac173648d114228f9bf1adf0bffeb965c7c0764588cbdf9e159bf7",
+        "bytes": 12373
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-d1-feedback-delivery.md",
+        "sha256": "52b647d035d9cf6455811bfb5f2ba191b16f19fdddad698d9460b0340665447f",
+        "bytes": 13752
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-d2-paired-agent-evaluation.md",
+        "sha256": "3947240c346bb11548badae87dcb40514cba69495e734ca3f1b3e358e4a7140d",
+        "bytes": 13843
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e1-candidate-freeze.md",
+        "sha256": "2cff8256319f94de3a57224510c59ea12eb98f62390036fd9dfb1e5fff14b4b2",
+        "bytes": 14821
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e2-receipt-verification.md",
+        "sha256": "ffd2e805991062d46de7b3bc02ead34414684f0ca894ef5b4a77f9d6ddc8213b",
+        "bytes": 15627
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-e3-host-apply.md",
+        "sha256": "09868f372a956ae7cd5bf9eacf3531478d64db42678dc95ef114315d1cfdc836",
+        "bytes": 16994
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f1-completion-contract.md",
+        "sha256": "2e3b4a2443402d84730424f542d1b6cf93233a6fccf662315e2aa3bf030fcbc8",
+        "bytes": 17060
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f2-cleanup-barrier.md",
+        "sha256": "579e71c832d7a96396c04af3eca4271a83299c47e8f938a0fa9b4a0d31caa85d",
+        "bytes": 17507
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f3-sidecar-delivery.md",
+        "sha256": "f6a3661bfc87427fdc3af5a6964a8816713cc2415d1e5ed40fc0820f314e8581",
+        "bytes": 18177
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f4-controlled-stability.md",
+        "sha256": "0853fe2a97b75e559dfac4f6b7f1638ff0dd61245dc4bcd2d3deaed6095aeb92",
+        "bytes": 18754
+      },
+      {
+        "path": "harness/specs/tasks/versegit-product-f5-global-acceptance.md",
+        "sha256": "ccb1711ea5b1086cf2c5a1432c585c23ce521148fade50315896091f34a659d8",
+        "bytes": 7519
+      },
+      {
+        "path": "openclaw_runtime/src/agents/harness/versegit-feedback-delivery.ts",
+        "sha256": "00761c19b81014a54d4b6cd0cfa7fe32907195b1b43923e93c872be788ac8f60",
+        "bytes": 2662
+      },
+      {
+        "path": "openclaw_runtime/src/agents/harness/versegit-tool-observation.ts",
+        "sha256": "11040691758f9186019b6c38a4445a48745a4f563eb0e672a9a1422d1e3328f7",
+        "bytes": 5107
+      },
+      {
+        "path": "openclaw_runtime/src/agents/orchestration-candidate-apply.ts",
+        "sha256": "bd1cc046ba7da8d671568432a20452c6e8347c7e254e0ace948d340f3cf4c5a5",
+        "bytes": 25166
+      },
+      {
+        "path": "openclaw_runtime/src/agents/orchestration-candidate.ts",
+        "sha256": "c831347e9dee7a43f777ee0a17f0a51793e3acab82885fc4656bd1d7194a6a1c",
+        "bytes": 11467
+      },
+      {
+        "path": "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+        "sha256": "a725cf7a11eb9ae95b2cccbc66ca25937f4e12dc5401a801ea52bf1fb4de16e0",
+        "bytes": 4645
+      },
+      {
+        "path": "openclaw_runtime/src/agents/patch-flow.ts",
+        "sha256": "2bb8cc35df557a6bfa19506eed28266085dcf352058e9365a4f27b8a63b5f158",
+        "bytes": 4503
+      },
+      {
+        "path": "openclaw_runtime/src/agents/sessions/tools/versegit-tool-basis.ts",
+        "sha256": "08bf614fe10afaf32753620d9e99285f5960cc200c07c2eb84e578f43f2ab98d",
+        "bytes": 2270
+      },
+      {
+        "path": "openclaw_runtime/src/agents/subagent-versegit-cleanup.ts",
+        "sha256": "0bd4802d4b9dff3eb710c8c83c9f14ee9b68eff468b2fc4c681e3c8b8adbed0c",
+        "bytes": 15161
+      },
+      {
+        "path": "resources/versegit/LICENSE-APACHE-2.0.txt",
+        "sha256": "f81c8de6cfc5091c69fd68229215a93e1b31ee73940e355876257bf0db7ca33e",
+        "bytes": 11351
+      },
+      {
+        "path": "resources/versegit/manifest.json",
+        "sha256": "8c06fb3d0cbc52acb5079f8d8e8fdedf2e85e1480fd971c520887bc19b4ed2d2",
+        "bytes": 2769
+      },
+      {
+        "path": "scripts/bundle-main-runtime.mjs",
+        "sha256": "ec0a014d1fd6f407fe5b9d2ab99b236b3560381b8ca7d54d27872c0c913e783c",
+        "bytes": 3840
+      },
+      {
+        "path": "scripts/verify-versegit-product-integration.d.mts",
+        "sha256": "d68a40b357c6ef657e7685aea7223d2e91aee54a01eca4433b5f3034d357831d",
+        "bytes": 2412
+      },
+      {
+        "path": "scripts/verify-versegit-product-integration.mjs",
+        "sha256": "00f86c48170f522aff04adc9a1ca4a0cb00a878034f7301875aee6f367f0ca8f",
+        "bytes": 70593
+      },
+      {
+        "path": "shared/capability-claims.ts",
+        "sha256": "cad37b7277c9d9ff9225d9fc374d951b169eed026fc6b4be13b9743907e7870e",
+        "bytes": 65450
+      },
+      {
+        "path": "shared/component-authority-manifest.ts",
+        "sha256": "4eea3dd6d3d4fae1ee947aad34f633db8f861e8daf40fdec53f954697d29f85f",
+        "bytes": 62605
+      },
+      {
+        "path": "shared/dcs/component-disposition-catalog.ts",
+        "sha256": "9a31fb00bc1de641197c3cbdca835f804d38943270c443014f29fc6ff7d01a7c",
+        "bytes": 48122
+      },
+      {
+        "path": "shared/types/versegit.ts",
+        "sha256": "6c9d98c6d7b40bb6286297296ad5ccda0cd1bf360e70cc8715e399bf89d7b833",
+        "bytes": 8609
+      },
+      {
+        "path": "shared/versegit-cleanup-barrier.ts",
+        "sha256": "646f775e09ef50dc6596b093aa815723823e709bd49418b1fb6c0230daddf35e",
+        "bytes": 17722
+      },
+      {
+        "path": "shared/versegit-runtime-contract.ts",
+        "sha256": "12e336a05e1e176dcfe25b9f05b129058af30549be5af17d8187ce6749a6571a",
+        "bytes": 6949
+      },
+      {
+        "path": "tests/unit/orchestration-worktree-merge.test.ts",
+        "sha256": "e51bdd17cd0c0f1404ea1bb470b88bcf2e8879b6ef1341d6cfcf46129f8fe5db",
+        "bytes": 5507
+      },
+      {
+        "path": "tests/unit/versegit-product-acceptance.test.ts",
+        "sha256": "bc4e3708e295a25115f264adeaf75e764b35651c3364cb77095efbb56120de58",
+        "bytes": 10291
+      },
+      {
+        "path": "tests/unit/versegit-wp6-closeout.test.ts",
+        "sha256": "1566d3d54ac304a2ff37ce91f91153ecc5cc2848fc0299cdf519f0bee869a397",
+        "bytes": 7586
+      },
+      {
+        "path": "tests/unit/versegit-wp8-review.test.ts",
+        "sha256": "39e8ca9c3a47cf3168fe46bb244e7a27cd009165069ab60aac63ce9b01980f8d",
+        "bytes": 2165
+      },
+      {
+        "path": "tests/unit/versegit-wp9-global-acceptance.test.ts",
+        "sha256": "c85a3310f4e59abaed4e9cd88daf2bfad44a29487532fd8d3f86c148e20f4020",
+        "bytes": 11372
+      }
+    ],
+    "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+    "artifactSha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+  },
+  "acceptance": [
+    {
+      "id": "AC1",
+      "status": "passed",
+      "scope": "risk observation, agent feedback, candidate pre-verification, host writeback, persistent result, cleanup, package and bounded stability",
+      "criteria": [
+        "risk-observation",
+        "agent-feedback",
+        "candidate-pre-verification",
+        "persistent-result",
+        "host-writeback",
+        "cleanup",
+        "package",
+        "bounded-stability"
+      ]
+    },
+    {
+      "id": "AC2",
+      "status": "passed",
+      "scope": "independent current-candidate verdict with explicit remaining P2 residuals",
+      "p0": 0,
+      "p1": 0,
+      "p2": 6
+    },
+    {
+      "id": "AC3",
+      "status": "passed",
+      "scope": "three-language README, product/model capability and Task Forest hash-gated closure rule",
+      "taskForestClosure": {
+        "eligible": true,
+        "baseGraphHashRequired": true,
+        "proposalApplyRequired": true,
+        "validateExportRequired": true,
+        "performedBy": "TF-0539"
+      }
+    }
+  ],
+  "criteria": [
+    {
+      "id": "risk-observation",
+      "status": "passed",
+      "tasks": [
+        "TF-0524",
+        "TF-0525",
+        "TF-0526",
+        "TF-0527",
+        "TF-0528",
+        "TF-0529"
+      ],
+      "checks": 8,
+      "evidence": [
+        "a1/current-verification.json",
+        "a1/current-input-manifest.json",
+        "a1/historical-evidence-index.json",
+        "a2/build-identity.json",
+        "a2/electron-startup.json",
+        "a2/smoke-results.json",
+        "b1/adapter-differential.json",
+        "b1/mode-effect-matrix.json",
+        "b1/authority-negative.json",
+        "b2/diagnostic-contract.json",
+        "b2/host-invoke.json",
+        "b2/negative-host-requests.json",
+        "c1/runtime-bindings.json",
+        "c1/binding-negative.json",
+        "c2/coverage.json",
+        "c2/observation-links.json",
+        "c2/basis-race-cases.json"
+      ],
+      "recompute": "Replays A1/A2/B1/B2/C1/C2 counters, source/tree ancestry, SHA256SUMS, production callers and negative cases."
+    },
+    {
+      "id": "agent-feedback",
+      "status": "passed",
+      "tasks": [
+        "TF-0530",
+        "TF-0531"
+      ],
+      "checks": 5,
+      "evidence": [
+        "d1/feedback-delivery.json",
+        "d1/next-call-binding.json",
+        "d1/transcript-index.json",
+        "d2/paired-results.json",
+        "d2/behavior-evidence.json",
+        "d2/paired-input-manifest.json"
+      ],
+      "recompute": "Replays D1 delivery levels/next-call binding and D2 paired positive/negative control counts from retained trials."
+    },
+    {
+      "id": "candidate-pre-verification",
+      "status": "passed",
+      "tasks": [
+        "TF-0532",
+        "TF-0533",
+        "TF-0534"
+      ],
+      "checks": 6,
+      "evidence": [
+        "e1/candidate-manifest.json",
+        "e1/target-before-after.json",
+        "e1/candidate-negative.json",
+        "e2/plans.json",
+        "e2/execution-receipts.json",
+        "e3/ordering-trace.json"
+      ],
+      "recompute": "Replays E1 freeze/target negatives, E2 receipt-bound governed runs and E3 ordering indices."
+    },
+    {
+      "id": "persistent-result",
+      "status": "passed",
+      "tasks": [
+        "TF-0535"
+      ],
+      "checks": 5,
+      "evidence": [
+        "f1/completion-contract.json",
+        "f1/persisted-outcomes.json",
+        "f1/restart-lifecycle.json"
+      ],
+      "recompute": "Replays F1 completion mapping, duplicate/epoch negatives and restart persistence."
+    },
+    {
+      "id": "host-writeback",
+      "status": "passed",
+      "tasks": [
+        "TF-0534"
+      ],
+      "checks": 6,
+      "evidence": [
+        "e3/apply-decision.json",
+        "e3/ordering-trace.json",
+        "e3/write-journal-index.json",
+        "e3/toctou-negative.json"
+      ],
+      "recompute": "Replays E3 combined verification/apply order, grant checkpoint, write-journal/undo and authority boundaries."
+    },
+    {
+      "id": "cleanup",
+      "status": "passed",
+      "tasks": [
+        "TF-0536",
+        "TF-0538"
+      ],
+      "checks": 6,
+      "evidence": [
+        "f2/cleanup-barrier.json",
+        "f2/recovery-required.json",
+        "f2/resource-inventory.json",
+        "f4/resource-survivors.json"
+      ],
+      "recompute": "Replays F2 barrier/recovery/inventory cases and F4 ten-loop survivor totals."
+    },
+    {
+      "id": "package",
+      "status": "passed",
+      "tasks": [
+        "TF-0537"
+      ],
+      "checks": 8,
+      "evidence": [
+        "f3/sidecar-package-manifest.json",
+        "f3/build-provenance.json",
+        "f3/package-negative.json"
+      ],
+      "recompute": "Replays F3 package manifest/provenance/negative cases and tracked manifest/license identity; ignored binary is hashed when present."
+    },
+    {
+      "id": "bounded-stability",
+      "status": "passed",
+      "tasks": [
+        "TF-0538"
+      ],
+      "checks": 7,
+      "evidence": [
+        "f4/packaged-flow.json",
+        "f4/stability-report.json",
+        "f4/stability-samples.jsonl",
+        "f4/resource-survivors.json"
+      ],
+      "recompute": "Recomputes F4 sample count, P50/P95, peak RSS, failure/duplicate/survivor counts and checks frozen budgets."
+    },
+    {
+      "id": "docs-capability-authority",
+      "status": "passed",
+      "tasks": [
+        "TF-0539"
+      ],
+      "checks": 8,
+      "evidence": [
+        "docs/dev/versegit-validation-layer/README.md",
+        "docs/clawx-product-semantics.md",
+        "shared/component-authority-manifest.ts",
+        "README.md",
+        "README.zh-CN.md",
+        "README.ja-JP.md",
+        "harness/specs/rules/task-forest-autoclose-and-roles.md"
+      ],
+      "recompute": "Scans READMEs, controlled-preview lock, host authority/manifest and Task Forest closeout rule for current claim agreement."
+    }
+  ],
+  "evidence": {
+    "groups": 15,
+    "files": 66,
+    "shaManifests": 15,
+    "independentReviews": 15,
+    "oldestTask": "TF-0524",
+    "newestTask": "TF-0538"
+  },
+  "independentReview": {
+    "path": "harness/specs/fixtures/versegit-product-integration/f5-current-20261104/independent-verdict.json",
+    "digest": "33dd519355eebc16c3c92349a38cc52551ea7eb1237bf1a3b7c2746ae0efc381",
+    "actor": "codex",
+    "reviewerRole": "independent-product-f5-verifier-process",
+    "verdict": "pass",
+    "p0": 0,
+    "p1": 0,
+    "p2": 6,
+    "indexDigest": "09b960dd283178fdf9e8507969983ed6928b03d9251181b3da7d3caaef25f021",
+    "recomputed": true
+  },
+  "posture": {
+    "optIn": true,
+    "defaultOff": true,
+    "nonGa": true,
+    "liveReady": false,
+    "productApproved": false,
+    "ga": false,
+    "m4Authorized": false,
+    "hostAuthority": "ClawX",
+    "hostOwns": [
+      "executor",
+      "task",
+      "orchestration",
+      "approval",
+      "write-journal",
+      "Git-apply"
+    ],
+    "vgLandingAuthority": false,
+    "providerLandAdmitAuthority": false,
+    "modelFacingUserCapability": false,
+    "realHumanEvidence": false
+  },
+  "scope": {
+    "observedPlatforms": [
+      "win32-x64"
+    ],
+    "observedModes": [
+      "M1"
+    ],
+    "closedLoops": 10,
+    "coldStarts": 3,
+    "fixtureLanguagesOnly": true,
+    "externalModelQualityMeasured": false,
+    "releaseEligible": false
+  },
+  "residuals": [
+    {
+      "id": "P2-non-windows-platforms",
+      "summary": "Product evidence is limited to win32-x64; macOS and Linux were not executed."
+    },
+    {
+      "id": "P2-model-matrix",
+      "summary": "Only deterministic probe models were exercised; broader model families and external model quality were not measured."
+    },
+    {
+      "id": "P2-language-matrix",
+      "summary": "Repository-language coverage is limited to fixture languages; unlisted languages remain unmeasured."
+    },
+    {
+      "id": "P2-byte-reproducibility",
+      "summary": "F3 proves semantic identity across two builds but not byte-identical provider reproducibility."
+    },
+    {
+      "id": "P2-conflicts-plan",
+      "summary": "The provider conflicts-plan seam remains unavailable and is not promoted by this acceptance."
+    },
+    {
+      "id": "P2-crash-grade-cleanup",
+      "summary": "Cleanup is proven for observed normal, failure, continuation, restart and interruption paths, not arbitrary power-loss/crash recovery."
+    }
+  ],
+  "commands": [
+    {
+      "id": "write",
+      "command": "node scripts/verify-versegit-product-integration.mjs --write",
+      "exitCode": 0,
+      "durationMs": 0,
+      "counts": {
+        "criteria": 9,
+        "evidenceGroups": 15,
+        "evidenceFiles": 66
+      },
+      "summary": "generated index, independent verdict and global report"
+    },
+    {
+      "id": "unit",
+      "command": "pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
+      "exitCode": 0,
+      "durationMs": 20380,
+      "counts": {
+        "files": 1,
+        "passed": 7,
+        "failed": 0
+      },
+      "summary": "Actual run retained at D:/tmp/clawx-verse-fix-20261104/vg-product-test.log; source behavior unchanged by F5 harness routing follow-up."
+    },
+    {
+      "id": "harness",
+      "command": "pnpm harness validate --spec harness/specs/tasks/verse-tools-boundary-repair.md",
+      "exitCode": 0,
+      "durationMs": 0,
+      "counts": null,
+      "summary": "Spec is valid; actual command output in harness.log."
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 0,
+      "counts": null,
+      "summary": "Full node/web/test projects passed, GOMAXPROCS=4; typecheck.log and artifacts/typecheck-cache/report.json read back."
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 0,
+      "counts": null,
+      "summary": "Actual structured replay passed; comms-replay.log."
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 0,
+      "counts": null,
+      "summary": "All comparison metrics passed; comms-compare.log."
+    },
+    {
+      "id": "finalize",
+      "command": "node scripts/verify-versegit-product-integration.mjs --finalize",
+      "exitCode": 0,
+      "durationMs": 0,
+      "counts": null,
+      "summary": "sealed recorded required-command results into the global report"
+    }
+  ],
+  "failures": [],
+  "unmeasured": [
+    "Product evidence is limited to win32-x64; macOS and Linux were not executed.",
+    "Only deterministic probe models were exercised; broader model families and external model quality were not measured.",
+    "Repository-language coverage is limited to fixture languages; unlisted languages remain unmeasured.",
+    "F3 proves semantic identity across two builds but not byte-identical provider reproducibility.",
+    "The provider conflicts-plan seam remains unavailable and is not promoted by this acceptance.",
+    "Cleanup is proven for observed normal, failure, continuation, restart and interruption paths, not arbitrary power-loss/crash recovery."
+  ],
+  "taskForest": {
+    "task": "TF-0539",
+    "parent": "TF-0523",
+    "closeoutEligible": true,
+    "closurePerformed": false,
+    "baseGraphHashRequired": true,
+    "proposalApplyRequired": true,
+    "validateExportRequired": true
+  },
+  "digest": "b2309797060487274c22e8fa84ea4a90cd8326fbda034174d1b4b0befb9261f2"
+}
