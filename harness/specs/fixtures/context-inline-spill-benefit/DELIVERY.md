@@ -23,7 +23,7 @@ actor: codex-inline-spill-benefit-r2
 | B4 非劣 | 未通过 | 61.11% < 66.67% − 5 个百分点 |
 | B5 不臆造 | 通过 | recall-stable 无证据控制 6/6 返回 null |
 | B6 预算 | 未通过 | 投影字符差 −481.375；token 相对 reference-visible 增长 38.6166%，高于 25% |
-| B7 证据 | 通过 | 46/46 清单文件匹配，976 个 archive 的 checksum/byteLength 通过，凭证扫描 0 命中；逐次记录与统计复算一致 |
+| B7 证据 | 通过 | 47/47 清单文件匹配，976 个 archive 的 checksum/byteLength 通过，凭证扫描 0 命中；逐次记录与统计复算一致 |
 
 decision.status 原样保留 live/result.json 的 mechanism-only。engineeringAcceptedByAgent/releaseApproved/liveReady/defaultOn 均为 false。
 
@@ -91,6 +91,8 @@ deterministic 的 token=0 表示没有 provider usage，属于未测成本；微
 ## 证据、复算与收口
 
 result.json/runs.json 保留各原始 run 的内容。live/provider-wire.jsonl.gz 是 358 次实际请求/原始响应（未捕获认证 headers）；archives.jsonl.gz 分别保留 deterministic 160、live 816 个 archive 文件的精确内容。provenance.json 列出来源及源码摘要。SHA256SUMS 覆盖除 SHA256SUMS 外全部文件；verify-evidence.mjs 还解压检查 archive payload 的 checksum/byteLength 与记录里的 handle。
+
+本目录的 .gitattributes 禁用文本换行转换，防止其他平台或 core.autocrlf=true 的新检出改变哈希锁定的证据字节。
 
 第一轮原始证据完整保留于 D:/tmp/inline-spill-benefit-r2/round1-evidence，provenance.json 记录旧清单摘要。既有 context-inline-spill/ 机制证据包的 105 文件清单保持原样，最终另复验。
 
