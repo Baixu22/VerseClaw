@@ -701,7 +701,7 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-error')).not.toBeVisible();
   });
 
-  test('creates a Source Set from search results and generates a review-only Studio draft', async ({ electronApp, page }) => {
+  test('creates a Source Set, displays partial excerpt evidence, and generates a review-only Studio draft', async ({ electronApp, page }, testInfo) => {
     await installIpcMocks(electronApp, {
       gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
       gatewayRpc: {
@@ -775,6 +775,22 @@ test.describe('Knowledge Hub MVP', () => {
             updatedAt: '2026-07-05T00:00:00.000Z',
           },
         },
+        [typed('knowledge', 'answerFromSourceSet', {
+          question: 'Which decision is supported?',
+          sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
+          sourceSetId: 'ks-e2e',
+        })]: {
+          success: true, question: 'Which decision is supported?', answer: 'Selected source excerpts (partial response). Review before durable writes.',
+          groundingStatus: 'partial', synthesisMode: 'source-excerpts',
+          sources: [{
+            id: 'notes/decision.md', lookup: 'notes/decision.md', path: 'notes/decision.md', title: 'Decision', excerpt: 'Review before durable writes.',
+            citation: { refId: 'memory-wiki:notes/decision.md', owner: 'memory-wiki', subjectId: 'notes/decision.md', revision: '19', contentDigest: 'sha256:read-range', sourceRefs: ['notes/decision.md'] },
+            readRange: { fromLine: 1, toLine: 80, totalLines: 120, truncated: true },
+          }],
+          unknowns: ['Source notes/decision.md is truncated to lines 1-80 of 120; unread lines cannot ground this response.'],
+          suggestedNextActions: [], rejections: [], conflictSet: [],
+          retrievalDiagnostics: { query: 'Which decision is supported?', corpus: 'wiki', resultCount: 1 },
+        },
         [typed('knowledge', 'createArtifactDraft', {
           artifactType: 'decision-memo',
           title: 'Decision Memo',
@@ -833,11 +849,27 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-draft-inbox')).toBeVisible();
     await expect(page.getByTestId('knowledge-draft-row')).toContainText('Decision Memo');
 
+    await page.getByTestId('knowledge-librarian-open').click();
+    await page.getByTestId('knowledge-librarian-question').fill('Which decision is supported?');
+    await page.getByTestId('knowledge-librarian-ask').click();
+    const answerMessage = page.getByTestId('knowledge-librarian-message-assistant').last();
+    await expect(answerMessage).toContainText('Selected source excerpts');
+    await expect(answerMessage).toContainText('Partial');
+    await answerMessage.locator('details summary').first().click();
+    await expect(page.getByTestId('knowledge-librarian-unknowns-section')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-unknowns-section')).toContainText('truncated to lines 1-80 of 120');
+    await expect(answerMessage.getByText('Confidence', { exact: true })).toHaveCount(0);
+    await expect(answerMessage.getByText(/NaN%|78%/)).toHaveCount(0);
+    const screenshot = testInfo.outputPath('source-set-partial-evidence.png');
+    await page.screenshot({ path: screenshot });
+    await testInfo.attach('source-set-partial-evidence', { path: screenshot, contentType: 'image/png' });
+
     const knowledgeActions = await electronApp.evaluate(() => (
       (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string }> }).__verseClawE2eHostCalls ?? []
     ).filter((request) => request.module === 'knowledge').map((request) => request.action));
     expect(knowledgeActions).toContain('saveSourceSet');
     expect(knowledgeActions).toContain('createArtifactDraft');
+    expect(knowledgeActions).toContain('answerFromSourceSet');
     expect(knowledgeActions).not.toContain('applyDraft');
     expect(knowledgeActions).not.toContain('applyReviewedChange');
   });

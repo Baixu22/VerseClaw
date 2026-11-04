@@ -184,9 +184,7 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
           question,
           answer: result.answer,
           sources: result.sources.map((source) => ({
-            id: source.id,
-            lookup: source.lookup,
-            title: source.title,
+            ...source,
             path: source.path || source.lookup,
             excerpt: source.excerpt,
             corpus: 'wiki',
@@ -203,9 +201,7 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
             roleTag: 'knowledge-librarian',
             resultCount: result.retrievalDiagnostics.resultCount,
             selectedSources: result.sources.map((source) => ({
-              id: source.id,
-              lookup: source.lookup,
-              title: source.title,
+              ...source,
               path: source.path || source.lookup,
               excerpt: source.excerpt,
               corpus: 'wiki',
@@ -457,7 +453,6 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
                     roleTag: t('librarian.retrieval.roleTag'),
                     resultCount: t('librarian.retrieval.resultCount'),
                     selectedSources: t('librarian.retrieval.selectedSources'),
-                    confidence: t('librarian.confidence'),
                     groundingStatus: {
                       grounded: t('librarian.groundingStatus.grounded'),
                       partial: t('librarian.groundingStatus.partial'),

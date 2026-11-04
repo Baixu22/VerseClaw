@@ -170,6 +170,7 @@ flowchart LR
 - 会话使用 JSONL transcript；运行态还使用 SQLite。
 - Token 历史来自 session transcript 的结构化 usage；成本是估算值。
 - Knowledge 使用 `memory-wiki` vault 和本地 governance metadata。
+- Source Set 先执行来源准入，保留版本与读取范围引用并披露被拒绝的来源；当前返回摘录并标为 partial，不显示未经测量的回答置信度。
 - 日志、trace、截图、Task Forest 与 handoff 默认是本地工作数据，除非明确整理为 curated evidence。
 
 本地存储不等于离线执行。在线模型、渠道、浏览器和外部工具会按配置接收数据。不要把凭据、私人 transcript、原始日志提交到仓库或公开 issue。

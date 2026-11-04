@@ -170,6 +170,7 @@ Main layers：
 - Session は JSONL transcript、runtime state は SQLite も使用。
 - Token history は structured session usage record から集計。Cost は推定値。
 - Knowledge は `memory-wiki` vault と local governance metadata を使用。
+- Source Set は所有元の読み取り条件と、版および読み取り範囲の引用を保持します。現在の応答は partial の抜粋で、除外された資料を示し、未測定の回答確信度は表示しません。
 - Log、trace、screenshot、Task Forest、handoff は明示的に curated されない限り local working data。
 
 Local storage は offline execution を意味しません。Online model、channel、browser、external tool は設定に従って data を受け取ります。Credential や private transcript を commit / public issue に含めないでください。

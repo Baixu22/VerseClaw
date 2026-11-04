@@ -1582,6 +1582,119 @@ describe('knowledge host API', () => {
     });
   });
 
+  it.each([false, true])('rejects archived Source Set evidence without fallback (semantic=%s)', async (semantic) => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.get') return {
+          corpus: 'wiki', path: 'notes/archived.md', title: 'Archived decision',
+          content: 'ARCHIVED_BODY_MUST_NOT_ENTER_ANSWER', status: 'archived', revision: 19,
+          fromLine: 1, lineCount: 80, totalLines: 120, truncated: true,
+        };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const answer = await api.answerFromSourceSet({
+      question: 'What is the deployment decision?', semantic,
+      sourceRefs: [{ id: 'notes/archived.md', kind: 'wiki', path: 'notes/archived.md' }],
+    });
+    expect(answer.groundingStatus).toBe('missing_sources');
+    expect(answer.sources).toEqual([]);
+    expect(answer.answer).not.toContain('ARCHIVED_BODY_MUST_NOT_ENTER_ANSWER');
+    expect(answer.rejections).toEqual([expect.objectContaining({ reason: 'archived', subjectId: 'notes/archived.md' })]);
+    expect(answer.confidence).toBeUndefined();
+  });
+
+  it('retains explicit Source Set version pins and rejects a changed owner revision', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.get') return {
+          corpus: 'wiki', path: 'notes/versioned.md', title: 'Versioned decision',
+          content: 'OWNER_REVISION_20_BODY', status: 'active', revision: 20,
+        };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const ref = { id: 'notes/versioned.md', kind: 'wiki' as const, path: 'notes/versioned.md', revision: '19' };
+    const saved = await api.saveSourceSet({ title: 'Pinned decision', sourceRefs: [ref] });
+    expect(saved.sourceSet?.sourceRefs).toEqual([ref]);
+    const answer = await api.answerFromSourceSet({ question: 'Which decision applies?', sourceRefs: saved.sourceSet!.sourceRefs });
+    expect(answer.groundingStatus).toBe('missing_sources');
+    expect(answer.sources).toEqual([]);
+    expect(answer.rejections).toEqual([expect.objectContaining({ reason: 'revision_mismatch' })]);
+    expect(answer.answer).not.toContain('OWNER_REVISION_20_BODY');
+  });
+
+  it('reports unverified Source Set excerpts as partial rather than a calibrated answer', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'wiki.get') return {
+          corpus: 'wiki', path: params.lookup, title: String(params.lookup),
+          content: params.lookup === 'notes/port-a.md' ? 'The gateway port is 8080.' : 'The gateway port is 9090.',
+          status: 'active', revision: 19, updatedAt: '2026-11-04T00:00:00.000Z',
+        };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const answer = await api.answerFromSourceSet({
+      question: 'What port should the gateway use?',
+      sourceRefs: ['notes/port-a.md', 'notes/port-b.md'].map((id) => ({ id, kind: 'wiki', path: id })),
+    });
+    expect(answer.groundingStatus).toBe('partial');
+    expect(answer.synthesisMode).toBe('source-excerpts');
+    expect(answer.confidence).toBeUndefined();
+    expect(answer.unknowns.join(' ')).toContain('not been evaluated');
+    expect(answer.sources.every((source) => source.citation?.revision === '19')).toBe(true);
+  });
+
+  it('keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'wiki.get') return {
+          corpus: 'wiki', path: params.lookup, title: String(params.lookup),
+          content: params.lookup === 'notes/active.md' ? 'ADMITTED_BODY' : 'ARCHIVED_BODY',
+          status: params.lookup === 'notes/active.md' ? 'active' : 'archived', revision: 19,
+        };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const archived = { id: 'notes/archived.md', kind: 'wiki' as const, path: 'notes/archived.md' };
+    await expect(api.createArtifactDraft({ artifactType: 'summary', sourceRefs: [archived] })).resolves.toMatchObject({ success: false });
+    await expect(api.listDrafts({ status: 'all' })).resolves.toMatchObject({ drafts: [] });
+    const result = await api.createArtifactDraft({
+      artifactType: 'summary', sourceRefs: [{ id: 'notes/active.md', kind: 'wiki', path: 'notes/active.md' }, archived],
+      metadata: { groundingStatus: 'grounded', rejections: [], sourceSetEvidence: [] },
+    });
+    expect(result.success).toBe(true);
+    expect(result.draft?.sourceRefs).toEqual([expect.objectContaining({ id: 'notes/active.md', revision: '19' })]);
+    expect(result.draft?.metadata).toMatchObject({
+      groundingStatus: 'partial', rejections: [expect.objectContaining({ reason: 'archived' })],
+      sourceSetEvidence: [expect.objectContaining({ citation: expect.objectContaining({ revision: '19' }) })],
+    });
+    expect(result.draft?.createdBy).toBe('agent');
+    expect(result.draft?.confidence).toBeUndefined();
+    expect(JSON.stringify(result.draft)).not.toContain('ARCHIVED_BODY');
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+  });
+
+  it('applies saved Source Set workspace context without granting cross-workspace reads', async () => {
+    const gatewayManager = { rpc: vi.fn(async () => ({ corpus: 'wiki', path: 'notes/scoped.md', content: 'OTHER_WORKSPACE_BODY', status: 'active', scope: { workspaceId: 'workspace-b' } })) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const saved = await api.saveSourceSet({ title: 'Workspace A', sourceRefs: [{ id: 'notes/scoped.md', kind: 'wiki' }], metadata: { workspaceId: 'workspace-a' } });
+    const answer = await api.answerFromSourceSet({ question: 'Scoped answer?', sourceRefs: saved.sourceSet!.sourceRefs, sourceSetId: saved.sourceSet!.id });
+    expect(answer.sources).toEqual([]);
+    expect(answer.rejections).toEqual([expect.objectContaining({ reason: 'scope_mismatch' })]);
+    expect(answer.answer).not.toContain('OTHER_WORKSPACE_BODY');
+  });
+
   it('persists source sets and answers from their selected sources without applying durable wiki changes', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
@@ -1632,7 +1745,7 @@ describe('knowledge host API', () => {
     });
 
     expect(answer.success).toBe(true);
-    expect(answer.groundingStatus).toBe('grounded');
+    expect(answer.groundingStatus).toBe('partial');
     expect(answer.answer).toContain('Decision note');
     expect(answer.sources.map((source) => source.lookup)).toEqual(['notes/decision.md', 'notes/procedure.md']);
     expect(answer.unknowns).toContain('Grounding is page/snippet level.');
@@ -1742,7 +1855,7 @@ describe('knowledge host API', () => {
       metadata: {
         knowledgeKind: 'studio-artifact',
         artifactType: 'decision-memo',
-        groundingStatus: 'grounded',
+          groundingStatus: 'partial',
       },
     });
     expect(result.draft?.body).toContain('## Sources used');

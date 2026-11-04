@@ -40,11 +40,7 @@ import {
 } from '../../openclaw_runtime/src/knowledge/governance-adapters';
 import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harness/hook-context';
 import { isRuntimeLineage } from '../../openclaw_runtime/src/runtime-core/lineage';
-import {
-  digestSourceSetContent,
-  retrieveSourceSet,
-  type SourceSetCandidate,
-} from '../../openclaw_runtime/src/context-engine/source-set';
+import { retrieveSelectedSourceSetEvidence } from './knowledge-source-set-answer';
 import {
   createSiliconFlowEmbeddingProvider,
   hasSiliconFlowEmbeddingProvider,
@@ -104,7 +100,6 @@ import type {
   KnowledgeReferenceKind,
   KnowledgeSourceRef,
   KnowledgeSourceSet,
-  KnowledgeSourceSetAnswerSource,
   KnowledgeStewardConfig,
   KnowledgeRolePlayerConfig,
   KnowledgeRoleRegistryFile,
@@ -1027,6 +1022,8 @@ function normalizeSourceRefs(value: unknown): KnowledgeSourceRef[] {
       ...(kind ? { kind } : {}),
       ...(getString(entry.path) ? { path: getString(entry.path) } : {}),
       ...(getString(entry.url) ? { url: getString(entry.url) } : {}),
+      ...(entry.revision === undefined ? {} : { revision: getString(entry.revision) ?? 'invalid-revision-pin' }),
+      ...(entry.contentDigest === undefined ? {} : { contentDigest: getString(entry.contentDigest) ?? 'invalid-digest-pin' }),
     }];
   });
 }
@@ -3364,173 +3361,58 @@ export function createKnowledgeApi({
     semanticStewardInvoker = (context) => runSemanticStewardInvoker(gatewayManager, context);
   }
 
-  async function readSourceSetAnswerSource(ref: KnowledgeSourceRef): Promise<KnowledgeSourceSetAnswerSource | null> {
-    const lookup = ref.path || ref.id;
-    if (!lookup) return null;
-    try {
-      const page = await rpc<Record<string, unknown>>('wiki.get', { lookup, lineCount: 80, corpus: 'wiki' }, 30_000);
-      const title = rowString(page, ['title', 'name', 'pageTitle']) || ref.label || lookup;
-      const pagePath = rowString(page, ['pagePath', 'path', 'sourcePath']) || ref.path;
-      const body = rowString(page, ['body', 'content', 'text', 'snippet', 'bodyPreview']);
-      return {
-        id: ref.id,
-        lookup,
-        title,
-        excerpt: bodyPreview(body || ref.label || lookup),
-        ...(body ? { content: body } : {}),
-        ...(pagePath ? { path: pagePath } : {}),
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  function publicSourceSetAnswerSource(source: KnowledgeSourceSetAnswerSource): KnowledgeSourceSetAnswerSource {
-    return {
-      id: source.id,
-      lookup: source.lookup,
-      title: source.title,
-      excerpt: source.excerpt,
-      ...(source.path ? { path: source.path } : {}),
-    };
-  }
-
-  function sourceSetCandidateFromAnswerSource(source: KnowledgeSourceSetAnswerSource): SourceSetCandidate {
-    const content = source.content ?? source.excerpt;
-    return {
-      ref: {
-        refId: `memory-wiki:${source.lookup}`,
-        owner: 'memory-wiki',
-        subjectKind: 'wiki-page',
-        subjectId: source.lookup,
-        revision: 'selected',
-        contentDigest: digestSourceSetContent(content),
-        trust: 'confirmed',
-        sensitivity: 'workspace',
-        acl: { read: ['operator'] },
-        provenance: {
-          sourceRefs: [source.id || source.lookup],
-          evidenceRefs: [],
-        },
-      },
-      content,
-      status: 'active',
-      indexedAt: nowIso(),
-    };
-  }
-
   async function buildAnswerFromSourceSet(input: {
     question: string;
     sourceRefs: KnowledgeSourceRef[];
     artifactType?: KnowledgeArtifactType;
     sourceSetId?: string;
     semantic?: boolean;
+    workspaceId?: string;
   }): Promise<KnowledgeAnswerFromSourceSetResult> {
     const question = input.question.trim();
     const sourceRefs = normalizeSourceRefs(input.sourceRefs);
-    const sources = (await Promise.all(sourceRefs.map((ref) => readSourceSetAnswerSource(ref))))
-      .filter((source): source is KnowledgeSourceSetAnswerSource => Boolean(source));
+    const sourceSet = input.sourceSetId ? await readSourceSet(input.sourceSetId) : null;
     const semanticRequested = input.semantic === true;
-    let semanticLane: NonNullable<KnowledgeAnswerFromSourceSetResult['semanticLane']> | undefined;
-    let orderedSources = sources;
-    if (semanticRequested && sources.length > 0) {
-      const embeddingProvider = hasSiliconFlowEmbeddingProvider()
-        ? createSiliconFlowEmbeddingProvider()
-        : undefined;
-      const sourceSetCandidates = sources.map(sourceSetCandidateFromAnswerSource);
-      const sourceSetResult = await retrieveSourceSet({
-        sources: sourceSetCandidates,
-        query: {
-          text: question,
-          aclSubjects: ['operator'],
-          limit: Math.max(1, sources.length),
-        },
-        embeddingProvider,
-        now: () => new Date(),
-      });
-      semanticLane = sourceSetResult.semanticLane;
-      const nextSources: KnowledgeSourceSetAnswerSource[] = [];
-      for (const entry of sourceSetResult.retrieved) {
-        const source = sources.find((item) => `memory-wiki:${item.lookup}` === entry.ref.refId);
-        if (source) {
-          nextSources.push({ ...source, content: entry.content });
-        }
-      }
-      orderedSources = nextSources;
-      if (orderedSources.length === 0) {
-        orderedSources = sources;
-      }
-    } else if (semanticRequested) {
-      semanticLane = { status: 'unavailable', reason: 'no-readable-sources' };
-    }
-    const rows = sources.length > 0
-      ? sources.map((source) => ({
-        id: source.id,
-        title: source.title,
-        lookup: source.lookup,
-        pagePath: source.path ?? source.lookup,
-      }))
-      : sourceRefs.map((ref) => ({
-        id: ref.id,
-        title: ref.label ?? ref.id,
-        lookup: ref.path ?? ref.id,
-        pagePath: ref.path ?? ref.id,
-      }));
-    const selectedLookups = new Set(rows.map((row) => row.lookup));
-    const retrievalDiagnostics = buildRetrievalDiagnostics({
-      query: question,
-      corpus: 'wiki',
-      mode: 'source-set',
-      rows,
-      selectedLookups,
-      reason: 'explicit Source Set selection',
-      backend: semanticRequested && semanticLane?.status === 'available' ? 'semantic' : 'fallback-keyword',
+    const embeddingProvider = semanticRequested && hasSiliconFlowEmbeddingProvider()
+      ? createSiliconFlowEmbeddingProvider() : undefined;
+    const evidence = await retrieveSelectedSourceSetEvidence({
+      question, sourceRefs,
+      workspaceId: input.workspaceId ?? getString(sourceSet?.metadata?.workspaceId),
+      readPage: (ref) => rpc('wiki.get', { lookup: ref.path || ref.id, lineCount: 80, corpus: 'wiki' }, 30_000),
+      embeddingProvider,
     });
-    const missingCount = Math.max(0, sourceRefs.length - sources.length);
-    const groundingStatus: KnowledgeAnswerFromSourceSetResult['groundingStatus'] = sources.length === 0
-      ? 'missing_sources'
-      : missingCount > 0
-        ? 'partial'
-        : 'grounded';
-    const unknowns = [
-      'Grounding is page/snippet level.',
-      ...(missingCount > 0 ? [`${missingCount} selected source(s) could not be read.`] : []),
-      ...(sources.length === 0 ? ['No selected sources were readable.'] : []),
-    ];
-    const suggestedNextActions = groundingStatus === 'missing_sources'
-      ? ['Add readable sources to the Source Set.', 'Broaden the search and save a new Source Set.']
-      : ['Review this answer before creating a durable draft.', 'Create a Studio artifact draft when the synthesis looks useful.'];
+    const { sources, unknowns, groundingStatus } = evidence;
+    const rows = sources.map((source) => ({
+      id: source.id, title: source.title, lookup: source.lookup, pagePath: source.path ?? source.lookup,
+    }));
+    const retrievalDiagnostics = buildRetrievalDiagnostics({
+      query: question, corpus: 'wiki', mode: 'source-set', rows,
+      selectedLookups: new Set(rows.map((row) => row.lookup)),
+      reason: 'explicit Source Set selection after owner admission',
+      backend: semanticRequested && evidence.sourceSet.semanticLane.status === 'available' ? 'semantic' : 'fallback-keyword',
+    });
     const artifactHint = input.artifactType ? ` Artifact focus: ${input.artifactType}.` : '';
-    const sourceLines = orderedSources.map((source, index) => (
-      `${index + 1}. ${source.title}: ${source.excerpt}`
-    ));
-    const answer = orderedSources.length > 0
+    const answer = sources.length > 0
       ? [
-        `Answer grounded in ${orderedSources.length} selected source(s).${artifactHint}`,
-        `Question: ${question}`,
-        '',
-        ...sourceLines,
+        `Selected source excerpts (partial response).${artifactHint}`,
+        `Question: ${question}`, '',
+        ...sources.map((source, index) => `${index + 1}. ${source.title}: ${source.excerpt}`),
       ].join('\n')
       : [
-        'I could not answer from the selected Source Set because no selected source was readable.',
+        'I could not answer from the selected Source Set because no source passed read admission.',
         `Question: ${question}`,
       ].join('\n');
-    if (input.sourceSetId) {
-      const sourceSet = await readSourceSet(input.sourceSetId);
-      if (sourceSet) await writeSourceSet({ ...sourceSet, lastUsedAt: nowIso(), updatedAt: nowIso() });
+    if (sourceSet) {
+      await writeSourceSet({ ...sourceSet, lastUsedAt: nowIso(), updatedAt: nowIso() });
     }
     return {
-      success: true,
-      question,
-      answer,
-      sources: orderedSources.map(publicSourceSetAnswerSource),
-      unknowns,
-      suggestedNextActions,
-      groundingStatus,
-      confidence: groundingStatus === 'grounded' ? 0.78 : groundingStatus === 'partial' ? 0.48 : 0,
-      retrievalDiagnostics,
-      semanticRequested,
-      ...(semanticLane ? { semanticLane } : {}),
+      success: true, question, answer, sources, unknowns, groundingStatus,
+      synthesisMode: 'source-excerpts',
+      suggestedNextActions: evidence.sourceSet.suggestedNextActions.map((entry) => entry.text),
+      rejections: evidence.sourceSet.rejections,
+      conflictSet: evidence.sourceSet.conflictSet,
+      retrievalDiagnostics, semanticRequested,
+      ...(semanticRequested ? { semanticLane: evidence.sourceSet.semanticLane } : {}),
     };
   }
 
@@ -4396,7 +4278,6 @@ export function createKnowledgeApi({
           unknowns: ['Question is required.'],
           suggestedNextActions: ['Ask a question about the selected sources.'],
           groundingStatus: 'missing_sources',
-          confidence: 0,
           retrievalDiagnostics: buildRetrievalDiagnostics({
             query: '',
             corpus: 'wiki',
@@ -4412,6 +4293,7 @@ export function createKnowledgeApi({
         artifactType: normalizeArtifactType(body.artifactType),
         sourceSetId: getString(body.sourceSetId),
         semantic: body.semantic === true,
+        workspaceId: getString(body.workspaceId),
       });
     },
 
@@ -4427,22 +4309,33 @@ export function createKnowledgeApi({
         artifactType,
         sourceSetId: getString(body.sourceSetId),
         semantic: body.semantic === true,
+        workspaceId: getString(body.workspaceId),
       });
+      if (answer.sources.length === 0) {
+        return { success: false, error: 'No admitted selected sources are available for a Studio draft.' };
+      }
+      const admittedSourceRefs: KnowledgeSourceRef[] = answer.sources.map((source) => ({
+        id: source.id, kind: 'wiki', label: source.title, path: source.path || source.lookup,
+        ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
+      }));
       const draft = createDraftFromPayload({
         title,
         body: artifactDraftBody(answer, artifactType),
         type: draftTypeForArtifact(artifactType),
-        sourceIds: sourceIdsFromRefs(sourceRefs),
-        sourceRefs,
+        sourceIds: sourceIdsFromRefs(admittedSourceRefs),
+        sourceRefs: admittedSourceRefs,
         tags: ['studio-artifact', artifactType],
         createdBy: 'agent',
-        confidence: answer.confidence,
         metadata: {
+          ...(isRecord(body.metadata) ? body.metadata : {}),
           knowledgeKind: 'studio-artifact',
           artifactType,
           groundingStatus: answer.groundingStatus,
+          synthesisMode: answer.synthesisMode,
+          rejections: answer.rejections,
+          conflictSet: answer.conflictSet,
+          sourceSetEvidence: answer.sources.map((source) => ({ citation: source.citation, readRange: source.readRange })),
           retrievalDiagnostics: answer.retrievalDiagnostics,
-          ...(isRecord(body.metadata) ? body.metadata : {}),
         },
       });
       if (!draft) return { success: false, error: 'artifact draft could not be created' };

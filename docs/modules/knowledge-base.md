@@ -234,11 +234,21 @@ Host API：
 
 回答流程：
 
-1. 读取 source set；
-2. 按 ACL 过滤；
-3. 可选 semantic ranking；
-4. 生成带 citation 的 answer；
-5. 允许把 answer 转为 artifact draft。
+1. 读取选中来源及 owner 提供的状态、revision、摘要、权限、敏感性、scope 和新鲜度；
+2. 词法与可选语义分支共用现有 SourceSet 准入，选择来源不覆盖 owner 政策；
+3. 校验可选 revision/digest 钉选，保留来源排序与 semantic lane 诊断；
+4. 返回带 owner、canonical subject、revision、读取内容摘要和读取范围的引用，披露拒绝原因、已提供的结构化冲突和截断；
+5. 当前仅返回来源摘录，明确为 `partial`，不生成未经测量的回答置信度；
+6. 只有存在已准入来源时才创建 Studio draft；草稿只绑定已准入引用，保留读取证据，持久应用仍走已有审阅与 apply。
+
+所有来源被拒绝或 embedding 失败时，不把原始来源回填成证据。未提供 owner
+新鲜度的来源标为未知；旧 Wiki 响应未显式给出状态时保留 active-vault 兼容行为，
+缺省 trust 为 advisory，缺少 revision 时绑定读取内容摘要。
+
+本路径尚未实现模型综合、多轮追问或无结构文本的语义矛盾判定，因此摘录可回读
+不等于回答正确性已经验证。后续按来源同步、Librarian 问答、中文与长文检索、
+Steward 版本审阅、单个持续连接器和效果评测的次序交付，不建立第二知识权威。
+本轮仍沿用首次读取 80 行和现有 SourceSet 检索报告最多 20 个来源的边界。
 
 语义检索：
 

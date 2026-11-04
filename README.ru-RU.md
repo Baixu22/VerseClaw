@@ -169,6 +169,7 @@ flowchart LR
 - Sessions используют JSONL transcripts; runtime state также использует SQLite.
 - Token history строится из structured session usage; cost является оценкой.
 - Knowledge использует `memory-wiki` vault и local governance metadata.
+- Ответы Source Set сохраняют правила допуска владельца, версию и диапазон цитаты. Сейчас это частичные выдержки с указанием отклонённых источников, без неизмеренной уверенности в ответе.
 - Logs, traces, screenshots, Task Forest и handoffs являются local working data, пока явно не curated.
 
 Локальное хранение не означает offline execution. Online models, channels, browsers и external tools получают данные согласно конфигурации. Не коммитьте credentials, private transcripts и raw logs.

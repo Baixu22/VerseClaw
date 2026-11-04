@@ -65,6 +65,7 @@ describe('Chat knowledge mode', () => {
     fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'What was decided?' } });
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
     expect(await screen.findByTestId('knowledge-librarian-answer-section')).toHaveTextContent('A source-backed answer.');
+    expect(screen.queryByText('80%')).not.toBeInTheDocument();
     expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith({ question: 'What was decided?', sourceRefs: refs, sourceSetId: 'source-set-1' });
     expect(knowledge.search).not.toHaveBeenCalled();
     expect(knowledge.createDraft).not.toHaveBeenCalled();
@@ -106,6 +107,33 @@ describe('Chat knowledge mode', () => {
     await waitFor(() => expect(page).toHaveAttribute('data-bot-state', 'confused'));
     expect(knowledge.search).toHaveBeenLastCalledWith(expect.objectContaining({ query: 'Retry this question' }));
     expect(knowledge.applyDraft).not.toHaveBeenCalled();
+  });
+
+  it('preserves source version evidence and hides unmeasured confidence in excerpt responses', async () => {
+    const refs = [{ id: 'wiki/decision.md', kind: 'wiki' as const, path: 'wiki/decision.md' }];
+    knowledge.answerFromSourceSet.mockResolvedValueOnce({
+      success: true, answer: 'Selected source excerpts.', question: 'What was decided?',
+      sources: [{
+        id: refs[0].id, lookup: refs[0].path, path: refs[0].path, title: 'Decision', excerpt: 'Review first.',
+        citation: { owner: 'memory-wiki', subjectId: refs[0].path, revision: '19', contentDigest: 'sha256:read-range' },
+        readRange: { fromLine: 1, toLine: 80, totalLines: 120, truncated: true },
+      }],
+      unknowns: ['Only lines 1-80 were read.'], suggestedNextActions: [], groundingStatus: 'partial',
+      retrievalDiagnostics: { query: 'What was decided?', corpus: 'wiki', resultCount: 1 },
+    });
+    renderChat({ sourceRefs: refs });
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'What was decided?' } });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+    expect(await screen.findByTestId('knowledge-librarian-answer-section')).toHaveTextContent('Selected source excerpts.');
+    expect(screen.getByTestId('knowledge-librarian-unknowns-section')).toHaveTextContent('Only lines 1-80 were read.');
+    expect(screen.queryByText('librarian.confidence')).not.toBeInTheDocument();
+    expect(screen.queryByText('NaN%')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('knowledge-librarian-save-draft'));
+    await waitFor(() => expect(knowledge.createDraft).toHaveBeenCalledWith(expect.objectContaining({
+      sourceRefs: [expect.objectContaining({ revision: '19', contentDigest: 'sha256:read-range' })],
+      metadata: expect.objectContaining({ groundingStatus: 'partial' }),
+    })));
+    expect(knowledge.applyReviewedChange).not.toHaveBeenCalled();
   });
 
   it('reflects source-set waiting and the actual draft/review phases before opening governed review', async () => {

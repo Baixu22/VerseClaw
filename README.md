@@ -170,6 +170,7 @@ No separate database server is required.
 - Sessions use JSONL transcripts; runtime state also uses SQLite.
 - Token history is aggregated from structured session usage records. Costs are estimates.
 - Knowledge uses a `memory-wiki` vault plus local governance metadata.
+- Source Set responses preserve owner admission, version and read-range citations. They currently return partial source excerpts, disclose rejected sources, and omit unmeasured answer confidence.
 - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
 
 Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.

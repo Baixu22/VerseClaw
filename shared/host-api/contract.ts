@@ -4094,6 +4094,9 @@ export type KnowledgeSourceRef = {
   kind?: 'chat' | 'file' | 'wiki' | 'task_ledger' | 'trace' | 'task_loop' | 'manual' | 'search_result' | 'other';
   path?: string;
   url?: string;
+  /** Optional owner version and digest pins; selection never overrides these. */
+  revision?: string;
+  contentDigest?: string;
 };
 export type KnowledgeInteractionMvpMetadata = {
   mvpVersion: 'knowledge-interaction-mvp-1';
@@ -4471,6 +4474,14 @@ export type KnowledgeSaveSourceSetPayload = {
 export type KnowledgeSourceSetResult = HostSuccess & { sourceSet?: KnowledgeSourceSet };
 export type KnowledgeListSourceSetsResult = HostSuccess & { sourceSets: KnowledgeSourceSet[] };
 export type KnowledgeDeleteSourceSetPayload = { id: string };
+export type KnowledgeSourceSetCitation = {
+  refId: string;
+  owner: string;
+  subjectId: string;
+  revision: string;
+  contentDigest: string;
+  sourceRefs: string[];
+};
 export type KnowledgeSourceSetAnswerSource = {
   id: string;
   lookup: string;
@@ -4478,6 +4489,9 @@ export type KnowledgeSourceSetAnswerSource = {
   excerpt: string;
   path?: string;
   content?: string;
+  citation?: KnowledgeSourceSetCitation;
+  updatedAt?: string;
+  readRange?: { fromLine: number; toLine: number; totalLines?: number; truncated: boolean };
 };
 export type KnowledgeAnswerFromSourceSetPayload = {
   question: string;
@@ -4485,6 +4499,8 @@ export type KnowledgeAnswerFromSourceSetPayload = {
   artifactType?: KnowledgeArtifactType;
   sourceSetId?: string;
   semantic?: boolean;
+  /** Retrieval context filter, not an ACL grant. */
+  workspaceId?: string;
 };
 export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   question: string;
@@ -4493,7 +4509,11 @@ export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   unknowns: string[];
   suggestedNextActions: string[];
   groundingStatus: 'grounded' | 'partial' | 'missing_sources';
-  confidence: number;
+  /** Populated only by a measured answer path; template excerpts omit it. */
+  confidence?: number;
+  synthesisMode?: 'source-excerpts';
+  rejections?: Array<{ refId: string; owner: string; subjectId: string; reason: string; visibleReason: string }>;
+  conflictSet?: Array<{ kind: 'claim' | 'source'; key: string; description: string; stances?: string[]; citations: KnowledgeSourceSetCitation[] }>;
   retrievalDiagnostics: KnowledgeRetrievalDiagnostics;
   semanticRequested?: boolean;
   semanticLane?: {
@@ -4510,6 +4530,7 @@ export type KnowledgeCreateArtifactDraftPayload = {
   sourceRefs: KnowledgeSourceRef[];
   sourceSetId?: string;
   semantic?: boolean;
+  workspaceId?: string;
   metadata?: Record<string, unknown>;
 };
 export type KnowledgeListDraftsPayload = {
