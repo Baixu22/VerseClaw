@@ -170,7 +170,7 @@ test.describe('recovery contract eval windows', () => {
     await writeFile(markerPath, "", "utf8");
     const llm = await startScriptedLlm((_userText, toolResults) => {
       if (Object.keys(toolResults).length > 0) return { text: `${WINDOW} complete` };
-      if (WINDOW === "intent-after-persist-kill") return { toolCall: { id: "w-intent-0", name: "bash", args: { command: "sleep 45" } } };
+      if (WINDOW === "intent-after-persist-kill") return { toolCall: { id: "w-intent-0", name: "bash", args: { command: "sleep 45; printf 'EFFECT\\n' >> \"" + markerPath + "\"" } } };
       return { toolCall: { id: `w-${WINDOW}-0`, name: "write", args: { path: "recovery-effect-marker.txt", content: `EFFECT-${Date.now()}` } } };
     });
     const openclawDir = join(homeDir, '.openclaw');

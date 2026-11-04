@@ -208,3 +208,22 @@ live-provider 凭据保持 `EVIDENCE_INSUFFICIENT`。
 
 这是一个**真实、可复算的负面结论**：恢复后的"记住什么、下一步做什么"是对的，
 但"别丢工作"和"恢复时延"两项不合格。它同时为下一阶段定义了明确的优化目标。
+
+## 2026-11-04 candidate 模式首次接线验证（TF-0718/TF-0719 进行中）
+
+已实现并接入：
+
+1. `execution_phases` 表（openclaw-state SQLite，单写者、CAS、幂等键）。
+2. `recordExecutionIntent`：工具执行前落盘 intent（默认 legacy 关闭，`OPENCLAW_EXECUTION_PHASE_WRITER=taskflow` 开启）。
+3. `commitExecutionPhase`：dispatched → effect_pending → effect_committed，非法/过期转换拒绝。
+4. `settleOrphanedExecutionPhases`：gateway 启动把孤儿结算为 lost 或 needsReconciliation。
+5. `resolveExecutionPhaseRecovery`：open 的 `effect_pending/effect_committed` 强制 reconcile，只有 `dispatched` 允许 resume。
+6. candidate 模式恢复延迟：首跳 5s→1s，退避上限 10s（仅 writer 开启时）。
+
+**验证结果（K1，writer=taskflow）**：`lostTasks=1`、`terminalCorrect=false`。
+
+原因已定位：恢复路径识别到 `dispatched` 后只做 transcript 修复并继续模型回合，
+**没有重新派发那个待执行的工具调用**。工具参数按隐私设计不落库，因此重派必须
+从 transcript 尾部的 assistant toolUse 读取，并用 execution phase 行作授权。
+
+这是 TF-0718/0719 的最后一个缺口，已明确下一步实现点；本轮不把它写成已完成。

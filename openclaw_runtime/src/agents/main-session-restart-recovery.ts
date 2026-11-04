@@ -651,7 +651,10 @@ export function scheduleRestartAbortedMainSessionRecovery(
     stateDir?: string;
   } = {},
 ): void {
-  const initialDelay = params.delayMs ?? DEFAULT_RECOVERY_DELAY_MS;
+  const candidateMode = isExecutionPhaseWriterEnabled();
+  const initialDelay = params.delayMs ?? (candidateMode ? 1_000 : DEFAULT_RECOVERY_DELAY_MS);
+  const nextDelay = (delay: number) =>
+    candidateMode ? Math.min(delay * RETRY_BACKOFF_MULTIPLIER, 10_000) : delay * RETRY_BACKOFF_MULTIPLIER;
   const maxRetries = params.maxRetries ?? MAX_RECOVERY_RETRIES;
   const resumedSessionKeys = new Set<string>();
 
@@ -664,13 +667,13 @@ export function scheduleRestartAbortedMainSessionRecovery(
       })
         .then((result) => {
           if (result.failed > 0 && attempt < maxRetries) {
-            attemptRecovery(attempt + 1, delay * RETRY_BACKOFF_MULTIPLIER);
+            attemptRecovery(attempt + 1, nextDelay(delay));
           }
         })
         .catch((err: unknown) => {
           if (attempt < maxRetries) {
             log.warn(`main-session restart recovery failed: ${String(err)}`);
-            attemptRecovery(attempt + 1, delay * RETRY_BACKOFF_MULTIPLIER);
+            attemptRecovery(attempt + 1, nextDelay(delay));
           } else {
             log.warn(`main-session restart recovery gave up: ${String(err)}`);
           }
@@ -680,5 +683,6 @@ export function scheduleRestartAbortedMainSessionRecovery(
 
   attemptRecovery(1, initialDelay);
 }
+
 
 
