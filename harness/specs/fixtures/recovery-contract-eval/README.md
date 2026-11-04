@@ -141,3 +141,4 @@ RECOVERY_LONGSESSION_OUT=D:/tmp/recovery-longsession-v5 \
 
 因此 TF-0711 的「两次重跑结构一致」**未满足**；K4 需要单独修复与验证，
 不能把第一轮的 3/3 当作稳定结论。
+
