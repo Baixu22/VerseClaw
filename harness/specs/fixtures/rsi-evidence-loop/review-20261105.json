@@ -100,7 +100,8 @@
       0,
       0,
       0
-    ]
+    ],
+    "dependencyMode": "Reused the main checkout node_modules, generated the empty extension bridge, and linked the existing VerseBrowser dist; this is a clean-source typecheck, not a fresh dependency install."
   },
   "harness": {
     "validate": 0,
