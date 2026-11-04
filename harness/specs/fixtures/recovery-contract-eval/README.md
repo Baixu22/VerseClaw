@@ -46,3 +46,16 @@
 node --experimental-strip-types scripts/recovery-contract-eval.mjs --dir D:/tmp/recovery-eval-v2
 node --experimental-strip-types scripts/recovery-contract-eval.mjs --check
 ```
+
+## TF-0722 长会话抽样的已知缺陷（本轮未通过）
+
+本轮新增了 `tests/e2e/recovery-longsession-eval.spec.ts` 并在真实 Electron 上跑通了
+第一对（`ls-compression-01`）。但读回面用的是 `sessions.history`，它只返回近期窗口
+（观测到 `transcriptLength=2`），因此 `mustPreserveMatched` 为 0 并不代表事实真的丢失。
+
+因此本轮**不把该抽样计入质量结论**：`report.json` 的 long-session 仍是 0/30，
+评测保持 `EVIDENCE_INSUFFICIENT`。
+
+下一轮必须先修读回面：从
+`<userData>/openclaw-source-state/agents/main/sessions/<sessionFile>` 直接读
+完整 transcript（其它 long-session spec 已经这么做），再重跑 ≥30 对。
