@@ -104,4 +104,4 @@ node "$pack/recompute.mjs" "$pack/live" "$pack/live/provider-wire.jsonl.gz" D:/t
 node "$pack/verify-evidence.mjs" "$pack"
 ```
 
-TF-0749 的收益验收仍应保持 in_progress/open：B3/B4/B6 与严格对照输入有实证缺口。最后一次可信 CLI 回读为 TF-0749=in_progress/60%、TF-0750–0754=done/100%；当前实时状态未重新确认。第二轮提案保存六次均 exit 1（另一进程持有 OS 写锁），已按交接的十分钟等待上限停止重试，尚未保存/应用第二轮摘要，也未执行其 validate/export。提案与继续入口保留在 D:/tmp/inline-spill-benefit-r2/tf-r2-proposal.json 及本地 docs/dev/handoffs/LATEST.md。第一轮提案已在上一会话应用并验证。后续状态更新仍只走 proposal-save → proposal-apply → validate → export；不删除 lock、不使用 --allow-stale。未 push、未发布。
+第二轮 Task Forest 更新已完成：TF-0749=in_progress/80%，TF-0750–0754=done/100%，六个节点的摘要与设计偏差记录已更新到本轮证据。保存、应用、校验、导出均有 exit 0 记录；其中应用和导出由接力来源会话先一步执行，本会话保留进程句柄确认退出码，并另做 CLI 与 HTML 磁盘回读。六个节点的字段与提案一致，HTML 除生成时间外匹配完整当前投影。原先六次锁等待失败作为历史记录保留，未删除 lock、未使用 --allow-stale、未重复应用。命令与回读记录在 D:/tmp/inline-spill-benefit-r2/tf-observed-apply-exit.json、tf-observed-export-exit.json、tf-resume-validate-final.stdout.txt、tf-closeout-readback.json；本地交接为 docs/dev/handoffs/LATEST.md。父节点仍未通过收益验收，原因是 B3/B4/B6 与严格对照输入的实证缺口；未将 mechanism-only 升级为 task-benefit-verified。未 push、未发布。
