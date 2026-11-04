@@ -62,6 +62,9 @@ touchedAreas:
   - tests/unit/semantic-convergence-*
   - tests/e2e/semantic-convergence-*
   - artifacts/runs/semantic-convergence-20261104/**
+  - docs/dev/evidence/semantic-convergence-20261104/**
+  - scripts/repository-artifacts.json
+  - .gitignore
 expectedUserBehavior:
   - 一次用户请求不会因多层重试被重复计费或被提前拒绝；预算内的合法重试可以恢复。
   - 设置页不会把 429、非鉴权 400 或未确认模型误报为“凭据已验证/推理就绪”。
