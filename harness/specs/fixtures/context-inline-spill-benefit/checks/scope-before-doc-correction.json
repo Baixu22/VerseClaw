@@ -1,0 +1,56 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r2",
+  "scopeChecks": [
+    {
+      "name": "arms",
+      "unchanged": true
+    },
+    {
+      "name": "corpus",
+      "unchanged": true
+    },
+    {
+      "name": "projection",
+      "unchanged": true
+    },
+    {
+      "name": "scoring",
+      "unchanged": true
+    }
+  ],
+  "protectedNow": [
+    {
+      "file": "scripts/inline-spill-benefit-eval.mts",
+      "unchanged": true
+    },
+    {
+      "file": "scripts/inline-spill-benefit-scoring.ts",
+      "unchanged": true
+    },
+    {
+      "file": "tests/unit/inline-spill-benefit-eval.test.ts",
+      "unchanged": true
+    },
+    {
+      "file": "tests/unit/zz-probe5.test.ts",
+      "unchanged": true
+    },
+    {
+      "file": "scripts/context-inline-spill-benefit-scoring.mts",
+      "unchanged": true
+    },
+    {
+      "file": "harness/specs/rules/inline-spill-benefit-quantification.md",
+      "unchanged": true
+    },
+    {
+      "file": "harness/specs/tasks/inline-spill-real-benefit-eval.md",
+      "unchanged": true
+    },
+    {
+      "file": "docs/modules/context-and-memory.md",
+      "unchanged": true
+    }
+  ]
+}

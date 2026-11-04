@@ -1,0 +1,209 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-04T06-49-33-988Z-deterministic",
+  "mode": "deterministic",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit",
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "ddd66ced9f3d389bd03a476fcbdccfc2de759f33",
+    "tree": "cbcd93f60b96d40bd2161a0481c8971f8485de29",
+    "dirty": true
+  },
+  "provider": {
+    "kind": "deterministic-scripted-policy",
+    "endpoint_origin": null,
+    "model": null,
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 1,
+    "maxTurns": 8,
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 8,
+      "pass": 2,
+      "successRate": 0.25,
+      "wilson95": [
+        0.071479212752109,
+        0.5907245696898311
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 186.625,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.003,
+      "p95LatencyMs": 0.007,
+      "failureClasses": {
+        "recall_not_attempted": 6,
+        "none": 2
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3,
+      "meanMainContextChars": 16141.625,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.018,
+      "p95LatencyMs": 0.038,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 8,
+      "pass": 8,
+      "successRate": 1,
+      "wilson95": [
+        0.6755924351161198,
+        1
+      ],
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "passAtK": 1,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3,
+      "meanMainContextChars": 39175.625,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.014,
+      "p95LatencyMs": 0.024,
+      "failureClasses": {
+        "none": 8
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 8,
+      "pass": 4,
+      "successRate": 0.5,
+      "wilson95": [
+        0.21521606221387757,
+        0.7847839377861224
+      ],
+      "evidenceSuccessRate": 0.3333333333333333,
+      "controlSuccessRate": 1,
+      "passAtK": 0.3333333333333333,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3,
+      "meanMainContextChars": 39175.625,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 0.023,
+      "p95LatencyMs": 0.035,
+      "failureClasses": {
+        "none": 4,
+        "recalled_text_evicted": 4
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 2,
+      "onlyA": 6,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.03125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 4,
+      "onlyA": 4,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 0.125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 8,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 0,
+      "p": 1
+    }
+  },
+  "decision": {
+    "status": "inconclusive",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": 0,
+    "tokenGrowthPct": 0,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

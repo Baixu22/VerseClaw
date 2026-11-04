@@ -1,0 +1,53 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r2",
+  "initialPairs": 24,
+  "byteIdenticalInitialPairs": 0,
+  "retentionOffSuccessfulEvidenceWithOracleOnlyInHistory": [
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 0
+    },
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 2
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 0
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 2
+    },
+    {
+      "fixtureId": "signing-key",
+      "repetition": 1
+    },
+    {
+      "fixtureId": "tenant-id",
+      "repetition": 2
+    }
+  ],
+  "rawRequestCharsByArm": {
+    "baseline-no-reference": {
+      "mean": 2765.5833333333335,
+      "reportedMean": 380.875
+    },
+    "reference-visible": {
+      "mean": 58620.958333333336,
+      "reportedMean": 15642.416666666666
+    },
+    "recall-stable": {
+      "mean": 87695.95833333333,
+      "reportedMean": 47822.958333333336
+    },
+    "retention-off": {
+      "mean": 85857.625,
+      "reportedMean": 48304.333333333336
+    }
+  },
+  "incompleteResponses": 29,
+  "runsAboveThreeModelRecalls": 4,
+  "parallelRecallsRejected": 1
+}

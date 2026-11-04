@@ -1,0 +1,214 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-04T06-51-18-636Z-live",
+  "mode": "live",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit",
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "ddd66ced9f3d389bd03a476fcbdccfc2de759f33",
+    "tree": "cbcd93f60b96d40bd2161a0481c8971f8485de29",
+    "dirty": true
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 3,
+    "maxTurns": 8,
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 3,
+      "successRate": 0.125,
+      "wilson95": [
+        0.04344334080123444,
+        0.31003881270500067
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.5,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 0,
+      "meanTurns": 3.625,
+      "meanMainContextChars": 380.875,
+      "meanInputTokens": 2904.3333333333335,
+      "meanOutputTokens": 1099,
+      "meanTotalTokens": 4003.3333333333335,
+      "p50LatencyMs": 18376.736,
+      "p95LatencyMs": 23123.505,
+      "failureClasses": {
+        "answer_mismatch": 15,
+        "schema_invalid": 6,
+        "none": 3
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 18,
+      "successRate": 0.75,
+      "wilson95": [
+        0.55100555994846,
+        0.8800063377140499
+      ],
+      "evidenceSuccessRate": 0.6666666666666666,
+      "controlSuccessRate": 1,
+      "passAtK": 0.16666666666666666,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.75,
+      "meanMainContextChars": 15642.416666666666,
+      "meanInputTokens": 24067,
+      "meanOutputTokens": 1246.4583333333333,
+      "meanTotalTokens": 25313.458333333332,
+      "p50LatencyMs": 22113.979,
+      "p95LatencyMs": 29568.935,
+      "failureClasses": {
+        "none": 18,
+        "schema_invalid": 6
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 17,
+      "successRate": 0.7083333333333334,
+      "wilson95": [
+        0.5083230633550337,
+        0.8508535180303913
+      ],
+      "evidenceSuccessRate": 0.6111111111111112,
+      "controlSuccessRate": 1,
+      "passAtK": 0.3333333333333333,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.75,
+      "meanMainContextChars": 47822.958333333336,
+      "meanInputTokens": 33789.875,
+      "meanOutputTokens": 1298.7916666666667,
+      "meanTotalTokens": 35088.666666666664,
+      "p50LatencyMs": 21310.907,
+      "p95LatencyMs": 32620.291,
+      "failureClasses": {
+        "none": 17,
+        "recalled_text_evicted": 2,
+        "schema_invalid": 5
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 10,
+      "successRate": 0.4166666666666667,
+      "wilson95": [
+        0.24467602609811764,
+        0.6116533413477124
+      ],
+      "evidenceSuccessRate": 0.3333333333333333,
+      "controlSuccessRate": 0.6666666666666666,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.7916666666666665,
+      "meanMainContextChars": 48304.333333333336,
+      "meanInputTokens": 33413.333333333336,
+      "meanOutputTokens": 1534.3333333333333,
+      "meanTotalTokens": 34947.666666666664,
+      "p50LatencyMs": 20075.638,
+      "p95LatencyMs": 35480.422,
+      "failureClasses": {
+        "none": 10,
+        "recalled_text_evicted": 4,
+        "schema_invalid": 10
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 3,
+      "onlyA": 14,
+      "onlyB": 0,
+      "neither": 7,
+      "p": 0.0001220703125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 9,
+      "onlyA": 8,
+      "onlyB": 1,
+      "neither": 6,
+      "p": 0.0390625
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 13,
+      "onlyA": 4,
+      "onlyB": 5,
+      "neither": 2,
+      "p": 1
+    }
+  },
+  "decision": {
+    "status": "mechanism-only",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": false,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": -481.375,
+    "tokenGrowthPct": 0.38616644966528013,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

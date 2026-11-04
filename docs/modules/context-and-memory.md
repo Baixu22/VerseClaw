@@ -501,3 +501,43 @@ Context 相关诊断：
 - `docs/dev/vtoken-retirement-decision.md`
 
 延伸阅读：[Context Runtime Kit](../context-runtime-kit/README.md)、[产品语义](../clawx-product-semantics.md)、[上下文权威边界 ADR](../dev/adr/2026-08-16-context-authority-boundaries.md)。
+
+## 14. Inline/Spill 真实任务收益评测（agent 驱动外循环）
+
+机制证据（引用可见、回读可达、窗口内有界保留）不等于任务收益。为回答“真实收益是否存在”，
+`scripts/context-inline-spill-benefit-loop-eval.mts` 建立一个可复算的评测：
+
+- **模型自主决策**：harness 只执行模型返回的 function call，是否回读、何时回读、分页多少由模型决定；
+  脚本不替模型发起 recall。
+- **真实组件**：`truncateOversizedToolResultsInMessages`、`pruneContextMessages`、
+  `createContextArchiveRecallTool`、`ArchiveHandle` 校验与 archive 存储全部是生产实现。
+- **四臂对照**：`baseline-no-reference`、`reference-visible`、`recall-stable`、
+  `retention-off`（负对照）使用同一语料、oracle 与评分器。第二轮原始请求确认：两压力臂的
+  archive URI/session 不同，且原始工具历史独立附加，当前不能视为严格的单变量对照。
+- **冻结口径**：指标定义、B1–B7 判据、失败分类与判定输出以
+  [inline-spill-benefit-quantification](../../harness/specs/rules/inline-spill-benefit-quantification.md) 为准，
+  运行前不得改阈值。
+
+第二轮 live 覆盖 96 次运行（4 臂 × 8 任务 × 3 次）：`decision.status=mechanism-only`。
+recall-stable 证据任务 11/18，通过 B1/B2/B5；B3/B4/B6 未通过，token 相对
+reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验限制见
+[收益评测交付记录](../../harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md)。
+
+复算：
+
+```powershell
+$env:TEMP='D:\tmp'; $env:TMP='D:\tmp'
+openclaw_runtime/node_modules/.bin/tsx scripts/context-inline-spill-benefit-loop-eval.mts --mode deterministic --out D:/tmp/context-inline-spill-benefit
+$env:CONTEXT_INLINE_SPILL_API_KEY='<owner provided>'
+$env:CONTEXT_INLINE_SPILL_BASE_URL='http://127.0.0.1:3065/v1'
+$env:CONTEXT_INLINE_SPILL_MODEL='space-bunny'
+openclaw_runtime/node_modules/.bin/tsx scripts/context-inline-spill-benefit-loop-eval.mts --mode live --out D:/tmp/context-inline-spill-benefit
+```
+
+边界：
+
+- 这是 agent 驱动的评测器外循环，不是 Electron/Gateway 的完整产品回合；Gateway 审批、system prompt、
+  bootstrap 与多 agent 编排不在覆盖内。
+- deterministic 模式使用脚本策略，只能证明 harness 自身正确，不能当作模型自主性的证据。
+- 费用只有 provider 返回计费单位时才记录，否则 `not-run`；token 用量逐次记录。
+- 结论只覆盖该语料与该模型，不外推为产品质量、GA 或发布批准。

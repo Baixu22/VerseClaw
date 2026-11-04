@@ -1,0 +1,2511 @@
+{
+  "schema": "ContextInlineSpillBenefitRuns/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit",
+  "records": [
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "deploy-token",
+      "repetition": 0,
+      "sessionId": "benefit-deploy-token-baseline-no-reference-0",
+      "success": false,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 199,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.01,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recall_not_attempted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.01,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-deploy-token-baseline-no-reference-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+        "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+        "byteLength": 41143
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "deploy-token",
+      "repetition": 0,
+      "sessionId": "benefit-deploy-token-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16154,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.226,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "DEPLOY_TOKEN_7f31ab"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.207,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.011,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"DEPLOY_TOKEN_7f31ab\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-33e0b0",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-deploy-token-reference-visible-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+            "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5857,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-d4d5ee",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-deploy-token-reference-visible-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+            "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-deploy-token-reference-visible-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+        "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+        "byteLength": 41143
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "deploy-token",
+      "repetition": 0,
+      "sessionId": "benefit-deploy-token-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39188,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.027,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "DEPLOY_TOKEN_7f31ab"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.01,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.01,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"DEPLOY_TOKEN_7f31ab\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-1852db",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-deploy-token-recall-stable-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+            "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5853,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-bd09d6",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-deploy-token-recall-stable-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+            "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5857,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-deploy-token-recall-stable-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+        "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+        "byteLength": 41143
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "deploy-token",
+      "repetition": 0,
+      "sessionId": "benefit-deploy-token-retention-off-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39188,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.056,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "DEPLOY_TOKEN_7f31ab"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.016,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.024,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.016,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"DEPLOY_TOKEN_7f31ab\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-595531",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-deploy-token-retention-off-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+            "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5853,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-f32a50",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-deploy-token-retention-off-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+            "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5857,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-deploy-token-retention-off-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+        "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+        "byteLength": 41143
+      }
+    },
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "db-passport",
+      "repetition": 0,
+      "sessionId": "benefit-db-passport-baseline-no-reference-0",
+      "success": false,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 182,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.007,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recall_not_attempted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-db-passport-baseline-no-reference-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+        "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+        "byteLength": 42142
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "db-passport",
+      "repetition": 0,
+      "sessionId": "benefit-db-passport-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16137,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.038,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "DB_PASSPORT_9c02de"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.024,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"DB_PASSPORT_9c02de\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-c31c20",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-db-passport-reference-visible-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+            "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5855,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-28a448",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-db-passport-reference-visible-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+            "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5859,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-db-passport-reference-visible-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+        "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+        "byteLength": 42142
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "db-passport",
+      "repetition": 0,
+      "sessionId": "benefit-db-passport-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39171,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.014,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "DB_PASSPORT_9c02de"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"DB_PASSPORT_9c02de\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-3a392d",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-db-passport-recall-stable-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+            "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5851,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-da7fad",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-db-passport-recall-stable-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+            "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5855,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-db-passport-recall-stable-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+        "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+        "byteLength": 42142
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "db-passport",
+      "repetition": 0,
+      "sessionId": "benefit-db-passport-retention-off-0",
+      "success": false,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39171,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.021,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recalled_text_evicted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-2447fd",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-db-passport-retention-off-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+            "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5851,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-4e981f",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-db-passport-retention-off-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+            "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5855,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-db-passport-retention-off-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+        "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+        "byteLength": 42142
+      }
+    },
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "cache-seed",
+      "repetition": 0,
+      "sessionId": "benefit-cache-seed-baseline-no-reference-0",
+      "success": false,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 168,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.005,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recall_not_attempted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-cache-seed-baseline-no-reference-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+        "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+        "byteLength": 43141
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "cache-seed",
+      "repetition": 0,
+      "sessionId": "benefit-cache-seed-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16123,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.017,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "CACHE_SEED_44aa10"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"CACHE_SEED_44aa10\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-16eb0c",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-cache-seed-reference-visible-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+            "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5853,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-6498dc",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-cache-seed-reference-visible-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+            "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5857,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-cache-seed-reference-visible-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+        "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+        "byteLength": 43141
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "cache-seed",
+      "repetition": 0,
+      "sessionId": "benefit-cache-seed-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39157,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.016,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "CACHE_SEED_44aa10"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"CACHE_SEED_44aa10\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-1014a2",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-cache-seed-recall-stable-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+            "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5849,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-9c23c7",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-cache-seed-recall-stable-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+            "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5853,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-cache-seed-recall-stable-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+        "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+        "byteLength": 43141
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "cache-seed",
+      "repetition": 0,
+      "sessionId": "benefit-cache-seed-retention-off-0",
+      "success": false,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39157,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.023,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recalled_text_evicted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.01,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-615999",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-cache-seed-retention-off-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+            "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5849,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-01e7c1",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-cache-seed-retention-off-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+            "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5853,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-cache-seed-retention-off-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+        "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+        "byteLength": 43141
+      }
+    },
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "signing-key",
+      "repetition": 0,
+      "sessionId": "benefit-signing-key-baseline-no-reference-0",
+      "success": false,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 180,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.003,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recall_not_attempted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.003,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-signing-key-baseline-no-reference-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+        "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+        "byteLength": 41142
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "signing-key",
+      "repetition": 0,
+      "sessionId": "benefit-signing-key-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16135,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.017,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "SIGNING_KEY_b71c55"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"SIGNING_KEY_b71c55\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-060254",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-signing-key-reference-visible-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+            "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5855,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-3aa9f0",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-signing-key-reference-visible-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+            "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5859,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-signing-key-reference-visible-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+        "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+        "byteLength": 41142
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "signing-key",
+      "repetition": 0,
+      "sessionId": "benefit-signing-key-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39169,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.013,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "SIGNING_KEY_b71c55"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"SIGNING_KEY_b71c55\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-d99fe5",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-signing-key-recall-stable-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+            "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5851,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-c84566",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-signing-key-recall-stable-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+            "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5855,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-signing-key-recall-stable-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+        "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+        "byteLength": 41142
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "signing-key",
+      "repetition": 0,
+      "sessionId": "benefit-signing-key-retention-off-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39169,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.019,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "SIGNING_KEY_b71c55"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"SIGNING_KEY_b71c55\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-18cfea",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-signing-key-retention-off-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+            "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5851,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-0e90bb",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-signing-key-retention-off-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+            "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5855,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-signing-key-retention-off-0/signing-key-0-adce01dd6200b35b.context-archive.json",
+        "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+        "byteLength": 41142
+      }
+    },
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "tenant-id",
+      "repetition": 0,
+      "sessionId": "benefit-tenant-id-baseline-no-reference-0",
+      "success": false,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 167,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.003,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recall_not_attempted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.003,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-tenant-id-baseline-no-reference-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+        "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+        "byteLength": 42140
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "tenant-id",
+      "repetition": 0,
+      "sessionId": "benefit-tenant-id-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16122,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.023,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "TENANT_ID_3d9e77"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"TENANT_ID_3d9e77\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-db5153",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-tenant-id-reference-visible-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+            "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5851,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-c217c2",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-tenant-id-reference-visible-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+            "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5855,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-tenant-id-reference-visible-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+        "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+        "byteLength": 42140
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "tenant-id",
+      "repetition": 0,
+      "sessionId": "benefit-tenant-id-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39156,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.024,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "TENANT_ID_3d9e77"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.01,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"TENANT_ID_3d9e77\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-8432a5",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-tenant-id-recall-stable-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+            "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5847,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-ba36e1",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-tenant-id-recall-stable-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+            "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5851,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-tenant-id-recall-stable-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+        "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+        "byteLength": 42140
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "tenant-id",
+      "repetition": 0,
+      "sessionId": "benefit-tenant-id-retention-off-0",
+      "success": false,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39156,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.035,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recalled_text_evicted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.011,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.017,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-fa7061",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-tenant-id-retention-off-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+            "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5847,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-120ea8",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-tenant-id-retention-off-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+            "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5851,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-tenant-id-retention-off-0/tenant-id-0-49751092506a1dc9.context-archive.json",
+        "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+        "byteLength": 42140
+      }
+    },
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "migration-hash",
+      "repetition": 0,
+      "sessionId": "benefit-migration-hash-baseline-no-reference-0",
+      "success": false,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 172,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.003,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recall_not_attempted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.003,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-migration-hash-baseline-no-reference-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+        "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+        "byteLength": 43145
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "migration-hash",
+      "repetition": 0,
+      "sessionId": "benefit-migration-hash-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16127,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.016,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "MIGRATION_HASH_a1f4c8"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"MIGRATION_HASH_a1f4c8\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-4ac79f",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-migration-hash-reference-visible-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+            "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-d11c27",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-migration-hash-reference-visible-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+            "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5865,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-migration-hash-reference-visible-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+        "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+        "byteLength": 43145
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "migration-hash",
+      "repetition": 0,
+      "sessionId": "benefit-migration-hash-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39161,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.014,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": "MIGRATION_HASH_a1f4c8"
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":\"MIGRATION_HASH_a1f4c8\"}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-aabc4c",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-migration-hash-recall-stable-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+            "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5857,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-30b8f8",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-migration-hash-recall-stable-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+            "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-migration-hash-recall-stable-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+        "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+        "byteLength": 43145
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "migration-hash",
+      "repetition": 0,
+      "sessionId": "benefit-migration-hash-retention-off-0",
+      "success": false,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39161,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.023,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": "recalled_text_evicted",
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-43914f",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-migration-hash-retention-off-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+            "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5857,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-d58a17",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-migration-hash-retention-off-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+            "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": true
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-migration-hash-retention-off-0/migration-hash-0-6c72c327950674d6.context-archive.json",
+        "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+        "byteLength": 43145
+      }
+    },
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "control-absent-1",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-1-baseline-no-reference-0",
+      "success": true,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 214,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.002,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.002,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-1-baseline-no-reference-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "control-absent-1",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-1-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16169,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.018,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.003,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-03970f",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-1-reference-visible-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5865,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-10324d",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-1-reference-visible-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5868,
+          "result_has_oracle": false
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-1-reference-visible-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "control-absent-1",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-1-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39203,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.013,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.003,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-4a9bfc",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-1-recall-stable-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-373634",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-1-recall-stable-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5864,
+          "result_has_oracle": false
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-1-recall-stable-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "control-absent-1",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-1-retention-off-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39203,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.034,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.016,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.011,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-97ca43",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-1-retention-off-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-577fe7",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-1-retention-off-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5864,
+          "result_has_oracle": false
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-1-retention-off-0/control-absent-1-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    },
+    {
+      "arm": "baseline-no-reference",
+      "fixtureId": "control-absent-2",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-2-baseline-no-reference-0",
+      "success": true,
+      "recallAttempted": false,
+      "recallOk": false,
+      "turns": 1,
+      "mainContextChars": 211,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.003,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.003,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-2-baseline-no-reference-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    },
+    {
+      "arm": "reference-visible",
+      "fixtureId": "control-absent-2",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-2-reference-visible-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 16166,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.03,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.018,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.004,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-f44c90",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-2-reference-visible-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5865,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-a93da8",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-2-reference-visible-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5868,
+          "result_has_oracle": false
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-2-reference-visible-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    },
+    {
+      "arm": "recall-stable",
+      "fixtureId": "control-absent-2",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-2-recall-stable-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39200,
+      "retainedAtEnd": 2,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.015,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.007,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.005,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.003,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-5b67c2",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-2-recall-stable-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-55c539",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-2-recall-stable-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5864,
+          "result_has_oracle": false
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-2-recall-stable-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    },
+    {
+      "arm": "retention-off",
+      "fixtureId": "control-absent-2",
+      "repetition": 0,
+      "sessionId": "benefit-control-absent-2-retention-off-0",
+      "success": true,
+      "recallAttempted": true,
+      "recallOk": true,
+      "turns": 3,
+      "mainContextChars": 39200,
+      "retainedAtEnd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "latencyMs": 0.026,
+      "cost": {
+        "status": "not-run",
+        "reason": "Provider billing rates were not supplied; token usage is recorded."
+      },
+      "failureClass": null,
+      "finalAnswer": {
+        "ok": true,
+        "value": null
+      },
+      "providerCalls": [
+        {
+          "turn": 0,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.008,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 1,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.012,
+          "usage": null,
+          "tool_call_count": 1,
+          "text": "",
+          "failure_class": null
+        },
+        {
+          "turn": 2,
+          "status": "executed",
+          "http_status": null,
+          "latency_ms": 0.006,
+          "usage": null,
+          "tool_call_count": 0,
+          "text": "{\"value\":null}",
+          "failure_class": null
+        }
+      ],
+      "toolCalls": [
+        {
+          "call_id": "det-0-3da524",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-2-retention-off-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 0,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5861,
+          "result_has_oracle": false
+        },
+        {
+          "call_id": "det-1-6a44fa",
+          "name": "context_archive_recall",
+          "arguments": {
+            "archive_uri": "context-archive://benefit-control-absent-2-retention-off-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+            "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+            "offset": 5500,
+            "max_chars": 5500
+          },
+          "ok": true,
+          "result_chars": 5864,
+          "result_has_oracle": false
+        }
+      ],
+      "archive": {
+        "uri": "context-archive://benefit-control-absent-2-retention-off-0/control-absent-2-0-e8578ed4269f57b7.context-archive.json",
+        "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+        "byteLength": 45466
+      }
+    }
+  ]
+}
