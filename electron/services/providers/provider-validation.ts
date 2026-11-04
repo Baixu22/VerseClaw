@@ -11,6 +11,11 @@ import type {
   ProviderValidationResult,
   ProviderValidationState,
 } from '@shared/host-api/contract';
+import {
+  evaluateProviderNetworkTarget,
+  resolveProviderNetworkPolicy,
+  type ProviderNetworkBlockedReason,
+} from '../../../openclaw_runtime/src/agents/provider-network-policy';
 
 type ValidationProfile =
   | 'openai-completions'
@@ -250,6 +255,108 @@ function extractModelIds(data: unknown): string[] {
     }
   }
   return [];
+}
+
+/**
+ * TF-0734: one total deadline for the whole validation flow (model listing
+ * plus any fallback probe), not a per-request timeout that stacks.
+ */
+export const PROVIDER_VALIDATION_DEADLINE_MS = 15_000;
+
+type ValidationContext = {
+  baseUrl?: string;
+  trustConfiguredBaseUrlOrigin: boolean;
+  deadlineMs: number;
+  deadlineAtMs: number;
+  signal: AbortSignal;
+};
+
+function originOf(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return undefined;
+    return parsed.origin.toLowerCase();
+  } catch {
+    return undefined;
+  }
+}
+
+function createValidationContext(providerType: string, baseUrl: string | undefined): ValidationContext {
+  // The runtime transport grants exact-origin trust to operator-configured
+  // custom/local endpoints, never to a known native provider default host.
+  // Mirror that: same as the registry default => no extra trust; any other
+  // explicit base URL => operator-configured endpoint.
+  const registryOrigin = originOf(getProviderConfig(providerType)?.baseUrl);
+  const origin = originOf(baseUrl);
+  const isRegistryDefault = Boolean(origin && registryOrigin && origin === registryOrigin);
+  return {
+    baseUrl,
+    trustConfiguredBaseUrlOrigin: Boolean(origin) && !isRegistryDefault,
+    deadlineMs: PROVIDER_VALIDATION_DEADLINE_MS,
+    deadlineAtMs: Date.now() + PROVIDER_VALIDATION_DEADLINE_MS,
+    signal: AbortSignal.timeout(PROVIDER_VALIDATION_DEADLINE_MS),
+  };
+}
+
+function blockedValidationResult(params: {
+  blockedReason: ProviderNetworkBlockedReason;
+  policyFingerprint: string;
+  deadlineMs: number;
+}): ProviderValidationResult {
+  return {
+    valid: false,
+    reachable: 'unreachable',
+    auth: 'unknown',
+    protocol: 'unknown',
+    model: 'unknown',
+    rateLimited: false,
+    ready: false,
+    reason: 'blocked',
+    error: `Blocked by provider network policy: ${params.blockedReason}`,
+    policyFingerprint: params.policyFingerprint,
+    stage: 'preflight',
+    blockedReason: params.blockedReason,
+    deadlineMs: params.deadlineMs,
+  };
+}
+
+/** Resolve + enforce policy for one probe URL before any bytes go out. */
+function prepareValidationTarget(
+  context: ValidationContext,
+  url: string,
+): { blocked?: ProviderValidationResult; policyFingerprint: string } {
+  const policy = resolveProviderNetworkPolicy({
+    baseUrl: context.baseUrl,
+    requestUrl: url,
+    trustConfiguredBaseUrlOrigin: context.trustConfiguredBaseUrlOrigin,
+  });
+  const decision = evaluateProviderNetworkTarget(url, policy.policy);
+  if (!decision.allowed) {
+    return {
+      blocked: blockedValidationResult({
+        blockedReason: decision.blockedReason,
+        policyFingerprint: policy.fingerprint,
+        deadlineMs: context.deadlineMs,
+      }),
+      policyFingerprint: policy.fingerprint,
+    };
+  }
+  return { policyFingerprint: policy.fingerprint };
+}
+
+function withPolicyMetadata(
+  result: ProviderValidationResult,
+  context: ValidationContext,
+  stage: 'models' | 'probe' | 'transport',
+  policyFingerprint: string,
+): ProviderValidationResult {
+  return {
+    ...result,
+    policyFingerprint,
+    stage,
+    deadlineMs: context.deadlineMs,
+  };
 }
 
 const UNKNOWN_VALIDATION_STATE: ProviderValidationState = {
@@ -550,18 +657,31 @@ async function performProviderValidationRequest(
   providerLabel: string,
   url: string,
   headers: Record<string, string>,
+  context: ValidationContext,
   options?: { requireModel?: boolean },
 ): Promise<ClassifiedValidationResult> {
+  const prepared = prepareValidationTarget(context, url);
+  if (prepared.blocked) return prepared.blocked;
   try {
     logValidationRequest(providerLabel, 'GET', url, headers);
-    const response = await proxyAwareFetch(url, { headers });
+    const response = await proxyAwareFetch(url, { headers, signal: context.signal });
     logValidationStatus(providerLabel, response.status);
     const data = await response.json().catch(() => ({}));
     // Model-listing probes require a non-empty list to count as ready; the
     // OpenRouter /auth/key probe proves the credential only.
-    return classifyHttpResponse('models', response.status, data, response.headers, options);
+    return withPolicyMetadata(
+      classifyHttpResponse('models', response.status, data, response.headers, options),
+      context,
+      'models',
+      prepared.policyFingerprint,
+    );
   } catch (error) {
-    return classifyNetworkFailure(error);
+    return withPolicyMetadata(
+      classifyNetworkFailure(error),
+      context,
+      'transport',
+      prepared.policyFingerprint,
+    );
   }
 }
 
@@ -594,8 +714,9 @@ async function validateOpenAiCompatibleKey(
   providerType: string,
   apiKey: string,
   apiProtocol: 'openai-completions' | 'openai-responses',
-  baseUrl?: string,
-  auth?: ProviderValidationAuthInput,
+  baseUrl: string | undefined,
+  auth: ProviderValidationAuthInput | undefined,
+  context: ValidationContext,
 ): Promise<ValidationResult> {
   const trimmedBaseUrl = baseUrl?.trim();
   if (!trimmedBaseUrl) {
@@ -608,16 +729,16 @@ async function validateOpenAiCompatibleKey(
   const { modelsUrl, probeUrl } = resolveOpenAiProbeUrls(trimmedBaseUrl, apiProtocol);
   const authModelsUrl = applyProviderValidationAuthQuery(modelsUrl, auth, apiKey);
   const authProbeUrl = applyProviderValidationAuthQuery(probeUrl, auth, apiKey);
-  const modelsResult = await performProviderValidationRequest(providerType, authModelsUrl, authHeaders, { requireModel: true });
+  const modelsResult = await performProviderValidationRequest(providerType, authModelsUrl, authHeaders, context, { requireModel: true });
 
   if (shouldFallbackFromModelsProbe(modelsResult)) {
     console.log(
       `[clawx-validate] ${providerType} /models returned ${modelsResult.status}, falling back to ${apiProtocol} probe`,
     );
     if (apiProtocol === 'openai-responses') {
-      return await performResponsesProbe(providerType, authProbeUrl, authHeaders);
+      return await performResponsesProbe(providerType, authProbeUrl, authHeaders, context);
     }
-    return await performChatCompletionsProbe(providerType, authProbeUrl, authHeaders);
+    return await performChatCompletionsProbe(providerType, authProbeUrl, authHeaders, context);
   }
 
   return modelsResult;
@@ -627,7 +748,10 @@ async function performResponsesProbe(
   providerLabel: string,
   url: string,
   headers: Record<string, string>,
+  context: ValidationContext,
 ): Promise<ValidationResult> {
+  const prepared = prepareValidationTarget(context, url);
+  if (prepared.blocked) return prepared.blocked;
   try {
     logValidationRequest(providerLabel, 'POST', url, headers);
     const response = await proxyAwareFetch(url, {
@@ -637,12 +761,23 @@ async function performResponsesProbe(
         model: 'validation-probe',
         input: 'hi',
       }),
+      signal: context.signal,
     });
     logValidationStatus(providerLabel, response.status);
     const data = await response.json().catch(() => ({}));
-    return classifyProbeResponse(response.status, data, response.headers);
+    return withPolicyMetadata(
+      classifyProbeResponse(response.status, data, response.headers),
+      context,
+      'probe',
+      prepared.policyFingerprint,
+    );
   } catch (error) {
-    return classifyNetworkFailure(error);
+    return withPolicyMetadata(
+      classifyNetworkFailure(error),
+      context,
+      'transport',
+      prepared.policyFingerprint,
+    );
   }
 }
 
@@ -650,7 +785,10 @@ async function performChatCompletionsProbe(
   providerLabel: string,
   url: string,
   headers: Record<string, string>,
+  context: ValidationContext,
 ): Promise<ValidationResult> {
+  const prepared = prepareValidationTarget(context, url);
+  if (prepared.blocked) return prepared.blocked;
   try {
     logValidationRequest(providerLabel, 'POST', url, headers);
     const response = await proxyAwareFetch(url, {
@@ -661,12 +799,23 @@ async function performChatCompletionsProbe(
         messages: [{ role: 'user', content: 'hi' }],
         max_tokens: 1,
       }),
+      signal: context.signal,
     });
     logValidationStatus(providerLabel, response.status);
     const data = await response.json().catch(() => ({}));
-    return classifyProbeResponse(response.status, data, response.headers);
+    return withPolicyMetadata(
+      classifyProbeResponse(response.status, data, response.headers),
+      context,
+      'probe',
+      prepared.policyFingerprint,
+    );
   } catch (error) {
-    return classifyNetworkFailure(error);
+    return withPolicyMetadata(
+      classifyNetworkFailure(error),
+      context,
+      'transport',
+      prepared.policyFingerprint,
+    );
   }
 }
 
@@ -674,7 +823,10 @@ async function performAnthropicMessagesProbe(
   providerLabel: string,
   url: string,
   headers: Record<string, string>,
+  context: ValidationContext,
 ): Promise<ValidationResult> {
+  const prepared = prepareValidationTarget(context, url);
+  if (prepared.blocked) return prepared.blocked;
   try {
     logValidationRequest(providerLabel, 'POST', url, headers);
     const response = await proxyAwareFetch(url, {
@@ -685,30 +837,43 @@ async function performAnthropicMessagesProbe(
         messages: [{ role: 'user', content: 'hi' }],
         max_tokens: 1,
       }),
+      signal: context.signal,
     });
     logValidationStatus(providerLabel, response.status);
     const data = await response.json().catch(() => ({}));
-    return classifyProbeResponse(response.status, data, response.headers);
+    return withPolicyMetadata(
+      classifyProbeResponse(response.status, data, response.headers),
+      context,
+      'probe',
+      prepared.policyFingerprint,
+    );
   } catch (error) {
-    return classifyNetworkFailure(error);
+    return withPolicyMetadata(
+      classifyNetworkFailure(error),
+      context,
+      'transport',
+      prepared.policyFingerprint,
+    );
   }
 }
 
 async function validateGoogleQueryKey(
   providerType: string,
   apiKey: string,
-  baseUrl?: string,
+  baseUrl: string | undefined,
+  context: ValidationContext,
 ): Promise<ValidationResult> {
   const base = normalizeBaseUrl(baseUrl || 'https://generativelanguage.googleapis.com/v1beta');
   const url = `${base}/models?pageSize=1&key=${encodeURIComponent(apiKey)}`;
-  return await performProviderValidationRequest(providerType, url, {});
+  return await performProviderValidationRequest(providerType, url, {}, context);
 }
 
 async function validateAnthropicHeaderKey(
   providerType: string,
   apiKey: string,
-  baseUrl?: string,
-  auth?: ProviderValidationAuthInput,
+  baseUrl: string | undefined,
+  auth: ProviderValidationAuthInput | undefined,
+  context: ValidationContext,
 ): Promise<ValidationResult> {
   const rawBase = normalizeBaseUrl(baseUrl || 'https://api.anthropic.com/v1');
   const base = rawBase.endsWith('/v1') ? rawBase : `${rawBase}/v1`;
@@ -722,7 +887,7 @@ async function validateAnthropicHeaderKey(
     ...authHeaders,
   };
 
-  const modelsResult = await performProviderValidationRequest(providerType, url, headers, { requireModel: true });
+  const modelsResult = await performProviderValidationRequest(providerType, url, headers, context, { requireModel: true });
 
   // If the endpoint doesn't implement /models (like Minimax Anthropic compatibility), fallback to a /messages probe.
   if (
@@ -735,7 +900,7 @@ async function validateAnthropicHeaderKey(
       `[clawx-validate] ${providerType} /models returned error, falling back to /messages probe`,
     );
     const messagesUrl = applyProviderValidationAuthQuery(`${base}/messages`, auth, apiKey);
-    return await performAnthropicMessagesProbe(providerType, messagesUrl, headers);
+    return await performAnthropicMessagesProbe(providerType, messagesUrl, headers, context);
   }
 
   return modelsResult;
@@ -744,17 +909,19 @@ async function validateAnthropicHeaderKey(
 async function validateOpenRouterKey(
   providerType: string,
   apiKey: string,
+  context: ValidationContext,
 ): Promise<ValidationResult> {
   const url = 'https://openrouter.ai/api/v1/auth/key';
   const headers = { Authorization: `Bearer ${apiKey}` };
-  return await performProviderValidationRequest(providerType, url, headers, { requireModel: false });
+  return await performProviderValidationRequest(providerType, url, headers, context, { requireModel: false });
 }
 
 async function listOpenAiCompatibleModels(
   providerType: string,
   apiKey: string,
-  baseUrl?: string,
-  auth?: ProviderValidationAuthInput,
+  baseUrl: string | undefined,
+  auth: ProviderValidationAuthInput | undefined,
+  context: ValidationContext,
 ): Promise<ProviderModelListResult> {
   const trimmedBaseUrl = baseUrl?.trim();
   if (!trimmedBaseUrl) {
@@ -770,8 +937,12 @@ async function listOpenAiCompatibleModels(
     Authorization: `Bearer ${apiKey}`,
   };
   try {
+    const prepared = prepareValidationTarget(context, url);
+    if (prepared.blocked) {
+      return { success: false, models: [], error: prepared.blocked.error, state: toValidationState(prepared.blocked) };
+    }
     logValidationRequest(providerType, 'GET', url, headers);
-    const response = await proxyAwareFetch(url, { headers });
+    const response = await proxyAwareFetch(url, { headers, signal: context.signal });
     logValidationStatus(providerType, response.status);
     const data = await response.json().catch(() => ({}));
     const classified = classifyAuthResponse(response.status, data, response.headers);
@@ -804,13 +975,18 @@ async function listOpenAiCompatibleModels(
 async function listGoogleModels(
   providerType: string,
   apiKey: string,
-  baseUrl?: string,
+  baseUrl: string | undefined,
+  context: ValidationContext,
 ): Promise<ProviderModelListResult> {
   const base = normalizeBaseUrl(baseUrl || 'https://generativelanguage.googleapis.com/v1beta');
   const url = `${base}/models?key=${encodeURIComponent(apiKey)}`;
   try {
+    const prepared = prepareValidationTarget(context, url);
+    if (prepared.blocked) {
+      return { success: false, models: [], error: prepared.blocked.error, state: toValidationState(prepared.blocked) };
+    }
     logValidationRequest(providerType, 'GET', url, {});
-    const response = await proxyAwareFetch(url, {});
+    const response = await proxyAwareFetch(url, { signal: context.signal });
     logValidationStatus(providerType, response.status);
     const data = await response.json().catch(() => ({}));
     const result = classifyAuthResponse(response.status, data, response.headers);
@@ -839,8 +1015,9 @@ async function listGoogleModels(
 async function listAnthropicModels(
   providerType: string,
   apiKey: string,
-  baseUrl?: string,
-  auth?: ProviderValidationAuthInput,
+  baseUrl: string | undefined,
+  auth: ProviderValidationAuthInput | undefined,
+  context: ValidationContext,
 ): Promise<ProviderModelListResult> {
   const rawBase = normalizeBaseUrl(baseUrl || 'https://api.anthropic.com/v1');
   const base = rawBase.endsWith('/v1') ? rawBase : `${rawBase}/v1`;
@@ -854,8 +1031,12 @@ async function listAnthropicModels(
     ...authHeaders,
   };
   try {
+    const prepared = prepareValidationTarget(context, url);
+    if (prepared.blocked) {
+      return { success: false, models: [], error: prepared.blocked.error, state: toValidationState(prepared.blocked) };
+    }
     logValidationRequest(providerType, 'GET', url, headers);
-    const response = await proxyAwareFetch(url, { headers });
+    const response = await proxyAwareFetch(url, { headers, signal: context.signal });
     logValidationStatus(providerType, response.status);
     const data = await response.json().catch(() => ({}));
     const classified = classifyAuthResponse(response.status, data, response.headers);
@@ -893,6 +1074,9 @@ export async function validateApiKeyWithProvider(
     return noAuthValidationResult();
   }
 
+  // TF-0734: one context (policy + total deadline) per validation flow.
+  const context = createValidationContext(providerType, resolvedBaseUrl);
+
   const trimmedKey = apiKey.trim();
   if (!trimmedKey) {
     return unknownValidationResult('API key is required');
@@ -907,6 +1091,7 @@ export async function validateApiKeyWithProvider(
           'openai-completions',
           resolvedBaseUrl,
           auth,
+          context,
         );
       case 'openai-responses':
         return await validateOpenAiCompatibleKey(
@@ -915,18 +1100,28 @@ export async function validateApiKeyWithProvider(
           'openai-responses',
           resolvedBaseUrl,
           auth,
+          context,
         );
       case 'google-query-key':
-        return await validateGoogleQueryKey(providerType, trimmedKey, resolvedBaseUrl);
+        return await validateGoogleQueryKey(providerType, trimmedKey, resolvedBaseUrl, context);
       case 'anthropic-header':
-        return await validateAnthropicHeaderKey(providerType, trimmedKey, resolvedBaseUrl, auth);
+        return await validateAnthropicHeaderKey(providerType, trimmedKey, resolvedBaseUrl, auth, context);
       case 'openrouter':
-        return await validateOpenRouterKey(providerType, trimmedKey);
+        return await validateOpenRouterKey(providerType, trimmedKey, createValidationContext('openrouter', 'https://openrouter.ai/api/v1'));
       default:
         return unknownValidationResult(`Unsupported validation profile for provider: ${providerType}`);
     }
   } catch (error) {
-    return classifyNetworkFailure(error);
+    return withPolicyMetadata(
+      classifyNetworkFailure(error),
+      context,
+      'transport',
+      resolveProviderNetworkPolicy({
+        baseUrl: resolvedBaseUrl,
+        requestUrl: resolvedBaseUrl ?? '',
+        trustConfiguredBaseUrlOrigin: context.trustConfiguredBaseUrlOrigin,
+      }).fingerprint,
+    );
   }
 }
 
@@ -939,6 +1134,7 @@ export async function listModelsWithProvider(
   const resolvedBaseUrl = options?.baseUrl || getProviderConfig(providerType)?.baseUrl;
   const trimmedKey = apiKey.trim();
   const auth = options?.auth;
+  const context = createValidationContext(providerType, resolvedBaseUrl);
 
   if (profile === 'none') {
     return {
@@ -966,13 +1162,13 @@ export async function listModelsWithProvider(
 
   switch (profile) {
     case 'google-query-key':
-      return await listGoogleModels(providerType, trimmedKey, resolvedBaseUrl);
+      return await listGoogleModels(providerType, trimmedKey, resolvedBaseUrl, context);
     case 'anthropic-header':
-      return await listAnthropicModels(providerType, trimmedKey, resolvedBaseUrl, auth);
+      return await listAnthropicModels(providerType, trimmedKey, resolvedBaseUrl, auth, context);
     case 'openrouter':
     case 'openai-completions':
     case 'openai-responses':
-      return await listOpenAiCompatibleModels(providerType, trimmedKey, resolvedBaseUrl, auth);
+      return await listOpenAiCompatibleModels(providerType, trimmedKey, resolvedBaseUrl, auth, context);
     default:
       return {
         success: false,

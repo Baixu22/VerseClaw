@@ -16,6 +16,13 @@ touchedAreas:
   - openclaw_runtime/src/agents/request-attempt-budget.ts
   - openclaw_runtime/src/agents/request-attempt-budget.test.ts
   - openclaw_runtime/src/agents/provider-transport-fetch.ts
+  - openclaw_runtime/src/agents/provider-network-policy.ts
+  - tests/unit/semantic-convergence-provider-network-parity.test.ts
+  - tests/unit/semantic-convergence-provider-validation-matrix.test.ts
+  - scripts/semantic-convergence-baseline.mjs
+  - docs/dev/network-protocol-reliability/provider-health.md
+  - docs/dev/semantic-convergence-benefit-20261104.md
+  - docs/dev/semantic-convergence-program-20261104.md
   - openclaw_runtime/src/agents/model-fallback.ts
   - openclaw_runtime/src/agents/model-fallback.loop-termination.test.ts
   - openclaw_runtime/src/agents/retry-budget-invariants.test.ts

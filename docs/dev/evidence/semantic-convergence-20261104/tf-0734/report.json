@@ -1,0 +1,96 @@
+{
+  "schema": "SemanticConvergenceNodeReport/v1",
+  "node": "TF-0734",
+  "title": "验证与推理共享请求策略、SSRF 与 deadline",
+  "generatedAt": "2026-11-04T00:00:00.000Z",
+  "driven_by": "agent",
+  "actor": "codex/mainline",
+  "base": {
+    "parentCommit": "9d50e8ca1"
+  },
+  "metrics": {
+    "NET-1": {
+      "before": 0,
+      "after": 1,
+      "unit": "boolean",
+      "method": "static"
+    },
+    "NET-2": {
+      "before": 0,
+      "after": 1,
+      "unit": "boolean",
+      "method": "static"
+    },
+    "NET-3": {
+      "before": 0,
+      "after": 4,
+      "unit": "probes with total deadline",
+      "method": "static"
+    },
+    "NET-4": {
+      "before": 0,
+      "after": 1,
+      "unit": "policy parity",
+      "method": "static+behavioral"
+    },
+    "policy_parity_rate": {
+      "before": "0%",
+      "after": "100%",
+      "unit": "targets",
+      "method": "behavioral"
+    }
+  },
+  "tests": {
+    "providerNetworkSuites": {
+      "files": 10,
+      "total": 170,
+      "failed": 0
+    },
+    "runtimeProviderSuites": {
+      "files": 2,
+      "total": 33,
+      "failed": 0
+    },
+    "parityTargets": 7,
+    "failClosedTargets": 5
+  },
+  "staticChecks": {
+    "typecheckNode": "passed",
+    "typecheckWeb": "passed",
+    "buildVite": "passed",
+    "eslintTargeted": "passed",
+    "i18nLint": "passed",
+    "contractCheck": "passed",
+    "harnessValidate": "passed"
+  },
+  "evidence": {
+    "staticBefore": "docs/dev/evidence/semantic-convergence-20261104/tf-0734/network-before.json",
+    "staticAfter": "docs/dev/evidence/semantic-convergence-20261104/tf-0734/network-after.json",
+    "unitTests": "docs/dev/evidence/semantic-convergence-20261104/tf-0734/unit-tests.json",
+    "behavioral": "tests/unit/semantic-convergence-provider-network-parity.test.ts",
+    "sharedPolicy": "openclaw_runtime/src/agents/provider-network-policy.ts"
+  },
+  "changes": [
+    "Added one shared provider network policy resolver used by both buildGuardedModelFetch (inference) and provider validation.",
+    "The resolver produces a stable SHA-256 policyFingerprint over the normalized SSRF/private-network/origin/proxy inputs.",
+    "Validation now evaluates every probe target before sending: metadata, link-local, malformed URL, unsupported protocol and non-allowlisted hosts fail closed with blockedReason and stage=preflight.",
+    "One total 15s validation deadline is shared by the model listing and the fallback probe; all four probe families receive the same AbortSignal.",
+    "Validation results now carry policyFingerprint, stage, blockedReason and deadlineMs.",
+    "provider-transport-fetch no longer maintains its own SSRF policy assembly; it delegates to the shared resolver."
+  ],
+  "limitations": [
+    "Validation applies the pre-flight host/IP decision and the shared fingerprint, then uses the Electron-owned transport (net.fetch / NetworkPool). DNS-level socket pinning remains in the runtime's fetchWithSsrFGuard.",
+    "The parity test compares the shared resolver's outputs and asserts the inference source imports it; it does not perform a live inference request.",
+    "No live third-party provider was contacted; no real-human evidence is claimed."
+  ],
+  "notChanged": [
+    "No product lock, default value, or release status changed.",
+    "No paid provider request was made."
+  ],
+  "candidate": {
+    "branch": "codex/semantic-convergence-20261104",
+    "worktree": "D:\\ClawX-work\\semantic-convergence-20261104",
+    "dirtyAtTestTime": false,
+    "note": "Tests and static checks ran on the clean parent tree; this evidence file is part of the same branch commit."
+  }
+}

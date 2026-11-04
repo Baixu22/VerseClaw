@@ -17,7 +17,12 @@ const OUT_FILE = process.env.SEMANTIC_CONVERGENCE_OUT
 function read(path) {
   if (process.env.SEMANTIC_CONVERGENCE_SOURCE === "git-head") {
     const ref = process.env.SEMANTIC_CONVERGENCE_REF ?? "HEAD";
-    return execFileSync("git", ["show", `${ref}:${path}`], { cwd: ROOT, encoding: "utf8" });
+    try {
+      return execFileSync("git", ["show", `${ref}:${path}`], { cwd: ROOT, encoding: "utf8" });
+    } catch {
+      // File did not exist at the baseline ref (new in the current change set).
+      return "";
+    }
   }
   return readFileSync(join(ROOT, path), "utf8");
 }
@@ -123,8 +128,31 @@ const legacyCollapsedClasses = [
 ].filter(Boolean).length;
 const falseReadyScenarios = legacyCollapsedClasses;
 
-const usesGuardedFetch = providerValidation.includes("fetchWithSsrFGuard") || providerValidation.includes("buildGuardedModelFetch");
-const validationHasDeadline = /AbortSignal|deadline|signal:/.test(providerValidation);
+// TF-0734: validation and inference share one policy resolver
+// (openclaw_runtime/src/agents/provider-network-policy.ts).
+const providerTransport = read("openclaw_runtime/src/agents/provider-transport-fetch.ts");
+const sharedPolicyResolver = read("openclaw_runtime/src/agents/provider-network-policy.ts");
+const sharedPolicyResolverPresent = sharedPolicyResolver.includes("export function resolveProviderNetworkPolicy");
+const bothUseSharedPolicy =
+  sharedPolicyResolverPresent &&
+  providerValidation.includes("resolveProviderNetworkPolicy") &&
+  providerValidation.includes("evaluateProviderNetworkTarget") &&
+  providerTransport.includes("resolveProviderNetworkPolicy");
+const usesGuardedFetch = bothUseSharedPolicy ? 1 : 0;
+const validationHasDeadline =
+  providerValidation.includes("PROVIDER_VALIDATION_DEADLINE_MS") &&
+  providerValidation.includes("AbortSignal.timeout") &&
+  providerValidation.includes("signal: context.signal");
+const policyParity = bothUseSharedPolicy ? 1 : 0;
+const probeDeadlineCoverage = ["performProviderValidationRequest", "performResponsesProbe", "performChatCompletionsProbe", "performAnthropicMessagesProbe"].filter(
+  (name) => {
+    const start = providerValidation.indexOf("async function " + name);
+    if (start < 0) return false;
+    const next = providerValidation.indexOf("async function ", start + 10);
+    const block = providerValidation.slice(start, next > 0 ? next : undefined);
+    return block.includes("signal: context.signal");
+  },
+).length;
 
 const mutationFields = ["systemPrompt", "prependContext", "appendContext", "prependSystemContext", "appendSystemContext"];
 const declaredAuthority = contextCandidate.includes("ContextCandidateAuthority") || hookTypes.includes("PromptContributionAuthority");
@@ -158,8 +186,10 @@ const metrics = [
   metric("MEM-2", "independent commit steps inside one logical memory update", "sum(step count) for self-edit and curation", Math.max(0, updateTransactions.selfEditSequence - 1) + Math.max(0, updateTransactions.curationSequence - 1), "steps", "static", "Transaction boundaries are inherited from the persistence port; values are candidate windows, not observed corruption.", ["openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts", "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts"]),
   metric("VALID-1", "status classes currently collapsed into valid=true", "count(success, rateLimit, probe400)", falseReadyScenarios, "classes", "static", "Classes only; actual provider behavior varies by API. The 12-scenario matrix is the behavioral gate.", ["electron/services/providers/provider-validation.ts"]),
   metric("VALID-2", "validation state dimensions exposed by the result type", "count(reachable, auth, protocol, model, rateLimited, ready)", validationDimensionCount, "dimensions", "static", "Type-shape evidence; UI semantics are asserted by semantic-convergence-provider-validation-matrix.test.ts.", ["shared/host-api/contract.ts", "electron/services/providers/provider-validation.ts"]),
-  metric("NET-1", "validation requests sharing inference guarded policy", "usesGuardedFetch ? 1 : 0", usesGuardedFetch ? 1 : 0, "boolean", "static", "Import/call evidence only; policy parity is behavioral.", ["electron/services/providers/provider-validation.ts"]),
-  metric("NET-2", "validation probe carries explicit deadline", "validationHasDeadline ? 1 : 0", validationHasDeadline ? 1 : 0, "boolean", "static", "Regex-based; manual review required.", ["electron/services/providers/provider-validation.ts"]),
+  metric("NET-1", "validation requests sharing inference guarded policy", "bothUseSharedPolicy ? 1 : 0", usesGuardedFetch, "boolean", "static", "Source contract: both call sites import the shared resolver; behaviour is asserted by semantic-convergence-provider-network-parity.test.ts.", ["electron/services/providers/provider-validation.ts", "openclaw_runtime/src/agents/provider-transport-fetch.ts", "openclaw_runtime/src/agents/provider-network-policy.ts"]),
+  metric("NET-2", "validation probe carries explicit deadline", "deadline gate + signal present", validationHasDeadline ? 1 : 0, "boolean", "static", "Source contract; probe coverage is measured as NET-3.", ["electron/services/providers/provider-validation.ts"]),
+  metric("NET-3", "validation probes carrying the total deadline signal", "count(models, responses, chat, anthropic probes with signal)", probeDeadlineCoverage, "probes", "static", "Static coverage of the four probe call sites; runtime abort behaviour is unit-tested.", ["electron/services/providers/provider-validation.ts"]),
+  metric("NET-4", "policy parity between validation and inference", "bothUseSharedPolicy ? 1 : 0", policyParity, "boolean", "static", "Same resolver, same normalized fingerprint; behavioural matrix in semantic-convergence-provider-network-parity.test.ts.", ["openclaw_runtime/src/agents/provider-network-policy.ts"]),
   metric("PROMPT-1", "prompt mutation fields covered by an authority declaration", "declaredAuthority ? 5 : 0", promptAuthorityCoverage, "fields", "static", "No producer-level declaration exists today; this counts the public field list.", ["openclaw_runtime/src/plugins/hook-before-agent-start.types.ts", "openclaw_runtime/src/context-engine/context-candidate.ts"]),
   metric("PROMPT-2", "post-orchestrator additions outside the managed ledger", "count(runtimeIntensitySystemPrompt, degradationNotice)", postOrchestratorAdditions, "additions", "static", "Counts code paths, not actual chars; the snapshot coverage test measures chars.", ["openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"]),
   metric("PROMPT-3", "seal producer coverage matrix present", "sealMatrix ? 1 : 0", sealMatrix ? 1 : 0, "boolean", "static", "Seal is default-off; presence is not enforcement evidence.", ["openclaw_runtime/src/context-engine/rc03-seal-hook.ts"]),

@@ -2715,6 +2715,22 @@ export type ProviderValidationReason =
   | 'dns-error'
   | 'blocked'
   | 'unknown';
+/** Stage that produced a validation outcome (TF-0734). */
+export type ProviderValidationStage =
+  | 'preflight'
+  | 'models'
+  | 'probe'
+  | 'transport'
+  | 'unknown';
+export type ProviderValidationBlockedReason =
+  | 'invalid-url'
+  | 'unsupported-protocol'
+  | 'blocked-hostname'
+  | 'metadata-address'
+  | 'link-local-address'
+  | 'private-network'
+  | 'hostname-not-allowlisted';
+
 export type ProviderValidationState = {
   reachable: ProviderValidationReachability;
   auth: ProviderValidationAuth;
@@ -2730,6 +2746,14 @@ export type ProviderValidationResult = ProviderValidationState & {
   error?: string;
   status?: number;
   durationMs?: number;
+  /** Stable hash of the SSRF/private-network/proxy policy used for the probe. */
+  policyFingerprint?: string;
+  /** Where the outcome was decided (preflight, model listing, probe, transport). */
+  stage?: ProviderValidationStage;
+  /** Set only when the pre-flight policy denied the target. */
+  blockedReason?: ProviderValidationBlockedReason;
+  /** Total validation deadline, not a per-request timeout. */
+  deadlineMs?: number;
 };
 export type ProviderModelListPayload = {
   accountId?: string;
