@@ -1,0 +1,146 @@
+{
+  "schema": "SemanticConvergenceNodeReport/v1",
+  "node": "TF-0739",
+  "title": "RC-03 seal coverage matrix and negative cases",
+  "generatedAt": "2026-11-04T17:03:16.018Z",
+  "driven_by": "agent",
+  "actor": "codex/context-prompt-owner",
+  "base": "ec7e017873378a97fd5f3420b5536185c6c4001f",
+  "candidate": {
+    "commit": "6faa3e91f8297cdc4a45004000041abd8f775835",
+    "tree": "52cd1776f2e9d1306d07d2e8ec0a310208288f2a",
+    "dirty": false
+  },
+  "decision": {
+    "status": "node-complete-with-broader-gate-failures",
+    "nodeAcceptancePassed": true,
+    "broaderRuntimeGatePassed": false,
+    "fullTypecheckPassed": false,
+    "releaseReady": false,
+    "liveReady": false,
+    "defaultOn": false,
+    "realHumanEvidence": false
+  },
+  "metrics": {
+    "matrixCovered": 18,
+    "matrixRegistered": 18,
+    "matrixCoverageRatio": 1,
+    "refusedNegativeClasses": 3,
+    "providerCallsAfterPostSealDenial": 0,
+    "legalContinuationProviderCalls": 2,
+    "managedCharLimit": 6000
+  },
+  "tests": {
+    "root": {
+      "total": 66,
+      "passed": 66,
+      "failed": 0,
+      "unselectedOrSkipped": 0
+    },
+    "runtime": {
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "unselectedOrSkipped": 0
+    },
+    "selectedEntrySuite": {
+      "total": 22,
+      "passed": 20,
+      "failed": 2,
+      "unselectedOrSkipped": 0
+    },
+    "targetedFrozenBaseline": {
+      "total": 22,
+      "passed": 1,
+      "failed": 2,
+      "unselectedOrSkipped": 19
+    },
+    "focusedPassed": 98
+  },
+  "acceptance": [
+    {
+      "criterion": "Coverage matrix 100%",
+      "verdict": "pass",
+      "evidence": [
+        "matrix.json",
+        "unit-tests.json"
+      ]
+    },
+    {
+      "criterion": "seal-on unregistered mutation=0",
+      "verdict": "pass",
+      "scope": "registered lineage and embedded admission",
+      "evidence": [
+        "decisions.json",
+        "observations-after.json",
+        "unit-tests.json"
+      ]
+    },
+    {
+      "criterion": "seal-off does not claim coverage",
+      "verdict": "pass",
+      "evidence": [
+        "unit-tests.json",
+        "runtime-tests.json"
+      ]
+    },
+    {
+      "criterion": "Three negative classes rejected",
+      "verdict": "pass",
+      "evidence": [
+        "decisions.json",
+        "unit-tests.json"
+      ]
+    }
+  ],
+  "review": {
+    "engine": "codex",
+    "model": "space-bunny",
+    "exitCode": 0,
+    "findings": 0,
+    "method": "fixed source snapshot; native read-only inspection tool unavailable",
+    "metadata": "review-metadata.json"
+  },
+  "residuals": {
+    "selectedEntryFailures": [
+      {
+        "name": "RC-03R real-entry seal and dual v1 receipts ContextEngine replacement obeys the shared budget at the real wire: compass-full",
+        "messages": [
+          "AssertionError: expected true to be false // Object.is equality\n    at D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts:340:47\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "name": "RC-03R real-entry seal and dual v1 receipts COMPASS candidates reach the real wire only after the shared budget projection",
+        "messages": [
+          "AssertionError: expected '{\"model\":\"gpt-rc03\",\"input\":[{\"type\":…' to contain 'COMPASS-BUDGET:'\n    at D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts:559:18\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      }
+    ],
+    "targetedBaselineFailures": [
+      {
+        "name": "RC-03R real-entry seal and dual v1 receipts ContextEngine replacement obeys the shared budget at the real wire: compass-full",
+        "messages": [
+          "AssertionError: expected true to be false // Object.is equality\n    at D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts:340:47\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      },
+      {
+        "name": "RC-03R real-entry seal and dual v1 receipts COMPASS candidates reach the real wire only after the shared budget projection",
+        "messages": [
+          "AssertionError: expected '{\"model\":\"gpt-rc03\",\"input\":[{\"type\":…' to contain 'COMPASS-BUDGET:'\n    at D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts:559:18\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ]
+      }
+    ],
+    "unmatchedSelectedEntryFailureNames": [],
+    "fullTypecheckErrors": [
+      "tests/unit/rsi-sekb-arms.test.ts(102,19): error TS2339: Property 'promotion' does not exist on type '{ schemaVersion: string; status: string; reasons: string[]; evidenceKind: string; arms: Record<string, { completeCaseCount: number; passK: number | null; passAtK: number | null; flakeRate: number | null; meanTokens: number | null; gate: string; }>; comparisons: { ...; }[]; cost: { ...; }; claims: { ...; }; }'.",
+      "tests/unit/rsi-sekb-arms.test.ts(126,19): error TS2339: Property 'promotion' does not exist on type '{ schemaVersion: string; status: string; reasons: string[]; evidenceKind: string; arms: Record<string, { completeCaseCount: number; passK: number | null; passAtK: number | null; flakeRate: number | null; meanTokens: number | null; gate: string; }>; comparisons: { ...; }[]; cost: { ...; }; claims: { ...; }; }'."
+    ]
+  },
+  "limitations": [
+    "18 rows prove the registry phase matrix. This is not complete provider-adapter wire attestation or live-provider acceptance.",
+    "Runtime probes and provider responses are agent-driven simulations using actual repository APIs; no real-human claim.",
+    "The targeted frozen baseline executes only selected cases; unselected tests are not passes. No full runtime or GA claim.",
+    "Native reviewer inspection tools failed during Windows setup; the successful structured review used complete changed runtime source snapshots plus supplied caller contracts.",
+    "The full uncached typecheck retains existing RSI promotion-property errors. No assertions or unrelated sources were weakened."
+  ]
+}

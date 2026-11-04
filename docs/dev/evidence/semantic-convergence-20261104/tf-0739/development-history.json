@@ -1,0 +1,133 @@
+{
+  "note": "Development runs do not replace clean-candidate acceptance; false sourceStable and partial selections stay explicit.",
+  "runs": [
+    {
+      "id": "dev-real-entry",
+      "candidate": {
+        "commit": "ec7e017873378a97fd5f3420b5536185c6c4001f",
+        "tree": "098b91951189eb273a6ac1e31a232daef1d9b287",
+        "dirty": true
+      },
+      "sourceStable": true,
+      "exitCode": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-core.config.ts",
+        "src/agents/rc03-entry-transitions.acceptance.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0739-dev-real-entry.json"
+      ],
+      "localGateArtifact": "D:/tmp/tf0739-dev-real-entry.gate.json",
+      "localLog": "D:/tmp/tf0739-dev-real-entry.log"
+    },
+    {
+      "id": "dev-entry-post-fixes",
+      "candidate": {
+        "commit": "ec7e017873378a97fd5f3420b5536185c6c4001f",
+        "tree": "098b91951189eb273a6ac1e31a232daef1d9b287",
+        "dirty": true
+      },
+      "sourceStable": false,
+      "exitCode": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-core.config.ts",
+        "src/agents/rc03-entry-transitions.acceptance.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0739-dev-entry-post-fixes.json"
+      ],
+      "localGateArtifact": "D:/tmp/tf0739-dev-entry-post-fixes.gate.json",
+      "localLog": "D:/tmp/tf0739-dev-entry-post-fixes.log"
+    },
+    {
+      "id": "dev-entry-compact-parity",
+      "candidate": {
+        "commit": "ec7e017873378a97fd5f3420b5536185c6c4001f",
+        "tree": "098b91951189eb273a6ac1e31a232daef1d9b287",
+        "dirty": true
+      },
+      "sourceStable": true,
+      "exitCode": 0,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-core.config.ts",
+        "src/agents/rc03-entry-transitions.acceptance.test.ts",
+        "--maxWorkers=1",
+        "--testNamePattern",
+        "compact:|seal off:",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0739-dev-entry-compact-parity.json"
+      ],
+      "localGateArtifact": "D:/tmp/tf0739-dev-entry-compact-parity.gate.json",
+      "localLog": "D:/tmp/tf0739-dev-entry-compact-parity.log"
+    },
+    {
+      "id": "entry-baseline",
+      "candidate": {
+        "commit": "ec7e017873378a97fd5f3420b5536185c6c4001f",
+        "tree": "098b91951189eb273a6ac1e31a232daef1d9b287",
+        "dirty": true
+      },
+      "sourceStable": true,
+      "exitCode": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "D:/tmp/tf0739-entry-baseline.config.ts",
+        "src/agents/rc03-entry-transitions.acceptance.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0739-entry-baseline-tests.json"
+      ],
+      "localGateArtifact": "D:/tmp/tf0739-entry-baseline.gate.json",
+      "localLog": "D:/tmp/tf0739-entry-baseline.log"
+    },
+    {
+      "id": "entry-baseline-targeted",
+      "candidate": {
+        "commit": "ec7e017873378a97fd5f3420b5536185c6c4001f",
+        "tree": "098b91951189eb273a6ac1e31a232daef1d9b287",
+        "dirty": true
+      },
+      "sourceStable": true,
+      "exitCode": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "D:/tmp/tf0739-entry-baseline.config.ts",
+        "src/agents/rc03-entry-transitions.acceptance.test.ts",
+        "--maxWorkers=1",
+        "--testNamePattern",
+        "compass-full|COMPASS candidates reach|handoff:",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0739-entry-baseline-targeted.json"
+      ],
+      "localGateArtifact": "D:/tmp/tf0739-entry-baseline-targeted.gate.json",
+      "localLog": "D:/tmp/tf0739-entry-baseline-targeted.log"
+    }
+  ]
+}

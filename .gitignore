@@ -2464,6 +2464,37 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0738/credential-scan.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0738/SHA256SUMS
 !/docs/dev/rc03-seal-coverage.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/README.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/SHA256SUMS
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/commands.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/comms-compare.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/comms-replay.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/credential-scan.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/decisions.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/development-history.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/entry-baseline-loader.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/entry-baseline.config.ts
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/entry-baseline.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/entry-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/full-typecheck.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/matrix.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/observations-after.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/observations-before.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/probe-after-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/probe-baseline-loader.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/probe-before-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/probe.config.ts
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/probe.test.ts
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/raw-review.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/report.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/review-metadata.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/review.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/runtime-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/scope-typecheck.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/source-manifest.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/typecheck-errors.log
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/unit-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/.gitattributes
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

@@ -1,0 +1,10 @@
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {writeFileSync} from 'node:fs';
+import base from 'D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/test/vitest/vitest.agents-core.config.ts';
+const root='D:/ClawX-work/semantic-convergence-20261104';
+const ref='ec7e017873378a97fd5f3420b5536185c6c4001f';
+const paths=["openclaw_runtime/src/agents/btw.ts","openclaw_runtime/src/agents/embedded-agent-runner/compact.ts","openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts","openclaw_runtime/src/agents/embedded-agent-runner/run.ts","openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts","openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts","openclaw_runtime/src/agents/sessions/extensions/runner.ts","openclaw_runtime/src/context-engine/context-final-snapshot.ts","openclaw_runtime/src/context-engine/context-orchestrator.ts","openclaw_runtime/src/context-engine/rc03-producers.ts","openclaw_runtime/src/context-engine/rc03-seal-hook.ts","openclaw_runtime/src/context-engine/seal-registry.ts"];
+const originals=Object.fromEntries(paths.map(path=>[path,execFileSync('git',['show',`${ref}:${path}`],{cwd:root,encoding:'utf8',windowsHide:true})]));
+const loaded:Record<string,string>={};
+export default {...base,cacheDir:'D:/tmp/tf0739-final-entry-baseline-vite',test:base.test,plugins:[...(process.env.RC03_PROBE_BASELINE==='1'?[{name:'frozen-source-probe',enforce:'pre' as const,load(id:string){const normalized=id.split('?')[0].replaceAll('\\','/');const path=paths.find(path=>normalized.endsWith('/'+path));if(!path)return;const code=originals[path];loaded[path]=createHash('sha256').update(code).digest('hex');writeFileSync('D:/tmp/tf0739-final-entry-baseline-loaded.json',JSON.stringify({ref,mappedPaths:paths,loaded},null,2));return code;}}]:[]),...(base.plugins??[])]};
