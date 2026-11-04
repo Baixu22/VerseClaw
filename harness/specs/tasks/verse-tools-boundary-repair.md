@@ -134,6 +134,8 @@ receipts. Current evidence replays the N8 checks and every N9 row, checks unique
 round identities, and recalculates the summary; asserted pass flags alone fail.
 Interruption receipts must identify a verified process handle and match the
 observed process birth time and owned user-data directory for that exact round.
+A failed round stops scheduling further rounds and still runs the final owned
+cleanup. Such a partial failure cannot satisfy the required 46-round pass.
 
 Initialization failures are covered before any fixture server is left listening;
 an empty N9 round selection is a failure, not stability evidence. The Vite build

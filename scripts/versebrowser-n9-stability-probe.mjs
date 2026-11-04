@@ -240,11 +240,11 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
   };
 
   try {
-    for (let i = 1; i <= coldStarts; i += 1) await withInstance('cold', i, statusOnly);
-    for (let i = 1; i <= loops; i += 1) await withInstance('loop', i, fullLoop);
-    for (let i = 1; i <= interrupts; i += 1) {
+    for (let i = 1; i <= coldStarts && issues.length === 0; i += 1) await withInstance('cold', i, statusOnly);
+    for (let i = 1; i <= loops && issues.length === 0; i += 1) await withInstance('loop', i, fullLoop);
+    for (let i = 1; i <= interrupts && issues.length === 0; i += 1) {
       await withInstance('interrupt', i, interruptOpen);
-      await withInstance('recovery', i, fullLoop);
+      if (issues.length === 0) await withInstance('recovery', i, fullLoop);
     }
   } finally {
     fixture.closeAllConnections();
