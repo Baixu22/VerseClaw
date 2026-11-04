@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { execFileSync } from 'node:child_process';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createResponsesProvider } from './lib/rsi-responses-provider.mjs';
+import { artifactPath } from './lib/agent-first-trials.mjs';
+import { sha256File } from './rsi-tf0604-baseline.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS = 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json';
@@ -30,7 +32,7 @@ export function inspectLiveCorpus(root = ROOT) {
       && !/\.test\.[cm]?[jt]sx?$|\/tests\//u.test(path));
     return { id: task.id, base, reference, productChanges, originalDecision: original.decision?.status ?? null,
       sourceRecord: task.referenceSolution.sourceRecord,
-      sourceRecordDigest: sha(readFileSync(join(root, task.referenceSolution.sourceRecord))),
+      sourceRecordDigest: sha256File(join(root, task.referenceSolution.sourceRecord)),
       oraclePaths: task.oracle.testPaths, commands: task.oracle.commandLines };
   });
 }
@@ -83,7 +85,7 @@ export function assessTaskAdmission({ reference, baseline }) {
   return { passed: issues.length === 0, issues };
 }
 
-export function finalizeLiveAdmission(root, directory) {
+export function finalizeLiveAdmission(root, directory, options = {}) {
   const tasks = inspectLiveCorpus(root);
   const admissions = tasks.map((task) => {
     const path = join(directory, 'calibration', task.id, 'admission.json');
@@ -101,8 +103,48 @@ export function finalizeLiveAdmission(root, directory) {
       taskId: task.id, repeat, arm, status: 'not-run', reason: passed ? 'measurement-not-started' : 'task-admission-not-satisfied',
     })))),
     claims: { taskQualityMeasured: false, benefit: false, promotionReady: false, realHuman: false, productLocksChanged: false } };
-  write(join(directory, 'admission-report.json'), result);
+  if (options.write !== false) write(join(directory, 'admission-report.json'), result);
   return result;
+}
+
+export function checkLiveAcceptance(root, directory) {
+  const errors = [];
+  let report;
+  try {
+    const walk = (path) => readdirSync(path, { withFileTypes: true }).flatMap((entry) => {
+      const full = artifactPath(directory, relative(directory, join(path, entry.name)));
+      return entry.isDirectory() ? walk(full) : [relative(directory, full).replaceAll('\\', '/')];
+    });
+    const files = walk(directory).filter((path) => path !== 'SHA256SUMS').sort();
+    const expected = files.map((path) => `${sha(readFileSync(join(directory, path)))}  ${path}`).join('\n') + '\n';
+    assert.equal(readFileSync(artifactPath(directory, 'SHA256SUMS'), 'utf8'), expected, 'acceptance-manifest-drift');
+    report = finalizeLiveAdmission(root, directory, { write: false });
+    assert.deepEqual(read(artifactPath(directory, 'admission-report.json')), report, 'acceptance-recomputation');
+    for (const task of report.admissions.filter((entry) => entry.status !== 'not-calibrated')) {
+      const admission = read(artifactPath(directory, `calibration/${task.taskId}/admission.json`));
+      for (const stage of ['reference', 'baseline']) {
+        for (const [index, execution] of (admission.stages[stage].executions ?? []).entries()) {
+          if (execution.kind !== 'vitest' || execution.report === null) continue;
+          assert.deepEqual(read(artifactPath(directory, `calibration/${task.taskId}/${stage}/oracle-${index + 1}.json`)),
+            execution.report, 'raw-calibration-report-drift');
+        }
+      }
+    }
+    const summaryPath = join(directory, 'result.v1.json');
+    if (existsSync(summaryPath)) {
+      const summary = read(summaryPath);
+      assert.equal(summary.status, report.status, 'summary-status-drift');
+      assert.equal(summary.trialExecution?.executed, 0, 'unexecuted-trials-claimed');
+      assert.equal(summary.trialExecution?.unexecuted, report.trialSlots.length, 'summary-slot-count-drift');
+      assert(Object.values(summary.claims ?? {}).length === 6 && Object.values(summary.claims).every((value) => value === false), 'summary-claim-boundary');
+      for (const [path, digest] of Object.entries(summary.candidate?.sourceHashes ?? {})) {
+        const bytes = execFileSync('git', ['show', `${summary.candidate.commit}:${path}`], { cwd: root, windowsHide: true });
+        assert.equal(sha(bytes), digest, 'summary-source-commit-drift');
+      }
+    }
+  } catch (caught) { errors.push(caught.message); }
+  return { passed: errors.length === 0, errors, acceptanceStatus: report?.status ?? 'invalid',
+    measuredTaskTrials: 0, unexecutedSlots: report?.trialSlots.length ?? null, benefitClaim: false };
 }
 
 export async function calibrateLiveTask(root, directory, taskId, options = {}) {
@@ -157,7 +199,8 @@ if (isMainEntrypoint(import.meta.url)) {
       result = { passed: resultOnDisk.admission.passed, taskId: resultOnDisk.taskId, admission: resultOnDisk.admission,
         referencePassed: resultOnDisk.stages.reference.passed, baselinePassed: resultOnDisk.stages.baseline.passed };
     } else if (positionals[0] === 'finalize') result = finalizeLiveAdmission(ROOT, directory);
-    else throw new Error('Use inventory, probe, calibrate or finalize');
+    else if (positionals[0] === 'check') result = checkLiveAcceptance(ROOT, directory);
+    else throw new Error('Use inventory, probe, calibrate, finalize or check');
     console.log(JSON.stringify(result, null, 2));
     process.exitCode = result.passed === false || result.status === 'NO_GO' ? 1 : 0;
   } catch (caught) { console.error(caught.message); process.exitCode = 1; }

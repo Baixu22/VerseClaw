@@ -8,5 +8,6 @@ export function probeLiveResource(input: { directory: string; endpoint: string; 
 export function calibrateLiveTask(root: string, directory: string, taskId: string, options?: { timeoutMs?: number }): Promise<{
   taskId: string; source: LiveTaskIdentity; stages: Record<string, CalibrationStage>; admission: { passed: boolean; issues: string[] };
 }>;
-export function finalizeLiveAdmission(root: string, directory: string): { status: 'NO_GO' | 'ready-for-measurement'; admissions: Array<{ taskId: string; passed: boolean; issues: string[] }>;
+export function finalizeLiveAdmission(root: string, directory: string, options?: { write?: boolean }): { status: 'NO_GO' | 'ready-for-measurement'; admissions: Array<{ taskId: string; passed: boolean; issues: string[] }>;
   trialSlots: Array<{ taskId: string; repeat: number; arm: string; status: 'not-run' }>; claims: Record<string, boolean> };
+export function checkLiveAcceptance(root: string, directory: string): { passed: boolean; errors: string[]; acceptanceStatus: string; measuredTaskTrials: number; unexecutedSlots: number | null; benefitClaim: false };

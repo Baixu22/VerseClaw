@@ -1,8 +1,30 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { assessTaskAdmission, inspectLiveCorpus } from '../../scripts/rsi-live-acceptance.mjs';
+import { createHash } from 'node:crypto';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve, sep } from 'node:path';
+import { assessTaskAdmission, checkLiveAcceptance, finalizeLiveAdmission, inspectLiveCorpus } from '../../scripts/rsi-live-acceptance.mjs';
 
 describe('real RSI task admission', () => {
+  it('retains 216 not-run slots and rejects a rehashed fake admission pass', () => {
+    const directory = mkdtempSync('D:/tmp/rsi-live-admission-test-');
+    if (!resolve(directory).startsWith(`${resolve('D:/tmp')}${sep}rsi-live-admission-test-`)) throw Error('unsafe cleanup');
+    const reportPath = join(directory, 'admission-report.json');
+    const seal = () => writeFileSync(join(directory, 'SHA256SUMS'), `${createHash('sha256').update(readFileSync(reportPath)).digest('hex')}  admission-report.json\n`);
+    try {
+      const report = finalizeLiveAdmission(process.cwd(), directory);
+      expect(report.status).toBe('NO_GO');
+      expect(report.trialSlots).toHaveLength(216);
+      seal();
+      expect(checkLiveAcceptance(process.cwd(), directory)).toMatchObject({ passed: true, acceptanceStatus: 'NO_GO', measuredTaskTrials: 0 });
+      writeFileSync(reportPath, JSON.stringify({ ...report, status: 'ready-for-measurement' }));
+      seal();
+      expect(checkLiveAcceptance(process.cwd(), directory).passed).toBe(false);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
   it('recovers original base/reference identities without guessing HEAD parents', () => {
     const tasks = inspectLiveCorpus(process.cwd());
     expect(tasks).toHaveLength(24);
