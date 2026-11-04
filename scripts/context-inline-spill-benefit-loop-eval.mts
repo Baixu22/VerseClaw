@@ -379,7 +379,7 @@ for (const fixture of fixtures) {
         failureClass, finalAnswer, providerCalls, toolCalls: toolCallLog,
         archive: { uri: handle.uri, checksum: handle.checksum, byteLength: handle.byteLength },
       });
-      console.error(JSON.stringify({ arm, fixture: fixture.id, rep: repetition, success, recallAttempted, recallOk, turns, failureClass, finalValue: finalAnswer.value, mainContextChars, retainedAtEnd }));
+      console.error(redact(JSON.stringify({ arm, fixture: fixture.id, rep: repetition, success, recallAttempted, recallOk, turns, failureClass, finalValue: finalAnswer.value, mainContextChars, retainedAtEnd })));
     }
   }
 }
