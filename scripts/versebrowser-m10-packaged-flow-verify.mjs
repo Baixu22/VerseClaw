@@ -10,6 +10,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { browserBuildIdentity } from './lib/versebrowser-build-identity.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const EXE = 'release/win-unpacked/Verse Claw.exe';
@@ -21,6 +22,7 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   const exePath = resolve(hostRoot, exe);
   const issues = [];
   if (!existsSync(exePath)) return { schemaVersion: 1, driven_by: 'agent', actor: 'codex', status: 'fail', issues: [{ kind: 'packaged_exe_missing', path: exe }] };
+  const build = await browserBuildIdentity(exePath);
   const require = createRequire(join(hostRoot, 'package.json'));
   const electron = require('playwright-core')._electron;
 
@@ -40,23 +42,13 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   const port = 9300 + Math.floor(Math.random() * 600);
   const runId = `m10-${Date.now().toString(36)}`;
 
-  const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, fixtureUrl: url, runId };
+  const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, build, fixtureUrl: url, runId };
   let app;
-  let browser;
   try {
     app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
       env: { ...process.env, TEMP: runRoot, TMP: runRoot, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
-    browser = { contexts: () => [app.context()] };
-    // The CDP endpoint can be live before the renderer registers its page, so wait for
-    // one instead of failing the run on a race (N8 F3).
-    let page = null;
-    const pageDeadline = Date.now() + 30_000;
-    while (Date.now() < pageDeadline && page === null) {
-      const pages = browser.contexts().flatMap((c) => c.pages());
-      if (pages.length > 0) page = pages[0];
-      else await sleep(500);
-    }
-    if (page === null) throw new Error('packaged renderer produced no page within 30s');
+    const page = await app.firstWindow({ timeout: 30_000 });
+    await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
     result.pageTitle = await page.title();
     result.hostBridgePresent = await page.evaluate(() => Boolean(window.verseClaw?.hostInvoke));
     if (!result.hostBridgePresent) throw new Error('hostInvoke bridge missing in packaged renderer');
@@ -123,6 +115,7 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
     session_closed: f.closed === true,
   };
   result.checks = checks;
+  if ((await browserBuildIdentity(exePath)).digest !== build.digest) issues.push({ kind: 'build_changed_during_run' });
   result.status = issues.length === 0 && Object.values(checks).every(Boolean) ? 'pass' : 'fail';
   result.issues = issues;
   return result;

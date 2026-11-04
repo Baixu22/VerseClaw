@@ -27,6 +27,7 @@ import { agentBrowserProfilePartition } from '../../core/filesystem-boundary.ts'
 export type TabManagedWindow = Pick<
   BrowserWindow,
   | 'close'
+  | 'destroy'
   | 'focus'
   | 'hide'
   | 'isDestroyed'
@@ -188,17 +189,18 @@ export class AgentBrowserTabManager {
         sandbox: true,
       },
     });
-    if (url) {
-      await window.loadURL(url);
+    const entry = { pageId, index: this.pages.size, window, url: url ?? '', title: '' };
+    this.pages.set(pageId, entry);
+    try {
+      if (url) await window.loadURL(url);
+      if (window.isDestroyed() || !this.pages.has(pageId)) throw new Error('Browser tab closed during navigation');
+    } catch (error) {
+      // A denied initial request must not leave a window outside the tab registry.
+      this.pages.delete(pageId);
+      if (!window.isDestroyed()) window.destroy();
+      throw error;
     }
-    const title = window.webContents.getTitle() ?? '';
-    this.pages.set(pageId, {
-      pageId,
-      index: this.pages.size,
-      window,
-      url: url ?? '',
-      title,
-    });
+    entry.title = window.webContents.getTitle() ?? '';
     if (!background) {
       this.activePageId = pageId;
     }
@@ -243,12 +245,9 @@ export class AgentBrowserTabManager {
     if (this.pages.size <= 1) {
       throw new Error('最后一个标签页不能通过 closePage 关闭，请使用 session close。');
     }
+    // A page cannot veto host-owned tab termination with beforeunload.
+    if (!entry.window.isDestroyed()) entry.window.destroy();
     this.pages.delete(targetId);
-    try {
-      entry.window.close();
-    } catch {
-      // best-effort: 窗口可能已销毁
-    }
     // 重新索引剩余页面
     const remaining = [...this.pages.values()].sort((a, b) => a.index - b.index);
     remaining.forEach((e, i) => {

@@ -65,13 +65,16 @@ VG 不再只是“可选的 symbol verification plugin”，而是：
 - WP0–WP6 工程证据与 WP7 bounded live slice 已生成；
 - WP8 独立 agent 审查、WP9 聚合有过工程收口；
 - status 为 `PASS_WITH_GAPS`；
-- `landed-unwired`；
+- 历史 WP9 为 `landed-unwired`；后续 bounded host slice 已有接线，当前可用性仍由显式开关、回执和当前候选验收决定；
 - default off；
 - `releaseEligible=false`；
 - `liveReady=false`、`productApproved=false`、`defaultOn=false`；
 - M4 landing/admission authority 未授权。
 
 `docs/dev/versegit-product-integration/TF-0517/verified-glm-20261025/` 是后续产品接入的 agent-driven closeout 证据；它不改变上述产品锁。
+
+当前复核使用 `harness/specs/fixtures/versegit-product-integration/f5-current-20261104/`。
+旧目录只证明其记录的候选；source/candidate hash 改变后必须重跑对应检查，不能复制旧 pass。
 
 ### 2.4 Go / No-Go 边界
 
@@ -270,6 +273,27 @@ Browser 的默认安全边界：
 - full-access script/fetch/storage 有单独授权和 revoke；
 - deny/unsupported 后不得换 driver 重试同一 mutation。
 
+Gateway 只分发当前模型动作集合中的可用动作；`requestModeUpgrade`、`setEnabled` 等宿主管理方法
+不属于该入口。运行时调用不能传 `userApproval`、`runtimeMode` 或私网批准声明；除状态发现外必须
+携带所属运行时会话，payload 不得替换 owner。未绑定的状态发现仅返回能力信息，不返回浏览器会话。
+权威能力集合为空或只有未知动作时，只保留 `status` 发现能力。
+
+所有 desktop managed 会话及其附加 tab 都安装同一请求拦截，按真实 session/origin/有效期检查
+重定向、子资源和 DNS 解析结果。首次打开的私网批准由 Host 单次消费，并在导航前绑定实际浏览器
+session ID；关闭会话会撤销对应批准。只检查 `open` 参数不足以证明页面后续请求受控。
+受控关闭会销毁所属窗口，网页的 `beforeunload` 不能否决资源清理；新 tab 初始导航被拒绝时立即销毁。
+无法归属窗口的请求不使用任何会话的私网批准或预览豁免；全部窗口关闭后，该 profile 不再发起后台请求。
+普通页面的可选资源失败会阻断该资源，但不销毁已成功加载的主页面；supervised 任务仍保留严格的网络完成判据。
+Main 的本地网络出口解析并校验目的地址后，直接连接该数值地址，Chromium 不会再次解析目标主机名。
+持久化 profile 共享连接，因此私网出口采用该 profile 内所有活跃会话的许可交集；加入或关闭会话会撤销
+已建立的连接。页面请求层继续逐次执行所属会话和授权时效检查；TLS 仍由 Chromium 校验原站点证书。
+同一活跃 profile 的 DNS 结果固定并由请求层与出口共享，最多 1024 个主机；需要刷新地址时关闭该
+profile 的全部会话后重新打开。该上限防止页面制造无界 DNS 状态，不扩大私网授权范围。
+出口仅接受 Main 为该 profile 提供的代理认证，私网连接按授权到期时间断开；临时 DNS 失败可重试，
+连接失败仅在已校验的地址列表中切换且不重放请求。WebRTC 不允许绕过出口发送 UDP。
+系统代理/PAC 路由仍由 Electron 解析；HTTP 上游代理使用校验过的数值目的地址建立 CONNECT。
+不支持的上游协议或独立 profile 代理配置会明确拒绝，不静默改成直连。
+
 ### 4.5 任务持久化与恢复
 
 存储：`<dataDir>/agent-browser/tasks.json`。
@@ -354,7 +378,7 @@ VToken 曾经是可选 token packing/context sidecar，但 TF-0496 用真实 pro
 
 | 组件 | 主要缺口 |
 |---|---|
-| VerseGit | landed-unwired、default-off、完整 M3 未验收、M4 未授权、跨平台/真实大样本仍在 P2 |
+| VerseGit | default-off、bounded host slice 按当前候选验收、完整 M3 未验收、M4 未授权、跨平台/真实大样本仍在 P2 |
 | VerseShell | default-off、controlled canary、外部平台和真实用户 canary 未完成 |
 | VerseBrowser | 81/67/28/14 差距；13 source-only 未实现于 desktop；private network 默认 deny；没有无人监督 GA |
 | VToken | retired；低于 materiality bar，不能宣称 token-saving 产品 |

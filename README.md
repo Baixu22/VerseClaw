@@ -58,9 +58,13 @@ Important current defaults:
 - Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
 - Memory feedback and SEKB adoption counts are diagnostic-only; feedback does not affect retrieval ranking or retention decisions. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md) distinguish historical measurement from deterministic replay.
 - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
-- VerseGit is default-off and landed-unwired. VerseShell is a default-off controlled foundation. VerseBrowser advertises actions from a live driver snapshot, not from its full contract.
+- VerseGit and VerseShell remain default-off; their host integrations retain the boundaries described below.
 - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.
 - `liveReady=false`, `productApproved=false` and `defaultOn=false` remain product locks.
+
+<!-- VERSE-TOOLS-BOUNDARY-START -->
+**VerseGit bounded coding loop:** default-off, not approved for general availability. The bounded win32-x64 M1 provider supplies repository facts; candidate verification uses VerseShell, while the host owns the write journal and Git apply. M4 landing/admission is unauthorized; `liveReady=false` and `productApproved=false` remain locked. VerseShell stays default-off. VerseBrowser accepts only available runtime actions with an owning session; host-only approvals cannot be supplied by the model, and request-level private-network checks cover redirects and subresources. See [Verse tool boundaries](docs/modules/verse-tools.md).
+<!-- VERSE-TOOLS-BOUNDARY-END -->
 
 See the [default configuration matrix](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) and [capability claims](shared/capability-claims.ts) before changing a default or making a release claim.
 

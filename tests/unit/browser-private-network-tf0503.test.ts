@@ -81,4 +81,15 @@ describe('TF-0503 browser private-network default deny', () => {
   it('public URLs bypass approval entirely and need none', () => {
     expect(decideBrowserNavigation({ url: 'https://example.com', sessionId: 's1', now: NOW }).allowed).toBe(true);
   });
+
+  it('requires a grant when any DNS answer is private beyond loopback, even for a persisted local preview', () => {
+    const url = 'http://preview.internal/';
+    const input = { url, sessionId: 'preview', firstPartyOrigins: ['http://preview.internal'] };
+    expect(decideBrowserNavigation({ ...input, resolvedAddresses: ['127.0.0.1'] })).toMatchObject({ allowed: true, reason: 'first-party-preview' });
+    for (const addresses of [
+      ['169.254.169.254'], ['127.0.0.1', '192.168.1.2'], ['192.168.1.2', '127.0.0.1'],
+    ]) {
+      expect(decideBrowserNavigation({ ...input, resolvedAddresses: addresses }).allowed).toBe(false);
+    }
+  });
 });

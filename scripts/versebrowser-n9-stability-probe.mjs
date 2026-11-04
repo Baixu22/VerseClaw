@@ -22,6 +22,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { browserBuildIdentity } from './lib/versebrowser-build-identity.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const DEFAULT_EXE = 'release/win-unpacked/Verse Claw.exe';
@@ -63,6 +64,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
   if (!existsSync(exePath)) {
     return { schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'fail', issues: [issue('packaged_exe_missing', { exe })] };
   }
+  const build = await browserBuildIdentity(exePath);
 
   const fixture = createServer((_req, res) => {
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
@@ -92,14 +94,8 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
       child = app.process();
       child.on('exit', () => { exited = true; });
       row.launchMs = Date.now() - startedAt;
-      let page = null;
-      const pageDeadline = Date.now() + 30_000;
-      while (Date.now() < pageDeadline && page === null) {
-        const pages = app.context().pages();
-        if (pages.length > 0) page = pages[0];
-        else await sleep(500);
-      }
-      if (page === null) throw new Error('renderer produced no page within 30s');
+      const page = await app.firstWindow({ timeout: 30_000 });
+      await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
       row.rendererReadyMs = Date.now() - startedAt;
       row.pageTitle = await page.title();
       Object.assign(row, await body(page, runId, { runRoot, userDataDir, app }));
@@ -307,6 +303,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
     totalRounds: rows.length,
   };
 
+  if ((await browserBuildIdentity(exePath)).digest !== build.digest) issues.push(issue('build_changed_during_run', {}));
   const report = {
     schemaVersion: 1,
     artifact: 'versebrowser-n9-stability',
@@ -316,6 +313,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, coldStarts 
     finalSweepRemoved,
     finalSweepKilled,
     exe,
+    build,
     fixtureUrl: url,
     url,
     status: issues.length === 0 ? 'pass' : 'fail',

@@ -24,7 +24,7 @@ export const F5_VERDICT_SCHEMA = 'clawx.versegit.product-f5-independent-verdict/
 export const F5_TASK = 'TF-0539';
 export const F5_PARENT_TASK = 'TF-0523';
 export const F5_ACTOR = 'codex';
-export const F5_EVIDENCE_ROOT = 'harness/specs/fixtures/versegit-product-integration/f5';
+export const F5_EVIDENCE_ROOT = 'harness/specs/fixtures/versegit-product-integration/f5-current-20261104';
 export const F5_REPORT_PATH = `${F5_EVIDENCE_ROOT}/global-acceptance.json`;
 export const F5_INDEX_PATH = `${F5_EVIDENCE_ROOT}/criterion-evidence-index.json`;
 export const F5_VERDICT_PATH = `${F5_EVIDENCE_ROOT}/independent-verdict.json`;
@@ -132,6 +132,7 @@ export const F5_SOURCE_INPUTS = [
   F5_PRODUCT_SEMANTICS_PATH,
   F5_MANIFEST_PATH,
   ...F5_README_PATHS,
+  'docs/modules/verse-tools.md',
   F5_AUTOCLOSE_RULE_PATH,
   'harness/specs/tasks/versegit-module-implementation-contracts.md',
   'harness/specs/tasks/versegit-product-a1-evidence-baseline.md',
@@ -731,6 +732,22 @@ function evaluateStability(loaded) {
   );
 }
 
+export function validateVerseToolReadme(text, path) {
+  const startMarker = '<!-- VERSE-TOOLS-BOUNDARY-START -->';
+  const endMarker = '<!-- VERSE-TOOLS-BOUNDARY-END -->';
+  const start = text.indexOf(startMarker);
+  const end = text.indexOf(endMarker, start + startMarker.length);
+  if (start < 0 || end <= start) return false;
+  const claim = text.slice(start + startMarker.length, end);
+  // Scope this check to the actual Verse claim. Other sections can truthfully
+  // say "Not a GA claim" without being misclassified as product graduation.
+  const withoutDenials = claim.replace(/\b(?:not\s+(?:a\s+)?GA(?:\s+claim)?|non-GA)\b|非\s*GA|GA\s*ではありません/giu, '');
+  return Boolean(README_CLAIMS[path]?.every(token => claim.includes(token)))
+    && claim.includes('docs/modules/verse-tools.md')
+    && text.includes(F5_DOCS_PATH)
+    && !/\bGA\b/u.test(withoutDenials);
+}
+
 function evaluateDocs(root) {
   const readmes = Object.fromEntries(F5_README_PATHS.map((path) => [path, readText(root, path)]));
   const semantics = readText(root, F5_PRODUCT_SEMANTICS_PATH);
@@ -750,8 +767,8 @@ function evaluateDocs(root) {
   const documentedSurfaces = fpRows.map((line) => line.split('|')[1].trim()).sort();
   const readmeChecks = F5_README_PATHS.map((path) => check(
     `readme-${path}`,
-    README_CLAIMS[path].every((token) => readmes[path].includes(token)) && readmes[path].includes(F5_DOCS_PATH) && !/\bGA\b/u.test(readmes[path]),
-    `${path} carries the bounded product claim, avoids the GA token on the product surface, and links the VG validation layer`,
+    validateVerseToolReadme(readmes[path], path),
+    `${path} carries the scoped bounded product claim and links its current module contract without asserting GA`,
   ));
   const requiredOwners = ['coding-execution-backend', 'verseshell-execution-adapter', 'permission-approval-authority', 'task-ledger', 'observability-recorder'];
   return criterion(

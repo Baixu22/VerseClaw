@@ -19,10 +19,11 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EVIDENCE_ROOT = 'harness/specs/fixtures/versebrowser-invocation-maturity';
-const CURRENT = 'current-merge-20261025';
+const CURRENT = 'current-20261104';
 const SOURCE_SCOPE = [
   'packages/versebrowser',
   'electron/services/agent-browser-api.ts',
+  'electron/services/agent-browser-network-proxy.ts',
   'electron/main/index.ts',
   'electron/services/agent-browser-capabilities.ts',
   'electron/gateway/agent-browser-bridge.ts',
@@ -32,6 +33,11 @@ const SOURCE_SCOPE = [
   'openclaw_runtime/src/gateway/server-methods/agent-browser.ts',
   'scripts/versebrowser-n9-stability-probe.mjs',
   'scripts/versebrowser-m10-packaged-flow-verify.mjs',
+  'scripts/versebrowser-evidence-verify.mjs',
+  'scripts/versebrowser-host-integration-verify.mjs',
+  'scripts/lib/versebrowser-build-identity.mjs',
+  'tests/e2e/versebrowser-host-invocation.spec.ts',
+  'tests/unit/versebrowser-*.test.ts',
 ];
 const CREDENTIAL_PATTERNS = [
   /(?<![A-Za-z0-9_-])sk-[A-Za-z0-9_-]{20,}/,
@@ -141,7 +147,7 @@ async function verifyHistoricalN9(hostRoot) {
   return { status: issues.length ? 'fail' : 'pass', manifest, issues };
 }
 
-async function verifyCurrent(hostRoot) {
+export async function verifyCurrent(hostRoot) {
   const dir = path.join(EVIDENCE_ROOT, CURRENT);
   const issues = [];
   if (!existsSync(path.join(hostRoot, dir))) return { status: 'fail', issues: [issue('current_evidence_missing', { path: dir })] };
@@ -158,6 +164,16 @@ async function verifyCurrent(hostRoot) {
   if (status?.status !== 'pass') issues.push(issue('current_status_not_pass'));
   if (n8?.status !== 'pass') issues.push(issue('current_n8_not_pass'));
   if (n9?.status !== 'pass') issues.push(issue('current_n9_not_pass'));
+  const build = candidate?.build;
+  const expectedPaths = ['Verse Claw.exe', 'resources/app.asar', 'resources/main-runtime.asar'];
+  const validBuild = build?.schemaVersion === 1 && Array.isArray(build.artifacts)
+    && JSON.stringify(build.artifacts.map(entry => entry.path)) === JSON.stringify(expectedPaths)
+    && build.artifacts.every(entry => Number.isSafeInteger(entry.bytes) && entry.bytes > 0 && /^[0-9a-f]{64}$/.test(entry.sha256))
+    && build.digest === sha256(Buffer.from(JSON.stringify(build.artifacts)));
+  if (!validBuild) issues.push(issue('current_build_identity_invalid'));
+  for (const [label, result] of [['n8', n8], ['n9', n9]]) {
+    if (!validBuild || JSON.stringify(result?.build) !== JSON.stringify(build)) issues.push(issue('current_run_build_mismatch', { run: label }));
+  }
   if (n9?.summary?.loops?.passed !== 30 || n9?.summary?.loops?.fullLoops !== 30) issues.push(issue('current_n9_loop_count_mismatch'));
   if (n9?.summary?.coldStarts?.passed !== 10) issues.push(issue('current_n9_cold_start_mismatch'));
   if (n9?.summary?.interrupts?.killedWithLiveSession !== 3 || n9?.summary?.interrupts?.recoveryPassed !== 3) issues.push(issue('current_n9_interrupt_mismatch'));
@@ -168,7 +184,14 @@ async function verifyCurrent(hostRoot) {
       const commitTree = git(hostRoot, ['rev-parse', `${candidate.sourceCommit}^{tree}`]);
       if (commitTree !== candidate.sourceTree) issues.push(issue('current_candidate_tree_mismatch', { expected: candidate.sourceTree, actual: commitTree }));
       git(hostRoot, ['merge-base', '--is-ancestor', candidate.sourceCommit, 'HEAD']);
-      const changed = git(hostRoot, ['diff', '--name-only', candidate.sourceCommit, 'HEAD', '--', ...SOURCE_SCOPE]).split(/\r?\n/).filter(Boolean);
+      // Include index/worktree edits and newly introduced source files, not only
+      // committed changes. A dirty candidate must not inherit a historical pass.
+      const changed = [...new Set([
+        ...git(hostRoot, ['diff', '--name-only', candidate.sourceCommit, 'HEAD', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+        ...git(hostRoot, ['diff', '--cached', '--name-only', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+        ...git(hostRoot, ['diff', '--name-only', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+        ...git(hostRoot, ['ls-files', '--others', '--exclude-standard', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+      ].filter(Boolean))];
       if (changed.length) issues.push(issue('current_evidence_stale', { changed }));
     } catch (error) {
       issues.push(issue('current_candidate_git_check_failed', { message: String(error?.stderr || error?.message || error) }));
@@ -194,13 +217,14 @@ async function scanCredentials(hostRoot) {
 }
 
 export async function verifyEvidence(hostRoot = ROOT) {
-  const [n8, n9, current] = await Promise.all([
+  const [n8, n9, previous, current] = await Promise.all([
     verifyN8(hostRoot),
     verifyHistoricalN9(hostRoot),
+    verifyManifest(hostRoot, path.join(EVIDENCE_ROOT, 'current-merge-20261025')),
     verifyCurrent(hostRoot),
   ]);
   const credentials = await scanCredentials(hostRoot);
-  const issues = [n8, n9, current].flatMap((section) => section.issues ?? []);
+  const issues = [n8, n9, previous, current].flatMap((section) => section.issues ?? []);
   for (const hit of credentials) issues.push(issue('credential_pattern_hit', hit));
   return {
     schemaVersion: 1,
@@ -208,7 +232,7 @@ export async function verifyEvidence(hostRoot = ROOT) {
     actor: 'codex',
     status: issues.length ? 'fail' : 'pass',
     scope: 'retained VerseBrowser evidence manifests, attribution, current-candidate binding and credential scan',
-    sections: { n8, n9, current },
+    sections: { n8, n9, previous, current },
     credentialScan: { hits: credentials.length, matches: credentials },
     issues,
   };

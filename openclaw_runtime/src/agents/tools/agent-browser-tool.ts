@@ -175,8 +175,8 @@ function agentBrowserSchema(actions: readonly AgentBrowserAction[]): TSchema {
 
 /**
  * Restrict a declared vocabulary to the entries the host reports as available.
- * Unknown names are dropped; an empty/absent input falls back to the full
- * declared vocabulary so existing callers keep today's behaviour.
+ * Unknown names are dropped. An empty authoritative snapshot leaves only
+ * side-effect-free discovery; it must never expand the executable vocabulary.
  */
 /**
  * Driver-specific disposition (spec N5).
@@ -208,10 +208,10 @@ export const DRIVER_UNAVAILABLE_ACTIONS: readonly string[] = Object.freeze([
 export function normalizeAvailableActions(
   available: readonly string[] | undefined,
 ): readonly AgentBrowserAction[] {
-  if (!available || available.length === 0) return AGENT_BROWSER_ACTIONS;
+  if (!available) return AGENT_BROWSER_ACTIONS.filter((action) => !DRIVER_UNAVAILABLE_ACTIONS.includes(action));
   const allowed = new Set(available);
   const filtered = AGENT_BROWSER_ACTIONS.filter((action) => allowed.has(action));
-  return filtered.length > 0 ? filtered : AGENT_BROWSER_ACTIONS;
+  return filtered.length > 0 ? filtered : ["status"];
 }
 
 /**
@@ -458,11 +458,12 @@ async function assertSessionEffectAllowed(params: {
   sessionId: string;
   action: AgentBrowserSessionEffect;
   provenanceContext?: ContentProvenanceContext;
+  correlation?: AgentBrowserCorrelation;
 }): Promise<void> {
   if (!shouldPreflightAgentBrowserSessionEffect(params.provenanceContext)) return;
   let statusResult: unknown;
   try {
-    statusResult = await params.invoke("status", {});
+    statusResult = await params.invoke("status", {}, params.correlation);
   } catch {
     throw new ToolAuthorizationError(
       `Agent browser ${params.action} denied: unable to verify the target browser session.`,
@@ -600,6 +601,7 @@ export function createAgentBrowserTool(options?: {
           sessionId: typeof payload.sessionId === "string" ? payload.sessionId : "",
           action,
           provenanceContext: options.contentProvenanceContext,
+          correlation,
         });
       }
       let result: unknown;
