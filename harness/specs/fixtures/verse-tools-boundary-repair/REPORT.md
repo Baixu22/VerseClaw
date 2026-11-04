@@ -34,6 +34,6 @@
 - 全仓库 harness:ci 仍有无关 Agent Dev 证据超过 24 小时窗口的问题；不宣称全仓库全绿。
 - 外部 VerseShell MCP 连接器未获本轮通过声明；项目内 VS binary/manifest 与 VG→VS 路径的证据单独保留。
 - 最终独立源码审查未完成，见 source-review-status.json。原审查的已知发现已修复和定向验证，不等于获得新的独立审查通过。
-- 主工作区存在其他会话的未提交变更，修复留在 codex/verse-tools-boundaries-20261104。合并预检另有 scripts/rsi-sekb-arms.d.mts 的声明冲突，尚未修改主工作区。
+- 主工作区存在其他会话的未提交变更，修复留在 codex/verse-tools-boundaries-20261104。合并预案保留主线更完整的 scripts/rsi-sekb-arms.d.mts 声明，补丁对当时主工作区的 git apply --check 已通过；预案尚未应用，见 merge-plan.json。
 
 历史失败单独留存，不与本次 pass 混算。manifest 覆盖本目录的全部留存文件。
