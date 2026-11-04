@@ -40,6 +40,9 @@ import {
   recoveryShadowSink,
   type LegacyRecoveryOutcome,
 } from "./recovery-authority/shadow.js";
+import { isExecutionPhaseWriterEnabled } from "./execution-phase/tool-boundary.js";
+import { resolveExecutionPhaseRecovery } from "./execution-phase/recovery.js";
+import { settleOrphanedExecutionPhases } from "./execution-phase/store.js";
 import type { SessionLockInspection } from "./session-write-lock.js";
 
 const log = createSubsystemLogger("main-session-restart-recovery");
@@ -543,17 +546,26 @@ async function recoverStore(params: {
         log.warn(`recovery authority shadow failed for ${sessionKey}: ${String(err)}`);
       }
     }
-    if (resumeBlockReason) {
+    // TF-0719: with the execution-phase writer on, an open effect may already
+    // have been applied. Resuming blindly would duplicate it.
+    let effectiveResumeBlockReason = resumeBlockReason;
+    if (isExecutionPhaseWriterEnabled()) {
+      const phaseRecovery = resolveExecutionPhaseRecovery(sessionKey);
+      if (phaseRecovery.action === 'reconcile') {
+        effectiveResumeBlockReason = "execution phase requires reconciliation: " + phaseRecovery.phases.join(",");
+      }
+    }
+    if (effectiveResumeBlockReason) {
       await sendUnresumableSessionNotice({
         cfg: params.cfg,
         entry,
         sessionKey,
-        reason: resumeBlockReason,
+        reason: effectiveResumeBlockReason,
       });
       await markSessionFailed({
         storePath: params.storePath,
         sessionKey,
-        reason: resumeBlockReason,
+        reason: effectiveResumeBlockReason,
       });
       result.failed++;
       continue;
@@ -604,6 +616,13 @@ export async function recoverRestartAbortedMainSessions(
 ): Promise<{ recovered: number; failed: number; skipped: number }> {
   const result = { recovered: 0, failed: 0, skipped: 0 };
   const resumedSessionKeys = params.resumedSessionKeys ?? new Set<string>();
+  if (isExecutionPhaseWriterEnabled()) {
+    try {
+      settleOrphanedExecutionPhases();
+    } catch (err) {
+      log.warn("execution phase settlement failed: " + String(err));
+    }
+  }
 
   for (const storePath of await resolveRestartRecoveryStorePaths(params)) {
     const storeResult = await recoverStore({
@@ -661,4 +680,5 @@ export function scheduleRestartAbortedMainSessionRecovery(
 
   attemptRecovery(1, initialDelay);
 }
+
 

@@ -529,6 +529,22 @@ export interface ExecApprovalsConfig {
   updated_at_ms: number;
 }
 
+export interface ExecutionPhases {
+  created_at: number;
+  effect_class: string;
+  execution_id: string;
+  idempotency_key: string;
+  intent_json: Generated<string>;
+  phase: string;
+  recovery_json: Generated<string>;
+  revision: Generated<number>;
+  run_id: string | null;
+  session_key: string | null;
+  task_id: string | null;
+  tool_name: string;
+  updated_at: number;
+}
+
 export interface FlowRuns {
   blocked_summary: string | null;
   blocked_task_id: string | null;
@@ -1333,6 +1349,7 @@ export interface DB {
   diagnostic_stability_bundles: DiagnosticStabilityBundles;
   effect_receipts: EffectReceipts;
   exec_approvals_config: ExecApprovalsConfig;
+  execution_phases: ExecutionPhases;
   flow_runs: FlowRuns;
   gateway_restart_handoff: GatewayRestartHandoff;
   gateway_restart_intent: GatewayRestartIntent;

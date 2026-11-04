@@ -1776,4 +1776,35 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_effect_receipts_idempotency
   ON effect_receipts(idempotency_key);
 
 CREATE INDEX IF NOT EXISTS idx_effect_receipts_approval
-  ON effect_receipts(approval_id, created_at DESC);\n`;
+  ON effect_receipts(approval_id, created_at DESC);
+
+-- TF-0718/TF-0719: durable execution phase.
+-- One row per tool invocation, keyed by a stable idempotency key. The committed
+-- phase is the only judge of "what already happened"; the domain journal stays
+-- the effect truth. No raw tool arguments/output are stored here.
+CREATE TABLE IF NOT EXISTS execution_phases (
+  execution_id TEXT NOT NULL PRIMARY KEY,
+  idempotency_key TEXT NOT NULL,
+  session_key TEXT,
+  run_id TEXT,
+  task_id TEXT,
+  tool_name TEXT NOT NULL,
+  effect_class TEXT NOT NULL CHECK (effect_class IN ('safe','unsafe','reconcile')),
+  phase TEXT NOT NULL CHECK (phase IN (
+    'admitted','dispatched','effect_pending','effect_committed','verified','terminal','failed','aborted'
+  )),
+  revision INTEGER NOT NULL DEFAULT 0,
+  intent_json TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(intent_json) AND json_type(intent_json) = 'object'),
+  recovery_json TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(recovery_json) AND json_type(recovery_json) = 'object'),
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_execution_phases_idempotency
+  ON execution_phases(idempotency_key);
+
+CREATE INDEX IF NOT EXISTS idx_execution_phases_session
+  ON execution_phases(session_key, updated_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_execution_phases_phase
+  ON execution_phases(phase, updated_at DESC);\n`;
