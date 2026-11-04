@@ -424,75 +424,75 @@
       "sha256": "090f6dc3fdd82aee12b52bf818f7920071ebeb870d29dde1958d87a8462e4ee5",
       "bytes": 4508
     },
-    "probe-worktrees.stdout.log": {
+    "probe-worktrees.stdout.txt": {
       "sha256": "e01136ed5f0fb2d900bb3bee3ffeb0b1d18c0cd6e863c05ba5315a8d3ae75a85",
       "bytes": 4969
     },
-    "probe-worktrees.stderr.log": {
+    "probe-worktrees.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "probe-boundaries.stdout.log": {
+    "probe-boundaries.stdout.txt": {
       "sha256": "765d8b1f0bd6822c37e3d5ce1bcfdec67888f9a71113ff24c138d64a690b4142",
       "bytes": 2135
     },
-    "probe-boundaries.stderr.log": {
+    "probe-boundaries.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "probe-routing.stdout.log": {
+    "probe-routing.stdout.txt": {
       "sha256": "46cf5d4d07a30841993457b342449cb3459e6f0c4b90b14ba130ab55fbf40a71",
       "bytes": 4602
     },
-    "probe-routing.stderr.log": {
+    "probe-routing.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "probe-journal.stdout.log": {
+    "probe-journal.stdout.txt": {
       "sha256": "c21e74b4311b697ff9611e6aef4dbf4696f4b6823e8dc2a6dcaecb75efb953a1",
       "bytes": 739
     },
-    "probe-journal.stderr.log": {
+    "probe-journal.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "sts-environment.stdout.log": {
+    "sts-environment.stdout.txt": {
       "sha256": "705fba922a3b6ea72098c6821260e3b0fdd84d89ab6b9be254c7a5e5449fcb51",
       "bytes": 141
     },
-    "sts-environment.stderr.log": {
+    "sts-environment.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "sts-installation.stdout.log": {
+    "sts-installation.stdout.txt": {
       "sha256": "f6787b6b174942edb776c99d92ff3512b297c1232ba4dd8d580c84974a6437d6",
       "bytes": 1004
     },
-    "sts-installation.stderr.log": {
+    "sts-installation.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "sts-wheel-binding.stdout.log": {
+    "sts-wheel-binding.stdout.txt": {
       "sha256": "c379203821a5bea565efb0a91cd6fc8a167e8abe22e4996ab6ad4e59098624ba",
       "bytes": 123
     },
-    "sts-wheel-binding.stderr.log": {
+    "sts-wheel-binding.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "vg-capabilities.stdout.log": {
+    "vg-capabilities.stdout.txt": {
       "sha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
       "bytes": 3737
     },
-    "vg-capabilities.stderr.log": {
+    "vg-capabilities.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
-    "vs-version.stdout.log": {
+    "vs-version.stdout.txt": {
       "sha256": "1465334d5260501196377a50a45bbd96a1b522d7beff4fe0778cd9037966fd14",
       "bytes": 9
     },
-    "vs-version.stderr.log": {
+    "vs-version.stderr.txt": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     }
