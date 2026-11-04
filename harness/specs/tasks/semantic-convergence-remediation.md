@@ -11,6 +11,7 @@ touchedAreas:
   - docs/dev/semantic-convergence-program-20261104.md
   - docs/dev/semantic-convergence-benefit-20261104.md
   - docs/dev/network-protocol-reliability/retry-budget.md
+  - docs/dev/network-protocol-reliability/provider-health.md
   - harness/specs/tasks/semantic-convergence-remediation.md
   - openclaw_runtime/src/agents/request-attempt-budget.ts
   - openclaw_runtime/src/agents/request-attempt-budget.test.ts
@@ -29,6 +30,21 @@ touchedAreas:
   - shared/host-api/contract.ts
   - src/components/settings/ProvidersSettings.tsx
   - src/pages/Setup/ProviderModelSteps.tsx
+  - src/lib/providers.ts
+  - src/lib/setup-provider.ts
+  - src/stores/providers.ts
+  - shared/i18n/locales/en/settings.json
+  - shared/i18n/locales/en/setup.json
+  - shared/i18n/locales/zh/settings.json
+  - shared/i18n/locales/zh/setup.json
+  - shared/i18n/locales/ja/settings.json
+  - shared/i18n/locales/ja/setup.json
+  - shared/i18n/locales/ru/settings.json
+  - shared/i18n/locales/ru/setup.json
+  - tests/unit/provider-validation.test.ts
+  - tests/unit/provider-store-validation.test.ts
+  - tests/unit/setup-provider-validation.test.ts
+  - tests/e2e/setup-first-run-fp-p1-01.spec.ts
   - openclaw_runtime/src/context-engine/context-candidate.ts
   - openclaw_runtime/src/context-engine/context-orchestrator.ts
   - openclaw_runtime/src/context-engine/turn-injection-budget.ts

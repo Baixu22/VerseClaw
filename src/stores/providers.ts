@@ -14,6 +14,7 @@ import type {
 import { normalizeProviderApiKeyInput } from '@/lib/providers';
 import { hostApi } from '@/lib/host-api';
 import { fetchProviderSnapshot } from '@/lib/provider-accounts';
+import type { ProviderValidationResult } from '@shared/host-api/contract';
 
 // Re-export types for consumers that imported from here
 export type {
@@ -23,6 +24,8 @@ export type {
   ProviderWithKeyInfo,
 } from '@/lib/providers';
 export type { ProviderSnapshot } from '@/lib/provider-accounts';
+
+export type { ProviderValidationResult } from '@shared/host-api/contract';
 
 interface ProviderState {
   statuses: ProviderWithKeyInfo[];
@@ -45,7 +48,7 @@ interface ProviderState {
       apiProtocol?: ProviderAccount['apiProtocol'];
       auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
     }
-  ) => Promise<{ valid: boolean; error?: string; durationMs?: number }>;
+  ) => Promise<ProviderValidationResult>;
   listAccountModels: (
     accountId: string,
     apiKey?: string,
@@ -81,7 +84,7 @@ interface ProviderState {
       apiProtocol?: ProviderAccount['apiProtocol'];
       auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
     }
-  ) => Promise<{ valid: boolean; error?: string; durationMs?: number }>;
+  ) => Promise<ProviderValidationResult>;
 }
 
 export const useProviderStore = create<ProviderState>((set, get) => ({
@@ -292,11 +295,19 @@ export const useProviderStore = create<ProviderState>((set, get) => ({
           apiKey: normalizedApiKey,
           options,
       });
-      return result?.valid === true
-        ? { valid: true, durationMs: result.durationMs }
-        : { valid: false, error: result?.error, durationMs: result?.durationMs };
+      return result;
     } catch (error) {
-      return { valid: false, error: String(error) };
+      return {
+        valid: false,
+        error: String(error),
+        reachable: 'unknown',
+        auth: 'unknown',
+        protocol: 'unknown',
+        model: 'unknown',
+        rateLimited: false,
+        ready: false,
+        reason: 'unknown',
+      };
     }
   },
 

@@ -38,6 +38,7 @@ import {
   type ProviderAccount,
   type ProviderConfig,
   type ProviderVendorInfo,
+  type ProviderValidationResult,
 } from '@/stores/providers';
 import {
   PROVIDER_TYPE_INFO,
@@ -57,6 +58,7 @@ import {
   type ProviderListItem,
 } from '@/lib/provider-accounts';
 import { cn } from '@/lib/utils';
+import { providerValidationFeedback } from '@/lib/setup-provider';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settings';
@@ -294,6 +296,7 @@ function ModelPicker({
 
 export function ProvidersSettings() {
   const { t } = useTranslation('settings');
+  const validationFailureCopy = useValidationFailureCopy();
   const devModeUnlocked = useSettingsStore((state) => state.devModeUnlocked);
   const {
     statuses,
@@ -371,10 +374,10 @@ export function ProvidersSettings() {
         apiProtocol: options?.apiProtocol,
         auth: options?.requestAuth,
       });
-      if (testResult.valid) {
+      if (testResult.ready === true) {
         toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(testResult.durationMs ?? 0) }));
       } else {
-        toast.error(t('aiProviders.toast.connectionFailed', { error: testResult.error || t('aiProviders.toast.invalidKey') }));
+        toast.error(t('aiProviders.toast.connectionFailed', { error: validationFailureCopy(testResult) }));
       }
     } catch (error) {
       toast.error(`${t('aiProviders.toast.failedAdd')}: ${error}`);
@@ -481,6 +484,39 @@ export function ProvidersSettings() {
   );
 }
 
+/**
+ * TF-0733: turn a structured validation result into actionable, localised copy.
+ * 429 shows the retry window; a non-auth failure shows protocol/parameter
+ * guidance instead of the generic "invalid key" text.
+ */
+function useValidationFailureCopy() {
+  const { t } = useTranslation('settings');
+  return (result: ProviderValidationResult): string => {
+    const feedback = providerValidationFeedback(result, result.error);
+    switch (feedback.key) {
+      case 'rateLimited': {
+        const seconds = feedback.retryAfterMs !== undefined
+          ? Math.ceil(feedback.retryAfterMs / 1000)
+          : undefined;
+        return seconds !== undefined
+          ? t('aiProviders.validation.rateLimitedWithRetry', { seconds })
+          : t('aiProviders.validation.rateLimited');
+      }
+      case 'protocolError':
+        return t('aiProviders.validation.protocolError');
+      case 'modelUnavailable':
+        return t('aiProviders.validation.modelUnavailable');
+      case 'network':
+        return t('aiProviders.validation.network');
+      case 'service':
+        return t('aiProviders.validation.service');
+      case 'invalidKey':
+      default:
+        return feedback.rawError || t('aiProviders.toast.invalidKey');
+    }
+  };
+}
+
 interface ProviderCardProps {
   item: ProviderListItem;
   allProviders: ProviderListItem[];
@@ -494,7 +530,7 @@ interface ProviderCardProps {
   onValidateKey: (
     key?: string,
     options?: { baseUrl?: string; apiProtocol?: ProviderAccount['apiProtocol'] }
-  ) => Promise<{ valid: boolean; error?: string; durationMs?: number }>;
+  ) => Promise<ProviderValidationResult>;
   onListModels: (
     key?: string,
     options?: { baseUrl?: string; apiProtocol?: ProviderAccount['apiProtocol'] }
@@ -519,6 +555,7 @@ function ProviderCard({
   devModeUnlocked,
 }: ProviderCardProps) {
   const { t, i18n } = useTranslation('settings');
+  const validationFailureCopy = useValidationFailureCopy();
   const { account, vendor, status } = item;
   const [newKey, setNewKey] = useState('');
   const [baseUrl, setBaseUrl] = useState(account.baseUrl || '');
@@ -610,8 +647,10 @@ function ProviderCard({
           apiProtocol: (account.vendorId === 'custom' || account.vendorId === 'ollama') ? apiProtocol : undefined,
         });
         setValidating(false);
-        if (!result.valid) {
-          setValidationError(result.error || t('aiProviders.toast.invalidKey'));
+        // Only a rejected credential blocks saving. A probe that authenticated
+        // but has no confirmed model is a model-step concern, not a key error.
+        if (result.auth === 'invalid') {
+          setValidationError(validationFailureCopy(result));
           setSaving(false);
           return;
         }
@@ -671,10 +710,10 @@ function ProviderCard({
         baseUrl: baseUrl.trim() || undefined,
         apiProtocol: (account.vendorId === 'custom' || account.vendorId === 'ollama') ? apiProtocol : undefined,
       });
-      if (testResult.valid) {
+      if (testResult.ready === true) {
         toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(testResult.durationMs ?? 0) }));
       } else {
-        toast.error(t('aiProviders.toast.connectionFailed', { error: testResult.error || t('aiProviders.toast.invalidKey') }));
+        toast.error(t('aiProviders.toast.connectionFailed', { error: validationFailureCopy(testResult) }));
       }
       onCancelEdit();
     } catch (error) {
@@ -694,11 +733,12 @@ function ProviderCard({
         baseUrl: baseUrl.trim() || undefined,
         apiProtocol: (account.vendorId === 'custom' || account.vendorId === 'ollama') ? apiProtocol : undefined,
       });
-      if (result.valid) {
+      if (result.ready === true) {
         toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(result.durationMs ?? 0) }));
       } else {
-        setValidationError(result.error || t('aiProviders.toast.invalidKey'));
-        toast.error(t('aiProviders.toast.connectionFailed', { error: result.error || t('aiProviders.toast.invalidKey') }));
+        const message = validationFailureCopy(result);
+        setValidationError(message);
+        toast.error(t('aiProviders.toast.connectionFailed', { error: message }));
       }
     } finally {
       setTestingConnection(false);
@@ -1165,7 +1205,7 @@ interface AddProviderDialogProps {
       apiProtocol?: ProviderAccount['apiProtocol'];
       auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
     }
-  ) => Promise<{ valid: boolean; error?: string; durationMs?: number }>;
+  ) => Promise<ProviderValidationResult>;
   onListModels: (
     type: string,
     apiKey?: string,
@@ -1189,6 +1229,7 @@ function AddProviderDialog({
   devModeUnlocked,
 }: AddProviderDialogProps) {
   const { t, i18n } = useTranslation('settings');
+  const validationFailureCopy = useValidationFailureCopy();
   const [selectedType, setSelectedType] = useState<ProviderType | null>(null);
   const [name, setName] = useState('');
   const [apiKey, setApiKey] = useState('');
@@ -1549,8 +1590,8 @@ function AddProviderDialog({
           apiProtocol: (selectedType === 'custom' || selectedType === 'ollama') ? apiProtocol : undefined,
           auth: buildValidationAuth(),
         });
-        if (!result.valid) {
-          setValidationError(result.error || t('aiProviders.toast.invalidKey'));
+        if (result.auth === 'invalid') {
+          setValidationError(validationFailureCopy(result));
           setSaving(false);
           return;
         }
@@ -1598,11 +1639,12 @@ function AddProviderDialog({
         apiProtocol: (selectedType === 'custom' || selectedType === 'ollama') ? apiProtocol : undefined,
         auth: buildValidationAuth(),
       });
-      if (result.valid) {
+      if (result.ready === true) {
         toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(result.durationMs ?? 0) }));
       } else {
-        setValidationError(result.error || t('aiProviders.toast.invalidKey'));
-        toast.error(t('aiProviders.toast.connectionFailed', { error: result.error || t('aiProviders.toast.invalidKey') }));
+        const message = validationFailureCopy(result);
+        setValidationError(message);
+        toast.error(t('aiProviders.toast.connectionFailed', { error: message }));
       }
     } finally {
       setTestingConnection(false);

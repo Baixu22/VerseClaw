@@ -60,15 +60,48 @@
   "recovery": {
     "activityTitle": "セッションと復旧",
     "currentTitle": "現在のセッションの復旧",
-    "enabled": { "title": "セッション状態パネルを表示", "description": "実際のアクティビティがあるとき、Chat の横に実行状態を表示します。" },
-    "autoExpand": { "title": "自動展開", "description": "デスクトップでパネルを開くタイミングを選択します。", "active": "アクティブ時", "attention": "確認が必要な時", "never": "展開しない" },
-    "completedRunsExpanded": { "title": "完了した実行アクティビティを展開したままにする", "description": "完了した実行の詳細を既定で表示します。このセッションで手動で閉じた実行は閉じたままです。" },
-    "showGit": { "title": "ワークスペース Git を表示", "description": "ワークスペースのブランチと変更状態を含めます。" },
-    "showCommands": { "title": "Agent コマンドを表示", "description": "対話型ターミナルと構造化コマンドの概要を表示します。" },
-    "notifications": { "title": "復旧とブロック通知", "description": "実際の復旧またはブロック信号の確認が必要なときに通知します。" },
-    "desktopNotifications": { "title": "デスクトップ通知", "description": "実行の完了、失敗、承認待ちをシステム通知で知らせます。ベルメニューからオフにできますが、アプリ内の通知は残ります。" },
-    "retention": { "title": "最近のアクティビティ保持", "description": "完了したアクティビティをパネルに表示する期間を制限します。transcript やランタイム リソースの保持期間は変わりません。", "none": "保持しない", "five": "5 分", "fifteen": "15 分" },
-    "session": { "title": "セッション", "description": "確認するワークスペースセッションを選択します。" },
+    "enabled": {
+      "title": "セッション状態パネルを表示",
+      "description": "実際のアクティビティがあるとき、Chat の横に実行状態を表示します。"
+    },
+    "autoExpand": {
+      "title": "自動展開",
+      "description": "デスクトップでパネルを開くタイミングを選択します。",
+      "active": "アクティブ時",
+      "attention": "確認が必要な時",
+      "never": "展開しない"
+    },
+    "completedRunsExpanded": {
+      "title": "完了した実行アクティビティを展開したままにする",
+      "description": "完了した実行の詳細を既定で表示します。このセッションで手動で閉じた実行は閉じたままです。"
+    },
+    "showGit": {
+      "title": "ワークスペース Git を表示",
+      "description": "ワークスペースのブランチと変更状態を含めます。"
+    },
+    "showCommands": {
+      "title": "Agent コマンドを表示",
+      "description": "対話型ターミナルと構造化コマンドの概要を表示します。"
+    },
+    "notifications": {
+      "title": "復旧とブロック通知",
+      "description": "実際の復旧またはブロック信号の確認が必要なときに通知します。"
+    },
+    "desktopNotifications": {
+      "title": "デスクトップ通知",
+      "description": "実行の完了、失敗、承認待ちをシステム通知で知らせます。ベルメニューからオフにできますが、アプリ内の通知は残ります。"
+    },
+    "retention": {
+      "title": "最近のアクティビティ保持",
+      "description": "完了したアクティビティをパネルに表示する期間を制限します。transcript やランタイム リソースの保持期間は変わりません。",
+      "none": "保持しない",
+      "five": "5 分",
+      "fifteen": "15 分"
+    },
+    "session": {
+      "title": "セッション",
+      "description": "確認するワークスペースセッションを選択します。"
+    },
     "runAction": "実行",
     "openConversation": "会話を開く",
     "healthy": "このセッションに復旧の必要はありません。",
@@ -235,6 +268,14 @@
       "step2": "ブラウザでログインページを開いてください。",
       "step3": "コードを貼り付けてアクセスを承認してください。",
       "requestingCode": "セキュアログインコードを取得中..."
+    },
+    "validation": {
+      "rateLimited": "プロバイダーによるレート制限",
+      "rateLimitedWithRetry": "プロバイダーがレート制限中です。約 {{seconds}} 秒後に再試行してください。",
+      "protocolError": "エンドポイントがリクエスト形式を拒否しました。Base URL と API プロトコルを確認してください。",
+      "modelUnavailable": "エンドポイントには到達でき、キーも有効ですが、指定したモデルは利用できません。",
+      "network": "プロバイダーのエンドポイントに到達できません。ネットワークまたはプロキシ設定を確認してください。",
+      "service": "プロバイダーが予期しない応答を返しました。"
     }
   },
   "gateway": {

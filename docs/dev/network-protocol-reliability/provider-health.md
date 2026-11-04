@@ -102,3 +102,32 @@ failures, open fail-fast without a provider request, half-open single probe,
 successful recovery, account/endpoint isolation, export hygiene, and
 non-double-counting against the concurrency budget. No paid provider request is
 made and no live-provider conformance is claimed.
+
+## Validation probe states (TF-0733)
+
+The provider **validation** probe (Settings / Setup) is separate from runtime
+endpoint health above. Since TF-0733 it reports a structured
+`ProviderValidationResult`, not a single boolean:
+
+| dimension | values | meaning |
+|---|---|---|
+| `reachable` | `reachable` / `unreachable` / `unknown` | did the endpoint answer at all |
+| `auth` | `valid` / `invalid` / `unknown` | did it accept the credential |
+| `protocol` | `compatible` / `incompatible` / `unknown` | did it accept the request shape |
+| `model` | `available` / `unavailable` / `unknown` | is the probed/selected model usable |
+| `rateLimited` (+ `retryAfterMs`) | boolean / number | HTTP 429 and its `Retry-After` |
+| `ready` | boolean | the only surface the UI may render as verified |
+
+Rules:
+
+- HTTP 429 is **not** a pass. It sets `rateLimited=true`, `ready=false`, and is
+  never treated as a credential success. `Retry-After` is parsed from seconds
+  or an HTTP date into `retryAfterMs`.
+- A non-auth 400 on the fallback chat/responses probe means the endpoint
+  understood the credential but rejected the request shape: `protocol-error`.
+  A model-shaped 400/404 is `model-unavailable`.
+- `valid` remains for one release as a compatibility field with fixed
+  semantics (`auth === 'valid' && protocol !== 'incompatible'`). It must not
+  gate "Credentials verified"; that copy requires `ready === true`.
+- Setup writes `metadata.validation.status='valid'` only after a model is
+  confirmed, so leaving the wizard mid-way cannot leave a false-ready record.

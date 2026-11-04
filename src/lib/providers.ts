@@ -161,11 +161,17 @@ export interface ProviderAccount {
     email?: string;
     resourceUrl?: string;
     customModels?: string[];
-    /** FP-P1-01: sanitized validation record (never contains key material). */
+    /**
+     * FP-P1-01: sanitized validation record (never contains key material).
+     * TF-0733: 'valid' is only written once a model has been confirmed, so the
+     * record can no longer claim readiness for an unverified model.
+     */
     validation?: {
-      status: 'valid' | 'invalid' | 'network-error' | 'unchecked';
+      status: 'valid' | 'invalid' | 'network-error' | 'rate-limited' | 'protocol-error' | 'unchecked';
       checkedAt: string;
       model?: string;
+      reason?: string;
+      retryAfterMs?: number;
       source: 'setup' | 'settings';
     };
   };

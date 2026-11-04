@@ -7,6 +7,7 @@
  * FP-P1-06 support bundle.
  */
 import type { ProviderAccount, ProviderWithKeyInfo } from '@/lib/providers';
+import type { ProviderValidationState } from '@shared/host-api/contract';
 
 /** Sanitized verification state persisted in app settings (no secrets). */
 export type SetupProviderVerification = {
@@ -24,6 +25,9 @@ export const DEFAULT_SETUP_PROVIDER_VERIFICATION: SetupProviderVerification = {
 export type ProviderValidationFailureClass =
   | 'not-filled'
   | 'credentials'
+  | 'rate-limited'
+  | 'protocol'
+  | 'model'
   | 'network'
   | 'service';
 
@@ -32,12 +36,32 @@ export type ProviderValidationFailureClass =
  * The UI translates each class into "what to change, where" copy instead of
  * surfacing the raw error string (AC: 校验失败给出可操作文案).
  */
+/**
+ * TF-0733: when the host returns a structured validation state, the
+ * classification comes from the state dimensions — not from string matching
+ * on the error message. A 429 becomes 'rate-limited', a non-auth 400 becomes
+ * 'protocol', and a model rejection becomes 'model'. Only legacy/opaque
+ * failures fall back to the message heuristics below.
+ */
 export function classifyProviderValidationError(input: {
   apiKeyPresent: boolean;
   requiresApiKey: boolean;
   error?: string;
+  status?: number;
+  state?: ProviderValidationState;
 }): ProviderValidationFailureClass {
   if (input.requiresApiKey && !input.apiKeyPresent) return 'not-filled';
+  const state = input.state;
+  if (state) {
+    if (state.rateLimited) return 'rate-limited';
+    if (state.auth === 'invalid') return 'credentials';
+    if (state.reachable === 'unreachable') return 'network';
+    if (state.protocol === 'incompatible' || state.reason === 'protocol-error') return 'protocol';
+    if (state.model === 'unavailable') return 'model';
+    if (state.reason === 'server-error') return 'service';
+    if (!state.ready) return 'service';
+  }
+  if (input.status === 429) return 'rate-limited';
   const error = (input.error ?? '').toLowerCase();
   if (
     /(^|\D)(401|403)(\D|$)/.test(error) ||
@@ -97,4 +121,57 @@ export function isSetupVerificationComplete(
     typeof verification.model === 'string' &&
     verification.model.length > 0
   );
+}
+
+/**
+ * TF-0733: the single readiness gate for Setup's "Credentials verified" copy.
+ * `valid` (compatibility) is deliberately not consulted: a 429 or a non-auth
+ * 400 keeps `valid` false/true inconsistently across providers, so only the
+ * explicit `ready` dimension may mark the credential step as verified.
+ */
+export function isSetupProviderReady(input: {
+  apiKeyPresent: boolean;
+  requiresApiKey: boolean;
+  state?: ProviderValidationState;
+}): boolean {
+  if (input.requiresApiKey && !input.apiKeyPresent) return false;
+  return input.state?.ready === true;
+}
+
+/**
+ * TF-0733: map a structured validation state to the message key the Settings
+ * provider card should show. Keeping this pure (key + params, no i18n import)
+ * lets both Settings and tests use the same mapping.
+ */
+export type ProviderValidationFeedbackKey =
+  | 'invalidKey'
+  | 'rateLimited'
+  | 'protocolError'
+  | 'modelUnavailable'
+  | 'network'
+  | 'service';
+
+export function providerValidationFeedback(
+  state: ProviderValidationState | undefined,
+  fallbackError?: string,
+): { key: ProviderValidationFeedbackKey; retryAfterMs?: number; rawError?: string } {
+  if (!state) {
+    return { key: 'invalidKey', rawError: fallbackError };
+  }
+  if (state.rateLimited) {
+    return { key: 'rateLimited', retryAfterMs: state.retryAfterMs };
+  }
+  if (state.auth === 'invalid') {
+    return { key: 'invalidKey', rawError: fallbackError };
+  }
+  if (state.reachable === 'unreachable') {
+    return { key: 'network', rawError: fallbackError };
+  }
+  if (state.protocol === 'incompatible' || state.reason === 'protocol-error') {
+    return { key: 'protocolError', rawError: fallbackError };
+  }
+  if (state.model === 'unavailable') {
+    return { key: 'modelUnavailable', rawError: fallbackError };
+  }
+  return { key: 'service', rawError: fallbackError };
 }

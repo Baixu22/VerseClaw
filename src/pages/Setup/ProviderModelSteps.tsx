@@ -29,6 +29,7 @@ import {
   classifyProviderValidationError,
   type ProviderValidationFailureClass,
 } from '@/lib/setup-provider';
+import type { ProviderValidationState } from '@shared/host-api/contract';
 
 /** Vendors offered during first-run setup (all support key or local auth). */
 const SETUP_VENDOR_IDS: ProviderType[] = [
@@ -52,11 +53,16 @@ export type PendingProviderSetup = {
   apiProtocol?: ProviderAccount['apiProtocol'];
 };
 
+/**
+ * TF-0733: 'credentials-accepted' means the credential half passed, but the
+ * model is not confirmed yet. Only 'ready' (model confirmed, host said
+ * ready) may render "Credentials verified".
+ */
 type ValidationState =
   | { phase: 'idle' }
   | { phase: 'validating' }
-  | { phase: 'valid'; durationMs?: number }
-  | { phase: 'failed'; failure: ProviderValidationFailureClass; rawError?: string };
+  | { phase: 'credentials-accepted'; durationMs?: number; state?: ProviderValidationState }
+  | { phase: 'failed'; failure: ProviderValidationFailureClass; rawError?: string; retryAfterMs?: number };
 
 interface ProviderStepContentProps {
   pending: PendingProviderSetup | null;
@@ -180,13 +186,18 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
           apiKeyPresent: apiKey.trim().length > 0,
           requiresApiKey,
           error: result.error,
+          status: result.status,
+          state: result,
         }),
         rawError: result.error,
+        retryAfterMs: result.retryAfterMs,
       });
       return;
     }
     // Credential is live-verified — create the account now so the Model step
-    // can list models against the stored key.
+    // can list models against the stored key. TF-0733: this deliberately does
+    // NOT write metadata.validation='valid'; that record is written only after
+    // the Model step confirms a real model.
     const vendors = useProviderStore.getState().vendors;
     const id = buildProviderAccountId(selectedType, null, vendors);
     const effectiveApiKey = resolveProviderApiKeyForSave(selectedType, apiKey.trim());
@@ -201,13 +212,6 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
           model: typeInfo.defaultModelId,
           enabled: true,
           isDefault: false,
-          metadata: {
-            validation: {
-              status: 'valid',
-              checkedAt: new Date().toISOString(),
-              source: 'setup',
-            },
-          },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -219,7 +223,7 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
       return;
     }
     if (generation !== validationGeneration.current) return;
-    setValidation({ phase: 'valid', durationMs: result.durationMs });
+    setValidation({ phase: 'credentials-accepted', durationMs: result.durationMs, state: result });
     onValidated({
       accountId: id,
       vendorId: selectedType,
@@ -245,12 +249,15 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
           apiKeyPresent: true,
           requiresApiKey: true,
           error: result.error,
+          status: result.status,
+          state: result,
         }),
         rawError: result.error,
+        retryAfterMs: result.retryAfterMs,
       });
       return;
     }
-    setValidation({ phase: 'valid', durationMs: result.durationMs });
+    setValidation({ phase: 'credentials-accepted', durationMs: result.durationMs, state: result });
     onValidated({
       accountId: account.id,
       vendorId: account.vendorId,
@@ -260,7 +267,11 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
     });
   };
 
-  const failureCopy = (failure: ProviderValidationFailureClass, rawError?: string) => (
+  const failureCopy = (
+    failure: ProviderValidationFailureClass,
+    rawError?: string,
+    retryAfterMs?: number,
+  ) => (
     <div
       data-testid={`setup-provider-error-${failure}`}
       className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm"
@@ -269,6 +280,13 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
         {t(`provider.errors.${failure}.title`)}
       </p>
       <p className="mt-1 text-muted-foreground">{t(`provider.errors.${failure}.action`)}</p>
+      {failure === 'rate-limited' && (
+        <p data-testid="setup-provider-retry-after" className="mt-1 text-xs text-muted-foreground">
+          {retryAfterMs !== undefined
+            ? t('provider.errors.rate-limited.retryAfter', { seconds: Math.ceil(retryAfterMs / 1000) })
+            : t('provider.errors.rate-limited.noRetryAfter')}
+        </p>
+      )}
       {rawError && failure !== 'not-filled' && (
         <p className="mt-1 break-all font-mono text-xs text-muted-foreground/70">{rawError}</p>
       )}
@@ -405,22 +423,22 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
                 t('provider.validateButton')
               )}
             </Button>
-            {validation.phase === 'valid' && (
+            {validation.phase === 'credentials-accepted' && (
               <span
-                data-testid="setup-provider-validated"
+                data-testid={validation.state?.ready ? 'setup-provider-validated' : 'setup-provider-credentials-accepted'}
                 className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400"
               >
                 <CheckCircle2 className="h-4 w-4" />
-                {t('provider.validated')}
+                {validation.state?.ready ? t('provider.validated') : t('provider.credentialsAccepted')}
               </span>
             )}
           </div>
         </div>
       )}
 
-      {validation.phase === 'failed' && failureCopy(validation.failure, validation.rawError)}
+      {validation.phase === 'failed' && failureCopy(validation.failure, validation.rawError, validation.retryAfterMs)}
 
-      {pending && validation.phase === 'valid' && (
+      {pending && validation.phase === 'credentials-accepted' && (
         <p className="text-sm text-muted-foreground">
           {t('provider.readyHint', { label: pending.label })}
         </p>

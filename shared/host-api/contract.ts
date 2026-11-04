@@ -2646,9 +2646,11 @@ export type ProviderAccount = {
     customModels?: string[];
     /** FP-P1-01: sanitized validation record (never contains key material). */
     validation?: {
-      status: 'valid' | 'invalid' | 'network-error' | 'unchecked';
+      status: 'valid' | 'invalid' | 'network-error' | 'rate-limited' | 'protocol-error' | 'unchecked';
       checkedAt: string;
       model?: string;
+      reason?: string;
+      retryAfterMs?: number;
       source: 'setup' | 'settings';
     };
   };
@@ -2679,7 +2681,56 @@ export type ProviderValidationPayload = {
   apiKey?: string;
   options?: ProviderValidationOptions;
 };
-export type ProviderValidationResult = { valid: boolean; error?: string; durationMs?: number };
+/**
+ * TF-0733: structured provider validation state.
+ *
+ * Validation used to collapse every non-auth 4xx and even 429 into
+ * `valid: true`, so the Settings/Setup UI could say "Credentials verified"
+ * for a rate-limited or protocol-mismatched endpoint. The six dimensions
+ * below keep those facts separate:
+ *  - reachable: did the endpoint answer at all
+ *  - auth: did it accept the credential
+ *  - protocol: did it accept the request shape
+ *  - model: is the probed/selected model usable
+ *  - rateLimited (+ retryAfterMs): HTTP 429 and its Retry-After
+ *  - ready: the single surface the UI may render as verified/connected
+ *
+ * `valid` is kept for one release as a compatibility field with fixed
+ * semantics: `auth === 'valid' && protocol !== 'incompatible'`. It is NOT the
+ * readiness signal; UI must gate "verified" on `ready`.
+ */
+export type ProviderValidationReachability = 'reachable' | 'unreachable' | 'unknown';
+export type ProviderValidationAuth = 'valid' | 'invalid' | 'unknown';
+export type ProviderValidationProtocol = 'compatible' | 'incompatible' | 'unknown';
+export type ProviderValidationModel = 'available' | 'unavailable' | 'unknown';
+export type ProviderValidationReason =
+  | 'ok'
+  | 'unauthorized'
+  | 'rate-limited'
+  | 'protocol-error'
+  | 'model-unavailable'
+  | 'server-error'
+  | 'network-error'
+  | 'timeout'
+  | 'dns-error'
+  | 'blocked'
+  | 'unknown';
+export type ProviderValidationState = {
+  reachable: ProviderValidationReachability;
+  auth: ProviderValidationAuth;
+  protocol: ProviderValidationProtocol;
+  model: ProviderValidationModel;
+  rateLimited: boolean;
+  retryAfterMs?: number;
+  ready: boolean;
+  reason: ProviderValidationReason;
+};
+export type ProviderValidationResult = ProviderValidationState & {
+  valid: boolean;
+  error?: string;
+  status?: number;
+  durationMs?: number;
+};
 export type ProviderModelListPayload = {
   accountId?: string;
   vendorId?: string;
@@ -2690,6 +2741,8 @@ export type ProviderModelListPayload = {
 export type ProviderModelListResult = HostSuccess & {
   models: string[];
   durationMs?: number;
+  /** TF-0733: structured outcome when listing failed (429 / protocol / model). */
+  state?: ProviderValidationState;
 };
 export type ProviderIdPayload = { providerId: string };
 export type ProviderApiKeyPayload = ProviderIdPayload & { apiKey: string };

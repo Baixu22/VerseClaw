@@ -121,8 +121,23 @@
       "service": {
         "title": "Provider returned an unexpected response",
         "action": "The endpoint answered but not the way we expected. Verify the Base URL points at a compatible API, then retry."
+      },
+      "rate-limited": {
+        "title": "Provider is rate limiting",
+        "action": "The credential was not rejected, but the provider is refusing requests right now. Nothing is marked verified; wait and retry.",
+        "retryAfter": "Retry after about {{seconds}} s.",
+        "noRetryAfter": "The provider did not send a retry window."
+      },
+      "protocol": {
+        "title": "Protocol or parameter error",
+        "action": "The endpoint answered but rejected the request shape. Check the Base URL and the selected API protocol."
+      },
+      "model": {
+        "title": "Model unavailable",
+        "action": "The key works, but the provider does not offer the probed model. Continue to the Model step and pick a listed model."
       }
-    }
+    },
+    "credentialsAccepted": "Credentials accepted — confirm a model to finish verification"
   },
   "channel": {
     "title": "Connect a Messaging Channel",

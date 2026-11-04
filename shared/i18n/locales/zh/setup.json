@@ -121,8 +121,23 @@
       "service": {
         "title": "Provider 返回异常响应",
         "action": "端点有响应但格式不符合预期。请确认 Base URL 指向兼容的 API，然后重试。"
+      },
+      "rate-limited": {
+        "title": "Provider 正在限流",
+        "action": "凭据未被拒绝，但 Provider 当前拒绝请求。此时代码不会标记为已验证，请稍后重试。",
+        "retryAfter": "请约 {{seconds}} 秒后重试。",
+        "noRetryAfter": "Provider 未提供重试时间。"
+      },
+      "protocol": {
+        "title": "协议或参数错误",
+        "action": "端点有响应，但拒绝了请求格式。请检查 Base URL 与所选 API 协议。"
+      },
+      "model": {
+        "title": "模型不可用",
+        "action": "密钥有效，但 Provider 不提供探测使用的模型。请继续到模型步骤选择列表中的模型。"
       }
-    }
+    },
+    "credentialsAccepted": "凭据已接受 — 确认模型后才会完成验证"
   },
   "channel": {
     "title": "连接消息渠道",

@@ -104,12 +104,24 @@ const updateTransactions = {
     memoryRuntimeIntegration.includes("reason: \"flag_disabled\""),
 };
 
-const validCollapse = {
-  success: providerValidation.includes("status >= 200 && status < 300) return { valid: true }"),
-  rateLimit: providerValidation.includes("status === 429) return { valid: true }"),
-  probe400: providerValidation.includes("status === 400 && !classified.authFailure"),
-};
-const falseReadyScenarios = Object.values(validCollapse).filter((v) => v).length;
+// TF-0733: measure the CURRENT state shape. The pre-fix code collapsed 2xx,
+// 429 and non-auth probe 400 into `valid:true`; the fixed classifier emits a
+// structured state and gates readiness on `ready`.
+const validationStateDimensions = [
+  /reachable:\s*'/.test(providerValidation),
+  /auth:\s*'/.test(providerValidation),
+  /protocol:\s*'/.test(providerValidation),
+  /model:\s*'/.test(providerValidation),
+  /rateLimited:\s*/.test(providerValidation),
+  /ready:\s*(true|false)/.test(providerValidation),
+];
+const validationDimensionCount = validationStateDimensions.filter(Boolean).length;
+const legacyCollapsedClasses = [
+  providerValidation.includes("status >= 200 && status < 300) return { valid: true }"),
+  providerValidation.includes("status === 429) return { valid: true }"),
+  providerValidation.includes("status === 400 && !classified.authFailure"),
+].filter(Boolean).length;
+const falseReadyScenarios = legacyCollapsedClasses;
 
 const usesGuardedFetch = providerValidation.includes("fetchWithSsrFGuard") || providerValidation.includes("buildGuardedModelFetch");
 const validationHasDeadline = /AbortSignal|deadline|signal:/.test(providerValidation);
@@ -145,7 +157,7 @@ const metrics = [
   metric("MEM-1", "agent self-edit emits human provenance labels", "count(human_confirmation)+count(human_approved)+count(promotedBy human)", humanLabels.humanConfirmationSource + humanLabels.humanApprovedStatus + humanLabels.promotedByHuman, "labels", "static", "Persist is retired, so these labels are unreachable today; this is a recovery gate.", ["openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts"]),
   metric("MEM-2", "independent commit steps inside one logical memory update", "sum(step count) for self-edit and curation", Math.max(0, updateTransactions.selfEditSequence - 1) + Math.max(0, updateTransactions.curationSequence - 1), "steps", "static", "Transaction boundaries are inherited from the persistence port; values are candidate windows, not observed corruption.", ["openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts", "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts"]),
   metric("VALID-1", "status classes currently collapsed into valid=true", "count(success, rateLimit, probe400)", falseReadyScenarios, "classes", "static", "Classes only; actual provider behavior varies by API. The 12-scenario matrix is the behavioral gate.", ["electron/services/providers/provider-validation.ts"]),
-  metric("VALID-2", "validation state dimensions exposed by the result type", "1 (valid boolean) until structured state is implemented", 1, "dimensions", "static", "Current contract exposes valid/error/durationMs only.", ["shared/host-api/contract.ts", "electron/services/providers/provider-validation.ts"]),
+  metric("VALID-2", "validation state dimensions exposed by the result type", "count(reachable, auth, protocol, model, rateLimited, ready)", validationDimensionCount, "dimensions", "static", "Type-shape evidence; UI semantics are asserted by semantic-convergence-provider-validation-matrix.test.ts.", ["shared/host-api/contract.ts", "electron/services/providers/provider-validation.ts"]),
   metric("NET-1", "validation requests sharing inference guarded policy", "usesGuardedFetch ? 1 : 0", usesGuardedFetch ? 1 : 0, "boolean", "static", "Import/call evidence only; policy parity is behavioral.", ["electron/services/providers/provider-validation.ts"]),
   metric("NET-2", "validation probe carries explicit deadline", "validationHasDeadline ? 1 : 0", validationHasDeadline ? 1 : 0, "boolean", "static", "Regex-based; manual review required.", ["electron/services/providers/provider-validation.ts"]),
   metric("PROMPT-1", "prompt mutation fields covered by an authority declaration", "declaredAuthority ? 5 : 0", promptAuthorityCoverage, "fields", "static", "No producer-level declaration exists today; this counts the public field list.", ["openclaw_runtime/src/plugins/hook-before-agent-start.types.ts", "openclaw_runtime/src/context-engine/context-candidate.ts"]),

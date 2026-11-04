@@ -6,6 +6,11 @@ import {
   resolveProviderRequestAuth,
   type ProviderRequestAuthOverride,
 } from '@openclaw/provider-request-auth';
+import type {
+  ProviderValidationReason,
+  ProviderValidationResult,
+  ProviderValidationState,
+} from '@shared/host-api/contract';
 
 type ValidationProfile =
   | 'openai-completions'
@@ -15,9 +20,16 @@ type ValidationProfile =
   | 'openrouter'
   | 'none';
 
-type ValidationResult = { valid: boolean; error?: string; status?: number };
-export type ProviderModelListResult = { success: boolean; models: string[]; error?: string; status?: number };
-type ClassifiedValidationResult = ValidationResult & { authFailure?: boolean };
+type ValidationResult = ProviderValidationResult;
+export type ProviderModelListResult = {
+  success: boolean;
+  models: string[];
+  error?: string;
+  status?: number;
+  /** TF-0733: structured outcome, present on the cancellation/failure paths. */
+  state?: ProviderValidationState;
+};
+type ClassifiedValidationResult = ProviderValidationResult & { authFailure?: boolean };
 
 /** UI-level auth format accepted from the custom provider dialog. */
 export type ProviderValidationAuthInput = {
@@ -240,30 +252,104 @@ function extractModelIds(data: unknown): string[] {
   return [];
 }
 
-async function performProviderValidationRequest(
-  providerLabel: string,
-  url: string,
-  headers: Record<string, string>,
-): Promise<ClassifiedValidationResult> {
-  try {
-    logValidationRequest(providerLabel, 'GET', url, headers);
-    const response = await proxyAwareFetch(url, { headers });
-    logValidationStatus(providerLabel, response.status);
-    const data = await response.json().catch(() => ({}));
-    const result = classifyAuthResponse(response.status, data);
-    return { ...result, status: response.status };
-  } catch (error) {
-    return {
-      valid: false,
-      error: `Connection error: ${error instanceof Error ? error.message : String(error)}`,
-    };
-  }
+const UNKNOWN_VALIDATION_STATE: ProviderValidationState = {
+  reachable: 'unknown',
+  auth: 'unknown',
+  protocol: 'unknown',
+  model: 'unknown',
+  rateLimited: false,
+  ready: false,
+  reason: 'unknown',
+};
+
+function toValidationState(result: ProviderValidationResult): ProviderValidationState {
+  return {
+    reachable: result.reachable,
+    auth: result.auth,
+    protocol: result.protocol,
+    model: result.model,
+    rateLimited: result.rateLimited,
+    ...(result.retryAfterMs !== undefined ? { retryAfterMs: result.retryAfterMs } : {}),
+    ready: result.ready,
+    reason: result.reason,
+  };
 }
 
-function classifyAuthResponse(
+function noAuthValidationResult(): ProviderValidationResult {
+  return {
+    ...UNKNOWN_VALIDATION_STATE,
+    auth: 'valid',
+    ready: true,
+    reason: 'ok',
+    valid: true,
+  };
+}
+
+function unknownValidationResult(error?: string): ProviderValidationResult {
+  return {
+    ...UNKNOWN_VALIDATION_STATE,
+    valid: false,
+    ...(error !== undefined ? { error } : {}),
+  };
+}
+
+const MODEL_ERROR_PATTERN =
+  /(invalid|unknown|unsupported|not[_ -]?found|does not exist|no such|unavailable|deprecated|missing)[^\n]{0,24}\b(model|deployment)\b|\b(model|deployment)\b[^\n]{0,24}(invalid|unknown|unsupported|not[_ -]?found|does not exist|no such|unavailable|deprecated|missing)|invalid[_ -]?model|model[_ -]?not[_ -]?found/i;
+
+/** Parse an HTTP `Retry-After` header (delay-seconds or HTTP-date) into ms. */
+function parseRetryAfterMs(value: string | null | undefined): number | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if (/^\d+$/.test(trimmed)) {
+    const seconds = Number(trimmed);
+    return Number.isFinite(seconds) ? Math.max(0, Math.round(seconds * 1000)) : undefined;
+  }
+  const date = Date.parse(trimmed);
+  if (!Number.isNaN(date)) return Math.max(0, date - Date.now());
+  return undefined;
+}
+
+/** Classify a transport-level failure (timeout / DNS / SSRF-blocked / proxy). */
+function classifyNetworkFailure(error: unknown): ClassifiedValidationResult {
+  const message = error instanceof Error ? error.message : String(error);
+  const lowered = message.toLowerCase();
+  let reason: ProviderValidationReason = 'network-error';
+  if (/abort|timed?\s?out|etimedout|timeout|deadline/.test(lowered)) {
+    reason = 'timeout';
+  } else if (/enotfound|eai_again|getaddrinfo|dns|name resolution|nodename nor servname/.test(lowered)) {
+    reason = 'dns-error';
+  } else if (/ssrf|private|blocked|not allowed|forbidden host|metadata|link-?local|loopback/.test(lowered)) {
+    reason = 'blocked';
+  }
+  return {
+    reachable: 'unreachable',
+    auth: 'unknown',
+    protocol: 'unknown',
+    model: 'unknown',
+    rateLimited: false,
+    ready: false,
+    reason,
+    valid: false,
+    error: `Connection error: ${message}`,
+  };
+}
+
+/**
+ * TF-0733: classify one HTTP response into the six validation dimensions.
+ *
+ * `stage` distinguishes the `/models` credential probe from the chat/responses
+ * fallback probe: a non-auth 400 on the fallback probe means the endpoint
+ * understood our auth + protocol and rejected the dummy model or a parameter,
+ * so it is NOT a credential failure and must NOT be reported as ready.
+ */
+function classifyHttpResponse(
+  stage: 'models' | 'probe',
   status: number,
   data: unknown,
-) : ClassifiedValidationResult {
+  headers?: Headers,
+  options?: { requireModel?: boolean },
+): ClassifiedValidationResult {
   const obj = data as {
     error?: { message?: string; code?: string };
     message?: string;
@@ -272,24 +358,225 @@ function classifyAuthResponse(
   const msg = obj?.error?.message || obj?.message || `API error: ${status}`;
   const code = obj?.error?.code || obj?.code;
   const hasAuthCode = typeof code === 'string' && AUTH_ERROR_CODE_PATTERN.test(code);
+  const authLike = AUTH_ERROR_PATTERN.test(msg) || hasAuthCode;
 
-  if (status >= 200 && status < 300) return { valid: true };
-  if (status === 429) return { valid: true };
-  if (status === 401 || status === 403) {
-    return { valid: false, error: 'Invalid API key', authFailure: true };
+  if (status >= 200 && status < 300) {
+    const models = extractModelIds(data);
+    // A /models 200 with an empty list proves the credential but not a usable
+    // model, so `ready` (and therefore the UI's "verified" copy) waits for the
+    // Model step to confirm one.
+    const requiresModelList = stage === 'models' && options?.requireModel === true;
+    const model = stage === 'models'
+      ? (models.length > 0 ? 'available' : (requiresModelList ? 'unavailable' : 'unknown'))
+      : 'available';
+    const ready = !requiresModelList || models.length > 0;
+    return {
+      reachable: 'reachable',
+      auth: 'valid',
+      protocol: 'compatible',
+      model,
+      rateLimited: false,
+      // A 2xx proves the credential. Readiness additionally needs a listed
+      // model when the caller asked for one (OpenRouter's /auth/key does not).
+      ready,
+      reason: ready ? 'ok' : 'model-unavailable',
+      valid: true,
+      status,
+    };
   }
-  if (status === 400 && (AUTH_ERROR_PATTERN.test(msg) || hasAuthCode)) {
+
+  if (status === 429) {
+    const retryAfterMs = parseRetryAfterMs(headers?.get('retry-after'));
+    return {
+      reachable: 'reachable',
+      auth: 'unknown',
+      protocol: 'unknown',
+      model: 'unknown',
+      rateLimited: true,
+      ...(retryAfterMs !== undefined ? { retryAfterMs } : {}),
+      ready: false,
+      reason: 'rate-limited',
+      valid: false,
+      error: msg === `API error: ${status}` ? 'Rate limited' : msg,
+      status,
+    };
+  }
+
+  if (status === 401 || status === 403) {
+    return {
+      reachable: 'reachable',
+      auth: 'invalid',
+      protocol: 'unknown',
+      model: 'unknown',
+      rateLimited: false,
+      ready: false,
+      reason: 'unauthorized',
+      valid: false,
+      error: 'Invalid API key',
+      authFailure: true,
+      status,
+    };
+  }
+
+  if (status === 400 && authLike) {
     const error = hasAuthCode && msg === `API error: ${status}`
       ? `Invalid API key (${code})`
       : msg || 'Invalid API key';
-    return { valid: false, error, authFailure: true };
+    return {
+      reachable: 'reachable',
+      auth: 'invalid',
+      protocol: 'unknown',
+      model: 'unknown',
+      rateLimited: false,
+      ready: false,
+      reason: 'unauthorized',
+      valid: false,
+      error,
+      authFailure: true,
+      status,
+    };
   }
 
-  return { valid: false, error: msg };
+  if (status >= 500) {
+    return {
+      reachable: 'reachable',
+      auth: 'unknown',
+      protocol: 'unknown',
+      model: 'unknown',
+      rateLimited: false,
+      ready: false,
+      reason: 'server-error',
+      valid: false,
+      error: msg,
+      status,
+    };
+  }
+
+  const modelLike = MODEL_ERROR_PATTERN.test(msg) || (typeof code === 'string' && /model/i.test(code));
+
+  if (stage === 'probe' && status === 400) {
+    if (modelLike) {
+      return {
+        reachable: 'reachable',
+        auth: 'valid',
+        protocol: 'compatible',
+        model: 'unavailable',
+        rateLimited: false,
+        ready: false,
+        reason: 'model-unavailable',
+        valid: true,
+        error: msg,
+        status,
+      };
+    }
+    return {
+      reachable: 'reachable',
+      auth: 'valid',
+      // A non-auth 400 on the chat/responses probe means the endpoint
+      // understood the credential but rejected the request shape/parameters,
+      // so the protocol dimension is genuinely incompatible. This also keeps
+      // the compatibility `valid` field false for non-auth 400s.
+      protocol: 'incompatible',
+      model: 'unknown',
+      rateLimited: false,
+      ready: false,
+      reason: 'protocol-error',
+      valid: false,
+      error: msg,
+      status,
+    };
+  }
+
+  if (status === 404 && modelLike) {
+    return {
+      reachable: 'reachable',
+      auth: 'unknown',
+      protocol: 'compatible',
+      model: 'unavailable',
+      rateLimited: false,
+      ready: false,
+      reason: 'model-unavailable',
+      valid: false,
+      error: msg,
+      status,
+    };
+  }
+
+  if (status === 404 || status === 405 || status === 501) {
+    return {
+      reachable: 'reachable',
+      auth: 'unknown',
+      protocol: 'incompatible',
+      model: 'unknown',
+      rateLimited: false,
+      ready: false,
+      reason: 'protocol-error',
+      valid: false,
+      error: msg,
+      status,
+    };
+  }
+
+  if (modelLike) {
+    return {
+      reachable: 'reachable',
+      auth: 'unknown',
+      protocol: 'compatible',
+      model: 'unavailable',
+      rateLimited: false,
+      ready: false,
+      reason: 'model-unavailable',
+      valid: false,
+      error: msg,
+      status,
+    };
+  }
+
+  return {
+    reachable: 'reachable',
+    auth: 'unknown',
+    protocol: 'incompatible',
+    model: 'unknown',
+    rateLimited: false,
+    ready: false,
+    reason: 'protocol-error',
+    valid: false,
+    error: msg,
+    status,
+  };
+}
+
+async function performProviderValidationRequest(
+  providerLabel: string,
+  url: string,
+  headers: Record<string, string>,
+  options?: { requireModel?: boolean },
+): Promise<ClassifiedValidationResult> {
+  try {
+    logValidationRequest(providerLabel, 'GET', url, headers);
+    const response = await proxyAwareFetch(url, { headers });
+    logValidationStatus(providerLabel, response.status);
+    const data = await response.json().catch(() => ({}));
+    // Model-listing probes require a non-empty list to count as ready; the
+    // OpenRouter /auth/key probe proves the credential only.
+    return classifyHttpResponse('models', response.status, data, response.headers, options);
+  } catch (error) {
+    return classifyNetworkFailure(error);
+  }
+}
+
+function classifyAuthResponse(
+  status: number,
+  data: unknown,
+  headers?: Headers,
+  options?: { requireModel?: boolean },
+): ClassifiedValidationResult {
+  return classifyHttpResponse('models', status, data, headers, options);
 }
 
 function shouldFallbackFromModelsProbe(result: ClassifiedValidationResult): boolean {
   if (result.valid || result.status === undefined) return false;
+  if (result.rateLimited) return false;
   if (result.status === 401 || result.status === 403) return false;
   if (result.authFailure) return false;
   return true;
@@ -298,19 +585,9 @@ function shouldFallbackFromModelsProbe(result: ClassifiedValidationResult): bool
 function classifyProbeResponse(
   status: number,
   data: unknown,
+  headers?: Headers,
 ): ClassifiedValidationResult {
-  const classified = classifyAuthResponse(status, data);
-
-  if (status >= 200 && status < 300) {
-    return { valid: true, status };
-  }
-  if (status === 429) {
-    return { valid: true, status };
-  }
-  if (status === 400 && !classified.authFailure) {
-    return { valid: true, status };
-  }
-  return { ...classified, status };
+  return classifyHttpResponse('probe', status, data, headers);
 }
 
 async function validateOpenAiCompatibleKey(
@@ -322,7 +599,7 @@ async function validateOpenAiCompatibleKey(
 ): Promise<ValidationResult> {
   const trimmedBaseUrl = baseUrl?.trim();
   if (!trimmedBaseUrl) {
-    return { valid: false, error: `Base URL is required for provider "${providerType}" validation` };
+    return unknownValidationResult(`Base URL is required for provider "${providerType}" validation`);
   }
 
   const authHeaders = buildProviderValidationAuth(auth, apiKey).headers ?? {
@@ -331,7 +608,7 @@ async function validateOpenAiCompatibleKey(
   const { modelsUrl, probeUrl } = resolveOpenAiProbeUrls(trimmedBaseUrl, apiProtocol);
   const authModelsUrl = applyProviderValidationAuthQuery(modelsUrl, auth, apiKey);
   const authProbeUrl = applyProviderValidationAuthQuery(probeUrl, auth, apiKey);
-  const modelsResult = await performProviderValidationRequest(providerType, authModelsUrl, authHeaders);
+  const modelsResult = await performProviderValidationRequest(providerType, authModelsUrl, authHeaders, { requireModel: true });
 
   if (shouldFallbackFromModelsProbe(modelsResult)) {
     console.log(
@@ -363,12 +640,9 @@ async function performResponsesProbe(
     });
     logValidationStatus(providerLabel, response.status);
     const data = await response.json().catch(() => ({}));
-    return classifyProbeResponse(response.status, data);
+    return classifyProbeResponse(response.status, data, response.headers);
   } catch (error) {
-    return {
-      valid: false,
-      error: `Connection error: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return classifyNetworkFailure(error);
   }
 }
 
@@ -390,12 +664,9 @@ async function performChatCompletionsProbe(
     });
     logValidationStatus(providerLabel, response.status);
     const data = await response.json().catch(() => ({}));
-    return classifyProbeResponse(response.status, data);
+    return classifyProbeResponse(response.status, data, response.headers);
   } catch (error) {
-    return {
-      valid: false,
-      error: `Connection error: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return classifyNetworkFailure(error);
   }
 }
 
@@ -417,12 +688,9 @@ async function performAnthropicMessagesProbe(
     });
     logValidationStatus(providerLabel, response.status);
     const data = await response.json().catch(() => ({}));
-    return classifyProbeResponse(response.status, data);
+    return classifyProbeResponse(response.status, data, response.headers);
   } catch (error) {
-    return {
-      valid: false,
-      error: `Connection error: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return classifyNetworkFailure(error);
   }
 }
 
@@ -454,7 +722,7 @@ async function validateAnthropicHeaderKey(
     ...authHeaders,
   };
 
-  const modelsResult = await performProviderValidationRequest(providerType, url, headers);
+  const modelsResult = await performProviderValidationRequest(providerType, url, headers, { requireModel: true });
 
   // If the endpoint doesn't implement /models (like Minimax Anthropic compatibility), fallback to a /messages probe.
   if (
@@ -479,7 +747,7 @@ async function validateOpenRouterKey(
 ): Promise<ValidationResult> {
   const url = 'https://openrouter.ai/api/v1/auth/key';
   const headers = { Authorization: `Bearer ${apiKey}` };
-  return await performProviderValidationRequest(providerType, url, headers);
+  return await performProviderValidationRequest(providerType, url, headers, { requireModel: false });
 }
 
 async function listOpenAiCompatibleModels(
@@ -506,16 +774,29 @@ async function listOpenAiCompatibleModels(
     const response = await proxyAwareFetch(url, { headers });
     logValidationStatus(providerType, response.status);
     const data = await response.json().catch(() => ({}));
-    const classified = classifyAuthResponse(response.status, data);
+    const classified = classifyAuthResponse(response.status, data, response.headers);
     if (!classified.valid) {
-      return { success: false, models: [], error: classified.error, status: response.status };
+      return {
+        success: false,
+        models: [],
+        error: classified.error,
+        status: response.status,
+        state: toValidationState(classified),
+      };
     }
-    return { success: true, models: extractModelIds(data), status: response.status };
+    return {
+      success: true,
+      models: extractModelIds(data),
+      status: response.status,
+      state: toValidationState(classified),
+    };
   } catch (error) {
+    const failure = classifyNetworkFailure(error);
     return {
       success: false,
       models: [],
-      error: `Connection error: ${error instanceof Error ? error.message : String(error)}`,
+      error: failure.error,
+      state: toValidationState(failure),
     };
   }
 }
@@ -532,14 +813,26 @@ async function listGoogleModels(
     const response = await proxyAwareFetch(url, {});
     logValidationStatus(providerType, response.status);
     const data = await response.json().catch(() => ({}));
-    const result = classifyAuthResponse(response.status, data);
+    const result = classifyAuthResponse(response.status, data, response.headers);
     if (!result.valid) {
-      return { success: false, models: [], error: result.error, status: response.status };
+      return {
+        success: false,
+        models: [],
+        error: result.error,
+        status: response.status,
+        state: toValidationState(result),
+      };
     }
     const models = extractModelIds(data).map((model) => model.replace(/^models\//, ''));
-    return { success: true, models, status: response.status };
+    return {
+      success: true,
+      models,
+      status: response.status,
+      state: toValidationState(result),
+    };
   } catch (error) {
-    return { success: false, models: [], error: String(error) };
+    const failure = classifyNetworkFailure(error);
+    return { success: false, models: [], error: failure.error, state: toValidationState(failure) };
   }
 }
 
@@ -565,17 +858,25 @@ async function listAnthropicModels(
     const response = await proxyAwareFetch(url, { headers });
     logValidationStatus(providerType, response.status);
     const data = await response.json().catch(() => ({}));
-    const classified = classifyAuthResponse(response.status, data);
+    const classified = classifyAuthResponse(response.status, data, response.headers);
     if (!classified.valid) {
-      return { success: false, models: [], error: classified.error, status: response.status };
+      return {
+        success: false,
+        models: [],
+        error: classified.error,
+        status: response.status,
+        state: toValidationState(classified),
+      };
     }
-    return { success: true, models: extractModelIds(data), status: response.status };
-  } catch (error) {
     return {
-      success: false,
-      models: [],
-      error: `Connection error: ${error instanceof Error ? error.message : String(error)}`,
+      success: true,
+      models: extractModelIds(data),
+      status: response.status,
+      state: toValidationState(classified),
     };
+  } catch (error) {
+    const failure = classifyNetworkFailure(error);
+    return { success: false, models: [], error: failure.error, state: toValidationState(failure) };
   }
 }
 
@@ -589,12 +890,12 @@ export async function validateApiKeyWithProvider(
   const auth = options?.auth;
 
   if (profile === 'none') {
-    return { valid: true };
+    return noAuthValidationResult();
   }
 
   const trimmedKey = apiKey.trim();
   if (!trimmedKey) {
-    return { valid: false, error: 'API key is required' };
+    return unknownValidationResult('API key is required');
   }
 
   try {
@@ -622,11 +923,10 @@ export async function validateApiKeyWithProvider(
       case 'openrouter':
         return await validateOpenRouterKey(providerType, trimmedKey);
       default:
-        return { valid: false, error: `Unsupported validation profile for provider: ${providerType}` };
+        return unknownValidationResult(`Unsupported validation profile for provider: ${providerType}`);
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    return { valid: false, error: errorMessage };
+    return classifyNetworkFailure(error);
   }
 }
 
@@ -641,10 +941,27 @@ export async function listModelsWithProvider(
   const auth = options?.auth;
 
   if (profile === 'none') {
-    return { success: true, models: [] };
+    return {
+      success: true,
+      models: [],
+      state: {
+        reachable: 'unknown',
+        auth: 'valid',
+        protocol: 'unknown',
+        model: 'unknown',
+        rateLimited: false,
+        ready: true,
+        reason: 'ok',
+      },
+    };
   }
   if (!trimmedKey) {
-    return { success: false, models: [], error: 'API key is required' };
+    return {
+      success: false,
+      models: [],
+      error: 'API key is required',
+      state: toValidationState(unknownValidationResult('API key is required')),
+    };
   }
 
   switch (profile) {
@@ -657,6 +974,11 @@ export async function listModelsWithProvider(
     case 'openai-responses':
       return await listOpenAiCompatibleModels(providerType, trimmedKey, resolvedBaseUrl, auth);
     default:
-      return { success: false, models: [], error: `Unsupported model discovery profile for provider: ${providerType}` };
+      return {
+        success: false,
+        models: [],
+        error: `Unsupported model discovery profile for provider: ${providerType}`,
+        state: toValidationState(unknownValidationResult()),
+      };
   }
 }
