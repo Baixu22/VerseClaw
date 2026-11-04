@@ -121,3 +121,23 @@ node --experimental-strip-types scripts/recovery-contract-eval.mjs --check
 RECOVERY_LONGSESSION_OUT=D:/tmp/recovery-longsession-v5 \
   pnpm exec playwright test tests/e2e/recovery-longsession-eval.spec.ts
 ```
+
+## 2026-11-04 第二轮 15 次矩阵（可复现性比对）
+
+同样的 5 窗口 × 3 重复再跑一轮（`D:/tmp/recovery-eval-v4`），与第一轮 `v3` 对比：
+
+| 窗口 | 第一轮 | 第二轮 | 一致性 |
+|---|---|---|---|
+| K1 intent-after-persist-kill | lost=3, terminal=0/3 | lost=3, terminal=0/3 | **一致** |
+| K2 effect-before-receipt-kill | lost=0, terminal=3/3 | lost=0, terminal=3/3 | **一致** |
+| K3 child-created-before-parent-advance | lost=0, terminal=3/3 | lost=0, terminal=3/3 | **一致** |
+| K4 store-write-failure | lost=0, terminal=3/3 | **lost=2, terminal=1/3** | **不一致** |
+| K5 repeated-restart | lost=6, terminal=0/3 | lost=6, terminal=0/3 | **一致** |
+| 合计 | dup=0, lost=9, terminal=9/15 | dup=0, lost=11, terminal=7/15 | 不一致 |
+
+**K4 的真实含义**：把会话状态路径变成不可写后，第二轮有 2/3 次运行时仍然对外报告成功
+（`lostTasks += 1`）。这不是测量噪声，而是一次真实的 **fail-open** 信号：
+存储写失败并不总是被当成失败。第一轮恰好 3/3 fail-closed，说明该行为不稳定。
+
+因此 TF-0711 的「两次重跑结构一致」**未满足**；K4 需要单独修复与验证，
+不能把第一轮的 3/3 当作稳定结论。

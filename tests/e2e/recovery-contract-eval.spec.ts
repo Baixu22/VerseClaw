@@ -19,7 +19,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ElectronApplication, TestInfo } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { buildMockProviderConfig, hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 
 const WINDOW = process.env.RECOVERY_WINDOW ?? '';
 const TRIAL_INDEX = Number(process.env.RECOVERY_TRIAL_INDEX ?? '0');
@@ -188,7 +188,7 @@ test.describe('recovery contract eval windows', () => {
       await hostInvoke(app, 'workspaces', 'create', {
         rootPath: workspaceDir, permissionMode: 'fullAccess', name: 'recovery-eval',
       }).catch(() => undefined);
-      await startGateway(app);
+      await hostInvoke(app, 'gateway', 'start').catch(() => undefined);
       await waitGatewayReady(app);
 
       let receipt: TrialReceipt | null = null;
@@ -324,6 +324,7 @@ test.describe('recovery contract eval windows', () => {
     }
   });
 });
+
 
 
 
