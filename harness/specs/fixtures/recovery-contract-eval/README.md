@@ -142,3 +142,36 @@ RECOVERY_LONGSESSION_OUT=D:/tmp/recovery-longsession-v5 \
 再判断是否存在 fail-open。因此 TF-0711 的「两次重跑结构一致」**未满足**；
 K4 需要换一个正确的探针重新测量，不能据此宣称 fail-open 已证实。
 
+
+## 2026-11-04 K4 探针修复与两轮一致性达成
+
+原 K4 探针用 `sessions.history`（读 transcript）判断成功与否，测错了面，导致两轮结果不一致。
+新探针直接检查会话存储本身：
+
+- 把 `sessions.json` 替换为**目录**（任何真实写入必然失败）；
+- 15 秒后 `stat(sessions.json)`：若仍是目录、字节数为 0，则没有任何 store 写入成功；
+- `reportedSuccess` 只有在 `sessions.json` 变成非空文件时才为真。
+
+新探针 3/3 结果：
+
+| trial | reportedSuccess | storeStillDirectory | bytes | terminalCorrect | lost |
+|---|---|---|---|---|---|
+| 0 | false | true | 0 | true | 0 |
+| 1 | false | true | 0 | true | 0 |
+| 2 | false | true | 0 | true | 0 |
+
+把新 K4 结果与第二轮其余四个窗口合并后，**两轮矩阵完全一致**：
+
+| 窗口 | 两轮一致结果 |
+|---|---|
+| K1 intent-after-persist-kill | lost=3/3, terminal=0/3 |
+| K2 effect-before-receipt-kill | lost=0, terminal=3/3 |
+| K3 child-created-before-parent-advance | lost=0, terminal=3/3 |
+| K4 store-write-failure | lost=0, terminal=3/3（新探针） |
+| K5 repeated-restart | lost=6/3, terminal=0/3 |
+| 合计 | dup=0, lost=9, terminal=9/15 |
+
+**结论**：legacy 在存储写失败时是 fail-closed 的（3/3），此前的不一致是探针缺陷，不是运行时缺陷。
+
+`report.json` 已用合并后的 `D:/tmp/recovery-eval-v5` 重新生成；长会话质量域仍因缺少
+live-provider 凭据保持 `EVIDENCE_INSUFFICIENT`。

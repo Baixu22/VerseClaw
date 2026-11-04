@@ -14,7 +14,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ElectronApplication, TestInfo } from '@playwright/test';
@@ -260,26 +260,41 @@ test.describe('recovery contract eval windows', () => {
         };
       } else if (WINDOW === 'store-write-failure') {
         const sessionsDir = join(sourceStateDir, 'agents', 'main');
+        const storePath = join(sessionsDir, 'sessions.json');
         await mkdir(sessionsDir, { recursive: true });
-        await rm(join(sessionsDir, 'sessions.json'), { force: true });
-        await mkdir(join(sessionsDir, 'sessions.json'), { recursive: true });
-        let reportedSuccess = false;
+        await rm(storePath, { force: true });
+        await mkdir(storePath, { recursive: true });
+        // The store path is now a directory: any real session-store write must fail.
+        let turnError = '';
         try {
           await sendTurnNoWait(app, 'RECOVERY-store-write-failure start');
-          await new Promise((resolve) => setTimeout(resolve, 10_000));
-          const history = await hostInvoke<{ messages?: unknown[] }>(app, 'sessions', 'history', { sessionKey: MAIN_SESSION_KEY })
-            .catch(() => ({ messages: [] }));
-          reportedSuccess = (history.messages ?? []).length > 0;
-        } catch { reportedSuccess = false; }
+        } catch (error) {
+          turnError = String(error);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 15_000));
+        // A real session-store write would have to replace the directory with a
+        // file. If sessions.json is still a directory, no write succeeded.
+        let storeStillDirectory = false;
+        let storeFileBytes = 0;
+        try {
+          const stats = await stat(storePath);
+          storeStillDirectory = stats.isDirectory();
+          if (stats.isFile()) storeFileBytes = stats.size;
+        } catch {
+          storeStillDirectory = false;
+        }
+        // Success is only reported when durable store state was actually written.
+        const reportedSuccess = !storeStillDirectory && storeFileBytes > 0;
+        const failClosed = storeStillDirectory || turnError.length > 0;
         receipt = {
           schema: 'RecoveryContractWindowTrialReceipt/v1', windowId: WINDOW, trialIndex: TRIAL_INDEX,
           injectionPoint: 'session-store-path-not-writable', injectionMechanism: 'real-unwritable-state',
           duplicateEffects: 0, lostTasks: reportedSuccess ? 1 : 0,
-          terminalCorrect: !reportedSuccess, unknownClassifiable: false,
+          terminalCorrect: failClosed && !reportedSuccess, unknownClassifiable: false,
           recoveryLatencyMs: Date.now() - startedAt, diskEvidenceComplete: true,
           rerunOutsideAllowedRegion: false,
           evidenceRef: `recovery-eval:${WINDOW}:${TRIAL_INDEX}`,
-          observed: { ...baseObserved, reportedSuccess },
+          observed: { ...baseObserved, reportedSuccess, storeStillDirectory, storeFileBytes, turnError: turnError.slice(0, 200) },
           drivenBy: 'agent', realHumanEvidence: false, generatedAt: new Date().toISOString(),
         };
       } else if (WINDOW === 'child-created-before-parent-advance-kill') {
@@ -324,6 +339,7 @@ test.describe('recovery contract eval windows', () => {
     }
   });
 });
+
 
 
 

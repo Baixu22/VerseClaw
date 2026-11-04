@@ -3,7 +3,7 @@
   "drivenBy": "agent",
   "actor": "recovery-contract-eval-driver",
   "realHumanEvidence": false,
-  "generatedAt": "2026-11-04T07:12:34.620Z",
+  "generatedAt": "2026-11-04T08:10:59.292Z",
   "manifest": {
     "schema": "RecoveryContractManifest/v1",
     "frozenAt": "2026-11-03T00:00:00.000Z",
@@ -11,7 +11,7 @@
     "windows": 5,
     "longSessionPairs": 30
   },
-  "trialReceiptsDir": "D:/tmp/recovery-eval-v3",
+  "trialReceiptsDir": "D:/tmp/recovery-eval-v5",
   "pairReceiptsDir": "D:/tmp/recovery-longsession-v5",
   "trialCountsByWindow": {
     "child-created-before-parent-advance-kill": 3,
@@ -22,7 +22,7 @@
   },
   "evaluation": {
     "schema": "RecoveryContractEval/v1",
-    "generatedAt": "2026-11-04T07:12:34.618Z",
+    "generatedAt": "2026-11-04T08:10:59.290Z",
     "drivenBy": "agent",
     "actor": "recovery-contract-eval-driver",
     "realHumanEvidence": false,
