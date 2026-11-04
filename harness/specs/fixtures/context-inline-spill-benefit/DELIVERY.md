@@ -104,4 +104,4 @@ node "$pack/recompute.mjs" "$pack/live" "$pack/live/provider-wire.jsonl.gz" D:/t
 node "$pack/verify-evidence.mjs" "$pack"
 ```
 
-TF-0749 保持 in_progress/open：B3/B4/B6 与严格对照输入仍有实证缺口。TF-0750–0754 的已有 done 状态保留，摘要更新到第二轮结果。状态更新仅通过 proposal-save → proposal-apply → validate → export；不删除 lock、不使用 --allow-stale。未 push、未发布。
+TF-0749 的收益验收仍应保持 in_progress/open：B3/B4/B6 与严格对照输入有实证缺口。最后一次可信 CLI 回读为 TF-0749=in_progress/60%、TF-0750–0754=done/100%；当前实时状态未重新确认。第二轮提案保存六次均 exit 1（另一进程持有 OS 写锁），已按交接的十分钟等待上限停止重试，尚未保存/应用第二轮摘要，也未执行其 validate/export。提案与继续入口保留在 D:/tmp/inline-spill-benefit-r2/tf-r2-proposal.json 及本地 docs/dev/handoffs/LATEST.md。第一轮提案已在上一会话应用并验证。后续状态更新仍只走 proposal-save → proposal-apply → validate → export；不删除 lock、不使用 --allow-stale。未 push、未发布。
