@@ -180,6 +180,7 @@ async function runGate(args: string[]) {
       cwd: ROOT,
       encoding: 'utf8',
       maxBuffer: 10 * 1024 * 1024,
+      windowsHide: true,
     });
     return { code: 0, stdout, stderr };
   } catch (error) {
@@ -262,6 +263,29 @@ describe('contract check: alias contract members', () => {
 });
 
 describe('contract check: flat IPC admission surface', () => {
+  it('ignores comments, strings, unrelated handles and shadowed IPC objects', () => {
+    const text = [
+      "import { ipcMain } from 'electron';",
+      "// ipcMain.handle('comment', () => 1);",
+      "const example = \"ipcMain['handle']('string', () => 1)\";",
+      "function shadow(ipcMain: { handle: (name: string) => void }) { ipcMain.handle('local'); }",
+      "const local = { handle: (name: string) => name }; local.handle('local');",
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.ts')).toEqual([]);
+  });
+
+  it('resolves scoped aliases and parenthesized/type-wrapped IPC receivers', () => {
+    const text = [
+      "import { ipcMain as owner } from 'electron';",
+      "const request = (owner as unknown as typeof owner)['handle'];",
+      "request('a:one', () => 1);",
+      "function shadow(request: (name: string) => void) { request('local'); }",
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.ts')).toEqual([
+      { file: 'f.ts', line: 3, channel: 'a:one', expression: "'a:one'" },
+    ]);
+  });
+
   it('enumerates ipcMain.handle sites including multi-line and non-literal forms', () => {
     const text = [
       "ipcMain.handle('a:one', () => 1);",
@@ -438,6 +462,8 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
       'flat-ipc/preload-mismatch',
       'flat-ipc/preload-direct-invoke',
       'flat-ipc/retired-channel-live',
+      'flat-ipc/non-static-method',
+      'flat-ipc/typed-entry-duplicate',
       'host-api/unresolved-alias-member',
       'host-api/facade-missing-action',
     ]));
@@ -454,6 +480,10 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
     expect(issues).toHaveLength(1);
     expect(issues[0]).toContain(fixture.expect);
   }, 30_000);
+
+  it.each(['ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mjs', 'cjs'])('keeps virtual %s production probes off disk', (extension) => {
+    expect(() => readFileSync(`${ROOT}/electron/contract-check-probe.${extension}`)).toThrow();
+  });
 
   it('distinguishes a broken fixture (exit 2) from a gate failure (exit 1)', async () => {
     const result = await runGate(['--fixture', `${FIXTURE_DIR}/does-not-exist.json`]);

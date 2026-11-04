@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-dynamic-method",
+  "rule": "flat-ipc/non-static-method",
+  "expect": "[flat-ipc/non-static-method]",
+  "description": "A real-entry negative control for the statically enumerable single IPC admission surface.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\nipcMain[admissionMethod]('rogue:ast', () => undefined);\n"
+    }
+  ]
+}

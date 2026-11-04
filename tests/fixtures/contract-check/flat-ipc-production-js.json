@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-production-js",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry] ipcMain.handle('rogue:extension')",
+  "description": "A virtual production file must participate in the same scanner without changing the on-disk candidate.",
+  "mutations": [
+    {
+      "file": "electron/contract-check-probe.js",
+      "create": "const { ipcMain: admissionProbe } = require('electron');\nadmissionProbe['handle']('rogue:extension', () => undefined);\n"
+    }
+  ]
+}

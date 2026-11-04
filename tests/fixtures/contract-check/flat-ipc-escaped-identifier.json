@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-escaped-identifier",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry] ipcMain.handle('rogue:ast')",
+  "description": "A real-entry negative control for the statically enumerable single IPC admission surface.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\nipc\\u004dain['handle']('rogue:ast', () => undefined);\n"
+    }
+  ]
+}

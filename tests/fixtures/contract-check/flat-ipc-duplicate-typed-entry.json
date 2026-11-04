@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-duplicate-typed-entry",
+  "rule": "flat-ipc/typed-entry-duplicate",
+  "expect": "[flat-ipc/typed-entry-duplicate]",
+  "description": "A real-entry negative control for the statically enumerable single IPC admission surface.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\nipcMain['handle']('host:invoke', () => undefined);\n"
+    }
+  ]
+}

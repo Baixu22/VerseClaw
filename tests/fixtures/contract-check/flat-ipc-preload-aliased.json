@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-preload-aliased",
+  "rule": "flat-ipc/preload-direct-invoke",
+  "expect": "[flat-ipc/preload-direct-invoke]",
+  "description": "An equivalent preload invoke cannot reopen the retired direct request surface.",
+  "mutations": [
+    {
+      "file": "electron/preload/index.ts",
+      "append": "\nconst admissionProbe = ipcRenderer.invoke.bind(ipcRenderer);\nadmissionProbe('rogue:ast');\n"
+    }
+  ]
+}
