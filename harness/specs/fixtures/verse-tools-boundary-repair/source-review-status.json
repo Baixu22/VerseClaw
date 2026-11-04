@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "kind": "independent-source-review",
+  "status": "unavailable",
+  "error": "HTTP 405 from the configured model proxy",
+  "attempts": [
+    {
+      "log": "D:/tmp/clawx-verse-fix-20261104/autoreview-source-final.log",
+      "exitCode": 1
+    },
+    {
+      "log": "D:/tmp/clawx-verse-fix-20261104/autoreview-retry.log",
+      "exitCode": 1
+    }
+  ],
+  "previousFindings": "Earlier findings were implemented and checked by targeted/unit/real-Electron tests; no clean final independent source-review verdict is claimed.",
+  "taskStatus": "in_progress",
+  "integration": "Repair branch is not merged into the concurrently edited main checkout."
+}

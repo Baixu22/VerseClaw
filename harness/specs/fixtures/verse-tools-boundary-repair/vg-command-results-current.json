@@ -1,0 +1,32 @@
+[
+  {
+    "id": "unit",
+    "command": "pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
+    "exitCode": 0,
+    "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/vg-unit-current.log"
+  },
+  {
+    "id": "harness",
+    "command": "pnpm harness validate --spec harness/specs/tasks/verse-tools-boundary-repair.md",
+    "exitCode": 0,
+    "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/harness-current.log"
+  },
+  {
+    "id": "typecheck",
+    "command": "pnpm run typecheck",
+    "exitCode": 0,
+    "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/typecheck-current.log"
+  },
+  {
+    "id": "comms-replay",
+    "command": "pnpm run comms:replay",
+    "exitCode": 0,
+    "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/comms-replay-current.log"
+  },
+  {
+    "id": "comms-compare",
+    "command": "pnpm run comms:compare",
+    "exitCode": 0,
+    "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/comms-compare-current.log"
+  }
+]

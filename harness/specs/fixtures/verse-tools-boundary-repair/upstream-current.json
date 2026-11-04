@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "source": {
+    "root": "D:/versebrowser",
+    "commit": "47b076f85d4e37cdaea67c1564d1c4f4dbf2b011"
+  },
+  "patches": {
+    "status": "pass",
+    "count": 16,
+    "entries": [
+      {
+        "id": "host-data-dir-provider",
+        "sourcePath": "src/host/paths.ts",
+        "targetPath": "packages/versebrowser/src/host/paths.ts",
+        "patchPath": "packages/versebrowser/patches/src__host__paths.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "index-data-dir-provider",
+        "sourcePath": "src/index.ts",
+        "targetPath": "packages/versebrowser/src/index.ts",
+        "patchPath": "packages/versebrowser/patches/src__index.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "cli-mcp-stdio-lifetime",
+        "sourcePath": "src/cli.ts",
+        "targetPath": "packages/versebrowser/src/cli.ts",
+        "patchPath": "packages/versebrowser/patches/src__cli.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-collab-remote-policy-ts",
+        "sourcePath": "src/collab/remote-policy.ts",
+        "targetPath": "packages/versebrowser/src/collab/remote-policy.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__collab__remote-policy.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-driver-profile-ts",
+        "sourcePath": "src/engine/driver-profile.ts",
+        "targetPath": "packages/versebrowser/src/engine/driver-profile.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__driver-profile.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-facade-ts",
+        "sourcePath": "src/engine/facade.ts",
+        "targetPath": "packages/versebrowser/src/engine/facade.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__facade.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-persistent-sessions-ts",
+        "sourcePath": "src/engine/persistent-sessions.ts",
+        "targetPath": "packages/versebrowser/src/engine/persistent-sessions.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__persistent-sessions.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-playwright-host-api-ts",
+        "sourcePath": "src/engine/playwright-host-api.ts",
+        "targetPath": "packages/versebrowser/src/engine/playwright-host-api.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__playwright-host-api.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-semantic-browser-ts",
+        "sourcePath": "src/engine/semantic-browser.ts",
+        "targetPath": "packages/versebrowser/src/engine/semantic-browser.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__semantic-browser.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-standalone-ts",
+        "sourcePath": "src/engine/standalone.ts",
+        "targetPath": "packages/versebrowser/src/engine/standalone.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__standalone.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-upstream-control-ts",
+        "sourcePath": "src/engine/upstream-control.ts",
+        "targetPath": "packages/versebrowser/src/engine/upstream-control.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__upstream-control.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-engine-visual-browser-ts",
+        "sourcePath": "src/engine/visual-browser.ts",
+        "targetPath": "packages/versebrowser/src/engine/visual-browser.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__visual-browser.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-evidence-reader-ts",
+        "sourcePath": "src/evidence/reader.ts",
+        "targetPath": "packages/versebrowser/src/evidence/reader.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__evidence__reader.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "tf0372-lint-src-openclaw-gateway-types-ts",
+        "sourcePath": "src/openclaw/gateway/types.ts",
+        "targetPath": "packages/versebrowser/src/openclaw/gateway/types.ts",
+        "patchPath": "packages/versebrowser/patches/tf0372-lint__src__openclaw__gateway__types.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "vb-engine-policy-src-engine-service-ts",
+        "sourcePath": "src/engine/service.ts",
+        "targetPath": "packages/versebrowser/src/engine/service.ts",
+        "patchPath": "packages/versebrowser/patches/vb-engine-policy__src__engine__service.ts.patch",
+        "ok": true
+      },
+      {
+        "id": "host-owned-tab-lifecycle",
+        "sourcePath": "src/engine/browser-control/tab-manager.ts",
+        "targetPath": "packages/versebrowser/src/engine/browser-control/tab-manager.ts",
+        "patchPath": "packages/versebrowser/patches/host-owned-tab-lifecycle.patch",
+        "ok": true
+      }
+    ],
+    "issues": []
+  },
+  "patchApply": {
+    "status": "pass",
+    "issues": []
+  },
+  "wiring": {
+    "status": "pass",
+    "checks": {
+      "module_entry": true,
+      "desktop_service_cli_free": true,
+      "desktop_capabilities_cli_less": true,
+      "standalone_cli_runner": true,
+      "permission_recorder": true,
+      "workspace_provider": true,
+      "sensitive_capture_host_owned": true,
+      "data_dir_provider": true,
+      "workspace_root_refresh": true,
+      "typed_sandbox_denial": true,
+      "resource_owner_hook": true,
+      "gateway_gate": true
+    },
+    "issues": []
+  },
+  "issues": []
+}

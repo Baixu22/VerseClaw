@@ -1,0 +1,97 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "results": [
+    {
+      "runRoot": "D:\\ClawX\\.ae\\verse-tools-runs-20261104\\n9-batch-iqZCHh\\n9-cold-hFSs1z",
+      "appExited": true,
+      "forcedShutdown": false,
+      "killed": 0,
+      "initialResidualProcesses": 0,
+      "initialResidualNames": [],
+      "residualCleanupAttempts": 0,
+      "residualProcesses": 0,
+      "residualNames": [],
+      "runDirReclaimed": true,
+      "errors": []
+    },
+    {
+      "runRoot": "D:\\ClawX\\.ae\\verse-tools-runs-20261104\\n9-batch-iqZCHh\\n9-loop-6G5W3z",
+      "appExited": true,
+      "forcedShutdown": false,
+      "killed": 0,
+      "initialResidualProcesses": 0,
+      "initialResidualNames": [],
+      "residualCleanupAttempts": 0,
+      "residualProcesses": 0,
+      "residualNames": [],
+      "runDirReclaimed": true,
+      "errors": []
+    },
+    {
+      "runRoot": "D:\\ClawX\\.ae\\verse-tools-runs-20261104\\n9-batch-iqZCHh\\n9-loop-mmtxPt",
+      "appExited": true,
+      "forcedShutdown": false,
+      "killed": 0,
+      "initialResidualProcesses": 0,
+      "initialResidualNames": [],
+      "residualCleanupAttempts": 0,
+      "residualProcesses": 0,
+      "residualNames": [],
+      "runDirReclaimed": true,
+      "errors": []
+    },
+    {
+      "runRoot": "D:\\ClawX\\.ae\\verse-tools-runs-20261104\\n9-batch-iqZCHh\\n9-loop-oESZKK",
+      "appExited": true,
+      "forcedShutdown": false,
+      "killed": 0,
+      "initialResidualProcesses": 0,
+      "initialResidualNames": [],
+      "residualCleanupAttempts": 0,
+      "residualProcesses": 0,
+      "residualNames": [],
+      "runDirReclaimed": true,
+      "errors": []
+    },
+    {
+      "runRoot": "D:\\ClawX\\.ae\\verse-tools-runs-20261104\\n9-batch-iqZCHh\\n9-loop-tmQlwP",
+      "appExited": true,
+      "forcedShutdown": false,
+      "killed": 0,
+      "initialResidualProcesses": 0,
+      "initialResidualNames": [],
+      "residualCleanupAttempts": 0,
+      "residualProcesses": 0,
+      "residualNames": [],
+      "runDirReclaimed": true,
+      "errors": []
+    },
+    {
+      "runRoot": "D:\\ClawX\\.ae\\verse-tools-runs-20261104\\n9-batch-iqZCHh\\n9-loop-ToyHuR",
+      "appExited": true,
+      "forcedShutdown": false,
+      "killed": 0,
+      "initialResidualProcesses": 0,
+      "initialResidualNames": [],
+      "residualCleanupAttempts": 0,
+      "residualProcesses": 0,
+      "residualNames": [],
+      "runDirReclaimed": true,
+      "errors": []
+    },
+    {
+      "runRoot": "D:\\ClawX\\.ae\\verse-tools-runs-20261104\\n9-batch-BXznjh\\n9-loop-rPKRI7",
+      "appExited": true,
+      "forcedShutdown": false,
+      "killed": 0,
+      "initialResidualProcesses": 0,
+      "initialResidualNames": [],
+      "residualCleanupAttempts": 0,
+      "residualProcesses": 0,
+      "residualNames": [],
+      "runDirReclaimed": true,
+      "errors": []
+    }
+  ]
+}

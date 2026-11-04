@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "recordedAt": "2026-11-04T19:26:02.016Z",
+  "sourceCommit": "38e0d720970fdc26c5c594161c5f776532fd9423",
+  "productBuildCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
+  "tests": {
+    "hostUnits": {
+      "files": 20,
+      "passed": 156,
+      "failed": 0,
+      "skipped": 0,
+      "startTime": 1793817768305,
+      "artifact": "focused-unit-current.json",
+      "sourceCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
+      "scope": "Actual run at the clean product-build candidate; subsequent commits change only acceptance runners, which are exercised by the final N8/N9 runs."
+    },
+    "runtimeProvenance": {
+      "files": 1,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "startTime": 1793817816869,
+      "artifact": "runtime-provenance-current.json",
+      "sourceCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
+      "scope": "Actual run at the clean product-build candidate; subsequent commits change only acceptance runners, which are exercised by the final N8/N9 runs."
+    },
+    "browserUnits": {
+      "files": 3,
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0,
+      "startTime": 1793817810865,
+      "artifact": "browser-unit-current.json",
+      "sourceCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
+      "scope": "Actual run at the clean product-build candidate; subsequent commits change only acceptance runners, which are exercised by the final N8/N9 runs."
+    },
+    "electronE2E": {
+      "startTime": "2026-11-04T18:17:37.350Z",
+      "duration": 14624.003,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "artifact": "vb-e2e.json"
+    }
+  },
+  "typecheck": {
+    "success": true,
+    "cache": false,
+    "totalDurationMs": 66465
+  },
+  "packaged": {
+    "n8Checks": 10,
+    "n9Rounds": 46,
+    "evidenceDirectory": "../versebrowser-invocation-maturity/current-20261104"
+  },
+  "limitations": [
+    "Full repository harness:ci failed on unrelated stale Agent Dev retained reports.",
+    "Windows x64 only; external model quality and non-Windows execution were not remeasured.",
+    "VG M4 remains unauthorized and VS remains default-off.",
+    "Main checkout contains concurrent dirty changes; these results belong to the isolated repair branch."
+  ],
+  "finalSourceReview": {
+    "schemaVersion": 1,
+    "driven_by": "agent",
+    "actor": "codex",
+    "kind": "independent-source-review",
+    "status": "unavailable",
+    "error": "HTTP 405 from the configured model proxy",
+    "attempts": [
+      {
+        "log": "D:/tmp/clawx-verse-fix-20261104/autoreview-source-final.log",
+        "exitCode": 1
+      },
+      {
+        "log": "D:/tmp/clawx-verse-fix-20261104/autoreview-retry.log",
+        "exitCode": 1
+      }
+    ],
+    "previousFindings": "Earlier findings were implemented and checked by targeted/unit/real-Electron tests; no clean final independent source-review verdict is claimed.",
+    "taskStatus": "in_progress",
+    "integration": "Repair branch is not merged into the concurrently edited main checkout."
+  },
+  "overallStatus": "runtime-gates-passed-source-review-pending"
+}
