@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.product-f5-independent-verdict/v1",
-  "generated_at": "2026-11-04T14:52:29.963Z",
+  "generated_at": "2026-11-04T18:25:26.923Z",
   "task": "TF-0539",
   "parentTask": "TF-0523",
   "driven_by": "agent",
@@ -14,12 +14,12 @@
   },
   "source": {
     "branch": "codex/verse-tools-boundaries-20261104",
-    "commit": "71496d4e0ac751078b6684978c2bc1e0e42b01cc",
-    "tree": "7786fb723b6e61a3992aea2978ab06cb314f0d66",
+    "commit": "27e0f5dda2e41cc9a301eb1449e3ecf0c9975834",
+    "tree": "ed909b0494db1f7388925fb10886bc20242ef597",
     "dirty": false
   },
-  "candidateId": "4c27870dd7ee190eb0cde2e88a132b75a93210fa4c17f3ef6b3cf2527a66680b",
-  "indexDigest": "09b960dd283178fdf9e8507969983ed6928b03d9251181b3da7d3caaef25f021",
+  "candidateId": "d97677d59c3fbd3e9064012ea64a6f222fb8dab29cd26cf01623bc690fcbda18",
+  "indexDigest": "1dd9008fbba22ae53d3f74b9a6d0eafaf2cadbad62b95f3c3dfa105d1fd1edd7",
   "evidence": {
     "groups": 15,
     "files": 66,
@@ -112,5 +112,5 @@
   "taskForestCloseoutEligible": true,
   "issues": [],
   "recomputed": true,
-  "digest": "33dd519355eebc16c3c92349a38cc52551ea7eb1237bf1a3b7c2746ae0efc381"
+  "digest": "9b2bb094fc776058aad79d2481dad7f2ab2d40bb0d7cec9476c204516b8d6142"
 }

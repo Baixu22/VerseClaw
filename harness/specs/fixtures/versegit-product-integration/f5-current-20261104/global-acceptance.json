@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.product-f5-global-acceptance/v1",
-  "generated_at": "2026-11-04T14:54:02.985Z",
+  "generated_at": "2026-11-04T18:32:57.390Z",
   "task": "TF-0539",
   "parentTask": "TF-0523",
   "driven_by": "agent",
@@ -9,13 +9,13 @@
   "passed": true,
   "source": {
     "branch": "codex/verse-tools-boundaries-20261104",
-    "commit": "71496d4e0ac751078b6684978c2bc1e0e42b01cc",
-    "tree": "7786fb723b6e61a3992aea2978ab06cb314f0d66",
+    "commit": "27e0f5dda2e41cc9a301eb1449e3ecf0c9975834",
+    "tree": "ed909b0494db1f7388925fb10886bc20242ef597",
     "dirty": false
   },
   "candidate": {
-    "id": "4c27870dd7ee190eb0cde2e88a132b75a93210fa4c17f3ef6b3cf2527a66680b",
-    "sourceInputDigest": "388149c6103e27c571258c641caea218e575dfcae3d0475fa17586b304117859",
+    "id": "d97677d59c3fbd3e9064012ea64a6f222fb8dab29cd26cf01623bc690fcbda18",
+    "sourceInputDigest": "d44450179a6a90017060443cc4b0747daff6e1dee4be8e5b186da301be74211c",
     "inputs": [
       {
         "path": "README.ja-JP.md",
@@ -44,8 +44,8 @@
       },
       {
         "path": "docs/modules/verse-tools.md",
-        "sha256": "d83a54fb42953979b21bd1bb24e9b02aec1a28231762e4ae74f841bc4ed641ee",
-        "bytes": 16704
+        "sha256": "0f68c1547db32dea08ff8d795c48c64c3adb4836a1061cf82aa005f7bfc791b0",
+        "bytes": 16947
       },
       {
         "path": "electron/services/versegit-fact-adapter.ts",
@@ -74,8 +74,8 @@
       },
       {
         "path": "harness/specs/tasks/verse-tools-boundary-repair.md",
-        "sha256": "3369584d84429e8b27263f9dba87a100094e47de68a1a579bc6f0f75f5c20da6",
-        "bytes": 6545
+        "sha256": "d099f883934ce704789cf45edce823050cbb726ac200370cb6f9d9968d9e4b57",
+        "bytes": 7865
       },
       {
         "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
@@ -159,8 +159,8 @@
       },
       {
         "path": "harness/specs/tasks/versegit-product-f5-global-acceptance.md",
-        "sha256": "ccb1711ea5b1086cf2c5a1432c585c23ce521148fade50315896091f34a659d8",
-        "bytes": 7519
+        "sha256": "b812fa6cdac26376fc7ed263b46873f16da5fff55a438ef2bf8c5be10781471e",
+        "bytes": 7805
       },
       {
         "path": "openclaw_runtime/src/agents/harness/versegit-feedback-delivery.ts",
@@ -498,14 +498,14 @@
   },
   "independentReview": {
     "path": "harness/specs/fixtures/versegit-product-integration/f5-current-20261104/independent-verdict.json",
-    "digest": "33dd519355eebc16c3c92349a38cc52551ea7eb1237bf1a3b7c2746ae0efc381",
+    "digest": "9b2bb094fc776058aad79d2481dad7f2ab2d40bb0d7cec9476c204516b8d6142",
     "actor": "codex",
     "reviewerRole": "independent-product-f5-verifier-process",
     "verdict": "pass",
     "p0": 0,
     "p1": 0,
     "p2": 6,
-    "indexDigest": "09b960dd283178fdf9e8507969983ed6928b03d9251181b3da7d3caaef25f021",
+    "indexDigest": "1dd9008fbba22ae53d3f74b9a6d0eafaf2cadbad62b95f3c3dfa105d1fd1edd7",
     "recomputed": true
   },
   "posture": {
@@ -586,13 +586,9 @@
       "id": "unit",
       "command": "pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
       "exitCode": 0,
-      "durationMs": 20380,
-      "counts": {
-        "files": 1,
-        "passed": 7,
-        "failed": 0
-      },
-      "summary": "Actual run retained at D:/tmp/clawx-verse-fix-20261104/vg-product-test.log; source behavior unchanged by F5 harness routing follow-up."
+      "durationMs": 0,
+      "counts": null,
+      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/vg-unit-current.log"
     },
     {
       "id": "harness",
@@ -600,7 +596,7 @@
       "exitCode": 0,
       "durationMs": 0,
       "counts": null,
-      "summary": "Spec is valid; actual command output in harness.log."
+      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/harness-current.log"
     },
     {
       "id": "typecheck",
@@ -608,7 +604,7 @@
       "exitCode": 0,
       "durationMs": 0,
       "counts": null,
-      "summary": "Full node/web/test projects passed, GOMAXPROCS=4; typecheck.log and artifacts/typecheck-cache/report.json read back."
+      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/typecheck-current.log"
     },
     {
       "id": "comms-replay",
@@ -616,7 +612,7 @@
       "exitCode": 0,
       "durationMs": 0,
       "counts": null,
-      "summary": "Actual structured replay passed; comms-replay.log."
+      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/comms-replay-current.log"
     },
     {
       "id": "comms-compare",
@@ -624,7 +620,7 @@
       "exitCode": 0,
       "durationMs": 0,
       "counts": null,
-      "summary": "All comparison metrics passed; comms-compare.log."
+      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/comms-compare-current.log"
     },
     {
       "id": "finalize",
@@ -653,5 +649,5 @@
     "proposalApplyRequired": true,
     "validateExportRequired": true
   },
-  "digest": "b2309797060487274c22e8fa84ea4a90cd8326fbda034174d1b4b0befb9261f2"
+  "digest": "10269825046d7bedde546df4e458a3931dec2e600982baf3ef656d78290efd7a"
 }
