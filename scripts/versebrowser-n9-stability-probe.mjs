@@ -14,8 +14,7 @@
  * it is not a product GA claim.
  */
 import { createServer } from 'node:http';
-import { spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, rmdir, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rmdir, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -23,41 +22,15 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { browserBuildIdentity } from './lib/versebrowser-build-identity.mjs';
+import { cleanupBrowserProbe, probeCensusBackend, readProbeProcesses } from './lib/versebrowser-probe-cleanup.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const DEFAULT_EXE = 'release/win-unpacked/Verse Claw.exe';
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function issue(kind, detail) { return { kind, ...detail }; }
-let processCensusShell = 'pwsh.exe';
-
-function listProcesses() {
-  const ps = [
-    "$ErrorActionPreference='Stop'",
-    'Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine,WorkingSetSize | ConvertTo-Json -Compress -Depth 3',
-  ].join('; ');
-  const args = ['-NoProfile', '-NonInteractive', '-Command', ps];
-  const options = { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true, timeout: 15_000 };
-  let out = spawnSync(processCensusShell, args, options);
-  // Windows PowerShell's cold WMI startup can exceed the sampling deadline on
-  // busy hosts. Prefer the installed modern shell; only absence selects 5.1.
-  if (out.error?.code === 'ENOENT' && processCensusShell === 'pwsh.exe') {
-    processCensusShell = 'powershell.exe';
-    out = spawnSync(processCensusShell, args, options);
-  }
-  if (out.status !== 0 || !out.stdout) throw new Error(`Process census failed: ${out.error?.message ?? out.stderr ?? out.status}`);
-  const parsed = JSON.parse(out.stdout);
-  if (!parsed || typeof parsed !== 'object') throw new Error('Process census returned no inventory');
-  return Array.isArray(parsed) ? parsed : [parsed];
-}
-
-function processesFor(runDir) {
-  const needle = runDir.toLowerCase();
-  return listProcesses().filter((p) => typeof p.CommandLine === 'string' && p.CommandLine.toLowerCase().includes(needle));
-}
 
 function rssMbFor(runDir) {
-  const bytes = processesFor(runDir).reduce((sum, p) => sum + (Number(p.WorkingSetSize) || 0), 0);
+  const bytes = readProbeProcesses(runDir).reduce((sum, p) => sum + (Number(p.WorkingSetSize) || 0), 0);
   return Math.round((bytes / (1024 * 1024)) * 10) / 10;
 }
 
@@ -87,23 +60,21 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
     const runRoot = await mkdtemp(join(batchRoot, `n9-${kind}-`));
     const userDataDir = join(runRoot, 'ud');
     const homeDir = join(runRoot, 'home');
-    for (const dir of [userDataDir, homeDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
+    const artifactsDir = join(runRoot, 'playwright');
+    for (const dir of [userDataDir, homeDir, artifactsDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
     await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
-    const port = 9200 + Math.floor(Math.random() * 700);
     const runId = `n9-${kind}-${index}-${Date.now().toString(36)}`;
     const startedAt = Date.now();
-    let child;
-    let exited = false;
+    let mainPid;
     let app;
     const row = { kind, index, runId, runRoot, status: 'fail' };
     try {
-      app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
+      app = await electron.launch({ executablePath: exePath, artifactsDir, args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
         env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
           APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
           XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
-          VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
-      child = app.process();
-      child.on('exit', () => { exited = true; });
+          VERSE_CLAW_REMOTE_DEBUGGING_PORT: '', VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
+      mainPid = await app.evaluate(() => process.pid);
       row.launchMs = Date.now() - startedAt;
       const page = await app.firstWindow({ timeout: 30_000 });
       await page.waitForLoadState('load', { timeout: 30_000 });
@@ -123,44 +94,14 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       row.error = String((error && error.message) || error);
       issues.push(issue('round_failed', { kind, index, message: row.error }));
     } finally {
-      if (app && kind !== 'interrupt') {
-        let timer;
-        await Promise.race([app.close().catch(() => undefined), new Promise((done) => { timer = setTimeout(done, 8000); })]);
-        clearTimeout(timer);
-      }
-      // Every round tears the app tree down; for `interrupt` rounds this kill happens with a
-      // live browser session still open, which is the controlled-interrupt case.
-      if (child && !exited) spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
-      if (app) await Promise.race([app.close().catch(() => undefined), sleep(5000)]);
-      const exitDeadline = Date.now() + 10_000;
-      while (!exited && Date.now() < exitDeadline) await sleep(200);
-      row.appExited = exited;
-      let residual = processesFor(runRoot);
-      row.initialResidualProcesses = residual.length;
-      row.initialResidualNames = residual.slice(0, 5).map((p) => p.Name);
-      let cleanupAttempts = 0;
-      while (residual.length > 0 && cleanupAttempts < 5) {
-        cleanupAttempts += 1;
-        for (const processInfo of residual) {
-          try { process.kill(Number(processInfo.ProcessId), 'SIGKILL'); } catch { /* already exited */ }
-          spawnSync('taskkill', ['/PID', String(processInfo.ProcessId), '/T', '/F'], { windowsHide: true });
-        }
-        await sleep(1500);
-        residual = processesFor(runRoot);
-      }
-      row.residualCleanupAttempts = cleanupAttempts;
-      row.residualProcesses = residual.length;
-      row.residualNames = residual.slice(0, 5).map((p) => p.Name);
-      let reclaimed = false;
-      for (let attempt = 0; attempt < 6 && !reclaimed; attempt += 1) {
-        try { await rm(runRoot, { recursive: true, force: true }); reclaimed = !existsSync(runRoot); }
-        catch { await sleep(800); }
-      }
-      row.runDirReclaimed = reclaimed;
+      const cleanup = await cleanupBrowserProbe({ app, mainPid, runRoot, interrupt: kind === 'interrupt' });
+      Object.assign(row, cleanup);
+      for (const message of cleanup.errors) issues.push(issue('round_cleanup_failed', { kind, index, message }));
+      if (cleanup.errors.length) row.status = 'fail';
       row.durationMs = Date.now() - startedAt;
     }
     rows.push(row);
-    if (output) await writeFile(resolve(hostRoot, output), JSON.stringify({ schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'in_progress', build, processCensusShell, rows, issues }, null, 2) + '\n', 'utf8');
+    if (output) await writeFile(resolve(hostRoot, output), JSON.stringify({ schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'in_progress', build, processCensusBackend: probeCensusBackend(), rows, issues }, null, 2) + '\n', 'utf8');
     process.stdout.write(JSON.stringify({ kind, index, status: row.status, error: row.error, residualProcesses: row.residualProcesses, residualNames: row.residualNames, runDirReclaimed: row.runDirReclaimed }) + '\n');
     return row;
   }
@@ -263,31 +204,14 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
   // The shared temp root can contain another running probe. Reclaim only the
   // exact per-round directories allocated by this invocation.
   for (const row of rows) {
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-      const leftovers = processesFor(row.runRoot);
-      if (leftovers.length === 0) break;
-      for (const processInfo of leftovers) {
-        try { process.kill(Number(processInfo.ProcessId), 'SIGKILL'); } catch { /* already exited */ }
-        spawnSync('taskkill', ['/PID', String(processInfo.ProcessId), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
-        finalSweepKilled += 1;
-      }
-      await sleep(1000);
-    }
-    if (existsSync(row.runRoot)) {
-      for (let attempt = 0; attempt < 5; attempt += 1) {
-        try { await rm(row.runRoot, { recursive: true, force: true }); break; }
-        catch { await sleep(1000); }
-      }
-      if (!existsSync(row.runRoot)) finalSweepRemoved += 1;
-    }
-  }
-  await rmdir(batchRoot).catch((error) => issues.push(issue('batch_dir_not_reclaimed', { message: String(error.message) })));
-
-  for (const row of rows) {
-    const finalResidual = row.runRoot ? processesFor(row.runRoot) : [];
-    row.finalResidualProcesses = finalResidual.length;
-    row.finalResidualNames = finalResidual.slice(0, 5).map((p) => p.Name);
-    row.runDirReclaimedFinal = !row.runRoot || !existsSync(row.runRoot);
+    const existed = existsSync(row.runRoot);
+    const cleanup = await cleanupBrowserProbe({ runRoot: row.runRoot, removalAttempts: 5 });
+    finalSweepKilled += cleanup.killed;
+    if (existed && cleanup.runDirReclaimed) finalSweepRemoved += 1;
+    row.finalResidualProcesses = cleanup.residualProcesses;
+    row.finalResidualNames = cleanup.residualNames;
+    row.runDirReclaimedFinal = cleanup.runDirReclaimed;
+    for (const message of cleanup.errors) issues.push(issue('final_cleanup_failed', { kind: row.kind, index: row.index, message }));
     if (row.finalResidualProcesses !== 0) {
       issues.push(issue('residual_processes_after_sweep', { kind: row.kind, index: row.index, names: row.finalResidualNames }));
     }
@@ -295,11 +219,12 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       issues.push(issue('run_dir_not_reclaimed_after_sweep', { kind: row.kind, index: row.index, runRoot: row.runRoot }));
     }
   }
+  await rmdir(batchRoot).catch((error) => issues.push(issue('batch_dir_not_reclaimed', { message: String(error.message) })));
 
   const byKind = (kind) => rows.filter((r) => r.kind === kind);
   const durations = (kind) => byKind(kind).map((r) => r.durationMs).sort((a, b) => a - b);
   const pct = (list, p) => (list.length === 0 ? null : list[Math.min(list.length - 1, Math.floor((p / 100) * list.length))]);
-  const maxOf = (list) => (list.length === 0 ? 0 : Math.max(...list));
+  const maxOf = (list) => (list.some(value => value == null) ? null : list.length === 0 ? 0 : Math.max(...list));
   const loopRows = byKind('loop');
   const summary = {
     coldStarts: { rounds: byKind('cold').length, passed: byKind('cold').filter((r) => r.status === 'pass').length, p50Ms: pct(durations('cold'), 50), maxMs: maxOf(durations('cold')), maxResidual: maxOf(byKind('cold').map((r) => r.finalResidualProcesses ?? r.residualProcesses)) },
@@ -332,7 +257,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
     scope: `packaged app repeat runs: ${coldStarts} cold starts, ${loops} full loops, ${interrupts} interrupt+recovery pairs (Windows x64, this build)`,
     finalSweepRemoved,
     finalSweepKilled,
-    processCensusShell,
+    processCensusBackend: probeCensusBackend(),
     exe,
     build,
     fixtureUrl: url,

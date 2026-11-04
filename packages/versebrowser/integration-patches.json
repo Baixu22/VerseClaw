@@ -202,9 +202,9 @@
       "sourceNormalization": "lf",
       "originalRawSha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
       "originalLfSha256": "f8382356e892f130d99310ab73a97560485033c306af0b405ddc12b95bb3ebfc",
-      "patchedSha256": "353f7ec8c9dd71d0a60281dda4a515f0bda774e09c73adb54dd512bc67eb67fb",
+      "patchedSha256": "ad478be4e072998611d06ffb6d2e804f07270f27458abe9b6f0e64046e9c4fa9",
       "patchPath": "packages/versebrowser/patches/vb-engine-policy__src__engine__service.ts.patch",
-      "patchSha256": "d545f1d019207e3fa74cf003e835fc2d81742d3d3d7b501c78a5e25f3c9b0584",
+      "patchSha256": "1b422285e8ef3f099c30a54799a2e728af1624f6e6b606961fff26f2017ed122",
       "reason": "Preserve existing host service adaptations and bind request guards to the real session, including additional tabs and window cleanup. The host retains network policy and approval authority."
     },
     {

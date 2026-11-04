@@ -378,46 +378,46 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
     }
     let pending = this.networkProfiles.get(session.profile);
     if (!pending) {
-      const transport = electronSession.fromPartition(partition);
-      const upstreamRoute = await transport.resolveProxy('https://example.com');
-      const systemRoute = await electronSession.defaultSession.resolveProxy('https://example.com');
-      const ownPreviousProxy = this.lastProxyUrls.get(session.profile);
-      if (upstreamRoute !== systemRoute && upstreamRoute !== `PROXY ${ownPreviousProxy ? new URL(ownPreviousProxy).host : ''}`) {
-        this.networkSessions.delete(session.id);
-        throw new Error('Browser network requires an upstream proxy; direct egress is refused');
-      }
-      pending = createBrowserNetworkProxy({
-        resolveUpstreamProxy: url => electronSession.defaultSession.resolveProxy(url),
-        lookupAddresses: async hostname => (await transport.resolveHost(hostname)).endpoints.map(endpoint => ({ address: endpoint.address, family: endpoint.family === 'ipv4' ? 4 : 6 })),
-        authorize: async (url, addresses, tunnel) => {
-          const owners = [...this.networkSessions].filter(([, owner]) => owner.profile === session.profile);
-          if (owners.length === 0) throw new Error('Browser network profile has no live owner');
-          let expiresAt: number | undefined;
-          // Electron pools connections per persistent profile, not browser tab.
-          // A private tunnel is allowed only while every owner of that shared
-          // transport permits it; it cannot borrow another session's grant.
-          for (const [sessionId, owner] of owners) {
-            const firstPartyOrigins = await resolveFirstPartyOrigins(owner);
-            const targets = [url];
-            if (tunnel) {
-              // CONNECT carries no URL scheme and Chromium also uses it for ws.
-              // The per-request guard enforces the precise ws/wss origin; here
-              // either scheme must authorize this same host and numeric port.
-              const target = new URL(url);
-              targets.push(`http://${target.hostname}:${target.port || '443'}/`);
+      pending = (async () => {
+        const transport = electronSession.fromPartition(partition);
+        const upstreamRoute = await transport.resolveProxy('https://example.com');
+        const systemRoute = await electronSession.defaultSession.resolveProxy('https://example.com');
+        const ownPreviousProxy = this.lastProxyUrls.get(session.profile);
+        if (upstreamRoute !== systemRoute && upstreamRoute !== `PROXY ${ownPreviousProxy ? new URL(ownPreviousProxy).host : ''}`) {
+          throw new Error('Browser network requires an upstream proxy; direct egress is refused');
+        }
+        const proxy = await createBrowserNetworkProxy({
+          resolveUpstreamProxy: url => electronSession.defaultSession.resolveProxy(url),
+          lookupAddresses: async hostname => (await transport.resolveHost(hostname)).endpoints.map(endpoint => ({ address: endpoint.address, family: endpoint.family === 'ipv4' ? 4 : 6 })),
+          authorize: async (url, addresses, tunnel) => {
+            const owners = [...this.networkSessions].filter(([, owner]) => owner.profile === session.profile);
+            if (owners.length === 0) throw new Error('Browser network profile has no live owner');
+            let expiresAt: number | undefined;
+            // Electron pools connections per persistent profile, not browser tab.
+            // A private tunnel is allowed only while every owner of that shared
+            // transport permits it; it cannot borrow another session's grant.
+            for (const [sessionId, owner] of owners) {
+              const firstPartyOrigins = await resolveFirstPartyOrigins(owner);
+              const targets = [url];
+              if (tunnel) {
+                // CONNECT carries no URL scheme and Chromium also uses it for ws.
+                // The per-request guard enforces the precise ws/wss origin; here
+                // either scheme must authorize this same host and numeric port.
+                const target = new URL(url);
+                targets.push(`http://${target.hostname}:${target.port || '443'}/`);
+              }
+              const allowed = targets.map(target => ({ target, decision: decideBrowserNavigation({ url: target, sessionId,
+                approvals: [...privateNetworkApprovals.values()], firstPartyOrigins, resolvedAddresses: addresses }) })).find(result => result.decision.allowed);
+              if (!allowed) throw new Error('Browser destination denied by profile owners');
+              if (allowed.decision.allowed && allowed.decision.reason === 'approved-private') {
+                const grant = privateNetworkApprovals.get(`${sessionId}|${browserOriginOf(allowed.target)}`);
+                if (!grant) throw new Error('Browser private grant expired');
+                expiresAt = Math.min(expiresAt ?? grant.expiresAt, grant.expiresAt);
+              }
             }
-            const allowed = targets.map(target => ({ target, decision: decideBrowserNavigation({ url: target, sessionId,
-              approvals: [...privateNetworkApprovals.values()], firstPartyOrigins, resolvedAddresses: addresses }) })).find(result => result.decision.allowed);
-            if (!allowed) throw new Error('Browser destination denied by profile owners');
-            if (allowed.decision.allowed && allowed.decision.reason === 'approved-private') {
-              const grant = privateNetworkApprovals.get(`${sessionId}|${browserOriginOf(allowed.target)}`);
-              if (!grant) throw new Error('Browser private grant expired');
-              expiresAt = Math.min(expiresAt ?? grant.expiresAt, grant.expiresAt);
-            }
-          }
-          return expiresAt;
-        },
-      }).then(async proxy => {
+            return expiresAt;
+          },
+        });
         const onLogin = (event: Electron.Event, contents: Electron.WebContents, _details: Electron.AuthenticationResponseDetails, authInfo: Electron.AuthInfo, callback: (username?: string, password?: string) => void) => {
           if (!authInfo.isProxy || authInfo.host !== '127.0.0.1' || authInfo.port !== Number(new URL(proxy.url).port) || contents?.session !== transport) return;
           event.preventDefault(); callback(proxy.credentials.username, proxy.credentials.password);
@@ -430,15 +430,14 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
           await transport.closeAllConnections();
           return proxy;
         } catch (error) { proxy.close(); throw error; }
-      });
+      })();
       this.networkProfiles.set(session.profile, pending);
     }
     try {
       const proxy = await pending;
       proxy.revokeConnections(); // Joining a profile changes its permission intersection.
     } catch (error) {
-      this.networkSessions.delete(session.id);
-      this.networkProfiles.delete(session.profile);
+      if (this.networkProfiles.get(session.profile) === pending) this.networkProfiles.delete(session.profile);
       throw error;
     }
   }

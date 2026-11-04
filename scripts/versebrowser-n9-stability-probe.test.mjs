@@ -4,6 +4,17 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { runProbe } from './versebrowser-n9-stability-probe.mjs';
+import { cleanupBrowserProbe } from './lib/versebrowser-probe-cleanup.mjs';
+
+test('census failures remain unknown and cannot skip owned directory reclamation', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'verse-failed-census-'));
+  await writeFile(join(root, 'owned.txt'), 'fixture');
+  const result = await cleanupBrowserProbe({ runRoot: root, query: () => { throw new Error('census timeout'); } });
+  assert.equal(result.runDirReclaimed, true);
+  assert.equal(result.residualProcesses, null);
+  assert.equal(result.appExited, false);
+  assert.ok(result.errors.includes('census timeout'));
+});
 
 test('a probe never sweeps another run from its shared temp root', async () => {
   const root = await mkdtemp(join(tmpdir(), 'verse-probe-cleanup-'));

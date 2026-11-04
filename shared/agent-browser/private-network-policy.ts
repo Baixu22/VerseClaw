@@ -46,14 +46,21 @@ function parseIpv4(hostname: string): number[] | null {
 }
 
 function classifyHost(hostnameRaw: string): BrowserPrivateNetworkClass {
-  const hostname = hostnameRaw.trim().toLowerCase().replace(/^\[|\]$/gu, '').replace(/\.$/u, '');
+  let hostname = hostnameRaw.trim().toLowerCase().replace(/^\[|\]$/gu, '').replace(/\.$/u, '');
+  if (hostname.includes(':')) {
+    try { hostname = new URL(`http://[${hostname}]/`).hostname.slice(1, -1); }
+    catch { return 'ipv6-local'; }
+  }
   if (/(?:^|\.)(?:localhost|local|internal|home\.arpa)$/u.test(hostname)) return 'local-name';
-  const mapped = hostname.match(/^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/u);
+  // Both IPv4-mapped and IPv4-translatable IPv6 retain the IPv4 destination's
+  // classification; URL canonicalization renders their last 32 bits in hex.
+  const mapped = hostname.match(/^::ffff:(?:0:)?([0-9a-f]{1,4}):([0-9a-f]{1,4})$/u);
   if (mapped) {
     const high = Number.parseInt(mapped[1], 16);
     const low = Number.parseInt(mapped[2], 16);
     return classifyHost(`${high >> 8}.${high & 255}.${low >> 8}.${low & 255}`);
   }
+  if (hostname.startsWith('::ffff:0:')) return classifyHost(hostname.slice(9));
   if (hostname.startsWith('::ffff:')) return classifyHost(hostname.slice(7));
   const v4 = parseIpv4(hostname);
   if (v4) {

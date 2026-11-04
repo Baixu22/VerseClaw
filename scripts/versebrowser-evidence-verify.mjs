@@ -37,6 +37,7 @@ const SOURCE_SCOPE = [
   'scripts/versebrowser-evidence-verify.mjs',
   'scripts/versebrowser-host-integration-verify.mjs',
   'scripts/lib/versebrowser-build-identity.mjs',
+  'scripts/lib/versebrowser-probe-cleanup.mjs',
   'tests/e2e/versebrowser-host-invocation.spec.ts',
   'tests/unit/versebrowser-*.test.ts',
 ];

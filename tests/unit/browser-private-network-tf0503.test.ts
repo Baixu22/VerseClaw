@@ -16,12 +16,19 @@ describe('TF-0503 browser private-network default deny', () => {
     ['http://172.16.4.4', 'rfc1918'],
     ['http://169.254.169.254/latest/meta-data', 'link-local'],
     ['http://[::1]:9000', 'loopback'],
+    ['http://[::ffff:0:127.0.0.1]', 'loopback'],
+    ['http://[::ffff:0:192.168.1.1]', 'rfc1918'],
   ])('classifies %s as non-public (%s)', (url, expected) => {
     expect(classifyBrowserAddress(url)).toBe(expected);
   });
 
   it('treats a public https URL as public', () => {
     expect(classifyBrowserAddress('https://example.com/a')).toBe('public');
+    expect(classifyBrowserAddress('http://[::ffff:0:8.8.8.8]')).toBe('public');
+  });
+
+  it('classifies expanded IPv4-translatable DNS answers before allowing the request', () => {
+    expect(decideBrowserNavigation({ url: 'https://public-looking.example', sessionId: 's1', resolvedAddresses: ['0:0:0:0:ffff:0:7f00:1'] }).allowed).toBe(false);
   });
 
   it('denies every private class by default when no approval exists', () => {

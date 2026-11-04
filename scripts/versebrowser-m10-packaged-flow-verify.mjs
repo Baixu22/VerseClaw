@@ -3,8 +3,7 @@
 // bridge to the embedded @verse-claw/versebrowser module. Agent approvals are driven
 // through the Main inspector, never supplied as renderer permission claims.
 import { createServer } from 'node:http';
-import { spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -12,12 +11,11 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { browserBuildIdentity } from './lib/versebrowser-build-identity.mjs';
+import { cleanupBrowserProbe } from './lib/versebrowser-probe-cleanup.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const EXE = 'release/win-unpacked/Verse Claw.exe';
 
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot = join(hostRoot, '.tmp') } = {}) {
   const exePath = resolve(hostRoot, exe);
@@ -39,20 +37,20 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
   const runRoot = await mkdtemp(join(tempRoot, 'm10-packaged-flow-'));
   const userDataDir = join(runRoot, 'ud');
   const homeDir = join(runRoot, 'home');
-  for (const dir of [userDataDir, homeDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
+  const artifactsDir = join(runRoot, 'playwright');
+  for (const dir of [userDataDir, homeDir, artifactsDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
   await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
-  const port = 9300 + Math.floor(Math.random() * 600);
   const runId = `m10-${Date.now().toString(36)}`;
 
   const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, build, fixtureUrl: url, runId };
   let app;
   let mainPid;
   try {
-    app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
+    app = await electron.launch({ executablePath: exePath, artifactsDir, args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
       env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
         APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
         XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
-        VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
+        VERSE_CLAW_REMOTE_DEBUGGING_PORT: '', VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
     mainPid = await app.evaluate(() => process.pid);
     const page = await app.firstWindow({ timeout: 30_000 });
     await page.waitForLoadState('load', { timeout: 30_000 });
@@ -100,33 +98,11 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
   } catch (error) {
     issues.push({ kind: 'packaged_flow_failed', message: String(error?.message ?? error) });
   } finally {
-    if (app) {
-      const child = app.process();
-      let timer;
-      await Promise.race([app.close().catch(() => undefined), new Promise((done) => { timer = setTimeout(done, 8000); })]);
-      clearTimeout(timer);
-      // On Windows Playwright's child is cmd.exe, which can exit before its
-      // Electron child. Keep the Main PID observed through the inspector.
-      result.forcedShutdown = false;
-      if (mainPid) {
-        try {
-          process.kill(mainPid, 0);
-          result.forcedShutdown = spawnSync('taskkill', ['/PID', String(mainPid), '/T', '/F'], { windowsHide: true, timeout: 15_000 }).status === 0;
-        } catch { /* Main has already exited. */ }
-      }
-      if (child.exitCode === null && child.signalCode === null) {
-        spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
-      }
-    }
+    result.cleanup = await cleanupBrowserProbe({ app, mainPid, runRoot, removalAttempts: 5 });
+    for (const message of result.cleanup.errors) issues.push({ kind: 'packaged_cleanup_failed', message });
     // Never let a lingering client connection hang the verifier (N8 F3).
     fixture.closeAllConnections();
     await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
-    // The app's own child processes can still be shutting down and hold files under the
-    // run directory, which made a single rm() fail silently and leave the run root behind
-    // (N8 F3). Wait for the renderer process to exit, then retry the cleanup.
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-      try { await rm(runRoot, { recursive: true, force: true }); break; } catch { await sleep(1000); }
-    }
   }
 
   const f = result.flow ?? {};
@@ -139,6 +115,8 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
     snapshot_returns_fixture_content: f.snapshotOk === true && f.snapshotHasFixture === true,
     session_owned_by_requested_key: f.ownedSessionCount === 1,
     session_closed: f.closed === true,
+    processes_closed: result.cleanup?.residualProcesses === 0,
+    run_directory_reclaimed: result.cleanup?.runDirReclaimed === true,
   };
   result.checks = checks;
   if ((await browserBuildIdentity(exePath)).digest !== build.digest) issues.push({ kind: 'build_changed_during_run' });

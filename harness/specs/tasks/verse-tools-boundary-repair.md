@@ -33,6 +33,7 @@ touchedAreas:
   - scripts/versebrowser-n9-stability-probe.mjs
   - scripts/versebrowser-n9-stability-probe.test.mjs
   - scripts/lib/versebrowser-build-identity.mjs
+  - scripts/lib/versebrowser-probe-cleanup.mjs
   - scripts/verify-versegit-product-integration.mjs
   - scripts/verify-versegit-product-integration.d.mts
   - scripts/rsi-sekb-arms.d.mts
@@ -43,6 +44,7 @@ touchedAreas:
   - tests/e2e/versebrowser-host-invocation.spec.ts
   - harness/specs/tasks/verse-tools-boundary-repair.md
   - harness/specs/tasks/versebrowser-invocation-maturity.md
+  - harness/specs/tasks/versegit-product-f5-global-acceptance.md
   - harness/specs/fixtures/verse-tools-boundary-repair/**
   - harness/specs/fixtures/versebrowser-invocation-maturity/current-20261104/**
   - harness/specs/fixtures/versegit-product-integration/f5-current-20261104/**
@@ -112,8 +114,11 @@ User data, home/app-data and OpenClaw config paths are isolated per round, so a
 packaged probe does not acquire locks in the owner's real runtime directory.
 N9 writes incomplete per-round results during execution so an interrupted or
 failed batch remains diagnosable and cannot be mistaken for a final pass.
-Process sampling uses the installed PowerShell 7 when available, otherwise the
-Windows PowerShell executable. A query error or timeout still fails the run.
+Process sampling queries candidate processes by the random run suffix, then
+matches the complete owned path; it does not serialize the entire host inventory.
+Unicode command lines are preserved. A query error or timeout still fails the run and
+cannot bypass cleanup or discard the affected round. Playwright controls its
+own ephemeral debugging port; its artifacts remain under the owned run root.
 
 The required full typecheck also repairs a pre-existing declaration omission:
 `buildArmsReport` already returns `promotion` at runtime, but its declaration did

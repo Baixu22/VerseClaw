@@ -7,9 +7,9 @@ vi.mock('@electron/services/workspaces-api', () => ({
 vi.mock('@electron/services/permissions-api', () => ({ recordPermissionDecisionEvent: vi.fn(async (event: unknown) => event) }));
 vi.mock('@electron/services/sensitive-capture-gate', () => ({ assertSensitiveCaptureAllowed: vi.fn(async () => ({ allowed: true })) }));
 vi.mock('@electron/services/session-delete-gate', () => ({ findSessionDeleteGateBySession: vi.fn(async () => undefined) }));
-const transportMock = vi.hoisted(() => ({ resolveHost: vi.fn(async (_hostname: string) => ({ endpoints: [{ address: '93.184.216.34', family: 'ipv4' }] })) }));
+const transportMock = vi.hoisted(() => ({ resolveHost: vi.fn(async (_hostname: string) => ({ endpoints: [{ address: '93.184.216.34', family: 'ipv4' }] })), resolveProxy: vi.fn(async () => 'DIRECT') }));
 vi.mock('@electron/services/agent-browser-network-proxy', () => ({ createBrowserNetworkProxy: vi.fn(async (options: { lookupAddresses: (hostname: string) => Promise<unknown> }) => ({ url: 'http://127.0.0.1:18080', credentials: { username: 'fixture', password: 'fixture' }, onClose: vi.fn(), resolveAddresses: options.lookupAddresses, revokeConnections: vi.fn(), close: vi.fn() })) }));
-vi.mock('electron', () => ({ app: { getPath: () => 'D:/tmp/verse-boundary-test', on: vi.fn(), off: vi.fn() }, session: { defaultSession: { resolveProxy: vi.fn(async () => 'DIRECT') }, fromPartition: () => ({ resolveHost: transportMock.resolveHost, resolveProxy: vi.fn(async () => 'DIRECT'), setProxy: vi.fn(async () => {}), closeAllConnections: vi.fn(async () => {}) }) } }));
+vi.mock('electron', () => ({ app: { getPath: () => 'D:/tmp/verse-boundary-test', on: vi.fn(), off: vi.fn() }, session: { defaultSession: { resolveProxy: vi.fn(async () => 'DIRECT') }, fromPartition: () => ({ resolveHost: transportMock.resolveHost, resolveProxy: transportMock.resolveProxy, setProxy: vi.fn(async () => {}), closeAllConnections: vi.fn(async () => {}) }) } }));
 
 import {
   approveBrowserPrivateNetwork, assertBrowserRequestAllowed, createAgentBrowserApi,
@@ -17,6 +17,7 @@ import {
 } from '@electron/services/agent-browser-api';
 import { registerAgentBrowserGatewayBridge } from '@electron/gateway/agent-browser-bridge';
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
+import { createBrowserNetworkProxy } from '@electron/services/agent-browser-network-proxy';
 import { createAgentBrowserTool, type AgentBrowserInvoker } from '../../openclaw_runtime/src/agents/tools/agent-browser-tool';
 
 type RequestDetails = { url: string; webContentsId?: number; resourceType: string };
@@ -27,6 +28,8 @@ let nextWindowId = 1;
 
 beforeEach(() => {
   transportMock.resolveHost.mockReset().mockResolvedValue({ endpoints: [{ address: '93.184.216.34', family: 'ipv4' }] });
+  transportMock.resolveProxy.mockReset().mockResolvedValue('DIRECT');
+  vi.mocked(createBrowserNetworkProxy).mockClear();
   setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
   setBrowserFirstPartyOriginProvider(() => []);
 });
@@ -36,7 +39,7 @@ afterEach(() => {
   setBrowserFirstPartyOriginProvider(null);
 });
 
-function hostFixture(optionalResource?: string) {
+function hostFixture(optionalResource?: string, failFirstWindow = false) {
   let requestHandler: RequestHandler;
   const session = {
     webRequest: { onBeforeRequest: vi.fn((handler: RequestHandler) => { requestHandler = handler; }) },
@@ -68,6 +71,7 @@ function hostFixture(optionalResource?: string) {
     };
   }
   const host = new HostAgentBrowserService({ managedEngine: 'browser-window', createWindow: () => {
+    if (failFirstWindow) { failFirstWindow = false; throw new Error('window creation failed'); }
     const window = makeWindow(); windows.push(window); return window as never;
   } });
   hosts.push(host);
@@ -89,6 +93,33 @@ async function dispatch(fixture: ReturnType<typeof hostFixture>, action: string,
 }
 
 describe('Verse browser authority through the production Main API', () => {
+  it.each(['proxy-resolution', 'window-creation'])('removes the failed owner after %s so the next private grant can be used', async (failure) => {
+    const f = hostFixture(undefined, failure === 'window-creation');
+    if (failure === 'proxy-resolution') transportMock.resolveProxy.mockRejectedValueOnce(new Error('proxy resolution failed'));
+    await expect(f.api.open({ sessionKey: 'failed-owner', profile: 'shared' })).rejects.toThrow(/failed/);
+    expect(f.host.list()).toHaveLength(0);
+    const origin = 'http://127.0.0.1:17777';
+    approveBrowserPrivateNetwork({ sessionId: 'next-owner', origin });
+    await f.api.open({ sessionKey: 'next-owner', profile: 'shared', url: origin });
+    const options = vi.mocked(createBrowserNetworkProxy).mock.calls.at(-1)![0];
+    await expect(options.authorize(origin, ['127.0.0.1'], false)).resolves.toBeGreaterThan(0);
+  });
+
+  it('recovers the live main page when the active extra tab is closed natively', async () => {
+    const f = hostFixture();
+    const opened = await f.api.open({ sessionKey: 'tab-owner' });
+    await f.host.newPage({ sessionId: opened.session.id });
+    expect(f.windows).toHaveLength(2);
+    f.windows[1].destroy();
+    const pages = await f.host.listPages({ sessionId: opened.session.id });
+    expect(pages.activePageId).toBe('0');
+    expect(pages.pages).toHaveLength(1);
+    expect(f.host.list()[0].id).toBe(opened.session.id);
+    f.host.close(opened.session.id);
+    expect(f.windows[0].isDestroyed()).toBe(true);
+    expect(f.host.list()).toHaveLength(0);
+  });
+
   it.each(['click', 'type'] as const)('preserves owner correlation through the model %s preflight and actual Main action', async (action) => {
     const f = hostFixture();
     const opened = await f.api.open({ sessionKey: 'model-owner' });

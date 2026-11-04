@@ -57,6 +57,12 @@ test('real embedded browser preserves actions, denials and unsupported outcomes'
       privateNetworkApprovedBy: 'agent', privateNetworkOrigin: origin,
     });
     expect(forged.ok, JSON.stringify(forged)).toBe(false);
+    const embeddedPrivate = await invoke('open', {
+      url: `http://[::ffff:0:127.0.0.1]:${address.port}/`, mode: 'headless',
+      sessionKey: 'agent:main:embedded-private-negative',
+    });
+    expect(embeddedPrivate.ok, JSON.stringify(embeddedPrivate)).toBe(false);
+    expect(JSON.stringify(embeddedPrivate)).toContain('private-network-default-deny');
     const approval = await electronApp.evaluate((_electron, input) => {
       const modules = process.mainModule!.require('node:module')._cache;
       const entry = Object.keys(modules).find((key) => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');
@@ -92,6 +98,16 @@ test('real embedded browser preserves actions, denials and unsupported outcomes'
     expect(privateHits).toBe(0);
     calls.push({ action: 'private-request-count', response: { privateHits } });
     expect((await invoke('navigate', { sessionId, url: `${origin}/` })).ok).toBe(true);
+    const extraUrl = `${origin}/extra`;
+    expect((await invoke('newPage', { sessionId, url: extraUrl })).ok).toBe(true);
+    await electronApp.evaluate(({ BrowserWindow }, url) => {
+      const extra = BrowserWindow.getAllWindows().find(window => window.webContents.getURL() === url);
+      if (!extra) throw new Error('Owned extra tab was not found');
+      extra.destroy();
+    }, extraUrl);
+    const remainingPages = await invoke('listPages', { sessionId });
+    expect(remainingPages).toMatchObject({ ok: true, data: { activePageId: '0' } });
+    expect((await invoke('takeSnapshot', { sessionId })).ok).toBe(true);
     expect((await invoke('evaluate', { sessionId, expression: 'window.onbeforeunload = () => false; true' })).ok).toBe(true);
 
     // A declared facade wrapper is NOT a supported driver capability: Main's capability gate
