@@ -8,6 +8,8 @@ task_forest:
 taskType: runtime-bridge
 intent: 修复 Memory、提示词注入、Provider 验证/网络与重试预算中已复核的语义裂缝，并以可复算 baseline/after 证明收益；不改变产品锁、默认值、发布状态或 GA 口径。
 touchedAreas:
+  - scripts/rsi-sekb-arms.d.mts
+  - openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts
   - docs/dev/semantic-convergence-program-20261104.md
   - docs/dev/semantic-convergence-benefit-20261104.md
   - docs/dev/network-protocol-reliability/retry-budget.md
@@ -193,3 +195,11 @@ structured usage/window-control paths and are not estimated from character count
 
 README en/zh/ja descriptions now qualify 6000 as a managed injection budget and
 mention the separate post-orchestrator accounting; no new application UI is introduced.
+
+## TF-0739 residual regression alignment
+
+COMPASS pre-reply SSP/retrieval remains retired. Its supplied queue text must not
+consume the shared budget or reach the provider. The real-entry regression keeps
+full-budget replacement denial covered through active knowledge Blocks collected
+by the existing Assembler. RSI report declarations use the shared PromotionVerdict
+already returned by the runtime; no promotion policy or product default changes.

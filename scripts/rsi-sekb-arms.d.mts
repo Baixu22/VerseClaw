@@ -1,3 +1,5 @@
+import type { PairedEffect, PromotionVerdict } from './lib/paired-ablation.mjs';
+
 export const ARMS_PROTOCOL_PATH: string;
 export const ARMS_RUNS_PATH: string;
 export const ARMS_REPORT_PATH: string;
@@ -10,8 +12,11 @@ export function buildArmsPlan(protocol: any): {
 };
 export function buildArmsReport(root?: string): {
   schemaVersion: string; status: string; reasons: string[]; evidenceKind: string;
+  generatedAt: string; driven_by: string; actor: string; taskForestNode: string;
+  protocolPath: string; runsPath: string;
+  promotion: PromotionVerdict;
   arms: Record<string, { completeCaseCount: number; passK: number | null; passAtK: number | null; flakeRate: number | null; meanTokens: number | null; gate: string }>;
-  comparisons: Array<{ id: string; role: string; baseline: number | null; treatment: number | null; meanDiff: number | null; ci95: [number | null, number | null] | null; verdict: string; reasons: string[] }>;
+  comparisons: Array<{ id: string; role: string; baseline: number | null; treatment: number | null; meanDiff: number | null; ci95: [number | null, number | null] | null; varianceStatus: PairedEffect['varianceStatus']; verdict: string; reasons: string[] }>;
   cost: { offMeanTokens: number | null; confirmedMeanTokens: number | null; relativeIncrease: number | null; ceiling: number; withinCeiling: boolean | null; missing: boolean };
   claims: { benefit: boolean; promotionReady: boolean; productLocksChanged: boolean; realHuman: boolean; providerCalls: number };
 };
