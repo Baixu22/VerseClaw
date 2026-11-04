@@ -47,7 +47,7 @@ export const F5_REQUIRED_COMMANDS = [
   },
   {
     id: 'harness',
-    command: `pnpm harness validate --spec ${F5_SPEC_PATH}`,
+    command: 'pnpm harness validate --spec harness/specs/tasks/verse-tools-boundary-repair.md',
     expectedPattern: /Spec is valid/u,
   },
   { id: 'typecheck', command: 'pnpm run typecheck', expectedPattern: /(passed|success|exit 0)/iu },
@@ -124,6 +124,7 @@ const EVIDENCE_PATHS = {
 };
 
 export const F5_SOURCE_INPUTS = [
+  'harness/specs/tasks/verse-tools-boundary-repair.md',
   F5_SPEC_PATH,
   F5_VERIFIER_PATH,
   F5_DECLARATION_PATH,
