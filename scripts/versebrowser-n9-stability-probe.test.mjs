@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { runProbe } from './versebrowser-n9-stability-probe.mjs';
-import { cleanupBrowserProbe } from './lib/versebrowser-probe-cleanup.mjs';
+import { cleanupBrowserProbe, ownsProbeCommandLine } from './lib/versebrowser-probe-cleanup.mjs';
 import { browserBuildIdentity } from './lib/versebrowser-build-identity.mjs';
 import { PROVENANCE_PATH, sha256 } from './lib/versebrowser-build-provenance.mjs';
 import { recordBuildProvenance } from './versebrowser-build-provenance.mjs';
@@ -38,6 +38,30 @@ test('census failures remain unknown and cannot skip owned directory reclamation
   assert.equal(result.residualProcesses, null);
   assert.equal(result.appExited, false);
   assert.ok(result.errors.includes('census timeout'));
+});
+
+test('process ownership uses the complete user-data argument, not path substrings', () => {
+  const root=resolve(tmpdir(),'owned probe');
+  assert.equal(ownsProbeCommandLine(root,`"Verse Claw.exe" --user-data-dir="${join(root,'ud')}" --type=renderer`),true);
+  assert.equal(ownsProbeCommandLine(root,`"--user-data-dir=${join(root,'ud')}"`),true);
+  assert.equal(ownsProbeCommandLine(root,`type "${join(root,'ud','file.txt')}"`),false);
+  assert.equal(ownsProbeCommandLine(root,`--user-data-dir="${join(root+'-sibling','ud')}"`),false);
+  assert.equal(ownsProbeCommandLine(root,`--user-data-dir="${join(root,'ud-sibling')}"`),false);
+  assert.equal(ownsProbeCommandLine('',`--user-data-dir="${join(root,'ud')}"`),false);
+});
+
+test('census failure retains the controller termination receipt and closes once', async () => {
+  const root=await mkdtemp(join(tmpdir(),'verse-fallback-receipt-'));
+  let closes=0;
+  const app={close:async()=>{closes+=1;},process:()=>({pid:123,spawnfile:'Verse Claw.exe',kill:()=>true})};
+  const result=await cleanupBrowserProbe({app,runRoot:root,interrupt:true,query:()=>{throw new Error('census failed');}});
+  assert.equal(closes,1);
+  assert.equal(result.killed,1);assert.equal(result.forcedShutdown,true);
+  assert.equal(result.terminationRequests[0].backend,'controller-handle');
+  assert.equal(result.terminationRequests[0].accepted,true);
+  assert.equal(result.residualProcesses,null);assert.equal(result.appExited,false);
+  assert.ok(result.errors.includes('census failed'));
+  assert.ok(!result.errors.includes('Controlled interruption did not terminate an owned process'));
 });
 
 test('an interruption without an actual owned termination is not successful evidence', async () => {

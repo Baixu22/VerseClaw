@@ -17,6 +17,22 @@ const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const EXE = 'release/win-unpacked/Verse Claw.exe';
 
 
+export function packagedFlowChecks(result) {
+  const f = result.flow ?? {};
+  return {
+    host_bridge_present: result.hostBridgePresent === true,
+    private_network_default_deny: result.defaultDeny?.ok === false && String(result.defaultDeny.error?.message ?? '').includes('private-network-default-deny'),
+    real_session_opened: f.openOk === true,
+    sandbox_fails_closed_without_upgrade: f.blockedFailsClosed === true,
+    runtime_mode_upgrade_ok: f.upgradeMode === 'full_access',
+    snapshot_returns_fixture_content: f.snapshotOk === true && f.snapshotHasFixture === true,
+    session_owned_by_requested_key: f.ownedSessionCount === 1,
+    session_closed: f.closed === true,
+    processes_closed: result.cleanup?.residualProcesses === 0,
+    run_directory_reclaimed: result.cleanup?.runDirReclaimed === true,
+  };
+}
+
 export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot = join(hostRoot, '.tmp') } = {}) {
   const exePath = resolve(hostRoot, exe);
   const issues = [];
@@ -107,19 +123,7 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot 
     for (const message of result.cleanup.errors) issues.push({ kind: 'packaged_cleanup_failed', message });
   }
 
-  const f = result.flow ?? {};
-  const checks = {
-    host_bridge_present: result.hostBridgePresent === true,
-    private_network_default_deny: result.defaultDeny?.ok === false && String(result.defaultDeny.error?.message ?? '').includes('private-network-default-deny'),
-    real_session_opened: f.openOk === true,
-    sandbox_fails_closed_without_upgrade: f.blockedFailsClosed === true,
-    runtime_mode_upgrade_ok: f.upgradeMode === 'full_access',
-    snapshot_returns_fixture_content: f.snapshotOk === true && f.snapshotHasFixture === true,
-    session_owned_by_requested_key: f.ownedSessionCount === 1,
-    session_closed: f.closed === true,
-    processes_closed: result.cleanup?.residualProcesses === 0,
-    run_directory_reclaimed: result.cleanup?.runDirReclaimed === true,
-  };
+  const checks = packagedFlowChecks(result);
   result.checks = checks;
   if ((await browserBuildIdentity(exePath)).digest !== build.digest) issues.push({ kind: 'build_changed_during_run' });
   result.status = issues.length === 0 && Object.values(checks).every(Boolean) ? 'pass' : 'fail';

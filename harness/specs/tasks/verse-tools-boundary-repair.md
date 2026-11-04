@@ -125,6 +125,13 @@ matches the complete owned path; it does not serialize the entire host inventory
 Unicode command lines are preserved. A query error or timeout still fails the run and
 cannot bypass cleanup or discard the affected round. Playwright controls its
 own ephemeral debugging port; its artifacts remain under the owned run root.
+Process ownership matches the complete explicit browser user-data directory;
+mentioning a directory or a sibling prefix is insufficient. Windows observations
+discard terminated WMI rows and record process birth time. Termination opens a
+process handle and rechecks that birth time before killing, so PID reuse cannot
+inherit ownership. Controller fallback termination and removal failures retain
+receipts. Current evidence replays the N8 checks and every N9 row, checks unique
+round identities, and recalculates the summary; asserted pass flags alone fail.
 
 Initialization failures are covered before any fixture server is left listening;
 an empty N9 round selection is a failure, not stability evidence. The Vite build

@@ -75,7 +75,9 @@ function classifyHost(hostnameRaw: string): BrowserPrivateNetworkClass {
     return 'public';
   }
   if (hostname === '::' || hostname === '::1' || hostname === '0:0:0:0:0:0:0:1') return 'loopback';
-  if (hostname.includes(':') && /^(?:fc|fd|fe[89ab])/u.test(hostname)) return 'ipv6-local';
+  // Deprecated site-local (RFC 3879) and multicast (RFC 4291) are not public
+  // unicast destinations either; neither can inherit the loopback preview grant.
+  if (hostname.includes(':') && /^(?:fc|fd|fe[89a-f]|ff)/u.test(hostname)) return 'ipv6-local';
   return 'public';
 }
 

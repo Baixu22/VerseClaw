@@ -14,9 +14,11 @@ import { existsSync } from 'node:fs';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
+import { isDeepStrictEqual, parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { PRODUCT_SOURCE_SCOPE, validBuildProvenance } from './lib/versebrowser-build-provenance.mjs';
+import { packagedFlowChecks } from './versebrowser-m10-packaged-flow-verify.mjs';
+import { isCompleteProbeRound, summarizeProbeRows } from './versebrowser-n9-stability-probe.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EVIDENCE_ROOT = 'harness/specs/fixtures/versebrowser-invocation-maturity';
@@ -170,6 +172,30 @@ export async function verifyCurrent(hostRoot) {
   if (status?.status !== 'pass') issues.push(issue('current_status_not_pass'));
   if (n8?.status !== 'pass') issues.push(issue('current_n8_not_pass'));
   if (n9?.status !== 'pass') issues.push(issue('current_n9_not_pass'));
+  const n8Checks = packagedFlowChecks(n8 ?? {});
+  if (!Object.values(n8Checks).every(Boolean) || !isDeepStrictEqual(n8?.checks, n8Checks)
+    || !Array.isArray(n8?.cleanup?.errors) || n8.cleanup.errors.length) issues.push(issue('current_n8_checks_invalid'));
+  for (const [run, result] of [['n8', n8], ['n9', n9]]) {
+    if (result?.driven_by !== 'agent' || !result?.actor) issues.push(issue('current_run_attribution_missing', { run }));
+    if (!Array.isArray(result?.issues) || result.issues.length) issues.push(issue('current_run_issues_present', { run }));
+  }
+  const expectedRounds = { cold: 10, loop: 30, interrupt: 3, recovery: 3 };
+  const rows = n9?.rows;
+  const validRows = Array.isArray(rows) && rows.length === 46 && rows.every(row =>
+    isCompleteProbeRound(row) && row.status === 'pass' && Number.isSafeInteger(row.index)
+    && row.index > 0 && row.index <= expectedRounds[row.kind]
+    && typeof row.runId === 'string' && row.runId.length > 0
+    && typeof row.runRoot === 'string' && row.runRoot.length > 0
+    && Number.isFinite(row.durationMs) && row.durationMs >= 0
+    && Array.isArray(row.errors) && row.errors.length === 0 && row.appExited === true
+    && row.residualProcesses === 0 && row.runDirReclaimed === true
+    && row.finalResidualProcesses === 0 && row.runDirReclaimedFinal === true
+    && (row.kind !== 'interrupt' || (row.forcedShutdown === true && Array.isArray(row.terminationRequests)
+      && row.terminationRequests.some(request => request.accepted === true && request.signal === 'SIGKILL' && typeof request.name === 'string' && request.name.toLowerCase() !== 'cmd.exe'))))
+    && new Set(rows.map(row => `${row.kind}:${row.index}`)).size === 46
+    && new Set(rows.map(row => row.runId)).size === 46 && new Set(rows.map(row => row.runRoot)).size === 46;
+  if (!validRows) issues.push(issue('current_n9_rows_invalid'));
+  else if (!isDeepStrictEqual(n9.summary, summarizeProbeRows(rows))) issues.push(issue('current_n9_summary_mismatch'));
   const build = candidate?.build;
   const expectedPaths = ['Verse Claw.exe', 'resources/app.asar', 'resources/main-runtime.asar'];
   const validBuild = build?.schemaVersion === 2 && Array.isArray(build.artifacts)

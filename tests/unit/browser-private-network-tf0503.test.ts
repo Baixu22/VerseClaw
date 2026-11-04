@@ -18,6 +18,8 @@ describe('TF-0503 browser private-network default deny', () => {
     ['http://[::1]:9000', 'loopback'],
     ['http://[::ffff:0:127.0.0.1]', 'loopback'],
     ['http://[::ffff:0:192.168.1.1]', 'rfc1918'],
+    ['http://[ff02::1]', 'ipv6-local'],
+    ['http://[fec0::1]', 'ipv6-local'],
   ])('classifies %s as non-public (%s)', (url, expected) => {
     expect(classifyBrowserAddress(url)).toBe(expected);
   });
@@ -29,6 +31,14 @@ describe('TF-0503 browser private-network default deny', () => {
 
   it('classifies expanded IPv4-translatable DNS answers before allowing the request', () => {
     expect(decideBrowserNavigation({ url: 'https://public-looking.example', sessionId: 's1', resolvedAddresses: ['0:0:0:0:ffff:0:7f00:1'] }).allowed).toBe(false);
+  });
+
+  it('denies multicast and deprecated site-local addresses in URLs and DNS answers', () => {
+    for (const address of ['ff02::1','fec0::1']) {
+      const url=`http://[${address}]/`;
+      expect(decideBrowserNavigation({url,sessionId:'s1',firstPartyOrigins:[new URL(url).origin]}).allowed).toBe(false);
+      expect(decideBrowserNavigation({url:'https://public-looking.example',sessionId:'s1',resolvedAddresses:[address]}).allowed).toBe(false);
+    }
   });
 
   it('denies every private class by default when no approval exists', () => {

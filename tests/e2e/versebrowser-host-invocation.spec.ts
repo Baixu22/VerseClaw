@@ -57,12 +57,14 @@ test('real embedded browser preserves actions, denials and unsupported outcomes'
       privateNetworkApprovedBy: 'agent', privateNetworkOrigin: origin,
     });
     expect(forged.ok, JSON.stringify(forged)).toBe(false);
-    const embeddedPrivate = await invoke('open', {
-      url: `http://[::ffff:0:127.0.0.1]:${address.port}/`, mode: 'headless',
-      sessionKey: 'agent:main:embedded-private-negative',
-    });
-    expect(embeddedPrivate.ok, JSON.stringify(embeddedPrivate)).toBe(false);
-    expect(JSON.stringify(embeddedPrivate)).toContain('private-network-default-deny');
+    for (const privateAddress of ['::ffff:0:127.0.0.1', 'ff02::1', 'fec0::1']) {
+      const embeddedPrivate = await invoke('open', {
+        url: `http://[${privateAddress}]:${address.port}/`, mode: 'headless',
+        sessionKey: 'agent:main:embedded-private-negative',
+      });
+      expect(embeddedPrivate.ok, JSON.stringify(embeddedPrivate)).toBe(false);
+      expect(JSON.stringify(embeddedPrivate)).toContain('private-network-default-deny');
+    }
     const approval = await electronApp.evaluate((_electron, input) => {
       const modules = process.mainModule!.require('node:module')._cache;
       const entry = Object.keys(modules).find((key) => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');

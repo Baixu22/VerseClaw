@@ -45,19 +45,44 @@ describe('Verse evidence candidate identity', () => {
     ]};
     const build = { schemaVersion: 2, artifacts, digest: hash(JSON.stringify(artifacts)), provenance, provenanceSha256:hash(JSON.stringify(provenance)+'\n') };
     const candidate = { driven_by: 'agent', actor: 'unit-fixture', dirty: false, sourceCommit, sourceTree, productBuildCommit:sourceCommit, build };
+    const n8 = { status: 'pass', build, driven_by: 'agent', actor: 'unit-fixture', issues: [], hostBridgePresent: true,
+      defaultDeny: {ok:false,error:{message:'private-network-default-deny'}},
+      flow:{openOk:true,blockedFailsClosed:true,upgradeMode:'full_access',snapshotOk:true,snapshotHasFixture:true,ownedSessionCount:1,closed:true},
+      cleanup:{residualProcesses:0,runDirReclaimed:true,errors:[]},
+      checks:{host_bridge_present:true,private_network_default_deny:true,real_session_opened:true,sandbox_fails_closed_without_upgrade:true,runtime_mode_upgrade_ok:true,snapshot_returns_fixture_content:true,session_owned_by_requested_key:true,session_closed:true,processes_closed:true,run_directory_reclaimed:true}};
+    const rows = Object.entries({cold:10,loop:30,interrupt:3,recovery:3}).flatMap(([kind,count]) => Array.from({length:count},(_,index)=>({
+      kind,index:index+1,runId:`fixture-${kind}-${index}`,runRoot:join(root,`run-${kind}-${index}`),status:'pass',durationMs:1,errors:[],
+      hostStatusOk:true,privateNetworkDenied:true,openOk:true,blockedFailsClosed:true,upgradeOk:true,typed:true,clicked:true,snapshotOk:true,snapshotHasFixture:true,ownedSessionCount:1,closed:true,sessionsAfterClose:0,
+      interruptedPrivateNetworkDenied:true,interruptedOpenOk:true,interruptedWithLiveSession:true,forcedShutdown:true,terminationRequests:[{accepted:true,signal:'SIGKILL',name:'Verse Claw.exe'}],
+      appExited:true,residualProcesses:0,runDirReclaimed:true,finalResidualProcesses:0,runDirReclaimedFinal:true,rssMbAfterLoop:1,
+    })));
+    const n9 = {status:'pass',build,driven_by:'agent',actor:'unit-fixture',issues:[],rows,summary:{
+      coldStarts:{rounds:10,passed:10,p50Ms:1,maxMs:1,maxResidual:0},
+      loops:{rounds:30,passed:30,fullLoops:30,p50Ms:1,p95Ms:1,maxMs:1,maxResidual:0,rssMbMax:1},
+      interrupts:{rounds:3,killedWithLiveSession:3,recoveryRounds:3,recoveryPassed:3},runDirsReclaimed:46,totalRounds:46}};
     json('candidate.json', candidate);
     json('status.json', { status: 'pass' });
-    json('n8-result.json', { status: 'pass', build });
-    json('n9-result.json', { status: 'pass', build, summary: { loops: { passed: 30, fullLoops: 30 }, coldStarts: { passed: 10 }, interrupts: { killedWithLiveSession: 3, recoveryPassed: 3 }, runDirsReclaimed: 46, totalRounds: 46 } });
+    json('n8-result.json', n8);
+    json('n9-result.json', n9);
     const seal = () => write(root, `${dir}/SHA256SUMS`, readdirSync(join(root, dir)).filter(file=>file!=='SHA256SUMS').sort().map(file => `${hash(readFileSync(join(root, dir, file)))}  ${file}`).join('\n') + '\n');
     seal();
     expect((await verifyCurrent(root)).status).toBe('pass');
+    json('n8-result.json',{...n8,flow:{...n8.flow,openOk:false}});seal();
+    expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_n8_checks_invalid'});
+    json('n8-result.json',n8);
+    for (const badRows of [[],rows.map((row,index)=>index===0?{...row,hostStatusOk:false}:row),rows.map((row,index)=>index===0?{...row,runDirReclaimed:false}:row),rows.map((row,index)=>index===0?rows[1]:row)]) {
+      json('n9-result.json',{...n9,rows:badRows});seal();
+      expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_n9_rows_invalid'});
+    }
+    json('n9-result.json',{...n9,summary:{...n9.summary,loops:{...n9.summary.loops,p95Ms:99}}});seal();
+    expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_n9_summary_mismatch'});
+    json('n9-result.json',n9);seal();
     json('candidate.json',{...candidate,productBuildCommit:'f'.repeat(40)});
     expect((await verifyCurrent(root)).issues).toContainEqual({kind:'current_product_build_commit_mismatch'});
     json('candidate.json',candidate);seal();
     json('n8-result.json', { status: 'pass' });
     expect((await verifyCurrent(root)).issues).toContainEqual({ kind: 'current_run_build_mismatch', run: 'n8' });
-    json('n8-result.json', { status: 'pass', build });
+    json('n8-result.json', n8);
     write(root, 'shared/host-api/contract.ts', 'export const contract = 2;\n');
     expect((await verifyCurrent(root)).issues).toContainEqual({ kind: 'current_evidence_stale', changed: ['shared/host-api/contract.ts'] });
     write(root, 'shared/host-api/contract.ts', 'export const contract = 1;\n');

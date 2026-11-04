@@ -34,6 +34,47 @@ function rssMbFor(runDir) {
   return Math.round((bytes / (1024 * 1024)) * 10) / 10;
 }
 
+export function isCompleteProbeRound(row) {
+  if (!row || !['cold','loop','interrupt','recovery'].includes(row.kind)) return false;
+  return row.kind === 'cold' ? row.hostStatusOk === true
+        : row.kind === 'interrupt' ? row.interruptedPrivateNetworkDenied === true && row.interruptedOpenOk === true && row.interruptedWithLiveSession === true
+        : row.privateNetworkDenied === true && row.openOk === true && row.blockedFailsClosed === true
+          && row.upgradeOk === true && row.typed === true && row.clicked === true
+          && row.snapshotOk === true && row.snapshotHasFixture === true && row.ownedSessionCount === 1
+          && row.closed === true && row.sessionsAfterClose === 0;
+}
+
+export function summarizeProbeRows(rows) {
+  const byKind = (kind) => rows.filter((r) => r.kind === kind);
+  const durations = (kind) => byKind(kind).map((r) => r.durationMs).sort((a, b) => a - b);
+  const pct = (list, p) => (list.length === 0 ? null : list[Math.min(list.length - 1, Math.floor((p / 100) * list.length))]);
+  const maxOf = (list) => (list.some(value => value == null) ? null : list.length === 0 ? 0 : Math.max(...list));
+  const loopRows = byKind('loop');
+  const summary = {
+    coldStarts: { rounds: byKind('cold').length, passed: byKind('cold').filter((r) => r.status === 'pass').length, p50Ms: pct(durations('cold'), 50), maxMs: maxOf(durations('cold')), maxResidual: maxOf(byKind('cold').map((r) => r.finalResidualProcesses ?? r.residualProcesses)) },
+    loops: {
+      rounds: loopRows.length,
+      passed: loopRows.filter((r) => r.status === 'pass').length,
+      fullLoops: loopRows.filter((r) => r.snapshotHasFixture === true && r.closed === true).length,
+      p50Ms: pct(durations('loop'), 50),
+      p95Ms: pct(durations('loop'), 95),
+      maxMs: maxOf(durations('loop')),
+      maxResidual: maxOf(loopRows.map((r) => r.finalResidualProcesses ?? r.residualProcesses)),
+      rssMbMax: maxOf(loopRows.map((r) => r.rssMbAfterLoop ?? 0)),
+    },
+    interrupts: {
+      rounds: byKind('interrupt').length,
+      killedWithLiveSession: byKind('interrupt').filter((r) => r.interruptedWithLiveSession === true && r.forcedShutdown === true && r.status === 'pass').length,
+      recoveryRounds: byKind('recovery').length,
+      recoveryPassed: byKind('recovery').filter((r) => r.status === 'pass' && r.snapshotHasFixture === true).length,
+    },
+    runDirsReclaimed: rows.filter((r) => r.runDirReclaimedFinal).length,
+    totalRounds: rows.length,
+  };
+
+  return summary;
+}
+
 export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = join(hostRoot, '.tmp'), coldStarts = 10, loops = 30, interrupts = 3, output } = {}) {
   const fail = async (kind, message) => {
     const report = { schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'fail', issues: [issue(kind, { message })] };
@@ -101,13 +142,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       row.rendererReadyMs = Date.now() - startedAt;
       row.pageTitle = await page.title();
       Object.assign(row, await body(page, runId, { runRoot, userDataDir, app }));
-      const complete = kind === 'cold' ? row.hostStatusOk === true
-        : kind === 'interrupt' ? row.interruptedPrivateNetworkDenied === true && row.interruptedWithLiveSession === true
-        : row.privateNetworkDenied === true && row.openOk === true && row.blockedFailsClosed === true
-          && row.upgradeOk === true && row.typed === true && row.clicked === true
-          && row.snapshotHasFixture === true && row.ownedSessionCount === 1
-          && row.closed === true && row.sessionsAfterClose === 0;
-      if (!complete) throw new Error(`Incomplete ${kind} browser round`);
+      if (!isCompleteProbeRound(row)) throw new Error(`Incomplete ${kind} browser round`);
       row.status = 'pass';
     } catch (error) {
       row.error = String((error && error.message) || error);
@@ -242,32 +277,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
   }
   await rmdir(batchRoot).catch((error) => issues.push(issue('batch_dir_not_reclaimed', { message: String(error.message) })));
 
-  const byKind = (kind) => rows.filter((r) => r.kind === kind);
-  const durations = (kind) => byKind(kind).map((r) => r.durationMs).sort((a, b) => a - b);
-  const pct = (list, p) => (list.length === 0 ? null : list[Math.min(list.length - 1, Math.floor((p / 100) * list.length))]);
-  const maxOf = (list) => (list.some(value => value == null) ? null : list.length === 0 ? 0 : Math.max(...list));
-  const loopRows = byKind('loop');
-  const summary = {
-    coldStarts: { rounds: byKind('cold').length, passed: byKind('cold').filter((r) => r.status === 'pass').length, p50Ms: pct(durations('cold'), 50), maxMs: maxOf(durations('cold')), maxResidual: maxOf(byKind('cold').map((r) => r.finalResidualProcesses ?? r.residualProcesses)) },
-    loops: {
-      rounds: loopRows.length,
-      passed: loopRows.filter((r) => r.status === 'pass').length,
-      fullLoops: loopRows.filter((r) => r.snapshotHasFixture === true && r.closed === true).length,
-      p50Ms: pct(durations('loop'), 50),
-      p95Ms: pct(durations('loop'), 95),
-      maxMs: maxOf(durations('loop')),
-      maxResidual: maxOf(loopRows.map((r) => r.finalResidualProcesses ?? r.residualProcesses)),
-      rssMbMax: maxOf(loopRows.map((r) => r.rssMbAfterLoop ?? 0)),
-    },
-    interrupts: {
-      rounds: byKind('interrupt').length,
-      killedWithLiveSession: byKind('interrupt').filter((r) => r.interruptedWithLiveSession === true && r.forcedShutdown === true && r.status === 'pass').length,
-      recoveryRounds: byKind('recovery').length,
-      recoveryPassed: byKind('recovery').filter((r) => r.status === 'pass' && r.snapshotHasFixture === true).length,
-    },
-    runDirsReclaimed: rows.filter((r) => r.runDirReclaimedFinal).length,
-    totalRounds: rows.length,
-  };
+  const summary = summarizeProbeRows(rows);
 
   if ((await browserBuildIdentity(exePath)).digest !== build.digest) issues.push(issue('build_changed_during_run', {}));
   const report = {
