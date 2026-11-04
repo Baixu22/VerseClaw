@@ -24,6 +24,11 @@ const candidate = { commit: git(['rev-parse', 'HEAD']), tree: git(['rev-parse', 
 if (candidate.dirty) throw new Error('Commit the baseline driver and its inputs before measuring; no dirty-candidate acceptance');
 const out = path.resolve(args.out);
 if (fs.existsSync(out)) throw new Error('Output exists; use a fresh run directory to preserve previous evidence');
+const outRelative = path.relative(root, out);
+if (!path.isAbsolute(outRelative) && outRelative !== '..' && !outRelative.startsWith(`..${path.sep}`)) {
+  try { git(['check-ignore', path.join(outRelative, 'report.json')]); }
+  catch { throw new Error('In-worktree output must be ignored; choose .audit/<new-run> or an external D: scratch directory'); }
+}
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.mkdirSync(out);
 const commands = [];
@@ -47,6 +52,9 @@ const protocol = json(path.join(fixture, 'evaluation-protocol.json'));
 const historical = json(path.join(fixture, 'historical-inputs.json'));
 const sourceInputs = boundInputPaths(root).map((p) => ({ path: p, ...stamp(path.join(root, p)) }));
 try {
+  for (const p of ['resources/bin/win32-x64/vg.exe', 'resources/bin/win32-x64/ae.exe']) {
+    if (!fs.existsSync(path.join(root, p))) throw new Error(`Required frozen binary is absent: ${p}; provision and verify it before running`);
+  }
   const probes = {};
   for (const [name, resultPath] of Object.entries(PROBE_FILES)) {
     const probeOut = path.join(out, name);
@@ -113,7 +121,8 @@ try {
     }),
     capabilities: json(path.join(fixture, 'capabilities.json')),
     dependencies: { node: process.version, rootModules: fs.realpathSync(path.join(root, 'node_modules')),
-      runtimeModules: fs.realpathSync(path.join(root, 'openclaw_runtime/node_modules')), freshInstall: false },
+      runtimeModules: fs.realpathSync(path.join(root, 'openclaw_runtime/node_modules')), freshInstall: false,
+      resourceBuild: 'not-run; prebuilt VG/VS binaries are accepted only after matching the tracked manifest digests' },
   };
   fs.writeFileSync(path.join(out, 'inventory.json'), JSON.stringify(inventory, null, 2));
   const historicalComparison = Object.entries(historical.sourceStamps).map(([p, v]) => ({ path: p, historicalSha256: v.sha256, currentSha256: stamp(path.join(root, p)).sha256, unchanged: stamp(path.join(root, p)).sha256 === v.sha256 }));
