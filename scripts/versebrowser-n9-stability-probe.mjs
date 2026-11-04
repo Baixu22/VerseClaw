@@ -29,13 +29,22 @@ const DEFAULT_EXE = 'release/win-unpacked/Verse Claw.exe';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function issue(kind, detail) { return { kind, ...detail }; }
+let processCensusShell = 'pwsh.exe';
 
 function listProcesses() {
   const ps = [
-    "$ErrorActionPreference='SilentlyContinue'",
+    "$ErrorActionPreference='Stop'",
     'Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine,WorkingSetSize | ConvertTo-Json -Compress -Depth 3',
   ].join('; ');
-  const out = spawnSync('powershell.exe', ['-NoProfile', '-Command', ps], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true, timeout: 15_000 });
+  const args = ['-NoProfile', '-NonInteractive', '-Command', ps];
+  const options = { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true, timeout: 15_000 };
+  let out = spawnSync(processCensusShell, args, options);
+  // Windows PowerShell's cold WMI startup can exceed the sampling deadline on
+  // busy hosts. Prefer the installed modern shell; only absence selects 5.1.
+  if (out.error?.code === 'ENOENT' && processCensusShell === 'pwsh.exe') {
+    processCensusShell = 'powershell.exe';
+    out = spawnSync(processCensusShell, args, options);
+  }
   if (out.status !== 0 || !out.stdout) throw new Error(`Process census failed: ${out.error?.message ?? out.stderr ?? out.status}`);
   const parsed = JSON.parse(out.stdout);
   if (!parsed || typeof parsed !== 'object') throw new Error('Process census returned no inventory');
@@ -151,7 +160,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
       row.durationMs = Date.now() - startedAt;
     }
     rows.push(row);
-    if (output) await writeFile(resolve(hostRoot, output), JSON.stringify({ schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'in_progress', build, rows, issues }, null, 2) + '\n', 'utf8');
+    if (output) await writeFile(resolve(hostRoot, output), JSON.stringify({ schemaVersion: 1, artifact: 'versebrowser-n9-stability', driven_by: 'agent', actor: 'codex', status: 'in_progress', build, processCensusShell, rows, issues }, null, 2) + '\n', 'utf8');
     process.stdout.write(JSON.stringify({ kind, index, status: row.status, error: row.error, residualProcesses: row.residualProcesses, residualNames: row.residualNames, runDirReclaimed: row.runDirReclaimed }) + '\n');
     return row;
   }
@@ -323,6 +332,7 @@ export async function runProbe({ hostRoot = ROOT, exe = DEFAULT_EXE, tempRoot = 
     scope: `packaged app repeat runs: ${coldStarts} cold starts, ${loops} full loops, ${interrupts} interrupt+recovery pairs (Windows x64, this build)`,
     finalSweepRemoved,
     finalSweepKilled,
+    processCensusShell,
     exe,
     build,
     fixtureUrl: url,

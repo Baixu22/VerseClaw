@@ -112,6 +112,8 @@ User data, home/app-data and OpenClaw config paths are isolated per round, so a
 packaged probe does not acquire locks in the owner's real runtime directory.
 N9 writes incomplete per-round results during execution so an interrupted or
 failed batch remains diagnosable and cannot be mistaken for a final pass.
+Process sampling uses the installed PowerShell 7 when available, otherwise the
+Windows PowerShell executable. A query error or timeout still fails the run.
 
 The required full typecheck also repairs a pre-existing declaration omission:
 `buildArmsReport` already returns `promotion` at runtime, but its declaration did
