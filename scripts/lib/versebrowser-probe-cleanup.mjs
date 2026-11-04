@@ -37,10 +37,19 @@ export async function cleanupBrowserProbe({ app, runRoot, interrupt = false, rem
   const errors = [];
   let forcedShutdown = false;
   let killed = 0;
-  const kill = pid => {
+  let applicationTerminations = 0;
+  const terminationRequests = [];
+  const kill = target => {
+    const pid = Number(target.ProcessId);
     if (!Number.isSafeInteger(pid) || pid <= 0) return;
-    const result = spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'], { windowsHide: true, timeout: 15_000 });
-    if (result.status === 0) { forcedShutdown = true; killed += 1; }
+    try {
+      process.kill(pid, 'SIGKILL');
+      terminationRequests.push({ pid, name: target.Name, signal: 'SIGKILL', accepted: true });
+      forcedShutdown = true; killed += 1;
+      if (target.Name?.toLowerCase() !== 'cmd.exe') applicationTerminations += 1;
+    } catch (error) {
+      terminationRequests.push({ pid, name: target.Name, signal: 'SIGKILL', accepted: false, errorCode: error.code });
+    }
   };
   const census = () => {
     try { return query(runRoot); }
@@ -52,14 +61,16 @@ export async function cleanupBrowserProbe({ app, runRoot, interrupt = false, rem
   let attempts = 0;
   while (residual?.length && attempts < 5) {
     attempts += 1;
-    for (const process of residual) kill(Number(process.ProcessId));
+    // Stop the application before its cmd.exe launch wrapper. A tree-kill CLI
+    // can return a nonzero aggregate code when one child exits during the kill.
+    for (const target of residual.toSorted((a, b) => Number(a.Name?.toLowerCase() === 'cmd.exe') - Number(b.Name?.toLowerCase() === 'cmd.exe'))) kill(target);
     await sleep(1500);
     residual = census();
   }
   // A failed census grants no authority over a numeric PID that may have been
   // reused. Only the controller's still-owned process handle can be stopped.
   if (residual === null && app) { try { app.process().kill('SIGKILL'); } catch { /* Recorded census failure remains fatal. */ } }
-  if (interrupt && !forcedShutdown) errors.push('Controlled interruption did not terminate an owned process');
+  if (interrupt && applicationTerminations === 0) errors.push('Controlled interruption did not terminate an owned process');
   if (app) await closeWithin(app, 5000);
   let reclaimed = false;
   for (let attempt = 0; attempt < removalAttempts && !reclaimed; attempt += 1) {
@@ -70,7 +81,7 @@ export async function cleanupBrowserProbe({ app, runRoot, interrupt = false, rem
   if (finalResidual?.length) errors.push(`Owned processes remain: ${finalResidual.map(process => process.Name).join(', ')}`);
   if (!reclaimed) errors.push('Owned run directory was not reclaimed');
   return {
-    appExited: finalResidual?.length === 0, forcedShutdown, killed,
+    appExited: finalResidual?.length === 0, forcedShutdown, killed, terminationRequests,
     initialResidualProcesses: initialResidual?.length ?? null,
     initialResidualNames: initialResidual?.map(process => process.Name) ?? null,
     residualCleanupAttempts: attempts, residualProcesses: finalResidual?.length ?? null,
