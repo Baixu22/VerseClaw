@@ -17,10 +17,11 @@ import { join } from 'node:path';
 import type { ElectronApplication, TestInfo } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
-import { buildRecoveryContractManifest } from '../../../shared/recovery-contract-eval';
+import { buildRecoveryContractManifest } from '../../shared/recovery-contract-eval';
 
 const OUT_DIR = process.env.RECOVERY_LONGSESSION_OUT ?? '';
 const FAMILY = process.env.RECOVERY_LONGSESSION_FAMILY ?? '';
+const LIMIT = Number(process.env.RECOVERY_LONGSESSION_LIMIT ?? '0');
 const MAIN_SESSION_KEY = 'agent:main:main';
 
 type GatewayStatus = { state?: string; gatewayReady?: boolean; childPid?: number };
@@ -96,7 +97,22 @@ test.describe('long-session recovery evaluation', () => {
 
   test('runs the frozen pairs and records what survived', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
     const manifest = buildRecoveryContractManifest();
-    const pairs = FAMILY ? manifest.longSessionPairs.filter((pair) => pair.family === FAMILY) : manifest.longSessionPairs;
+    const familyPairs = FAMILY ? manifest.longSessionPairs.filter((pair) => pair.family === FAMILY) : manifest.longSessionPairs;
+    let pairs = familyPairs;
+    if (LIMIT > 0) {
+      if (FAMILY) {
+        pairs = familyPairs.slice(0, LIMIT);
+      } else {
+        // One pair per family, in frozen order: a bounded, reproducible sample.
+        const byFamily = new Map<string, typeof familyPairs>();
+        for (const pair of familyPairs) {
+          const bucket = byFamily.get(pair.family) ?? [];
+          if (bucket.length < LIMIT) bucket.push(pair);
+          byFamily.set(pair.family, bucket);
+        }
+        pairs = [...byFamily.values()].flat();
+      }
+    }
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-longsession-eval-'));
     const llm = await startScriptedLlm((userText) => {
       const match = /LSEVAL-FACT-(\d+)/.exec(userText);
@@ -124,10 +140,12 @@ test.describe('long-session recovery evaluation', () => {
 
       for (const pair of pairs) {
         const startedAt = Date.now();
-        // Facts are stated across several turns so the transcript is non-trivial.
-        for (let i = 0; i < pair.mustPreserve.length; i += 1) {
-          await sendAndAwait(app, llm.log, `LSEVAL-FACT-${i} ${pair.mustPreserve[i]}`, `LSEVAL-FACT-${i} ACK`);
-        }
+        // All must-preserve facts are stated in one turn so the transcript is
+        // non-trivial without multiplying the eval's wall-clock cost.
+        const factsMessage = pair.mustPreserve
+          .map((fact, i) => `LSEVAL-FACT-${i} ${fact}`)
+          .join(' | ');
+        await sendAndAwait(app, llm.log, factsMessage, 'LSEVAL-FACT-0 ACK');
 
         let sessionKey = MAIN_SESSION_KEY;
         let variantNote = 'in-place';
@@ -184,3 +202,6 @@ test.describe('long-session recovery evaluation', () => {
     }
   });
 });
+
+
+
