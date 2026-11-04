@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { codingObservability } from "../context-engine/coding-observability.js";
@@ -53,6 +53,86 @@ describe("worktree-service (C4 interface)", () => {
     svc.cleanup("w1");
     expect(svc.list().find((r) => r.id === "w1")?.status).toBe("cleaned");
     expect(listWorktreeDirs(root).includes("w1")).toBe(false);
+  });
+
+  it.each([".", "..", "", "CON", "NUL.txt", "COM1", "trail.", " lead"])("rejects reserved worktree id %j before touching control files", (id) => {
+    mkdirSync(path.join(root, ".openclaw"));
+    const marker = path.join(root, ".openclaw", "state.txt");
+    writeFileSync(marker, "must-survive");
+    expect(() => createWorktreeService(root).create(id)).toThrow(/worktree.*id/i);
+    expect(readFileSync(marker, "utf8")).toBe("must-survive");
+  });
+
+  it("does not delete an existing directory on repeated or unowned create", () => {
+    const svc = createWorktreeService(root);
+    const first = svc.create("owned");
+    const marker = path.join(first.root, "uncommitted.txt");
+    writeFileSync(marker, "preserve");
+    expect(() => svc.create("owned")).toThrow(/exists|conflict/);
+    __resetWorktreeRegistry();
+    expect(() => createWorktreeService(root).create("owned")).toThrow(/exists|conflict/);
+    expect(readFileSync(marker, "utf8")).toBe("preserve");
+  });
+
+  it("keeps normalization and truncated-prefix ids distinct", () => {
+    const svc = createWorktreeService(root);
+    const ids = ["scope:a", "scope?a", "x".repeat(70) + "a", "x".repeat(70) + "b"];
+    const records = ids.map((id) => svc.create(id));
+    expect(new Set(records.map((r) => r.root)).size).toBe(4);
+    expect(ids.map((id) => svc.pathFor(id))).toEqual(records.map((r) => r.root));
+    expect(records.every((r) => existsSync(r.root))).toBe(true);
+  });
+
+  it("refuses a replaced managed root or cleanup target", () => {
+    const external = mkdtempSync(path.join(tmpdir(), "worktree-external-"));
+    try {
+      const marker = path.join(external, "keep.txt");
+      writeFileSync(marker, "external");
+      const svc = createWorktreeService(root);
+      const rec = svc.create("worker");
+      renameSync(rec.root, rec.root + "-original");
+      symlinkSync(external, rec.root, process.platform === "win32" ? "junction" : "dir");
+      expect(() => svc.cleanup(rec.id)).toThrow();
+      expect(readFileSync(marker, "utf8")).toBe("external");
+      rmSync(path.join(root, ".openclaw/worktrees"), { recursive: true, force: true });
+      symlinkSync(external, path.join(root, ".openclaw/worktrees"), process.platform === "win32" ? "junction" : "dir");
+      expect(() => svc.create("other")).toThrow();
+      expect(existsSync(path.join(external, "other"))).toBe(false);
+      expect(readFileSync(marker, "utf8")).toBe("external");
+    } finally { rmSync(external, { recursive: true, force: true }); }
+  });
+
+  it("does not steal a live aged lock or execute after lock timeout", () => {
+    const dir = path.join(root, ".openclaw/worktrees");
+    mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, ".merge.lock");
+    const contents = `${process.pid}\n${Date.now() - 60000}\n`;
+    writeFileSync(file, contents);
+    expect(() => createWorktreeService(root).create("locked")).toThrow(/lock.*timeout/);
+    expect(existsSync(path.join(dir, "locked"))).toBe(false);
+    expect(readFileSync(file, "utf8")).toBe(contents);
+  }, 15000);
+
+  it("preserves untracked content in an inprocess worktree and a replacement directory", () => {
+    const svc = createWorktreeService(root);
+    const rec = svc.create("extra");
+    writeFileSync(path.join(rec.root, "user.txt"), "keep");
+    expect(() => svc.cleanup(rec.id)).toThrow(/user_content/);
+    renameSync(rec.root, rec.root + "-old");
+    mkdirSync(rec.root);
+    expect(() => svc.cleanup(rec.id)).toThrow(/identity_changed/);
+    expect(readFileSync(path.join(rec.root + "-old", "user.txt"), "utf8")).toBe("keep");
+  });
+
+  it("preserves a worker commit that has not been integrated", () => {
+    initGitRepo(root);
+    const svc = createWorktreeService(root, { backend: "git" });
+    const rec = svc.create("committed", { writeSet: ["src/a.ts"] });
+    writeFileSync(path.join(rec.root, "src/a.ts"), "worker change");
+    execFileSync("git", ["add", "src/a.ts"], { cwd: rec.root, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "worker"], { cwd: rec.root, stdio: "ignore" });
+    expect(() => svc.cleanup(rec.id)).toThrow(/unpreserved_commits/);
+    expect(readFileSync(path.join(rec.root, "src/a.ts"), "utf8")).toBe("worker change");
   });
 
   it("merge queue serializes and detects overlapping conflicts (2-worker same file)", () => {

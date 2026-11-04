@@ -351,6 +351,8 @@ Workspace 删除或 root 变化时：
 - Git API 存在完整操作集合，但并非所有危险操作都有默认自动执行许可。
 - Code review 不是自动 merge authority。
 - worktree isolation 是 advanced，不是普通路径默认。
+- managed worktree 创建拒绝保留名、名称碰撞和已有目录，不在创建过程中删除旧目录。
+  创建、锁和清理路径重新检查目录联接；锁等待超时会失败，不能无锁继续执行。
 - stale-write guard 是 advanced，不能写成默认保护。
 - patch flow 与 symbol lease 已退役。
 - auto verify 可能 skip；skip 不是 pass。

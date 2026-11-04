@@ -16,6 +16,7 @@ import {
   cpSync,
   existsSync,
   mkdirSync,
+  lstatSync,
   openSync,
   readFileSync,
   readdirSync,
@@ -25,6 +26,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
+import { assertNoSymlinkParentsSync, resolveRootPathSync, safePathSegmentHashed } from "@openclaw/fs-safe/advanced";
 import {
   LongSessionCoordinationError,
   decideLongSessionCoordination,
@@ -74,6 +76,7 @@ export type WorktreeRecord = {
   gitBranch?: string;
   baseOid?: string;
   owner?: WorktreeLifecycleOwner;
+  filesystemIdentity?: { dev: number; ino: number };
 };
 
 export type MergeQueueItem = {
@@ -124,6 +127,28 @@ function scope(baseRoot: string) {
     registry.set(key, s);
   }
   return s;
+}
+
+function safeWorktreeId(id: string): string {
+  if (!id || id !== id.trim() || id.startsWith(".") || /[. ]$/.test(id) || /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(id)) {
+    throw new Error("unsafe_worktree_id");
+  }
+  // Preserve ordinary opaque IDs. Encoded/truncated IDs use the existing hashed
+  // segment helper, so two original IDs cannot silently share a directory.
+  return /^[a-zA-Z0-9._-]{1,64}$/.test(id) ? id : safePathSegmentHashed(id);
+}
+
+function assertManagedDirectory(baseRoot: string, targetPath: string): void {
+  assertNoSymlinkParentsSync({ rootDir: baseRoot, targetPath, requireDirectories: true, messagePrefix: "worktree boundary" });
+}
+
+function listDirectoryFiles(root: string, prefix = ""): string[] {
+  return readdirSync(path.join(root, prefix), { withFileTypes: true }).flatMap((entry) => {
+    const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+    return entry.isDirectory() && !entry.isSymbolicLink()
+      ? listDirectoryFiles(root, relative)
+      : [relative];
+  });
 }
 
 /** Normalize relative paths for Windows separators and reject traversal. */
@@ -229,31 +254,43 @@ function sleepMs(ms: number): void {
 /** Exclusive create lock with stale recovery (C4-H merge/cleanup serialization). */
 function withWorktreeLock(baseRoot: string, fn: () => void): void {
   const lockDir = path.join(path.resolve(baseRoot), ".openclaw", "worktrees");
+  assertManagedDirectory(baseRoot, lockDir);
   mkdirSync(lockDir, { recursive: true });
   const lockPath = path.join(lockDir, ".merge.lock");
+  const token = `${process.pid}\n${Date.now()}\n`;
   const started = Date.now();
   let fd: number | undefined;
   while (Date.now() - started < 3000) {
     try {
       fd = openSync(lockPath, "wx");
-      writeFileSync(lockPath, `${process.pid}\n${Date.now()}\n`, "utf8");
+      writeFileSync(fd, token, "utf8");
       break;
-    } catch {
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
       try {
         if (existsSync(lockPath)) {
+          const stat = lstatSync(lockPath);
+          if (!stat.isFile() || stat.isSymbolicLink() || stat.nlink > 1) throw new Error("unsafe_worktree_lock", { cause: error });
           const raw = readFileSync(lockPath, "utf8");
+          const pid = Number(raw.split(/\r?\n/)[0] ?? 0);
           const ts = Number(raw.split(/\r?\n/)[1] ?? 0);
-          if (ts > 0 && Date.now() - ts > 10_000) {
+          let dead = false;
+          if (Number.isInteger(pid) && pid > 0) {
+            try { process.kill(pid, 0); }
+            catch (probe) { dead = (probe as NodeJS.ErrnoException).code === "ESRCH"; }
+          }
+          if (dead && ts > 0 && Date.now() - ts > 10_000 && readFileSync(lockPath, "utf8") === raw) {
             unlinkSync(lockPath);
             continue;
           }
         }
-      } catch {
-        // ignore
+      } catch (readError) {
+        if ((readError as NodeJS.ErrnoException).code !== "ENOENT") throw readError;
       }
       sleepMs(10);
     }
   }
+  if (fd === undefined) throw new Error("worktree_lock_timeout");
   try {
     fn();
   } finally {
@@ -264,7 +301,7 @@ function withWorktreeLock(baseRoot: string, fn: () => void): void {
         // ignore
       }
       try {
-        unlinkSync(lockPath);
+        if (readFileSync(lockPath, "utf8") === token) unlinkSync(lockPath);
       } catch {
         // ignore
       }
@@ -297,6 +334,8 @@ function seedFilesInto(wtRoot: string, baseRoot: string, seedFiles: string[] | u
     const rel = normalizeWorktreeRelPath(relRaw);
     const src = path.join(baseRoot, ...rel.split("/"));
     const dest = path.join(wtRoot, ...rel.split("/"));
+    resolveRootPathSync({ absolutePath: src, rootPath: baseRoot, boundaryLabel: "worktree seed" });
+    assertManagedDirectory(wtRoot, path.dirname(dest));
     if (existsSync(src) && statSync(src).isFile()) {
       mkdirSync(path.dirname(dest), { recursive: true });
       cpSync(src, dest);
@@ -330,12 +369,27 @@ function requireCleanupAuthorization(input: {
   const root = normalizeRoot(input.record.root);
   const rootDir = normalizeRoot(input.rootDir);
   const baseRoot = normalizeRoot(input.baseRoot);
+  assertManagedDirectory(baseRoot, root);
   if (root === baseRoot || root === rootDir || !root.startsWith(rootDir + path.sep)) {
     throw new Error('worktree_cleanup_target_not_disposable');
   }
   if (input.record.status === 'cleaned') return { root };
+  if (!input.record.filesystemIdentity) throw new Error('worktree_cleanup_identity_missing');
+  const current = lstatSync(root);
+  if (current.dev !== input.record.filesystemIdentity.dev || current.ino !== input.record.filesystemIdentity.ino) {
+    throw new Error('worktree_cleanup_identity_changed');
+  }
+  if (input.record.owner?.retention === 'keep') throw new Error('worktree_cleanup_retention_keep');
+  if (input.record.backend === 'git') {
+    const common = (cwd: string) => path.resolve(cwd, git(['rev-parse', '--git-common-dir'], cwd).trim()).toLowerCase();
+    if (common(root) !== common(baseRoot)) throw new Error('worktree_cleanup_repository_changed');
+    if (!input.record.baseOid || git(['rev-list', '--count', `HEAD`, `^${input.record.baseOid}`], root).trim() !== '0') {
+      throw new Error('worktree_cleanup_unpreserved_commits');
+    }
+  }
   const allowed = new Set((input.record.writeSet ?? []).map((value) => normalizeWorktreeRelPath(value)));
-  const unexpected = input.changed.files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
+  const files = input.record.backend === 'inprocess' ? listDirectoryFiles(root) : input.changed.files;
+  const unexpected = files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
   if (unexpected.length > 0) {
     throw new Error('worktree_cleanup_user_content_present:' + unexpected.slice(0, 8).join(','));
   }
@@ -371,6 +425,19 @@ export function createWorktreeService(
     backend,
     create(id, createOptions) {
       const s = scope(resolved);
+      const safeId = safeWorktreeId(id);
+      const wtRoot = hardenFsRoot(path.join(rootDir, safeId));
+      assertManagedDirectory(resolved, wtRoot);
+      if (s.records.has(id) || s.records.has(safeId) || existsSync(wtRoot)) {
+        throw new Error("worktree_already_exists_or_identity_conflict");
+      }
+      for (const relRaw of createOptions?.seedFiles ?? []) {
+        const rel = normalizeWorktreeRelPath(relRaw);
+        const target = path.join(resolved, ...rel.split("/"));
+        resolveRootPathSync({ absolutePath: target, rootPath: resolved, boundaryLabel: "worktree seed" });
+        if (existsSync(target) && statSync(target).nlink > 1) throw new Error("worktree_seed_hardlink");
+      }
+      const writeSet = createOptions?.writeSet?.map(normalizeWorktreeRelPath);
       const owner = createOptions?.owner;
       if (owner) {
         const uniqueRecords = new Set(s.records.values());
@@ -387,15 +454,14 @@ export function createWorktreeService(
         });
         if (!budget.allowed) throw new LongSessionCoordinationError(budget);
       }
-      const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
-      const wtRoot = hardenFsRoot(path.join(rootDir, safeId));
       let gitBranch: string | undefined;
       let recBackend: WorktreeBackend = "inprocess";
 
       withWorktreeLock(resolved, () => {
+        assertManagedDirectory(resolved, wtRoot);
         mkdirSync(rootDir, { recursive: true });
         if (existsSync(wtRoot)) {
-          removePathWithRetries(wtRoot);
+          throw new Error("worktree_already_exists_or_identity_conflict");
         }
 
         if (backend === "git") {
@@ -437,18 +503,19 @@ export function createWorktreeService(
         baseRoot: resolved,
         createdAtMs: Date.now(),
         status: "active",
-        writeSet: createOptions?.writeSet?.map((p) => normalizeWorktreeRelPath(p)),
+        writeSet,
         backend: recBackend,
         gitBranch,
         ...(baseOid ? { baseOid } : {}),
         ...(owner ? { owner: { ...owner, retention: owner.retention ?? "keep" } } : {}),
+        filesystemIdentity: { dev: lstatSync(wtRoot).dev, ino: lstatSync(wtRoot).ino },
       };
       s.records.set(safeId, rec);
       if (safeId !== id) s.records.set(id, rec);
       return install ? { ...rec, install } : rec;
     },
     pathFor(id) {
-      const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
+      const safeId = safeWorktreeId(id);
       return path.join(rootDir, safeId);
     },
     list() {
@@ -577,6 +644,7 @@ export function createWorktreeService(
       const s = scope(resolved);
       const rec = s.records.get(id);
       if (!rec) return;
+      if (rec.status === "cleaned") return;
       withWorktreeLock(resolved, () => {
         const ownership = requireCleanupAuthorization({
           rootDir,
