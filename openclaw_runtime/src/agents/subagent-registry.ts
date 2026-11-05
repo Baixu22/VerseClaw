@@ -508,7 +508,19 @@ async function processCompletedOrchestrationWorktrees(
     return;
   }
 
-  const baseRoot = mergeable.find((worker) => worker.workspaceDir)?.workspaceDir;
+  const { findManagedWorktree } = await import("./worktree-service.js");
+  const records = mergeable.map((worker) => worker.workspaceDir
+    ? findManagedWorktree(worker.workspaceDir, worker.orchestration!.worktreeId!) : undefined);
+  const baseRoot = records[0]?.baseRoot;
+  if (records.some((record, index) => !record || record.baseRoot !== baseRoot
+    || record.owner?.sessionKey !== mergeable[index].requesterSessionKey)) {
+    for (const worker of mergeable) applyOrchestrationWorkerPatch(worker, {
+      worktreeMergeStatus: "error", worktreeMergeReason: "worktree-parent-owner-unavailable",
+      worktreeMergeProcessedAt: processedAt,
+    });
+    persistSubagentRuns();
+    return;
+  }
   if (!baseRoot) {
     for (const worker of mergeable) {
       applyOrchestrationWorkerPatch(worker, {
@@ -523,8 +535,13 @@ async function processCompletedOrchestrationWorktrees(
   }
 
   try {
+    const { resolveOrchestrationContext } = await import("./orchestration-workspace-context.js");
+    const parents = records.map((record) =>
+      resolveOrchestrationContext({ sessionKey: record!.owner!.sessionKey,
+        expectedSessionGeneration: record!.owner!.expectedSessionId, workspaceDir: baseRoot }, getRuntimeConfig)
+    );
     const { mergeOrchestrationWorktrees } = await import("./orchestration-worktree-merge.js");
-    const results = mergeOrchestrationWorktrees({
+    const results = await mergeOrchestrationWorktrees({
       baseRoot,
       workers: mergeable.map((worker) => ({
         taskNodeId: worker.orchestration?.taskNodeId ?? worker.runId,
@@ -532,6 +549,7 @@ async function processCompletedOrchestrationWorktrees(
         declaredWriteSet: worker.orchestration?.worktreeWriteSet ?? [],
       })),
       conflictPolicy: "mark_conflict",
+      assertParentCurrent: () => { for (const parent of parents) parent.assertWorkspaceCurrent?.(); },
     });
     const byWorktreeId = new Map(results.map((result) => [result.worktreeId, result]));
     for (const worker of mergeable) {
@@ -539,6 +557,9 @@ async function processCompletedOrchestrationWorktrees(
       applyOrchestrationWorkerPatch(worker, {
         worktreeMergeStatus: result?.status ?? "error",
         worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
+        worktreeMergeJournalRef: result?.journalRef,
+        worktreeMergeHashes: result?.hashes,
+        worktreeMergeRecoveryRequired: result?.recoveryRequired,
         ...(result?.reason ? { worktreeMergeReason: result.reason } : {}),
         worktreeMergeProcessedAt: processedAt,
       });

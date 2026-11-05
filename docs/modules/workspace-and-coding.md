@@ -311,6 +311,8 @@ Remote forge 有独立 Host API：
 
 资源调度只接受 WorktreeService 登记且目录身份仍有效的独立 Git checkout；布尔声明、伪造记录与 inprocess 目录都不能提供这一证明。回执记录实际 backend、根目录和 verifiedCheckout，显式 Git 后端不可用时拒绝执行。目录模拟仍称 inprocess-worktree，不宣称 Git 隔离。
 
+工作树回流以创建时的 parent/worker 文件摘要为基线，按实际内容变化识别新增、修改和删除；重命名保留旧路径删除与新路径新增。parent 已被并发修改、Git HEAD 已变化或目标目录身份不一致时返回 conflict，保留用户内容和 index。回流通过既有 Coding journal 和文件锁执行，返回前读回目标摘要；失败时恢复已写内容，若检测到不同的并发内容则保留恢复记录并报告 recoveryRequired。重复回流相同内容不重复写入或生成新 journal。完成回调通过工作树注册记录找到 parent 根，独立于 worker 执行 cwd。
+
 ## 11. CodingRun、Task Loop 与 Task Ledger
 
 `CodingRun` 是 association/projection view，不是第二任务状态机。

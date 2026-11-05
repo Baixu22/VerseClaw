@@ -40,7 +40,7 @@ try {
   const deletionService = createWorktreeService(deletionRoot);
   const deletionWorker = deletionService.create('delete-worker', { writeSet: ['a.txt'], seedFiles: ['a.txt'] });
   unlinkSync(path.join(deletionWorker.root, 'a.txt'));
-  const deletionResult = merge(deletionRoot, deletionWorker.id);
+  const deletionResult = await merge(deletionRoot, deletionWorker.id);
   const deletionActual = { result: deletionResult, baseFileStillExists: existsSync(path.join(deletionRoot, 'a.txt')) };
   record('worktree-deletion-silently-not-merged', 'delete a.txt in base or report a failure', deletionActual, deletionActual.baseFileStillExists && deletionResult[0]?.status === 'merged');
 
@@ -50,7 +50,7 @@ try {
   const staleWorker = staleService.create('stale-worker', { writeSet: ['a.txt'], seedFiles: ['a.txt'] });
   writeFileSync(path.join(staleWorker.root, 'a.txt'), 'worker-change');
   writeFileSync(path.join(staleRoot, 'a.txt'), 'concurrent-owner-change');
-  const staleResult = merge(staleRoot, staleWorker.id);
+  const staleResult = await merge(staleRoot, staleWorker.id);
   const staleActual = { result: staleResult, baseContents: readFileSync(path.join(staleRoot, 'a.txt'), 'utf8') };
   record('worktree-overwrites-concurrent-base-edit', 'conflict and preserve concurrent-owner-change', staleActual, staleActual.baseContents === 'worker-change' && staleResult[0]?.status === 'merged');
 
@@ -70,7 +70,7 @@ try {
       writeFileSync(path.join(worker.root, 'a.txt'), 'worker-change');
       writeFileSync(path.join(root, 'a.txt'), 'concurrent-owner-change');
     }
-    const result = merge(root, worker.id);
+    const result = await merge(root, worker.id);
     const contents = existsSync(path.join(root, 'a.txt')) ? readFileSync(path.join(root, 'a.txt'), 'utf8') : null;
     record('git-worktree-' + scenario, scenario === 'delete' ? 'delete a.txt or report failure' : 'preserve concurrent base edit and report conflict', { backend: worker.backend, result, contents }, worker.backend === 'git' && result[0]?.status === 'merged' && (scenario === 'delete' ? contents === 'baseline' : contents === 'worker-change'));
   }

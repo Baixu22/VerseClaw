@@ -89,6 +89,9 @@ export type TeamOrchestrationMetadata = {
   worktreeWriteSetMismatch?: string[];
   worktreeMergeReason?: string;
   worktreeMergeProcessedAt?: number;
+  worktreeMergeJournalRef?: string;
+  worktreeMergeHashes?: Record<string, string | null>;
+  worktreeMergeRecoveryRequired?: boolean;
   routeDiagnostics?: RouteDiagnostics;
   qualityPolicy?: OrchestrationQualityPolicy;
   repairPolicy?: OrchestrationRepairPolicy;

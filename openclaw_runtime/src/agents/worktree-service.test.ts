@@ -135,7 +135,7 @@ describe("worktree-service (C4 interface)", () => {
     expect(readFileSync(path.join(rec.root, "src/a.ts"), "utf8")).toBe("worker change");
   });
 
-  it("merge queue serializes and detects overlapping conflicts (2-worker same file)", () => {
+  it("merge queue serializes and detects overlapping conflicts (2-worker same file)", async () => {
     const svc = createWorktreeService(root);
     const w1 = svc.create("w1", { seedFiles: ["src/a.ts"] });
     const w2 = svc.create("w2", { seedFiles: ["src/a.ts"] });
@@ -146,14 +146,14 @@ describe("worktree-service (C4 interface)", () => {
     expect(existsSync(path.join(w2.root, "src", "a.ts"))).toBe(true);
     svc.enqueueMerge({ worktreeId: "w1", changedFiles: ["src/a.ts"] });
     svc.enqueueMerge({ worktreeId: "w2", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(results[1]?.status).toBe("conflict");
     expect(readFileSync(path.join(root, "src", "a.ts"), "utf8")).toContain("a = 2");
     expect(codingObservability.rates().mergeReworkRate).toBeGreaterThan(0);
   });
 
-  it("conflict policy can return work to worker", () => {
+  it("conflict policy can return work to worker", async () => {
     const svc = createWorktreeService(root, { conflictPolicy: "return_worker" });
     const w1 = svc.create("w1", { seedFiles: ["src/a.ts"] });
     const w2 = svc.create("w2", { seedFiles: ["src/a.ts"] });
@@ -161,21 +161,21 @@ describe("worktree-service (C4 interface)", () => {
     writeFileSync(path.join(w2.root, "src", "a.ts"), "export const a = 3;\n");
     svc.enqueueMerge({ worktreeId: "w1", changedFiles: ["src/a.ts"] });
     svc.enqueueMerge({ worktreeId: "w2", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(results[1]?.status).toBe("rework");
     expect(results[1]?.reason).toMatch(/^return_worker:/);
   });
 
-  it("merge missing worktree fails cleanly", () => {
+  it("merge missing worktree fails cleanly", async () => {
     const svc = createWorktreeService(root);
     svc.enqueueMerge({ worktreeId: "ghost", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("conflict");
     expect(results[0]?.reason).toBe("missing_worktree");
   });
 
-  it("git backend creates isolated worktree when available (opt-in, not production default)", () => {
+  it("git backend creates isolated worktree when available (opt-in, not production default)", async () => {
     initGitRepo(root);
     const svc = createWorktreeService(root, { backend: "git" });
     expect(svc.backend).toBe("git");
@@ -184,7 +184,7 @@ describe("worktree-service (C4 interface)", () => {
     expect(existsSync(rec.root)).toBe(true);
     writeFileSync(path.join(rec.root, "src", "a.ts"), "export const a = 9;\n");
     svc.enqueueMerge({ worktreeId: "g1", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(readFileSync(path.join(root, "src", "a.ts"), "utf8")).toContain("a = 9");
     svc.cleanup("g1");
@@ -312,7 +312,7 @@ describe("worktree-service C4-H hardening", () => {
     expect(readFileSync(path.join(rec.root, "src", "nested", "b.ts"), "utf8")).toContain("b = 1");
   });
 
-  it("git backend concurrent create/merge/cleanup stays isolated (C4-H)", () => {
+  it("git backend concurrent create/merge/cleanup stays isolated (C4-H)", async () => {
     initGitRepo(root);
     const svc = createWorktreeService(root, { backend: "git" });
     expect(svc.backend).toBe("git");
@@ -324,7 +324,7 @@ describe("worktree-service C4-H hardening", () => {
     writeFileSync(path.join(w2.root, "src", "a.ts"), "export const a = 3;\n");
     svc.enqueueMerge({ worktreeId: "g-a", changedFiles: ["src\\a.ts"] });
     svc.enqueueMerge({ worktreeId: "g-b", changedFiles: ["src/a.ts"] });
-    const results = svc.processMergeQueue();
+    const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(results[1]?.status).toBe("conflict");
     svc.cleanup("g-a");
