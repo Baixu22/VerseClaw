@@ -75,8 +75,8 @@
     "failed": 0,
     "pending": 0,
     "oracleUnchanged": true,
-    "reportPath": "D:\\tmp\\rsi-model-test-20261105\\g03-model-trial-3\\oracle\\run-report.json",
-    "calibrationPath": "D:/tmp/rsi-model-test-20261105-v2/calibration/tf-0291-g03/admission.json",
+    "reportPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/oracle/run-report.json",
+    "calibrationPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/admission.json",
     "admissionStatus": "pass",
     "admissionWarnings": [
       "baseline-target-module-absent"
@@ -84,8 +84,8 @@
   },
   "execution": {
     "providerResponseRetained": true,
-    "rawArtifactPath": "D:/tmp/rsi-model-test-20261105/g03-model-trial-3/raw-response.json",
-    "responseTextPath": "D:/tmp/rsi-model-test-20261105/g03-model-trial-3/response-text.txt"
+    "rawArtifactPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/raw-response.json",
+    "responseTextPath": "harness/specs/fixtures/rsi-model-diagnostic/g03/response-text.txt"
   },
   "limitations": [
     "White-box single-task smoke: the public interface contract was supplied from the task contract; the hidden test file contents were not sent to the model.",
@@ -100,5 +100,6 @@
     "productLocksChanged": false,
     "completeRsiImplementation": false,
     "releaseApproved": false
-  }
+  },
+  "evidencePack": "harness/specs/fixtures/rsi-model-diagnostic/g03"
 }
