@@ -126,8 +126,8 @@
     },
     {
       "file": "lint.txt",
-      "sha256": "79060ca7d9abdcbe4ac7fbf0f725266b4f67f2da3e9fbe4d5abfeaa7a72859a1",
-      "bytes": 2993
+      "sha256": "b2300bf31854b30902f160781f9477103c3a15365c72f927c4257c1246633f9b",
+      "bytes": 2990
     },
     {
       "file": "live/binding.json",
@@ -158,6 +158,11 @@
       "file": "live-quality-binding.json",
       "sha256": "503677b3a5596c265400a487b42b66ee2c4800f9739526493d57cb586a86f37d",
       "bytes": 584
+    },
+    {
+      "file": "merge-normalization.json",
+      "sha256": "135ef522e91b7853af2704b14b8356689e24c6bcda83978f8b5652c5c85b281f",
+      "bytes": 540
     },
     {
       "file": "native-sync/cursor-before-restart.json",
