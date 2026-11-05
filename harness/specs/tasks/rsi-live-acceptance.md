@@ -35,7 +35,8 @@ acceptance:
   - The API key enters through stdin, is never passed to the subject or grader process and is not written to source, configuration, logs or retained evidence.
   - Current corpus identities and public/held-out membership are retained; each historical base and reference revision is recovered from its original acceptance record before execution.
   - A hard admission failure leaves model task execution and subject isolation explicitly unexecuted; endpoint preflight is never counted as a quality trial.
-  - eady-for-measurement requires all 24 task admissions and a retained passing provider preflight matched to the planned endpoint/model; a missing or failed preflight leaves the result NO_GO.
+  - A baseline whose only failure is a missing module inside the declared target scope is admitted with `baseline-target-module-absent`; missing dependencies outside target scope remain hard failures.
+  - `ready-for-measurement` requires all 24 task admissions and a retained passing provider preflight matched to the planned endpoint/model; a missing or failed preflight leaves the result `NO_GO`.
   - Every reference oracle is calibrated before its task's agent outcomes may be used as quality evidence. A calibration failure is a hard admission failure, not a retryable agent result.
   - No result-dependent advice, candidate or threshold changes are introduced to bypass a failed admission gate. A later experiment must separately freeze its confirmed SEKB candidate.
   - Actual provider usage, tools, timestamps, failures, edits and independent oracle reports are persisted and replayable. A hard acceptance failure may stop the campaign, with unexecuted slots retained explicitly.

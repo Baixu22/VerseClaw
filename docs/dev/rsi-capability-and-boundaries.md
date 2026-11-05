@@ -110,6 +110,8 @@ counts recorded task labels; `completeCases` remains zero because feedback
 records contain no experimental arm/repeat identity. Both pilot and three-arm
 check commands compare the retained report with a fresh derivation.
 
+A baseline whose only failure is an expected missing module inside the declared target scope is admitted with the warning `baseline-target-module-absent`; missing dependencies outside target scope still fail closed. The model smoke demonstrates capability plumbing only, not benefit.
+
 The 2026-11-05 local review keeps README files hash-recorded but non-judged:
 documentation edits from parallel work are warnings, while RSI code, fixtures,
 rules and acceptance records still fail closed on drift.
@@ -119,7 +121,9 @@ base/reference revisions, target scope and acceptance criteria. Its collector
 receipt must carry replayable edits plus a grader revision and edits digest, and
 `calibrate` imports a live package only after the admission report is ready and
 the provider preflight matches the planned endpoint/model. A stale lock left by a
-dead process is reclaimed on resume; a live lock still fails closed.Seal readback is scoped to judged inputs: an unrelated in-flight edit in the
+dead process is reclaimed on resume; a live lock still fails closed.
+
+Seal readback is scoped to judged inputs: an unrelated in-flight edit in the
 shared checkout is a warning, while a dirty judged input still fails closed.
 
 The active v2 reservation still contains zero completed model trials.

@@ -302,24 +302,36 @@ function oracleState(root, workspace, task) {
   return { task: rawDigest(task.oracle), files, combined: rawDigest({ oracle: task.oracle, files }) };
 }
 
-function missingModuleDiagnostics(report, workspace, task) {
+export function missingModuleDiagnostics(report, workspace, task) {
   const diagnostics = [];
-  const scope = new Set((task.input?.targetScope ?? []).map((entry) => slash(entry).replace(/^\.\//u, '')));
+  const scope = (task.input?.targetScope ?? []).map((entry) => slash(entry).replace(/^\.\//u, ''));
+  const canonical = (path) => path.replace(/\.(?:c|m)?[jt]sx?$/u, '');
+  const scopeMatches = (missingPath) => {
+    const target = canonical(missingPath);
+    return scope.some((entry) => {
+      const wanted = canonical(entry);
+      return target === wanted || target.startsWith(`${wanted}/`);
+    });
+  };
+  const record = (message, importer) => {
+    if (typeof message !== 'string') return;
+    const matched = message.match(/Failed to resolve import ["']([^"']+)["']/u) ?? message.match(/Cannot find module ["']([^"']+)["']/u);
+    if (!matched) return;
+    let missingPath = matched[1];
+    if (missingPath.startsWith('.') && importer) missingPath = slash(join(dirname(importer), missingPath));
+    missingPath = slash(missingPath).replace(/^\.\//u, '');
+    const diagnostic = { kind: 'missing-module', missingPath, importer, inTargetScope: scopeMatches(missingPath) };
+    if (!diagnostics.some((entry) => entry.missingPath === diagnostic.missingPath && entry.importer === diagnostic.importer)) diagnostics.push(diagnostic);
+  };
   for (const result of report?.testResults ?? []) {
     const importer = result.name && isAbsolute(result.name) ? slash(relative(workspace, result.name)) : null;
-    for (const message of result.assertionResults?.map((entry) => entry.failureMessages?.join('\n')).filter(Boolean) ?? []) {
-      const matched = message.match(/Failed to resolve import ["']([^"']+)["']/u) ?? message.match(/Cannot find module ["']([^"']+)["']/u);
-      if (!matched) continue;
-      let missingPath = matched[1];
-      if (missingPath.startsWith('.') && importer) missingPath = slash(join(dirname(importer), missingPath));
-      missingPath = missingPath.replace(/^\.\//u, '');
-      diagnostics.push({ kind: 'missing-module', missingPath, importer, inTargetScope: scope.has(missingPath) });
+    record(result.message, importer);
+    for (const assertion of result.assertionResults ?? []) {
+      for (const message of assertion.failureMessages ?? []) record(message, importer);
     }
   }
   return diagnostics;
-}
-
-function aggregates(executions) {
+}function aggregates(executions) {
   return executions.reduce((counts, execution) => {
     if (execution.kind !== 'vitest' || !execution.report) return counts;
     counts.numTotalTests += Number(execution.report.numTotalTests ?? 0);

@@ -77,12 +77,18 @@ export function assessTaskAdmission({ reference, baseline }) {
     && (entry.kind === 'command' || counted(entry.report) && entry.report?.success === true && entry.report.numTotalTests > 0
       && entry.report.numPassedTests === entry.report.numTotalTests && entry.report.numFailedTests === 0 && entry.report.numPendingTests === 0
       && (entry.report.numSkippedTests ?? 0) === 0 && (entry.report.numTodoTests ?? 0) === 0));
+  const baselineMissingTarget = baseline && baseline.passed === false && complete(baseline)
+    && Array.isArray(baseline.diagnostics)
+    && baseline.diagnostics.some((entry) => entry?.kind === 'missing-module' && entry.inTargetScope === true);
   if (!referencePassed || reference.passed !== true) issues.push('reference-oracle-not-passing');
   if (!baseline) issues.push('unresolved-baseline-not-executed');
   else if (baseline.passed === true) issues.push('baseline-already-passes');
   else if (!complete(baseline)
-    || !baseline.executions.some((entry) => entry.exitCode !== 0 && counted(entry.report) && entry.report?.numFailedTests > 0)) issues.push('baseline-has-no-gradeable-failure');
-  return { passed: issues.length === 0, issues };
+    || (!baselineMissingTarget
+      && !baseline.executions.some((entry) => entry.exitCode !== 0 && counted(entry.report) && entry.report?.numFailedTests > 0))) issues.push('baseline-has-no-gradeable-failure');
+  const result = { passed: issues.length === 0, issues };
+  if (result.passed && baselineMissingTarget) result.warnings = ['baseline-target-module-absent'];
+  return result;
 }
 
 export function finalizeLiveAdmission(root, directory, options = {}) {

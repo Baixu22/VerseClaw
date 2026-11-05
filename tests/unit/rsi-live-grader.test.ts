@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, rmdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import { prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } from '../../scripts/lib/rsi-live-grader.mjs';
+import { missingModuleDiagnostics, prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } from '../../scripts/lib/rsi-live-grader.mjs';
 import { sha256File } from '../../scripts/rsi-tf0604-baseline.mjs';
 
 const ROOT = process.cwd(), TEMP = 'D:/tmp', roots: string[] = [];
@@ -57,7 +57,15 @@ describe('live task grader independent execution', () => {
     await expect(runLiveTaskOracles({ root, task, workspace, outDir: join(root, 'tamper-oracle') })).rejects.toThrow('frozen-oracle-input-drift');
   });
 
-  it('rejects model edits to hidden tests or outside the declared task scope', async () => {
+  it('classifies a missing module from the top-level suite message and task scope', () => {
+    const { task } = fixture();
+    const report = { testResults: [{ name: 'D:/tmp/workspace/tests/subject.test.ts', message: "Cannot find module './subject.mjs'", assertionResults: [] }] };
+    expect(missingModuleDiagnostics(report, 'D:/tmp/workspace', task)).toEqual([
+      { kind: 'missing-module', missingPath: 'tests/subject.mjs', importer: 'tests/subject.test.ts', inTargetScope: false },
+    ]);
+    const scoped = { ...task, input: { targetScope: ['tests/subject.mjs'] } };
+    expect(missingModuleDiagnostics(report, 'D:/tmp/workspace', scoped)[0].inTargetScope).toBe(true);
+  });  it('rejects model edits to hidden tests or outside the declared task scope', async () => {
     const { root, task, base } = fixture();
     await expect(prepareGradeWorkspace({ root, task, workspace: join(root, 'bad-edit'), revision: base,
       edits: [{ path: 'tests/subject.test.ts', content: '' }] })).rejects.toThrow('hidden oracle');

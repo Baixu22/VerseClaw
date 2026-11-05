@@ -25,6 +25,8 @@ export type HistoricalGradeTask = Record<string, any> & {
 export type GradeEdit = { path: string; content: string | Uint8Array };
 export type GradeEdits = GradeEdit[] | Record<string, string | Uint8Array>;
 
+export function missingModuleDiagnostics(report: any, workspace: string, task: HistoricalGradeTask): OracleDiagnostic[];
+
 export function resolveHistoricalTask(root: string, taskId: string): HistoricalGradeTask;
 
 export function prepareGradeWorkspace(options: {
