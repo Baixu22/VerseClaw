@@ -1,0 +1,94 @@
+{
+  "schema": "GatewayStartupAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-gateway-startup-relay",
+  "recordedAt": "2026-11-05T13:49:31.476Z",
+  "task": "TF-0805",
+  "verdict": "pass",
+  "scope": "Windows source development; isolated profiles, real Electron utility processes and desktop host; no configured channels or provider conversations",
+  "candidate": {
+    "commit": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+    "tree": "7fe7b5e6bcd1d7fce67a8074908edf31255f1ad0",
+    "dirty": false,
+    "base": "5accfbddbf46839bf7999c70eed31b1b045b640b",
+    "workspace": "D:/ClawX/.tmp/gateway-startup-verify-20261105"
+  },
+  "implementation": [
+    "Native-load JavaScript doctor contracts before SDK-loader preparation, retaining the discovered plugin root and existing source/error fallbacks.",
+    "Use the existing IPv4 loopback endpoint for Main readiness/authentication, including device-token upgrade.",
+    "Make the measurement loopback-only, use per-attempt random credentials, isolate OS environment and cache, and require observed doctor-loader invocation."
+  ],
+  "measurements": {
+    "samplesPerArm": 3,
+    "cache": "fresh transform cache per attempt; OS caches not flushed",
+    "beforeRpcP50Ms": 8855.1949,
+    "afterRpcP50Ms": 7438.5566,
+    "p50ReductionPercent": 15.997821798366068,
+    "beforeRpcMs": [
+      23495.301900000002,
+      7424.973099999999,
+      8855.1949
+    ],
+    "afterRpcMs": [
+      7438.5566,
+      7193.7737,
+      7439.4518
+    ],
+    "desktopAuthenticatedRpcMs": 13340
+  },
+  "acceptance": [
+    {
+      "criterion": "same-build alternating before/after with every sample and authenticated RPC",
+      "passed": true,
+      "evidence": "measurement.json"
+    },
+    {
+      "criterion": "source/overlay authority, doctor precedence and native/fallback regression",
+      "passed": true,
+      "evidence": "unit.json"
+    },
+    {
+      "criterion": "real managed desktop start, authenticated RPC and child termination",
+      "passed": true,
+      "evidence": "desktop.json"
+    },
+    {
+      "criterion": "type/build/comms/Harness results and earlier failures recorded",
+      "passed": true,
+      "evidence": [
+        "types.json",
+        "build-identity.json",
+        "comms-replay.json",
+        "comms-compare.json",
+        "harness.json",
+        "negative-controls.json",
+        "provenance.json"
+      ]
+    }
+  ],
+  "checks": {
+    "uniqueFocusedTests": 63,
+    "refreshedFinalTest": 1,
+    "desktop": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typeProjects": "node/web/test pass with per-project provenance",
+    "lintExit": 0,
+    "runtimeBuildExit": 0,
+    "desktopBuildExit": 0,
+    "commsReplayExit": 0,
+    "commsCompareExit": 0,
+    "harnessValidationExit": 0,
+    "harnessPlanOnly": true,
+    "codeReview": "clean after the recorded remediations"
+  },
+  "limitations": [
+    "Three paired samples are descriptive and do not establish a statistical performance guarantee. The slow first baseline is retained.",
+    "Hot-start gains, OS-reboot cold starts, other platforms, packaged apps, and configured user/provider/channel workloads are not established.",
+    "The isolated probe disables mDNS discovery and has no configured channels; it retains normal migration and startup-sidecar behavior. Production defaults and locks are unchanged.",
+    "The original shared dependency directory could not be fully reinstalled while its Electron binary was in use. Verification used an independent frozen-lock installation with package-store reuse; runtime package dependencies were reused after manifest matching.",
+    "Earlier failed and abandoned attempts are retained in the private raw archive; they are not presented as successful runs."
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "validationExit": 0,
+  "dryRun": true,
+  "report": {
+    "specPath": "harness\\specs\\tasks\\gateway-startup-performance.md",
+    "scenario": "gateway-backend-communication",
+    "taskType": "runtime-bridge",
+    "startedAt": "2026-11-05T13:07:02.777Z",
+    "finishedAt": "2026-11-05T13:07:03.797Z",
+    "changedFiles": [
+      "README.ja-JP.md",
+      "README.md",
+      "README.zh-CN.md",
+      "electron/gateway/ws-client.ts",
+      "harness/specs/scenarios/gateway-startup-diagnostics.md",
+      "harness/specs/tasks/gateway-startup-performance.md",
+      "openclaw_runtime/scripts/profile-extension-memory.mjs",
+      "openclaw_runtime/src/plugins/doctor-contract-registry.ts",
+      "scripts/measure-gateway-startup.mjs",
+      "tests/e2e/gateway-startup-performance.spec.ts",
+      "tests/unit/gateway-doctor-contract-loading.test.ts",
+      "tests/unit/gateway-loopback-connect.test.ts",
+      "tests/unit/gateway-ready-fallback.test.ts"
+    ],
+    "residualPaths": [],
+    "ownership": {
+      "checked": true,
+      "covered": [
+        "README.ja-JP.md",
+        "README.md",
+        "README.zh-CN.md",
+        "electron/gateway/ws-client.ts",
+        "harness/specs/scenarios/gateway-startup-diagnostics.md",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "openclaw_runtime/scripts/profile-extension-memory.mjs",
+        "openclaw_runtime/src/plugins/doctor-contract-registry.ts",
+        "scripts/measure-gateway-startup.mjs",
+        "tests/e2e/gateway-startup-performance.spec.ts",
+        "tests/unit/gateway-doctor-contract-loading.test.ts",
+        "tests/unit/gateway-loopback-connect.test.ts",
+        "tests/unit/gateway-ready-fallback.test.ts"
+      ],
+      "residual": [],
+      "uncovered": []
+    },
+    "selectedProfiles": [
+      "fast",
+      "comms"
+    ],
+    "steps": [
+      {
+        "profile": "rules",
+        "name": "Backend communication boundary scan",
+        "status": "pass",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Generate extension bridge",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "ext:bridge"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Lint without autofix",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "lint:check"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Typecheck",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "typecheck"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Unit tests",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "test"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "comms",
+        "name": "Comms replay",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "comms:replay"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "comms",
+        "name": "Comms compare",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "comms:compare"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      }
+    ],
+    "failures": [],
+    "result": "pass"
+  }
+}

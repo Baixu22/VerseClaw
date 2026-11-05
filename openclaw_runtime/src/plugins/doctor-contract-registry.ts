@@ -12,6 +12,7 @@ import type {
 } from "../plugin-state/plugin-state-store.js";
 import type { DoctorSessionRouteStateOwner } from "./doctor-session-route-state-owner-types.js";
 import type { PluginManifestRegistry } from "./manifest-registry.js";
+import { tryNativeRequireJavaScriptModule } from "./native-module-require.js";
 import {
   createPluginModuleLoaderCache,
   getCachedPluginModuleLoader,
@@ -93,6 +94,18 @@ const moduleLoaders: PluginModuleLoaderCache = createPluginModuleLoaderCache();
 let moduleLoaderFactoryForTest: PluginModuleLoaderFactory | undefined;
 
 function loadPluginDoctorContractModule(modulePath: string): PluginDoctorContractModule {
+  // Most compiled contracts use relative imports and need no SDK alias graph.
+  // Keep the existing loader for source contracts and unresolved SDK imports.
+  if (!moduleLoaderFactoryForTest) {
+    const native = tryNativeRequireJavaScriptModule(modulePath, {
+      allowWindows: true,
+      fallbackOnMissingDependency: true,
+      fallbackOnNativeError: true,
+    });
+    if (native.ok) {
+      return native.moduleExport as PluginDoctorContractModule;
+    }
+  }
   return getCachedPluginModuleLoader({
     cache: moduleLoaders,
     modulePath,

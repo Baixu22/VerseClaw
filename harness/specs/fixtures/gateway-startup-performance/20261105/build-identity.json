@@ -1,0 +1,33 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-gateway-startup-relay",
+  "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+  "freshRuntimeBuild": true,
+  "contracts": [
+    {
+      "name": "state-migrations-CvMilb1J.js",
+      "sha256": "3d25a5868935193bea7d99a4031deecf2e078b8118e207fc48090773b45cdbbd"
+    }
+  ],
+  "entrySha256": "2db1c096fbfbcab23768d3b7186ff5822915e0fdfc519434b4fca3e001e9bb06",
+  "buildCandidate": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47",
+  "verificationCandidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+  "buildReuseNote": "Only the benchmark artifact predicate and a test nullability guard changed after this fresh build; runtime and desktop production sources are identical.",
+  "runtimeBuild": {
+    "candidate": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47",
+    "command": "OPENCLAW_BUILD_ALL_NO_PNPM=1 node scripts/build-openclaw-runtime.mjs",
+    "exitCode": 0,
+    "logSha256": "94d910b4b0e8542791ae83f8d98a86cbbc6adb69fa8f82a1b24cf1caca04fe9e"
+  },
+  "desktopBuild": {
+    "candidate": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47",
+    "command": "node --max-old-space-size=6144 node_modules/vite/bin/vite.js build",
+    "exitCode": 0,
+    "logSha256": "708517ecf06124bbe27deda6b4289f605f283375b8464b1ddd3db606b5fb1f15"
+  },
+  "changedSinceBuild": [
+    "scripts/measure-gateway-startup.mjs",
+    "tests/unit/gateway-loopback-connect.test.ts"
+  ],
+  "productionBuildInputsUnchanged": true
+}

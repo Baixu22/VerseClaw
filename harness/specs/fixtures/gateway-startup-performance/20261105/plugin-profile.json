@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-11-05T13:21:56.622Z",
+  "repoRoot": "D:\\ClawX\\.tmp\\gateway-startup-verify-20261105\\openclaw_runtime",
+  "selectedExtensions": [
+    "memory-core"
+  ],
+  "baseline": {
+    "status": "ok",
+    "maxRssMb": 53.71875
+  },
+  "combined": null,
+  "counts": {
+    "totalEntries": 1,
+    "ok": 1,
+    "fail": 0,
+    "timeout": 0
+  },
+  "options": {
+    "concurrency": 1,
+    "timeoutMs": 90000,
+    "combinedTimeoutMs": 180000,
+    "skipCombined": true
+  },
+  "topByDeltaMb": [
+    {
+      "dir": "memory-core",
+      "file": "D:\\ClawX\\.tmp\\gateway-startup-verify-20261105\\openclaw_runtime\\dist\\extensions\\memory-core\\index.js",
+      "status": "ok",
+      "maxRssMb": 304.625,
+      "deltaFromBaselineMb": 250.90625,
+      "stderrPreview": "__OPENCLAW_MAX_RSS_KB__=311936"
+    }
+  ],
+  "results": [
+    {
+      "dir": "memory-core",
+      "file": "D:\\ClawX\\.tmp\\gateway-startup-verify-20261105\\openclaw_runtime\\dist\\extensions\\memory-core\\index.js",
+      "status": "ok",
+      "maxRssMb": 304.625,
+      "deltaFromBaselineMb": 250.90625,
+      "stderrPreview": "__OPENCLAW_MAX_RSS_KB__=311936"
+    }
+  ]
+}

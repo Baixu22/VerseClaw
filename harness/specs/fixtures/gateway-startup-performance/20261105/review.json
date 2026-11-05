@@ -1,0 +1,68 @@
+{
+  "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+  "final": {
+    "findings": [],
+    "overall_confidence": 0.98,
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "The updated selector uniquely matches the existing compiled state-migrations-CvMilb1J.js artifact, whose loader and fallback remain compatible with baseline extraction and instrumentation. The address guard correctly narrows AddressInfo | string | null before both address.port uses. No actionable defects were found in this delta. Verification was read-only; no tests or artifact-producing commands were run."
+  },
+  "remediationReview": {
+    "findings": [
+      {
+        "body": "The compiled runtime removes the unused test factory and simplifies this conditional to an unconditional block. The available `dist/state-migrations-CvMilb1J.js` contains the expected loader and `resolveContractApiPath(rootDir)`, but no `if (!moduleLoaderFactoryForTest)`. Consequently, this new predicate excludes the valid artifact, leaving `contractChunks` empty and making the documented benchmark abort with “Build the current runtime before measuring” before either arm runs. Remove the test-only marker requirement and validate the compiled native-loading and fallback structure instead.",
+        "category": "bug",
+        "code_location": {
+          "file_path": "scripts/measure-gateway-startup.mjs",
+          "line": 29
+        },
+        "confidence": 0.99,
+        "priority": "P2",
+        "title": "Accept the compiled loader after its test-only guard is optimized away"
+      }
+    ],
+    "overall_confidence": 0.97,
+    "overall_correctness": "patch is incorrect",
+    "overall_explanation": "The delta addresses the three prior findings through explicit loopback/random-token authentication, authoritative plugin-root resolution, and environment filtering with loader observation. However, its new artifact-selection predicate rejects the compiled runtime and prevents benchmarking. The health RPC and file-URL changes appear consistent with their callers. Review used read-only inspection; no tests or builds were run."
+  },
+  "initialSubstantiveReview": {
+    "findings": [
+      {
+        "body": "The child inherits OPENCLAW_GATEWAY_BIND, and this launch does not supply --bind. With OPENCLAW_GATEWAY_BIND=lan, entry.ts starts it on 0.0.0.0 using the publicly known token 'agent-local-startup-measurement'. Disabling controlUi does not disable /tools/invoke, whose bearer authentication grants operator access. A reachable network peer can therefore authenticate during the measurement. Explicitly bind the probe to loopback and generate an unpredictable token per attempt.",
+        "category": "security",
+        "code_location": {
+          "file_path": "scripts/measure-gateway-startup.mjs",
+          "line": 145
+        },
+        "confidence": 0.99,
+        "priority": "P1",
+        "title": "[P1] Force loopback binding for the measurement Gateway"
+      },
+      {
+        "body": "Bundled origin does not necessarily mean the packaged implementation is authoritative. discovery.ts deliberately discovers mounted source overlays first, marks them 'bundled', and preserves their precedence over packaged plugins. For a mounted extensions/acpx containing updated migrations, this lookup resolves the packaged doctor-contract-api.js by directory name and returns it before inspecting record.rootDir. Startup consequently runs the packaged migrations while loading the overlay plugin. Preserve authoritative source-overlay roots before substituting compiled artifacts.",
+        "category": "regression",
+        "code_location": {
+          "file_path": "openclaw_runtime/src/plugins/doctor-contract-registry.ts",
+          "line": 128
+        },
+        "confidence": 0.98,
+        "priority": "P2",
+        "title": "[P2] Preserve mounted source overlays when resolving doctor contracts"
+      },
+      {
+        "body": "OPENCLAW_SKIP_LEGACY_STATE_MIGRATION survives this environment cleanup. When inherited, prepareGatewayPluginBootstrap skips ensureSessionStateMigrated, so the benchmark can reach authenticated system-presence without exercising the changed doctor loader in either arm. The report nevertheless labels the samples before/after and states that no migration is skipped. OPENCLAW_DISABLE_BUNDLED_PLUGINS can similarly remove the intended workload. Clear or reject these bypass settings and verify that the loader under comparison was exercised before accepting samples.",
+        "category": "bug",
+        "code_location": {
+          "file_path": "scripts/measure-gateway-startup.mjs",
+          "line": 60
+        },
+        "confidence": 0.98,
+        "priority": "P2",
+        "title": "[P2] Reject inherited flags that bypass the measured startup work"
+      }
+    ],
+    "overall_confidence": 0.98,
+    "overall_correctness": "patch is incorrect",
+    "overall_explanation": "The patch overrides authoritative source-overlay contracts, and the measurement helper has concrete network-exposure and workload-validation defects. The IPv4 change preserves the existing authentication flow, and the E2E retains successful-start, authenticated-RPC, and child-termination assertions. Review was read-only; no tests were run."
+  },
+  "note": "All original substantive findings were corrected; the final small follow-up review is clean. Reviews were read-only; execution evidence comes from the separate gates."
+}
