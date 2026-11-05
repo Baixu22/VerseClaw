@@ -2575,6 +2575,19 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0743/stopped-processes.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0743/typecheck-environment-failure.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0743/unit-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/.gitattributes
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/README.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/SHA256SUMS
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/baseline-observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/baseline-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/commands.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/comms-compare.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/comms-replay.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/credential-scan.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/report.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/source-manifest.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0744/unit-tests.json
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
