@@ -171,9 +171,11 @@ describe("T-B6 (TF-0126): working_memory regather within one attempt", () => {
       ]),
       tool_registry: makeToolRegistryBlock(),
     };
+    // The context ladder queries all Blocks without a block_types filter.
+    // Match BlockStore so the fixture does not erase the initial projection.
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: async (params) =>
-        (params.block_types ?? []).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
+        (params.block_types ?? Object.keys(blocks)).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
       upsert: async (block) => {
         blocks[block.block_type] = block;
         return { accepted: true };
@@ -220,7 +222,7 @@ describe("T-B6 (TF-0126): working_memory regather within one attempt", () => {
     };
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: async (params) =>
-        (params.block_types ?? []).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
+        (params.block_types ?? Object.keys(blocks)).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
       upsert: async (block) => {
         blocks[block.block_type] = block;
         return { accepted: true };
@@ -259,7 +261,7 @@ describe("T-B6 (TF-0126): working_memory regather within one attempt", () => {
     };
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: async (params) =>
-        (params.block_types ?? []).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
+        (params.block_types ?? Object.keys(blocks)).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
       upsert: async (block) => {
         blocks[block.block_type] = block;
         return { accepted: true };
@@ -295,7 +297,7 @@ describe("T-B6 (TF-0126): working_memory regather within one attempt", () => {
     };
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: async (params) =>
-        (params.block_types ?? []).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
+        (params.block_types ?? Object.keys(blocks)).flatMap((type) => (blocks[type] ? [blocks[type]] : [])),
       upsert: async (block) => {
         blocks[block.block_type] = block;
         return { accepted: true };

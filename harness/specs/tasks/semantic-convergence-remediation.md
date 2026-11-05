@@ -8,6 +8,7 @@ task_forest:
 taskType: runtime-bridge
 intent: 修复 Memory、提示词注入、Provider 验证/网络与重试预算中已复核的语义裂缝，并以可复算 baseline/after 证明收益；不改变产品锁、默认值、发布状态或 GA 口径。
 touchedAreas:
+  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts
   - scripts/rsi-sekb-arms.d.mts
   - openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts
   - docs/dev/semantic-convergence-program-20261104.md
