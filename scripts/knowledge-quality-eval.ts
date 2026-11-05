@@ -60,8 +60,8 @@ export async function runKnowledgeQualityEval(options: {
     const row: Record<string, unknown> = { id: task.id, baseline: { mode: 'first-80-lines-240-character-excerpt', answer: baselineAnswer, taskComplete: baselineComplete, lexicalHit: oldHit },
       admission: { sources: evidence.sources, rejections: evidence.sourceSet.rejections, conflicts: evidence.sourceSet.conflictSet, reads, lexicalHit: newHit },
       liveModel: false, taskComplete: false, abstentionCorrect: false, quoteCitationsValid: false };
-    if (task.conflict || !evidence.sources.length) {
-      row.answer = task.conflict ? 'Conflicting admitted evidence; no single answer.' : 'No admitted sources.';
+    if (evidence.sourceSet.conflictSet.length || !evidence.sources.length) {
+      row.answer = evidence.sourceSet.conflictSet.length ? 'Conflicting admitted evidence; no single answer.' : 'No admitted sources.';
       row.abstentionCorrect = task.abstain === true;
       row.taskComplete = task.abstain === true;
       row.quoteCitationsValid = null;
@@ -84,6 +84,10 @@ export async function runKnowledgeQualityEval(options: {
     await writeFile(join(options.output, `${task.id}.json`), JSON.stringify(row, null, 2));
     process.stdout.write(`${task.id}: ${row.taskComplete ? 'pass' : options.infer ? 'fail' : 'unmeasured'}\n`);
   }
+  // Compare the same answerable tasks; existing admission refusals are not
+  // newly gained answers. The excerpt control is reconstructed, not a live A/B.
+  const answerable = rows.filter(row => !knowledgeQualityCases.find(task => task.id === row.id)?.abstain);
+  const baselineCompleted = (row: Record<string, unknown>) => (row.baseline as { taskComplete: boolean }).taskComplete;
   const summary = { driven_by: 'agent', actor: 'knowledge-quality-eval', corpusDigest: createHash('sha256').update(JSON.stringify(knowledgeQualityCases)).digest('hex'),
     cases: rows.length, liveCalls: rows.filter(r => r.liveModel).length,
     completedProviderCalls: rows.filter(r => (r.provider as { status?: string } | undefined)?.status === 'completed').length,
@@ -93,8 +97,17 @@ export async function runKnowledgeQualityEval(options: {
     citationEvaluated: rows.filter(r => r.liveModel && !r.error).length,
     abstentionCorrect: rows.filter(r => knowledgeQualityCases.find(task => task.id === r.id)?.abstain && r.abstentionCorrect).length,
     abstentionCases: knowledgeQualityCases.filter(task => task.abstain).length,
+    pairedAnswerable: {
+      cases: answerable.length,
+      baselineComplete: answerable.filter(baselineCompleted).length,
+      treatmentComplete: options.infer ? answerable.filter(row => row.taskComplete).length : null,
+      improved: options.infer ? answerable.filter(row => row.taskComplete && !baselineCompleted(row)).map(row => row.id) : [],
+      regressed: options.infer ? answerable.filter(row => !row.taskComplete && baselineCompleted(row)).map(row => row.id) : [],
+      metric: 'Expected answer strings present; reconstructed excerpt control, not historical model A/B.',
+    },
+    inferenceSkippedCases: rows.filter(row => row.inferenceSkipped).map(row => row.id),
     decision: options.infer ? rows.every(r => r.taskComplete) ? 'measured-pass' : 'measured-with-residuals' : 'partially-unmeasured',
-    limitations: ['Fixed representative selected-source corpus, not full-vault discovery or population-wide quality; no guaranteed entailment.', 'Direct real provider inference; full Gateway path is validated separately.', 'Baseline is the prior excerpt behavior, not a second model.', 'Underlying identity behind space-bunny and monetary cost are unverified.'], rows };
+    limitations: ['Fixed representative selected-source corpus, not full-vault discovery or population-wide quality; no guaranteed entailment.', 'Direct real provider inference; full Gateway path is validated separately.', 'Baseline reconstructs prior excerpt behavior, not a second model or historical executable replay. Refusals are excluded from the paired answerable denominator.', 'Latency has no historical paired baseline; live embedding-provider latency is unmeasured.', 'Underlying identity behind space-bunny and monetary cost are unverified.'], rows };
   await writeFile(join(options.output, 'report.json'), JSON.stringify(summary, null, 2));
   return summary;
 }

@@ -2,7 +2,10 @@ import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
-import { build } from 'esbuild';
+import { createRequire } from 'node:module';
+
+// Reuse Vite's installed build toolchain; esbuild is not a root dependency.
+const { build } = createRequire(import.meta.resolve('vite'))('esbuild');
 
 const output = resolve(process.argv[2] ?? 'D:/tmp/knowledge-quality-eval');
 if (process.platform === 'win32' && !/^[dD]:[\\/]/.test(output)) throw Error('Evaluation artifacts must be on D:');
