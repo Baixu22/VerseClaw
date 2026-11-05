@@ -32,6 +32,7 @@ const extensionPackages = getExtensionPackages();
 export const localOpenClawRuntimeAliases = {
   '@openclaw/normalization-core': resolve(__dirname, 'openclaw_runtime/packages/normalization-core/src'),
   '@openclaw/acp-core': resolve(__dirname, 'openclaw_runtime/packages/acp-core/src'),
+  '@openclaw/net-policy': resolve(__dirname, 'openclaw_runtime/packages/net-policy/src'),
   '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
   '@openclaw/provider-request-auth': resolve(__dirname, 'openclaw_runtime/src/agents/provider-request-auth.ts'),
 };
@@ -46,6 +47,7 @@ const bundledMainRuntimeDependencies = new Set([
   'shiki',
   'kysely',
   'tslog',
+  'ipaddr.js',
   '@openclaw/fs-safe',
 ]);
 const alias = {

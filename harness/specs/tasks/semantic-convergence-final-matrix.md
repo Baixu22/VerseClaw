@@ -9,6 +9,7 @@ taskType: runtime-bridge
 diffBase: cc9799bc7
 intent: Verify the complete semantic repair chain with explicit positive, negative, boundary, integration and Electron evidence on one clean source candidate.
 touchedAreas:
+  - vite.config.ts
   - tests/unit/semantic-convergence-*
   - tests/integration/semantic-convergence-*
   - tests/e2e/semantic-convergence-*
@@ -49,3 +50,9 @@ prompt authority; prompt accounting/seal; memory provenance; memory atomicity;
 memory read consistency; and facade disposition. Sub-requirements remain separate
 rows so grouping cannot drop an acceptance criterion. This is program development
 acceptance, not a full joint-system or release/GA gate.
+
+The first Electron run exposed a missing Main bundle source alias for the
+existing Runtime net-policy package. Add that existing package to the same
+source-alias boundary as the other inlined runtime packages; no policy/default
+or dependency version changes. Retain the failed run and dependency-resolution
+provenance, then rebuild and repeat the same UI checks.
