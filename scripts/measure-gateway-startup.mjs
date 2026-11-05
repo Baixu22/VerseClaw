@@ -26,7 +26,7 @@ for (const name of await readdir(dist)) {
   if (!name.startsWith('state-migrations-') || !name.endsWith('.js')) continue;
   const source = await readFile(join(dist, name), 'utf8');
   if (source.includes('function loadPluginDoctorContractModule(modulePath)')
-    && source.includes('if (!moduleLoaderFactoryForTest)')
+    && source.includes('tryNativeRequireJavaScriptModule(')
     && source.includes('function resolveContractApiPath(rootDir)')) contractChunks.push({ name, source });
 }
 if (contractChunks.length !== 1) throw new Error('Build the current runtime before measuring');

@@ -14,7 +14,7 @@ it('probes and authenticates the managed loopback Gateway when DNS is unavailabl
   const server = new WebSocketServer({ host: '127.0.0.1', port: 0 });
   await once(server, 'listening');
   const address = server.address();
-  if (typeof address === 'string') throw new Error('Expected a TCP listener');
+  if (!address || typeof address === 'string') throw new Error('Expected a TCP listener');
   server.on('connection', (socket) => {
     socket.send(JSON.stringify({ type: 'event', event: 'connect.challenge', payload: { nonce: 'local' } }));
     socket.on('message', (data) => {
