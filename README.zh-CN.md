@@ -104,6 +104,8 @@ pnpm dev
 
 `pnpm dev` 会先构建 VerseBrowser、嵌入式 runtime 和 bundled skills，再打开 Vite 与 Electron。Gateway 通常需要 10–30 秒就绪；只打开 Vite 页面不能获得完整 Electron Host services。
 
+已构建的 Gateway 启动时复用插件 Doctor 契约的编译产物，先尝试原生加载，再按需构建 SDK 别名；迁移检查仍然执行。运行 `pnpm run build:runtime` 后，可用 `node scripts/measure-gateway-startup.mjs` 在隔离的 Electron 配置下测量认证 RPC 就绪耗时；报告保留每次尝试及本机测量边界。
+
 第一次使用：
 
 1. 完成 Setup。

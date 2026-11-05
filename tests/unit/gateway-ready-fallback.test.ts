@@ -178,6 +178,8 @@ describe('GatewayManager gatewayReady fallback', () => {
           'sessions.patch',
           'sessions.fork',
           'sessions.stop',
+          'sessions.archive',
+          'sessions.restore',
           'sessions.delete',
           'cron.list',
           'cron.add',

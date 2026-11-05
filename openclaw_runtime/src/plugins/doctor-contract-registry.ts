@@ -12,6 +12,7 @@ import type {
 } from "../plugin-state/plugin-state-store.js";
 import type { DoctorSessionRouteStateOwner } from "./doctor-session-route-state-owner-types.js";
 import type { PluginManifestRegistry } from "./manifest-registry.js";
+import { tryNativeRequireJavaScriptModule } from "./native-module-require.js";
 import {
   createPluginModuleLoaderCache,
   getCachedPluginModuleLoader,
@@ -19,6 +20,7 @@ import {
   type PluginModuleLoaderCache,
 } from "./plugin-module-loader-cache.js";
 import { loadPluginManifestRegistryForPluginRegistry } from "./plugin-registry.js";
+import { resolveBundledPluginPublicArtifactPath } from "./public-surface-loader.js";
 
 const CONTRACT_API_EXTENSIONS = [".js", ".mjs", ".cjs", ".ts", ".mts", ".cts"] as const;
 const CURRENT_MODULE_PATH = fileURLToPath(import.meta.url);
@@ -93,6 +95,18 @@ const moduleLoaders: PluginModuleLoaderCache = createPluginModuleLoaderCache();
 let moduleLoaderFactoryForTest: PluginModuleLoaderFactory | undefined;
 
 function loadPluginDoctorContractModule(modulePath: string): PluginDoctorContractModule {
+  // Most compiled contracts use relative imports and need no SDK alias graph.
+  // Keep the existing loader for source contracts and unresolved SDK imports.
+  if (!moduleLoaderFactoryForTest) {
+    const native = tryNativeRequireJavaScriptModule(modulePath, {
+      allowWindows: true,
+      fallbackOnMissingDependency: true,
+      fallbackOnNativeError: true,
+    });
+    if (native.ok) {
+      return native.moduleExport as PluginDoctorContractModule;
+    }
+  }
   return getCachedPluginModuleLoader({
     cache: moduleLoaders,
     modulePath,
@@ -101,11 +115,24 @@ function loadPluginDoctorContractModule(modulePath: string): PluginDoctorContrac
   })(modulePath) as PluginDoctorContractModule;
 }
 
-function resolveContractApiPath(rootDir: string): string | null {
+function resolveContractApiPath(record: PluginManifestRegistryRecord): string | null {
+  // Built Gateway runs may discover source-only bundled manifests too. Use the
+  // matching public artifact when available instead of transforming its TS graph.
+  // External plugin roots keep their own contracts and must never resolve by id.
+  const rootDir = record.rootDir;
   const orderedExtensions = RUNNING_FROM_BUILT_ARTIFACT
     ? CONTRACT_API_EXTENSIONS
     : ([...CONTRACT_API_EXTENSIONS.slice(3), ...CONTRACT_API_EXTENSIONS.slice(0, 3)] as const);
   for (const basename of ["doctor-contract-api", "contract-api"]) {
+    if (RUNNING_FROM_BUILT_ARTIFACT && record.origin === "bundled") {
+      const built = resolveBundledPluginPublicArtifactPath({
+        dirName: path.basename(rootDir),
+        artifactBasename: `${basename}.js`,
+      });
+      if (built && !/\.[cm]?ts$/u.test(built)) {
+        return built;
+      }
+    }
     for (const extension of orderedExtensions) {
       for (const baseDir of [rootDir, path.join(rootDir, "dist")]) {
         const candidate = path.join(baseDir, `${basename}${extension}`);
@@ -290,7 +317,7 @@ export function collectRelevantDoctorPluginIdsForTouchedPaths(params: {
 function loadPluginDoctorContractEntry(
   record: PluginManifestRegistryRecord,
 ): PluginDoctorContractEntry | null {
-  const contractSource = resolveContractApiPath(record.rootDir);
+  const contractSource = resolveContractApiPath(record);
   if (!contractSource) {
     return null;
   }

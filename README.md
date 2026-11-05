@@ -104,6 +104,8 @@ pnpm dev
 
 `pnpm dev` builds VerseBrowser, the embedded runtime and bundled skills before opening Vite and Electron. The Gateway normally needs 10–30 seconds to become ready. A Vite page alone does not provide the full Electron Host services.
 
+Built Gateway startup reuses compiled plugin doctor contracts and tries native loading before constructing SDK aliases. Migration checks still run. To measure startup through an authenticated RPC in isolated Electron profiles, run `node scripts/measure-gateway-startup.mjs` after `pnpm run build:runtime`; the report includes every attempt and local timing limits.
+
 First session:
 
 1. Complete Setup.

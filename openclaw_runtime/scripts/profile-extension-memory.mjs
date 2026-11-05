@@ -191,7 +191,7 @@ export async function runCase({
   return await new Promise((resolve) => {
     const child = spawnImpl(
       process.execPath,
-      ["--import", hookPath, "--input-type=module", "--eval", body],
+      ["--import", pathToFileURL(hookPath).href, "--input-type=module", "--eval", body],
       {
         cwd: repoRoot,
         env,

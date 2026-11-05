@@ -283,6 +283,16 @@ pnpm run comms:compare
 
 ## Reporting Notes
 
+For local startup comparisons, `node scripts/measure-gateway-startup.mjs <report.json> <rounds>`
+uses real Electron utility processes, fresh isolated profiles, and alternating before/after order.
+Each attempt also uses a fresh transform cache. Report these cold-cache timings separately from
+shared-cache or already-running-profile measurements; do not extrapolate a first-run gain to hot starts.
+The baseline reconstructs the prior doctor-contract loader with a module load hook against the
+same built runtime; the runtime files remain unchanged. Success requires an authenticated
+`system-presence` response. Retain failed attempts, build identity, raw startup traces, and
+measurement limits. Built runs should prefer compiled bundled doctor contracts and native
+loading, while external plugin roots, source fallback, and migrations retain their ownership.
+
 When sharing findings:
 
 - Quote log patterns and timing metrics, not full memory doctor output.
