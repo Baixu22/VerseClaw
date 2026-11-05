@@ -92,3 +92,48 @@ it("accepts punctuation and duplicated field labels, but rejects negated or mism
     ).mustPreserveMatched,
   ).toBe(0);
 });
+
+it("reads value/text fact objects and an explicit next-step fact without requiring a duplicate field", () => {
+  const facts = [
+    { key: "Objective", value: "accepted fact" },
+    { key: "Next action", text: "continue work" },
+  ];
+  expect(scoreRecoveryReadback(JSON.stringify({ facts, complete: false }), expected)).toMatchObject(
+    { schemaValid: false, mustPreserveMatched: 1, nextActionCorrect: true },
+  );
+  expect(
+    scoreRecoveryReadback(
+      JSON.stringify({ facts, nextAction: "a different action", complete: false }),
+      expected,
+    ).nextActionCorrect,
+  ).toBe(false);
+  expect(
+    scoreRecoveryReadback(
+      JSON.stringify({
+        facts: [{ value: "accepted fact", text: "Not accepted fact" }],
+        nextAction: "continue work",
+        complete: false,
+      }),
+      expected,
+    ).mustPreserveMatched,
+  ).toBe(0);
+});
+it("checks decoded forbidden strings and duplicated colon labels", () => {
+  const answer =
+    '{"facts":["accepted fact"],"nextAction":"continue work","complete":false,"note":"REVOKED\\u002dhidden"}';
+  expect(
+    scoreRecoveryReadback(answer, { ...expected, forbiddenFacts: ["REVOKED-hidden"] })
+      .forbiddenFactLeak,
+  ).toBe(true);
+  const fact = "Decision case-01: keep boundary";
+  expect(
+    scoreRecoveryReadback(
+      JSON.stringify({
+        facts: ["Decision case-01: " + fact],
+        nextAction: "continue work",
+        complete: false,
+      }),
+      { ...expected, mustPreserve: [fact] },
+    ).mustPreserveMatched,
+  ).toBe(1);
+});

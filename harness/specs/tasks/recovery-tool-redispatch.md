@@ -30,6 +30,9 @@ touchedAreas:
   - tests/e2e/recovery-contract-eval.spec.ts
   - tests/e2e/recovery-longsession-eval.spec.ts
   - tests/e2e/fixtures/recovery-contract-probe.ts
+  - tests/e2e/fixtures/recovery-live-proxy.ts
+  - tests/unit/recovery-live-proxy.test.ts
+  - tests/unit/recovery-observation.test.ts
   - tests/e2e/fixtures/electron.ts
   - shared/long-session-continuity.ts
   - shared/types/session-activity.ts
@@ -90,6 +93,8 @@ acceptance:
   - Execution phase and status use the same flow_runs row and TaskFlow revision CAS; no active execution_phases writer remains after migration.
   - The execution writer is active only when both execution and Task Loop lifecycle writers select taskflow.
   - The formal five-window instrument preserves observed injection points, verifies durable artifacts and hashes, counts append-only effects, and restarts the same work in K5.
+  - A timeout after a verified injected boundary retains the final disk snapshot, timeout flag and failed trial; it is never omitted or replaced by a successful retry. Setup failures before a boundary remain explicitly counted non-measurements.
+  - The live-provider proxy aborts upstream I/O when its caller disconnects or the fixture closes; a terminal assistant error ends the failed attempt without becoming quality evidence.
   - Fresh baseline and candidate runs use the unchanged frozen manifest; all acceptance claims follow the measured result.
   - Quality reports recompute every saved post-boundary assistant answer with one versioned judge, preserve the preliminary score and answer hash, and separate JSON schema compliance from factual fidelity.
 docs:

@@ -72,21 +72,34 @@ it("the evidence driver does not relabel observed fault windows as frozen window
 it("rejudges the saved assistant answer instead of trusting a stale preliminary score", () => {
   const dir = mkdtempSync(join(tmpdir(), "recovery-answer-oracle-"));
   try {
-    const pair = buildRecoveryContractManifest().longSessionPairs[0];
+    const pair = buildRecoveryContractManifest().longSessionPairs.find(
+      (pair) => pair.family === "handoff",
+    )!;
+    const assistantText = JSON.stringify({
+      objective: pair.mustPreserve[0],
+      constraint: pair.mustPreserve[1],
+      decision: pair.mustPreserve[2],
+      nextAction: pair.expectedNextAction,
+      complete: false,
+    });
+    const branch = [
+      { id: "question-1", message: { role: "user", content: "Recovery readback for " + pair.id } },
+      {
+        id: "answer-1",
+        message: { role: "assistant", content: assistantText, stopReason: "stop" },
+      },
+    ];
     const artifacts = ["before.json", "boundary.json", "answer.json"].map((name) => {
       const value =
         name === "answer.json"
           ? {
               assistantEntryId: "answer-1",
-              assistantText: JSON.stringify({
-                objective: pair.mustPreserve[0],
-                constraint: pair.mustPreserve[1],
-                decision: pair.mustPreserve[2],
-                nextAction: pair.expectedNextAction,
-                complete: false,
-              }),
+              assistantText,
+              disk: { branch },
             }
-          : {};
+          : name === "boundary.json"
+            ? { disk: { entries: [] } }
+            : {};
       const bytes = JSON.stringify(value);
       const path = join(dir, name);
       writeFileSync(path, bytes);
@@ -136,6 +149,9 @@ it("rejudges the saved assistant answer instead of trusting a stale preliminary 
         schemaValid: false,
       },
     });
+    const verification=spawnSync(process.execPath,['--experimental-strip-types',resolve('scripts/recovery-contract-eval.mjs'),
+      '--dir',dir,'--pairs',dir,'--verify',output],{encoding:'utf8',windowsHide:true,timeout:30_000});
+    expect(verification.status).toBe(0);expect(JSON.parse(verification.stdout).reproduced).toBe(true);
     writeFileSync(artifacts[2].path, "{}");
     const invalid = spawnSync(
       process.execPath,

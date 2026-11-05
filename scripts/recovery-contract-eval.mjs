@@ -69,8 +69,12 @@ function readReceipts(dir) {
 }
 
 const check = process.argv.includes("--check");
+const verifyPath = argValue("--verify", "");
+const recorded = verifyPath ? JSON.parse(readFileSync(resolve(verifyPath), "utf8")) : null;
 const dir = resolve(argValue("--dir", "D:/tmp/recovery-eval"));
 const manifest = buildRecoveryContractManifest();
+if (bundle && bundle.manifestHash !== manifest.manifestHash)
+  throw new Error("sealed evidence does not match the frozen workload");
 const receipts = bundle
   ? bundle.windows.filter((receipt) => receipt.arm === arm)
   : readReceipts(dir);
@@ -149,6 +153,77 @@ function readPairReceipts(dir) {
     .filter((value) => value && typeof value === "object");
 }
 
+function verifyFreshAnswer(receipt, pair, answer) {
+  const text = (message) =>
+    typeof message.content === "string"
+      ? message.content
+      : (message.content ?? [])
+          .filter((block) => block.type === "text")
+          .map((block) => block.text)
+          .join("\n");
+  const read = (name) => {
+    const artifact = receipt.artifacts.find((item) =>
+      item.path.replaceAll("\\", "/").endsWith("/" + name),
+    );
+    if (!artifact) throw new Error("missing " + name);
+    return JSON.parse(artifactBytes(artifact.path).toString("utf8"));
+  };
+  try {
+    const boundary = read("boundary.json");
+    const branch = answer.disk.branch;
+    const entry = branch.findLast((item) => item.message?.role === "assistant");
+    if (
+      entry?.id !== answer.assistantEntryId ||
+      entry.message.stopReason !== "stop" ||
+      text(entry.message) !== answer.assistantText
+    )
+      return null;
+    if (boundary.disk.entries.some((item) => item.id === answer.assistantEntryId)) return null;
+    const question = branch
+      .slice(
+        0,
+        branch.findIndex((item) => item.id === entry.id),
+      )
+      .findLast((item) => item.message?.role === "user");
+    if (
+      !question ||
+      !text(question.message).includes("Recovery readback for " + pair.id) ||
+      pair.mustPreserve.some((fact) => text(question.message).includes(fact))
+    )
+      return null;
+    const integrity = { freshAssistant: true, questionDoesNotContainGold: true };
+    if (pair.family === "compression") {
+      const before = read("before.json");
+      const seed = before.branch.findLast((item) => item.message?.role === "assistant");
+      const compaction = boundary.disk.branch.findLast((item) => item.type === "compaction");
+      const seedIndex = boundary.disk.branch.findIndex((item) => item.id === seed?.id);
+      const keepIndex = boundary.disk.branch.findIndex(
+        (item) => item.id === compaction?.firstKeptEntryId,
+      );
+      if (!compaction || seedIndex < 0 || keepIndex <= seedIndex) return null;
+      const retained = boundary.disk.branch
+        .slice(
+          keepIndex,
+          boundary.disk.branch.findIndex((item) => item.id === compaction.id),
+        )
+        .filter((item) => item.type === "message");
+      if (
+        pair.mustPreserve.some((fact) => retained.some((item) => text(item.message).includes(fact)))
+      )
+        return null;
+      integrity.compaction = {
+        seedNotInRetainedTail: true,
+        summaryLiteralMatches: pair.mustPreserve.filter((fact) =>
+          compaction.summary.toLowerCase().includes(fact.toLowerCase()),
+        ).length,
+      };
+    }
+    return integrity;
+  } catch {
+    return null;
+  }
+}
+
 const pairDir = resolve(argValue("--pairs", "D:/tmp/recovery-longsession-eval"));
 const longSessionMeasurements = (
   bundle ? bundle.quality.filter((receipt) => receipt.arm === arm) : readPairReceipts(pairDir)
@@ -184,6 +259,14 @@ const longSessionMeasurements = (
     rejectedEvidence.push({ pairId: receipt.pairId, reason: "assistant identity mismatch" });
     return [];
   }
+  const integrity = verifyFreshAnswer(receipt, pair, answer);
+  if (!integrity) {
+    rejectedEvidence.push({
+      pairId: receipt.pairId,
+      reason: "fresh assistant, question or boundary proof failed",
+    });
+    return [];
+  }
   const judged = scoreRecoveryReadback(answer.assistantText, {
     ...pair,
     forbiddenFacts: [`REVOKED-${pair.id}`, `SIBLING_ONLY-${pair.id}`],
@@ -192,6 +275,7 @@ const longSessionMeasurements = (
     pairId: pair.id,
     judgeVersion: RECOVERY_READBACK_JUDGE_VERSION,
     answerSha256: answerArtifact.sha256,
+    integrity,
     preliminary: {
       mustPreserveMatched: receipt.mustPreserveMatched,
       nextActionCorrect: receipt.nextActionCorrect,
@@ -221,6 +305,7 @@ const result = evaluateRecoveryContractEval({
   windowTrials,
   longSessionMeasurements,
   actor: ACTOR,
+  ...(recorded ? { generatedAt: recorded.evaluation.generatedAt } : {}),
 });
 
 const byWindow = {};
@@ -249,7 +334,7 @@ const report = {
   evaluation: result,
 };
 
-if (!check) {
+if (!check && !verifyPath) {
   mkdirSync(OUT_DIR, { recursive: true });
   const output = resolve(argValue("--output", join(OUT_DIR, "report.json")));
   mkdirSync(dirname(output), { recursive: true });
@@ -258,10 +343,16 @@ if (!check) {
   console.log(`wrote ${output}`);
 }
 
+const reproduced = recorded
+  ? JSON.stringify(recorded.evaluation) === JSON.stringify(result) &&
+    JSON.stringify(recorded.readbackJudgements) === JSON.stringify(readbackJudgements)
+  : undefined;
+
 console.log(
   JSON.stringify(
     {
       status: result.status,
+      ...(recorded ? { reproduced } : {}),
       decision: result.decision.disposition,
       qualityClaimAllowed: result.qualityClaimAllowed,
       trialCountsByWindow: byWindow,
@@ -274,4 +365,4 @@ console.log(
   ),
 );
 
-process.exit(result.status === "PASS" ? 0 : 1);
+process.exit(recorded ? (reproduced ? 0 : 1) : result.status === "PASS" ? 0 : 1);

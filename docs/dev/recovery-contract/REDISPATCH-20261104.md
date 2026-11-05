@@ -82,3 +82,13 @@ P50/P95 超过冻结上限时总报告必须 FAIL，不能通过排除慢样本�
 历史 dirty 开发批次的 legacy 15 窗口为 dup=0、lost=0、terminal=9/15，纠正了旧探针的 lost=9。该批次的 raw assistant 离线统一重判：legacy 120/120 事实、30/30 下一步；candidate 19 对，尚缺 11 对。它们是历史开发记录，不传给新候选。
 
 最终工作使用 scripts/recovery-contract-acceptance.mjs：要求干净 commit/tree，两臂每个 family 六对真实 provider 答案和五窗口各三重复，保存所有完成与失败尝试，封存可离线回读的 raw-evidence.json.gz。冻结 workload 与 P50/P95 门槛保持原样；完整采集后如时延不合格，总 verdict 为 FAIL / NO-GO。
+
+## 失败窗口的保留规则
+
+原始 8137cdb2e 窗口批次在已注入故障后可能因恢复观察超时而抛错，没有生成 receipt，已撤回该批次的正式窗口资格。质量域独立校验通过：60/60 新 assistant、问题不含 gold，12/12 压缩头部确实被摘要替代且保留尾部不含原始事实。原始文件与 preliminary score 保留。
+
+修正后的观察器把超时后的最后真实磁盘快照与失败 verdict 一同落盘；elapsed-to-failed-observer-verdict 表示尝试失败的观察时长，不冒充成功恢复时间。只有未到达注入点的 setup 失败才能补测；已有负面 receipt 不允许被好结果替换。
+
+矩阵可使用 scripts/recovery-contract-matrix.mjs --batch：复用一条串行 Playwright worker 的编译缓存，每个测试仍创建新的 home/userData/Electron/Gateway/workspace。冻结的五窗口、每窗三次、所有超时与判据均未改变。采样代码与运行时源代码的 commit/hash 分开记录，运行时与 8137cdb2e 一致。
+
+代理在下游断开或 fixture 关闭时立即取消上游 I/O；已结束的 assistant error/abort 会作为失败返回，不继续等成功答案。评分器 recovery-readback/v4 统一读取 statement/value/text/fact，保留显式错误 nextAction，不把缺少重复 JSON 字段等同于语义丢失。

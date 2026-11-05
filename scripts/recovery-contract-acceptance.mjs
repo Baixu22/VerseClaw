@@ -201,6 +201,7 @@ for (const arm of ["legacy", "candidate"])
     "scripts/recovery-contract-eval.mjs",
     "--bundle",
     bundlePath,
+    "--batch",
     "--arm",
     arm,
     "--output",

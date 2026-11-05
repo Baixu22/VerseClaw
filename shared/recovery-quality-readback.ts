@@ -1,6 +1,16 @@
-export const RECOVERY_READBACK_JUDGE_VERSION = "recovery-readback/v3";
+export const RECOVERY_READBACK_JUDGE_VERSION = "recovery-readback/v4";
 
-/** Judge fresh assistant fields; JSON shape compliance is separate from factual fidelity. */
+function factStrings(value: unknown): string[] {
+  if (typeof value === "string") return [value];
+  if (!value || typeof value !== "object" || Array.isArray(value)) return [];
+  const record = value as Record<string, unknown>;
+  const strings = ["statement", "value", "text", "fact"].flatMap((key) =>
+    typeof record[key] === "string" ? [record[key] as string] : [],
+  );
+  const unique = [...new Set(strings)];
+  return unique.length === 1 ? unique : [];
+}
+
 export function scoreRecoveryReadback(
   text: string,
   expected: {
@@ -17,7 +27,7 @@ export function scoreRecoveryReadback(
   try {
     parsed = JSON.parse(json.trim());
   } catch {
-    /* A malformed readback fails the schema gate. */
+    /* Malformed/ambiguous answers fail. */
   }
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) parsed = {};
   const fields = ["objective", "constraint", "decision", "nextAction"] as const;
@@ -26,16 +36,8 @@ export function scoreRecoveryReadback(
       ? (parsed.facts as Record<string, unknown>)
       : parsed;
   const facts = Array.isArray(parsed.facts)
-    ? parsed.facts.flatMap((item) =>
-        typeof item === "string"
-          ? [item]
-          : item && typeof item === "object" && typeof item.statement === "string"
-            ? [item.statement]
-            : [],
-      )
-    : fields.flatMap((key) =>
-        typeof factObject[key] === "string" ? [factObject[key] as string] : [],
-      );
+    ? parsed.facts.flatMap(factStrings)
+    : fields.flatMap((key) => factStrings(factObject[key]));
   const schemaValid =
     Array.isArray(parsed.facts) &&
     parsed.facts.every((item) => typeof item === "string") &&
@@ -44,8 +46,12 @@ export function scoreRecoveryReadback(
   const matches = (got: string, fact: string) => {
     let value = normalize(got);
     const gold = normalize(fact).replace(/[.!?。]+$/, "");
-    const label = gold.match(/^(objective|constraint|decision|next action)\s+\S+/)?.[0];
-    if (label && value.startsWith(`${label}: ${gold}`)) value = value.slice(label.length + 2);
+    const label = gold
+      .match(/^(objective|constraint|decision|next action)\s+\S+/)?.[0]
+      ?.replace(/:$/, "");
+    if (label)
+      while (value.startsWith(`${label}: `) && !value.startsWith(gold))
+        value = value.slice(label.length + 2);
     if (value === gold) return true;
     const suffix = value.slice(gold.length);
     return (
@@ -56,9 +62,15 @@ export function scoreRecoveryReadback(
       )
     );
   };
+  const interpretedText = `${text}\n${JSON.stringify(parsed)}`;
   const forbiddenFactLeak = expected.forbiddenFacts.some((fact) =>
-    normalize(text).includes(normalize(fact)),
+    normalize(interpretedText).includes(normalize(fact)),
   );
+  // An explicit contradictory nextAction wins over the accepted-facts list.
+  // Without the duplicate JSON field, an explicit Next action fact still states the next step.
+  const next = Object.prototype.hasOwnProperty.call(parsed, "nextAction")
+    ? factStrings(parsed.nextAction)
+    : facts.filter((fact) => matches(fact, expected.expectedNextAction));
   return {
     schemaValid,
     forbiddenFactLeak,
@@ -67,12 +79,12 @@ export function scoreRecoveryReadback(
       : expected.mustPreserve.filter((fact) => facts.some((got) => matches(got, fact))).length,
     nextActionCorrect:
       !forbiddenFactLeak &&
-      typeof parsed.nextAction === "string" &&
-      matches(parsed.nextAction, expected.expectedNextAction),
+      next.length > 0 &&
+      next.every((got) => matches(got, expected.expectedNextAction)),
     falseCompletionClaim:
       parsed.complete === true ||
       expected.forbiddenCompletionClaims.some((claim) =>
-        normalize(text).includes(normalize(claim)),
+        normalize(interpretedText).includes(normalize(claim)),
       ),
   };
 }
