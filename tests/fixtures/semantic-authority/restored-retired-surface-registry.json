@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "restored-retired-surface-registry",
+  "class": "conflicting-default",
+  "rule": "default-retirement",
+  "expect": "[semantic-authority/default-retirement] component 'retired-surface-registry'",
+  "expectIssueCount": 3,
+  "description": "Reintroduce the exact pre-TF-0790 declaration; resolved exceptions must no longer suppress it.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "anchor": "id: 'retired-surface-registry'",
+      "find": "    id: 'retired-surface-registry',\n    label: 'Retired surface registry',\n    domains: ['ui-transport'],\n    purpose: 'Owns retired-surface classification and removal claims; removed surfaces cannot be used as current capability evidence.',\n    ownedDataTypes: ['retired.surface-class'],\n    scopes: ['global'],\n    allowedReads: ['capability.descriptor', 'ui.host-request'],\n    allowedWrites: ['retired.surface-class'],\n    effects: ['update', 'record'],\n    forbiddenActions: ['reactivate-retired-surface', 'grant-permissions', 'own-context-prompt-plan'],\n    runtimeAvailabilitySource: 'static:retired-surface-registry',\n    defaultMode: 'internal',",
+      "replace": "    id: 'retired-surface-registry',\n    label: 'Retired surface registry',\n    domains: ['ui-transport'],\n    purpose: 'Owns retired-surface classification and removal claims; removed surfaces cannot be used as current capability evidence.',\n    ownedDataTypes: ['retired.surface-class'],\n    scopes: ['global'],\n    allowedReads: ['capability.descriptor', 'ui.host-request'],\n    allowedWrites: ['retired.surface-class'],\n    effects: ['update', 'record'],\n    forbiddenActions: ['reactivate-retired-surface', 'grant-permissions', 'own-context-prompt-plan'],\n    runtimeAvailabilitySource: 'static:retired-surface-registry',\n    defaultMode: 'retired',"
+    }
+  ]
+}

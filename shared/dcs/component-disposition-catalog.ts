@@ -158,9 +158,9 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     remainingGap: [],
   }),
   entry({
-    id: 'component.vtoken-bridge', label: 'VToken internal host bridge', disposition: 'internal', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'opt-in', targetDefaultMode: 'internal',
-    ...internal('Internal diagnostics boundary only; the renderer has no VToken bridge switch or independent product panel.'),
-    currentConsumers: ['internal diagnostics', 'vtoken package tests'], evidenceRefs: CONTEXT_EVIDENCE,
+    id: 'component.vtoken-bridge', label: 'VToken retired host bridge', disposition: 'retired', owner: 'TF-0496', implementationNodeId: 'TF-0496', currentMode: 'retired', targetDefaultMode: 'retired',
+    ...retired('TF-0496 disabled the bridge and refuses enabling it; the compatibility API and package tests remain, without a runnable sidecar or renderer switch.'),
+    currentConsumers: ['retired compatibility API', 'vtoken package tests'], evidenceRefs: [...CONTEXT_EVIDENCE, 'docs/dev/vtoken-retirement-decision.md'],
     coverage: { authorityComponentIds: ['vtoken-bridge'] },
   }),
   entry({
@@ -322,7 +322,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     coverage: { authorityComponentIds: ['renderer-ui-surface'], settingsSectionIds: ['overview', 'general', 'system', 'archived', 'models'], settingsPanelIds: ['ProvidersSettings'], routePaths: ['/setup/*', '/', '/settings', '/settings/*', '/models'] },
   }),
   entry({
-    id: 'component.retired-surface-registry', label: 'Retired surface registry', disposition: 'internal', owner: 'retired-surface-registry', implementationNodeId: 'TF-0505', currentMode: 'baseline', targetDefaultMode: 'retired',
+    id: 'component.retired-surface-registry', label: 'Retired surface registry', disposition: 'internal', owner: 'retired-surface-registry', implementationNodeId: 'TF-0505', currentMode: 'baseline', targetDefaultMode: 'internal',
     ...internal('Internal classification source that prevents removed surfaces from returning as claims.'),
     currentConsumers: ['retirement checks', 'product claim scan'], evidenceRefs: [...UI_EVIDENCE, SEMANTICS],
     coverage: { authorityComponentIds: ['retired-surface-registry'] },

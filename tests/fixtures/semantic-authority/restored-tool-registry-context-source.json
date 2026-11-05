@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "restored-tool-registry-context-source",
+  "class": "conflicting-default",
+  "rule": "default-activation",
+  "expect": "[semantic-authority/default-activation] component 'tool-registry-context-source'",
+  "expectIssueCount": 3,
+  "description": "Reintroduce the exact pre-TF-0790 declaration; resolved exceptions must no longer suppress it.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "anchor": "id: 'tool-registry-context-source'",
+      "find": "    id: 'tool-registry-context-source',\n    label: 'Tool-registry context source',\n    domains: ['context', 'capability'],\n    purpose: 'Projects tool registry metadata into a compact context candidate; it does not execute tools.',\n    ownedDataTypes: [],\n    scopes: ['turn'],\n    allowedReads: ['capability.descriptor', 'capability.execution-schema'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'execute-tool-effect', 'authorize-tool-use'],\n    runtimeAvailabilitySource: 'DCS_PROD_FLAGS:tool-registry',\n    defaultMode: 'baseline',",
+      "replace": "    id: 'tool-registry-context-source',\n    label: 'Tool-registry context source',\n    domains: ['context', 'capability'],\n    purpose: 'Projects tool registry metadata into a compact context candidate; it does not execute tools.',\n    ownedDataTypes: [],\n    scopes: ['turn'],\n    allowedReads: ['capability.descriptor', 'capability.execution-schema'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'execute-tool-effect', 'authorize-tool-use'],\n    runtimeAvailabilitySource: 'DCS_PROD_FLAGS:tool-registry',\n    defaultMode: 'opt-in',"
+    }
+  ]
+}

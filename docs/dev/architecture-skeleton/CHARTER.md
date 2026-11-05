@@ -250,6 +250,6 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 - `TF-0788` 把同步叶模块的 workspace 查询改为 owner 传入的读取函数，sandbox API 与同步复用同一个 `sandbox-state` 存储；只读工具目录持有四个名称常量，工厂保持原导出。持久存储、权限 mapper、工具名称/顺序/摘要和注册条件保持。前后依赖图、owner 测试、原循环门禁残差与最终候选见 `harness/specs/fixtures/architecture-small-cycles/report.json`。README 三语已复核，内部依赖重排无需产品说明更新。
 - `TF-0788` 限定验收通过：干净候选 `36b37acd4` 的 80/80 相关测试和 4 条反向边负例通过；20 项记录运行 exit 0，含完整 uncached node/web/test 类型、契约、scoped lint、comms 与 Harness。应用静态图 825 → 826 文件、环 1 → 0；context 两文件环 1 → 0。该候选的原 runtime checker 分量 [23, 2] → [23]，exit 1，23 文件成员不变。20 份保留文件的哈希读回 19/19 匹配、凭据 0 命中。两次 Codex 复核无发现；四入口 bundle smoke 不替代完整构建。剩余分量由 `TF-0789` 接续。
 - `TF-0789` 将 CVK 引擎身份放到静态叶模块并保持工厂模块原导出；registry 只读取身份，kill-switch 与 VToken 配置解析直接消费原 `runtime-core/types` 中的 `isRecord`。三条反向边均已移开，原循环检查从 23 文件分量降为 0；限定候选 `b834bf3e1` 的 58/58 相关测试通过，24 项记录门禁为 0，完整 `runtime:source:check` 仍保留与基线逐字一致的 LOC 残差。证据见 `harness/specs/fixtures/architecture-runtime-cycles/report.json`；不把该限定结果外推为全仓通过。
-- 后续处理陈旧权威声明、重要关系约束及完整复验。上一轮的 8 条裁定诊断与 35 项 gap 仍须在新的候选重测，不能把登记视为消除；下一叶为 TF-0790。
+- TF-0790 已修正五组件的陈旧声明并删除对应八条裁定。原 checker 规则不变，当前裁定为0；结构例外55项、登记gap35项。逐项分类为18项描述映射缺口、16项领域外owner、1项未实现的全系统model echo保证，详见 `AUTHORITY-RECONCILIATION.md` §12 与 `harness/specs/fixtures/architecture-authority-convergence/gap-classification.json`。最终候选仍须验收；TF-0791随后补关键关系约束并复验整体架构范围。
 - 共享工作区会话接口的类型漂移属于另一未提交工作流；本轮独立基线没有搬入这些改动，类型验收单独记录。
 - 整体架构成熟度仍不等于通过；维护效率、agent 成功率与可靠性净收益尚无本轮对照测量。批次 D 的产品消费需求仍未证实。

@@ -50,7 +50,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 | `retired` | compatibility、provenance、rollback inspection のためだけに保持。 |
 | `agent-driven` | agent が生成し、そのように表示した evidence。real-human evidence ではありません。 |
 
-現在の machine-readable component catalog は 54 行です：13 default、12 advanced、24 internal、5 retired、0 experiment。分類は runtime proof ではありません。詳細は [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md)。
+現在の machine-readable component catalog は 54 行です：13 default、12 advanced、23 internal、6 retired、0 experiment。分類は runtime proof ではありません。詳細は [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md)。
 
 重要な default：
 

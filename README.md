@@ -50,7 +50,7 @@ Conversations show what a turn produced, whichever tool produced it. Audio and v
 | `retired` | Kept only for compatibility, provenance or rollback inspection. |
 | `agent-driven` | Evidence produced by an agent and labeled as such. It is not real-human evidence. |
 
-The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 24 internal, 5 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
+The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 23 internal, 6 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
 
 Important current defaults:
 

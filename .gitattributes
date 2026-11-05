@@ -67,3 +67,4 @@ tests/fixtures/runtime-memory-eval/locomo-full-500-report.json -text
 harness/specs/fixtures/architecture-admission-ast/** -text
 harness/specs/fixtures/architecture-small-cycles/** -text
 harness/specs/fixtures/architecture-runtime-cycles/** -text
+harness/specs/fixtures/architecture-authority-convergence/** -text

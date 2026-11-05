@@ -50,7 +50,7 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 | `retired` | Сохранено только для compatibility, provenance или rollback inspection. |
 | `agent-driven` | Evidence создано агентом и помечено как такое. Это не real-human evidence. |
 
-Текущий machine-readable component catalog содержит 54 строки: 13 default, 12 advanced, 24 internal, 5 retired, 0 experiment. Классификация не является runtime proof. См. [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
+Текущий machine-readable component catalog содержит 54 строки: 13 default, 12 advanced, 23 internal, 6 retired, 0 experiment. Классификация не является runtime proof. См. [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
 
 Важные defaults:
 

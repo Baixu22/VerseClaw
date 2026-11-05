@@ -689,3 +689,33 @@ python -X utf8 "$USERPROFILE/.codex/skills/task-forest/scripts/task_forest.py" l
 | 逐条列出冲突项；每个冲突给出裁定或显式豁免并写明理由与复核条件 | 达成 | §6.2 C-01…C-06（6 条，均有裁定 + 理由 + 复核条件）；§6.3 X-01…X-05（均有理由 + 复核条件）；未裁定 0 |
 | 无法定位 owner 的组件记为 gap，不猜测、不默认通过 | 达成 | §6.4 G-01…G-06（组件级 7 条 + 数据类型 16 + 子系统 5 + 敏感面 7）；人工候选明确标注"不作裁定依据" |
 | 不修改任何注册表、不合并表、不新增注册表、不改运行时行为与默认值 | 达成 | §9；`git status` 本轮仅本文件 + validator spec 一行 `docs.files`；§11 #10 六表单测仍绿 |
+
+
+## 12. TF-0790：落实已裁定的声明修正（2026-11-05）
+
+以上各节保留原候选和历史读数。本节为当前声明修正，全部由 agent 执行。
+
+| 旧裁定 | 当前声明 | 依据 |
+|---|---|---|
+| C-02 / C-03 | working-memory 与 tool-registry 的 `defaultMode=baseline` | 现有 `DCS_PROD_FLAGS`、Workspace Context 默认矩阵及 assembler；没有修改开关 |
+| C-04 | VToken assembly `defaultMode=retired` | `resolveVtokenAssemblyConfig` 已始终关闭 |
+| C-05 | bridge manifest、disposition/current/target 均为 retired | `readVtokenBridgeEnabledFromEnv` 始终 false、enable 被拒绝；兼容 API 存在不是 opt-in 可用 |
+| C-06 | retired-surface-registry 自身 `defaultMode/targetDefaultMode=internal`，currentMode 保持 baseline | 退役表仍是有效分类来源，表中记录的对象退役不等于表自身停用 |
+
+对应八条 `registered-pending-fix` 已删除，18条 checker 规则未改。
+五个 `restored-*.json` 负例把原声明逐一注回真实入口，每个必须拒绝。
+原过时豁免、空 observed、非默认冲突与缺理由测试保留为显式注入，避免已删除登记使测试失效。
+结构例外为55条：新增的X-04只解释退役表internal可见性与baseline激活属于不同轴；
+原54条结构例外不改理由和观测值。该例外不能抑制default或owner错误。
+
+35项gap的逐行源码锚点和摘要见
+`harness/specs/fixtures/architecture-authority-convergence/gap-classification.json`：
+18项描述映射缺口、16项矩阵领域之外的既有owner、1项未实现保证（系统范围model echo无明文保证）。
+external-owner指当前组件manifest覆盖外，可仍属于本仓；不是一律第三方服务。
+这些分类不创建owner、不删除gap、不授予运行能力。已有局部脱敏不证明全系统明文消除；
+现有recovery/checkpoint不证明任意副作用幂等重放。实现缺口是已声明的非保证范围，
+本叶不改变产品承诺，也不把它记为实现通过。
+
+注册表状态修正会让现有能力投影如实呈现bridge退役；不更改runtime代码、权限、产品默认矩阵或锁。
+README四语计数同步为54条中的23 internal与6 retired；其余产品说明保持。
+最终候选的命令、退出码、哈希及限制保留于本叶验收包；完整复验归TF-0791。
