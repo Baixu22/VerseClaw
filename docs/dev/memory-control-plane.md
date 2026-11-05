@@ -56,3 +56,9 @@ TF-0498 adds the single product destination `/memory`. It is a projection and co
 Role Memory off closes Role read/write gates and stops Role prompt retrieval, but does not delete the on-disk cards. Runtime capture, persistence, provider and injection-pilot flags are reported separately. Native OpenClaw memory sources have separate read-only owners; the Memory UI states that disabling this surface's Role/Runtime gates does not claim to disable those sources.
 
 The model-facing projection contains accepted keys whose owner gate and injection-pilot configuration make them currently model-visible. Candidate keys are returned only as an explicit exclusion set for diagnostics/tests and never enter accepted/model-visible data.
+
+## 原子更新边界（TF-0742）
+
+恢复前的 self-edit 与 AUDN curation 使用既有存储 owner 的同步事务：SQLite 复用同一连接及嵌套 savepoint，内存 store 在失败时恢复事实、失效记录、关系、使用计数与容量淘汰状态。新事实、旧事实失效与关系写入中任一步抛错、rejected 或 skipped，均中止更新；不具备原子接口的显式端口在写入前拒绝。
+
+DELETE 在失效写入提交后返回 applied/persisted=true，重复删除返回 already_applied；缺失目标拒绝，禁用路径仍 skipped/flag_disabled。此处不启用已退役的 persist；SQLite 故障注入仅在隔离测试进程模拟标志解析。README en/zh/ja 已审阅，产品可用性与用户流程未变化。

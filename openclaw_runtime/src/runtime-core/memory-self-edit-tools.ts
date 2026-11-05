@@ -131,7 +131,8 @@ function persistFact(
     if (result.status === "rejected") {
       return { ok: false, message: result.message };
     }
-    return { ok: false, message: `persistence skipped (${result.reason})` };
+    return { ok: false, message: result.status === "skipped"
+      ? `persistence skipped (${result.reason})` : "persistence deleted a fact instead of appending it" };
   }
   const result = context.store.appendFact(fact);
   if (!result.accepted) {
@@ -374,16 +375,6 @@ export const memoryUpdateTool: MemorySelfEditTool = {
       },
     };
 
-    const appendResult = persistFact(context, newFact);
-    if (!appendResult.ok) {
-      recordMemoryEffect(context, { action: "memory_update", factId, outcome: "not_applied", identity: context.effectIdentity ?? {} });
-      return {
-        ok: false,
-        tool: "memory_update",
-        message: `Failed to persist new fact: ${appendResult.message}.`,
-      };
-    }
-
     const invalidation: RuntimeMemoryInvalidationProposal = {
       schemaVersion: 1,
       invalidationId: `invalidation_${factId}_${now}`,
@@ -407,25 +398,23 @@ export const memoryUpdateTool: MemorySelfEditTool = {
       };
     }
 
-    const invalidationResult = persistInvalidation(context, sanitizedInvalidation.value);
-    if (!invalidationResult.ok) {
-      // The new fact was already appended; the update is partially applied and
-      // must be reconciled rather than reported as a clean failure.
-      recordMemoryEffect(context, { action: "memory_update", factId, newFactId, outcome: "unknown", identity: context.effectIdentity ?? {} });
+    try {
+      const owner = context.persistence ?? context.store;
+      if (!owner.runAtomic) throw new Error("Atomic memory persistence is unsupported; no writes performed.");
+      owner.runAtomic(() => {
+        const appendResult = persistFact(context, newFact);
+        if (!appendResult.ok) throw new Error(`Failed to persist new fact: ${appendResult.message}.`);
+        const invalidationResult = persistInvalidation(context, sanitizedInvalidation.value);
+        if (!invalidationResult.ok) throw new Error(`Failed to persist invalidation: ${invalidationResult.message}.`);
+        const relationResult = persistSupersedesRelation(context, newFactId, factId);
+        if (!relationResult.ok) throw new Error(`Failed to persist supersedes relation: ${relationResult.message}.`);
+      });
+    } catch (error) {
+      recordMemoryEffect(context, { action: "memory_update", factId, newFactId, outcome: "not_applied", identity: context.effectIdentity ?? {} });
       return {
         ok: false,
         tool: "memory_update",
-        message: `Failed to persist invalidation: ${invalidationResult.message}.`,
-      };
-    }
-
-    const relationResult = persistSupersedesRelation(context, newFactId, factId);
-    if (!relationResult.ok) {
-      recordMemoryEffect(context, { action: "memory_update", factId, newFactId, outcome: "unknown", identity: context.effectIdentity ?? {} });
-      return {
-        ok: false,
-        tool: "memory_update",
-        message: `Failed to persist supersedes relation: ${relationResult.message}.`,
+        message: error instanceof Error ? error.message : String(error),
       };
     }
 

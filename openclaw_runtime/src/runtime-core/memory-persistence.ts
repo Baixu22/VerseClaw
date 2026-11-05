@@ -1,5 +1,7 @@
 // Default-off SQLite persistence proof for sanitized Runtime Memory records.
 import { existsSync } from "node:fs";
+import { isDeepStrictEqual } from "node:util";
+import { isAsyncFunction } from "node:util/types";
 import type { DatabaseSync } from "node:sqlite";
 import type { Insertable } from "kysely";
 import {
@@ -604,6 +606,7 @@ export class RuntimeMemoryPersistenceStore {
   readonly #openDatabase: RuntimeMemoryPersistenceOpenDatabase;
   readonly #storeOptions: RuntimeMemoryStoreOptions;
   readonly #persistenceMaxFacts: number;
+  #transactionDatabase?: RuntimeMemoryPersistenceDatabaseHandle;
 
   constructor(options: RuntimeMemoryPersistenceOptions = {}) {
     this.#config = options.config;
@@ -645,6 +648,18 @@ export class RuntimeMemoryPersistenceStore {
       owner: RUNTIME_MEMORY_PERSISTENCE_OWNER,
       schemaVersion: RUNTIME_MEMORY_PERSISTENCE_SCHEMA_VERSION,
     };
+  }
+
+  /** Nested writes stay on the same owner connection and use existing savepoints. */
+  runAtomic<T>(operation: () => T): T {
+    if (!this.persistEnabled()) throw new Error("persistence skipped (flag_disabled)");
+    if (isAsyncFunction(operation)) throw new Error("Memory transactions must be synchronous.");
+    return this.withWriteTransaction((database) => {
+      const previous = this.#transactionDatabase;
+      this.#transactionDatabase = database;
+      try { return operation(); }
+      finally { this.#transactionDatabase = previous; }
+    });
   }
 
   appendEpisode(
@@ -842,7 +857,7 @@ export class RuntimeMemoryPersistenceStore {
   private withWriteTransaction<T>(
     operation: (database: RuntimeMemoryPersistenceDatabaseHandle) => T,
   ): T {
-    const database = this.#openDatabase(this.#databaseOptions);
+    const database = this.#transactionDatabase ?? this.#openDatabase(this.#databaseOptions);
     return runSqliteImmediateTransactionWithRetrySync(database.db, () => {
       ensureRuntimeMemoryPersistenceSchema(database.db, this.#now());
       return operation(database);
@@ -966,6 +981,9 @@ function persistInvalidation(
 ): RuntimeMemoryPersistenceWriteResult<RuntimeMemoryInvalidationProposal> {
   const existing = findExistingInvalidation(db, invalidation.invalidationId);
   if (existing) {
+    if (!isDeepStrictEqual(existing, invalidation)) {
+      return { status: "rejected", reason: "invalid_invalidation", message: "Invalidation ID conflicts with an existing record.", persisted: false };
+    }
     return persistedWriteResult({
       stored: false,
       duplicate: true,

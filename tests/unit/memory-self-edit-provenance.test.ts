@@ -27,6 +27,7 @@ function setup(durable: boolean) {
   expect(store.appendFact(original).accepted).toBe(true);
   // Explicit in-memory persistence port; never enables the retired product flag or SQLite.
   const persistence: RuntimeMemoryRuntimeIntegrationPort | undefined = durable ? {
+    runAtomic: operation => store.runAtomic(operation),
     migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
     appendEpisode: () => ({ status: "skipped", reason: "flag_disabled", persisted: false }),
     appendFact: (fact) => {

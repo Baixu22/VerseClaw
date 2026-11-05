@@ -3,9 +3,11 @@ import react from '@vitejs/plugin-react';
 import { resolve, join } from 'path';
 import { cpus } from 'os';
 import { readFileSync, existsSync, statSync, realpathSync } from 'fs';
+import { createRequire } from 'node:module';
 import type { Plugin } from 'vite';
 
 const RUNTIME_ROOT = resolve(__dirname, 'openclaw_runtime');
+const runtimeRequire = createRequire(join(RUNTIME_ROOT, 'package.json'));
 
 /**
  * Resolve a tsconfig path-mapping target against RUNTIME_ROOT, mirroring the
@@ -160,6 +162,9 @@ export default defineConfig({
       '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
       '@openclaw/provider-request-auth': resolve(__dirname, 'openclaw_runtime/src/agents/provider-request-auth.ts'),
       rastermill: resolve(__dirname, 'tests/fixtures/rastermill.ts'),
+      // Runtime-owned SQLite/logging deps live in its separate pnpm tree.
+      kysely: runtimeRequire.resolve('kysely'),
+      tslog: runtimeRequire.resolve('tslog'),
     },
   },
 });

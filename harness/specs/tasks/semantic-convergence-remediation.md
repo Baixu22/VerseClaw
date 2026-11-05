@@ -8,6 +8,20 @@ task_forest:
 taskType: runtime-bridge
 intent: 修复 Memory、提示词注入、Provider 验证/网络与重试预算中已复核的语义裂缝，并以可复算 baseline/after 证明收益；不改变产品锁、默认值、发布状态或 GA 口径。
 touchedAreas:
+  - docs/dev/memory-control-plane.md
+  - harness/specs/fixtures/memory-self-edit-provenance/**
+  - harness/specs/rules/memory-self-edit-provenance.md
+  - harness/specs/tasks/memory-self-edit-provenance.md
+  - harness/specs/tasks/memory-atomic-update.md
+  - openclaw_runtime/src/runtime-core/memory-context.ts
+  - openclaw_runtime/src/runtime-core/memory-store.ts
+  - openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts
+  - tests/unit/memory-self-edit-provenance.test.ts
+  - tests/unit/runtime-memory-context-contracts.test.ts
+  - tests/unit/runtime-memory-self-edit-persistence.test.ts
+  - tests/unit/runtime-memory-self-edit.test.ts
+  - tests/unit/memory-atomic-update.test.ts
+  - vitest.config.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts
   - scripts/rsi-sekb-arms.d.mts
   - openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts

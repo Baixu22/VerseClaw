@@ -155,6 +155,7 @@ describe("P0-B: memory self-edit persistence retirement", () => {
     store.appendFact(makeFact("f1"));
 
     const failingPersistence: RuntimeMemoryRuntimeIntegrationPort = {
+      runAtomic: operation => store.runAtomic(operation),
       migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
       appendEpisode: () => ({
         status: "rejected",
@@ -204,6 +205,7 @@ describe("P0-B: memory self-edit persistence retirement", () => {
     store.appendFact(makeFact("forget_me"));
 
     const failingPersistence: RuntimeMemoryRuntimeIntegrationPort = {
+      runAtomic: operation => store.runAtomic(operation),
       migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
       appendEpisode: () => ({
         status: "rejected",
@@ -253,6 +255,7 @@ describe("P0-B: memory self-edit persistence retirement", () => {
     store.appendFact(makeFact("f1"));
 
     const failingPersistence: RuntimeMemoryRuntimeIntegrationPort = {
+      runAtomic: operation => store.runAtomic(operation),
       migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
       appendEpisode: () => ({
         status: "rejected",
@@ -297,6 +300,7 @@ describe("P0-B: memory self-edit persistence retirement", () => {
     store.appendFact(makeFact("f1"));
 
     const relationFailingPersistence: RuntimeMemoryRuntimeIntegrationPort = {
+      runAtomic: operation => store.runAtomic(operation),
       migrate: () => ({ status: "skipped", reason: "flag_disabled", migrated: false }),
       appendEpisode: () => ({
         status: "rejected",
