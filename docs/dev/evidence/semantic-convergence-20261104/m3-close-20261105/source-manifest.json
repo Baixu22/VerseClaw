@@ -1,0 +1,25 @@
+{
+  "candidate": {
+    "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+    "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+    "dirty": false
+  },
+  "base": "76b37c7dddfb564527e045ff6b50db30c291fa1e",
+  "sourceHashes": {
+    "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts": "2357c6e9206e0557dc456d8bf79879e1ef2f9f2342c73fe3441eedff33485d17",
+    "tests/unit/semantic-convergence-prompt-authority.test.ts": "9b2cd2d4e653171b29566de162e4a353ec3ce7783f18fd101d921fa0e56a252d",
+    "tests/unit/semantic-convergence-prompt-budget.test.ts": "0936e42d1e7b86189eabbaa9401c7ffd4604730d78a855ffb2fe2d77c6c47d2a",
+    "tests/unit/rc03-seal-coverage.test.ts": "c1220020d4771b5eb7f3549ad11c3fecc24e5eb44354d916b4b01c86caadcb4d",
+    "tests/unit/rc03-btw-seal.test.ts": "fc5990244f4bd1f18c9e2dd0ec46eafb2649c9886ad350f2e035a03069e544e3",
+    "tests/unit/rc03-manual-compaction-seal.test.ts": "a037a24776512a1db954f152d96b3d9abee766237df634acc3c1ebab7d4ffb68",
+    "openclaw_runtime/src/context-engine/prompt-contribution-authority.test.ts": "085c9a0187a8251ae86c072745f056a1b13c8b2a5443d8cb8ca36e2e6f2d52b1",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.test.ts": "fc83fa3998d514870656a055e50573fc774706f11771d180378c17ac6a969f14",
+    "openclaw_runtime/src/context-engine/context-candidate.test.ts": "f4ed0c12a4291bbd7b790055a76ba6461939ac8f0b02014da5fd213652a416e5",
+    "openclaw_runtime/src/context-engine/context-orchestrator.test.ts": "40b9500b4a3b0f877121f2fda2963fb5873c7caee4f24f259ef6cb9858cfb549",
+    "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts": "c83861e8f00306fefdc57d4d2412faabcca0c6636e2bddb71e1d5aa27bf7c0c5",
+    "openclaw_runtime/src/context-engine/rc03-seal.test.ts": "f98e65fd5744f70ecf641b083c3f48a99ef5c773c794c5c14b88ad91f77a8814",
+    "openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts": "595713b2c57025b1635a86e29e3b12aa2e56844af65b7791c17b7e739892ef8d"
+  }
+}

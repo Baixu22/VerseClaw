@@ -2422,7 +2422,24 @@
     "docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/review-initial.json",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/review-metadata.json",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/review.json",
-    "docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/source-manifest.json"
+    "docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/source-manifest.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/.gitattributes",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/README.md",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/SHA256SUMS",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/baseline-embedded.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/budget-observations.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/child-reports.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/commands.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/credential-scan.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/embedded-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/report.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/review-metadata.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/review.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/root-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/runtime-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/scope-typecheck.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/seal-matrix.json",
+    "docs/dev/evidence/semantic-convergence-20261104/m3-close-20261105/source-manifest.json"
   ],
   "artifactBatches": {}
 }

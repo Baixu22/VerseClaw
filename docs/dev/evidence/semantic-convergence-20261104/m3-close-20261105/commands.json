@@ -1,0 +1,298 @@
+{
+  "candidate": {
+    "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+    "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "id": "final-embedded",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+      "candidate": {
+        "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+        "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "sourceHashesAfter": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents-embedded-agent.config.ts",
+        "src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+        "src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/m3close-final-embedded.json"
+      ],
+      "startedAt": "2026-11-05T03:57:27.146Z",
+      "completedAt": "2026-11-05T03:57:50.302Z",
+      "durationMs": 23154,
+      "exitCode": 0,
+      "log": "D:/tmp/m3close-final-embedded.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/m3close-final-embedded-cache"
+      }
+    },
+    {
+      "id": "final-root",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+        "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "sourceHashesAfter": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/semantic-convergence-prompt-authority.test.ts",
+        "tests/unit/semantic-convergence-prompt-budget.test.ts",
+        "tests/unit/rc03-seal-coverage.test.ts",
+        "tests/unit/rc03-btw-seal.test.ts",
+        "tests/unit/rc03-manual-compaction-seal.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/m3close-final-root.json"
+      ],
+      "startedAt": "2026-11-05T03:57:50.408Z",
+      "completedAt": "2026-11-05T03:58:30.447Z",
+      "durationMs": 40038,
+      "exitCode": 0,
+      "log": "D:/tmp/m3close-final-root.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "PROMPT_BUDGET_TRACE_PATH": "D:/tmp/m3close-budget-observations.json",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/m3close-final-root-cache"
+      }
+    },
+    {
+      "id": "final-runtime",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+      "candidate": {
+        "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+        "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "sourceHashesAfter": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.unit.config.ts",
+        "src/context-engine/prompt-contribution-authority.test.ts",
+        "src/context-engine/turn-injection-budget.test.ts",
+        "src/context-engine/context-candidate.test.ts",
+        "src/context-engine/context-orchestrator.test.ts",
+        "src/context-engine/context-orchestrator.compass.test.ts",
+        "src/context-engine/rc03-seal.test.ts",
+        "src/context-engine/rc03-seal-wiring.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/m3close-final-runtime.json"
+      ],
+      "startedAt": "2026-11-05T03:58:30.542Z",
+      "completedAt": "2026-11-05T03:58:44.504Z",
+      "durationMs": 13961,
+      "exitCode": 0,
+      "log": "D:/tmp/m3close-final-runtime.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/m3close-final-runtime-cache"
+      }
+    },
+    {
+      "id": "final-types",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+        "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "sourceHashesAfter": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "D:/tmp/m3close-scope-typecheck.json",
+        "--composite",
+        "false"
+      ],
+      "startedAt": "2026-11-05T03:58:44.595Z",
+      "completedAt": "2026-11-05T03:58:51.231Z",
+      "durationMs": 6635,
+      "exitCode": 0,
+      "log": "D:/tmp/m3close-final-types.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/m3close-final-types-cache"
+      }
+    },
+    {
+      "id": "final-lint",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+        "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "sourceHashesAfter": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts",
+        "--max-warnings=0"
+      ],
+      "startedAt": "2026-11-05T03:58:51.328Z",
+      "completedAt": "2026-11-05T03:58:54.598Z",
+      "durationMs": 3269,
+      "exitCode": 0,
+      "log": "D:/tmp/m3close-final-lint.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/m3close-final-lint-cache"
+      }
+    },
+    {
+      "id": "final-harness",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+        "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "sourceHashesAfter": {
+        "harness/specs/tasks/semantic-convergence-remediation.md": "ff828d8502723b5abc685b22006953da8c974f086a12f6028be773ea16ea0e48",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts": "b8f9074f195f47b8d7d8b943c560543c32d2fcb7f28bb06ce1d250ff77954414"
+      },
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/semantic-convergence-remediation.md"
+      ],
+      "startedAt": "2026-11-05T03:58:54.693Z",
+      "completedAt": "2026-11-05T03:58:56.379Z",
+      "durationMs": 1684,
+      "exitCode": 0,
+      "log": "D:/tmp/m3close-final-harness.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/m3close-final-harness-cache"
+      }
+    }
+  ],
+  "baseline": {
+    "id": "baseline-embedded",
+    "driven_by": "agent",
+    "actor": "codex/context-prompt-owner",
+    "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+    "candidate": {
+      "commit": "76b37c7dddfb564527e045ff6b50db30c291fa1e",
+      "tree": "4d2fcb6b619847c62b334d68c70fb1d18237eead",
+      "dirty": false
+    },
+    "sourceStable": true,
+    "sourceHashes": {},
+    "sourceHashesAfter": {},
+    "command": [
+      "node",
+      "scripts/run-vitest.mjs",
+      "run",
+      "--config",
+      "test/vitest/vitest.agents-embedded-agent.config.ts",
+      "src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+      "src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts",
+      "--maxWorkers=1",
+      "--reporter=verbose",
+      "--reporter=json",
+      "--outputFile",
+      "D:/tmp/m3close-baseline-embedded.json"
+    ],
+    "startedAt": "2026-11-05T03:51:52.683Z",
+    "completedAt": "2026-11-05T03:52:05.410Z",
+    "durationMs": 12727,
+    "exitCode": 1,
+    "log": "D:/tmp/m3close-baseline-embedded.log",
+    "environment": {
+      "TEMP": "D:\\tmp",
+      "TMP": "D:\\tmp",
+      "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:\\tmp\\m3close-baseline-cache"
+    }
+  }
+}

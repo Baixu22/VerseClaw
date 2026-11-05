@@ -1,0 +1,94 @@
+{
+  "schema": "M3Closeout/v1",
+  "node": "TF-0736",
+  "driven_by": "agent",
+  "actor": "codex/semantic-sequence",
+  "generatedAt": "2026-11-05T04:00:09.571Z",
+  "candidate": {
+    "commit": "d0d7a69535d4f54853264fb3718e2bf50ea7345c",
+    "tree": "d9924d58b3655abfe6a78caf9933085dcb9500b7",
+    "dirty": false
+  },
+  "decision": {
+    "status": "milestone-complete",
+    "acceptancePassed": true,
+    "releaseReady": false,
+    "realHumanEvidence": false
+  },
+  "tests": {
+    "embedded": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "root": {
+      "total": 81,
+      "passed": 81,
+      "failed": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "total": 112,
+      "passed": 112,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totalPassed": 205,
+  "regather": {
+    "before": {
+      "passed": 9,
+      "failed": 3
+    },
+    "after": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "rootCause": "Mock query omitted-type filter returned no blocks, but the production ladder queries all blocks. Fixed four mock defaults; assertions and production code unchanged."
+  },
+  "metrics": {
+    "authorityDeclarationCoverage": "5/5",
+    "accountedCharRatio": 1,
+    "accountingSamples": 8,
+    "negativeUnknownChars": 20,
+    "sealMatrix": "18/18",
+    "managedLimit": 6000
+  },
+  "acceptance": [
+    {
+      "criterion": "authority_declaration_coverage=5/5; ungoverned mutation=0",
+      "verdict": "pass",
+      "scope": "declared hook/candidate APIs in explicit enforce mode",
+      "evidence": [
+        "root-tests.json",
+        "runtime-tests.json",
+        "child-reports.json"
+      ]
+    },
+    {
+      "criterion": "accounted_char_ratio=1.0; seal-on unknown mutation=0",
+      "verdict": "pass",
+      "scope": "deterministic composer/finalizer and embedded admission",
+      "evidence": [
+        "budget-observations.json",
+        "seal-matrix.json",
+        "root-tests.json",
+        "runtime-tests.json"
+      ]
+    }
+  ],
+  "review": {
+    "exitCode": 0,
+    "acceptedFindings": 0,
+    "rejectedPreexistingFidelityNote": 1,
+    "metadata": "review-metadata.json"
+  },
+  "limitations": [
+    "Scoped M3 development acceptance, not all adapters/live-provider/full runtime or GA.",
+    "Runtime defaults, managed 6000 and retired memory unchanged.",
+    "Prior child reports remain historical; current regression results are bound to this source commit."
+  ]
+}

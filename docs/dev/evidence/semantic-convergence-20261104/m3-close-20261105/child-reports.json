@@ -1,0 +1,131 @@
+[
+  {
+    "node": "TF-0737",
+    "path": "docs/dev/evidence/semantic-convergence-20261104/tf-0737/report.json",
+    "sha256": "904f7f293745f830bad1fe52bc829e6ad3df968c7e8cac5a9b12a44d1ae73d65",
+    "candidate": {
+      "commit": "5866f51f8e09a6c3ad6aced78c78040c58f2f230",
+      "tree": "be287894c58222959238611b31564bca17e5d33e",
+      "dirty": false
+    },
+    "acceptance": [
+      {
+        "criterion": "5/5 mutation fields declared",
+        "verdict": "pass",
+        "evidence": [
+          "prompt-after.json",
+          "unit-tests.json",
+          "runtime-tests.json"
+        ]
+      },
+      {
+        "criterion": "Undeclared systemPrompt/message_replacement rejected",
+        "verdict": "pass",
+        "evidence": [
+          "unit-tests.json",
+          "runtime-tests.json",
+          "commands.json#behavioralTrace"
+        ]
+      },
+      {
+        "criterion": "Matching declarations pass; negatives never silently downgrade",
+        "verdict": "pass",
+        "evidence": [
+          "unit-tests.json",
+          "runtime-tests.json",
+          "commands.json#behavioralTrace"
+        ]
+      }
+    ]
+  },
+  {
+    "node": "TF-0738",
+    "path": "docs/dev/evidence/semantic-convergence-20261104/tf-0738/report.json",
+    "sha256": "d3980e1b0b877f62af258eebb514b69ba67fe63aba104cb9d21e547112394142",
+    "candidate": {
+      "commit": "65b8be15bf37039d2a7c9089d81b86df45bc644b",
+      "tree": "28733902bd2dcce227c4116e88674928cfd2336b",
+      "dirty": false
+    },
+    "acceptance": [
+      {
+        "criterion": "accounted_char_ratio=1.0",
+        "verdict": "pass",
+        "evidence": [
+          "observations.json",
+          "unit-tests.json"
+        ]
+      },
+      {
+        "criterion": "No-turnId path explicitly unbudgeted",
+        "verdict": "pass",
+        "evidence": [
+          "unit-tests.json"
+        ]
+      },
+      {
+        "criterion": "ContextFinalSnapshot budgetCoverage readable and immutable",
+        "verdict": "pass",
+        "evidence": [
+          "observations.json",
+          "unit-tests.json"
+        ]
+      },
+      {
+        "criterion": "6000 is not the total provider request budget",
+        "verdict": "pass",
+        "evidence": [
+          "unit-tests.json",
+          "README.md",
+          "docs/dev/context-orchestrator.md"
+        ]
+      }
+    ]
+  },
+  {
+    "node": "TF-0739",
+    "path": "docs/dev/evidence/semantic-convergence-20261104/tf-0739/report.json",
+    "sha256": "a173548769ca34aa8cd0a1d6eb6be6721c2fd6773aea71ecd651293c4d54386c",
+    "candidate": {
+      "commit": "6faa3e91f8297cdc4a45004000041abd8f775835",
+      "tree": "52cd1776f2e9d1306d07d2e8ec0a310208288f2a",
+      "dirty": false
+    },
+    "acceptance": [
+      {
+        "criterion": "Coverage matrix 100%",
+        "verdict": "pass",
+        "evidence": [
+          "matrix.json",
+          "unit-tests.json"
+        ]
+      },
+      {
+        "criterion": "seal-on unregistered mutation=0",
+        "verdict": "pass",
+        "scope": "registered lineage and embedded admission",
+        "evidence": [
+          "decisions.json",
+          "observations-after.json",
+          "unit-tests.json"
+        ]
+      },
+      {
+        "criterion": "seal-off does not claim coverage",
+        "verdict": "pass",
+        "evidence": [
+          "unit-tests.json",
+          "runtime-tests.json"
+        ]
+      },
+      {
+        "criterion": "Three negative classes rejected",
+        "verdict": "pass",
+        "evidence": [
+          "decisions.json",
+          "unit-tests.json"
+        ]
+      }
+    ]
+  }
+]
