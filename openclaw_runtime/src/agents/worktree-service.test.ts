@@ -197,6 +197,16 @@ describe("worktree-service (C4 interface)", () => {
     expect(svc.backend).toBe("inprocess");
   });
 
+  it("does not create a directory simulation when Git checkout creation fails", () => {
+    initGitRepo(root);
+    writeFileSync(path.join(root, ".git", "worktrees"), "block registry creation");
+    const svc = createWorktreeService(root, { backend: "git" });
+    expect(svc.backend).toBe("git");
+    expect(() => svc.create("failed-checkout")).toThrow();
+    expect(existsSync(path.join(root, ".openclaw", "worktrees", "failed-checkout"))).toBe(false);
+    expect(svc.list()).toHaveLength(0);
+  });
+
   it("resolveWorktreeBackend defaults to inprocess", () => {
     expect(resolveWorktreeBackend()).toBe("inprocess");
     expect(resolveWorktreeBackend(undefined, { backend: "git" })).toBe("git");

@@ -480,7 +480,6 @@ export function createWorktreeService(
         });
         if (!budget.allowed) throw new LongSessionCoordinationError(budget);
       }
-      let gitBranch: string | undefined;
       let recBackend: WorktreeBackend = "inprocess";
 
       withWorktreeLock(resolved, () => {
@@ -492,21 +491,9 @@ export function createWorktreeService(
 
         if (backend === "git") {
           const absWt = path.resolve(wtRoot);
-          try {
-            git(["worktree", "add", "--detach", absWt, "HEAD"], resolved);
-            gitBranch = undefined;
-            recBackend = "git";
-          } catch {
-            try {
-              gitBranch = `openclaw/wt-${safeId.slice(0, 40)}`;
-              git(["worktree", "add", "-B", gitBranch, absWt, "HEAD"], resolved);
-              recBackend = "git";
-            } catch {
-              mkdirSync(wtRoot, { recursive: true });
-              gitBranch = undefined;
-              recBackend = "inprocess";
-            }
-          }
+          // A failed checkout must not become a directory simulation or reset an existing branch.
+          git(["worktree", "add", "--detach", absWt, "HEAD"], resolved);
+          recBackend = "git";
         } else {
           mkdirSync(wtRoot, { recursive: true });
           recBackend = "inprocess";
@@ -532,7 +519,7 @@ export function createWorktreeService(
         status: "active",
         writeSet,
         backend: recBackend,
-        gitBranch,
+        gitBranch: undefined,
         ...(baseOid ? { baseOid } : {}),
         ...(owner ? { owner: { ...owner, retention: owner.retention ?? "keep" } } : {}),
         filesystemIdentity: { dev: lstatSync(wtRoot).dev, ino: lstatSync(wtRoot).ino },

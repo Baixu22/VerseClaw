@@ -57,7 +57,7 @@ import {
 } from './helpers/role-gateway-test-utils';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
 import { clearSessionStoreCacheForTest } from '../../openclaw_runtime/src/config/sessions/store';
@@ -221,6 +221,21 @@ describe('TF-0768 authorized workspace execution', () => {
     expect(result?.error?.message).toMatch(/already_exists/);
     expect(spawnSubagentDirect).not.toHaveBeenCalled();
     expect(createWorktreeService(f.root).list()).toHaveLength(1);
+  });
+
+  it('rejects a Git create failure without spawning or creating a simulated worker directory', async () => {
+    const f = fixture('git');
+    const git = (...args: string[]) => execFileSync('git', args, { cwd: f.root, windowsHide: true, stdio: 'pipe' });
+    git('init');
+    git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'fixture');
+    writeFileSync(join(f.root, '.git', 'worktrees'), 'block registry creation');
+    const result = await callHandler('orchestrator.run', { ...f.request,
+      workers: [{ roleName: 'implementer', task: 'edit', worktreeId: 'failed-checkout' }],
+    }, f.cfg);
+    expect(result?.ok).toBe(false);
+    expect(spawnSubagentDirect).not.toHaveBeenCalled();
+    expect(existsSync(join(f.root, '.openclaw', 'worktrees', 'failed-checkout'))).toBe(false);
+    expect(createWorktreeService(f.root).list()).toHaveLength(0);
   });
 
   it('stops the next worker after a parent generation change', async () => {
