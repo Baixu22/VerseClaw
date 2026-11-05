@@ -1,7 +1,9 @@
-import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import fs from "node:fs";
+import { syncBuiltinESMExports } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   applyPatch,
   assertPatchParentPath,
@@ -13,6 +15,7 @@ import {
 } from "./apply-patch.js";
 import { __resetBatchLocks, applyPreparedBatch, preflightPatch } from "./apply-patch-preflight.js";
 import { decodeTextFile } from "./sessions/tools/text-file-codec.js";
+import { __setEffectReceiptSink } from "./apply-patch-effect-receipt.js";
 import {
   __resetWriteJournals,
   getOrCreateWriteJournal,
@@ -28,6 +31,9 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  vi.restoreAllMocks();
+  syncBuiltinESMExports();
+  __setEffectReceiptSink(undefined);
   __resetBatchLocks();
   __resetWriteJournals();
   await rm(dir, { recursive: true, force: true });
@@ -214,6 +220,90 @@ describe("UAS-04 rollback and recovery", () => {
 });
 
 describe("UAS-04 lease and restart semantics", () => {
+  it('exposes incomplete persistence through the real tool error without repeating file effects', async () => {
+    await writeFile(join(dir, 'a.txt'), 'before\n');
+    const originalWrite = fs.writeFileSync;
+    vi.spyOn(fs, 'writeFileSync').mockImplementation((file, data, opts) => {
+      if (String(file).endsWith('.meta.json') && String(data).includes('"state":"committed"')) {
+        throw new Error('injected terminal metadata write failure');
+      }
+      return originalWrite(file, data, opts);
+    });
+    syncBuiltinESMExports();
+    const tool = createApplyPatchTool({ cwd: dir, journal: { workspaceRoot: dir, sessionId: 'tool-durable', enabled: true } });
+    await expect(tool.execute('tool-batch', { input: patchLines(...replace('a.txt', 'before', 'after')) }, undefined))
+      .rejects.toMatchObject({ batchState: 'recovery_required', effectApplied: true, journalStatePersisted: false,
+        recoveryRef: expect.stringContaining('batch=tool-batch') });
+    expect(await readFile(join(dir, 'a.txt'), 'utf8')).toBe('after\n');
+    __resetWriteJournals();
+    expect(getOrCreateWriteJournal(dir, 'tool-durable').entries[0]?.batch?.state).toBe('prepared');
+  });
+
+  it('reports missing prepared journal evidence after a snapshot storage failure', async () => {
+    await writeFile(join(dir, 'a.txt'), 'before\n');
+    await mkdir(join(dir, '.openclaw'));
+    await writeFile(join(dir, '.openclaw', 'journal'), 'blocked journal directory');
+    const fileOps = hostFileOps();
+    const applyOptions = options(true);
+    const batch = await prepare(parsePatchText(patchLines(...replace('a.txt', 'before', 'after'))).hunks, applyOptions, fileOps);
+    expect(batch.journalEntries).toHaveLength(0);
+    const result = await applyPreparedBatch(batch, applyOptions, fileOps);
+    expect(result).toMatchObject({ batchState: 'recovery_required', effectApplied: true, journalStatePersisted: false });
+    expect(result.recoveryRef).toContain('batch=batch-1');
+    expect(result.journal).toBeUndefined();
+    expect(await readFile(join(dir, 'a.txt'), 'utf8')).toBe('after\n');
+  });
+
+  it('retains reconciliation evidence when file rollback succeeds but journal rollback cannot persist', async () => {
+    await writeFile(join(dir, 'a.txt'), 'before\n');
+    const ops = hostFileOps();
+    const opts = options(true);
+    const batch = await prepare(parsePatchText(patchLines(...replace('a.txt', 'before', 'after'))).hunks, opts, ops);
+    const meta = batch.journalEntries[0].snapshotPath + '.meta.json';
+    await chmod(meta, 0o444);
+    let writes = 0;
+    try {
+      const result = await applyPreparedBatch(batch, opts, { ...ops, writeFile: async (file, bytes) => {
+        await ops.writeFile(file, bytes);
+        if (++writes === 1) throw new Error('write acknowledgement failed');
+      } });
+      expect(result).toMatchObject({ batchState: 'recovery_required', effectApplied: false, journalStatePersisted: false });
+      expect(result.recoveryRef).toContain('batch=batch-1');
+      expect(await readFile(join(dir, 'a.txt'), 'utf8')).toBe('before\n');
+      expect(JSON.parse(await readFile(meta, 'utf8')).batch.state).toBe('prepared');
+    } finally { await chmod(meta, 0o666); }
+  });
+
+  it.each(['readonly', 'storage-failure'] as const)('does not claim a durable commit after %s terminal persistence failure', async (failure) => {
+    await writeFile(join(dir, 'a.txt'), 'before\n');
+    const fileOps = hostFileOps();
+    const applyOptions = options(true);
+    const batch = await prepare(parsePatchText(patchLines(...replace('a.txt', 'before', 'after'))).hunks, applyOptions, fileOps);
+    const meta = batch.journalEntries[0].snapshotPath + '.meta.json';
+    const receipts: Array<{ outcome: string }> = [];
+    __setEffectReceiptSink({ record: (receipt) => { receipts.push(receipt); } });
+    if (failure === 'readonly') await chmod(meta, 0o444);
+    else { await rm(meta); await mkdir(meta); }
+    try {
+      const result = await applyPreparedBatch(batch, applyOptions, fileOps);
+      expect(result.batchState).toBe('recovery_required');
+      expect(result).toMatchObject({ effectApplied: true, journalStatePersisted: false });
+      expect(result.text).toMatch(/do not replay/i);
+      expect(result.recoveryRef).toContain('batch=batch-1');
+      expect(await readFile(join(dir, 'a.txt'), 'utf8')).toBe('after\n');
+      expect(receipts).toHaveLength(1);
+      expect(receipts[0].outcome).toBe('unknown');
+      expect(batch.journalEntries[0].batch?.state).toBe('prepared');
+      if (failure === 'readonly') {
+        expect(JSON.parse(await readFile(meta, 'utf8')).batch.state).toBe('prepared');
+        __resetWriteJournals();
+        expect(getOrCreateWriteJournal(dir, 'uas-04').entries[0]?.batch?.state).toBe('prepared');
+      }
+    } finally {
+      if (failure === 'readonly') await chmod(meta, 0o666);
+    }
+  });
+
   it("journals exactly once inside the production tool batch lease", async () => {
     await writeFile(join(dir, "a.txt"), "a0\n");
     const tool = createApplyPatchTool({

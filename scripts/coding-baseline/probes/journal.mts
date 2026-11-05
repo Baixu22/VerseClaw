@@ -12,6 +12,7 @@ try {
   const {preflightPatch,applyPreparedBatch}=await import(sourceUrl('openclaw_runtime/src/agents/apply-patch-preflight.ts'));
   const {decodeTextFile}=await import(sourceUrl('openclaw_runtime/src/agents/sessions/tools/text-file-codec.ts'));
   const {__resetWriteJournals,getOrCreateWriteJournal}=await import(sourceUrl('openclaw_runtime/src/agents/tools/write-journal-core.ts'));
+  const {openOpenClawStateDatabase}=await import(sourceUrl('openclaw_runtime/src/state/openclaw-state-db.ts'));
   for (const readonly of [false,true]) {
     const sid=readonly?'locked':'normal', name=sid+'.txt';
     fs.writeFileSync(path.join(workspace,name),'before\n');
@@ -23,10 +24,12 @@ try {
     if(readonly) fs.chmodSync(meta,0o444);  // Windows file attribute; snapshot itself remains readable.
     try {
       const returned=await applyPreparedBatch(batch,options,ops);
+      const inMemory=batch.journalEntries[0]?.batch?.state;
       const persisted=JSON.parse(fs.readFileSync(meta,'utf8')).batch.state;
+      const receipt=openOpenClawStateDatabase().db.prepare('SELECT outcome,journal_ref,recoverability FROM effect_receipts WHERE idempotency_key=?').get('apply_patch:request-'+sid);
       __resetWriteJournals();
       const rehydrated=getOrCreateWriteJournal(workspace,sid).entries.at(-1)?.batch?.state;
-      rows.push({id:'patch-sidecar-'+sid,returned:returned.batchState,journalInResult:returned.journal?.batchState,undoable:returned.journal?.undoable,persisted,rehydrated,actualFile:fs.readFileSync(path.join(workspace,name),'utf8')});
+      rows.push({id:'patch-sidecar-'+sid,returned:returned.batchState,journalInResult:returned.journal?.batchState,undoable:returned.journal?.undoable,effectApplied:returned.effectApplied,journalStatePersisted:returned.journalStatePersisted,recoveryRef:returned.recoveryRef,inMemory,persisted,rehydrated,receipt,actualFile:fs.readFileSync(path.join(workspace,name),'utf8')});
     } finally { if(readonly)fs.chmodSync(meta,0o666); }
   }
 } catch(err){rows.push({id:'probe-error',error:String(err)});}

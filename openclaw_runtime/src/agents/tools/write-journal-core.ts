@@ -263,9 +263,11 @@ export function setWriteJournalBatchState(
       persisted = false;
       continue;
     }
-    entry.batch = { ...entry.batch, state };
+    const batch = { ...entry.batch, state };
     try {
-      persistWriteJournalEntry(entry);
+      persistWriteJournalEntry({ ...entry, batch });
+      // Memory must not advance beyond the durable owner when a sidecar write fails.
+      entry.batch = batch;
     } catch {
       // A stale prepared sidecar is safer than claiming a terminal state that was not persisted.
       persisted = false;
