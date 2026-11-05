@@ -61,13 +61,23 @@ test('closing an Electron wrapper reaps its actual main process and preserves a 
     const wrapperPid = first.process().pid;
     const firstPid = await first.evaluate(() => process.pid);
     const secondPid = await second.evaluate(() => process.pid);
+    const childPid = await first.evaluate(() => {
+      const child = process.mainModule!.require('node:child_process').spawn(process.execPath,
+        ['-e', 'setInterval(() => {}, 1000)'], {
+          env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' }, stdio: 'ignore', windowsHide: true,
+        });
+      child.unref();
+      return child.pid as number;
+    });
+    expect(isAlive(childPid)).toBe(true);
     await closeElectronApp(first);
     await expect.poll(() => isAlive(firstPid)).toBe(false);
+    await expect.poll(() => isAlive(childPid)).toBe(false);
     expect(isAlive(secondPid)).toBe(true);
     const page = await getStableWindow(second);
     await expect(page.getByTestId('main-layout')).toBeVisible();
     await writeFile(test.info().outputPath('process-close-observations.json'), JSON.stringify({
-      driven_by: 'agent', actor: 'codex/tf0746', firstPid, firstAlive: false, secondPid, secondAlive: true,
+      driven_by: 'agent', actor: 'codex/tf0746', firstPid, firstAlive: false, childPid, childAlive: false, secondPid, secondAlive: true,
       wrapperPid,
     }, null, 2));
   } finally {

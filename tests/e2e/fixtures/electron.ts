@@ -286,10 +286,8 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
     return;
   }
   if (!pid) return;
-  // Kill the Electron parent directly first. taskkill /T can block on Windows
-  // when a detached Gateway child owns inherited stdio; a bounded taskkill is
-  // only a child-tree follow-up.
-  try { process.kill(pid, 'SIGKILL'); } catch { /* already exited */ }
+  // Windows tree enumeration requires the parent to remain alive. Give taskkill
+  // the real main PID first; killing that parent first can orphan its children.
   await new Promise<void>((resolve) => {
     try {
       const killer = spawn('taskkill', ['/F', '/T', '/PID', String(pid)], { stdio: 'ignore', windowsHide: true });
@@ -297,11 +295,12 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
       const done = () => { if (settled) return; settled = true; resolve(); };
       killer.on('close', done);
       killer.on('error', done);
-      setTimeout(done, 2_000).unref();
+      setTimeout(() => { if (!settled) { killer.kill(); done(); } }, 5_000).unref();
     } catch {
       resolve();
     }
   });
+  try { process.kill(pid, 'SIGKILL'); } catch { /* tree already exited */ }
 }
 
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {

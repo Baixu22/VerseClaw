@@ -7,6 +7,7 @@ import { attachModelProviderRequestTransport } from "../../openclaw_runtime/src/
 import { createRequestAttemptBudget, runWithRequestAttemptBudget } from "../../openclaw_runtime/src/agents/request-attempt-budget";
 import { coerceToFailoverError } from "../../openclaw_runtime/src/agents/failover-error";
 import { createProviderHttpError } from "../../openclaw_runtime/src/agents/provider-http-errors";
+import { classifyStreamFailure } from "../../openclaw_runtime/src/agents/stream-failure";
 import { retryAsync } from "../../openclaw_runtime/src/infra/retry";
 import { closeProviderOutboundBudget } from "../../openclaw_runtime/src/agents/provider-outbound-budget";
 import type { Model } from "../../openclaw_runtime/src/llm/types";
@@ -71,9 +72,7 @@ async function recovery(statuses: number[], maxPhysicalAttempts: number) {
       recovered = true;
     }, { attempts: 5, minDelayMs: 0, maxDelayMs: 0, jitter: 0,
       shouldRetry: failure => {
-        if (!(failure instanceof Error)) return false;
-        const status = (failure as Error & { status?: number }).status;
-        return status === 429 || (typeof status === "number" && status >= 500);
+        return classifyStreamFailure(failure, { phase: "before_headers", partialOutput: false }).isRetryable;
       },
     }));
   } catch (caught) { error = caught; }
