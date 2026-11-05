@@ -149,7 +149,7 @@ Palantir 真正值得借鉴的是「对象—关系—动作—权限—血缘�
 | C | TF-0633 语义合同硬化接入骨架（父）；TF-0634…TF-0637 C1–C4 四叶 | done |
 | 审查后续 | TF-0638 B2 对账承重化；TF-0639 C5 报告观测化（`REVIEW-20261101.md` §5） | done / done |
 | A（2026-11-03 已验收） | TF-0649 A3 迁移活体消费者；TF-0650 A4 改写 E2E mock 缝；TF-0651 A5 退役扁平通道与 preload 第二入口；TF-0652 A6 兼容回归与收口 | done；保留已分类的全仓失败 |
-| 2026-11-05 修复 | TF-0786：TF-0787 门禁 → TF-0788 小依赖环 → TF-0789 runtime 反向依赖 → TF-0790 权威描述 → TF-0791 复验 | 三叶限定验收完成（3/5）；TF-0790 待推进 |
+| 2026-11-05 修复 | TF-0786：TF-0787 门禁 → TF-0788 小依赖环 → TF-0789 runtime 反向依赖 → TF-0790 权威描述 → TF-0791 复验 | 四叶限定验收完成（4/5）；TF-0791 最终复验中 |
 | D | 未登记（消费需求未证实） | - |
 
 > 2026-10-31 的拆分与规划状态保留在历史决策记录 `docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md`；上表表达当前交付和正在推进的阶段。
@@ -250,6 +250,6 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 - `TF-0788` 把同步叶模块的 workspace 查询改为 owner 传入的读取函数，sandbox API 与同步复用同一个 `sandbox-state` 存储；只读工具目录持有四个名称常量，工厂保持原导出。持久存储、权限 mapper、工具名称/顺序/摘要和注册条件保持。前后依赖图、owner 测试、原循环门禁残差与最终候选见 `harness/specs/fixtures/architecture-small-cycles/report.json`。README 三语已复核，内部依赖重排无需产品说明更新。
 - `TF-0788` 限定验收通过：干净候选 `36b37acd4` 的 80/80 相关测试和 4 条反向边负例通过；20 项记录运行 exit 0，含完整 uncached node/web/test 类型、契约、scoped lint、comms 与 Harness。应用静态图 825 → 826 文件、环 1 → 0；context 两文件环 1 → 0。该候选的原 runtime checker 分量 [23, 2] → [23]，exit 1，23 文件成员不变。20 份保留文件的哈希读回 19/19 匹配、凭据 0 命中。两次 Codex 复核无发现；四入口 bundle smoke 不替代完整构建。剩余分量由 `TF-0789` 接续。
 - `TF-0789` 将 CVK 引擎身份放到静态叶模块并保持工厂模块原导出；registry 只读取身份，kill-switch 与 VToken 配置解析直接消费原 `runtime-core/types` 中的 `isRecord`。三条反向边均已移开，原循环检查从 23 文件分量降为 0；限定候选 `b834bf3e1` 的 58/58 相关测试通过，24 项记录门禁为 0，完整 `runtime:source:check` 仍保留与基线逐字一致的 LOC 残差。证据见 `harness/specs/fixtures/architecture-runtime-cycles/report.json`；不把该限定结果外推为全仓通过。
-- TF-0790 已修正五组件的陈旧声明并删除对应八条裁定。原 checker 规则不变，当前裁定为0；结构例外55项、登记gap35项。逐项分类为18项描述映射缺口、16项领域外owner、1项未实现的全系统model echo保证，详见 `AUTHORITY-RECONCILIATION.md` §12 与 `harness/specs/fixtures/architecture-authority-convergence/gap-classification.json`。最终候选仍须验收；TF-0791随后补关键关系约束并复验整体架构范围。
+- TF-0790 已修正五组件的陈旧声明并删除对应八条裁定。原 checker 规则不变，当前裁定为0；结构例外55项、登记gap35项。逐项分类为18项描述映射缺口、16项领域外owner、1项未实现的全系统model echo保证，详见 `AUTHORITY-RECONCILIATION.md` §12 与 `harness/specs/fixtures/architecture-authority-convergence/gap-classification.json`。TF-0790候选2ca6e2092的150项测试及完整类型通过，证据提交a80f06b17；TF-0791现补关键关系约束并复验既定架构范围。
 - 共享工作区会话接口的类型漂移属于另一未提交工作流；本轮独立基线没有搬入这些改动，类型验收单独记录。
 - 整体架构成熟度仍不等于通过；维护效率、agent 成功率与可靠性净收益尚无本轮对照测量。批次 D 的产品消费需求仍未证实。

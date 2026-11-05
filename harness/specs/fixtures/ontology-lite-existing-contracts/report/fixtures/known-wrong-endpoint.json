@@ -1,0 +1,16 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "known-wrong-endpoint",
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "purpose": "A declared concept is still invalid when used as the wrong target for routing quality.",
+  "expect": {
+    "mode": "report", "exitCode": 1, "status": "invalid",
+    "rule": "relation-endpoint-mismatch", "relationKey": "routing-memo--quality-gated-by--chat", "field": "to"
+  },
+  "mutations": [{
+    "file": "shared/product-semantics.ts",
+    "find": "{ from: 'routing-memo', kind: 'quality-gated-by', to: 'task-loop', authorityBoundary: 'same-session-scorecard',",
+    "replace": "{ from: 'routing-memo', kind: 'quality-gated-by', to: 'chat', authorityBoundary: 'same-session-scorecard',"
+  }]
+}

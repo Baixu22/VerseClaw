@@ -430,6 +430,15 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(generated.relations[0].relationKey).toBe('chat--suggests-upgrade-to--chat');
   });
 
+  it('rejects a known but wrong relation endpoint through the real entry', async () => {
+    const generated = await report(['--fixture', `${FIXTURES}/known-wrong-endpoint.json`]);
+    expect(generated.code).toBe(1);
+    expect(generated.report?.status).toBe('invalid');
+    expect(generated.report?.diagnostics).toContainEqual(expect.objectContaining({
+      rule: 'relation-endpoint-mismatch', field: 'to', relationKey: 'routing-memo--quality-gated-by--chat',
+    }));
+  });
+
   it('a validator stubbed to a no-op cannot keep the declared rules: rulesEvaluated shrinks and the report is invalid', async () => {
     const { report: generated, fixture } = await negative('validator-noop');
     expect(rulesOf(generated.diagnostics)).toEqual(['report-field-missing']);
@@ -723,11 +732,11 @@ describe('--verify invalidates tampered or incomplete reports', () => {
 // a skipped check. Each case below spawns the CLI; the fixtures are the C3 ones under
 // report/fixtures/ (plus C5's validator-noop) and no second fixture set exists.
 describe('evidence refs check: real gate entry (node scripts/check-evidence-refs.mjs)', () => {
-  const RELATION_RULE_COUNT = 11;
+  const RELATION_RULE_COUNT = 12;
   const SOURCE_RULE_COUNT = 8;
   const CLOSED_RULES: string[] = [...semantics.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES];
 
-  it('binds the closed rule set the gate must evaluate: 11 relation rules + 8 source rules, no overlap', () => {
+  it('binds the closed rule set the gate must evaluate: 12 relation rules + 8 source rules, no overlap', () => {
     expect(semantics.PRODUCT_SEMANTIC_RELATION_RULES).toHaveLength(RELATION_RULE_COUNT);
     expect(SOURCE_DIAGNOSTIC_RULES).toHaveLength(SOURCE_RULE_COUNT);
     expect(new Set(CLOSED_RULES).size).toBe(RELATION_RULE_COUNT + SOURCE_RULE_COUNT);
@@ -793,7 +802,7 @@ describe('evidence refs check: real gate entry (node scripts/check-evidence-refs
     expect(readFileSync(hollow, 'utf8')).toBe(text);
   });
 
-  it('a skipped check cannot pass: the positive report records all 6 relations, 8 source refs and exactly the 19 closed rules', async () => {
+  it('a skipped check cannot pass: the positive report records all 6 relations, 8 source refs and exactly the 20 closed rules', async () => {
     const result = await report(['--actor', ACTOR]);
     expect(result.code).toBe(0);
     expect(result.stdout).toMatch(/^\[evidence-refs\] report valid: 6 relation\(s\), 8 source ref\(s\), 0 diagnostic\(s\) -> /);

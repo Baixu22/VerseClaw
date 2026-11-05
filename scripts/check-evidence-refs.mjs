@@ -277,6 +277,7 @@ export const RELATION_RULE_PROBES = Object.freeze([
   { rule: 'duplicate-relation', candidates: [{ ...PROBE_RELATION }, { ...PROBE_RELATION }] },
   { rule: 'missing-evidence', candidates: [{ ...PROBE_RELATION, evidenceRefs: [] }] },
   { rule: 'kind-boundary-mismatch', candidates: [{ ...PROBE_RELATION, authorityBoundary: 'advisory-only' }] },
+  { rule: 'relation-endpoint-mismatch', candidates: [{ from: 'routing-memo', kind: 'quality-gated-by', to: 'chat', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/clawx-product-semantics.md'] }] },
   { rule: 'reverse-task-authority', candidates: [{ ...PROBE_RELATION, from: 'task-ledger', to: 'chat' }] },
   { rule: 'forged-grant-field', candidates: [{ ...PROBE_RELATION, grants: ['write'] }] },
   { rule: 'cross-session-quality', candidates: [{ from: 'routing-memo', kind: 'quality-gated-by', to: 'task-loop', authorityBoundary: 'same-session-scorecard', evidenceRefs: ['docs/modules/multi-agent-and-tasks.md'] }], context: { sessionScope: 'cross-session' } },
