@@ -1,0 +1,441 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:05:07.587Z",
+  "gates": [
+    {
+      "name": "runtime-build",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "build:runtime"
+      ],
+      "startedAt": "2026-11-05T09:40:54.127Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:42:02.055Z"
+    },
+    {
+      "name": "new-lint",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "eslint",
+        "tests/unit/autonomy-candidate-input.test.ts",
+        "openclaw_runtime/src/gateway/session-reset-service.ts",
+        "openclaw_runtime/src/gateway/session-reset-service.stop.test.ts",
+        "openclaw_runtime/src/config/sessions/types.ts",
+        "openclaw_runtime/src/config/sessions/metadata.ts",
+        "openclaw_runtime/src/agents/goal-wake-helper-host.ts",
+        "openclaw_runtime/src/agents/goal-wake-helper-host.test.ts",
+        "openclaw_runtime/src/process/spawn-utils.ts",
+        "openclaw_runtime/src/process/supervisor/types.ts",
+        "openclaw_runtime/src/process/supervisor/supervisor.ts",
+        "openclaw_runtime/src/process/supervisor/adapters/child.ts",
+        "openclaw_runtime/src/process/supervisor/adapters/pty.ts",
+        "openclaw_runtime/src/agents/verseshell/aci-client.ts",
+        "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+        "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+        "openclaw_runtime/src/agents/verseshell/process-manager.test.ts",
+        "openclaw_runtime/src/agents/verseshell-runtime.ts",
+        "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+        "tests/unit/autonomy-executor-launch.test.ts",
+        "electron/services/gateway-api.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "openclaw_runtime/src/agents/bash-tools.exec-runtime.ts",
+        "openclaw_runtime/src/agents/simple-completion-transport.ts",
+        "tests/unit/autonomy-simple-completion.test.ts",
+        "openclaw_runtime/src/agents/task-loop-verification.ts",
+        "openclaw_runtime/src/agents/bash-tools.exec.ts",
+        "openclaw_runtime/src/agents/bash-tools.exec-types.ts",
+        "openclaw_runtime/src/agents/tools/task-loop-tool.ts",
+        "openclaw_runtime/src/agents/long-task-control/store.ts",
+        "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+        "shared/task-ledger-artifact.ts",
+        "tests/unit/task-loop-verification.test.ts",
+        "tests/e2e/autonomy-task-completion.spec.ts"
+      ],
+      "startedAt": "2026-11-05T09:42:02.085Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:42:12.354Z"
+    },
+    {
+      "name": "lint",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "eslint",
+        "electron/utils/sandbox-high-risk-gate.ts",
+        "electron/services/workspace-permissions.ts",
+        "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "openclaw_runtime/src/agents/role-spawn.ts",
+        "openclaw_runtime/src/agents/subagent-registry.ts",
+        "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "tests/unit/task-loop-controller.test.ts",
+        "electron/main/index.ts",
+        "openclaw_runtime/src/agents/agent-tools.ts",
+        "electron/services/session-activity-api.ts",
+        "tests/unit/task-ledger-service.test.ts",
+        "electron/services/chat-api.ts",
+        "electron/services/sessions-api.ts",
+        "openclaw_runtime/src/config/runtime-snapshot.ts",
+        "openclaw_runtime/src/agents/task-loop-completion-fence.ts",
+        "electron/services/task-ledger-completion.ts",
+        "electron/services/task-ledger-actions.ts",
+        "electron/services/task-ledger-api.ts",
+        "electron/services/task-ledger-service.ts",
+        "electron/services/versegit-receipt-bridge.ts",
+        "electron/services/versegit-receipt-evidence.ts",
+        "shared/task-ledger-completion.ts",
+        "shared/task-ledger-candidate.ts",
+        "shared/types/task-ledger.ts",
+        "shared/host-api/contract.ts",
+        "src/lib/host-api.ts",
+        "openclaw_runtime/src/agents/task-loop-completion.ts",
+        "openclaw_runtime/src/agents/task-loop-controller.ts",
+        "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+        "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "openclaw_runtime/src/gateway/server-methods.ts",
+        "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+        "tests/unit/autonomy-simple-completion.test.ts",
+        "tests/unit/task-loop-verification.test.ts",
+        "tests/unit/autonomy-task-completion.test.ts",
+        "tests/unit/autonomy-task-completion-owner.test.ts",
+        "tests/unit/autonomy-task-completion-admission.test.ts",
+        "tests/unit/autonomy-task-actions.test.ts",
+        "tests/unit/versegit-candidate-receipts.test.ts",
+        "tests/unit/host-api-facade.test.ts"
+      ],
+      "startedAt": "2026-11-05T09:42:12.357Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:42:21.106Z"
+    },
+    {
+      "name": "contract",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "contract:check"
+      ],
+      "startedAt": "2026-11-05T09:42:21.107Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:42:31.426Z"
+    },
+    {
+      "name": "harness-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-task-completion.md"
+      ],
+      "startedAt": "2026-11-05T09:42:31.428Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:42:34.854Z"
+    },
+    {
+      "name": "typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "typecheck"
+      ],
+      "startedAt": "2026-11-05T09:42:34.854Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:43:45.054Z"
+    },
+    {
+      "name": "unit",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/autonomy-candidate-input.test.ts",
+        "tests/unit/autonomy-executor-launch.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/task-ledger-process.test.ts",
+        "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+        "tests/unit/context-item-registry.test.ts",
+        "tests/unit/context-archive-recall.test.ts",
+        "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+        "tests/unit/workspace-permissions.test.ts",
+        "tests/unit/autonomy-simple-completion.test.ts",
+        "tests/unit/task-loop-verification.test.ts",
+        "tests/unit/autonomy-task-completion.test.ts",
+        "tests/unit/autonomy-task-completion-owner.test.ts",
+        "tests/unit/autonomy-task-completion-admission.test.ts",
+        "tests/unit/autonomy-task-actions.test.ts",
+        "tests/unit/task-ledger-service.test.ts",
+        "tests/unit/versegit-candidate-receipts.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/identity-scope.test.ts",
+        "tests/unit/task-loop-controller.test.ts",
+        "tests/unit/chat-api-workspace-fingerprint.test.ts",
+        "tests/unit/chat-send-input-mode.test.ts",
+        "tests/unit/long-task-control.test.ts",
+        "tests/unit/session-activity-background-read.test.ts",
+        "tests/unit/autonomy-host-readiness.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a3-relay-20261105-01a1ab0d/clean-3b8036324cee/unit.json"
+      ],
+      "startedAt": "2026-11-05T09:43:45.076Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:52:09.535Z"
+    },
+    {
+      "name": "comms-replay",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "comms:replay"
+      ],
+      "startedAt": "2026-11-05T09:52:09.549Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:52:10.542Z"
+    },
+    {
+      "name": "comms-compare",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "comms:compare"
+      ],
+      "startedAt": "2026-11-05T09:52:10.543Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:52:11.356Z"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-task-completion.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-05T09:52:11.357Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:52:13.004Z"
+    },
+    {
+      "name": "runtime-owners",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "src/agents/verseshell/process-manager.test.ts",
+        "src/agents/verseshell/governed-process.test.ts",
+        "src/gateway/session-reset-service.stop.test.ts",
+        "src/agents/goal-wake-helper-host.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a3-relay-20261105-01a1ab0d/clean-3b8036324cee/runtime-owners.json"
+      ],
+      "startedAt": "2026-11-05T09:52:13.026Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:53:10.867Z"
+    },
+    {
+      "name": "vite-build",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "build:vite"
+      ],
+      "startedAt": "2026-11-05T09:53:10.868Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:56:16.436Z"
+    },
+    {
+      "name": "runtime-stage3",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "src/agents/long-task-control/stage3-working-context.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a3-relay-20261105-01a1ab0d/clean-3b8036324cee/runtime-stage3.json"
+      ],
+      "startedAt": "2026-11-05T09:56:16.458Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:57:06.984Z"
+    },
+    {
+      "name": "source-config",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/config-sync-source-runtime.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/autonomy-a3-relay-20261105-01a1ab0d/clean-3b8036324cee/source-config.json"
+      ],
+      "startedAt": "2026-11-05T09:57:06.985Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T09:57:13.158Z"
+    },
+    {
+      "name": "e2e",
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/autonomy-task-completion.spec.ts",
+        "tests/e2e/autonomy-task-actions.spec.ts",
+        "--workers=1",
+        "--reporter=line,json",
+        "--output=D:/tmp/autonomy-a3-relay-20261105-01a1ab0d/clean-3b8036324cee/e2e-results"
+      ],
+      "startedAt": "2026-11-05T09:57:13.159Z",
+      "exitCode": 0,
+      "error": null,
+      "endedAt": "2026-11-05T10:04:03.322Z"
+    }
+  ],
+  "tests": {
+    "passed": 446,
+    "failed": 0,
+    "skipped": 1
+  },
+  "runtimeOwners": {
+    "passed": 55,
+    "failed": 0,
+    "skipped": 0
+  },
+  "runtimeStage3": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceConfig": {
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceUnchanged": true,
+  "finalDirty": false,
+  "e2e": {
+    "stats": {
+      "startTime": "2026-11-05T09:57:14.992Z",
+      "duration": 407850.73299999995,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "guard": {
+      "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+      "driven_by": "agent",
+      "actor": "playwright-runner",
+      "ok": true,
+      "sourceChanged": false,
+      "before": {
+        "status": "",
+        "trackedFilesSha256": "2cc38fe479632cd87338eb256d2d87bece42ef699eb5407f0894dc1327d18df5",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "status": "",
+        "trackedFilesSha256": "2cc38fe479632cd87338eb256d2d87bece42ef699eb5407f0894dc1327d18df5",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cleanup": {
+      "driven_by": "agent",
+      "actor": "playwright-runner",
+      "runRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2",
+      "ledgerEntries": 4,
+      "reaped": [
+        {
+          "pid": 39944,
+          "aliveBefore": false,
+          "nodeKill": false,
+          "taskkill": false
+        },
+        {
+          "pid": 31484,
+          "aliveBefore": false,
+          "nodeKill": false,
+          "taskkill": false
+        },
+        {
+          "pid": 34468,
+          "aliveBefore": false,
+          "nodeKill": false,
+          "taskkill": false
+        },
+        {
+          "pid": 49276,
+          "aliveBefore": false,
+          "nodeKill": false,
+          "taskkill": false
+        }
+      ],
+      "survivors": [],
+      "sweep": {
+        "status": "ok",
+        "runRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\",
+        "owned": [],
+        "remaining": []
+      }
+    }
+  }
+}

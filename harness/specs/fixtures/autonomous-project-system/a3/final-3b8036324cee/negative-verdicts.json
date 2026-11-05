@@ -1,0 +1,2715 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:05:07.587Z",
+  "assertions": [
+    {
+      "file": "tests/unit/autonomy-candidate-input.test.ts",
+      "name": "candidate physical input decoding rejects special-file input before attempting an unbounded source read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-candidate-input.test.ts",
+      "name": "candidate physical input decoding rejects malformed filename bytes in both real candidate-reader paths",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-candidate-input.test.ts",
+      "name": "candidate executable input modes invalidates untracked input when only execution permission changes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-candidate-input.test.ts",
+      "name": "candidate executable input modes invalidates linked physical input when only target execution permission changes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-executor-launch.test.ts",
+      "name": "actual executor launch boundary checks again before an OS spawn fallback instead of reusing an earlier permission",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-executor-launch.test.ts",
+      "name": "actual executor launch boundary rechecks after asynchronous PTY preparation before invoking its spawn",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection projects current owner observations without converting them into permission or measured budgets",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects mismatched workspaceId from another owner scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects mismatched sessionKey from another owner scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects mismatched sessionId from another owner scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects stale, future or malformed observation time 1793613569999",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects stale, future or malformed observation time 1793613600001",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects stale, future or malformed observation time NaN",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection does not promote missing generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection does not promote stale generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection does not promote mismatch generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection does not promote unverified generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects unacknowledged runtime generation null",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects unacknowledged runtime generation different-generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection does not turn configured descriptors or absent adapter evidence into available tools",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection keeps empty effective tools and a disabled scheduler explicitly unsupported",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection rejects disconnected, blocked or replaced connections and missing service probes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection clears all previous connection probes including the method descriptor",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 current host capability projection does not let gatewayReady or an old successful probe hide a disconnected transport",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 existing Main sessionActivity integration reads actual owner probes, preserves policy and reports scheduler enabled=true",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 existing Main sessionActivity integration reads actual owner probes, preserves policy and reports scheduler enabled=false",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-host-readiness.test.ts",
+      "name": "TF-0674 existing Main sessionActivity integration keeps absent runtime probes unknown instead of treating configured policy as success",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-simple-completion.test.ts",
+      "name": "TF-0672 source-runtime self-check transport uses the existing HTTP owner when pruned SDK registration is absent, without changing a registered public provider",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction retains its own ticket through a transient Windows delete-sharing publication failure",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction keeps accepted manual Date metadata when checksumming its persisted JSON representation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction commits a multi-event operation once and replays the same receipt after projection damage",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction allows exactly one of two stale revision writers and recovers concurrent duplicates",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction rejects same-key different payload while allowing a new same-parameter intent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction replays a durable append after the first projection write failed",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction does not project an incomplete log frame or treat it as a committed batch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction serializes new automatic and existing manual writes through the same log owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction keeps every event in an existing shared-key batch and rejects a complete damaged frame atomically",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction fences competing processes and recovers an actual subprocess exit after durable append",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction does not expire a live journal writer and fails closed on a corrupt participant",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction reclaims an orphan from an earlier incarnation even when its PID is the current live PID",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 existing Task Ledger log transaction preserves exclusion under four competing processes and one hundred guarded writes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action requires an owner-backed claim for new automatic business done while manual and turn check done retain their meaning",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action fences a same-key session reset attempted after the final owner read until the journal commits",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action refreshes the runtime session epoch after journal contention before admitting a new write",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action allows Gateway RPC handling to acquire the journal before automatic admission takes its ticket",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action recovers a committed receipt after Gateway replacement or unavailability without readmitting its old epoch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action does not let automatic operation IDs suppress existing lifecycle batch keys",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects requests from a prior Gateway process even when the app generation counter repeats",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action derives assistant identity from existing owners for create, link and update; manual edits stay user",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action denies a new automatic update of a manually done task until explicit reopen",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action denies a new automatic update of a manually dropped task until explicit reopen",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action replays an earlier link after its task was deleted without repeating its effect",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects model-provided actor before reading an owner or writing the log",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects model-provided principal before reading an owner or writing the log",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects model-provided identity before reading an owner or writing the log",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched workspaceId scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched sessionKey scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched sessionGeneration scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects mismatched projectId scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-actions.test.ts",
+      "name": "TF-0671 typed controlled automatic task action rejects a stale Gateway stamp and a session replaced while waiting for the journal owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) does not let public writers claim the internal runtime actor",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) releases the session fence while post-commit owner readback is still waiting",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) preserves manual-done business facts against generic automatic replacement and terminal updates",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) preserves manual-dropped business facts against generic automatic replacement and terminal updates",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) preserves accepted business facts against generic automatic replacement and terminal updates",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) does not admit a new completion over an explicit manual done",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) does not admit a new completion over an explicit manual dropped",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) injects the actual completion owner into the Main session-activity read model",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) keeps referenced evidence current across a session selection while new writes stay active-bound",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) keeps referenced evidence current across a workspace selection while new writes stay active-bound",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects caller-authored mission-control lifecycle provenance on every node-writing route",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects caller-authored clawgraph lifecycle provenance on every node-writing route",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects caller-authored current readback on creation as well as patch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects a receipt that expires while the final artifacts are being read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects a config owner mutation after the last RPC read by journal CAS",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects a checkpoint owner mutation after the last RPC read by journal CAS",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) commits only referenced owner facts, replays its historical decision, and invalidates changed source without rewriting history",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) records a rejected claim when the check owner is missing, regardless of complete/pass text",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects stale generation, caller verdicts, conflicting operation reuse and forged decision CRUD",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) does not allow the older append route to turn a model-authored business terminal into verification",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) requires a claim for an assistant business node even with owner undefined",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) requires a claim for an assistant business node even with owner user",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) requires a claim for an assistant business node even with owner agent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) cannot use node_updated to automatically finish an existing manual business task",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) cannot use status_changed to automatically finish an existing manual business task",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) cannot use review_cleared to automatically finish an existing manual business task",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) cannot recast a business task through node_created to erase completion admission",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) cannot recast a business task through decision_recorded to erase completion admission",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) cannot recast a business task through deviation_logged to erase completion admission",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) cannot recast a business task through node_updated to erase completion admission",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) keeps a turn check done without letting an automatic patch convert it into accepted business done",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects a later attempt without undoing a manual completion",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) rejects a later attempt without undoing a accepted completion",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+      "name": "TF-0672 Main completion admission (owner-fixture integration) fences an active workspace root replacement after the last owner reference read and before append",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) hashes source bytes behind a consumed junction and rejects core.worktree redirection",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) does not let inherited Git variables redirect physical task provenance",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) binds tracked siblings when the execution cwd is a nested repository directory",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) rejects a populated unresolved gitlink and hashes a junction gitlink physical tree",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) binds task worktree and bootstrap inputs with identical sync/async provenance",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) returns a terminal failed verifier instead of waiting for nonexistent success text",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) waits for a later-started verifier under its own child deadline",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) starts an inner TaskLoop under its recorded Mission root without replacing the owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) does not append invalidations for identical config activations but fences an in-place changed object",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) returns equivalent fresh provenance asynchronously while allowing event-loop progress",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) refuses a caller-selected manual root and preserves the committed prefix",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) hashes initialized gitlinks and detects their dirty source in both candidate readers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) reads physical candidate and index state without executing repository Git helpers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) reuses the explicit reviewer report token without inferring pass from prose",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) refuses to bind an earlier reviewer to changed source at checkpoint capture",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) pins the real session, captures source/config/diff and recomputes from existing SQLite after reopening",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) does not manufacture an independent reviewer from reported text or a worker identity",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+      "name": "TF-0672 actual checkpoint/provenance owners (unit integration) invalidates the exact candidate on tracked edits, staging, untracked input, config or integrated HEAD",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary keeps a finished runtime task pending independent acceptance",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary retains execution completion progress while business acceptance stays pending",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary does not treat a model completion word, accepted dispatch or zero exit as an acceptance receipt",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary retains only references to existing owners without accepting any completion",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects caller-authored passed authority",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects caller-authored verifier authority",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects caller-authored reviewer authority",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects caller-authored candidate authority",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects caller-authored actor authority",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects caller-authored decision authority",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects cross-generation references, Forest authority and ambiguous verification references",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary invalidates evidence when source, inputs, configuration or the integrated dirty candidate changes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary finds no reference gaps for matching independent owner records without itself writing done",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects complete plus repair evidence from the task owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects complete plus blocked evidence from the task owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects complete plus unavailable evidence from the task owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects absent owner data and the old branch candidate after integration",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects evidence for another task, another owner revision or an expired check",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary rejects a forged verifier and a self-check worker posing as independent verification",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary requires actual artifact verification in addition to zero exit and a passed status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-task-completion.test.ts",
+      "name": "TF-0672 automatic business task completion boundary hashes real bytes asynchronously and rejects tampering or missing refs",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) forwards workspaceId to Gateway rpcParams when renderer sends it",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) produces workspaceFingerprint from workspace rootPath and forwards to Gateway",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) omits workspaceFingerprint when workspaceId is absent (no workspace scope)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) forwards workspaceId but omits workspaceFingerprint when rootPath lookup fails",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) does not call getWorkspaceRootPathById when workspaceId is absent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) uses the active coordinator environment and verified session generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) fails closed for paused or generation-mismatched coordinator bindings",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) materializes a pending handoff generation after the first successful Chat send",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) forwards the ambient logical deadline to Gateway chat.send (NET-E)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "name": "chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) omits deadlineAtMs when no logical deadline is ambient (NET-E)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode gate rejects explicit inputMode without an active /loop Task Ledger root",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode gate rejects unknown inputMode values at the protocol layer",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode: interrupt checkpoints before aborting, records checkpointed event, and responds ok",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode: guide steers the active run and records steered evidence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode: guide falls back to a normal send when steering is rejected",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode: queue persists the queued message and broadcasts queue status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode: queue preserves owner scope when direct drain replays chat.send",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode: queue preserves owner scope when callback drain replays chat.send",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/chat-send-input-mode.test.ts",
+      "name": "chat.send inputMode: queue drain restores claimed rows when a new run started before drain",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-archive-recall.test.ts",
+      "name": "context_archive_recall model tool bounds output and keeps the current session able to recover a masked archive",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-archive-recall.test.ts",
+      "name": "context_archive_recall model tool rejects a handle owned by another session",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "ContextItemRegistry shadow mode registers metadata-only items, lifecycle events, queries, and status snapshots",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "ContextItemRegistry shadow mode rejects large payload-shaped fields in registry records",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "ContextItemRegistry shadow mode bounds shadow-mode failures as diagnostics",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family shadow ingestion helpers records representative runtime inputs as ContextItems without raw payload storage",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family shadow ingestion helpers creates stable item ids and content hashes for ingestion metadata",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family lifecycle audit helpers records lifecycle events from runtime transformation paths into the shared audit snapshot",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family lifecycle audit helpers records bounded truncation lifecycle metadata without raw payloads",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family lifecycle audit helpers records route, compaction, and checkpoint lifecycle events as audit metadata",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family lifecycle audit helpers creates deterministic lifecycle event ids",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family archive handle MVP creates checksum-backed handles and verifies archived payloads",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family archive handle MVP fails closed when an archived payload checksum no longer matches",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/context-item-registry.test.ts",
+      "name": "Context Family archive handle MVP removes session archive artifacts during hard-delete cleanup",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "name": "gateway permission approval flow rejects verification for a workspace whose permissions were not evaluated",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "name": "gateway permission approval flow refuses verification when its persisted physical root differs from Main",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "name": "gateway permission approval flow requires approval for dangerous gateway RPC and consumes approval before replay",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "name": "gateway permission approval flow does not allow an approved gateway request to be reused for different params",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "name": "gateway permission approval flow captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "name": "gateway permission approval flow returns structured sandbox denial details for a fail-closed gateway action",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes automatic Task Ledger operations through the typed Main action",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes completion references through the existing typed Ledger module",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes the typed session stop surface through the sessions module",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls settings.getAll through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade throws response errors",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls settings.setMany and reset through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes project rules methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes agent browser methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes code review methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes Remote Forge reads through the typed host facade",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes uv installer setup through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes vtoken methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes git methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes log file path and tail lines through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls channels.accounts through hostInvoke with options",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes channel credential validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes channel target lookup payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls agents.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls providers.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes provider validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes provider OAuth requests through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls work provider APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls knowledge APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls sessions.summaries through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls session compaction methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls clawGraph methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls cron.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls skills.clawhubList through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability queryTraces through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability reportTrace through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade uses a function-shaped host API contract to type host invocations",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade lets service handlers inherit payload types from the host API contract",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep uninvoked direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep the legacy unified app:request client path",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary does not let a completed label invent completion authority",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary keeps Chat final, Task Loop pass, and unavailable verification distinct",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary keeps identity brands distinct and requires scope at typed run boundaries",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary centralizes a byte-preserving workspace/project compatibility mapping",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary normalizes an owner-resolved legacy workspace spelling without mutating its input",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary keeps an explicit project association and every identifier byte unchanged",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":null}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":[]}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionKey\":\"session\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionId\":\"physical-session\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"projectId\":\"project\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceId\":\"\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceKey\":42}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\" \",\"scope\":{\"workspaceId\":\"workspace\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects conflicting legacy and canonical workspace identities",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary keeps same-session attempts independent and never converts a physical sessionId",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary requires the ledger owner-specific task field",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary requires the runtime owner-specific task field",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary requires the browser owner-specific task field",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary requires the cron owner-specific task field",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary requires the install owner-specific task field",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: null",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: undefined",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {\"taskId\":\"bare\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {\"kind\":\"toString\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {\"kind\":\"unknown\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "long-task intervention control maps guide to non-disruptive steering evidence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "long-task intervention control maps queue to deferred follow-up without aborting the active run",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "long-task intervention control maps interrupt to deviation evidence and requires ClawGraph confirmation while a node is active",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "long-task intervention control maps revise-goal to a checkpointed goal-revision deviation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "long-task intervention control builds a normalized resume checkpoint that can recover without the full transcript",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "long-task intervention control normalizes control signals, validation state, and acceptance status within bounded recovery fields",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='interrupt' options={}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='interrupt' options={ highRisk: true, …(1) }",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='guide' options={}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='guide' options={ highRisk: true }",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='queue' options={}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='revise-goal' options={}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='revise-goal' options={ clawGraphNodeActive: true }",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) requires review for guide with highRisk (shared side)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/long-task-control.test.ts",
+      "name": "intervention policy: shared/runtime consistency (P0-2) marks queue checkpointRequired without abort semantics",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) does not elevate a completed verifier run to pass without a structured verdict",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) keeps ok plus a negative review out of pass/verified",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) fails on structured outcome error without relying on free text",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) uses explicit orchestration.verificationVerdict over free text",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) honors structured JSON verificationVerdict embedded in text",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) does not allow free-text pass prose alone to authorize (missing provenance)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) fail-closes on free-text fail heuristics when structured provenance is absent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) fail-closes repair_required from text heuristics without elevating trust",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+      "name": "structured verifier report (P2-005 / F-AUTH-005) resolveStructuredVerificationVerdict prefers orchestration field",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "explicit strong sandbox requests fail closed (#156) throws when docker-strong is explicitly required but unavailable",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "explicit strong sandbox requests fail closed (#156) keeps automatic selection degradable when strong is not explicitly required",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "explicit strong sandbox requests fail closed (#156) does not treat policy-light as a strong request",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) classifies gateway cron/browser/exec methods as high-risk",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) treats non-read terminal risks as exec under sandbox gate",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) keeps completion verification behind an explicit strong requirement even in full access",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) classifies agent-browser and cron host actions",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) allows high-risk when sandbox is not degraded",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) requires approval for high-risk under degraded strong sandbox (stepwise)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) fail-closes high-risk under degraded when approval path is unavailable",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) composes with workspace decisions without weakening hard deny",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) force-visible degraded summary always reports status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "name": "sandbox high-risk gate (P2-004 / F-ISO-001) uses injectable policy loader without requiring Electron/store",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'an RPC timeout is unknown, never an e…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'an owner read exception is unknown, n…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a response without the owner projecti…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'an envelope without a snapshot is unk…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a gateway without the method stays un…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a projection whose goal-wake owner re…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a projection that omits the owner-rea…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a successful empty read is known'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a finished main run with live backgro…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) keeps a successful empty read as a fact: known, dated, and warning-free",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) keeps background activity after the main run ended",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) forwards the canonical workspace id into the runtime policy read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) does not present a failed first read as a successful empty read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) retains live background facts when a re-read fails and marks them stale",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) marks a host-reported unknown read without inventing a failure for an unsupported host",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) returns to known/current after a successful re-read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-process.test.ts",
+      "name": "Task Ledger physical process identity keeps a real OS birth identity when the project cwd contains shadow shell executables",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-process.test.ts",
+      "name": "Task Ledger physical process identity keeps query failure unknown and refuses to publish a guessed own incarnation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service never projects caller-supplied effective readback or decisions from generic node records",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service projects nodes, dependencies, review state, decisions, and session links",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service removes deleted nodes and related edges from the snapshot",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service preserves long conversation control metadata and review tags without auto-clearing review state",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service projects long-task root children for checkpoints decisions deviations evidence and review",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "task ledger service keeps valid JSONL events and reports damaged lines",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "runtime lifecycle projections own their terminal status replays older ClawGraph and Mission records as runtime facts without new metadata",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "runtime lifecycle projections own their terminal status keeps internal checkpoint milestones while ignoring automatic provenance borrowing",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "runtime lifecycle projections own their terminal status keeps the clawgraph goal runtime terminal out of the business completion fence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "runtime lifecycle projections own their terminal status keeps the mission-control goal runtime terminal out of the business completion fence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "runtime lifecycle projections own their terminal status keeps the mission-control task runtime terminal out of the business completion fence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "runtime lifecycle projections own their terminal status keeps the mission-control milestone runtime terminal out of the business completion fence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-service.test.ts",
+      "name": "runtime lifecycle projections own their terminal status still fences an automatic business task without the runtime-lifecycle marker",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check parses valid reviewer JSON",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check falls back conservatively when reviewer JSON is invalid",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check wraps evidence as untrusted and truncates large evidence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check includes bounded control state in the reviewer context pack",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check keeps previous context summary as the compact history source",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check isolates prompt-injection-like evidence inside untrusted reviewer data blocks",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check falls back conservatively when reviewer completion aborts or times out",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task-loop context and self-check downgrades complete when validation signals remain open",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop waits for terminal DCS side effects before returning and records their outcome",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop creates a Task Ledger root at startup and associates checkpoints with it",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop blocks startup when Task Ledger root creation fails",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not create a Task Ledger root for ordinary chat helpers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop completes after one successful self-check",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop records AgentMap prompt candidate runtime shadow without changing reviewer context",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop keeps TaskLoop reviewer prompt legacy by default and exposes AgentMap only through explicit pilot invocation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop keeps AgentMap sentinel out of default reviewer, lifecycle, and checkpoint payloads",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop keeps legacy lifecycle and checkpoint payloads unchanged when RuntimeTaskEvent shadow is off",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not open or write Runtime Memory when omitted flags",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not open or write Runtime Memory when shadow=false",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not open or write Runtime Memory when persist=false",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not open or write Runtime Memory when persist=true with shadow omitted",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not write Runtime Memory or create an episode when retired flags are shadow and persist true",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not write Runtime Memory or create an episode when retired flags are string true flags",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not write Runtime Memory or create an episode when retired flags are all legacy flags true",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not replay or read a TaskLoop episode after retired persistence flags are set",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop keeps TaskLoop terminal behavior when a scripted Runtime Memory writer fails after retirement",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits sanitized TaskLoop trace spans only when trace context shadow is enabled",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits a warning-only evidence verifier report without changing complete status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop maps missing file evidence to standalone insufficient evidence without changing complete status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop includes subagent-provided evidence refs in the shadow report",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop keeps code-task evidence gate runtime shadow collection disabled by default",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits code-task evidence gate runtime shadow collection only in explicit shadow mode",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop fails closed for invalid explicit code-task collection wiring without changing completion",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop accumulates multiple code-task shadow collections through an injected in-memory sink",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop isolates code-task shadow collection builder and sink failures from completion",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits RuntimeTaskEvent lifecycle and checkpoint shadows for a complete TaskLoop",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop adds touched file fingerprints to RuntimeTaskEvent checkpoint shadows",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop attaches registry diagnostics to TaskLoop shadow events without changing legacy decisions",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not attach registry diagnostics when registry flags are off",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not attach registry diagnostics when only the collector flag is omitted",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits a blocked RuntimeTaskEvent shadow without changing TaskLoop blocked decisions",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits a failed RuntimeTaskEvent shadow for TaskLoop errors without changing the error result",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop ignores RuntimeTaskEvent shadow sink failures",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop auto-selects the security-audit template for security-sensitive tasks",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop runs a scoped repair iteration before completing",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop blocks repeated repair evidence without progress",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop blocks when the max iteration limit leaves repair work outstanding",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop blocks worker or verifier failures when repair budget is exhausted",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop does not complete when an injected self-check leaves validation missing",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop blocks accepted workers with no captured child result",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop normalizes 'forbidden' worker failures into evidence gate reasons",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop normalizes 'error' worker failures into evidence gate reasons",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop records timeout failures from orchestrator failures even when no outcome exists",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits warning-only evidence verifier report for 'permission' without changing blocked status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits warning-only evidence verifier report for 'worker failure' without changing blocked status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits warning-only evidence verifier report for 'timeout' without changing blocked status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits warning-only evidence verifier report for 'unverifiable' without changing blocked status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop keeps legacy repair evidence-gate status when evidence verifier shadow is enabled",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop keeps legacy error status when evidence verifier shadow is enabled before evidence collection",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop extracts structured subagent evidence into files tests risks and followups",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop prefers completion result text over frozen fallback evidence sources",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop falls back to legacy frozen result text when completion delivery is absent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop emits lifecycle evidence gate and role quality summaries for UI consumers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop records evidence gate checkpoint details",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "runTaskLoop records evidence gate reasons in checkpoint review items for recovery",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "subagent tool policy denies mission_loop, task_loop, and team_orchestrate for read-only leaf roles",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task_loop tool runs and returns loop details",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task_loop tool keeps task_loop tool and verifier behavior unchanged when runtime memory persistence is disabled",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-controller.test.ts",
+      "name": "task_loop tool reads status for an existing loop",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer waits for a real check longer than the default background yield window",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer retains actual exec/effect/archive for a ro sandbox adapter fixture",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer retains actual exec/effect/archive for a rw sandbox adapter fixture",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer uses the original rw or readonly project mount and rejects a copied/different candidate",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer runs the frozen program once, reopens its owner rows and invalidates a tampered artifact",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer keeps the digest of the validated archive buffer when its file changes after the read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer rejects a missing or corrupt raw-output archive linked by the check owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer retains verbose output beyond the poll buffer without marking complete archives unavailable",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer keeps execution evidence out of resume and rollback checkpoint selection",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer serializes two same-run requests without replaying the effect",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer keeps a real nonzero check failed and invalidates a changed policy candidate",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer waits for approval and retains the approved foreground execution receipt",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer uses the controller session denial instead of a permissive global policy",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer preserves the existing exec denial policy and produces no process receipt",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer never runs a new program, a stale candidate or an unknown reviewer",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual process verification producer requires full checklist coverage when freezing verification programs",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 frozen execution and session owners rejects a hook changing frozen command before an admitted receipt",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 frozen execution and session owners rejects a hook changing frozen workdir before an admitted receipt",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 frozen execution and session owners keeps the later resume task root after verifying a previous checkpoint",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 effective controller context preserves global provider tool denial before dispatch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 effective controller context preserves agent provider tool denial before dispatch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 effective controller context preserves model provider tool denial before dispatch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 effective controller context preserves override provider tool denial before dispatch",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 effective controller context rejects the unsupported remote target before calling its execution owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 effective controller context binds the spawned workspace and executes in its persisted task cwd",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 effective controller context rejects a changed execution cwd in the same physical session",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual execution source binding retains the exact task worktree in the candidate and invalidates changed task bytes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 actual execution source binding rejects a reviewer pinned only to the workspace when execution uses another tree",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 launch generation fence does not launch after approval replaces the controller session generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "approval policy owner drift rejects actual execution if inline approval reduces session exec policy",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 controller account policy retains the persisted account-specific exec denial",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 pending verification stop owner cancels inline approval before a successful session stop can return",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 persisted sender policy retains channel-scoped sender tool denial during verification",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 persisted Discord policy owner retains actual guild/channel deny rules when constructing verification exec",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 filename and policy channel owners preserves an actual leading BOM filename as source input in both candidate readers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-loop-verification.test.ts",
+      "name": "TF-0672 filename and policy channel owners rejects the changed effective channel at the post-approval execution boundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/versegit-candidate-receipts.test.ts",
+      "name": "candidate receipt v2 host authority recomputes a task-bound fixture receipt from disk and rejects artifact tampering after reopening (not live execution evidence)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/versegit-candidate-receipts.test.ts",
+      "name": "candidate receipt v2 host authority revalidates cached review facts against the same receipt owner on every read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/versegit-candidate-receipts.test.ts",
+      "name": "candidate receipt v2 host authority accepts only a complete v2 binding and rejects each required negative independently",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/versegit-candidate-receipts.test.ts",
+      "name": "candidate receipt v2 host authority rejects a revoked grant that otherwise has coherent receipt evidence",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/versegit-candidate-receipts.test.ts",
+      "name": "real governed candidate receipts preserves a failed receipt before a refreshed candidate continuation passes and cleans every managed process",
+      "status": "skipped"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy classifies common read, write, network, and destructive commands",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy blocks mutating commands in read-only mode",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy treats git config-injection and boundary-escape flags as destructive whatever the subcommand",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy does not let a leading git global flag downgrade a destructive or network subcommand",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy classifies worktree lifecycle commands without letting shell risk lag behind git-api",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy keeps benign git invocations readable when global flags are absent or harmless",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy stops treating a read subcommand as read-only once --output redirects to a file",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy blocks a git --output write in read-only mode",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy does not mistake look-alike git flags for an output redirect",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy requires approval for risky commands in accept-edits mode",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy gates writes to Git repository metadata even inside the workspace",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy does not treat git-adjacent project files as repository metadata",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy detects git metadata through backslash paths and case differences",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy maps workspace modes to OpenClaw exec approval config",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy checks whether a path stays inside the workspace",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy applies workspace modes to file writes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy classifies gateway RPC methods conservatively",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy keeps the dev/test-only gateway RPC guard mechanism with an empty method set",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/workspace-permissions.test.ts",
+      "name": "workspace permission policy covers write decisions across permission modes for files and commands",
+      "status": "passed"
+    }
+  ],
+  "legacySkippedTests": [
+    "real governed candidate receipts preserves a failed receipt before a refreshed candidate continuation passes and cleans every managed process"
+  ],
+  "actualNegative": {
+    "driven_by": "agent",
+    "actor": "codex-a3-electron",
+    "candidate": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "scope": {
+      "workspaceId": "default",
+      "projectId": "default",
+      "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+      "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+    },
+    "ack": {
+      "schema": "runtime-flag-ack/v1",
+      "gatewayGeneration": "1",
+      "childPid": 47548,
+      "launchEnv": {
+        "VERSE_VTOKEN_ASSEMBLY_ENABLED": {
+          "present": false
+        },
+        "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH": {
+          "present": false
+        },
+        "OPENCLAW_DCS_CONTEXT_VIEW_TOOLS": {
+          "present": false
+        },
+        "OPENCLAW_DCS_CONTEXT_TOOLS": {
+          "present": false
+        }
+      },
+      "injectionBudget": {
+        "totalChars": 6000,
+        "precedence": [
+          "knowledge",
+          "session_start",
+          "working_memory",
+          "tool_registry",
+          "cvk_addition",
+          "vtoken",
+          "memory_pilot",
+          "other"
+        ],
+        "dropAlertRatio": 0.1,
+        "counters": {
+          "turns": 0,
+          "killedTurns": 0,
+          "appliedChars": 0,
+          "requestedChars": 0,
+          "droppedChars": 0,
+          "truncatedChars": 0,
+          "dropAlerts": 0
+        },
+        "lastTurn": null
+      },
+      "effectiveFlags": {
+        "runtime.contextBlock.compass.enabled": false,
+        "runtime.contextBlock.role_memory.enabled": false,
+        "runtime.contextBlock.working_memory.enabled": true,
+        "runtime.contextBlock.tool_registry.enabled": true,
+        "runtime.coding.parseOnTouch.enabled": true,
+        "runtime.coding.staleWriteGuard.enabled": false,
+        "runtime.coding.writeJournal.enabled": true,
+        "runtime.coding.autoVerify.enabled": "auto",
+        "runtime.coding.worktree.backend": "inprocess",
+        "runtime.coding.symbolLease.enabled": false,
+        "runtime.coding.symbolLease.mode": "memory",
+        "runtime.coding.patchFlow.default": false,
+        "runtime.coding.sekb.experienceShadow": false,
+        "runtime.coding.sekb.retrievalShadow": false,
+        "runtime.coding.routingMemo.shadow": false,
+        "runtime.vtoken.assembly.enabled": false,
+        "dcs.contextViewTools.enabled": false,
+        "runtime.contextEnhancement.killSwitch": false
+      },
+      "flagAttribution": {
+        "runtime.contextBlock.compass.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.contextBlock.role_memory.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.contextBlock.working_memory.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.contextBlock.tool_registry.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.coding.parseOnTouch.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.coding.staleWriteGuard.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.writeJournal.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.coding.autoVerify.enabled": {
+          "value": "auto",
+          "origin": "default"
+        },
+        "runtime.coding.worktree.backend": {
+          "value": "inprocess",
+          "origin": "default"
+        },
+        "runtime.coding.symbolLease.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.symbolLease.mode": {
+          "value": "memory",
+          "origin": "default"
+        },
+        "runtime.coding.patchFlow.default": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.sekb.experienceShadow": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.sekb.retrievalShadow": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.routingMemo.shadow": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.vtoken.assembly.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "dcs.contextViewTools.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.contextEnhancement.killSwitch": {
+          "value": false,
+          "origin": "default"
+        }
+      },
+      "configSource": {
+        "path": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-user-data-cnDqHM\\openclaw-source-state\\openclaw.json",
+        "exists": true,
+        "origin": "env-override"
+      },
+      "runtimeBuildOrConfigHash": "6808c3e3103fca69f26227e343d65979",
+      "turnEffectProbe": {
+        "wouldChangeTurn": true,
+        "killSwitchEngaged": false,
+        "activeSurfaces": [
+          "runtime.contextBlock.working_memory.enabled",
+          "runtime.contextBlock.tool_registry.enabled"
+        ]
+      },
+      "degradedReason": null,
+      "answeredAt": "2026-11-05T10:00:49.712Z"
+    },
+    "beforeRevision": 0,
+    "oldDigestClaimRejected": true,
+    "checkpoint": {
+      "scope": {
+        "workspaceId": "default",
+        "projectId": "default",
+        "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+        "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+      },
+      "workspaceRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-0jgzAc\\.openclaw\\workspace",
+      "executionWorkdir": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-0jgzAc\\.openclaw\\workspace",
+      "configSha256": "86a5387c9ecd5a074bcf29338d7376cc173e4d52efd6088cfb7e12185345c73b",
+      "checkpoint": null,
+      "checks": []
+    },
+    "rejected": {
+      "success": true,
+      "snapshot": {
+        "schemaVersion": 1,
+        "workspaceId": "default-7505d64a54",
+        "generatedAt": "2026-11-05T10:00:51.260Z",
+        "nodes": [
+          {
+            "title": "Actual A3 completion negative control",
+            "id": "agent-node-7b64695e91dccc9bdf62b4d87c03200e",
+            "kind": "task",
+            "status": "review",
+            "owner": "agent",
+            "metadata": {
+              "automaticCompletion": {
+                "authority": "task-ledger",
+                "state": "pending",
+                "scope": {
+                  "workspaceId": "default",
+                  "projectId": "default",
+                  "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+                  "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+                }
+              }
+            },
+            "createdAt": "2026-11-05T10:00:49.785Z",
+            "updatedAt": "2026-11-05T10:00:51.205Z",
+            "completionDecision": {
+              "operationId": "a3-actual-rejected-completion",
+              "accepted": false,
+              "taskRef": {
+                "owner": "task-ledger",
+                "taskNodeId": "agent-node-7b64695e91dccc9bdf62b4d87c03200e",
+                "scope": {
+                  "workspaceId": "default",
+                  "projectId": "default",
+                  "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+                  "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+                }
+              },
+              "checkpointId": "missing-a3-checkpoint",
+              "checkpointRevision": null,
+              "verificationRunIds": [
+                "missing-a3-check-run"
+              ],
+              "verificationRevisions": [],
+              "candidate": {
+                "source": "dfb877d4bf877b6f5a3d6b7800552a7444cfbd4b",
+                "inputSha256": "77321fe6924ae39534c18373f6b61f5129df7b3f514291c46199eef72e372a71",
+                "configSha256": "86a5387c9ecd5a074bcf29338d7376cc173e4d52efd6088cfb7e12185345c73b",
+                "dirtyDiffSha256": "988d1a53e199b51ca040ff86ab1c0167d25fcb73630200280650ca9bd739118f"
+              },
+              "acceptanceSha256": null,
+              "taskInputSha256": null,
+              "gaps": [
+                "task-loop-owner-unavailable"
+              ],
+              "capturedAt": 1793872851205,
+              "expiresAt": null,
+              "driven_by": "agent"
+            },
+            "parentId": null,
+            "tags": [],
+            "completedAt": null
+          }
+        ],
+        "edges": [],
+        "sessionLinks": [],
+        "rootNodeIds": [
+          "agent-node-7b64695e91dccc9bdf62b4d87c03200e"
+        ],
+        "reviewNodeIds": [
+          "agent-node-7b64695e91dccc9bdf62b4d87c03200e"
+        ],
+        "activeNodeIds": [],
+        "blockedNodeIds": [],
+        "currentGoalId": null,
+        "recentDecisions": [],
+        "eventsCount": 2,
+        "warnings": []
+      },
+      "receipt": {
+        "operationId": "a3-actual-rejected-completion",
+        "requestSha256": "6773cbd9bfcc9ba17e216d8c02fe4e0cae7ad0b56ed29e77e40881b2c8b3efb5",
+        "identity": {
+          "actor": "assistant",
+          "agentId": "main",
+          "scope": {
+            "workspaceId": "default",
+            "projectId": "default",
+            "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+            "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+          },
+          "runtimeGeneration": "1",
+          "runtimeOwner": {
+            "childPid": 47548,
+            "connectedAt": 1793872844295
+          }
+        },
+        "revision": 2,
+        "eventIds": [
+          "completion-5d861ad0d4a646deab91758a44dbb8337b04241104856229850ee605c42966de"
+        ],
+        "replayed": false
+      },
+      "operationDecision": {
+        "operationId": "a3-actual-rejected-completion",
+        "accepted": false,
+        "taskRef": {
+          "owner": "task-ledger",
+          "taskNodeId": "agent-node-7b64695e91dccc9bdf62b4d87c03200e",
+          "scope": {
+            "workspaceId": "default",
+            "projectId": "default",
+            "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+            "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+          }
+        },
+        "checkpointId": "missing-a3-checkpoint",
+        "checkpointRevision": null,
+        "verificationRunIds": [
+          "missing-a3-check-run"
+        ],
+        "verificationRevisions": [],
+        "candidate": {
+          "source": "dfb877d4bf877b6f5a3d6b7800552a7444cfbd4b",
+          "inputSha256": "77321fe6924ae39534c18373f6b61f5129df7b3f514291c46199eef72e372a71",
+          "configSha256": "86a5387c9ecd5a074bcf29338d7376cc173e4d52efd6088cfb7e12185345c73b",
+          "dirtyDiffSha256": "988d1a53e199b51ca040ff86ab1c0167d25fcb73630200280650ca9bd739118f"
+        },
+        "acceptanceSha256": null,
+        "taskInputSha256": null,
+        "gaps": [
+          "task-loop-owner-unavailable"
+        ],
+        "capturedAt": 1793872851205,
+        "expiresAt": null,
+        "driven_by": "agent"
+      },
+      "decisionScope": "operation-history"
+    },
+    "replay": {
+      "success": true,
+      "snapshot": {
+        "schemaVersion": 1,
+        "workspaceId": "default-7505d64a54",
+        "generatedAt": "2026-11-05T10:00:52.554Z",
+        "nodes": [
+          {
+            "title": "Actual A3 completion negative control",
+            "id": "agent-node-7b64695e91dccc9bdf62b4d87c03200e",
+            "kind": "task",
+            "status": "review",
+            "owner": "agent",
+            "metadata": {
+              "automaticCompletion": {
+                "authority": "task-ledger",
+                "state": "pending",
+                "scope": {
+                  "workspaceId": "default",
+                  "projectId": "default",
+                  "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+                  "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+                }
+              }
+            },
+            "createdAt": "2026-11-05T10:00:49.785Z",
+            "updatedAt": "2026-11-05T10:00:51.205Z",
+            "completionDecision": {
+              "operationId": "a3-actual-rejected-completion",
+              "accepted": false,
+              "taskRef": {
+                "owner": "task-ledger",
+                "taskNodeId": "agent-node-7b64695e91dccc9bdf62b4d87c03200e",
+                "scope": {
+                  "workspaceId": "default",
+                  "projectId": "default",
+                  "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+                  "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+                }
+              },
+              "checkpointId": "missing-a3-checkpoint",
+              "checkpointRevision": null,
+              "verificationRunIds": [
+                "missing-a3-check-run"
+              ],
+              "verificationRevisions": [],
+              "candidate": {
+                "source": "dfb877d4bf877b6f5a3d6b7800552a7444cfbd4b",
+                "inputSha256": "77321fe6924ae39534c18373f6b61f5129df7b3f514291c46199eef72e372a71",
+                "configSha256": "86a5387c9ecd5a074bcf29338d7376cc173e4d52efd6088cfb7e12185345c73b",
+                "dirtyDiffSha256": "988d1a53e199b51ca040ff86ab1c0167d25fcb73630200280650ca9bd739118f"
+              },
+              "acceptanceSha256": null,
+              "taskInputSha256": null,
+              "gaps": [
+                "task-loop-owner-unavailable"
+              ],
+              "capturedAt": 1793872851205,
+              "expiresAt": null,
+              "driven_by": "agent"
+            },
+            "parentId": null,
+            "tags": [],
+            "completedAt": null
+          }
+        ],
+        "edges": [],
+        "sessionLinks": [],
+        "rootNodeIds": [
+          "agent-node-7b64695e91dccc9bdf62b4d87c03200e"
+        ],
+        "reviewNodeIds": [
+          "agent-node-7b64695e91dccc9bdf62b4d87c03200e"
+        ],
+        "activeNodeIds": [],
+        "blockedNodeIds": [],
+        "currentGoalId": null,
+        "recentDecisions": [],
+        "eventsCount": 2,
+        "warnings": []
+      },
+      "receipt": {
+        "operationId": "a3-actual-rejected-completion",
+        "requestSha256": "6773cbd9bfcc9ba17e216d8c02fe4e0cae7ad0b56ed29e77e40881b2c8b3efb5",
+        "identity": {
+          "actor": "assistant",
+          "agentId": "main",
+          "scope": {
+            "workspaceId": "default",
+            "projectId": "default",
+            "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+            "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+          },
+          "runtimeGeneration": "1",
+          "runtimeOwner": {
+            "childPid": 47548,
+            "connectedAt": 1793872844295
+          }
+        },
+        "revision": 2,
+        "eventIds": [
+          "completion-5d861ad0d4a646deab91758a44dbb8337b04241104856229850ee605c42966de"
+        ],
+        "replayed": true
+      },
+      "operationDecision": {
+        "operationId": "a3-actual-rejected-completion",
+        "accepted": false,
+        "taskRef": {
+          "owner": "task-ledger",
+          "taskNodeId": "agent-node-7b64695e91dccc9bdf62b4d87c03200e",
+          "scope": {
+            "workspaceId": "default",
+            "projectId": "default",
+            "sessionKey": "agent:main:dashboard:a27d858c-97f6-4f38-af43-a3ff20e1c959",
+            "sessionGeneration": "bc7efe63-4e07-4df6-8abb-5098af1a971e"
+          }
+        },
+        "checkpointId": "missing-a3-checkpoint",
+        "checkpointRevision": null,
+        "verificationRunIds": [
+          "missing-a3-check-run"
+        ],
+        "verificationRevisions": [],
+        "candidate": {
+          "source": "dfb877d4bf877b6f5a3d6b7800552a7444cfbd4b",
+          "inputSha256": "77321fe6924ae39534c18373f6b61f5129df7b3f514291c46199eef72e372a71",
+          "configSha256": "86a5387c9ecd5a074bcf29338d7376cc173e4d52efd6088cfb7e12185345c73b",
+          "dirtyDiffSha256": "988d1a53e199b51ca040ff86ab1c0167d25fcb73630200280650ca9bd739118f"
+        },
+        "acceptanceSha256": null,
+        "taskInputSha256": null,
+        "gaps": [
+          "task-loop-owner-unavailable"
+        ],
+        "capturedAt": 1793872851205,
+        "expiresAt": null,
+        "driven_by": "agent"
+      },
+      "decisionScope": "operation-history"
+    },
+    "ledgerRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-0jgzAc\\.openclaw\\task-ledgers\\workspaces",
+    "acceptanceLimits": [
+      "Negative admission only; this journey does not prove the positive independent verification chain"
+    ]
+  }
+}

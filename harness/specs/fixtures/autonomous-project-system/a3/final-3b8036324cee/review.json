@@ -1,0 +1,422 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:05:07.587Z",
+  "review": {
+    "findings": [],
+    "overall_confidence": 0.72,
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "No actionable introduced defect was identified in the inspected completion admission, provenance, ownership, policy, and executor boundaries. All 86 source hashes and the immutable bundle hash matched the manifest. Review used read-only source and diff inspection; tests were not run. This verdict does not establish clean-candidate acceptance, release readiness, or completion of the broader TF-0664 goal."
+  },
+  "exit": {
+    "driven_by": "agent",
+    "actor": "codex-relay-01a1a510",
+    "status": "completed",
+    "pid": 36460,
+    "workdir": "D:/ClawX-work/autonomy-host-readiness",
+    "command": "C:/Users/27933/AppData/Local/Programs/Python/Python310/python.exe",
+    "args": [
+      "D:/tmp/autonomy-a3-relay-20261104-01a1a510/fixes-r14/review/review-whole-on-disk.py",
+      "--mode",
+      "local",
+      "--no-web-search",
+      "--prompt-file",
+      "D:/tmp/autonomy-a3-relay-20261104-01a1a510/fixes-r14/review/review-notes.md",
+      "--stream-engine-output",
+      "--thinking",
+      "medium",
+      "--json-output",
+      "D:/tmp/autonomy-a3-relay-20261104-01a1a510/fixes-r14/review/autoreview.json"
+    ],
+    "modelOverride": false,
+    "helperEngineAndValidatorUnchanged": true,
+    "inputPresentation": "Complete unchanged bundle on disk; original helper main/schema/engine/changed-path validator",
+    "rustLog": "off (diagnostic only; exposes stdout error masked by harmless stderr warnings)",
+    "startedAt": "2026-11-05T05:38:21.986Z",
+    "exitCode": 0,
+    "error": null,
+    "endedAt": "2026-11-05T06:05:07.915Z",
+    "sourceUnchanged": true,
+    "hasStructuredResult": true
+  },
+  "source": {
+    "head": "3259f57bd86740f2a743a0bf349b3933a8da08cb",
+    "snapshot": [
+      {
+        "file": "docs/modules/multi-agent-and-tasks.md",
+        "sha256": "bb942c5f0ffa690297a0f735e2d8613f6a76d5e1e78173c4cdcc73fc107b0b1f"
+      },
+      {
+        "file": "electron/main/index.ts",
+        "sha256": "c8286c91e9ef0a80888d7464fef875f36eb19340895e43e463533e790fd59790"
+      },
+      {
+        "file": "electron/services/chat-api.ts",
+        "sha256": "c9bc13c72878a3889808e07c51dc0f3159460d1f502234e84098eb796912297f"
+      },
+      {
+        "file": "electron/services/gateway-api.ts",
+        "sha256": "c00c73c9d50a8b0b4345a0338cddc66db8f59096062a682d83e2f945f6e17c35"
+      },
+      {
+        "file": "electron/services/session-activity-api.ts",
+        "sha256": "ad58afa6fb0fe340f7f046c38c11220b99770d0da5eef3fdf1846e734a122cb5"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "315eae5db9470c4bf434b26d6dc35d027c2da10ce06a2df3926dc2699cadc34e"
+      },
+      {
+        "file": "electron/services/task-ledger-actions.ts",
+        "sha256": "1f0dae56e2f58e05dfcc8f3380402e321db157fd0ef1c06620305ee9d46296f0"
+      },
+      {
+        "file": "electron/services/task-ledger-api.ts",
+        "sha256": "897c242d3163f46fb7bec393a6f318ef3810fc01bb957f1ca74e9dd265b698c7"
+      },
+      {
+        "file": "electron/services/task-ledger-completion.ts",
+        "sha256": "81e52f473cac20d7161f3924987e20a882984118b55d5afbb0180523282dfc0b"
+      },
+      {
+        "file": "electron/services/task-ledger-service.ts",
+        "sha256": "81a806cfd97216be55a8c411dc623e5f3978462a1bfda69f6ed676884e0ddce8"
+      },
+      {
+        "file": "electron/services/versegit-receipt-bridge.ts",
+        "sha256": "c4833d4ef3a6028f9f765f5b2373a20085cfb46c27abfce816d15067f6612d58"
+      },
+      {
+        "file": "electron/services/versegit-receipt-evidence.ts",
+        "sha256": "c662d2c10e3d9e950534fcf9211beaed9e0ceb3c57b36cbab68b38b4f6e93fd4"
+      },
+      {
+        "file": "electron/services/workspace-permissions.ts",
+        "sha256": "bf7a046a72020e2ae239bff89732896677e87bdc98e0c435a6b7bb90af013685"
+      },
+      {
+        "file": "electron/utils/sandbox-high-risk-gate.ts",
+        "sha256": "d28ff701075fdaf8f63afefb3578091b5adb98c2dceaea0aa13e8178a657777c"
+      },
+      {
+        "file": "harness/specs/fixtures/autonomous-project-system/a3/closure-audit-80c0fd41f/README.md",
+        "sha256": "e7a1042bd7cff9b155ef1ae0f69855f6f17562db2e70e5e32697d156caf0a1bb"
+      },
+      {
+        "file": "harness/specs/fixtures/autonomous-project-system/a3/closure-audit-80c0fd41f/SHA256SUMS",
+        "sha256": "1902a4860d399e1e2ac656614ef8b22933d8ab1891163986b19dc0ce705d9011"
+      },
+      {
+        "file": "harness/specs/fixtures/autonomous-project-system/a3/closure-audit-80c0fd41f/audit.json",
+        "sha256": "7a52c0885b31756f0207a0b83a9ca50c548673f8b8699796d108e1b5b5a688b7"
+      },
+      {
+        "file": "harness/specs/fixtures/autonomous-project-system/a3/closure-audit-80c0fd41f/counterexample.json",
+        "sha256": "e19c415dc57b08b1b6348cd3532fe05225c69d4078a483988b9314969defb886"
+      },
+      {
+        "file": "harness/specs/fixtures/autonomous-project-system/a3/closure-audit-80c0fd41f/reproduction.json",
+        "sha256": "a8ffc01cd3dbd152705e1979eae6c1bb6b70a59ca756296f1afc5dc056952551"
+      },
+      {
+        "file": "harness/specs/fixtures/autonomous-project-system/a3/closure-audit-80c0fd41f/source-manifest.json",
+        "sha256": "6b7f89e17a2f1b0d52aeca2f03086c10341a20fe2493a1c403afa5b749ed6822"
+      },
+      {
+        "file": "harness/specs/rules/autonomy-task-completion-boundary.md",
+        "sha256": "ea9a6ae56ab5379fe6eb7595ae5c22c9933f3f2ac1f64cfca5c6fd01dc32c451"
+      },
+      {
+        "file": "harness/specs/scenarios/autonomy-task-completion.md",
+        "sha256": "1015ba57e6f9bd9963fa3fa71ccab996fad6005a59a0374f5764d6f40056a284"
+      },
+      {
+        "file": "harness/specs/tasks/autonomy-task-completion.md",
+        "sha256": "c14e22b0cc806bf9d70cc49b5e46ef615b1a10dc41d6c3b1303ee82ce698d8ec"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/agent-tools.ts",
+        "sha256": "c88404b82610c3f0a8df930c7a6f5aa92cf24a5607451fc978a667cd15227532"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-runtime.ts",
+        "sha256": "7c7fe2627646bde8feff91338ec10621b6971beef6aba08fdcce20d33983c155"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-types.ts",
+        "sha256": "d61c19fc76d727d2ca0a551a399e4135b714f08c4ea8471bccbdbab5028759c0"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec.ts",
+        "sha256": "949f58b697ef1e45a3d18ee464763afd1571916d8c397d40d37bf6731e2cbc68"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/goal-wake-helper-host.test.ts",
+        "sha256": "94f83e90d3e9236185bc465c4737a4baf8726a8df79874c564887ce1ff3a2f9a"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/goal-wake-helper-host.ts",
+        "sha256": "8b9d5c9a2577d1d7e176a3bc8cfc9ccb5ad18414268e02fa1f9539d7ca16365a"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/long-task-control/store.ts",
+        "sha256": "c58abe8d5e21309bc62736a081b08627ea08a240b5cf2b386bca1c5e6a26d394"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+        "sha256": "b6818f2ae7146d9edc5c290b8e13167305dc554e1c2ec894757b81f048411b97"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestration-verifier-report.ts",
+        "sha256": "89f55d80336d37c917ab472804a34700b7ee0ed7bac7b8194b594f79b469c45e"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "sha256": "6b4f3776835d3c58abde22990ad57be5086dd3c930f85bdefc4be648ceeaa6ec"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/role-spawn.ts",
+        "sha256": "19de80ac2f91b0758fe078398aaa7696c27e2c09841cf69f93ab554155935a68"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/simple-completion-transport.ts",
+        "sha256": "5d5a84e54e07d86fc7b7b049eb9725ee77144f39cd9c14c07bbc751e2e84c54b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-registry.ts",
+        "sha256": "598f1d496aa6050dac587a4f9d6171e5201efc9dd8d3aff5ff5fdebbf3da19ec"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "sha256": "3cdc81369d9b8567004a80eacab81753e8bfe16492ca380593ec8f1effae0a12"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/task-loop-completion-fence.ts",
+        "sha256": "ee45ac8b06f3337d5f0d97aa92380d5bcbf93fd5b108832564c39e3b50a7fcc3"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/task-loop-completion.ts",
+        "sha256": "9883439cca5733ec5fd9364825f6d6662637f90e05c7e8740aabfe4ca4bb550b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/task-loop-controller.ts",
+        "sha256": "6051f4c1ba2c7d55d1560fc786045a7242c2b53b4d1370842329553b7dca5e33"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/task-loop-verification.ts",
+        "sha256": "241a1e06941bf7ee64c4b0a0302c4b96a4cdcc2d3f4a136e4c57b1ee8163ad09"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/tools/task-loop-tool.ts",
+        "sha256": "e47176973bc5aadca654436072f6962f2def1a26ceda9898cf6136ea69a4d623"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell-runtime.ts",
+        "sha256": "7e5d359eb9beea07fc9d06d7bbc43c58f9554dacfc5bcd421138106490d1cf07"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/aci-client.ts",
+        "sha256": "ccc4e7e6bd04b66185ede6d655404e0c990fe84527cd838c73cf1563b309f09d"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+        "sha256": "dbcd64cd58f4622791d06bfb5bbb8626ee0163e87a5bc61b441774d161352277"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/process-manager.test.ts",
+        "sha256": "84e6196d17a5782b3aeb8ff35a05ce51724eeccaba11679acd2f7044d58b2510"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+        "sha256": "3863aa61fc76e5a016349d94c2b6f470236c82084d2618b360d2a5ee82aaf08c"
+      },
+      {
+        "file": "openclaw_runtime/src/config/runtime-snapshot.ts",
+        "sha256": "09013a77dcf9b8676f1813f6d5f38441f3354eb5d81b0f3e156a1ee2cd1dbc7f"
+      },
+      {
+        "file": "openclaw_runtime/src/config/sessions/metadata.ts",
+        "sha256": "1c30c898f2b3e25d76ad049143bd00c9b237f2996bb0adef92297c330eb5c2f2"
+      },
+      {
+        "file": "openclaw_runtime/src/config/sessions/types.ts",
+        "sha256": "7e5ccf4d805705cfa821cd9680eae9f6073778c381184ee2c5243e1a3f5fb9e2"
+      },
+      {
+        "file": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+        "sha256": "661893e50468436c41576feec3f28b141c839f95556971d3224b0f890ed8684e"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+        "sha256": "be75ebbab05ade3b252bab21e85ef07863c1ab02c417549cb092f037e2a76119"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods.ts",
+        "sha256": "92d06adeeb008eeacb892abf72dcc96692fbe88724bec25c961a9c867494351a"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "sha256": "48df91fe3b5aa0b7a696e70299f3776437a7106d9420bb04c32f7cbf43f7e020"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+        "sha256": "e05e2bd67c8a5b1bde3d3fe946ccb28a81e41a939bb6867733bdb26c77b5631b"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-reset-service.stop.test.ts",
+        "sha256": "b013be0d47a5d4a99a9c00976b6d67fab7b8d7c2798bb19f8eeba7a9497a6f2e"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-reset-service.ts",
+        "sha256": "7bbcb8783e635b10c0438c89a8283ab384dae78e941146bdc52a27c8afc9e009"
+      },
+      {
+        "file": "openclaw_runtime/src/process/spawn-utils.ts",
+        "sha256": "f2fe9bd377815b69951be689a9a3a75120ffca652e4b76907abfb1f8d31fea1e"
+      },
+      {
+        "file": "openclaw_runtime/src/process/supervisor/adapters/child.ts",
+        "sha256": "b45da72e8e8cb79d9f1388a0054660a806a939228b407155caaa7d0aefbc708c"
+      },
+      {
+        "file": "openclaw_runtime/src/process/supervisor/adapters/pty.ts",
+        "sha256": "72474ffacd890a4edbbb9753bac51bf00213cfc0913ea73b76a2d1515729745f"
+      },
+      {
+        "file": "openclaw_runtime/src/process/supervisor/supervisor.ts",
+        "sha256": "aef9dfcde39de6d266909902acd74ecbc4310db3bb8dac7e0afb197e34b3ac2d"
+      },
+      {
+        "file": "openclaw_runtime/src/process/supervisor/types.ts",
+        "sha256": "ff34ae94a87e4a4975ce5b2bedc60dbf0a3c9f48e86c739dbaa9c9e703bbd7db"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "1a77a03c59df45a3bc89cb5d17232c8cad8a23fb1c52b9e8c39ea7c8537e70b1"
+      },
+      {
+        "file": "shared/task-ledger-artifact.ts",
+        "sha256": "e055b1a6ed726f2224e4eb4d6a9f4cbda9eaa543b07c9759dc4fda0494e58e6e"
+      },
+      {
+        "file": "shared/task-ledger-candidate.ts",
+        "sha256": "a5c02dfc3fbc1beec69ede5b629fe0664b387bcce67310c65eab21531f3afba6"
+      },
+      {
+        "file": "shared/task-ledger-completion.ts",
+        "sha256": "77c7f22d589f4bb8524a02958ca033993028f8b5aa49058f1c2a5a818952e76b"
+      },
+      {
+        "file": "shared/task-ledger-journal-lock.ts",
+        "sha256": "70bd3e06ffaefd5460d251db43e9897c7bb3144db97e49d11fc92deb1434775b"
+      },
+      {
+        "file": "shared/task-ledger-process.ts",
+        "sha256": "ea75255ce0d01edbd813629552ae91ee5e098095e9f422398fe9648af41432ec"
+      },
+      {
+        "file": "shared/types/task-ledger.ts",
+        "sha256": "d1aba6a0790a94ca9453ed6c2d00a9ab68962a0333ef8c33477602024281d0ce"
+      },
+      {
+        "file": "src/lib/host-api.ts",
+        "sha256": "8ec4b7f5883f2cf29d63bd6a85d3b98eaedc11923cbdfb728f736af35e6bf295"
+      },
+      {
+        "file": "tests/e2e/autonomy-task-completion.spec.ts",
+        "sha256": "1d4a469616870a4e69308960627b11f0c56c15f8e013015965a4c786d9df905b"
+      },
+      {
+        "file": "tests/unit/autonomy-candidate-input.test.ts",
+        "sha256": "c94eeb9eada5945baf8904c5c68ac685c24055b22e178cdaf4857fbb0c95b981"
+      },
+      {
+        "file": "tests/unit/autonomy-executor-launch.test.ts",
+        "sha256": "65739029e38aef27d58f49d487a1c34f442495193abe9a43937fd72483aa083a"
+      },
+      {
+        "file": "tests/unit/autonomy-simple-completion.test.ts",
+        "sha256": "b15d6f7b8a3fa1ae984fff00f7b3d7eafcb23aba672422c4589ebb72bc42ad5d"
+      },
+      {
+        "file": "tests/unit/autonomy-task-actions.test.ts",
+        "sha256": "c093489de0b51a75c606306e8ec6d8ba3dfe236fab1d36bb2e8fd01bde214456"
+      },
+      {
+        "file": "tests/unit/autonomy-task-completion-admission.test.ts",
+        "sha256": "eb204bb19a770160403a2347beacdbdd0f7cfd0c1e1da9b81948a184529bcfcb"
+      },
+      {
+        "file": "tests/unit/autonomy-task-completion-owner.test.ts",
+        "sha256": "acaa53c35e4ef328c5eb8842f65a4f21f05791e7482cbab94340db33aa9cce53"
+      },
+      {
+        "file": "tests/unit/autonomy-task-completion.test.ts",
+        "sha256": "af4f1faaeb7b6590074f4bee3e4da7449df03d24b92d72eaba392c8e074ed95f"
+      },
+      {
+        "file": "tests/unit/gateway-permissions-api.test.ts",
+        "sha256": "5c29492f47d8626e80e53c0cbdd39f82e45493a1b81e50e13ab58f19bae4ffba"
+      },
+      {
+        "file": "tests/unit/host-api-facade.test.ts",
+        "sha256": "6865c37fc2e7326a1a30662436d6d106bcd2c9f30944152843c1c394f7ced919"
+      },
+      {
+        "file": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+        "sha256": "9cbdf356d7245f049da7094b12281dfb3c1dbd9313b36910cf3e18b5d3921c23"
+      },
+      {
+        "file": "tests/unit/task-ledger-process.test.ts",
+        "sha256": "f8fe081a0bbbae2a90512375d941965e0ada8585f8863ecd219ed87b63c479f3"
+      },
+      {
+        "file": "tests/unit/task-ledger-service.test.ts",
+        "sha256": "8f1b6e75b5793d2b6f5a7638b16eb5be149a9c2ebb74cf5a409a8ce937a73cd8"
+      },
+      {
+        "file": "tests/unit/task-loop-verification.test.ts",
+        "sha256": "b314c66d1b161943e25f291ce0520297a7f77b056b0d45864dda8ba684e803e6"
+      },
+      {
+        "file": "tests/unit/versegit-candidate-receipts.test.ts",
+        "sha256": "2f447cee8054a3d521d19fe270d83b8888f66e63bd03f80937d87812664b07f0"
+      },
+      {
+        "file": "tests/unit/workspace-permissions.test.ts",
+        "sha256": "3bae3858b8e4bb8f6e5144adee842126f0385fcf87026573f5decf7c4191b7a2"
+      }
+    ]
+  },
+  "invocation": {
+    "driven_by": "agent",
+    "actor": "codex-relay-01a1a510",
+    "status": "running",
+    "pid": 36460,
+    "workdir": "D:/ClawX-work/autonomy-host-readiness",
+    "command": "C:/Users/27933/AppData/Local/Programs/Python/Python310/python.exe",
+    "args": [
+      "D:/tmp/autonomy-a3-relay-20261104-01a1a510/fixes-r14/review/review-whole-on-disk.py",
+      "--mode",
+      "local",
+      "--no-web-search",
+      "--prompt-file",
+      "D:/tmp/autonomy-a3-relay-20261104-01a1a510/fixes-r14/review/review-notes.md",
+      "--stream-engine-output",
+      "--thinking",
+      "medium",
+      "--json-output",
+      "D:/tmp/autonomy-a3-relay-20261104-01a1a510/fixes-r14/review/autoreview.json"
+    ],
+    "modelOverride": false,
+    "helperEngineAndValidatorUnchanged": true,
+    "inputPresentation": "Complete unchanged bundle on disk; original helper main/schema/engine/changed-path validator",
+    "rustLog": "off (diagnostic only; exposes stdout error masked by harmless stderr warnings)",
+    "startedAt": "2026-11-05T05:38:21.986Z"
+  }
+}

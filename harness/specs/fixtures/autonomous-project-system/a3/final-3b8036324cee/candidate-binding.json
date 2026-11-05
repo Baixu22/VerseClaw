@@ -1,0 +1,194 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:05:07.587Z",
+  "businessCandidate": {
+    "source": "274f9551e72f49625922e223208d7a1321f049d4",
+    "inputSha256": "33030c9d1c7667409c8d6e509c5c5c8cf687bc8d330c6ea339eaa2118c13e389",
+    "configSha256": "f2690c335998cf029ac9c178d5ac241fadaa23b2853a6977b1ca1b43ce5aa7cc",
+    "dirtyDiffSha256": "2df041a44f825532fc46ad6d2b55ff4a5eb78dab2bf833bc2465be77cc4ea089"
+  },
+  "taskRef": {
+    "owner": "task-ledger",
+    "taskNodeId": "a3-actual-positive-task",
+    "scope": {
+      "workspaceId": "default",
+      "projectId": "default",
+      "sessionKey": "agent:main:dashboard:3b73be95-72da-4b7c-96ac-da1ef20eb236",
+      "sessionGeneration": "b9f8687b-a390-418f-9723-fe1e2de04f98"
+    }
+  },
+  "checkpoint": {
+    "owner": "task-loop",
+    "checkpointId": "task-loop:loop_8d664cb0-2e05-4730-8e31-f99576736b87:iteration:1:complete",
+    "loopRunId": "loop_8d664cb0-2e05-4730-8e31-f99576736b87",
+    "taskRef": {
+      "owner": "task-ledger",
+      "taskNodeId": "a3-actual-positive-task",
+      "scope": {
+        "workspaceId": "default",
+        "projectId": "default",
+        "sessionKey": "agent:main:dashboard:3b73be95-72da-4b7c-96ac-da1ef20eb236",
+        "sessionGeneration": "b9f8687b-a390-418f-9723-fe1e2de04f98"
+      }
+    },
+    "status": "complete",
+    "evidenceGate": "pass",
+    "selfCheckDecision": "complete",
+    "candidate": {
+      "source": "274f9551e72f49625922e223208d7a1321f049d4",
+      "inputSha256": "33030c9d1c7667409c8d6e509c5c5c8cf687bc8d330c6ea339eaa2118c13e389",
+      "configSha256": "f2690c335998cf029ac9c178d5ac241fadaa23b2853a6977b1ca1b43ce5aa7cc",
+      "dirtyDiffSha256": "2df041a44f825532fc46ad6d2b55ff4a5eb78dab2bf833bc2465be77cc4ea089"
+    },
+    "reviewSource": {
+      "state": "pinned",
+      "workspaceRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source",
+      "executionWorkdir": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source",
+      "candidate": {
+        "source": "274f9551e72f49625922e223208d7a1321f049d4",
+        "inputSha256": "33030c9d1c7667409c8d6e509c5c5c8cf687bc8d330c6ea339eaa2118c13e389",
+        "configSha256": "f2690c335998cf029ac9c178d5ac241fadaa23b2853a6977b1ca1b43ce5aa7cc",
+        "dirtyDiffSha256": "2df041a44f825532fc46ad6d2b55ff4a5eb78dab2bf833bc2465be77cc4ea089"
+      },
+      "capturedAt": 1793872968223
+    },
+    "acceptanceSha256": "31e346264c33f3ef3fa5f267d8d1c953db80b0abf6a9e233d1422aa5d871cc7e",
+    "taskInputSha256": "45fbd41bb137b541651cca536bd26066841da4de250a129643020d6b9213d2f0",
+    "requiredCheckIds": [
+      "acceptance:03ba7259be5d1e0289dd000b29f932f5d4763a60e6019c343c2617570c4def75"
+    ],
+    "workerRunIds": [
+      "6079cffe-058b-4dc9-851f-e40b652311da",
+      "b5777368-7015-4fba-8a35-ed1a30895e2a",
+      "caf6044e-9fc0-4388-9ca5-63dc48784abd"
+    ],
+    "verificationChecks": [
+      {
+        "checkId": "acceptance:03ba7259be5d1e0289dd000b29f932f5d4763a60e6019c343c2617570c4def75",
+        "command": "& 'C:\\Program Files\\nodejs\\node.exe' verify.cjs; exit $LASTEXITCODE"
+      }
+    ],
+    "executionWorkdir": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source",
+    "verifierRunId": "d252c283-d431-48a5-9ba9-f37458e87b81",
+    "reviewer": {
+      "agentId": "main",
+      "runId": "d252c283-d431-48a5-9ba9-f37458e87b81",
+      "sessionKey": "agent:main:subagent:4869e09d-e667-4421-a120-ad148c5fbd80"
+    },
+    "capturedAt": 1793872975434,
+    "expiresAt": 1793876575434,
+    "ownerRevision": "9a2bb8abdfae04d6ea9ec0fb7effe453cc39811fbe6a069b0afbb480a358bff7"
+  },
+  "verification": {
+    "receipt": {
+      "owner": "task-loop-exec-effect",
+      "receiptId": "efx_dfdacd1d-3111-4244-a385-376e8afab8ec",
+      "ownerRevision": "9d61ff8e359773a703e2922d369531faab4261ea82fae88d4aacb25b6db6b79b",
+      "verificationRunId": "a3-actual-positive-check",
+      "checkpointId": "task-loop:loop_8d664cb0-2e05-4730-8e31-f99576736b87:iteration:1:complete",
+      "checkpointRevision": "9a2bb8abdfae04d6ea9ec0fb7effe453cc39811fbe6a069b0afbb480a358bff7",
+      "taskRef": {
+        "owner": "task-ledger",
+        "taskNodeId": "a3-actual-positive-task",
+        "scope": {
+          "workspaceId": "default",
+          "projectId": "default",
+          "sessionKey": "agent:main:dashboard:3b73be95-72da-4b7c-96ac-da1ef20eb236",
+          "sessionGeneration": "b9f8687b-a390-418f-9723-fe1e2de04f98"
+        }
+      },
+      "candidate": {
+        "source": "274f9551e72f49625922e223208d7a1321f049d4",
+        "inputSha256": "33030c9d1c7667409c8d6e509c5c5c8cf687bc8d330c6ea339eaa2118c13e389",
+        "configSha256": "f2690c335998cf029ac9c178d5ac241fadaa23b2853a6977b1ca1b43ce5aa7cc",
+        "dirtyDiffSha256": "2df041a44f825532fc46ad6d2b55ff4a5eb78dab2bf833bc2465be77cc4ea089"
+      },
+      "acceptanceSha256": "31e346264c33f3ef3fa5f267d8d1c953db80b0abf6a9e233d1422aa5d871cc7e",
+      "checkId": "acceptance:03ba7259be5d1e0289dd000b29f932f5d4763a60e6019c343c2617570c4def75",
+      "reviewer": {
+        "agentId": "main",
+        "runId": "d252c283-d431-48a5-9ba9-f37458e87b81",
+        "sessionKey": "agent:main:subagent:4869e09d-e667-4421-a120-ad148c5fbd80"
+      },
+      "status": "verified",
+      "exitCode": 0,
+      "artifactRefs": [
+        {
+          "owner": "context-archive",
+          "ref": "context-archive://b9f8687b-a390-418f-9723-fe1e2de04f98/b9f8687b-a390-418f-9723-fe1e2de04f98-observation-task-check-197a201e32762d1e4d1e21173169fcd36c95801f845c1f19e0c717d46bd8080a-c97340aa1a9c07dc.context-archive.json",
+          "path": "file:///D:/ClawX/artifacts/runs/verse-claw-e2e-run-uvBbZ2/verse-claw-e2e-home-4QmirS/.openclaw/context-archives/b9f8687b-a390-418f-9723-fe1e2de04f98/b9f8687b-a390-418f-9723-fe1e2de04f98-observation-task-check-197a201e32762d1e4d1e21173169fcd36c95801f845c1f19e0c717d46bd8080a-c97340aa1a9c07dc.context-archive.json",
+          "sha256": "030bb66d9fab4b60955f66905ddd42396cfc2bc0cd005b872b336dc7a7a4a705",
+          "verified": true
+        },
+        {
+          "owner": "context-archive",
+          "ref": "context-archive://b9f8687b-a390-418f-9723-fe1e2de04f98/b9f8687b-a390-418f-9723-fe1e2de04f98-observation-wild-reef-c3eb371cf4f4f726.context-archive.json",
+          "path": "file:///D:/ClawX/artifacts/runs/verse-claw-e2e-run-uvBbZ2/verse-claw-e2e-home-4QmirS/.openclaw/context-archives/b9f8687b-a390-418f-9723-fe1e2de04f98/b9f8687b-a390-418f-9723-fe1e2de04f98-observation-wild-reef-c3eb371cf4f4f726.context-archive.json",
+          "sha256": "84a1d8ec0d6109af9637476d15ff551a0005573bea15dc84b8388f42fbad54e9",
+          "verified": true
+        }
+      ],
+      "capturedAt": 1793872977556,
+      "expiresAt": 1793876575434
+    },
+    "replayed": false,
+    "state": "completed"
+  },
+  "artifact": {
+    "path": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\.openclaw\\context-archives\\b9f8687b-a390-418f-9723-fe1e2de04f98\\b9f8687b-a390-418f-9723-fe1e2de04f98-observation-task-check-197a201e32762d1e4d1e21173169fcd36c95801f845c1f19e0c717d46bd8080a-c97340aa1a9c07dc.context-archive.json",
+    "sha256": "030bb66d9fab4b60955f66905ddd42396cfc2bc0cd005b872b336dc7a7a4a705",
+    "bytes": 1756,
+    "record": {
+      "handle": {
+        "byteLength": 1232,
+        "checksum": "sha256:c97340aa1a9c07dc81fc60e16aa83c8f9e439ddee582d653960ecaf8bfa8dce9",
+        "createdAt": "1970-01-01T00:00:00.000Z",
+        "source": {
+          "label": "task-verification-exec",
+          "sessionId": "b9f8687b-a390-418f-9723-fe1e2de04f98",
+          "type": "tool_call"
+        },
+        "uri": "context-archive://b9f8687b-a390-418f-9723-fe1e2de04f98/b9f8687b-a390-418f-9723-fe1e2de04f98-observation-task-check-197a201e32762d1e4d1e21173169fcd36c95801f845c1f19e0c717d46bd8080a-c97340aa1a9c07dc.context-archive.json"
+      },
+      "payload": {
+        "commandSha256": "180e2c8f7e2443aa0e4a5892116b6fd437f53a12431c923a6fa1f0dfed474748",
+        "durationMs": 14510,
+        "executionWorkdir": "d:\\clawx\\artifacts\\runs\\verse-claw-e2e-run-uvbbz2\\verse-claw-e2e-home-4qmirs\\a3-positive-source",
+        "executor": {
+          "agentId": "main",
+          "modelId": "mock-coder",
+          "modelProvider": "openai",
+          "sessionGeneration": "b9f8687b-a390-418f-9723-fe1e2de04f98",
+          "sessionKey": "agent:main:dashboard:3b73be95-72da-4b7c-96ac-da1ef20eb236"
+        },
+        "exitCode": 0,
+        "lifecycleOwner": "native",
+        "outcome": "completed",
+        "output": "A3 candidate contract actually verified\n(node:34624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)",
+        "pid": 19816,
+        "rawOutput": {
+          "byteLength": 204,
+          "checksum": "sha256:c3eb371cf4f4f726cd631277bfe81aa88425dd74e72cbbd45f96b1fab14a3e2d",
+          "createdAt": "1970-01-01T00:00:00.000Z",
+          "source": {
+            "label": "native-output",
+            "sessionId": "b9f8687b-a390-418f-9723-fe1e2de04f98",
+            "type": "tool_call"
+          },
+          "uri": "context-archive://b9f8687b-a390-418f-9723-fe1e2de04f98/b9f8687b-a390-418f-9723-fe1e2de04f98-observation-wild-reef-c3eb371cf4f4f726.context-archive.json"
+        },
+        "runId": "a3-actual-positive-check",
+        "schema": "TaskLoopCheckOutput/v1",
+        "timedOut": false
+      },
+      "schemaVersion": 1
+    }
+  },
+  "implementationSourceIsDistinctFromBusinessFixture": true
+}

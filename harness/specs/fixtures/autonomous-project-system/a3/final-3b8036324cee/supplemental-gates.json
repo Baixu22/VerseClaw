@@ -1,0 +1,40 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": "3b8036324cee92b9233c4d4f29437299074448a8",
+  "diffCheck": {
+    "command": "git diff --check 3259f57bd86740f2a743a0bf349b3933a8da08cb..3b8036324cee92b9233c4d4f29437299074448a8",
+    "exitCode": 0,
+    "output": "",
+    "toolChunkId": "aa7903"
+  },
+  "repositoryArtifacts": {
+    "driven_by": "agent",
+    "actor": "codex-relay-01a1ab0d",
+    "candidate": {
+      "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+      "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+      "dirty": false
+    },
+    "command": "node scripts/check-repository-artifacts.mjs",
+    "exitCode": 1,
+    "error": null,
+    "sourceCommitted": true,
+    "output": "Spec requires local or missing documentation: harness/specs/tasks/architecture-skeleton-admission-regression.md: docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md\n",
+    "recordedAt": "2026-11-05T10:05:02.775Z",
+    "inheritedOnly": true,
+    "issues": [
+      "Spec requires local or missing documentation: harness/specs/tasks/architecture-skeleton-admission-regression.md: docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md"
+    ],
+    "baseline": "D:/tmp/autonomy-a3-r46-baseline/report.json"
+  },
+  "readmeReview": {
+    "paths": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "changesRequired": false,
+    "reason": "Existing README inventory points to the module; that module receives a post-validation evidence link."
+  }
+}

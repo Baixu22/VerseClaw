@@ -1,0 +1,84 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:05:07.587Z",
+  "task": "TF-0672",
+  "fullObjective": "TF-0664",
+  "verdict": "accepted",
+  "nodeClosureAllowed": true,
+  "requirements": [
+    "骨架层：L3 完成权威 + L5 证据失效",
+    "受控写集/复用点：electron/services/task-ledger-api.ts；electron/services/task-ledger-service.ts；electron/main/index.ts；shared/types/identity-scope.ts；openclaw_runtime/src/agents/task-loop-controller.ts",
+    "只对自动业务任务完成路径施加completion claim；不盲目禁止turn check的done或重写旧手工状态。",
+    "Task Loop现有gate结果仍由既有owner生成；提交侧核验可信来源、候选版本、验收清单和证据引用。",
+    "证据绑定source/input/config/dirty-diff、run/effect、reviewer和有效期；整合后候选变化使相关验收失效。",
+    "验证决定/CompletionDecision引用既有TaskLoop、任务验证与效果owner的记录，绑定taskRef、verified candidate digest、check receipts、reviewer和owner revision；不新增完成裁判服务或独立decision store。"
+  ],
+  "acceptance": [
+    {
+      "index": 0,
+      "text": "complete+repair/blocked/unavailable不能产生自动验收done；单纯accepted/exit0/text也不能。",
+      "status": "verified",
+      "evidence": [
+        "negative-verdicts.json",
+        "completion-claims.json"
+      ]
+    },
+    {
+      "index": 1,
+      "text": "证据缺失、篡改、来源过期、错误任务、旧generation被拒；验收成功可从磁盘和owner事件重算。",
+      "status": "verified",
+      "evidence": [
+        "candidate-binding.json",
+        "completion-claims.json"
+      ]
+    },
+    {
+      "index": 2,
+      "text": "保留TaskLedger任务事实与Workboard/TaskLoop调度状态分离；一般编辑不被伪装成独立验证。",
+      "status": "verified",
+      "evidence": [
+        "negative-verdicts.json",
+        "review.json"
+      ]
+    },
+    {
+      "index": 3,
+      "text": "负例：模型自证passed；旧分支证据验收新合并候选；伪造verifier；缺失artifact",
+      "status": "verified",
+      "evidence": [
+        "negative-verdicts.json",
+        "completion-claims.json"
+      ]
+    },
+    {
+      "index": 4,
+      "text": "证据包含driven_by:agent、真实actor、source/candidate/输入配置版本、命令/exit/count、artifact hash、负例与未测范围；不以stdout或模型自述收口。",
+      "status": "verified",
+      "evidence": [
+        "source-inputs.json",
+        "gates.json",
+        "source-projection.json",
+        "review.json",
+        "credential-scan.json",
+        "SHA256SUMS",
+        "raw-provenance.json",
+        "supplemental-gates.json",
+        "delivery-scope.json"
+      ]
+    }
+  ],
+  "limits": [
+    "A3 owner completion only; TF0664 remains incomplete, no joint-system GA claim.",
+    "All interactions agent-driven; scripted LLM scenario controls prove wiring, not model intelligence.",
+    "Sandbox adapter uses real child/exec/effect/archive but Docker isolation and remote sandbox candidates are not measured.",
+    "One pre-existing native VS test remains skipped for missing binary; actual TaskLoop native check/effect/archive positive path passed.",
+    "Installed dependencies reused; no fresh dependency install, non-Windows execution, public release, soak, power-loss or globally green CI claim.",
+    "Inherited global AgentDev performance and runtime-core baseline diagnostics remain; A2 retained repository-residuals.json documents them."
+  ]
+}

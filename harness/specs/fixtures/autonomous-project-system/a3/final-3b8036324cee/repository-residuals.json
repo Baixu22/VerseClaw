@@ -1,0 +1,40 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:05:07.587Z",
+  "currentArtifact": {
+    "driven_by": "agent",
+    "actor": "codex-relay-01a1ab0d",
+    "candidate": {
+      "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+      "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+      "dirty": false
+    },
+    "command": "node scripts/check-repository-artifacts.mjs",
+    "exitCode": 1,
+    "error": null,
+    "sourceCommitted": true,
+    "output": "Spec requires local or missing documentation: harness/specs/tasks/architecture-skeleton-admission-regression.md: docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md\n",
+    "recordedAt": "2026-11-05T10:05:02.775Z"
+  },
+  "baselineArtifact": {
+    "driven_by": "agent",
+    "actor": "codex-a3-baseline-audit",
+    "sourceHead": "3259f57bd86740f2a743a0bf349b3933a8da08cb",
+    "baseline": "D:/tmp/autonomy-a3-r46-baseline/source",
+    "checkerSha256": "6632157b159038786eb4a827e6f9a159a49d098c0f6f79ae6edce5cd7fa2820c",
+    "checkerMatchesParent": true,
+    "readOnlyGitMetadata": true,
+    "exitCode": 1,
+    "error": null,
+    "currentRun": "D:/tmp/autonomy-a3-r42/repository-artifacts-exit.json",
+    "output": "Spec requires local or missing documentation: harness/specs/tasks/architecture-skeleton-admission-regression.md: docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md\n",
+    "recordedAt": "2026-11-03T20:30:23.048Z"
+  },
+  "scope": "Inherited whole-repository missing documentation; not an A3 regression or a passed global gate. A2 global AgentDev/runtime-core residuals remain disclosed."
+}

@@ -1,0 +1,22 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:08:09.746Z",
+  "validatedSourceCommit": "3b8036324cee92b9233c4d4f29437299074448a8",
+  "unchangedReviewedFiles": 85,
+  "postValidationSourceChanges": [
+    {
+      "file": "docs/modules/multi-agent-and-tasks.md",
+      "before": "bb942c5f0ffa690297a0f735e2d8613f6a76d5e1e78173c4cdcc73fc107b0b1f",
+      "after": "b9cd501150cf1057fd4dd1946909cb73138fda8bed9b0359ca583a1cb9ca8f86"
+    }
+  ],
+  "postValidationRuntimeChanges": [],
+  "additionalPaths": "harness/specs/fixtures/autonomous-project-system/a3/final-3b8036324cee/",
+  "reason": "After the exact clean candidate passed, replace the obsolete in-development module note with its measured evidence link. All runtime source remains byte-identical. Evidence and documentation are a separate follow-up commit; no prior candidate report is re-signed as a validation of that later commit."
+}

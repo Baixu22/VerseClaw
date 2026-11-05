@@ -1,0 +1,949 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-relay-01a1ab0d",
+  "candidate": {
+    "commit": "3b8036324cee92b9233c4d4f29437299074448a8",
+    "tree": "9ee46391a35f3c291c21296d6df7a69ced015f39",
+    "dirty": false
+  },
+  "generatedAt": "2026-11-05T10:05:57.314Z",
+  "archive": "D:\\ClawX-work\\autonomy-host-readiness\\artifacts\\runs\\autonomy-a3-private-3b8036324cee-01a1ab0d",
+  "businessRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source",
+  "processRoot": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2",
+  "files": [
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\.openclaw\\context-archives\\b9f8687b-a390-418f-9723-fe1e2de04f98\\b9f8687b-a390-418f-9723-fe1e2de04f98-observation-task-check-197a201e32762d1e4d1e21173169fcd36c95801f845c1f19e0c717d46bd8080a-c97340aa1a9c07dc.context-archive.json",
+      "archivePath": "raw/0000-b9f8687b-a390-418f-9723-fe1e2de04f98-observation-task-check-197a201e32762d1e4d1e21173169fcd36c95801f845c1f19e0c717d46bd8080a-c97340aa1a9c07dc.context-archive.json",
+      "bytes": 1756,
+      "sha256": "030bb66d9fab4b60955f66905ddd42396cfc2bc0cd005b872b336dc7a7a4a705"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\events.jsonl",
+      "archivePath": "raw/0001-events.jsonl",
+      "bytes": 44261,
+      "sha256": "e5fc5919f44be1eba84b55ac0ccdfa86cb38cc3001cb8669c444fff9ea42eee2"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\COMMIT_EDITMSG",
+      "archivePath": "raw/0002-COMMIT_EDITMSG",
+      "bytes": 31,
+      "sha256": "a031a653eebc8b7f7193400ce43b3bbb8533467beb157d407d2354938cbc0354"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\HEAD",
+      "archivePath": "raw/0003-HEAD",
+      "bytes": 21,
+      "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\config",
+      "archivePath": "raw/0004-config",
+      "bytes": 130,
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\description",
+      "archivePath": "raw/0005-description",
+      "bytes": 73,
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\applypatch-msg.sample",
+      "archivePath": "raw/0006-applypatch-msg.sample",
+      "bytes": 478,
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\commit-msg.sample",
+      "archivePath": "raw/0007-commit-msg.sample",
+      "bytes": 896,
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\fsmonitor-watchman.sample",
+      "archivePath": "raw/0008-fsmonitor-watchman.sample",
+      "bytes": 4726,
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\post-update.sample",
+      "archivePath": "raw/0009-post-update.sample",
+      "bytes": 189,
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\pre-applypatch.sample",
+      "archivePath": "raw/0010-pre-applypatch.sample",
+      "bytes": 424,
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\pre-commit.sample",
+      "archivePath": "raw/0011-pre-commit.sample",
+      "bytes": 1649,
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\pre-merge-commit.sample",
+      "archivePath": "raw/0012-pre-merge-commit.sample",
+      "bytes": 416,
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\pre-push.sample",
+      "archivePath": "raw/0013-pre-push.sample",
+      "bytes": 1374,
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\pre-rebase.sample",
+      "archivePath": "raw/0014-pre-rebase.sample",
+      "bytes": 4898,
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\pre-receive.sample",
+      "archivePath": "raw/0015-pre-receive.sample",
+      "bytes": 544,
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\prepare-commit-msg.sample",
+      "archivePath": "raw/0016-prepare-commit-msg.sample",
+      "bytes": 1492,
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\push-to-checkout.sample",
+      "archivePath": "raw/0017-push-to-checkout.sample",
+      "bytes": 2783,
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\sendemail-validate.sample",
+      "archivePath": "raw/0018-sendemail-validate.sample",
+      "bytes": 2308,
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\hooks\\update.sample",
+      "archivePath": "raw/0019-update.sample",
+      "bytes": 3650,
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\index",
+      "archivePath": "raw/0020-index",
+      "bytes": 305,
+      "sha256": "53c6348f6f9cca369642be48ded7bb465916fc73dfce5935da2d4381812f98be"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\info\\exclude",
+      "archivePath": "raw/0021-exclude",
+      "bytes": 240,
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\logs\\HEAD",
+      "archivePath": "raw/0022-HEAD",
+      "bytes": 178,
+      "sha256": "2e228ffa29b177a4a5aa2637776dff2759d9c25bf773e3906db74d59d5580173"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\logs\\refs\\heads\\main",
+      "archivePath": "raw/0023-main",
+      "bytes": 178,
+      "sha256": "2e228ffa29b177a4a5aa2637776dff2759d9c25bf773e3906db74d59d5580173"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\objects\\27\\4f9551e72f49625922e223208d7a1321f049d4",
+      "archivePath": "raw/0024-4f9551e72f49625922e223208d7a1321f049d4",
+      "bytes": 139,
+      "sha256": "61552a72789d14dbd5e91897159cb73b8c44e399060afc9afc9e2af11ede65d1"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\objects\\65\\b65cc1e504925956298dd9c5d5af928b7063a6",
+      "archivePath": "raw/0025-b65cc1e504925956298dd9c5d5af928b7063a6",
+      "bytes": 37,
+      "sha256": "179ab2fdd973639d4b36b2de6948e73bbf045fdd92b74c99662cfcc2dea707c9"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\objects\\66\\2651590622f44adb61cb32fd4c191053c7995a",
+      "archivePath": "raw/0026-2651590622f44adb61cb32fd4c191053c7995a",
+      "bytes": 124,
+      "sha256": "a0be30a66ab610a7024efd011893c04dc79b11fe11a19f19edca61cfc77f9081"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\objects\\ee\\f0c31f1399246a3a6311a11c5adce695a1631c",
+      "archivePath": "raw/0027-f0c31f1399246a3a6311a11c5adce695a1631c",
+      "bytes": 32,
+      "sha256": "18536e0303d74d01468cd2bdc1e90c582366072fd1d435cbaa9b3e8cbb5287df"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\objects\\fa\\015d7fb5c86f1f583dd02f57fdf1c941011050",
+      "archivePath": "raw/0028-015d7fb5c86f1f583dd02f57fdf1c941011050",
+      "bytes": 159,
+      "sha256": "3e4b4707fda6cf182dd30ab7fcbb27647e703701febe79a3b61b934d7394986c"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.git\\refs\\heads\\main",
+      "archivePath": "raw/0029-main",
+      "bytes": 41,
+      "sha256": "01bcbeb576d0538a55109f9294a9c6a17246d8c5870cf73e77872cd9ddd33982"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\.gitignore",
+      "archivePath": "raw/0030-.gitignore",
+      "bytes": 16,
+      "sha256": "5f083efae12d01608479e33cbf3eef89f604ab1e742c76f4da542f3ec1d8f741"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\source.txt",
+      "archivePath": "raw/0031-source.txt",
+      "bytes": 29,
+      "sha256": "7273705b2e53a7ca03b6860769cabfcd8406bde3edb20056e54590999362c4c0"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-home-4QmirS\\a3-positive-source\\verify.cjs",
+      "archivePath": "raw/0032-verify.cjs",
+      "bytes": 199,
+      "sha256": "2d468eeff670f652cb358f464fb957afcd8820c587424a1475fb8e746152d061"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-user-data-hC2Rs8\\openclaw-source-state\\state\\openclaw.sqlite",
+      "archivePath": "raw/0033-openclaw.sqlite",
+      "bytes": 1486848,
+      "sha256": "ee78c48c8f05e53302c6fdc725e2bd3f7d6ab2526c7e33d38a03e58883fb54d1"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-user-data-hC2Rs8\\openclaw-source-state\\state\\openclaw.sqlite-shm",
+      "archivePath": "raw/0034-openclaw.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "be75381e57160d3a2b59c3f4ed0e6a2d5c6089342310a77d82fd97eda197918a"
+    },
+    {
+      "originalPath": "D:\\ClawX\\artifacts\\runs\\verse-claw-e2e-run-uvBbZ2\\verse-claw-e2e-user-data-hC2Rs8\\openclaw-source-state\\state\\openclaw.sqlite-wal",
+      "archivePath": "raw/0035-openclaw.sqlite-wal",
+      "bytes": 4132392,
+      "sha256": "ebe6a3e0152f08039fac31d6e37a83d74a8b0934075c06e6a9780866b2026028"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a2-runtime-deps-20261103\\view.json",
+      "archivePath": "raw/0036-view.json",
+      "bytes": 862,
+      "sha256": "e5c3907d377c8317935432702024a0b830f55d6e87a5ce5848438a6b0a1463ad"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r21-review\\autoreview.json",
+      "archivePath": "raw/0037-autoreview.json",
+      "bytes": 8153,
+      "sha256": "f400ac322ee6be8c235c6135c5dc7d24662e800d3165a5c51e02171e3e050dd6"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r23\\development-gates.json",
+      "archivePath": "raw/0038-development-gates.json",
+      "bytes": 21927,
+      "sha256": "fb9563830b5ebe307bf7b655ea7cb2d6e910cdb69d15aadf2c45fe3365aaf10b"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r25\\development-gates.json",
+      "archivePath": "raw/0039-development-gates.json",
+      "bytes": 21433,
+      "sha256": "441c5304240c53b6e2bc7864dead727267be98574e325cadf5bd84473c8a617d"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r27-review\\attempt2-exit.json",
+      "archivePath": "raw/0040-attempt2-exit.json",
+      "bytes": 726,
+      "sha256": "6aec3a0dcc23c866264bc9f4e31e3f6042efcfe993bac0e62d6801fb8d580c80"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r27-review\\autoreview-exit.json",
+      "archivePath": "raw/0041-autoreview-exit.json",
+      "bytes": 726,
+      "sha256": "ec4f1495f2c63f967bac1f6966c0092b501875e17b4ac73dff3684ddab14b565"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r30-projection\\report.json",
+      "archivePath": "raw/0042-report.json",
+      "bytes": 316760,
+      "sha256": "36ef86dc357be197a76db16075a3f72d6ced4d5a82ebe465f8c62d200fef12b4"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r30-projection\\transport-isolated.json",
+      "archivePath": "raw/0043-transport-isolated.json",
+      "bytes": 2685,
+      "sha256": "db0000c8630010600ceca73bed3485113140240e54bd58892b138cdc3fb3f444"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r32\\bypass-audit\\readback-report.json",
+      "archivePath": "raw/0044-readback-report.json",
+      "bytes": 2741,
+      "sha256": "e45454d2a2da0a3af84b06d5b3e7b1b6e6b4fc548b7d470ed7579212ca456f27"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r32\\bypass-audit\\report.json",
+      "archivePath": "raw/0045-report.json",
+      "bytes": 2271,
+      "sha256": "c01c203c8bce9f802a229687804a9d2c9b4d6af4e8820bf518573bdd2b17aa72"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r32\\bypass-audit\\selection-report.json",
+      "archivePath": "raw/0046-selection-report.json",
+      "bytes": 11126,
+      "sha256": "48677532ab3928cd0dc06c283111a7de31150fbc84d84b8b40248739eaa44ee6"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r33\\development-gates.json",
+      "archivePath": "raw/0047-development-gates.json",
+      "bytes": 23508,
+      "sha256": "363fc3aeaa1a1f210caa6761c236b65e4b6baabe74a6e6e0cbb03a522620d1f1"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r34-review\\autoreview-exit.json",
+      "archivePath": "raw/0048-autoreview-exit.json",
+      "bytes": 726,
+      "sha256": "d20830c34d9c728db60940eef2a66d1f9ba3a4cf36f3de2742206de2447f81e4"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r38-process-probe\\observed-process-probe.json",
+      "archivePath": "raw/0049-observed-process-probe.json",
+      "bytes": 1138,
+      "sha256": "a92d8324a68f547ffa85078d7bf823caf6d36281e2eb04c36ac445bf669ba044"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r40-review\\autoreview-exit.json",
+      "archivePath": "raw/0050-autoreview-exit.json",
+      "bytes": 726,
+      "sha256": "6d8c00b6413b1c9f864467a45cc73e7db0a3e3f5f61bc5515d7fdc439f640da2"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r44-review\\autoreview-exit.json",
+      "archivePath": "raw/0051-autoreview-exit.json",
+      "bytes": 726,
+      "sha256": "33c0b0f896351ad1b1d45c4b98f0f5a9db88a9f324bcfe6fc4aa56bc4c1a04e2"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r46-baseline\\report.json",
+      "archivePath": "raw/0052-report.json",
+      "bytes": 667,
+      "sha256": "10bff833635906763f79df9bd3431c7efd2062e4593c6f91e39377adc3ec101e"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r47\\advisory-triage.json",
+      "archivePath": "raw/0053-advisory-triage.json",
+      "bytes": 3372,
+      "sha256": "453709728601451ae244d617c6f75b3d067172949c7028a95ae198ef5d5b955b"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r47\\after-slow-process.json",
+      "archivePath": "raw/0054-after-slow-process.json",
+      "bytes": 4372,
+      "sha256": "2ea8ff4e560076cd0ba3603148c8d82d9859e59094dd1b285164a4b8f1bc58e5"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r47\\async-config-foreground.json",
+      "archivePath": "raw/0055-async-config-foreground.json",
+      "bytes": 21018,
+      "sha256": "32117389ce9c5deffff6a2a97f16867be6a8aa9e94e72654c39d947a8d58fa63"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r47\\before-owner-boundary.json",
+      "archivePath": "raw/0056-before-owner-boundary.json",
+      "bytes": 16611,
+      "sha256": "d6065184d9e79501957cab8a61e1012c18cade6144d76e0ed8e3dede06ad8a70"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r47\\before-slow-process.json",
+      "archivePath": "raw/0057-before-slow-process.json",
+      "bytes": 5139,
+      "sha256": "f26326fd76b1def5a41d62b1e1389c8b4a9b04d2246e6124b341717375f7c961"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r49-review\\autoreview-exit.json",
+      "archivePath": "raw/0058-autoreview-exit.json",
+      "bytes": 726,
+      "sha256": "2c452562d5c2e6fd979cd573e2ab6a88f6940abc341417b85b942c7e2597acf3"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r53-review\\autoreview.json",
+      "archivePath": "raw/0059-autoreview.json",
+      "bytes": 6273,
+      "sha256": "f51e8dcf941ec9b329d582e4dfe21ec88a2ccbc0bb90940b04131b6b7d540799"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r56\\main-lifecycle-order.json",
+      "archivePath": "raw/0060-main-lifecycle-order.json",
+      "bytes": 1150,
+      "sha256": "44c4e0e2971d0879c74082a23ea53b4fb3ff291f587f17713e0245872ce37e90"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r56\\r53-finding-triage.json",
+      "archivePath": "raw/0061-r53-finding-triage.json",
+      "bytes": 2601,
+      "sha256": "af52379118991a37d00f6ec5896b0b4d8e219c905d29e2524124cbfd9d5d0d9b"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r58-review\\autoreview-exit.json",
+      "archivePath": "raw/0062-autoreview-exit.json",
+      "bytes": 726,
+      "sha256": "1a639a10ed6360baf0e92cfc7dd724f379d0803d466845c31ed895d2b5e0ee13"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r61-review\\autoreview-exit.json",
+      "archivePath": "raw/0063-autoreview-exit.json",
+      "bytes": 726,
+      "sha256": "8c4d8d6aa11927bf041f80ba43145776c6cf1435b9bb3f79a876de5b8dda3dee"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-r63-review\\input-deduplication.json",
+      "archivePath": "raw/0064-input-deduplication.json",
+      "bytes": 315,
+      "sha256": "55d0e252f616d82bb86ecf9ed39696636260f5a8714fb0aa5ddb5cfcd942bcdc"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r10\\inherited-runtime-assertion.json",
+      "archivePath": "raw/0065-inherited-runtime-assertion.json",
+      "bytes": 493,
+      "sha256": "ddda708738532947594b50aab76bb542e58e8ffc878a144a482cd57c81b47b41"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r10\\review\\autoreview-exit.json",
+      "archivePath": "raw/0066-autoreview-exit.json",
+      "bytes": 938,
+      "sha256": "d2d530aeb3f4abe46668a61eb48c9a6118fb292984334325a75a8d2ff4f56b40"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r11\\review\\autoreview-exit.json",
+      "archivePath": "raw/0067-autoreview-exit.json",
+      "bytes": 938,
+      "sha256": "18aa13f776caca289a9e68c7d98bb97b354f7f87211a2a08af8033d59b183e22"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r13\\full-gates\\development-gates.json",
+      "archivePath": "raw/0068-development-gates.json",
+      "bytes": 37124,
+      "sha256": "d5c78a98764024c714e29ad25d5b5342de060bd004d92e1d44a8b2b3d142fbc5"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r13\\review\\autoreview.json",
+      "archivePath": "raw/0069-autoreview.json",
+      "bytes": 1366,
+      "sha256": "20fabda5992253fa2e2e41fe041b5ad42404360891d9f134cf24983f398e8700"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\dependency-repair\\applied.json",
+      "archivePath": "raw/0070-applied.json",
+      "bytes": 16729,
+      "sha256": "97768b02d2a4fa12b4b7e4127ea7dd3266f0194467723bab56c771602c160634"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\dependency-repair\\fs-safe-optional-deps.json",
+      "archivePath": "raw/0071-fs-safe-optional-deps.json",
+      "bytes": 659,
+      "sha256": "ce43730e121fd2462d9e2f11f2524db95b64b3e9304508fd8c1f8d7b527ae10a"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\dependency-repair\\workspace-links-applied.json",
+      "archivePath": "raw/0072-workspace-links-applied.json",
+      "bytes": 60626,
+      "sha256": "bcdb70afa49349042c26c02ec290d4878ae8269f4dff667e30978df27bfcd2dd"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\full-gates-v2\\development-gates.json",
+      "archivePath": "raw/0073-development-gates.json",
+      "bytes": 35289,
+      "sha256": "6140c2548033365400b62d128d5055db597e9c4804f343b4695d689ae2dd5879"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\full-gates-v3\\development-gates.json",
+      "archivePath": "raw/0074-development-gates.json",
+      "bytes": 36354,
+      "sha256": "c456da9d1160976e7776fa4e1b7074edaa74117649a117ae1396c1c3a45003f5"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\full-gates-v5\\development-gates.json",
+      "archivePath": "raw/0075-development-gates.json",
+      "bytes": 39471,
+      "sha256": "f1d860958c0eadd3221067259b183fa18ee1ba6873e6a1d9e0a977e26f4cdf6c"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\full-gates-v5\\e2e-report.json",
+      "archivePath": "raw/0076-e2e-report.json",
+      "bytes": 394903,
+      "sha256": "0e74d808dc8f16057dedf25f632960561ffd8842af2e96f9903698a247db0c3f"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\full-gates-v5\\e2e-results\\electron-process-cleanup.json",
+      "archivePath": "raw/0077-electron-process-cleanup.json",
+      "bytes": 665,
+      "sha256": "c59d0ae6a628cdfbaa6d5dc30eaa69171080f28a3accfa0342213689b35b8813"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\full-gates-v6\\terminal-audit.json",
+      "archivePath": "raw/0078-terminal-audit.json",
+      "bytes": 4922,
+      "sha256": "199bf25a534fbc9bf9ff26cf6b2929489bfd364c75d160f2f773a79aea377760"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\full-gates\\development-gates.json",
+      "archivePath": "raw/0079-development-gates.json",
+      "bytes": 33728,
+      "sha256": "ca912cd9d45a6b874cd72b5c81f9cff6ef937b670c796e58589d18e31e440fbf"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\native-git-diagnostic.json",
+      "archivePath": "raw/0080-native-git-diagnostic.json",
+      "bytes": 3045,
+      "sha256": "2a99dd323bcadb1a7c6034d91941fa0df5bf3f0aea0c32ef36c353c5cd39a3bc"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\original-node-contract.json",
+      "archivePath": "raw/0081-original-node-contract.json",
+      "bytes": 17188,
+      "sha256": "6b7b95649c0f5e27a322dc2f0ebac2664d98f232ea4dbd2af45012a5c5689139"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\owned-compression.json",
+      "archivePath": "raw/0082-owned-compression.json",
+      "bytes": 13346,
+      "sha256": "c8529da82a1d091a60287fd7c99d1e0fb1738e78648ede599d6ce37b4a60a688"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\projection-runtime-owners\\report.json",
+      "archivePath": "raw/0083-report.json",
+      "bytes": 15606,
+      "sha256": "92f0d81de884b032b06ace7dd7fa16d1f3d67192a22671ce92e6b130d801d424"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\projection-v2\\report.json",
+      "archivePath": "raw/0084-report.json",
+      "bytes": 21583,
+      "sha256": "e6cb6f27453be5decc7e4d99f9d100a6ff257c352e820fb032fc69c9d5e6e27b"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\projection\\report.json",
+      "archivePath": "raw/0085-report.json",
+      "bytes": 20671,
+      "sha256": "5bbd9cbd655b301c5181480982d0964a1383368546174bf3063fe2144047998b"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\review\\autoreview-exit.json",
+      "archivePath": "raw/0086-autoreview-exit.json",
+      "bytes": 1126,
+      "sha256": "37c06c69727f81efb367bc6c838595bf99f446f357c83b566232dea8f57768b1"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\review\\autoreview.json",
+      "archivePath": "raw/0087-autoreview.json",
+      "bytes": 537,
+      "sha256": "812eb4bae0355318676c246c0877a4070f7e77e578048b7299d724fa1398a158"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\review\\complete-change-bundle.md",
+      "archivePath": "raw/0088-complete-change-bundle.md",
+      "bytes": 419075,
+      "sha256": "9a4aa1e51e2abd55724dea088bfe701edb33998f24807403ccf89fb83b805789"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\review\\input-manifest.json",
+      "archivePath": "raw/0089-input-manifest.json",
+      "bytes": 14891,
+      "sha256": "524bb90ee25f832f470450e00dcb0008d3eeb1e440484e753779b85149b5b047"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\review\\review-invocation.json",
+      "archivePath": "raw/0090-review-invocation.json",
+      "bytes": 991,
+      "sha256": "1c5502b11935aa075d08c4f865cd6deb5f7f5d8876191c621f52a4c4ee2b07b3"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r14\\review\\review-source.json",
+      "archivePath": "raw/0091-review-source.json",
+      "bytes": 14112,
+      "sha256": "1b99131572baf3f339c8cdb6c4da18dccbed4b8545d99870450e240e6d991631"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r5\\review-resource-failure.json",
+      "archivePath": "raw/0092-review-resource-failure.json",
+      "bytes": 845,
+      "sha256": "12b9276904f53d9e397b75cb69df1232f36771b072c3bab98056f9d3d431de01"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r6\\full-gates\\development-gates.json",
+      "archivePath": "raw/0093-development-gates.json",
+      "bytes": 29057,
+      "sha256": "a86b9118473492a7d88f5b03d6a739a8fc785ea9b3793e502edcb5bd77e8cbc9"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r7\\review\\autoreview-exit.json",
+      "archivePath": "raw/0094-autoreview-exit.json",
+      "bytes": 936,
+      "sha256": "3005ddbca76c57f81353b6b62f5e3d41cb40f7eed983967ad5e4aea9e8fec9cd"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r8\\full-gates\\development-gates.json",
+      "archivePath": "raw/0095-development-gates.json",
+      "bytes": 29057,
+      "sha256": "aa211275d88a9e7ebd23996527c36cc573f59a74ae5cd322707715bb64d5583c"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261104-01a1a510\\fixes-r8\\review\\autoreview.json",
+      "archivePath": "raw/0096-autoreview.json",
+      "bytes": 6010,
+      "sha256": "a3fedd7b8da941c5d56d2a5c79939f45ebc505b7c2abb6695fd88339906823ee"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\batch-replay.json",
+      "archivePath": "raw/0097-batch-replay.json",
+      "bytes": 4391,
+      "sha256": "a4b8fcbd0725d5bb1a1906228be189bbe914e33a4d74160073f613b3cc0e6f86"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\concurrent-replay.json",
+      "archivePath": "raw/0098-concurrent-replay.json",
+      "bytes": 3122,
+      "sha256": "a54334c12828c7c99df80740d34d782b1f6a89bd4dd8975c09345852e4c51f8b"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\crash-recovery.json",
+      "archivePath": "raw/0099-crash-recovery.json",
+      "bytes": 5849,
+      "sha256": "922749562f5656d736129807ef39e4b466f8d8e8d9bb8ac5b8c9b2d6cc593ede"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\cross-process-lock-exclusion.json",
+      "archivePath": "raw/0100-cross-process-lock-exclusion.json",
+      "bytes": 768,
+      "sha256": "79eed95933f5f2a95c1bbe6115767e0f0991fdfaf2dc66e0628891bfbe522ed4"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\damaged-frame-recovery.json",
+      "archivePath": "raw/0101-damaged-frame-recovery.json",
+      "bytes": 4481,
+      "sha256": "3876b93f532dfb953f97bf31e0809802225a75f97dabaeba73f3e3a6c8ebad15"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\hosted-restart-replay.json",
+      "archivePath": "raw/0102-hosted-restart-replay.json",
+      "bytes": 1641,
+      "sha256": "752131da206e82f7c65a2d72a1f5695155a922f0facba1da51ae61e18ef27bf8"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\interrupted-lock-publication.json",
+      "archivePath": "raw/0103-interrupted-lock-publication.json",
+      "bytes": 3131,
+      "sha256": "50cc4011ac0ca35a4022854d807aeca074d88084ed4e3fe2f140a5b2f0aa0040"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\legacy-key-isolation.json",
+      "archivePath": "raw/0104-legacy-key-isolation.json",
+      "bytes": 2046,
+      "sha256": "23a2b8bffe6ede244160344a58f09fe73a195bfe65bebf2664def323182b978f"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\reused-pid-orphan.json",
+      "archivePath": "raw/0105-reused-pid-orphan.json",
+      "bytes": 391,
+      "sha256": "2bd96211ea78d007b746844191f84dd8659ee36b705933d77151783c7ad3a62d"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\runtime-main-interop.json",
+      "archivePath": "raw/0106-runtime-main-interop.json",
+      "bytes": 5656,
+      "sha256": "e9f132f2d4f1d4dca3b544ef519ab60bad403ad2fd27ba8d163045c87a890c57"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\session-reset-fence.json",
+      "archivePath": "raw/0107-session-reset-fence.json",
+      "bytes": 1154,
+      "sha256": "012f574798ee01706c2ce8c913be393ebbb3659f9dbfcde49c54b6f2f9fcfcc6"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\a2-unit-evidence\\torn-frame-recovery.json",
+      "archivePath": "raw/0108-torn-frame-recovery.json",
+      "bytes": 4095,
+      "sha256": "2910084815b9b81313d9b4b4aa95dc3cec40f3a031b9b1d85c1abd0e9efc05c5"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\comms-compare.log",
+      "archivePath": "raw/0109-comms-compare.log",
+      "bytes": 3463,
+      "sha256": "d4027fb84a5262e319403cd11010d2375445842fd4b39690ab4fc9d41b75bf25"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\comms-replay.log",
+      "archivePath": "raw/0110-comms-replay.log",
+      "bytes": 137,
+      "sha256": "0713a8a859f0f5c55a734d01874e97586dc3e999448f30c8746d40f7e214cbfe"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\contract.log",
+      "archivePath": "raw/0111-contract.log",
+      "bytes": 57,
+      "sha256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-report.json",
+      "archivePath": "raw/0112-e2e-report.json",
+      "bytes": 404493,
+      "sha256": "bb3a6453ccb3ee6e05c183bf28ab89e3049aa3c5e198e6c543ad73a97b17226f"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\.last-run.json",
+      "archivePath": "raw/0113-.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-actions-TF-0-5ce93-ays-the-same-persistent-log\\attachments\\persistent-task-action-intent-cd31481d6e0027c3944008b40ea1f327d50c644b.json",
+      "archivePath": "raw/0114-persistent-task-action-intent-cd31481d6e0027c3944008b40ea1f327d50c644b.json",
+      "bytes": 397,
+      "sha256": "5778a6775e89acc5cc704d842c039beb676c77245462f83b3dd1638df180d0c5"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-actions-TF-0-5ce93-ays-the-same-persistent-log\\attachments\\task-action-receipts-20a53cfc15cdca741e27034103f81e408e9d69fc.json",
+      "archivePath": "raw/0115-task-action-receipts-20a53cfc15cdca741e27034103f81e408e9d69fc.json",
+      "bytes": 6504,
+      "sha256": "d5873bdd01722bc925d1872cf85f79e6e73b4648f88f101d76996a8ec887b7cf"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-actions-TF-0-5ce93-ays-the-same-persistent-log\\task-action-intent.json",
+      "archivePath": "raw/0116-task-action-intent.json",
+      "bytes": 397,
+      "sha256": "5778a6775e89acc5cc704d842c039beb676c77245462f83b3dd1638df180d0c5"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-actions-TF-0-5ce93-ays-the-same-persistent-log\\task-action-receipts.json",
+      "archivePath": "raw/0117-task-action-receipts.json",
+      "bytes": 6504,
+      "sha256": "d5873bdd01722bc925d1872cf85f79e6e73b4648f88f101d76996a8ec887b7cf"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-actions-TF-0-600a6-e-actual-Main-owned-journal\\attachments\\main-runtime-owner-journal-c1ba4887531bd4e9f9a3abb3a123516979c56442.json",
+      "archivePath": "raw/0118-main-runtime-owner-journal-c1ba4887531bd4e9f9a3abb3a123516979c56442.json",
+      "bytes": 2414,
+      "sha256": "fbe0f69f1f8bdd3a9575bc47a94549b5bc4f7d781c7a86c79b9ac8971826fb31"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-actions-TF-0-600a6-e-actual-Main-owned-journal\\main-runtime-owner-journal.json",
+      "archivePath": "raw/0119-main-runtime-owner-journal.json",
+      "bytes": 2414,
+      "sha256": "fbe0f69f1f8bdd3a9575bc47a94549b5bc4f7d781c7a86c79b9ac8971826fb31"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-completion-T-f9b06-tion-with-historical-replay\\a3-owner-negative.json",
+      "archivePath": "raw/0120-a3-owner-negative.json",
+      "bytes": 15894,
+      "sha256": "5cfee272550cbd8c6ad5abe697a8bbf0b85d56b4266a167d1f0febcb8f8cd174"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\autonomy-task-completion-T-f9b06-tion-with-historical-replay\\attachments\\a3-owner-negative-e83dd7c47cd8cdb70e51e066f6bb1d10fe2163ff.json",
+      "archivePath": "raw/0121-a3-owner-negative-e83dd7c47cd8cdb70e51e066f6bb1d10fe2163ff.json",
+      "bytes": 15894,
+      "sha256": "5cfee272550cbd8c6ad5abe697a8bbf0b85d56b4266a167d1f0febcb8f8cd174"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\electron-process-cleanup.json",
+      "archivePath": "raw/0122-electron-process-cleanup.json",
+      "bytes": 776,
+      "sha256": "e69c1d829e032676adfd667098faff4c24b112a843aeba131173dd8b393b0451"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\electron-process-run.json",
+      "archivePath": "raw/0123-electron-process-run.json",
+      "bytes": 138,
+      "sha256": "a9a3a0aa375e12c5ddf0124bba05b248cde09f29e3e8daee8d8616c458646220"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\source-mutation-guard.json",
+      "archivePath": "raw/0124-source-mutation-guard.json",
+      "bytes": 585,
+      "sha256": "c9a2f775cba272a96a8a4cec14008b386b886f621d4ee30efc55be8faa139152"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\source-state-after.json",
+      "archivePath": "raw/0125-source-state-after.json",
+      "bytes": 194,
+      "sha256": "f1cbb7e77ce566a7d4d83585f5d53b84b79652f5b321c12425d8e9a1f7f1a1ec"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e-results\\source-state-before.json",
+      "archivePath": "raw/0126-source-state-before.json",
+      "bytes": 194,
+      "sha256": "f1cbb7e77ce566a7d4d83585f5d53b84b79652f5b321c12425d8e9a1f7f1a1ec"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\e2e.log",
+      "archivePath": "raw/0127-e2e.log",
+      "bytes": 50167,
+      "sha256": "3e627f46152addd3cdb0c929d45516a8d369596803b9b8188eae0bf0827008de"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\harness-dry-run.log",
+      "archivePath": "raw/0128-harness-dry-run.log",
+      "bytes": 326,
+      "sha256": "46dfa788008dffa56f75dcba8d477a64f3118a7e0b83d975241692c3384d71bd"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\harness-validate.log",
+      "archivePath": "raw/0129-harness-validate.log",
+      "bytes": 272,
+      "sha256": "66762fe4e5fa4df5bb0d0652b0ec4d48ae0aa1c0b541fb8c3649dc7247fb1817"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\lint.log",
+      "archivePath": "raw/0130-lint.log",
+      "bytes": 197,
+      "sha256": "498ab1a366d7b3044125626eb0e20431290f7801d32ed9bc608509d55a03a2f4"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\new-lint.log",
+      "archivePath": "raw/0131-new-lint.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\run.json",
+      "archivePath": "raw/0132-run.json",
+      "bytes": 30369,
+      "sha256": "a993560f3fc9ff27d1db88b62a93a28407c790be57fca74bacfd772317b2b25c"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\runtime-build.log",
+      "archivePath": "raw/0133-runtime-build.log",
+      "bytes": 3118,
+      "sha256": "4efc132015fcd5e7e30c5c7a8b29726a60d695963b7232e024be3d2cf9dd6383"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\runtime-owners.json",
+      "archivePath": "raw/0134-runtime-owners.json",
+      "bytes": 20856,
+      "sha256": "a3bf860e9368aafb66c6e56f31122ceba69b4c21610017bb9df45254db597955"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\runtime-owners.log",
+      "archivePath": "raw/0135-runtime-owners.log",
+      "bytes": 10927,
+      "sha256": "0aff4d6a60b90e998d1076da41b5fc8c2c9039afebaa038d048f042f3efa417e"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\runtime-stage3.json",
+      "archivePath": "raw/0136-runtime-stage3.json",
+      "bytes": 2696,
+      "sha256": "cf97593746e551a1cbf8e1a407141bd78409140391a9d445939011c640965227"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\runtime-stage3.log",
+      "archivePath": "raw/0137-runtime-stage3.log",
+      "bytes": 137,
+      "sha256": "72596383ea2a9bea4fb256e2e9ac60b6e5ad9b11426a27f534788b8124dc220c"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\source-config.json",
+      "archivePath": "raw/0138-source-config.json",
+      "bytes": 7048,
+      "sha256": "11bb06ae3e4296ec25d6d949e96ad3f65789057c477498bd35f92215bcf545d1"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\source-config.log",
+      "archivePath": "raw/0139-source-config.log",
+      "bytes": 104,
+      "sha256": "980a911450b2b885012fe8fd728ae55c44f967a7d3916fd8a18dc65c6dab67be"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\typecheck.log",
+      "archivePath": "raw/0140-typecheck.log",
+      "bytes": 1627,
+      "sha256": "6ad1b41f4bbafcdac2b027f5d5e98c7bf23b89d0bbcc7df4462d19cdfa74a891"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\unit.json",
+      "archivePath": "raw/0141-unit.json",
+      "bytes": 161807,
+      "sha256": "3e91c7898ac9dc55d2f7bc2eaba0b8ca08bfa5b82d04d4a943153033968daf51"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\unit.log",
+      "archivePath": "raw/0142-unit.log",
+      "bytes": 83674,
+      "sha256": "0e213bfc90d9fc1399e3c511c8c2a0bb244a90d749c8f87e99eb8f97c22b4aa6"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\clean-3b8036324cee\\vite-build.log",
+      "archivePath": "raw/0143-vite-build.log",
+      "bytes": 47087,
+      "sha256": "4ff115361829d37b96ff3e570f18756d9c89baaf7a82b1d2fc3fcab8490a43aa"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\commit-source.cjs",
+      "archivePath": "raw/0144-commit-source.cjs",
+      "bytes": 4188,
+      "sha256": "5351af8e6b7435a3babd9a847c4533902b2a62d91bc9158acdc44ad02361ad92"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\commit-source.log",
+      "archivePath": "raw/0145-commit-source.log",
+      "bytes": 2177,
+      "sha256": "a61d8cd37781c0a789c6f01914023a00084410d92804bbac9ee452f1b2d3a6be"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\committed-candidate.json",
+      "archivePath": "raw/0146-committed-candidate.json",
+      "bytes": 5345,
+      "sha256": "6a63c1d3bc43a4976cc03c601d8a8af9676a4b17a47ca9f133c93d40fa5b3acc"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\curate-clean.cjs",
+      "archivePath": "raw/0147-curate-clean.cjs",
+      "bytes": 19830,
+      "sha256": "242d64677df64f81866563c1230ed192cb283c30ffe9f334b2014a673fcb7f89"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\repository-artifacts-exit.json",
+      "archivePath": "raw/0148-repository-artifacts-exit.json",
+      "bytes": 568,
+      "sha256": "0953ccb2672be88ea790909fd9b5476e0e71bfa16454e893f92f68c3519b7364"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\retain-raw.cjs",
+      "archivePath": "raw/0149-retain-raw.cjs",
+      "bytes": 6970,
+      "sha256": "ca1b8f8bbc86ed91c187853d9ad1fff3a594358f879d4159032bbca198a3698f"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\source-snapshot.json",
+      "archivePath": "raw/0150-source-snapshot.json",
+      "bytes": 15554,
+      "sha256": "a03207a548784e5ccec4a0cc330bd0992e43e0d601f27f2fac3385b61d326539"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\supplemental-gates.json",
+      "archivePath": "raw/0151-supplemental-gates.json",
+      "bytes": 1501,
+      "sha256": "d6ce6a5f733e3131d405076388c90ea1ce69db1e4f93d75d28d9d187af917ff6"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\closeout\\verify-clean.cjs",
+      "archivePath": "raw/0152-verify-clean.cjs",
+      "bytes": 5764,
+      "sha256": "481512354e937696a921ea415f11aba87d87929062ebc6acd3e108bdd18865bc"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-relay-20261105-01a1ab0d\\relay-start.json",
+      "archivePath": "raw/0153-relay-start.json",
+      "bytes": 2373,
+      "sha256": "f9535e3b185f2f31f8211721b9579d76f731b0c18b594721b992e12798e77d29"
+    },
+    {
+      "originalPath": "D:\\tmp\\autonomy-a3-root-deps-20261104\\snapshot.json",
+      "archivePath": "raw/0154-snapshot.json",
+      "bytes": 888,
+      "sha256": "ae4cd76e9c6a5f9929f6d76917460b32eb51299d6e142c4eea4867b3defa9356"
+    }
+  ],
+  "fileCount": 155,
+  "totalBytes": 8460790,
+  "recovery": "Read each archivePath under archive and verify its SHA256 before use. originalPath records provenance; restore into a new isolated directory and map these original paths, never overwrite current data. Product source is retained by candidate.commit; dependencies were reused and are not included.",
+  "scope": "Raw exact-candidate gate reports, logs, private Electron attachments, original SQLite and journal owners, context archives, isolated business Git inputs, immutable review bundle, and historical inputs referenced by the curated report. No production profile or credentials were copied."
+}

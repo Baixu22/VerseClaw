@@ -317,8 +317,10 @@ Mission Control/ClawGraph 的运行终态沿用各自 recorder 的投影，仍�
 `runtimeLifecycle` 来源标记只由内部 recorder 写入，公开创建、patch 和 append 入口拒绝调用方提供它。
 混合 payload 的 node/patch 均校验来源标记。Mission 内层 TaskLoop 回读原 Mission owner 后复用共享 root，
 原 source/run 归属保持不变；子 run 等待沿用既有 timeout owner，0/未配置不被缩成新的短时限。
-TF-0672 仍在开发与验收中，真实 TaskLoop→检查进程→effect/archive→Electron 接纳正例已有开发证据，
-尚未完成同干净候选与独立复核验收；单元 fixture 通过不能宣称完整自治验收完成。
+TF-0672 的 TaskLoop→检查进程→effect/archive→Electron 完成链已在干净源码候选
+`3b8036324cee` 验收，包含同源码独立复核、原 owner 磁盘回读、接纳与候选变化后失效。
+[验收证据与未测边界](../../harness/specs/fixtures/autonomous-project-system/a3/final-3b8036324cee/acceptance.json)
+仅对应该候选的自动完成链；脚本模型控制不证明模型质量，也不代表完整 TF-0664 或 GA。
 冻结检查沿用 controller 当前 model/provider 和 exec policy。工具 hook 后的命令、实际 cwd 与
 process owner 回执均须匹配；spawned 会话使用既有 workspace/cwd，cwd 变更使旧检查点不可用。
 缺少可绑定候选和 process outcome owner 的远端 node 检查在启动前拒绝；验证记录不改变当前任务 root。
