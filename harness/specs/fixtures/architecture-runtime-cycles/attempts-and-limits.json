@@ -1,0 +1,186 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baselineRuntimeBuild": {
+    "schema": "ArchitectureRuntimeCycleGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "build",
+    "cwd": "D:\\tmp\\architecture-runtime-cycles-20261105\\baseline\\openclaw_runtime",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "scripts/build-all.mjs"
+    ],
+    "candidate": {
+      "commit": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+      "tree": "88b15f70537d1ba88cd2e408b07ddae24c1f4d93",
+      "dirty": false,
+      "status": "",
+      "afterStatus": "",
+      "afterDirty": false
+    },
+    "startedAt": "2026-11-05T06:41:02.744Z",
+    "finishedAt": "2026-11-05T06:58:08.705Z",
+    "durationMs": 1025923,
+    "exitCode": 134,
+    "signal": null,
+    "stdout": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\baseline\\build.stdout.txt",
+    "stderr": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\baseline\\build.stderr.txt",
+    "env": {
+      "TEMP": "D:/tmp",
+      "GOMAXPROCS": "4",
+      "UV_THREADPOOL_SIZE": "2",
+      "pnpmVerifyDepsMode": "warn",
+      "runtimeLintSkipPrepare": true
+    },
+    "stdoutSha256": "ef8c5b0aecf778ff1fb737e9cfc98a9e6c3ca23cf151c5ccaf8c2e5f9dd405e1",
+    "rawStdout": "[canvas] build: node scripts/bundle-a2ui.mjs\n<DIR>/a2ui.bundle.js  chunk │ size: 394.48 kB\n\n√ rolldown v1.1.0 Finished in 19.78 s\n[diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated\n[diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full\n",
+    "stderrSha256": "5be557b36add82b5b1f9ddf3c6598d19cf5ff54c6f3d8c623922522d40dfcdf2",
+    "rawStderr": "[build-all] plugins:assets:build\n[build-all] plugins:assets:build done in 144.6s\n[build-all] tsdown\n[tsdown-build] still running pid=10828; no output for 31s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 60s\n[tsdown-build] still running pid=10828; no output for 60s\n[tsdown-build] still running pid=10828; no output for 31s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 60s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 60s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n[tsdown-build] still running pid=10828; no output for 30s\n\r\n<--- Last few GCs --->\r\n\r\n[10828:0000025FB9AC3000]   847625 ms: Scavenge (interleaved) 8126.4 (8201.0) -> 8122.2 (8218.8) MB, pooled: 0 MB, 46.86 / 0.00 ms  (average mu = 0.129, current mu = 0.002) allocation failure; \r\n[10828:0000025FB9AC3000]   865832 ms: Mark-Compact 8136.4 (8219.6) -> 8127.3 (8226.4) MB, pooled: 0 MB, 18071.63 / 0.00 ms  (average mu = 0.095, current mu = 0.053) allocation failure; scavenge might not succeed\r\n\r\nFATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory\r\n----- Native stack trace -----\r\n\r\n 1: 00007FF772E76536 node::SetAbortHandler+54\r\n 2: 00007FF772E76A74 node::OnFatalError+1284\r\n 3: 00007FF771A62387 v8::Function::NewInstance+423\r\n 4: 00007FF771862BC7 v8::HeapStatistics::used_global_handles_size+54423\r\n 5: 00007FF771860866 v8::HeapStatistics::used_global_handles_size+45366\r\n 6: 00007FF77187AEEA X509_STORE_set_cleanup+5098\r\n 7: 00007FF771886D48 uv_timer_set_repeat+19096\r\n 8: 00007FF77189E24C uv_timer_set_repeat+114588\r\n 9: 00007FF77167EBE1 v8::TypecheckWitness::TypecheckWitness+106305\r\n10: 00007FF77167EE5F v8::TypecheckWitness::TypecheckWitness+106943\r\n11: 00007FF77167DC7A v8::TypecheckWitness::TypecheckWitness+102362\r\n12: 00007FF771A3C62C X509_STORE_get_get_crl+415756\r\n13: 0000025FF21F753A \r\n[build-all] tsdown failed after 879.2s\n[build-all] phase timings: total 1023.9s; slowest tsdown (failed) 879.2s; plugins:assets:build 144.6s\n"
+  },
+  "candidateFullRuntimeBuild": {
+    "status": "not-run",
+    "reason": "Unchanged clean baseline full build exhausted the JavaScript heap in tsdown. Candidate proof is five entry bundles plus owner tests and types; no complete build claim."
+  },
+  "remoteCapability": {
+    "schema": "ArchitectureRuntimeCycleGate/v1",
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "id": "remote-capability",
+    "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence\\ClawX\\openclaw_runtime",
+    "exe": "C:\\Program Files\\nodejs\\node.exe",
+    "argv": [
+      "scripts/crabbox-wrapper.mjs",
+      "--help"
+    ],
+    "candidate": {
+      "commit": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+      "tree": "88b15f70537d1ba88cd2e408b07ddae24c1f4d93",
+      "dirty": true,
+      "status": "M openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts\n M openclaw_runtime/src/context-engine/cvk/engine.ts\n M openclaw_runtime/src/context-engine/enhancement-kill-switch.ts\n M openclaw_runtime/src/context-engine/registry.ts\n M tests/unit/context-engine-registry-default-on.test.ts\n?? harness/specs/tasks/architecture-skeleton-runtime-cycle-removal.md\n?? openclaw_runtime/src/context-engine/cvk/identity.ts\n?? tests/unit/architecture-runtime-cycles.test.ts",
+      "afterStatus": "M openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts\n M openclaw_runtime/src/context-engine/cvk/engine.ts\n M openclaw_runtime/src/context-engine/enhancement-kill-switch.ts\n M openclaw_runtime/src/context-engine/registry.ts\n M tests/unit/context-engine-registry-default-on.test.ts\n?? harness/specs/tasks/architecture-skeleton-runtime-cycle-removal.md\n?? openclaw_runtime/src/context-engine/cvk/identity.ts\n?? tests/unit/architecture-runtime-cycles.test.ts",
+      "afterDirty": true
+    },
+    "startedAt": "2026-11-05T06:34:31.153Z",
+    "finishedAt": "2026-11-05T06:34:31.853Z",
+    "durationMs": 699,
+    "exitCode": 2,
+    "signal": null,
+    "stdout": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\remote-capability.stdout.txt",
+    "stderr": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\remote-capability.stderr.txt",
+    "env": {
+      "TEMP": "D:/tmp",
+      "GOMAXPROCS": "4",
+      "UV_THREADPOOL_SIZE": "2",
+      "pnpmVerifyDepsMode": "warn",
+      "runtimeLintSkipPrepare": true
+    },
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "rawStdout": "",
+    "stderrSha256": "3ac5706204666006539deea0bf0762881bc79b92220a15ef0319a8fb603528b9",
+    "rawStderr": "[crabbox] bin=crabbox version=unknown provider=aws providers=unknown\n[crabbox] selected binary failed basic --version/--help sanity checks\n"
+  },
+  "testAttempts": [
+    {
+      "source": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit.json",
+      "result": {
+        "schema": "ArchitectureRuntimeCycleGate/v1",
+        "driven_by": "agent",
+        "actor": "codex-architecture-convergence",
+        "id": "unit",
+        "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+        "exe": "C:\\Program Files\\nodejs\\node.exe",
+        "argv": [
+          "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/architecture-runtime-cycles.test.ts",
+          "tests/unit/context-engine-registry-default-on.test.ts",
+          "tests/unit/model-capability-effective-state-tf0512.test.ts",
+          "--maxWorkers=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile.json=D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit-result.json"
+        ],
+        "candidate": {
+          "commit": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+          "tree": "88b15f70537d1ba88cd2e408b07ddae24c1f4d93",
+          "dirty": true,
+          "status": "M openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts\n M openclaw_runtime/src/context-engine/cvk/engine.ts\n M openclaw_runtime/src/context-engine/enhancement-kill-switch.ts\n M openclaw_runtime/src/context-engine/registry.ts\n M tests/unit/context-engine-registry-default-on.test.ts\n?? harness/specs/tasks/architecture-skeleton-runtime-cycle-removal.md\n?? openclaw_runtime/src/context-engine/cvk/identity.ts\n?? tests/unit/architecture-runtime-cycles.test.ts",
+          "afterStatus": "M openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts\n M openclaw_runtime/src/context-engine/cvk/engine.ts\n M openclaw_runtime/src/context-engine/enhancement-kill-switch.ts\n M openclaw_runtime/src/context-engine/registry.ts\n M tests/unit/context-engine-registry-default-on.test.ts\n?? harness/specs/tasks/architecture-skeleton-runtime-cycle-removal.md\n?? openclaw_runtime/src/context-engine/cvk/identity.ts\n?? tests/unit/architecture-runtime-cycles.test.ts",
+          "afterDirty": true
+        },
+        "startedAt": "2026-11-05T07:05:07.241Z",
+        "finishedAt": "2026-11-05T07:09:03.442Z",
+        "durationMs": 236200,
+        "exitCode": 1,
+        "signal": null,
+        "stdout": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit.stdout.txt",
+        "stderr": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit.stderr.txt",
+        "env": {
+          "TEMP": "D:/tmp",
+          "GOMAXPROCS": "4",
+          "UV_THREADPOOL_SIZE": "2",
+          "pnpmVerifyDepsMode": "warn",
+          "runtimeLintSkipPrepare": true
+        },
+        "stdoutSha256": "9af11716563540072f9cae7c8bce1fbf244fa80d1d4ded7bb6b9d523a5567b21",
+        "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n\n RUN  v4.1.1 C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX\n\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > reports the actual tool, ready driver, effective ack, grants, memory and knowledge 4086ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > keeps runtime availability and drivers unknown when acknowledgement is absent 682ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > does not trust an unknown gateway generation from a local ack 836ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > accepts a process-owned ack even when it is observed after the initial clock read 836ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > expires grants and denies revoked grants at refresh time 1718ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > fails closed when the coding backend is quarantined 917ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > reports loading, unavailable and degraded runtime states without promoting them 2475ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > fails closed when the ack generation does not match the runtime generation 1616ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > refreshes a config switch into runtime state while keeping the static digest stable 2315ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > does not treat tool presence as approval and reconciles an actual denial 826ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > keeps the effective digest stable for observation-only changes 1700ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > changes the effective digest when tool, ack or driver facts change 3003ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > rejects an older refresh after a newer run generation starts 810ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > keeps fallback facts unknown instead of promoting static dispositions 288ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > refreshes capability facts at the context-engine assemble boundary 2243ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > does not append capability positioning before the tool surface is known 0ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > appends only a non-empty profile addition to the provider system prompt 4863ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > injects effective capability state through the default context-runtime-kit assembler 3391ms\nstdout | tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts\n{\n  \"status\": \"complete\",\n  \"criteria\": 5,\n  \"profileEntries\": 54\n}\n\n × tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts 80473ms\n   → Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n ✓ tests/unit/architecture-runtime-cycles.test.ts > runtime dependency leaves > registers and resolves an engine without loading the CVK implementation 819ms\n ✓ tests/unit/architecture-runtime-cycles.test.ts > runtime dependency leaves > evaluates the kill switch without loading the runtime barrel 115ms\n ✓ tests/unit/architecture-runtime-cycles.test.ts > runtime dependency leaves > resolves the retired VToken gate without loading the runtime barrel 705ms\n ✓ tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > defaults to context-runtime-kit when the slot is absent and CRK is enabled by default 5ms\n ✓ tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > keeps explicit legacy slot authoritative 0ms\n ✓ tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > uses legacy when runtime.contextRuntimeKit.enabled is false and accepts the rollback schema 5ms\n ✓ tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > wires runtime.contextFamily.contextStatus into the registered CRK engine 16ms\n ✓ tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > restores the pre-call transcript when a failing engine mutates nested messages 4ms\n ✓ tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > quarantines a default-on CRK assemble failure and falls back to legacy 2ms\n\n Test Files  1 failed | 2 passed (3)\n      Tests  1 failed | 27 passed (28)\n   Start at  15:05:09\n   Duration  232.02s (transform 34.32s, setup 16.60s, import 40.49s, tests 114.93s, environment 39.65s)\n\nJSON report written to D:/tmp/architecture-runtime-cycles-20261105/gates/development/unit-result.json\n",
+        "stderrSha256": "d01f79e3317f2d802591c3671bbaeeb42273e1a8445493a17078e13673a42e0e",
+        "rawStderr": "stderr | tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > restores the pre-call transcript when a failing engine mutates nested messages\n[context-engine] Context engine \"context-runtime-kit\" owner=core failed during assemble: mutated CRK failed; quarantining it for this process and falling back to default engine \"legacy\".\n\nstderr | tests/unit/context-engine-registry-default-on.test.ts > Context engine registry default-on CRK resolution > quarantines a default-on CRK assemble failure and falls back to legacy\n[context-engine] Context engine \"context-runtime-kit\" owner=core failed during assemble: CRK assemble exploded; quarantining it for this process and falling back to default engine \"legacy\".\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts\nError: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n ❯ tests/unit/model-capability-effective-state-tf0512.test.ts:433:3\n    431|     }\n    432|   });\n    433|   it(\"regenerates the acceptance pack from current disk facts\", async …\n       |   ^\n    434|     // The generator binds component-graduation-report.json to the cur…\n    435|     // bytes are restored in `finally` so running the unit suite canno…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n"
+      }
+    },
+    {
+      "source": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit-capability.json",
+      "result": {
+        "schema": "ArchitectureRuntimeCycleGate/v1",
+        "driven_by": "agent",
+        "actor": "codex-architecture-convergence",
+        "id": "unit-capability",
+        "cwd": "C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX",
+        "exe": "C:\\Program Files\\nodejs\\node.exe",
+        "argv": [
+          "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/model-capability-effective-state-tf0512.test.ts",
+          "--maxWorkers=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile.json=D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit-capability-result.json"
+        ],
+        "candidate": {
+          "commit": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+          "tree": "88b15f70537d1ba88cd2e408b07ddae24c1f4d93",
+          "dirty": true,
+          "status": "M openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts\n M openclaw_runtime/src/context-engine/cvk/engine.ts\n M openclaw_runtime/src/context-engine/enhancement-kill-switch.ts\n M openclaw_runtime/src/context-engine/registry.ts\n M tests/unit/context-engine-registry-default-on.test.ts\n?? harness/specs/tasks/architecture-skeleton-runtime-cycle-removal.md\n?? openclaw_runtime/src/context-engine/cvk/identity.ts\n?? tests/unit/architecture-runtime-cycles.test.ts",
+          "afterStatus": "M openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts\n M openclaw_runtime/src/context-engine/cvk/engine.ts\n M openclaw_runtime/src/context-engine/enhancement-kill-switch.ts\n M openclaw_runtime/src/context-engine/registry.ts\n M tests/unit/context-engine-registry-default-on.test.ts\n?? harness/specs/tasks/architecture-skeleton-runtime-cycle-removal.md\n?? openclaw_runtime/src/context-engine/cvk/identity.ts\n?? tests/unit/architecture-runtime-cycles.test.ts",
+          "afterDirty": true
+        },
+        "startedAt": "2026-11-05T07:29:23.449Z",
+        "finishedAt": "2026-11-05T07:30:39.076Z",
+        "durationMs": 75626,
+        "exitCode": 0,
+        "signal": null,
+        "stdout": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit-capability.stdout.txt",
+        "stderr": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\development\\unit-capability.stderr.txt",
+        "env": {
+          "TEMP": "D:/tmp",
+          "GOMAXPROCS": "4",
+          "UV_THREADPOOL_SIZE": "2",
+          "pnpmVerifyDepsMode": "warn",
+          "runtimeLintSkipPrepare": true
+        },
+        "stdoutSha256": "d79f5ad27a77d4d631dc4b118410ccb3ef38901c0e7fedb58043c491c2d886d7",
+        "rawStdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n\n RUN  v4.1.1 C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX\n\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > reports the actual tool, ready driver, effective ack, grants, memory and knowledge 2898ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > keeps runtime availability and drivers unknown when acknowledgement is absent 713ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > does not trust an unknown gateway generation from a local ack 737ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > accepts a process-owned ack even when it is observed after the initial clock read 708ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > expires grants and denies revoked grants at refresh time 1984ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > fails closed when the coding backend is quarantined 671ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > reports loading, unavailable and degraded runtime states without promoting them 1420ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > fails closed when the ack generation does not match the runtime generation 667ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > refreshes a config switch into runtime state while keeping the static digest stable 1200ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > does not treat tool presence as approval and reconciles an actual denial 747ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > keeps the effective digest stable for observation-only changes 1075ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > changes the effective digest when tool, ack or driver facts change 2270ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > rejects an older refresh after a newer run generation starts 527ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > keeps fallback facts unknown instead of promoting static dispositions 186ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > refreshes capability facts at the context-engine assemble boundary 6453ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > does not append capability positioning before the tool surface is known 0ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > appends only a non-empty profile addition to the provider system prompt 867ms\nstdout | tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts\n{\n  \"status\": \"complete\",\n  \"criteria\": 5,\n  \"profileEntries\": 54\n}\n\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > injects effective capability state through the default context-runtime-kit assembler 950ms\n ✓ tests/unit/model-capability-effective-state-tf0512.test.ts > runtime effective capability adapter > regenerates the acceptance pack from current disk facts 12033ms\n\n Test Files  1 passed (1)\n      Tests  19 passed (19)\n   Start at  15:29:29\n   Duration  67.68s (transform 8.65s, setup 472ms, import 30.71s, tests 36.11s, environment 0ms)\n\nJSON report written to D:/tmp/architecture-runtime-cycles-20261105/gates/development/unit-capability-result.json\n",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "rawStderr": ""
+      }
+    }
+  ],
+  "earlierOverwrittenAttempt": "An earlier combined development run timed out the effective-digest case; its gate output was overwritten by the next development retry. It supplies no acceptance credit. The subsequent retained combined run timed out only the acceptance-pack generator. Final separate runs passed without timeout/rule changes.",
+  "dependencyLimit": "Explicit reuse of installed dependencies. Existing pnpm patchedDependencies out-of-sync warning retained; no fresh-install claim.",
+  "runtimeLint": "Original run-oxlint wrapper and deny-warnings; OPENCLAW_OXLINT_SKIP_PREPARE=1 skips unrelated SDK declaration generation only."
+}

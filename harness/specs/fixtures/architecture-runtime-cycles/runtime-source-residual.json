@@ -1,0 +1,95 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "candidate": {
+    "commit": "b834bf3e1164544e8fde5c41b715d611c5dd4bf7",
+    "tree": "0eadb5e2e4a770fa8be10745f7e835aa8615bd48",
+    "dirty": false
+  },
+  "fullPipelineExitCode": 1,
+  "allSixSubgatesExecuted": true,
+  "subgates": [
+    {
+      "id": "runtime-policy",
+      "exitCode": 0
+    },
+    {
+      "id": "cycles",
+      "exitCode": 0
+    },
+    {
+      "id": "deprecated-api",
+      "exitCode": 0
+    },
+    {
+      "id": "deprecated-zero",
+      "exitCode": 0
+    },
+    {
+      "id": "unused-files",
+      "exitCode": 0
+    },
+    {
+      "id": "loc",
+      "exitCode": 1
+    }
+  ],
+  "loc": {
+    "baseline": {
+      "schema": "ArchitectureRuntimeCycleGate/v1",
+      "driven_by": "agent",
+      "actor": "codex-architecture-convergence",
+      "id": "loc",
+      "cwd": "D:\\tmp\\architecture-runtime-cycles-20261105\\baseline\\openclaw_runtime",
+      "exe": "C:\\Program Files\\nodejs\\node.exe",
+      "argv": [
+        "--import",
+        "tsx",
+        "scripts/check-ts-max-loc.ts",
+        "--max",
+        "500",
+        "--baseline",
+        "scripts/ts-max-loc-baseline.json"
+      ],
+      "candidate": {
+        "commit": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+        "tree": "88b15f70537d1ba88cd2e408b07ddae24c1f4d93",
+        "dirty": false,
+        "status": "",
+        "afterStatus": "",
+        "afterDirty": false
+      },
+      "startedAt": "2026-11-05T06:38:57.579Z",
+      "finishedAt": "2026-11-05T06:39:04.886Z",
+      "durationMs": 7306,
+      "exitCode": 1,
+      "signal": null,
+      "stdout": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\baseline\\loc.stdout.txt",
+      "stderr": "D:\\tmp\\architecture-runtime-cycles-20261105\\gates\\baseline\\loc.stderr.txt",
+      "env": {
+        "TEMP": "D:/tmp",
+        "GOMAXPROCS": "4",
+        "UV_THREADPOOL_SIZE": "2",
+        "pnpmVerifyDepsMode": "warn",
+        "runtimeLintSkipPrepare": true
+      },
+      "stdoutSha256": "2b3049696a2456f4dc236a682d2f3ff24b4e221abfaec7708e9c0494b7783400",
+      "rawStdout": "New files over 500 lines (23):\nNEW\t735\tsrc/gateway/session-archive-service.ts\nNEW\t686\tsrc/agents/verseshell/governed-process.ts\nNEW\t674\tsrc/agents/worktree-service.ts\nNEW\t665\tsrc/agents/tools/agent-browser-tool.ts\nNEW\t631\tsrc/agents/orchestration-candidate-apply.ts\nNEW\t602\tsrc/agents/runtime-effective-capability.ts\nNEW\t601\tsrc/agents/checkpoint-rollback-executor.test.ts\nNEW\t595\tsrc/gateway/session-archive-service.test.ts\nNEW\t580\tsrc/context-engine/rc03-seal-hook.ts\nNEW\t571\tsrc/agents/verseshell/readonly-facade.ts\nNEW\t555\tsrc/agents/verseshell/governed-process.test.ts\nNEW\t544\tsrc/memory/memory-authority.ts\nNEW\t534\tsrc/agents/provider-outbound-budget.test.ts\nNEW\t532\tsrc/agents/openai-transport-stream.test.ts\nNEW\t522\tsrc/agents/verseshell/governed-exec.ts\nNEW\t517\tsrc/runtime-core/model-capability-effective-state.ts\nNEW\t514\textensions/diagnostics-otel/src/cost-sampling.ts\nNEW\t513\tsrc/context-engine/context-folding/expand.ts\nNEW\t510\tsrc/agents/sessions/tools/write.ts\nNEW\t509\tsrc/gateway/session-effective-policy.ts\nNEW\t508\tsrc/agents/provider-outbound-budget.ts\nNEW\t508\tsrc/context-engine/chat-turn-vtoken-injection.ts\nNEW\t506\tsrc/agents/sessions/tools/bash.ts\nExisting baseline files that grew (110):\nGROWN\t6094->6220\tsrc/agents/embedded-agent-runner/run/attempt.ts\nGROWN\t5361->5404\tsrc/gateway/server-methods/chat.ts\nGROWN\t3949->3950\tsrc/agents/embedded-agent-runner/run.ts\nGROWN\t3522->3624\textensions/diagnostics-otel/src/service.ts\nGROWN\t3597->3618\textensions/qa-lab/src/providers/mock-openai/server.ts\nGROWN\t3350->3462\tsrc/agents/sessions/agent-session.ts\nGROWN\t2852->2855\tsrc/gateway/session-utils.ts\nGROWN\t2343->2357\tsrc/agents/bash-tools.exec.ts\nGROWN\t2267->2321\tsrc/memory/memory-store.ts\nGROWN\t2196->2223\tsrc/config/schema.help.ts\nGROWN\t1754->1997\tsrc/agents/subagent-registry.ts\nGROWN\t1933->1962\tsrc/config/validation.ts\nGROWN\t1834->1886\tsrc/agents/tool-search.ts\nGROWN\t1851->1863\tsrc/agents/subagent-spawn.ts\nGROWN\t1823->1843\tsrc/cron/service/timer.ts\nGROWN\t1796->1823\tsrc/agents/embedded-agent-runner/compact.ts\nGROWN\t1773->1810\tsrc/skills/loading/workspace.ts\nGROWN\t1789->1800\tsrc/agents/model-fallback.ts\nGROWN\t1776->1780\tsrc/state/openclaw-state-schema.generated.ts\nGROWN\t1752->1761\tsrc/agents/mission-control/controller.ts\nGROWN\t1709->1747\tsrc/runtime-core/memory-context.ts\nGROWN\t1715->1732\tsrc/agents/agent-hooks/compaction-safeguard.ts\nGROWN\t1727->1730\tsrc/agents/sessions/extensions/types.ts\nGROWN\t1717->1722\tsrc/agents/bash-tools.exec-runtime.ts\nGROWN\t1476->1633\tsrc/gateway/server-methods/role-orchestration-methods.ts\nGROWN\t1606->1626\textensions/qa-lab/src/suite.ts\nGROWN\t1560->1571\tsrc/agents/sessions/session-manager.ts\nGROWN\t1563->1570\tsrc/agents/agent-tools.ts\nGROWN\t1523->1541\tpackages/gateway-protocol/src/index.ts\nGROWN\t1462->1516\tsrc/auto-reply/reply/get-reply-run.ts\nGROWN\t1483->1484\tsrc/auto-reply/reply/agent-runner-memory.ts\nGROWN\t1473->1478\tsrc/runtime-core/registries.ts\nGROWN\t1444->1446\tsrc/plugins/tools.ts\nGROWN\t1309->1413\tsrc/gateway/session-reset-service.ts\nGROWN\t1313->1394\tsrc/agents/subagent-registry-lifecycle.ts\nGROWN\t1385->1386\tsrc/state/openclaw-state-db.generated.d.ts\nGROWN\t1312->1335\tsrc/gateway/openresponses-http.ts\nGROWN\t1307->1308\tsrc/auto-reply/reply/followup-runner.ts\nGROWN\t1303->1305\textensions/qa-lab/src/cli.runtime.ts\nGROWN\t1297->1301\tsrc/agents/agent-bundle-mcp-runtime.ts\nGROWN\t1176->1301\tsrc/gateway/server-methods/sessions.lifecycle.ts\nGROWN\t1283->1284\tsrc/agents/code-mode.ts\nGROWN\t1243->1276\tsrc/infra/diagnostic-events.ts\nGROWN\t1269->1272\tsrc/agents/verseshell/process-manager.ts\nGROWN\t1168->1235\tpackages/gateway-protocol/src/schema/sessions.ts\nGROWN\t953->1216\tsrc/agents/orchestrator-run-observed.ts\nGROWN\t1197->1215\tsrc/config/schema.labels.ts\nGROWN\t1155->1212\tsrc/gateway/server-methods/sessions.run-control.ts\nGROWN\t1013->1197\tsrc/context-engine/assembler.test.ts\nGROWN\t1192->1195\tsrc/config/zod-schema.agent-runtime.ts\nGROWN\t810->1187\tsrc/agents/tools/context-agent-tools.ts\nGROWN\t1175->1179\tsrc/cron/service/jobs.ts\nGROWN\t1027->1158\tsrc/gateway/server-methods/sessions.compaction.ts\nGROWN\t1015->1127\tsrc/agents/provider-transport-fetch.ts\nGROWN\t1050->1071\tsrc/agents/orchestration-protocol.ts\nGROWN\t1059->1060\textensions/qa-lab/src/gateway-child.ts\nGROWN\t995->1038\tpackages/agent-core/src/harness/compaction/compaction.ts\nGROWN\t1024->1025\tsrc/state/openclaw-state-db.ts\nGROWN\t897->1014\tsrc/context-engine/context-orchestrator.ts\nGROWN\t975->1005\tsrc/context-engine/memory-context-provider.ts\nGROWN\t941->998\tsrc/agents/embedded-agent-runner/extensions.ts\nGROWN\t961->987\tsrc/acp/event-ledger.ts\nGROWN\t848->983\tsrc/agents/agent-steering-queue.ts\nGROWN\t926->931\tsrc/agents/stage4-capability-grant.ts\nGROWN\t849->882\tsrc/knowledge/sekb/sekb.test.ts\nGROWN\t862->875\tsrc/agents/bash-tools.exec-host-gateway.ts\nGROWN\t863->867\tsrc/agents/session-tool-result-guard.ts\nGROWN\t684->866\tsrc/agents/receipt-store.ts\nGROWN\t841->865\tsrc/runtime-core/event-log.ts\nGROWN\t856->858\tsrc/agents/subagent-registry-run-manager.ts\nGROWN\t730->858\tsrc/context-engine/assembler.ts\nGROWN\t795->843\tsrc/runtime-core/memory-pre-reply-injection.ts\nGROWN\t813->814\tsrc/knowledge/sekb/knowledge-store.ts\nGROWN\t805->812\ttsdown.config.ts\nGROWN\t787->811\tsrc/logging/diagnostic-stability.ts\nGROWN\t757->798\tsrc/agents/openclaw-tools.ts\nGROWN\t788->794\tsrc/config/types.tools.ts\nGROWN\t781->786\tsrc/gateway/server-methods.ts\nGROWN\t714->784\tsrc/agents/orchestrator.ts\nGROWN\t772->783\tsrc/config/sessions/types.ts\nGROWN\t750->775\tsrc/runtime-core/memory-self-edit-tools.ts\nGROWN\t727->731\tsrc/agents/embedded-agent-runner/transcript-file-state.ts\nGROWN\t701->724\tsrc/agents/embedded-agent-runner/run/attempt.model-diagnostic-events.ts\nGROWN\t704->722\tsrc/agents/embedded-agent-runner/thinking.ts\nGROWN\t689->721\tsrc/gateway/server-cron.ts\nGROWN\t705->711\tsrc/context-engine/registry/context-item-registry.ts\nGROWN\t638->685\tsrc/process/command-queue.ts\nGROWN\t676->684\tsrc/agents/tool-catalog.ts\nGROWN\t664->668\tsrc/agents/subagent-announce.ts\nGROWN\t661->667\tsrc/config/types.agent-defaults.ts\nGROWN\t657->665\tpackages/gateway-protocol/src/schema/protocol-schemas.ts\nGROWN\t662->665\tsrc/agents/verseshell/process-manager.test.ts\nGROWN\t626->651\tsrc/agents/shadow-census.ts\nGROWN\t577->650\tsrc/process/supervisor/supervisor.ts\nGROWN\t618->635\tsrc/agents/agent-tools.policy.ts\nGROWN\t541->628\tsrc/context-engine/turn-injection-budget.ts\nGROWN\t623->626\tsrc/context-engine/rc03-seal-wiring.test.ts\nGROWN\t585->624\tsrc/agents/tools/context-agent-tools.test.ts\nGROWN\t581->614\tpackages/gateway-protocol/src/schema/cron.ts\nGROWN\t606->613\tsrc/agents/sessions/tools/edit.ts\nGROWN\t607->608\tsrc/agents/receipt-store.test.ts\nGROWN\t575->604\tsrc/knowledge/sekb/experience-block-bridge.test.ts\nGROWN\t594->598\tsrc/agents/embedded-agent-runner/extensions.working-memory.test.ts\nGROWN\t577->580\tsrc/context-engine/runtime-flag-ack.ts\nGROWN\t543->550\tsrc/sessions/session-admission-registry.ts\nGROWN\t524->544\tsrc/agents/sessions/tools/read.ts\nGROWN\t508->542\tsrc/agents/bash-tools.exec-host-node.ts\nGROWN\t509->514\tsrc/agents/embedded-agent-runner/extensions.knowledge.test.ts\nGROWN\t506->510\tsrc/gateway/chat-abort.ts\nGROWN\t501->502\tsrc/agents/agent-bundle-mcp-materialize.ts\n",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStderr": ""
+    },
+    "candidateStdoutSha256": "2b3049696a2456f4dc236a682d2f3ff24b4e221abfaec7708e9c0494b7783400",
+    "byteIdenticalStdout": true,
+    "newOver500": 23,
+    "grownOverBaseline": 110,
+    "touchedExistingOffenders": [
+      {
+        "file": "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+        "candidateLines": 508,
+        "baselineLines": 508
+      }
+    ],
+    "newOrWorsenedOffenders": 0,
+    "method": "Run the original checker in a clean detached checkout at the exact base commit, then compare complete stdout bytes and changed path sets. No allowlist/baseline edits."
+  }
+}
