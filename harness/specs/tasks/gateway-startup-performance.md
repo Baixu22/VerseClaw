@@ -35,6 +35,7 @@ acceptance:
   - Before and after measurements use the same built runtime, isolated state, and real Electron utility processes; the baseline explicitly reconstructs the prior contract loader, and raw phase timings are retained and agent driven.
   - Startup optimizations reduce measured latency without treating socket listening as authenticated RPC readiness.
   - Focused tests cover the optimization and its failure path; Electron coverage exercises a real Gateway with an authenticated RPC and clean shutdown.
+  - Source overlays and external plugin roots remain authoritative; the benchmark uses loopback-only binding, per-attempt random credentials, and observed loader invocations despite inherited bypass flags.
   - Communication replay, comparison, relevant type checks, and Harness validation pass, or exact residual failures are recorded.
 docs:
   required: true
@@ -46,3 +47,5 @@ The default measurement gives each attempt a fresh transform cache and retains p
 after every completed attempt. Keep shared-cache results separate; a cold-cache improvement does
 not establish a hot-start improvement. Preserve the normal desktop start timeout and device-token
 handshake in Electron coverage.
+The desktop check uses the existing workspace-authorized `health` RPC; the isolated utility
+process benchmark probes `system-presence` directly. Neither path changes workspace permissions.

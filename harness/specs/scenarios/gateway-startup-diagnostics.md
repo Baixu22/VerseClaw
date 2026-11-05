@@ -290,8 +290,10 @@ shared-cache or already-running-profile measurements; do not extrapolate a first
 The baseline reconstructs the prior doctor-contract loader with a module load hook against the
 same built runtime; the runtime files remain unchanged. Success requires an authenticated
 `system-presence` response. Retain failed attempts, build identity, raw startup traces, and
-measurement limits. Built runs should prefer compiled bundled doctor contracts and native
-loading, while external plugin roots, source fallback, and migrations retain their ownership.
+measurement limits. Resolved JavaScript doctor contracts should use the early native path when
+supported. Discovered plugin roots remain authoritative, including mounted source overlays and
+external plugins. The probe binds to loopback with a random token per attempt, clears inherited
+runtime overrides, and accepts a timing sample only after the measured doctor loader was invoked.
 
 When sharing findings:
 

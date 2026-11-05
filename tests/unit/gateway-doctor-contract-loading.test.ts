@@ -59,10 +59,10 @@ function plugin(origin: 'bundled' | 'global') {
 }
 
 describe('Gateway startup doctor contract loading', () => {
-  it('uses an existing compiled bundled doctor artifact and retains migration entries', () => {
-    plugin('bundled');
-    const built = join(fixture, 'dist', 'doctor-contract-api.js');
-    mocks.artifact.mockReturnValue(built);
+  it('retains migration entries when a compiled contract needs the fallback loader', () => {
+    const rootDir = plugin('bundled');
+    const built = join(rootDir, 'doctor-contract-api.js');
+    writeFileSync(built, 'export const stateMigrations = [];');
     expect(listPluginDoctorStateMigrationEntries()).toEqual([
       expect.objectContaining({ pluginId: 'example', migration: expect.objectContaining({ id: 'fixture-state' }) }),
     ]);
@@ -71,22 +71,19 @@ describe('Gateway startup doctor contract loading', () => {
 
   it('keeps a source doctor contract ahead of a generic built contract', () => {
     const rootDir = plugin('bundled');
-    mocks.artifact.mockImplementation(({ artifactBasename }: { artifactBasename: string }) => (
-      artifactBasename === 'contract-api.js' ? join(fixture, 'dist', 'contract-api.js') : null
-    ));
+    writeFileSync(join(rootDir, 'contract-api.js'), 'export const stateMigrations = [];');
     listPluginDoctorStateMigrationEntries();
     expect(mocks.load).toHaveBeenCalledWith(join(rootDir, 'doctor-contract-api.ts'));
   });
 
   it('retains source loading when the bundled artifact is unbuilt', () => {
     const rootDir = plugin('bundled');
-    mocks.artifact.mockReturnValue(join(rootDir, 'doctor-contract-api.ts'));
     listPluginDoctorStateMigrationEntries();
     expect(mocks.load).toHaveBeenCalledWith(join(rootDir, 'doctor-contract-api.ts'));
   });
 
-  it('loads an external plugin contract from its own root', () => {
-    const rootDir = plugin('global');
+  it.each(['bundled', 'global'] as const)('preserves the authoritative %s plugin root', (origin) => {
+    const rootDir = plugin(origin);
     mocks.artifact.mockReturnValue(join(fixture, 'dist', 'doctor-contract-api.js'));
     listPluginDoctorStateMigrationEntries();
     expect(mocks.artifact).not.toHaveBeenCalled();
@@ -94,10 +91,10 @@ describe('Gateway startup doctor contract loading', () => {
   });
 
   it('loads native compiled contracts without constructing the SDK alias loader', () => {
-    plugin('bundled');
+    const rootDir = plugin('bundled');
     const migration = { id: 'native', label: 'Native migration', detectLegacyState: () => null,
       migrateLegacyState: () => ({ changes: [], warnings: [] }) };
-    mocks.artifact.mockReturnValue(join(fixture, 'dist', 'doctor-contract-api.js'));
+    writeFileSync(join(rootDir, 'doctor-contract-api.js'), 'export const stateMigrations = [];');
     mocks.native.mockReturnValue({ ok: true, moduleExport: { stateMigrations: [migration] } });
     expect(listPluginDoctorStateMigrationEntries()[0]?.migration.id).toBe('native');
     expect(mocks.load).not.toHaveBeenCalled();

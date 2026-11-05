@@ -260,7 +260,7 @@ export async function runCase({
 
 function buildImportBody(entryFiles, label) {
   const imports = entryFiles
-    .map((filePath) => `await import(${JSON.stringify(filePath)});`)
+    .map((filePath) => `await import(${JSON.stringify(pathToFileURL(filePath).href)});`)
     .join("\n");
   return `${imports}\nconsole.log(${JSON.stringify(label)});\nprocess.exit(0);\n`;
 }

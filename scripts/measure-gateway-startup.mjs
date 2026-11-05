@@ -10,6 +10,11 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const require = createRequire(import.meta.url);
+const desktopEnvKeys = new Set([
+  'PATH', 'PATHEXT', 'SYSTEMROOT', 'SYSTEMDRIVE', 'COMSPEC', 'WINDIR', 'LANG', 'TERM',
+  'USER', 'LOGNAME', 'USERNAME', 'DISPLAY', 'WAYLAND_DISPLAY', 'XAUTHORITY',
+  'XDG_RUNTIME_DIR', 'DBUS_SESSION_BUS_ADDRESS',
+]);
 const output = resolve(process.argv[2] ?? 'artifacts/gateway-startup-performance/measurement.json');
 const rounds = Number(process.argv[3] ?? 3);
 if (!Number.isInteger(rounds) || rounds < 1 || rounds > 10) throw new Error('Rounds must be 1-10');
@@ -20,13 +25,22 @@ const contractChunks = [];
 for (const name of await readdir(dist)) {
   if (!name.startsWith('state-migrations-') || !name.endsWith('.js')) continue;
   const source = await readFile(join(dist, name), 'utf8');
-  if (source.includes('function resolveContractApiPath(record)')) contractChunks.push({ name, source });
+  if (source.includes('function loadPluginDoctorContractModule(modulePath)')
+    && source.includes('if (!moduleLoaderFactoryForTest)')
+    && source.includes('function resolveContractApiPath(rootDir)')) contractChunks.push({ name, source });
 }
 if (contractChunks.length !== 1) throw new Error('Build the current runtime before measuring');
 const contract = contractChunks[0];
-const baselineNeedle = 'RUNNING_FROM_BUILT_ARTIFACT && record.origin === "bundled"';
-const baselineLoader = 'function loadPluginDoctorContractModule(modulePath) { return getCachedPluginModuleLoader({ cache: moduleLoaders, modulePath, importerUrl: import.meta.url })(modulePath); }';
-if (contract.source.split(baselineNeedle).length !== 2) throw new Error('Unexpected contract artifact; rebuild');
+const loaderStart = contract.source.indexOf('function loadPluginDoctorContractModule(modulePath)');
+const loaderEnd = contract.source.indexOf('function resolveContractApiPath', loaderStart);
+const loaderSource = contract.source.slice(loaderStart, loaderEnd);
+const fallbackStart = loaderSource.indexOf('return getCachedPluginModuleLoader(');
+if (loaderEnd < loaderStart || fallbackStart < 0 || !loaderSource.includes('tryNativeRequireJavaScriptModule')) {
+  throw new Error('Unexpected doctor loader artifact; update the measurement driver');
+}
+// Keep the fallback's actual compiled bindings; only remove the early native path.
+const baselineLoader = loaderSource.slice(0, loaderSource.indexOf('{') + 1)
+  + ' ' + loaderSource.slice(fallbackStart);
 const probePath = join(runRoot, 'probe.cjs');
 await writeFile(probePath, `(${electronProbe.toString()})();`);
 const results = [];
@@ -40,8 +54,10 @@ for (let round = 1; round <= rounds; round++) {
     // arm's TS compilation. Keep it writable by the Electron utility process.
     const tempDir = join(run, 'temp');
     await mkdir(tempDir, { recursive: true });
+    await mkdir(join(run, 'AppData', 'Roaming'), { recursive: true });
+    await mkdir(join(run, 'AppData', 'Local'), { recursive: true });
     await writeFile(join(run, 'openclaw.json'), JSON.stringify({
-      gateway: { mode: 'local', controlUi: { enabled: false } },
+      gateway: { mode: 'local', bind: 'loopback', auth: { mode: 'token' }, controlUi: { enabled: false } },
       plugins: { enabled: true },
       update: { checkOnStart: false },
     }));
@@ -53,11 +69,17 @@ for (let round = 1; round <= rounds; round++) {
         server.close((error) => error ? reject(error) : resolvePort(freePort));
       });
     });
-    const options = { root, run, port, arm, contractName: contract.name, baselineNeedle, baselineLoader };
-    const env = { ...process.env, TEMP: tempDir, TMP: tempDir, TMPDIR: tempDir,
-      GATEWAY_STARTUP_PROBE: JSON.stringify(options) };
-    delete env.ELECTRON_RUN_AS_NODE;
-    for (const key of ['GATEWAY_PROBE_DIAGNOSE', 'GATEWAY_PROBE_CACHE', 'OPENCLAW_DEFER_STARTUP_SIDECARS', 'OPENCLAW_BUNDLED_PLUGINS_DIR', 'NODE_COMPILE_CACHE']) delete env[key];
+    const options = { root, run, port, arm, contractName: contract.name, baselineLoader };
+    // Keep desktop/OS plumbing, never user credentials or runtime bypass flags.
+    const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => (
+      desktopEnvKeys.has(key.toUpperCase()) || key.startsWith('LC_') || key.startsWith('__CF_')
+    )));
+    Object.assign(env, {
+      TEMP: tempDir, TMP: tempDir, TMPDIR: tempDir, HOME: run, USERPROFILE: run,
+      APPDATA: join(run, 'AppData', 'Roaming'), LOCALAPPDATA: join(run, 'AppData', 'Local'),
+      XDG_CONFIG_HOME: join(run, '.config'), XDG_CACHE_HOME: join(run, '.cache'),
+      XDG_DATA_HOME: join(run, '.local', 'share'), GATEWAY_STARTUP_PROBE: JSON.stringify(options),
+    });
     const launchedAt = Date.now();
     const exitCode = await new Promise((resolveExit) => {
       const child = spawn(require('electron'), ['--no-sandbox', '--disable-gpu', probePath], {
@@ -99,7 +121,8 @@ async function writeReport() {
     schema: 'clawx.gateway-startup-performance/v1', driven_by: 'agent', actor: 'gateway-startup-probe',
     recordedAt: new Date().toISOString(), platform: process.platform, rounds, runRoot,
     contractArtifact: { path: contract.name, sha256: createHash('sha256').update(contract.source).digest('hex') },
-    baseline: 'The before arm uses a module load hook to restore the prior doctor module loader and disable compiled contract selection in the same built runtime, without editing dist.',
+    baseline: 'The before arm removes the early native path using the exact fallback from the same compiled doctor loader. Both arms verify a real call to that loader; dist files remain unchanged.',
+    environment: 'Only desktop/OS environment is inherited; user homes and caches are isolated. Runtime bypass flags and credentials are omitted; binding and token authentication are explicit.',
     transformCache: 'fresh-per-attempt', complete: results.length === rounds * 2, metrics, results,
     limitations: ['Local Windows development Electron, fresh isolated profiles, plugins enabled, no configured channels or provider calls.',
       'Each attempt has a fresh transform cache; OS caches are not flushed. Both arm orders are included when rounds > 1. P95 is descriptive for this small sample.',
@@ -115,44 +138,57 @@ function electronProbe() {
   const { app, utilityProcess } = require('electron');
   const fs = require('node:fs');
   const path = require('node:path');
-  const { root, run, port, arm, contractName, baselineNeedle, baselineLoader } = JSON.parse(process.env.GATEWAY_STARTUP_PROBE);
+  const { root, run, port, arm, contractName, baselineLoader } = JSON.parse(process.env.GATEWAY_STARTUP_PROBE);
   app.disableHardwareAcceleration();
   app.setPath('userData', path.join(run, 'electron'));
   app.whenReady().then(() => {
     const entry = path.join(root, 'openclaw_runtime', 'dist', 'entry.js');
     const bootstrap = path.join(run, 'runtime.cjs');
+    const proofPath = path.join(run, 'doctor-loader-proof.json');
     fs.writeFileSync(bootstrap, `
       const { registerHooks } = require('node:module');
       const { pathToFileURL } = require('node:url');
       const entry = ${JSON.stringify(entry)};
       process.argv[1] = entry;
+      let loaderObserved = false;
+      globalThis.__gatewayStartupDoctorObserved = () => {
+        if (loaderObserved) return;
+        loaderObserved = true;
+        require('node:fs').writeFileSync(${JSON.stringify(proofPath)}, JSON.stringify({
+          arm: ${JSON.stringify(arm)}, loaderObserved: true, baselineApplied: ${JSON.stringify(arm === 'before')},
+        }));
+      };
       registerHooks({ load(url, context, nextLoad) {
         const result = nextLoad(url, context);
-        if (${JSON.stringify(arm)} === 'before' && url.endsWith(${JSON.stringify('/' + contractName)})) {
+        if (url.endsWith(${JSON.stringify('/' + contractName)})) {
           const source = Buffer.isBuffer(result.source) ? result.source.toString('utf8') : result.source;
-          if (typeof source !== 'string' || source.split(${JSON.stringify(baselineNeedle)}).length !== 2) throw new Error('Baseline reconstruction mismatch');
+          if (typeof source !== 'string') throw new Error('Doctor loader source unavailable');
           const start = source.indexOf('function loadPluginDoctorContractModule(modulePath)');
           const end = source.indexOf('function resolveContractApiPath', start);
           if (start < 0 || end < start || source.lastIndexOf('function loadPluginDoctorContractModule(modulePath)') !== start) throw new Error('Baseline module loader mismatch');
-          return { ...result, source: (source.slice(0, start) + ${JSON.stringify(baselineLoader)} + String.fromCharCode(10) + source.slice(end)).replace(${JSON.stringify(baselineNeedle)}, 'false') };
+          const loader = ${JSON.stringify(arm)} === 'before' ? ${JSON.stringify(baselineLoader)} : source.slice(start, end);
+          const observed = loader.replace('{', '{ globalThis.__gatewayStartupDoctorObserved();');
+          return { ...result, source: source.slice(0, start) + observed + source.slice(end) };
         }
         return result;
       }});
       import(pathToFileURL(entry).href);
     `);
-    const token = 'agent-local-startup-measurement';
+    const token = require('node:crypto').randomBytes(32).toString('hex');
     const startedAt = performance.now();
-    const child = utilityProcess.fork(bootstrap, ['gateway', '--port', String(port), '--allow-unconfigured'], {
+    const child = utilityProcess.fork(bootstrap, ['gateway', '--bind', 'loopback', '--port', String(port), '--allow-unconfigured'], {
       cwd: path.dirname(path.dirname(entry)), stdio: 'pipe',
       env: { ...process.env, OPENCLAW_CONFIG_PATH: path.join(run, 'openclaw.json'), OPENCLAW_STATE_DIR: path.join(run, 'state'),
         OPENCLAW_HOME: run, HOME: run, USERPROFILE: run,
-        OPENCLAW_GATEWAY_TOKEN: token, OPENCLAW_DISABLE_BONJOUR: '1', OPENCLAW_SKIP_CHANNELS: '1', OPENCLAW_GATEWAY_STARTUP_TRACE: '1' },
+        APPDATA: path.join(run, 'AppData', 'Roaming'), LOCALAPPDATA: path.join(run, 'AppData', 'Local'),
+        OPENCLAW_GATEWAY_TOKEN: token, OPENCLAW_DISABLE_BONJOUR: '1', OPENCLAW_SKIP_CHANNELS: '1',
+        OPENCLAW_NO_RESPAWN: '1', OPENCLAW_GATEWAY_STARTUP_TRACE: '1' },
       serviceName: 'Gateway startup measurement',
     });
     const log = fs.createWriteStream(path.join(run, 'runtime.log'));
     child.stdout.on('data', (data) => log.write(data));
     child.stderr.on('data', (data) => log.write(data));
-    const result = { ok: false };
+    const result = { ok: false, bind: 'loopback', tokenPerAttempt: true, loaderObserved: false };
     let finished = false;
     let ws;
     const finish = (error) => {
@@ -194,6 +230,18 @@ function electronProbe() {
         } else if (msg.type === 'res' && msg.id === 'measure-rpc') {
           if (!msg.ok) { finish(`system-presence failed: ${msg.error?.code}`); return; }
           result.rpcReadyMs = performance.now() - startedAt;
+          if (!Array.isArray(msg.payload)) { finish('system-presence returned an invalid payload'); return; }
+          try {
+            const proof = JSON.parse(fs.readFileSync(proofPath, 'utf8'));
+            if (proof.arm !== arm || proof.loaderObserved !== true || proof.baselineApplied !== (arm === 'before')) {
+              throw new Error('Doctor loader proof does not match this arm');
+            }
+            result.loaderObserved = true;
+            result.baselineApplied = proof.baselineApplied;
+          } catch (error) {
+            finish(`Measured doctor loader was not observed: ${error.message}`);
+            return;
+          }
           result.ok = true;
           finish();
         }

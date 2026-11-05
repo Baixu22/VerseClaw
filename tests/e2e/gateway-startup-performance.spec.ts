@@ -32,7 +32,7 @@ test('managed Gateway starts with plugins, serves authenticated RPC, and stops i
   const tempDir = join(userDataDir, 'temp');
   await mkdir(tempDir, { recursive: true });
   const evidence = {
-    driven_by: 'agent', actor: 'playwright-gateway-startup', pluginsEnabled: true,
+    driven_by: 'agent', actor: 'playwright-gateway-startup', pluginsEnabled: true, rpcMethod: 'health',
     memory: { freeBytes: freemem(), totalBytes: totalmem() },
     startSucceeded: false, authenticatedRpc: false, stopped: false,
     readyMs: null as number | null, pid: null as number | null,
@@ -60,8 +60,11 @@ test('managed Gateway starts with plugins, serves authenticated RPC, and stops i
       const status = await invoke('gateway', 'status');
       return status.state === 'running' && status.gatewayReady === true;
     }, { timeout: 90_000 }).toBe(true);
-    const presence = await invoke('gateway', 'rpc', { method: 'system-presence', params: {}, timeoutMs: 10_000 });
-    expect(Array.isArray(presence)).toBe(true);
+    // The renderer's workspace policy already permits health as a read-only
+    // RPC; system-presence is an internal readiness probe in Main.
+    const health = await invoke('gateway', 'rpc', { method: 'health', params: { probe: false }, timeoutMs: 10_000 });
+    expect(health.ok).toBe(true);
+    expect(Array.isArray(health.agents)).toBe(true);
     evidence.authenticatedRpc = true;
     const status = await invoke('gateway', 'status');
     const pid = status.pid as number;
