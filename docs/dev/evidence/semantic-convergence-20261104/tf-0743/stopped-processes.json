@@ -1,0 +1,115 @@
+{
+  "processes": [
+    {
+      "ProcessId": 37232,
+      "ParentProcessId": 46384,
+      "CreationDate": "2026-11-05T21:20:55.922053+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 24120,
+      "ParentProcessId": 37232,
+      "CreationDate": "2026-11-05T21:20:55.939339+08:00",
+      "Name": "conhost.exe"
+    },
+    {
+      "ProcessId": 11648,
+      "ParentProcessId": 37232,
+      "CreationDate": "2026-11-05T21:21:04.404389+08:00",
+      "Name": "cmd.exe"
+    },
+    {
+      "ProcessId": 24196,
+      "ParentProcessId": 37232,
+      "CreationDate": "2026-11-05T21:21:04.407611+08:00",
+      "Name": "cmd.exe"
+    },
+    {
+      "ProcessId": 20160,
+      "ParentProcessId": 37232,
+      "CreationDate": "2026-11-05T21:21:04.411257+08:00",
+      "Name": "cmd.exe"
+    },
+    {
+      "ProcessId": 38784,
+      "ParentProcessId": 20160,
+      "CreationDate": "2026-11-05T21:21:04.414471+08:00",
+      "Name": "conhost.exe"
+    },
+    {
+      "ProcessId": 50736,
+      "ParentProcessId": 11648,
+      "CreationDate": "2026-11-05T21:21:04.428178+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 37824,
+      "ParentProcessId": 24196,
+      "CreationDate": "2026-11-05T21:21:04.433726+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 5732,
+      "ParentProcessId": 20160,
+      "CreationDate": "2026-11-05T21:21:04.453116+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 50368,
+      "ParentProcessId": 37824,
+      "CreationDate": "2026-11-05T21:21:04.736488+08:00",
+      "Name": "cmd.exe"
+    },
+    {
+      "ProcessId": 45120,
+      "ParentProcessId": 50736,
+      "CreationDate": "2026-11-05T21:21:04.736925+08:00",
+      "Name": "cmd.exe"
+    },
+    {
+      "ProcessId": 45312,
+      "ParentProcessId": 5732,
+      "CreationDate": "2026-11-05T21:21:04.753307+08:00",
+      "Name": "cmd.exe"
+    },
+    {
+      "ProcessId": 37952,
+      "ParentProcessId": 45120,
+      "CreationDate": "2026-11-05T21:21:04.761832+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 50732,
+      "ParentProcessId": 50368,
+      "CreationDate": "2026-11-05T21:21:04.762798+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 11116,
+      "ParentProcessId": 45312,
+      "CreationDate": "2026-11-05T21:21:04.777414+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 42984,
+      "ParentProcessId": 50732,
+      "CreationDate": "2026-11-05T21:21:05.206306+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 13372,
+      "ParentProcessId": 11116,
+      "CreationDate": "2026-11-05T21:21:05.224434+08:00",
+      "Name": "node.exe"
+    },
+    {
+      "ProcessId": 47896,
+      "ParentProcessId": 37952,
+      "CreationDate": "2026-11-05T21:21:05.226115+08:00",
+      "Name": "node.exe"
+    }
+  ],
+  "driven_by": "agent",
+  "reason": "pnpm dependency auto-reconciliation instead of compiler; rerun with verify_deps_before_run=warn",
+  "actor": "codex/tf0743"
+}

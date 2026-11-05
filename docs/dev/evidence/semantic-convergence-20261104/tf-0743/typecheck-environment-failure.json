@@ -1,0 +1,49 @@
+{
+  "id": "tf0743-final-typecheck",
+  "driven_by": "agent",
+  "actor": "codex/semantic-goal",
+  "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+  "base": "c6414f689878ece855b5a31ef03736611edcbc1a",
+  "candidate": {
+    "commit": "c6414f689878ece855b5a31ef03736611edcbc1a",
+    "tree": "5cce3caaa0b86359798f7b3304eaf52fd5b8f99d",
+    "dirty": true
+  },
+  "sourceHashes": {
+    "docs/dev/memory-control-plane.md": "b98aabf3cd387a9724fd914464e3b0e2e8ae1e2de5cf28e2b061ac1f7392cacb",
+    "harness/specs/tasks/memory-read-consistency.md": "abca53fe5272c261d6f7c3997a4a433ed4d544b380adcdbd497f8b6dbf51dd6e",
+    "openclaw_runtime/src/infra/sqlite-transaction.ts": "9669911ea2927587fa59bc4501ce0bd442b96f7c036995a94a8bf0dcbb98cd4f",
+    "openclaw_runtime/src/runtime-core/memory-persistence.ts": "cba0528f763e38c0b6be3eaa6f73f20527894ee8474f716ddffad43ac2a9bdfa",
+    "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts": "ef09bd7c86d530a971f0554af098b297d78a54c2aef9f0a1c66545de14c9decf",
+    "openclaw_runtime/src/runtime-core/memory-query-tool.ts": "d8d2ebf5b678858d9f4ac243ea642e940e3c192d0e3590edd906354223792cb8",
+    "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "1addff12b999eb1f55e343184be8945428e9dd6357c57c1f4481b2b6736e3852",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts": "75eec9dda86dce5553693722412ea5ccf8cabccd722e4c0069d187e9471c6c24",
+    "tests/unit/memory-read-consistency.test.ts": "5f98e7ce952610c5d2f9a458b6761a2dccf8e5714e5b59b494ca9e85097d0df7"
+  },
+  "sourceHashesAfter": {
+    "docs/dev/memory-control-plane.md": "b98aabf3cd387a9724fd914464e3b0e2e8ae1e2de5cf28e2b061ac1f7392cacb",
+    "harness/specs/tasks/memory-read-consistency.md": "abca53fe5272c261d6f7c3997a4a433ed4d544b380adcdbd497f8b6dbf51dd6e",
+    "openclaw_runtime/src/infra/sqlite-transaction.ts": "9669911ea2927587fa59bc4501ce0bd442b96f7c036995a94a8bf0dcbb98cd4f",
+    "openclaw_runtime/src/runtime-core/memory-persistence.ts": "cba0528f763e38c0b6be3eaa6f73f20527894ee8474f716ddffad43ac2a9bdfa",
+    "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts": "ef09bd7c86d530a971f0554af098b297d78a54c2aef9f0a1c66545de14c9decf",
+    "openclaw_runtime/src/runtime-core/memory-query-tool.ts": "d8d2ebf5b678858d9f4ac243ea642e940e3c192d0e3590edd906354223792cb8",
+    "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "1addff12b999eb1f55e343184be8945428e9dd6357c57c1f4481b2b6736e3852",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts": "75eec9dda86dce5553693722412ea5ccf8cabccd722e4c0069d187e9471c6c24",
+    "tests/unit/memory-read-consistency.test.ts": "5f98e7ce952610c5d2f9a458b6761a2dccf8e5714e5b59b494ca9e85097d0df7"
+  },
+  "sourceStable": true,
+  "command": [
+    "node",
+    "scripts/typecheck-agent-dev.mjs",
+    "--force"
+  ],
+  "environment": {
+    "TEMP": "D:\\tmp",
+    "TMP": "D:\\tmp"
+  },
+  "startedAt": "2026-11-05T13:20:55.882Z",
+  "completedAt": "2026-11-05T13:32:01.858Z",
+  "durationMs": 665974,
+  "exitCode": 1,
+  "log": "D:/tmp/tf0743-final-typecheck.log"
+}

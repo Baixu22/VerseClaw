@@ -1,0 +1,158 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0743",
+  "observations": [
+    {
+      "case": "self-edit-query-recall",
+      "before": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ]
+      },
+      "updated": {
+        "ok": true,
+        "tool": "memory_update",
+        "message": "Fact old superseded by old_superseded_5000.",
+        "data": {
+          "oldFactId": "old",
+          "newFactId": "old_superseded_5000",
+          "updatedFields": {
+            "objectSummary": "green color"
+          }
+        }
+      },
+      "after": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ]
+      },
+      "recall": {
+        "ok": true,
+        "tool": "memory_recall",
+        "message": "Found 1 fact(s).",
+        "data": [
+          {
+            "factId": "old_superseded_5000",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "green color",
+            "verificationStatus": "agent_approved",
+            "memoryType": "semantic",
+            "valid_at": 5000
+          }
+        ]
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "forget-query",
+      "after": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ]
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "external-connection",
+      "before": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ]
+      },
+      "after": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ]
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "external-process",
+      "after": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ]
+      },
+      "elapsedMs": 0
+    },
+    {
+      "case": "changed-during-retrieval",
+      "during": {
+        "ok": true,
+        "message": "Found 1 fact(s) matching \"color\".",
+        "count": 1,
+        "facts": [
+          {
+            "factId": "old",
+            "subject": "profile",
+            "predicate": "color",
+            "objectSummary": "blue color",
+            "confidence": 0.8,
+            "validAt": 100
+          }
+        ]
+      }
+    }
+  ]
+}

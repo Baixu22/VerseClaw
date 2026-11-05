@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "No actionable scoped defects found. The change invalidates both the facts cache and derived retrieval indexes on owner commits and revision-detected external changes, publishes only after the outer transaction commits, captures snapshot revisions under the read transaction, and rechecks revisions after asynchronous retrieval. Query and self-edit paths use consistent freshness scope, the retired tool adapter maps `object` to `objectSummary`, persist remains disabled by default, and Node 22 transaction detection relies on the existing transaction-depth owner with a safe fallback.",
+  "overall_confidence": 0.91
+}
