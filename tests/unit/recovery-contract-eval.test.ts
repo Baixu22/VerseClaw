@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
@@ -169,6 +169,51 @@ it("rejudges the saved assistant answer instead of trusting a stale preliminary 
     );
     expect(invalid.status).toBe(1);
     expect(JSON.parse(readFileSync(output, "utf8")).readbackJudgements).toHaveLength(0);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+it.each([
+  { name: "actual throw", point: "session-store-before-ack", action: "throw", tamper: false, failures: 0 },
+  { name: "reported hit only", point: "different-boundary", action: "throw", tamper: false, failures: 3 },
+  { name: "pause instead of failure", point: "session-store-before-ack", action: "pause", tamper: false, failures: 3 },
+  { name: "tampered bytes", point: "session-store-before-ack", action: "throw", tamper: true, failures: 3 },
+])("verifies K4 from the hashed failed-write artifact: $name", ({ point, action, tamper, failures }) => {
+  const dir = mkdtempSync(join(tmpdir(), "recovery-store-boundary-"));
+  try {
+    for (const trial of completeWindowTrials(buildRecoveryContractManifest()).filter(
+      (trial) => trial.windowId === "store-write-failure",
+    )) {
+      const evidenceDir = join(dir, String(trial.trialIndex));
+      mkdirSync(evidenceDir);
+      const artifacts = ["before.json", "failed-write.json", "retry.json"].map((name) => {
+        const bytes = JSON.stringify(name === "failed-write.json" ? {
+          error: "EIO", hit: [{ point, action }], failed: {},
+        } : {});
+        const artifactPath = join(evidenceDir, name);
+        writeFileSync(artifactPath, bytes);
+        const sha256 = createHash("sha256").update(bytes).digest("hex");
+        if (tamper && name === "failed-write.json") writeFileSync(artifactPath, "{}");
+        return { path: artifactPath, sha256 };
+      });
+      writeFileSync(join(dir, "trial-store-" + String(trial.trialIndex) + ".json"), JSON.stringify({
+        ...trial, artifacts,
+        observed: {
+          error: "EIO", unchanged: true, retryApplied: true,
+          ...(failures ? { hit: [{ point: "session-store-before-ack", action: "throw" }] } : {}),
+        },
+      }));
+    }
+    const output = join(dir, "report.json");
+    const execution = spawnSync(process.execPath, [
+      "--experimental-strip-types", resolve("scripts/recovery-contract-eval.mjs"),
+      "--dir", dir, "--pairs", dir, "--output", output,
+    ], { encoding: "utf8", windowsHide: true, timeout: 30_000 });
+    expect(execution.error).toBeUndefined();
+    const report = JSON.parse(readFileSync(output, "utf8"));
+    expect(report.evaluation.gates.find((gate: { name: string }) => gate.name === "diskEvidenceComplete"))
+      .toMatchObject({ observed: failures, pass: failures === 0 });
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

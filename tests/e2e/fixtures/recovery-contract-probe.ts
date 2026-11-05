@@ -144,6 +144,21 @@ export function persistEvidence(dir: string, name: string, value: unknown) {
   };
 }
 
+/** Preserve a failure during a multi-crash sequence, even if its final snapshot is unreadable. */
+export function persistFailedRecoveryObservation(dir: string, read: () => unknown, error: unknown) {
+  let value: unknown = null;
+  let snapshotError = "";
+  try {
+    value = read();
+  } catch (failure) {
+    snapshotError = String(failure);
+  }
+  return persistEvidence(dir, "failed-observation.json", {
+    error: String(error), value, snapshotError,
+    driven_by: "agent", actor: "recovery-contract-matrix", realHumanEvidence: false,
+  });
+}
+
 /** Close the live child before closing Playwright's owning app connection. */
 export async function closeRecoveryApp(app: ElectronApplication): Promise<void> {
   let timer: ReturnType<typeof setTimeout> | undefined;

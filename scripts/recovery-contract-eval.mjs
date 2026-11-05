@@ -107,10 +107,23 @@ function verifyWindowBoundary(receipt) {
         points[0] === "user-intent-durable" &&
         points.slice(1).every((point) => point === "recovery-before-dispatch")
       );
-    case "store-write-failure":
-      return (
-        receipt.observed?.hit?.some((hit) => hit.point === "session-store-before-ack") === true
+    case "store-write-failure": {
+      const artifact = receipt.artifacts?.find((item) =>
+        item.path.replaceAll("\\", "/").endsWith("/failed-write.json"),
       );
+      if (!artifact) return false;
+      try {
+        const failed = JSON.parse(artifactBytes(artifact.path).toString("utf8"));
+        return (
+          Array.isArray(failed.hit) &&
+          failed.hit.some(
+            (hit) => hit.point === "session-store-before-ack" && hit.action === "throw",
+          )
+        );
+      } catch {
+        return false;
+      }
+    }
     default:
       return false;
   }

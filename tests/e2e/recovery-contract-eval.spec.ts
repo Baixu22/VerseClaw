@@ -20,6 +20,7 @@ import {
   eventually,
   observeRecoveryVerdict,
   persistEvidence,
+  persistFailedRecoveryObservation,
   readProbeFiles,
   readRecoveryDisk,
   writeProbe,
@@ -142,6 +143,7 @@ test.describe("recovery contract eval windows", () => {
       let app: ElectronApplication | undefined;
       const crashes: Array<Record<string, unknown>> = [];
       let receipt: Record<string, unknown> | undefined;
+      let started = Date.now();
       const evidence: Array<{ path: string; sha256: string; bytes: number }> = [];
       try {
         app = await launchElectronApp({
@@ -176,7 +178,7 @@ test.describe("recovery contract eval windows", () => {
         const before = readRecoveryDisk(stateDir);
         evidence.push(persistEvidence(trialDir, "before.json", before));
         const baseRequests = llm.log.length;
-        let started = Date.now();
+        started = Date.now();
         let outcome: Record<string, unknown> = {};
         if (WINDOW === "store-write-failure") {
           writeProbe(configPath, { id, point: "session-store-before-ack", action: "throw" });
@@ -234,7 +236,7 @@ test.describe("recovery contract eval windows", () => {
             point,
             action: "pause",
             ...(point === "tool-return-before-receipt" ? { toolName } : {}),
-            ...(WINDOW === "intent-after-persist-kill" ? { messageIncludes: id } : {}),
+            ...(point === "user-intent-durable" ? { messageIncludes: id + " start" } : {}),
           });
           // The async send can finish only after the paused gateway is released;
           // its transport error is recorded while the test controls the process.
@@ -300,6 +302,7 @@ test.describe("recovery contract eval windows", () => {
               at: Date.now(),
             });
             kill(hit.pid);
+            crashes[crashes.length - 1].killSucceeded = true;
             // Change the next boot's probe only after termination. Releasing a
             // live paused process first would let it cross the measured boundary.
             if (point === "user-intent-durable") expect(llm.log.length).toBe(baseRequests);
@@ -427,6 +430,38 @@ test.describe("recovery contract eval windows", () => {
           contentType: "application/json",
         });
         expect(evidence.length).toBeGreaterThanOrEqual(3);
+      } catch (error) {
+        if (crashes.length > 0 && !receipt) {
+          evidence.push(persistFailedRecoveryObservation(trialDir, () => ({
+            disk: readRecoveryDisk(stateDir),
+            decisions: readProbeFiles(probeDir, "decision-"),
+            effects: effectLines(effectPath),
+          }), error));
+          receipt = {
+            schema: "RecoveryContractIncompleteTrial/v1",
+            windowId: WINDOW, trialIndex: INDEX, arm: ARM,
+            injectionPoint: windowContract.annotation.injectionPoint,
+            sampleStatus: "failed-observation",
+            injectionMechanism: "real-process-kill",
+            duplicateEffects: null, lostTasks: null, terminalCorrect: false,
+            unknownClassifiable: true, rerunOutsideAllowedRegion: null,
+            recoveryLatencyMs: Date.now() - started,
+            diskEvidenceComplete: false, setupWaitMs,
+            observed: {
+              crashes, requestedCrashes: WINDOW === "repeated-restart" ? 3 : 1,
+              completedCrashes: crashes.filter((crash) => crash.killSucceeded === true).length,
+              observationTimedOut: String(error).includes("timed out"),
+              observationError: String(error),
+              latencyBasis: "elapsed-to-failed-injection-observer",
+            },
+            evidenceRef: trialDir.replaceAll("\\", "/"), artifacts: evidence,
+            drivenBy: "agent", actor: "recovery-contract-matrix", realHumanEvidence: false,
+            generatedAt: new Date().toISOString(),
+          };
+          const artifact = persistEvidence(resolve(OUT), `trial-${WINDOW}-${INDEX}.json`, receipt);
+          await testInfo.attach("recovery-trial", { path: artifact.path, contentType: "application/json" });
+        }
+        throw error;
       } finally {
         writeProbe(configPath, { id: "released", point: "observe", action: "pause" });
         if (app) await closeRecoveryApp(app);
