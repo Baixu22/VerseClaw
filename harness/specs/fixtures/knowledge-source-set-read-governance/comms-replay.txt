@@ -1,0 +1,2 @@
+$ node scripts/comms/replay.mjs
+Wrote comms replay metrics to C:\Users\27933\.codex\worktrees\knowledge-read-governance-20261105\ClawX\artifacts\comms\current-metrics.json

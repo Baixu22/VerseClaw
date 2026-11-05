@@ -1,0 +1,10 @@
+$ node scripts/check-repository-artifacts.mjs
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stderr-1.log
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stdout-1.log
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stderr-1.log
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stdout-1.log
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stderr-1.log
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stdout-1.log
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stderr-1.log
+Tracked path is ignored: harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log
+[ELIFECYCLE] Command failed with exit code 1.
