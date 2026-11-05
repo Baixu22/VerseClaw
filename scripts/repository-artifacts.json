@@ -2542,7 +2542,10 @@
     "docs/dev/evidence/semantic-convergence-20261104/tf-0746/settings-rate-limited.png",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0746/source-guard.json",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0746/source-manifest.json",
-    "docs/dev/evidence/semantic-convergence-20261104/tf-0746/recompute.mjs"
+    "docs/dev/evidence/semantic-convergence-20261104/tf-0746/recompute.mjs",
+    "docs/dev/semantic-convergence-benefit-20261104.md",
+    "docs/dev/evidence/semantic-convergence-20261104/tf-0747/baseline-m0.json",
+    "docs/dev/evidence/semantic-convergence-20261104/tf-0747/report.json"
   ],
   "artifactBatches": {}
 }

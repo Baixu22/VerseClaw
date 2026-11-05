@@ -1,0 +1,540 @@
+{
+  "schema": "SemanticConvergenceBenefitReport/v1",
+  "node": "TF-0747",
+  "driven_by": "agent",
+  "actor": "codex/semantic-program",
+  "measurementCandidate": {
+    "commit": "300631d8588062209a06236d552ddf1f8b08eb52",
+    "tree": "84ab86f182bc71bb62bd15596b21af054217ae29",
+    "dirty": false
+  },
+  "inputs": [
+    {
+      "file": "docs/dev/evidence/semantic-convergence-20261104/tf-0747/baseline-m0.json",
+      "sha256": "142aa34ff98155eec25d075311e7f50ad0171b9b5fb95187800254729ab4e9ee"
+    },
+    {
+      "file": "docs/dev/evidence/semantic-convergence-20261104/tf-0746/report.json",
+      "sha256": "1c28b826077526b8295cae7c8bc83a7115b98658a8b3d1c42df28baed58515b5"
+    },
+    {
+      "file": "docs/dev/evidence/semantic-convergence-20261104/tf-0746/matrix.json",
+      "sha256": "6eed944309247ee5ac243d321e1ecb2ee2cf13f11c02f19fe39125fb9abb8bfc"
+    },
+    {
+      "file": "docs/dev/evidence/semantic-convergence-20261104/tf-0746/commands.json",
+      "sha256": "53b544297c9c1b849328a3434f63e84125bcb822f4f81574336f99f4e7c4ea42"
+    },
+    {
+      "file": "docs/dev/evidence/semantic-convergence-20261104/tf-0746/http-observations.json",
+      "sha256": "a1a628430760efd6190afc770d68705338d55b84f79f7747a3ee5e954ec74bcf"
+    },
+    {
+      "file": "docs/dev/evidence/semantic-convergence-20261104/tf-0746/negative-cases.json",
+      "sha256": "93d7aae0d5069be8f04f44b96ed721b60698c0261eea1719dc38ade42c977bed"
+    },
+    {
+      "file": "docs/dev/evidence/semantic-convergence-20261104/tf-0746/electron-verdicts.json",
+      "sha256": "15c0074b4ddb8ca085bb63315718af376b9cbd6e78d4576add68e2a6b53187a2"
+    }
+  ],
+  "baseline": {
+    "candidate": {
+      "commit": "25cc8a146588263a7661159cf288582af53ca50f",
+      "dirty": true
+    },
+    "metrics": [
+      {
+        "id": "RETRY-1",
+        "definition": "attempt identity collides with reversible budget count",
+        "formula": "identity==usedCount AND success decrements usedCount",
+        "value": 1,
+        "unit": "boolean",
+        "method": "static",
+        "limitation": "Source shape only; the contract test reproduces the collision dynamically.",
+        "sources": [
+          "openclaw_runtime/src/agents/request-attempt-budget.ts"
+        ]
+      },
+      {
+        "id": "RETRY-2",
+        "definition": "retry charging layers present for one logical request",
+        "formula": "count(files calling tryRecordAttempt/recordAttempt)",
+        "value": 4,
+        "unit": "layers",
+        "method": "static",
+        "limitation": "Counts production call sites, not per-request amplification; the dynamic sequence is measured by the contract test.",
+        "sources": [
+          "provider-transport",
+          "agent-auto-retry",
+          "model-fallback",
+          "retryAsync"
+        ]
+      },
+      {
+        "id": "MEM-1",
+        "definition": "agent self-edit emits human provenance labels",
+        "formula": "count(human_confirmation)+count(human_approved)+count(promotedBy human)",
+        "value": 5,
+        "unit": "labels",
+        "method": "static",
+        "limitation": "Persist is retired, so these labels are unreachable today; this is a recovery gate.",
+        "sources": [
+          "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts"
+        ]
+      },
+      {
+        "id": "MEM-2",
+        "definition": "independent commit steps inside one logical memory update",
+        "formula": "sum(step count) for self-edit and curation",
+        "value": 4,
+        "unit": "steps",
+        "method": "static",
+        "limitation": "Transaction boundaries are inherited from the persistence port; values are candidate windows, not observed corruption.",
+        "sources": [
+          "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts"
+        ]
+      },
+      {
+        "id": "VALID-1",
+        "definition": "status classes currently collapsed into valid=true",
+        "formula": "count(success, rateLimit, probe400)",
+        "value": 3,
+        "unit": "classes",
+        "method": "static",
+        "limitation": "Classes only; actual provider behavior varies by API. The 12-scenario matrix is the behavioral gate.",
+        "sources": [
+          "electron/services/providers/provider-validation.ts"
+        ]
+      },
+      {
+        "id": "VALID-2",
+        "definition": "validation state dimensions exposed by the result type",
+        "formula": "1 (valid boolean) until structured state is implemented",
+        "value": 1,
+        "unit": "dimensions",
+        "method": "static",
+        "limitation": "Current contract exposes valid/error/durationMs only.",
+        "sources": [
+          "shared/host-api/contract.ts",
+          "electron/services/providers/provider-validation.ts"
+        ]
+      },
+      {
+        "id": "NET-1",
+        "definition": "validation requests sharing inference guarded policy",
+        "formula": "usesGuardedFetch ? 1 : 0",
+        "value": 0,
+        "unit": "boolean",
+        "method": "static",
+        "limitation": "Import/call evidence only; policy parity is behavioral.",
+        "sources": [
+          "electron/services/providers/provider-validation.ts"
+        ]
+      },
+      {
+        "id": "NET-2",
+        "definition": "validation probe carries explicit deadline",
+        "formula": "validationHasDeadline ? 1 : 0",
+        "value": 0,
+        "unit": "boolean",
+        "method": "static",
+        "limitation": "Regex-based; manual review required.",
+        "sources": [
+          "electron/services/providers/provider-validation.ts"
+        ]
+      },
+      {
+        "id": "PROMPT-1",
+        "definition": "prompt mutation fields covered by an authority declaration",
+        "formula": "declaredAuthority ? 5 : 0",
+        "value": 0,
+        "unit": "fields",
+        "method": "static",
+        "limitation": "No producer-level declaration exists today; this counts the public field list.",
+        "sources": [
+          "openclaw_runtime/src/plugins/hook-before-agent-start.types.ts",
+          "openclaw_runtime/src/context-engine/context-candidate.ts"
+        ]
+      },
+      {
+        "id": "PROMPT-2",
+        "definition": "post-orchestrator additions outside the managed ledger",
+        "formula": "count(runtimeIntensitySystemPrompt, degradationNotice)",
+        "value": 2,
+        "unit": "additions",
+        "method": "static",
+        "limitation": "Counts code paths, not actual chars; the snapshot coverage test measures chars.",
+        "sources": [
+          "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
+        ]
+      },
+      {
+        "id": "PROMPT-3",
+        "definition": "seal producer coverage matrix present",
+        "formula": "sealMatrix ? 1 : 0",
+        "value": 0,
+        "unit": "boolean",
+        "method": "static",
+        "limitation": "Seal is default-off; presence is not enforcement evidence.",
+        "sources": [
+          "openclaw_runtime/src/context-engine/rc03-seal-hook.ts"
+        ]
+      },
+      {
+        "id": "MEM-3",
+        "definition": "shared memory cache invalidated on write path",
+        "formula": "cacheInvalidationInQuery && cacheInvalidationInPreReply",
+        "value": 0,
+        "unit": "boolean",
+        "method": "static",
+        "limitation": "No write-path invalidation found; TTL is 30s.",
+        "sources": [
+          "openclaw_runtime/src/runtime-core/memory-query-tool.ts",
+          "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts"
+        ]
+      },
+      {
+        "id": "FACADE-1",
+        "definition": "production consumers of Stage5 facade",
+        "formula": "count(non-test files referencing facade)",
+        "value": 0,
+        "unit": "consumers",
+        "method": "static",
+        "limitation": "Includes golden-run by design; the node decides adopt-or-retire.",
+        "sources": [
+          "openclaw_runtime/src/context-engine/stage5-memory-facade.ts"
+        ]
+      },
+      {
+        "id": "EMB-1",
+        "definition": "worst-case embedding time for 100 texts",
+        "formula": "REQUEST_TIMEOUT_MS * ceil(100 / MAX_BATCH_SIZE)",
+        "value": 390000,
+        "unit": "ms",
+        "method": "static",
+        "limitation": "Assumes every batch hits the timeout; no network measurement.",
+        "sources": [
+          "electron/services/knowledge-embedding-provider.ts"
+        ]
+      }
+    ],
+    "limitation": "Historical source-derived M0 snapshot; dirty=true. Preserved unchanged, not a clean paired benchmark. Counts use their original definitions (including MEM-1=5 labels, not the plan shorthand of 3 sites)."
+  },
+  "findings": [
+    {
+      "id": "R1",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "R1",
+          "requirement": "Retry identity",
+          "journey": "success/failure/idempotent completion",
+          "command": "commands.json:tf0746-root",
+          "oracle": "unique IDs, immutable outcomes, one release",
+          "negative": "repeated completion",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Local automated scenarios; no live-user before/after performance claim."
+    },
+    {
+      "id": "R2",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "R2",
+          "requirement": "Retry charging/recovery",
+          "journey": "real local HTTP503/503/200 through guarded transport and shared budget",
+          "command": "commands.json:tf0746-root",
+          "oracle": "3 outbound=3 charges, success; auth1 request; exhausted2 requests",
+          "negative": "401/403/budget exhaustion",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Local automated scenarios; no live-user before/after performance claim."
+    },
+    {
+      "id": "V1",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "V1",
+          "requirement": "Provider readiness",
+          "journey": "12-state matrix, Setup/Main/local HTTP and Settings UI",
+          "command": "commands.json:tf0746-root",
+          "oracle": "false-ready0/12;429/400 never verified;Setup continuation disabled",
+          "negative": "429/non-auth400/auth/model/timeout/blocked",
+          "artifacts": [
+            "root-tests.json",
+            "electron-verdicts.json",
+            "settings-observations.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Local automated scenarios; no live-user before/after performance claim."
+    },
+    {
+      "id": "N1",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "N1",
+          "requirement": "Network policy",
+          "journey": "validation/inference target policy and deadline parity",
+          "command": "commands.json:tf0746-root",
+          "oracle": "shared fingerprint, fail-closed metadata/invalid target, total probe deadline",
+          "negative": "SSRF/invalid URL/deadline",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        },
+        {
+          "finding": "N1",
+          "requirement": "Embedding deadline",
+          "journey": "100-text operation with shared total deadline",
+          "command": "commands.json:tf0746-root",
+          "oracle": "120000ms logical clock ceiling, no new batch after expiry",
+          "negative": "expired/cancelled operation",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Local automated scenarios; no live-user before/after performance claim."
+    },
+    {
+      "id": "P1",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "P1",
+          "requirement": "Prompt authority",
+          "journey": "all declared mutation fields and registered admission",
+          "command": "commands.json:tf0746-root",
+          "oracle": "5/5 declarations; explicit enforce denies unknown rights before effects",
+          "negative": "undeclared replacement/source spoofing",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Explicit enforce/seal scenarios; defaults remain warn/off, not universal live enforcement."
+    },
+    {
+      "id": "P2",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "P2",
+          "requirement": "Prompt accounting",
+          "journey": "managed/post-orchestrator composition and actual final snapshot",
+          "command": "commands.json:tf0746-root",
+          "oracle": "6000 managed cap, joins/replacements counted, missing baseline visible",
+          "negative": "unbudgeted/no-turn/failure",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        },
+        {
+          "finding": "P2",
+          "requirement": "Seal/entry boundaries",
+          "journey": "sealed stream and embedded extension entry",
+          "command": "commands.json:tf0746-root",
+          "oracle": "seal-on rejects unregistered mutation; off/kill remains truthful; entries continue",
+          "negative": "tamper/duplicate/after-seal semantic transform",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Explicit enforce/seal scenarios; defaults remain warn/off, not universal live enforcement."
+    },
+    {
+      "id": "M1",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "M1",
+          "requirement": "Memory provenance",
+          "journey": "agent edit, schema and persistence-port validation",
+          "command": "commands.json:tf0746-root",
+          "oracle": "agent_self_edit/agent_approved, human tags rejected",
+          "negative": "forged human approval/rejection",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Recovery-precondition/static disposition; persist stays retired."
+    },
+    {
+      "id": "M2",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "M2",
+          "requirement": "Memory atomicity",
+          "journey": "SQLite/in-memory self-edit and curation transactions",
+          "command": "commands.json:tf0746-root",
+          "oracle": "six failures rollback; truthful DELETE",
+          "negative": "three stages x two paths/conflicting IDs/async",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Recovery-precondition/static disposition; persist stays retired."
+    },
+    {
+      "id": "M3",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "M3",
+          "requirement": "Memory freshness",
+          "journey": "committed reads, external Node writer and read races",
+          "command": "commands.json:tf0746-root",
+          "oracle": "immediate current read or explicit stale snapshot metadata",
+          "negative": "missing revision/rollback/external commit race",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Recovery-precondition/static disposition; persist stays retired."
+    },
+    {
+      "id": "M4",
+      "verdict": "resolved-with-boundary",
+      "rows": [
+        {
+          "finding": "M4",
+          "requirement": "Facade disposition",
+          "journey": "production consumer/import oracle",
+          "command": "commands.json:tf0746-root",
+          "oracle": "retire;zero production consumers;headers/docs align",
+          "negative": "direct/barrel/dynamic importer fixture",
+          "artifacts": [
+            "root-tests.json"
+          ],
+          "verdict": "pass"
+        }
+      ],
+      "limitation": "Recovery-precondition/static disposition; persist stays retired."
+    }
+  ],
+  "observedAfter": [
+    {
+      "id": "retry-amplification",
+      "value": 1,
+      "unit": "charges per physical request",
+      "method": "real-local-HTTP",
+      "source": "tf-0746/http-observations.json",
+      "liveUserBenefit": false
+    },
+    {
+      "id": "retry-recovered",
+      "value": 1,
+      "unit": "local fault sequence",
+      "method": "real-local-HTTP",
+      "source": "tf-0746/http-observations.json",
+      "liveUserBenefit": false
+    },
+    {
+      "id": "root-runtime-pass-count",
+      "value": 511,
+      "unit": "assertions",
+      "method": "same-candidate-test-results",
+      "source": "tf-0746/report.json",
+      "liveUserBenefit": false
+    },
+    {
+      "id": "electron-pass-count",
+      "value": 4,
+      "unit": "distinct journeys",
+      "method": "real-Electron-Main-local-HTTP",
+      "source": "tf-0746/electron-verdicts.json",
+      "liveUserBenefit": false
+    },
+    {
+      "id": "negative-pass-rate",
+      "value": 1,
+      "unit": "declared negative/boundary cases",
+      "method": "retained-case-results",
+      "source": "tf-0746/negative-cases.json",
+      "liveUserBenefit": false
+    }
+  ],
+  "comparisons": {
+    "pairedLiveUserSampleCount": 0,
+    "measuredLiveUserImpact": null,
+    "measuredDollarSavings": null,
+    "policy": "No subtraction across static counts and behavioral outcomes or across different fixtures/candidates. Historical before and current after are reported independently."
+  },
+  "score": {
+    "weights": {
+      "correctness": 0.35,
+      "userImpact": 0.25,
+      "coverage": 0.2,
+      "costEfficiency": 0.1,
+      "evidenceQuality": 0.1
+    },
+    "dimensions": {
+      "correctness": 1,
+      "userImpact": null,
+      "coverage": 1,
+      "costEfficiency": null,
+      "evidenceQuality": 1
+    },
+    "interval": {
+      "lower": 0.65,
+      "upper": 1
+    },
+    "interpretation": "Repair-evidence score for ordering only. Missing impact/cost dimensions are bounded 0..1. This interval is not a confidence interval, measured benefit percentage, or release approval.",
+    "definitions": {
+      "correctness": "verified finding closure fraction",
+      "coverage": "final matrix rows with pass verdict / all rows",
+      "evidenceQuality": "clean source-stable successful gates / retained final gates",
+      "userImpact": "unavailable: no paired live-user outcome samples",
+      "costEfficiency": "unavailable: no paired production resource/dollar samples"
+    }
+  },
+  "verificationCost": {
+    "aggregateGateMs": 778108,
+    "observedGateWindowMs": 592829,
+    "limitation": "Sum includes concurrent gate durations, not elapsed development time or dollars; window covers retained final gates only. Failed/review/development attempts are additional costs, not savings."
+  },
+  "decision": {
+    "status": "keep-retired",
+    "persist": false,
+    "defaultChanges": {
+      "proposed": [],
+      "applied": []
+    },
+    "productLocksChanged": false,
+    "releaseReady": false,
+    "realHumanEvidence": false
+  },
+  "unmeasured": [
+    "Live-provider reliability, latency, billed tokens and dollars",
+    "Live-user improvement and long-term soak",
+    "Non-Windows behavior and joint-system GA"
+  ]
+}
