@@ -4,6 +4,9 @@
 // Stage 5 unit-aware packer and the read-only Memory Facade without changing
 // provider bytes, tool execution, or any product default. The API key is read
 // from the caller or process env and is never persisted or logged.
+// TF-0744: historical observation only. The Stage5 memory facade is retired
+// from production adoption; this explicit replay is not a registered memory
+// tool consumer and does not restore Runtime Memory persistence.
 import {
   runStage2GoldenCodingTurn,
   STAGE2_GOLDEN_MODEL_REF,

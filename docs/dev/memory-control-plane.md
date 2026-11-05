@@ -70,3 +70,9 @@ DELETE 在失效写入提交后返回 applied/persisted=true，重复删除返�
 query 和每次重载的 self-edit 入口均返回 loadedAt、sourceRevision、scope、stale。快照 revision 在读取数据的同一事务中采集；异步检索结束时再次核对，提交与读取竞争时明确 stale。缺失 revision 的注入端口与未提交事务不声称 fresh。scope=sqlite-connection-snapshot 只表示所观察的读边界，不能保证返回后另一进程不会再写入。元数据表更新可能保守地使 revision 变化，宁可重新加载，也不把它解释为新增事实。
 
 此节点还对齐现有 agent schema 的 object 参数与内部 handler 的 objectSummary 字段，保持工具输入语义。所有路径继续受 TF-0500 的 persist=false 退役门禁约束；跨进程验证使用隔离 SQLite 与自动退出的 Node 子进程，属于 agent 驱动的恢复前证据。
+
+## Stage5 facade 决策：retire（TF-0744）
+
+选择退役生产采用：Stage5 facade 没有生产工具消费者，也没有生产 barrel 导出；唯一非测试消费者是显式调用的 historical golden-run observer。为它新增生产入口会扩大当前恢复前门禁的范围，且无法改变 persist 已退役的事实。现有工具继续由各自 owner 管理，保持已验证的权限与存储边界。
+
+模块标记 deprecated；direct exports 仅为历史观察复跑和契约测试保留，golden-run 的默认关闭开关与历史产物保持。此处的 retire 是采用决策，不删除历史代码或重写旧验收。契约测试扫描生产源码并以导入、动态导入和 barrel 导出的负例验证判定器。self-edit 文件头说明 adapter 已存在但 persist 仍退役；不得从直接单测接口推断工具已注册。当前生产消费者数为 0，属于静态结构度量，不是运行时收益。未来采用需要单独设计和验收；本节点不修改默认值或产品锁。
