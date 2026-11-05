@@ -1,0 +1,16 @@
+{
+  "ref": "d8b5f93b9ac33b04b5d44c197e11a27b95d92dce",
+  "mappedPaths": [
+    "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+    "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+    "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+    "openclaw_runtime/src/runtime-core/memory-store.ts"
+  ],
+  "loaded": {
+    "openclaw_runtime/src/runtime-core/memory-persistence.ts": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
+    "openclaw_runtime/src/runtime-core/memory-store.ts": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+    "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "7ef8e14273e294d28ef151c4135f827b86436f8f0dda9b9bd767654e6d77a366",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "3f70519c30f81c58bfd87d0bee9897ad771f3a49cb21fc1e5575fdf2594dbe3b"
+  }
+}

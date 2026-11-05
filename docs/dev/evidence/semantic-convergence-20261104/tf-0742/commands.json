@@ -1,0 +1,600 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0742",
+  "candidate": {
+    "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+    "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "id": "final-atomic",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/memory-atomic-update.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0742-final-atomic.json"
+      ],
+      "startedAt": "2026-11-05T06:59:57.338Z",
+      "completedAt": "2026-11-05T07:00:45.014Z",
+      "durationMs": 47600,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-atomic.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-atomic-cache"
+      }
+    },
+    {
+      "id": "final-regression",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/memory-self-edit-provenance.test.ts",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+        "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+        "tests/unit/runtime-memory-self-edit.test.ts",
+        "tests/unit/runtime-memory-store.test.ts",
+        "tests/unit/runtime-memory-write-curation.test.ts",
+        "tests/unit/runtime-memory-proposal-shadow.test.ts",
+        "tests/unit/runtime-memory-runtime-integration.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile",
+        "D:/tmp/tf0742-final-regression.json"
+      ],
+      "startedAt": "2026-11-05T07:04:07.147Z",
+      "completedAt": "2026-11-05T07:05:19.357Z",
+      "durationMs": 72207,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-regression.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-regression-cache"
+      }
+    },
+    {
+      "id": "final-typecheck",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs",
+        "--force"
+      ],
+      "startedAt": "2026-11-05T07:05:19.628Z",
+      "completedAt": "2026-11-05T07:09:04.964Z",
+      "durationMs": 225333,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-typecheck.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-typecheck-cache"
+      }
+    },
+    {
+      "id": "final-lint",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/runtime-core/memory-store.ts",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts",
+        "tests/unit/memory-atomic-update.test.ts",
+        "tests/unit/memory-self-edit-provenance.test.ts",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+        "vitest.config.ts",
+        "--max-warnings=0"
+      ],
+      "startedAt": "2026-11-05T07:09:05.249Z",
+      "completedAt": "2026-11-05T07:09:16.920Z",
+      "durationMs": 11668,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-lint.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-lint-cache"
+      }
+    },
+    {
+      "id": "final-harness",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/memory-atomic-update.md",
+        "--since",
+        "d8b5f93b9ac33b04b5d44c197e11a27b95d92dce"
+      ],
+      "startedAt": "2026-11-05T07:09:17.227Z",
+      "completedAt": "2026-11-05T07:09:20.457Z",
+      "durationMs": 3227,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-harness.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-harness-cache"
+      }
+    },
+    {
+      "id": "final-harness-plan",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/memory-atomic-update.md",
+        "--since",
+        "d8b5f93b9ac33b04b5d44c197e11a27b95d92dce",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-05T07:09:20.744Z",
+      "completedAt": "2026-11-05T07:09:23.547Z",
+      "durationMs": 2801,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-harness-plan.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-harness-plan-cache"
+      }
+    },
+    {
+      "id": "final-comms-replay",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "startedAt": "2026-11-05T07:09:23.774Z",
+      "completedAt": "2026-11-05T07:09:25.496Z",
+      "durationMs": 1718,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-comms-replay.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "COMMS_OUTPUT_DIR": "D:/tmp/tf0742-final-comms",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-comms-replay-cache"
+      }
+    },
+    {
+      "id": "final-comms-compare",
+      "driven_by": "agent",
+      "actor": "codex/context-prompt-owner",
+      "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+      "candidate": {
+        "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+        "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+        "dirty": false
+      },
+      "sourceStable": true,
+      "sourceHashes": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "sourceHashesAfter": {
+        "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+        "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+        "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+        "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+        "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+        "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+        "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+        "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+        "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+        "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+        "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+      },
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "startedAt": "2026-11-05T07:09:25.665Z",
+      "completedAt": "2026-11-05T07:09:27.510Z",
+      "durationMs": 1844,
+      "exitCode": 0,
+      "log": "D:/tmp/tf0742-final-comms-compare.log",
+      "environment": {
+        "TEMP": "D:/tmp",
+        "TMP": "D:/tmp",
+        "pnpm_config_verify_deps_before_run": "warn",
+        "COMMS_OUTPUT_DIR": "D:/tmp/tf0742-final-comms",
+        "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:/tmp/tf0742-final-comms-compare-cache"
+      }
+    }
+  ],
+  "baselineGate": {
+    "id": "frozen-final",
+    "driven_by": "agent",
+    "actor": "codex/context-prompt-owner",
+    "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+    "candidate": {
+      "commit": "d8b5f93b9ac33b04b5d44c197e11a27b95d92dce",
+      "tree": "51d5f090b4eca9f9fbd997599a742dab5cd57450",
+      "dirty": true
+    },
+    "sourceStable": true,
+    "sourceHashes": {
+      "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+      "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+      "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+      "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+      "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+      "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+      "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+      "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+      "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+      "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+      "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+      "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+    },
+    "sourceHashesAfter": {
+      "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+      "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+      "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+      "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+      "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+      "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+      "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+      "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+      "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6",
+      "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+      "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+      "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+    },
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "D:/tmp/tf0742-frozen.config.ts",
+      "--maxWorkers=1",
+      "--reporter=verbose",
+      "--reporter=json",
+      "--outputFile",
+      "D:/tmp/tf0742-frozen-final.json"
+    ],
+    "startedAt": "2026-11-05T06:37:40.195Z",
+    "completedAt": "2026-11-05T06:37:44.728Z",
+    "durationMs": 4532,
+    "exitCode": 1,
+    "log": "D:/tmp/tf0742-frozen-final.log",
+    "environment": {
+      "TEMP": "D:\\tmp",
+      "TMP": "D:\\tmp",
+      "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:\\tmp\\tf0742-frozen-final-cache"
+    }
+  },
+  "baselineInitialGate": {
+    "id": "baseline-sqlite",
+    "driven_by": "agent",
+    "actor": "codex/context-prompt-owner",
+    "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+    "candidate": {
+      "commit": "d8b5f93b9ac33b04b5d44c197e11a27b95d92dce",
+      "tree": "51d5f090b4eca9f9fbd997599a742dab5cd57450",
+      "dirty": true
+    },
+    "sourceStable": true,
+    "sourceHashes": {
+      "harness/specs/tasks/memory-atomic-update.md": "dae07581244a9e592cbd1dff1c075ae4a6ba6a68eb8318c950bc27f5401138d6",
+      "tests/unit/memory-atomic-update.test.ts": "b382e7d2d355faf32869de3f7f3be18e85b3b9ae616cd84b0a08e673e9ad1d49"
+    },
+    "sourceHashesAfter": {
+      "harness/specs/tasks/memory-atomic-update.md": "dae07581244a9e592cbd1dff1c075ae4a6ba6a68eb8318c950bc27f5401138d6",
+      "tests/unit/memory-atomic-update.test.ts": "b382e7d2d355faf32869de3f7f3be18e85b3b9ae616cd84b0a08e673e9ad1d49"
+    },
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "D:/tmp/tf0742-sqlite.config.ts",
+      "--maxWorkers=1",
+      "--reporter=verbose",
+      "--reporter=json",
+      "--outputFile",
+      "D:/tmp/tf0742-baseline-sqlite.json"
+    ],
+    "startedAt": "2026-11-05T05:06:22.643Z",
+    "completedAt": "2026-11-05T05:06:45.110Z",
+    "durationMs": 22466,
+    "exitCode": 1,
+    "log": "D:/tmp/tf0742-baseline-sqlite.log",
+    "environment": {
+      "TEMP": "D:\\tmp",
+      "TMP": "D:\\tmp",
+      "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH": "D:\\tmp\\tf0742-baseline-sqlite-cache"
+    }
+  }
+}

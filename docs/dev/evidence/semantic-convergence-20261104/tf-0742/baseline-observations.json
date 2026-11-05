@@ -1,0 +1,130 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0742",
+  "scope": "isolated SQLite with test-only mocked flag resolver",
+  "observations": [
+    {
+      "route": "self-edit",
+      "stage": "fact",
+      "before": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "after": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "error": "injected-fact"
+    },
+    {
+      "route": "self-edit",
+      "stage": "invalidation",
+      "before": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "after": {
+        "facts": [
+          "old",
+          "old_superseded_2000"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "error": "injected-invalidation"
+    },
+    {
+      "route": "self-edit",
+      "stage": "relation",
+      "before": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "after": {
+        "facts": [
+          "old",
+          "old_superseded_2000"
+        ],
+        "invalidations": [
+          "old"
+        ],
+        "relations": []
+      },
+      "error": "injected-relation"
+    },
+    {
+      "route": "curation",
+      "stage": "fact",
+      "before": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "after": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [
+          "old"
+        ],
+        "relations": []
+      },
+      "error": "injected-fact"
+    },
+    {
+      "route": "curation",
+      "stage": "invalidation",
+      "before": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "after": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "error": "injected-invalidation"
+    },
+    {
+      "route": "curation",
+      "stage": "relation",
+      "before": {
+        "facts": [
+          "old"
+        ],
+        "invalidations": [],
+        "relations": []
+      },
+      "after": {
+        "facts": [
+          "old",
+          "replacement"
+        ],
+        "invalidations": [
+          "old"
+        ],
+        "relations": []
+      },
+      "error": "injected-relation"
+    }
+  ]
+}

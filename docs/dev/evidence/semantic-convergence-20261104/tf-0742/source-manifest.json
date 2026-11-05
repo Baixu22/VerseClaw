@@ -1,0 +1,28 @@
+{
+  "candidate": {
+    "commit": "d9b94d6336a6454c2cfef77bae8a9507d74ca571",
+    "tree": "5c3a21bfcf1f90bc90ad308841270c7ea77a427a",
+    "dirty": false
+  },
+  "base": "d8b5f93b9ac33b04b5d44c197e11a27b95d92dce",
+  "sourceHashes": {
+    "docs/dev/memory-control-plane.md": "1cc06999c72e8c30b287616ad71af57f70873aaf96b2cc5f47956042af60b6e6",
+    "harness/specs/tasks/semantic-convergence-remediation.md": "cd79f4c3b4f5bce2759d2d51a535138d81fe8886de458b21e87115d81f97d296",
+    "openclaw_runtime/src/runtime-core/memory-persistence.ts": "88dcd00cbd1539629ad79e91ab29f0727982b28b3098edd1c1f62ac5325a49c3",
+    "openclaw_runtime/src/runtime-core/memory-proposal-shadow.ts": "608f4c1e0e4778c7bacb25e1df61b005b66af84533ae9bb5259143fdcb8ef873",
+    "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "98065df1a03280a65d73310d8de5a9554521b068b5127185569a3c65cb58249c",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "c52e8dbe6235bf9df41981f71c1bc4b4dc42aee0a1c8992b58cc743e1a54b78b",
+    "openclaw_runtime/src/runtime-core/memory-store.ts": "fec141cb3cce8fd887fcc3af1a9b1c7dfa42bbde94842b896ce79c59aa63dea8",
+    "tests/unit/memory-self-edit-provenance.test.ts": "33bc082dff6d4b07f3866bc4fd172af7f6595736b90fe3af1cf023a9a6340de6",
+    "tests/unit/runtime-memory-self-edit-persistence.test.ts": "c1016ae344273b771a5186381a34ef3a9505a407722f45d746d34f6d46b179cc",
+    "vitest.config.ts": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42",
+    "harness/specs/tasks/memory-atomic-update.md": "1d66817f29c0b35590072b15e579adf54e06ed2f07471cabda56df5b49de8950",
+    "tests/unit/memory-atomic-update.test.ts": "d21921447507961ec4415ea3e0d6c9f5c5b1b6e152838aecc34757653b44b6f6"
+  },
+  "baselineLoadedHashes": {
+    "openclaw_runtime/src/runtime-core/memory-persistence.ts": "3f9526e0de7f1c1bb215bfcd0e4134e8d904a64c41301d7697d417b0ead4d861",
+    "openclaw_runtime/src/runtime-core/memory-store.ts": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+    "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts": "7ef8e14273e294d28ef151c4135f827b86436f8f0dda9b9bd767654e6d77a366",
+    "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts": "3f70519c30f81c58bfd87d0bee9897ad771f3a49cb21fc1e5575fdf2594dbe3b"
+  }
+}
