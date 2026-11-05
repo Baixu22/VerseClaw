@@ -1,0 +1,37 @@
+[
+  {
+    "id": "unit",
+    "command": "pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
+    "exitCode": 0,
+    "durationMs": 8530,
+    "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained vg-unit-bound.txt; SHA256 0fcdce5bc0719610ca0fcb0d01f2e3c18b651dcc38064ab79bb93d1c3e0b2c57"
+  },
+  {
+    "id": "harness",
+    "command": "pnpm harness validate --spec harness/specs/tasks/verse-tools-boundary-repair.md",
+    "exitCode": 0,
+    "durationMs": 2839,
+    "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained harness-bound.txt; SHA256 c8c1fd2a3d553ebae0da9b54aa58919dc4a296823f365ee22c59762b33c31458"
+  },
+  {
+    "id": "typecheck",
+    "command": "pnpm run typecheck",
+    "exitCode": 0,
+    "durationMs": 37661,
+    "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained typecheck-bound.txt; SHA256 e76b4cbfe08ad7f77ce9736d850bc4b34735b9d1bef1064810bc19739ef9f674"
+  },
+  {
+    "id": "comms-replay",
+    "command": "pnpm run comms:replay",
+    "exitCode": 0,
+    "durationMs": 903,
+    "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained comms-replay-bound.txt; SHA256 86fbd666ed080974c4155cd5525afd2b4e040eda12e2cc07c4344e6ba58c3300"
+  },
+  {
+    "id": "comms-compare",
+    "command": "pnpm run comms:compare",
+    "exitCode": 0,
+    "durationMs": 799,
+    "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained comms-compare-bound.txt; SHA256 8a186e213e2843d3b7f09c61d9975e1c09541b030cf57b85da649646e2a3c98a"
+  }
+]

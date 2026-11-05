@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-flow",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "fail",
+  "issues": [
+    {
+      "kind": "build_identity_failed",
+      "message": "\"node_modules\\@verse-claw\\versebrowser\\dist\\cli.d.ts\" was not found in this archive"
+    }
+  ]
+}

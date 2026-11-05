@@ -6,13 +6,13 @@
   "actor": "codex",
   "source": {
     "branch": "codex/verse-tools-boundaries-20261104",
-    "commit": "27e0f5dda2e41cc9a301eb1449e3ecf0c9975834",
-    "tree": "ed909b0494db1f7388925fb10886bc20242ef597",
+    "commit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+    "tree": "1ae80d3200d878300162d2b34a1f5067eb7df96d",
     "dirty": false
   },
   "candidate": {
-    "id": "d97677d59c3fbd3e9064012ea64a6f222fb8dab29cd26cf01623bc690fcbda18",
-    "sourceInputDigest": "d44450179a6a90017060443cc4b0747daff6e1dee4be8e5b186da301be74211c",
+    "id": "9f46bc0c5d9be62fe9ba066b908798ce0f5cc10b7d4e929d4bc8ff6756cfa983",
+    "sourceInputDigest": "8ff8980f789631a615497d4fd7e6ee393064751b21ca3810268edfeecda909bc",
     "inputs": [
       {
         "path": "README.ja-JP.md",
@@ -41,8 +41,8 @@
       },
       {
         "path": "docs/modules/verse-tools.md",
-        "sha256": "0f68c1547db32dea08ff8d795c48c64c3adb4836a1061cf82aa005f7bfc791b0",
-        "bytes": 16947
+        "sha256": "904b74ee510332d8d0db4f58bd1dbc462129559e633c310f5464bb2879243461",
+        "bytes": 17264
       },
       {
         "path": "electron/services/versegit-fact-adapter.ts",
@@ -71,8 +71,8 @@
       },
       {
         "path": "harness/specs/tasks/verse-tools-boundary-repair.md",
-        "sha256": "d099f883934ce704789cf45edce823050cbb726ac200370cb6f9d9968d9e4b57",
-        "bytes": 7865
+        "sha256": "703672c943e0cb038dc2b458dfd62e3e8719a8e47974a23047cfefe28ca0fbd9",
+        "bytes": 9507
       },
       {
         "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
@@ -1400,6 +1400,6 @@
     }
   ],
   "passed": true,
-  "generated_at": "2026-11-04T18:25:23.849Z",
-  "digest": "1dd9008fbba22ae53d3f74b9a6d0eafaf2cadbad62b95f3c3dfa105d1fd1edd7"
+  "generated_at": "2026-11-05T00:07:53.354Z",
+  "digest": "e076875cea58690b52d093c8dec70e370cf87b17f7ac070c12f4838d37efac64"
 }

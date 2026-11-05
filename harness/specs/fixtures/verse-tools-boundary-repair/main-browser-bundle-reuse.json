@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "reused": true,
+  "verifiedAt": "2026-11-04T23:31:57.663Z",
+  "reason": "Every freshly rebuilt browser dist byte and the complete existing main-runtime archive match the previous recorded refresh; browser source is unchanged.",
+  "compiledFiles": 508,
+  "archiveSha256": "f10017c1df916bcf4ab0b57fa142627a675af03d2e0f465e01cfc8790338d4a7"
+}

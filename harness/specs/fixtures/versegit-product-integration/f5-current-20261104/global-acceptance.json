@@ -1,6 +1,6 @@
 {
   "schema": "clawx.versegit.product-f5-global-acceptance/v1",
-  "generated_at": "2026-11-04T18:32:57.390Z",
+  "generated_at": "2026-11-05T00:19:26.895Z",
   "task": "TF-0539",
   "parentTask": "TF-0523",
   "driven_by": "agent",
@@ -9,13 +9,13 @@
   "passed": true,
   "source": {
     "branch": "codex/verse-tools-boundaries-20261104",
-    "commit": "27e0f5dda2e41cc9a301eb1449e3ecf0c9975834",
-    "tree": "ed909b0494db1f7388925fb10886bc20242ef597",
+    "commit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+    "tree": "1ae80d3200d878300162d2b34a1f5067eb7df96d",
     "dirty": false
   },
   "candidate": {
-    "id": "d97677d59c3fbd3e9064012ea64a6f222fb8dab29cd26cf01623bc690fcbda18",
-    "sourceInputDigest": "d44450179a6a90017060443cc4b0747daff6e1dee4be8e5b186da301be74211c",
+    "id": "9f46bc0c5d9be62fe9ba066b908798ce0f5cc10b7d4e929d4bc8ff6756cfa983",
+    "sourceInputDigest": "8ff8980f789631a615497d4fd7e6ee393064751b21ca3810268edfeecda909bc",
     "inputs": [
       {
         "path": "README.ja-JP.md",
@@ -44,8 +44,8 @@
       },
       {
         "path": "docs/modules/verse-tools.md",
-        "sha256": "0f68c1547db32dea08ff8d795c48c64c3adb4836a1061cf82aa005f7bfc791b0",
-        "bytes": 16947
+        "sha256": "904b74ee510332d8d0db4f58bd1dbc462129559e633c310f5464bb2879243461",
+        "bytes": 17264
       },
       {
         "path": "electron/services/versegit-fact-adapter.ts",
@@ -74,8 +74,8 @@
       },
       {
         "path": "harness/specs/tasks/verse-tools-boundary-repair.md",
-        "sha256": "d099f883934ce704789cf45edce823050cbb726ac200370cb6f9d9968d9e4b57",
-        "bytes": 7865
+        "sha256": "703672c943e0cb038dc2b458dfd62e3e8719a8e47974a23047cfefe28ca0fbd9",
+        "bytes": 9507
       },
       {
         "path": "harness/specs/tasks/versegit-module-implementation-contracts.md",
@@ -498,14 +498,14 @@
   },
   "independentReview": {
     "path": "harness/specs/fixtures/versegit-product-integration/f5-current-20261104/independent-verdict.json",
-    "digest": "9b2bb094fc776058aad79d2481dad7f2ab2d40bb0d7cec9476c204516b8d6142",
+    "digest": "fee98d15eee071568742c0cc39580d0905c11a403b6912d294bb8e3b69e47183",
     "actor": "codex",
     "reviewerRole": "independent-product-f5-verifier-process",
     "verdict": "pass",
     "p0": 0,
     "p1": 0,
     "p2": 6,
-    "indexDigest": "1dd9008fbba22ae53d3f74b9a6d0eafaf2cadbad62b95f3c3dfa105d1fd1edd7",
+    "indexDigest": "e076875cea58690b52d093c8dec70e370cf87b17f7ac070c12f4838d37efac64",
     "recomputed": true
   },
   "posture": {
@@ -586,41 +586,41 @@
       "id": "unit",
       "command": "pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
       "exitCode": 0,
-      "durationMs": 0,
+      "durationMs": 8530,
       "counts": null,
-      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/vg-unit-current.log"
+      "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained vg-unit-bound.txt; SHA256 0fcdce5bc0719610ca0fcb0d01f2e3c18b651dcc38064ab79bb93d1c3e0b2c57"
     },
     {
       "id": "harness",
       "command": "pnpm harness validate --spec harness/specs/tasks/verse-tools-boundary-repair.md",
       "exitCode": 0,
-      "durationMs": 0,
+      "durationMs": 2839,
       "counts": null,
-      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/harness-current.log"
+      "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained harness-bound.txt; SHA256 c8c1fd2a3d553ebae0da9b54aa58919dc4a296823f365ee22c59762b33c31458"
     },
     {
       "id": "typecheck",
       "command": "pnpm run typecheck",
       "exitCode": 0,
-      "durationMs": 0,
+      "durationMs": 37661,
       "counts": null,
-      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/typecheck-current.log"
+      "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained typecheck-bound.txt; SHA256 e76b4cbfe08ad7f77ce9736d850bc4b34735b9d1bef1064810bc19739ef9f674"
     },
     {
       "id": "comms-replay",
       "command": "pnpm run comms:replay",
       "exitCode": 0,
-      "durationMs": 0,
+      "durationMs": 903,
       "counts": null,
-      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/comms-replay-current.log"
+      "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained comms-replay-bound.txt; SHA256 86fbd666ed080974c4155cd5525afd2b4e040eda12e2cc07c4344e6ba58c3300"
     },
     {
       "id": "comms-compare",
       "command": "pnpm run comms:compare",
       "exitCode": 0,
-      "durationMs": 0,
+      "durationMs": 799,
       "counts": null,
-      "summary": "Actual command completed successfully; on-disk output read back at D:/tmp/clawx-verse-fix-20261104/comms-compare-current.log"
+      "summary": "Actual execution at 0143905e9f83e8a9c423d5aef72285d5c3390bba; retained comms-compare-bound.txt; SHA256 8a186e213e2843d3b7f09c61d9975e1c09541b030cf57b85da649646e2a3c98a"
     },
     {
       "id": "finalize",
@@ -649,5 +649,5 @@
     "proposalApplyRequired": true,
     "validateExportRequired": true
   },
-  "digest": "10269825046d7bedde546df4e458a3931dec2e600982baf3ef656d78290efd7a"
+  "digest": "c1119123fc733ae10d2ca2a52453b1502b19b0e02557c7d8d1d827f5e053ae16"
 }

@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-11-04T22:54:47.9491144Z",
+  "completedAt": "2026-11-04T22:54:49.9889847Z",
+  "argv": [
+    "scripts/versebrowser-m10-packaged-flow-verify.mjs",
+    "--exe",
+    "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+    "--temp-root",
+    "D:/ClawX/.ae/verse-tools-runs-20261104",
+    "--output",
+    "D:\\tmp\\clawx-verse-fix-20261104/n8-bound-current.json"
+  ],
+  "program": "node",
+  "sourceCommit": "d92c414c72993114ae4de8785d8b320edf316425",
+  "exitCode": 1,
+  "id": "n8",
+  "log": "D:\\tmp\\clawx-verse-fix-20261104\\n8-bound.log",
+  "durationMs": 2039
+}
