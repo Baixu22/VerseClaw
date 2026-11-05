@@ -1,117 +1,72 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "driven_by": "agent",
   "actor": "codex",
-  "recordedAt": "2026-11-04T19:26:02.016Z",
-  "sourceCommit": "38e0d720970fdc26c5c594161c5f776532fd9423",
-  "productBuildCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
+  "recordedAt": "2026-11-05T00:17:37.911Z",
+  "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+  "productBuildCommit": "9f5970e12a07be6be547a5b5273064fc6325a6e7",
   "tests": {
     "hostUnits": {
-      "files": 20,
-      "passed": 156,
+      "files": 21,
+      "passed": 166,
       "failed": 0,
       "skipped": 0,
-      "startTime": 1793817768305,
+      "startTime": 1793837738231,
       "artifact": "focused-unit-current.json",
-      "sourceCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
-      "scope": "Actual run at the clean product-build candidate; subsequent commits change only acceptance runners, which are exercised by the final N8/N9 runs."
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+      "executionCommit": "0143905e9f83e8a9c423d5aef72285d5c3390bba"
     },
     "runtimeProvenance": {
       "files": 1,
       "passed": 24,
       "failed": 0,
       "skipped": 0,
-      "startTime": 1793817816869,
+      "startTime": 1793837314289,
       "artifact": "runtime-provenance-current.json",
-      "sourceCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
-      "scope": "Actual run at the clean product-build candidate; subsequent commits change only acceptance runners, which are exercised by the final N8/N9 runs."
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+      "executionCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
     },
     "browserUnits": {
-      "files": 3,
-      "passed": 44,
+      "files": 2,
+      "passed": 39,
       "failed": 0,
       "skipped": 0,
-      "startTime": 1793817810865,
+      "startTime": 1793837316825,
       "artifact": "browser-unit-current.json",
-      "sourceCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
-      "scope": "Actual run at the clean product-build candidate; subsequent commits change only acceptance runners, which are exercised by the final N8/N9 runs."
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+      "executionCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
     },
     "electronE2E": {
-      "startTime": "2026-11-04T18:17:37.350Z",
-      "duration": 14624.003,
+      "startTime": "2026-11-05T00:10:15.374Z",
+      "duration": 9574.315,
       "expected": 1,
       "skipped": 0,
       "unexpected": 0,
       "flaky": 0,
-      "artifact": "vb-e2e.json"
+      "artifact": "vb-e2e.json",
+      "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
     }
   },
   "typecheck": {
     "success": true,
     "cache": false,
-    "totalDurationMs": 66465
+    "totalDurationMs": 36743
+  },
+  "probeRegressions": {
+    "passed": 13,
+    "artifact": "deepseek-fixes-node-tests.txt"
   },
   "packaged": {
     "n8Checks": 10,
     "n9Rounds": 46,
-    "evidenceDirectory": "../versebrowser-invocation-maturity/current-20261104"
+    "evidenceDirectory": "../versebrowser-invocation-maturity/current-20261105",
+    "buildIdentitySchema": 2,
+    "provenanceScope": "versebrowser-desktop-build-v1"
   },
   "limitations": [
-    "Full repository harness:ci failed on unrelated stale Agent Dev retained reports.",
-    "Windows x64 only; external model quality and non-Windows execution were not remeasured.",
+    "Full repository harness:ci retains the unrelated stale Agent Dev failure; not a full-repository green claim.",
+    "Windows x64 only; external model quality and non-Windows execution were not measured.",
     "VG M4 remains unauthorized and VS remains default-off.",
-    "Main checkout contains concurrent dirty changes; these results belong to the isolated repair branch."
-  ],
-  "finalSourceReview": {
-    "schemaVersion": 1,
-    "driven_by": "agent",
-    "actor": "codex",
-    "kind": "independent-source-review",
-    "status": "unavailable",
-    "error": "HTTP 405 from the configured model proxy",
-    "attempts": [
-      {
-        "log": "D:/tmp/clawx-verse-fix-20261104/autoreview-source-final.log",
-        "exitCode": 1
-      },
-      {
-        "log": "D:/tmp/clawx-verse-fix-20261104/autoreview-retry.log",
-        "exitCode": 1
-      }
-    ],
-    "previousFindings": "Earlier findings were implemented and checked by targeted/unit/real-Electron tests; no clean final independent source-review verdict is claimed.",
-    "taskStatus": "in_progress",
-    "integration": "Repair branch is not merged into the concurrently edited main checkout."
-  },
-  "overallStatus": "runtime-gates-passed-source-review-pending",
-  "retainedLogs": [
-    {
-      "original": "comms-compare-current.log",
-      "artifact": "comms-compare-current.txt"
-    },
-    {
-      "original": "comms-replay-current.log",
-      "artifact": "comms-replay-current.txt"
-    },
-    {
-      "original": "harness-current.log",
-      "artifact": "harness-current.txt"
-    },
-    {
-      "original": "lint-current.log",
-      "artifact": "lint-current.txt"
-    },
-    {
-      "original": "probe-cleanup-test-final.log",
-      "artifact": "probe-cleanup-test-final.txt"
-    },
-    {
-      "original": "probe-lint-final.log",
-      "artifact": "probe-lint-final.txt"
-    },
-    {
-      "original": "vg-strict-current.log",
-      "artifact": "vg-strict-current.txt"
-    }
+    "Evidence is for the isolated repair candidate, not concurrent unrelated main-workspace edits."
   ]
 }

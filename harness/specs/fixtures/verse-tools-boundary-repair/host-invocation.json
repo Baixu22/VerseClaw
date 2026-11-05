@@ -6,7 +6,7 @@
     {
       "action": "setEnabled",
       "response": {
-        "id": "c448523f-2978-44e2-8844-477b79f85606",
+        "id": "afbbb735-855f-48d8-ba03-6b0591174805",
         "ok": true,
         "data": {
           "success": true,
@@ -17,7 +17,7 @@
     {
       "action": "open",
       "response": {
-        "id": "793d002a-b226-45f5-9cd8-f77df296c3a0",
+        "id": "4b746cb6-5fe8-46c5-91c1-b9807cd182b1",
         "ok": false,
         "error": {
           "code": "INTERNAL",
@@ -31,7 +31,7 @@
     {
       "action": "open",
       "response": {
-        "id": "58374e83-6bdd-4702-acea-2b75d225666f",
+        "id": "961d048e-9fb7-409a-bd9e-0f7232ff923b",
         "ok": false,
         "error": {
           "code": "INTERNAL",
@@ -45,11 +45,39 @@
     {
       "action": "open",
       "response": {
-        "id": "f22386e7-3f2b-4fb3-8567-881f1282b15f",
+        "id": "978759cd-f0a7-491b-ad6d-d570743c4a8b",
         "ok": false,
         "error": {
           "code": "INTERNAL",
           "message": "Agent browser open blocked: private-network-default-deny (address class loopback)",
+          "details": {
+            "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+          }
+        }
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "98776e23-99a8-496d-8bc4-747c9b85065d",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser open blocked: private-network-default-deny (address class ipv6-local)",
+          "details": {
+            "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+          }
+        }
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "84b99cd2-787b-4ba3-8162-91d7a055ebd1",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser open blocked: private-network-default-deny (address class ipv6-local)",
           "details": {
             "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
           }
@@ -60,34 +88,34 @@
       "action": "main-private-network-approval",
       "response": {
         "sessionId": "agent:main:versebrowser-hygiene",
-        "origin": "http://127.0.0.1:63935",
-        "grantedAt": 1793816267050,
-        "expiresAt": 1793816867050,
+        "origin": "http://127.0.0.1:64907",
+        "grantedAt": 1793837421142,
+        "expiresAt": 1793838021142,
         "grantedBy": "agent"
       }
     },
     {
       "action": "open",
       "response": {
-        "id": "358e94e3-efb3-44d2-8441-290d490ebd41",
+        "id": "f8c4fd5b-72a7-4ff1-a760-693f43b8e6b9",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.290Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.413Z",
             "runtimeMode": "normal_restricted",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           },
           "textSample": "Agent-driven browser proof\n Save\n\nNot saved"
@@ -97,7 +125,7 @@
     {
       "action": "takeSnapshot",
       "response": {
-        "id": "7f76d466-242f-4179-a4ee-9aedc2db5ed2",
+        "id": "73664cb2-ed49-4473-9c2d-123707983724",
         "ok": false,
         "error": {
           "code": "INTERNAL",
@@ -108,26 +136,26 @@
     {
       "action": "requestModeUpgrade",
       "response": {
-        "id": "23296e2f-b45a-4996-a4fc-1d57ea538939",
+        "id": "4dbd9cc7-6436-47bf-8c76-d3d92518acf7",
         "ok": true,
         "data": {
           "success": true,
           "runtimeMode": "full_access",
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.309Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.523Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           }
         }
@@ -136,25 +164,25 @@
     {
       "action": "type",
       "response": {
-        "id": "1e26f1ce-3a2c-442f-8a94-d6937ab58c50",
+        "id": "5e9d2fd3-c181-41c2-bf80-0f76fad3b613",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.321Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.541Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           }
         }
@@ -163,25 +191,25 @@
     {
       "action": "click",
       "response": {
-        "id": "11a253a0-7a29-4ec4-bf68-254fed1afdad",
+        "id": "ff3b21a3-f6fc-4b0b-8e70-655b89b28436",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.374Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.625Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           }
         }
@@ -190,53 +218,53 @@
     {
       "action": "takeSnapshot",
       "response": {
-        "id": "8daa141e-e06c-46e0-b50b-f4d9b3ae1380",
+        "id": "3a401982-464c-4604-8ea3-1e70c59ae9d3",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.391Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.639Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           },
-          "snapshot": "# 浏览器页面快照\n页面标题：VerseBrowser integration fixture\n页面 URL：http://127.0.0.1:63935/\n\n- uid=1_1 RootWebArea \"VerseBrowser integration fixture\" focused=\"true\"\n  - uid=1_2 heading \"Agent-driven browser proof\"\n    - uid=1_3 StaticText \"Agent-driven browser proof\"\n  - uid=1_4 image \"Optional blocked resource\"\n  - uid=1_5 Iframe\n  - uid=1_6 textbox \"Name\" value=\"[REDACTED]\" value_redacted focused=\"true\" required=\"false\"\n    - uid=1_7 generic\n      - uid=1_8 StaticText \"Agent proof\"\n  - uid=1_9 button \"Save\"\n    - uid=1_10 StaticText \"Save\"\n  - uid=1_11 paragraph\n    - uid=1_12 StaticText \"Saved Agent proof\""
+          "snapshot": "# 浏览器页面快照\n页面标题：VerseBrowser integration fixture\n页面 URL：http://127.0.0.1:64907/\n\n- uid=1_1 RootWebArea \"VerseBrowser integration fixture\" focused=\"true\"\n  - uid=1_2 heading \"Agent-driven browser proof\"\n    - uid=1_3 StaticText \"Agent-driven browser proof\"\n  - uid=1_4 image \"Optional blocked resource\"\n  - uid=1_5 Iframe\n  - uid=1_6 textbox \"Name\" value=\"[REDACTED]\" value_redacted focused=\"true\" required=\"false\"\n    - uid=1_7 generic\n      - uid=1_8 StaticText \"Agent proof\"\n  - uid=1_9 button \"Save\"\n    - uid=1_10 StaticText \"Save\"\n  - uid=1_11 paragraph\n    - uid=1_12 StaticText \"Saved Agent proof\""
         }
       }
     },
     {
       "action": "evaluate",
       "response": {
-        "id": "fbb9902a-680b-4168-b3eb-c4123546a5c7",
+        "id": "fbc51a16-670f-4689-97d3-b5044d602551",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.427Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.670Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           },
           "value": "websocket-open"
@@ -246,25 +274,25 @@
     {
       "action": "evaluate",
       "response": {
-        "id": "ad274ee8-f6a4-46b4-bbc9-6a5b9af22127",
+        "id": "a9669407-5aeb-4efd-95a2-0ea1a845fd9c",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.441Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.688Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           },
           "value": "request-blocked"
@@ -274,25 +302,25 @@
     {
       "action": "evaluate",
       "response": {
-        "id": "8e9abec1-960d-40cf-9cb2-979be3fc0c7f",
+        "id": "4817bc0c-4ccf-41df-94d0-4b84f3a2db41",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.452Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.703Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           },
           "value": "image-blocked"
@@ -302,11 +330,11 @@
     {
       "action": "navigate",
       "response": {
-        "id": "ad93dcb1-550e-4cb1-a7a3-971df55f8613",
+        "id": "d6900ed2-1211-46ab-b929-61d74e316bce",
         "ok": false,
         "error": {
           "code": "INTERNAL",
-          "message": "ERR_BLOCKED_BY_CLIENT (-20) loading 'http://127.0.0.1:63934/private'",
+          "message": "ERR_BLOCKED_BY_CLIENT (-20) loading 'http://127.0.0.1:64906/private'",
           "details": {
             "backendCode": "ERR_BLOCKED_BY_CLIENT"
           }
@@ -322,25 +350,25 @@
     {
       "action": "navigate",
       "response": {
-        "id": "d28ae6cc-460c-4af0-9f7b-c97862d5a928",
+        "id": "20803a71-84f0-4bcb-824b-a39083aba1fd",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.673Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.022Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           }
         }
@@ -349,39 +377,39 @@
     {
       "action": "newPage",
       "response": {
-        "id": "6980ac11-d00c-4464-8879-b3353a9e6dd1",
+        "id": "cfe94815-0805-4dad-8209-4995c663e273",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.790Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.149Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/extra",
+            "url": "http://127.0.0.1:64907/extra",
             "title": "VerseBrowser integration fixture"
           },
           "pages": [
             {
               "pageId": "0",
               "index": 0,
-              "url": "http://127.0.0.1:63935/",
+              "url": "http://127.0.0.1:64907/",
               "title": "",
               "active": false
             },
             {
               "pageId": "page-1",
               "index": 1,
-              "url": "http://127.0.0.1:63935/extra",
+              "url": "http://127.0.0.1:64907/extra",
               "title": "VerseBrowser integration fixture",
               "active": true
             }
@@ -393,32 +421,32 @@
     {
       "action": "listPages",
       "response": {
-        "id": "824a8f23-8dbe-4621-87f4-5302b47c3fea",
+        "id": "b99beea2-b33e-4144-bc86-e9378e9dc6b6",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.790Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.149Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/extra",
+            "url": "http://127.0.0.1:64907/extra",
             "title": "VerseBrowser integration fixture"
           },
           "pages": [
             {
               "pageId": "0",
               "index": 0,
-              "url": "http://127.0.0.1:63935/",
+              "url": "http://127.0.0.1:64907/",
               "title": "",
               "active": true
             }
@@ -430,53 +458,53 @@
     {
       "action": "takeSnapshot",
       "response": {
-        "id": "59359732-7d89-4fec-8af3-26da20e82574",
+        "id": "25277bcf-2a44-468b-9812-446f4a46cf3b",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.819Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.178Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           },
-          "snapshot": "# 浏览器页面快照\n页面标题：VerseBrowser integration fixture\n页面 URL：http://127.0.0.1:63935/\n\n- uid=1_1 RootWebArea \"VerseBrowser integration fixture\" focused=\"true\"\n  - uid=1_2 heading \"Agent-driven browser proof\"\n    - uid=1_3 StaticText \"Agent-driven browser proof\"\n  - uid=1_4 image \"Optional blocked resource\"\n  - uid=1_5 Iframe\n  - uid=1_6 textbox \"Name\" required=\"false\"\n    - uid=1_7 generic\n  - uid=1_8 button \"Save\"\n    - uid=1_9 StaticText \"Save\"\n  - uid=1_10 paragraph\n    - uid=1_11 StaticText \"Not saved\""
+          "snapshot": "# 浏览器页面快照\n页面标题：VerseBrowser integration fixture\n页面 URL：http://127.0.0.1:64907/\n\n- uid=1_1 RootWebArea \"VerseBrowser integration fixture\" focused=\"true\"\n  - uid=1_2 heading \"Agent-driven browser proof\"\n    - uid=1_3 StaticText \"Agent-driven browser proof\"\n  - uid=1_4 image \"Optional blocked resource\"\n  - uid=1_5 Iframe\n  - uid=1_6 textbox \"Name\" required=\"false\"\n    - uid=1_7 generic\n  - uid=1_8 button \"Save\"\n    - uid=1_9 StaticText \"Save\"\n  - uid=1_10 paragraph\n    - uid=1_11 StaticText \"Not saved\""
         }
       }
     },
     {
       "action": "evaluate",
       "response": {
-        "id": "5214a570-93e7-40f9-aad9-be8e61a54df0",
+        "id": "00b1a7e8-e81f-4880-a37d-ad3fe67b3ec9",
         "ok": true,
         "data": {
           "success": true,
           "session": {
-            "id": "2116028b-5f51-4be4-9249-f47c9d753407",
-            "profile": "agent-hygiene-1793816267051",
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
             "mode": "headless",
             "authPersistence": "session-name",
-            "authStateName": "agent-hygiene-1793816267051",
+            "authStateName": "agent-hygiene-1793837421143",
             "connection": {
               "mode": "managed"
             },
-            "createdAt": "2026-11-04T18:17:47.068Z",
-            "updatedAt": "2026-11-04T18:17:47.830Z",
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.191Z",
             "runtimeMode": "full_access",
             "workspaceId": "default",
             "sessionKey": "agent:main:versebrowser-hygiene",
-            "url": "http://127.0.0.1:63935/",
+            "url": "http://127.0.0.1:64907/",
             "title": "VerseBrowser integration fixture"
           },
           "value": true
@@ -486,7 +514,7 @@
     {
       "action": "readForms",
       "response": {
-        "id": "ccc93217-9426-4428-a678-a343116bc998",
+        "id": "1454e372-1332-457e-9df4-c5cb736ec58f",
         "ok": false,
         "error": {
           "code": "UNSUPPORTED",
@@ -500,7 +528,7 @@
     {
       "action": "fullAccessRevoke",
       "response": {
-        "id": "315e5484-71ee-4022-aca3-12fe23a3f870",
+        "id": "2621eff9-c383-40ad-881c-1864ebffe85c",
         "ok": true,
         "data": {
           "success": true,
@@ -511,7 +539,7 @@
     {
       "action": "takeSnapshot",
       "response": {
-        "id": "49415148-021e-4c76-920f-146c4837a714",
+        "id": "5f059493-b0db-4800-b95f-1a5916c87c45",
         "ok": false,
         "error": {
           "code": "INTERNAL",
@@ -522,7 +550,7 @@
     {
       "action": "close",
       "response": {
-        "id": "2a96aeec-6461-4244-8b5d-5c46087558de",
+        "id": "cc8c6187-a4a8-4e41-9e37-74876533332b",
         "ok": true,
         "data": {
           "success": true
@@ -532,7 +560,7 @@
     {
       "action": "status",
       "response": {
-        "id": "e2dfcd15-cadc-450b-910d-b8d1279fe17a",
+        "id": "65fe1b3d-a375-4870-b102-ec8246e56014",
         "ok": true,
         "data": {
           "success": true,

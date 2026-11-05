@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "recordedAt": "2026-11-05T00:17:37.911Z",
+  "status": "pass",
+  "scope": "Windows x64 packaged browser owner, private-network, action and cleanup acceptance; no provider quality or product graduation claim",
+  "n8Checks": 10,
+  "n9Rounds": 46,
+  "releaseEligible": false,
+  "defaultChanges": false
+}
