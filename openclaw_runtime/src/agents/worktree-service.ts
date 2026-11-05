@@ -557,9 +557,15 @@ export function createWorktreeService(
     },
     enqueueMerge(item) {
       const s = scope(resolved);
+      const changedFiles = [...new Set(item.changedFiles.map(normalizeWorktreeRelPath))].sort();
+      // Duplicate completion callbacks share the pending owner's result instead
+      // of queuing a second overlapping write and losing its terminal receipt.
+      const pending = s.queue.find((entry) => entry.status === "pending" && entry.worktreeId === item.worktreeId
+        && JSON.stringify(entry.changedFiles) === JSON.stringify(changedFiles));
+      if (pending) return pending;
       const entry: MergeQueueItem = {
         worktreeId: item.worktreeId,
-        changedFiles: item.changedFiles.map((f) => normalizeWorktreeRelPath(f)),
+        changedFiles,
         status: item.status ?? "pending",
         review: item.review,
         reason: item.reason,

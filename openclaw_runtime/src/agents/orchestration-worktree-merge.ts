@@ -59,12 +59,12 @@ export async function mergeOrchestrationWorktrees(params: {
     if (writeSetMismatch.length > 0) {
       reasonParts.push(`writeSet_mismatch:${writeSetMismatch.join(",")}`);
     }
-    service.enqueueMerge({
+    const queued = service.enqueueMerge({
       worktreeId: worker.worktreeId,
       changedFiles,
       ...(reasonParts.length > 0 ? { reason: reasonParts.join(";") } : {}),
     });
-    return { worker, declaredWriteSet, changed, changedFiles, writeSetMismatch };
+    return { worker, declaredWriteSet, changed, changedFiles, writeSetMismatch, queued };
   });
 
   const processed = await service.processMergeQueue(undefined, {
@@ -75,7 +75,7 @@ export async function mergeOrchestrationWorktrees(params: {
   const processedByWorktree = new Map(processed.map((item) => [item.worktreeId, item]));
 
   return pending.map((entry) => {
-    const item = processedByWorktree.get(entry.worker.worktreeId);
+    const item = processedByWorktree.get(entry.worker.worktreeId) ?? entry.queued;
     const reasonParts: string[] = [];
     if (entry.writeSetMismatch.length > 0) {
       reasonParts.push(`writeSet_mismatch:${entry.writeSetMismatch.join(",")}`);

@@ -225,6 +225,14 @@ describe.each(['inprocess', 'git'] as const)('TF-0769 %s merge contents', (backe
     expect(readFileSync(join(root, 'a.txt'), 'utf8')).toBe('later user edit');
   });
 
+  it('duplicate concurrent completion merges return the same successful result', async () => {
+    const { root, worker, merge } = fixture();
+    writeFileSync(join(worker.root, 'a.txt'), 'worker');
+    const results = await Promise.all([merge(), merge()]);
+    expect(results.map((rows) => rows[0]?.status)).toEqual(['merged', 'merged']);
+    expect(readFileSync(join(root, 'a.txt'), 'utf8')).toBe('worker');
+  });
+
   it('retains user changes, including staged bytes and a stale Git base', async () => {
     const { root, worker, merge } = fixture();
     writeFileSync(join(worker.root, 'a.txt'), 'worker');

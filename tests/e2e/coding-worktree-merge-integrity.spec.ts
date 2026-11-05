@@ -2,6 +2,8 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+import type { SubagentRunRecord } from '../../openclaw_runtime/src/agents/subagent-registry.types';
 import type { ElectronApplication } from '@playwright/test';
 import { expect, getStableWindow, test } from './fixtures/electron';
 import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
@@ -66,10 +68,16 @@ for (const backend of ['inprocess', 'git'] as const) {
         }
         evidence.terminal = terminal;
         expect(terminal?.status).toBe('ok');
-        const registryPath = join(userDataDir, 'openclaw-source-state', 'subagents', 'runs.json');
-        const readRun = () => {
-          try { return JSON.parse(readFileSync(registryPath, 'utf8')).runs[child.childRunId]; }
+        const registryPath = join(userDataDir, 'openclaw-source-state', 'state', 'openclaw.sqlite');
+        const readRun = (): SubagentRunRecord | undefined => {
+          let db: DatabaseSync | undefined;
+          try {
+            db = new DatabaseSync(registryPath, { readOnly: true });
+            const row = db.prepare('SELECT payload_json FROM subagent_runs WHERE run_id = ?').get(child.childRunId);
+            return typeof row?.payload_json === 'string' ? JSON.parse(row.payload_json) : undefined;
+          }
           catch { return undefined; }
+          finally { db?.close(); }
         };
         await expect.poll(() => readRun()?.orchestration?.worktreeMergeStatus, { timeout: 45_000 }).toBe(concurrent ? 'conflict' : 'merged');
         evidence.persistedRun = readRun();
@@ -79,7 +87,7 @@ for (const backend of ['inprocess', 'git'] as const) {
         expect(evidence.parentFiles).toEqual(concurrent
           ? { a: 'concurrent user edit', b: 'original b', c: null }
           : { a: null, b: null, c: 'original b' });
-        if (!concurrent) expect(readRun().orchestration.worktreeMergeJournalRef).toBeTruthy();
+        if (!concurrent) expect(readRun()?.orchestration?.worktreeMergeJournalRef).toBeTruthy();
         expect(raceInjected).toBe(concurrent);
         evidence.status = 'pass';
       } finally {
