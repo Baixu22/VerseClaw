@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
@@ -54,7 +55,10 @@ test('closing an Electron wrapper reaps its actual main process and preserves a 
   let second: ElectronApplication | undefined;
   const isAlive = (pid: number) => { try { process.kill(pid, 0); return true; } catch { return false; } };
   try {
-    second = await launchElectronApp({ skipSetup: true });
+    const secondProfile = join(process.env.CLAWX_E2E_RUN_ROOT!, 'second-owned-profile');
+    await mkdir(secondProfile, { recursive: true });
+    second = await launchElectronApp({ skipSetup: true, profileDir: secondProfile });
+    const wrapperPid = first.process().pid;
     const firstPid = await first.evaluate(() => process.pid);
     const secondPid = await second.evaluate(() => process.pid);
     await closeElectronApp(first);
@@ -64,7 +68,7 @@ test('closing an Electron wrapper reaps its actual main process and preserves a 
     await expect(page.getByTestId('main-layout')).toBeVisible();
     await writeFile(test.info().outputPath('process-close-observations.json'), JSON.stringify({
       driven_by: 'agent', actor: 'codex/tf0746', firstPid, firstAlive: false, secondPid, secondAlive: true,
-      wrapperPid: first.process().pid,
+      wrapperPid,
     }, null, 2));
   } finally {
     await closeElectronApp(first);
