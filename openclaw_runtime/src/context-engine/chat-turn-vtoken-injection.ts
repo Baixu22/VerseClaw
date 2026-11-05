@@ -19,7 +19,7 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { isRecord } from "../runtime-core/index.js";
+import { isRecord } from "../runtime-core/types.js";
 import type { BlockStoreApi, ContextBlock, SourceSystem } from "./block.js";
 import { dcsObservability } from "./dcs-observability.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
@@ -327,22 +327,22 @@ export function createVtokenPackCandidates(input: {
     ...input.markdownSources
       .filter((source) => !renderedPaths.has(source.sourcePath))
       .map((source) => ({
-      candidateId: packCandidateId("markdown", source),
-      kind: "markdown" as const,
-      sourcePath: source.sourcePath,
-      text: source.text,
-    })),
+        candidateId: packCandidateId("markdown", source),
+        kind: "markdown" as const,
+        sourcePath: source.sourcePath,
+        text: source.text,
+      })),
     ...(input.toolSchemas ?? [])
       .filter((toolSchema) => {
         const name = typeof toolSchema.name === "string" ? toolSchema.name : "";
         return name === "" || !renderedTools.has(name);
       })
       .map((toolSchema) => ({
-      candidateId: packCandidateId("tool_schema", { serverName: "host", toolSchema }),
-      kind: "tool_schema" as const,
-      serverName: "host",
-      toolSchema,
-    })),
+        candidateId: packCandidateId("tool_schema", { serverName: "host", toolSchema }),
+        kind: "tool_schema" as const,
+        serverName: "host",
+        toolSchema,
+      })),
     ...(input.memoryEntries ?? []).map((entry) => ({
       candidateId: packCandidateId("memory", entry),
       kind: "memory" as const,
