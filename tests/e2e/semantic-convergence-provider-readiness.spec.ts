@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
@@ -50,13 +50,12 @@ test('Settings validates 429 and non-auth 400 through Main without claiming veri
   }
 });
 
-test('closing an Electron wrapper reaps its actual main process and preserves a second app', async ({ launchElectronApp }) => {
+test('closing an Electron wrapper reaps its actual main process and preserves a second app', async ({ launchElectronApp, userDataDir }) => {
   const first = await launchElectronApp({ skipSetup: true });
   let second: ElectronApplication | undefined;
+  const secondProfile = await mkdtemp(join(dirname(userDataDir), 'second-owned-profile-'));
   const isAlive = (pid: number) => { try { process.kill(pid, 0); return true; } catch { return false; } };
   try {
-    const secondProfile = join(process.env.CLAWX_E2E_RUN_ROOT!, 'second-owned-profile');
-    await mkdir(secondProfile, { recursive: true });
     second = await launchElectronApp({ skipSetup: true, profileDir: secondProfile });
     const wrapperPid = first.process().pid;
     const firstPid = await first.evaluate(() => process.pid);
@@ -83,5 +82,6 @@ test('closing an Electron wrapper reaps its actual main process and preserves a 
   } finally {
     await closeElectronApp(first);
     if (second) await closeElectronApp(second);
+    await rm(secondProfile, { recursive: true, force: true });
   }
 });
