@@ -34,6 +34,7 @@ acceptance:
   - The user authorized the supplied local Responses endpoint and space-bunny and explicitly waived a financial cap; fixed per-trial request, output and wall-clock limits still prevent unbounded loops.
   - The API key enters through stdin, is never passed to the subject or grader process and is not written to source, configuration, logs or retained evidence.
   - Current corpus identities and public/held-out membership are retained; each historical base and reference revision is recovered from its original acceptance record before execution.
+  - Hidden oracle test paths are restored from the task's historical reference revision, and the reference revision plus test digests are checked during final admission recomputation.
   - A hard admission failure leaves model task execution and subject isolation explicitly unexecuted; endpoint preflight is never counted as a quality trial.
   - A baseline whose only failure is a missing module inside the declared target scope is admitted with `baseline-target-module-absent`; missing dependencies outside target scope remain hard failures.
   - `ready-for-measurement` requires all 24 task admissions and a retained passing provider preflight matched to the planned endpoint/model; a missing or failed preflight leaves the result `NO_GO`.
@@ -61,7 +62,7 @@ oracle files must remain hidden and pinned. If the current oracle cannot grade
 its historical reference, report the exact calibration mismatch and do not
 convert that mismatch into evidence of model or RSI quality.
 
-A task-ready package is still NO_GO until a passing provider preflight exists. The 2026-11-05 latest readback is `harness/specs/fixtures/rsi-live-acceptance/classified-cohort-20261105-v5/`: 24 calibrated, 11 admitted, 13 rejected and 216 slots not-run. Its admission layer preserves `assertion`, `infrastructure`, `target-module-absent` and `oracle-input-drift` separately; the earlier v3/v4 packs remain historical readbacks. Independent test execution uses
+A task-ready package is still NO_GO until a passing provider preflight exists. The current readback is `harness/specs/fixtures/rsi-live-acceptance/version-bound-cohort-20261106-v6/`: 24 calibrated, 21 admitted, 3 rejected and 216 slots not-run. Its oracle layer restores hidden tests from each task's reference revision; the remaining S03/L01/L03 rejection is `baseline-already-passes`, not an oracle or dependency failure. Independent test execution uses
 a fresh local workspace and sanitized environment; it is not an OS-level sandbox
 or packaged desktop acceptance. A NO_GO is a completed admission decision, not a
 completed RSI benefit measurement. Subject execution and confirmed candidate

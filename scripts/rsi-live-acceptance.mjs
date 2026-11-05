@@ -15,6 +15,14 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS = 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json';
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
+const referenceTestDigestCache = new Map();
+function referenceTestDigest(root, revision, path) {
+  const key = `${resolve(root)}\0${revision}\0${path}`;
+  if (referenceTestDigestCache.has(key)) return referenceTestDigestCache.get(key);
+  const value = sha(execFileSync('git', ['-C', root, 'show', `${revision}:${path}`], { windowsHide: true }));
+  referenceTestDigestCache.set(key, value);
+  return value;
+}
 function write(path, value) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' });
@@ -114,6 +122,14 @@ export function finalizeLiveAdmission(root, directory, options = {}) {
     if (!existsSync(path)) return { taskId: task.id, passed: false, status: 'not-calibrated', issues: ['task-not-calibrated'] };
     const retained = read(path);
     assert.deepEqual(retained.source, task, 'calibration-source-drift');
+    for (const stageName of ['reference', 'baseline']) {
+      const stage = retained.stages?.[stageName];
+      assert.equal(stage?.oracleRevision, task.reference, 'calibration-oracle-revision-drift');
+      for (const testPath of task.oraclePaths) {
+        const expectedDigest = referenceTestDigest(root, task.reference, testPath);
+        assert.equal(stage?.oracleTestDigests?.[testPath], expectedDigest, 'calibration-oracle-digest-drift');
+      }
+    }
     const admission = assessTaskAdmission({ reference: retained.stages.reference, baseline: retained.stages.baseline });
     assert.deepEqual(retained.admission, admission, 'admission-recomputation');
     return { taskId: task.id, ...admission, status: admission.passed ? 'admitted' : 'rejected', admissionDigest: sha(readFileSync(path)) };

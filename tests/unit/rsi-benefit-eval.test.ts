@@ -2,6 +2,7 @@
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { afterAll, describe, expect, it } from 'vitest';
 import { parseResponsesReply } from '../../scripts/lib/rsi-responses-provider.mjs';
 import { assessTaskAdmission, finalizeLiveAdmission, inspectLiveCorpus } from '../../scripts/rsi-live-acceptance.mjs';
@@ -49,7 +50,8 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     });
     const identities = new Map(inspectLiveCorpus(ROOT).map((identity) => [identity.id, identity]));
     for (const task of plan.tasks) {
-      const stage = (pass: boolean) => ({ passed: pass, commands: task.oracle.commands, oracleUnchanged: true, inputDigests: task.oracle.inputDigests,
+      const oracleTestDigests = Object.fromEntries(task.oracle.testPaths.map((path) => [path, createHash('sha256').update(execFileSync('git', ['-C', ROOT, 'show', `${task.source.reference}:${path}`], { windowsHide: true })).digest('hex')]));
+      const stage = (pass: boolean) => ({ passed: pass, commands: task.oracle.commands, oracleUnchanged: true, oracleRevision: task.source.reference, oracleTestDigests, inputDigests: task.oracle.inputDigests,
         executions: task.oracle.commands.map((command) => ({ command, kind: 'vitest', exitCode: pass ? 0 : 1, error: null, timedOut: false,
           report: { success: pass, numTotalTests: 1, numPassedTests: pass ? 1 : 0, numFailedTests: pass ? 0 : 1, numPendingTests: 0,
             testResults: [{ assertionResults: [{ status: pass ? 'passed' : 'failed' }] }] } })) });
@@ -64,7 +66,7 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     const providerPreflight = {
       driven_by: 'agent', actor: 'offline-contract-preflight', scope: 'provider admission; not a task outcome',
       startedAt: new Date().toISOString(), durationMs: 1, passed: true,
-      request: { url: plan.provider.endpoint, instructions: 'Reply with the exact marker only.', input: 'RSI_PROVIDER_READY' },
+      request: { url: plan.provider.endpoint, body: { model: plan.provider.model }, instructions: 'Reply with the exact marker only.', input: 'RSI_PROVIDER_READY' },
       response: { id: 'offline-provider-preflight', model: plan.provider.model, status: 'completed', text: 'RSI_PROVIDER_READY',
         usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, functionCalls: [], incompleteReason: null },
     };

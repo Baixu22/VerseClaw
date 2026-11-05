@@ -478,6 +478,7 @@ function verifyTaskAdmissions(root, directory, plan, taskIds) {
     for (const stage of [reference, baseline]) {
       assert.deepEqual(stage?.commands, task.oracle.commands, 'calibration-command-drift');
       assert.deepEqual(stage?.inputDigests, task.oracle.inputDigests, 'calibration-input-drift');
+      assert.equal(stage?.oracleRevision, task.source.reference, 'calibration-oracle-revision-drift');
     }
     const observed = assessTaskAdmission({ reference, baseline });
     assert.deepEqual(admission.admission, observed, 'calibration-verdict-drift');

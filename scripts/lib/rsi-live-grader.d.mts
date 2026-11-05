@@ -11,6 +11,8 @@ export type HistoricalGradeTask = Record<string, any> & {
   sourceRecordData: any;
   oracleDigest: string;
   inputDigest: Record<string, string>;
+  oracleRevision: string;
+  oracleTestDigests: Record<string, string>;
   oracle: {
     commandLine?: string;
     commandLines?: string[];
@@ -89,6 +91,8 @@ export function runLiveTaskOracles(options: {
   oracleHashAfter: string | null;
   oracleUnchanged: boolean;
   inputDigests: Record<string, string>;
+  oracleRevision: string | null;
+  oracleTestDigests: Record<string, string> | null;
   diagnostics: OracleDiagnostic[];
   workspace: string;
   outDir: string;

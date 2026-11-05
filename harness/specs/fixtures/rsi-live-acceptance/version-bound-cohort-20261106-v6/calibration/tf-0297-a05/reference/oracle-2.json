@@ -1,0 +1,780 @@
+{
+  "numTotalTestSuites": 14,
+  "numPassedTestSuites": 14,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 44,
+  "numPassedTests": 44,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793901272099,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "compaction budget shadow"
+          ],
+          "fullName": "compaction budget shadow buildCompactionBudgetShadow is absent without a schedule",
+          "status": "passed",
+          "title": "buildCompactionBudgetShadow is absent without a schedule",
+          "duration": 2.1098999999994703,
+          "failureMessages": [],
+          "location": {
+            "line": 44,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction budget shadow"
+          ],
+          "fullName": "compaction budget shadow buildCompactionBudgetShadow locks planned/actual tier, earlier-only thresholds, and budget diagnostics",
+          "status": "passed",
+          "title": "buildCompactionBudgetShadow locks planned/actual tier, earlier-only thresholds, and budget diagnostics",
+          "duration": 1.455999999998312,
+          "failureMessages": [],
+          "location": {
+            "line": 52,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction budget shadow"
+          ],
+          "fullName": "compaction budget shadow budgetShadow is diagnostics-only and never enters CompressionArtifact",
+          "status": "passed",
+          "title": "budgetShadow is diagnostics-only and never enters CompressionArtifact",
+          "duration": 2.3973000000005413,
+          "failureMessages": [],
+          "location": {
+            "line": 75,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction budget shadow"
+          ],
+          "fullName": "compaction budget shadow recordEmbeddedCompactionBudgetCounters writes the three real A5 counters",
+          "status": "passed",
+          "title": "recordEmbeddedCompactionBudgetCounters writes the three real A5 counters",
+          "duration": 0.4684000000015658,
+          "failureMessages": [],
+          "location": {
+            "line": 101,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction budget shadow"
+          ],
+          "fullName": "compaction budget shadow recordSafeguardBudgetShadow records ignored plans when safeguard overrides the planner",
+          "status": "passed",
+          "title": "recordSafeguardBudgetShadow records ignored plans when safeguard overrides the planner",
+          "duration": 0.31780000000071595,
+          "failureMessages": [],
+          "location": {
+            "line": 111,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction budget shadow"
+          ],
+          "fullName": "compaction budget shadow ignored rate > 20% keeps triggering degrade_to_default_budget in the existing registry",
+          "status": "passed",
+          "title": "ignored rate > 20% keeps triggering degrade_to_default_budget in the existing registry",
+          "duration": 0.2528000000020256,
+          "failureMessages": [],
+          "location": {
+            "line": 125,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901292963,
+      "endTime": 1793901292970.2527,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0297-a05/reference/workspace/openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "compaction promotion gate"
+          ],
+          "fullName": "compaction promotion gate locks the promotion order",
+          "status": "passed",
+          "title": "locks the promotion order",
+          "duration": 1.8900999999987107,
+          "failureMessages": [],
+          "location": {
+            "line": 51,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion gate"
+          ],
+          "fullName": "compaction promotion gate normalizes unknown or absent stages to shadow",
+          "status": "passed",
+          "title": "normalizes unknown or absent stages to shadow",
+          "duration": 0.35939999999936845,
+          "failureMessages": [],
+          "location": {
+            "line": 61,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion gate"
+          ],
+          "fullName": "compaction promotion gate keeps would-retry development eligible with 30 fixed production samples and model independence",
+          "status": "passed",
+          "title": "keeps would-retry development eligible with 30 fixed production samples and model independence",
+          "duration": 0.36529999999947904,
+          "failureMessages": [],
+          "location": {
+            "line": 67,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion gate"
+          ],
+          "fullName": "compaction promotion gate fails closed to shadow when the 30-sample fixed-pair requirement or model independence is absent",
+          "status": "passed",
+          "title": "fails closed to shadow when the 30-sample fixed-pair requirement or model independence is absent",
+          "duration": 0.4084000000002561,
+          "failureMessages": [],
+          "location": {
+            "line": 76,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion gate"
+          ],
+          "fullName": "compaction promotion gate fails closed to shadow for current live evidence and reports only automated failing gates",
+          "status": "passed",
+          "title": "fails closed to shadow for current live evidence and reports only automated failing gates",
+          "duration": 0.9675000000006548,
+          "failureMessages": [],
+          "location": {
+            "line": 92,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion gate"
+          ],
+          "fullName": "compaction promotion gate requires the full automated P6-A evidence including no-fabrication for critical-only",
+          "status": "passed",
+          "title": "requires the full automated P6-A evidence including no-fabrication for critical-only",
+          "duration": 0.3165000000008149,
+          "failureMessages": [],
+          "location": {
+            "line": 111,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion gate"
+          ],
+          "fullName": "compaction promotion gate allows critical-only and limited only with the full promotion evidence",
+          "status": "passed",
+          "title": "allows critical-only and limited only with the full promotion evidence",
+          "duration": 0.1841999999996915,
+          "failureMessages": [],
+          "location": {
+            "line": 127,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion enforcement"
+          ],
+          "fullName": "compaction promotion enforcement never enforces shadow or boundary exits",
+          "status": "passed",
+          "title": "never enforces shadow or boundary exits",
+          "duration": 0.330100000001039,
+          "failureMessages": [],
+          "location": {
+            "line": 140,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion enforcement"
+          ],
+          "fullName": "compaction promotion enforcement would-retry requests one bounded retry for provider exits",
+          "status": "passed",
+          "title": "would-retry requests one bounded retry for provider exits",
+          "duration": 0.2114000000001397,
+          "failureMessages": [],
+          "location": {
+            "line": 152,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion enforcement"
+          ],
+          "fullName": "compaction promotion enforcement critical-only cancels when the pipeline would preserve turns",
+          "status": "passed",
+          "title": "critical-only cancels when the pipeline would preserve turns",
+          "duration": 0.1797999999998865,
+          "failureMessages": [],
+          "location": {
+            "line": 167,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "compaction promotion enforcement"
+          ],
+          "fullName": "compaction promotion enforcement critical-only retries when only wouldRetry is true and budget remains",
+          "status": "passed",
+          "title": "critical-only retries when only wouldRetry is true and budget remains",
+          "duration": 0.11549999999988358,
+          "failureMessages": [],
+          "location": {
+            "line": 174,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901276184,
+      "endTime": 1793901276189.33,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0297-a05/reference/workspace/openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt flag-off matrix: zero injection, preserves base prompt bytes",
+          "status": "passed",
+          "title": "flag-off matrix: zero injection, preserves base prompt bytes",
+          "duration": 24.93249999999898,
+          "failureMessages": [],
+          "location": {
+            "line": 107,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt memory-only canary injects Memory Context",
+          "status": "passed",
+          "title": "memory-only canary injects Memory Context",
+          "duration": 1.9927000000006956,
+          "failureMessages": [],
+          "location": {
+            "line": 125,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt keeps the selected runtime-memory provider in deferred lineage",
+          "status": "passed",
+          "title": "keeps the selected runtime-memory provider in deferred lineage",
+          "duration": 4.092899999999645,
+          "failureMessages": [],
+          "location": {
+            "line": 143,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt does not scope memory to an ephemeral runId, but preserves an explicit stable taskId",
+          "status": "passed",
+          "title": "does not scope memory to an ephemeral runId, but preserves an explicit stable taskId",
+          "duration": 0.5391999999992549,
+          "failureMessages": [],
+          "location": {
+            "line": 181,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt vtoken-only canary injects Working Context",
+          "status": "passed",
+          "title": "vtoken-only canary injects Working Context",
+          "duration": 1.218799999998737,
+          "failureMessages": [],
+          "location": {
+            "line": 236,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt both flags on compose memory then vtoken",
+          "status": "passed",
+          "title": "both flags on compose memory then vtoken",
+          "duration": 0.7184999999990396,
+          "failureMessages": [],
+          "location": {
+            "line": 255,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt kill switch cuts both stages fail-closed",
+          "status": "passed",
+          "title": "kill switch cuts both stages fail-closed",
+          "duration": 0.6722999999983585,
+          "failureMessages": [],
+          "location": {
+            "line": 281,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt records lineage for diagnostics (session/run/sources/budget)",
+          "status": "passed",
+          "title": "records lineage for diagnostics (session/run/sources/budget)",
+          "duration": 0.7885000000005675,
+          "failureMessages": [],
+          "location": {
+            "line": 307,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt defers both stages, then projects declared precedence instead of lifecycle order",
+          "status": "passed",
+          "title": "defers both stages, then projects declared precedence instead of lifecycle order",
+          "duration": 2.5996999999988475,
+          "failureMessages": [],
+          "location": {
+            "line": 333,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt does not query lazy VToken memory inputs while its flag is off",
+          "status": "passed",
+          "title": "does not query lazy VToken memory inputs while its flag is off",
+          "duration": 0.9418000000005122,
+          "failureMessages": [],
+          "location": {
+            "line": 377,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt nativeMemory=true negotiates memory and vtoken flag-off before provider queries",
+          "status": "passed",
+          "title": "nativeMemory=true negotiates memory and vtoken flag-off before provider queries",
+          "duration": 1.0658000000003085,
+          "failureMessages": [],
+          "location": {
+            "line": 404,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt nativeContextGating=true closes both channels and keeps the provenance receipt",
+          "status": "passed",
+          "title": "nativeContextGating=true closes both channels and keeps the provenance receipt",
+          "duration": 0.9673000000002503,
+          "failureMessages": [],
+          "location": {
+            "line": 445,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt reads native capability declarations from cfg.capabilities when input omits them",
+          "status": "passed",
+          "title": "reads native capability declarations from cfg.capabilities when input omits them",
+          "duration": 0.7932000000000698,
+          "failureMessages": [],
+          "location": {
+            "line": 477,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt nativeContextGating=true gates BlockStore candidates at finalize and keeps the receipt",
+          "status": "passed",
+          "title": "nativeContextGating=true gates BlockStore candidates at finalize and keeps the receipt",
+          "duration": 1.0459000000009837,
+          "failureMessages": [],
+          "location": {
+            "line": 502,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt absent native capability declarations keep the current enabled behavior",
+          "status": "passed",
+          "title": "absent native capability declarations keep the current enabled behavior",
+          "duration": 0.38370000000031723,
+          "failureMessages": [],
+          "location": {
+            "line": 548,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "computeContextExtraSystemPrompt"
+          ],
+          "fullName": "computeContextExtraSystemPrompt does not construct Memory providers or query VToken when the kill switch is on",
+          "status": "passed",
+          "title": "does not construct Memory providers or query VToken when the kill switch is on",
+          "duration": 0.4063000000005559,
+          "failureMessages": [],
+          "location": {
+            "line": 566,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901274462,
+      "endTime": 1793901274505.4062,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0297-a05/reference/workspace/openclaw_runtime/src/context-engine/context-orchestrator.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A5 deprecation counters"
+          ],
+          "fullName": "A5 deprecation counters records plan adoption, ignored plans, and budget exceeded separately",
+          "status": "passed",
+          "title": "records plan adoption, ignored plans, and budget exceeded separately",
+          "duration": 180.25900000000001,
+          "failureMessages": [],
+          "location": {
+            "line": 8,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A5 deprecation counters"
+          ],
+          "fullName": "A5 deprecation counters ignored rate > 20% triggers degrade_to_default_budget through the existing registry",
+          "status": "passed",
+          "title": "ignored rate > 20% triggers degrade_to_default_budget through the existing registry",
+          "duration": 0.5856000000003405,
+          "failureMessages": [],
+          "location": {
+            "line": 20,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A5 deprecation counters"
+          ],
+          "fullName": "A5 deprecation counters ignored rate <= 20% does not degrade",
+          "status": "passed",
+          "title": "ignored rate <= 20% does not degrade",
+          "duration": 0.27219999999942956,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901272722,
+      "endTime": 1793901272903.5857,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0297-a05/reference/workspace/openclaw_runtime/src/observability/deprecation-counters.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "selectCompressionPlan P5 thresholds"
+          ],
+          "fullName": "selectCompressionPlan P5 thresholds keeps the existing 0.6/0.75/0.85/0.95 ladder when thresholds are absent",
+          "status": "passed",
+          "title": "keeps the existing 0.6/0.75/0.85/0.95 ladder when thresholds are absent",
+          "duration": 0.7746000000006461,
+          "failureMessages": [],
+          "location": {
+            "line": 40,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selectCompressionPlan P5 thresholds"
+          ],
+          "fullName": "selectCompressionPlan P5 thresholds only moves thresholds earlier and clamps later user values to production defaults",
+          "status": "passed",
+          "title": "only moves thresholds earlier and clamps later user values to production defaults",
+          "duration": 0.3230999999996129,
+          "failureMessages": [],
+          "location": {
+            "line": 63,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "planCompression P5 tierSchedule"
+          ],
+          "fullName": "planCompression P5 tierSchedule leaves plan.tier at tier0 without a schedule and does not micro-compact",
+          "status": "passed",
+          "title": "leaves plan.tier at tier0 without a schedule and does not micro-compact",
+          "duration": 0.37340000000040163,
+          "failureMessages": [],
+          "location": {
+            "line": 99,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "planCompression P5 tierSchedule"
+          ],
+          "fullName": "planCompression P5 tierSchedule uses tierSchedule only for plan.tier and keeps the existing tier behavior",
+          "status": "passed",
+          "title": "uses tierSchedule only for plan.tier and keeps the existing tier behavior",
+          "duration": 1.462600000000748,
+          "failureMessages": [],
+          "location": {
+            "line": 106,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "planCriticalFirstBudget"
+          ],
+          "fullName": "planCriticalFirstBudget keeps the fixed budget order and truncates niceToHaveProse before criticalLedger",
+          "status": "passed",
+          "title": "keeps the fixed budget order and truncates niceToHaveProse before criticalLedger",
+          "duration": 0.42660000000068976,
+          "failureMessages": [],
+          "location": {
+            "line": 127,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "planCriticalFirstBudget"
+          ],
+          "fullName": "planCriticalFirstBudget truncates criticalLedger only after every earlier class is exhausted",
+          "status": "passed",
+          "title": "truncates criticalLedger only after every earlier class is exhausted",
+          "duration": 0.2870999999995547,
+          "failureMessages": [],
+          "location": {
+            "line": 154,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "planCriticalFirstBudget"
+          ],
+          "fullName": "planCriticalFirstBudget returns bounded JSON-serializable diagnostics and never calls a model",
+          "status": "passed",
+          "title": "returns bounded JSON-serializable diagnostics and never calls a model",
+          "duration": 0.4223999999994703,
+          "failureMessages": [],
+          "location": {
+            "line": 179,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "P5 planner performance budget"
+          ],
+          "fullName": "P5 planner performance budget plans 100 small inputs with p99 <= 30ms",
+          "status": "passed",
+          "title": "plans 100 small inputs with p99 <= 30ms",
+          "duration": 0.7144000000007509,
+          "failureMessages": [],
+          "location": {
+            "line": 197,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901272937,
+      "endTime": 1793901272942.7144,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0297-a05/reference/workspace/openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts"
+    }
+  ]
+}
