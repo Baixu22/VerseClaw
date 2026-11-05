@@ -1,0 +1,61 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baseline": "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+  "candidate": {
+    "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+    "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+    "dirty": false
+  },
+  "method": "git cat-file --batch bytes vs recorded SHA-256; only LF/CRLF conversion is accepted",
+  "bindings": [
+    {
+      "scope": "application-baseline",
+      "commit": "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+      "files": 825,
+      "exactBytes": 825,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    },
+    {
+      "scope": "application-candidate",
+      "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+      "files": 826,
+      "exactBytes": 826,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    },
+    {
+      "scope": "context-baseline",
+      "commit": "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+      "files": 2,
+      "exactBytes": 2,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    },
+    {
+      "scope": "context-candidate",
+      "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+      "files": 2,
+      "exactBytes": 2,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    },
+    {
+      "scope": "runtime-baseline",
+      "commit": "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+      "files": 9158,
+      "exactBytes": 9158,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    },
+    {
+      "scope": "runtime-candidate",
+      "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+      "files": 9158,
+      "exactBytes": 9158,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    }
+  ]
+}

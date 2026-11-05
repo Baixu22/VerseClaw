@@ -1,0 +1,235 @@
+{
+  "schema": "ArchitectureSmallCyclesAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-05T05:32:16.387450+00:00",
+  "verdict": "pass-for-TF-0788-scope",
+  "node": "TF-0788",
+  "phase": "TF-0786",
+  "rootNode": "TF-0628",
+  "baseline": "dc7fbf3cc0a901b1ef413e7b91b86e4129fb795f",
+  "candidate": {
+    "commit": "36b37acd405fc59d7aa2e92de1a06e750b108801",
+    "tree": "9b5d9235107a36243d701e0741381a76a76a6fb7",
+    "dirty": false
+  },
+  "tests": {
+    "total": 80,
+    "passed": 80,
+    "failed": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "scope": "root",
+        "passed": 49,
+        "failed": 0,
+        "skipped": 0,
+        "artifact": "tests-root.json"
+      },
+      {
+        "scope": "runtime",
+        "passed": 21,
+        "failed": 0,
+        "skipped": 0,
+        "artifact": "tests-runtime.json"
+      },
+      {
+        "scope": "folding",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "artifact": "tests-folding.json"
+      }
+    ],
+    "reverseEdgeNegativeControls": 4
+  },
+  "dependencyGraphs": {
+    "application": {
+      "baselineFiles": 825,
+      "candidateFiles": 826,
+      "baselineCycles": 1,
+      "candidateCycles": 0
+    },
+    "contextPair": {
+      "baselineCycles": 1,
+      "candidateCycles": 0
+    },
+    "runtime": {
+      "baselineSccSizes": [
+        23,
+        2
+      ],
+      "candidateSccSizes": [
+        23
+      ],
+      "checkerExitCode": 1,
+      "largeComponentUnchanged": true,
+      "remainingOwner": "TF-0789"
+    }
+  },
+  "gates": [
+    {
+      "id": "unit",
+      "exitCode": 0,
+      "durationMs": 77169.5116
+    },
+    {
+      "id": "runtime-unit-retry",
+      "exitCode": 0,
+      "durationMs": 35291.8682
+    },
+    {
+      "id": "folding-unit",
+      "exitCode": 0,
+      "durationMs": 69931.1502
+    },
+    {
+      "id": "typecheck-full",
+      "exitCode": 0,
+      "durationMs": 266340.585
+    },
+    {
+      "id": "runtime-lint",
+      "exitCode": 0,
+      "durationMs": 34525.7259
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationMs": 7353.917399999999
+    },
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationMs": 361.7713
+    },
+    {
+      "id": "bundle-smoke",
+      "exitCode": 0,
+      "durationMs": 2302.9455000000003
+    },
+    {
+      "id": "graphs",
+      "exitCode": 0,
+      "durationMs": 13621.7332
+    },
+    {
+      "id": "runtime-graphs",
+      "exitCode": 0,
+      "durationMs": 60839.7424
+    },
+    {
+      "id": "behavior-parity",
+      "exitCode": 0,
+      "durationMs": 2349.2412
+    },
+    {
+      "id": "contract",
+      "exitCode": 0,
+      "durationMs": 12172.413
+    },
+    {
+      "id": "runtime-policy",
+      "exitCode": 0,
+      "durationMs": 326.9057
+    },
+    {
+      "id": "comms-replay",
+      "exitCode": 0,
+      "durationMs": 958.4531
+    },
+    {
+      "id": "comms-compare",
+      "exitCode": 0,
+      "durationMs": 789.2518
+    },
+    {
+      "id": "artifacts",
+      "exitCode": 0,
+      "durationMs": 10123.7611
+    },
+    {
+      "id": "evidence",
+      "exitCode": 0,
+      "durationMs": 787.9551000000001
+    },
+    {
+      "id": "harness-validate",
+      "exitCode": 0,
+      "durationMs": 12998.5051
+    },
+    {
+      "id": "harness-dry-run",
+      "exitCode": 0,
+      "durationMs": 57841.4636
+    },
+    {
+      "id": "diff",
+      "exitCode": 0,
+      "durationMs": 1141.5457999999999
+    },
+    {
+      "id": "runtime-cycles",
+      "exitCode": 1,
+      "durationMs": 20530.841099999998
+    }
+  ],
+  "gateSummary": {
+    "exitZero": 20,
+    "knownResidualExitOne": 1
+  },
+  "behaviorBoundary": {
+    "movedSandboxFunctionBodiesEquivalent": 4,
+    "syncFunctionBodiesEquivalentAfterReaderRename": 2,
+    "protectedFilesUnchanged": 12,
+    "compatibilityToolNameExports": 4,
+    "readmeReview": "All three READMEs reviewed. Internal dependency reordering changes no user-facing flow/API; updates not required."
+  },
+  "buildProof": "Four touched entry bundles with external packages; no full distribution build.",
+  "review": {
+    "engine": "codex",
+    "cleanRuns": 2,
+    "findings": 0,
+    "artifact": "reviews.json"
+  },
+  "dependencies": {
+    "mode": "explicit reuse of current worktree dependencies",
+    "freshInstall": "not-run",
+    "pnpmVerifyDepsMode": "warn",
+    "warning": "Reused node_modules emits the existing patchedDependencies out-of-sync warning. No fresh-install or dependency reconciliation claim."
+  },
+  "notRun": [
+    "full unit suite",
+    "Electron E2E",
+    "full Vite/Electron build",
+    "full runtime build",
+    "full runtime:source:check pipeline",
+    "live-provider effect evaluation"
+  ],
+  "limitations": [
+    "Static value-import/re-export graphs exclude dynamic import, require, opaque package boundaries and whole-program effects.",
+    "Owner tests use controlled fixtures/mocks; comms replay consumes tracked deterministic JSONL events.",
+    "Original runtime cycle gate still exits 1 for the unchanged 23-file SCC. No graph-wide or repository-wide pass is claimed.",
+    "No measured maintainability, performance, agent-success, business benefit, GA or release-readiness claim."
+  ],
+  "evidence": [
+    "gate-results.json",
+    "tests-root.json",
+    "tests-runtime.json",
+    "tests-folding.json",
+    "dependency-graphs.json",
+    "runtime-cycles.json",
+    "source-bindings.json",
+    "behavior-parity.json",
+    "comms-metrics.json",
+    "comms-compare.json",
+    "bundle-smoke.json",
+    "reviews.json",
+    "reproduction.json",
+    "earlier-attempts.json",
+    "private-provenance.json"
+  ],
+  "credentialScan": "credential-scan.json",
+  "hashManifest": "SHA256SUMS"
+}
