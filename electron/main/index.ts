@@ -69,6 +69,7 @@ import { syncAllProviderAuthToRuntime } from '../services/providers/provider-run
 import { applyChatRuntimeEvent, enrichTraceTokenUsage } from '../services/observability-adapter';
 import { recordPromptCacheObservation } from '../services/usage-api';
 import { stopAllOfficeWatches } from '../services/office-tools-api';
+import { stopAllKnowledgeSourceWatches } from '../services/knowledge-api';
 import { disposeVtokenBridge } from '../services/vtoken-api';
 import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
 import { appendTaskLedgerEvents } from '../services/task-ledger-service';
@@ -1440,6 +1441,7 @@ if (gotTheLock) {
   app.on('will-quit', () => {
     disposeVtokenBridge();
     stopAllOfficeWatches();
+    stopAllKnowledgeSourceWatches();
     // R0-3: reclaim every live pty session and stop tracked resources
     // (shutdown() = stop timers + kill tracked processes, best-effort).
     getTerminalSessionManager()?.shutdownAll();

@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-knowledge-relay",
+  "candidate": {
+    "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+    "tree": "f9bc61f52541167e1ae8cc80529cb00082343d08",
+    "dirty": false
+  },
+  "steps": [
+    {
+      "name": "ui",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/knowledge-bot.spec.ts",
+        "tests/e2e/knowledge-hub.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--max-failures=1",
+        "--output=D:\\tmp\\knowledge-relay-20261105\\final\\e2e-r2\\ui-output"
+      ],
+      "startedAt": "2026-11-05T11:30:08.575Z",
+      "finishedAt": "2026-11-05T11:32:07.687Z",
+      "exitCode": 0,
+      "dirtyAfter": false,
+      "commitAfter": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5"
+    },
+    {
+      "name": "live-electron-run",
+      "command": [
+        "py",
+        "-3",
+        "-X",
+        "utf8",
+        "D:/tmp/knowledge-relay-20261105/run-live.py",
+        "e2e"
+      ],
+      "startedAt": "2026-11-05T11:32:08.052Z",
+      "finishedAt": "2026-11-05T11:35:08.256Z",
+      "exitCode": 1,
+      "dirtyAfter": false,
+      "commitAfter": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5"
+    }
+  ]
+}

@@ -8,8 +8,10 @@ import { knowledgeSourceSetApi } from './source-set';
 import { knowledgeWatchedDirectoriesApi } from './watched-directories';
 import { knowledgeProvenanceApi } from './provenance';
 import { knowledgeRoutingApi } from './routing';
+import { knowledgeConnectorsApi } from './connectors';
 
 export const knowledgeHostApi = {
+  ...knowledgeConnectorsApi,
   ...knowledgeLibraryApi,
   ...knowledgeRoutingApi,
   ...knowledgeInboxApi,

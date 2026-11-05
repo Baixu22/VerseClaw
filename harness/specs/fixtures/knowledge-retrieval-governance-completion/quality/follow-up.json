@@ -1,0 +1,79 @@
+{
+  "id": "follow-up",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "网关恢复命令是 clawx recover --safe。",
+    "taskComplete": true,
+    "lexicalHit": false
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "恢复.md",
+        "lookup": "恢复.md",
+        "path": "恢复.md",
+        "title": "恢复.md",
+        "excerpt": "网关恢复命令是 clawx recover --safe。",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:恢复.md",
+          "owner": "memory-wiki",
+          "subjectId": "恢复.md",
+          "revision": "1",
+          "contentDigest": "sha256:ebb01b1ea27c0e6efa49fe03f0072033a7d5ac683d4e7aa3ee3f24720b786958",
+          "sourceRefs": [
+            "恢复.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "恢复.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": true,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": true,
+  "promptHash": "9b6af1b4237137293d8766b90768708f0d593ca79dcdc797dbe8670ddd29fc67",
+  "provider": {
+    "text": "{\"claims\":[{\"text\":\"网关恢复命令是 `clawx recover --safe`。\",\"citations\":[{\"sourceId\":\"memory-wiki:恢复.md\",\"quote\":\"网关恢复命令是 clawx recover --safe。\"}]}],\"unknowns\":[]}",
+    "responseId": "01a1ab5a96f1758abbeb91c35cecb742",
+    "model": "space-bunny",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 468,
+      "outputTokens": 134,
+      "totalTokens": 602
+    }
+  },
+  "parsed": {
+    "claims": [
+      {
+        "text": "网关恢复命令是 `clawx recover --safe`。",
+        "citations": [
+          {
+            "sourceId": "memory-wiki:恢复.md",
+            "quote": "网关恢复命令是 clawx recover --safe。"
+          }
+        ]
+      }
+    ],
+    "unknowns": []
+  },
+  "answer": "网关恢复命令是 `clawx recover --safe`。",
+  "durationMs": 3247
+}

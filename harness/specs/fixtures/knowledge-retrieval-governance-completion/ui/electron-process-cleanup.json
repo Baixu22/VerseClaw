@@ -1,0 +1,45 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-8LML3w",
+  "ledgerEntries": 5,
+  "reaped": [
+    {
+      "pid": 16940,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 42184,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 40848,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 28168,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 45556,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-8LML3w\\",
+    "owned": [],
+    "remaining": []
+  }
+}

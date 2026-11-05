@@ -8,7 +8,7 @@ function stable(value: unknown): string {
   return `{${Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => `${JSON.stringify(k)}:${stable(v)}`).join(',')}}`;
 }
 const key = (action: string, payload: unknown = null) => stable(['knowledge', action, payload]);
-const evidence = resolve('docs/dev/evidence/knowledge-bot');
+const evidence = process.env.CLAWX_KNOWLEDGE_BOT_EVIDENCE_DIR ?? resolve('docs/dev/evidence/knowledge-bot');
 const question = 'Explain the decision';
 const markdown = '# Decision\n\nUse **cited sources**.\n\n| Scope | Result |\n| --- | --- |\n| Knowledge | Reviewed |\n\n```ts\nconst grounded = true;\n```';
 
@@ -125,16 +125,15 @@ test('approved solid follows drag, real host requests, retries and shared conver
       runtime.__knowledgeBotRequests.push(request);
       const respond = (data: unknown) => ({ id: request.id, ok: true, data });
       const hold = (phase: string) => new Promise<void>((resolve) => { runtime.__knowledgeBotReleases[phase] = resolve; });
-      if (request.action === 'search' && request.payload?.query) {
+      if (request.action === 'answerFromSourceSet') {
         runtime.__knowledgeBotSearchCount++;
         await hold('search');
         if (runtime.__knowledgeBotSearchCount === 2) return respond({ success: false, error: 'Knowledge search unavailable' });
-        if (runtime.__knowledgeBotSearchCount === 3) return respond({ success: true, results: [] });
-        return respond({ success: true, results: [{ lookup: 'notes/decision.md', title: 'Decision', snippet: 'A cited decision.', score: .9 }] });
-      }
-      if (request.action === 'get') {
-        await hold('read');
-        return respond({ success: true, content: '# Decision\n\nUse cited sources for knowledge answers.' });
+        if (runtime.__knowledgeBotSearchCount === 3) return respond({ success: true, answer: 'No admitted sources are available.', sources: [], unknowns: ['Missing evidence.'], groundingStatus: 'missing_sources', suggestedNextActions: [], retrievalDiagnostics: { resultCount: 0 } });
+        return respond({ success: true, answer: 'Use cited sources for knowledge answers. [memory-wiki:notes/decision.md]',
+          sources: [{ id: 'notes/decision.md', lookup: 'notes/decision.md', title: 'Decision', excerpt: 'Use cited sources for knowledge answers.',
+            citation: { refId: 'memory-wiki:notes/decision.md', revision: '7', contentDigest: 'sha256:fixture', owner: 'memory-wiki', subjectId: 'notes/decision.md', sourceRefs: [] } }],
+          unknowns: [], groundingStatus: 'grounded', suggestedNextActions: [], retrievalDiagnostics: { resultCount: 1 } });
       }
       if (request.action === 'recordKnowledgeReference') return respond({ success: true });
       return previous(event, request);
@@ -158,13 +157,11 @@ test('approved solid follows drag, real host requests, retries and shared conver
   const searchPath = await animatedAvatar.locator('path').first().getAttribute('d');
   await page.screenshot({ path: resolve(evidence, 'searching-light.png') });
   await release('search');
-  await expect(chat).toHaveAttribute('data-bot-state', 'reading');
-  await release('read');
   await expect(chat).toHaveAttribute('data-bot-state', 'finished');
   await expect(page.getByTestId('knowledge-librarian-answer-section').locator('.codex-markdown')).toBeVisible();
   await expect(page.getByTestId('knowledge-librarian-source')).toHaveCount(1);
   await expect(page.getByTestId('knowledge-librarian-answer-section')).not.toContainText('I searched the vault');
-  await expect(page.getByTestId('knowledge-librarian-retrieval-inspector')).toContainText('I searched the vault');
+  await expect(page.getByTestId('knowledge-librarian-retrieval-inspector')).toContainText('Explain the decision');
   await expect(floating.getByTestId('knowledge-librarian-candidate-actions')).toBeHidden();
   await expect(floating.getByTestId('knowledge-librarian-composer')).not.toContainText('Checkpoint saved');
   await floating.getByTestId('knowledge-librarian-retrieval-inspector').locator('summary').click();
@@ -201,9 +198,8 @@ test('approved solid follows drag, real host requests, retries and shared conver
   await page.getByTestId('knowledge-librarian-retry').click();
   await expect(chat).toHaveAttribute('data-bot-state', 'searching');
   await release('search');
-  await expect(chat).toHaveAttribute('data-bot-state', 'finished');
-  // Zero search hits still use the actual open document as an explicit source.
-  await expect(page.getByTestId('knowledge-librarian-source').last()).toContainText('Untitled note');
+  await expect(chat).toHaveAttribute('data-bot-state', 'confused');
+  await expect(page.getByTestId('knowledge-librarian-answer-section').last()).toContainText('No admitted sources');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(chat.locator('header [data-testid="knowledge-bot"]')).toHaveCount(0);
@@ -240,7 +236,7 @@ test('approved solid follows drag, real host requests, retries and shared conver
     floating: { floatBox, edgeSpacing, backgroundMounted: true, routeUnchanged: true, draftRetained: true, pendingRequestRetained: true, escapeClosed: true,
       compactMetadata: true, promptsInMenu: true, candidateActionsInDetails: true, minimizeControl: true, focusRestored: true, animation: { openMs: 180, closeMs: 140, reducedMs: 80 } },
     drag: { before, constrained, after, snapped, withinRange, storedPosition, restored, radius: 112, openedOnDrag: false, keyboardOpened: true },
-    observedStates: ['idle', 'listening', 'searching', 'reading', 'finished', 'failed', 'searching', 'finished'],
+    observedStates: ['idle', 'listening', 'searching', 'finished', 'failed', 'searching', 'confused'],
     sharedMarkdown: { table: true, codeHeader: true, composerShell: true }, reducedMotionStable: true,
     searchBodyPathPresent: Boolean(searchPath), animatedFrameChanges: true, errors, requests,
   }, null, 2) + '\n');
