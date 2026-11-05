@@ -1,0 +1,776 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\semantic-convergence-20261104\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/semantic-convergence-20261104/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\semantic-convergence-20261104\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/tf0746-e2e-complete-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/semantic-convergence-20261104/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "semantic-convergence-provider-readiness.spec.ts",
+      "file": "semantic-convergence-provider-readiness.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Settings validates 429 and non-auth 400 through Main without claiming verified",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 109156,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\semantic-convergence-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 409
+                      },
+                      "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-xkCBdm\\verse-claw-e2e-user-data-D29mx7\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\semantic-convergence-20261104\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=41792\u001b[22m\n\u001b[2m  - [pid=41792][out]\u001b[22m\n\u001b[2m  - [pid=41792][err] Debugger listening on ws://127.0.0.1:63484/1d3bf982-e1d5-4672-a753-d2ed3d61fc1a\u001b[22m\n\u001b[2m  - [pid=41792][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:63484/1d3bf982-e1d5-4672-a753-d2ed3d61fc1a\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:63484/1d3bf982-e1d5-4672-a753-d2ed3d61fc1a\u001b[22m\n\u001b[2m  - [pid=41792][err] Debugger attached.\u001b[22m\n\n\n   at fixtures\\electron.ts:409\n\n  407 |     }\n  408 |     : {};\n> 409 |   const app = await electron.launch({\n      |               ^\n  410 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  411 |     args: [\n  412 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\n    at launchVerseClawElectron (D:\\ClawX-work\\semantic-convergence-20261104\\tests\\e2e\\fixtures\\electron.ts:409:15)\n    at D:\\ClawX-work\\semantic-convergence-20261104\\tests\\e2e\\fixtures\\electron.ts:539:21\n    at D:\\ClawX-work\\semantic-convergence-20261104\\tests\\e2e\\semantic-convergence-provider-readiness.spec.ts:21:11"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T16:45:59.575Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\tf0746-e2e-complete-results\\semantic-convergence-provi-09e99-n-without-claiming-verified\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\tf0746-e2e-complete-results\\semantic-convergence-provi-09e99-n-without-claiming-verified\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "88dfd6cd5a7538f7920a-a5e6d4014be6cbc8f3ae",
+          "file": "semantic-convergence-provider-readiness.spec.ts",
+          "line": 7,
+          "column": 5
+        },
+        {
+          "title": "closing an Electron wrapper reaps its actual main process and preserves a second app",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43814,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:42.359Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:42.365Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:42.365Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T16:48:42.365Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-05T16:48:42.365Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:42.449Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:42.449Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [22448:1106/004842.610:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[22448:1106/004842.610:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:42.980Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:42.982Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:42.983Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:48:42.983Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:42.983Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:48:42.983Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:49.512Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:49.512Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-05T16:48:49.512Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=26588, ppid=32036\n[2026-11-05T16:48:49.512Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:49.543Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:49.555Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:49.555Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T16:48:49.555Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:49.555Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:49.679Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:49.679Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [26588:1106/004849.705:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[26588:1106/004849.705:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:49.889Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:49.890Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:49.891Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:49.892Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:48:49.892Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:48:49.892Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:48:50.612Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-05T16:48:14.164Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "88dfd6cd5a7538f7920a-2b4d803b27d52d83e32e",
+          "file": "semantic-convergence-provider-readiness.spec.ts",
+          "line": 53,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "setup-first-run-fp-p1-01.spec.ts",
+      "file": "setup-first-run-fp-p1-01.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "FP-P1-01 Setup provider/model verification (real Electron + real HTTP)",
+          "file": "setup-first-run-fp-p1-01.spec.ts",
+          "line": 133,
+          "column": 6,
+          "specs": [
+            {
+              "title": "verified path plus all three failure classes in the Provider step",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25087,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[fp-p1-01-verification] {\"status\":\"verified\",\"accountId\":\"custom-139a1704-c932-42ac-8e56-5174e204d890\",\"vendorId\":\"custom\",\"model\":\"mock-coder-small\",\"checkedAt\":\"2026-11-05T16:49:20.979Z\"}\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:02.940Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:02.940Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-05T16:49:02.940Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=10316, ppid=37644\n[2026-11-05T16:49:02.940Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:02.975Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:02.981Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:02.981Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T16:49:02.982Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-05T16:49:02.982Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:03.057Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:03.057Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [10316:1106/004903.063:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[10316:1106/004903.063:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:03.196Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[2026-11-05T16:49:03.197Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:03.198Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:49:03.198Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:49:03.198Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:49:03.198Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:03.672Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:03.672Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:49:03.672Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:49:03.672Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.277Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.278Z] [INFO] Gateway start requested (port=62174)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.288Z] [DEBUG] Device identity loaded (deviceId=05b88034b556858b2e04bc3582b0cd40e0e082502ab89d730cfd9493ff96c7f4)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.289Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.596Z] [DEBUG] Checking for existing Gateway...\n"
+                        },
+                        {
+                          "text": "[app:err] (node:10316) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.696Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.722Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:04.771Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.775Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":7,\"channelStartupPolicyMs\":2,\"uvEnvMs\":9,\"mcpEnvMs\":39,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":72,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.776Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=62174, entry=\"D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 62174 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.810Z] [INFO] Gateway process started (pid=43736)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:04.810Z] [DEBUG] Gateway manager now owns process pid=43736\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:04.834Z] [WARN] [Gateway stderr] [1106/004904.833:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:04.835Z] [WARN] [Gateway stderr] Some features may not be available.\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:04.928Z] [WARN] [Gateway stderr] (node:43736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:04.929Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:06.915Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:09.017Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:10.594Z] [DEBUG] [Gateway stderr] (node:43736) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:10.595Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:11.873Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:13.434Z] [DEBUG] Gateway ready after 31 attempt(s)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:13.435Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:62174/ws)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:13.464Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=a935fefc-8dac-41d9-9935-f291433ce002 peer=127.0.0.1:57891->127.0.0.1:62174 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:62174 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:13.466Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:13.467Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:13.467Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:13.471Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=d975e7c0-e95d-444a-94bc-5e474e33466d peer=127.0.0.1:51548->127.0.0.1:62174 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:62174 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:13.582Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:62174/ws)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:13.583Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:15.709Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:15.709Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T16:49:15.709Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:16.917Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:16.917Z] [DEBUG] Gateway state changed: starting -> running\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:16.918Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:16.918Z] [INFO] [metric] gateway.startup {\"configSyncMs\":214,\"spawnToReadyMs\":8624,\"readyToConnectMs\":3484,\"totalMs\":12322}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:19.413Z] [INFO] Setting up managed Python 3.12 (uv=uv, source=path, arch=x64, mirror=true)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:19.961Z] [INFO] [python-setup:mirror] stderr: Downloading cpython-3.12.13-windows-x86_64-none (download)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:19.962Z] [INFO] [python-setup:mirror] stderr: (20.9MiB)\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom request GET http://127.0.0.1:61265/v1/models?limit=1 headers={\"Authorization\":\"Bearer wron***-key\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom HTTP 401\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom request GET http://127.0.0.1:60468/v1/models?limit=1 headers={\"Authorization\":\"Bearer test***y-ok\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom request GET http://127.0.0.1:61265/v1/models?limit=1 headers={\"Authorization\":\"Bearer test***-429\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom HTTP 429\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom request GET http://127.0.0.1:61265/v1/models?limit=1 headers={\"Authorization\":\"Bearer test***eter\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom HTTP 400\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom /models returned 400, falling back to openai-completions probe\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom request POST http://127.0.0.1:61265/v1/chat/completions headers={\"Authorization\":\"Bearer test***eter\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom HTTP 400\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom request GET http://127.0.0.1:61265/v1/models?limit=1 headers={\"Authorization\":\"Bearer test***y-ok\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom HTTP 200\n"
+                        },
+                        {
+                          "text": "[app:out] Saved API key for provider \"custom-custom13\" to OpenClaw auth-profiles (agents: main)\n"
+                        },
+                        {
+                          "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-custom13\"\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:20.457Z] [INFO] Scheduling Gateway reload after saving provider \"custom-custom13\" config\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:20.457Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                        },
+                        {
+                          "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                        },
+                        {
+                          "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom request GET http://127.0.0.1:61265/v1/models headers={\"Authorization\":\"Bearer test***y-ok\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [clawx-validate] custom HTTP 200\n"
+                        },
+                        {
+                          "text": "[app:out] Saved API key for provider \"custom-custom13\" to OpenClaw auth-profiles (agents: main)\n"
+                        },
+                        {
+                          "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-custom13\"\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:21.070Z] [INFO] Scheduling Gateway reload after updating provider \"custom-custom13\" config\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:21.070Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                        },
+                        {
+                          "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                        },
+                        {
+                          "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                        },
+                        {
+                          "text": "[app:out] Set OpenClaw default model to \"custom-custom13/mock-coder-small\" for provider \"custom-custom13\" (runtime override)\n"
+                        },
+                        {
+                          "text": "[app:out] Saved API key for provider \"custom-custom13\" to OpenClaw auth-profiles (agents: main)\n"
+                        },
+                        {
+                          "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-custom13\"\n"
+                        },
+                        {
+                          "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-custom13\"\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:21.265Z] [INFO] Scheduling Gateway reload after provider switch to \"custom-custom13\"\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:21.267Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:21.923Z] [WARN] Failed to seed Verse Claw workspace harness {\"workspaceDir\":\"D:\\\\tmp\\\\tf0746-e2e-complete-results\\\\setup-first-run-fp-p1-01-F-c64ab-lasses-in-the-Provider-step\\\\workspace\",\"targetDir\":\"D:\\\\tmp\\\\tf0746-e2e-complete-results\\\\setup-first-run-fp-p1-01-F-c64ab-lasses-in-the-Provider-step\\\\workspace\\\\.verse-claw\\\\harness\",\"error\":{\"errno\":-4048,\"code\":\"EPERM\",\"syscall\":\"mkdir\",\"path\":\"D:\\\\tmp\\\\tf0746-e2e-complete-results\\\\setup-first-run-fp-p1-01-F-c64ab-lasses-in-the-Provider-step\\\\workspace\\\\.verse-claw\"}}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:22.342Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:22.342Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:49:22.342Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:49:22.342Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:22.487Z] [INFO] [gateway-refresh] mode=reload requested pid=43736 state=running\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:22.487Z] [INFO] [gateway-refresh] mode=reload result=skipped_recent_connect connectedForMs=5570 pid=43736\n[2026-11-05T16:49:22.488Z] [INFO] Gateway connected 5570ms ago, skipping reload signal\n"
+                        },
+                        {
+                          "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                        },
+                        {
+                          "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-05T16:48:58.453Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dbcc0273777fd8d2eebb-bee0fc2048187e6def02",
+              "file": "setup-first-run-fp-p1-01.spec.ts",
+              "line": 134,
+              "column": 7
+            },
+            {
+              "title": "skip path: limited-mode Complete state and chat first-send interception",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26677,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[fp-p1-01-skip] {\"status\":\"skipped\"}\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:28.765Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:28.766Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-05T16:49:28.766Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=28236, ppid=18640\n[2026-11-05T16:49:28.766Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:28.794Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:28.796Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T16:49:28.796Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T16:49:28.796Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-05T16:49:28.796Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:28.827Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:28.828Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [28236:1106/004928.909:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[28236:1106/004928.909:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:29.071Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:29.071Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:29.072Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:49:29.072Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:29.512Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:29.512Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:49:29.512Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:49:29.512Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:30.128Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:30.129Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:30.294Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:49:30.294Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:49:30.295Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:49:30.295Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:30.483Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:30.484Z] [INFO] Gateway start requested (port=55493)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:30.488Z] [DEBUG] Device identity loaded (deviceId=7645271b3c0036a412a6dc6415096b32dfa739dfac2ec39d5b485c2ab66e9291)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:30.488Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:30.689Z] [DEBUG] Checking for existing Gateway...\n"
+                        },
+                        {
+                          "text": "[app:err] (node:28236) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:31.111Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:31.138Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:31.207Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:31.210Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":9,\"channelStartupPolicyMs\":2,\"uvEnvMs\":5,\"mcpEnvMs\":55,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":90,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:31.210Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=55493, entry=\"D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 55493 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:31.254Z] [INFO] Gateway process started (pid=29828)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:31.255Z] [DEBUG] Gateway manager now owns process pid=29828\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:31.346Z] [WARN] [Gateway stderr] [1106/004931.345:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:31.346Z] [WARN] [Gateway stderr] Some features may not be available.\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:31.513Z] [WARN] [Gateway stderr] (node:29828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:31.514Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:33.553Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:36.030Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:39.289Z] [DEBUG] [Gateway stderr] (node:29828) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:39.289Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:41.987Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:43.257Z] [DEBUG] Gateway ready after 32 attempt(s)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:43.257Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:55493/ws)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:43.286Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=67153dff-53c1-4fd5-ac51-dc8864abd394 peer=127.0.0.1:60216->127.0.0.1:55493 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:55493 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:43.288Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:43.289Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:43.289Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:43.291Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=8d6069a8-8c56-4cfb-b5db-cb28d8173c78 peer=127.0.0.1:54076->127.0.0.1:55493 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:55493 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:43.403Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:55493/ws)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-05T16:49:43.403Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:45.366Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:45.366Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T16:49:45.367Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:47.136Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:47.136Z] [DEBUG] Gateway state changed: starting -> running\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:47.137Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:47.137Z] [INFO] [metric] gateway.startup {\"configSyncMs\":566,\"spawnToReadyMs\":12002,\"readyToConnectMs\":3880,\"totalMs\":16448}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-05T16:49:47.723Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-05T16:49:23.555Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dbcc0273777fd8d2eebb-050526115d4389430602",
+              "file": "setup-first-run-fp-p1-01.spec.ts",
+              "line": 279,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T16:45:58.393Z",
+    "duration": 235773.666,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

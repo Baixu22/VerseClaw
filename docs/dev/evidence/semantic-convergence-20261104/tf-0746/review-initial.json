@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "title": "Killing the Electron parent first can orphan its descendants",
+      "body": "On Windows, this forcefully terminates the actual Electron main process before `taskkill /T` enumerates its process tree. If the parent has already exited, `taskkill` cannot reliably discover and terminate the Gateway or other Electron children, leaving them orphaned and potentially keeping the Playwright worker alive. The new regression only checks that the main PID disappeared and that a second app remained alive, so it does not detect these descendant leaks. Run the tree kill before terminating the parent, or otherwise retain a reliable way to terminate all descendants, and assert that the closed app's descendants are gone.",
+      "priority": "P1",
+      "confidence": 0.9,
+      "category": "bug",
+      "code_location": {
+        "file_path": "tests/e2e/fixtures/electron.ts",
+        "line": 292
+      }
+    },
+    {
+      "title": "The HTTP recovery test reimplements the retry policy it claims to verify",
+      "body": "The test supplies its own `shouldRetry` callback that explicitly retries 429/5xx and rejects 401/403, then invokes `retryAsync` directly. Consequently, the test remains green if the production provider retry policy regresses, while the matrix claims that real provider failures recover through the production retry path. Exercise the production request/retry coordinator or import its retry-classification policy instead of encoding the expected behavior in the test.",
+      "priority": "P2",
+      "confidence": 0.87,
+      "category": "test_gap",
+      "code_location": {
+        "file_path": "tests/integration/semantic-convergence-provider-recovery.test.ts",
+        "line": 72
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The bundle improves PID recording, but the Windows cleanup can still orphan descendants because the parent is terminated before tree enumeration, and the new regression does not observe that failure. The local HTTP test also hardcodes the retry decision it is intended to validate, leaving the production retry policy untested. These issues leave the stated cleanup and provider-retry acceptance boundaries unproven.",
+  "overall_confidence": 0.89
+}

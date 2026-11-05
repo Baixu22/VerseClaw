@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "firstPid": 22448,
+  "firstAlive": false,
+  "childPid": 50288,
+  "childAlive": false,
+  "secondPid": 26588,
+  "secondAlive": true,
+  "wrapperPid": 19524
+}

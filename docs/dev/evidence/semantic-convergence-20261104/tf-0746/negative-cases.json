@@ -1,0 +1,944 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "selection": "Declared negative/boundary cases selected by explicit title terms; the complete unfiltered case set is retained in raw suite JSON and also passes with no skips.",
+  "titleTerms": "reject|deni|unknown|unregistered|forged|conflict|skipped|disabled|exhaust|missing|does not|never|fails closed|rolls back|idempotent|without writes/network",
+  "cases": [
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-recovery.test.ts",
+      "name": "TF-0746 provider/retry real local HTTP does not retry auth rejection 401",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-recovery.test.ts",
+      "name": "TF-0746 provider/retry real local HTTP does not retry auth rejection 403",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-recovery.test.ts",
+      "name": "TF-0746 provider/retry real local HTTP stops before a third request when the two-slot failure budget is exhausted",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "context-control-plane-stage5-contracts.test.ts",
+      "name": "context control plane stage5 contracts does not introduce a second durable store or DCS authority",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "context-control-plane-stage5-contracts.test.ts",
+      "name": "context control plane stage5 contracts fails closed on schema boundaries: whitelist enums, newlines, wildcards, ids, refs, and limits",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "knowledge-embedding-deadline.test.ts",
+      "name": "TF-0735 knowledge embedding total deadline does not start another batch after the budget is exhausted",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "knowledge-embedding-deadline.test.ts",
+      "name": "TF-0735 knowledge embedding total deadline rejects instead of returning partial vectors when a later batch fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 SQLite atomic self-edit rolls back when the fact write fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 SQLite atomic self-edit rolls back when the invalidation write fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 SQLite atomic self-edit rolls back when the relation write fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 SQLite atomic curation rolls back when the fact write fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 SQLite atomic curation rolls back when the invalidation write fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 SQLite atomic curation rolls back when the relation write fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 rejected/skipped self-edit writes rolls back an earlier write when the relation returns rejected",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 rejected/skipped self-edit writes rolls back an earlier write when the relation returns skipped",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 rejected/skipped curation writes rolls back an earlier write when the relation returns rejected",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "TF-0742 rejected/skipped curation writes rolls back an earlier write when the relation returns skipped",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "rolls back SUPERSEDE when its second relation fails",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "rejects a non-atomic port before writes and keeps the production flag retired",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "does not claim a deletion when its target is missing or loading was skipped",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "rejects async callbacks before their first instruction on both transaction owners",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "rejects a conflicting candidate DELETE invalidation ID",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "rejects a conflicting different-target DELETE invalidation ID",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-atomic-update.test.ts",
+      "name": "rejects a conflicting future DELETE invalidation ID",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-facade-disposition.test.ts",
+      "name": "TF-0744 Stage5 facade disposition rejects a production importer fixture: import { createSemanticMemoryFacade } from \"./stage5-memory-facade.js\";",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-facade-disposition.test.ts",
+      "name": "TF-0744 Stage5 facade disposition rejects a production importer fixture: export * from \"./stage5-memory-facade.js\";",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-facade-disposition.test.ts",
+      "name": "TF-0744 Stage5 facade disposition rejects a production importer fixture: const facade = await import(\"./stage5-memory-facade.js\");",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-facade-disposition.test.ts",
+      "name": "TF-0744 Stage5 facade disposition does not infer production registration from the direct self-edit test interface",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-query-tool.test.ts",
+      "name": "memory_query agent tool is retired never exposes a callable memory_query surface",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-read-consistency.test.ts",
+      "name": "TF-0743 committed reads does not return a forgotten fact from a cached query",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-read-consistency.test.ts",
+      "name": "TF-0743 external revision boundaries does not label old rows with a newer revision after the read transaction commits",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-read-consistency.test.ts",
+      "name": "does not claim fresh when a persistence port supplies no revision evidence",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-read-consistency.test.ts",
+      "name": "does not cache or claim fresh for an uncommitted outer transaction",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-read-consistency.test.ts",
+      "name": "keeps persistence retired and never registers the tools without test spies",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-self-edit-adapter.test.ts",
+      "name": "P1-2 memory self-edit adapter stays retired never exposes any of the retired tool names",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-self-edit-provenance.test.ts",
+      "name": "TF-0741 self-edit provenance (persistence port=false) rejects a forged human rejection before either write path",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-self-edit-provenance.test.ts",
+      "name": "TF-0741 self-edit provenance (persistence port=true) rejects a forged human rejection before either write path",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-self-edit-provenance.test.ts",
+      "name": "rejects self-edit records that claim human approval at the schema boundary",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-self-edit-provenance.test.ts",
+      "name": "rejects contradictory human_approved approval through accepted and candidate store paths",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-self-edit-provenance.test.ts",
+      "name": "rejects contradictory verified approval through accepted and candidate store paths",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-self-edit-provenance.test.ts",
+      "name": "rejects contradictory deterministic_rule approval through accepted and candidate store paths",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-tf0500-persistence-retirement.test.ts",
+      "name": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for explicit true",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-tf0500-persistence-retirement.test.ts",
+      "name": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for string true",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-tf0500-persistence-retirement.test.ts",
+      "name": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for omitted",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-tf0500-persistence-retirement.test.ts",
+      "name": "retired runtime-memory flags can never resolve to true resolves every retired flag to false for explicit false",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-tf0500-persistence-retirement.test.ts",
+      "name": "retired runtime-memory flags can never resolve to true keeps candidateGeneration independently configurable",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-tf0500-persistence-retirement.test.ts",
+      "name": "retired persistence produces no writes and no database file skips episode and fact writes and never opens sqlite",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "memory-tf0500-persistence-retirement.test.ts",
+      "name": "retired integration stays inert and never invokes injected writers skips migration and writes through the integration facade",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-error-retry-boundaries.test.ts",
+      "name": "public FailoverReason compatibility mapping (#116) maps unknown without an undefined compatibility branch",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-error-retry-boundaries.test.ts",
+      "name": "public FailoverReason compatibility mapping (#116) keeps refusal semantics distinct and does not claim unknown responsibility",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-error-retry-boundaries.test.ts",
+      "name": "Retry-After lower bound (#119) rejects a hint beyond the timer range even when zero maxDelay means uncapped",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-error-retry-boundaries.test.ts",
+      "name": "Retry-After lower bound (#119) does not resend channel retry_after=120 from root",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-error-retry-boundaries.test.ts",
+      "name": "Retry-After lower bound (#119) does not resend channel retry_after=120 from response",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-error-retry-boundaries.test.ts",
+      "name": "Retry-After lower bound (#119) does not resend channel retry_after=120 from error",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-error-retry-boundaries.test.ts",
+      "name": "Retry-After lower bound (#119) never overrides strict shouldRetry for a non-idempotent channel call",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-store-validation.test.ts",
+      "name": "useProviderStore - secret broker boundary (P1-001) does not expose getAccountApiKey or getApiKey on the renderer store",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-validation.test.ts",
+      "name": "validateApiKeyWithProvider does not mask auth-like 400 errors behind a fallback probe",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-validation.test.ts",
+      "name": "validateApiKeyWithProvider does not mask localized auth-like 400 errors behind a fallback probe",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "provider-validation.test.ts",
+      "name": "validateApiKeyWithProvider does not duplicate endpoint suffix when baseUrl already points to /responses",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage propagates seal denial through the real extension runner while ordinary optional failures remain open",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage covers every registered producer in its legal phase and rejects the opposite phase",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage rejects unknown system-prompt sources even when supplied ids or a boundary try to hide lineage",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage does not treat dropped unknown sources as applied mutations",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage rejects duplicate registration and keeps registration facts immutable",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage reports disabled coverage and no RC-03 plan/receipt while the flag is off",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage rejects post-seal semantic prompt changed prompt before calling the provider",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage rejects post-seal semantic prompt base prompt\n<!-- OPENCLAW_CACHE_BOUNDARY -->\nnew instructions before calling the provider",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage keeps repeated denial closed with shadow census=false and permits a repaired call",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage keeps repeated denial closed with shadow census=true and permits a repaired call",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "rc03-seal-coverage.test.ts",
+      "name": "TF-0739 RC-03 executable coverage rejects explicit summary identity conflicts and reuses a correctly identified summary on wire retry",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "runtime-memory-context-contracts.test.ts",
+      "name": "runtime memory context contracts rejects raw chat logs, transcripts, trace dumps, prompts, payloads, tool IO, env, secrets, and trace headers",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "runtime-memory-self-edit-persistence.test.ts",
+      "name": "P0-B: memory self-edit persistence retirement retires durable memory_update while preserving the disabled-write contract",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "runtime-memory-self-edit-persistence.test.ts",
+      "name": "P0-B: memory self-edit persistence retirement memory_update returns ok:false when persistence rejects the write",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "runtime-memory-self-edit-persistence.test.ts",
+      "name": "P0-B: memory self-edit persistence retirement memory_forget returns ok:false when persistence rejects the write",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "runtime-memory-self-edit-persistence.test.ts",
+      "name": "P0-B: memory self-edit persistence retirement memory_strengthen returns ok:false when persistence rejects the access",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission systemPrompt rejects a grant belonging to another producer",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission prependContext rejects a grant belonging to another producer",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission appendContext rejects a grant belonging to another producer",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission prependSystemContext rejects a grant belonging to another producer",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission appendSystemContext rejects a grant belonging to another producer",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission never borrows an earlier hook grant or silently returns a partial merge",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission ignores permissions forged inside a hook result",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 hook authority admission does not change model resolution or ordinary plugin error handling",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 candidate admission and projection rejects undeclared system_prompt before collection or charge",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-authority.test.ts",
+      "name": "TF-0737 candidate admission and projection rejects undeclared message_replacement before collection or charge",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-budget.test.ts",
+      "name": "TF-0738 observed prompt accounting records eight real API observations and a missing-accounting negative control",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-budget.test.ts",
+      "name": "TF-0738 observed prompt accounting uses the final prompt observation to expose a late unregistered addition",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-budget.test.ts",
+      "name": "TF-0738 observed prompt accounting does not charge repeated composition or cached finalization twice",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-budget.test.ts",
+      "name": "TF-0738 observed prompt accounting does not pretend a snapshot without a baseline observation has complete budgeting",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-prompt-budget.test.ts",
+      "name": "TF-0738 observed prompt accounting does not count a setter operation that failed to apply",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-network-parity.test.ts",
+      "name": "TF-0734 shared provider network policy fails closed for http://169.254.169.254/latest/meta-data (metadata-address)",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-network-parity.test.ts",
+      "name": "TF-0734 shared provider network policy fails closed for http://metadata.google.internal/v1 (blocked-hostname)",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-network-parity.test.ts",
+      "name": "TF-0734 shared provider network policy fails closed for http://[fe80::1]/v1 (link-local-address)",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-network-parity.test.ts",
+      "name": "TF-0734 shared provider network policy fails closed for ftp://example.com/v1 (unsupported-protocol)",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-network-parity.test.ts",
+      "name": "TF-0734 shared provider network policy fails closed for not a url (invalid-url)",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-provider-validation-matrix.test.ts",
+      "name": "TF-0733 provider validation 12-scenario matrix never reports ready for any scenario whose credential/protocol/model chain failed",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-retry-identity.test.ts",
+      "name": "attempt identity is independent from retry budget does not reuse an identity after a successful attempt releases budget",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "semantic-convergence-retry-identity.test.ts",
+      "name": "attempt identity is independent from retry budget makes completeAttempt idempotent",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 classifyProviderValidationError key-less vendors (ollama/local) never classify as not-filled",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 classifyProviderValidationError credential rejection \"API error: 401 Unauthorized\" → credentials",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 classifyProviderValidationError credential rejection \"status 403 forbidden\" → credentials",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 classifyProviderValidationError credential rejection \"Invalid API key provided\" → credentials",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 classifyProviderValidationError credential rejection \"invalid_api_key: Incorrect API key\" → credentials",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 classifyProviderValidationError credential rejection \"authentication failed\" → credentials",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 classifyProviderValidationError unexpected provider responses fall into the explicit service bucket, never silently pass",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 isProviderRuntimeReady (chat first-send gate) no accounts → not ready (Setup skipped clean install)",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 isProviderRuntimeReady (chat first-send gate) disabled default account → not ready",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "FP-P1-01 isSetupVerificationComplete skipped is NEVER complete — limited mode must stay visible",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states 429 rate limit → { reachable: 'reachable', auth: 'unknown', protocol: 'unknown', model: 'unknown', rateLimited: true, ready: false, reason: 'rate-limited', retryAfterMs: 5000 }",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states 401 unauthorized → { reachable: 'reachable', auth: 'invalid', protocol: 'unknown', model: 'unknown', rateLimited: false, ready: false, reason: 'unauthorized' }",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states non-auth 400 → { reachable: 'reachable', auth: 'valid', protocol: 'compatible', model: 'unknown', rateLimited: false, ready: false, reason: 'protocol-error' }",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states unknown model → { reachable: 'reachable', auth: 'valid', protocol: 'compatible', model: 'unavailable', rateLimited: false, ready: false, reason: 'model-unavailable' }",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states network down → { reachable: 'unreachable', auth: 'unknown', protocol: 'unknown', model: 'unknown', rateLimited: false, ready: false, reason: 'network-error' }",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states 5xx → { reachable: 'reachable', auth: 'unknown', protocol: 'unknown', model: 'unknown', rateLimited: false, ready: false, reason: 'server-error' }",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states a ready state is the only one that never classifies as a failure",
+      "status": "passed"
+    },
+    {
+      "suite": "root",
+      "file": "setup-provider-validation.test.ts",
+      "name": "TF-0733 structured provider validation states providerValidationFeedback never maps a non-auth 400 to invalidKey",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "context-candidate.test.ts",
+      "name": "ContextCandidate/v1 accepts structured replacements atomically after higher precedence (exhausted=false)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "context-candidate.test.ts",
+      "name": "ContextCandidate/v1 accepts structured replacements atomically after higher precedence (exhausted=true)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "context-candidate.test.ts",
+      "name": "ContextCandidate/v1 does not charge a replacement after the original history was repaired",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "context-orchestrator.compass.test.ts",
+      "name": "does not claim complete facts when the retired retrieval path cannot produce text",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "context-orchestrator.test.ts",
+      "name": "computeContextExtraSystemPrompt does not scope memory to an ephemeral runId, but preserves an explicit stable taskId",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "context-orchestrator.test.ts",
+      "name": "computeContextExtraSystemPrompt does not query lazy VToken memory inputs while its flag is off",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "context-orchestrator.test.ts",
+      "name": "computeContextExtraSystemPrompt does not construct Memory providers or query VToken when the kill switch is on",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority rejects an undeclared systemPrompt replacement in enforce mode",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority rejects an undeclared message replacement in enforce mode",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority allows a matching declaration and rejects mismatches explicitly",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority warns instead of throwing outside enforce mode, and never downgrades silently",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (dcs-knowledge)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (context-block:knowledge)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (compass-ssp)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (session-start:summary)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority does not derive replacement permission from a built-in source name (memory-inject-pilot:runtime-memory)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "prompt-contribution-authority.test.ts",
+      "name": "TF-0737 prompt contribution authority does not register synthetic names or broaden exact core IDs by prefix",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "rc03-seal-wiring.test.ts",
+      "name": "RC-03 production wiring (seal hook at the pre-seal convergence point) TF-0739: post-seal system mutation rejects before provider execution and remains in the census",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "rc03-seal.test.ts",
+      "name": "RC-03 seal registry rejects a semantic producer that mutates transport and a non-semantic producer that mutates messages",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "rc03-seal.test.ts",
+      "name": "RC-03 seal registry assertSealProducersRegistered reports unregistered ids (unknown semantic mutation = 0 enforced)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "rc03-seal.test.ts",
+      "name": "RC-03 receipts through ReceiptStore remains idempotent for identical correlated receipts (content-sensitive)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "stage5-memory-facade.test.ts",
+      "name": "stage5 semantic memory facade fails closed on unknown tool names and invalid query fields",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "stage5-memory-facade.test.ts",
+      "name": "stage5 semantic memory facade fails closed on schema-invalid adapter candidates",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "stage5-memory-facade.test.ts",
+      "name": "stage5 semantic memory facade fails closed on schema-invalid writes without calling the owner",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "stage5-unit-aware-packer.test.ts",
+      "name": "stage5 unit-aware packer is stable for equal inputs and never prefixes text",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "stage5-unit-aware-packer.test.ts",
+      "name": "stage5 unit-aware packer fails closed when output reserve exceeds the budget",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "stage5-unit-aware-packer.test.ts",
+      "name": "stage5 unit-aware packer fails closed on invalid enums, ids, source refs, and duplicate units",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "stage5-unit-aware-packer.test.ts",
+      "name": "stage5 unit-aware packer fails closed on fractional or negative token estimates",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "turn-injection-budget.test.ts",
+      "name": "FP-P0-05 shared budget does not eliminate degradation by enlarging the total (accounting stays honest)",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "turn-injection-budget.test.ts",
+      "name": "FP-P2-04 config overrides a missing or corrupt config falls back to the FP-P0-05 defaults",
+      "status": "passed"
+    },
+    {
+      "suite": "runtime",
+      "file": "turn-injection-budget.test.ts",
+      "name": "#184 cross-injection duplication metric does not count a channel repeating itself as cross-injection",
+      "status": "passed"
+    },
+    {
+      "suite": "agents",
+      "file": "model-fallback.loop-termination.test.ts",
+      "name": "model fallback respects runtime loop termination leaves charging to provider transport when the run does not record a physical attempt",
+      "status": "passed"
+    },
+    {
+      "suite": "agents",
+      "file": "model-fallback.loop-termination.test.ts",
+      "name": "does not exhaust a four-slot budget after two failed physical attempts",
+      "status": "passed"
+    },
+    {
+      "suite": "agents",
+      "file": "rc03-entry-transitions.acceptance.test.ts",
+      "name": "RC-03R real-entry seal and dual v1 receipts retired COMPASS candidates spend no budget and never reach the real wire",
+      "status": "passed"
+    },
+    {
+      "suite": "agents",
+      "file": "request-attempt-budget.test.ts",
+      "name": "RequestAttemptBudget fails closed when a layer tries to exceed the budget",
+      "status": "passed"
+    },
+    {
+      "suite": "agents",
+      "file": "request-attempt-budget.test.ts",
+      "name": "RequestAttemptBudget does not turn invalid Retry-After metadata into a delay",
+      "status": "passed"
+    },
+    {
+      "suite": "agents",
+      "file": "request-attempt-budget.test.ts",
+      "name": "RequestAttemptBudget never schedules retries by itself",
+      "status": "passed"
+    },
+    {
+      "suite": "retry-invariants",
+      "file": "retry-budget-invariants.test.ts",
+      "name": "retry budget invariants fails closed at the exact budget boundary",
+      "status": "passed"
+    },
+    {
+      "suite": "retry-invariants",
+      "file": "retry-budget-invariants.test.ts",
+      "name": "retry budget invariants does not double-release a repeated success completion",
+      "status": "passed"
+    },
+    {
+      "suite": "infra",
+      "file": "retry.test.ts",
+      "name": "retryAsync shared attempt budget does not charge the ambient budget when the operation does not record a physical attempt",
+      "status": "passed"
+    }
+  ]
+}

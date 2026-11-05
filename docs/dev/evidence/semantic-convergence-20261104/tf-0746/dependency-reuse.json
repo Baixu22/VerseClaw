@@ -1,0 +1,97 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "records": [
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/packages/net-policy/node_modules/ipaddr.js",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\ipaddr.js@2.4.0\\node_modules\\ipaddr.js",
+      "name": "ipaddr.js",
+      "version": "2.4.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/packages/markdown-core/node_modules/markdown-it",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\markdown-it@14.2.0\\node_modules\\markdown-it",
+      "name": "markdown-it",
+      "version": "14.2.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/packages/markdown-core/node_modules/yaml",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\yaml@2.9.0\\node_modules\\yaml",
+      "name": "yaml",
+      "version": "2.9.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/api",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+api@1.9.1\\node_modules\\@opentelemetry\\api",
+      "name": "@opentelemetry/api",
+      "version": "1.9.1"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/api-logs",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+api-logs@0.218.0\\node_modules\\@opentelemetry\\api-logs",
+      "name": "@opentelemetry/api-logs",
+      "version": "0.218.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/exporter-logs-otlp-proto",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+exporter-log_31895c5d6160649235f73210e18b5100\\node_modules\\@opentelemetry\\exporter-logs-otlp-proto",
+      "name": "@opentelemetry/exporter-logs-otlp-proto",
+      "version": "0.218.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/exporter-metrics-otlp-proto",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+exporter-met_abe4530f7758f932a006758688bbf687\\node_modules\\@opentelemetry\\exporter-metrics-otlp-proto",
+      "name": "@opentelemetry/exporter-metrics-otlp-proto",
+      "version": "0.218.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/exporter-trace-otlp-proto",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+exporter-tra_d8e808ba82b85372a468e022bb290191\\node_modules\\@opentelemetry\\exporter-trace-otlp-proto",
+      "name": "@opentelemetry/exporter-trace-otlp-proto",
+      "version": "0.218.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/resources",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+resources@2.7.1_@opentelemetry+api@1.9.1\\node_modules\\@opentelemetry\\resources",
+      "name": "@opentelemetry/resources",
+      "version": "2.7.1"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/sdk-logs",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+sdk-logs@0.218.0_@opentelemetry+api@1.9.1\\node_modules\\@opentelemetry\\sdk-logs",
+      "name": "@opentelemetry/sdk-logs",
+      "version": "0.218.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/sdk-metrics",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+sdk-metrics@2.7.1_@opentelemetry+api@1.9.1\\node_modules\\@opentelemetry\\sdk-metrics",
+      "name": "@opentelemetry/sdk-metrics",
+      "version": "2.7.1"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/sdk-node",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+sdk-node@0.218.0_@opentelemetry+api@1.9.1\\node_modules\\@opentelemetry\\sdk-node",
+      "name": "@opentelemetry/sdk-node",
+      "version": "0.218.0"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/sdk-trace-base",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+sdk-trace-base@2.7.1_@opentelemetry+api@1.9.1\\node_modules\\@opentelemetry\\sdk-trace-base",
+      "name": "@opentelemetry/sdk-trace-base",
+      "version": "2.7.1"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/extensions/diagnostics-otel/node_modules/@opentelemetry/semantic-conventions",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\@opentelemetry+semantic-conventions@1.41.1\\node_modules\\@opentelemetry\\semantic-conventions",
+      "name": "@opentelemetry/semantic-conventions",
+      "version": "1.41.1"
+    },
+    {
+      "link": "D:/ClawX-work/semantic-convergence-20261104/openclaw_runtime/packages/gateway-client/node_modules/ipaddr.js",
+      "source": "D:\\ClawX-work\\recovery-integration-20261103\\openclaw_runtime\\node_modules\\.pnpm\\ipaddr.js@2.4.0\\node_modules\\ipaddr.js",
+      "name": "ipaddr.js",
+      "version": "2.4.0"
+    }
+  ],
+  "method": "exact package-owner versions reused through absolute local junctions; no manifest/install changes"
+}

@@ -1,0 +1,171 @@
+{
+  "schema": "SemanticConvergenceRegressionMatrix/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0746",
+  "candidate": {
+    "commit": "300631d8588062209a06236d552ddf1f8b08eb52",
+    "tree": "84ab86f182bc71bb62bd15596b21af054217ae29",
+    "dirty": false
+  },
+  "rows": [
+    {
+      "finding": "R1",
+      "requirement": "Retry identity",
+      "journey": "success/failure/idempotent completion",
+      "command": "commands.json:tf0746-root",
+      "oracle": "unique IDs, immutable outcomes, one release",
+      "negative": "repeated completion",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "R2",
+      "requirement": "Retry charging/recovery",
+      "journey": "real local HTTP503/503/200 through guarded transport and shared budget",
+      "command": "commands.json:tf0746-root",
+      "oracle": "3 outbound=3 charges, success; auth1 request; exhausted2 requests",
+      "negative": "401/403/budget exhaustion",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "V1",
+      "requirement": "Provider readiness",
+      "journey": "12-state matrix, Setup/Main/local HTTP and Settings UI",
+      "command": "commands.json:tf0746-root",
+      "oracle": "false-ready0/12;429/400 never verified;Setup continuation disabled",
+      "negative": "429/non-auth400/auth/model/timeout/blocked",
+      "artifacts": [
+        "root-tests.json",
+        "electron-verdicts.json",
+        "settings-observations.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "N1",
+      "requirement": "Network policy",
+      "journey": "validation/inference target policy and deadline parity",
+      "command": "commands.json:tf0746-root",
+      "oracle": "shared fingerprint, fail-closed metadata/invalid target, total probe deadline",
+      "negative": "SSRF/invalid URL/deadline",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "N1",
+      "requirement": "Embedding deadline",
+      "journey": "100-text operation with shared total deadline",
+      "command": "commands.json:tf0746-root",
+      "oracle": "120000ms logical clock ceiling, no new batch after expiry",
+      "negative": "expired/cancelled operation",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "P1",
+      "requirement": "Prompt authority",
+      "journey": "all declared mutation fields and registered admission",
+      "command": "commands.json:tf0746-root",
+      "oracle": "5/5 declarations; explicit enforce denies unknown rights before effects",
+      "negative": "undeclared replacement/source spoofing",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "P2",
+      "requirement": "Prompt accounting",
+      "journey": "managed/post-orchestrator composition and actual final snapshot",
+      "command": "commands.json:tf0746-root",
+      "oracle": "6000 managed cap, joins/replacements counted, missing baseline visible",
+      "negative": "unbudgeted/no-turn/failure",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "P2",
+      "requirement": "Seal/entry boundaries",
+      "journey": "sealed stream and embedded extension entry",
+      "command": "commands.json:tf0746-root",
+      "oracle": "seal-on rejects unregistered mutation; off/kill remains truthful; entries continue",
+      "negative": "tamper/duplicate/after-seal semantic transform",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "M1",
+      "requirement": "Memory provenance",
+      "journey": "agent edit, schema and persistence-port validation",
+      "command": "commands.json:tf0746-root",
+      "oracle": "agent_self_edit/agent_approved, human tags rejected",
+      "negative": "forged human approval/rejection",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "M2",
+      "requirement": "Memory atomicity",
+      "journey": "SQLite/in-memory self-edit and curation transactions",
+      "command": "commands.json:tf0746-root",
+      "oracle": "six failures rollback; truthful DELETE",
+      "negative": "three stages x two paths/conflicting IDs/async",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "M3",
+      "requirement": "Memory freshness",
+      "journey": "committed reads, external Node writer and read races",
+      "command": "commands.json:tf0746-root",
+      "oracle": "immediate current read or explicit stale snapshot metadata",
+      "negative": "missing revision/rollback/external commit race",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "M4",
+      "requirement": "Facade disposition",
+      "journey": "production consumer/import oracle",
+      "command": "commands.json:tf0746-root",
+      "oracle": "retire;zero production consumers;headers/docs align",
+      "negative": "direct/barrel/dynamic importer fixture",
+      "artifacts": [
+        "root-tests.json"
+      ],
+      "verdict": "pass"
+    },
+    {
+      "finding": "OPS",
+      "requirement": "Resource teardown",
+      "journey": "two Electron apps plus a spawned child",
+      "command": "commands.json:tf0746-e2e-complete + tf0746-settings-selected",
+      "oracle": "first main+child gone, second remains;run-end survivors0",
+      "negative": "wrapper PID mismatch/descendant leak",
+      "artifacts": [
+        "process-observations.json",
+        "full-run-cleanup.json"
+      ],
+      "verdict": "pass"
+    }
+  ]
+}

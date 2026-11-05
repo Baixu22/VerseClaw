@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-XxHODP",
+  "ledgerEntries": 1,
+  "reaped": [
+    {
+      "pid": 32392,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\ClawX\\.local\\tf0746-semantic-e2e\\verse-claw-e2e-run-XxHODP\\",
+    "owned": [],
+    "remaining": []
+  }
+}

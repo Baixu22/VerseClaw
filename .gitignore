@@ -2588,6 +2588,46 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0744/report.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0744/source-manifest.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0744/unit-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/.gitattributes
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/README.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/SHA256SUMS
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/agents-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/build-graph.config.ts
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/commands.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/comms-compare.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/comms-replay.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/credential-scan.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/dependency-reuse.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/electron-initial.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/electron-settings-rerun.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/electron-verdicts.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/embedded-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/facade-observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/full-run-cleanup.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/full-typecheck.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/http-observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/infra-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/matrix.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/memory-observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/negative-cases.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/process-observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/prompt-observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/report.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/retry-invariants-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/review-adjudication.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/review-initial.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/review-metadata.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/review-raw.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/review-second.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/root-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/runtime-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/settings-cleanup.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/settings-observations.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/settings-protocol-error.png
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/settings-rate-limited.png
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/source-guard.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/source-manifest.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0746/recompute.mjs
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
