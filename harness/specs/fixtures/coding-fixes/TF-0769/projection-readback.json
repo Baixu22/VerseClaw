@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0769",
+  "realHumanEvidence": false,
+  "candidate": "f51de63b27f9ee4fbbc9997e568787446e857b7e",
+  "trackedFiles": 20558,
+  "errors": [],
+  "dependencies": "root D:/ClawX; private runtime node_modules, frozen lock install; source bytes match git archive"
+}
