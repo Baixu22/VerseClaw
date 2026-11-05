@@ -1,0 +1,71 @@
+{
+  "id": "missing-fact",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "The service is an experimental desktop application. No customer count is recorded.",
+    "taskComplete": false,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "overview.md",
+        "lookup": "overview.md",
+        "path": "overview.md",
+        "title": "overview.md",
+        "excerpt": "The service is an experimental desktop application. No customer count is recorded.",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:overview.md",
+          "owner": "memory-wiki",
+          "subjectId": "overview.md",
+          "revision": "1",
+          "contentDigest": "sha256:f87391e4e781b6041d769d2e1703b74d59bc7ae2199834accb55f929b665522c",
+          "sourceRefs": [
+            "overview.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "overview.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": true,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": true,
+  "promptHash": "97b271971ecd80fef2d17e07ddeed08ba5c05b83cf53f24c3fcc326deae265ad",
+  "provider": {
+    "text": "{\"claims\":[],\"unknowns\":[\"The number of customers who use the service is not recorded.\"]}",
+    "responseId": "01a1ab5a6bd57637a2940b764477236a",
+    "model": "space-bunny",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 446,
+      "outputTokens": 110,
+      "totalTokens": 556
+    }
+  },
+  "parsed": {
+    "claims": [],
+    "unknowns": [
+      "The number of customers who use the service is not recorded."
+    ]
+  },
+  "answer": "",
+  "durationMs": 5453
+}

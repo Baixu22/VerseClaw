@@ -1,0 +1,161 @@
+{
+  "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+  "tree": "f9bc61f52541167e1ae8cc80529cb00082343d08",
+  "dirty": false,
+  "driven_by": "agent",
+  "actor": "codex-knowledge-convergence",
+  "files": [
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "748e38f799e6e838c062f9a9a82ec461c17fcc4f95ce10e58e3c4f2c299a3c05"
+    },
+    {
+      "file": "README.md",
+      "sha256": "cf6911bc78b40ea2755192da0960b851028316ae4e24fa725c8bb677868b6fe5"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "5fb8e10a1a0c3c4fcccfb02460ce58eb771edbe5d32177fa7a2770e2624237b2"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "b754aafb77dea59528514649a9106972f97167ad92ba4de6d8146239fcf74c04"
+    },
+    {
+      "file": "docs/modules/knowledge-base.md",
+      "sha256": "81e2c243aba801486cdea975f02bf3081bd27bbb22ea8397a4cc883414bd7283"
+    },
+    {
+      "file": "electron/main/index.ts",
+      "sha256": "f179d758d24edee7372dc6143bc0903b223fc8ca5ad238fd80e2a0d87f81bcb5"
+    },
+    {
+      "file": "electron/services/knowledge-api.ts",
+      "sha256": "dbdd75f1a6b817cb53678e258d32fc46f5213569144ed87aca118178a0a11894"
+    },
+    {
+      "file": "electron/services/knowledge-embedding-provider.ts",
+      "sha256": "2621ea43b4544528920ec95a62ddb5e7b9c51cfb3f4b84767f7efa4fcd9d11ef"
+    },
+    {
+      "file": "electron/services/knowledge-evidence-qa.ts",
+      "sha256": "2fe36720f89633d63041dde737e029c72f7d2a0b9a70f101998a56129f5205f4"
+    },
+    {
+      "file": "electron/services/knowledge-github-connector.ts",
+      "sha256": "6ea45fb59e64111f6a9425c85b98d05d6bdcc66c79b735946a7140262fe72fcd"
+    },
+    {
+      "file": "electron/services/knowledge-source-set-answer.ts",
+      "sha256": "4a63c652138e58053a5d3daa8feb165c415ee59f6662268a16f06620602c3650"
+    },
+    {
+      "file": "electron/services/knowledge-source-sync.ts",
+      "sha256": "2f7ac954c50624665fe63938a99384916c484ffd5e8c1a61d5de3b0b5f33d9db"
+    },
+    {
+      "file": "harness/specs/rules/knowledge-continuous-source-sync.md",
+      "sha256": "81a96d22c09a30580b3578c812f12cef05b5a000d1aa636454c0740604815ca6"
+    },
+    {
+      "file": "harness/specs/rules/knowledge-evidence-and-connectors.md",
+      "sha256": "e8b0716f449a4694163b1c9ede2920dd098d3975644f5606646acaf428d525ce"
+    },
+    {
+      "file": "harness/specs/tasks/knowledge-continuous-source-sync.md",
+      "sha256": "81fb3bd8a5c722818efb4b787dbac14d15c65d7b0b0cdc037c26ed67eb05dde5"
+    },
+    {
+      "file": "harness/specs/tasks/knowledge-evidence-qa.md",
+      "sha256": "e64ed6fedc64367b692f380e394408be0665534e605ce34eb51621eaf0258e1f"
+    },
+    {
+      "file": "harness/specs/tasks/knowledge-retrieval-and-governance-completion.md",
+      "sha256": "d5238c4d1f3b19e2c25fcfce8707b6c42dd2d6ccdab72b1629f6a4279eec3847"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/source-set.ts",
+      "sha256": "3b0e26468d6dec33190a05bced060fb54df760eadc41ded957dcce16cdab86f8"
+    },
+    {
+      "file": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+      "sha256": "0ca3c52f6473bee79384dcb7edd691f47beeded3cd184d0e76f8f4e3ecc54721"
+    },
+    {
+      "file": "openclaw_runtime/src/runtime-core/memory-tokenization.ts",
+      "sha256": "531e61a22590b1d8a9f59a7b4c9a011ca5aaa7779fbb3e8dc57998bd7c73ac06"
+    },
+    {
+      "file": "scripts/contract-check.mjs",
+      "sha256": "9e9fcf1dd2db535eb94cbd09df4b5187c7ff47c8ec8ed58fedb9e2691f0fa454"
+    },
+    {
+      "file": "scripts/knowledge-quality-eval.ts",
+      "sha256": "245c398a0fe15176c96cd76cc34ad72fa29008c714f60c95d3d6bb6378c409a9"
+    },
+    {
+      "file": "scripts/run-knowledge-quality-eval.mjs",
+      "sha256": "4d9ff35ca4ce8e51000c87adfb3f04b0550c21e63a458fe186063d8c467f2ef4"
+    },
+    {
+      "file": "shared/host-api/contract.ts",
+      "sha256": "cb74450e2b78806d4334c91629453b58ad4e7f448c3d8496273a63ecd32ab0fc"
+    },
+    {
+      "file": "src/lib/host-api/knowledge/connectors.ts",
+      "sha256": "1d9a62db61a19b4fe5ecdca487e62948e482e5565e363b3f794a32ab4076350d"
+    },
+    {
+      "file": "src/lib/host-api/knowledge/index.ts",
+      "sha256": "8254fcb7fe78f1ba43682ea7e3284ffd8d18631238bdee254e48d1777fe529dc"
+    },
+    {
+      "file": "src/pages/Chat/KnowledgeChat.tsx",
+      "sha256": "a72b5d9897431dc6b002be025df42a55fa2280272d9f688a008311f9fcbd9fb0"
+    },
+    {
+      "file": "tests/e2e/knowledge-bot.spec.ts",
+      "sha256": "e398770586c0117d52d8a5a96a35b28af5c6aa3998db097ab6ded5db3c0935a1"
+    },
+    {
+      "file": "tests/e2e/knowledge-hub.spec.ts",
+      "sha256": "1e2d758ee353069be83eda79d34b6559c4b87c5fc2ec8600468b26e849e9db21"
+    },
+    {
+      "file": "tests/e2e/knowledge-live.spec.ts",
+      "sha256": "5df063273873b92211de6e6683a33958d10c20cb98460478a1c44b2cd9bc2426"
+    },
+    {
+      "file": "tests/unit/knowledge-api.test.ts",
+      "sha256": "0a99c91c0ac0dc983f3bd6b1ad4fded55192cab6a0cb6c7090cb939720a1157f"
+    },
+    {
+      "file": "tests/unit/knowledge-chat.test.tsx",
+      "sha256": "0fe596cfdea00a82c8f3e5c01e1bdb10eaa7d2b8d4aca60887faab4035c486b8"
+    },
+    {
+      "file": "tests/unit/knowledge-evidence-qa.test.ts",
+      "sha256": "28586f01762e2be03bb4d1f3eeffd1da3d1a1267dcde1d5fb146812f874f01d9"
+    },
+    {
+      "file": "tests/unit/knowledge-github-connector.test.ts",
+      "sha256": "d3d2225ebce47f0e67f339c965a753f0574dfd82c76face11ee7f8b1c9392b1c"
+    },
+    {
+      "file": "tests/unit/knowledge-retrieval.test.ts",
+      "sha256": "51a8bf915c6a777f28d6fd6d1c73f48479e28d6434e5b3aa3796130ee5f1ce51"
+    },
+    {
+      "file": "tests/unit/knowledge-source-sync.test.ts",
+      "sha256": "ddfd2a3c36e09d364a7c5348661849afa7154dc49d13233b3f8d774305ccd961"
+    },
+    {
+      "file": "tests/unit/knowledge-steward-registry.test.ts",
+      "sha256": "6edd1fad0d56707adc697ec704f89f4b2c213907e218d1801c66e3afdf748caa"
+    },
+    {
+      "file": "tests/unit/knowledge-steward-semantic-pass.test.ts",
+      "sha256": "ce015feaca7ab7eb4afa10bccac4509833d59f093a52cc0a5ee0316973fdc6a1"
+    }
+  ]
+}

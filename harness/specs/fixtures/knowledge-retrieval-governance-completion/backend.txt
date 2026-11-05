@@ -1,0 +1,121 @@
+
+ RUN  v4.1.1 D:/ClawX-work/knowledge-relay-20261105
+
+stderr | tests/unit/knowledge-api.test.ts > knowledge host API > KS-02 truthful DCS projection sink > falls back to a journal sink and never claims blockstore when state DB cannot open
+[knowledge-api] BlockStore sink unavailable, falling back to journal: Error: ENOTDIR: not a directory, mkdir 'D:\tmp\clawx-knowledge-api-1793876106380\state-as-file\state'
+    at mkdirSync (node:fs:1410:26)
+    at ensureOpenClawStatePermissions (D:/ClawX-work/knowledge-relay-20261105/openclaw_runtime/src/state/openclaw-state-db.ts:122:3)
+    at openOpenClawStateDatabase (D:/ClawX-work/knowledge-relay-20261105/openclaw_runtime/src/state/openclaw-state-db.ts:881:3)
+    at createHostExperienceProjectionSink (D:/ClawX-work/knowledge-relay-20261105/electron/services/knowledge-api.ts:496:22)
+    at D:/ClawX-work/knowledge-relay-20261105/tests/unit/knowledge-api.test.ts:2168:26
+    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20 {
+  errno: -4052,
+  code: 'ENOTDIR',
+  syscall: 'mkdir',
+  path: 'D:\\tmp\\clawx-knowledge-api-1793876106380\\state-as-file\\state'
+}
+
+ ✓ tests/unit/knowledge-api.test.ts (45 tests) 5270ms
+     ✓ wraps wiki.status and reports Gateway failures  1421ms
+     ✓ reconciles watched file changes into versioned agent-driven review candidates  381ms
+ ✓ tests/unit/knowledge-roletags.test.ts (20 tests) 2516ms
+       ✓ preserves roleTags through create → get round-trip  321ms
+ ✓ tests/unit/knowledge-steward-notes-injection.test.ts (14 tests) 1444ms
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > DEFAULT_REGISTRY fallback (§3.1, §8) > falls back to DEFAULT_REGISTRY when registry file is corrupt JSON
+[knowledge] steward-roles.json load failed (unknown); using default
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > DEFAULT_REGISTRY fallback (§3.1, §8) > falls back to DEFAULT_REGISTRY when registry is not an object
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'root',
+    message: 'registry file is not an object; using default'
+  }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > DEFAULT_REGISTRY fallback (§3.1, §8) > falls back to DEFAULT_REGISTRY when version is unsupported
+[knowledge] steward-roles.json issues: [
+  { path: 'version', message: 'unsupported version 99; using default' }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > DEFAULT_REGISTRY fallback (§3.1, §8) > falls back to DEFAULT_REGISTRY when defaultRoleId is missing
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'defaultRoleId',
+    message: 'defaultRoleId is required; using default'
+  }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > DEFAULT_REGISTRY fallback (§3.1, §8) > falls back to DEFAULT_REGISTRY when roles array is empty
+[knowledge] steward-roles.json issues: [ { path: 'roles', message: 'roles array is empty; using default' } ]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > Boundary preservation — canApplyDirectly literal false (§9) > rejects a hand-edited entry with canApplyDirectly: true and skips it
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'roles[0].capabilities.canApplyDirectly',
+    message: 'canApplyDirectly must be literal false (got true); entry skipped'
+  },
+  { path: 'roles', message: 'no valid role entries; using default' }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > Boundary preservation — canApplyDirectly literal false (§9) > rejects canApplyDirectly: "false" (string) — must be literal boolean false
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'roles[0].capabilities.canApplyDirectly',
+    message: 'canApplyDirectly must be literal false (got "false"); entry skipped'
+  },
+  { path: 'roles', message: 'no valid role entries; using default' }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > Boundary preservation — canApplyDirectly literal false (§9) > rejects canApplyDirectly: 0 (number) — must be literal boolean false
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'roles[0].capabilities.canApplyDirectly',
+    message: 'canApplyDirectly must be literal false (got 0); entry skipped'
+  },
+  { path: 'roles', message: 'no valid role entries; using default' }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > Variant normalization (§3.1) > rejects duplicate roleId and skips the second occurrence
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'roles[1].roleId',
+    message: 'duplicate roleId: knowledge-steward'
+  }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > Variant normalization (§3.1) > rejects entry missing roleId
+[knowledge] steward-roles.json issues: [ { path: 'roles[0].roleId', message: 'roleId is required' } ]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > Variant normalization (§3.1) > rejects entry missing enabled flag
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'roles[0].enabled',
+    message: 'enabled (boolean) is required'
+  },
+  { path: 'roles', message: 'no valid role entries; using default' }
+]
+
+stderr | tests/unit/knowledge-steward-registry.test.ts > Area 5 §3.1 — KB Role Registry > Variant normalization (§3.1) > rejects defaultRoleId that is not in accepted roles
+[knowledge] steward-roles.json issues: [
+  {
+    path: 'defaultRoleId',
+    message: 'defaultRoleId nonexistent-role not present in accepted roles; using default'
+  }
+]
+
+ ✓ tests/unit/knowledge-steward-registry.test.ts (21 tests) 297ms
+ ✓ tests/unit/knowledge-steward-semantic-pass.test.ts (12 tests) 398ms
+ ✓ tests/unit/knowledge-github-connector.test.ts (12 tests) 947ms
+ ✓ tests/unit/knowledge-source-sync.test.ts (6 tests) 821ms
+     ✓ reconciles twenty native rename/change event bursts, updates and withdrawals without duplicates  586ms
+ ✓ tests/unit/knowledge-retrieval.test.ts (9 tests) 28ms
+ ✓ tests/unit/knowledge-source-set-answer.test.ts (41 tests) 25ms
+ ✓ tests/unit/knowledge-evidence-qa.test.ts (8 tests) 7ms
+ ✓ tests/unit/knowledge-host-api-split.test.ts (1 test) 2ms
+
+ Test Files  11 passed (11)
+      Tests  189 passed (189)
+   Start at  18:55:03
+   Duration  18.38s (transform 1.40s, setup 195ms, import 3.90s, tests 11.75s, environment 1ms)
+
+JSON report written to D:/tmp/knowledge-relay-20261105/final/backend.json

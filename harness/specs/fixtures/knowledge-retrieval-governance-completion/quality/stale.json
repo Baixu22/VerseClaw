@@ -1,0 +1,37 @@
+{
+  "id": "stale",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "",
+    "taskComplete": false,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [],
+    "rejections": [
+      {
+        "refId": "memory-wiki:stale.md",
+        "owner": "memory-wiki",
+        "subjectId": "stale.md",
+        "reason": "stale",
+        "visibleReason": "Source \"memory-wiki:stale.md\" is status is stale and cannot ground an answer."
+      }
+    ],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "stale.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": false,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": null,
+  "answer": "No admitted sources.",
+  "inferenceSkipped": "No admitted sources or structured conflict",
+  "durationMs": 0
+}

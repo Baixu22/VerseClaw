@@ -19,15 +19,9 @@ Verse Claw 的 Knowledge 是本地 Markdown/wiki-first 的受治理项目知识�
 
 ## 2. 页面分区
 
-`src/pages/Knowledge/index.tsx` 当前有七个工作区 tab：
-
-1. **Library**
-2. **Review Queue**
-3. **Inbox**
-4. **Drafts**
-5. **Review**
-6. **Runtime Lessons**
-7. **Governance**
+`src/pages/Knowledge/index.tsx` 当前有两个主入口：**Library** 和 **Review Queue**。
+Inbox、Drafts、Review、Runtime Lessons 和 Governance 是按需打开的内部工作视图，
+不是七个平级主入口；以 `PRIMARY_WORKBENCH_TABS` 和实际导航为准。
 
 此外有：
 

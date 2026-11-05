@@ -41,5 +41,5 @@ TF-0797 follows the completed Source Set admission delivery. Reuse the existing
 Inbox and GovernanceStore; source snapshots are synchronization cursors, never a
 second knowledge authority. Capture keys bind configuration, path, revision and
 transition. Removed files produce withdrawal candidates without deleting accepted
-knowledge. Persisted configuration is review-gated. No product defaults or locks
+knowledge. Persisted configuration keeps captured source changes review-gated. No product defaults or locks
 are promoted. Evidence actors are agents.

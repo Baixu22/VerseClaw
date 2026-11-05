@@ -1,0 +1,117 @@
+{
+  "id": "cross-source",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "The release reviewer is Mira.\nThe rollback command is clawx rollback --last.",
+    "taskComplete": true,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "reviewer.md",
+        "lookup": "reviewer.md",
+        "path": "reviewer.md",
+        "title": "reviewer.md",
+        "excerpt": "The release reviewer is Mira.",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:reviewer.md",
+          "owner": "memory-wiki",
+          "subjectId": "reviewer.md",
+          "revision": "1",
+          "contentDigest": "sha256:19630d13e943ab2fcc340f87dddc3e7c9e98968da91a16e969767e72e4fa7721",
+          "sourceRefs": [
+            "reviewer.md"
+          ]
+        }
+      },
+      {
+        "id": "rollback.md",
+        "lookup": "rollback.md",
+        "path": "rollback.md",
+        "title": "rollback.md",
+        "excerpt": "The rollback command is clawx rollback --last.",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:rollback.md",
+          "owner": "memory-wiki",
+          "subjectId": "rollback.md",
+          "revision": "1",
+          "contentDigest": "sha256:69c351498382bbba803d13d929389ddc9ad923dc3ce94cd29de9ca40614c2889",
+          "sourceRefs": [
+            "rollback.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "reviewer.md",
+        "fromLine": 1,
+        "lineCount": 80
+      },
+      {
+        "path": "rollback.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": true,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": true,
+  "promptHash": "7f0bc77169efaa42dcbeb421418fb3edfc711d09169ea9bc79359dd39484e426",
+  "provider": {
+    "text": "{\"claims\":[{\"text\":\"The release reviewer is Mira.\",\"citations\":[{\"sourceId\":\"memory-wiki:reviewer.md\",\"quote\":\"The release reviewer is Mira.\"}]},{\"text\":\"The rollback command is clawx rollback --last.\",\"citations\":[{\"sourceId\":\"memory-wiki:rollback.md\",\"quote\":\"The rollback command is clawx rollback --last.\"}]}],\"unknowns\":[]}",
+    "responseId": "01a1ab5aa39f750d8351f2ab901de88b",
+    "model": "space-bunny",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 530,
+      "outputTokens": 112,
+      "totalTokens": 642
+    }
+  },
+  "parsed": {
+    "claims": [
+      {
+        "text": "The release reviewer is Mira.",
+        "citations": [
+          {
+            "sourceId": "memory-wiki:reviewer.md",
+            "quote": "The release reviewer is Mira."
+          }
+        ]
+      },
+      {
+        "text": "The rollback command is clawx rollback --last.",
+        "citations": [
+          {
+            "sourceId": "memory-wiki:rollback.md",
+            "quote": "The rollback command is clawx rollback --last."
+          }
+        ]
+      }
+    ],
+    "unknowns": []
+  },
+  "answer": "The release reviewer is Mira.\nThe rollback command is clawx rollback --last.",
+  "durationMs": 3703
+}

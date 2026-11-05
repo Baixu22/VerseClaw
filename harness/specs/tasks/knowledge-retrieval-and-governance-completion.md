@@ -54,8 +54,10 @@ docs:
   required: true
 ---
 
-TF-0797 through TF-0802 are delivered serially within the explicitly requested
-continuation. Frozen product defaults remain in force. All automated actors are
+TF-0797 through TF-0802 are validated and closed in dependency order within the
+explicitly requested continuation. Their implementation was retained in one
+source candidate; that does not substitute for the individual evidence gates.
+Frozen product defaults remain in force. All automated actors are
 labelled agent-driven. Citation validation proves exact quote existence and
 source/version binding, not universal semantic entailment. Accepted knowledge
 still changes exclusively through reviewed apply. The connector is explicitly

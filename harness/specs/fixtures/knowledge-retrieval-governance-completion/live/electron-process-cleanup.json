@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-relay-20261105\\verse-claw-e2e-run-pw1sFF",
+  "ledgerEntries": 1,
+  "reaped": [
+    {
+      "pid": 8652,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "unavailable",
+    "error": "Error: Command failed: powershell.exe -NoLogo -NoProfile -NonInteractive -Command "
+  }
+}

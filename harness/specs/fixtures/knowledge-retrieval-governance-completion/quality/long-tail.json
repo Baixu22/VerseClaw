@@ -1,0 +1,124 @@
+{
+  "id": "long-tail",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "Routine unrelated note 0. Routine unrelated note 1. Routine unrelated note 2. Routine unrelated note 3. Routine unrelated note 4. Routine unrelated note 5. Routine unrelated note 6. Routine unrelated note 7. Routine unrelated note 8. Routin",
+    "taskComplete": false,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "long-runbook.md",
+        "lookup": "long-runbook.md",
+        "path": "long-runbook.md",
+        "title": "long-runbook.md",
+        "excerpt": "Routine unrelated note 160. Routine unrelated note 161. Routine unrelated note 162. Routine unrelated note 163. Routine unrelated note 164. Routine unrelated note 165. Routine unrelated note 166. Routine unrelated note 167. Routine unrelate",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 161,
+          "toLine": 240,
+          "totalLines": 1000,
+          "truncated": true
+        },
+        "citation": {
+          "refId": "memory-wiki:long-runbook.md",
+          "owner": "memory-wiki",
+          "subjectId": "long-runbook.md",
+          "revision": "1",
+          "contentDigest": "sha256:f8c3500cc17895b6bfe6e54b270efbdc74fe873ad1fd89ceeea7879365479089",
+          "sourceRefs": [
+            "long-runbook.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "long-runbook.md",
+        "fromLine": 1,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 81,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 161,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 241,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 321,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 401,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 481,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 561,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 641,
+        "lineCount": 80
+      },
+      {
+        "path": "long-runbook.md",
+        "fromLine": 721,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": true,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": true,
+  "promptHash": "4615c6027fa7b4163cbbcd82d3fed06ccb6d3b827113759216dda0ccd8bc9756",
+  "provider": {
+    "text": "{\"claims\":[{\"text\":\"The emergency recovery command is `clawx recover --safe`.\",\"citations\":[{\"sourceId\":\"memory-wiki:long-runbook.md\",\"quote\":\"Emergency recovery command: clawx recover --safe.\"}]}],\"unknowns\":[]}",
+    "responseId": "01a1ab5a60587e769e6c787c48a91c87",
+    "model": "space-bunny",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 997,
+      "outputTokens": 53,
+      "totalTokens": 1050
+    }
+  },
+  "parsed": {
+    "claims": [
+      {
+        "text": "The emergency recovery command is `clawx recover --safe`.",
+        "citations": [
+          {
+            "sourceId": "memory-wiki:long-runbook.md",
+            "quote": "Emergency recovery command: clawx recover --safe."
+          }
+        ]
+      }
+    ],
+    "unknowns": []
+  },
+  "answer": "The emergency recovery command is `clawx recover --safe`.",
+  "durationMs": 2933
+}

@@ -1,0 +1,188 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "evidence_kind": "real-electron-with-controlled-host-responses",
+  "floating": {
+    "floatBox": {
+      "x": 841.3333740234375,
+      "y": 241.33334350585938,
+      "width": 400,
+      "height": 520.0000305175781
+    },
+    "edgeSpacing": {
+      "viewportRight": 39.6666259765625,
+      "viewportBottom": 39.666656494140625,
+      "surfaceRightGap": 15.33331298828125,
+      "composerLeft": 16.6666259765625,
+      "composerRight": 16.66668701171875,
+      "composerBottom": 16.66663360595703,
+      "closeWidth": 32,
+      "closeInset": 14.6666259765625,
+      "closeBackground": "oklab(0.22559 -0.00131416 -0.00642684 / 0.05)"
+    },
+    "backgroundMounted": true,
+    "routeUnchanged": true,
+    "draftRetained": true,
+    "pendingRequestRetained": true,
+    "escapeClosed": true,
+    "compactMetadata": true,
+    "promptsInMenu": true,
+    "candidateActionsInDetails": true,
+    "minimizeControl": true,
+    "focusRestored": true,
+    "animation": {
+      "openMs": 180,
+      "closeMs": 140,
+      "reducedMs": 80
+    }
+  },
+  "drag": {
+    "before": {
+      "x": 1169.3333740234375,
+      "y": 694.4852905273438,
+      "width": 88,
+      "height": 88
+    },
+    "constrained": {
+      "x": 1068.83,
+      "y": 610.136
+    },
+    "after": {
+      "x": 1076.9522705078125,
+      "y": 616.8598022460938,
+      "width": 88,
+      "height": 88
+    },
+    "snapped": {
+      "x": 1169,
+      "y": 693,
+      "width": 88,
+      "height": 88
+    },
+    "withinRange": {
+      "x": 1125,
+      "y": 659,
+      "width": 88,
+      "height": 88
+    },
+    "storedPosition": {
+      "x": 1169,
+      "y": 693
+    },
+    "restored": {
+      "x": 849.3333740234375,
+      "y": 653.3333740234375,
+      "width": 88,
+      "height": 88
+    },
+    "radius": 112,
+    "openedOnDrag": false,
+    "keyboardOpened": true
+  },
+  "observedStates": [
+    "idle",
+    "listening",
+    "searching",
+    "finished",
+    "failed",
+    "searching",
+    "confused"
+  ],
+  "sharedMarkdown": {
+    "table": true,
+    "codeHeader": true,
+    "composerShell": true
+  },
+  "reducedMotionStable": true,
+  "searchBodyPathPresent": true,
+  "animatedFrameChanges": true,
+  "errors": [],
+  "requests": [
+    {
+      "id": "c1d48a89-2472-4bcf-ab8d-37a30819e506",
+      "module": "knowledge",
+      "action": "answerFromSourceSet",
+      "payload": {
+        "question": "Explain the decision",
+        "sourceRefs": [],
+        "synthesis": true,
+        "history": [
+          {
+            "role": "assistant",
+            "content": "# Decision\n\nUse **cited sources**.\n\n| Scope | Result |\n| --- | --- |\n| Knowledge | Reviewed |\n\n```ts\nconst grounded = true;\n```"
+          }
+        ]
+      },
+      "deadline": {
+        "deadlineAtMs": 1793878286356,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "c1d48a89-2472-4bcf-ab8d-37a30819e506"
+      }
+    },
+    {
+      "id": "368ba48b-f5b0-4c7e-8961-ca70166c5f1a",
+      "module": "knowledge",
+      "action": "answerFromSourceSet",
+      "payload": {
+        "question": "Try again",
+        "sourceRefs": [],
+        "synthesis": true,
+        "history": [
+          {
+            "role": "assistant",
+            "content": "# Decision\n\nUse **cited sources**.\n\n| Scope | Result |\n| --- | --- |\n| Knowledge | Reviewed |\n\n```ts\nconst grounded = true;\n```"
+          },
+          {
+            "role": "user",
+            "content": "Explain the decision"
+          },
+          {
+            "role": "assistant",
+            "content": "Use cited sources for knowledge answers. [memory-wiki:notes/decision.md]"
+          }
+        ]
+      },
+      "deadline": {
+        "deadlineAtMs": 1793878287860,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "368ba48b-f5b0-4c7e-8961-ca70166c5f1a"
+      }
+    },
+    {
+      "id": "7c9066ab-52b8-4963-b3d6-0fb063b0cfce",
+      "module": "knowledge",
+      "action": "answerFromSourceSet",
+      "payload": {
+        "question": "Try again",
+        "sourceRefs": [],
+        "synthesis": true,
+        "history": [
+          {
+            "role": "assistant",
+            "content": "# Decision\n\nUse **cited sources**.\n\n| Scope | Result |\n| --- | --- |\n| Knowledge | Reviewed |\n\n```ts\nconst grounded = true;\n```"
+          },
+          {
+            "role": "user",
+            "content": "Explain the decision"
+          },
+          {
+            "role": "assistant",
+            "content": "Use cited sources for knowledge answers. [memory-wiki:notes/decision.md]"
+          },
+          {
+            "role": "user",
+            "content": "Try again"
+          }
+        ]
+      },
+      "deadline": {
+        "deadlineAtMs": 1793878288671,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "7c9066ab-52b8-4963-b3d6-0fb063b0cfce"
+      }
+    }
+  ]
+}
