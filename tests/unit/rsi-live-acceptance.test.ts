@@ -42,13 +42,21 @@ describe('real RSI task admission', () => {
       testResults: [{ assertionResults: [{ status: 'failed' }] }] } }] };
     expect(assessTaskAdmission({ reference, baseline: failed }).passed).toBe(true);
     expect(assessTaskAdmission({ reference: { passed: true }, baseline: failed }).passed).toBe(false);
-    expect(assessTaskAdmission({ reference: failed, baseline: failed }).issues).toContain('reference-oracle-not-passing');
+    expect(assessTaskAdmission({ reference: { ...failed, failureClass: 'assertion' }, baseline: failed }).issues).toContain('reference-oracle-not-passing');
+    expect(assessTaskAdmission({ reference: { passed: false }, baseline: failed }).issues).toContain('reference-infrastructure-failure');
+    expect(assessTaskAdmission({ reference: { ...reference, passed: false, failureClass: 'infrastructure', executions: [] }, baseline: failed }).issues).toContain('reference-infrastructure-failure');
+    expect(assessTaskAdmission({ reference: { ...reference, passed: false, failureClass: 'oracle-input-drift', executions: [] }, baseline: failed }).issues).toContain('reference-oracle-input-drift');
     expect(assessTaskAdmission({ reference: { passed: true }, baseline: { passed: true } }).issues).toContain('baseline-already-passes');
     expect(assessTaskAdmission({ reference: { passed: true }, baseline: { passed: false, executions: [{ exitCode: null, timedOut: true }] } }).passed).toBe(false);
+    expect(assessTaskAdmission({ reference: { passed: true }, baseline: { passed: false, failureClass: 'infrastructure', executions: [] } }).issues).toContain('baseline-infrastructure-failure');
+    expect(assessTaskAdmission({ reference: { passed: true }, baseline: { passed: false, failureClass: 'oracle-input-drift', executions: [] } }).issues).toContain('baseline-oracle-input-drift');
+    expect(assessTaskAdmission({ reference: { passed: false, timedOut: true, executions: [] }, baseline: failed }).issues).toContain('reference-infrastructure-failure');
+    expect(assessTaskAdmission({ reference: { passed: false, failureClass: 'target-module-absent', executions: [] }, baseline: failed }).issues).toContain('reference-oracle-not-passing');
     expect(assessTaskAdmission({ reference: { passed: true }, baseline: { passed: false, executions: [] } }).passed).toBe(false);
     const missingTarget = { ...failed, diagnostics: [{ kind: 'missing-module', missingPath: 'src/target.js', importer: 'tests/target.test.ts', inTargetScope: true }],
       executions: [{ ...failed.executions[0], exitCode: 1, report: { success: false, numTotalTests: 0, numPassedTests: 0, numFailedTests: 0, numPendingTests: 0, testResults: [{ assertionResults: [], message: "Cannot find module './target.js'" }] } }] };
     expect(assessTaskAdmission({ reference, baseline: missingTarget })).toEqual({ passed: true, issues: [], warnings: ['baseline-target-module-absent'] });
     expect(assessTaskAdmission({ reference, baseline: { ...missingTarget, diagnostics: [{ ...missingTarget.diagnostics[0], inTargetScope: false }] } }).passed).toBe(false);
+    expect(assessTaskAdmission({ reference, baseline: { ...missingTarget, diagnostics: [{ ...missingTarget.diagnostics[0], inTargetScope: false }] } }).issues).toContain('baseline-infrastructure-failure');
   });
 });

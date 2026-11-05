@@ -26,6 +26,10 @@ export type GradeEdit = { path: string; content: string | Uint8Array };
 export type GradeEdits = GradeEdit[] | Record<string, string | Uint8Array>;
 
 export function missingModuleDiagnostics(report: any, workspace: string, task: HistoricalGradeTask): OracleDiagnostic[];
+export function linkGraderDependencies(root: string, workspace: string, descriptors: Array<{ usesRootDeps?: boolean; usesRuntimeDeps?: boolean }>): string[];
+export type OracleFailureClass = 'assertion' | 'infrastructure' | 'target-module-absent' | 'oracle-input-drift';
+
+export function classifyMissingModuleFailure(diagnostics?: OracleDiagnostic[]): { failureClass: 'assertion' | 'infrastructure' | 'target-module-absent'; inTargetScope: boolean; diagnostics: OracleDiagnostic[] };
 
 export function resolveHistoricalTask(root: string, taskId: string): HistoricalGradeTask;
 
@@ -79,6 +83,7 @@ export function runLiveTaskOracles(options: {
   numFailedTests: number;
   numPendingTests: number;
   passed: boolean;
+  failureClass: OracleFailureClass | null;
   timeoutMs: number;
   oracleHashBefore: string;
   oracleHashAfter: string | null;

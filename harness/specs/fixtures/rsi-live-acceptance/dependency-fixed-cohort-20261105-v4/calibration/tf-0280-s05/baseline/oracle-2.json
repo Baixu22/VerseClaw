@@ -1,0 +1,289 @@
+{
+  "numTotalTestSuites": 4,
+  "numPassedTestSuites": 4,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 15,
+  "numPassedTests": 15,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793858898339,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "image_generate credential-use provenance boundary"
+          ],
+          "fullName": "image_generate credential-use provenance boundary denies an external cross-provider override before provider execution",
+          "status": "passed",
+          "title": "denies an external cross-provider override before provider execution",
+          "duration": 20.566200000001118,
+          "failureMessages": [],
+          "location": {
+            "line": 88,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "image_generate credential-use provenance boundary"
+          ],
+          "fullName": "image_generate credential-use provenance boundary denies a discovered cross-provider override before provider credential resolution",
+          "status": "passed",
+          "title": "denies a discovered cross-provider override before provider credential resolution",
+          "duration": 0.8235999999960768,
+          "failureMessages": [],
+          "location": {
+            "line": 107,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "image_generate credential-use provenance boundary"
+          ],
+          "fullName": "image_generate credential-use provenance boundary keeps the resolved default primary provider usable without explicit config",
+          "status": "passed",
+          "title": "keeps the resolved default primary provider usable without explicit config",
+          "duration": 3.203800000002957,
+          "failureMessages": [],
+          "location": {
+            "line": 123,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "image_generate credential-use provenance boundary"
+          ],
+          "fullName": "image_generate credential-use provenance boundary keeps an operator-configured fallback provider usable",
+          "status": "passed",
+          "title": "keeps an operator-configured fallback provider usable",
+          "duration": 0.6543999999994412,
+          "failureMessages": [],
+          "location": {
+            "line": 143,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "image_generate credential-use provenance boundary"
+          ],
+          "fullName": "image_generate credential-use provenance boundary keeps a same-provider model override usable",
+          "status": "passed",
+          "title": "keeps a same-provider model override usable",
+          "duration": 0.6319000000003143,
+          "failureMessages": [],
+          "location": {
+            "line": 168,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "image_generate credential-use provenance boundary"
+          ],
+          "fullName": "image_generate credential-use provenance boundary keeps the resolved default provider and automatic fallback when no override is supplied",
+          "status": "passed",
+          "title": "keeps the resolved default provider and automatic fallback when no override is supplied",
+          "duration": 0.654500000004191,
+          "failureMessages": [],
+          "location": {
+            "line": 186,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793858919905,
+      "endTime": 1793858919931.6545,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0280-s05/baseline/workspace/openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy denies an unbound provider override for untrusted provenance",
+          "status": "passed",
+          "title": "denies an unbound provider override for untrusted provenance",
+          "duration": 2.2198000000007596,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy denies an unbound provider override for derived-untrusted provenance",
+          "status": "passed",
+          "title": "denies an unbound provider override for derived-untrusted provenance",
+          "duration": 0.2462999999988824,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy denies an unbound provider override for missing provenance",
+          "status": "passed",
+          "title": "denies an unbound provider override for missing provenance",
+          "duration": 0.1625000000003638,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy denies an unbound provider override for invalid provenance",
+          "status": "passed",
+          "title": "denies an unbound provider override for invalid provenance",
+          "duration": 0.14899999999943248,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy allows same-provider and explicitly configured fallback overrides",
+          "status": "passed",
+          "title": "allows same-provider and explicitly configured fallback overrides",
+          "duration": 0.2165999999997439,
+          "failureMessages": [],
+          "location": {
+            "line": 38,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy fails closed when an explicit override has no resolvable provider",
+          "status": "passed",
+          "title": "fails closed when an explicit override has no resolvable provider",
+          "duration": 0.14550000000053842,
+          "failureMessages": [],
+          "location": {
+            "line": 51,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy does not constrain calls without an explicit model override",
+          "status": "passed",
+          "title": "does not constrain calls without an explicit model override",
+          "duration": 0.16119999999864376,
+          "failureMessages": [],
+          "location": {
+            "line": 58,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy does not constrain trusted system or direct operator provenance",
+          "status": "passed",
+          "title": "does not constrain trusted system or direct operator provenance",
+          "duration": 0.3076999999993859,
+          "failureMessages": [],
+          "location": {
+            "line": 65,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "provider credential-use provenance policy"
+          ],
+          "fullName": "provider credential-use provenance policy does not treat an ordinary trust field as an operator boundary",
+          "status": "passed",
+          "title": "does not treat an ordinary trust field as an operator boundary",
+          "duration": 0.22729999999864958,
+          "failureMessages": [],
+          "location": {
+            "line": 81,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793858898890,
+      "endTime": 1793858898894.2273,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0280-s05/baseline/workspace/openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts"
+    }
+  ]
+}

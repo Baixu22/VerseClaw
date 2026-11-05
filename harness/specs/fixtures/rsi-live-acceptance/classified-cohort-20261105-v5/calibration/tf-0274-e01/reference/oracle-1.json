@@ -1,0 +1,140 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 8,
+  "numPassedTests": 6,
+  "numFailedTests": 2,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793862697570,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability review regression: incomplete anchors cannot hide an observed unsafe outcome",
+          "status": "failed",
+          "title": "review regression: incomplete anchors cannot hide an observed unsafe outcome",
+          "duration": 5.3156999999999925,
+          "failureMessages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts:19:39\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability review regression: malformed outcomes and duplicate case identities are rejected",
+          "status": "failed",
+          "title": "review regression: malformed outcomes and duplicate case identities are rejected",
+          "duration": 1.2483999999999469,
+          "failureMessages": [
+            "AssertionError: expected [Function] to throw an error\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1551:16)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts:26:130\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+          "status": "passed",
+          "title": "computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+          "duration": 0.6610000000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+          "status": "passed",
+          "title": "preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+          "duration": 0.494700000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability flags a flake only when the first scheduled trial failed and a later re-run passed",
+          "status": "passed",
+          "title": "flags a flake only when the first scheduled trial failed and a later re-run passed",
+          "duration": 0.2950000000000159,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability fails the gate when a safety-required case is skipped",
+          "status": "passed",
+          "title": "fails the gate when a safety-required case is skipped",
+          "duration": 0.23649999999997817,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability enforces positive (must pass) and negative (must reject) anchors",
+          "status": "passed",
+          "title": "enforces positive (must pass) and negative (must reject) anchors",
+          "duration": 0.21020000000004302,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "aggregateReliability"
+          ],
+          "fullName": "aggregateReliability reports insufficient-sample instead of passing when complete cases are below the gate",
+          "status": "passed",
+          "title": "reports insufficient-sample instead of passing when complete cases are below the gate",
+          "duration": 0.20720000000000027,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793862698367,
+      "endTime": 1793862698376.2366,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts"
+    }
+  ]
+}

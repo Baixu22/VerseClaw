@@ -1,0 +1,903 @@
+{
+  "numTotalTestSuites": 25,
+  "numPassedTestSuites": 22,
+  "numFailedTestSuites": 3,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 65,
+  "numPassedTests": 63,
+  "numFailedTests": 2,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793859548702,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A04 A4 gate coverage"
+          ],
+          "fullName": "A04 A4 gate coverage keeps every A4 required test path present and wired into the archived pilot spec",
+          "status": "failed",
+          "title": "keeps every A4 required test path present and wired into the archived pilot spec",
+          "duration": 37.36220000000003,
+          "failureMessages": [
+            "AssertionError: expected '---\\nlifecycleStatus: archived\\nid: a…' to contain '- tests/unit/a4-decision-quality-dev-…'\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/a04-a4-gate-coverage.test.ts:29:20\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A04 A4 gate coverage"
+          ],
+          "fullName": "A04 A4 gate coverage pins the A4 counter action and A4-first degradation order evidence",
+          "status": "passed",
+          "title": "pins the A4 counter action and A4-first degradation order evidence",
+          "duration": 0.917699999999968,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A04 A4 gate coverage"
+          ],
+          "fullName": "A04 A4 gate coverage pins A4 as offline-only with the sanctioned dev-tool consumer wired",
+          "status": "failed",
+          "title": "pins A4 as offline-only with the sanctioned dev-tool consumer wired",
+          "duration": 595.8014000000003,
+          "failureMessages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/a04-a4-gate-coverage.test.ts:64:82\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859552593,
+      "endTime": 1793859553226.8015,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/a04-a4-gate-coverage.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring returns overall = 1.0 for a perfect decision (correct, complete, timely)",
+          "status": "passed",
+          "title": "returns overall = 1.0 for a perfect decision (correct, complete, timely)",
+          "duration": 1.8803000000000338,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring returns correctness = 0.0 when actionMatched is false",
+          "status": "passed",
+          "title": "returns correctness = 0.0 when actionMatched is false",
+          "duration": 0.25739999999996144,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring returns correctness = 0.0 when reviewerAction !== expectedAction (implicit mismatch)",
+          "status": "passed",
+          "title": "returns correctness = 0.0 when reviewerAction !== expectedAction (implicit mismatch)",
+          "duration": 0.16700000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring returns correctness = 1.0 when expectedAction is omitted (assume correct)",
+          "status": "passed",
+          "title": "returns correctness = 1.0 when expectedAction is omitted (assume correct)",
+          "duration": 0.1429000000000542,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring computes completeness as considered/available ratio, clamped to [0, 1]",
+          "status": "passed",
+          "title": "computes completeness as considered/available ratio, clamped to [0, 1]",
+          "duration": 0.23820000000000618,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring computes timeliness with linear decay from tick 0 to maxTicksForDecision",
+          "status": "passed",
+          "title": "computes timeliness with linear decay from tick 0 to maxTicksForDecision",
+          "duration": 0.2075999999999567,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring caps timeliness at 0.5 when wasDeferred is true",
+          "status": "passed",
+          "title": "caps timeliness at 0.5 when wasDeferred is true",
+          "duration": 0.11980000000005475,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring classifies as low-quality when overall < 0.6",
+          "status": "passed",
+          "title": "classifies as low-quality when overall < 0.6",
+          "duration": 0.12969999999995707,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "scoreDecision — pure scoring"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) scoreDecision — pure scoring classifies as NOT low-quality when overall = 0.6 (boundary, strict <)",
+          "status": "passed",
+          "title": "classifies as NOT low-quality when overall = 0.6 (boundary, strict <)",
+          "duration": 0.17309999999997672,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "flag-off parity"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) flag-off parity audit() returns null when pilot is disabled (no flags)",
+          "status": "passed",
+          "title": "audit() returns null when pilot is disabled (no flags)",
+          "duration": 0.23099999999999454,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "flag-off parity"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) flag-off parity audit() returns null when pilot is \"off\"",
+          "status": "passed",
+          "title": "audit() returns null when pilot is \"off\"",
+          "duration": 0.16679999999996653,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "flag-off parity"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) flag-off parity auditBatch() returns null when pilot is disabled",
+          "status": "passed",
+          "title": "auditBatch() returns null when pilot is disabled",
+          "duration": 0.24930000000006203,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "flag-off parity"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) flag-off parity does NOT increment counters when pilot is disabled",
+          "status": "passed",
+          "title": "does NOT increment counters when pilot is disabled",
+          "duration": 0.15859999999997854,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "shadow mode — audit + counter integration"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) shadow mode — audit + counter integration audit() returns a score and increments auditedDecisions when pilot is \"shadow\"",
+          "status": "passed",
+          "title": "audit() returns a score and increments auditedDecisions when pilot is \"shadow\"",
+          "duration": 0.29369999999994434,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "shadow mode — audit + counter integration"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) shadow mode — audit + counter integration audit() increments lowQualityDecisions when decision is low-quality",
+          "status": "passed",
+          "title": "audit() increments lowQualityDecisions when decision is low-quality",
+          "duration": 0.1595999999999549,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "shadow mode — audit + counter integration"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) shadow mode — audit + counter integration auditBatch() returns aggregated result and increments counters by batch size",
+          "status": "passed",
+          "title": "auditBatch() returns aggregated result and increments counters by batch size",
+          "duration": 0.6528999999999314,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "shadow mode — audit + counter integration"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) shadow mode — audit + counter integration auditBatch() with empty records returns totalAudited=0, lowQualityCount=0, meanOverall=0",
+          "status": "passed",
+          "title": "auditBatch() with empty records returns totalAudited=0, lowQualityCount=0, meanOverall=0",
+          "duration": 0.12450000000001182,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "budget violation integration"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) budget violation integration auditing 100 decisions with 11 low-quality triggers A4 budget violation",
+          "status": "passed",
+          "title": "auditing 100 decisions with 11 low-quality triggers A4 budget violation",
+          "duration": 0.26870000000008076,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "budget violation integration"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) budget violation integration auditing 100 decisions with 10 low-quality does NOT trigger violation (boundary)",
+          "status": "passed",
+          "title": "auditing 100 decisions with 10 low-quality does NOT trigger violation (boundary)",
+          "duration": 0.1817999999999529,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "isDecisionQualityAuditEnabled"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) isDecisionQualityAuditEnabled returns false for undefined flags",
+          "status": "passed",
+          "title": "returns false for undefined flags",
+          "duration": 0.10980000000006385,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "isDecisionQualityAuditEnabled"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) isDecisionQualityAuditEnabled returns false for \"off\"",
+          "status": "passed",
+          "title": "returns false for \"off\"",
+          "duration": 0.07229999999992742,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "DecisionQualityAuditor (A4 — S5 fix)",
+            "isDecisionQualityAuditEnabled"
+          ],
+          "fullName": "DecisionQualityAuditor (A4 — S5 fix) isDecisionQualityAuditEnabled returns true for \"shadow\"",
+          "status": "passed",
+          "title": "returns true for \"shadow\"",
+          "duration": 0.0969000000000051,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859555044,
+      "endTime": 1793859555051.097,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/decision-quality-auditor.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas snapshot() returns all 6 areas with zero counters initially",
+          "status": "passed",
+          "title": "snapshot() returns all 6 areas with zero counters initially",
+          "duration": 1.7548000000000457,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas getArea() returns the correct area shape for each of the 6 areas",
+          "status": "passed",
+          "title": "getArea() returns the correct area shape for each of the 6 areas",
+          "duration": 0.375,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count incrementA1LegacyFallback increments the counter",
+          "status": "passed",
+          "title": "incrementA1LegacyFallback increments the counter",
+          "duration": 0.2876000000001113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count shadow success increments independently of legacy fallback",
+          "status": "passed",
+          "title": "shadow success increments independently of legacy fallback",
+          "duration": 0.15670000000000073,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count declared-path violations are tracked separately",
+          "status": "passed",
+          "title": "declared-path violations are tracked separately",
+          "duration": 0.15049999999996544,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records agreement and disagreement separately",
+          "status": "passed",
+          "title": "records agreement and disagreement separately",
+          "duration": 0.19240000000013424,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records deferred wave count",
+          "status": "passed",
+          "title": "records deferred wave count",
+          "duration": 0.12409999999999854,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) incrementA6VolatileMislabel increments the critical counter",
+          "status": "passed",
+          "title": "incrementA6VolatileMislabel increments the critical counter",
+          "duration": 0.1429000000000542,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "status": "passed",
+          "title": "volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "duration": 0.23749999999995453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) verifier pass/fail are tracked",
+          "status": "passed",
+          "title": "verifier pass/fail are tracked",
+          "duration": 0.2098999999998341,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "status": "passed",
+          "title": "A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "duration": 0.1710000000000491,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate ≤ 5% → not violated",
+          "status": "passed",
+          "title": "A1: legacy fallback rate ≤ 5% → not violated",
+          "duration": 0.11779999999998836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A2: disagreement rate > 10% → violated",
+          "status": "passed",
+          "title": "A2: disagreement rate > 10% → violated",
+          "duration": 0.10590000000001965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A3: anomaly rate > 20% → violated",
+          "status": "passed",
+          "title": "A3: anomaly rate > 20% → violated",
+          "duration": 0.10819999999989705,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A4: low-quality rate > 10% → violated",
+          "status": "passed",
+          "title": "A4: low-quality rate > 10% → violated",
+          "duration": 0.1045000000001437,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A5: plan ignored rate > 20% → violated",
+          "status": "passed",
+          "title": "A5: plan ignored rate > 20% → violated",
+          "duration": 0.10030000000006112,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A6: verifier fail rate > 5% → violated",
+          "status": "passed",
+          "title": "A6: verifier fail rate > 5% → violated",
+          "duration": 0.08540000000016335,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response no violation when all counters are within budget",
+          "status": "passed",
+          "title": "no violation when all counters are within budget",
+          "duration": 0.16180000000008476,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response reset() clears all counters",
+          "status": "passed",
+          "title": "reset() clears all counters",
+          "duration": 0.08680000000003929,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859558238,
+      "endTime": 1793859558243.1619,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/deprecation-counters.test.ts"
+    },
+    {
+      "assertionResults": [],
+      "startTime": 1793859548702,
+      "endTime": 1793859548702,
+      "status": "failed",
+      "message": "Failed to resolve import \"../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js\" from \"tests/unit/performance-budgets.test.ts\". Does the file exist?",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/performance-budgets.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans 60-span trace with threshold=50 → aggregated, claw.core.trace.truncated emitted",
+          "status": "passed",
+          "title": "60-span trace with threshold=50 → aggregated, claw.core.trace.truncated emitted",
+          "duration": 5.059500000000071,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans drops lowest-priority spans first (a4 before a6 before core)",
+          "status": "passed",
+          "title": "drops lowest-priority spans first (a4 before a6 before core)",
+          "duration": 1.3769000000000915,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans does not truncate when span count equals threshold",
+          "status": "passed",
+          "title": "does not truncate when span count equals threshold",
+          "duration": 0.3650000000000091,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans does not truncate when span count is below threshold",
+          "status": "passed",
+          "title": "does not truncate when span count is below threshold",
+          "duration": 0.4411000000000058,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans emits the truncation event at most once per trace",
+          "status": "passed",
+          "title": "emits the truncation event at most once per trace",
+          "duration": 0.44470000000001164,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans uses default threshold (200) when not specified",
+          "status": "passed",
+          "title": "uses default threshold (200) when not specified",
+          "duration": 0.723700000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans records droppedAreas in the truncation event",
+          "status": "passed",
+          "title": "records droppedAreas in the truncation event",
+          "duration": 0.5771000000000868,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.13: trace truncation at >threshold spans"
+          ],
+          "fullName": "Stage 3 / 3.13: trace truncation at >threshold spans defaults span area to callerArea when not explicitly set",
+          "status": "passed",
+          "title": "defaults span area to callerArea when not explicitly set",
+          "duration": 0.31009999999992033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859556019,
+      "endTime": 1793859556028.31,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/trace-truncation.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "功能完整性"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 功能完整性 checkBudgetViolation(\"a4\") returns not violated when 0 decisions audited",
+          "status": "passed",
+          "title": "checkBudgetViolation(\"a4\") returns not violated when 0 decisions audited",
+          "duration": 1.7825000000000273,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "功能完整性"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 功能完整性 checkBudgetViolation(\"a4\") returns violated + degrade_to_audit_only at 11/100 low-quality rate",
+          "status": "passed",
+          "title": "checkBudgetViolation(\"a4\") returns violated + degrade_to_audit_only at 11/100 low-quality rate",
+          "duration": 0.3523999999999887,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "功能完整性"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 功能完整性 reset() clears A4 counters back to zero",
+          "status": "passed",
+          "title": "reset() clears A4 counters back to zero",
+          "duration": 0.5831999999998061,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "功能完整性"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 功能完整性 getArea(\"a4\") returns { auditedDecisions, lowQualityDecisions } shape",
+          "status": "passed",
+          "title": "getArea(\"a4\") returns { auditedDecisions, lowQualityDecisions } shape",
+          "duration": 0.3182999999999083,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "边界条件"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 边界条件 auditedDecisions=0 + lowQualityDecisions=0 does not divide by zero (guard prevents)",
+          "status": "passed",
+          "title": "auditedDecisions=0 + lowQualityDecisions=0 does not divide by zero (guard prevents)",
+          "duration": 0.15769999999997708,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "边界条件"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 边界条件 lowQualityDecisions > auditedDecisions (anomalous state) still classifies by rate > 0.10",
+          "status": "passed",
+          "title": "lowQualityDecisions > auditedDecisions (anomalous state) still classifies by rate > 0.10",
+          "duration": 0.14360000000010587,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "边界条件"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 边界条件 exactly 10% (10/100) is NOT violated — boundary is strict >, not >=",
+          "status": "passed",
+          "title": "exactly 10% (10/100) is NOT violated — boundary is strict >, not >=",
+          "duration": 0.11950000000001637,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "错误路径"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 错误路径 incrementA4AuditedDecisions(0) has no effect (adds zero)",
+          "status": "passed",
+          "title": "incrementA4AuditedDecisions(0) has no effect (adds zero)",
+          "duration": 0.12830000000008113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "错误路径"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 错误路径 incrementA4LowQualityDecisions(-1) does not throw (implementation does not clamp but is safe)",
+          "status": "passed",
+          "title": "incrementA4LowQualityDecisions(-1) does not throw (implementation does not clamp but is safe)",
+          "duration": 0.26320000000009713,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "属性测试"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 属性测试 checkBudgetViolation monotonicity — violation goes false→true and never reverts as lowQuality increases 0→15",
+          "status": "passed",
+          "title": "checkBudgetViolation monotonicity — violation goes false→true and never reverts as lowQuality increases 0→15",
+          "duration": 0.5390999999999622,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "属性测试"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 属性测试 reset() restores violation state to false",
+          "status": "passed",
+          "title": "reset() restores violation state to false",
+          "duration": 0.141399999999976,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "集成测试"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 集成测试 A4 reviewer decision → increment chain → budget violation (simulated Mission reviewer flow)",
+          "status": "passed",
+          "title": "A4 reviewer decision → increment chain → budget violation (simulated Mission reviewer flow)",
+          "duration": 0.2234000000000833,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A4 deep — decision-quality deprecation counters",
+            "集成测试"
+          ],
+          "fullName": "A4 deep — decision-quality deprecation counters 集成测试 A4 counters do not interfere with other area counters (A1/A5)",
+          "status": "passed",
+          "title": "A4 counters do not interfere with other area counters (A1/A5)",
+          "duration": 0.21149999999988722,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859557147,
+      "endTime": 1793859557152.2234,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0296-a04/reference/workspace/tests/unit/deep/a4-deep.test.ts"
+    }
+  ]
+}

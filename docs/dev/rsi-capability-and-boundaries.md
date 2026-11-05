@@ -110,6 +110,8 @@ counts recorded task labels; `completeCases` remains zero because feedback
 records contain no experimental arm/repeat identity. Both pilot and three-arm
 check commands compare the retained report with a fresh derivation.
 
+The grader must expose both root and runtime dependencies while running an oracle; dependency-only reference failures must not be recorded as task failures. The 2026-11-05 v5 readback at `harness/specs/fixtures/rsi-live-acceptance/classified-cohort-20261105-v5/` keeps 11/24 admitted, 13 rejected and 216 slots not-run, while separating three assertion failures, one oracle-input drift, six reference infrastructure failures and three already-passing baselines (A05 also has a baseline infrastructure failure). No trial or benefit claim follows from this NO_GO.
+
 A baseline whose only failure is an expected missing module inside the declared target scope is admitted with the warning `baseline-target-module-absent`; missing dependencies outside target scope still fail closed. The model smoke demonstrates capability plumbing only, not benefit.
 
 The 2026-11-05 local review keeps README files hash-recorded but non-judged:

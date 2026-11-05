@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "RsiLiveAdmissionBatchResult/v1",
+  "generatedAt": "2026-11-05T06:35:16.259Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-dependency-fix-calibrator",
+  "status": "NO_GO",
+  "batch": {
+    "plannedTasks": 24,
+    "admittedTasks": 11,
+    "rejectedTasks": 13,
+    "plannedSlots": 216,
+    "executedSlots": 0,
+    "notRunSlots": 216
+  },
+  "admittedTaskIds": [
+    "tf-0276-s01",
+    "tf-0277-s02",
+    "tf-0280-s05",
+    "tf-0281-s06",
+    "tf-0282-s07",
+    "tf-0284-l02",
+    "tf-0286-l04",
+    "tf-0287-l05",
+    "tf-0288-l06",
+    "tf-0290-g02",
+    "tf-0291-g03"
+  ],
+  "rejected": [
+    {
+      "taskId": "tf-0274-e01",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "issues": [
+        "baseline-already-passes"
+      ]
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "issues": [
+        "reference-oracle-not-passing",
+        "baseline-has-no-gradeable-failure"
+      ]
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "issues": [
+        "baseline-already-passes"
+      ]
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "issues": [
+        "baseline-already-passes"
+      ]
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "issues": [
+        "reference-oracle-not-passing"
+      ]
+    }
+  ],
+  "trialExecution": {
+    "planned": 216,
+    "executed": 0,
+    "unexecuted": 216,
+    "reason": "task-admission-failed"
+  },
+  "claims": {
+    "taskQualityMeasured": false,
+    "benefit": false,
+    "promotionReady": false,
+    "realHuman": false,
+    "productLocksChanged": false,
+    "completeRsiImplementation": false
+  }
+}

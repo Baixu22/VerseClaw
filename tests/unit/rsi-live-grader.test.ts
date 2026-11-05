@@ -1,9 +1,9 @@
 // @vitest-environment node
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, rmdirSync, symlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, rmdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import { missingModuleDiagnostics, prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } from '../../scripts/lib/rsi-live-grader.mjs';
+import { classifyMissingModuleFailure, linkGraderDependencies, missingModuleDiagnostics, prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } from '../../scripts/lib/rsi-live-grader.mjs';
 import { sha256File } from '../../scripts/rsi-tf0604-baseline.mjs';
 
 const ROOT = process.cwd(), TEMP = 'D:/tmp', roots: string[] = [];
@@ -46,8 +46,23 @@ describe('live task grader independent execution', () => {
       expect(report.oracleUnchanged).toBe(true);
       expect(report.numTotalTests).toBe(1);
       expect(report.executions[0].exitCode).toBe(passed ? 0 : 1);
+      expect(report.failureClass).toBe(passed ? null : 'assertion');
       expect(readFileSync(report.executions[0].stdoutPath, 'utf8')).toContain('JSON report written');
     }
+  });
+
+  it('links runtime dependencies for a runtime oracle command', () => {
+    const { root } = fixture();
+    mkdirSync(join(root, 'openclaw_runtime'), { recursive: true });
+    const workspace = join(root, 'runtime-linked');
+    mkdirSync(join(workspace, 'openclaw_runtime'), { recursive: true });
+    mkdirSync(workspace, { recursive: true });
+    symlinkSync(join(ROOT, 'openclaw_runtime', 'node_modules'), join(root, 'openclaw_runtime', 'node_modules'), 'junction');
+    const links = linkGraderDependencies(root, workspace, [{ usesRootDeps: false, usesRuntimeDeps: true }]);
+    expect(links).toEqual([join(workspace, 'openclaw_runtime', 'node_modules')]);
+    expect(existsSync(join(workspace, 'openclaw_runtime', 'node_modules'))).toBe(true);
+    for (const link of links) rmdirSync(link);
+    rmdirSync(join(root, 'openclaw_runtime', 'node_modules'));
   });
 
   it('rejects tampered oracle bytes before executing them', async () => {
@@ -55,6 +70,13 @@ describe('live task grader independent execution', () => {
     await prepareGradeWorkspace({ root, task, workspace, revision: reference });
     writeFileSync(join(workspace, 'tests/subject.test.ts'), 'throw new Error("changed oracle")');
     await expect(runLiveTaskOracles({ root, task, workspace, outDir: join(root, 'tamper-oracle') })).rejects.toThrow('frozen-oracle-input-drift');
+  });
+
+  it('separates target-scoped absence from missing infrastructure dependencies', () => {
+    expect(classifyMissingModuleFailure([])).toEqual({ failureClass: 'assertion', inTargetScope: false, diagnostics: [] });
+    expect(classifyMissingModuleFailure([{ kind: 'missing-module', missingPath: 'src/new.js', inTargetScope: true }]).failureClass).toBe('target-module-absent');
+    expect(classifyMissingModuleFailure([{ kind: 'missing-module', missingPath: 'tslog', inTargetScope: false }]).failureClass).toBe('infrastructure');
+    expect(classifyMissingModuleFailure([{ kind: 'missing-module', missingPath: 'src/new.js', inTargetScope: true }, { kind: 'missing-module', missingPath: 'kysely', inTargetScope: false }]).failureClass).toBe('infrastructure');
   });
 
   it('classifies a missing module from the top-level suite message and task scope', () => {
@@ -65,7 +87,9 @@ describe('live task grader independent execution', () => {
     ]);
     const scoped = { ...task, input: { targetScope: ['tests/subject.mjs'] } };
     expect(missingModuleDiagnostics(report, 'D:/tmp/workspace', scoped)[0].inTargetScope).toBe(true);
-  });  it('rejects model edits to hidden tests or outside the declared task scope', async () => {
+  });
+
+  it('rejects model edits to hidden tests or outside the declared task scope', async () => {
     const { root, task, base } = fixture();
     await expect(prepareGradeWorkspace({ root, task, workspace: join(root, 'bad-edit'), revision: base,
       edits: [{ path: 'tests/subject.test.ts', content: '' }] })).rejects.toThrow('hidden oracle');

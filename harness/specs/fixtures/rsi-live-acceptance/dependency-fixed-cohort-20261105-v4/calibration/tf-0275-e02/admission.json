@@ -1,0 +1,389 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0275-e02",
+  "source": {
+    "id": "tf-0275-e02",
+    "base": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+    "reference": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+    "productChanges": [
+      "scripts/lib/paired-ablation.d.mts",
+      "scripts/lib/paired-ablation.mjs",
+      "shared/agent-dev/paired-ablation-fixture.json"
+    ],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/e02-acceptance.json",
+    "sourceRecordDigest": "67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd",
+    "oraclePaths": [
+      "tests/unit/agent-dev-paired-ablation.test.ts",
+      "tests/unit/runtime-memory-paired-ablation.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0275-e02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-paired-ablation.test.ts",
+            "tests/unit/runtime-memory-paired-ablation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 4,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 11,
+            "numPassedTests": 4,
+            "numFailedTests": 7,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793858345997,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation summarizes pass^k, p50/p95 latency, tokens, false blocks and safety violations",
+                    "status": "passed",
+                    "title": "summarizes pass^k, p50/p95 latency, tokens, false blocks and safety violations",
+                    "duration": 5.992599999999584,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation computes a paired mean difference and 95% CI",
+                    "status": "failed",
+                    "title": "computes a paired mean difference and 95% CI",
+                    "duration": 10.007599999999911,
+                    "failureMessages": [
+                      "AssertionError: expected 6 to be 2 // Object.is equality\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts:47:30\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation reports component-helps only when the 95% CI excludes zero on the positive side",
+                    "status": "passed",
+                    "title": "reports component-helps only when the 95% CI excludes zero on the positive side",
+                    "duration": 1.0630000000001019,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation returns no-effect when the CI contains zero and never invents a win",
+                    "status": "passed",
+                    "title": "returns no-effect when the CI contains zero and never invents a win",
+                    "duration": 0.589799999999741,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation returns hurts on a significant negative effect and safety-regression on violations",
+                    "status": "passed",
+                    "title": "returns hurts on a significant negative effect and safety-regression on violations",
+                    "duration": 0.5665000000008149,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "promotion gate"
+                    ],
+                    "fullName": "promotion gate review regression: carries explicit safety violations into promotion",
+                    "status": "failed",
+                    "title": "review regression: carries explicit safety violations into promotion",
+                    "duration": 1.5695999999998094,
+                    "failureMessages": [
+                      "TypeError: Cannot read properties of undefined (reading 'status')\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts:89:29\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "promotion gate"
+                    ],
+                    "fullName": "promotion gate review regression: rejects invalid numeric evidence and intervals",
+                    "status": "failed",
+                    "title": "review regression: rejects invalid numeric evidence and intervals",
+                    "duration": 0.610700000000179,
+                    "failureMessages": [
+                      "TypeError: (0 , __vite_ssr_import_1__.evaluatePromotion) is not a function\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts:95:14\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "promotion gate"
+                    ],
+                    "fullName": "promotion gate review regression: a partially measured cost is unavailable and pass@k is retained",
+                    "status": "failed",
+                    "title": "review regression: a partially measured cost is unavailable and pass@k is retained",
+                    "duration": 1.3506999999999607,
+                    "failureMessages": [
+                      "AssertionError: expected 100 to be null\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts:103:32\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "promotion gate"
+                    ],
+                    "fullName": "promotion gate never promotes below the product improvement floor",
+                    "status": "failed",
+                    "title": "never promotes below the product improvement floor",
+                    "duration": 0.6094000000002779,
+                    "failureMessages": [
+                      "TypeError: (0 , __vite_ssr_import_1__.evaluatePromotion) is not a function\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts:108:18\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "promotion gate"
+                    ],
+                    "fullName": "promotion gate eliminates a cost overrun and holds when cost is missing",
+                    "status": "failed",
+                    "title": "eliminates a cost overrun and holds when cost is missing",
+                    "duration": 0.5072000000000116,
+                    "failureMessages": [
+                      "TypeError: (0 , __vite_ssr_import_1__.evaluatePromotion) is not a function\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts:114:18\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "promotion gate"
+                    ],
+                    "fullName": "promotion gate promotes only when the floor, the interval and the cost ceiling all hold",
+                    "status": "failed",
+                    "title": "promotes only when the floor, the interval and the cost ceiling all hold",
+                    "duration": 0.4720999999999549,
+                    "failureMessages": [
+                      "TypeError: (0 , __vite_ssr_import_1__.evaluatePromotion) is not a function\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts:121:22\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793858350752,
+                "endTime": 1793858350775.507,
+                "status": "failed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793858345997,
+                "endTime": 1793858345997,
+                "status": "failed",
+                "message": "Cannot find package 'kysely' imported from D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/openclaw_runtime/src/infra/kysely-sync.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/reference/workspace/tests/unit/runtime-memory-paired-ablation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 11,
+      "numPassedTests": 4,
+      "numFailedTests": 7,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "19d385e6f51b90be2be8038172cf442e746762df5f0ca30417a7e5b1d1735927",
+      "oracleHashAfter": "19d385e6f51b90be2be8038172cf442e746762df5f0ca30417a7e5b1d1735927",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-paired-ablation.md": "1dacdebf222ad3c2f04bfca4cc424851b1b42ba6c74c7420aa37f92f6b7169af",
+        "tests/unit/agent-dev-paired-ablation.test.ts": "44634cdf74c172b70b42602b6593b96a996ecf57d49721acc93a39a0118d8d45",
+        "tests/unit/runtime-memory-paired-ablation.test.ts": "bdbeb72b8a46e87ec95fe7d510497bcb009122673f2163f1fc7b85dc72e27026"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0275-e02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-paired-ablation.test.ts",
+            "tests/unit/runtime-memory-paired-ablation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793858373347,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793858373347,
+                "endTime": 1793858373347,
+                "status": "failed",
+                "message": "Cannot find module '../../scripts/lib/paired-ablation.mjs' imported from D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/baseline/workspace/tests/unit/agent-dev-paired-ablation.test.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/baseline/workspace/tests/unit/agent-dev-paired-ablation.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793858373347,
+                "endTime": 1793858373347,
+                "status": "failed",
+                "message": "Cannot find package 'kysely' imported from D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/baseline/workspace/openclaw_runtime/src/infra/kysely-sync.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0275-e02/baseline/workspace/tests/unit/runtime-memory-paired-ablation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "19d385e6f51b90be2be8038172cf442e746762df5f0ca30417a7e5b1d1735927",
+      "oracleHashAfter": "19d385e6f51b90be2be8038172cf442e746762df5f0ca30417a7e5b1d1735927",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-paired-ablation.md": "1dacdebf222ad3c2f04bfca4cc424851b1b42ba6c74c7420aa37f92f6b7169af",
+        "tests/unit/agent-dev-paired-ablation.test.ts": "44634cdf74c172b70b42602b6593b96a996ecf57d49721acc93a39a0118d8d45",
+        "tests/unit/runtime-memory-paired-ablation.test.ts": "bdbeb72b8a46e87ec95fe7d510497bcb009122673f2163f1fc7b85dc72e27026"
+      },
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "scripts/lib/paired-ablation.mjs",
+          "importer": "tests/unit/agent-dev-paired-ablation.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0275-e02\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "reference-oracle-not-passing"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

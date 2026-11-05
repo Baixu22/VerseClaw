@@ -1,6 +1,6 @@
 export type LiveTaskIdentity = { id: string; base: string; reference: string; productChanges: string[]; originalDecision: string | null;
   sourceRecord: string; sourceRecordDigest: string; oraclePaths: string[]; commands: string[] };
-export type CalibrationStage = { passed: boolean; commands?: string[]; oracleUnchanged?: boolean;
+export type CalibrationStage = { passed: boolean; failureClass?: 'assertion' | 'infrastructure' | 'target-module-absent' | 'oracle-input-drift' | null; timedOut?: boolean; commands?: string[]; oracleUnchanged?: boolean;
   executions?: Array<{ command?: string; kind?: string; error?: string | null; exitCode: number | null; timedOut?: boolean; report?: { numFailedTests?: number; [key: string]: unknown } | null }>;
   diagnostics?: Array<{ kind: string; missingPath?: string; importer?: string | null; inTargetScope?: boolean; message?: string }> };
 export function inspectLiveCorpus(root?: string): LiveTaskIdentity[];

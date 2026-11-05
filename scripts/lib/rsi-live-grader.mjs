@@ -256,6 +256,37 @@ function directoryLink(source, target) {
   symlinkSync(source, target, process.platform === 'win32' ? 'junction' : 'dir');
 }
 
+export function classifyMissingModuleFailure(diagnostics = []) {
+  const entries = Array.isArray(diagnostics) ? diagnostics.filter((entry) => entry?.kind === 'missing-module') : [];
+  if (entries.length === 0) return { failureClass: 'assertion', inTargetScope: false, diagnostics: [] };
+  return {
+    failureClass: entries.some((entry) => entry.inTargetScope !== true) ? 'infrastructure' : 'target-module-absent',
+    inTargetScope: entries.every((entry) => entry.inTargetScope === true),
+    diagnostics: entries,
+  };
+}
+export function linkGraderDependencies(root, workspace, descriptors) {
+  const links = [];
+  try {
+    if (descriptors.some((entry) => entry.usesRootDeps)) {
+      const target = join(workspace, 'node_modules');
+      directoryLink(join(root, 'node_modules'), target);
+      links.push(target);
+    }
+    if (descriptors.some((entry) => entry.usesRuntimeDeps)) {
+      const target = join(workspace, 'openclaw_runtime', 'node_modules');
+      if (existsSync(target)) throw new Error(`dependency target already exists: ${target}`);
+      const candidates = [join(root, 'openclaw_runtime', 'node_modules'), join(root, 'node_modules')].filter((source) => existsSync(source));
+      if (candidates.length === 0) throw new Error('runtime dependency directory missing');
+      directoryLink(candidates[0], target);
+      links.push(target);
+    }
+    return links;
+  } catch (error) {
+    for (const target of links.reverse()) removeOwnedDirectoryLink(target);
+    throw error;
+  }
+}
 function removeOwnedDirectoryLink(target) {
   if (!existsSync(target)) return;
   if (lstatSync(target).isSymbolicLink()) rmdirSync(target);
@@ -331,7 +362,8 @@ export function missingModuleDiagnostics(report, workspace, task) {
     }
   }
   return diagnostics;
-}function aggregates(executions) {
+}
+function aggregates(executions) {
   return executions.reduce((counts, execution) => {
     if (execution.kind !== 'vitest' || !execution.report) return counts;
     counts.numTotalTests += Number(execution.report.numTotalTests ?? 0);
@@ -356,20 +388,9 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
   if (Object.values(before.files).some((entry) => entry.root !== entry.expected || entry.workspace !== entry.expected)) throw new Error('frozen-oracle-input-drift');
   const executions = [];
   const diagnostics = [];
-  const ownedLinks = [];
-
+  let ownedLinks = [];
   try {
-    if (descriptors.some((entry) => entry.usesRootDeps)) {
-      const target = join(workspace, 'node_modules');
-      directoryLink(join(root, 'node_modules'), target);
-      ownedLinks.push(target);
-    }
-    if (descriptors.some((entry) => entry.usesRuntimeDeps)) {
-      const target = join(workspace, 'openclaw_runtime', 'node_modules');
-      directoryLink(join(root, 'openclaw_runtime', 'node_modules'), target);
-      ownedLinks.push(target);
-    }
-
+    ownedLinks = linkGraderDependencies(root, workspace, descriptors);
     for (const [index, descriptor] of descriptors.entries()) {
       const stem = String(index + 1).padStart(2, '0');
       const stdoutPath = join(outDir, `${stem}-stdout.log`);
@@ -422,6 +443,14 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
     && executions.length === commands.length
     && executions.every((execution) => execution.exitCode === 0 && !execution.timedOut && execution.error === null)
     && executions.every(validTests);
+  const missingFailure = classifyMissingModuleFailure(diagnostics);
+  const executionInfrastructure = diagnostics.some((entry) => entry.kind === 'vitest-report-missing' || entry.kind === 'oracle-hash-after-error')
+    || executions.some((execution) => execution.timedOut || execution.error !== null);
+  const failureClass = passed ? null
+    : !oracleUnchanged ? 'oracle-input-drift'
+      : missingFailure.failureClass === 'infrastructure' || executionInfrastructure ? 'infrastructure'
+        : missingFailure.failureClass === 'target-module-absent' ? 'target-module-absent'
+          : 'assertion';
 
   const report = {
     schemaVersion: 'RsiLiveTaskGrader/v1',
@@ -432,6 +461,7 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
     executions,
     ...counts,
     passed,
+    failureClass,
     timeoutMs,
     oracleHashBefore: before.combined,
     oracleHashAfter: after.combined,

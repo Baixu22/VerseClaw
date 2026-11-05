@@ -77,15 +77,30 @@ export function assessTaskAdmission({ reference, baseline }) {
     && (entry.kind === 'command' || counted(entry.report) && entry.report?.success === true && entry.report.numTotalTests > 0
       && entry.report.numPassedTests === entry.report.numTotalTests && entry.report.numFailedTests === 0 && entry.report.numPendingTests === 0
       && (entry.report.numSkippedTests ?? 0) === 0 && (entry.report.numTodoTests ?? 0) === 0));
+  const referenceMissing = reference?.diagnostics?.filter((entry) => entry?.kind === 'missing-module') ?? [];
+  const baselineMissing = baseline?.diagnostics?.filter((entry) => entry?.kind === 'missing-module') ?? [];
   const baselineMissingTarget = baseline && baseline.passed === false && complete(baseline)
-    && Array.isArray(baseline.diagnostics)
-    && baseline.diagnostics.some((entry) => entry?.kind === 'missing-module' && entry.inTargetScope === true);
-  if (!referencePassed || reference.passed !== true) issues.push('reference-oracle-not-passing');
+    && baselineMissing.length > 0 && baselineMissing.every((entry) => entry.inTargetScope === true);
+  const baselineMissingInfrastructure = baselineMissing.some((entry) => entry.inTargetScope !== true);
+  if (!referencePassed || reference?.passed !== true) {
+    if (reference?.failureClass === 'oracle-input-drift') issues.push('reference-oracle-input-drift');
+    else if (reference?.failureClass === 'infrastructure' || referenceMissing.some((entry) => entry.inTargetScope !== true)) {
+      issues.push('reference-infrastructure-failure');
+    } else if ((!complete(reference) && !(reference?.failureClass === 'assertion' || reference?.failureClass === 'target-module-absent'))
+      || reference?.timedOut === true || reference?.executions?.some((entry) => entry?.timedOut === true || entry?.error !== null)) {
+      issues.push('reference-infrastructure-failure');
+    } else issues.push('reference-oracle-not-passing');
+  }
   if (!baseline) issues.push('unresolved-baseline-not-executed');
   else if (baseline.passed === true) issues.push('baseline-already-passes');
   else if (!complete(baseline)
     || (!baselineMissingTarget
-      && !baseline.executions.some((entry) => entry.exitCode !== 0 && counted(entry.report) && entry.report?.numFailedTests > 0))) issues.push('baseline-has-no-gradeable-failure');
+      && !baseline.executions?.some((entry) => entry.exitCode !== 0 && counted(entry.report) && entry.report?.numFailedTests > 0))) {
+    if (baseline.failureClass === 'oracle-input-drift') issues.push('baseline-oracle-input-drift');
+    else if (baseline.failureClass === 'infrastructure' || baselineMissingInfrastructure) issues.push('baseline-infrastructure-failure');
+    else if (baseline.timedOut === true || baseline.executions?.some((entry) => entry?.timedOut === true || entry?.error !== null)) issues.push('baseline-infrastructure-failure');
+    else issues.push('baseline-has-no-gradeable-failure');
+  }
   const result = { passed: issues.length === 0, issues };
   if (result.passed && baselineMissingTarget) result.warnings = ['baseline-target-module-absent'];
   return result;
@@ -113,7 +128,10 @@ export function finalizeLiveAdmission(root, directory, options = {}) {
         const receipt = read(path);
         providerPassed = receipt?.driven_by === 'agent' && typeof receipt.actor === 'string' && receipt.actor.trim().length > 0
           && receipt.passed === true && receipt.response?.status === 'completed' && receipt.response?.usage !== null
-          && typeof receipt.response?.usage === 'object';
+          && typeof receipt.response?.usage === 'object'
+          && receipt.request?.url === 'http://127.0.0.1:3065/v1/responses'
+          && receipt.request?.body?.model === 'space-bunny'
+          && receipt.response?.model === 'space-bunny';
         provider = { status: providerPassed ? 'ready' : 'failed', receipt: 'provider-preflight.json',
           responseId: receipt.response?.id ?? null, usage: receipt.response?.usage ?? null };
       } catch {
@@ -187,7 +205,8 @@ export async function calibrateLiveTask(root, directory, taskId, options = {}) {
       await prepareGradeWorkspace({ root, task, workspace, revision });
       stages[name] = await runLiveTaskOracles({ root, task, workspace, outDir: join(target, name, 'oracle'), timeoutMs: options.timeoutMs ?? 120000 });
     } catch (caught) {
-      stages[name] = { passed: false, failureClass: 'infrastructure', error: caught.message, executions: [] };
+      const failureClass = /^frozen oracle digest mismatch:/u.test(caught.message) ? 'oracle-input-drift' : 'infrastructure';
+      stages[name] = { passed: false, failureClass, error: caught.message, executions: [], diagnostics: [] };
     }
   }
   const admission = assessTaskAdmission({ reference: stages.reference, baseline: stages.baseline });
