@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "scripts/rsi-sekb-arms.d.mts now declares every field buildArmsReport returns (generatedAt, driven_by, actor, taskForestNode, protocolPath, runsPath, evidenceKind, status, promotion, reasons, arms, comparisons, cost, claims) and imports PairedEffect/PromotionVerdict from ./lib/paired-ablation.mjs, so comparisons varianceStatus and the promotion verdict use the shared instrument types; the earlier missing-field finding is closed. In the RC-03 acceptance test, compass-full becomes retired-compass (SSP bytes asserted absent from the wire, zero requested/applied chars) and knowledge-full exercises full-budget denial through the active BlockStore/Assembler knowledge path: charsRequested > 6000, charsApplied == 6000, replacement marker absent, appliedProducers false. Request-byte/receipt pairing, replacement and attempt-identity assertions are unchanged; defaults and product locks untouched.",
+  "overall_confidence": 0.82
+}

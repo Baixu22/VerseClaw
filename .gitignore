@@ -2495,6 +2495,19 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0739/typecheck-errors.log
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0739/unit-tests.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0739/.gitattributes
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/README.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/SHA256SUMS
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/arms-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/commands.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/credential-scan.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/entry-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/full-typecheck.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/report.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/retirement-tests.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/review-initial.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/review-metadata.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/review.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0739/residual-fix-20261105/source-manifest.json
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

@@ -1,0 +1,96 @@
+{
+  "schema": "SemanticConvergenceResidualFix/v1",
+  "node": "TF-0739",
+  "generatedAt": "2026-11-04T22:51:32.687Z",
+  "driven_by": "agent",
+  "actor": "codex/context-prompt-owner",
+  "candidate": {
+    "commit": "b5558f44aa78398aacef3ef9345ff776e593353c",
+    "tree": "47e0ff065e996d5120f1e509cd8fe848745328bd",
+    "dirty": false
+  },
+  "decision": {
+    "status": "residual-regressions-fixed",
+    "selectedEntrySuitePassed": true,
+    "fullUncachedApplicationTypecheckPassed": true,
+    "reviewClean": true,
+    "productLocksChanged": false,
+    "realHumanEvidence": false,
+    "releaseReady": false
+  },
+  "changes": [
+    "RSI .d.mts now declares the existing promotion verdict, metadata and comparison varianceStatus using the shared instrument types; runtime policy is unchanged.",
+    "RC-03 entry tests now verify retired COMPASS SSP text is excluded, consumes zero budget and has no applied attribution.",
+    "A separate active knowledge-full fixture retains the 6000-character budget denial for atomic CVK replacement; byte/receipt and continuation assertions remain."
+  ],
+  "before": {
+    "sourceCandidate": "6faa3e91f8297cdc4a45004000041abd8f775835",
+    "entry": {
+      "total": 22,
+      "passed": 20,
+      "failed": 2,
+      "unselectedOrSkipped": 0
+    },
+    "applicationTypecheckErrors": [
+      "tests/unit/rsi-sekb-arms.test.ts(102,19): error TS2339: Property 'promotion' does not exist on type '{ schemaVersion: string; status: string; reasons: string[]; evidenceKind: string; arms: Record<string, { completeCaseCount: number; passK: number | null; passAtK: number | null; flakeRate: number | null; meanTokens: number | null; gate: string; }>; comparisons: { ...; }[]; cost: { ...; }; claims: { ...; }; }'.",
+      "tests/unit/rsi-sekb-arms.test.ts(126,19): error TS2339: Property 'promotion' does not exist on type '{ schemaVersion: string; status: string; reasons: string[]; evidenceKind: string; arms: Record<string, { completeCaseCount: number; passK: number | null; passAtK: number | null; flakeRate: number | null; meanTokens: number | null; gate: string; }>; comparisons: { ...; }[]; cost: { ...; }; claims: { ...; }; }'."
+    ],
+    "evidence": "../report.json",
+    "interpretation": "Two obsolete SSP expectations, not a production injection failure; missing declaration caused two TypeScript errors."
+  },
+  "after": {
+    "tests": {
+      "arms": {
+        "total": 11,
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0
+      },
+      "entry": {
+        "total": 23,
+        "passed": 23,
+        "failed": 0,
+        "skipped": 0
+      },
+      "retirement": {
+        "total": 7,
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "totalPassed": 41,
+    "typecheck": {
+      "success": true,
+      "projects": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0
+        }
+      ]
+    },
+    "review": {
+      "exitCode": 0,
+      "findings": 0,
+      "confidence": 0.82,
+      "method": "fixed complete source snapshots; known Windows inspection tool unavailable"
+    }
+  },
+  "limitations": [
+    "Entry transports and model responses are agent-driven fixtures; this is not live-provider or full runtime/GA acceptance.",
+    "Native reviewer read-only tools were unavailable; structured review used complete scoped source snapshots.",
+    "Historical TF-0739 evidence is preserved unchanged; this report applies only to the later committed source candidate."
+  ]
+}
