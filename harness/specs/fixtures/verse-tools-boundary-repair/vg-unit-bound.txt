@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/ClawX-work/verse-tools-boundaries-20261104
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  08:14:11
+   Duration  6.97s (transform 109ms, setup 134ms, import 96ms, tests 6.53s, environment 0ms)
+

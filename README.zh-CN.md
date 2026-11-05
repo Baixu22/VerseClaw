@@ -58,9 +58,13 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 - Runtime Memory injection、SEKB automatic writeback、Browser private network 不默认开启。
 - 记忆反馈与 SEKB 采用计数仅用于诊断；反馈不参与检索排序或保留决策。[RSI 证据与边界](docs/dev/rsi-capability-and-boundaries.md) 区分历史测量与确定性重放。
 - VToken 已退役；旧环境变量/配置不能重新启用生产 assembly 或 sidecar。
-- VerseGit default-off 且 landed-unwired；VerseShell 是 default-off controlled foundation；VerseBrowser 按 live driver snapshot 公布动作，而不是按完整契约数宣称可用。
+- VerseGit 与 VerseShell 仍默认关闭；宿主接入保留下述职责与权限边界。
 - Dreams 已退役；Image Generation 是开发者/测试门槛，不是正常产品导航。
 - `liveReady=false`、`productApproved=false`、`defaultOn=false` 仍是产品锁。
+
+<!-- VERSE-TOOLS-BOUNDARY-START -->
+**VerseGit 有界编码闭环：**默认关闭，尚未批准全面可用。win32-x64 M1 provider 提供仓库事实；候选验证通过 VerseShell 执行，宿主保有 write journal 与 Git apply。M4 landing/admission 未授权；`liveReady=false`、`productApproved=false` 保持冻结。VerseShell 仍默认关闭。VerseBrowser 只接受当前可用且绑定所属会话的运行时动作，模型参数不能代替宿主批准；请求级私网校验覆盖重定向和子资源。详见 [Verse 组件边界](docs/modules/verse-tools.md)。
+<!-- VERSE-TOOLS-BOUNDARY-END -->
 
 改默认值或做发布声明前，请先读[默认配置矩阵](docs/dev/default-config-matrix.md)、[产品语义](docs/clawx-product-semantics.md)和[能力声明矩阵](shared/capability-claims.ts)。
 

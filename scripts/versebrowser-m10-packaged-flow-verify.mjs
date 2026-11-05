@@ -3,24 +3,43 @@
 // bridge to the embedded @verse-claw/versebrowser module. Agent approvals are driven
 // through the Main inspector, never supplied as renderer permission claims.
 import { createServer } from 'node:http';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { browserBuildIdentity } from './lib/versebrowser-build-identity.mjs';
+import { cleanupBrowserProbe } from './lib/versebrowser-probe-cleanup.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const EXE = 'release/win-unpacked/Verse Claw.exe';
 
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+export function packagedFlowChecks(result) {
+  const f = result.flow ?? {};
+  return {
+    host_bridge_present: result.hostBridgePresent === true,
+    private_network_default_deny: result.defaultDeny?.ok === false && String(result.defaultDeny.error?.message ?? '').includes('private-network-default-deny'),
+    real_session_opened: f.openOk === true,
+    sandbox_fails_closed_without_upgrade: f.blockedFailsClosed === true,
+    runtime_mode_upgrade_ok: f.upgradeMode === 'full_access',
+    snapshot_returns_fixture_content: f.snapshotOk === true && f.snapshotHasFixture === true,
+    session_owned_by_requested_key: f.ownedSessionCount === 1,
+    session_closed: f.closed === true,
+    processes_closed: result.cleanup?.residualProcesses === 0,
+    run_directory_reclaimed: result.cleanup?.runDirReclaimed === true,
+  };
+}
 
-export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
+export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE, tempRoot = join(hostRoot, '.tmp') } = {}) {
   const exePath = resolve(hostRoot, exe);
   const issues = [];
   if (!existsSync(exePath)) return { schemaVersion: 1, driven_by: 'agent', actor: 'codex', status: 'fail', issues: [{ kind: 'packaged_exe_missing', path: exe }] };
+  let build;
+  try { build = await browserBuildIdentity(exePath); }
+  catch (error) { return {schemaVersion:1,artifact:'versebrowser-m10-packaged-flow',driven_by:'agent',actor:'codex',status:'fail',issues:[{kind:'build_identity_failed',message:String(error.message ?? error)}]}; }
   const require = createRequire(join(hostRoot, 'package.json'));
   const electron = require('playwright-core')._electron;
 
@@ -28,35 +47,31 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     res.end('<!doctype html><title>M10 Fixture</title><h1 id="h">M10 PACKAGED OK</h1><p>body marker 42</p>');
   });
-  await new Promise((done) => fixture.listen(0, '127.0.0.1', done));
-  const url = `http://127.0.0.1:${fixture.address().port}/`;
-  // A fresh checkout has no .tmp directory, so mkdtemp would fail with ENOENT before
-  // the app is ever launched (N8 F3).
-  await mkdir(join(hostRoot, '.tmp'), { recursive: true });
-  const runRoot = await mkdtemp(join(hostRoot, '.tmp', 'm10-packaged-flow-'));
-  const userDataDir = join(runRoot, 'ud');
-  await mkdir(userDataDir, { recursive: true });
-  await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
-  const port = 9300 + Math.floor(Math.random() * 600);
   const runId = `m10-${Date.now().toString(36)}`;
-
-  const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, fixtureUrl: url, runId };
+  const result = { schemaVersion: 1, artifact: 'versebrowser-m10-packaged-flow', driven_by: 'agent', actor: 'codex', exe, build, runId };
   let app;
-  let browser;
+  let runRoot;
   try {
-    app = await electron.launch({ executablePath: exePath, args: ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
-      env: { ...process.env, TEMP: runRoot, TMP: runRoot, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
-    browser = { contexts: () => [app.context()] };
-    // The CDP endpoint can be live before the renderer registers its page, so wait for
-    // one instead of failing the run on a race (N8 F3).
-    let page = null;
-    const pageDeadline = Date.now() + 30_000;
-    while (Date.now() < pageDeadline && page === null) {
-      const pages = browser.contexts().flatMap((c) => c.pages());
-      if (pages.length > 0) page = pages[0];
-      else await sleep(500);
-    }
-    if (page === null) throw new Error('packaged renderer produced no page within 30s');
+    await new Promise((done, reject) => { fixture.once('error', reject); fixture.listen(0, '127.0.0.1', done); });
+    const url = `http://127.0.0.1:${fixture.address().port}/`;
+    result.fixtureUrl = url;
+    // A fresh checkout has no .tmp directory, so mkdtemp would fail with ENOENT before
+    // the app is ever launched (N8 F3).
+    await mkdir(tempRoot, { recursive: true });
+    runRoot = await mkdtemp(join(tempRoot, 'm10-packaged-flow-'));
+    const userDataDir = join(runRoot, 'ud');
+    const homeDir = join(runRoot, 'home');
+    const artifactsDir = join(runRoot, 'playwright');
+    for (const dir of [userDataDir, homeDir, artifactsDir, join(homeDir, 'AppData/Roaming'), join(homeDir, 'AppData/Local')]) await mkdir(dir, { recursive: true });
+    await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }));
+    app = await electron.launch({ executablePath: exePath, artifactsDir, args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--lang=en-US', '--disable-gpu'], cwd: hostRoot, timeout: 90_000,
+      env: { ...process.env, TEMP: runRoot, TMP: runRoot, HOME: homeDir, USERPROFILE: homeDir,
+        APPDATA: join(homeDir, 'AppData/Roaming'), LOCALAPPDATA: join(homeDir, 'AppData/Local'),
+        XDG_CONFIG_HOME: join(homeDir, '.config'), OPENCLAW_CONFIG_DIR: join(homeDir, '.openclaw'),
+        VERSE_CLAW_REMOTE_DEBUGGING_PORT: '', VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', VERSE_CLAW_USER_DATA_DIR: userDataDir } });
+    const page = await app.firstWindow({ timeout: 30_000 });
+    await page.waitForLoadState('load', { timeout: 30_000 });
+    await page.waitForFunction(() => Boolean(window.verseClaw?.hostInvoke), {}, { timeout: 30_000 });
     result.pageTitle = await page.title();
     result.hostBridgePresent = await page.evaluate(() => Boolean(window.verseClaw?.hostInvoke));
     if (!result.hostBridgePresent) throw new Error('hostInvoke bridge missing in packaged renderer');
@@ -100,37 +115,25 @@ export async function verifyPackagedFlow({ hostRoot = ROOT, exe = EXE } = {}) {
   } catch (error) {
     issues.push({ kind: 'packaged_flow_failed', message: String(error?.message ?? error) });
   } finally {
-    if (app) await app.close().catch(() => { try { app.process().kill(); } catch { /* already exited */ } });
     // Never let a lingering client connection hang the verifier (N8 F3).
+    fixture.closeAllConnections();
     await new Promise((done) => { const timer = setTimeout(done, 5000); fixture.close(() => { clearTimeout(timer); done(); }); });
-    // The app's own child processes can still be shutting down and hold files under the
-    // run directory, which made a single rm() fail silently and leave the run root behind
-    // (N8 F3). Wait for the renderer process to exit, then retry the cleanup.
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-      try { await rm(runRoot, { recursive: true, force: true }); break; } catch { await sleep(1000); }
-    }
+    result.cleanup = runRoot ? await cleanupBrowserProbe({ app, runRoot, removalAttempts: 5 })
+      : { residualProcesses: 0, runDirReclaimed: true, errors: [], resourcesCreated: false };
+    for (const message of result.cleanup.errors) issues.push({ kind: 'packaged_cleanup_failed', message });
   }
 
-  const f = result.flow ?? {};
-  const checks = {
-    host_bridge_present: result.hostBridgePresent === true,
-    private_network_default_deny: result.defaultDeny?.ok === false && String(result.defaultDeny.error?.message ?? '').includes('private-network-default-deny'),
-    real_session_opened: f.openOk === true,
-    sandbox_fails_closed_without_upgrade: f.blockedFailsClosed === true,
-    runtime_mode_upgrade_ok: f.upgradeMode === 'full_access',
-    snapshot_returns_fixture_content: f.snapshotOk === true && f.snapshotHasFixture === true,
-    session_owned_by_requested_key: f.ownedSessionCount === 1,
-    session_closed: f.closed === true,
-  };
+  const checks = packagedFlowChecks(result);
   result.checks = checks;
+  if ((await browserBuildIdentity(exePath)).digest !== build.digest) issues.push({ kind: 'build_changed_during_run' });
   result.status = issues.length === 0 && Object.values(checks).every(Boolean) ? 'pass' : 'fail';
   result.issues = issues;
   return result;
 }
 
 async function main() {
-  const { values } = parseArgs({ options: { 'host-root': { type: 'string' }, exe: { type: 'string' }, output: { type: 'string' } }, allowPositionals: false });
-  const report = await verifyPackagedFlow({ hostRoot: values['host-root'], exe: values.exe });
+  const { values } = parseArgs({ options: { 'host-root': { type: 'string' }, exe: { type: 'string' }, 'temp-root': { type: 'string' }, output: { type: 'string' } }, allowPositionals: false });
+  const report = await verifyPackagedFlow({ hostRoot: values['host-root'], exe: values.exe, tempRoot: values['temp-root'] });
   const text = JSON.stringify(report, null, 2) + '\n';
   if (values.output) await writeFile(resolve(values.output), text, 'utf8');
   process.stdout.write(text);

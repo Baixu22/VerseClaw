@@ -58,9 +58,13 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 - Runtime Memory injection、SEKB automatic writeback、Browser private network は default-on ではありません。
 - メモリのフィードバックと SEKB 採用回数は診断専用です。フィードバックは検索順位や保持判断に影響しません。[RSI の証拠と境界](docs/dev/rsi-capability-and-boundaries.md) では過去の測定と決定的なリプレイを区別します。
 - VToken は retired。旧 env/config では production assembly / sidecar を再有効化できません。
-- VerseGit は default-off / landed-unwired。VerseShell は default-off controlled foundation。VerseBrowser は live driver snapshot の action のみ advertise します。
+- VerseGit と VerseShell は既定で無効です。ホスト統合は以下の責務と権限の境界を維持します。
 - Dreams は retired。Image Generation は developer/test gate で、通常の製品 navigation ではありません。
 - `liveReady=false`、`productApproved=false`、`defaultOn=false` は product lock として維持されます。
+
+<!-- VERSE-TOOLS-BOUNDARY-START -->
+**VerseGit の境界付きコーディングループ：**既定で無効、一般提供は未承認です。win32-x64 M1 provider はリポジトリの事実を提供し、候補の検証は VerseShell で実行します。write journal と Git apply はホストが管理します。M4 landing/admission は未承認で、`liveReady=false` と `productApproved=false` を維持します。VerseShell も既定で無効です。VerseBrowser は利用可能かつ所有セッションに紐づく runtime action のみ受け付け、モデルの引数でホストの承認を代替できません。リクエスト単位の private-network 検査はリダイレクトとサブリソースも対象です。[Verse の境界](docs/modules/verse-tools.md)を参照してください。
+<!-- VERSE-TOOLS-BOUNDARY-END -->
 
 Default や release claim を変更する前に、[default configuration](docs/dev/default-config-matrix.md)、[product semantics](docs/clawx-product-semantics.md)、[capability claims](shared/capability-claims.ts) を確認してください。
 

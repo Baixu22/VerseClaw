@@ -1,0 +1,116 @@
+{
+  "schema": "clawx.versegit.product-f5-independent-verdict/v1",
+  "generated_at": "2026-11-05T00:07:56.593Z",
+  "task": "TF-0539",
+  "parentTask": "TF-0523",
+  "driven_by": "agent",
+  "actor": "codex",
+  "reviewer_role": "independent-product-f5-verifier-process",
+  "verdict": "pass",
+  "priority": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 6
+  },
+  "source": {
+    "branch": "codex/verse-tools-boundaries-20261104",
+    "commit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
+    "tree": "1ae80d3200d878300162d2b34a1f5067eb7df96d",
+    "dirty": false
+  },
+  "candidateId": "9f46bc0c5d9be62fe9ba066b908798ce0f5cc10b7d4e929d4bc8ff6756cfa983",
+  "indexDigest": "e076875cea58690b52d093c8dec70e370cf87b17f7ac070c12f4838d37efac64",
+  "evidence": {
+    "groups": 15,
+    "files": 66,
+    "shaManifests": 15,
+    "independentReviews": 15
+  },
+  "criteria": [
+    {
+      "id": "risk-observation",
+      "status": "passed",
+      "checks": 8
+    },
+    {
+      "id": "agent-feedback",
+      "status": "passed",
+      "checks": 5
+    },
+    {
+      "id": "candidate-pre-verification",
+      "status": "passed",
+      "checks": 6
+    },
+    {
+      "id": "persistent-result",
+      "status": "passed",
+      "checks": 5
+    },
+    {
+      "id": "host-writeback",
+      "status": "passed",
+      "checks": 6
+    },
+    {
+      "id": "cleanup",
+      "status": "passed",
+      "checks": 6
+    },
+    {
+      "id": "package",
+      "status": "passed",
+      "checks": 8
+    },
+    {
+      "id": "bounded-stability",
+      "status": "passed",
+      "checks": 7
+    },
+    {
+      "id": "docs-capability-authority",
+      "status": "passed",
+      "checks": 8
+    }
+  ],
+  "residuals": [
+    {
+      "id": "P2-non-windows-platforms",
+      "summary": "Product evidence is limited to win32-x64; macOS and Linux were not executed."
+    },
+    {
+      "id": "P2-model-matrix",
+      "summary": "Only deterministic probe models were exercised; broader model families and external model quality were not measured."
+    },
+    {
+      "id": "P2-language-matrix",
+      "summary": "Repository-language coverage is limited to fixture languages; unlisted languages remain unmeasured."
+    },
+    {
+      "id": "P2-byte-reproducibility",
+      "summary": "F3 proves semantic identity across two builds but not byte-identical provider reproducibility."
+    },
+    {
+      "id": "P2-conflicts-plan",
+      "summary": "The provider conflicts-plan seam remains unavailable and is not promoted by this acceptance."
+    },
+    {
+      "id": "P2-crash-grade-cleanup",
+      "summary": "Cleanup is proven for observed normal, failure, continuation, restart and interruption paths, not arbitrary power-loss/crash recovery."
+    }
+  ],
+  "boundaries": {
+    "defaultOff": true,
+    "liveReady": false,
+    "productApproved": false,
+    "ga": false,
+    "m4Authorized": false,
+    "hostAuthority": "ClawX",
+    "vgLandingAuthority": false,
+    "realHumanEvidence": false
+  },
+  "taskForestCloseoutEligible": true,
+  "issues": [],
+  "recomputed": true,
+  "digest": "fee98d15eee071568742c0cc39580d0905c11a403b6912d294bb8e3b69e47183"
+}

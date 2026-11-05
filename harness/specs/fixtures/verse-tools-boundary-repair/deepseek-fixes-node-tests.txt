@@ -1,0 +1,24 @@
+✔ normal install, dev and build compile the embedded package before consuming dist (0.5782ms)
+✔ credential-bearing runtime probes stay outside addable source paths (0.9834ms)
+✔ census failures remain unknown and cannot skip owned directory reclamation (5.22ms)
+✔ process ownership uses the complete user-data argument, not path substrings (0.4596ms)
+✔ census failure retains the controller termination receipt and closes once (1.3144ms)
+✔ a transient census failure does not abandon the remaining cleanup observations (3010.5871ms)
+✔ an interruption without an actual owned termination is not successful evidence (1.3668ms)
+✔ a probe never sweeps another run from its shared temp root (7.0528ms)
+✔ zero or invalid stability rounds cannot create a pass receipt (1.1492ms)
+✔ packaged output changes are detected against the embedded build proof (48.9484ms)
+✔ an unrecorded browser copy in app.asar cannot escape compiled-output verification (31.5153ms)
+[versebrowser-build] bound; 5 compiled outputs
+[versebrowser-build] source-changed-or-dirty; 5 compiled outputs
+[versebrowser-build] source-changed-or-dirty; 5 compiled outputs
+✔ the build seal rejects production source changed after capture (851.3082ms)
+✔ both runners release the fixture and write failure evidence on initialization errors (1125.6357ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5260.7614

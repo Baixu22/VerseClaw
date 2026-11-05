@@ -131,7 +131,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
     });
 
     expect(invoke.mock.calls).toEqual([
-      ["status", {}],
+      ["status", {}, expect.objectContaining({ toolCallId: "call-1" })],
       ["click", { sessionId: "s1", selector: "#next" }, { gatewayRequestId: undefined, toolCallId: "call-1" }],
     ]);
   });
@@ -156,7 +156,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
           connectionMode: "managed",
         }),
       ).rejects.toMatchObject({ name: "ToolAuthorizationError", status: 403 });
-      expect(invoke.mock.calls).toEqual([["status", {}]]);
+      expect(invoke.mock.calls).toEqual([["status", {}, expect.objectContaining({ toolCallId: "call-1" })]]);
     },
   );
 
@@ -180,7 +180,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
         selector: "#publish",
       }),
     ).rejects.toMatchObject({ name: "ToolAuthorizationError", status: 403 });
-    expect(invoke.mock.calls).toEqual([["status", {}]]);
+    expect(invoke.mock.calls).toEqual([["status", {}, expect.objectContaining({ toolCallId: "call-1" })]]);
   });
 
   it("fails closed when the status lookup fails", async () => {
@@ -199,7 +199,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
         selector: "#publish",
       }),
     ).rejects.toMatchObject({ name: "ToolAuthorizationError", status: 403 });
-    expect(invoke.mock.calls).toEqual([["status", {}]]);
+    expect(invoke.mock.calls).toEqual([["status", {}, expect.objectContaining({ toolCallId: "call-1" })]]);
   });
 
   it("keeps direct operator clicks on the existing path without a preflight", async () => {
@@ -246,7 +246,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
     });
 
     expect(invoke.mock.calls).toEqual([
-      ["status", {}],
+      ["status", {}, expect.objectContaining({ toolCallId: "call-1" })],
       [
         "type",
         { sessionId: "s-type", selector: "#search", text: "secret-looking text", clear: true },
@@ -277,7 +277,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
       status: 403,
       message: expect.not.stringContaining("should-not-reach-bridge"),
     });
-    expect(invoke.mock.calls).toEqual([["status", {}]]);
+    expect(invoke.mock.calls).toEqual([["status", {}, expect.objectContaining({ toolCallId: "call-1" })]]);
   });
 
   it.each([
@@ -301,7 +301,7 @@ describe("agent_browser existing-session effect provenance boundary", () => {
         text: "must-not-cross",
       }),
     ).rejects.toMatchObject({ name: "ToolAuthorizationError", status: 403 });
-    expect(invoke.mock.calls).toEqual([["status", {}]]);
+    expect(invoke.mock.calls).toEqual([["status", {}, expect.objectContaining({ toolCallId: "call-1" })]]);
   });
 
   it("fails type closed when the status lookup fails", async () => {
@@ -321,6 +321,6 @@ describe("agent_browser existing-session effect provenance boundary", () => {
         text: "must-not-cross",
       }),
     ).rejects.toMatchObject({ name: "ToolAuthorizationError", status: 403 });
-    expect(invoke.mock.calls).toEqual([["status", {}]]);
+    expect(invoke.mock.calls).toEqual([["status", {}, expect.objectContaining({ toolCallId: "call-1" })]]);
   });
 });

@@ -85,6 +85,7 @@ class FakeSession {
 }
 
 class FakeWebContents extends EventEmitter {
+  setWebRTCIPHandlingPolicy() {}
   readonly id = 41;
   readonly session = new FakeSession();
   url = '';
@@ -140,6 +141,11 @@ class FakeWindow {
 
   close() {
     this.closed = true;
+  }
+
+  destroy() {
+    this.closed = true;
+    this.webContents.emit('destroyed');
   }
 
   isDestroyed() {

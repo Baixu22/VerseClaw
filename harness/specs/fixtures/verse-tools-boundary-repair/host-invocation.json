@@ -1,0 +1,746 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "scope": "real renderer to Main to embedded Electron; local private-network negatives; no model or Gateway",
+  "calls": [
+    {
+      "action": "setEnabled",
+      "response": {
+        "id": "afbbb735-855f-48d8-ba03-6b0591174805",
+        "ok": true,
+        "data": {
+          "success": true,
+          "enabled": true
+        }
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "4b746cb6-5fe8-46c5-91c1-b9807cd182b1",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser open blocked: private-network-default-deny (address class loopback)",
+          "details": {
+            "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+          }
+        }
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "961d048e-9fb7-409a-bd9e-0f7232ff923b",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser open blocked: private-network-default-deny (address class loopback)",
+          "details": {
+            "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+          }
+        }
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "978759cd-f0a7-491b-ad6d-d570743c4a8b",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser open blocked: private-network-default-deny (address class loopback)",
+          "details": {
+            "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+          }
+        }
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "98776e23-99a8-496d-8bc4-747c9b85065d",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser open blocked: private-network-default-deny (address class ipv6-local)",
+          "details": {
+            "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+          }
+        }
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "84b99cd2-787b-4ba3-8162-91d7a055ebd1",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser open blocked: private-network-default-deny (address class ipv6-local)",
+          "details": {
+            "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+          }
+        }
+      }
+    },
+    {
+      "action": "main-private-network-approval",
+      "response": {
+        "sessionId": "agent:main:versebrowser-hygiene",
+        "origin": "http://127.0.0.1:64907",
+        "grantedAt": 1793837421142,
+        "expiresAt": 1793838021142,
+        "grantedBy": "agent"
+      }
+    },
+    {
+      "action": "open",
+      "response": {
+        "id": "f8c4fd5b-72a7-4ff1-a760-693f43b8e6b9",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.413Z",
+            "runtimeMode": "normal_restricted",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          },
+          "textSample": "Agent-driven browser proof\n Save\n\nNot saved"
+        }
+      }
+    },
+    {
+      "action": "takeSnapshot",
+      "response": {
+        "id": "73664cb2-ed49-4473-9c2d-123707983724",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser action requires runtime mode upgrade (current: normal_restricted). Call requestModeUpgrade first."
+        }
+      }
+    },
+    {
+      "action": "requestModeUpgrade",
+      "response": {
+        "id": "4dbd9cc7-6436-47bf-8c76-d3d92518acf7",
+        "ok": true,
+        "data": {
+          "success": true,
+          "runtimeMode": "full_access",
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.523Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          }
+        }
+      }
+    },
+    {
+      "action": "type",
+      "response": {
+        "id": "5e9d2fd3-c181-41c2-bf80-0f76fad3b613",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.541Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          }
+        }
+      }
+    },
+    {
+      "action": "click",
+      "response": {
+        "id": "ff3b21a3-f6fc-4b0b-8e70-655b89b28436",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.625Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          }
+        }
+      }
+    },
+    {
+      "action": "takeSnapshot",
+      "response": {
+        "id": "3a401982-464c-4604-8ea3-1e70c59ae9d3",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.639Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          },
+          "snapshot": "# 浏览器页面快照\n页面标题：VerseBrowser integration fixture\n页面 URL：http://127.0.0.1:64907/\n\n- uid=1_1 RootWebArea \"VerseBrowser integration fixture\" focused=\"true\"\n  - uid=1_2 heading \"Agent-driven browser proof\"\n    - uid=1_3 StaticText \"Agent-driven browser proof\"\n  - uid=1_4 image \"Optional blocked resource\"\n  - uid=1_5 Iframe\n  - uid=1_6 textbox \"Name\" value=\"[REDACTED]\" value_redacted focused=\"true\" required=\"false\"\n    - uid=1_7 generic\n      - uid=1_8 StaticText \"Agent proof\"\n  - uid=1_9 button \"Save\"\n    - uid=1_10 StaticText \"Save\"\n  - uid=1_11 paragraph\n    - uid=1_12 StaticText \"Saved Agent proof\""
+        }
+      }
+    },
+    {
+      "action": "evaluate",
+      "response": {
+        "id": "fbc51a16-670f-4689-97d3-b5044d602551",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.670Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          },
+          "value": "websocket-open"
+        }
+      }
+    },
+    {
+      "action": "evaluate",
+      "response": {
+        "id": "a9669407-5aeb-4efd-95a2-0ea1a845fd9c",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.688Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          },
+          "value": "request-blocked"
+        }
+      }
+    },
+    {
+      "action": "evaluate",
+      "response": {
+        "id": "4817bc0c-4ccf-41df-94d0-4b84f3a2db41",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:21.703Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          },
+          "value": "image-blocked"
+        }
+      }
+    },
+    {
+      "action": "navigate",
+      "response": {
+        "id": "d6900ed2-1211-46ab-b929-61d74e316bce",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "ERR_BLOCKED_BY_CLIENT (-20) loading 'http://127.0.0.1:64906/private'",
+          "details": {
+            "backendCode": "ERR_BLOCKED_BY_CLIENT"
+          }
+        }
+      }
+    },
+    {
+      "action": "private-request-count",
+      "response": {
+        "privateHits": 0
+      }
+    },
+    {
+      "action": "navigate",
+      "response": {
+        "id": "20803a71-84f0-4bcb-824b-a39083aba1fd",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.022Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          }
+        }
+      }
+    },
+    {
+      "action": "newPage",
+      "response": {
+        "id": "cfe94815-0805-4dad-8209-4995c663e273",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.149Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/extra",
+            "title": "VerseBrowser integration fixture"
+          },
+          "pages": [
+            {
+              "pageId": "0",
+              "index": 0,
+              "url": "http://127.0.0.1:64907/",
+              "title": "",
+              "active": false
+            },
+            {
+              "pageId": "page-1",
+              "index": 1,
+              "url": "http://127.0.0.1:64907/extra",
+              "title": "VerseBrowser integration fixture",
+              "active": true
+            }
+          ],
+          "activePageId": "page-1"
+        }
+      }
+    },
+    {
+      "action": "listPages",
+      "response": {
+        "id": "b99beea2-b33e-4144-bc86-e9378e9dc6b6",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.149Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/extra",
+            "title": "VerseBrowser integration fixture"
+          },
+          "pages": [
+            {
+              "pageId": "0",
+              "index": 0,
+              "url": "http://127.0.0.1:64907/",
+              "title": "",
+              "active": true
+            }
+          ],
+          "activePageId": "0"
+        }
+      }
+    },
+    {
+      "action": "takeSnapshot",
+      "response": {
+        "id": "25277bcf-2a44-468b-9812-446f4a46cf3b",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.178Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          },
+          "snapshot": "# 浏览器页面快照\n页面标题：VerseBrowser integration fixture\n页面 URL：http://127.0.0.1:64907/\n\n- uid=1_1 RootWebArea \"VerseBrowser integration fixture\" focused=\"true\"\n  - uid=1_2 heading \"Agent-driven browser proof\"\n    - uid=1_3 StaticText \"Agent-driven browser proof\"\n  - uid=1_4 image \"Optional blocked resource\"\n  - uid=1_5 Iframe\n  - uid=1_6 textbox \"Name\" required=\"false\"\n    - uid=1_7 generic\n  - uid=1_8 button \"Save\"\n    - uid=1_9 StaticText \"Save\"\n  - uid=1_10 paragraph\n    - uid=1_11 StaticText \"Not saved\""
+        }
+      }
+    },
+    {
+      "action": "evaluate",
+      "response": {
+        "id": "00b1a7e8-e81f-4880-a37d-ad3fe67b3ec9",
+        "ok": true,
+        "data": {
+          "success": true,
+          "session": {
+            "id": "51453dc6-d7d2-4931-971f-1f28278fd9be",
+            "profile": "agent-hygiene-1793837421143",
+            "mode": "headless",
+            "authPersistence": "session-name",
+            "authStateName": "agent-hygiene-1793837421143",
+            "connection": {
+              "mode": "managed"
+            },
+            "createdAt": "2026-11-05T00:10:21.211Z",
+            "updatedAt": "2026-11-05T00:10:22.191Z",
+            "runtimeMode": "full_access",
+            "workspaceId": "default",
+            "sessionKey": "agent:main:versebrowser-hygiene",
+            "url": "http://127.0.0.1:64907/",
+            "title": "VerseBrowser integration fixture"
+          },
+          "value": true
+        }
+      }
+    },
+    {
+      "action": "readForms",
+      "response": {
+        "id": "1454e372-1332-457e-9df4-c5cb736ec58f",
+        "ok": false,
+        "error": {
+          "code": "UNSUPPORTED",
+          "message": "Agent browser action \"readForms\" is not available: driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)",
+          "details": {
+            "backendCode": "E_CAPABILITY_UNAVAILABLE"
+          }
+        }
+      }
+    },
+    {
+      "action": "fullAccessRevoke",
+      "response": {
+        "id": "2621eff9-c383-40ad-881c-1864ebffe85c",
+        "ok": true,
+        "data": {
+          "success": true,
+          "content": "完全访问模式已撤销，浏览器自动化已回到普通模式（受限）。"
+        }
+      }
+    },
+    {
+      "action": "takeSnapshot",
+      "response": {
+        "id": "5f059493-b0db-4800-b95f-1a5916c87c45",
+        "ok": false,
+        "error": {
+          "code": "INTERNAL",
+          "message": "Agent browser action requires runtime mode upgrade (current: normal_restricted). Call requestModeUpgrade first."
+        }
+      }
+    },
+    {
+      "action": "close",
+      "response": {
+        "id": "cc8c6187-a4a8-4e41-9e37-74876533332b",
+        "ok": true,
+        "data": {
+          "success": true
+        }
+      }
+    },
+    {
+      "action": "status",
+      "response": {
+        "id": "65fe1b3d-a375-4870-b102-ec8246e56014",
+        "ok": true,
+        "data": {
+          "success": true,
+          "sessions": [],
+          "browserControlEnabled": true,
+          "capabilities": {
+            "version": "183742115a66a1d10ae48a4378fe26a35666be52868cc7dc195ca7e9edf5c5c7",
+            "driverKind": "injected",
+            "cliAvailable": false,
+            "actions": [
+              {
+                "action": "open",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "status",
+                "available": true,
+                "supervised": false
+              },
+              {
+                "action": "navigate",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "waitForSelector",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "click",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "type",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "evaluate",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "screenshot",
+                "available": true,
+                "supervised": false
+              },
+              {
+                "action": "command",
+                "available": false,
+                "supervised": true,
+                "reason": "bundled agent-browser CLI is not available"
+              },
+              {
+                "action": "close",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "getConsoleMessages",
+                "available": true,
+                "supervised": false
+              },
+              {
+                "action": "downloadFile",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares downloadFile but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "uploadFiles",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares uploadFiles but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "pointer",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares pointer but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "drag",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares drag but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "selectOption",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares selectOption but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "selectValues",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares selectValues but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "appendText",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares appendText but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "setChecked",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares setChecked but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "findElement",
+                "available": false,
+                "supervised": false,
+                "reason": "driver \"injected\" declares findElement but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "semanticRead",
+                "available": false,
+                "supervised": false,
+                "reason": "driver \"injected\" declares semanticRead but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "readForms",
+                "available": false,
+                "supervised": false,
+                "reason": "driver \"injected\" declares readForms but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "readDialogs",
+                "available": false,
+                "supervised": false,
+                "reason": "driver \"injected\" declares readDialogs but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "respondDialog",
+                "available": false,
+                "supervised": true,
+                "reason": "driver \"injected\" declares respondDialog but refuses them (E_NOT_IMPLEMENTED)"
+              },
+              {
+                "action": "takeSnapshot",
+                "available": true,
+                "supervised": false
+              },
+              {
+                "action": "extractPageText",
+                "available": true,
+                "supervised": false
+              },
+              {
+                "action": "pressKey",
+                "available": true,
+                "supervised": true
+              },
+              {
+                "action": "verifyFlow",
+                "available": true,
+                "supervised": true
+              }
+            ],
+            "supervision": "required",
+            "unsupervisedActions": [
+              "extractPageText",
+              "findElement",
+              "getConsoleMessages",
+              "readDialogs",
+              "readForms",
+              "screenshot",
+              "semanticRead",
+              "status",
+              "takeSnapshot"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

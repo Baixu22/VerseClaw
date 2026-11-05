@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { mkdtemp, mkdir, readFile, rm, writeFile, copyFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,13 +16,32 @@ const SOURCE_ROOT = 'D:/versebrowser';
 function hash(bytes) { return createHash('sha256').update(bytes).digest('hex'); }
 function issue(kind, detail) { return { kind, ...detail }; }
 
-async function verifyPatchEntries(hostRoot, sourceRoot) {
+async function readOriginals(hostRoot, sourceRoot, sourceCommit) {
+  const manifest = JSON.parse(await readFile(path.join(hostRoot, PACKAGE_ROOT, 'integration-patches.json'), 'utf8'));
+  const originals = new Map();
+  for (const entry of manifest.entries ?? []) {
+    let source = sourceCommit
+      ? execFileSync('git', ['show', `${sourceCommit}:${entry.sourcePath}`], { cwd: sourceRoot, windowsHide: true, maxBuffer: 16 * 1024 * 1024 })
+      : await readFile(path.join(sourceRoot, entry.sourcePath));
+    if (sourceCommit && hash(source) !== entry.originalRawSha256) {
+      // Git stores LF blobs; the import manifest may describe a CRLF checkout.
+      // Restore only the declared transport normalization, never source changes.
+      const lf = Buffer.from(source.toString('latin1').replaceAll('\r\n', '\n'), 'latin1');
+      const crlf = Buffer.from(lf.toString('latin1').replaceAll('\n', '\r\n'), 'latin1');
+      source = [lf, crlf].find(bytes => hash(bytes) === entry.originalRawSha256) ?? source;
+    }
+    originals.set(entry.sourcePath, source);
+  }
+  return originals;
+}
+
+async function verifyPatchEntries(hostRoot, originals) {
   const issues = [];
   const patchManifestPath = path.join(hostRoot, PACKAGE_ROOT, 'integration-patches.json');
   const manifest = JSON.parse(await readFile(patchManifestPath, 'utf8'));
   const checked = [];
   for (const entry of manifest.entries ?? []) {
-    const source = await readFile(path.join(sourceRoot, entry.sourcePath));
+    const source = originals.get(entry.sourcePath);
     const target = await readFile(path.join(hostRoot, entry.targetPath));
     const patch = await readFile(path.join(hostRoot, entry.patchPath));
     const sourceHash = hash(source);
@@ -38,7 +57,7 @@ async function verifyPatchEntries(hostRoot, sourceRoot) {
   return { status: issues.length ? 'fail' : 'pass', count: checked.length, entries: checked, issues };
 }
 
-async function verifyPatchesApply(hostRoot, sourceRoot) {
+async function verifyPatchesApply(hostRoot, originals) {
   const issues = [];
   const manifest = JSON.parse(await readFile(path.join(hostRoot, PACKAGE_ROOT, 'integration-patches.json'), 'utf8'));
   const work = await mkdtemp(path.join(tmpdir(), 'versebrowser-patch-check-'));
@@ -47,10 +66,13 @@ async function verifyPatchesApply(hostRoot, sourceRoot) {
     for (const entry of manifest.entries ?? []) {
       const fixture = path.join(work, entry.sourcePath);
       await mkdir(path.dirname(fixture), { recursive: true });
-      const sourceText = await readFile(path.join(sourceRoot, entry.sourcePath), 'utf8');
+      const sourceText = originals.get(entry.sourcePath).toString('utf8');
       await writeFile(fixture, sourceText.replaceAll('\r\n', '\n'), 'utf8');
       try {
-        execFileSync('git', ['apply', '--check', path.join(hostRoot, entry.patchPath)], { cwd: work, stdio: 'pipe', windowsHide: true });
+        execFileSync('git', ['apply', path.join(hostRoot, entry.patchPath)], { cwd: work, stdio: 'pipe', windowsHide: true });
+        const applied = (await readFile(fixture, 'utf8')).replaceAll('\r\n', '\n');
+        const target = (await readFile(path.join(hostRoot, entry.targetPath), 'utf8')).replaceAll('\r\n', '\n');
+        if (applied !== target) issues.push(issue('patch_result_mismatch', { id: entry.id }));
       } catch (error) {
         issues.push(issue('patch_does_not_apply_to_original', { id: entry.id, message: String(error.stderr || error.message) }));
       }
@@ -88,19 +110,25 @@ async function verifyWiring(hostRoot) {
   return { status: issues.length ? 'fail' : 'pass', checks: required, issues };
 }
 
-export async function verifyHostIntegration({ hostRoot = ROOT, sourceRoot = SOURCE_ROOT } = {}) {
+export async function verifyHostIntegration({ hostRoot = ROOT, sourceRoot, sourceCommit } = {}) {
+  const imported = JSON.parse(await readFile(path.join(hostRoot, PACKAGE_ROOT, 'import-manifest.json'), 'utf8'));
+  // The default is the immutable source object, not the mutable checkout. An
+  // explicit source-root without a commit remains a hash-checked fixture input.
+  const commit = sourceCommit ?? (sourceRoot === undefined ? imported.sourceCommit : undefined);
+  const root = sourceRoot ?? SOURCE_ROOT;
+  const originals = await readOriginals(hostRoot, root, commit);
   const [entries, apply, wiring] = await Promise.all([
-    verifyPatchEntries(hostRoot, sourceRoot),
-    verifyPatchesApply(hostRoot, sourceRoot),
+    verifyPatchEntries(hostRoot, originals),
+    verifyPatchesApply(hostRoot, originals),
     verifyWiring(hostRoot),
   ]);
   const issues = [entries, apply, wiring].flatMap((section) => section.issues ?? []);
-  return { schemaVersion: 1, driven_by: 'agent', actor: 'codex', status: issues.length ? 'fail' : 'pass', patches: entries, patchApply: apply, wiring, issues };
+  return { schemaVersion: 1, driven_by: 'agent', actor: 'codex', status: issues.length ? 'fail' : 'pass', source: { root, commit: commit ?? null }, patches: entries, patchApply: apply, wiring, issues };
 }
 
 async function main() {
-  const { values } = parseArgs({ options: { 'host-root': { type: 'string' }, 'source-root': { type: 'string' }, output: { type: 'string' } }, allowPositionals: false });
-  const report = await verifyHostIntegration({ hostRoot: values['host-root'], sourceRoot: values['source-root'] });
+  const { values } = parseArgs({ options: { 'host-root': { type: 'string' }, 'source-root': { type: 'string' }, 'source-commit': { type: 'string' }, output: { type: 'string' } }, allowPositionals: false });
+  const report = await verifyHostIntegration({ hostRoot: values['host-root'], sourceRoot: values['source-root'], sourceCommit: values['source-commit'] });
   const text = JSON.stringify(report, null, 2) + '\n';
   if (values.output) await writeFile(path.resolve(values.output), text, 'utf8');
   process.stdout.write(text);

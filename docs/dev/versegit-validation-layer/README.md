@@ -2,6 +2,11 @@
 
 > 状态：WP9 已完成 whole-goal 工程验收，结论为 `PASS_WITH_GAPS`；非 GA、默认关闭、landed-unwired，`releaseEligible=false`。
 > 日期：2026-10-22。
+
+2026-11-04 边界修复使用独立的当前候选证据目录
+`harness/specs/fixtures/versegit-product-integration/f5-current-20261104/global-acceptance.json`。
+原 `f5/` 与 `verified-glm-20261025/` 保持历史身份。当前 verifier 拒绝源码、候选或文档漂移，
+测试通过不会替代最终命令回读；M4 未授权、default-off、P0=0/P1=0 的证据要求与 P2 残余边界保持不变。
 > 本文取代“VerseGit 只是一个可选的符号级验证插件”的单点描述；它不改变任何产品锁、默认值或发布状态。深度设计位于 `harness/specs/guides/versegit-concurrency/`，README 作为稳定入口。
 
 ## 1. 结论

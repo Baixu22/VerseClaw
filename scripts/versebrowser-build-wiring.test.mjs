@@ -7,9 +7,11 @@ const { scripts } = JSON.parse(readFileSync(new URL('../package.json', import.me
 test('normal install, dev and build compile the embedded package before consuming dist', () => {
   assert.equal(scripts['versebrowser:build'], 'pnpm --filter @verse-claw/versebrowser build');
   assert.ok(scripts.postinstall.startsWith('node scripts/assert-pnpm-toolchain.mjs && pnpm run versebrowser:build && '));
-  for (const entry of ['predev', 'predev:mock', 'prebuild:vite']) {
+  for (const entry of ['predev', 'predev:mock']) {
     assert.ok(scripts[entry].startsWith('pnpm run versebrowser:build && '), entry);
   }
+  assert.ok(scripts['prebuild:vite'].startsWith('node scripts/versebrowser-build-provenance.mjs --capture && pnpm run versebrowser:build && '));
+  assert.equal(scripts['postbuild:vite'], 'node scripts/versebrowser-build-provenance.mjs');
 });
 
 test('credential-bearing runtime probes stay outside addable source paths', () => {

@@ -196,6 +196,7 @@ describe('agent browser gateway bridge', () => {
       params: {
         requestId: 'req-1',
         action: 'open',
+        correlation: { sessionKey: 'owner' },
         payload: { url: 'https://example.com', profile: 'work' },
       },
     });
@@ -250,7 +251,7 @@ describe('agent browser gateway bridge', () => {
   it('routes new facade actions through the complete host API when available', async () => {
     const gatewayManager = new EventEmitter() as EventEmitter & { rpc: ReturnType<typeof vi.fn> };
     gatewayManager.rpc = vi.fn(async () => ({ ok: true }));
-    const service = {};
+    const service = { list: () => [{ id: 's1', sessionKey: 'owner' }] };
     const api = {
       downloadFile: vi.fn(async (payload: unknown) => ({ success: true, data: payload })),
     };
@@ -259,7 +260,7 @@ describe('agent browser gateway bridge', () => {
       const dispose = registerAgentBrowserGatewayBridge(gatewayManager as never, service as never, api as never, allActionsAvailable);
       gatewayManager.emit('notification', {
         method: 'agentBrowser.invoke.request',
-        params: { requestId: 'req-download', action: 'downloadFile', payload: { sessionId: 's1', selector: '#f', path: 'D:/tmp/f.bin' } },
+        params: { requestId: 'req-download', action: 'downloadFile', payload: { sessionId: 's1', selector: '#f', path: 'D:/tmp/f.bin' }, correlation: { sessionKey: 'owner' } },
       });
       await vi.waitFor(() => {
         expect(api.downloadFile).toHaveBeenCalledWith({ sessionId: 's1', selector: '#f', path: 'D:/tmp/f.bin' });
@@ -277,6 +278,7 @@ describe('agent browser gateway bridge', () => {
     };
     gatewayManager.rpc = vi.fn(async () => ({ ok: true }));
     const service = {
+      list: () => [{ id: 's1', sessionKey: 'owner' }],
       command: vi.fn(async () => ({
         session: { id: 's1' },
         data: { requests: [] },
@@ -294,6 +296,7 @@ describe('agent browser gateway bridge', () => {
       params: {
         requestId: 'req-2',
         action: 'command',
+        correlation: { sessionKey: 'owner' },
         payload: { sessionId: 's1', args: ['network', 'requests'] },
       },
     });

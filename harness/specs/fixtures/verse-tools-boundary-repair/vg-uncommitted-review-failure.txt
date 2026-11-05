@@ -1,0 +1,60 @@
+
+ RUN  v4.1.1 D:/ClawX-work/verse-tools-boundaries-20261104
+
+ ❯ tests/unit/versegit-product-acceptance.test.ts (7 tests | 2 failed) 6565ms
+     × recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence 3314ms
+     × rebuilds the acceptance state from evidence rather than trusting node status text 3237ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence
+AssertionError: expected [ …(7) ] to deeply equal [ …(5) ]
+
+- Expected
++ Received
+
+@@ -1,6 +1,8 @@
+  [
++   "source worktree is dirty outside F5 evidence:  M harness/specs/fixtures/verse-tools-boundary-repair/source-review-status.json",
++   "source worktree is dirty outside F5 evidence: ?? harness/specs/fixtures/verse-tools-boundary-repair/deepseek-source-review.json",
+    "required command not recorded: pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts",
+    "required command not recorded: pnpm harness validate --spec harness/specs/tasks/verse-tools-boundary-repair.md",
+    "required command not recorded: pnpm run typecheck",
+    "required command not recorded: pnpm run comms:replay",
+    "required command not recorded: pnpm run comms:compare",
+
+ ❯ tests/unit/versegit-product-acceptance.test.ts:45:27
+     43|     // Only command recording can be pending while this very suite run…
+     44|     // sealing. Source/candidate drift is never a green acceptance res…
+     45|     expect(result.issues).toEqual(pendingCommandIssues);
+       |                           ^
+     46|     expect(result.state.ok).toBe(true);
+     47|     expect(result.report.status).toBe('passed');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > rebuilds the acceptance state from evidence rather than trusting node status text
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/versegit-product-acceptance.test.ts:211:22
+    209|   it('rebuilds the acceptance state from evidence rather than trusting…
+    210|     const state = buildAcceptanceState({ root });
+    211|     expect(state.ok).toBe(true);
+       |                      ^
+    212|     expect(state.evidence.groups.map((group: { task: string }) => grou…
+    213|       'TF-0524', 'TF-0525', 'TF-0526', 'TF-0527', 'TF-0528', 'TF-0529'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  08:10:26
+   Duration  6.97s (transform 99ms, setup 116ms, import 85ms, tests 6.57s, environment 0ms)
+
