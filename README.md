@@ -170,7 +170,9 @@ No separate database server is required.
 - Sessions use JSONL transcripts; runtime state also uses SQLite.
 - Token history is aggregated from structured session usage records. Costs are estimates.
 - Knowledge uses a `memory-wiki` vault plus local governance metadata.
-- Source Set responses preserve owner admission, version and read-range citations. They currently return partial source excerpts, disclose rejected sources, and omit unmeasured answer confidence.
+- Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
+- Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
+- Chinese lexical retrieval, bounded long-document continuation, a provider-scoped embedding cache and version-bound Steward findings share the same admission boundary. An opt-in public GitHub directory connector sends updates and withdrawals to Inbox; other SaaS connectors are not implemented.
 - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
 
 Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.

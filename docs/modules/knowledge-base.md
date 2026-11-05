@@ -238,17 +238,24 @@ Host API：
 2. 词法与可选语义分支共用现有 SourceSet 准入，选择来源不覆盖 owner 政策；
 3. 校验可选 revision/digest 钉选，保留来源排序与 semantic lane 诊断；
 4. 返回带 owner、canonical subject、revision、读取内容摘要和读取范围的引用，披露拒绝原因、已提供的结构化冲突和截断；
-5. 当前仅返回来源摘录，明确为 `partial`，不生成未经测量的回答置信度；
+5. Librarian 请求 `synthesis=true` 后通过 Gateway model-only 路径综合证据；每项回答必须绑定来源 ID 和原文子串，无效引用拒绝并降级为摘录；
 6. 只有存在已准入来源时才创建 Studio draft；草稿只绑定已准入引用，保留读取证据，持久应用仍走已有审阅与 apply。
 
 所有来源被拒绝或 embedding 失败时，不把原始来源回填成证据。未提供 owner
 新鲜度的来源标为未知；旧 Wiki 响应未显式给出状态时保留 active-vault 兼容行为，
 缺省 trust 为 advisory，缺少 revision 时绑定读取内容摘要。
 
-本路径尚未实现模型综合、多轮追问或无结构文本的语义矛盾判定，因此摘录可回读
-不等于回答正确性已经验证。后续按来源同步、Librarian 问答、中文与长文检索、
-Steward 版本审阅、单个持续连接器和效果评测的次序交付，不建立第二知识权威。
-本轮仍沿用首次读取 80 行和现有 SourceSet 检索报告最多 20 个来源的边界。
+追问最多保留 8 轮、总计 8000 字符，每轮最多 2000 字符；历史只能解释指代，不能
+充当事实证据。模型会话使用独立随机 ID，不提供工具、投递或 apply 权限。结构化
+冲突阻止综合；模型失败显示原因并保留 partial 摘录。原文存在和版本绑定核验不等于
+通用语义蕴含证明；无结构矛盾仍依赖模型判断。未提供 synthesis 的调用和 Studio
+继续使用摘录模式，不显示未经测量的数值置信度。
+
+中文词法复用 CJK bigram；续读每次 80 行，最多 800 行/96000 字符，选择问题最相关
+的窗口，保留实际行号和截断信息。每次续读必须绑定相同 owner 版本/新鲜度、状态和
+权限；缺少版本信息或显式摘要钉选时不继续。版本/权限变化拒绝整次读取，不拼接
+不一致快照。SourceSet 报告仍最多 20 个来源。embedding 缓存最多 256 个向量，按
+端点、模型、凭据和内容摘要隔离；不持久化、不缓存失败，版本改变内容时重新计算。
 
 语义检索：
 
@@ -311,7 +318,7 @@ Watched directory 支持：
 
 - 递归监听；
 - pattern 匹配；
-- 5 秒 debounce；
+- 150ms debounce、60 秒周期补扫；
 - `ingestNewFiles`；
 - `requiresReview`；
 - 事件日志；
@@ -322,12 +329,22 @@ Watched directory 支持：
 - 新文件只会创建一个 **review-gated Inbox item**；
 - 不直接写正式 Wiki；
 - `autoCompile=true` 也只记录 skipped 事件，必须等 review/apply；
-- 删除文件 no action；
+- 新增、修改与删除均有稳定来源 ID 和内容版本；删除生成待审撤销候选；
+- 启动全量快照补偿停机事件，成功捕获才推进持久游标；部分扫描不推断删除；
+- 持久 transition sequence 区分重复编辑和删除后恢复，同内容再次出现仍生成新一轮候选；
+- 跳过 symlink/binary，最多 1000 entries、每文件 2 MiB、每轮 16 MiB；
 - watcher 失败不会 crash app，但应通过事件/诊断暴露。
 
 ## 11. Steward 与 Review Queue
 
 Steward 是质量/治理角色，不是最终自动 apply authority。
+
+默认 heuristic 不变；显式 semantic 角色按有效 `reviewFocus` 搜索并读取准入原文，
+输入包含草稿 revision/digest 和来源版本/摘要。结构化 findings 提供 kind、severity、
+原文引用及未核实原因。duplicate/conflict 必须同时引用草稿与来源，才可标记引用
+核验通过；这仍不是语义蕴含保证。仅有模型自由警告或引用不符的发现明确 unverified。
+审阅结果保存在原草稿 metadata；模型运行期间草稿被编辑、删除或应用时，旧结果
+拒绝覆盖。模型失败保留规则结果并记录原因，不升级 apply 权限。
 
 可检查：
 
@@ -348,6 +365,37 @@ Agent-driven review 可以作为自动等价路径，但产物必须明确：
 - `actor: <agent-name>`
 
 不得声称 real-human evidence。
+
+### 公共 GitHub 持续来源
+
+Main Host API 提供 `listSourceConnectors`、`upsertSourceConnector`、
+`syncSourceConnector`、`removeSourceConnector`；renderer facade 为
+`hostApi.knowledge` 的同名方法。配置仅持久在本机 `source-connectors.json`：
+
+```json
+{"id":"project-docs","kind":"github-public-directory","owner":"openai","repo":"openai-python","ref":"main","path":"README.md","enabled":true,"intervalSeconds":300}
+```
+
+入口是单文件或非递归公共目录，支持 `.md`/`.markdown`/`.txt`。固定访问
+`https://api.github.com`，不接受任意 URL、凭据或重定向。最多 100 entries、每文件
+256 KiB、总计 4 MiB；超预算扫描失败，不推断删除。稳定 ID 绑定 owner/repo/ref/path，
+Git blob SHA 校验正文完整性。每版本变化进入既有待审 Inbox；删除或 public→private/
+404 生成撤销/访问权丢失候选（不包含旧正文），ACL 元数据变为空。HTTP 403/429/5xx
+保留上个游标，不当作删除；指数退避和服务器 retry 信息保存在 receipt。每次成功
+捕获才写游标，重启重扫；lastSuccessAt/observedAt/retryAt 可回读。停用/移除只停止
+连接，不直接删除已审定知识。需要撤销已采纳知识时仍由审阅/提案/apply 处理。
+
+这不是私有 GitHub ACL 或任意企业 SaaS 同步。没有实现 Notion/Drive/Confluence
+连接器、递归全仓抓取或 webhooks；当前公共目录轮询是交付的唯一外部持续入口。
+
+### 可复算效果评测
+
+配置已授权的 `CLAWX_SPACE_BUNNY_API_KEY` 后执行
+`node scripts/run-knowledge-quality-eval.mjs D:/tmp/knowledge-quality-eval`。
+固定 14 样例覆盖中英、长文、结构化冲突、陈旧/撤销/权限/secret 拒绝、来源指令诱导
+和追问；每样例保留输入、读取范围、拒绝、模型原文输出与 token usage。指标采用
+固定答案命中和严格拒答形状，不能外推总体正确率。旧首 80 行/240 字符摘录是配对
+基线，直接 provider 实测与 Gateway 接线证据分开报告；模型真实底层身份和金额未测。
 
 ## 12. Knowledge Bot
 

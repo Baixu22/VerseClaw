@@ -66,7 +66,7 @@ describe('Chat knowledge mode', () => {
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
     expect(await screen.findByTestId('knowledge-librarian-answer-section')).toHaveTextContent('A source-backed answer.');
     expect(screen.queryByText('80%')).not.toBeInTheDocument();
-    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith({ question: 'What was decided?', sourceRefs: refs, sourceSetId: 'source-set-1' });
+    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith({ question: 'What was decided?', sourceRefs: refs, sourceSetId: 'source-set-1', synthesis: true, history: [] });
     expect(knowledge.search).not.toHaveBeenCalled();
     expect(knowledge.createDraft).not.toHaveBeenCalled();
     fireEvent.click(screen.getByTestId('knowledge-librarian-save-draft'));
@@ -80,11 +80,9 @@ describe('Chat knowledge mode', () => {
     await waitFor(() => expect(localStorage.getItem(storageKey)).toContain('What was decided?'));
   });
 
-  it('follows pending search and page reads, then an actual failure and retry outcome', async () => {
+  it('follows the Host evidence request, failure, retry and bounded follow-up context', async () => {
     let resolveSearch!: (value: unknown) => void;
-    let resolvePage!: (value: unknown) => void;
-    knowledge.search.mockReturnValueOnce(new Promise((resolve) => { resolveSearch = resolve; }));
-    knowledge.get.mockReturnValueOnce(new Promise((resolve) => { resolvePage = resolve; }));
+    knowledge.answerFromSourceSet.mockReturnValueOnce(new Promise((resolve) => { resolveSearch = resolve; }));
     renderChat();
     const page = screen.getByTestId('knowledge-chat-page');
     fireEvent.focus(screen.getByTestId('knowledge-librarian-question'));
@@ -92,20 +90,19 @@ describe('Chat knowledge mode', () => {
     fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Find the decision' } });
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
     expect(page).toHaveAttribute('data-bot-state', 'searching');
-    await act(async () => resolveSearch({ success: true, results: [{ lookup: 'decision.md', title: 'Decision', snippet: 'Keep sources.' }] }));
-    expect(page).toHaveAttribute('data-bot-state', 'reading');
-    await act(async () => resolvePage({ success: true, content: '# Decision\nKeep sources.' }));
+    await act(async () => resolveSearch({ success: true, answer: 'Keep sources.', sources: [{ id: 'decision.md', lookup: 'decision.md', title: 'Decision', excerpt: 'Keep sources.' }], groundingStatus: 'partial', unknowns: [], suggestedNextActions: [], retrievalDiagnostics: { query: 'Find the decision', corpus: 'wiki', resultCount: 1 } }));
     expect(page).toHaveAttribute('data-bot-state', 'finished');
     expect(screen.getByTestId('knowledge-librarian-answer-section').querySelector('.codex-markdown')).not.toBeNull();
-    knowledge.search.mockRejectedValueOnce(new Error('Search unavailable'));
+    knowledge.answerFromSourceSet.mockRejectedValueOnce(new Error('Search unavailable'));
     fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Retry this question' } });
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
     expect(await screen.findByTestId('knowledge-librarian-error')).toHaveTextContent('Search unavailable');
     expect(page).toHaveAttribute('data-bot-state', 'failed');
-    knowledge.search.mockResolvedValueOnce({ success: true, results: [] });
+    knowledge.answerFromSourceSet.mockResolvedValueOnce({ success: true, answer: 'Missing evidence', sources: [], groundingStatus: 'missing_sources', unknowns: ['No sources'], suggestedNextActions: [], retrievalDiagnostics: { query: 'Retry this question', corpus: 'wiki', resultCount: 0 } });
     fireEvent.click(screen.getByTestId('knowledge-librarian-retry'));
     await waitFor(() => expect(page).toHaveAttribute('data-bot-state', 'confused'));
-    expect(knowledge.search).toHaveBeenLastCalledWith(expect.objectContaining({ query: 'Retry this question' }));
+    expect(knowledge.answerFromSourceSet).toHaveBeenLastCalledWith(expect.objectContaining({ question: 'Retry this question', synthesis: true, history: expect.arrayContaining([expect.objectContaining({ role: 'assistant', content: 'Keep sources.' })]) }));
+    expect(knowledge.search).not.toHaveBeenCalled();
     expect(knowledge.applyDraft).not.toHaveBeenCalled();
   });
 

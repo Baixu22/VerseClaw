@@ -4,6 +4,7 @@ import type {
 } from '../../shared/host-api/contract';
 import {
   digestSourceSetContent,
+  lexicalOverlapScore,
   retrieveSourceSet,
   type SourceSetCandidate,
   type SourceSetClaimSeed,
@@ -60,6 +61,46 @@ type MaterializedSource = {
   source: KnowledgeSourceSetAnswerSource;
   candidate: SourceSetCandidate;
 };
+
+/** Read at most 800 lines / 96k characters, retaining the most relevant 80-line window.
+ * Each continuation must have the same owner revision and policy; mixed snapshots
+ * cannot become evidence. Missing version metadata leaves the first read partial. */
+export async function readBoundedKnowledgePage(input: {
+  ref: KnowledgeSourceRef;
+  question: string;
+  workspaceId?: string;
+  read: (range: { fromLine?: number; lineCount: number }) => Promise<unknown>;
+}): Promise<unknown> {
+  const first = await input.read({ lineCount: 80 });
+  if (!record(first) || typeof first.content !== 'string' || input.ref.contentDigest) return first;
+  if (first.content.length > 96_000) return { ...first, status: 'denied', statusReason: 'source read exceeds the character budget' };
+  const admitted = await retrieveSelectedSourceSetEvidence({
+    question: input.question, sourceRefs: [input.ref], workspaceId: input.workspaceId,
+    readPage: async () => first,
+  });
+  if (!admitted.sources.length || !admitted.sources[0].readRange?.truncated) return first;
+  const owner = (page: Record<string, unknown>) => {
+    const metadata = record(page.metadata) ? page.metadata : {};
+    return JSON.stringify(['path', 'corpus', 'revision', 'updatedAt', 'status', 'privacyTier', 'sensitivity', 'acl', 'scope', 'workspaceId', 'agentId', 'trust']
+      .map(key => page[key] ?? metadata[key]));
+  };
+  const binding = owner(first);
+  const metadata = record(first.metadata) ? first.metadata : {};
+  if (first.revision === undefined && metadata.revision === undefined && first.updatedAt === undefined && metadata.updatedAt === undefined) return first;
+  let best = first, bestScore = lexicalOverlapScore(input.question, first.content), chars = first.content.length;
+  for (let fromLine = 81; fromLine <= Math.min(800, Number(first.totalLines) || 80); fromLine += 80) {
+    if (chars >= 96_000) break;
+    const page = await input.read({ fromLine, lineCount: 80 });
+    if (!record(page) || typeof page.content !== 'string' || page.fromLine !== fromLine || owner(page) !== binding || page.totalLines !== first.totalLines) {
+      return { ...first, status: 'denied', statusReason: 'source changed during bounded continuation' };
+    }
+    chars += page.content.length;
+    if (chars > 96_000) break;
+    const score = lexicalOverlapScore(input.question, page.content);
+    if (score > bestScore) { best = page; bestScore = score; }
+  }
+  return best;
+}
 
 function materializeSource(ref: KnowledgeSourceRef, page: unknown): MaterializedSource | null {
   if (!record(page) || page.success === false || (page.corpus !== undefined && page.corpus !== 'wiki')) return null;
@@ -202,6 +243,7 @@ export async function retrieveSelectedSourceSetEvidence(input: {
   ])];
   return {
     sourceSet, sources, unknowns,
+    modelSources: sourceSet.retrieved.map((entry, index) => ({ ...sources[index], content: entry.content })),
     // This handler lists evidence. Actual QA/citation verification is a separate delivery.
     groundingStatus: sources.length === 0 ? 'missing_sources' as const : 'partial' as const,
   };

@@ -779,6 +779,8 @@ test.describe('Knowledge Hub MVP', () => {
           question: 'Which decision is supported?',
           sourceRefs: [{ id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision' }],
           sourceSetId: 'ks-e2e',
+          synthesis: true,
+          history: [],
         })]: {
           success: true, question: 'Which decision is supported?', answer: 'Selected source excerpts (partial response). Review before durable writes.',
           groundingStatus: 'partial', synthesisMode: 'source-excerpts',

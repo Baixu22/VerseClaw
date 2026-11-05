@@ -92,6 +92,7 @@ describe('knowledge host API', () => {
 
   afterEach(async () => {
     const mod = await import('@electron/services/knowledge-api');
+    mod.stopAllKnowledgeSourceWatches();
     mod.__setSekbRuntimeModuleForTests(undefined);
     closeOpenClawStateDatabaseForTest();
     rmSync(root, { recursive: true, force: true });
@@ -800,6 +801,30 @@ describe('knowledge host API', () => {
       }),
     ]);
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('reconciles watched file changes into versioned agent-driven review candidates', async () => {
+    const watchedDir = join(root, 'watched-native'); mkdirSync(watchedDir, { recursive: true });
+    writeFileSync(join(watchedDir, 'existing.md'), 'Source before startup');
+    const gatewayManager = { rpc: vi.fn(async () => { throw new Error('no direct wiki write'); }) };
+    const { createKnowledgeApi, stopAllKnowledgeSourceWatches } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    try {
+      await expect(api.addWatchedDirectory({ id: 'new', path: watchedDir, patterns: ['**/*.md'], enabled: true, ingestNewFiles: true, autoCompile: true, requiresReview: false })).resolves.toMatchObject({ success: true });
+      let result = await api.listInboxItems({ status: 'all' });
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]).toMatchObject({ status: 'pending', createdBy: 'agent', metadata: { sourceTransition: 'created', driven_by: 'agent', actor: 'knowledge-source-sync', requiresReview: true } });
+      writeFileSync(join(watchedDir, 'existing.md'), 'Source after update');
+      await vi.waitFor(async () => expect((await api.listInboxItems({ status: 'all' })).items).toHaveLength(2), { timeout: 5000 });
+      stopAllKnowledgeSourceWatches();
+      writeFileSync(join(watchedDir, 'new.md'), 'Missed while stopped');
+      const restarted = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+      await restarted.listWatchedDirectories();
+      result = await restarted.listInboxItems({ status: 'all' });
+      expect(result.items).toHaveLength(3);
+      expect(new Set(result.items.map(x => x.metadata?.captureKey)).size).toBe(3);
+      expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    } finally { stopAllKnowledgeSourceWatches(); }
   });
 
   it('records knowledge provenance references as metadata only', async () => {
@@ -1696,6 +1721,33 @@ describe('knowledge host API', () => {
     expect(answer.answer).not.toContain('OTHER_WORKSPACE_BODY');
   });
 
+  it('answers default and follow-up questions through the existing model-only Gateway with checked citations', async () => {
+    const listeners = new Set<(value: unknown) => void>();
+    const gatewayManager = {
+      on: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.add(callback)),
+      off: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.delete(callback)),
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'wiki.search') return { results: [{ pagePath: 'port.md', title: 'Gateway port' }] };
+        if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: '网关端口为8080。', revision: 2, status: 'active' };
+        if (method === 'agent') return { runId: 'qa-run' };
+        if (method === 'agent.wait') {
+          for (const callback of listeners) callback({ runId: 'qa-run', type: 'assistant.delta', text: JSON.stringify({ claims: [{ text: '网关端口为8080。', citations: [{ sourceId: 'memory-wiki:port.md', quote: '端口为8080' }] }], unknowns: [] }) });
+          return { status: 'completed' };
+        }
+        throw Error(`Unexpected RPC ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const answer = await api.answerFromSourceSet({ question: '它的端口呢？', sourceRefs: [], synthesis: true, history: [{ role: 'user', content: '讨论网关' }] });
+    expect(answer).toMatchObject({ success: true, synthesisMode: 'model', model: { status: 'completed', runId: 'qa-run' }, groundingStatus: 'partial' });
+    expect(answer.unknowns.join(' ')).toContain('no known freshness');
+    expect(answer.answer).toContain('网关端口为8080');
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({ query: expect.stringContaining('讨论网关') }), 30000);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true, promptMode: 'none', message: expect.stringContaining('讨论网关'), deliver: false }), 60000);
+    expect(listeners.size).toBe(0);
+  });
+
   it('persists source sets and answers from their selected sources without applying durable wiki changes', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
@@ -1803,7 +1855,7 @@ describe('knowledge host API', () => {
       expect(answer.semanticRequested).toBe(true);
       expect(answer.semanticLane).toMatchObject({
         status: 'available',
-        providerId: 'siliconflow-qwen3-embed-8b',
+        providerId: expect.stringContaining('siliconflow:Qwen/Qwen3-Embedding-8B:'),
       });
       expect(answer.retrievalDiagnostics.backend).toBe('semantic');
       expect(answer.sources.map((source) => source.lookup)).toEqual([

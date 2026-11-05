@@ -9,8 +9,8 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { hostApi, type KnowledgeDraftType, type KnowledgeSearchResult, type KnowledgeSourceSet, type KnowledgeStatusResult, type KnowledgeStewardReviewResult } from '@/lib/host-api';
 import { errorMessageFrom } from '@/lib/user-error';
-import { buildGroundedLibrarianAnswer, createDraftPayloadFromGroundedAnswer, createErrorExperienceInboxPayloadFromGroundedAnswer, type KnowledgeLibrarianGroundedAnswer } from '@/lib/knowledge-librarian';
-import { getSearchRows, getLookup, getTitle, getSnippet, getScore, getPageBody, getString, markdownSummary, readableExcerpt, type SearchRow, makeLibrarianMessage, parseLibrarianCheckpoint, KNOWLEDGE_LIBRARIAN_STORAGE_KEY, type KnowledgeLibrarianMessage, type KnowledgeLibrarianCitation, type KnowledgeLibrarianCheckpoint } from '../Knowledge/knowledge-view-utils';
+import { createDraftPayloadFromGroundedAnswer, createErrorExperienceInboxPayloadFromGroundedAnswer, type KnowledgeLibrarianGroundedAnswer } from '@/lib/knowledge-librarian';
+import { type SearchRow, makeLibrarianMessage, parseLibrarianCheckpoint, KNOWLEDGE_LIBRARIAN_STORAGE_KEY, type KnowledgeLibrarianMessage, type KnowledgeLibrarianCitation, type KnowledgeLibrarianCheckpoint } from '../Knowledge/knowledge-view-utils';
 import { KnowledgeAssistantMessage, KnowledgeAssistantPromptInput, KnowledgeAssistantErrorCard } from '../Knowledge/KnowledgeAssistant';
 
 export type KnowledgeChatContext = {
@@ -42,7 +42,6 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
   const context = useMemo<KnowledgeChatContext>(() => suppliedContext ?? (location.state as { knowledgeContext?: KnowledgeChatContext } | null)?.knowledgeContext ?? {}, [suppliedContext, location.state]);
   const previous = useMemo(() => parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY)), []);
   const editorTitle = typeof context.editorTitle === 'string' ? context.editorTitle : previous?.editorTitle || t('workspace.untitled');
-  const editorBody = typeof context.editorBody === 'string' ? context.editorBody : '';
   const editorSource = typeof context.editorSource === 'string' ? context.editorSource : previous?.editorSource || '';
   const currentSourceRefs = useMemo(() => Array.isArray(context.sourceRefs) ? context.sourceRefs : [], [context.sourceRefs]);
   const currentSourceSetId = context.sourceSetId ?? null;
@@ -95,13 +94,6 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
     const thread = threadRef.current;
     if (thread) thread.scrollTop = thread.scrollHeight;
   }, [librarianMessages.length, running, librarianError]);
-  const editorSummary = useMemo(() => markdownSummary(editorBody), [editorBody]);
-  const editorSourceIds = useMemo(() => {
-    const explicit = editorSource.trim();
-    if (explicit) return [explicit];
-    const slug = editorTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    return [`manual:${slug || 'untitled'}`];
-  }, [editorSource, editorTitle]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || librarianMessages.length === 0) return;
@@ -167,126 +159,24 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
     setActivity(currentSourceRefs.length > 0 ? 'waiting' : 'searching');
     setError(null);
     try {
-      if (currentSourceRefs.length > 0) {
-        const result = await hostApi.knowledge.answerFromSourceSet({
-          question,
-          sourceRefs: currentSourceRefs,
-          ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
-        });
-        if (!result.success) throw new Error(result.error || t('errors.search'));
-        const citations: KnowledgeLibrarianCitation[] = result.sources.map((source) => ({
-          lookup: source.lookup,
-          title: source.title,
-          path: source.path || source.lookup,
-          excerpt: source.excerpt || t('librarian.emptyCitation'),
-        }));
-        const groundedAnswer: KnowledgeLibrarianGroundedAnswer = {
-          question,
-          answer: result.answer,
-          sources: result.sources.map((source) => ({
-            ...source,
-            path: source.path || source.lookup,
-            excerpt: source.excerpt,
-            corpus: 'wiki',
-            reason: t('sourceSet.answerBoundary'),
-          })),
-          unknowns: result.unknowns,
-          suggestions: result.suggestedNextActions,
-          nextActions: result.suggestedNextActions,
-          confidence: result.confidence,
-          groundingStatus: result.groundingStatus,
-          retrieval: {
-            query: result.retrievalDiagnostics.query,
-            corpus: result.retrievalDiagnostics.corpus,
-            roleTag: 'knowledge-librarian',
-            resultCount: result.retrievalDiagnostics.resultCount,
-            selectedSources: result.sources.map((source) => ({
-              ...source,
-              path: source.path || source.lookup,
-              excerpt: source.excerpt,
-              corpus: 'wiki',
-            })),
-          },
-        };
-        setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
-        setActivity(groundedAnswer.groundingStatus === 'missing_sources' ? 'confused' : 'finished');
-        return;
-      }
-      const result = await hostApi.knowledge.search({
-        query: question,
-        maxResults: 4,
-        corpus: 'wiki',
-        roleTag: 'knowledge-librarian',
+      const history = librarianMessages.slice(-8).flatMap(message => message.role === 'system' ? [] : [{ role: message.role, content: message.content }]);
+      const result = await hostApi.knowledge.answerFromSourceSet({
+        question, sourceRefs: currentSourceRefs, synthesis: true, history,
+        ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
       });
       if (!result.success) throw new Error(result.error || t('errors.search'));
-      const matches = getSearchRows(result).slice(0, 3);
-      if (matches.length > 0) setActivity('reading');
-      const citations: KnowledgeLibrarianCitation[] = [];
-      for (const row of matches) {
-        const lookup = getLookup(row);
-        if (!lookup) continue;
-        let body = getSnippet(row);
-        try {
-          const page = await hostApi.knowledge.get({ lookup, lineCount: 80, corpus: 'wiki' });
-          if (page.success) body = getPageBody(page as Record<string, unknown>) || body;
-        } catch {
-          // Search snippets are still useful if a page preview fails.
-        }
-        const excerpt = readableExcerpt(body, getSnippet(row));
-        citations.push({
-          lookup,
-          title: getTitle(row),
-          path: getString(row, ['sourcePath', 'pagePath', 'path']) || lookup,
-          score: getScore(row),
-          excerpt: excerpt || t('librarian.emptyCitation'),
-        });
-        void hostApi.knowledge.recordKnowledgeReference({
-          targetId: lookup,
-          targetKind: 'wiki-page',
-          title: getTitle(row),
-          sourceRefs: [{ id: lookup, kind: 'wiki', path: lookup }],
-          reference: { kind: 'search', lookup, query: question },
-        }).catch(() => undefined);
-      }
-
-      if (citations.length === 0 && editorBody.trim()) {
-        citations.push({
-          lookup: editorSource || editorSourceIds[0],
-          title: editorTitle.trim() || t('workspace.untitled'),
-          path: editorSource || editorSourceIds[0],
-          excerpt: readableExcerpt(editorBody, editorSummary) || t('librarian.emptyCitation'),
-        });
-      }
-
-      setActivity('thinking');
-      const groundedAnswer = buildGroundedLibrarianAnswer({
-        question,
-        resultCount: getSearchRows(result).length,
-        corpus: 'wiki',
-        roleTag: 'knowledge-librarian',
-        sources: citations.map((citation) => ({
-          id: citation.lookup,
-          lookup: citation.lookup,
-          title: citation.title,
-          path: citation.path || citation.lookup,
-          excerpt: citation.excerpt,
-          corpus: 'wiki',
-          ...(typeof citation.score === 'number' ? { score: citation.score } : {}),
-          reason: t('librarian.retrieval.selectedReason'),
-        })),
-        messages: {
-          answerIntro: t('librarian.answerIntro', { count: citations.length }),
-          answerBoundary: t('librarian.answerBoundary'),
-          noAnswer: t('librarian.noAnswer'),
-          missingSources: t('librarian.unknowns.noSources'),
-          pageSnippetGrounding: t('librarian.unknowns.pageSnippetLevel'),
-          suggestionSaveDraft: t('librarian.suggestions.next.saveDraft'),
-          suggestionCreateErrorExperience: t('librarian.suggestions.next.createErrorExperience'),
-          suggestionSendToSteward: t('librarian.suggestions.next.sendToSteward'),
-          suggestionBroadenSearch: t('librarian.suggestions.next.broadenSearch'),
-        },
-      });
-      setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
+      const citations: KnowledgeLibrarianCitation[] = result.sources.map(source => ({
+        lookup: source.lookup, title: source.title, path: source.path || source.lookup,
+        excerpt: source.excerpt || t('librarian.emptyCitation'),
+      }));
+      const sources = result.sources.map(source => ({ ...source, path: source.path || source.lookup, corpus: 'wiki' as const }));
+      const groundedAnswer: KnowledgeLibrarianGroundedAnswer = {
+        question, answer: result.answer, sources, unknowns: result.unknowns,
+        suggestions: result.suggestedNextActions, nextActions: result.suggestedNextActions,
+        groundingStatus: result.groundingStatus,
+        retrieval: { query: question, corpus: 'wiki', roleTag: 'knowledge-librarian', resultCount: result.retrievalDiagnostics.resultCount, selectedSources: sources },
+      };
+      setLibrarianMessages(messages => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
       setActivity(groundedAnswer.groundingStatus === 'missing_sources' ? 'confused' : 'finished');
     } catch (err) {
       const message = errorMessageFrom(err);
@@ -297,7 +187,7 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
     } finally {
       setRunning(null);
     }
-  }, [currentSourceRefs, currentSourceSetId, editorBody, editorSource, editorSourceIds, editorSummary, editorTitle, librarianQuestion, running, setActivity, t]);
+  }, [currentSourceRefs, currentSourceSetId, librarianMessages, librarianQuestion, running, setActivity, t]);
 
   const copyLibrarianMessage = useCallback(async (messageId: string, content: string) => {
     if (!content.trim()) return;
