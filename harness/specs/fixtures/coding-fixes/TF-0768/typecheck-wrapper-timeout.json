@@ -1,0 +1,17 @@
+{
+  "schema": "GateInterruption/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0768-relay",
+  "realHumanEvidence": false,
+  "candidate": "7cd644562b918da25c79b19a9eb022c282075dec",
+  "argv": [
+    "node",
+    "scripts/typecheck-agent-dev.mjs"
+  ],
+  "status": "timeout",
+  "timeoutSeconds": 600,
+  "exitCode": null,
+  "cause": "unconfirmed; wrapper did not complete within timeout",
+  "processConfirmedStopped": true,
+  "replacement": "bridge and uncached node/web/test tsgo projects via direct Node entrypoints; same compiler arguments; not a successful wrapper run"
+}

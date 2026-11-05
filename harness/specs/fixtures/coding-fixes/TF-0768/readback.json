@@ -1,0 +1,17 @@
+{
+  "schema": "CodingIsolationReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0768-relay",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "c8e10fb894406c4498e4cb99266fefe3d201e411",
+    "tree": "4b7a82acf70172517c12843728b4de076c90cc59",
+    "dirty": false
+  },
+  "sourceHashesVerified": 19,
+  "artifactHashesVerifiedBeforeAddingReadback": 41,
+  "trackedProjectionFilesVerified": 20510,
+  "e2eEffectReadbacks": 2,
+  "electronProcessSurvivors": 0,
+  "errors": []
+}
