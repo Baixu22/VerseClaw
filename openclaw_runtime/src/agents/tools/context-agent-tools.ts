@@ -939,7 +939,7 @@ function resolveBlockHandleMinter(
   const requester = resolveContextFoldingRequester(options, sessionId);
   return (block) =>
     handleForContextBlock(block, requester, {
-      ...(options.contextFoldingNow ? { now: options.contextFoldingNow } : {}),
+      now: options.contextFoldingNow,
     });
 }
 
