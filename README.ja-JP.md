@@ -248,4 +248,4 @@ Historical plan と acceptance snapshot には固有の日付と candidate が�
 
 Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell team の ClawX を基盤にしています。Repository は [MIT License](LICENSE) を使用します。Bundled component は各自の license/source obligation を保持します。詳細は [VerseShell notices](resources/verseshell/SOURCE.md)。一部 conversation/workspace interaction（web search source card を含む）は Swami Malode の [Rare UI](https://rareui.com) を基にし、attribution は `src/components/rareui` に保持されています。
 
-復旧の実装と証拠：任意の execution writer は TaskFlow にツールの実行フェーズを保存し、副作用の前に CAS で実行権を取得します。owner が許可した処理のみ再開します。lifecycle と execution の両 writer で `taskflow` を明示する必要があり、既定値は `legacy` のままです。不明な副作用は照合が必要です。[復旧範囲と測定結果](docs/dev/recovery-contract/REDISPATCH-20261104.md)を参照してください。
+復旧の実装と証拠：任意の execution writer は TaskFlow にツールの実行フェーズを保存し、副作用の前に CAS で実行権を取得します。owner が許可した処理のみ再開します。lifecycle と execution の両 writer で `taskflow` を明示する必要があり、既定値は `legacy` のままです。不明な副作用は照合が必要です。[2026-11-05の評価](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md)では60件のlive回答と30件の主障害試行を保存しています。候補の状態分類は改善しましたが、固定レイテンシ基準はFAIL/NO-GOです。

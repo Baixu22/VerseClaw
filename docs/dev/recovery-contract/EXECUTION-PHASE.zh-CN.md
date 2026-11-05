@@ -1,5 +1,7 @@
 # 执行 Phase 状态机与统一收口层（TF-0717 实现前研究）
 
+> 2026-11-05更新：单一TaskFlow row/CAS、旧表迁移、writer conjunction、持久化意图及phase-aware quarantine已接线。当前源码与实测见 [最终报告](FINAL-20261105.zh-CN.md)。§1–4保留最初研究基线与冻结契约；其中“当时无phase”的描述不代表当前实现。
+
 > 状态：draft（实现前研究，不是生产实现）
 >
 > driven_by: agent
@@ -266,57 +268,21 @@ SQL 条件必须是 `WHERE flow_id = ? AND revision = ? AND execution_phase = ?`
 - 1 个 phase 转换（`effect_pending -> effect_committed`）必须由 domain journal/receipt 证据驱动；没有证据不得前进。
 - 0 个窗口允许“凭 lost/凭异常”自动重放 effect。
 
-## 5. Gateway 启动：上一 boot 的孤儿 phase 如何结算为 lost
+## 5. Gateway 启动：按phase保留或结算孤儿执行
 
-### 5.1 规则
+当前实现以 `execution-phase/store.ts:settleOrphanedExecutionPhases` 与 `tasks/workflow-lifecycle-owner.ts:settleOrphanedWorkflowLifecycles` 为准。
 
-`lost` 是 FlowStatus，不是 phase。启动结算只改变 lifecycle status；phase 保留最后一条 durable 证据，因为 phase 才是恢复判断的输入。
+- 工具执行owner：`verified` 经同一revision CAS收口为`terminal/succeeded`；`effect_pending` 或`effect_committed` 保留phase，写`needsReconciliation`并将lifecycle置为`blocked`；`dispatched`保持待授权恢复。
+- 一般workflow owner：有phase的row不直接标lost；pending/committed effect进入`blocked`与`restart:needs-reconciliation`，其余有phase的row交回所属owner。没有phase的legacy row仍沿用失去controller后结算lost的原规则。
+- 真实、已持久化tool result可由主会话owner推进`effect_committed -> verified -> terminal`；未知效果不能靠receipt、event-log或合成transcript结果跳到终态，也不能自动重放。
 
-对 controller 为 `task-loop-lifecycle`（未来可推广到其他 domain）的非终态 row：
+这是同一`flow_runs`上的phase/status/revision及恢复元数据，不是第二张执行账本。主会话和domain journal仍拥有各自状态；不能将该接线升级为跨transcript/session/effect的全局原子事务或通用外部效果对账器。
 
-1. 如果 `isLive(id)` 为真，跳过。
-2. 读取 `execution_phase`。旧行没有 phase 时，按 legacy 规则推断（建议 `admitted` 或 `dispatched`，并在 `state_json` 标记 `phaseInferred=true`），不得假装已有精确 phase。
-3. 调用 `classifyReplay(phase)`：
-   - `safe`：CAS `status='lost'`，phase 保留，`state_json.recovery={orphaned:true, verdict:'safe', bootId}`；没有 effect，不重跑。
-   - `reconcile`：CAS `status='lost'`，phase 保留，`state_json.recovery={orphaned:true, needsReconciliation:true, verdict:'reconcile', bootId}`；启动路径只做 journal/receipt 查询，不执行 effect。未知结果保持 quarantine（status 已是 lost，但 `needsReconciliation` 使 reconciliation worker 继续扫描）。
-   - `unsafe`：CAS `status='lost'`，phase 保留，`state_json.recovery={orphaned:true, effectAlreadyApplied:true, verdict:'unsafe'}`；永不 replay。
-4. phase 为 `effect_pending` 且 journal/receipt 无法判断时，**不得把 phase 改成 failed/aborted 来“看起来终态”**；保留 `effect_pending` + `needsReconciliation` 是唯一诚实的表示。后续 reconciliation 若证明 applied，可把 phase 提交为 `effect_committed`（仍属于同一 row 的 CAS，不是新 lifecycle），再由验证/人工收口；若证明 not_applied，才可转 failed/aborted。
-5. `effect_committed`/`verified` 的孤儿没有 effect 不确定性；可以安全 lost，但仍不重跑 effect。
+## 6. 默认writer仍为legacy
 
-### 5.2 与现有启动顺序的差异
+生产schema、pre-effect intent、真实工具重派和五窗口测量已经落地；默认不变的当前依据是完整评测仍 **FAIL/NO-GO**。候选45样本P50=32007ms、P95=86786.4ms超过冻结5000/15000ms；独立legacy复跑14条完整+1条注入后不完整，结构匹配12/15。其他四个RecoveryAuthority owner尚未接入。
 
-当前 `server.impl.ts:1754-1793` 的顺序是 ClawGraph -> Mission -> Task Loop，直接调用 `settleOrphanedTaskLoopLifecycles()`；后者在 legacy writer 下 no-op，在 taskflow 下直接 lost。
-
-未来 phase 实现必须在 Task Loop 接受新 tick 之前加入一次 phase-aware reconciliation pass：
-
-```text
-gateway boot
-  -> read task-loop rows by controller
-  -> for each non-terminal row with no live owner:
-       phase = row.execution_phase ?? inferLegacyPhase(row)
-       verdict = classifyReplay(phase)
-       CAS status=lost + state_json.recovery (phase unchanged)
-  -> reconciliation worker handles needsReconciliation rows
-  -> only after that accept new task-loop ticks
-```
-
-这不会新增 store：reconciliation 读的是 `flow_runs` + 现有 domain journal/EffectReceipt，写回同一个 `flow_runs` row。
-
-## 6. 为什么默认 writer 仍是 legacy
-
-1. 当前 TaskFlow 只被证明到 coarse lifecycle 的 cutover；`WORK-PACKAGES.md:99-105` 明确记录 RC-06B/C/D 的默认 writer 都是 `legacy`，cutover 只是 opt-in。
-2. execution phase 还没有生产 schema、pre-effect intent、domain reconciler 和 5 个 kill 窗口实测；把默认切到 taskflow 会把“设计”当成“恢复保证”。
-3. `EffectReceipt` 不能授权 replay，event log replay 未实现，checkpoint rollback 只覆盖文件。默认 taskflow 会让用户以为 external effect 已可恢复，这是不真实的。
-4. 默认 legacy 保持零行为变化，便于在独立 worktree 内做 pilot、对比和 rollback；product locks 保持 false。
-
-拟议 gate（实现时，不在本文件启用）：
-
-```text
-OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER=legacy|projection|taskflow   # 仍为 legacy 默认
-OPENCLAW_EXECUTION_PHASE_WRITER=legacy|taskflow                  # 拟议，默认 legacy
-```
-
-约束：只有 `OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER=taskflow` **且** `OPENCLAW_EXECUTION_PHASE_WRITER=taskflow` 时才允许 phase 写；任一为 legacy，phase writer 强制 legacy。这样不会出现“status 走 legacy、phase 走 taskflow”的双真相。`runtime.eventLog.*` 仍全部默认 false，不因 phase gate 打开。
+已有gate要求`OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER=taskflow`且`OPENCLAW_EXECUTION_PHASE_WRITER=taskflow`；任一不满足就关闭execution writer。`runtime.eventLog.*`保持false，RecoveryAuthority默认off且仍只读shadow。完整源头、样本量、相对/绝对门槛与未测边界见最终报告。
 
 ## 7. 回滚路径
 
@@ -331,7 +297,7 @@ OPENCLAW_EXECUTION_PHASE_WRITER=legacy|taskflow                  # 拟议，默�
 
 - 直接选择 legacy writer；不删除 TaskFlow row，不 `DROP` phase 列，不改已有 revision。
 - 不执行双写补偿；宁可让 TaskFlow 暂时只读，也不把两个 writer 都当 truth。
-- 任何已 terminal 的 row 保留原 phase/status/receipt 引用；任何非终态 row 按 §5 的 lost/quarantine 规则处理。
+- 任何已 terminal 的 row 保留原 phase/status/receipt 引用；任何非终态 row 按 §5 的 phase-aware quarantine/owner 结算规则处理。
 
 ## 8. 本轮交付与可量化验收
 
@@ -341,7 +307,7 @@ OPENCLAW_EXECUTION_PHASE_WRITER=legacy|taskflow                  # 拟议，默�
 |---|---|---|
 | `shared/recovery-contract/execution-phase.ts` | 纯 enum/transition/replay/commit 决策表 | 否 |
 | `tests/unit/recovery-contract-execution-phase.test.ts` | 状态机、非法转换、终态、effect_pending reconcile、幂等 commit | 否 |
-| `docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md` | 设计、CAS 提交点、K1-K5、启动 lost、legacy 默认、回滚 | 否 |
+| `docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md` | 设计、CAS 提交点、K1-K5、启动 phase-aware quarantine、legacy 默认、回滚 | 否 |
 | `harness/specs/tasks/execution-phase-commit.md` | 实现前 draft spec 与验收门槛 | 否 |
 
 ### 8.2 可量化指标
@@ -371,7 +337,7 @@ OPENCLAW_EXECUTION_PHASE_WRITER=legacy|taskflow                  # 拟议，默�
 
 1. P1：在 TaskFlow schema 增加 nullable `execution_phase`（或经审定的等价 first-class 字段），实现 phase-aware CAS；legacy 默认下零写。
 2. P2：接入 pre-effect intent；domain journal/EffectReceipt 仍为 effect truth；实现通用 `effect_pending` reconciler。
-3. P3：对 K1-K5 做真实子进程 kill/重启测试，断言：不重复 effect、不错误重放、lost 有正确的 reconciliation 标记。
+3. P3：对 K1-K5 做真实子进程 kill/重启测试，断言：不重复 effect、不错误重放、未知效果保留正确的 reconciliation 标记。
 4. P4：在 explicit gate 下跑 pilot；只有 5/5 kill 窗口和 effect 对账全部通过，才讨论默认 writer；event log 仍默认 off。
 
 ## 9. 未做与不能声称的部分

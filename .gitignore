@@ -2414,6 +2414,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md
 !/docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md
 !/docs/dev/recovery-contract/REDISPATCH-20261104.md
+!/docs/dev/recovery-contract/FINAL-20261105.zh-CN.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
@@ -2490,3 +2491,9 @@ openclaw_runtime/_tmp_*
 !/docs/dev/runtime-memory-persistence-breakage-20261103.md
 !/docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md
 !/docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md
+
+!/docs/dev/recovery-contract/FINAL-20261105.zh-CN.md
+
+!/harness/specs/fixtures/recovery-contract-eval/final-20261105/candidate-report.log
+
+!/harness/specs/fixtures/recovery-contract-eval/final-20261105/legacy-report.log

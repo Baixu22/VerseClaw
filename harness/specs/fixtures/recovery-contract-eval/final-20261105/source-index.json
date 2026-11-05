@@ -1,0 +1,37 @@
+{
+  "schema": "RecoveryOfflineReaderSources/v1",
+  "sourceCommit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+  "files": [
+    {
+      "path": "scripts/recovery-contract-eval.mjs",
+      "sha256": "2ffa90fe0bed49e8243e83f040299eee27dc467c044cf8a28f5de141069a11bb"
+    },
+    {
+      "path": "shared/recovery-contract-eval.ts",
+      "sha256": "469a045cf4645911239b3743b6aa22c8d2956dca7832a488652797b9acabc6ab"
+    },
+    {
+      "path": "shared/recovery-quality-readback.ts",
+      "sha256": "0952c2ae653f8aab445f54059bd2e9bd80fdede8cf02a32e4010e79f69200ddb"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
+    },
+    {
+      "path": "harness/specs/fixtures/recovery-contract-eval/recovery-contract-eval-manifest.json",
+      "sha256": "0059d3f4188a1b037ff1e6768f910930008605dec4bd19cf5c3a3829a1eb387d"
+    }
+  ],
+  "dependencyMode": "Node builtins only; no install, runtime rebuild, or original D-drive evidence paths required",
+  "driven_by": "agent",
+  "actor": "recovery-source-sealer",
+  "realHumanEvidence": false,
+  "archiveSha256": "bf6a560321cabbad6291bfe907d58520ba3eae77ded34e2b62a787975da33d8f",
+  "runtimeCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+  "samplingCommits": {
+    "quality": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+    "windows": "1909dfd0c0e0d8fe8e2e3ebb0ae49e1b565a776f"
+  },
+  "runtimeSourcesEqual": true
+}

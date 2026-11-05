@@ -119,7 +119,37 @@
     "docs/dev/memory-control-plane.md",
     "harness/specs/tasks/memory-control-plane-authority.md",
     "harness/specs/tasks/memory-user-surface.md",
-    "harness/specs/fixtures/long-session-development/d1/typecheck-errors.log"
+    "harness/specs/fixtures/long-session-development/d1/typecheck-errors.log",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/acceptance-map.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/answer-integrity.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/attempt-inventory.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/baseline-repeat.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/bundle-index.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/candidate-report.exit",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/candidate-report.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/candidate-report.log",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/comparison.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/credential-scan.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/gates-raw.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/gates.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/heartbeat-probe-incident.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/legacy-report.exit",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/legacy-report.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/legacy-report.log",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/offline-verification.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/offline-verify.mjs",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/process-kill-proof.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/raw-evidence.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/reader-source.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/README.md",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/recovery-contract-eval-manifest.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/shadow-accounting.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/shadow-benchmark.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/source-audit.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/source-index.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/closeout-gates-raw.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/closeout-gates.json",
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/HASHES.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -2328,7 +2358,8 @@
     "team/role-architecture-design/area-4-role-memory-completion.md",
     "docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md",
     "docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md",
-    "docs/dev/recovery-contract/REDISPATCH-20261104.md"
+    "docs/dev/recovery-contract/REDISPATCH-20261104.md",
+    "docs/dev/recovery-contract/FINAL-20261105.zh-CN.md"
   ],
   "artifactBatches": {}
 }

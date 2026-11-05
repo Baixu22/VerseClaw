@@ -76,6 +76,10 @@ expectedUserBehavior:
   - Unknown outcomes, legacy unbound rows, changed arguments, and missing durable authorization never execute automatically.
   - Normal tool validation, policy hooks, abort handling, and transcript persistence apply to recovered calls.
 requiredTests:
+  - tests/unit/recovery-contract-eval.test.ts
+  - tests/unit/recovery-quality-readback.test.ts
+  - tests/unit/recovery-observation.test.ts
+  - tests/unit/recovery-live-proxy.test.ts
   - openclaw_runtime/src/agents/execution-phase/redispatch.test.ts
   - openclaw_runtime/src/agents/execution-phase/store.test.ts
   - openclaw_runtime/src/agents/execution-phase/recovery.test.ts

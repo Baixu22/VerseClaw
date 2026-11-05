@@ -1,5 +1,7 @@
 # 恢复收口：实现、测量与边界
 
+> 当前验收以 [2026-11-05最终实测与收口判断](FINAL-20261105.zh-CN.md) 为准。本页保留实现范围及历史过程；完整数据为60质量答案、30主窗口、14完整复跑+1注入后不完整尝试，整体FAIL/NO-GO。
+
 `driven_by: agent` · `actor: recovery-convergence-integrator` · `realHumanEvidence: false`
 
 ## 当前实现

@@ -1,0 +1,679 @@
+{
+  "schema": "RecoveryContractManifest/v1",
+  "version": 1,
+  "frozenAt": "2026-11-03T00:00:00.000Z",
+  "frozenBeforeMeasurement": true,
+  "drivenBy": "agent",
+  "actor": "recovery-eval-agent",
+  "windows": [
+    {
+      "id": "intent-after-persist-kill",
+      "title": "Kill after intent persist, before dispatch",
+      "description": "The user intent is durably persisted, then the process dies before provider dispatch.",
+      "minRepeats": 3,
+      "annotation": {
+        "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+        "expectedObservableState": "exactly one persisted intent is found; no assistant output was emitted; the turn is resumable",
+        "forbiddenRerunRegion": "do not re-append the persisted user intent and do not replay any tool call that already started",
+        "allowedRerunRegion": "may schedule the unstarted turn from the persisted intent",
+        "requiredDiskEvidence": [
+          "turn-intent journal record",
+          "session transcript tail",
+          "recovery decision record"
+        ]
+      }
+    },
+    {
+      "id": "effect-before-receipt-kill",
+      "title": "Kill after external effect, before receipt persist",
+      "description": "The external side effect committed, but the process died before the effect receipt was persisted.",
+      "minRepeats": 3,
+      "annotation": {
+        "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+        "expectedObservableState": "the effect exists once; the missing receipt is classified as unknown and is never silently replayed",
+        "forbiddenRerunRegion": "do not replay the tool invocation whose side effect may have committed",
+        "allowedRerunRegion": "may reconcile through the idempotency key, or mark the effect unreceipted and require explicit continuation",
+        "requiredDiskEvidence": [
+          "effect log entry or idempotency key",
+          "tool invocation record",
+          "receipt reconciliation record"
+        ]
+      }
+    },
+    {
+      "id": "child-created-before-parent-advance-kill",
+      "title": "Kill after child creation, before parent advance",
+      "description": "A child task was durably created, but the parent node did not advance before the process died.",
+      "minRepeats": 3,
+      "annotation": {
+        "injectionPoint": "after the child task record is durably created, before the parent task node advances",
+        "expectedObservableState": "the child exists exactly once and is linked to the parent; the parent stays at its pre-advance state",
+        "forbiddenRerunRegion": "do not create a second child and do not re-run child initialization",
+        "allowedRerunRegion": "may re-link the existing child and advance the parent after verifying child identity",
+        "requiredDiskEvidence": [
+          "child task record",
+          "parent task journal",
+          "parent-child link or edge record"
+        ]
+      }
+    },
+    {
+      "id": "store-write-failure",
+      "title": "Store write failure",
+      "description": "The durable store rejects or fails a write (ENOSPC / EACCES / abrupt I/O failure).",
+      "minRepeats": 3,
+      "annotation": {
+        "injectionPoint": "during a store write, before the write acknowledgment is returned",
+        "expectedObservableState": "the write is reported as failed; no silent success; the previous durable state remains readable",
+        "forbiddenRerunRegion": "do not report write success and do not advance state on an unacknowledged store write",
+        "allowedRerunRegion": "may retry the same idempotent write or fall back to the append-only journal when one exists",
+        "requiredDiskEvidence": [
+          "store write error record",
+          "last durable snapshot or journal offset",
+          "retry or fallback decision record"
+        ]
+      }
+    },
+    {
+      "id": "repeated-restart",
+      "title": "Repeated restart at the same recovery boundary",
+      "description": "The process restarts repeatedly (at least three times) at the same or adjacent recovery boundary.",
+      "minRepeats": 3,
+      "annotation": {
+        "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+        "expectedObservableState": "every restart converges on the same task state with no duplicate effect and no orphan child",
+        "forbiddenRerunRegion": "do not replay completed effects and do not re-create children that survived a prior restart",
+        "allowedRerunRegion": "may re-scan the journal, re-link surviving children, and resume only the not-yet-committed step",
+        "requiredDiskEvidence": [
+          "restart counter",
+          "journal replay checkpoint per restart",
+          "final task, effect and child state dump"
+        ]
+      }
+    }
+  ],
+  "longSessionPairs": [
+    {
+      "id": "ls-compression-01",
+      "family": "compression",
+      "pairIndex": 0,
+      "title": "Compress the active task spine and continue #1",
+      "prompt": "A long conversation is compacted at a checkpoint; the recovered turn must continue from the accepted compression artifact. Scenario ls-compression-01 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-compression-01 remains active after the compression boundary",
+        "Constraint ls-compression-01: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-compression-01: keep the last owner-accepted recovery boundary",
+        "Next action ls-compression-01: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-compression-01: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-compression-01 is complete",
+        "ls-compression-01 has no remaining work"
+      ],
+      "inputHash": "226ff9d447906543e6edfa61540163f8cfd65944a35b870783ffc2af3498176d"
+    },
+    {
+      "id": "ls-handoff-01",
+      "family": "handoff",
+      "pairIndex": 0,
+      "title": "Hand off the work between sessions #1",
+      "prompt": "A session boundary hands the work to a fresh session; the recovered session must continue from accepted facts only. Scenario ls-handoff-01 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-handoff-01 remains active after the handoff boundary",
+        "Constraint ls-handoff-01: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-handoff-01: keep the last owner-accepted recovery boundary",
+        "Next action ls-handoff-01: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-handoff-01: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-handoff-01 is complete",
+        "ls-handoff-01 has no remaining work"
+      ],
+      "inputHash": "44bc276ceec273b4f9ca6630c3baf7c755865a4f0838d9ec166bd156c6424072"
+    },
+    {
+      "id": "ls-fork-01",
+      "family": "fork",
+      "pairIndex": 0,
+      "title": "Fork a branch and continue the selected branch #1",
+      "prompt": "A fork creates a sibling branch; the recovered branch must keep its identity and must not inherit sibling state. Scenario ls-fork-01 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-fork-01 remains active after the fork boundary",
+        "Constraint ls-fork-01: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-fork-01: keep the last owner-accepted recovery boundary",
+        "Next action ls-fork-01: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-fork-01: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-fork-01 is complete",
+        "ls-fork-01 has no remaining work"
+      ],
+      "inputHash": "7cb48d3cd9736dbe27f532069d6c3c104ff4d29dede6625d3d257509162b04ae"
+    },
+    {
+      "id": "ls-restart-01",
+      "family": "restart",
+      "pairIndex": 0,
+      "title": "Restart the process mid-conversation #1",
+      "prompt": "The desktop process restarts mid-task; the recovered session must reload the transcript tail and resume the pending step. Scenario ls-restart-01 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-restart-01 remains active after the restart boundary",
+        "Constraint ls-restart-01: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-restart-01: keep the last owner-accepted recovery boundary",
+        "Next action ls-restart-01: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-restart-01: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-restart-01 is complete",
+        "ls-restart-01 has no remaining work"
+      ],
+      "inputHash": "c5a508674d86cf0b72038ef2219a75f554df6a3508f54a9117031ef5493116ef"
+    },
+    {
+      "id": "ls-revocation-01",
+      "family": "revocation",
+      "pairIndex": 0,
+      "title": "Revoke an earlier instruction and continue #1",
+      "prompt": "A prior instruction or fact is revoked; the recovered session must preserve the revocation and must not resurrect the revoked fact. Scenario ls-revocation-01 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-revocation-01 remains active after the revocation boundary",
+        "Constraint ls-revocation-01: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-revocation-01: keep the last owner-accepted recovery boundary",
+        "Next action ls-revocation-01: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-revocation-01: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-revocation-01 is complete",
+        "ls-revocation-01 has no remaining work"
+      ],
+      "inputHash": "5f2d20687ee51af786375c130850995cb8ccd79c0c44b927f0433172fe1146dd"
+    },
+    {
+      "id": "ls-compression-02",
+      "family": "compression",
+      "pairIndex": 1,
+      "title": "Compress the active task spine and continue #2",
+      "prompt": "A long conversation is compacted at a checkpoint; the recovered turn must continue from the accepted compression artifact. Scenario ls-compression-02 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-compression-02 remains active after the compression boundary",
+        "Constraint ls-compression-02: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-compression-02: keep the last owner-accepted recovery boundary",
+        "Next action ls-compression-02: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-compression-02: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-compression-02 is complete",
+        "ls-compression-02 has no remaining work"
+      ],
+      "inputHash": "37b4b49bc360686b015eed9c4e5f4c2c142a2cd8a91b6b7d1202c3d2dfe83fa8"
+    },
+    {
+      "id": "ls-handoff-02",
+      "family": "handoff",
+      "pairIndex": 1,
+      "title": "Hand off the work between sessions #2",
+      "prompt": "A session boundary hands the work to a fresh session; the recovered session must continue from accepted facts only. Scenario ls-handoff-02 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-handoff-02 remains active after the handoff boundary",
+        "Constraint ls-handoff-02: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-handoff-02: keep the last owner-accepted recovery boundary",
+        "Next action ls-handoff-02: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-handoff-02: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-handoff-02 is complete",
+        "ls-handoff-02 has no remaining work"
+      ],
+      "inputHash": "3f30991f85ff5a4fc8b0c665d96f3ac9255642767c93b5a90e6ab934b7c7e41b"
+    },
+    {
+      "id": "ls-fork-02",
+      "family": "fork",
+      "pairIndex": 1,
+      "title": "Fork a branch and continue the selected branch #2",
+      "prompt": "A fork creates a sibling branch; the recovered branch must keep its identity and must not inherit sibling state. Scenario ls-fork-02 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-fork-02 remains active after the fork boundary",
+        "Constraint ls-fork-02: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-fork-02: keep the last owner-accepted recovery boundary",
+        "Next action ls-fork-02: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-fork-02: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-fork-02 is complete",
+        "ls-fork-02 has no remaining work"
+      ],
+      "inputHash": "729c65d32ec1f9298d7f1894b68a5307d2beb5459d5178435676115604d70985"
+    },
+    {
+      "id": "ls-restart-02",
+      "family": "restart",
+      "pairIndex": 1,
+      "title": "Restart the process mid-conversation #2",
+      "prompt": "The desktop process restarts mid-task; the recovered session must reload the transcript tail and resume the pending step. Scenario ls-restart-02 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-restart-02 remains active after the restart boundary",
+        "Constraint ls-restart-02: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-restart-02: keep the last owner-accepted recovery boundary",
+        "Next action ls-restart-02: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-restart-02: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-restart-02 is complete",
+        "ls-restart-02 has no remaining work"
+      ],
+      "inputHash": "17578927a279fe2d677cb45461c44f6117650b6d45b89ce9ee256b492253c950"
+    },
+    {
+      "id": "ls-revocation-02",
+      "family": "revocation",
+      "pairIndex": 1,
+      "title": "Revoke an earlier instruction and continue #2",
+      "prompt": "A prior instruction or fact is revoked; the recovered session must preserve the revocation and must not resurrect the revoked fact. Scenario ls-revocation-02 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-revocation-02 remains active after the revocation boundary",
+        "Constraint ls-revocation-02: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-revocation-02: keep the last owner-accepted recovery boundary",
+        "Next action ls-revocation-02: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-revocation-02: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-revocation-02 is complete",
+        "ls-revocation-02 has no remaining work"
+      ],
+      "inputHash": "90de20d0df018d1c166e421af67b3c83cb1fbdddc5d9bdc27a6457844055dd02"
+    },
+    {
+      "id": "ls-compression-03",
+      "family": "compression",
+      "pairIndex": 2,
+      "title": "Compress the active task spine and continue #3",
+      "prompt": "A long conversation is compacted at a checkpoint; the recovered turn must continue from the accepted compression artifact. Scenario ls-compression-03 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-compression-03 remains active after the compression boundary",
+        "Constraint ls-compression-03: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-compression-03: keep the last owner-accepted recovery boundary",
+        "Next action ls-compression-03: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-compression-03: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-compression-03 is complete",
+        "ls-compression-03 has no remaining work"
+      ],
+      "inputHash": "7cc828c432629510b3b1d9159fea13220507a77cc24630dd10286d5e8007c5c2"
+    },
+    {
+      "id": "ls-handoff-03",
+      "family": "handoff",
+      "pairIndex": 2,
+      "title": "Hand off the work between sessions #3",
+      "prompt": "A session boundary hands the work to a fresh session; the recovered session must continue from accepted facts only. Scenario ls-handoff-03 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-handoff-03 remains active after the handoff boundary",
+        "Constraint ls-handoff-03: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-handoff-03: keep the last owner-accepted recovery boundary",
+        "Next action ls-handoff-03: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-handoff-03: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-handoff-03 is complete",
+        "ls-handoff-03 has no remaining work"
+      ],
+      "inputHash": "4eb901c4ff7df2f38f55a338c1d59398f44d9ea3daeefa884d2682d26557c385"
+    },
+    {
+      "id": "ls-fork-03",
+      "family": "fork",
+      "pairIndex": 2,
+      "title": "Fork a branch and continue the selected branch #3",
+      "prompt": "A fork creates a sibling branch; the recovered branch must keep its identity and must not inherit sibling state. Scenario ls-fork-03 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-fork-03 remains active after the fork boundary",
+        "Constraint ls-fork-03: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-fork-03: keep the last owner-accepted recovery boundary",
+        "Next action ls-fork-03: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-fork-03: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-fork-03 is complete",
+        "ls-fork-03 has no remaining work"
+      ],
+      "inputHash": "028cbf3cfaa25143c8753064e9f94fe49df5325221fb304c84807c108349817d"
+    },
+    {
+      "id": "ls-restart-03",
+      "family": "restart",
+      "pairIndex": 2,
+      "title": "Restart the process mid-conversation #3",
+      "prompt": "The desktop process restarts mid-task; the recovered session must reload the transcript tail and resume the pending step. Scenario ls-restart-03 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-restart-03 remains active after the restart boundary",
+        "Constraint ls-restart-03: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-restart-03: keep the last owner-accepted recovery boundary",
+        "Next action ls-restart-03: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-restart-03: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-restart-03 is complete",
+        "ls-restart-03 has no remaining work"
+      ],
+      "inputHash": "716f8bd4e1199c5b7d3a410c7f3344d4ec4e09b12b32b210899308eb5d7452c8"
+    },
+    {
+      "id": "ls-revocation-03",
+      "family": "revocation",
+      "pairIndex": 2,
+      "title": "Revoke an earlier instruction and continue #3",
+      "prompt": "A prior instruction or fact is revoked; the recovered session must preserve the revocation and must not resurrect the revoked fact. Scenario ls-revocation-03 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-revocation-03 remains active after the revocation boundary",
+        "Constraint ls-revocation-03: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-revocation-03: keep the last owner-accepted recovery boundary",
+        "Next action ls-revocation-03: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-revocation-03: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-revocation-03 is complete",
+        "ls-revocation-03 has no remaining work"
+      ],
+      "inputHash": "01600443fdec8c297103e8b0fa8bb1d9bfa1a96d6871e640538a02c70661a072"
+    },
+    {
+      "id": "ls-compression-04",
+      "family": "compression",
+      "pairIndex": 3,
+      "title": "Compress the active task spine and continue #4",
+      "prompt": "A long conversation is compacted at a checkpoint; the recovered turn must continue from the accepted compression artifact. Scenario ls-compression-04 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-compression-04 remains active after the compression boundary",
+        "Constraint ls-compression-04: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-compression-04: keep the last owner-accepted recovery boundary",
+        "Next action ls-compression-04: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-compression-04: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-compression-04 is complete",
+        "ls-compression-04 has no remaining work"
+      ],
+      "inputHash": "1300e3a5f7c4a51e9ea1054cf0b592f4fb90e2ebf2fa66d6b7c1061e2c12b983"
+    },
+    {
+      "id": "ls-handoff-04",
+      "family": "handoff",
+      "pairIndex": 3,
+      "title": "Hand off the work between sessions #4",
+      "prompt": "A session boundary hands the work to a fresh session; the recovered session must continue from accepted facts only. Scenario ls-handoff-04 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-handoff-04 remains active after the handoff boundary",
+        "Constraint ls-handoff-04: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-handoff-04: keep the last owner-accepted recovery boundary",
+        "Next action ls-handoff-04: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-handoff-04: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-handoff-04 is complete",
+        "ls-handoff-04 has no remaining work"
+      ],
+      "inputHash": "f2e16e927691fe88b8dc59af981116219ebfa6234f9df4704655d5c5a2e3ed8d"
+    },
+    {
+      "id": "ls-fork-04",
+      "family": "fork",
+      "pairIndex": 3,
+      "title": "Fork a branch and continue the selected branch #4",
+      "prompt": "A fork creates a sibling branch; the recovered branch must keep its identity and must not inherit sibling state. Scenario ls-fork-04 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-fork-04 remains active after the fork boundary",
+        "Constraint ls-fork-04: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-fork-04: keep the last owner-accepted recovery boundary",
+        "Next action ls-fork-04: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-fork-04: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-fork-04 is complete",
+        "ls-fork-04 has no remaining work"
+      ],
+      "inputHash": "0e00f2b261b9fadd70801aab19d4364f60708290c78bc32e31184ce8d497ae9e"
+    },
+    {
+      "id": "ls-restart-04",
+      "family": "restart",
+      "pairIndex": 3,
+      "title": "Restart the process mid-conversation #4",
+      "prompt": "The desktop process restarts mid-task; the recovered session must reload the transcript tail and resume the pending step. Scenario ls-restart-04 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-restart-04 remains active after the restart boundary",
+        "Constraint ls-restart-04: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-restart-04: keep the last owner-accepted recovery boundary",
+        "Next action ls-restart-04: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-restart-04: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-restart-04 is complete",
+        "ls-restart-04 has no remaining work"
+      ],
+      "inputHash": "9806a8de527e60ae73859f8d6282e1ec2ee31c0f9ace324d3be46ad3ed0b91f9"
+    },
+    {
+      "id": "ls-revocation-04",
+      "family": "revocation",
+      "pairIndex": 3,
+      "title": "Revoke an earlier instruction and continue #4",
+      "prompt": "A prior instruction or fact is revoked; the recovered session must preserve the revocation and must not resurrect the revoked fact. Scenario ls-revocation-04 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-revocation-04 remains active after the revocation boundary",
+        "Constraint ls-revocation-04: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-revocation-04: keep the last owner-accepted recovery boundary",
+        "Next action ls-revocation-04: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-revocation-04: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-revocation-04 is complete",
+        "ls-revocation-04 has no remaining work"
+      ],
+      "inputHash": "33198b5439ef3c40d9aa70fbcc9f31e2fe79c23eccdcd5b0a1d6f9dc03d5f201"
+    },
+    {
+      "id": "ls-compression-05",
+      "family": "compression",
+      "pairIndex": 4,
+      "title": "Compress the active task spine and continue #5",
+      "prompt": "A long conversation is compacted at a checkpoint; the recovered turn must continue from the accepted compression artifact. Scenario ls-compression-05 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-compression-05 remains active after the compression boundary",
+        "Constraint ls-compression-05: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-compression-05: keep the last owner-accepted recovery boundary",
+        "Next action ls-compression-05: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-compression-05: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-compression-05 is complete",
+        "ls-compression-05 has no remaining work"
+      ],
+      "inputHash": "0d2bd82c8662cbab6c1e21e55c3bb88c9624d7d8cfeec75c7daceabef0283c40"
+    },
+    {
+      "id": "ls-handoff-05",
+      "family": "handoff",
+      "pairIndex": 4,
+      "title": "Hand off the work between sessions #5",
+      "prompt": "A session boundary hands the work to a fresh session; the recovered session must continue from accepted facts only. Scenario ls-handoff-05 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-handoff-05 remains active after the handoff boundary",
+        "Constraint ls-handoff-05: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-handoff-05: keep the last owner-accepted recovery boundary",
+        "Next action ls-handoff-05: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-handoff-05: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-handoff-05 is complete",
+        "ls-handoff-05 has no remaining work"
+      ],
+      "inputHash": "882c34a57ddf50b34f792565866c52a9ff5ebf2ee5c3852166cbd778d70926ff"
+    },
+    {
+      "id": "ls-fork-05",
+      "family": "fork",
+      "pairIndex": 4,
+      "title": "Fork a branch and continue the selected branch #5",
+      "prompt": "A fork creates a sibling branch; the recovered branch must keep its identity and must not inherit sibling state. Scenario ls-fork-05 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-fork-05 remains active after the fork boundary",
+        "Constraint ls-fork-05: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-fork-05: keep the last owner-accepted recovery boundary",
+        "Next action ls-fork-05: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-fork-05: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-fork-05 is complete",
+        "ls-fork-05 has no remaining work"
+      ],
+      "inputHash": "f4d86cb06d544c82355c711fa9e60e092ffa995776a247c8251ccf8b2dab094a"
+    },
+    {
+      "id": "ls-restart-05",
+      "family": "restart",
+      "pairIndex": 4,
+      "title": "Restart the process mid-conversation #5",
+      "prompt": "The desktop process restarts mid-task; the recovered session must reload the transcript tail and resume the pending step. Scenario ls-restart-05 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-restart-05 remains active after the restart boundary",
+        "Constraint ls-restart-05: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-restart-05: keep the last owner-accepted recovery boundary",
+        "Next action ls-restart-05: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-restart-05: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-restart-05 is complete",
+        "ls-restart-05 has no remaining work"
+      ],
+      "inputHash": "37765f1c52c7e926eedeb3165e9932da037e317d52a56ea087e051cfc1525bf2"
+    },
+    {
+      "id": "ls-revocation-05",
+      "family": "revocation",
+      "pairIndex": 4,
+      "title": "Revoke an earlier instruction and continue #5",
+      "prompt": "A prior instruction or fact is revoked; the recovered session must preserve the revocation and must not resurrect the revoked fact. Scenario ls-revocation-05 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-revocation-05 remains active after the revocation boundary",
+        "Constraint ls-revocation-05: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-revocation-05: keep the last owner-accepted recovery boundary",
+        "Next action ls-revocation-05: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-revocation-05: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-revocation-05 is complete",
+        "ls-revocation-05 has no remaining work"
+      ],
+      "inputHash": "02a574985577b1e1425ea80b58151b4c4268464dfc2509444dd2dd3409a4777e"
+    },
+    {
+      "id": "ls-compression-06",
+      "family": "compression",
+      "pairIndex": 5,
+      "title": "Compress the active task spine and continue #6",
+      "prompt": "A long conversation is compacted at a checkpoint; the recovered turn must continue from the accepted compression artifact. Scenario ls-compression-06 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-compression-06 remains active after the compression boundary",
+        "Constraint ls-compression-06: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-compression-06: keep the last owner-accepted recovery boundary",
+        "Next action ls-compression-06: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-compression-06: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-compression-06 is complete",
+        "ls-compression-06 has no remaining work"
+      ],
+      "inputHash": "97cea777ee81cd364511b1c98f986d59ac6b7ffb326c7c07194f3df55f382516"
+    },
+    {
+      "id": "ls-handoff-06",
+      "family": "handoff",
+      "pairIndex": 5,
+      "title": "Hand off the work between sessions #6",
+      "prompt": "A session boundary hands the work to a fresh session; the recovered session must continue from accepted facts only. Scenario ls-handoff-06 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-handoff-06 remains active after the handoff boundary",
+        "Constraint ls-handoff-06: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-handoff-06: keep the last owner-accepted recovery boundary",
+        "Next action ls-handoff-06: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-handoff-06: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-handoff-06 is complete",
+        "ls-handoff-06 has no remaining work"
+      ],
+      "inputHash": "800ef2758880b9e83442b734135b92a6cca2ffeb2a2c012c561a33dc7aaeff1a"
+    },
+    {
+      "id": "ls-fork-06",
+      "family": "fork",
+      "pairIndex": 5,
+      "title": "Fork a branch and continue the selected branch #6",
+      "prompt": "A fork creates a sibling branch; the recovered branch must keep its identity and must not inherit sibling state. Scenario ls-fork-06 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-fork-06 remains active after the fork boundary",
+        "Constraint ls-fork-06: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-fork-06: keep the last owner-accepted recovery boundary",
+        "Next action ls-fork-06: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-fork-06: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-fork-06 is complete",
+        "ls-fork-06 has no remaining work"
+      ],
+      "inputHash": "3af09b0c5479e831009ac348cc99e64b67d9936f0d88aa7bf418d3bb7ca20c77"
+    },
+    {
+      "id": "ls-restart-06",
+      "family": "restart",
+      "pairIndex": 5,
+      "title": "Restart the process mid-conversation #6",
+      "prompt": "The desktop process restarts mid-task; the recovered session must reload the transcript tail and resume the pending step. Scenario ls-restart-06 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-restart-06 remains active after the restart boundary",
+        "Constraint ls-restart-06: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-restart-06: keep the last owner-accepted recovery boundary",
+        "Next action ls-restart-06: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-restart-06: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-restart-06 is complete",
+        "ls-restart-06 has no remaining work"
+      ],
+      "inputHash": "3f28caf1e8990c6f7be10fdebe5173223927d06a4f0c5a8e1cb0c2616262980e"
+    },
+    {
+      "id": "ls-revocation-06",
+      "family": "revocation",
+      "pairIndex": 5,
+      "title": "Revoke an earlier instruction and continue #6",
+      "prompt": "A prior instruction or fact is revoked; the recovered session must preserve the revocation and must not resurrect the revoked fact. Scenario ls-revocation-06 must continue without losing the four required facts.",
+      "mustPreserve": [
+        "Objective ls-revocation-06 remains active after the revocation boundary",
+        "Constraint ls-revocation-06: preserve the accepted scope and do not rerun committed effects",
+        "Decision ls-revocation-06: keep the last owner-accepted recovery boundary",
+        "Next action ls-revocation-06: resume from the last durable checkpoint"
+      ],
+      "expectedNextAction": "next action ls-revocation-06: resume from the last durable checkpoint",
+      "forbiddenCompletionClaims": [
+        "All work for ls-revocation-06 is complete",
+        "ls-revocation-06 has no remaining work"
+      ],
+      "inputHash": "c240c626573f2821b50bc1e2e4241ed7f0e6f0776c16560af159da383fb46522"
+    }
+  ],
+  "thresholds": {
+    "duplicateEffectsMax": 0,
+    "lostTasksMax": 0,
+    "terminalCorrectnessMin": 1,
+    "unknownClassifiableRateMax": 0.02,
+    "mustPreserveFidelityMin": 1,
+    "falseCompletionClaimsMax": 0,
+    "nextActionAccuracyMin": 0.95,
+    "recoveryLatencyP50MsMax": 5000,
+    "recoveryLatencyP95MsMax": 15000
+  },
+  "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a"
+}

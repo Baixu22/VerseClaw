@@ -1,0 +1,2362 @@
+{
+  "schema": "RecoveryAttemptInventory/v1",
+  "primaryQualifiedWindows": 30,
+  "qualityQualifiedAnswers": 60,
+  "independentRepeat": {
+    "targetSlots": 15,
+    "complete": 14,
+    "incomplete": 1,
+    "status": "INCOMPLETE_REPEAT"
+  },
+  "matrixStatusCounts": {
+    "passed": 37,
+    "failed": 6,
+    "timedOut": 0,
+    "skipped": 0,
+    "not-reported": 30
+  },
+  "controllers": [
+    {
+      "path": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\matrix-run.json",
+      "sha256": "98b7e9deb98e9ad8e21feddc7f5662777f17b168799a51e989009df04038668b",
+      "report": {
+        "schema": "RecoveryMatrixRun/v2",
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 54847,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\intent-after-persist-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-intent-after-persist-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 23167
+            },
+            "receiptSha256": "1bf7c909c87ba745e7174ff54f4acd4feb24f1065b832c5b0ec559a96ae66a29"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 66880,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\intent-after-persist-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-intent-after-persist-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 33441
+            },
+            "receiptSha256": "cd10b0fea0b3eac73ee80a2146df22245f2ab241802e5d499f628db3218c746e"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 120847,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\intent-after-persist-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-intent-after-persist-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 29121
+            },
+            "receiptSha256": "9882991f7c25bba249f91200d03fda2fd3dce4463b3e18bb91ffafae6dabfac8"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 225711,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\effect-before-receipt-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-effect-before-receipt-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 76280
+            },
+            "receiptSha256": "604bf3a41be173b1e7e45a0edf9260a614b7a2b3e806bab74d39308d453893a6"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "elapsedMs": 129469,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\effect-before-receipt-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-effect-before-receipt-kill-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 150957,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\effect-before-receipt-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-effect-before-receipt-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 39064
+            },
+            "receiptSha256": "b7a1c3dee14fd21ccd76af0e188620640329b8460d8a6a181df4d640490fd5e6"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "elapsedMs": 143854,
+            "setupWaitMs": 60000,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\child-created-before-parent-advance-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-child-created-before-parent-advance-kill-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "elapsedMs": 248875,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\child-created-before-parent-advance-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-child-created-before-parent-advance-kill-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 89039,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\child-created-before-parent-advance-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-child-created-before-parent-advance-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 24746
+            },
+            "receiptSha256": "7a8cf5e6c4d43401b8dfe4b148566fb2eb17d1a3973d22c855f50cfe4bc3a29d"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 63591,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\store-write-failure-0.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-store-write-failure-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 151
+            },
+            "receiptSha256": "b51132eee118f95e1d69aa662c4278e98b791a41c288b41b397d6092a2598cfa"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 51894,
+            "setupWaitMs": 30000,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\store-write-failure-1.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-store-write-failure-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 181
+            },
+            "receiptSha256": "af5ad2b12008c477ec30c1693706d718abbd3d7557be6bc61c186e3118c93318"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 61471,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\store-write-failure-2.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-store-write-failure-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 119
+            },
+            "receiptSha256": "a755966fb93c0f2d43f8fa63ffb538fe602680feb3b0ee9e68ed054bcdaf2f3a"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "elapsedMs": 185004,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\repeated-restart-0.log",
+            "receiptFile": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\windows\\legacy\\trial-repeated-restart-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 130630
+            },
+            "receiptSha256": "5726258811719640ab5b1ea621a484c68054cbf04c02aa313ccc80a45128be4e"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-0\\matrix-run.json",
+      "sha256": "f9c1625b9f281fbc99c3108385fe922bfc9be5e286c095ffcd0c6a9f4e75d35c",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 86452,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 79034,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-0\\legacy\\child-created-before-parent-advance-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-0\\legacy\\trial-child-created-before-parent-advance-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 30711
+            },
+            "receiptSha256": "f2967f810abe18323289a8313cd10b0e8d76e3d01600defdc591969fd5d0edc6"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-1\\matrix-run.json",
+      "sha256": "06b73c95e0d65a84dba7e1e6f59d39b193632a7a8cd3192129abc0915016b0ab",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 99000,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 64222,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-1\\legacy\\child-created-before-parent-advance-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-1\\legacy\\trial-child-created-before-parent-advance-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 30114
+            },
+            "receiptSha256": "0610da4bb677da19b298b40a6f5d57549e062d889544184bf4f3f9ce716ab6f7"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 30813,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-1\\legacy\\store-write-failure-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-1\\legacy\\trial-store-write-failure-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 911
+            },
+            "receiptSha256": "97b9e5393ea7b894d82da97b72539db705420b0aed6b1b9dbad0be69a32d827d"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-10\\matrix-run.json",
+      "sha256": "ad2a8680bfe1bb468372cb8d2b271ce4517d9df1b2c1861ac19ca1ee13daea88",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 106015,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 46926,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-10\\candidate\\child-created-before-parent-advance-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-10\\candidate\\trial-child-created-before-parent-advance-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 11201
+            },
+            "receiptSha256": "dcebae68f88301717e8abe87a23a46e7f08bef80b32cb5dcccc8e3c119fd83fd"
+          },
+          {
+            "arm": "candidate",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 54703,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-10\\candidate\\child-created-before-parent-advance-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-10\\candidate\\trial-child-created-before-parent-advance-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 13556
+            },
+            "receiptSha256": "a844f47af6e28f30c6b8ad485f25864c979848f6b917d61172f1af537bf494f9"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-11\\matrix-run.json",
+      "sha256": "3aa92a37e2813a021cb04277a01aa86d7d48ca301b1bddbce039fde1e3d4f7ef",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 90171,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 54452,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-11\\candidate\\child-created-before-parent-advance-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-11\\candidate\\trial-child-created-before-parent-advance-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 13447
+            },
+            "receiptSha256": "23bd39f0d5e3cb498b84e9b38e15459309ed4a8340a5d5edc5dd9ab26991027c"
+          },
+          {
+            "arm": "candidate",
+            "windowId": "store-write-failure",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 31816,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-11\\candidate\\store-write-failure-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-11\\candidate\\trial-store-write-failure-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 119
+            },
+            "receiptSha256": "bae2bfffc83215760b58d1035dbd8e3ccda95195d0fb7028e65532cac2219c66"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-12\\matrix-run.json",
+      "sha256": "6cdb421956a6bbd00d2cf968cb6a3a73ef3eab0187ee082b5bb2fdc9a2479b0f",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 1,
+          "signal": null
+        },
+        "totalDurationMs": 148970,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "store-write-failure",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 39754,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-12\\candidate\\store-write-failure-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-12\\candidate\\trial-store-write-failure-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 384
+            },
+            "receiptSha256": "f53074fbc878c8deb8def88a1e8c2499a755d5a6c40945030074ab21c7808724"
+          },
+          {
+            "arm": "candidate",
+            "windowId": "store-write-failure",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "failed",
+            "elapsedMs": 95702,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-12\\candidate\\store-write-failure-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-12\\candidate\\trial-store-write-failure-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-13\\matrix-run.json",
+      "sha256": "343e8422100c6a19f9e863f8697125f0b36877e0b23e7b135bf31282c943a742",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 70992,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "store-write-failure",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 64798,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-13\\candidate\\store-write-failure-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-13\\candidate\\trial-store-write-failure-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 142
+            },
+            "receiptSha256": "6ca44865d5af8fef198a18b47ee9a4632bd6930efee2d963051a9702b3b94eaf"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-14\\matrix-run.json",
+      "sha256": "f93ee4b4ebd10281d18bf12e7f1e6e1faf290d8cfc77e937124944a5d9560526",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 313779,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "repeated-restart",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 164876,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-14\\candidate\\repeated-restart-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-14\\candidate\\trial-repeated-restart-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 92592
+            },
+            "receiptSha256": "dd3ef2540af979a3b178078494ea99b194b401009b8c01728b540f7b12c100ab"
+          },
+          {
+            "arm": "candidate",
+            "windowId": "repeated-restart",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 142147,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-14\\candidate\\repeated-restart-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-14\\candidate\\trial-repeated-restart-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 106507
+            },
+            "receiptSha256": "7cd615d004f185747c5266e64295a505725f601ecbf6665bc5a6ef8d75223143"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-15\\matrix-run.json",
+      "sha256": "ac6f2f98dc40a45b54f1f5148dbe3b3e251d2c61dbc33bbc5fe9379df20e87db",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 176591,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "repeated-restart",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 171733,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-15\\candidate\\repeated-restart-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-15\\candidate\\trial-repeated-restart-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 126936
+            },
+            "receiptSha256": "9c684586647024b55748b3e049461751476e122f04f622218dd852eda7846100"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-2\\matrix-run.json",
+      "sha256": "b6d86779596a8cf91b7bb36ee0c3e5827b77ae062dd3f60e3cd62855bdea83d1",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 75929,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 35161,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-2\\legacy\\store-write-failure-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-2\\legacy\\trial-store-write-failure-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 397
+            },
+            "receiptSha256": "9b50d14ee71733ce76c3dc801019c16dda7e5794a59ec8c4eb87be89e0c467e9"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 35453,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-2\\legacy\\store-write-failure-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-2\\legacy\\trial-store-write-failure-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 135
+            },
+            "receiptSha256": "ec450ef334fff54127dc421f1125c0d8c586d14a51f7ad32af616d09a5d21286"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-3\\matrix-run.json",
+      "sha256": "fcf421c32a2665f0c9f368e7cdfffebb18ec3065aca3ae2f3b19c810507dcf1e",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 148050,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 143407,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-3\\legacy\\repeated-restart-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-3\\legacy\\trial-repeated-restart-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 88331
+            },
+            "receiptSha256": "4fb5b744b56d6041eb0e6fefa861c4e04ee6bd517e294fa97e10e883e4767b45"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-4\\matrix-run.json",
+      "sha256": "6600acd26a0cb97bf4216c417784134f6125194b84e631d050196c674255b441",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 1,
+          "signal": null
+        },
+        "totalDurationMs": 317112,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "failed",
+            "elapsedMs": 131451,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-4\\legacy\\repeated-restart-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-4\\legacy\\trial-repeated-restart-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "failed",
+            "elapsedMs": 4,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-4\\legacy\\repeated-restart-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-4\\legacy\\trial-repeated-restart-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-5\\matrix-run.json",
+      "sha256": "fefe5e0a2a7e4e515ae5a2cbb43484a0875544fe279a55e088ac8eaf0e68c578",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 383565,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 374816,
+            "setupWaitMs": 90000,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-5\\legacy\\repeated-restart-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-5\\legacy\\trial-repeated-restart-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 203651
+            },
+            "receiptSha256": "13d964ab89a63878a8a02f416bec2f277664fdc8b455bb4a4d1f03d9a909dfc5"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-6\\matrix-run.json",
+      "sha256": "f383883c585d679d52b7f962638cc031e0d4a418d199e4b445dcdc75e0beefad",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 226744,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 133632,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-6\\legacy\\repeated-restart-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-6\\legacy\\trial-repeated-restart-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 94989
+            },
+            "receiptSha256": "f439ade25c1590237a8ef6b7eab9d4abc57a3d9d85749a096f531bcbee882468"
+          },
+          {
+            "arm": "candidate",
+            "windowId": "intent-after-persist-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 87611,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-6\\candidate\\intent-after-persist-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-6\\candidate\\trial-intent-after-persist-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 34702
+            },
+            "receiptSha256": "cb6b51f4815c1d7147114394aec99e298fab6c5e3e7686562e8741bc520492e6"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-7\\matrix-run.json",
+      "sha256": "9a56bf557b1ccbc5a0b2de56ab82e147fc142382fa8062798e92414e72718176",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 111407,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "intent-after-persist-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 105253,
+            "setupWaitMs": 15000,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-7\\candidate\\intent-after-persist-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-7\\candidate\\trial-intent-after-persist-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 39709
+            },
+            "receiptSha256": "97cdc3ea13002637f41f4d1fe371468b8b7440f7be5755a5b75f7093c0bbb98a"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-8\\matrix-run.json",
+      "sha256": "a4453ddb06ad753b3aef463d8b826e3d283b75e1da866a7f82e191e5aa888efc",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 147993,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "intent-after-persist-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 74951,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-8\\candidate\\intent-after-persist-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-8\\candidate\\trial-intent-after-persist-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 33567
+            },
+            "receiptSha256": "34013a858eba368c9d48c25ca61b558f4884c974738884064bda7f0071acc150"
+          },
+          {
+            "arm": "candidate",
+            "windowId": "effect-before-receipt-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 68323,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-8\\candidate\\effect-before-receipt-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-8\\candidate\\trial-effect-before-receipt-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 27996
+            },
+            "receiptSha256": "ceaa0156abc14354f7712e74d5a1ee989fda5ed0e69343cf2f91bc6dcc6edd0b"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-9\\matrix-run.json",
+      "sha256": "783e0e5d0e94237b9edf1b0ede861085121d3b4b3b66a5f23933911acc3d0c42",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 157022,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "candidate",
+            "windowId": "effect-before-receipt-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 87585,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-9\\candidate\\effect-before-receipt-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-9\\candidate\\trial-effect-before-receipt-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 32007
+            },
+            "receiptSha256": "37961af701f5cec4547c93ed9e1efbe34035c85c8e6760e2aad0d15940b27982"
+          },
+          {
+            "arm": "candidate",
+            "windowId": "effect-before-receipt-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 64906,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-9\\candidate\\effect-before-receipt-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\completion\\batch-9\\candidate\\trial-effect-before-receipt-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 19121
+            },
+            "receiptSha256": "d7be3451ab39c0ca9e2f0da28291caab26ece9ab03af9deea5764d4e5b06c069"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\matrix-run.json",
+      "sha256": "ecd087061e505239b5cd76a2bd1beee3bb31992152ecd60c343032b8c603a663",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 1,
+          "signal": null
+        },
+        "totalDurationMs": 2224930,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": 180000,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\intent-after-persist-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-intent-after-persist-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 33225
+            },
+            "receiptSha256": "61b37622028f713986c70eb15fafaa4c6b9c1d4144b4778d12595ef83c2a7059"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\intent-after-persist-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-intent-after-persist-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 31890
+            },
+            "receiptSha256": "884f1f734e3f5a747de0a36ff09afe71e75c8a22572fdc23436877241cb1cec4"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\intent-after-persist-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-intent-after-persist-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 35189
+            },
+            "receiptSha256": "e3f09c2ac3c2b2bf2608de2a9f043ea72b0148269d138545cc4418d144c682ef"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\effect-before-receipt-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-effect-before-receipt-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 37257
+            },
+            "receiptSha256": "7666fc42c110e5bd827a9f908082481461e51d9537c7dbe211a0c37328fa5337"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\effect-before-receipt-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-effect-before-receipt-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 169453
+            },
+            "receiptSha256": "b885368921e673da8d1bfd6b01ed215bd929f9ded559fb4ab6037e7b7ef7d1e1"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": 300000,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\effect-before-receipt-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-effect-before-receipt-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 70084
+            },
+            "receiptSha256": "f353269d33f386883878826da8629983a1ae8aa9232047e6d45ab81ef71e0e7c"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": 75000,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\child-created-before-parent-advance-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-child-created-before-parent-advance-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 29436
+            },
+            "receiptSha256": "085f36efec280d04babc6a592df054c44548b843833ae7c8258acfe4af90ba42"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\child-created-before-parent-advance-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-child-created-before-parent-advance-kill-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\child-created-before-parent-advance-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-child-created-before-parent-advance-kill-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\store-write-failure-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-store-write-failure-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\store-write-failure-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-store-write-failure-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\store-write-failure-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-store-write-failure-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\repeated-restart-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-repeated-restart-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\repeated-restart-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-repeated-restart-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\repeated-restart-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\legacy\\trial-repeated-restart-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "intent-after-persist-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\intent-after-persist-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-intent-after-persist-kill-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "intent-after-persist-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\intent-after-persist-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-intent-after-persist-kill-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "intent-after-persist-kill",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\intent-after-persist-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-intent-after-persist-kill-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "effect-before-receipt-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\effect-before-receipt-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-effect-before-receipt-kill-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "effect-before-receipt-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\effect-before-receipt-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-effect-before-receipt-kill-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "effect-before-receipt-kill",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\effect-before-receipt-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-effect-before-receipt-kill-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\child-created-before-parent-advance-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-child-created-before-parent-advance-kill-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\child-created-before-parent-advance-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-child-created-before-parent-advance-kill-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\child-created-before-parent-advance-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-child-created-before-parent-advance-kill-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "store-write-failure",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\store-write-failure-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-store-write-failure-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "store-write-failure",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\store-write-failure-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-store-write-failure-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "store-write-failure",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\store-write-failure-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-store-write-failure-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "repeated-restart",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\repeated-restart-0.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-repeated-restart-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "repeated-restart",
+            "index": 1,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\repeated-restart-1.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-repeated-restart-1.json",
+            "measurement": null,
+            "receiptSha256": null
+          },
+          {
+            "arm": "candidate",
+            "windowId": "repeated-restart",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "not-reported",
+            "elapsedMs": null,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\repeated-restart-2.log",
+            "receiptFile": "D:\\tmp\\recovery-window-observer-1909dfd0c-20261105\\candidate\\trial-repeated-restart-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-0\\matrix-run.json",
+      "sha256": "f39c5b04df9e8760a13c9b6b2fc3d2f6923a91bb7c9b63c02cd9f1f6d9d06e2c",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 1,
+          "signal": null
+        },
+        "totalDurationMs": 504187,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "failed",
+            "elapsedMs": 400511,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-0\\legacy\\intent-after-persist-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-0\\legacy\\trial-intent-after-persist-kill-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-1\\matrix-run.json",
+      "sha256": "fed723e284700c25a81023a6cc1f24f035754c4991334932861af86c4973a22a",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 376790,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 159652,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-1\\legacy\\intent-after-persist-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-1\\legacy\\trial-intent-after-persist-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 84175
+            },
+            "receiptSha256": "bb23f7baf94f8f85af0dd3eaa4a3af25eaf4d36fa452cf29c375fd89c69be74c"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 197295,
+            "setupWaitMs": 15000,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-1\\legacy\\intent-after-persist-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-1\\legacy\\trial-intent-after-persist-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 105704
+            },
+            "receiptSha256": "cf37a02c0f5df35901f578257a876e016331f496af7f8414a0fbd60eea9a0e8f"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-10\\matrix-run.json",
+      "sha256": "65521fbdc7f9eec1f031ba0a05e9345b42c00318994b101f008600e376d3f00f",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 1,
+          "signal": null
+        },
+        "totalDurationMs": 281837,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "failed",
+            "elapsedMs": 274745,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-10\\legacy\\repeated-restart-2.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-10\\legacy\\trial-repeated-restart-2.json",
+            "measurement": null,
+            "receiptSha256": null
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-2\\matrix-run.json",
+      "sha256": "7a72eb80ca37a46752034f120341042b075f888a9d1c517ed17d9cbe30d61daa",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 336661,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "intent-after-persist-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 327183,
+            "setupWaitMs": 150000,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-2\\legacy\\intent-after-persist-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-2\\legacy\\trial-intent-after-persist-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 113705
+            },
+            "receiptSha256": "008ae6caec418770f2f75d93870e091e0880d05ced5f9851c4aac2406f82d42e"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-3\\matrix-run.json",
+      "sha256": "e2979ba22595fcc3e72fb20eecb8b325e8e17ed405bc1f0ab179846cc8e52e97",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 290493,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 161836,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-3\\legacy\\effect-before-receipt-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-3\\legacy\\trial-effect-before-receipt-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 76287
+            },
+            "receiptSha256": "f89c4acef8ee9b89db4e07f38e0bbb4a0607d2ae0c7c828cde6ff87ac4dff883"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 120150,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-3\\legacy\\effect-before-receipt-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-3\\legacy\\trial-effect-before-receipt-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 58778
+            },
+            "receiptSha256": "82a1b206d9455a5bc239a050b3a1a3d3e167878be4c9c13983f6dc6eae22b1c8"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-4\\matrix-run.json",
+      "sha256": "53daf8dfd6e4f7ac86cba20aa966898d57c37712a759c8bca36cba8f58cc1439",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 334496,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "effect-before-receipt-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 199174,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-4\\legacy\\effect-before-receipt-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-4\\legacy\\trial-effect-before-receipt-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 92385
+            },
+            "receiptSha256": "5c5c436ac125ee987644eef7ba9bc3f069f805bc56f451037e196c7b23c0f802"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 129759,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-4\\legacy\\child-created-before-parent-advance-kill-0.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-4\\legacy\\trial-child-created-before-parent-advance-kill-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 41262
+            },
+            "receiptSha256": "0422c4f15f6d488df88ebedf7ab7c192d2d028441be6196d82170154b7868be3"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-5\\matrix-run.json",
+      "sha256": "e135b131e6a705e94ffc3a549fd39b0df7020c537b612def0c597301b4f41d52",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 114387,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 109113,
+            "setupWaitMs": 30000,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-5\\legacy\\child-created-before-parent-advance-kill-1.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-5\\legacy\\trial-child-created-before-parent-advance-kill-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 39698
+            },
+            "receiptSha256": "4776857f9d1f2052e32b9ad5b926c264423ee850dbe2476a3aa1467c3ebdca12"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-6\\matrix-run.json",
+      "sha256": "4a20419d09b9dc5efe020e39138c49b7a20cb0e4dd4fccc0dc157806a4776e62",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 200292,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "child-created-before-parent-advance-kill",
+            "index": 2,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 192742,
+            "setupWaitMs": 45000,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-6\\legacy\\child-created-before-parent-advance-kill-2.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-6\\legacy\\trial-child-created-before-parent-advance-kill-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": false,
+              "recoveryLatencyMs": 68135
+            },
+            "receiptSha256": "8c1d91e6c444726f33d2fb6bca56c093c118c829d422f7037542c088782a2427"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-7\\matrix-run.json",
+      "sha256": "4da799188e37e37c349049edbdfca1a632173f5db793eaeabbfda9d0b7bed3cc",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 69817,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 36642,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-7\\legacy\\store-write-failure-0.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-7\\legacy\\trial-store-write-failure-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 111
+            },
+            "receiptSha256": "c725fd68296c8f413f11ee0296957c8baeffc45309e5042e55724f9c47c63db7"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 27924,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-7\\legacy\\store-write-failure-1.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-7\\legacy\\trial-store-write-failure-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 88
+            },
+            "receiptSha256": "77942d20c3e1fada07230953866e7e7aae3bd5ad130ff5530c855ae2e4eb97e5"
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-8\\matrix-run.json",
+      "sha256": "b0391e4c6a7402d1099677dfd4fa3e5043690b49d357f6a62a9e83709861a7aa",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 1,
+          "signal": null
+        },
+        "totalDurationMs": 102361,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "store-write-failure",
+            "index": 2,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 25027,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-8\\legacy\\store-write-failure-2.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-8\\legacy\\trial-store-write-failure-2.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 97
+            },
+            "receiptSha256": "03e2c2bd2c7707a4d48ac9015a766830599859b4a882f6563fdfa5b965938164"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 0,
+            "exit": {
+              "code": 1,
+              "signal": null
+            },
+            "testStatus": "failed",
+            "elapsedMs": 72990,
+            "setupWaitMs": null,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-8\\legacy\\repeated-restart-0.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-8\\legacy\\trial-repeated-restart-0.json",
+            "measurement": null,
+            "receiptSha256": null
+          }
+        ]
+      }
+    },
+    {
+      "path": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-9\\matrix-run.json",
+      "sha256": "e1099037e2475d4f7d50dc4bd6d0edceccd175acb8bf95f6887da32db1046503",
+      "report": {
+        "schema": "RecoveryMatrixRun/v3",
+        "mode": "serial-worker-batch",
+        "runnerExit": {
+          "code": 0,
+          "signal": null
+        },
+        "totalDurationMs": 294795,
+        "driven_by": "agent",
+        "actor": "recovery-matrix-runner",
+        "realHumanEvidence": false,
+        "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+        "runs": [
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 0,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 114301,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-9\\legacy\\repeated-restart-0.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-9\\legacy\\trial-repeated-restart-0.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 79057
+            },
+            "receiptSha256": "fde4192d03856a3d822b00fdaca9ad4bffec66f370518fa338c5ddbde66150df"
+          },
+          {
+            "arm": "legacy",
+            "windowId": "repeated-restart",
+            "index": 1,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "testStatus": "passed",
+            "elapsedMs": 175348,
+            "setupWaitMs": 0,
+            "log": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-9\\legacy\\repeated-restart-1.log",
+            "receiptFile": "D:\\tmp\\recovery-baseline-repeat-1909dfd0c-20261105\\completion\\batch-9\\legacy\\trial-repeated-restart-1.json",
+            "measurement": {
+              "lostTasks": 0,
+              "duplicateEffects": 0,
+              "terminalCorrect": true,
+              "recoveryLatencyMs": 125877
+            },
+            "receiptSha256": "6751dd502f4abdc5ac2a58225a5a4e8920dc2f6c1ce35987460b13434ab1126f"
+          }
+        ]
+      }
+    }
+  ],
+  "withdrawnEpoch": {
+    "schema": "RecoveryMeasurementEpochDisposition/v1",
+    "candidate": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+    "quality": {
+      "retained": true,
+      "samples": 60,
+      "reason": "all fresh assistant identities, artifact hashes, questions and compaction boundaries independently verified"
+    },
+    "windows": {
+      "retainedForDiagnostics": true,
+      "formalUse": false,
+      "attempts": 13,
+      "reason": "post-injection observer timeout could abort without a receipt; affected matrix must be repeated without selecting successful outcomes"
+    },
+    "driven_by": "agent",
+    "actor": "recovery-observer-auditor",
+    "realHumanEvidence": false
+  },
+  "qualityStages": [
+    {
+      "name": "quality-candidate-handoff-0",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T03:59:46.489Z",
+      "elapsedMs": 337223,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\00-quality-candidate-handoff-0.log"
+    },
+    {
+      "name": "quality-candidate-fork-0",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T04:05:23.788Z",
+      "elapsedMs": 359164,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\01-quality-candidate-fork-0.log"
+    },
+    {
+      "name": "quality-candidate-compression-0",
+      "code": 1,
+      "signal": null,
+      "startedAt": "2026-11-05T04:11:22.983Z",
+      "elapsedMs": 293958,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\02-quality-candidate-compression-0.log"
+    },
+    {
+      "name": "quality-candidate-compression-1",
+      "code": 1,
+      "signal": null,
+      "startedAt": "2026-11-05T04:16:17.089Z",
+      "elapsedMs": 294318,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\03-quality-candidate-compression-1.log"
+    },
+    {
+      "name": "quality-candidate-compression-2",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T04:22:16.991Z",
+      "elapsedMs": 430224,
+      "setupWaitMs": 60000,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\04-quality-candidate-compression-2.log"
+    },
+    {
+      "name": "quality-candidate-revocation-0",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T04:29:27.239Z",
+      "elapsedMs": 235787,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\05-quality-candidate-revocation-0.log"
+    },
+    {
+      "name": "quality-candidate-restart-0",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T04:33:23.090Z",
+      "elapsedMs": 409763,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\06-quality-candidate-restart-0.log"
+    },
+    {
+      "name": "quality-legacy-handoff-0",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T04:41:13.138Z",
+      "elapsedMs": 244817,
+      "setupWaitMs": 60000,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\07-quality-legacy-handoff-0.log"
+    },
+    {
+      "name": "quality-legacy-fork-0",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T04:46:33.643Z",
+      "elapsedMs": 264921,
+      "setupWaitMs": 75000,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\08-quality-legacy-fork-0.log"
+    },
+    {
+      "name": "quality-legacy-compression-0",
+      "code": 1,
+      "signal": null,
+      "startedAt": "2026-11-05T04:59:50.620Z",
+      "elapsedMs": 128300,
+      "setupWaitMs": 525000,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\09-quality-legacy-compression-0.log"
+    },
+    {
+      "name": "quality-legacy-compression-1",
+      "code": 1,
+      "signal": null,
+      "startedAt": "2026-11-05T05:01:58.942Z",
+      "elapsedMs": 767761,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\10-quality-legacy-compression-1.log"
+    },
+    {
+      "name": "quality-legacy-revocation-0",
+      "code": 1,
+      "signal": null,
+      "startedAt": "2026-11-05T05:14:46.850Z",
+      "elapsedMs": 388113,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\11-quality-legacy-revocation-0.log"
+    },
+    {
+      "name": "quality-legacy-restart-0",
+      "code": 1,
+      "signal": null,
+      "startedAt": "2026-11-05T05:21:14.996Z",
+      "elapsedMs": 468292,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\12-quality-legacy-restart-0.log"
+    },
+    {
+      "name": "quality-legacy-restart-1",
+      "code": 1,
+      "signal": null,
+      "startedAt": "2026-11-05T05:29:03.333Z",
+      "elapsedMs": 690421,
+      "setupWaitMs": 0,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\13-quality-legacy-restart-1.log"
+    },
+    {
+      "name": "quality-legacy-restart-2",
+      "code": 0,
+      "signal": null,
+      "startedAt": "2026-11-05T05:42:05.958Z",
+      "elapsedMs": 89586,
+      "setupWaitMs": 90000,
+      "log": "D:\\tmp\\recovery-frozen-8137cdb2e-20261105\\14-quality-legacy-restart-2.log"
+    }
+  ],
+  "notes": [
+    "Controller exits and per-test statuses are separate; the aborted initial controller does not imply all its measured cases failed.",
+    "A pre-injection failure may rerun with fresh fixtures; no valid negative trial was replaced.",
+    "The disk-full K5 attempt remains environment-invalid with no invented metrics.",
+    "The final repeat K5 failure is retained as an incomplete, agent-derived reconstruction with original runner measurement=null; it was not rerun."
+  ],
+  "driven_by": "agent",
+  "actor": "recovery-attempt-auditor",
+  "realHumanEvidence": false
+}

@@ -1,5 +1,7 @@
 # Recovery Authority 五入口映射（TF-0713）
 
+> 2026-11-05源码复核：main-session已增加持久化run identity、边界digest和失败尝试预算；工具相位已收口到TaskFlow CAS，unknown进入quarantine。RecoveryAuthority仍只读shadow、其余四owner尚未接入。下文路径/行号与缺口表保留原研究commit的基线；当前15个源码锚点和差异见 [最终报告](FINAL-20261105.zh-CN.md) 与最终包source-audit.json。
+
 > 状态：研究 + 契约冻结；`driven_by: agent`，`actor: recovery-authority-agent`。  
 > 基线：`main@99c142fef`。  
 > 本文件只做源码映射、契约判断和收口建议，**不改变任何生产行为、默认值、产品锁或运行时开关**。  

@@ -1,13 +1,15 @@
 # 恢复契约的原始证据与报告
 
-driven_by: agent · actor: recovery-acceptance · realHumanEvidence: false
+`driven_by: agent` · `actor: recovery-evidence-auditor` · `realHumanEvidence: false`
 
-冻结契约仍为 recovery-contract-eval-manifest.json。旧探针与旧 user-input 质量评分已撤回验收资格；historical-readback-correction.json 保存更正，不用于当前候选通过声明。
+当前结论 **FAIL / NO-GO**，qualityClaimAllowed=false。冻结manifest未改；正式结论以 [2026-11-05最终证据](final-20261105/README.md) 为准，根目录report.json同步为最终candidate报告。
 
-最终干净候选运行入口为 scripts/recovery-contract-acceptance.mjs。它采集 legacy/candidate 两臂各 15 个真实进程故障窗口、30 个 live-provider 边界后新 assistant 答案，保留原始 receipt 和 artifact 哈希。所有已完成答案统一按 recovery-readback/v4 评分；preliminary 保留，JSON 格式合规独立列出。
+本包保留60个真实provider的边界后新assistant答案、30个主故障窗口，以及15次独立legacy复跑尝试（14完整、1注入后序列未完成）。每臂质量为120/120事实、30/30下一步、0错误完成/禁止事实泄漏；格式合规独立统计。主故障矩阵两臂dup/lost均0，终态正确率legacy60%、candidate100%；未归类比例40%→0。候选冻结P50=32007ms、P95=86786.4ms超过5000/15000ms。
 
-raw-evidence.json.gz 是可离线复算的原始证据包，不需要恢复 D 盘路径。读取器直接校验包内原始 bytes 的 SHA-256；改写原文或哈希即失效。
+源头与复算见source-index、bundle-index、comparison、baseline-repeat、attempt-inventory、source-audit、gates和offline-verification。343份artifact、105份receipt原文、442份metadata在raw-evidence.json.gz中按原bytes保留；不要求原始D盘case路径存在。基线结构只匹配12/15，TF-0711保持review_needed，不能引用旧“两轮完全一致”。
 
-复算命令：node --experimental-strip-types scripts/recovery-contract-eval.mjs --bundle harness/specs/fixtures/recovery-contract-eval/final-20261105/raw-evidence.json.gz --arm candidate --check
+隔离核验：两臂--verify退出0重现既有负面报告；--check退出1仍是验收失败。篡改副本的answer字节后被拒绝，原包哈希未变。
 
-总体 FAIL 的退出码为 1；不得放宽冻结时延门槛或删慢样本。Windows x64 的脚本 provider 验证效果边界，live provider 验证指定质量语料；accepted handoff 消费不证明自动摘要的提取质量。TF-0715 其他四入口与默认值发布决策仍独立。
+历史redispatch-proof.json、historical-readback-correction.json保留为开发过程记录。它们的旧窗口/旧user-input评分及独立execution_phases描述不用于当前通过声明；撤回原因在最终包的epoch-disposition与metadata中。
+
+TaskFlow已统一工具相位和生命周期写者；RecoveryAuthority仍是主会话只读shadow，生产决策仍经phase恢复器。TF-0715四个其他owner尚未接入，不能称五入口统一、通用external-effect exactly-once或GA。默认writer=legacy、shadow=off、event-log replay=false。

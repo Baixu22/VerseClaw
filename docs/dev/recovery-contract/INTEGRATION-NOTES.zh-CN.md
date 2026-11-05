@@ -1,5 +1,7 @@
 # 恢复契约集成分支（2026-11-04）
 
+> 本页是最初契约集成的历史记录。当前实现、真实故障/质量测量及NO-GO结论见 [2026-11-05最终报告](FINAL-20261105.zh-CN.md)。下文“当时没有接线/测量”及旧构建失败均不代表当前状态。
+
 > `driven_by: agent` · `actor: recovery-contract-integrator` · `realHumanEvidence: false`
 
 ## 这是什么
@@ -22,7 +24,7 @@
 - 真实恢复路径回归：`main-session-restart-recovery` **4/4 passed**，`.flow` **4/4 passed**。
 - 评分器行为：
   - 空样本 → `EVIDENCE_INSUFFICIENT`，9 指标全 `null`，`qualityClaimAllowed=false`。
-  - 完整样本 → `PASS`，`mustPreserveFidelity=1`、`duplicateEffects=0`、`P95=1168ms`。
+  - 纯函数的合成单测输入 → `PASS`、`P95=1168ms`；这是公式测试，不是实际运行时延或真实provider质量证据。
 
 ## 明确没有做的
 
