@@ -303,5 +303,22 @@
       ],
       "note": "63 Host facade/invoke and 8 actual Host client checks ran; the absent legacy filename was not counted as executed"
     }
-  ]
+  ],
+  "retainedTextNormalization": {
+    "operation": "normalize newlines and remove trailing whitespace from retained log copies",
+    "originalLogs": "D:/tmp/knowledge-convergence-20261105",
+    "changed": [
+      "build.txt",
+      "comms-compare.txt",
+      "comms-replay.txt",
+      "contract.txt",
+      "electron-e2e.txt",
+      "harness-dry-run.txt",
+      "harness-validate.txt",
+      "lint.txt",
+      "repository-retention.txt",
+      "task-forest-preclose.txt",
+      "typecheck.txt"
+    ]
+  }
 }

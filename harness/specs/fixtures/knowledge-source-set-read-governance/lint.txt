@@ -31,4 +31,3 @@ C:\Users\27933\.codex\worktrees\knowledge-read-governance-20261105\ClawX\electro
   5894:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ✖ 29 problems (0 errors, 29 warnings)
-
