@@ -1670,11 +1670,12 @@ describe('knowledge host API', () => {
     await expect(api.listDrafts({ status: 'all' })).resolves.toMatchObject({ drafts: [] });
     const result = await api.createArtifactDraft({
       artifactType: 'summary', sourceRefs: [{ id: 'notes/active.md', kind: 'wiki', path: 'notes/active.md' }, archived],
-      metadata: { groundingStatus: 'grounded', rejections: [], sourceSetEvidence: [] },
+      metadata: { groundingStatus: 'grounded', rejections: [], sourceSetEvidence: [], driven_by: 'real-human', actor: 'publisher' },
     });
     expect(result.success).toBe(true);
     expect(result.draft?.sourceRefs).toEqual([expect.objectContaining({ id: 'notes/active.md', revision: '19' })]);
     expect(result.draft?.metadata).toMatchObject({
+      driven_by: 'agent', actor: 'knowledge-source-set',
       groundingStatus: 'partial', rejections: [expect.objectContaining({ reason: 'archived' })],
       sourceSetEvidence: [expect.objectContaining({ citation: expect.objectContaining({ revision: '19' }) })],
     });

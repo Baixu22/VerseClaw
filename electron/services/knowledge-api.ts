@@ -4328,6 +4328,8 @@ export function createKnowledgeApi({
         createdBy: 'agent',
         metadata: {
           ...(isRecord(body.metadata) ? body.metadata : {}),
+          driven_by: 'agent',
+          actor: 'knowledge-source-set',
           knowledgeKind: 'studio-artifact',
           artifactType,
           groundingStatus: answer.groundingStatus,
