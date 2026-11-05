@@ -1,0 +1,234 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0282-s07",
+  "source": {
+    "id": "tf-0282-s07",
+    "base": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+    "reference": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+    "productChanges": [
+      "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts"
+    ],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/s07-acceptance.json",
+    "sourceRecordDigest": "e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb",
+    "oraclePaths": [
+      "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts",
+      "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+    ],
+    "commands": [
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0282-s07",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/runtime-core/verifier-completion-verdict.test.ts",
+            "src/runtime-core/evidence-verifier.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793854364526,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793854364526,
+                "endTime": 1793854364526,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793854364526,
+                "endTime": 1793854364526,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleHashAfter": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md": "aa86ff9ae1f449e89e3597f9acd639c36554c5b60e6038d73c829a30598043a9",
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts": "5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434",
+        "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts": "b73715370d0bd11afea7a3b0d5561267bf2edbd88bc38c9031d135ed4b4cbb2e"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0282-s07",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/verifier-completion-verdict.test.ts src/runtime-core/evidence-verifier.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/runtime-core/verifier-completion-verdict.test.ts",
+            "src/runtime-core/evidence-verifier.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793854413031,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793854413031,
+                "endTime": 1793854413031,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793854413031,
+                "endTime": 1793854413031,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0282-s07/baseline/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleHashAfter": "6fdc6e0e0924233ac6e1ce9f23d07ad4562c681fb6676f3162f9b6ed8f280ebc",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md": "aa86ff9ae1f449e89e3597f9acd639c36554c5b60e6038d73c829a30598043a9",
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts": "5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434",
+        "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts": "b73715370d0bd11afea7a3b0d5561267bf2edbd88bc38c9031d135ed4b4cbb2e"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0282-s07\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "reference-oracle-not-passing",
+      "baseline-has-no-gradeable-failure"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

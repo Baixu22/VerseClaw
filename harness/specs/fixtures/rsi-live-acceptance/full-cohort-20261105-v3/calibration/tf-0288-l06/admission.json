@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0288-l06",
+  "source": {
+    "id": "tf-0288-l06",
+    "base": "4afa1e94a73f200a29713566b5759b92a115f70a",
+    "reference": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+    "productChanges": [
+      "openclaw_runtime/src/agents/hot-file-write-owner.ts"
+    ],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/l06-acceptance.json",
+    "sourceRecordDigest": "17682ec3f46b3f3d0ac6d8469bcd9fc3a97f95c5e0eea7dbcf99ac4a16400272",
+    "oraclePaths": [
+      "openclaw_runtime/src/agents/hot-file-write-owner.test.ts"
+    ],
+    "commands": [
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/hot-file-write-owner.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0288-l06",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/hot-file-write-owner.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/hot-file-write-owner.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/hot-file-write-owner.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793853670347,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793853670347,
+                "endTime": 1793853670347,
+                "status": "failed",
+                "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0288-l06/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0288-l06/reference/workspace/openclaw_runtime/src/agents/hot-file-write-owner.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "fbf7b07f0b4ab896b96170f00f4ebedbf3e70c178452a8bb5dcdf2826ecc8464",
+      "oracleHashAfter": "fbf7b07f0b4ab896b96170f00f4ebedbf3e70c178452a8bb5dcdf2826ecc8464",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-hot-file-write-owner.md": "ae28580153e0ef4234d46d0914d5331538193f73307f23bac1bb13ddad587729",
+        "openclaw_runtime/src/agents/hot-file-write-owner.test.ts": "bf3c201357685b4b5ec464bbbb7bd3ff48ebcc3eab63de8c2a655780c2f91451"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0288-l06",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/hot-file-write-owner.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/hot-file-write-owner.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/hot-file-write-owner.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793853722536,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793853722536,
+                "endTime": 1793853722536,
+                "status": "failed",
+                "message": "Cannot find module './hot-file-write-owner.js' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0288-l06/baseline/workspace/openclaw_runtime/src/agents/hot-file-write-owner.test.ts",
+                "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0288-l06/baseline/workspace/openclaw_runtime/src/agents/hot-file-write-owner.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "timeoutMs": 180000,
+      "oracleHashBefore": "fbf7b07f0b4ab896b96170f00f4ebedbf3e70c178452a8bb5dcdf2826ecc8464",
+      "oracleHashAfter": "fbf7b07f0b4ab896b96170f00f4ebedbf3e70c178452a8bb5dcdf2826ecc8464",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-hot-file-write-owner.md": "ae28580153e0ef4234d46d0914d5331538193f73307f23bac1bb13ddad587729",
+        "openclaw_runtime/src/agents/hot-file-write-owner.test.ts": "bf3c201357685b4b5ec464bbbb7bd3ff48ebcc3eab63de8c2a655780c2f91451"
+      },
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "openclaw_runtime/src/agents/hot-file-write-owner.js",
+          "importer": "openclaw_runtime/src/agents/hot-file-write-owner.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v3\\calibration\\tf-0288-l06\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "reference-oracle-not-passing"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

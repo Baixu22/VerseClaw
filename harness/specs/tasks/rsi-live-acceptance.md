@@ -61,7 +61,7 @@ oracle files must remain hidden and pinned. If the current oracle cannot grade
 its historical reference, report the exact calibration mismatch and do not
 convert that mismatch into evidence of model or RSI quality.
 
-A task-ready package is still NO_GO until a passing provider preflight exists. Independent test execution uses
+A task-ready package is still NO_GO until a passing provider preflight exists. The 2026-11-05 full cohort readback is `harness/specs/fixtures/rsi-live-acceptance/full-cohort-20261105-v3/`: 24 calibrated, 6 admitted, 18 rejected and 216 slots not-run. Independent test execution uses
 a fresh local workspace and sanitized environment; it is not an OS-level sandbox
 or packaged desktop acceptance. A NO_GO is a completed admission decision, not a
 completed RSI benefit measurement. Subject execution and confirmed candidate

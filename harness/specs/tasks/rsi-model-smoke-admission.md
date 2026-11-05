@@ -14,6 +14,7 @@ touchedAreas:
   - harness/specs/tasks/rsi-live-acceptance.md
   - harness/specs/tasks/rsi-model-smoke-admission.md
   - harness/specs/fixtures/rsi-model-diagnostic/**
+  - harness/specs/fixtures/rsi-live-acceptance/full-cohort-20261105-v3/**
   - docs/dev/rsi-capability-and-boundaries.md
 requiredProfiles:
   - rsi
@@ -29,6 +30,7 @@ expectedUserBehavior:
   - One real space-bunny task smoke can exercise the provider, edit application and oracle path without being counted as a 216-slot benefit trial.
 requiredTests:
   - pnpm exec vitest run tests/unit/rsi-live-acceptance.test.ts tests/unit/rsi-live-grader.test.ts --maxWorkers=1
+  - node scripts/rsi-live-acceptance.mjs check --run-dir harness/specs/fixtures/rsi-live-acceptance/full-cohort-20261105-v3
   - node scripts/rsi-live-acceptance.mjs calibrate --run-dir D:/tmp/rsi-model-test-20261105-v2 --task-id tf-0291-g03 --timeout-ms 180000
   - node scripts/rsi-live-acceptance.mjs calibrate --run-dir D:/tmp/rsi-model-test-20261105-v2 --task-id tf-0284-l02 --timeout-ms 180000
   - pnpm harness validate --spec harness/specs/tasks/rsi-model-smoke-admission.md
@@ -39,6 +41,7 @@ acceptance:
   - G03 and L02 calibrate with reference pass, baseline not pass, and `baseline-target-module-absent` warning.
   - A live space-bunny G03 smoke produces only target-scope edits, leaves the oracle unchanged, and passes 6/6 tests.
   - The smoke is explicitly white-box and not benefit eligible because only one task is run, no k=3/216 plan is executed, and a public interface contract derived from the task contract was supplied.
+  - The full-cohort portable pack records 24 calibrated tasks, 6 admitted, 18 rejected, 216 not-run slots and a NO_GO status; its compact oracle reports and hashes pass independent readback.
   - No product default, product lock, approval, permission, real-human claim or benefit claim changes.
 docs:
   required: true
