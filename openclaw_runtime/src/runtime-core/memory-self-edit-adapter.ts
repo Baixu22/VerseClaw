@@ -10,7 +10,7 @@
  *   - 门控: runtime.memory.persist 关闭时返回 [] (与 memory_query 一致)。
  *     self-edit 是「持久记忆」的编辑面, 依赖 persist=true 是显式决策:
  *     没有 SQLite 语料库时注册这些工具只会产生假成功。
- *   - store 来源: integration.loadStore() (30s TTL 缓存同源)
+ *   - store 来源: integration.loadStore()，每次重载；与 query 共用 owner revision 检查
  *   - 写操作 (update/forget) 通过 integration.invalidateFact / appendFact /
  *     persistRelation 回放落库; strengthen 通过 integration.recordFactAccess
  *     写 runtime_memory_fact_usage。持久化失败一律返回 ok:false (fail-closed),
@@ -23,6 +23,7 @@ import type { AnyAgentTool } from "../agents/tools/common.js";
 import { payloadTextResult } from "../agents/tools/common.js";
 import { runtimeMemoryFlagEnabled } from "./memory-context.js";
 import { createRuntimeMemoryRuntimeIntegration } from "./memory-runtime-integration.js";
+import { observeMemoryReadFreshness } from "./memory-pre-reply-injection.js";
 import {
   executeMemorySelfEditTool,
   type MemorySelfEditToolContext,
@@ -112,10 +113,13 @@ export function createMemorySelfEditTools(options: {
     return [];
   }
 
-  const resolveContext = (): MemorySelfEditToolContext => {
+  const resolveContext = () => {
     const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
-    const { store } = integration.loadStore();
-    return { store, persistence: integration };
+    const result = integration.loadStore();
+    if (result.status !== "loaded") throw new Error(`Memory load skipped (${result.reason}).`);
+    const context: MemorySelfEditToolContext = { store: result.store, persistence: integration };
+    return { context, integration, freshness: observeMemoryReadFreshness(integration,
+      result.readSnapshot ?? { loadedAt: Date.now(), sourceRevision: null }) };
   };
 
   return TOOL_DEFS.map((def) => ({
@@ -126,9 +130,12 @@ export function createMemorySelfEditTools(options: {
     displaySummary: def.description.split(".")[0] ?? def.label,
     async execute(_toolCallId, params) {
       try {
-        const context = resolveContext();
-        const result = await executeMemorySelfEditTool(def.name, params, context);
-        return payloadTextResult(result);
+        const { context, integration, freshness } = resolveContext();
+        const args = params as Record<string, unknown>;
+        // The agent schema calls this field `object`; the store handler uses `objectSummary`.
+        const input = def.name === "memory_update" ? { ...args, objectSummary: args.object } : args;
+        const result = await executeMemorySelfEditTool(def.name, input, context);
+        return payloadTextResult({ ...result, freshness: observeMemoryReadFreshness(integration, freshness) });
       } catch (error) {
         return payloadTextResult({
           ok: false,

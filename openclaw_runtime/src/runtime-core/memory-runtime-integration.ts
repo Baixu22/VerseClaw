@@ -49,6 +49,7 @@ function requirePersisted(result: RuntimeMemoryFactWriteResult | RuntimeMemoryPe
 export type RuntimeMemoryRuntimeIntegrationPort = {
   /** Required for multi-write mutations; missing support rejects before effects. */
   runAtomic?<T>(operation: () => T): T;
+  getReadRevision?(): string | undefined;
   migrate(): RuntimeMemoryPersistenceMigrationResult;
   appendEpisode(
     episode: RuntimeMemoryEpisodeRecord,
@@ -258,6 +259,11 @@ export class RuntimeMemoryRuntimeIntegration {
       };
     }
     return this.#persistence.loadStore();
+  }
+
+  getReadRevision(): string | undefined {
+    if (!this.persistEnabled()) return undefined;
+    return this.#persistence.getReadRevision?.();
   }
 
   private persistEnabled(): boolean {

@@ -62,3 +62,11 @@ The model-facing projection contains accepted keys whose owner gate and injectio
 恢复前的 self-edit 与 AUDN curation 使用既有存储 owner 的同步事务：SQLite 复用同一连接及嵌套 savepoint，内存 store 在失败时恢复事实、失效记录、关系、使用计数与容量淘汰状态。新事实、旧事实失效与关系写入中任一步抛错、rejected 或 skipped，均中止更新；不具备原子接口的显式端口在写入前拒绝。
 
 DELETE 在失效写入提交后返回 applied/persisted=true，重复删除返回 already_applied；缺失目标拒绝，禁用路径仍 skipped/flag_disabled。此处不启用已退役的 persist；SQLite 故障注入仅在隔离测试进程模拟标志解析。README en/zh/ja 已审阅，产品可用性与用户流程未变化。
+
+## 读取新鲜度（TF-0743）
+
+恢复前的 memory_query 保留 30 秒缓存复用上限，每次复用先核对同一 SQLite owner 的不透明 revision。revision 同时观察连接内写入和其他连接的提交，包含连接身份，不是跨连接可比较的全局序号。owner 在最外层事务提交后通知进程内缓存失效；回滚不发送提交事件。facts 与派生检索索引同时失效，避免原 fact ID/时间不变的外部编辑仍复用旧索引。
+
+query 和每次重载的 self-edit 入口均返回 loadedAt、sourceRevision、scope、stale。快照 revision 在读取数据的同一事务中采集；异步检索结束时再次核对，提交与读取竞争时明确 stale。缺失 revision 的注入端口与未提交事务不声称 fresh。scope=sqlite-connection-snapshot 只表示所观察的读边界，不能保证返回后另一进程不会再写入。元数据表更新可能保守地使 revision 变化，宁可重新加载，也不把它解释为新增事实。
+
+此节点还对齐现有 agent schema 的 object 参数与内部 handler 的 objectSummary 字段，保持工具输入语义。所有路径继续受 TF-0500 的 persist=false 退役门禁约束；跨进程验证使用隔离 SQLite 与自动退出的 Node 子进程，属于 agent 驱动的恢复前证据。

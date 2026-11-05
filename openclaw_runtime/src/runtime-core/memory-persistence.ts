@@ -11,7 +11,7 @@ import {
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
-import { runSqliteImmediateTransactionWithRetrySync } from "../infra/sqlite-transaction.js";
+import { isSqliteTransactionActive, runSqliteImmediateTransactionWithRetrySync } from "../infra/sqlite-transaction.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
   openOpenClawStateDatabase,
@@ -62,6 +62,30 @@ export const RUNTIME_MEMORY_PERSISTENCE_SCHEMA_VERSION = 1;
 export const RUNTIME_MEMORY_PERSISTENCE_META_KEY = "runtime-memory";
 
 const logger = createSubsystemLogger("runtime-memory");
+
+const memoryChangeListeners = new Set<() => void>();
+const readConnectionIds = new WeakMap<DatabaseSync, number>();
+let nextReadConnectionId = 0;
+
+/** Process-local committed changes; a bridge may subscribe without owning a store. */
+export function subscribeRuntimeMemoryChanges(listener: () => void): () => void {
+  memoryChangeListeners.add(listener);
+  return () => { memoryChangeListeners.delete(listener); };
+}
+
+function sqliteChanges(db: DatabaseSync): number {
+  return Number((db.prepare("SELECT total_changes() AS changes").get() as { changes: number }).changes);
+}
+
+function memoryReadRevision(db: DatabaseSync): string {
+  let connection = readConnectionIds.get(db);
+  if (connection === undefined) {
+    connection = ++nextReadConnectionId;
+    readConnectionIds.set(db, connection);
+  }
+  const { data_version: version } = db.prepare("PRAGMA data_version").get() as { data_version: number };
+  return `${connection}:${version}:${sqliteChanges(db)}`;
+}
 
 export type RuntimeMemoryPersistenceOpenDatabase = (
   options?: OpenClawStateDatabaseOptions,
@@ -158,6 +182,7 @@ export type RuntimeMemoryPersistenceLoadResult =
   | {
       status: "loaded";
       store: RuntimeMemoryStore;
+      readSnapshot?: { loadedAt: number; sourceRevision: string };
       stats: {
         episodes: number;
         facts: number;
@@ -650,6 +675,14 @@ export class RuntimeMemoryPersistenceStore {
     };
   }
 
+  /** Opaque connection-scoped token: local writes plus commits by other connections. */
+  getReadRevision(): string | undefined {
+    if (!this.persistEnabled()) return undefined;
+    const { db } = this.#transactionDatabase ?? this.#openDatabase(this.#databaseOptions);
+    if (isSqliteTransactionActive(db)) return undefined;
+    return memoryReadRevision(db);
+  }
+
   /** Nested writes stay on the same owner connection and use existing savepoints. */
   runAtomic<T>(operation: () => T): T {
     if (!this.persistEnabled()) throw new Error("persistence skipped (flag_disabled)");
@@ -841,6 +874,9 @@ export class RuntimeMemoryPersistenceStore {
       return {
         status: "loaded",
         store,
+        // Capture the token under the same transaction as the rows. Sampling
+        // only after COMMIT could attach a newer revision to an older snapshot.
+        readSnapshot: { loadedAt: this.#now(), sourceRevision: memoryReadRevision(db) },
         stats: {
           episodes: store.stats().episodes,
           facts: store.stats().facts,
@@ -858,10 +894,20 @@ export class RuntimeMemoryPersistenceStore {
     operation: (database: RuntimeMemoryPersistenceDatabaseHandle) => T,
   ): T {
     const database = this.#transactionDatabase ?? this.#openDatabase(this.#databaseOptions);
-    return runSqliteImmediateTransactionWithRetrySync(database.db, () => {
+    const nested = this.#transactionDatabase !== undefined || isSqliteTransactionActive(database.db);
+    const before = sqliteChanges(database.db);
+    const result = runSqliteImmediateTransactionWithRetrySync(database.db, () => {
       ensureRuntimeMemoryPersistenceSchema(database.db, this.#now());
       return operation(database);
     });
+    // Nested savepoints are not durable. Publish only after the outer commit;
+    // observer failures must never make a committed write appear to have failed.
+    if (!nested && sqliteChanges(database.db) !== before) {
+      for (const listener of memoryChangeListeners) {
+        try { listener(); } catch { /* Cache observers are best-effort. */ }
+      }
+    }
+    return result;
   }
 }
 

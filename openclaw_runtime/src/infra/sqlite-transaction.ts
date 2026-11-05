@@ -6,6 +6,11 @@ const logger = createSubsystemLogger("runtime-memory");
 
 const transactionDepthByDatabase = new WeakMap<DatabaseSync, number>();
 
+/** The shared depth also covers Node 22, before DatabaseSync.isTransaction existed. */
+export function isSqliteTransactionActive(db: DatabaseSync): boolean {
+  return (transactionDepthByDatabase.get(db) ?? 0) > 0 || db.isTransaction === true;
+}
+
 const RETRYABLE_COMMIT_ERROR_CODES = new Set(["SQLITE_BUSY", "SQLITE_LOCKED"]);
 const MAX_COMMIT_ATTEMPTS = 8;
 const MAX_BEGIN_ATTEMPTS = 8;

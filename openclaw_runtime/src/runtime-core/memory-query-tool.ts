@@ -7,7 +7,7 @@
  * 设计:
  *   - 复用 hybridSearchFactsWithEmbedding (BM25 + 实体 RRF)
  *   - 使用 NO_EMBEDDING_PROVIDER 降级为 BM25 + 3-gram TF-IDF, 延迟 < 10ms
- *   - 复用 loadCompassFacts 的 30s TTL 缓存
+ *   - 复用 revision 检查的 30s facts 缓存，报告快照范围与 stale
  *   - 受 runtime.memory.persist 门控 (persist 关闭时 factory 返回 null)
  *
  * 与 memory-self-edit-tools.ts 的区别:
@@ -26,9 +26,12 @@ import {
 import { NO_EMBEDDING_PROVIDER } from "./memory-embedding-provider.js";
 import { runtimeMemoryFlagEnabled } from "./memory-context.js";
 import {
-  loadCompassFacts,
+  loadCompassFactsSnapshot,
+  observeMemoryReadFreshness,
   resolveCompassConfig,
+  type MemoryReadFreshness,
 } from "./memory-pre-reply-injection.js";
+import { createRuntimeMemoryRuntimeIntegration } from "./memory-runtime-integration.js";
 
 // === Tool Schema ===
 
@@ -65,6 +68,7 @@ interface MemoryQueryResult {
   message: string;
   count: number;
   facts: MemoryQueryFactItem[];
+  freshness?: MemoryReadFreshness;
 }
 
 // === Tool Factory ===
@@ -125,14 +129,14 @@ export function createMemoryQueryTool(options: {
       );
       const subjectFilter = args.subject?.trim() || undefined;
 
-      // 加载 facts 语料库 (复用 30s TTL 缓存)
-      const facts = loadCompassFacts(cfg);
+      const { facts, freshness } = loadCompassFactsSnapshot(cfg);
       if (facts.length === 0) {
         return payloadTextResult({
           ok: false,
           message: "Memory store is empty or not enabled.",
           count: 0,
           facts: [],
+          freshness,
         } satisfies MemoryQueryResult);
       }
 
@@ -154,6 +158,7 @@ export function createMemoryQueryTool(options: {
           message: `Found ${factItems.length} fact(s) matching "${queryText}".`,
           count: factItems.length,
           facts: factItems,
+          freshness: observeMemoryReadFreshness(createRuntimeMemoryRuntimeIntegration({ config: cfg }), freshness),
         };
         return payloadTextResult(result);
       } catch (err) {
@@ -162,6 +167,7 @@ export function createMemoryQueryTool(options: {
           message: `Memory query failed: ${String(err)}`,
           count: 0,
           facts: [],
+          freshness: observeMemoryReadFreshness(createRuntimeMemoryRuntimeIntegration({ config: cfg }), freshness),
         } satisfies MemoryQueryResult);
       }
     },
