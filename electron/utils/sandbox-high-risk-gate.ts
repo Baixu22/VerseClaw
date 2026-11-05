@@ -55,6 +55,8 @@ export function classifyGatewayMethodForSandboxGate(
   if (!normalized) return null;
   if (CRON_METHOD_RE.test(normalized)) return 'cron';
   if (BROWSER_METHOD_RE.test(normalized)) return 'browser';
+  // This refs-only RPC still executes the frozen shell check in its owner.
+  if (normalized === 'task_loop.verifyCompletion') return 'exec';
   if (EXEC_METHOD_RE.test(normalized)) return 'exec';
   return null;
 }

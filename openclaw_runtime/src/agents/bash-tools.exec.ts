@@ -1751,6 +1751,7 @@ export function createExecTool(
         const rawWorkdir = explicitWorkdir ?? defaultWorkdir ?? process.cwd();
         workdir = resolveWorkdir(rawWorkdir, warnings);
       }
+      await defaults?.onProcessStarting?.({ command: params.command, workdir, host });
       rejectUnsafeControlShellCommand(params.command);
 
       const inheritedBaseEnv = coerceEnv(process.env);
@@ -2083,6 +2084,8 @@ export function createExecTool(
         // Async preflight/arming can finish after the caller has cancelled.
         signal?.throwIfAborted();
         run = await runExecProcess({
+          beforeSpawn: defaults?.onProcessStarting
+            ? () => defaults.onProcessStarting!({ command: params.command, workdir, host }) : undefined,
           command: params.command,
           execCommand: execCommandOverride,
           executionPlan: executionPlan ?? preResolvedVerseShellPlan,
@@ -2320,7 +2323,8 @@ export function createExecTool(
         }
 
         run.promise
-          .then((outcome) => {
+          .then(async (outcome) => {
+            await defaults?.onProcessCompleted?.({ session: run.session, outcome, permissionEffect });
             cleanupToolRunListeners();
             if (yielded || run.session.backgrounded) {
               return;

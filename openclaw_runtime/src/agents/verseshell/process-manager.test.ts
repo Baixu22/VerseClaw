@@ -223,6 +223,32 @@ describe("typed ACI framing", () => {
 });
 
 describe("VerseShellProcessManager", () => {
+  it("checks the current owner after a request waits in the client queue", async () => {
+    let firstRequest: Request | undefined;
+    let observeFirst!: () => void;
+    const sent = new Promise<void>(resolve => { observeFirst = resolve; });
+    const h = harness((request, child) => {
+      if (request.op === 'runtime.handshake') child.respond(request, { data: handshakeData(baseConfig()) });
+      else if (!firstRequest) { firstRequest = request; observeFirst(); }
+      else child.respond(request);
+    });
+    managers.push(h.manager);
+    const config = { ...baseConfig(), maxConcurrency: 1 };
+    h.setConfig(config);
+    const client = await h.manager.getClient(config);
+    const first = client.execute('file.view', { path: 'fixture' });
+    await sent;
+    let allowed = true;
+    const second = client.execute('process.start', { argv: ['fixture'] }, { effectful: true,
+      beforeDispatch: () => { if (!allowed) throw new Error('session stopped while queued'); },
+    });
+    const outcome = second.then(() => null, error => error);
+    allowed = false;
+    h.children[0].respond(firstRequest!);
+    await first;
+    expect(await outcome).toMatchObject({ message: expect.stringContaining('session stopped while queued') });
+    expect(h.children[0].requests.filter(request => request.op === 'process.start')).toHaveLength(0);
+  });
   it("uses handshake data, JSON mode, non-permissive policy, and one comma-separated --cap", async () => {
     const h = harness();
     managers.push(h.manager);

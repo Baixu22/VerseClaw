@@ -755,6 +755,8 @@ function wrapPosixCommandWithPathPrepend(
 
 /** Starts a host or sandbox exec process and registers it for polling/backgrounding. */
 export async function runExecProcess(opts: {
+  /** Host-only fresh owner check at each actual executor admission boundary. */
+  beforeSpawn?: () => void;
   command: string;
   // Execute this instead of `command` (which is kept for display/session/logging).
   // Used to sanitize safeBins execution while preserving the original user input.
@@ -1076,7 +1078,9 @@ export async function runExecProcess(opts: {
           },
           "verseshell-spawn",
         );
+        await opts.beforeSpawn?.();
         const lifecycle = await startGovernedVerseShellProcess({
+          beforeDispatch: opts.beforeSpawn,
           command: execCommand,
           executionPlan: resolvedExecutionPlan,
           cwd: opts.workdir,
@@ -1231,7 +1235,9 @@ export async function runExecProcess(opts: {
       "verseshell-spawn",
     );
     try {
+      await opts.beforeSpawn?.();
       const vsResult = await verseshellExec(execCommand, {
+        beforeDispatch: opts.beforeSpawn,
         timeoutMs,
         cwd: opts.workdir,
       });
@@ -1346,6 +1352,7 @@ export async function runExecProcess(opts: {
     let durableHandle: DurableHelperSpawnHandle;
     try {
       durableHandle = await spawnDurableHelperProcess({
+        beforeSpawn: opts.beforeSpawn,
         runId: opts.durableHelper.runId,
         rootDir: opts.durableHelper.rootDir,
         nonce: opts.durableHelper.nonce,
@@ -1517,7 +1524,9 @@ export async function runExecProcess(opts: {
     "exec-spawn",
   );
   try {
+    await opts.beforeSpawn?.();
     const spawnBase = {
+      beforeSpawn: opts.beforeSpawn,
       runId: sessionId,
       sessionId: opts.sessionKey?.trim() || sessionId,
       backendId: opts.sandbox ? "exec-sandbox" : "exec-host",
@@ -1555,8 +1564,12 @@ export async function runExecProcess(opts: {
       );
       opts.warnings.push(warning);
       usingPty = false;
+      const releaseRetryPermit = acquireSessionAdmissionPermit({ agentId: opts.agentId,
+        canonicalSessionKey: lifecycleCanonicalSessionKey, expectedSessionId: lifecycleExpectedSessionId }, 'exec-spawn');
       try {
+        await opts.beforeSpawn?.();
         managedRun = await supervisor.spawn({
+          beforeSpawn: opts.beforeSpawn,
           runId: sessionId,
           sessionId: opts.sessionKey?.trim() || sessionId,
           backendId: "exec-host",
@@ -1596,6 +1609,8 @@ export async function runExecProcess(opts: {
           recoveryState: "runtime-error",
         });
         throw retryErr;
+      } finally {
+        releaseRetryPermit();
       }
     } else {
       markExited(session, null, null, "failed");

@@ -169,7 +169,7 @@ describe("stopSessionRuntime", () => {
       target,
       entry,
     });
-    expect(result).toEqual({ ok: true, key: identity.canonicalSessionKey });
+    expect(result).toEqual({ ok: true, key: identity.canonicalSessionKey, sessionId: identity.expectedSessionId });
     expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
   });
 

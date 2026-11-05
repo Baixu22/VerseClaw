@@ -129,6 +129,7 @@ type ImmutableProcessConfig = Readonly<{
 }>;
 
 type RequestEntry = {
+  beforeDispatch?: () => void;
   id: string;
   op: string;
   args: JsonObject;
@@ -516,6 +517,7 @@ class ManagedAciProcess implements AciTransport {
         timer,
         sent: false,
         retryable: opts.retryable === true,
+        beforeDispatch: opts.beforeDispatch,
         retryCount: 0,
       };
       this.queue.push(entry);
@@ -783,6 +785,7 @@ class ManagedAciProcess implements AciTransport {
       budget: { max_tokens: 4_000 },
     });
     try {
+      entry.beforeDispatch?.();
       this.child.stdin.write(`${request}\n`, "utf8");
     } catch (error) {
       this.pending.delete(entry.id);
@@ -791,6 +794,7 @@ class ManagedAciProcess implements AciTransport {
         entry,
         new AciTransportError("E_ACI_WRITE", `VerseShell write failed: ${String(error)}`, error),
       );
+      this.drainQueue();
     }
   }
 

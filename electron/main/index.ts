@@ -72,6 +72,7 @@ import { stopAllOfficeWatches } from '../services/office-tools-api';
 import { disposeVtokenBridge } from '../services/vtoken-api';
 import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
 import { appendTaskLedgerEvents } from '../services/task-ledger-service';
+import { projectTaskLoopTaskStatus, projectTaskLoopTaskProgress } from '../../shared/task-ledger-completion';
 import type { TaskLedgerEventInput, TaskLedgerNodeStatus } from '../../shared/types/task-ledger';
 import type { ClawGraphRunEvent, ClawGraphRunSnapshot } from '../../shared/types/clawgraph';
 import type {
@@ -238,12 +239,6 @@ function longConversationControlMetadata(input: {
   };
 }
 
-function taskLoopLedgerStatus(status?: string): TaskLedgerNodeStatus {
-  if (status === 'complete') return 'done';
-  if (status === 'blocked' || status === 'error') return 'blocked';
-  return 'doing';
-}
-
 function taskLoopLedgerTimestamp(payload: TaskLoopLifecyclePayload): string {
   const ts = typeof payload.ts === 'number' && Number.isFinite(payload.ts) ? payload.ts : Date.now();
   return new Date(ts).toISOString();
@@ -260,7 +255,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
   const taskId = `task-loop:${loopRunId}:task`;
   const checkId = `task-loop:${loopRunId}:check`;
   const reviewId = `task-loop:${loopRunId}:review`;
-  const status = taskLoopLedgerStatus(event.status);
+  const status = projectTaskLoopTaskStatus(event.status);
   const evidenceRefs = event.orchestrationRunId
     ? [{ type: 'trace' as const, ref: event.orchestrationRunId, label: 'Task-loop orchestration trace' }]
     : [];
@@ -349,7 +344,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
       sessionId: event.sessionKey ?? null,
       payload: {
         nodeId: goalId,
-        progress: event.progress ?? (status === 'done' || status === 'blocked' ? 100 : undefined),
+        progress: projectTaskLoopTaskProgress(event.status, event.progress),
       },
     },
     {
@@ -371,7 +366,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
       sessionId: event.sessionKey ?? null,
       payload: {
         nodeId: taskId,
-        progress: event.progress ?? (status === 'done' || status === 'blocked' ? 100 : undefined),
+        progress: projectTaskLoopTaskProgress(event.status, event.progress),
       },
     },
     {
@@ -389,7 +384,7 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
 
   if (event.phase === 'self_check' || event.selfCheckDecision) {
     events.push({
-      id: `task-loop:${loopRunId}:check:${event.iteration ?? 0}`,
+      id: `task-loop:${loopRunId}:check:${event.iteration ?? 0}:${event.selfCheckDecision ?? 'pending'}`,
       type: 'node_created',
       actor: 'system',
       taskId: checkId,
@@ -454,7 +449,9 @@ async function recordTaskLoopLedgerLifecycle(payload: unknown): Promise<void> {
     });
   }
 
-  await appendTaskLedgerEvents(undefined, events, `task-loop:${loopRunId}`);
+  // Stable event IDs dedupe retries. A run-wide batch key would discard every
+  // phase after intake, including the complete -> pending-review transition.
+  await appendTaskLedgerEvents(undefined, events);
 }
 
 function missionLedgerStatus(status?: MissionLifecycleEvent['status']): TaskLedgerNodeStatus {
@@ -509,7 +506,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
             tags: ['mission-control'],
             description: 'Runtime-controlled long-goal Mission Loop.',
             evidenceRefs,
-            metadata: { missionId },
+            metadata: { missionId, runtimeLifecycle: 'mission-control' },
             createdAt,
             updatedAt: createdAt,
           },
@@ -532,7 +529,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
             tags: ['mission-control', 'mission-loop'],
             progress: event.progress ?? 0,
             evidenceRefs,
-            metadata: { missionId, phase: event.phase, tick: event.tick },
+            metadata: { missionId, runtimeLifecycle: 'mission-control', phase: event.phase, tick: event.tick },
             createdAt,
             updatedAt: createdAt,
           },
@@ -572,7 +569,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
       },
     },
     {
-      id: `mission:${missionId}:goal-status:${event.status}`,
+      id: `mission:${missionId}:goal-status:${event.tick}:${event.phase}:${event.ts}:${event.status}`,
       type: 'status_changed',
       actor: 'system',
       taskId: goalId,
@@ -591,7 +588,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
       },
     },
     {
-      id: `mission:${missionId}:task-status:${event.status}`,
+      id: `mission:${missionId}:task-status:${event.tick}:${event.phase}:${event.ts}:${event.status}`,
       type: 'status_changed',
       actor: 'system',
       taskId,
@@ -620,6 +617,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
           evidenceRefs,
           metadata: {
             missionId,
+            runtimeLifecycle: 'mission-control',
             phase: event.phase,
             tick: event.tick,
             reviewerDecision: event.reviewerDecision,
@@ -654,6 +652,7 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
           evidenceRefs,
           metadata: {
             missionId,
+            runtimeLifecycle: 'mission-control',
             phase: event.phase,
             tick: event.tick,
             reviewerDecision: event.reviewerDecision,
@@ -667,7 +666,9 @@ async function recordMissionLedgerLifecycle(payload: unknown): Promise<void> {
     });
   }
 
-  await appendTaskLedgerEvents(workspaceId, events, `mission:${missionId}`);
+  // A run-wide batch key suppresses every event after the first batch; the
+  // TaskLoop writer already proved it. Reuse stable per-event ids instead.
+  await appendTaskLedgerEvents(workspaceId, events);
 }
 
 type ClawGraphLifecyclePayload = {
@@ -725,6 +726,7 @@ async function recordClawGraphLedgerLifecycle(payload: unknown): Promise<void> {
             evidenceRefs,
             metadata: {
               runId,
+              runtimeLifecycle: 'clawgraph',
               workflowId: snapshot.workflowId,
               sourcePath: snapshot.sourcePath,
             },
@@ -797,6 +799,7 @@ async function recordClawGraphLedgerLifecycle(payload: unknown): Promise<void> {
             evidenceRefs,
             metadata: {
               runId,
+              runtimeLifecycle: 'clawgraph',
               reviewId: review?.id,
               nodeId: event.nodeId,
               kind: review?.kind,

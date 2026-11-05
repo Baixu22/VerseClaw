@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a3-owner-audit",
+  "sourceCommit": "80c0fd41f47065c25e4121bae8822ef97cea0a66",
+  "files": [
+    {
+      "path": "electron/services/task-ledger-api.ts",
+      "sha256": "955364d7364b4857c5352352eb2e8a2fc245a636197dad16716226d2223b2d9e"
+    },
+    {
+      "path": "electron/services/task-ledger-service.ts",
+      "sha256": "10d93bd7b29b259f931f93cb65fe537f80f92e63128cfbc1aa495d6739507a55"
+    },
+    {
+      "path": "electron/utils/paths.ts",
+      "sha256": "de4385ebcf2fb0758c6ccdadc095dc833f7a41b1dff89a56b8b7a6ddaf73e73e"
+    }
+  ]
+}

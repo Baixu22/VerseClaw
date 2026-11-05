@@ -1,0 +1,22 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a3-owner-audit",
+  "sourceSnapshotPreparation": "const fs = require('node:fs'), cp = require('node:child_process'), path = require('node:path'), crypto = require('node:crypto');\nconst root = 'D:/tmp/autonomy-a3-r1/closed-candidate-repro', commit = '80c0fd41f';\nconst sources = ['electron/services/task-ledger-api.ts', 'electron/services/task-ledger-service.ts', 'electron/utils/paths.ts'];\nconst files = sources.map(file => {\n  const bytes = cp.execFileSync('git', ['show', commit + ':' + file], { cwd: 'D:/ClawX', windowsHide: true, maxBuffer: 4 * 1024 * 1024 });\n  const target = path.join(root, file); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, bytes);\n  return { path: file, sha256: crypto.createHash('sha256').update(bytes).digest('hex') };\n});\nfs.writeFileSync(root + '/source-manifest.json', JSON.stringify({ driven_by: 'agent', actor: 'codex-a3-owner-audit', sourceCommit: cp.execFileSync('git', ['rev-parse', commit], { cwd: 'D:/ClawX', encoding: 'utf8', windowsHide: true }).trim(), files }, null, 2));\n",
+  "testConfig": "import { defineConfig } from 'D:/ClawX/node_modules/vitest/dist/config.js';\nexport default defineConfig({ test: { root: 'D:/tmp/autonomy-a3-r1/closed-candidate-repro', include: ['*.test.ts'], environment: 'node', globals: true, maxWorkers: 1 } });\n",
+  "testSource": "import { mkdtemp, writeFile, rm } from 'node:fs/promises';\nimport { tmpdir } from 'node:os';\nimport { join } from 'node:path';\nconst fixture = vi.hoisted(() => ({ root: '' }));\nvi.mock('./electron/utils/paths', () => ({ getOpenClawConfigDir: () => fixture.root }));\nimport { createTaskLedgerApi } from './electron/services/task-ledger-api';\nit('requires actual owner/artifact readback rather than caller-chosen coherent digests', async () => {\n  fixture.root = await mkdtemp(join(tmpdir(), 'a3-closed-owner-counterexample-'));\n  try {\n    const api = createTaskLedgerApi();\n    const before = await api.createNode({ workspaceId: 'isolated-a3-repro', node: { title: 'Agent driven negative control', kind: 'task', owner: 'agent', status: 'review' } });\n    const node = before.snapshot.nodes[0];\n    const claim = { schema: 'TaskCompletionClaim/v1', taskId: node.id, candidateDigest: 'a'.repeat(64), generation: 'never-existed-session-generation', verifierDigest: 'b'.repeat(64), effectDigest: 'b'.repeat(64), priorStatus: 'review' };\n    const result = await api.submitCompletion({ workspaceId: 'isolated-a3-repro', claim, idempotencyKey: 'no-real-owner-or-artifact' });\n    const observed = result.snapshot.nodes.find(item => item.id === node.id);\n    await writeFile('D:/tmp/autonomy-a3-r1/closed-candidate-counterexample.json', JSON.stringify({ driven_by: 'agent', actor: 'codex-a3-owner-audit', sourceCommit: '80c0fd41f',\n      sessionOrRuntimeOwnerSupplied: false, artifactOrReceiptCreated: false, expectedAccepted: false, actualAccepted: result.accepted, actualTaskStatus: observed?.status,\n      callerAuthored: claim, events: result.snapshot.eventsCount, requirementViolated: 'No model/caller self-proof; read actual task/candidate/generation/check/reviewer/effect owners and disk artifacts' }, null, 2));\n    expect(result.accepted).toBe(false);\n    expect(observed?.status).not.toBe('done');\n  } finally { await rm(fixture.root, { recursive: true, force: true }); }\n});\n",
+  "command": "node node_modules/vitest/vitest.mjs run --config D:/tmp/autonomy-a3-r1/closed-candidate-repro.config.mts --reporter=json --outputFile=D:/tmp/autonomy-a3-r1/closed-candidate-repro.json",
+  "exitCode": 1,
+  "desiredBoundaryAssertion": "accepted must be false",
+  "counts": {
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  },
+  "rawReport": "D:/tmp/autonomy-a3-r1/closed-candidate-repro.json",
+  "mockedBoundary": "config root redirected only to an isolated temporary directory",
+  "unchangedProductionSources": [
+    "electron/services/task-ledger-api.ts",
+    "electron/services/task-ledger-service.ts",
+    "electron/utils/paths.ts"
+  ]
+}

@@ -61,6 +61,7 @@ const WRITE_PATTERNS = [
 ];
 
 const SAFE_GATEWAY_METHODS = new Set([
+  'task_loop.completionEvidence',
   'chat.history',
   'sessions.list',
   'skills.status',

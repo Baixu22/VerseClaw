@@ -64,7 +64,7 @@ function normalizeTaskLedgerWorkspaceId(workspaceId?: string | null): string {
   return `${slug || "workspace"}-${hash}`;
 }
 
-function taskLedgerEventsPath(
+export function taskLedgerEventsPath(
   workspaceId?: string | null,
   env: NodeJS.ProcessEnv = process.env,
 ): string {
@@ -94,38 +94,66 @@ export function appendLongTaskLedgerEvents(
   workspaceId: string | null | undefined,
   inputs: TaskLedgerEventInput[],
   env: NodeJS.ProcessEnv = process.env,
+  validateExisting?: (events: readonly TaskLedgerEvent[]) => void,
 ): void {
   if (inputs.length === 0) return;
   const pathname = taskLedgerEventsPath(workspaceId, env);
   mkdirSync(dirname(pathname), { recursive: true });
+  withTaskLedgerJournalLockSync(pathname, () => appendJournalUnlocked(pathname, workspaceId, inputs, validateExisting));
+}
+
+function appendJournalUnlocked(
+  pathname: string, workspaceId: string | null | undefined, inputs: TaskLedgerEventInput[],
+  validateExisting?: (events: readonly TaskLedgerEvent[]) => void,
+): void {
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
-  withTaskLedgerJournalLockSync(pathname, () => {
-    const raw = readJournal(pathname);
-    const prior = parseTaskLedgerJournal(raw).events;
-    const ids = new Set(prior.map((event) => event.id));
-    const keys = new Set(prior.map((event) => event.idempotencyKey).filter(Boolean));
-    // Compare against the committed prefix, not siblings in this batch: a
-    // shared batch key must not discard later legitimate events.
-    const events = inputs.flatMap((input): TaskLedgerEvent[] => {
-      if ((input.id && ids.has(input.id)) || (input.idempotencyKey && keys.has(input.idempotencyKey))) return [];
-      return [{
-        ...input,
-        id: input.id ?? randomUUID(),
-        workspaceId: normalizedWorkspaceId,
-        createdAt: input.createdAt ?? nowIso(),
-        idempotencyKey: input.idempotencyKey ?? null,
-        taskId: input.taskId ?? input.payload.nodeId ?? input.payload.node?.id ?? null,
-        sessionId: input.sessionId ?? null,
-      }];
-    });
-    if (events.length > 0) {
-      const fd = openSync(pathname, "a");
-      try {
-        appendFileSync(fd, `${raw && !raw.endsWith("\n") ? "\n" : ""}${serializeTaskLedgerCommit(events, null)}\n`, "utf8");
-        fsyncSync(fd);
-      } finally { closeSync(fd); }
-    }
+  const raw = readJournal(pathname);
+  const prior = parseTaskLedgerJournal(raw).events;
+  validateExisting?.(prior);
+  const ids = new Set(prior.map((event) => event.id));
+  const keys = new Set(prior.map((event) => event.idempotencyKey).filter(Boolean));
+  // Compare against the committed prefix, not siblings in this batch: a
+  // shared batch key must not discard later legitimate events.
+  const events = inputs.flatMap((input): TaskLedgerEvent[] => {
+    if ((input.id && ids.has(input.id)) || (input.idempotencyKey && keys.has(input.idempotencyKey))) return [];
+    return [{
+      ...input,
+      id: input.id ?? randomUUID(),
+      workspaceId: normalizedWorkspaceId,
+      createdAt: input.createdAt ?? nowIso(),
+      idempotencyKey: input.idempotencyKey ?? null,
+      taskId: input.taskId ?? input.payload.nodeId ?? input.payload.node?.id ?? null,
+      sessionId: input.sessionId ?? null,
+    }];
   });
+  if (events.length > 0) {
+    const fd = openSync(pathname, "a");
+    try {
+      appendFileSync(fd, `${raw && !raw.endsWith("\n") ? "\n" : ""}${serializeTaskLedgerCommit(events, null)}\n`, "utf8");
+      fsyncSync(fd);
+    } finally { closeSync(fd); }
+  }
+}
+
+/** A revision fence in the existing journal, not another decision/evidence store.
+ * Publish and fsync before owner mutation, holding the same lock until it ends.
+ * A concurrent Main completion either commits before mutation or fails A2 CAS.
+ */
+export function withLongTaskLedgerEvidenceMutation<T>(
+  owners: readonly { workspaceId: string; eventsPath: string }[], note: string, apply: () => T,
+): T {
+  const sorted = [...new Map(owners.map(owner => [owner.eventsPath, owner])).values()]
+    .sort((a, b) => a.eventsPath.localeCompare(b.eventsPath));
+  const next = (index: number): T => {
+    const owner = sorted[index];
+    if (!owner) return apply();
+    mkdirSync(dirname(owner.eventsPath), { recursive: true });
+    return withTaskLedgerJournalLockSync(owner.eventsPath, () => {
+      appendJournalUnlocked(owner.eventsPath, owner.workspaceId, [{ type: 'completion_evidence_changed', actor: 'system', payload: { note } }]);
+      return next(index + 1);
+    });
+  };
+  return next(0);
 }
 
 function taskLedgerEvidence(rootId: string): TaskLedgerEvidenceRef {
@@ -184,12 +212,13 @@ export function ensureLongTaskLedgerRoot(input: LongTaskLedgerRootInput): string
           tags: ["long-task", input.source],
           evidenceRefs: [{ type: "session", ref: input.sessionKey }],
           metadata: {
+            ...(input.metadata ?? {}),
             taskLedgerRootId: rootId,
             sessionKey: input.sessionKey,
             agentId: input.agentId,
             runId: input.runId,
             source: input.source,
-            ...(input.metadata ?? {}),
+            ...(input.source === 'task_loop' ? { automaticCompletion: { authority: 'task-ledger', state: 'pending' } } : {}),
           },
           createdAt,
         }),
@@ -214,7 +243,15 @@ export function ensureLongTaskLedgerRoot(input: LongTaskLedgerRootInput): string
         },
       },
     },
-  ], input.env);
+  ], input.env, events => {
+    const created = events.findLast(event => event.type === 'node_created' && event.payload.node?.id === rootId);
+    if (!created) return;
+    const previous = created.payload.node!;
+    if (created.actor !== 'system' || previous.owner !== 'agent' || previous.metadata?.source !== input.source
+      || previous.metadata?.sessionKey !== input.sessionKey || previous.metadata?.runId !== input.runId) {
+      throw new Error('TaskLoop root ID already belongs to another task or execution');
+    }
+  });
   return rootId;
 }
 

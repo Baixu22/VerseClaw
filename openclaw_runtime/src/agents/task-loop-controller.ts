@@ -1,4 +1,6 @@
 import crypto from "node:crypto";
+import { awaitTaskLoopCompletionChildren, captureTaskLoopCompletionCheckpoint, readTaskLoopCompletionContext, type TaskLoopCompletionContext } from './task-loop-completion.js';
+import { normalizeTaskCompletionCheckPlans } from '../../../shared/task-ledger-completion.js';
 import { stat } from "node:fs/promises";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { AgentConfig } from "../config/types.agents.js";
@@ -183,6 +185,7 @@ export type TaskLoopCodeTaskEvidenceGateRuntimeShadowCollectionBuilder = (
 ) => CodeTaskEvidenceGateRuntimeShadowCollectionResult;
 
 export type TaskLoopRunRequest = {
+  verificationChecks?: Array<{ acceptanceIndex: number; command: string }>;
   task: string;
   sessionKey: string;
   agentId?: string;
@@ -331,6 +334,7 @@ export type TaskLoopIterationSnapshot = {
 };
 
 export type TaskLoopRunRecord = {
+  completionContext?: TaskLoopCompletionContext;
   loopRunId: string;
   sessionKey: string;
   workspaceId?: string | null;
@@ -2813,7 +2817,17 @@ async function recordTaskLoopCheckpoint(
     const checkpointFileHashes = await computeTaskLoopCheckpointFileHashes(
       record.evidenceGate?.filesTouched ?? [],
     );
+    const checkpointId = 'task-loop:' + record.loopRunId + ':iteration:' + record.iteration + ':' + record.phase;
+    let taskCompletion;
+    if (record.completionContext) {
+      const subagents = await Promise.all(record.subagentEvidence.map(item => resolveSubagentRun(deps, item.childRunId, item.childSessionKey)));
+      try {
+        taskCompletion = await captureTaskLoopCompletionCheckpoint({ record, checkpointId, selfCheck,
+          cfg: localControlPlaneConfigs.get(record) ?? {}, subagents: subagents.filter((item): item is SubagentRunRecord => Boolean(item)), now: Date.now() });
+      } catch { /* Missing provenance leaves the business task pending independent acceptance. */ }
+    }
     const checkpointMetadata = {
+      ...(taskCompletion ? { taskCompletion } : {}),
       loopRunId: record.loopRunId,
       taskLedgerRootId: record.taskLedgerRootId,
       iteration: record.iteration,
@@ -3374,20 +3388,42 @@ export async function runTaskLoop(
   const maxIterations = positiveInt(config.maxIterations, 3, 1, 10);
   const maxRepairIterations = positiveInt(config.maxRepairIterations, 2, 0, maxIterations);
   const loopRunId = idFactory("loop");
+  const acceptance = [...new Set((request.acceptance ?? []).map(item => item.trim()).filter(Boolean))];
+  const verificationChecks = normalizeTaskCompletionCheckPlans(request.verificationChecks, acceptance);
   let taskLedgerRootId = nonEmptyText(request.taskLedgerRootId);
+  const requestedLineage = normalizeRuntimeLineage(request.lineage);
+  // Parent references stay scoped to the exact requesting session.
+  const parentLineage =
+    requestedLineage?.sessionId === request.sessionKey.trim() ? requestedLineage : undefined;
   try {
+    let rootSource: LongTaskLedgerRootInput['source'] = 'task_loop';
+    let rootRunId = loopRunId;
+    if (taskLedgerRootId && parentLineage?.missionId && parentLineage.taskLedgerRootId === taskLedgerRootId) {
+      // An inner TaskLoop shares its Mission's root, without replacing that
+      // root's execution owner. Lineage alone cannot assert Mission ownership.
+      const { getMissionRun } = await import('./mission-control/store.js');
+      const mission = getMissionRun(parentLineage.missionId);
+      if (!mission || mission.sessionKey !== request.sessionKey
+        || (mission.workspaceId ?? null) !== (request.workspaceId ?? null)
+        || mission.metadata?.taskLedgerRootId !== taskLedgerRootId) {
+        throw new Error('TaskLoop Mission root is unavailable or belongs to another owner');
+      }
+      rootSource = 'mission_loop';
+      rootRunId = mission.missionId;
+    }
     taskLedgerRootId = nonEmptyText(
       await (deps.ensureTaskLedgerRoot ?? ensureLongTaskLedgerRoot)({
         workspaceId: request.workspaceId,
         ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
         sessionKey: request.sessionKey,
         ...(request.agentId ? { agentId: request.agentId } : {}),
-        runId: loopRunId,
+        runId: rootRunId,
         title: request.task,
-        source: "task_loop",
+        source: rootSource,
         metadata: {
           templateId: request.templateId ?? request.teamTemplateId,
-          acceptance: request.acceptance ?? [],
+          acceptance,
+          ...(verificationChecks.length ? { verificationChecks } : {}),
         },
       }),
     );
@@ -3403,11 +3439,6 @@ export async function runTaskLoop(
       `Cannot start /loop without a Task Ledger root (loopRunId=${loopRunId}, sessionKey=${request.sessionKey}, workspaceId=${request.workspaceId ?? "default"}): root creator returned an empty id`,
     );
   }
-  const requestedLineage = normalizeRuntimeLineage(request.lineage);
-  // A parent lineage is accepted only when it names this exact session. A
-  // mismatched legacy payload is dropped rather than guessed or re-associated.
-  const parentLineage =
-    requestedLineage?.sessionId === request.sessionKey.trim() ? requestedLineage : undefined;
   const initialLineage = mergeRuntimeLineage(parentLineage, {
     sessionId: request.sessionKey,
     loopRunId,
@@ -3442,6 +3473,8 @@ export async function runTaskLoop(
     iterations: [],
   };
   taskLoopRuns.set(loopRunId, record);
+  try { record.completionContext = await readTaskLoopCompletionContext(request, cfg ?? {}) ?? undefined; }
+  catch { /* Legacy/unavailable session owner cannot produce an automatic completion proof. */ }
   localControlPlaneConfigs.set(record, cfg);
   const runtimeRegistryFlags = resolveRuntimeRegistryFeatureFlags(cfg);
   const runtimeEventLogFlags = resolveRuntimeEventLogFeatureFlags(cfg);
@@ -3527,6 +3560,10 @@ export async function runTaskLoop(
       };
       const ctx: RoleSpawnContext = {
         agentSessionKey: request.sessionKey,
+        ...(record.completionContext?.verificationChecks.length
+          ? { completionReviewRoot: record.completionContext.workspaceRoot,
+              completionExecutionWorkdir: record.completionContext.executionWorkdir } : {}),
+        ...(record.completionContext ? { workspaceDir: record.completionContext.workspaceRoot } : {}),
         ...(request.agentId ? { requesterAgentIdOverride: request.agentId } : {}),
       };
       const runObserved =
@@ -3541,7 +3578,7 @@ export async function runTaskLoop(
               );
             }) as SpawnFn)
           : (await import("./subagent-spawn.js")).spawnSubagentDirect);
-      const result = await runObserved(
+      let result = await runObserved(
         runRequest,
         ctx,
         { spawn },
@@ -3554,6 +3591,11 @@ export async function runTaskLoop(
           });
         },
       );
+      if (record.completionContext?.verificationChecks.length && !deps.runObserved) {
+        result = await awaitTaskLoopCompletionChildren(result, { sessionKey: record.sessionKey,
+          sessionGeneration: record.completionContext.scope.sessionGeneration, orchestrationRunId,
+          cancelled: () => taskLoopWasCancelled(record) });
+      }
       if (taskLoopWasCancelled(record)) {
         recorder.endSpan(span.id, {
           status: "error",

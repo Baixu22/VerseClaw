@@ -36,6 +36,7 @@ import {
   cleanupBarrierEvidenceFromRecord,
   stableJson,
   readCompletedVerseGitReviewFacts,
+  readCompletedVerseGitTaskCheck,
   type CandidateInputManifest,
 } from '../../electron/services/versegit-receipt-evidence';
 
@@ -153,6 +154,7 @@ function planFor(input: {
   authorizationDigest: string;
   scope?: 'full' | 'selected';
   deadlineAt?: number;
+  taskCompletion?: VerificationPlan['taskCompletion'];
 }): VerificationPlan {
   const created = createVerificationPlan({
     runId: input.runId,
@@ -165,7 +167,8 @@ function planFor(input: {
     authorizationDigest: input.authorizationDigest,
     evidenceVersion: 2,
     deadlineAt: input.deadlineAt ?? Date.now() + 60_000,
-    requiredChecks: input.scope === 'selected' ? ['producer-api'] : REQUIRED_CHECKS,
+    requiredChecks: input.taskCompletion ? ['candidate-full-required-tests'] : input.scope === 'selected' ? ['producer-api'] : REQUIRED_CHECKS,
+    ...(input.taskCompletion ? { taskCompletion: input.taskCompletion } : {}),
     commands: [{
       argv: ['node', 'verify.cjs'],
       cwd: '.',
@@ -429,12 +432,13 @@ function syntheticCleanup(root: string, plan: VerificationPlan): { cleanup: Reco
   };
 }
 
-function installSyntheticEvidence(root: string) {
-  const manifest = { schema: 'test.candidate/v1', inputDigest: 'a'.repeat(64), files: [{ path: 'verify.cjs', sha256: 'a'.repeat(64) }] };
+function installSyntheticEvidence(root: string, taskCompletion?: VerificationPlan['taskCompletion']) {
+  const manifest = { schema: 'test.candidate/v1', inputDigest: 'a'.repeat(64), files: [{ path: 'verify.cjs', sha256: 'a'.repeat(64) }],
+    ...(taskCompletion ? { candidateCommitOid: taskCompletion.candidate.source } : {}) };
   const candidateId = sha(stableJson(manifest));
   const authorization = authorizationFor({ runId: 'run-synthetic', candidateId, checkId: 'candidate-full-required-tests' });
   const authorizationDigest = sha(`${stableJson(authorization)}\n`);
-  const plan = planFor({ runId: 'run-synthetic', candidateId, candidateInputDigest: manifest.inputDigest, authorizationDigest });
+  const plan = planFor({ runId: 'run-synthetic', candidateId, candidateInputDigest: manifest.inputDigest, authorizationDigest, taskCompletion });
   const authority = new FileVerseShellReceiptAuthority(root);
   authority.reset();
   const bridge = new VerseGitReceiptBridge(authority);
@@ -460,10 +464,28 @@ function installSyntheticEvidence(root: string) {
   });
   expect(completed.receiptResult.status).toBe('accepted');
   expect(completed.verdict.status).toBe('observed');
+  // A generic successful execution has no Task Ledger task/checkpoint binding.
+  // It must not be promoted into an automatic completion check by the reader.
+  if (!taskCompletion) expect(readCompletedVerseGitTaskCheck(plan.runId, root)).toBeNull();
   return { authority, bridge, plan, authorization, prepared, manifest, candidateId, completed };
 }
 
 describe('candidate receipt v2 host authority', () => {
+  it('recomputes a task-bound fixture receipt from disk and rejects artifact tampering after reopening (not live execution evidence)', () => {
+    const root = mkdtempSync(join(tempRoot, 'versegit-task-reader-')); roots.push(root);
+    const scope = { workspaceId: 'workspace-task', projectId: 'workspace-task', sessionKey: 'agent:main:task', sessionGeneration: 'physical-task' };
+    const binding = { taskRef: { owner: 'task-ledger', taskNodeId: 'task-bound', scope }, checkpointId: 'owner-checkpoint', checkpointRevision: 'd'.repeat(64),
+      acceptanceSha256: 'e'.repeat(64), candidate: { source: 'f'.repeat(40), inputSha256: 'a'.repeat(64), configSha256: 'b'.repeat(64), dirtyDiffSha256: 'c'.repeat(64) },
+      reviewer: { agentId: 'main', runId: 'independent-reviewer', sessionKey: 'agent:main:reviewer' }, expiresAt: Date.now() + 60_000 } as VerificationPlan['taskCompletion'];
+    const fixture = installSyntheticEvidence(root, binding);
+    const reopened = new FileVerseShellReceiptAuthority(root);
+    expect(reopened.readTaskCheck(fixture.plan.runId)).toMatchObject({ receiptId: fixture.completed.receiptId, taskRef: binding!.taskRef,
+      ownerRevision: fixture.completed.receiptRef.digest, checkpointRevision: binding!.checkpointRevision, reviewer: binding!.reviewer, status: 'verified' });
+    expect(readCompletedVerseGitTaskCheck(fixture.plan.runId, join(root, 'missing-authority'))).toBeNull();
+    const artifact = join(root, 'artifacts', fixture.completed.receipt.stdoutDigest);
+    writeFileSync(artifact, 'tampered bytes');
+    expect(new FileVerseShellReceiptAuthority(root).readTaskCheck(fixture.plan.runId)).toBeNull();
+  });
   it('revalidates cached review facts against the same receipt owner on every read', () => {
     const root = mkdtempSync(join(tempRoot, 'versegit-review-cache-')); roots.push(root);
     const installed = installSyntheticEvidence(root);

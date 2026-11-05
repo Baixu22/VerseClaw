@@ -20,9 +20,16 @@ import type { SafeBinProfileFixture } from "../infra/exec-safe-bin-policy.js";
 import type { BashSandboxConfig } from "./bash-tools.shared.js";
 import type { EmbeddedFullAccessBlockedReason } from "./embedded-agent-runner/types.js";
 import type { ExecReviewerConfig } from "./exec-auto-reviewer.js";
+import type { ExecProcessOutcome } from "./bash-tools.exec-runtime.js";
+import type { ProcessSession } from "./bash-process-registry.js";
+import type { PermissionEffectOwnerCheckpointInput } from "../../../shared/permission-effect-contract.js";
 
 /** Runtime defaults passed into exec/process tool factories. */
 export type ExecToolDefaults = {
+  /** Host-only guard of the effective command and cwd, after tool hooks and before dispatch. */
+  onProcessStarting?: (input: { command: string; workdir?: string; host: ExecHost }) => void;
+  /** Host-only observer; model arguments cannot supply process outcome evidence. */
+  onProcessCompleted?: (input: { session: ProcessSession; outcome: ExecProcessOutcome; permissionEffect: PermissionEffectOwnerCheckpointInput }) => void | Promise<void>;
   /** Structured content sidecar used only for sink-local provenance policy. */
   contentProvenance?: unknown;
   hasCronTool?: boolean;

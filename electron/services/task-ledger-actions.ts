@@ -9,6 +9,7 @@ import type { GatewayManager } from '../gateway/manager';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { commitTaskLedgerOperation, replayCommittedTaskLedgerOperation } from './task-ledger-service';
 import { withTaskLedgerJournalLock, taskLedgerSessionEpochPath } from '../../shared/task-ledger-journal-lock';
+import { automaticBusinessTaskRequiresClaim } from '../../shared/task-ledger-completion';
 
 const text = z.string().min(1).max(2000).refine(value => Boolean(value.trim()));
 const status = z.enum(['todo', 'doing', 'blocked', 'review', 'done', 'dropped']);
@@ -36,9 +37,9 @@ function denied(message: string): Error & { code: string } {
   return Object.assign(new Error(message), { code: 'VALIDATION' });
 }
 
-type GatewayOwner = Pick<GatewayManager, 'rpc' | 'getStatus'>;
+export type GatewayOwner = Pick<GatewayManager, 'rpc' | 'getStatus'>;
 
-async function ownerIdentity(gateway: GatewayOwner | undefined, payload: z.infer<typeof request>): Promise<{ identity: TaskLedgerOperationIdentity; storePath: string }> {
+export async function readTaskLedgerAgentOwner(gateway: GatewayOwner | undefined, payload: Pick<z.infer<typeof request>, 'scope' | 'runtimeGeneration' | 'runtimeOwner'>): Promise<{ identity: TaskLedgerOperationIdentity; storePath: string }> {
   if (!gateway) throw denied('Automatic Task Ledger actions require the runtime owner');
   const workspace = await getActiveWorkspaceProfile();
   if (!workspace || workspace.id !== payload.scope.workspaceId || workspace.activeSessionKey !== payload.scope.sessionKey) {
@@ -89,12 +90,12 @@ export async function applyTaskLedgerAgentAction(gateway: GatewayOwner | undefin
   const replay = await replayCommittedTaskLedgerOperation({ workspaceId: payload.scope.workspaceId, operationId: payload.operationId,
     expectedRevision: payload.expectedRevision, request: payload });
   if (replay) return { success: true as const, ...replay };
-  const admitted = await ownerIdentity(gateway, payload);
+  const admitted = await readTaskLedgerAgentOwner(gateway, payload);
   return withTaskLedgerJournalLock(taskLedgerSessionEpochPath(admitted.storePath), async () => {
     // The runtime's existing session-store writer holds the same outer fence
     // through reset/delete/replace. Re-read after acquiring it; Gateway reads
     // remain available because waiting session writers use the async fence.
-    const fenced = await ownerIdentity(gateway, payload);
+    const fenced = await readTaskLedgerAgentOwner(gateway, payload);
     if (fenced.storePath !== admitted.storePath) throw denied('Task action session store owner changed');
     const identity = fenced.identity;
     const action = payload.action;
@@ -103,8 +104,13 @@ export async function applyTaskLedgerAgentAction(gateway: GatewayOwner | undefin
     let event: TaskLedgerEventInput;
     if (action.type === 'create') {
       const taskNodeId = id('node');
+      if (action.node.status === 'done' && automaticBusinessTaskRequiresClaim(action.node.kind ?? 'task')) {
+        throw denied('Automatic business task completion requires an owner-backed completion claim');
+      }
       event = { id: id('event'), type: 'node_created', actor: 'assistant', taskId: taskNodeId,
-        payload: { node: { ...action.node, id: taskNodeId, kind: action.node.kind ?? 'task', status: action.node.status ?? 'todo', owner: 'agent', createdAt: now, updatedAt: now } } };
+        payload: { node: { ...action.node, id: taskNodeId, kind: action.node.kind ?? 'task', status: action.node.status ?? 'todo', owner: 'agent',
+          ...(automaticBusinessTaskRequiresClaim(action.node.kind ?? 'task') ? { metadata: { automaticCompletion: { authority: 'task-ledger', state: 'pending', scope: identity.scope } } } : {}),
+          createdAt: now, updatedAt: now } } };
     } else if (action.type === 'update') {
       event = { id: id('event'), type: 'node_updated', actor: 'assistant', taskId: action.taskNodeId,
         payload: { nodeId: action.taskNodeId, patch: action.patch } };
@@ -120,11 +126,21 @@ export async function applyTaskLedgerAgentAction(gateway: GatewayOwner | undefin
         // replayable even if a later manual action deleted its target.
         if (action.type !== 'create' && !snapshot.nodes.some(node => node.id === action.taskNodeId)) throw denied('Task node does not exist in this workspace');
         if (action.type === 'create' && action.node.parentId && !snapshot.nodes.some(node => node.id === action.node.parentId)) throw denied('Parent task does not exist in this workspace');
+        if (action.type === 'update') {
+          const existing = snapshot.nodes.find(node => node.id === action.taskNodeId);
+          if (existing && automaticBusinessTaskRequiresClaim(existing.kind) && (existing.status === 'done' || existing.status === 'dropped')) {
+            throw denied('A terminal business task requires an explicit manual reopen before automatic updates');
+          }
+        }
+        if (action.type === 'update' && action.patch.status === 'done') {
+          const existing = snapshot.nodes.find(node => node.id === action.taskNodeId);
+          if (existing && automaticBusinessTaskRequiresClaim(existing.kind)) throw denied('Automatic business task completion requires an owner-backed completion claim');
+        }
       },
       validateIdentity: async () => {
         // RPC admission runs before acquiring a ticket, and is refreshed if
         // contention carried this request across another journal writer.
-        const current = await ownerIdentity(gateway, payload);
+        const current = await readTaskLedgerAgentOwner(gateway, payload);
         if (current.storePath !== fenced.storePath || JSON.stringify(current.identity) !== JSON.stringify(identity)) throw denied('Task action owner changed before commit');
       },
       validateCurrentOwner: async () => {

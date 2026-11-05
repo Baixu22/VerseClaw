@@ -47,6 +47,17 @@ afterEach(() => {
 });
 
 describe("detached durable helper host", () => {
+  it("checks the current owner after asynchronous intent preparation before launching", async () => {
+    const intent = await createDurableHelperIntent({ runId: 'run_guard_reject', commandDigest: 'd'.repeat(64),
+      policyRevision: 'runtime-lifecycle-phase4-host-v1', ownerEpoch: 'epoch-host' }, { rootDir });
+    const marker = path.join(rootDir, 'must-not-run');
+    await expect(spawnDurableHelperProcess({ runId: intent.runId, rootDir, nonce: intent.nonce, ownerEpoch: intent.ownerEpoch,
+      commandDigest: intent.commandDigest, argv: [process.execPath, '-e', `require('node:fs').writeFileSync(${JSON.stringify(marker)},'executed')`],
+      cwd: os.tmpdir(), env: { ...process.env }, launch, beforeSpawn: () => { throw new Error('Owner cancelled before helper launch'); },
+    })).rejects.toThrow('Owner cancelled before helper launch');
+    expect(fs.existsSync(marker)).toBe(false);
+    expect((await readDurableHelperFiles(intent.runId, { rootDir })).started).toBeUndefined();
+  });
   it("spawns a detached helper that writes started/exit and survives an unref'd parent handle", async () => {
     const intent = await createDurableHelperIntent(
       {

@@ -224,6 +224,9 @@ describe('workspace permission policy', () => {
   });
 
   it('classifies gateway RPC methods conservatively', () => {
+    for (const mode of ['readOnly', 'plan', 'acceptEdits', 'fullAccess'] as const) {
+      expect(decideGatewayRpc('task_loop.completionEvidence', mode, { checkpointId: 'owner-ref' })).toMatchObject({ allowed: true, risk: 'read' });
+    }
     expect(classifyGatewayRpcRisk('chat.history')).toBe('read');
     expect(classifyGatewayRpcRisk('memory.surface')).toBe('read');
     expect(classifyGatewayRpcRisk('chat.send')).toBe('read');

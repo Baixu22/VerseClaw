@@ -23,6 +23,11 @@ export type SessionChannelId = ChannelId;
 export type SessionChatType = ChatType;
 
 export type SessionOrigin = {
+  /** Inbound identity used by the existing sender-scoped tool policy owner. */
+  senderId?: string;
+  senderName?: string;
+  senderUsername?: string;
+  senderE164?: string;
   label?: string;
   provider?: string;
   surface?: string;

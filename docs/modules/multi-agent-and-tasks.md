@@ -294,6 +294,37 @@ owner 的 `childPid` 与连接时间也随请求核对，防止应用重启后�
 `snapshot.json` 仅为可重建投影。自动动作回执和普通 `done` 状态不等于独立任务验收，
 也不授予工具权限或改变 Task Forest 完成状态。
 
+新增自动业务任务（goal/milestone/task）保留 `automaticCompletion` 的 pending 标记；
+一般自动 update 不得直接提交 `done`。手工状态编辑以及 turn check、decision 等事实
+保留各自语义。Task Loop 的运行结束在 Ledger 业务任务上先投影为 `review`，完成请求
+只能引用原任务 owner 的 checkpoint 和独立验证回执。taskLedger.submitCompletion
+接收持久 operation/revision、scoped taskRef、checkpointId 与 verificationRunIds；
+Main 回读 TaskLoop 检查点、真实 generation 和现有 host receipt/artifact，不接收
+调用者自报的 passed、verifier 或 digest-only verdict。当前候选、任务输入、验收清单或
+owner revision 改变时，读模型退回 review 并显示失效/不可用；历史接纳事件仍可回读。
+操作返回的 operationDecision 与 decisionScope=operation-history 表示本次操作的历史事实；
+当前有效状态由 snapshot 的 completionReadback 表示，Chat、会话摘要和导出沿用同一读模型。
+completionReadback 不接受普通事件自报。切换前台会话或项目不撤销原 taskRef 的有效证据，
+新完成写入仍要求当前活动 owner 匹配。
+普通自动生命周期事件不能覆盖、删除或重开已 done/dropped 的业务事实；手工终态
+需要显式手工重开，新的完成声明也不能覆盖手工 done/dropped。会话活动面板使用同一
+Gateway owner 回读验收，保留有效接纳并显示真实失效。
+runtime 配置和完成 checkpoint 变更在原日志锁内先追加 revision，使并发接纳由 A2 CAS 拒绝。
+相同有效配置的重复激活不追加失效事件。普通候选回读使用异步Git/文件I/O，
+同一snapshot共享候选读取，下一次仍从源文件重新读取；最终接纳边界再次核对候选。
+冻结检查程序保持前台执行到实际退出，工具工厂不会擅自把前台要求改成后台yield。
+Mission Control/ClawGraph 的运行终态沿用各自 recorder 的投影，仍不表示独立业务验收。
+`runtimeLifecycle` 来源标记只由内部 recorder 写入，公开创建、patch 和 append 入口拒绝调用方提供它。
+混合 payload 的 node/patch 均校验来源标记。Mission 内层 TaskLoop 回读原 Mission owner 后复用共享 root，
+原 source/run 归属保持不变；子 run 等待沿用既有 timeout owner，0/未配置不被缩成新的短时限。
+TF-0672 仍在开发与验收中，真实 TaskLoop→检查进程→effect/archive→Electron 接纳正例已有开发证据，
+尚未完成同干净候选与独立复核验收；单元 fixture 通过不能宣称完整自治验收完成。
+冻结检查沿用 controller 当前 model/provider 和 exec policy。工具 hook 后的命令、实际 cwd 与
+process owner 回执均须匹配；spawned 会话使用既有 workspace/cwd，cwd 变更使旧检查点不可用。
+缺少可绑定候选和 process outcome owner 的远端 node 检查在启动前拒绝；验证记录不改变当前任务 root。
+task cwd 使用另一 worktree 时，验收 source 来自实际执行树；输入摘要同时绑定 bootstrap workspace
+和该执行树，任一来源变化都会使旧证据失效。独立 reviewer 与 Main 回读使用相同算法。
+
 ## 12. Task Ledger Working Context
 
 Task Ledger 还拥有 task-scoped Working Context 的 proposal/accept/reject 事件。

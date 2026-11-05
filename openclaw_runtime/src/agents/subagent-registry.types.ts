@@ -8,6 +8,7 @@ import type { SubagentRunOutcome } from "./subagent-announce-output.js";
 import type { SubagentLifecycleEndedReason } from "./subagent-lifecycle-events.js";
 import type { SpawnSubagentMode } from "./subagent-spawn.types.js";
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import type { TaskLedgerCompletionReview } from '../../../shared/types/task-ledger.js';
 import type {
   CodingIsolationMode,
   OrchestrationQualityPolicy,
@@ -46,6 +47,7 @@ export type TeamPatchFlowResultSummary = {
 };
 
 export type TeamOrchestrationMetadata = {
+  completionReview?: TaskLedgerCompletionReview;
   orchestrationRunId: string;
   templateId?: string;
   roleName: string;

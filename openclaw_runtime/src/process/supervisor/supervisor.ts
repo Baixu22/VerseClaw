@@ -309,6 +309,7 @@ export function createProcessSupervisor(
                 throw new Error("PTY command cannot be empty");
               }
               return await createPtyAdapter({
+                beforeSpawn: input.beforeSpawn,
                 shell,
                 args: [...shellArgs, ptyCommand],
                 cwd: input.cwd,
@@ -316,6 +317,7 @@ export function createProcessSupervisor(
               });
             })()
           : await createChildAdapter({
+              beforeSpawn: input.beforeSpawn,
               argv: input.argv,
               cwd: input.cwd,
               env: input.env,

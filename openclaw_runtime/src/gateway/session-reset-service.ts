@@ -666,7 +666,7 @@ async function runCleanupOtherOwners(
  * mutation. Used by `sessions.stop`; the fence is released on success.
  */
 export async function stopSessionRuntime(
-  params: SessionCleanupParams,
+  params: SessionCleanupParams & { onFenced?: () => void },
 ): Promise<StopSessionRuntimeResult> {
   const identity = resolveSessionLifecycleIdentity(params);
   if (!identity) {
@@ -707,6 +707,7 @@ export async function stopSessionRuntime(
     throw error;
   }
   try {
+    params.onFenced?.();
     const frontError = await runSessionStopFront({ cleanup: params, identity, reason: "session-stop" });
     if (frontError) {
       fence.release();

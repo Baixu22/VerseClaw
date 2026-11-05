@@ -94,6 +94,23 @@ let runtimeConfigSnapshotMetadata: RuntimeConfigSnapshotMetadata | null = null;
 let runtimeConfigSnapshotRevision = 0;
 let runtimeConfigSnapshotRefreshHandler: RuntimeConfigSnapshotRefreshHandler | null = null;
 const runtimeConfigWriteListeners = new Set<(event: RuntimeConfigWriteNotification) => void>();
+type RuntimeConfigMutationGuard = (apply: () => void, reset: boolean, nextConfig?: OpenClawConfig) => void;
+const runtimeConfigMutationGuards = new Set<RuntimeConfigMutationGuard>();
+
+/** Owner guards fence mutation; unlike observers, their failures must propagate. */
+export function registerRuntimeConfigMutationGuard(guard: RuntimeConfigMutationGuard): () => void {
+  runtimeConfigMutationGuards.add(guard);
+  return () => { runtimeConfigMutationGuards.delete(guard); };
+}
+
+function mutateRuntimeConfig(apply: () => void, reset = false, nextConfig?: OpenClawConfig): void {
+  const guards = [...runtimeConfigMutationGuards];
+  const next = (index: number): void => {
+    if (index === guards.length) apply();
+    else guards[index](() => next(index + 1), reset, nextConfig);
+  };
+  next(0);
+}
 
 function stableConfigStringify(value: unknown): string {
   if (value === null || typeof value !== "object") {
@@ -141,16 +158,20 @@ export function setRuntimeConfigSnapshot(
   config: OpenClawConfig,
   sourceConfig?: OpenClawConfig,
 ): void {
-  runtimeConfigSnapshot = config;
-  runtimeConfigSourceSnapshot = sourceConfig ?? null;
-  runtimeConfigSnapshotMetadata = createRuntimeConfigSnapshotMetadata(config, sourceConfig);
+  mutateRuntimeConfig(() => {
+    runtimeConfigSnapshot = config;
+    runtimeConfigSourceSnapshot = sourceConfig ?? null;
+    runtimeConfigSnapshotMetadata = createRuntimeConfigSnapshotMetadata(config, sourceConfig);
+  }, false, config);
 }
 
 export function resetConfigRuntimeState(): void {
-  runtimeConfigSnapshot = null;
-  runtimeConfigSourceSnapshot = null;
-  runtimeConfigSnapshotMetadata = null;
-  runtimeConfigSnapshotRevision = 0;
+  mutateRuntimeConfig(() => {
+    runtimeConfigSnapshot = null;
+    runtimeConfigSourceSnapshot = null;
+    runtimeConfigSnapshotMetadata = null;
+    runtimeConfigSnapshotRevision = 0;
+  }, true);
 }
 
 export function clearRuntimeConfigSnapshot(): void {

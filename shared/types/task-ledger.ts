@@ -1,4 +1,73 @@
 import type { AutonomySessionScope } from './identity-scope.js';
+import type { ScopedTaskReference } from './task-ledger-reference.js';
+
+/** Requests reference existing owner records; they never carry their own pass verdict. */
+export type TaskLedgerCompletionClaim = {
+  operationId: string;
+  expectedRevision: number;
+  taskRef: ScopedTaskReference & { owner: 'task-ledger' };
+  checkpointId: string;
+  verificationRunIds: string[];
+};
+
+/** Candidate provenance stored inside an existing checkpoint/Ledger event. */
+export type TaskLedgerCompletionCandidate = {
+  source: string;
+  inputSha256: string;
+  configSha256: string;
+  dirtyDiffSha256: string;
+};
+
+/** The existing verifier owner publishes its candidate before review starts. */
+export type TaskLedgerCompletionReview =
+  | { state: 'requested'; workspaceRoot: string; executionWorkdir?: string }
+  | { state: 'pinned'; workspaceRoot: string; executionWorkdir?: string; candidate: TaskLedgerCompletionCandidate; capturedAt: number };
+
+/** Read from the existing TaskLoop checkpoint owner, never a caller-authored claim. */
+export type TaskLedgerCompletionCheckpoint = {
+  owner: 'task-loop';
+  checkpointId: string;
+  ownerRevision: string;
+  loopRunId: string;
+  taskRef: TaskLedgerCompletionClaim['taskRef'];
+  status: string;
+  evidenceGate: 'pass' | 'repair' | 'blocked' | 'unavailable';
+  selfCheckDecision: 'complete' | 'repair' | 'blocked' | 'unavailable';
+  candidate: TaskLedgerCompletionCandidate;
+  /** Missing on legacy checkpoints: absence is unavailable review provenance. */
+  reviewSource?: Extract<TaskLedgerCompletionReview, { state: 'pinned' }>;
+  acceptanceSha256: string;
+  taskInputSha256: string;
+  requiredCheckIds: string[];
+  verificationChecks: Array<{ checkId: string; command: string }>;
+  /** Effective session cwd pinned at intake; legacy records default to their review workspace. */
+  executionWorkdir?: string;
+  workerRunIds: string[];
+  verifierRunId: string;
+  reviewer: { agentId: string; runId: string; sessionKey: string };
+  capturedAt: number;
+  expiresAt: number;
+};
+
+/** Normalized read from the existing verification/effect owner; no write API. */
+export type TaskLedgerCompletionCheckReceipt = {
+  owner: 'verseshell-host-receipt' | 'task-loop-exec-effect';
+  receiptId: string;
+  ownerRevision: string;
+  verificationRunId: string;
+  checkpointId: string;
+  checkpointRevision: string;
+  taskRef: TaskLedgerCompletionClaim['taskRef'];
+  candidate: TaskLedgerCompletionCandidate;
+  acceptanceSha256: string;
+  checkId: string;
+  reviewer: { agentId: string; runId: string; sessionKey: string };
+  status: 'verified' | 'failed' | 'unavailable';
+  exitCode: number | null;
+  artifactRefs: Array<{ owner: 'verseshell-host-receipt' | 'context-archive'; ref: string; sha256: string; verified: boolean; path?: string }>;
+  capturedAt: number;
+  expiresAt: number;
+};
 
 export type TaskLedgerOperationIdentity = {
   actor: 'assistant';
@@ -6,6 +75,24 @@ export type TaskLedgerOperationIdentity = {
   scope: AutonomySessionScope;
   runtimeGeneration: string;
   runtimeOwner: { childPid: number; connectedAt: number };
+};
+
+/** Historical acceptance points at existing owners; current readback may invalidate it. */
+export type TaskLedgerCompletionDecision = {
+  operationId: string;
+  accepted: boolean;
+  taskRef: TaskLedgerCompletionClaim['taskRef'];
+  checkpointId: string;
+  checkpointRevision: string | null;
+  verificationRunIds: string[];
+  verificationRevisions: string[];
+  candidate: TaskLedgerCompletionCandidate | null;
+  acceptanceSha256: string | null;
+  taskInputSha256: string | null;
+  gaps: string[];
+  capturedAt: number;
+  expiresAt: number | null;
+  driven_by: 'agent';
 };
 
 export type TaskLedgerOperationReceipt = {
@@ -54,6 +141,8 @@ export type TaskLedgerEventType =
   | 'review_requested'
   | 'review_cleared'
   | 'session_linked'
+  | 'completion_decided'
+  | 'completion_evidence_changed'
   | 'working_context_proposed'
   | 'working_context_proposal_accepted'
   | 'working_context_proposal_rejected';
@@ -205,6 +294,8 @@ export type TaskLedgerNode = {
   createdAt: string;
   updatedAt: string;
   completedAt?: string | null;
+  completionDecision?: TaskLedgerCompletionDecision;
+  completionReadback?: { state: 'accepted' | 'invalidated' | 'unavailable'; gaps: string[] };
 };
 
 export type TaskLedgerEdge = {
@@ -235,6 +326,7 @@ export type TaskLedgerSessionLink = {
 };
 
 export type TaskLedgerEventPayload = {
+  completionDecision?: TaskLedgerCompletionDecision;
   node?: TaskLedgerNode;
   nodeId?: string;
   patch?: Partial<Omit<TaskLedgerNode, 'id' | 'createdAt'>>;

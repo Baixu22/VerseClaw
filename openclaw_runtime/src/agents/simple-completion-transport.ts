@@ -115,5 +115,16 @@ export function prepareModelForSimpleCompletion<TApi extends Api>(params: {
     return { ...model, api };
   }
 
+  // Pruned source runtimes have no SDK built-ins. The same managed transport
+  // used by embedded runs must serve bounded reviewers, even without overrides.
+  if (!getApiProvider(model.api)) {
+    const api = resolveTransportAwareSimpleApi(model.api);
+    const streamFn = createOpenClawTransportStreamFnForModel(model, { cfg });
+    if (api && streamFn) {
+      ensureCustomApiRegistered(api, streamFn);
+      return { ...model, api };
+    }
+  }
+
   return model;
 }

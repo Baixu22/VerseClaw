@@ -92,6 +92,8 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "orchestrator.run", scope: "operator.write" },
   { name: "task_loop.run", scope: "operator.write" },
   { name: "task_loop.status", scope: "operator.read" },
+  { name: "task_loop.completionEvidence", scope: "operator.read" },
+  { name: "task_loop.verifyCompletion", scope: "operator.write" },
   // Mission Control: long-goal outer loop above bounded task_loop.
   { name: "mission.create", scope: "operator.write" },
   { name: "mission.run", scope: "operator.write" },

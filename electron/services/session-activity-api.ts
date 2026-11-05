@@ -120,7 +120,7 @@ export function createSessionActivityApi({
   terminalManager: TerminalSessionManager;
 }): CompleteHostServiceRegistry['sessionActivity'] {
   const gitApi = createGitApi();
-  const taskLedgerApi = createTaskLedgerApi();
+  const taskLedgerApi = createTaskLedgerApi({ gatewayManager });
 
   return {
     snapshot: async (payload: SessionActivitySnapshotPayload) => {

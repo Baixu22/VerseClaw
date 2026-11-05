@@ -6,6 +6,7 @@ import { handleMockChatSend } from './mock-provider';
 import { isRecord } from './payload-utils';
 import type { ChatKnowledgeDenial } from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
+import { readCurrentTaskLedgerCompletions } from './task-ledger-completion';
 import { readTaskLedgerWorkingContext } from './task-ledger-working-context';
 import { getResourceTracker } from './resource-tracker';
 import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
@@ -145,6 +146,7 @@ function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeRefere
 }
 
 async function applyTaskLedgerContext(
+  gatewayManager: GatewayManager,
   message: string,
   workspaceId: unknown,
   activeTaskNodeId: unknown,
@@ -152,7 +154,7 @@ async function applyTaskLedgerContext(
   if (typeof workspaceId !== 'string' || !workspaceId.trim()) return message;
   if (typeof activeTaskNodeId !== 'string' || !activeTaskNodeId.trim()) return message;
   try {
-    const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+    const snapshot = await readCurrentTaskLedgerCompletions(gatewayManager, await loadTaskLedgerSnapshot(workspaceId));
     const node = snapshot.nodes.find((entry) => entry.id === activeTaskNodeId);
     if (!node) return message;
     const parent = node.parentId
@@ -265,7 +267,7 @@ async function readLongSessionContinuityContext(input: {
     const workspaceRootPath = binding.environment.canonicalRoot;
     const roleMemoryEnabled = (await getSetting('roleMemoryEnabled')) !== false;
     const [ledgerResult, workingContextResult, compressionResult, memoryResult, policyResult] = await Promise.allSettled([
-      loadTaskLedgerSnapshot(input.workspaceId),
+      loadTaskLedgerSnapshot(input.workspaceId).then(snapshot => readCurrentTaskLedgerCompletions(input.gatewayManager, snapshot)),
       readTaskLedgerWorkingContext(input.workspaceId),
       input.gatewayManager.rpc('sessions.compressionArtifact', { key: input.sessionKey }, 10_000),
       input.gatewayManager.rpc('memory.surface', { limit: 100 }, 15_000),
@@ -455,7 +457,7 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           activeTaskNodeId: typeof body.activeTaskNodeId === 'string' ? body.activeTaskNodeId : undefined,
           knowledgeReferences,
         });
-        message = continuityMessage ?? await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
+        message = continuityMessage ?? await applyTaskLedgerContext(gatewayManager, message, body.workspaceId, body.activeTaskNodeId);
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];
         const media = normalizeMedia(body.media);

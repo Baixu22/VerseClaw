@@ -82,6 +82,8 @@ export type SpawnProcessAdapter<WaitSignal = NodeJS.Signals | number | null> = {
 };
 
 type SpawnBaseInput = {
+  /** Host-owned synchronous check after preparation, immediately before spawn. */
+  beforeSpawn?: () => void;
   runId?: string;
   sessionId: string;
   backendId: string;

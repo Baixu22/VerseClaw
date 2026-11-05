@@ -3,6 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { GatewayManager } from '../gateway/manager';
 import { applyTaskLedgerAgentAction } from './task-ledger-actions';
+import { readCurrentTaskLedgerCompletions, submitTaskLedgerCompletionClaim } from './task-ledger-completion';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
   TaskLedgerAddEdgePayload,
@@ -70,8 +71,18 @@ function normalizeEdgeInput(payload: TaskLedgerAddEdgePayload): TaskLedgerEdge {
   };
 }
 
-function wrapSnapshot(snapshot: TaskLedgerSnapshot) {
-  return { success: true, snapshot };
+function rejectCallerCompletion(payload: { patch?: Record<string, unknown>; node?: Partial<TaskLedgerNode>; completionDecision?: unknown; type?: string }) {
+  // Runtime recorder provenance cannot be borrowed by a caller to bypass the
+  // automatic business completion fence; internal recorders write the service.
+  if ([payload.node?.metadata, payload.patch?.metadata].some(metadata =>
+    metadata && typeof metadata === 'object' && 'runtimeLifecycle' in metadata)) {
+    throw Object.assign(new Error('Runtime lifecycle provenance is owned by the runtime recorder'), { code: 'VALIDATION' });
+  }
+  if (payload.type === 'completion_decided' || payload.completionDecision
+    || payload.node && ('completionDecision' in payload.node || 'completionReadback' in payload.node)
+    || payload.patch && ('completionDecision' in payload.patch || 'completionReadback' in payload.patch)) {
+    throw Object.assign(new Error('Completion decisions are owned by Task Ledger claim admission'), { code: 'VALIDATION' });
+  }
 }
 
 function escapeHtml(value: string): string {
@@ -125,15 +136,27 @@ document.getElementById('search').addEventListener('input',e=>{query=e.target.va
 }
 
 export function createTaskLedgerApi(options: { gatewayManager?: Pick<GatewayManager, 'rpc' | 'getStatus'> } = {}): CompleteHostServiceRegistry['taskLedger'] {
+  const wrapSnapshot = async (snapshot: TaskLedgerSnapshot) => ({ success: true as const, snapshot: await readCurrentTaskLedgerCompletions(options.gatewayManager, snapshot) });
   return {
-    applyAgentAction: payload => applyTaskLedgerAgentAction(options.gatewayManager, payload),
+    submitCompletion: payload => submitTaskLedgerCompletionClaim(options.gatewayManager, payload),
+    applyAgentAction: async payload => {
+      const result = await applyTaskLedgerAgentAction(options.gatewayManager, payload);
+      return { ...result, ...await wrapSnapshot(result.snapshot) };
+    },
     snapshot: async (payload) => wrapSnapshot(await loadTaskLedgerSnapshot(payload?.workspaceId)),
 
-    appendEvents: async (payload) => wrapSnapshot(
-      await appendTaskLedgerEvents(payload.workspaceId, payload.events, payload.idempotencyKey),
-    ),
+    appendEvents: async (payload) => {
+      for (const event of payload.events) {
+        rejectCallerCompletion({ ...event.payload, type: event.type });
+        if (event.actor === 'system') {
+          throw Object.assign(new Error('Internal runtime actors append through their existing owner'), { code: 'VALIDATION' });
+        }
+      }
+      return wrapSnapshot(await appendTaskLedgerEvents(payload.workspaceId, payload.events, payload.idempotencyKey));
+    },
 
     createNode: async (payload) => {
+      rejectCallerCompletion(payload);
       const node = normalizeNodeInput(payload);
       const event: TaskLedgerEventInput = {
         type: node.kind === 'decision' ? 'decision_recorded' : node.kind === 'deviation' ? 'deviation_logged' : 'node_created',
@@ -144,14 +167,15 @@ export function createTaskLedgerApi(options: { gatewayManager?: Pick<GatewayMana
       return wrapSnapshot(await appendTaskLedgerEvents(payload.workspaceId, [event], payload.idempotencyKey));
     },
 
-    updateNode: async (payload: TaskLedgerUpdateNodePayload) => wrapSnapshot(
-      await appendTaskLedgerEvents(payload.workspaceId, [{
+    updateNode: async (payload: TaskLedgerUpdateNodePayload) => {
+      rejectCallerCompletion(payload);
+      return wrapSnapshot(await appendTaskLedgerEvents(payload.workspaceId, [{
         type: 'node_updated',
         actor: 'user',
         taskId: payload.nodeId,
         payload: { nodeId: payload.nodeId, patch: payload.patch },
-      }], payload.idempotencyKey),
-    ),
+      }], payload.idempotencyKey));
+    },
 
     addEdge: async (payload) => {
       const edge = normalizeEdgeInput(payload);
@@ -206,7 +230,7 @@ export function createTaskLedgerApi(options: { gatewayManager?: Pick<GatewayMana
 
     exportHtml: async (payload) => {
       const workspaceId = payload?.workspaceId;
-      const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+      const snapshot = await readCurrentTaskLedgerCompletions(options.gatewayManager, await loadTaskLedgerSnapshot(workspaceId));
       const read = payload?.includeHistory === false
         ? { events: [], warnings: [] }
         : await readTaskLedgerEvents(workspaceId);

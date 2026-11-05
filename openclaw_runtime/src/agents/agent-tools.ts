@@ -775,7 +775,7 @@ export function createOpenClawCodingTools(options?: {
   const sandboxToolPolicyWithToolSearchControls =
     mergeToolSearchControlAllowlist(sandboxToolPolicy);
   const subagentPolicyWithToolSearchControls = mergeToolSearchControlAllowlist(subagentPolicy);
-  const allowBackground = isToolAllowedByPolicies("process", [
+  const allowBackground = options?.exec?.allowBackground !== false && isToolAllowedByPolicies("process", [
     profilePolicyWithAlsoAllow,
     providerProfilePolicyWithAlsoAllow,
     globalPolicyWithToolSearchControls,
@@ -1175,7 +1175,7 @@ export function createOpenClawCodingTools(options?: {
           channel: options?.messageProvider,
           accountId: options?.agentAccountId,
         }),
-        messageProvider: options?.messageProvider,
+        messageProvider: execDefaults.messageProvider ?? options?.messageProvider,
         currentChannelId: options?.currentChannelId,
         currentThreadTs: options?.currentThreadTs,
         accountId: options?.agentAccountId,

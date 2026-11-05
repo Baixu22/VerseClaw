@@ -25,6 +25,7 @@ function isServiceManagedRuntime(): boolean {
 }
 
 export async function createChildAdapter(params: {
+  beforeSpawn?: () => void;
   argv: string[];
   cwd?: string;
   env?: NodeJS.ProcessEnv;
@@ -61,6 +62,7 @@ export async function createChildAdapter(params: {
   }
 
   const spawned = await spawnWithFallback({
+    beforeSpawn: params.beforeSpawn,
     argv: [preparedSpawn.command, ...preparedSpawn.args],
     options,
     fallbacks: useDetached

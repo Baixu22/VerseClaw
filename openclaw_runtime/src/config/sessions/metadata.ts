@@ -20,6 +20,12 @@ const mergeOrigin = (
     return undefined;
   }
   const merged: SessionOrigin = existing ? { ...existing } : {};
+  if (next?.senderId && next.senderId !== existing?.senderId) {
+    delete merged.senderName; delete merged.senderUsername; delete merged.senderE164;
+  }
+  for (const field of ['senderId', 'senderName', 'senderUsername', 'senderE164'] as const) {
+    if (next?.[field]) merged[field] = next[field];
+  }
   if (next?.label) {
     merged.label = next.label;
   }
@@ -81,6 +87,12 @@ export function deriveSessionOrigin(
   const threadId = ctx.MessageThreadId ?? undefined;
 
   const origin: SessionOrigin = {};
+  const sender = { senderId: ctx.SenderId, senderName: ctx.SenderName,
+    senderUsername: ctx.SenderUsername, senderE164: ctx.SenderE164 };
+  for (const field of ['senderId', 'senderName', 'senderUsername', 'senderE164'] as const) {
+    const value = normalizeOptionalString(sender[field]);
+    if (value) origin[field] = value;
+  }
   if (label) {
     origin.label = label;
   }

@@ -58,7 +58,7 @@ import type {
 } from '../types/memory';
 import type { SessionActivitySnapshot } from '../types/session-activity';
 import type { AutonomySessionScope } from '../types/identity-scope';
-import type { TaskLedgerOperationReceipt } from '../types/task-ledger';
+import type { TaskLedgerOperationReceipt, TaskLedgerCompletionClaim, TaskLedgerCompletionDecision } from '../types/task-ledger';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -4838,6 +4838,13 @@ export type TaskLedgerAgentActionPayload = {
     | { type: 'link'; taskNodeId: string };
 };
 export type TaskLedgerAgentActionResult = TaskLedgerSnapshotResult & { receipt: TaskLedgerOperationReceipt };
+export type TaskLedgerCompletionClaimPayload = TaskLedgerCompletionClaim;
+export type TaskLedgerCompletionClaimResult = TaskLedgerAgentActionResult & {
+  /** Immutable outcome of this operation; never a statement of current validity. */
+  operationDecision: TaskLedgerCompletionDecision;
+  /** Effective task status and completionReadback are in snapshot, including on replay. */
+  decisionScope: 'operation-history';
+};
 export type TaskLedgerUpdateNodePayload = TaskLedgerWorkspacePayload & {
   nodeId: string;
   patch: Partial<Omit<TaskLedgerNode, 'id' | 'createdAt'>>;
@@ -6069,6 +6076,7 @@ export type HostApiContract = {
     deliveryTargets: () => DeliveryTargetsResult;
   };
   taskLedger: {
+    submitCompletion: (payload: TaskLedgerCompletionClaimPayload) => TaskLedgerCompletionClaimResult;
     snapshot: (payload?: TaskLedgerWorkspacePayload) => TaskLedgerSnapshotResult;
     applyAgentAction: (payload: TaskLedgerAgentActionPayload) => TaskLedgerAgentActionResult;
     appendEvents: (payload: TaskLedgerAppendEventsPayload) => TaskLedgerSnapshotResult;

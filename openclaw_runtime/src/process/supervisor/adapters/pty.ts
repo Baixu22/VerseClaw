@@ -44,6 +44,7 @@ async function loadPtyModule(): Promise<PtyModule> {
 }
 
 export async function createPtyAdapter(params: {
+  beforeSpawn?: () => void;
   shell: string;
   args: string[];
   cwd?: string;
@@ -59,6 +60,7 @@ export async function createPtyAdapter(params: {
   }
   const baseEnv = params.env ? toStringEnv(params.env) : undefined;
   const preparedSpawn = prepareOomScoreAdjustedSpawn(params.shell, params.args, { env: baseEnv });
+  params.beforeSpawn?.();
   const pty = spawn(preparedSpawn.command, preparedSpawn.args, {
     cwd: params.cwd,
     env: preparedSpawn.env ? toStringEnv(preparedSpawn.env) : undefined,

@@ -166,6 +166,7 @@ export type ContextArchiveVerifyResult =
       ok: true;
       payload: unknown;
       handle: ArchiveHandle;
+      fileSha256: string;
     }
   | {
       ok: false;
@@ -214,9 +215,10 @@ export async function verifyContextArchiveHandle(
     return { ok: false, reason: 'invalid_uri' };
   }
   let parsed: ContextArchiveArtifact;
+  let raw: Buffer;
   try {
-    const raw = await fs.readFile(filePath, 'utf8');
-    parsed = JSON.parse(raw) as ContextArchiveArtifact;
+    raw = await fs.readFile(filePath);
+    parsed = JSON.parse(raw.toString('utf8')) as ContextArchiveArtifact;
   } catch (error) {
     const code = (error as { code?: unknown }).code;
     return code === 'ENOENT'
@@ -231,7 +233,9 @@ export async function verifyContextArchiveHandle(
   if (payloadChecksum !== handle.checksum || parsed.handle.checksum !== handle.checksum) {
     return { ok: false, reason: 'checksum_mismatch' };
   }
-  return { ok: true, payload: parsed.payload, handle: parsed.handle };
+  // Publish the digest of the exact validated bytes, never a later file read.
+  return { ok: true, payload: parsed.payload, handle: parsed.handle,
+    fileSha256: createHash('sha256').update(raw).digest('hex') };
 }
 
 export async function cleanupContextArchiveArtifacts(params: {
@@ -610,7 +614,7 @@ function resolveContextArchiveRoot(archiveRoot?: string): string {
   );
 }
 
-function resolveContextArchiveFilePath(handle: Pick<ArchiveHandle, 'uri'>): string | null {
+export function resolveContextArchiveFilePath(handle: Pick<ArchiveHandle, 'uri'>): string | null {
   const match = /^context-archive:\/\/([^/]+)\/([^/]+)$/.exec(handle.uri);
   if (!match?.[1] || !match[2]) {
     return null;

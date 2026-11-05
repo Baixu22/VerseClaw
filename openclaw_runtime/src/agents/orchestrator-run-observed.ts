@@ -13,6 +13,8 @@ import {
 } from "./orchestrator.js";
 import type { RoleRegistryConfigCarrier } from "./role-registry.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { readTaskExecutionCandidateAsync } from '../../../shared/task-ledger-candidate.js';
+import { taskLedgerDigest } from '../../../shared/task-ledger-journal.js';
 import { isCodingPatchFlowDefault, resolveWorktreeBackend } from "../context-engine/coding-runtime-flags.js";
 import {
   spawnRoleSubagent,
@@ -657,6 +659,16 @@ export async function runOrchestrationWithRecorder(
           }
         }
       }
+      const completionReview = ctx.completionReviewRoot
+        ? isVerifier
+          ? { state: 'pinned' as const, workspaceRoot: worktree?.root ?? ctx.completionReviewRoot,
+              executionWorkdir: worktree?.root ?? ctx.completionExecutionWorkdir ?? ctx.completionReviewRoot,
+              candidate: await readTaskExecutionCandidateAsync(worktree?.root ?? ctx.completionReviewRoot,
+                worktree?.root ?? ctx.completionExecutionWorkdir ?? ctx.completionReviewRoot, taskLedgerDigest(request.cfg)),
+              capturedAt: Date.now() }
+          : { state: 'requested' as const, workspaceRoot: ctx.completionReviewRoot,
+              executionWorkdir: ctx.completionExecutionWorkdir ?? ctx.completionReviewRoot }
+        : undefined;
       const spawn = await spawnRoleSubagent(
         {
           role: roleName,
@@ -665,7 +677,7 @@ export async function runOrchestrationWithRecorder(
           agentId: request.agentId,
           modelOverride: modelRef ?? undefined,
           runTimeoutSeconds: request.runTimeoutSeconds,
-          ...(worktree ? { cwd: worktree.root } : {}),
+          ...(worktree ? { cwd: worktree.root } : ctx.completionExecutionWorkdir ? { cwd: ctx.completionExecutionWorkdir } : {}),
           // B-3 v3: carry the worker-plan write-set coordinate into the child
           // session so the embedded handoff entity snapshot knows the files this
           // worker is expected to touch (no-op when the node has none).
@@ -677,6 +689,7 @@ export async function runOrchestrationWithRecorder(
             ? {
                 orchestration: {
                   orchestrationRunId,
+                  ...(completionReview ? { completionReview } : {}),
                   templateId: plan.templateId,
                   roleName,
                   isVerifier,

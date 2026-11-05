@@ -30,18 +30,24 @@ export function parseStructuredVerificationVerdictFromText(
   if (!text || !text.trim()) {
     return undefined;
   }
-  // JSON object containing verificationVerdict
-  const jsonMatch = text.match(/\{[\s\S]{0,400}?"verificationVerdict"\s*:\s*"(pass|fail|repair_required)"[\s\S]{0,400}?\}/iu);
-  if (jsonMatch?.[1]) {
-    const v = jsonMatch[1].toLowerCase() as StructuredVerificationVerdict;
-    if (STRUCTURED_VERDICTS.has(v)) return v;
-  }
-  // Compact structured token: verificationVerdict=pass | verificationVerdict: fail
-  const kvMatch = text.match(/\bverificationVerdict\s*[:=]\s*["']?(pass|fail|repair_required)["']?/iu);
+  // Whole structured output or the final verdict line is authoritative;
+  // quoted worker text and examples elsewhere in a report are not verdicts.
+  const trimmed = text.trim();
+  try {
+    const value = JSON.parse(trimmed) as { verificationVerdict?: unknown };
+    if (typeof value.verificationVerdict === 'string' && STRUCTURED_VERDICTS.has(value.verificationVerdict.toLowerCase() as StructuredVerificationVerdict)) {
+      return value.verificationVerdict.toLowerCase() as StructuredVerificationVerdict;
+    }
+  } catch { /* Plain reports use the final token line below. */ }
+  const line = trimmed.split(/\r?\n/u).at(-1) ?? '';
+  const kvMatch = line.match(/^(?:my verdict:\s*)?verificationVerdict\s*[:=]\s*["']?(pass|fail|repair_required)["']?\s*$/iu);
   if (kvMatch?.[1]) {
     const v = kvMatch[1].toLowerCase() as StructuredVerificationVerdict;
     if (STRUCTURED_VERDICTS.has(v)) return v;
   }
+  // Embedded rejections may fail closed, but embedded/quoted pass never grants.
+  const rejection = trimmed.match(/"verificationVerdict"\s*:\s*"(fail|repair_required)"/iu);
+  if (rejection) return rejection[1].toLowerCase() as StructuredVerificationVerdict;
   return undefined;
 }
 
@@ -56,11 +62,15 @@ export function resolveStructuredVerificationVerdict(params: {
   const orch = typeof params.orchestrationVerdict === "string"
     ? params.orchestrationVerdict.trim().toLowerCase()
     : "";
-  if (STRUCTURED_VERDICTS.has(orch as StructuredVerificationVerdict)) {
-    return { verdict: orch as StructuredVerificationVerdict, source: "orchestration" };
-  }
-
   const fromText = parseStructuredVerificationVerdictFromText(params.resultText);
+  if (params.outcomeStatus === 'error' || params.outcomeStatus === 'timeout'
+    || fromText && STRUCTURED_VERDICTS.has(orch as StructuredVerificationVerdict) && orch !== fromText) {
+    return { verdict: 'fail', source: 'outcome_error' };
+  }
+  if (!fromText && /verificationVerdict/iu.test(params.resultText ?? '')) return { source: 'none' };
+  if (STRUCTURED_VERDICTS.has(orch as StructuredVerificationVerdict)) {
+    return { verdict: orch as StructuredVerificationVerdict, source: 'orchestration' };
+  }
   if (fromText) {
     return { verdict: fromText, source: "text_structured" };
   }

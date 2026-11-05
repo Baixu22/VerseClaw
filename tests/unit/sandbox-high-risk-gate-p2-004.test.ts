@@ -70,6 +70,15 @@ describe('sandbox high-risk gate (P2-004 / F-ISO-001)', () => {
     expect(classifyTerminalRiskForSandboxGate('destructive')).toBe('exec');
   });
 
+  it('keeps completion verification behind an explicit strong requirement even in full access', () => {
+    const action = classifyGatewayMethodForSandboxGate('task_loop.verifyCompletion');
+    expect(action).toBe('exec');
+    expect(classifyGatewayMethodForSandboxGate('task_loop.completionEvidence')).toBeNull();
+    const base = { allowed: true, risk: 'write' };
+    const gate = action ? decideSandboxHighRiskAction({ ...degradedPolicy, strengthRequired: true }, action, { allowApproval: true }) : null;
+    expect(composeWithSandboxHighRiskGate(base, gate)).toMatchObject({ allowed: false, requiresApproval: false });
+  });
+
   it('classifies agent-browser and cron host actions', () => {
     expect(classifyAgentBrowserAction('status')).toBeNull();
     expect(classifyAgentBrowserAction('open')).toBe('browser');

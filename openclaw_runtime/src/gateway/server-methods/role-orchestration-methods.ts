@@ -34,6 +34,10 @@ import {
 } from "../../agents/orchestration-quality-scorecard.js";
 import { spawnSubagentDirect } from "../../agents/subagent-spawn.js";
 import { getTaskLoopRun, runTaskLoop, type TaskLoopLifecycleEvent } from "../../agents/task-loop-controller.js";
+import { registerChatAbortController } from '../chat-abort.js';
+import { resolveAgentTimeoutMs } from '../../agents/timeout.js';
+import { acquireSessionAdmissionPermit } from '../../sessions/session-admission-registry.js';
+import { resolveGatewaySessionStoreTargetWithStore, resolveFreshestSessionStoreMatchFromStoreKeys } from '../session-utils.js';
 import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../../config/agent-limits.js";
 import {
   storeRuntimeTrace,
@@ -724,6 +728,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           taskLedgerRootId: readString(params.taskLedgerRootId),
           fileHints: readStringArray(params.fileHints),
           acceptance: readStringArray(params.acceptance),
+            verificationChecks: params.verificationChecks as Array<{ acceptanceIndex: number; command: string }> | undefined,
           important: readBoolean(params.important) ?? false,
           includeVerifier: readBoolean(params.includeVerifier),
           templateId: readTemplateId(params),
@@ -751,6 +756,63 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         undefined,
         errorShape(ErrorCodes.UNAVAILABLE, `task_loop.run failed: ${err instanceof Error ? err.message : String(err)}`),
       );
+    }
+  },
+
+  "task_loop.completionEvidence": async ({ params, respond, context }) => {
+    const workspaceId = readString(params.workspaceId);
+    const sessionKey = readString(params.sessionKey);
+    const checkpointId = readString(params.checkpointId);
+    const verificationRunIds = params.verificationRunIds;
+    if (!workspaceId || !sessionKey || !checkpointId || Object.keys(params).some(key => !['workspaceId', 'sessionKey', 'checkpointId', 'verificationRunIds'].includes(key))
+      || verificationRunIds !== undefined && (!Array.isArray(verificationRunIds) || verificationRunIds.length > 64 || verificationRunIds.some(id => typeof id !== 'string' || !id.trim() || id.length > 200))) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Task completion evidence requires owner references only'));
+      return;
+    }
+    try {
+      const { readTaskLoopCompletionEvidence } = await import('../../agents/task-loop-completion.js');
+      const facts = await readTaskLoopCompletionEvidence({ workspaceId, sessionKey, checkpointId }, context.getRuntimeConfig());
+      const { readTaskLoopVerificationReceipt } = await import('../../agents/task-loop-verification.js');
+      const checks = facts.checkpoint ? (await Promise.all(((verificationRunIds as string[] | undefined) ?? []).map(id => readTaskLoopVerificationReceipt(id, facts.checkpoint!)))).filter(Boolean) : [];
+      respond(true, { ...facts, checks }, undefined);
+    } catch {
+      respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, 'Task completion owner evidence is unavailable'));
+    }
+  },
+
+  "task_loop.verifyCompletion": async ({ params, respond, context }) => {
+    const workspaceId = readString(params.workspaceId), sessionKey = readString(params.sessionKey), checkpointId = readString(params.checkpointId);
+    const checkId = readString(params.checkId), verificationRunId = readString(params.verificationRunId);
+    if (!workspaceId || !sessionKey || !checkpointId || !checkId || !verificationRunId
+      || Object.keys(params).some(key => !['workspaceId', 'sessionKey', 'checkpointId', 'checkId', 'verificationRunId'].includes(key))) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Verification accepts frozen check and owner references only'));
+      return;
+    }
+    let cleanup = () => {};
+    try {
+      const cfg = context.getRuntimeConfig();
+      const target = resolveGatewaySessionStoreTargetWithStore({ cfg, key: sessionKey });
+      const entry = resolveFreshestSessionStoreMatchFromStoreKeys(target.store, target.storeKeys)?.entry;
+      if (!entry?.sessionId || target.canonicalKey !== sessionKey) throw new Error('Task verification session owner is unavailable');
+      const release = acquireSessionAdmissionPermit({ agentId: target.agentId, canonicalSessionKey: sessionKey,
+        expectedSessionId: entry.sessionId }, 'exec-spawn');
+      let run: ReturnType<typeof registerChatAbortController>;
+      try {
+        run = registerChatAbortController({ chatAbortControllers: context.chatAbortControllers,
+          runId: 'task-verification:' + crypto.randomUUID(), sessionId: entry.sessionId,
+          sessionKey, agentId: target.agentId, workspaceId, timeoutMs: resolveAgentTimeoutMs({ cfg }), kind: 'agent', controlUiVisible: false });
+        cleanup = run.cleanup;
+      } finally { release(); }
+      const { readTaskLoopCompletionEvidence } = await import('../../agents/task-loop-completion.js');
+      const facts = await readTaskLoopCompletionEvidence({ workspaceId, sessionKey, checkpointId }, cfg);
+      if (!facts.checkpoint || facts.scope.sessionGeneration !== entry.sessionId) throw new Error('Task completion checkpoint is unavailable');
+      run.controller.signal.throwIfAborted();
+      const { runTaskLoopVerificationCheck } = await import('../../agents/task-loop-verification.js');
+      respond(true, await runTaskLoopVerificationCheck({ workspaceId, sessionKey, checkpointId, checkId, verificationRunId }, cfg, run.controller.signal), undefined);
+    } catch {
+      respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, 'Task verification owner/program is unavailable'));
+    } finally {
+      cleanup();
     }
   },
 

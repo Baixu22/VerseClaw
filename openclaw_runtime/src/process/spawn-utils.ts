@@ -14,6 +14,7 @@ export type SpawnWithFallbackResult = {
 };
 
 type SpawnWithFallbackParams = {
+  beforeSpawn?: () => void;
   argv: string[];
   options: SpawnOptions;
   fallbacks?: SpawnFallback[];
@@ -99,6 +100,7 @@ export async function spawnWithFallback(
   let lastError: unknown;
   for (let index = 0; index < attempts.length; index += 1) {
     const attempt = attempts[index];
+    params.beforeSpawn?.();
     try {
       const child = await spawnAndWaitForSpawn(spawnImpl, params.argv, attempt.options);
       return {

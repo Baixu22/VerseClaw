@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { mutateTaskLoopCompletionEvidence } from '../task-loop-completion-fence.js';
 import type { Insertable, Selectable, Updateable } from "kysely";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../../infra/kysely-sync.js";
 import {
@@ -448,6 +449,8 @@ export function buildRuntimeResumeCheckpoint(input: {
 }
 
 export function recordLongTaskCheckpoint(input: {
+  /** Atomic reservation for an effectful check. Upsert remains the default. */
+  insertOnly?: boolean;
   id?: string;
   idempotencyKey?: string;
   sessionKey: string;
@@ -532,19 +535,32 @@ export function recordLongTaskCheckpoint(input: {
     created_at: now,
     updated_at: now,
   };
-  runOpenClawStateWriteTransaction(({ db }) => {
+  const previous = getLongTaskCheckpointById(id);
+  const previousByKey = values.idempotency_key ? getLongTaskCheckpointByKey(values.idempotency_key) : undefined;
+  if (input.insertOnly && (previous || previousByKey)) return previous ?? previousByKey!;
+  const write = () => runOpenClawStateWriteTransaction(({ db }) => {
     const query = getNodeSqliteKysely<LongTaskDatabase>(db);
     const insert = query.insertInto("long_task_checkpoints").values(values);
     executeSqliteQuerySync(
       db,
-      values.idempotency_key
+      input.insertOnly
+        ? insert.onConflict((conflict) => conflict.doNothing())
+        : values.idempotency_key
         ? insert.onConflict((conflict) =>
             conflict.column("idempotency_key").doUpdateSet(checkpointUpdate(values)),
           )
         : insert.onConflict((conflict) => conflict.column("id").doUpdateSet(checkpointUpdate(values))),
     );
   });
-  const record = getLongTaskCheckpointById(values.id) ?? getLatestLongTaskCheckpoint(input.sessionKey)!;
+  const previousRecords = [previous, previousByKey].filter((record): record is LongTaskCheckpointRecord => Boolean(record));
+  if (checkpoint.metadata?.taskCompletion || checkpoint.metadata?.taskVerification
+    || previousRecords.some(record => record.checkpoint.metadata?.taskCompletion || record.checkpoint.metadata?.taskVerification)) {
+    mutateTaskLoopCompletionEvidence([input.workspaceId, ...previousRecords.map(record => record.workspaceId)], write);
+  } else write();
+  const record = getLongTaskCheckpointById(values.id) ?? (values.idempotency_key ? getLongTaskCheckpointByKey(values.idempotency_key) : undefined) ?? getLatestLongTaskCheckpoint(input.sessionKey)!;
+  // A reservation is not a completed check fact. Publish the normal projection
+  // only when its existing owner appends the terminal record.
+  if (input.insertOnly) return record;
   try {
     recordCheckpointInLongTaskLedger({
       taskLedgerRootId,
@@ -696,6 +712,7 @@ export function getLatestLongTaskLedgerRootId(sessionKey: string): string | unde
       .selectFrom("long_task_checkpoints")
       .select(["task_ledger_root_id"])
       .where("session_key", "=", sessionKey)
+      .where('id', 'not like', 'task-loop-check:%')
       .where("task_ledger_root_id", "is not", null)
       .orderBy("created_at", "desc")
       .orderBy("id", "desc")
@@ -846,6 +863,8 @@ export function getLatestLongTaskCheckpoint(
       .selectFrom("long_task_checkpoints")
       .selectAll()
       .where("session_key", "=", sessionKey)
+      // These are exec evidence, not resumable task checkpoints.
+      .where('id', 'not like', 'task-loop-check:%')
       .orderBy("created_at", "desc")
       .orderBy("id", "desc")
       .limit(1),
@@ -864,6 +883,7 @@ export function listLongTaskCheckpoints(
       .selectFrom("long_task_checkpoints")
       .selectAll()
       .where("session_key", "=", sessionKey)
+      .where('id', 'not like', 'task-loop-check:%')
       .orderBy("created_at", "desc")
       .orderBy("id", "desc")
       .limit(Math.max(1, Math.min(100, Math.floor(limit)))),
@@ -910,6 +930,12 @@ export function getLongTaskCheckpointById(id: string): LongTaskCheckpointRecord 
     db,
     query.selectFrom("long_task_checkpoints").selectAll().where("id", "=", id).limit(1),
   ).rows[0];
+  return row ? checkpointRowToRecord(row) : undefined;
+}
+
+function getLongTaskCheckpointByKey(key: string): LongTaskCheckpointRecord | undefined {
+  const { db, query } = stateDb();
+  const row = executeSqliteQuerySync(db, query.selectFrom('long_task_checkpoints').selectAll().where('idempotency_key', '=', key).limit(1)).rows[0];
   return row ? checkpointRowToRecord(row) : undefined;
 }
 

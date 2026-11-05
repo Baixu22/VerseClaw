@@ -12,8 +12,22 @@ type LockOptions = { timeoutMs?: number; pollMs?: number };
 type Participant = { pid: number; token: string; choosing: boolean; ticket: number; incarnation: string; publishedAt: number };
 type Entry = { path: string; owner: Participant };
 
+function retryWindowsSharing<T>(operation: () => T): T {
+  const deadline = Date.now() + 500;
+  const pause = new Int32Array(new SharedArrayBuffer(4));
+  for (;;) {
+    try { return operation(); }
+    catch (error) {
+      // Readers/AV may briefly hold a delete-sharing handle. Retry only this
+      // same UUID record; never steal another ticket or suppress a lasting denial.
+      if (process.platform !== 'win32' || !['EPERM', 'EACCES'].includes((error as NodeJS.ErrnoException).code ?? '') || Date.now() >= deadline) throw error;
+      Atomics.wait(pause, 0, 0, 5);
+    }
+  }
+}
+
 function removeOwnRecord(path: string): void {
-  try { unlinkSync(path); }
+  try { retryWindowsSharing(() => unlinkSync(path)); }
   catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
 }
 
@@ -21,7 +35,7 @@ function publish(path: string, owner: Participant): void {
   const staging = `${path}.${randomUUID()}.stage`;
   try {
     writeFileSync(staging, JSON.stringify(owner), { encoding: 'utf8', flag: 'wx' });
-    renameSync(staging, path);
+    retryWindowsSharing(() => renameSync(staging, path));
   } finally { removeOwnRecord(staging); }
 }
 

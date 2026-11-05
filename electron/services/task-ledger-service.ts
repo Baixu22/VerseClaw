@@ -15,8 +15,13 @@ import type {
 import { getOpenClawConfigDir } from '../utils/paths';
 import { withTaskLedgerJournalLock } from '../../shared/task-ledger-journal-lock';
 import { parseTaskLedgerJournal as parseTaskLedgerLog, serializeTaskLedgerCommit, taskLedgerDigest as digest, type CommittedOperation } from '../../shared/task-ledger-journal';
+import { automaticBusinessTaskRequiresClaim, isRuntimeLifecycleProjection } from '../../shared/task-ledger-completion';
 
 const SCHEMA_VERSION = 1 as const;
+const REPLACEMENT_EVENTS = new Set<TaskLedgerEvent['type']>(['node_created', 'decision_recorded', 'deviation_logged']);
+const GENERIC_NODE_MUTATIONS = new Set<TaskLedgerEvent['type']>([
+  ...REPLACEMENT_EVENTS, 'node_updated', 'node_deleted', 'status_changed', 'progress_changed', 'review_requested', 'review_cleared',
+]);
 
 export type TaskLedgerReadResult = {
   events: TaskLedgerEvent[];
@@ -72,6 +77,8 @@ function normalizeNode(input: TaskLedgerNode, timestamp: string): TaskLedgerNode
   const status = input.status ?? 'todo';
   return {
     ...input,
+    completionDecision: undefined,
+    completionReadback: undefined,
     parentId: input.parentId ?? null,
     status,
     tags: Array.isArray(input.tags) ? input.tags : [],
@@ -134,6 +141,8 @@ export function projectTaskLedgerSnapshot(
   readWarnings: TaskLedgerWarning[] = [],
 ): TaskLedgerSnapshot {
   const nodes = new Map<string, TaskLedgerNode>();
+  // Rebuilt from internal creation facts, never borrowed from a caller patch.
+  const runtimeProjectionIds = new Set<string>();
   const edges = new Map<string, TaskLedgerEdge>();
   const sessionLinks = new Map<string, TaskLedgerSessionLink>();
   const warnings: TaskLedgerWarning[] = [...readWarnings];
@@ -142,13 +151,57 @@ export function projectTaskLedgerSnapshot(
     try {
       const timestamp = event.createdAt || nowIso();
       const nodeId = event.payload.nodeId ?? event.taskId ?? event.payload.node?.id;
+      const target = nodes.get((REPLACEMENT_EVENTS.has(event.type) ? event.payload.node?.id : nodeId) ?? '');
+      if (target && runtimeProjectionIds.has(target.id) && event.actor !== 'system' && event.actor !== 'user'
+        && GENERIC_NODE_MUTATIONS.has(event.type)) continue;
+      // Generic lifecycle reports cannot reopen or erase terminal business
+      // facts. Explicit manual edits remain available; changed evidence is
+      // handled by completion readback, not an ordinary status event.
+      if (event.actor !== 'user' && target && automaticBusinessTaskRequiresClaim(target.kind)
+        && !runtimeProjectionIds.has(target.id)
+        && (target.status === 'done' || target.status === 'dropped') && GENERIC_NODE_MUTATIONS.has(event.type)) continue;
       switch (event.type) {
+        case 'completion_decided': {
+          if (!nodeId) break;
+          const existing = nodes.get(nodeId);
+          const decision = event.payload.completionDecision;
+          if (!existing || !decision || decision.taskRef.taskNodeId !== nodeId) break;
+          if (existing.status === 'dropped' || existing.status === 'done' && !existing.completionDecision?.accepted) break;
+          // A failed attempt is journal history, not authority to undo an
+          // accepted completion or an explicit manual completion.
+          if (!decision.accepted && existing.status === 'done') break;
+          nodes.set(nodeId, { ...existing, completionDecision: decision, updatedAt: timestamp,
+            status: decision.accepted ? 'done' : 'review',
+            completedAt: decision.accepted ? timestamp : null });
+          break;
+        }
         case 'node_created':
         case 'decision_recorded':
         case 'deviation_logged': {
           const node = event.payload.node;
           if (!node) break;
-          nodes.set(node.id, normalizeNode(node, timestamp));
+          const normalized = normalizeNode(node, timestamp);
+          const prior = nodes.get(node.id);
+          const runtimeProjection = event.actor === 'system'
+            && (runtimeProjectionIds.has(node.id) || isRuntimeLifecycleProjection(normalized.metadata, node.id));
+          if (runtimeProjection) {
+            runtimeProjectionIds.add(node.id);
+            normalized.metadata = { ...prior?.metadata, ...normalized.metadata,
+              runtimeLifecycle: prior?.metadata?.runtimeLifecycle ?? normalized.metadata?.runtimeLifecycle
+                ?? (node.id.startsWith('mission:') ? 'mission-control' : 'clawgraph') };
+          } else if (event.actor === 'user') runtimeProjectionIds.delete(node.id);
+          // Reusing an ID cannot recast an existing business task as a turn
+          // check and erase its completion boundary. Explicit manual edits
+          // retain their existing type-editing semantics.
+          if (prior && event.actor !== 'user' && !runtimeProjection) normalized.kind = prior.kind;
+          // Preserve turn/check semantics. A model-authored business terminal is
+          // a review fact; only the completion operation can admit verification.
+          if (event.actor !== 'user' && automaticBusinessTaskRequiresClaim(normalized.kind)
+            && !runtimeProjection) {
+            normalized.metadata = { ...normalized.metadata, automaticCompletion: prior?.metadata?.automaticCompletion ?? normalized.metadata?.automaticCompletion ?? { authority: 'task-ledger', state: 'pending' } };
+            if (normalized.status === 'done') { normalized.status = 'review'; normalized.completedAt = null; }
+          }
+          nodes.set(node.id, normalized);
           break;
         }
         case 'node_updated': {
@@ -156,10 +209,26 @@ export function projectTaskLedgerSnapshot(
           const existing = nodes.get(nodeId);
           if (!existing) break;
           const patch = event.payload.patch ?? {};
-          const status = patch.status ?? existing.status;
+          const runtimeProjection = runtimeProjectionIds.has(existing.id);
+          let metadata: TaskLedgerNode['metadata'] = runtimeProjection && event.actor !== 'user'
+            ? { ...existing.metadata, ...patch.metadata, runtimeLifecycle: existing.metadata?.runtimeLifecycle }
+            : patch.metadata ?? existing.metadata;
+          if (event.actor === 'user' && (patch.status || patch.kind)) {
+            runtimeProjectionIds.delete(existing.id);
+            if (metadata?.runtimeLifecycle) { metadata = { ...metadata }; delete metadata.runtimeLifecycle; }
+          }
+          const requiresClaim = automaticBusinessTaskRequiresClaim(existing.kind)
+            && !runtimeProjection
+            && (existing.metadata?.automaticCompletion || event.actor !== 'user' && patch.status === 'done');
+          const status = patch.status === 'done' && requiresClaim && event.actor !== 'user' ? 'review' : patch.status ?? existing.status;
           nodes.set(nodeId, {
             ...existing,
             ...patch,
+            metadata,
+            completionDecision: event.actor === 'user' && patch.status ? undefined : existing.completionDecision,
+            completionReadback: undefined,
+            ...(event.actor !== 'user' && !runtimeProjection ? { kind: existing.kind } : {}),
+            ...(requiresClaim && event.actor !== 'user' ? { kind: existing.kind, metadata: { ...(patch.metadata ?? existing.metadata), automaticCompletion: existing.metadata?.automaticCompletion ?? { authority: 'task-ledger', state: 'pending' } } } : {}),
             id: existing.id,
             createdAt: existing.createdAt,
             status,
@@ -172,6 +241,7 @@ export function projectTaskLedgerSnapshot(
         case 'node_deleted': {
           if (!nodeId) break;
           nodes.delete(nodeId);
+          runtimeProjectionIds.delete(nodeId);
           for (const [edgeId, edge] of edges) {
             if (edge.from === nodeId || edge.to === nodeId) edges.delete(edgeId);
           }
@@ -186,18 +256,24 @@ export function projectTaskLedgerSnapshot(
           if (!nodeId) break;
           const existing = nodes.get(nodeId);
           if (!existing) break;
-          const status = event.type === 'review_requested'
+          const requestedStatus = event.type === 'review_requested'
             ? 'review'
             : event.type === 'review_cleared'
               ? (event.payload.status ?? 'todo')
               : event.payload.status;
-          if (!status) break;
+          if (!requestedStatus) break;
+          const runtimeProjection = runtimeProjectionIds.has(existing.id);
+          if (event.actor === 'user') runtimeProjectionIds.delete(existing.id);
+          const requiresClaim = automaticBusinessTaskRequiresClaim(existing.kind) && !runtimeProjection
+            && event.actor !== 'user' && requestedStatus === 'done';
+          const status = requiresClaim ? 'review' : requestedStatus;
           nodes.set(nodeId, {
             ...existing,
+            ...(event.actor === 'user' ? { completionDecision: undefined } : {}),
             status,
             updatedAt: timestamp,
             completedAt: status === 'done' ? (existing.completedAt ?? timestamp) : existing.completedAt ?? null,
-            metadata: event.payload.reviewReason
+            metadata: requiresClaim ? { ...existing.metadata, automaticCompletion: existing.metadata?.automaticCompletion ?? { authority: 'task-ledger', state: 'pending' } } : event.payload.reviewReason
               ? { ...(existing.metadata ?? {}), reviewReason: event.payload.reviewReason }
               : existing.metadata,
           });

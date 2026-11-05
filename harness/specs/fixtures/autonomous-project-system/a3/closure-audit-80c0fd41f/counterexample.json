@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a3-owner-audit",
+  "sourceCommit": "80c0fd41f",
+  "sessionOrRuntimeOwnerSupplied": false,
+  "artifactOrReceiptCreated": false,
+  "expectedAccepted": false,
+  "actualAccepted": true,
+  "actualTaskStatus": "done",
+  "callerAuthored": {
+    "schema": "TaskCompletionClaim/v1",
+    "taskId": "2f62320f-6ebd-4209-8435-1d81e60904a0",
+    "candidateDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "generation": "never-existed-session-generation",
+    "verifierDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "effectDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "priorStatus": "review"
+  },
+  "events": 2,
+  "requirementViolated": "No model/caller self-proof; read actual task/candidate/generation/check/reviewer/effect owners and disk artifacts"
+}

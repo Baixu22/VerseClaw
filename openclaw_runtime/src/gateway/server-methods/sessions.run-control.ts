@@ -1175,6 +1175,15 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       entry,
       legacyKey,
       canonicalKey,
+      onFenced: () => {
+        // Registration takes the existing admission permit synchronously.
+        // With the fence closed, no later registration can escape this census.
+        for (const [runId, active] of context.chatAbortControllers) {
+          if (runId.startsWith('task-verification:') && active.sessionKey === canonicalKey && active.sessionId === entry?.sessionId) {
+            active.controller.abort(new Error('Session stopped'));
+          }
+        }
+      },
     });
     if (!result.ok) {
       respond(false, undefined, result.error);

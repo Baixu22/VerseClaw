@@ -3,6 +3,7 @@ import type { GatewayManager } from '../gateway/manager';
 import type { ResourceFabric } from './resource-fabric';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createHash } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import type {
   KnowledgeCreateInboxItemPayload,
   KnowledgeDraftType,
@@ -343,7 +344,28 @@ export function createGatewayApi(
     method: string,
     params: unknown,
     timeoutMs: number | undefined,
+    policyWorkspace?: Awaited<ReturnType<typeof getActiveWorkspaceProfile>>,
   ) => {
+    if (method === 'task_loop.verifyCompletion') {
+      const active = await getActiveWorkspaceProfile();
+      if (!active || !isRecord(params) || params.workspaceId !== active.id || params.sessionKey !== active.activeSessionKey) {
+        throw Object.assign(new Error('Verification execution scope differs from the workspace/session whose policy was checked'), { code: 'VALIDATION' });
+      }
+      const facts = await gatewayManager.rpc<{ workspaceRoot: string; checkpoint: unknown }>('task_loop.completionEvidence', {
+        workspaceId: params.workspaceId, sessionKey: params.sessionKey, checkpointId: params.checkpointId,
+      }, 20_000);
+      const fresh = await getActiveWorkspaceProfile();
+      const physical = (value: string) => { const root = realpathSync(value); return process.platform === 'win32' ? root.toLowerCase() : root; };
+      if (!fresh || !facts.checkpoint || fresh.id !== active.id || fresh.activeSessionKey !== active.activeSessionKey
+        || physical(facts.workspaceRoot) !== physical(fresh.rootPath) || physical(active.rootPath) !== physical(fresh.rootPath)
+        || fresh.permissionMode !== active.permissionMode) {
+        throw Object.assign(new Error('Verification physical workspace or permission owner changed before dispatch'), { code: 'VALIDATION' });
+      }
+      if (!policyWorkspace || policyWorkspace.id !== active.id || policyWorkspace.activeSessionKey !== active.activeSessionKey
+        || physical(policyWorkspace.rootPath) !== physical(active.rootPath) || policyWorkspace.permissionMode !== active.permissionMode) {
+        throw Object.assign(new Error('Verification workspace policy changed after permission evaluation'), { code: 'VALIDATION' });
+      }
+    }
     const result = await runGatewayRpc(gatewayManager, resourceFabricInstance, method, params, timeoutMs);
     await captureMissionKnowledgeCandidates(method, result, options.createKnowledgeInboxItem, capturedMissionKnowledgeKeys);
     return result;
@@ -409,6 +431,10 @@ export function createGatewayApi(
       const timeoutMs = parseTimeoutMs(body.timeoutMs);
       const approvalId = normalizeApprovalId(body.approvalId);
       const workspace = await getActiveWorkspaceProfile();
+      if (method === 'task_loop.verifyCompletion'
+        && (!workspace || !isRecord(body.params) || body.params.workspaceId !== workspace.id || body.params.sessionKey !== workspace.activeSessionKey)) {
+        throw Object.assign(new Error('Verification execution scope differs from the workspace/session whose policy was checked'), { code: 'VALIDATION' });
+      }
 
       if (workspace) {
         let decision = decideGatewayRpc(method, workspace.permissionMode, body.params);
@@ -474,7 +500,7 @@ export function createGatewayApi(
                       paramsPreview: buildParamsPreview(body.params),
                       reason: `approved by preset ${matchResult.preset.label} (${matchResult.preset.id})`,
                     });
-                    return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
+                    return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
                   }
                 }
               } catch {
@@ -492,7 +518,7 @@ export function createGatewayApi(
                 requestHash,
               });
               if (approved) {
-                return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
+                return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
               }
             }
 
@@ -544,7 +570,7 @@ export function createGatewayApi(
         if (mockResult) return mockResult;
       }
 
-      return runRpcAndCaptureKnowledge(method, body.params, timeoutMs);
+      return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
     },
   };
 }

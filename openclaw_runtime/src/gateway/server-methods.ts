@@ -589,6 +589,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "orchestrator.run",
       "task_loop.run",
       "task_loop.status",
+      "task_loop.completionEvidence",
+      "task_loop.verifyCompletion",
       "observability.reportTrace",
       "observability.traces",
       "observability.readFrom",

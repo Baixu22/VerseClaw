@@ -138,6 +138,7 @@ export type GovernedProcessResourceReceipt = {
 };
 
 export type GovernedVerseShellProcessOptions = {
+  beforeDispatch?: () => void;
   command: string;
   /** Host-owned argv produced before approval. */
   argv?: readonly string[];
@@ -412,14 +413,15 @@ export async function startGovernedVerseShellProcess(
   };
 
   prepareVerseShellLifecycleRoot(baseConfig.workspace);
-  const firstClient = await manager.getClient(baseConfig);
+  const firstClient = await manager.getClient(baseConfig).catch(error => { capacityLease.release(); throw error; });
   const traceId = options.traceId?.trim() || `verseshell-process:${options.sessionId}`;
   const releaseCapacity = (): boolean => capacityLease.release();
   const first = await firstClient.execute("process.start", startArgs, {
+    beforeDispatch: options.beforeDispatch,
     timeoutMs: POLL_REQUEST_TIMEOUT_MS,
     effectful: true,
     traceId,
-  });
+  }).catch(error => { releaseCapacity(); throw error; });
   let client = firstClient;
   let startObservation = first;
   if (first.error?.code === "E_NEEDS_APPROVAL") {
@@ -435,12 +437,13 @@ export async function startGovernedVerseShellProcess(
         "VerseShell did not return a valid action-bound approval token",
       );
     }
-    client = await manager.getClient({ ...baseConfig, approvalToken: token });
+    client = await manager.getClient({ ...baseConfig, approvalToken: token }).catch(error => { releaseCapacity(); throw error; });
     startObservation = await client.execute("process.start", startArgs, {
+      beforeDispatch: options.beforeDispatch,
       timeoutMs: POLL_REQUEST_TIMEOUT_MS,
       effectful: true,
       traceId,
-    });
+    }).catch(error => { releaseCapacity(); throw error; });
   }
   if (!startObservation.ok) {
     if (client !== firstClient) await manager.shutdownProcess(client.processKey);

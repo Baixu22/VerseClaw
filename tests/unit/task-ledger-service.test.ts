@@ -23,6 +23,18 @@ function event(partial: Partial<TaskLedgerEvent> & Pick<TaskLedgerEvent, 'type' 
 }
 
 describe('task ledger service', () => {
+  it('never projects caller-supplied effective readback or decisions from generic node records', () => {
+    const created = event({ type: 'node_created', payload: { node: { id: 'unverified', title: 'Self proof', kind: 'task', status: 'done',
+      createdAt: baseTime, updatedAt: baseTime, completionReadback: { state: 'accepted', gaps: [] },
+      completionDecision: { accepted: true } as never } } });
+    const patched = event({ type: 'node_updated', payload: { nodeId: 'unverified', patch: {
+      completionReadback: { state: 'accepted', gaps: [] }, completionDecision: { accepted: true } as never,
+    } } });
+    const snapshot = projectTaskLedgerSnapshot(workspaceId, [created, patched]);
+    expect(snapshot.nodes[0]).toMatchObject({ status: 'review' });
+    expect(snapshot.nodes[0].completionReadback).toBeUndefined();
+    expect(snapshot.nodes[0].completionDecision).toBeUndefined();
+  });
   it('projects nodes, dependencies, review state, decisions, and session links', () => {
     const events: TaskLedgerEvent[] = [
       event({
@@ -338,5 +350,54 @@ describe('task ledger service', () => {
 
     expect(parsed.events.map((item) => item.id)).toEqual(['create']);
     expect(parsed.warnings.map((warning) => warning.type)).toEqual(['invalid_jsonl', 'invalid_event']);
+  });
+});
+
+describe('runtime lifecycle projections own their terminal status', () => {
+  it('replays older ClawGraph and Mission records as runtime facts without new metadata', () => {
+    for (const [id, metadata] of [['clawgraph:old:goal', { runId: 'old' }], ['mission:old:goal', { missionId: 'old' }]] as const) {
+      const created = event({ id: 'legacy-create', type: 'node_created', actor: 'system', payload: { node: {
+        id, title: 'Legacy runtime fact', kind: 'goal', status: 'doing', metadata, createdAt: baseTime, updatedAt: baseTime } } });
+      const done = event({ id: 'legacy-done', type: 'status_changed', actor: 'system', payload: { nodeId: id, status: 'done' } });
+      const snapshot = projectTaskLedgerSnapshot(workspaceId, [created, done]);
+      expect(snapshot.nodes[0].status).toBe('done');
+      expect(snapshot.nodes[0].metadata?.automaticCompletion).toBeUndefined();
+    }
+  });
+
+  it('keeps internal checkpoint milestones while ignoring automatic provenance borrowing', () => {
+    const id = 'mission:checkpoint:check:1';
+    const node = { id, title: 'Reflect evidence', kind: 'check' as const, status: 'doing' as const,
+      metadata: { missionId: 'checkpoint' }, createdAt: baseTime, updatedAt: baseTime };
+    const created = event({ id: 'reflect', type: 'node_created', actor: 'system', payload: { node } });
+    const checkpoint = event({ id: 'checkpoint', type: 'node_created', actor: 'system', payload: { node: { ...node, kind: 'milestone', status: 'done' } } });
+    const caller = event({ id: 'caller', type: 'node_updated', actor: 'assistant', payload: { nodeId: id,
+      patch: { title: 'Forged business task', kind: 'task', status: 'done', metadata: {} } } });
+    const snapshot = projectTaskLedgerSnapshot(workspaceId, [created, checkpoint, caller]);
+    expect(snapshot.nodes[0]).toMatchObject({ kind: 'milestone', status: 'done', title: 'Reflect evidence', metadata: { runtimeLifecycle: 'mission-control' } });
+  });
+
+  it.each([
+    ['clawgraph', 'goal'],
+    ['mission-control', 'goal'],
+    ['mission-control', 'task'],
+    ['mission-control', 'milestone'],
+  ] as const)('keeps the %s %s runtime terminal out of the business completion fence', (runtimeLifecycle, kind) => {
+    const goal = `${runtimeLifecycle}:run-1:${kind}`;
+    const created = event({ id: 'cg-create', type: 'node_created', actor: 'system', payload: { node: {
+      id: goal, title: 'Runtime run', kind, status: 'doing',
+      metadata: { runId: 'run-1', runtimeLifecycle }, createdAt: baseTime, updatedAt: baseTime } } });
+    const done = event({ id: 'cg-done', type: 'status_changed', actor: 'system', payload: { nodeId: goal, status: 'done' } });
+    const snapshot = projectTaskLedgerSnapshot(workspaceId, [created, done]);
+    expect(snapshot.nodes[0]).toMatchObject({ status: 'done' });
+    expect(snapshot.nodes[0].metadata?.automaticCompletion).toBeUndefined();
+  });
+
+  it('still fences an automatic business task without the runtime-lifecycle marker', () => {
+    const created = event({ id: 'biz', type: 'node_created', actor: 'assistant', payload: { node: {
+      id: 'biz', title: 'Business task', kind: 'task', status: 'done', createdAt: baseTime, updatedAt: baseTime } } });
+    const snapshot = projectTaskLedgerSnapshot(workspaceId, [created]);
+    expect(snapshot.nodes[0]).toMatchObject({ status: 'review' });
+    expect(snapshot.nodes[0].metadata?.automaticCompletion).toMatchObject({ authority: 'task-ledger' });
   });
 });

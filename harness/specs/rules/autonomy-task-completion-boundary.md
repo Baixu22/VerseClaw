@@ -1,0 +1,66 @@
+---
+id: autonomy-task-completion-boundary
+title: 自动业务完成只由既有任务owner接纳可回读证据
+type: ai-coding-rule
+severity: error
+---
+
+run/turn终态、模型self-check、spawn accepted、exit0与独立任务验收是不同事实。
+自动完成声明不得凭其中一个直接写业务任务done。手工编辑与turn check的原有状态保留。
+
+Task Ledger只消费TaskLoop、任务验证与效果owner的记录引用，提交侧回读candidate、
+source/input/config/dirty-diff、check回执、reviewer、owner revision、scope和session generation。
+payload不能自报passed/verifier。模型文本中的测试命令或artifact路径不是执行回执。
+缺失、篡改、过期、来源不可用、候选整合变化均使接纳失败或失效；不得新建裁判服务或decision store。
+
+决定与重算依据保留在现有Ledger事件和runtime检查点；Workboard与TaskLoop仍拥有调度和原gate，
+本体合同不授予授权或资源。脚本/agent完成所有验收交互，真实标为driven_by: agent。
+
+Git候选读取只消费索引和物理字节，禁止触发仓库配置的diff/textconv/filter/fsmonitor helper。
+runtime配置和完成checkpoint的变更必须在既有Ledger日志追加revision事实并持锁完成变更；
+接纳沿用A2 CAS，不在journal锁内等待Gateway RPC。效果回执仍由原append-only owner持有。
+失败声明只记录本次尝试，不能覆盖既有手工done或有效接纳；操作回执明确为历史事实，
+当前状态以snapshot和completionReadback为准。Chat、会话摘要与导出使用同一失效读模型。
+本地Docker检查复用原rw工作区或原ro项目挂载，不得把bootstrap副本的执行当成同候选验证。
+同一node ID的非用户重建和patch保留既有kind；不得先把业务任务改为check以清除完成标记，
+再改回业务任务直接done。显式手工kind/status编辑仍是手工事实，不伪装为独立接纳。
+completionReadback只能由当前owner回读派生，不能从普通node事件或patch获得。
+前台选中workspace/session只约束新接纳；只读回读按原taskRef查询既有owner，
+切换选中项本身不使未变化的证据失效，未知workspace/root/generation仍拒绝。
+业务任务的done/dropped事实不能被普通自动重建、patch、status或清理事件重开或删除；
+显式手工重开仍允许，验收失效由原owner回读派生。新完成声明不得覆盖手工done或dropped。
+会话活动面板沿用相同Gateway owner和completion回读，不得因漏注入owner显示假失效。
+交互回读的Git/文件读取使用异步I/O，同一snapshot可共享一次候选读取，但不得跨snapshot
+缓存掩盖源文件变化；最终journal接纳仍重新核对当前候选。相同有效配置重复激活不追加
+失效事件；真实配置变化和clear仍须原日志CAS fence。同一前台检查不得被工厂改为后台yield。
+TaskLoop运行完成的进度事实仍为100，业务状态仅进入review；后续phase不能被run级批次
+幂等键吞掉，沿原事件ID去重，不把进度或self-check当作独立验收done。
+Mission/ClawGraph的运行终态仍由既有recorder投影；runtimeLifecycle来源标记只允许内部
+recorder写入，公开node创建、patch与append入口拒绝调用方提供该标记。
+混合payload不能用一个metadata遮住另一个；入口核查全部node/patch来源标记。
+Mission内层TaskLoop共享原root时回读既有Mission owner及同session/workspace/root引用，
+保留原root source/run归属，不因内层loop ID改变而重建owner；虚构父引用仍拒绝。
+子run完成等待复用既有timeout owner语义；0与未配置保持原no-timeout表示，不私设1秒或10分钟上限。
+等待以各子run owner的终态为准，不把worker与迟启动verifier挤进同一个时限；终态失败或已冻结缺失输出不能继续等成功文本。
+独立verifier启动边界在既有run metadata记录同候选；checkpoint捕获时当前候选改变则拒绝沿用旧reviewer，旧checkpoint缺该来源保持不可用。
+archive校验返回同一物理buffer的SHA；check回执同时校验其raw-output owner链接，最终接纳重读两者。
+durable操作提交后释放session epoch fence，再进行派生回读；沙箱强度门禁覆盖verifyCompletion，completionEvidence保留只读准入。
+runtime来源仅从内部creation事件重建；公开调用不能自报system或借旧marker改写runtime事实，内部checkpoint kind转换及各次Mission状态事件分别保留。
+冻结验证程序使用controller session的现有exec host/security/ask/node策略；审批通过原inline owner续行到同一process observer，不绕过ask。
+展示缓冲截断不等于丢失证据；完整raw capture/archive可用时继续验证，真实capture截断或缺失仍拒绝。
+验证记录只由ID/原owner查询，不替代resume/rollback checkpoint；pending/terminal self-check事件分别幂等。
+Reviewer final verdict不能从引文或冲突token取pass；Git gitlink按子module HEAD/index/物理输入递归绑定，两种候选读取格式一致。
+冻结检查在工具hook之后、执行之前核对实际command/cwd，回执再绑定process owner观察到的command/cwd；
+会话workspace和cwd沿用spawnedWorkspaceDir/spawnedCwd的既有优先级，cwd变更使旧checkpoint不可用。
+检查工厂保留controller当前model/provider的工具限制；无可绑定候选与process outcome owner的remote node在执行前拒绝。
+验证记录也不得参与active task-root选择，失败reservation不能把当前业务task切回旧任务。
+task cwd指向独立worktree时，候选source取实际执行树，input/dirty摘要同时绑定原workspace与执行树及目录；
+reviewer启动、checkpoint、检查、Main接纳和只读回读使用同一候选算法，任一树变更使旧证据失效。
+workspace/cwd在仓库子目录时仍绑定整个Git树；gitlink按索引mode处理，junction读取物理树，populated但缺仓库owner拒绝。
+reviewer实际cwd从既有child session的spawnedCwd读取，不用bootstrap registry workspace代替。
+Main执行检查时目标workspace/session须与评估权限的owner一致；inline批准后由实际spawn边界重读generation/source，reset不能放行旧执行代。
+批准前后及实际executor dispatch检查当前session exec/model/account policy；stop取消pending verification，不能让后续批准继续启动。
+所有Git读取清除继承GIT_*变量，物理workspace绑定在Main dispatch前重新确认；child/PTY及ACI队列准备后同步执行最终owner guard。
+controller guild/channel/group上下文沿用session owner；链接源仅允许regular file或目录，不读取device/FIFO，Git文件名无法无损UTF-8解码则不可用。
+Git输出的起始BOM是可能的文件名字符，不能删除；最终dispatch fingerprint包含从当前delivery owner解析的生效频道。
+未跟踪输入和链接物理目标的执行权限也绑定候选摘要；仅改变mode不能继续沿用旧检查回执。

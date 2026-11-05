@@ -688,7 +688,7 @@ async function waitForReady(timeoutMs = 10_000): Promise<void> {
  */
 export async function verseshellEval(
   cmd: string,
-  opts?: { timeoutMs?: number; agentId?: string },
+  opts?: { timeoutMs?: number; agentId?: string; beforeDispatch?: () => void },
 ): Promise<VerseShellExecResult> {
   // ── Degradation check ──────────────────────────────────────────────────
   if (degradeState.active) {
@@ -728,7 +728,7 @@ export async function verseshellEval(
  */
 export async function verseshellEvalRaw(
   cmd: string,
-  opts?: { timeoutMs?: number; agentId?: string },
+  opts?: { timeoutMs?: number; agentId?: string; beforeDispatch?: () => void },
 ): Promise<VerseShellExecResult> {
   const proc = ensureVerseShell();
   await waitForReady();
@@ -759,6 +759,7 @@ export async function verseshellEvalRaw(
     pendingRequests.set(id, { resolve, reject, timer });
 
     try {
+      opts?.beforeDispatch?.();
       proc.stdin!.write(request + "\n");
     } catch (err) {
       clearTimeout(timer);
@@ -803,7 +804,7 @@ function killProcessTree(proc: ChildProcess | null): void {
  */
 export async function verseshellExec(
   command: string,
-  opts?: { timeoutMs?: number; agentId?: string; cwd?: string },
+  opts?: { timeoutMs?: number; agentId?: string; cwd?: string; beforeDispatch?: () => void },
 ): Promise<{
   stdout: string;
   stderr: string;

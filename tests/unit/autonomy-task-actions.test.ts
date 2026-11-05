@@ -10,7 +10,25 @@ import type { TaskLedgerEventInput, TaskLedgerOperationIdentity } from '@shared/
 import type { TaskLedgerAgentActionPayload } from '@shared/host-api/contract';
 
 vi.mock('@electron/utils/paths', () => ({ getOpenClawConfigDir: () => state.root }));
-const state = vi.hoisted(() => ({ root: '', failSnapshot: false, beforeJournalRead: undefined as (() => Promise<void>) | undefined }));
+const state = vi.hoisted(() => ({ root: '', failSnapshot: false, sharingFailure: 0, birthProbeFailures: 0, beforeJournalRead: undefined as (() => Promise<void>) | undefined }));
+vi.mock('node:child_process', async importOriginal => {
+  const actual = await importOriginal<typeof import('node:child_process')>();
+  return { ...actual, execFileSync: (...args: Parameters<typeof actual.execFileSync>) => {
+    if (process.platform === 'win32' && state.birthProbeFailures > 0 && /(?:^|[\\/])(?:pwsh|powershell)\.exe$/iu.test(String(args[0]))) {
+      state.birthProbeFailures--; throw Object.assign(new Error('Simulated first OS birth probe startup timeout'), { code: 'ETIMEDOUT' });
+    }
+    return actual.execFileSync(...args);
+  } };
+});
+vi.mock('node:fs', async importOriginal => {
+  const actual = await importOriginal<typeof import('node:fs')>();
+  return { ...actual, renameSync: (...args: Parameters<typeof actual.renameSync>) => {
+    if (process.platform === 'win32' && state.sharingFailure > 0 && String(args[0]).endsWith('.stage')) {
+      state.sharingFailure--; throw Object.assign(new Error('Simulated Windows delete-sharing violation'), { code: 'EPERM' });
+    }
+    return actual.renameSync(...args);
+  } };
+});
 vi.mock('node:fs/promises', async importOriginal => {
   const actual = await importOriginal<typeof import('node:fs/promises')>();
   return { ...actual, readFile: async (...args: Parameters<typeof actual.readFile>) => {
@@ -70,10 +88,18 @@ async function retainEvidence(name: string, data: unknown): Promise<void> {
   }, null, 2));
 }
 
-beforeEach(async () => { state.failSnapshot = false; state.beforeJournalRead = undefined; state.root = await mkdtemp(join(tmpdir(), 'clawx-a2-')); });
+beforeEach(async () => { state.failSnapshot = false; state.sharingFailure = 0; state.beforeJournalRead = undefined; state.root = await mkdtemp(join(tmpdir(), 'clawx-a2-')); });
 afterEach(async () => { vi.restoreAllMocks(); await rm(state.root, { recursive: true, force: true }); });
 
 describe('TF-0671 existing Task Ledger log transaction', () => {
+  it('retains its own ticket through a transient Windows delete-sharing publication failure', async () => {
+    state.sharingFailure = process.platform === 'win32' ? 2 : 0;
+    state.birthProbeFailures = process.platform === 'win32' ? 1 : 0;
+    let entries = 0;
+    await withFileLock(join(state.root, 'sharing-lock'), async () => { entries++; });
+    expect(entries).toBe(1); expect(state.sharingFailure).toBe(0); expect(state.birthProbeFailures).toBe(0);
+    expect((await readdir(lockPathFor(join(state.root, 'sharing-lock')))).filter(name => name.endsWith('.json') || name.endsWith('.stage'))).toEqual([]);
+  });
   it('keeps accepted manual Date metadata when checksumming its persisted JSON representation', async () => {
     const created = await createTaskLedgerApi().createNode({ workspaceId: 'workspace-owner', node: {
       title: 'Manual structured metadata', metadata: { observedAt: new Date('2026-11-03T00:00:00Z'), nested: [{ when: new Date('2026-11-03T00:00:01Z') }] },
@@ -316,6 +342,20 @@ const actionInput = (operationId: string, expectedRevision = 0): TaskLedgerAgent
 });
 
 describe('TF-0671 typed controlled automatic task action', () => {
+  it('requires an owner-backed claim for new automatic business done while manual and turn check done retain their meaning', async () => {
+    const api = createTaskLedgerApi({ gatewayManager: runtimeOwner() as never });
+    const request = actionInput('automatic-task');
+    await expect(api.applyAgentAction({ ...request, action: { type: 'create', node: { title: 'Model says done', status: 'done' } } })).rejects.toMatchObject({ code: 'VALIDATION' });
+    const created = await api.applyAgentAction(request);
+    const node = created.snapshot.nodes[0];
+    expect(node.metadata?.automaticCompletion).toMatchObject({ authority: 'task-ledger', state: 'pending', scope: request.scope });
+    await expect(api.applyAgentAction({ ...actionInput('self-complete', 1), action: { type: 'update', taskNodeId: node.id, patch: { status: 'done' } } })).rejects.toThrow('owner-backed completion claim');
+    const check = await api.applyAgentAction({ ...actionInput('turn-check', 1), action: { type: 'create', node: { title: 'Turn check recorded', kind: 'check', status: 'done' } } });
+    expect(check.snapshot.nodes.find(item => item.kind === 'check')?.status).toBe('done');
+    const manual = await api.updateNode({ workspaceId: 'workspace-owner', nodeId: node.id, patch: { status: 'done' } });
+    expect(manual.snapshot.nodes.find(item => item.id === node.id)?.status).toBe('done');
+    expect((await readTaskLedgerEvents('workspace-owner')).events.at(-1)?.actor).toBe('user');
+  });
   it('fences a same-key session reset attempted after the final owner read until the journal commits', async () => {
     const storePath = join(state.root, 'sessions.json');
     let generation = 'session-generation-1', acks = 0, resetStarted = false, resetDone = false;
@@ -435,6 +475,23 @@ describe('TF-0671 typed controlled automatic task action', () => {
     await api.updateNode({ workspaceId: 'workspace-owner', nodeId: taskNodeId, patch: { description: 'manual owner action' } });
     expect((await readTaskLedgerEvents('workspace-owner')).events.map(event => event.actor)).toEqual(['assistant', 'assistant', 'assistant', 'user']);
     expect((await api.applyAgentAction(actionInput('create-operation'))).receipt.replayed).toBe(true);
+  });
+
+  it.each(['done', 'dropped'] as const)('denies a new automatic update of a manually %s task until explicit reopen', async status => {
+    const api = createTaskLedgerApi({ gatewayManager: runtimeOwner() as never });
+    const created = await api.applyAgentAction(actionInput('terminal-created'));
+    const taskNodeId = created.snapshot.nodes[0].id;
+    const manual = await api.updateNode({ workspaceId: 'workspace-owner', nodeId: taskNodeId, patch: { status } });
+    const update: TaskLedgerAgentActionPayload = { ...actionInput('terminal-update', manual.snapshot.eventsCount),
+      action: { type: 'update', taskNodeId, patch: { status: 'doing', title: 'Automatic reopen' } } };
+    await expect(api.applyAgentAction(update)).rejects.toThrow('explicit manual reopen');
+    const unchanged = await loadTaskLedgerSnapshot('workspace-owner');
+    expect(unchanged.eventsCount).toBe(manual.snapshot.eventsCount);
+    expect(unchanged.nodes).toEqual(manual.snapshot.nodes);
+    expect((await api.applyAgentAction(actionInput('terminal-created'))).receipt.replayed).toBe(true);
+    const reopened = await api.updateNode({ workspaceId: 'workspace-owner', nodeId: taskNodeId, patch: { status: 'doing' } });
+    const accepted = await api.applyAgentAction({ ...update, operationId: 'after-explicit-reopen', expectedRevision: reopened.snapshot.eventsCount });
+    expect(accepted.snapshot.nodes[0]).toMatchObject({ status: 'doing', title: 'Automatic reopen' });
   });
 
   it('replays an earlier link after its task was deleted without repeating its effect', async () => {

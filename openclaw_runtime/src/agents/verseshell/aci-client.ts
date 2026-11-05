@@ -6,6 +6,8 @@ import {
 } from "./normalizer.js";
 
 export type AciExecuteOptions = {
+  /** Host-only check performed after client/queue preparation, before request write. */
+  beforeDispatch?: () => void;
   timeoutMs?: number;
   signal?: AbortSignal;
   /** Effectful calls are never replayed. */

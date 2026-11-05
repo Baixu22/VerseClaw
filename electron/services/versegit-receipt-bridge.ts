@@ -6,6 +6,8 @@
  * a live verification claim.
  */
 import { createHash } from 'node:crypto';
+import { taskLedgerDigest } from '../../shared/task-ledger-journal';
+import type { TaskLedgerCompletionCandidate, TaskLedgerCompletionClaim } from '../../shared/types/task-ledger';
 export const VG_COMMAND_PLAN_SCHEMA = 'clawx.versegit.command-plan/v1' as const;
 
 export const VG_RECEIPT_SCHEMA = 'clawx.verseshell.execution-receipt/v2';
@@ -35,6 +37,16 @@ export type VerificationPlan = {
   deadlineAt?: number;
   /** Complete set of checks represented by this plan. Required for evidenceVersion 2. */
   requiredChecks?: string[];
+  /** Host-bound task references for downstream Ledger consumption; never a verdict. */
+  taskCompletion?: {
+    taskRef: TaskLedgerCompletionClaim['taskRef'];
+    checkpointId: string;
+    checkpointRevision: string;
+    acceptanceSha256: string;
+    candidate: TaskLedgerCompletionCandidate;
+    reviewer: { agentId: string; runId: string; sessionKey: string };
+    expiresAt: number;
+  };
   commands: Array<{
     argv: string[];
     cwd: string;
@@ -159,7 +171,12 @@ function isRecord(value: unknown): value is Record<string, unknown> { return !!v
 function isDigest(value: unknown): value is string { return typeof value === 'string' && /^[0-9a-f]{64}$/u.test(value); }
 function nonEmpty(value: unknown): value is string { return typeof value === 'string' && value.trim().length > 0; }
 
-export function planDigest(plan: VerificationPlan): string { return digest({ ...plan, planDigest: undefined }); }
+export function planDigest(plan: VerificationPlan): string {
+  const facts = { ...plan, planDigest: undefined };
+  // New task-bound plans are read back from canonical owner JSON after restart.
+  // Their identity must survive key ordering; existing generic plan IDs stay unchanged.
+  return plan.taskCompletion ? taskLedgerDigest(facts) : digest(facts);
+}
 
 export function createVerificationPlan(input: Omit<VerificationPlan, 'schema' | 'planDigest'>): { plan: VerificationPlan | null; issues: string[] } {
   const plan: VerificationPlan = { schema: VG_COMMAND_PLAN_SCHEMA, ...input };

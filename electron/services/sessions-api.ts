@@ -43,6 +43,7 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
+import { readCurrentTaskLedgerCompletions } from './task-ledger-completion';
 import { createWorkspacesApi, getActiveWorkspaceProfile, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import {
   executeSessionDelegation,
@@ -2679,7 +2680,7 @@ export function createSessionsApi(ctx: {
       let ledgerDecisions: string[] = [];
       let ledgerReview: string[] = [];
       try {
-        const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+        const snapshot = await readCurrentTaskLedgerCompletions(ctx.gatewayManager, await loadTaskLedgerSnapshot(workspaceId));
         const ledger = summarizeTaskLedger(snapshot);
         ledgerActive = ledger.activeTasks;
         ledgerBlockers = ledger.blockers;

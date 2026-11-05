@@ -24,6 +24,8 @@ export type DurableHelperLaunch = {
 };
 
 export type DurableHelperSpawnInput = {
+  /** Host-owned check after asynchronous intent lookup, before helper launch. */
+  beforeSpawn?: () => void;
   runId: string;
   rootDir: string;
   nonce: string;
@@ -158,6 +160,7 @@ export async function spawnDurableHelperProcess(
   }
 
   const launch = input.launch ?? resolveDurableHelperLaunch();
+  input.beforeSpawn?.();
   const child = spawn(
     launch.file,
     [...launch.args, "goal-wake-helper-run", input.runId],

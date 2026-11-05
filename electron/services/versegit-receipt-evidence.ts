@@ -15,6 +15,8 @@ import type { VerseGitCandidateManifest } from '../../shared/types/versegit.ts';
 import { FileVerseGitCleanupBarrier } from '../../shared/versegit-cleanup-barrier.ts';
 import type { VerseGitCleanupBarrierRecord } from '../../shared/types/versegit.ts';
 import type { Observation } from '../../shared/verseshell/types.ts';
+import type { TaskLedgerCompletionCheckReceipt } from '../../shared/types/task-ledger';
+import { normalizeScopedTaskReference } from '../../shared/types/task-ledger-reference';
 import { executionInputDigest, VerseGitReceiptBridge } from './versegit-receipt-bridge.ts';
 import type {
   ReceiptAuthorityCheck,
@@ -39,6 +41,11 @@ export function readCompletedVerseGitReviewFacts(runId: string, workspaceRoot: s
     const { verify: _verify, ...projection } = fact;
     return structuredClone(projection);
   } catch { return null; }
+}
+
+/** The root is resolved by Main, never accepted from a completion claimant. */
+export function readCompletedVerseGitTaskCheck(runId: string, authorityRoot: string): TaskLedgerCompletionCheckReceipt | null {
+  return new FileVerseShellReceiptAuthority(authorityRoot).readTaskCheck(runId);
 }
 
 export const VG_HOST_EVIDENCE_SCHEMA = 'clawx.versegit.host-evidence/v1' as const;
@@ -271,6 +278,17 @@ export function prepareCandidateVerificationEvidence(input: {
   if (plan.requiredScope !== 'full') throw new Error('candidate verification requires full scope');
   if (!plan.candidateInputDigest || plan.candidateInputDigest !== candidateManifest.inputDigest) throw new Error('candidate input digest differs from plan');
   if (sha256(stableJson(candidateManifest)) !== plan.candidateId) throw new Error('candidate input manifest does not reproduce plan candidateId');
+  if (plan.taskCompletion) {
+    const binding = plan.taskCompletion;
+    const reference = normalizeScopedTaskReference(binding.taskRef, binding.taskRef.scope);
+    if (reference.owner !== 'task-ledger' || binding.candidate.source !== candidateManifest.candidateCommitOid
+      || binding.candidate.inputSha256 !== candidateManifest.inputDigest || !/^[a-f0-9]{64}$/u.test(binding.candidate.configSha256)
+      || !/^[a-f0-9]{64}$/u.test(binding.candidate.dirtyDiffSha256) || !/^[a-f0-9]{64}$/u.test(binding.acceptanceSha256)
+      || !/^[a-f0-9]{64}$/u.test(binding.checkpointRevision) || !binding.checkpointId.trim()
+      || !binding.reviewer.agentId.trim() || !binding.reviewer.runId.trim() || !binding.reviewer.sessionKey.trim()
+      || !Number.isFinite(binding.expiresAt) || binding.expiresAt <= Date.now()
+      || !plan.requiredChecks?.includes(plan.checkId)) throw new Error('Task completion binding is incomplete or differs from the verified candidate');
+  }
   if (!plan.authorizationDigest) throw new Error('candidate verification authorization digest is missing');
   assertAuthorizationMatchesPlan(authorization, plan);
   const authorizationRef = authority.recordAuthorization(authorization);
@@ -600,6 +618,44 @@ export class FileVerseShellReceiptAuthority implements VerseShellReceiptAuthorit
     try {
       const input = this.readJson<{ manifest?: CandidateInputManifest }>(join('inputs', idFile(candidateId)));
       return input.manifest?.candidateCommitOid ?? null;
+    } catch { return null; }
+  }
+
+  authorizationForReview(authorizationId: string): VerificationAuthorization | null {
+    try { return this.readJson<VerificationAuthorization>(join('authorizations', idFile(authorizationId))); }
+    catch { return null; }
+  }
+
+  /** Recompute a task reference from the existing receipt files, including after restart. */
+  readTaskCheck(runId: string): TaskLedgerCompletionCheckReceipt | null {
+    try {
+      const plan = this.readJson<VerificationPlan>(join('plans', idFile(runId)));
+      const binding = plan.taskCompletion;
+      if (plan.runId !== runId || !binding || plan.evidenceVersion !== 2) return null;
+      const receipts = readdirSync(this.absolute('receipts')).filter(name => /^[a-f0-9]{64}\.json$/u.test(name))
+        .map(name => this.readJson<VerseShellReceipt>(join('receipts', name)))
+        .filter(receipt => receipt.planId === runId);
+      // A run reference cannot silently select one of several conflicting receipts.
+      if (receipts.length !== 1) return null;
+      const receipt = receipts[0];
+      const bridge = new VerseGitReceiptBridge(this);
+      if (!receipt.realVerseshell || receipt.origin !== 'verseshell'
+        || bridge.registerPlan(plan).status !== 'accepted'
+        || bridge.receive(plan.runId, receipt).status !== 'accepted') return null;
+      const observation = this.readJson<HostObservationEvidence>(join('observations', idFile(String(receipt.observationId))));
+      const authorization = this.authorizationForReview(plan.authorizationId);
+      if (!authorization) return null;
+      return {
+        owner: 'verseshell-host-receipt', receiptId: receipt.receiptId,
+        ownerRevision: this.fileDigest(join('receipts', idFile(receipt.receiptId))), verificationRunId: runId,
+        checkpointId: binding.checkpointId, checkpointRevision: binding.checkpointRevision,
+        taskRef: binding.taskRef, candidate: binding.candidate, acceptanceSha256: binding.acceptanceSha256,
+        checkId: plan.checkId, reviewer: binding.reviewer,
+        status: receipt.status === 'exited' && receipt.exitCode === 0 ? 'verified' : 'failed', exitCode: receipt.exitCode,
+        artifactRefs: receipt.artifactDigests.map(digest => ({ owner: 'verseshell-host-receipt', ref: `artifacts/${digest}`, sha256: digest, verified: true })),
+        capturedAt: Date.parse(observation.process.capturedAt),
+        expiresAt: Math.min(binding.expiresAt, Date.parse(authorization.expiresAt)),
+      };
     } catch { return null; }
   }
 

@@ -60,6 +60,9 @@ export type RoleSpawnParams = {
 
 /** Minimal context for role-spawned workers (structurally compatible with SpawnSubagentContext). */
 export type RoleSpawnContext = {
+  /** Main/runtime-owned workspace for completion-enabled review provenance. */
+  completionReviewRoot?: string;
+  completionExecutionWorkdir?: string;
   agentSessionKey?: string;
   agentChannel?: string;
   agentAccountId?: string;

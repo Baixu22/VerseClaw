@@ -1,9 +1,12 @@
+import { formatErrorMessage } from "../infra/errors.js";
 /**
  * Subagent registry coordinator.
  *
  * Owns registration, lifecycle, delivery retry, steering, orphan recovery, persistence, and cleanup for child runs.
  */
 import { createHash } from "node:crypto";
+import { readTaskExecutionCandidateAsync } from '../../../shared/task-ledger-candidate.js';
+import { taskLedgerDigest } from '../../../shared/task-ledger-journal.js';
 import type { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
 import { getRuntimeConfig } from "../config/config.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
@@ -743,6 +746,14 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
       import("./subagent-spawn.js"),
     ]);
     const cfg = subagentRegistryDeps.getRuntimeConfig();
+    const reviewRequest = latestMeta.completionReview;
+    const completionReview = reviewRequest?.state === 'requested'
+      ? { state: 'pinned' as const, workspaceRoot: reviewRequest.workspaceRoot,
+          executionWorkdir: reviewRequest.executionWorkdir ?? reviewRequest.workspaceRoot,
+          candidate: await readTaskExecutionCandidateAsync(reviewRequest.workspaceRoot,
+            reviewRequest.executionWorkdir ?? reviewRequest.workspaceRoot, taskLedgerDigest(cfg)),
+          capturedAt: Date.now() }
+      : reviewRequest;
     const verifierTask = buildVerifierTask({ originalTask: latestMeta.originalTask, workers: expectedWorkers });
     const verifierNode = latestMeta.taskGraph ? taskGraphVerifierNode(latestMeta.taskGraph) : undefined;
     const verifierLedger = makeTaskLedgerEntry({
@@ -765,8 +776,10 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
         task: verifierTask,
         cfg: cfg as Parameters<typeof spawnRoleSubagent>[0]["cfg"],
         modelOverride: latestMeta.verifierModelRef ?? undefined,
+        ...(completionReview?.executionWorkdir ? { cwd: completionReview.executionWorkdir } : {}),
         orchestration: {
           ...latestMeta,
+          ...(completionReview ? { completionReview } : {}),
           roleName: latestMeta.verifierRole,
           isVerifier: true,
           phase: "verifier",
@@ -786,7 +799,7 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
       {
         agentSessionKey: completed.controllerSessionKey ?? completed.requesterSessionKey,
         completionOwnerKey: completed.requesterSessionKey,
-        workspaceDir: completed.workspaceDir,
+        workspaceDir: completionReview?.state === 'pinned' ? completionReview.workspaceRoot : completed.workspaceDir,
       },
       { spawn: spawnSubagentDirect },
     );
@@ -804,7 +817,7 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
       patch: { verifierSkippedReason: "spawn-failed", verifierSkippedAt: Date.now() },
     });
   } catch (error) {
-    log.warn("failed to start deferred orchestration verifier", { orchestrationRunId, error });
+    log.warn("failed to start deferred orchestration verifier", { orchestrationRunId, error: formatErrorMessage(error) });
     markOrchestrationWorkers({
       workers: expectedWorkers,
       patch: { verifierSkippedReason: "spawn-failed", verifierSkippedAt: Date.now() },

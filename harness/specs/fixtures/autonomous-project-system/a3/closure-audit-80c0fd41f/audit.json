@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-a3-owner-audit",
+  "capturedAt": "2026-11-03T12:49:22.328Z",
+  "task": "TF-0672",
+  "sourceCommit": "80c0fd41f47065c25e4121bae8822ef97cea0a66",
+  "canonicalClosureObservedAt": "2026-11-03T12:21:15.684678Z",
+  "verdict": "original-acceptance-not-met",
+  "requirement": "Claims must read existing TaskLoop/verifier/effect records and candidate/scope/generation/artifacts; caller-coherent digests are not evidence",
+  "actual": {
+    "callerOnlyDigests": true,
+    "runtimeOwner": false,
+    "verifierOwner": false,
+    "effectOwner": false,
+    "artifactCreated": false,
+    "accepted": true,
+    "status": "done"
+  },
+  "mutationScope": "isolated temporary ledger only; canonical repository files and historical evidence untouched",
+  "limits": [
+    "One concrete owner-boundary counterexample, not a broad security assessment",
+    "Current autonomy-host-readiness A3 implementation remains uncommitted development work",
+    "This audit does not itself finish A3 or TF-0664"
+  ]
+}
