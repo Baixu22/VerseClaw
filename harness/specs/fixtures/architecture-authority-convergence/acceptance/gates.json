@@ -1,0 +1,346 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "candidate": {
+    "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+    "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "id": "tests",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/semantic-authority-consistency.test.ts",
+        "tests/unit/architecture-authority-convergence.test.ts",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/model-capability-profile.test.ts",
+        "tests/unit/default-config-matrix.test.ts",
+        "tests/unit/component-graduation-report.test.ts",
+        "tests/unit/memory-control-plane.test.ts",
+        "tests/unit/capability-claims.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\architecture-authority-20261105\\candidate\\tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 112.594,
+      "finishedAt": "2026-11-05T14:05:29.913485+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\tests.stdout.txt",
+        "sha256": "32dcb405f531f466d8baed202b2c341ac478e9760e0144eceac607553e7f4494",
+        "text": "\n RUN  v4.1.1 C:/Users/27933/.codex/worktrees/architecture-convergence-recovered/ClawX\n\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: closed rule set and helpers > declares exactly the contracted rule set, reconciled with the checker 4ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: closed rule set and helpers > parses the two linked documents and resolves default-matrix anchors by slug 1ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: closed rule set and helpers > maps matrix vocabulary onto the default-mode axis and leaves auto unmapped 0ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: closed rule set and helpers > only compares activation-axis values (R-D1) 0ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: closed rule set and helpers > declares the five structural exemption classes with their rulings and target kinds (TF-0638) 0ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: closed rule set and helpers > defers only the module-level manifest assertion, on the same line, leaving the file text and line count intact 1ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: closed rule set and helpers > locates adjudication entries by id and target, sections by key, and falls back to the schema header 20ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: current registries with the TF-0631 rulings registered > passes with the expected counts and every rule evaluated 1ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: current registries with the TF-0631 rulings registered > reconciles every structural class observed == registered (55/55), with the report-only lists as the observed sets (TF-0638) 1ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: current registries with the TF-0631 rulings registered > registers every TF-0631 ruling with reason, review condition, basis and section source 13ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: current registries with the TF-0631 rulings registered > does not compare targetDefaultMode with defaultMode, nor internal across tables, nor identity by id suffix (X-03, X-02, O-1) 1ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > fails closed without an adjudication registry or with a wrong schema 18ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > passes both built-in validators through verbatim (registry-self-validation) 9ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > derives owner through coverage and rejects a conflicting owner field or accountable node (owner-namespace, C-01) 22ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > requires every component to be covered exactly once by a component.* entry (identity-key) 7ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > compares activation axis-wise (default-activation) and against flag risk (default-flag-risk) 15ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > detects retired asymmetry (default-retirement) and pins the X-03 observation of the changed component 7ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > judges default-matrix rows cited by runtimeAvailabilitySource (default-matrix-row) and fails closed on a missing row 14ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > rejects a data type with two authority owners, a flipped binding and a second authority-class claim (authority-boundary) 86ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > reconciles observed gaps with registered gaps in both directions (gap-registration) 12ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > makes structural exemptions load-bearing: an empty or missing exemptions list fails per observed pair (exemption-registration, TF-0638) 17ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > reports a structural entry whose pair is no longer observed as stale, once (exemption-registration / exemption-stale, TF-0638) 18ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > requires every structural entry to carry a known class matching its target kind (exemption-unknown-rule, TF-0638) 11ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > turns new not-comparable, flag-granularity and matrix-unmapped observations into failures instead of report entries (TF-0638) 19ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > carries line numbers on every registry-path diagnostic when the registry text is supplied (TF-0638) 7ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > locates data-type authority conflicts on a manifest row, falling back across owners when the second owner has no row in the text (authority-boundary, TF-0638) 9ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > resolves concepts through registered aliases only (concept-alias) 24ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > treats an entry without reason, review condition, source or basis as a failure and does not apply it (exemption-reason-missing) 32ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > rejects unknown rules and targets and duplicate entries (exemption-unknown-rule / exemption-unknown-target) 26ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > marks entries stale when a recorded value changes or the covered conflict disappears (exemption-stale) 20ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: rules on mutated registries > checks flag three-way binding and owner agreement at flag granularity (flag-binding) 19ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > passes on the current repository and writes a complete report 510ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > ships every contract negative class as a checked-in fixture whose rule exists, with id-anchored mutations 16ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture adjudication-non-default-rule.json through the real entry with the exact locatable diagnostic set 773ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture adjudication-observed-empty.json through the real entry with the exact locatable diagnostic set 1628ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture authority-boundary-reversed.json through the real entry with the exact locatable diagnostic set 693ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture authority-data-type-multi-owner.json through the real entry with the exact locatable diagnostic set 640ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture authority-duplicate-row.json through the real entry with the exact locatable diagnostic set 741ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture coverage-unknown-component.json through the real entry with the exact locatable diagnostic set 615ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture default-activation-mismatch.json through the real entry with the exact locatable diagnostic set 649ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture default-retirement-asymmetry.json through the real entry with the exact locatable diagnostic set 537ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture exemption-reason-missing.json through the real entry with the exact locatable diagnostic set 743ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture exemption-stale.json through the real entry with the exact locatable diagnostic set 577ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture gap-unregistered-concept.json through the real entry with the exact locatable diagnostic set 547ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture owner-conflict.json through the real entry with the exact locatable diagnostic set 649ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture owner-node-mismatch.json through the real entry with the exact locatable diagnostic set 1069ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture restored-retired-surface-registry.json through the real entry with the exact locatable diagnostic set 741ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture restored-tool-registry-context-source.json through the real entry with the exact locatable diagnostic set 778ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture restored-vtoken-bridge.json through the real entry with the exact locatable diagnostic set 694ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture restored-vtoken-context-source.json through the real entry with the exact locatable diagnostic set 402ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture restored-working-memory-context-source.json through the real entry with the exact locatable diagnostic set 1676ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture structural-exemption-missing.json through the real entry with the exact locatable diagnostic set 3149ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture structural-exemptions-absent.json through the real entry with the exact locatable diagnostic set 1721ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture structural-flag-granularity-unregistered.json through the real entry with the exact locatable diagnostic set 4299ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture structural-matrix-unmapped-unregistered.json through the real entry with the exact locatable diagnostic set 6856ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixture structural-not-comparable-unregistered.json through the real entry with the exact locatable diagnostic set 675ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > fails closed when the adjudication registry is missing (exit 1, adjudication-missing) 1844ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > locates every registry-path diagnostic on the entry id line through the real entry (TF-0638) 6646ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > ends a duplicate authority row as a located registry-self-validation diagnostic, not a load failure (TF-0638) 595ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > rejects fixtures that break the anchor discipline with a specific reason (exit 2, TF-0638) 390ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > locates data-type authority conflicts on the second declaration of the mutated manifest through the real entry (TF-0638) 1335ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > distinguishes broken fixture anchor-ambiguous.json (exit 2) from a gate failure (exit 1) 86ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > distinguishes broken fixture anchor-missing.json (exit 2) from a gate failure (exit 1) 87ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > distinguishes broken fixture anchor-not-in-find.json (exit 2) from a gate failure (exit 1) 87ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > distinguishes broken fixture never-applied.json (exit 2) from a gate failure (exit 1) 400ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > distinguishes broken fixture target-not-found.json (exit 2) from a gate failure (exit 1) 434ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > reports a missing fixture file and an unknown argument as exit 2 211ms\n ✓ tests/unit/semantic-authority-consistency.test.ts > semantic authority check: real gate entry (node scripts/check-semantic-authority.mjs) > does not touch the working tree when fixtures run 1141ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md row is registered in the fixture and still present in the md 3ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every md table row has a fixture entry (no silently untested row) 1ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-03 md row coverage > every registered assertion group is actually exercised by a test in this file 1ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > every fixture row matches the md \"Product default\" cell byte-for-byte 1ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > the verbatim cell normalizes to the declaredDefault for every format variant 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > FP-P0-07 md default-cell text lock (three-way parity) > implementation defaults agree with declaredDefault for every row 28ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks automatic healthy context view tools with an explicit rollback [dcs-context-view-tools-default] 1ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken assembly retired and not re-enableable [vtoken-assembly-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Workspace Context default ON and legacy DCS context flags default OFF [context-block-defaults] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory inject pilot default OFF [memory-inject-pilot-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Runtime Memory shadow/provider/persist as retired, not merely default-off [memory-shadow-provider-persist-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB master default OFF (no auto writeback graduation) [sekb-master-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > keeps SEKB auto writeback off with no enabling flag [sekb-auto-writeback-off] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks SEKB shadow evaluation default OFF and requires master [sekb-shadow-evaluation-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks Browser private network default DENY and migrates unacked legacy allow [browser-private-network-default] 1ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks VToken bridge default OFF (opt-in) [vtoken-bridge-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks enhancement kill switch default OFF with env and config forms [enhancement-kill-switch-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > locks coding auto verify default to auto-detect and bounds explicit opt-in [coding-auto-verify-default] 0ms\n ✓ tests/unit/default-config-matrix.test.ts > TF-0003 default configuration matrix > kill switch cuts VToken + memory inject fail-closed without requiring throw 0ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > keeps every component mapped to at least one domain and every domain owned 4ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > maps every existing DCS flag to exactly one component 1ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > preserves the Context, Memory, Knowledge, Capability, Execution, Browser and Observability separations 1ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second accepted-memory writer 1ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second context assembly owner 1ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects a second domain executor 1ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > rejects permission escalation and unauthorized cross-domain writes 1ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > cross-checks the product semantic and default-config surfaces 2ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > keeps every declared source anchor present in the current tree with exact path case 139ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > documents the machine manifest in runtime-control-planes.md 3ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > guards renderer transport against direct Gateway, IPC and domain-store access 174ms\n ✓ tests/unit/component-authority-manifest.test.ts > component authority manifest > builds a static and effective model-safe component profile 2ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > covers every authority component, DCS flag, runtime leaf, route, Settings section and Settings panel exactly once 8ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > records current consumer, owner, implementation/retirement node and evidence refs for every entry 106ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > covers every writable DCS control and keeps the product preview combo in a visible disposition 1ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > keeps every registered authority component mapped to one disposition 1ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > requires owner, future expiry and graduate/retire criteria on every experiment 0ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > explicitly covers the required special surfaces 0ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > does not expose any shadow or experiment capability as a user surface 0ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an unclassified route 6ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects a second disposition for the same authority component 5ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an experiment without expiry or owner 5ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > rejects an internal capability with a user entry 5ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > documents the single-page disposition table and links it from runtime control planes 34ms\n ✓ tests/unit/component-disposition-catalog.test.ts > ComponentDispositionManifest/v1 > projects the stable disposition index for a later ModelCapabilityProfile 1ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > builds a deterministic schema with one static disposition record for every user-visible capability 15ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > keeps static disposition, runtime availability, action authorization, memory and knowledge as separate axes 7ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > covers enabled/disabled/partial/degraded/quarantined/requires-approval/internal/retired with disk fixtures 3ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > keeps the static digest stable across effective facts and changes it only with static configuration 5ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > normalizes effective digest inputs and ignores observation/generation timestamps 7ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > bounds prompt addition to a reserved system-prompt budget without using working-context characters 5ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > binds a supplied capability catalog identity into the effective digest 7ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects invalid effective state inputs with explicit negative issue codes 2ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects duplicate static records and internal names in user-facing capabilities 1ms\n ✓ tests/unit/model-capability-profile.test.ts > ModelCapabilityProfile/v1 > rejects axis conflation and digest tampering in an already-generated profile 4ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > defines a schema that all registered components can instantiate 3ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > accepts the internal/default/advanced/retired/contract evidence matrices 20ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > keeps experiment/shadow valid but non-graduating 2ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > loads all positive fixtures from disk with their actual artifact hashes 5ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > rejects every negative fixture with the expected issue code 15ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > recomputes a deterministic input digest from raw artifact bindings 0ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > does not let experiment/shadow close a Task Forest done node 2ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > requires a passing report for a Task Forest done node 1ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > fails the default-change gate when the report is not default/advanced and valid 1ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > fails the default-change gate for an invalid default/advanced report 1ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > fails the disk-backed gate when an internal report requests a default change 43ms\n ✓ tests/unit/component-graduation-report.test.ts > ComponentGraduationReport/v1 > runs the disk-backed CLI gate logic against the positive fixture 2ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > covers the 45 capability claims in report order 2ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > requires every claim to carry the acceptance matrix fields 15ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > pins high-risk overclaims to explicit exclusions 1ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > keeps the generated machine-readable status table in sync 3ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > warns when high-confidence product claims lack evidence references 1ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > allows high-confidence claims that cite matrix and runtime or E2E evidence 0ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > warns when text repeats an unsafe overclaim from the matrix 1ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > warns when text repeats a product-semantic unsafe claim 0ms\n ✓ tests/unit/capability-claims.test.ts > capability claim matrix > links P2-06 reliability claims to the machine-readable boundary matrix 1ms\n ✓ tests/unit/architecture-authority-convergence.test.ts > component declarations reflect the already enacted product decisions > working-memory-context-source describes its own lifecycle as baseline 1ms\n ✓ tests/unit/architecture-authority-convergence.test.ts > component declarations reflect the already enacted product decisions > tool-registry-context-source describes its own lifecycle as baseline 0ms\n ✓ tests/unit/architecture-authority-convergence.test.ts > component declarations reflect the already enacted product decisions > vtoken-context-source describes its own lifecycle as retired 0ms\n ✓ tests/unit/architecture-authority-convergence.test.ts > component declarations reflect the already enacted product decisions > vtoken-bridge describes its own lifecycle as retired 0ms\n ✓ tests/unit/architecture-authority-convergence.test.ts > component declarations reflect the already enacted product decisions > retired-surface-registry describes its own lifecycle as internal 0ms\n ✓ tests/unit/architecture-authority-convergence.test.ts > component declarations reflect the already enacted product decisions > retains the Workspace Context default and keeps the inert bridge retired 1ms\n ✓ tests/unit/architecture-authority-convergence.test.ts > component declarations reflect the already enacted product decisions > accounts for every registered gap with a source-bound classification and keeps it unresolved 24ms\n\n Test Files  8 passed (8)\n      Tests  150 passed (150)\n   Start at  22:03:41\n   Duration  107.85s (transform 38.33s, setup 2.46s, import 51.78s, tests 46.98s, environment 2.30s)\n\nJSON report written to D:/tmp/architecture-authority-20261105/candidate/tests.json\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\tests.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "types",
+      "argv": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 1,
+      "durationSeconds": 264.016,
+      "finishedAt": "2026-11-05T14:09:56.015548+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\types.stdout.txt",
+        "sha256": "958dbafac83da22dc9a5f8aca2b3effb30cb1b485eabf4cd106421550b9005d5",
+        "text": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n[ext-bridge] No external extensions configured — empty stubs generated.\nopenclaw_runtime/packages/net-policy/src/ip.ts(47,3): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Type '\"benchmarking\"' is not assignable to type 'BlockedIpv6Range'.\nopenclaw_runtime/packages/net-policy/src/ip.ts(49,3): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Type '\"orchid2\"' is not assignable to type 'BlockedIpv6Range'.\n[ELIFECYCLE] Command failed with exit code 2.\n{\n  \"success\": false,\n  \"mode\": \"parallel\",\n  \"testTypes\": {\n    \"commandLine\": \"pnpm run typecheck:test\",\n    \"exitCode\": 2,\n    \"durationMs\": 253580,\n    \"observationMode\": false,\n    \"errorCount\": 10,\n    \"errorLog\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence-recovered\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n  },\n  \"cache\": {\n    \"enabled\": false,\n    \"status\": \"disabled\",\n    \"key\": \"c69659f9d0e0f8e29630f125d414e30f6eae4feabf45e7024359cff91d55ebe6\",\n    \"inputCount\": 13070,\n    \"report\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence-recovered\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\report.json\"\n  },\n  \"totalDurationMs\": 261124,\n  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",\n  \"results\": [\n    {\n      \"commandLine\": \"node scripts/generate-ext-bridge.mjs\",\n      \"exitCode\": 0,\n      \"durationMs\": 106\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:node\",\n      \"exitCode\": 2,\n      \"durationMs\": 83590\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:web\",\n      \"exitCode\": 0,\n      \"durationMs\": 14677\n    },\n    {\n      \"commandLine\": \"pnpm run typecheck:test\",\n      \"exitCode\": 2,\n      \"durationMs\": 253580,\n      \"observationMode\": false,\n      \"errorCount\": 10,\n      \"errorLog\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence-recovered\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"\n    }\n  ]\n}\n[ELIFECYCLE] Command failed with exit code 1.\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\types.stderr.txt",
+        "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8",
+        "text": "$ node scripts/typecheck-agent-dev.mjs\n$ tsgo --noEmit -p tsconfig.node.json --composite false\n$ tsgo --noEmit -p tsconfig.web.json --composite false\n"
+      }
+    },
+    {
+      "id": "authority",
+      "argv": [
+        "node",
+        "scripts/check-semantic-authority.mjs",
+        "--report",
+        "D:\\tmp\\architecture-authority-20261105\\candidate\\authority.json",
+        "--actor",
+        "codex-architecture-convergence"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 5.812,
+      "finishedAt": "2026-11-05T14:10:02.253239+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\authority.stdout.txt",
+        "sha256": "e1ba0d475295e970b4914b5fee297098e125aefe9a65286cdf14ea13b7c38404",
+        "text": "Semantic authority check passed.\nsummary components=35 authorities=44 dispositions=54 claims=45 reliability=7 sensitive=7 concepts=7 relations=6 flags=22 | rules=18 diagnostics=0 adjudicated=0 structural=55/55 gaps=35/35 aliases=1 bindings=3 not-comparable=21 matrix-unmapped=5\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\authority.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 9.765,
+      "finishedAt": "2026-11-05T14:10:12.199630+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\contract.stdout.txt",
+        "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+        "text": "Contract check passed.\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\contract.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "evidence",
+      "argv": [
+        "node",
+        "scripts/check-evidence-refs.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 0.391,
+      "finishedAt": "2026-11-05T14:10:12.781961+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\evidence.stdout.txt",
+        "sha256": "047cce29d2ca7c0bd2355ac3f116c8b099afb74981f7381fd16ff51c4381427f",
+        "text": "[evidence-refs] PASS 188 referenced path(s)\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\evidence.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 20.968,
+      "finishedAt": "2026-11-05T14:10:33.948131+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\retention.stdout.txt",
+        "sha256": "4c8b717e983d6489eab90b78706333e068b23af35f9fd41fd225688bc332d922",
+        "text": "Repository artifact retention passed (20545 tracked paths).\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\retention.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "shared/component-authority-manifest.ts",
+        "shared/dcs/component-disposition-catalog.ts",
+        "tests/unit/architecture-authority-convergence.test.ts",
+        "tests/unit/semantic-authority-consistency.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 19.468,
+      "finishedAt": "2026-11-05T14:10:53.626442+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\lint.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\lint.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "context",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "context",
+        "--spec",
+        "harness/specs/tasks/architecture-authority-declaration-convergence.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 0.547,
+      "finishedAt": "2026-11-05T14:10:54.305079+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\context.stdout.txt",
+        "sha256": "d0311fef7c139114f17b4ff8ddee95e7e8139821ccb305af1979cb680b5a31c5",
+        "text": "Context for: harness\\specs\\tasks\\architecture-authority-declaration-convergence.md\nIntent: 依据冻结默认矩阵与已有运行实现修正五个组件的描述，撤销八条已解决的冲突登记，并逐项解释三十五个登记缺口。\n\nRead order:\n- architecture-authority-declaration-convergence (task): harness\\specs\\tasks\\architecture-authority-declaration-convergence.md\n- contract-first-boundary (rule): harness\\specs\\rules\\contract-first-boundary.md\n- disk-temp-policy (ai-coding-rule): harness\\specs\\rules\\disk-temp-policy.md\n- docs-sync (ai-coding-rule): harness\\specs\\rules\\docs-sync.md\n- repository-artifact-retention (ai-coding-rule): harness\\specs\\rules\\repository-artifact-retention.md\n- task-forest-autoclose-and-roles (ai-coding-rule): harness\\specs\\rules\\task-forest-autoclose-and-roles.md\n- agent-first-acceptance (guide): harness\\specs\\guides\\agent-first-acceptance.md\n- agent-harness-routing (guide): harness\\specs\\guides\\agent-harness-routing.md\n- pretext-text-measurement-integration (guide): harness\\specs\\guides\\pretext-text-measurement-integration.md\n- product-acceptance-strategy (guide): harness\\specs\\guides\\product-acceptance-strategy.md\n- scoped-development-validation (guide): harness\\specs\\guides\\scoped-development-validation.md\n- spec-update (guide): harness\\specs\\guides\\spec-update.md\n- sustained-development-continuity (guide): harness\\specs\\guides\\sustained-development-continuity.md\n- harness (layer-spec): harness\\specs\\layers\\harness.md\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\context.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/architecture-authority-declaration-convergence.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 5.265,
+      "finishedAt": "2026-11-05T14:11:00.446627+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\validate.stdout.txt",
+        "sha256": "c22499d05a51b426ab72fc479dbfa70cd04ed604898cae98181003c8f5d5e492",
+        "text": "Spec is valid: harness\\specs\\tasks\\architecture-authority-declaration-convergence.md\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\validate.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/architecture-authority-declaration-convergence.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 1.625,
+      "finishedAt": "2026-11-05T14:11:05.882041+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\dry-run.stdout.txt",
+        "sha256": "034759bd0daf88e4a88169ef5c03b6a036245aa4f81bdb7070013a94b505fbb3",
+        "text": "Harness report: C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX\\artifacts\\harness\\latest.md\nHarness result: pass\n"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\dry-run.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    },
+    {
+      "id": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "3a362590d6b54e1e2083ec626d4cb9553905a3ad"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "candidate": {
+        "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+        "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+        "dirty": false
+      },
+      "exitCode": 0,
+      "durationSeconds": 0.484,
+      "finishedAt": "2026-11-05T14:11:06.569292+00:00",
+      "afterDirty": false,
+      "stdout": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\diff.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      },
+      "stderr": {
+        "path": "D:\\tmp\\architecture-authority-20261105\\candidate\\diff.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text": ""
+      }
+    }
+  ]
+}

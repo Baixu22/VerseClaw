@@ -1,0 +1,87 @@
+{
+  "schema": "ArchitectureAuthorityConvergenceAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "node": "TF-0790",
+  "candidate": {
+    "commit": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+    "tree": "91204bc3c257b603e037b9055e65a9b477239325",
+    "dirty": false
+  },
+  "baseline": "3a362590d6b54e1e2083ec626d4cb9553905a3ad",
+  "generatedAt": "2026-11-05T15:26:05.785764+00:00",
+  "verdict": "pass-scoped-authority-declaration-convergence",
+  "tests": {
+    "passed": 150,
+    "failed": 0,
+    "skipped": 0
+  },
+  "declarationBaselineNegativeTests": 6,
+  "adjudicatedConflicts": {
+    "before": 8,
+    "after": 0
+  },
+  "rulesUnchanged": 18,
+  "structural": {
+    "before": 54,
+    "after": 55,
+    "additional": "active internal retired-surface registry is not itself retired"
+  },
+  "gaps": {
+    "registered": 35,
+    "resolved": 0,
+    "classification": {
+      "description-gap": 18,
+      "external-owner": 16,
+      "implementation-gap": 1
+    }
+  },
+  "finalTypecheck": "node/web/test exit 0 after per-package dependency restoration",
+  "restoredOldDeclarationsRejected": 5,
+  "criteria": [
+    {
+      "id": 1,
+      "evidence": [
+        "authority-before.json",
+        "authority-after.json",
+        "boundaries.json"
+      ]
+    },
+    {
+      "id": 2,
+      "evidence": [
+        "tests.json",
+        "boundaries.json"
+      ]
+    },
+    {
+      "id": 3,
+      "evidence": [
+        "authority-after.json",
+        "tests.json"
+      ]
+    },
+    {
+      "id": 4,
+      "evidence": [
+        "../gap-classification.json",
+        "tests.json",
+        "boundaries.json"
+      ]
+    },
+    {
+      "id": 5,
+      "evidence": [
+        "gates.json",
+        "types-restored.json",
+        "SHA256SUMS"
+      ]
+    }
+  ],
+  "limitations": [
+    "35 registered gaps remain; classification is not implementation closure.",
+    "Whole-system model echo plaintext-free guarantee is explicitly absent.",
+    "No GA, release readiness, whole runtime build or measured business/maintenance benefit."
+  ]
+}
