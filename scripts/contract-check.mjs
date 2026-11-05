@@ -619,6 +619,7 @@ async function main() {
           knowledgeSourceSetApi: await readProjectFile('src/lib/host-api/knowledge/source-set.ts'),
           knowledgeProvenanceApi: await readProjectFile('src/lib/host-api/knowledge/provenance.ts'),
           knowledgeWatchedDirectoriesApi: await readProjectFile('src/lib/host-api/knowledge/watched-directories.ts'),
+          knowledgeConnectorsApi: await readProjectFile('src/lib/host-api/knowledge/connectors.ts'),
         },
       ),
       ipcHandlersText: [

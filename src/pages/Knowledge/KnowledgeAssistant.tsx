@@ -56,7 +56,6 @@ export function KnowledgeAssistantMessage({
     roleTag: string;
     resultCount: string;
     selectedSources: string;
-    confidence: string;
     groundingStatus: Record<KnowledgeLibrarianGroundedAnswer['groundingStatus'], string>;
   };
   actionLabels: {
@@ -190,7 +189,6 @@ export function KnowledgeAssistantMessage({
                   <dl className="grid gap-1 text-[11px] text-muted-foreground">
                     <div className="flex justify-between gap-3"><dt>{sectionLabels.query}</dt><dd className="min-w-0 truncate font-mono">{groundedAnswer.retrieval.query}</dd></div>
                     <div className="flex justify-between gap-3"><dt>{sectionLabels.resultCount}</dt><dd>{groundedAnswer.retrieval.resultCount}</dd></div>
-                    <div className="flex justify-between gap-3"><dt>{sectionLabels.confidence}</dt><dd>{Math.round(groundedAnswer.confidence * 100)}%</dd></div>
                   </dl>
                   {compact && candidateActions}
                 </div>

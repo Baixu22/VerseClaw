@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-knowledge-convergence",
+  "candidate": {
+    "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+    "tree": "f9bc61f52541167e1ae8cc80529cb00082343d08",
+    "dirty": false
+  },
+  "command": [
+    "node",
+    "D:\\ClawX-work\\knowledge-relay-20261105\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "tests/e2e/knowledge-live.spec.ts",
+    "--workers=1",
+    "--retries=0",
+    "--reporter=list,json",
+    "--output=D:\\tmp\\knowledge-relay-20261105\\final\\live-r2\\live-electron-output"
+  ],
+  "startedAt": "2026-11-05T11:43:58.059702+00:00",
+  "finishedAt": "2026-11-05T11:47:15.209949+00:00",
+  "exitCode": 1,
+  "dirtyAfter": false,
+  "commitAfter": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5"
+}

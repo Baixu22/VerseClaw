@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "root": "D:\\tmp\\knowledge-relay-20261105\\final\\source-sync-native\\sources",
+  "sequence": 25,
+  "files": {
+    "source-0.md": {
+      "digest": "c0a0e10a75df380bd86942c136a1127906001181dcac38e25844aadd2bf5e1ce",
+      "updatedAt": "2026-11-05T11:18:33.111Z",
+      "bytes": 13
+    },
+    "source-10.md": {
+      "digest": "5a65442c10780ac0b57bd11250ae2f8844bc1c89a0214109ce6685498c22972f",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-11.md": {
+      "digest": "120118c2b42b5368c3e48cae017c59a2d72f86cf31e1331c4ec5b09c1df61aca",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-12.md": {
+      "digest": "122610f47b426d4aff5bfb7c1d3394a29b7149af2dff22d0fbbc1f19b6caa3cf",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-13.md": {
+      "digest": "84efd1dac5d7acdbde7ea7ec63a60599b5eb829d49d6f289253d8b75dd503c17",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-14.md": {
+      "digest": "eeedf25f830c7bbe1cc56702eac41740d589f9810a1c82600f8b78608546f59f",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-15.md": {
+      "digest": "a7bbb4c93ece7bcf073b6cec9081473c6b22bc720b7dcb35436ed2aecb26af2b",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-16.md": {
+      "digest": "1f48ee926dae9b61d0d338d1441ff5013d9e790cd91eb3848a0f2940d9d2317d",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-17.md": {
+      "digest": "807cc426bf2d62ad6cbc1bda5e8432b7cefdd2c492e365c6cd7977608be0fcf1",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-18.md": {
+      "digest": "c7b38ae287c7789f2b9a276586291a093760e50ba058df6be74f521157cbe91b",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-19.md": {
+      "digest": "e425fa9fda2b5c96d60bedf1442f7971ecfe33c8471bea2b7d4c7367ce9e01db",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 14
+    },
+    "source-2.md": {
+      "digest": "0b65fe0ea819ff29f6e7bc7f3187fe9029f4971d4efd8c5f5baaaef98f8fb509",
+      "updatedAt": "2026-11-05T11:18:33.253Z",
+      "bytes": 21
+    },
+    "source-4.md": {
+      "digest": "09c3658266e71828c5f54ad41e58cd404324654d2183c3149b7ca494a292171c",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 13
+    },
+    "source-5.md": {
+      "digest": "edcca1ef1b12be81985f439fe8cfe8084c91f1fb4c89155f8ec39aa330c104bc",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 13
+    },
+    "source-6.md": {
+      "digest": "db368f16fbd6c6fd8afdc48bdb2cb19988696f1804d3cd57adce8377fb995470",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 13
+    },
+    "source-7.md": {
+      "digest": "7bf11d227d94dab3ee907dd315537363e1491baa6f6fc3d919d77cbec05be2f3",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 13
+    },
+    "source-8.md": {
+      "digest": "1c2957b7565d741a818d0806be2f3635eed8ce42c670c8bb574f3fb53e08acc1",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 13
+    },
+    "source-9.md": {
+      "digest": "e0556560a8d266979b3a672df4fb43a428b7b8123c63dcdcea1867a4fe6345ad",
+      "updatedAt": "2026-11-05T11:18:32.784Z",
+      "bytes": 13
+    },
+    "missed.md": {
+      "digest": "b5e7c96ac547568a76869801bac2ae174e297d9c6760df2acbbc76cd060e6ff1",
+      "updatedAt": "2026-11-05T11:18:33.255Z",
+      "bytes": 21
+    }
+  }
+}
