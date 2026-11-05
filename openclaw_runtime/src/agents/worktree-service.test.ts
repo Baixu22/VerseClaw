@@ -206,10 +206,10 @@ describe("worktree-service (C4 interface)", () => {
 describe("C4 isolation request + HandoffPack coordinates", () => {
   it("normalizeIsolationMode defaults to shared", () => {
     expect(normalizeIsolationMode(undefined)).toBe("shared");
-    expect(normalizeIsolationMode(null)).toBe("shared");
+    expect(() => normalizeIsolationMode(null)).toThrow(/unsupported isolation/);
     expect(normalizeIsolationMode("shared")).toBe("shared");
     expect(normalizeIsolationMode("worktree")).toBe("worktree");
-    expect(normalizeIsolationMode("patch-flow")).toBe("shared");
+    expect(() => normalizeIsolationMode("patch-flow")).toThrow(/unsupported isolation/);
   });
 
   it("orchestrator plan isolation defaults shared and accepts worktree", () => {

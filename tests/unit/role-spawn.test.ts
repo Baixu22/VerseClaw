@@ -61,6 +61,7 @@ type FakeSpawnResult = {
 /** Inline subset of SpawnSubagentContext used by role-spawn mapping. */
 interface FakeSpawnContext {
   agentSessionKey?: string;
+  workspaceDir?: string;
   agentChannel?: string;
   agentAccountId?: string;
   requesterAgentIdOverride?: string;
@@ -447,6 +448,26 @@ describe('role-driven spawn mapping', () => {
       { spawn: fakeSpawn as SpawnFn },
     );
     expect(missing.status).toBe('role-not-found');
+  });
+
+  it('rechecks the authorized workspace immediately before the injected spawn', async () => {
+    const checkpoints: string[] = [];
+    const fakeSpawn = async (_params: FakeSpawnParams, ctx: FakeSpawnContext): Promise<FakeSpawnResult> => {
+      checkpoints.push('spawn');
+      expect(ctx.workspaceDir).toBe('D:/authorized');
+      return { status: 'accepted', runId: 'run-authorized', childSessionKey: 'child-authorized' };
+    };
+    const result = await spawnRoleSubagent(
+      { role: 'implementer', task: 'write one file', cwd: 'D:/authorized' },
+      {
+        agentSessionKey: 'agent:main:authorized',
+        workspaceDir: 'D:/authorized',
+        assertWorkspaceCurrent: () => checkpoints.push('assert'),
+      },
+      { spawn: fakeSpawn as SpawnFn },
+    );
+    expect(result.status).toBe('accepted');
+    expect(checkpoints).toEqual(['assert', 'spawn']);
   });
 });
 

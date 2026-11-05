@@ -129,7 +129,7 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
     remainingGap: [],
     productEntry: "isolation: \"worktree\" | \"shared\" on a request/plan",
     notes:
-      "Defaults to shared; unknown values normalize to shared; worktree is accepted by the orchestrator plan and carried through HandoffPack alongside writeSet/worktreeId. Shared is intentionally the product default until multi-writer isolation is approved.",
+      "Defaults to shared; explicit unknown isolation values are rejected. Worktree requests inherit to workers unless explicitly overridden, and execute under the parent session's authorized workspace and generation. Only owner-verified Git checkouts prove checkout isolation; directory simulation remains inprocess. Shared remains the product default.",
   },
 ];
 

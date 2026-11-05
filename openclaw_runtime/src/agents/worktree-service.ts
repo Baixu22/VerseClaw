@@ -19,6 +19,7 @@ import {
   lstatSync,
   openSync,
   readFileSync,
+  realpathSync,
   readdirSync,
   rmSync,
   statSync,
@@ -116,6 +117,31 @@ export type CreateWorktreeServiceOptions = {
   backend?: WorktreeBackend;
   conflictPolicy?: MergeConflictPolicy;
 };
+
+export function isManagedWorktreeCurrent(record: WorktreeRecord | undefined): boolean {
+  if (!record || record.status !== "active" || scope(record.baseRoot).records.get(record.id) !== record
+    || !record.filesystemIdentity) return false;
+  try {
+    assertManagedDirectory(record.baseRoot, record.root);
+    const current = lstatSync(record.root);
+    return current.dev === record.filesystemIdentity.dev && current.ino === record.filesystemIdentity.ino;
+  } catch {
+    return false;
+  }
+}
+
+/** Only a live record from this owner can prove Git checkout isolation. */
+export function isVerifiedGitWorktree(record: WorktreeRecord | undefined): boolean {
+  if (!record || record.backend !== "git" || !record.baseOid || !isManagedWorktreeCurrent(record)) return false;
+  try {
+    const root = realpathSync(record.root);
+    const checkout = realpathSync(git(["rev-parse", "--show-toplevel"], root).trim());
+    const common = (cwd: string) => realpathSync(path.resolve(cwd, git(["rev-parse", "--git-common-dir"], cwd).trim()));
+    return path.relative(root, checkout) === "" && path.relative(common(root), common(record.baseRoot)) === "";
+  } catch {
+    return false;
+  }
+}
 
 const registry = new Map<string, { records: Map<string, WorktreeRecord>; queue: MergeQueueItem[] }>();
 
@@ -465,13 +491,14 @@ export function createWorktreeService(
         }
 
         if (backend === "git") {
-          gitBranch = `openclaw/wt-${safeId.slice(0, 40)}`;
           const absWt = path.resolve(wtRoot);
           try {
             git(["worktree", "add", "--detach", absWt, "HEAD"], resolved);
+            gitBranch = undefined;
             recBackend = "git";
           } catch {
             try {
+              gitBranch = `openclaw/wt-${safeId.slice(0, 40)}`;
               git(["worktree", "add", "-B", gitBranch, absWt, "HEAD"], resolved);
               recBackend = "git";
             } catch {

@@ -1060,9 +1060,11 @@ export function summarizeQuality(scores: readonly WorkerQualityScore[]): {
   };
 }
 
-/** C4-4: normalize isolation request. Omitted/unknown => shared (safe default). */
+/** Omitted requests retain the shared default; explicit unsupported modes fail closed. */
 export function normalizeIsolationMode(value: unknown): CodingIsolationMode {
-  return value === "worktree" ? "worktree" : "shared";
+  if (value === undefined || value === "shared") return "shared";
+  if (value === "worktree") return "worktree";
+  throw new Error('unsupported isolation; expected "shared" or "worktree"');
 }
 
 export function readStringArray(value: unknown): string[] {

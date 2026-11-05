@@ -307,6 +307,10 @@ Remote forge 有独立 Host API：
 - “声明 worktree”不等于“已隔离”；
 - in-process shared 写只允许有 write-set proof 或串行化。
 
+编排请求的顶层 `isolation` 会被各 worker 继承，worker 显式 `shared`/`worktree` 可覆盖；未提供仍为 shared，未知值直接拒绝。Gateway 与 `team_orchestrate` 共用父会话解析器，从持久化目录及当前配置解析根目录与 session generation，客户端路径只作为待核对条件。工作树创建与每次 spawn 都受同一父会话身份约束；工具工作区与执行 cwd 一并指向实际 worker 根目录。原生 spawn 在异步准备完成后、下发子任务前再次校验；父会话被重置时回滚准备状态并清理临时子会话。
+
+资源调度只接受 WorktreeService 登记且目录身份仍有效的独立 Git checkout；布尔声明、伪造记录与 inprocess 目录都不能提供这一证明。回执记录实际 backend、根目录和 verifiedCheckout，显式 Git 后端不可用时拒绝执行。目录模拟仍称 inprocess-worktree，不宣称 Git 隔离。
+
 ## 11. CodingRun、Task Loop 与 Task Ledger
 
 `CodingRun` 是 association/projection view，不是第二任务状态机。

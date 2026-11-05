@@ -74,7 +74,7 @@ import {
   type RuntimeBlackboardFailure,
 } from "./orchestration-runtime-blackboard.js";
 import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
-import { createWorktreeService } from "./worktree-service.js";
+import { createWorktreeService, isManagedWorktreeCurrent, isVerifiedGitWorktree, type WorktreeRecord, type WorktreeService } from "./worktree-service.js";
 import { PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS } from "./orchestration-patch-flow.js";
 import { createVerseGitRuntimeBindingPortFromEnv } from "../plugin-sdk/versegit-binding-port.js";
 import { registerVerseGitRuntimeBinding } from "../plugin-sdk/versegit-binding-registry.js";
@@ -425,6 +425,26 @@ export async function runOrchestrationWithRecorder(
 
   let plan: OrchestratorPlan;
   let schedule: ReturnType<typeof scheduleResourceAwareWaves>;
+  let worktreeService: WorktreeService | undefined;
+  const worktreeRecords = new Map<string, WorktreeRecord>();
+  const prepareWorktree = (node: OrchestrationTaskNode): WorktreeRecord => {
+    ctx.assertWorkspaceCurrent?.();
+    const existing = worktreeRecords.get(node.taskNodeId);
+    if (existing) return existing;
+    if (!worktreeService) throw new Error("worktree isolation requires an authorized workspaceDir");
+    const record = worktreeService.create(node.worktreeId ?? `${orchestrationRunId}:${node.taskNodeId}`, {
+      writeSet: node.writeSet,
+      seedFiles: node.writeSet,
+      owner: ctx.workspaceOwner,
+    });
+    if (record.backend !== worktreeService.backend
+      || (record.backend === "git" && !isVerifiedGitWorktree(record))) {
+      throw new Error("Requested worktree backend could not be verified; no worker was spawned");
+    }
+    worktreeRecords.set(node.taskNodeId, record);
+    node.worktreeId = record.id;
+    return record;
+  };
   try {
     const planSpan = recorder.startSpan({
       name: "orchestrator",
@@ -432,10 +452,20 @@ export async function runOrchestrationWithRecorder(
       input: request.task,
     });
     plan = createOrchestratorPlan(request);
+    ctx.assertWorkspaceCurrent?.();
+    if (plan.taskGraph.nodes.some((node) => node.isolation === "worktree")) {
+      if (!ctx.workspaceDir) throw new Error("worktree isolation requires an authorized workspaceDir");
+      const backend = resolveWorktreeBackend(request.cfg as OpenClawConfig | undefined);
+      worktreeService = createWorktreeService(ctx.workspaceDir, { backend });
+      if (worktreeService.backend !== backend) throw new Error("Requested worktree backend is unavailable");
+      for (const node of plan.taskGraph.nodes) {
+        if (node.isolation === "worktree") prepareWorktree(node);
+      }
+    }
     schedule = scheduleResourceAwareWaves({
       graph: plan.taskGraph,
       roles: resolvePlanRoles(plan, request),
-      options: { maxActiveRoles: request.maxWorkers },
+      options: { maxActiveRoles: request.maxWorkers, worktreeRecords },
     });
     plan.executionWaves = schedule.waves;
     const { roleCostSummary, ...numericSchedulerMetrics } = schedule.metrics;
@@ -460,16 +490,6 @@ export async function runOrchestrationWithRecorder(
     storeRuntimeTrace(trace);
     throw error;
   }
-
-  const needsWorktreeIsolation = plan.taskGraph.nodes.some(
-    (node) => node.isolation === "worktree",
-  );
-  const worktreeService =
-    needsWorktreeIsolation && ctx.workspaceDir
-      ? createWorktreeService(ctx.workspaceDir, {
-          backend: resolveWorktreeBackend(request.cfg as OpenClawConfig | undefined),
-        })
-      : undefined;
 
   const spawnWorker = async (
     roleName: string,
@@ -617,21 +637,7 @@ export async function runOrchestrationWithRecorder(
         : ctx;
       const worktree =
         node?.isolation === "worktree"
-          ? (() => {
-              if (!worktreeService) {
-                throw new Error("worktree isolation requires a workspaceDir");
-              }
-              const worktreeId = node.worktreeId ?? `${orchestrationRunId}:${node.taskNodeId}`;
-              const record = worktreeService.create(worktreeId, {
-                writeSet: node.writeSet,
-                seedFiles: node.writeSet,
-              });
-              return {
-                id: record.id,
-                root: record.root,
-                backend: record.backend,
-              };
-            })()
+          ? prepareWorktree(node)
           : undefined;
       if (verseGitBindingPort) {
         const worktreePath = worktree?.root ?? ctx.workspaceDir;
@@ -724,7 +730,17 @@ export async function runOrchestrationWithRecorder(
               }
             : {}),
         },
-        spawnCtx,
+        {
+          ...spawnCtx,
+          workspaceDir: worktree?.root ?? ctx.workspaceDir,
+          assertWorkspaceCurrent() {
+            ctx.assertWorkspaceCurrent?.();
+            if (worktree && (!isManagedWorktreeCurrent(worktree)
+              || (worktree.backend === "git" && !isVerifiedGitWorktree(worktree)))) {
+              throw new Error("Worktree checkout identity changed before spawn");
+            }
+          },
+        },
         deps,
       );
       if (verseGitBinding && verseGitBindingPort) {
@@ -791,6 +807,21 @@ export async function runOrchestrationWithRecorder(
           })
         : undefined;
       if (admissionReceipt) admissionReceipts.push(admissionReceipt);
+      const execution: DelegationWorkerExecution | undefined = spawn.authorization && "status" in spawn.authorization && ctx.workspaceDir
+        ? {
+            backend: "subagent",
+            toolAuthorization: spawn.authorization,
+            isolation: {
+              mode: worktree ? "worktree" : "shared",
+              backend: worktree?.backend === "git" ? "git-worktree" : worktree ? "inprocess-worktree" : "shared-inprocess",
+              canonicalRoot: worktree?.root ?? ctx.workspaceDir,
+              branch: worktree?.gitBranch ?? null,
+              detachedHead: worktree?.backend === "git" ? !worktree.gitBranch : null,
+              verifiedCheckout: isVerifiedGitWorktree(worktree),
+              ...(worktree ? { worktreeId: worktree.id } : {}),
+            },
+          }
+        : undefined;
       outcomes.push({
         roleName,
         agentId: request.agentId,
@@ -799,6 +830,7 @@ export async function runOrchestrationWithRecorder(
         ledger: endedLedger,
         spawn,
         ...(verseGitBinding ? { verseGitBinding } : {}),
+        ...(execution ? { execution } : {}),
         ...(admissionReceipt ? { admissionReceipt } : {}),
       });
       const runId = spawn.result?.runId;

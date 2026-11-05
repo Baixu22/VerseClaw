@@ -6,16 +6,14 @@ import {
   type OrchestrationTaskNode,
 } from "./orchestration-protocol.js";
 import type { RoleContract } from "./role-contract.js";
+import { isVerifiedGitWorktree, type WorktreeRecord } from "./worktree-service.js";
 
 export type ResourceSchedulerOptions = {
   maxActiveRoles?: number;
   exclusiveToolGroups?: readonly (readonly string[])[];
   roleCost?: Partial<Record<string, number>>;
-  /**
-   * Worktree intent alone is not isolation proof. Set this only when the
-   * existing worktree owner has produced verified checkouts for the nodes.
-   */
-  verifiedWorktreeIsolation?: boolean;
+  /** Node-to-checkout records issued by the existing worktree owner. */
+  worktreeRecords?: ReadonlyMap<string, WorktreeRecord>;
 };
 
 export type ResourceScheduleDeferReason =
@@ -149,9 +147,7 @@ function writeSetDeferReason(
   for (const existing of chunk) {
     if (!isWriteCapableNode(existing, roles)) continue;
     if (
-      options?.verifiedWorktreeIsolation === true &&
-      existing.isolation === "worktree" &&
-      candidate.isolation === "worktree"
+      hasIndependentCheckouts(existing, candidate, options)
     ) {
       continue;
     }
@@ -163,6 +159,18 @@ function writeSetDeferReason(
     }
   }
   return undefined;
+}
+
+function hasIndependentCheckouts(
+  left: OrchestrationTaskNode,
+  right: OrchestrationTaskNode,
+  options?: ResourceSchedulerOptions,
+): boolean {
+  if (left.isolation !== "worktree" || right.isolation !== "worktree") return false;
+  const a = options?.worktreeRecords?.get(left.taskNodeId);
+  const b = options?.worktreeRecords?.get(right.taskNodeId);
+  return Boolean(a && b && a.id !== b.id && a.root !== b.root && a.baseRoot === b.baseRoot
+    && isVerifiedGitWorktree(a) && isVerifiedGitWorktree(b));
 }
 
 function formatDeferredReasons(reasons: ReadonlySet<ResourceScheduleDeferReason>): string {
@@ -212,9 +220,7 @@ function takeContentionSafeChunk(params: {
       conflictingKeys.every((key) =>
         (usedExclusiveKeys.get(key) ?? []).every(
           (existing) =>
-            (params.options?.verifiedWorktreeIsolation === true &&
-              existing.isolation === "worktree" &&
-              node.isolation === "worktree") ||
+            hasIndependentCheckouts(existing, node, params.options) ||
             (Boolean(existing.writeSet?.length) &&
               Boolean(node.writeSet?.length) &&
               !writeSetsConflict(existing.writeSet, node.writeSet)),

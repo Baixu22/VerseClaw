@@ -221,6 +221,8 @@ export type SpawnSubagentContext = {
   requesterAgentIdOverride?: string;
   /** Explicit workspace directory for subagent to inherit (optional). */
   workspaceDir?: string;
+  /** Recheck the parent session owner before the child Gateway run is dispatched. */
+  assertWorkspaceCurrent?: () => void;
   inheritedToolAllowlist?: string[];
   inheritedToolDenylist?: string[];
 };
@@ -1622,6 +1624,7 @@ export async function spawnSubagentDirect(
       workspaceDir: _workspaceDir,
       ...publicSpawnedMetadata
     } = spawnedMetadata;
+    ctx.assertWorkspaceCurrent?.();
     const response = await callSubagentGateway({
       method: "agent",
       params: {
