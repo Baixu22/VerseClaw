@@ -149,7 +149,7 @@ Palantir 真正值得借鉴的是「对象—关系—动作—权限—血缘�
 | C | TF-0633 语义合同硬化接入骨架（父）；TF-0634…TF-0637 C1–C4 四叶 | done |
 | 审查后续 | TF-0638 B2 对账承重化；TF-0639 C5 报告观测化（`REVIEW-20261101.md` §5） | done / done |
 | A（2026-11-03 已验收） | TF-0649 A3 迁移活体消费者；TF-0650 A4 改写 E2E mock 缝；TF-0651 A5 退役扁平通道与 preload 第二入口；TF-0652 A6 兼容回归与收口 | done；保留已分类的全仓失败 |
-| 2026-11-05 修复 | TF-0786：TF-0787 门禁 → TF-0788 小依赖环 → TF-0789 runtime 反向依赖 → TF-0790 权威描述 → TF-0791 复验 | 串行推进；当前实施门禁 |
+| 2026-11-05 修复 | TF-0786：TF-0787 门禁 → TF-0788 小依赖环 → TF-0789 runtime 反向依赖 → TF-0790 权威描述 → TF-0791 复验 | 门禁限定验收完成；下一步小依赖环 |
 | D | 未登记（消费需求未证实） | - |
 
 > 2026-10-31 的拆分与规划状态保留在历史决策记录 `docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md`；上表表达当前交付和正在推进的阶段。
@@ -244,9 +244,9 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 
 ## 9. 当前状态与已知风险
 
-- 当前修复基线为 `bfcf57616b361a12845014b3f054b95e31c4021c`，独立工作树 `D:/ClawX-work/architecture-convergence-20261105`，分支 `codex/architecture-convergence-20261105`。本地任务图唯一目标仍为 `D:/ClawX/.agent-workbench/task-forest`。
+- 当前修复基线为 `bfcf57616b361a12845014b3f054b95e31c4021c`，挂载实施树为 `C:/Users/27933/.codex/worktrees/architecture-convergence/ClawX`，分支 `codex/architecture-convergence-20261105`。`D:/ClawX-work/architecture-convergence-20261105` 保留冻结验收现场；本地任务图唯一目标仍为 `D:/ClawX/.agent-workbench/task-forest`。
 - A/B/C 与审查后续已经实施；A3–A6 已验收，历史全仓失败不改写为通过。旧规划和验收记录保留原候选、日期与范围。
-- `TF-0787` 将 IPC 门禁的计算属性、空白和静态本地别名漏检修复到既有入口；机制与限制见 `ADMISSION-GATE.md`。其当前候选和测试结果保留于 `harness/specs/fixtures/architecture-admission-ast/report.json`。
+- `TF-0787` 的接入门禁限定验收通过：72/72 测试、38 项真实入口负例拒绝，完整类型与十项记录门禁均 exit 0。候选 `11adcfbdb`，36 份保留文件的清单读回 35/35 匹配、凭据扫描 0 命中。机制与限制见 `ADMISSION-GATE.md`；证据位于 `harness/specs/fixtures/architecture-admission-ast/report.json`。下一就绪叶子为 `TF-0788` 小依赖环。
 - 后续依次处理 workspace 三文件环与 context 两文件环、runtime 跨领域分量、陈旧权威声明、重要关系约束及完整复验。上一轮的 23 文件分量、8 条裁定诊断与 35 项 gap 都须在新的候选重测，不能把登记视为消除。
 - 共享工作区会话接口的类型漂移属于另一未提交工作流；本轮独立基线没有搬入这些改动，类型验收单独记录。
 - 整体架构成熟度仍不等于通过；维护效率、agent 成功率与可靠性净收益尚无本轮对照测量。批次 D 的产品消费需求仍未证实。
